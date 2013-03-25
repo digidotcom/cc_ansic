@@ -1,0 +1,184 @@
+/*
+ * Copyright (c) 2012 Digi International Inc.,
+ * All rights not expressly granted are reserved.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
+ * =======================================================================
+ */
+static connector_status_t layer_remove_facilities(connector_data_t * const connector_ptr, connector_supported_facility_cb_index_t cb_index);
+
+#if (defined CONNECTOR_DEBUG)
+
+static char const * close_status_to_string(connector_close_status_t const value)
+{
+    char const * result = NULL;
+    switch (value)
+    {
+        enum_to_case(connector_close_status_server_disconnected);
+        enum_to_case(connector_close_status_server_redirected);
+        enum_to_case(connector_close_status_device_terminated);
+        enum_to_case(connector_close_status_device_stopped);
+        enum_to_case(connector_close_status_no_keepalive);
+        enum_to_case(connector_close_status_abort);
+        enum_to_case(connector_close_status_device_error);
+#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
+        enum_to_case(connector_close_receive_error);
+        enum_to_case(connector_close_send_error);
+
+#endif
+    }
+    return result;
+}
+#else
+
+#define close_status_to_string(value)       NULL
+#endif
+
+static connector_status_t tcp_close_server(connector_data_t * const connector_ptr)
+{
+    connector_status_t result = connector_idle;
+    connector_close_status_t close_status = edp_get_close_status(connector_ptr);
+
+    if (edp_get_edp_state(connector_ptr) != edp_communication_connect_server)
+    {
+        connector_callback_status_t status;
+        connector_request_t request_id;
+
+#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
+        connector_auto_connect_type_t close_action = connector_manual_connect;
+
+        {
+            connector_close_request_t request_data;
+            size_t response_length = sizeof close_action;
+
+            request_data.network_handle = connector_ptr->edp_data.network_handle;
+            request_data.status = edp_get_close_status(connector_ptr);
+
+            connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(request_data.status));
+            request_id.network_request = connector_network_close;
+            status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &request_data, sizeof request_data, &close_action, &response_length);
+        }
+#else
+        request_id.network_request = connector_network_close;
+        status = connector_callback_no_response(connector_ptr->callback, connector_class_network_tcp, request_id, connector_ptr->edp_data.network_handle, sizeof *connector_ptr->edp_data.network_handle);
+#endif
+        switch (status)
+        {
+        case connector_callback_busy:
+            result = connector_pending;
+            goto done;
+
+        case connector_callback_continue:
+            result = connector_working;
+            break;
+
+        default:
+            result = connector_abort;
+            close_status = connector_close_status_abort;
+            break;
+        }
+
+
+#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
+        {
+                connector_ptr->edp_data.stop.connect_action = close_action;
+                edp_set_active_state(connector_ptr, connector_transport_idle);
+
+                tcp_send_complete_callback(connector_ptr, connector_abort);
+
+        }
+#else
+
+        if (result == connector_working)
+        {
+            connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(edp_get_close_status(connector_ptr)));
+
+            switch (edp_get_close_status(connector_ptr))
+            {
+                case connector_close_status_server_disconnected:
+                    break;
+                case connector_close_status_server_redirected:
+                    break;
+
+                case connector_close_status_device_terminated:
+                    result = connector_device_terminated;
+                    break;
+
+                case connector_close_status_no_keepalive:
+                    result = connector_keepalive_error;
+                    break;
+                case connector_close_status_abort:
+                    result = connector_abort;
+                    break;
+
+                /* 1.2 support */
+                case connector_close_receive_error:
+                    result = connector_receive_error;
+                    break;
+                case connector_close_send_error:
+                    result = connector_send_error;
+                    break;
+                default:
+                    result = connector_abort;
+                    break;
+            }
+        }
+        else if (result == connector_abort)
+        {
+            result = connector_close_error;
+        }
+
+
+        tcp_send_complete_callback(connector_ptr, result);
+        edp_set_active_state(connector_ptr, connector_transport_open);
+
+#endif
+        edp_set_edp_state(connector_ptr, edp_communication_connect_server);
+
+        layer_remove_facilities(connector_ptr, facility_callback_cleanup);
+
+        edp_reset_initial_data(connector_ptr);
+    }
+    else
+        edp_set_active_state(connector_ptr, connector_transport_idle);
+
+    switch (close_status)
+    {
+        case connector_close_status_device_terminated:
+#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
+        case connector_close_status_abort:
+#endif
+        {
+            /*
+              * Terminated by connector_dispatch call
+              * Free all memory.
+              */
+            connector_status_t const status = layer_remove_facilities(connector_ptr, facility_callback_delete);
+            if (status != connector_working && status != connector_idle)
+            {
+                connector_debug_printf("tcp_close_server: layer_remove_facilities failed %d\n", result);
+            }
+            edp_set_active_state(connector_ptr, connector_transport_terminate);
+            result = (close_status == connector_close_status_device_terminated) ? connector_device_terminated : connector_abort;
+            goto done;
+        }
+        default:
+            break;
+    }
+
+done:
+    return result;
+}
+
+static connector_status_t edp_close_process(connector_data_t * const connector_ptr)
+{
+    connector_status_t result;
+
+    result = tcp_close_server(connector_ptr);
+
+    return result;
+}
