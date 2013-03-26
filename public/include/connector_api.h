@@ -28,7 +28,12 @@
  */
 #define CONNECTOR_VERSION   0x01030000UL
 
+#include "connector_config.h"
 #include "connector_types.h"
+
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
+#include "connector_fw_api.h"
+#endif
 
 #define asizeof(array)  (sizeof array/sizeof array[0])
 
@@ -117,7 +122,7 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_class_t Class IDs
+* @defgroup connector_class_id_t Class IDs
 * @{
 */
 /**
@@ -127,7 +132,7 @@ typedef enum {
 typedef enum {
     connector_class_config,             /**< Configuration Class Id */
     connector_class_operating_system,   /**< Operating System Class Id */
-    connector_class_firmware,           /**< Firmware Facility Class Id */
+    connector_class_id_firmware,           /**< Firmware Facility Class Id */
     connector_class_data_service,       /**< Data Service Class Id */
     connector_class_remote_config_service, /**< Remote Configuration Class ID */
     connector_class_file_system,        /**< File System Class Id */
@@ -273,30 +278,6 @@ typedef enum {
     connector_os_yield,             /**< Callback is called with @ref connector_status_t to relinquish for other task to run when @ref connector_run is used. */
     connector_os_reboot            /**< Callback is called to reboot the system. */
 } connector_os_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_firmware_request_t Firmware Requests
-* @{
-*/
-/**
-* Firmware Facility Request ID passed to the application's callback for firmware update interface.
-* The class id for this connector_firmware_request_t is connector_class_firmware.
-*/
-typedef enum {
-    connector_firmware_target_count,            /**< Requesting callback to return number of supported target for firmware update */
-    connector_firmware_version,                 /**< Requesting callback to return the version number for specific target */
-    connector_firmware_code_size,               /**< Requesting callback to return max code size of specific target */
-    connector_firmware_description,             /**< Requesting callback to return description of specific target */
-    connector_firmware_name_spec,               /**< Requesting callback to return the regular expression for firmware update image name of specific target. */
-    connector_firmware_download_request,        /**< Requesting callback to start firmware update of specific target */
-    connector_firmware_binary_block,            /**< Callback is passed with image data for firmware update. This is called for each chunk of image data */
-    connector_firmware_download_complete,       /**< Callback is called to complete firmware update. */
-    connector_firmware_download_abort,          /**< Requesting callback to abort firmware update */
-    connector_firmware_target_reset             /**< Requesting callback to reset the target */
-} connector_firmware_request_t;
 /**
 * @}
 */
@@ -509,49 +490,6 @@ typedef enum  {
 */
 
 /**
-* @defgroup connector_fw_status_t Firmware download return status
-* @{
-*/
-/**
-* Return status code for firmware update. These status codes are used for @ref connector_firmware_download_request,
-* @see @ref connector_firmware_binary_block and @ref connector_firmware_download_abort callbacks.
-*/
-typedef enum {
-   connector_fw_success,                        /**< No error */
-   connector_fw_download_denied,                /**< Callback denied firmware update */
-   connector_fw_download_invalid_size,          /**< Callback returns invalid size */
-   connector_fw_download_invalid_version,       /**< Callback returns invalid version */
-   connector_fw_download_unauthenticated,       /**< The server has not been authenticated */
-   connector_fw_download_not_allowed,           /**< The server is not allowed to provided updates */
-   connector_fw_download_configured_to_reject,  /**< Callback rejects firmware update */
-   connector_fw_encountered_error,              /**< Callback encountered an error that precludes the firmware update */
-   connector_fw_user_abort,                     /**< User aborted firmware update */
-   connector_fw_device_error,                   /**< Device or server encountered an error in the download data */
-   connector_fw_invalid_offset,                 /**< connector_firmware_binary_block callback found invalid offset. */
-   connector_fw_invalid_data,                   /**< connector_firmware_binary_block callback found invalid data block.*/
-   connector_fw_hardware_error                  /**< Callback found permanent hardware error */
-} connector_fw_status_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_download_complete_status_t Firmware complete status codes
-* @{
-*/
-/**
-* Firmware Update Complete status. These status codes are used in @see connector_firmware_download_complete callback.
-*/
-typedef enum {
-   connector_fw_download_success,               /**< Callback returns this for firmware download finished successfully and calculated checksum matched the checksum sent in the callback */
-   connector_fw_download_checksum_mismatch,     /**< Callback returns this for download completed successfully, but the calculated checksum did not match the checksum sent in the callback */
-   connector_fw_download_not_complete           /**< Callback did not complete download successfully */
-} connector_fw_download_complete_status_t;
-/**
-* @}
-*/
-
-/**
 * @defgroup connector_request_t Request IDs
 * @{
 */
@@ -562,7 +500,7 @@ typedef enum {
 typedef union {
    connector_config_request_t config_request;               /**< Configuration request ID for configuration class */
    connector_os_request_t os_request;                       /**< Operating system request ID for operating system class */
-   connector_firmware_request_t firmware_request;           /**< Firmware request ID for firmware facility class */
+   connector_request_id_firmware_t firmware_request;           /**< Firmware request ID for firmware facility class */
    connector_data_service_request_t data_service_request;   /**< Data service request ID for data service class */
    connector_remote_config_request_t remote_config_request; /**< Remote configuration request ID for remote configuration service class */
    connector_file_system_request_t   file_system_request;   /**< File system request ID for file system class */
@@ -608,25 +546,40 @@ typedef struct  {
 */
 
 /**
-* @defgroup connector_write_request_t Network Write Request
+* @defgroup connector_network_open_data_t Network Open Data Structure
 * @{
 */
 /**
-* Write request structure for @ref connector_network_send callback which is called to send data to the iDigi Device Cloud.
+* Network open data structure for @ref connector_network_open callback which is called to open and connect to the iDigi Device Cloud.
+*/
+typedef struct  {
+    char const * server_url;        /**< Pointer to Etherios Cloud URL */
+    connector_network_handle_t * handle;    /**< Application defined network handle associated with the connection */
+} connector_network_open_data_t;
+/**
+* @}
+*/
+
+
+/**
+* @defgroup connector_network_send_data_t Network Send Data Structure
+* @{
+*/
+/**
+* Send data structure for @ref connector_network_send callback which is called to send data to the iDigi Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t * network_handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
     uint8_t const * buffer;                     /**< Pointer to data to be sent */
-    size_t length;                              /**< Number of bytes of data to be sent */
-    unsigned int timeout;                       /**< Timeout value in seconds which callback must return.
-                                                     This allows iDigi connector to maintenance keep alive process and send process. */
-} connector_write_request_t;
+    size_t bytes_available;                         /**< Number of bytes to send in the buffer */
+    size_t bytes_used;                              /**< Number of bytes sent */
+} connector_network_send_data_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_read_request_t Network Read Request
+* @defgroup connector_network_receive_data_t Network Receive Request
 * @{
 */
 /**
@@ -635,14 +588,31 @@ typedef struct  {
 */
 typedef struct  {
     connector_network_handle_t * network_handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    uint8_t * buffer;                           /**< Pointer to memory where callback writes received data to */
-    size_t length;                              /**< Number of bytes to be received */
-    unsigned int timeout;                       /**< Timeout value in seconds which callback must return.
-                                                     This allows iDigi connector to maintenance keep alive process and send process. */
-} connector_read_request_t;
+    uint8_t * buffer;                               /**< Pointer to memory where callback writes received data to */
+    size_t bytes_available;                         /**< Number of bytes available in the buffer */
+    size_t bytes_used;                              /**< Number of bytes received and copied to the buffer */
+} connector_network_receive_data_t;
 /**
 * @}
 */
+
+/**
+* @defgroup connector_auto_connect_type_t Action on Network Close
+* @{
+*/
+/**
+* Response to @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
+*/
+typedef enum {
+
+    connector_auto_connect,     /**< Connect to the iDigi Device Cloud automatically */
+    connector_manual_connect    /**< Connect to the iDigi Device Cloud manually */
+
+} connector_auto_connect_type_t;
+/**
+* @}
+*/
+
 
 /**
 * @defgroup connector_close_status_t iDigi Connection Close Status Values
@@ -669,7 +639,7 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_close_request_t Network Close Request
+* @defgroup connector_close_data_t Network Close Request
 * @{
 */
 /**
@@ -678,133 +648,9 @@ typedef enum {
 typedef struct  {
     connector_network_handle_t * network_handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
     connector_close_status_t  status;                     /**< Reason for closing the network handle */
-} connector_close_request_t;
-/**
-* @}
-*/
 
-/**
-* @defgroup connector_auto_connect_type_t Action on Network Close
-* @{
-*/
-/**
-* Response to @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
-*/
-typedef enum {
-
-    connector_auto_connect,     /**< Connect to the iDigi Device Cloud automatically */
-    connector_manual_connect    /**< Connect to the iDigi Device Cloud manually */
-
-} connector_auto_connect_type_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_config_t Firmware configuration
-* @{
-*/
-/**
-* Firmware configuration structure for @ref connector_firmware_version, @ref connector_firmware_code_size,
-* @ref connector_firmware_description, @ref connector_firmware_name_spec, and @ref connector_firmware_target_reset callbacks.
-*/
-typedef struct {
-    unsigned int timeout;   /**< Timeout value which callback must return control back to iDigi connector in seconds */
-    uint8_t target;         /**< Target number */
-} connector_fw_config_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_download_request_t Download Request
-* @{
-*/
-/**
-* Firmware download request structure for @ref connector_firmware_download_request callback which
-* is called when server requests firmware download.
-*/
-typedef struct {
-    unsigned int timeout;       /**< Timeout value which callback must return control back to iDigi connector in seconds */
-    uint32_t version;           /**< Reserved */
-    uint32_t code_size;         /**< size of the code that is ready to be sent to the target */
-    char * desc_string;         /**< Reserved */
-    char * file_name_spec;      /**< Reserved */
-    char * filename;            /**< Pointer to filename of the image to be downloaded */
-    uint8_t target;             /**< Target number of which firmware download request for */
-} connector_fw_download_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_image_data_t Image Data
-* @{
-*/
-/**
-* Firmware download image data structure for connector_firmware_binary_block callback which
-* is called when iDigi connector receives a block of image data for firmware download.
-*/
-typedef struct {
-    unsigned int timeout;   /**< Timeout value which callback must return control back to iDigi connector in seconds */
-    uint32_t offset;        /**< Offset value where this particular block of image data fits into the download */
-    uint8_t * data;         /**< Pointer binary image data */
-    size_t length;          /**< Length of binary image data in bytes */
-    uint8_t target;         /**< Target number of which firmware download request for */
-} connector_fw_image_data_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_download_complete_request_t Download complete
-* @{
-*/
-/**
-* Firmware download complete request structure containing information about firmware image data
-* for connector_firmware_download_complete callback which is called when the iDigi Device Cloud is done
-* sending all image data.
-*/
-typedef struct {
-    unsigned int timeout;   /**< Timeout value which callback must return control back to iDigi connector in seconds */
-    uint32_t code_size;     /**< Code size of the entire image data sent */
-    uint32_t checksum;      /**< CRC-32 value computed from offset 0 to code size. If it's 0, no checksum is required */
-    uint8_t target;         /**< Target number of which firmware download request for */
-} connector_fw_download_complete_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_download_complete_response_t Download complete response
-* @{
-*/
-/**
-* Firmware download complete response structure for connector_firmware_download_complete callback which
-* writes information and status of the download completion when the iDigi Device Cloud is done sending all image data.
-*/
-typedef struct {
-    uint32_t version;                               /**< Version number of the downloaded image */
-    uint32_t calculated_checksum;                   /**< Reserved */
-    connector_fw_download_complete_status_t status;     /**< Status code regarding the download completion */
-} connector_fw_download_complete_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_fw_download_abort_t Download Abort
-* @{
-*/
-/**
-* Firmware download abort structure for connector_firmware_abort callback which
-* is called when server aborts firmware download process.
-*/
-typedef struct {
-    unsigned int timeout;       /**< Timeout value which callback must return control back to iDigi connector in seconds */
-    connector_fw_status_t status;   /**< Abort reason or status */
-    uint8_t target;             /**< Target number of which firmware download request for */
-} connector_fw_download_abort_t;
+    connector_auto_connect_type_t  connect_action;
+} connector_network_close_data_t;
 /**
 * @}
 */
@@ -2025,11 +1871,7 @@ typedef struct
  /**
  * @param class_id 				This is a grouping or category of callback functions.  Each class_id contains a number of related request_id's.
  * @param request_id 			The request ID defines the specific callback being requested.
- * @param request_data 			This structure holds constant information passed to application.  This data is used to make
- * 								decisions on how to reply.
- * @param request_length 		The length in bytes of the request_data
- * @param response_data 				Pointer to returned response
- * @param response_length 				Length of the response in bytes
+ * @param data 			        Points to specific structure for the request ID
  *
  * @retval	connector_callback_continue		The callback completed successfully and the iDigi Connector should continue
  * 										it's process.
@@ -2046,8 +1888,7 @@ typedef struct
  * @see connector_init()
  */
 typedef connector_callback_status_t (* connector_callback_t) (connector_class_t const class_id, connector_request_t const request_id,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
+                                                             void * const data);
 /**
 * @}
 */
