@@ -32,10 +32,22 @@
 #include "connector_types.h"
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
-#include "connector_fw_api.h"
+#include "connector_api_firmware.h"
 #endif
 
 #define asizeof(array)  (sizeof array/sizeof array[0])
+/**
+ * @defgroup connector_bool_t Connector Boolean Type
+ * @{
+ */
+/**
+ * Connector Boolean Type
+ *
+ */
+typedef enum {
+    connector_false,    /**< False */
+    connector_true      /**< True */
+} connector_bool_t;
 
  /**
  * @defgroup connector_port_numbers iDigi Port Numbers

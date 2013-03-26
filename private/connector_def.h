@@ -102,12 +102,6 @@ typedef enum {
     connector_transport_redirect
 } connector_transport_state_t;
 
-typedef enum {
-    connector_false,
-    connector_true,
-    connector_bool_integer_width = INT_MAX
-} connector_bool_t;
-
 #define connector_bool(cond)    ((cond) ? connector_true : connector_false)
 
 #define add_list_node(head, tail, node) \

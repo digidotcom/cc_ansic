@@ -32,7 +32,7 @@
 #endif
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
-#include "connector_fw.h"
+#include "connector_firmware.h"
 #endif
 
 #include "layer.h"
