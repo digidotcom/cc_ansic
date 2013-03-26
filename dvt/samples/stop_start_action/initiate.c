@@ -29,7 +29,7 @@ int initiate_run(connector_handle_t handle)
     request_data.transport = connector_transport_tcp;
 
     do {
-        status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data.transport, NULL);
+        status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data.transport);
         if (status != connector_success)
         {
             APP_DEBUG("initiate_run: connector_initiate_action for connector_initiate_transport_start returns error %d\n", status);
@@ -38,7 +38,7 @@ int initiate_run(connector_handle_t handle)
     } while (status == connector_service_busy);
 
     /* start TCP again */
-    status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data.transport, NULL);
+    status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data.transport);
     if (status != connector_success)
     {
         /* should be ok since it's already started */
@@ -57,7 +57,7 @@ int initiate_run(connector_handle_t handle)
                 request_data.transport = initiate_action.transport;
                 stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
                 {
-                    connector_status_t const status = connector_initiate_action(handle, connector_initiate_transport_stop, &request_data, NULL);
+                    connector_status_t const status = connector_initiate_action(handle, connector_initiate_transport_stop, &request_data);
                     if (status != connector_success)
                     {
                         APP_DEBUG("initiate_run: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);
@@ -100,7 +100,7 @@ int initiate_run(connector_handle_t handle)
                             APP_DEBUG("initiate_run: Start %s\n", transport_to_string(request_data.transport));
                             request_data.user_context = &request_data.transport;
                             do {
-                                status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data, NULL);
+                                status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data);
                                 if (status != connector_success && status != connector_service_busy)
                                 {
                                     APP_DEBUG("application_ping: connector_initiate_action for connector_initiate_transport_start returns error %d\n", status);
@@ -128,7 +128,7 @@ int initiate_run(connector_handle_t handle)
                 APP_DEBUG("Initiate_run: Terminate iDigi\n");
                 connector_close_status = connector_close_status_device_terminated;
                 {
-                    connector_status_t const status = connector_initiate_action(handle, connector_initiate_terminate, NULL, NULL);
+                    connector_status_t const status = connector_initiate_action(handle, connector_initiate_terminate, NULL);
                     if (status != connector_success)
                     {
                         APP_DEBUG("initiate_run: connector_initiate_action for connector_initiate_terminate returns error %d\n", status);

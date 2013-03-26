@@ -444,7 +444,7 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
     if (dvt_ptr->request_count == connector_data_point_type_binary)
         goto done;
 
-    status = connector_initiate_action(handle, connector_initiate_data_point, dvt_ptr->dp_ptr, NULL);
+    status = connector_initiate_action(handle, connector_initiate_data_point, dvt_ptr->dp_ptr);
     switch (status)
     {
         case connector_success:

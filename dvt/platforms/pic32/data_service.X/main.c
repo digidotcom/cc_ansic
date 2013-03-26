@@ -69,7 +69,7 @@ int main(void){
                     // ip.  If it's an Auto IP, connection will fail until
                     // proper found.
                     status = connector_initiate_action(handle,
-                            connector_initiate_terminate, NULL, NULL);
+                            connector_initiate_terminate, NULL);
                     connect_time = 0;
                 }
             }
@@ -112,7 +112,7 @@ int main(void){
                         if(!initial_connect){ // Append if this is a reconnect.
                             data_service_request.flags = CONNECTOR_DATA_PUT_APPEND;
                         }
-                        status = connector_initiate_action(handle, connector_initiate_data_service, &data_service_request, NULL);
+                        status = connector_initiate_action(handle, connector_initiate_send_data, &data_service_request);
                     }
                     #endif
                     initial_connect = false;
@@ -135,7 +135,7 @@ int main(void){
                         sprintf(buffer, button_log_proto, time, button_text[i]);
                         data_service_request.context = &buffer;
                         data_service_request.flags = CONNECTOR_DATA_PUT_APPEND;
-                        status = connector_initiate_action(handle, connector_initiate_data_service, &data_service_request, NULL);
+                        status = connector_initiate_action(handle, connector_initiate_send_data, &data_service_request);
                         sleep(200); // sleep 200ms to prevent 1 button press being registered multiple times.
                     }
                     i++;

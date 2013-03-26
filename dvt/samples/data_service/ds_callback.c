@@ -78,7 +78,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
     user->file_length_in_bytes = content_length;
     user->index = index;
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &user->header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &user->header);
     if (status == connector_success)
     {
         put_file_active_count++;

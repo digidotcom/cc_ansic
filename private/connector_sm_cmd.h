@@ -31,7 +31,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             break;
         }
 
-        case connector_initiate_data_service:
+        case connector_initiate_send_data:
         {
             connector_data_service_put_request_t const * const request = sm_ptr->pending.data;
 

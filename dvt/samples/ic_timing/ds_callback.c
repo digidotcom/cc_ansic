@@ -78,7 +78,7 @@ static connector_status_t send_file(connector_handle_t handle, int index, char *
     user->file_length_in_bytes = content_length;
     user->index = index;
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &user->header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &user->header);
     if (status != connector_success)
     {
         if (status != connector_init_error)
@@ -274,7 +274,7 @@ static connector_callback_status_t process_device_request(connector_data_service
             connector_status_t action_status;
 
             APP_DEBUG("process_device_request: terminate IC (active session = %d)\n", put_file_active_count);
-            action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+            action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
             if (action_status != connector_success)
             {
                 APP_DEBUG("process_device_request: connector_initiate_terminate error %d\n", action_status);

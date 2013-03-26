@@ -22,7 +22,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.flags = ((request.flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == CONNECTOR_DATA_RESPONSE_NOT_NEEDED) ? 0 : CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
 
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
     APP_DEBUG("Sent ping [%d].\n", status);
     if (status == connector_success)
     {
@@ -39,7 +39,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
             APP_DEBUG("Trying to cancel the ping request\n");
             do
             {
-                status = connector_initiate_action(handle, connector_initiate_session_cancel, &cancel_request, NULL);
+                status = connector_initiate_action(handle, connector_initiate_session_cancel, &cancel_request);
                 if (status == connector_service_busy)
                     usleep(2);
                 else
@@ -78,7 +78,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     header_ptr->context = &app_data; /* will be returned in all subsequent callbacks */
     header_ptr->path  = (test_cases % 3) ? NULL : file_path;
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, header_ptr, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, header_ptr);
     APP_DEBUG("Status: Send data %d\n", status);
     if (status == connector_success)
     {
@@ -93,7 +93,7 @@ connector_status_t app_send_data(connector_handle_t handle)
             APP_DEBUG("Trying to cancel the send data request\n");
             do
             {
-                status = connector_initiate_action(handle, connector_initiate_session_cancel, &cancel_request, NULL);
+                status = connector_initiate_action(handle, connector_initiate_session_cancel, &cancel_request);
                 if (status == connector_service_busy)
                     usleep(2);
                 else

@@ -494,7 +494,7 @@ static connector_callback_status_t app_process_file_open(connector_file_open_req
     {
         connector_status_t ccode;
 
-        ccode = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+        ccode = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
         if (ccode != connector_success)
         {
             APP_DEBUG("process_device_request: connector_initiate_terminate error %d\n", ccode);

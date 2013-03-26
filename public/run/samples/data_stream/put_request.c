@@ -83,7 +83,7 @@ connector_status_t app_send_put_request(connector_handle_t handle)
     header.content_type = file_type;
     header.context = dia_info; /* will be returned in all subsequent callbacks */
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     APP_DEBUG("Status: %d, file: %s\n", status, header.path);
     if (status != connector_success)
         free(dia_info);

@@ -35,7 +35,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &request;
     request.flags = 0;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
     APP_DEBUG("Sent ping [%d].\n", status);
 
     return status;
@@ -128,7 +128,7 @@ connector_status_t app_send_dia_data(connector_handle_t handle)
        request.user_context = &dia_data;
 
        APP_DEBUG("Previous dia session pending, cancel it\n");
-       status = connector_initiate_action(handle, connector_initiate_session_cancel, &request, NULL);
+       status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
        if (status == connector_success) 
            status = connector_service_busy;
        else
@@ -162,7 +162,7 @@ connector_status_t app_send_dia_data(connector_handle_t handle)
 
     app_session_complete = app_false;
 
-    status = connector_initiate_action(handle, connector_initiate_dia_message, &dia_request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_dia_message, &dia_request);
     APP_DEBUG("Sent dia data %s %u, %s %d, status %d\n", 
         dia_data.channel_info[0].name, noise, dia_data.channel_info[1].name, temperature, status);
 

@@ -31,7 +31,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = NULL;
     request.flags = (request.flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) ? 0 : CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
     APP_DEBUG("Sent ping [%d].\n", status);
 
     return status;
@@ -56,7 +56,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     header_ptr->path  = file_path;
     header_ptr->context = &app_data; /* will be returned in all subsequent callbacks */
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, header_ptr, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, header_ptr);
     APP_DEBUG("Status: %d, file: %s\n", status, file_path);
 
     if (status == connector_success)

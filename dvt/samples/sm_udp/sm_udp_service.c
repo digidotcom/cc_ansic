@@ -63,7 +63,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     }
 
     request.flags = flag;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
     if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */
     {
         if ((request.flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == CONNECTOR_DATA_RESPONSE_NOT_NEEDED)
@@ -134,7 +134,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     header.path  = file_path;
     header.flags = flag;
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */
     {
         if ((header.flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == CONNECTOR_DATA_RESPONSE_NOT_NEEDED)

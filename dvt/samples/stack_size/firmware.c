@@ -163,7 +163,7 @@ static connector_callback_status_t app_firmware_reset(connector_fw_config_t cons
     UNUSED_ARGUMENT(reset_data);
     APP_DEBUG("firmware_reset\n");
 
-    connector_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+    connector_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
     if (connector_status != connector_success)
     {
         APP_DEBUG("app_firmware_reset: connector_initiate_terminate error %d\n", connector_status);

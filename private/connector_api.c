@@ -970,7 +970,7 @@ connector_status_t connector_run(connector_handle_t const handle)
     return rc;
 }
 
-connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data, void  * const response_data)
+connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
 {
     connector_status_t result = connector_init_error;
     connector_data_t * connector_ptr = (connector_data_t *)handle;
@@ -985,16 +985,12 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 #error "Error: One of the transport (TCP, UDP or SMS) must be defined in connector_config.h."
 #endif
 
-#if (!defined CONNECTOR_TRANSPORT_TCP)
-    UNUSED_PARAMETER(response_data);
-#endif
-
     switch (request)
     {
     case connector_initiate_terminate:
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
-        result = edp_initiate_action(connector_ptr, request, request_data, response_data);
+        result = edp_initiate_action(connector_ptr, request, request_data);
         COND_ELSE_GOTO(result == connector_success, done);
 #endif
 
@@ -1078,7 +1074,7 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
             case connector_transport_tcp:
-                result = edp_initiate_action(connector_ptr, request, request_data, response_data);
+                result = edp_initiate_action(connector_ptr, request, request_data);
 
                 if (*transport != connector_transport_all)  break;
                 else if (result != connector_success) break;
@@ -1115,7 +1111,7 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
         }
         break;
     }
-    result = edp_initiate_action(connector_ptr, request, request_data, response_data);
+    result = edp_initiate_action(connector_ptr, request, request_data);
 
     if (result != connector_success)
         connector_ptr->stop.state = connector_state_running;

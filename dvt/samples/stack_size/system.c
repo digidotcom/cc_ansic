@@ -100,7 +100,7 @@ connector_callback_status_t app_system_group_set(connector_remote_group_request_
         if (strcmp(request->element.value->string_value, "terminate") == 0)
         {
             connector_status_t action_status;
-            action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+            action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
             if (action_status != connector_success)
             {
                 APP_DEBUG("app_system_group_set: connector_initiate_terminate error %d\n", action_status);

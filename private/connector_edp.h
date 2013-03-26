@@ -682,7 +682,7 @@ done:
     return result;
 }
 
-connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, connector_initiate_request_t const request, void const * const request_data, void  * const response_data)
+connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, connector_initiate_request_t const request, void const * const request_data)
 {
     connector_status_t result = connector_init_error;
 
@@ -690,13 +690,12 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
     {
     case connector_initiate_terminate:
         UNUSED_PARAMETER(request_data);
-        UNUSED_PARAMETER(response_data);
         edp_set_initiate_state(connector_ptr, connector_transport_terminate);
         result = connector_success;
         break;
 
 #if (defined CONNECTOR_DATA_SERVICE)
-    case connector_initiate_data_service:
+    case connector_initiate_send_data:
         if (edp_get_edp_state(connector_ptr) == edp_communication_connect_server) goto done;
 
         switch (edp_get_active_state(connector_ptr))
@@ -740,7 +739,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             }
             break;
         }
-        result = data_service_initiate(connector_ptr, request_data, response_data);
+        result = data_service_initiate(connector_ptr, request_data);
         break;
 #endif /* CONNECTOR_DATA_SERVICE */
 

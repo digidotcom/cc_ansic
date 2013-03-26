@@ -31,10 +31,6 @@
 #include "connector_config.h"
 #include "connector_types.h"
 
-#if (defined CONNECTOR_FIRMWARE_SERVICE)
-#include "connector_api_firmware.h"
-#endif
-
 #define asizeof(array)  (sizeof array/sizeof array[0])
 /**
  * @defgroup connector_bool_t Connector Boolean Type
@@ -154,6 +150,38 @@ typedef enum {
     connector_class_status,             /**< Class ID for all status */
     connector_class_sm                  /**< Short message specific class ID */
 } connector_class_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_session_error_t Connector session error codes
+* @{
+*/
+/**
+* Error values returned from lower communication layer. It can be either from Etherios device cloud or from
+* Connector. These are errors originated from a layer where compression/decompression, resource
+* allocation and state handling takes place.
+*/
+typedef enum
+{
+    connector_session_error_none,                   /**< Success */
+    connector_session_error_fatal,                  /**< Generally represents internal, unexpected error */
+    connector_session_error_invalid_opcode,         /**< Opcode used in the message is invalid/unsupported */
+    connector_session_error_format,                 /**< Packet is framed incorrectly */
+    connector_session_error_session_in_use,         /**< Session with same ID is already in use */
+    connector_session_error_unknown_session,        /**< Session is not opened or already closed */
+    connector_session_error_compression_failure,    /**< Failed during compression of the data to send */
+    connector_session_error_decompression_failure,  /**< Failed during decompression of the received data */
+    connector_session_error_memory,                 /**< Malloc failed, try to restrict the number of active sessions */
+    connector_session_error_send,                   /**< Send socket error */
+    connector_session_error_cancel,                 /**< Used to force termination of a session */
+    connector_session_error_busy,                   /**< Either the cloud or the connector is busy processing */
+    connector_session_error_ack,                    /**< Invalid ack count */
+    connector_session_error_timeout,                /**< Session timed out */
+    connector_session_error_no_service,             /**< Requested service is not supported */
+    connector_session_error_count                   /**< Maximum error count value, new value goes before this element */
+} connector_session_error_t;
 /**
 * @}
 */
@@ -350,24 +378,6 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_data_service_request_t Data Service Request IDs
-* @{
-*/
-/**
- * Data service request ID, passed to the application callback
- * to request the data, to pass the response, and to pass the
- * error.
- */
-typedef enum {
-    connector_data_service_put_request,     /**< Indicates data service request related to send data to the iDigi Device Cloud */
-    connector_data_service_device_request,  /**< Indicates data service request related to receive data from the iDigi Device Cloud */
-    connector_data_service_dp_response     /**< Used in a callback when the iDigi Connector receives a response to data point request */
-} connector_data_service_request_t;
-/**
-* @}
-*/
-
-/**
 * @defgroup connector_os_status_type_t OS Status Reason Types
 * @{
 */
@@ -437,7 +447,9 @@ typedef enum {
 */
 typedef enum {
     connector_initiate_terminate,       /**< Terminates and stops iDigi connector from running. */
-    connector_initiate_data_service,    /**< Initiates the action to send generic data to the iDigi Device Cloud, the data will be stored in a file on the cloud. */
+    #if (defined CONNECTOR_DATA_SERVICE)
+    connector_initiate_send_data,       /**< Initiates the action to send data to the Etherios device cloud, the data will be stored in a file on Etherios device cloud. */
+    #endif
     connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
     connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
     connector_initiate_status_message,  /**< Sends status message to the iDigi Device Cloud. Supported only under UDP and SMS transport methods */
@@ -502,6 +514,38 @@ typedef enum  {
 */
 
 /**
+* @}
+*/
+
+/**
+* @defgroup connector_transport_t  Transport layer type
+* @{
+*/
+/**
+* iDigi Cloud Connector's will use the specified transport method when sending a request to the
+* iDigi Device Cloud.
+*/
+typedef enum
+{
+    connector_transport_tcp, /**< Use TCP. @ref CONNECTOR_TRANSPORT_TCP must be enabled. */
+    connector_transport_udp, /**< Use UDP. @ref CONNECTOR_TRANSPORT_UDP must be enabled. */
+    connector_transport_sms, /**< Use SMS. @ref CONNECTOR_TRANSPORT_SMS must be enabled. */
+    connector_transport_all  /**< All transports. */
+} connector_transport_t;
+/**
+* @}
+*/
+
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
+#include "connector_api_firmware.h"
+#endif
+
+#if (defined CONNECTOR_DATA_SERVICE)
+#include "connector_api_data_service.h"
+#endif
+
+
+/**
 * @defgroup connector_request_t Request IDs
 * @{
 */
@@ -510,15 +554,19 @@ typedef enum  {
 * @see connector_class_t
 */
 typedef union {
-   connector_config_request_t config_request;               /**< Configuration request ID for configuration class */
-   connector_os_request_t os_request;                       /**< Operating system request ID for operating system class */
-   connector_request_id_firmware_t firmware_request;           /**< Firmware request ID for firmware facility class */
-   connector_data_service_request_t data_service_request;   /**< Data service request ID for data service class */
-   connector_remote_config_request_t remote_config_request; /**< Remote configuration request ID for remote configuration service class */
-   connector_file_system_request_t   file_system_request;   /**< File system request ID for file system class */
-   connector_network_request_t  network_request;            /**< Network request ID for network TCP class, network UDP class, and network SMS class */
-   connector_status_request_t status_request;               /**< Status request ID for status class */
-   connector_sm_request_t sm_request;                       /**< Short message request ID for SM class */
+   connector_config_request_t config_request;                   /**< Configuration request ID for configuration class */
+   connector_os_request_t os_request;                           /**< Operating system request ID for operating system class */
+   #if (defined CONNECTOR_FIRMWARE_SERVICE)
+   connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
+   #endif
+   #if (defined CONNECTOR_DATA_SERVICE)
+   connector_request_id_data_service_t data_service_request;    /**< Data service request ID for data service class */
+   #endif
+   connector_remote_config_request_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
+   connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
+   connector_network_request_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+   connector_status_request_t status_request;                   /**< Status request ID for status class */
+   connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
 } connector_request_t;
 /**
 * @}
@@ -663,347 +711,6 @@ typedef struct  {
 
     connector_auto_connect_type_t  connect_action;
 } connector_network_close_data_t;
-/**
-* @}
-*/
-
-
-/**
-* @defgroup connector_msg_error_t iDigi Connector Error Codes
-* @{
-*/
-/**
- * Error values returned either from the remote the iDigi Device Cloud or
- * from the local iDigi client. These are errors originated from
- * messaging layer, where compression/decompression, resource
- * allocation and state handling take place.
- */
-typedef enum
-{
-    connector_msg_error_none,                   /**< Success */
-    connector_msg_error_fatal,                  /**< Generally represents internal, unexpected error */
-    connector_msg_error_invalid_opcode,         /**< Opcode used in the message is invalid/unsupported */
-    connector_msg_error_format,                 /**< Packet is framed incorrectly */
-    connector_msg_error_session_in_use,         /**< Session with same ID is already in use */
-    connector_msg_error_unknown_session,        /**< Session is not opened or already closed */
-    connector_msg_error_compression_failure,    /**< Failed during compression of the data to send */
-    connector_msg_error_decompression_failure,  /**< Failed during decompression of the received data */
-    connector_msg_error_memory,                 /**< Malloc failed, try to restrict the number of active sessions */
-    connector_msg_error_send,                   /**< Send socket error */
-    connector_msg_error_cancel,                 /**< Used to force termination of a session */
-    connector_msg_error_busy,                   /**< Either the iDigi Device Cloud or iDigi client is busy processing */
-    connector_msg_error_ack,                    /**< Invalid ack count */
-    connector_msg_error_timeout,                /**< Session timed out */
-    connector_msg_error_no_service,             /**< Requested service is not supported */
-    connector_msg_error_count                   /**< Maximum error count value, new value goes before this element */
-} connector_msg_error_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_session_status_t Status of a session
-* @{
-*/
-/**
- * Possible reason for a session to complete, it could be a success response from the iDigi Cloud or from a device.
- */
-typedef enum
-{
-    connector_session_status_success,       /**< Got success response from the iDigi Cloud */
-    connector_session_status_complete,      /**< Session completed, maybe response not needed */
-    connector_session_status_cancel,        /**< Session is cancelled */
-    connector_session_status_timeout,       /**< Session is timed out */
-    connector_session_status_no_resource,   /**< Session terminated due to lack of resource */
-    connector_session_status_cloud_error,   /**< Received error from the iDigi Cloud */
-    connector_session_status_device_error,  /**< An application error from a device */
-    connector_session_status_internal_error /**< Error originated in iDigi Client */
-} connector_session_status_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup put_flags Data service put flags
-* @{
-*/
-/**
- * Message archive bit flag
- *
- * Used in connector_data_service_put_request_t indicating server needs to archive
- * the message file. Valid only if the transport method is TCP.
- *
- * @see connector_data_service_put_request_t
- * @see connector_data_service_put_request callback
- */
-#define CONNECTOR_DATA_PUT_ARCHIVE   0x0001
-
-/**
- * Message append bit flag
- *
- * Used in connector_data_service_put_request_t indicating server need to append to
- * existing data if applicable. Valid only if the transport method is TCP.
- *
- * @see connector_data_service_put_request_t
- * @see connector_data_service_put_request callback
- */
-#define CONNECTOR_DATA_PUT_APPEND    0x0002
-
-/**
-* Response not needed bit flag
-*
-* Used in all device originated requests on UDP and SMS transport indicating that
-* the device doesn't need response to the request.
-*
-* @see connector_data_service_put_request_t
-* @see connector_message_status_request_t
-* @see connector_data_point_request_t
-* @see connector_device_to_server_config_t
-*/
-#define CONNECTOR_DATA_RESPONSE_NOT_NEEDED    0x0004
-
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_transport_t  Transport layer type
-* @{
-*/
-/**
-* iDigi Cloud Connector's will use the specified transport method when sending a request to the
-* iDigi Device Cloud.
-*/
-typedef enum
-{
-    connector_transport_tcp, /**< Use TCP. @ref CONNECTOR_TRANSPORT_TCP must be enabled. */
-    connector_transport_udp, /**< Use UDP. @ref CONNECTOR_TRANSPORT_UDP must be enabled. */
-    connector_transport_sms, /**< Use SMS. @ref CONNECTOR_TRANSPORT_SMS must be enabled. */
-    connector_transport_all  /**< All transports. */
-} connector_transport_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_service_put_request_t connector_data_service_put_request_t
-* @{
-*/
-/**
- * Put request header information. Used as initiate_action() request parameter to
- * initiate the send operation. Subsequent handling is done via callback functions.
- * This header information is returned as user_context in each callback request.
- * If the transport layer is UDP or SMS, the user_context in subsequent callbacks
- * will contain the context field value.
- */
-typedef struct
-{
-    connector_transport_t transport; /**< Transport method to send data to the iDigi Device Cloud */
-    char const * path;           /**< NUL terminated file path where user wants to store the data on the iDigi Device Cloud */
-    char const * content_type;   /**< NUL terminated content type (text/plain, text/xml, application/json, etc. */
-    unsigned int flags;          /**< Indicates whether server should archive and/or append, one of the following @ref put_flags */
-    void const * context;        /**< To hold the user context */
-} connector_data_service_put_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_service_type_t Data service types
-* @{
-*/
-/**
-* Data service types which is used in connector_data_service_device_request and
-* connector_data_service_put_request callbacks indicating the type of message.
-*/
-typedef enum
-{
-    connector_data_service_type_need_data,      /**< Indicating callback needs to write data onto specified buffer which will be sent to server */
-    connector_data_service_type_have_data,      /**< Indicating a message contains data from server that needs callback to process it. */
-    connector_data_service_type_error,          /**< Indicating error is encountered. Message will be terminated */
-    connector_data_service_type_total_length,   /**< Callback to get the total length of the data to be sent. Not applicable in TCP transport method */
-    connector_data_service_type_session_status  /**< Callback to pass the reason for session complete. Not applicable in TCP transport method */
-} connector_data_service_type_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup data_service_flags Data Service Flags
-* @{
-*/
-/**
- * This flag is used in to indicate that this is the first message for this
- * data transfer.
- *
- * @see connector_data_service_put_request callback
- * @see connector_data_service_device_request callback
- */
-#define CONNECTOR_MSG_FIRST_DATA            0x0001  /**< First chunk of data */
-
-/**
- * This flag is to indicate that this is the last message for this transfer.
- *
- * @see connector_data_service_put_request callback
- * @see connector_data_service_device_request callback
- */
-#define CONNECTOR_MSG_LAST_DATA             0x0002  /**< Last chunk of data */
-
-/**
-* This flag is to indicate whether the response is needed for this request or not.
-* Used only under SMS and UDP transport method. In case of TCP this flag is ignored
-* and response is always needed.
-*
-* @see connector_data_service_device_request callback
-*/
-#define CONNECTOR_MSG_RESPONSE_NOT_NEEDED   0x0004  /**< Response is not needed */
-
-/**
- * This flag is used to indicate tha the message was not processed.
- *
- * @see connector_data_service_device_request callback
- */
-#define CONNECTOR_MSG_DATA_NOT_PROCESSED    0x0010  /**< This flag is used in connector_data_service_device_request callback
-                                                     telling server that callback did not process the message */
-/**
- * Message success bit flag
- * This flag is used in connector_data_service_block_t indicating
- * message successfully handled.
- *
- * @see connector_data_service_put_request callback
- */
-#define CONNECTOR_MSG_RESP_SUCCESS          0x0100  /**< This flag is used in connector_data_service_put_request callback
-                                                     telling the callback that server successfully received the message. */
-/**
- * This flag is used to indicate that the message was invalid.
- *
- * @see connector_data_service_put_request callback
- */
-#define CONNECTOR_MSG_BAD_REQUEST           0x0200  /**< This flag is used in connector_data_service_put_request callback
-                                                     from server telling the callback that some portion of the data was invalid. */
-/**
- * This flag is used to indicate that the service is unavailable to process the message.
- *
- * @see connector_data_service_put_request callback
- */
-#define CONNECTOR_MSG_UNAVAILABLE           0x0400  /**< This flag is used in connector_data_service_put_request callback
-                                                     from server telling the callback that service is unavailable due to overload
-                                                     or other issues. Callback may try to resend the message later. */
-/**
- * This flag is used to indicate that the server encountered an error handling the message.
- *
- * @see connector_data_service_put_request callback
- */
-#define CONNECTOR_MSG_SERVER_ERROR          0x0800  /**< This flag is used in connector_data_service_put_request callback
-                                                     from server telling the callback that server encountered an error handling the message. */
-/**
-* @}
-*/
-
-/**
-* @defgroup.connector_data_service_block_t Data Service Block
-* @{
-*/
-/**
-* Data service block structure is used to send data between the iDigi Device cloud and client.
-* This structure is used in connector_data_service_put_request and connector_data_service_device_request callbacks.
-*
-* When message type is connector_data_service_type_need_data in connector_data_service_msg_request_t,
-* callback needs to update this structure with data to be sent to server.
-*
-* When message type is connector_data_service_type_have_data in connector_data_service_msg_request_t,
-* this structure contains data for callback to process.
-*
-* @see connector_data_service_request_t
-* @see connector_initiate_action
-* @see connector_data_service_put_request_t
-* @see connector_data_service_device_request_t
-* @see connector_data_service_type_t
-
-*/
-typedef struct
-{
-    void * data;                /**< Pointer to data */
-    size_t length_in_bytes;     /**< Number of bytes in data */
-    unsigned int flags;         /**< Bit mask flags. See each callback for specified bit mask flags, defined in @ref data_service_flags*/
-} connector_data_service_block_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_service_msg_request_t Data Service Message Request
-* @{
-*/
-/**
-* Data service message request structure is used to tell the callback to process data from the
-* iDigi Device Cloud, to return data to be sent to the iDigi Device Cloud, or to cancel an active message.
-*
-* This structure is used in connector_data_service_put_request and connector_data_service_device_request callbacks.
-*
-* @see connector_data_service_request_t
-* @see connector_initiate_action
-* @see connector_data_service_put_request_t
-* @see connector_data_service_device_request_t
-* @see connector_data_service_type_t
-*/
-typedef struct
-{
-    void * service_context;                     /**< Service context is pointer to connector_data_service_put_request_t for connector_data_service_put_request callback
-                                                    or to connector_data_service_device_request_t for connector_data_service_device_request callback. */
-    connector_data_service_type_t message_type;     /**< It contains connector_data_service_type_need_data to request callback for data to be sent to server,
-                                                   connector_data_service_type_have_data to tell callback to process data from server, or
-                                                   connector_data_service_type_error to tell callback to cancel the message since error is encountered. */
-    connector_data_service_block_t * server_data;   /**< It's pointer to data from server to be processed for connector_data_service_type_have_data message type or
-                                                     pointer to error status for connector_data_service_type_error message type. */
-} connector_data_service_msg_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_service_msg_response_t Data service response message
-* @{
-*/
-/**
-* Data service message response structure is used in connector_data_service_put_request
-* and connector_data_service_device_request callbacks to return data to be sent to the
-* iDigi Device Cloud, or to cancel the message.
-*
-* @see connector_data_service_request_t
-* @see connector_data_service_type_t
-*/
-typedef struct
-{
-    void * user_context;                        /**< Used for connector_data_service_device_request callback's context which will
-                                                    be returned on subsequent callbacks for its reference.
-                                                    For connector_data_service_put_request callback, it's not used. */
-    connector_msg_error_t message_status;           /**< Callback writes error status when it encounters error and cancels the message */
-    connector_data_service_block_t * client_data;   /**< Pointer to memory where callback writes data to for connector_data_service_type_need_data message type */
-} connector_data_service_msg_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_service_device_request_t Data service device request
-* @{
-*/
-/**
-* Data service device request structure is used in @see connector_data_service_device_request
-* callback to process device request. connector_data_service_device_request callback is passed with
-* @see connector_sevice_msg_request_t where service_context is pointing to this structure.
-*
-* @see connector_data_service_type_t
-*/
-typedef struct
-{
-    void * device_handle;       /**< Device handle for current device request */
-    char const * target;        /**< Contains nul terminated target name. The target name is only provided on
-                                    the first chunk of data (CONNECTOR_MSG_FIRST_DATA bit is set on flags. @see connector_data_service_block_t).
-                                    Otherwise, it’s null. */
-} connector_data_service_device_request_t;
-
 /**
 * @}
 */
@@ -1883,14 +1590,15 @@ typedef struct
  /**
  * @param class_id 				This is a grouping or category of callback functions.  Each class_id contains a number of related request_id's.
  * @param request_id 			The request ID defines the specific callback being requested.
- * @param data 			        Points to specific structure for the request ID
+ * @param data 			        Points to specific structure for a given class ID and request ID
  *
- * @retval	connector_callback_continue		The callback completed successfully and the iDigi Connector should continue
+ * @retval	connector_callback_continue	The callback completed successfully and the iDigi Connector should continue
  * 										it's process.
- * @retval  connector_callback_busy			The callback could not complete the operation within the allowable time frame.
+ * @retval  connector_callback_busy		The callback could not complete the operation within the allowable time frame.
  * 										Do not advance the state of the iDigi Connector and recall this callback at some
  * 										later time.
- * @retval 	connector_callback_abort		The application is requesting the iDigi Connector to abort execution.  This will
+ * @retval  connector_callback_error    An application level error occured while processing the callback.
+ * @retval 	connector_callback_abort	The application is requesting the iDigi Connector to abort execution.  This will
  * 										cause connector_run() or connector_step() to terminate with status @ref connector_abort.
  * @retval	connector_callback_unrecognized	An unsupported and unrecognized callback was received.  The application does not
  * 										support this request.  This should be implemented in the application to allow for
@@ -1899,8 +1607,7 @@ typedef struct
  * @see connector_callback_status_t
  * @see connector_init()
  */
-typedef connector_callback_status_t (* connector_callback_t) (connector_class_t const class_id, connector_request_t const request_id,
-                                                             void * const data);
+typedef connector_callback_status_t (* connector_callback_t) (connector_class_t const class_id, connector_request_t const request_id, void * const data);
 /**
 * @}
 */
@@ -2100,7 +1807,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          will eventually terminate that call.  Once the iDigi Connector is terminated, the
  *                          iDigi Connector must restart by calling connector_init().
  *
- *                      @li @b connector_initiate_data_service:
+ *                      @li @b connector_initiate_send_data:
  *                           This is used to trigger the send
  *                           data to the iDigi Device Cloud. Only the
  *                           header information is passed by
@@ -2137,7 +1844,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  * @param [in] request_data  Pointer to Request data
  *                      @li @b connector_initiate_terminate:
  *                          Should be NULL.
- *                      @li @b connector_initiate_data_service:
+ *                      @li @b connector_initiate_send_data:
  *                          Pointer to connector_data_service_put_request_t.
  *                      @li @b connector_initiate_transport_start:
  *                          Pointer to @ref connector_transport_t "connector_transport_t"
@@ -2152,25 +1859,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_session_cancel:
  *                          Pointer to connector_message_status_request_t
  *
- * @param [out] response_data  Pointer to Response data
- *                      @li @b connector_initiate_terminate:
- *                          Should be NULL.
- *                      @li @b connector_initiate_data_service:
- *                          Should be NULL.
- *                      @li @b connector_initiate_transport_start:
- *                          Should be NULL.
- *                      @li @b connector_initiate_transport_stop:
- *                          Should be NULL.
- *                      @li @b connector_initiate_status_message:
- *                          Not used, can be NULL.
- *                      @li @b connector_initiate_data_point:
- *                          Not used, can be NULL.
- *                      @li @b connector_initiate_config_message:
- *                          Not used, can be NULL.
- *                      @li @b connector_initiate_session_cancel:
- *                          Not used, can be NULL.
- *
- * @retval connector_success              No error
+* @retval connector_success              No error
  * @retval connector_init_error           iDigi connector was not initialized or not connected to the iDigi Device Cloud.
  * @retval connector_abort                Callback aborted iDigi connector.
  * @retval connector_invalid_data         Invalid parameter
@@ -2181,17 +1870,16 @@ connector_status_t connector_run(connector_handle_t const handle);
  * @code
  *     connector_data_service_put_request_t  file_info;
  *     :
- *     status = connector_initiate_action(handle, connector_initiate_data_service, &file_info, NULL);
+ *     status = connector_initiate_action(handle, connector_initiate_send_data, &file_info);
  *     :
  *     :
- *     status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+ *     status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
  * @endcode
  *
  * @see connector_handle_t
  * @see connector_callback_t
  */
-connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request,
-                                     void const * const request_data, void * const response_data);
+connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data);
 /**
 * @}.
 */

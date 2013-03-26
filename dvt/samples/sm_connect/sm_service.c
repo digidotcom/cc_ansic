@@ -33,7 +33,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
        request.user_context = &app_ping_pending;
 
        APP_DEBUG("Previous ping pending, cancel it\n");
-       status = connector_initiate_action(handle, connector_initiate_session_cancel, &request, NULL);
+       status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
        if (status == connector_success)
            status = connector_service_busy;
        else

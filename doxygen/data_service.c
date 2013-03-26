@@ -23,7 +23,7 @@
  * @subsection initiate_send Initiate Sending Data
  *
  * The application initiates the Put Request to the iDigi Device Cloud by calling connector_initiate_action()
- * with @ref connector_initiate_data_service request and @ref connector_data_service_put_request_t request_data.
+ * with @ref connector_initiate_send_data request and @ref connector_data_service_put_request_t request_data.
  *
  * The connector_initiate_action() is called with the following arguments:
  *
@@ -42,7 +42,7 @@
  * </tr>
  * <tr>
  *   <td>request</td>
- *   <td>@endhtmlonly @ref connector_initiate_data_service @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_initiate_send_data @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_data</td>
@@ -74,7 +74,7 @@
  *   header.context = &header;
  *
  *   // Begin a file transfer to the iDigi Device Cloud
- *   status = connector_initiate_action(handle, connector_initiate_data_service, &header, NULL);
+ *   status = connector_initiate_action(handle, connector_initiate_send_data, &header);
  * @endcode
  *
  * This example will invoke the iDigi connector to initiate a data transfer to the iDigi Device
@@ -125,7 +125,7 @@
  *   <td>request_data</td>
  *   <td>[IN] pointer to @endhtmlonly connector_data_service_msg_request_t @htmlonly structure:<br></br>
  *     <b><i>service_context</i></b> set to the request_data argument from the @endhtmlonly connector_initiate_action() @htmlonly
- *     @endhtmlonly @ref connector_initiate_data_service @htmlonly call<br></br>
+ *     @endhtmlonly @ref connector_initiate_send_data @htmlonly call<br></br>
  *     <b><i>message_type</i></b> can be set to one of the following:
  *       <ul>
  *       <li> @endhtmlonly @ref connector_data_service_type_need_data @htmlonly: request to send more data to the server.</li>

@@ -23,55 +23,21 @@
 * @{
 */
 /**
- * Data service request ID, passed to the application callback
- * to request the data, to pass the response, and to pass the
- * error.
+ * Data service request ID, passed to the application callback to request the data,
+ * to pass the response, and to pass the error.
  */
 typedef enum {
     connector_request_id_data_service_send_length,      /**< to get the total length of the send data. Not applicable in TCP transport method */
-    connector_request_id_data_service_send_data,        /**< to get the data to send to the Cloud */
+    connector_request_id_data_service_send_data,        /**< to get the data to send to Etherios device cloud */
     connector_request_id_data_service_send_status,      /**< to inform the session status */
-    connector_request_id_data_service_send_response,    /**< to inform the Cloud response */
+    connector_request_id_data_service_send_response,    /**< to inform Etherios device cloud response */
 
-    connector_request_id_data_service_recieve_target,   /**< to inform the start of the Cloud request for a given target */
-    connector_request_id_data_service_recieve_data,     /**< to pass the received request data from the Cloud */
+    connector_request_id_data_service_recieve_target,   /**< to inform the start of Etherios device cloud request for a given target */
+    connector_request_id_data_service_recieve_data,     /**< to pass the received request data from Etherios device cloud */
     connector_request_id_data_service_recieve_status,   /**< to inform the session status */
     connector_request_id_data_service_recieve_reply_length, /**< to get the total length of the response data. Not applicable in TCP transport method */
     connector_request_id_data_service_recieve_reply_data    /**< to get the response data */
-    /* connector_data_service_dp_response     /**< Used in a callback when the iDigi Connector receives a response to data point request */
 } connector_request_id_data_service_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_session_error_t Connector session error codes
-* @{
-*/
-/**
- * Error values returned from lower communication layer. It can be either from Cloud or from
- * Connector. These are errors originated from a layer where compression/decompression, resource
- * allocation and state handling takes place.
- */
-typedef enum
-{
-    connector_session_error_none,                   /**< Success */
-    connector_session_error_fatal,                  /**< Generally represents internal, unexpected error */
-    connector_session_error_invalid_opcode,         /**< Opcode used in the message is invalid/unsupported */
-    connector_session_error_format,                 /**< Packet is framed incorrectly */
-    connector_session_error_session_in_use,         /**< Session with same ID is already in use */
-    connector_session_error_unknown_session,        /**< Session is not opened or already closed */
-    connector_session_error_compression_failure,    /**< Failed during compression of the data to send */
-    connector_session_error_decompression_failure,  /**< Failed during decompression of the received data */
-    connector_session_error_memory,                 /**< Malloc failed, try to restrict the number of active sessions */
-    connector_session_error_send,                   /**< Send socket error */
-    connector_session_error_cancel,                 /**< Used to force termination of a session */
-    connector_session_error_busy,                   /**< Either the cloud or the connector is busy processing */
-    connector_session_error_ack,                    /**< Invalid ack count */
-    connector_session_error_timeout,                /**< Session timed out */
-    connector_session_error_no_service,             /**< Requested service is not supported */
-    connector_session_error_count                   /**< Maximum error count value, new value goes before this element */
-} connector_session_error_t;
 /**
 * @}
 */
@@ -128,11 +94,6 @@ typedef struct
     char const * hint; /** IN: error hint returned from the cloud, NULL if success or hint not available */
 } connector_data_service_send_response_t;
 
-#define CONNECTOR_DATA_SERVICE_SEND_FLAG_OVERWRITE  0x00
-#define CONNECTOR_DATA_SERVICE_SEND_FLAG_ARCHIVE    0x01
-#define CONNECTOR_DATA_SERVICE_SEND_FLAG_APPEND     0x02
-#define CONNECTOR_DATA_SERVICE_SEND_FLAG_TRANSIENT  0x04
-
 typedef struct
 {
     connector_transport_t transport;    /**< transport method to use to send the data */
@@ -140,7 +101,15 @@ typedef struct
 
     char const * path;                  /**< destination path */
     char const * content_type;          /**< null-terminated content type (text/plain, text/xml, application/json, etc. */
-    unsigned int flags;                 /**< archive, append or transient */
+
+    enum
+    {
+        connector_data_service_send_option_overwrite,
+        connector_data_service_send_option_archive,
+        connector_data_service_send_option_append,
+        connector_data_service_send_option_transient
+    } option;
+
     connector_bool_t response_required; /**< set to connector_true if response is needed */
 } connector_data_service_send_request_t;
 

@@ -188,7 +188,7 @@ static connector_callback_status_t app_firmware_reset(connector_fw_config_t cons
         /* let's terminate iDigi Connector and free all memory used in iDigi Connector.
          *
          */
-        connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+        connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
         pthread_cancel(application_thread);
         status = connector_callback_continue;
     }

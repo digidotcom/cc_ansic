@@ -818,11 +818,10 @@ static connector_status_t connector_facility_data_service_init(connector_data_t 
     return msg_init_facility(data_ptr, facility_index, msg_service_id_data, data_service_callback);
 }
 
-static connector_status_t data_service_initiate(connector_data_t * const connector_ptr,  void const * request, void  * response)
+static connector_status_t data_service_initiate(connector_data_t * const connector_ptr,  void const * request)
 {
     connector_status_t status = connector_invalid_data;
 
-    UNUSED_PARAMETER(response);
     ASSERT_GOTO(request != NULL, error);
 
     status = msg_initiate_request(connector_ptr, request) ? connector_success : connector_service_busy;

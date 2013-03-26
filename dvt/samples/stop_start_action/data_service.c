@@ -77,7 +77,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
             connector_initiate_stop_request_t const request_data = {client_device_request->transport, connector_wait_sessions_complete, NULL};
 
             stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
-            status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data, NULL);
+            status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data);
             if (status != connector_success)
             {
                 APP_DEBUG("device_request_action: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);
@@ -89,7 +89,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
         case device_request_start_idigi:
         APP_DEBUG("device_request_action: start %s iDigi\n", transport_to_string(client_device_request->transport));
         {
-            status = connector_initiate_action(connector_handle, connector_initiate_transport_start, &client_device_request->transport, NULL);
+            status = connector_initiate_action(connector_handle, connector_initiate_transport_start, &client_device_request->transport);
             if (status != connector_success)
             {
                 APP_DEBUG("device_request_action: connector_initiate_action for connector_initiate_transport_start returns error %d\n", status);
@@ -105,7 +105,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
             connector_initiate_stop_request_t const request_data = {client_device_request->transport, connector_stop_immediately, NULL};
 
             stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
-            status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data, NULL);
+            status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data);
             if (status != connector_success)
             {
                 APP_DEBUG("device_request_action: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);
@@ -128,7 +128,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
                 connector_initiate_stop_request_t const request_data = {connector_transport_all, connector_wait_sessions_complete, NULL};
 
                 stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
-                status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data, NULL);
+                status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data);
                 if (status != connector_success)
                 {
                     APP_DEBUG("device_request_action: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);
@@ -145,7 +145,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
                 connector_initiate_stop_request_t const request_data = {client_device_request->transport, connector_wait_sessions_complete, NULL};
 
                 stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
-                status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data, NULL);
+                status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data);
                 if (status != connector_success)
                 {
                     APP_DEBUG("device_request_action: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);
@@ -161,7 +161,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
         APP_DEBUG("device_request_action: stop iDigi immediately and terminate\n");
         connector_close_status = connector_close_status_device_terminated;
         {
-            status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+            status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
             if (status != connector_success)
             {
                 APP_DEBUG("device_request_action: connector_initiate_action for connector_initiate_terminate returns error %d\n", status);
@@ -292,7 +292,7 @@ static connector_callback_status_t app_process_device_request(connector_data_ser
                 connector_initiate_stop_request_t const request_data = {transport_type, connector_wait_sessions_complete, NULL};
 
                 stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
-                connector_status_t const status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data, NULL);
+                connector_status_t const status = connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data);
                 if (status != connector_success)
                 {
                     APP_DEBUG("app_process_device_request: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);

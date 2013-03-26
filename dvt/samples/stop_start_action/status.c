@@ -81,7 +81,7 @@ connector_callback_status_t app_status_handler(connector_status_request_t const 
 
         if (stop_request->user_context != NULL)
         {
-            connector_status_t const action_status = connector_initiate_action(connector_handle, connector_initiate_transport_start, &stop_request->transport, NULL);
+            connector_status_t const action_status = connector_initiate_action(connector_handle, connector_initiate_transport_start, &stop_request->transport);
             if (action_status != connector_success)
             {
                 APP_DEBUG("app_status_handler: connector_initiate_action for connector_initiate_transport_start returns error %d\n", action_status);

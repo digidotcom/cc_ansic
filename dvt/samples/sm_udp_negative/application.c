@@ -106,7 +106,7 @@ static connector_status_t start_transport(connector_handle_t handle)
 
     do
     {
-        status = connector_initiate_action(handle, connector_initiate_transport_start, &transport, NULL);
+        status = connector_initiate_action(handle, connector_initiate_transport_start, &transport);
         sleep(2);
     } while (status == connector_service_busy);
 
@@ -125,7 +125,7 @@ static connector_status_t stop_transport(connector_handle_t handle)
 
     do
     {
-        status = connector_initiate_action(handle, connector_initiate_transport_stop, &transport, NULL);
+        status = connector_initiate_action(handle, connector_initiate_transport_stop, &transport);
         sleep(2);
     } while (status == connector_service_busy);
 

@@ -105,7 +105,7 @@ int main (void)
             {
                 connector_status_t status;
 
-                status =  connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+                status =  connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
                 if (status != connector_success)
                 {
                     APP_DEBUG("connector_run_thread: connector_initiate_terminate error %d\n", status);

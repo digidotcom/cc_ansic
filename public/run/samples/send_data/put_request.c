@@ -43,7 +43,7 @@ connector_status_t app_send_put_request(connector_handle_t handle)
     header.content_type = file_type;
     header.context = app_data; /* will be returned in all subsequent callbacks */
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     if (status == connector_init_error)
     {
         static int print_once = 1;

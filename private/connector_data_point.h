@@ -177,7 +177,7 @@ static connector_status_t dp_send_message(connector_data_t * const connector_ptr
     dp_info->header.content_type = NULL;
     dp_info->header.context = dp_info;
 
-    result = connector_initiate_action(connector_ptr, connector_initiate_data_service, &dp_info->header, NULL);
+    result = connector_initiate_action(connector_ptr, connector_initiate_send_data, &dp_info->header);
     switch (result)
     {
         case connector_init_error:

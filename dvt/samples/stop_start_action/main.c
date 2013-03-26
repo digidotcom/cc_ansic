@@ -119,7 +119,7 @@ static int start_connector_thread(void)
 
         connector_close_status = connector_close_status_device_stopped;
         stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
-        status =  connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data, NULL);
+        status =  connector_initiate_action(connector_handle, connector_initiate_transport_stop, &request_data);
         if (status != connector_success)
         {
             ASSERT(0);

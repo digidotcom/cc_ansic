@@ -26,7 +26,7 @@ connector_status_t app_send_put_request(connector_handle_t handle)
     header.path  = file_path;
     header.content_type = file_type;
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     APP_DEBUG("Status: %d, file: %s\n", status, file_path);
 
     return status;

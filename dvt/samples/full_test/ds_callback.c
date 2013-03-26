@@ -49,7 +49,7 @@ connector_status_t send_put_request(connector_handle_t handle, dvt_ds_t * const 
     header->transport = connector_transport_tcp;
 
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, header);
     if (status == connector_success)
         ds_info->state = dvt_state_request_progress;
     APP_DEBUG("send_put_request: %s status  %d\n", ds_info->file_path, status);

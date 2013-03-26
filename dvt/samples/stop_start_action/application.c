@@ -90,7 +90,7 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_t const cl
                  APP_DEBUG("app_connector_reconnect: terminating. unexpected close status %s is not expected %s\n", close_status_to_string(status), close_status_to_string(connector_close_status));
 
                  snprintf(connector_close_status_text, sizeof connector_close_status_text, "%s is not expected %s\n", close_status_to_string(status), close_status_to_string(connector_close_status));
-                 action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL, NULL);
+                 action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
                  if (action_status != connector_success)
                  {
                      APP_DEBUG("app_connector_reconnect: connector_initiate_action for connector_initiate_terminate returns error %d\n", status);
@@ -223,7 +223,7 @@ int application_run(connector_handle_t handle)
         if (file_length == 0)
         {
             /* invalid transport */
-            status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data.transport, NULL);
+            status = connector_initiate_action(handle, connector_initiate_transport_start, &request_data.transport);
             if (status == connector_success)
             {
                 APP_DEBUG("application_ping: connector_initiate_action for connector_initiate_transport_start returns ok on invalid transport\n");
@@ -251,7 +251,7 @@ int application_run(connector_handle_t handle)
                 request_data.user_context = handle;
                 stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
                 do {
-                    status = connector_initiate_action(handle, connector_initiate_transport_stop, &request_data, NULL);
+                    status = connector_initiate_action(handle, connector_initiate_transport_stop, &request_data);
                     if (status != connector_success)
                     {
                         APP_DEBUG("application_ping: connector_initiate_action for connector_initiate_transport_stop returns error %d\n", status);
@@ -285,7 +285,7 @@ int application_run(connector_handle_t handle)
             {
                 APP_DEBUG("application_ping: Start %s\n", transport_to_string(transport));
                 do {
-                    status = connector_initiate_action(handle, connector_initiate_transport_start, &transport, NULL);
+                    status = connector_initiate_action(handle, connector_initiate_transport_start, &transport);
                     if (status != connector_success && status != connector_service_busy)
                     {
                         APP_DEBUG("application_ping: connector_initiate_action for connector_initiate_transport_start returns error %d\n", status);
@@ -417,7 +417,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     ping_request.transport = connector_transport_udp;
     ping_request.user_context = NULL;
     ping_request.flags = CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &ping_request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_status_message, &ping_request);
     APP_DEBUG("Sent ping [%d].\n", status);
 
     return status;

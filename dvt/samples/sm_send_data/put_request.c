@@ -39,7 +39,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &request;
     request.flags = 0;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request, NULL);
+    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
     /* APP_DEBUG("Sent ping [%d].\n", status); */
 
     return status;
@@ -64,7 +64,7 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
        request.user_context = app_send_data;
 
        APP_DEBUG("Previous data send pending, cancel it\n");
-       status = connector_initiate_action(handle, connector_initiate_session_cancel, &request, NULL);
+       status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
        if (status == connector_success) 
            status = connector_service_busy;
        else
@@ -114,7 +114,7 @@ connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t re
     header.content_type = file_type;
     header.context = app_send_data; /* will be returned in all subsequent callbacks */
 
-    status = connector_initiate_action(handle, connector_initiate_data_service, &header, NULL);
+    status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     APP_DEBUG("Status: %d, file: %s\n", status, header.path);
 
     if (status != connector_success)

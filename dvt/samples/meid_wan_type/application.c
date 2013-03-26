@@ -28,7 +28,7 @@ extern connector_status_t send_file(connector_handle_t handle, int index, char *
 
 connector_status_t app_terminate_tcp_transport(connector_handle_t handle)
 {
-    return connector_initiate_action(handle, connector_initiate_terminate, NULL, NULL);
+    return connector_initiate_action(handle, connector_initiate_terminate, NULL);
 
 }
 
