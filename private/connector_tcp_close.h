@@ -48,24 +48,16 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
         connector_callback_status_t status;
         connector_request_t request_id;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
-        connector_auto_connect_type_t close_action = connector_manual_connect;
+        connector_network_close_data_t close_data;
 
-        {
-            connector_close_request_t request_data;
-            size_t response_length = sizeof close_action;
+        close_data.network_handle = connector_ptr->edp_data.network_handle;
+        close_data.status = edp_get_close_status(connector_ptr);
 
-            request_data.network_handle = connector_ptr->edp_data.network_handle;
-            request_data.status = edp_get_close_status(connector_ptr);
-
-            connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(request_data.status));
-            request_id.network_request = connector_network_close;
-            status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &request_data, sizeof request_data, &close_action, &response_length);
-        }
-#else
+        connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(close_data.status));
         request_id.network_request = connector_network_close;
-        status = connector_callback_no_response(connector_ptr->callback, connector_class_network_tcp, request_id, connector_ptr->edp_data.network_handle, sizeof *connector_ptr->edp_data.network_handle);
-#endif
+        /* TODO: fix request_data and stop_action */
+        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &close_data);
+
         switch (status)
         {
         case connector_callback_busy:
@@ -85,7 +77,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
 
 #if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         {
-                connector_ptr->edp_data.stop.connect_action = close_action;
+                connector_ptr->edp_data.stop.connect_action = close_data.connect_action;
                 edp_set_active_state(connector_ptr, connector_transport_idle);
 
                 tcp_send_complete_callback(connector_ptr, connector_abort);

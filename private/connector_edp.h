@@ -123,7 +123,7 @@ static connector_status_t edp_get_config_parameter(connector_data_t * const conn
         connector_request_t request_id;
 
         request_id.config_request = config_request;
-        status = connector_callback_no_request_data(connector_ptr->callback, connector_class_config, request_id, store_at, &length);
+        status = connector_callback(connector_ptr->callback, connector_class_config, request_id, store_at);
 
         switch (status)
         {

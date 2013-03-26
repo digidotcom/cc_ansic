@@ -111,24 +111,20 @@ static connector_status_t tcp_initiate_send_facility_packet(connector_data_t * c
 static connector_callback_status_t tcp_send_buffer(connector_data_t * const connector_ptr, uint8_t * const buffer, size_t * const length)
 {
     connector_callback_status_t status;
-    connector_write_request_t write_data;
+    connector_network_send_data_t send_data;
     connector_request_t request_id;
-    size_t length_written = 0;
-    size_t size;
 
-    write_data.timeout = 0;
-    write_data.buffer = buffer;
-    write_data.length = *length;
-    write_data.network_handle = connector_ptr->edp_data.network_handle;
+    send_data.buffer = buffer;
+    send_data.bytes_available = *length;
+    send_data.network_handle = connector_ptr->edp_data.network_handle;
 
-    size = sizeof length_written;
     request_id.network_request = connector_network_send;
-    status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &write_data, sizeof write_data, &length_written, &size);
+    status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &send_data);
     switch (status)
     {
     case connector_callback_continue:
-        *length = length_written;
-        if (length_written > 0)
+        *length = send_data.bytes_used;
+        if (*length > 0)
         {
             /* Retain the "last (RX) message send" time. */
             if (get_system_time(connector_ptr, &connector_ptr->edp_data.keepalive.last_rx_sent_time) != connector_working)
@@ -144,15 +140,10 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
         status = connector_callback_abort;
         /* no break */
     case connector_callback_abort:
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
-        edp_set_close_status(connector_ptr, connector_close_send_error);
-#endif
         break;
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     case connector_callback_error:
         edp_set_close_status(connector_ptr, connector_close_status_device_error);
         break;
-#endif
     }
 
     return status;

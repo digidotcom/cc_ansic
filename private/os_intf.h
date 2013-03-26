@@ -51,10 +51,9 @@ static void free_static_data(connector_data_t * const connector_ptr,
 
 
 static connector_callback_status_t connector_callback(connector_callback_t const callback, connector_class_t const class_id,  connector_request_t const request_id,
-                                                                       void const * const request_data, size_t const request_length,
-                                                                       void * const response_data, size_t * const response_length)
+                                                                       void * const data)
 {
-    connector_callback_status_t status = callback(class_id, request_id, request_data, request_length, response_data, response_length);
+    connector_callback_status_t status = callback(class_id, request_id, data);
 
     switch (status)
     {
@@ -71,9 +70,7 @@ static connector_callback_status_t connector_callback(connector_callback_t const
             connector_debug_printf("connector_callback: callback for class id = %d request id = %d returned abort\n", class_id, request_id.config_request);
             break;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         case connector_callback_error:
-#endif
             connector_debug_printf("connector_callback: callback for class id = %d request id = %d returned error\n", class_id, request_id.config_request);
             break;
 
@@ -99,9 +96,8 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
     err_status.request_id = request_number;
     err_status.status = status;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     {
-        connector_callback_status_t const callback_status = connector_callback_no_response(callback, connector_class_config, request_id, &err_status, sizeof err_status);
+        connector_callback_status_t const callback_status = connector_callback(callback, connector_class_config, request_id, &err_status);
         switch (callback_status)
         {
             case connector_callback_continue:
@@ -111,10 +107,6 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
                 break;
         }
     }
-#else
-    connector_callback_no_response(callback, connector_class_config, request_id, &err_status, sizeof err_status);
-
-#endif
 
 #else
     UNUSED_PARAMETER(callback);
@@ -128,14 +120,13 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
 
 static connector_status_t get_system_time(connector_data_t * const connector_ptr, unsigned long * const uptime)
 {
-    size_t  length;
     connector_status_t result = connector_abort;
     connector_callback_status_t status;
     connector_request_t request_id;
 
     /* Call callback to get system up time in second */
     request_id.os_request = connector_os_system_up_time;
-    status = connector_callback_no_request_data(connector_ptr->callback, connector_class_operating_system, request_id, uptime, &length);
+    status = connector_callback(connector_ptr->callback, connector_class_operating_system, request_id, uptime);
     switch (status)
     {
     case connector_callback_continue:
@@ -158,12 +149,11 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
     connector_status_t result = connector_working;
     connector_callback_status_t status;
     size_t  size = length;
-    size_t len;
     connector_request_t request_id;
 
     request_id.os_request = connector_os_malloc;
     *ptr = NULL;
-    status = connector_callback(callback, connector_class_operating_system, request_id, &size, sizeof size, ptr, &len);
+    status = connector_callback(callback, connector_class_operating_system, request_id, &size);
     switch (status)
     {
     case connector_callback_continue:
@@ -204,9 +194,8 @@ static connector_status_t free_data(connector_data_t * const connector_ptr, void
 
     request_id.os_request = connector_os_free;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     {
-        connector_callback_status_t const callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_operating_system, request_id, ptr, 0);
+        connector_callback_status_t const callback_status = connector_callback(connector_ptr->callback, connector_class_operating_system, request_id, ptr);
         switch (callback_status)
         {
             case connector_callback_continue:
@@ -216,10 +205,6 @@ static connector_status_t free_data(connector_data_t * const connector_ptr, void
                 break;
         }
     }
-#else
-    connector_callback_no_response(connector_ptr->callback, connector_class_operating_system, request_id, ptr, 0);
-
-#endif
 
     return result;
 }
@@ -253,7 +238,6 @@ static connector_status_t free_data_buffer(connector_data_t * const connector_pt
     return status;
 }
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
 static connector_status_t yield_process(connector_data_t * const connector_ptr, connector_status_t const status)
 {
     connector_status_t result = connector_working;
@@ -264,7 +248,7 @@ static connector_status_t yield_process(connector_data_t * const connector_ptr, 
         connector_callback_status_t callback_status;
 
         request_id.os_request = connector_os_yield;
-        callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_operating_system, request_id, &request_data, sizeof request_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_operating_system, request_id, &request_data);
 
         switch (callback_status)
         {
@@ -278,23 +262,6 @@ static connector_status_t yield_process(connector_data_t * const connector_ptr, 
 
     return result;
 }
-#else
-static void sleep_timeout(connector_data_t * const connector_ptr)
-{
-    /* no receive buffer and nothing to be read */
-    if (connector_ptr->edp_data.receive_packet.free_packet_buffer == NULL &&
-        connector_ptr->edp_data.receive_packet.total_length == 0)
-    {
-        connector_request_t request_id;
-        unsigned int const timeout = connector_ptr->edp_data.receive_packet.timeout;
-
-        request_id.os_request = connector_os_sleep;
-        connector_callback_no_response(connector_ptr->callback, connector_class_operating_system, request_id, &timeout, sizeof timeout);
-    }
-
-    return;
-}
-#endif
 
 static connector_status_t connector_reboot(connector_data_t * const connector_ptr)
 {
@@ -303,17 +270,12 @@ static connector_status_t connector_reboot(connector_data_t * const connector_pt
     connector_callback_status_t status = connector_callback_continue;
     connector_request_t request_id;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     connector_class_t class_id = connector_class_operating_system;
     request_id.os_request = connector_os_reboot;
-#else
-    connector_class_t class_id = connector_class_network_tcp;
-    request_id.network_request = connector_network_reboot;
-#endif
 
     /* server reboots us */
 
-    status = connector_callback_no_response(connector_ptr->callback, class_id, request_id, NULL, 0);
+    status = connector_callback(connector_ptr->callback, class_id, request_id, NULL);
     switch (status)
     {
     case connector_callback_continue:

@@ -167,14 +167,13 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
     for (i=0; i < connector_facility_count; i++)
     {
         connector_request_t const request_id = connector_supported_service_table[i].request_id;
-        size_t length;
         connector_service_supported_status_t facility_enable = (request_id.config_request == MANDATORY_FACILITY) ? connector_service_supported : connector_service_unsupported;
 
         if (request_id.config_request != MANDATORY_FACILITY)
         {   /* this is optional facility so ask application whether it supports this facility */
             connector_callback_status_t status;
 
-            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_config, request_id, &facility_enable, &length);
+            status = connector_callback(connector_ptr->callback, connector_class_config, request_id, &facility_enable);
             switch (status)
             {
             case connector_callback_busy:

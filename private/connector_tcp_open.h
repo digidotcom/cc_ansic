@@ -15,45 +15,33 @@ static connector_status_t connect_server(connector_data_t * const connector_ptr,
     connector_status_t result = connector_idle;
 
     connector_callback_status_t status;
-    size_t length = sizeof *connector_ptr->edp_data.network_handle;
+    connector_network_open_data_t open_data;
+
     connector_request_t request_id;
 
+    UNUSED_PARAMETER(server_url_length);
+
+    open_data.server_url = server_url;
+    open_data.handle = NULL;
+
     request_id.network_request = connector_network_open;
-    status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, server_url, server_url_length, &connector_ptr->edp_data.network_handle, &length);
+    status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &open_data);
     switch (status)
     {
     case connector_callback_continue:
-        if (length == sizeof *connector_ptr->edp_data.network_handle)
-        {
-            result = connector_working;
-        }
-        else
-        {
-            result = connector_abort;
-            notify_error_status(connector_ptr->callback, connector_class_network_tcp, request_id, connector_invalid_data_size);
-        }
+        connector_ptr->edp_data.network_handle = open_data.handle;
         break;
     case  connector_callback_abort:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         result = connector_abort;
-#else
-        result = connector_connect_error;
-#endif
         break;
 
     case connector_callback_unrecognized:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         result = connector_unavailable;
-#else
-        result = connector_connect_error;
-#endif
         break;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     case connector_callback_error:
         result = connector_open_error;
         break;
-#endif
     case connector_callback_busy:
         result = connector_pending;
         break;

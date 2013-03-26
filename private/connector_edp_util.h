@@ -170,12 +170,12 @@ static connector_status_t notify_status(connector_callback_t const callback, con
     connector_status_t result;
 
     connector_request_t request_id;
-    connector_tcp_status_t const tcp_status = status;
+    connector_tcp_status_t  tcp_status = status;
 
     request_id.status_request = connector_status_tcp;
 
     {
-        connector_callback_status_t const callback_status =  connector_callback_no_response(callback, connector_class_status, request_id, &tcp_status, sizeof tcp_status);
+        connector_callback_status_t const callback_status =  connector_callback(callback, connector_class_status, request_id, &tcp_status);
 
         switch (callback_status)
         {

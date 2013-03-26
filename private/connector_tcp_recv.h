@@ -52,18 +52,15 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     request_id.network_request = connector_network_receive;
 
     {
-        connector_read_request_t read_data;
-        size_t  length_read = 0;
-        size_t size;
+        connector_network_receive_data_t read_data;
 
-        read_data.timeout = 0;
         read_data.network_handle = connector_ptr->edp_data.network_handle;
         read_data.buffer = buffer;
-        read_data.length = *length;
+        read_data.bytes_available = *length;
+        read_data.bytes_used = 0;
 
-        size = sizeof length_read;
 
-        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &read_data, sizeof read_data, &length_read, &size);
+        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &read_data);
         switch (status)
         {
         case connector_callback_unrecognized:
@@ -71,31 +68,25 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             /* no break */
         case connector_callback_abort:
             connector_debug_printf("tcp_receive_buffer: callback returns abort\n");
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
-            edp_set_close_status(connector_ptr, connector_close_receive_error);
-#endif
-            goto done;
+           goto done;
         case connector_callback_busy:
             *length = 0;
-            length_read = 0;
             break;
         case connector_callback_continue:
-            *length = length_read;
+            *length = read_data.bytes_used;
             break;
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         case connector_callback_error:
             edp_set_close_status(connector_ptr, connector_close_status_device_error);
             goto done;
-#endif
         }
-        if (length_read > 0 || connector_ptr->edp_data.keepalive.last_tx_received_time == 0)
+
+        if (read_data.bytes_used > 0 || connector_ptr->edp_data.keepalive.last_tx_received_time == 0)
         {
             /* Retain the "last (tx keepalive) message send" time. */
             if (get_system_time(connector_ptr, &connector_ptr->edp_data.keepalive.last_tx_received_time) != connector_working)
             {
                 status = connector_callback_abort;
             }
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
             else
             {
                 if (connector_ptr->edp_data.keepalive.miss_tx_count > 0)
@@ -105,7 +96,6 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
                     connector_ptr->edp_data.keepalive.miss_tx_count = 0;
                 }
             }
-#endif
             goto done;
         }
     }
@@ -116,7 +106,6 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     {
         unsigned long const tx_keepalive_interval = GET_TX_KEEPALIVE_INTERVAL(connector_ptr);
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         unsigned long const wait_count = connector_ptr->edp_data.keepalive.miss_tx_count + 1UL;
         unsigned long const max_timeout = (tx_keepalive_interval * wait_count);
 
@@ -144,31 +133,6 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             }
         }
 
-#else
-        unsigned long const wait_count = GET_WAIT_COUNT(connector_ptr);
-        unsigned long const max_timeout = (tx_keepalive_interval * wait_count);
-
-        if (!is_valid_timing_limit(connector_ptr, connector_ptr->edp_data.keepalive.last_tx_received_time, max_timeout))
-        {
-            /*
-             * We haven't received a message
-             * of any kind for the configured maximum interval, so we must
-             * mark this connection in error and return that status.
-             * We consider the connection lost.
-             *
-             * Note: this inactivity check applies only for MTv2 and later.
-             * For MTv1, the client sends keep-alives, but the server does
-             * not send them (nor must the client expect them). For MTv1,
-             * the data member tx_keepalive_ms is always 0 (zero), so this
-             * keep-alive failure check never triggers.
-             *
-             */
-            notify_error_status(connector_ptr->callback, connector_class_network_tcp, request_id, connector_keepalive_error);
-            connector_debug_printf("connector_receive: keepalive fails\n");
-            edp_set_close_status(connector_ptr, connector_close_status_no_keepalive);
-            status = connector_receive_error;
-        }
-#endif
     }
 
 

@@ -19,7 +19,6 @@
 
 #include <stddef.h>
 
-#include "connector_config.h"
 #include "connector_api.h"
 
 #if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1200)
@@ -176,7 +175,7 @@ static connector_status_t get_config_parameter(connector_data_t * const connecto
             break;
     }
 
-    callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_config, request_id, store_at, &length);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_config, request_id, store_at);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -685,7 +684,7 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
     stop_request.user_context = user_context;
 
     {
-        connector_callback_status_t const status =  connector_callback_no_response(connector_ptr->callback, connector_class_status, request_id, &stop_request, sizeof stop_request);
+        connector_callback_status_t const status =  connector_callback(connector_ptr->callback, connector_class_status, request_id, &stop_request);
 
         switch (status)
         {

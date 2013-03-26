@@ -78,9 +78,6 @@ typedef enum {
 #define MIN_VALUE(x,y)        (((x) < (y))? (x): (y))
 #define MAX_VALUE(x,y)        (((x) > (y))? (x): (y))
 
-#define connector_callback_no_response(callback, class_id, request_id, request_data, request_length) connector_callback((callback), (class_id), (request_id), (request_data), (request_length), NULL, NULL)
-#define connector_callback_no_request_data(callback, class_id, request_id, response_data, response_length) connector_callback((callback), (class_id), (request_id), NULL, 0, (response_data), (response_length))
-
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
 

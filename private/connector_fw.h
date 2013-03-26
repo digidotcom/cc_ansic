@@ -50,15 +50,9 @@ typedef union {
         fw_hardware_error
     } abort_status;
 
-    connector_fw_status_t   user_status;
+    connector_firmware_status_t user_status;
 
 } fw_abort_status_t;
-
-typedef enum {
-    fw_equal,
-    fw_less_than,
-    fw_greater_than
-} fw_compare_type_t;
 
 /* Firmware message header format:
  *  ------------------------
@@ -93,10 +87,8 @@ static size_t const target_list_size = record_bytes(fw_target_list);
 typedef struct {
     connector_data_t * connector_ptr;
     unsigned long last_fw_keepalive_sent_time;
-    uint32_t version;
-    uint32_t code_size;
-    char * description;
-    char * name_spec;
+    connector_firmware_info_t target_info;
+
     size_t desc_length;
     size_t spec_length;
     size_t  response_size;
@@ -104,7 +96,6 @@ typedef struct {
     connector_bool_t update_started;
     connector_bool_t fw_keepalive_start;
     uint8_t target_count;
-    uint8_t target;
     uint8_t response_buffer[FW_MESSAGE_RESPONSE_MAX_SIZE + PACKET_EDP_FACILITY_SIZE];
 } connector_firmware_data_t;
 
@@ -129,36 +120,22 @@ static connector_status_t confirm_fw_version(connector_firmware_data_t * const f
 }
 #endif
 
-static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr, connector_firmware_request_t const fw_request_id,
-                                           void * const request, size_t const request_size,
-                                           void * response, size_t * const response_size,
-                                           fw_compare_type_t const compare_type)
+static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr,
+                                        connector_request_id_firmware_t const fw_request_id,
+                                        void * const data)
 {
 
     connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
     connector_status_t result = connector_working;
 
     unsigned long end_time_stamp = 0;
-    size_t  length = 0;
-    connector_request_t request_id;
-
-
-    /* put the timeout value in the request pointer
-     * (1st field is timeout field for all fw callback)
-     */
-    if (request != NULL)
-    {
-        unsigned int * const req_timeout = request;
-        /* we want callback to return immediately */
-        *req_timeout = 0;
-
-    }
 
     {
+        connector_request_t request_id;
         connector_callback_status_t status;
 
         request_id.firmware_request = fw_request_id;
-        status = connector_callback(connector_ptr->callback, connector_class_firmware, request_id, request, request_size, response, &length);
+        status = connector_callback(connector_ptr->callback, connector_class_id_firmware, request_id, data);
 
         if (get_system_time(connector_ptr, &end_time_stamp) != connector_working)
         {
@@ -169,21 +146,6 @@ static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr
         switch (status)
         {
         case connector_callback_continue:
-            if (response_size != NULL)
-            {
-                if ((compare_type == fw_equal && length != *response_size) ||
-                    (compare_type == fw_less_than && length > *response_size) ||
-                    (compare_type == fw_greater_than && length < *response_size))
-                {
-                    /* bad data so let abort */
-                    connector_debug_printf("get_fw_config: returned invalid size %lu (length %lu)\n", (unsigned long int)length, (unsigned long int)*response_size);
-                    notify_error_status(connector_ptr->callback, connector_class_firmware, request_id, connector_invalid_data_size);
-                    result = connector_abort;
-                    goto done;
-                }
-
-                *response_size = length;
-            }
             break;
         case connector_callback_busy:
             result = connector_pending;
@@ -216,7 +178,7 @@ done:
     return result;
 }
 
-static fw_abort_status_t get_abort_status_code(connector_fw_status_t const status)
+static fw_abort_status_t get_abort_status_code(connector_firmware_status_t const status)
 {
     fw_abort_status_t code;
 
@@ -225,30 +187,30 @@ static fw_abort_status_t get_abort_status_code(connector_fw_status_t const statu
     /* convert status to abort status code for abort message */
     switch (status)
     {
-    case connector_fw_user_abort:
+    case connector_firmware_status_user_abort:
         code.abort_status = fw_user_abort;
         break;
-    case connector_fw_invalid_offset:
+    case connector_firmware_status_invalid_offset:
         code.abort_status = fw_invalid_offset;
         break;
-    case connector_fw_invalid_data:
+    case connector_firmware_status_invalid_data:
         code.abort_status = fw_invalid_data;
         break;
-    case connector_fw_hardware_error:
+    case connector_firmware_status_hardware_error:
         code.abort_status = fw_hardware_error;
         break;
-    case connector_fw_device_error:
-    case connector_fw_download_denied:
-    case connector_fw_download_invalid_size:
-    case connector_fw_download_invalid_version:
-    case connector_fw_download_unauthenticated:
-    case connector_fw_download_not_allowed:
-    case connector_fw_download_configured_to_reject:
-    case  connector_fw_encountered_error:
+    case connector_firmware_status_device_error:
+    case connector_firmware_status_download_denied:
+    case connector_firmware_status_download_invalid_size:
+    case connector_firmware_status_download_invalid_version:
+    case connector_firmware_status_download_unauthenticated:
+    case connector_firmware_status_download_not_allowed:
+    case connector_firmware_status_download_configured_to_reject:
+    case connector_firmware_status_encountered_error:
         /* not abort status so defult to device error */
         code.abort_status = fw_device_error;
         break;
-    case connector_fw_success:
+    case connector_firmware_status_success:
         ASSERT(connector_false);
         break;
 
@@ -315,7 +277,7 @@ static connector_status_t send_fw_abort(connector_firmware_data_t * const fw_ptr
     fw_ptr->response_size = FW_ABORT_HEADER_SIZE;
     result = send_fw_message(fw_ptr);
 
-    if (fw_ptr->target == target)
+    if (fw_ptr->target_info.target_number == target)
     {
         fw_ptr->update_started = connector_false;
     }
@@ -347,12 +309,7 @@ enum fw_info {
 
     connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
     connector_status_t result = connector_idle;
-    connector_firmware_request_t const request_list[] = {
-                                connector_firmware_version, connector_firmware_code_size,
-                                connector_firmware_description, connector_firmware_name_spec};
-    unsigned int const request_list_count = asizeof(request_list);
     uint8_t const target = message_load_u8(fw_message, target);
-    unsigned int i;
 
     connector_debug_printf("Firmware Facility: process info request\n");
     /* parse firmware info request
@@ -376,75 +333,46 @@ enum fw_info {
 
     }
 
-    CONFIRM(offsetof(connector_fw_config_t, timeout) == 0);
-
     /* let's get and build target info response */
-    for (i=0; i < request_list_count; i++)
     {
-        connector_fw_config_t request;
+        connector_firmware_info_t * firmware_info = &fw_ptr->target_info;
 
-        request.target = target;
+        firmware_info->target_number = target;
 
-        switch (request_list[i])
-        {
-        case connector_firmware_version:
-            /* add target number to the target list message before version*/
-            result = get_fw_config(fw_ptr, connector_firmware_version, &request, sizeof request,&fw_ptr->version, NULL, fw_equal);
-#if defined CONNECTOR_RCI_SERVICE
-            if (result == connector_working)
-            {
-               result = confirm_fw_version(fw_ptr, request.target, fw_ptr->version);
-            }
-#endif
-            break;
-
-        case connector_firmware_code_size:
-            result = get_fw_config(fw_ptr, connector_firmware_code_size, &request, sizeof request, &fw_ptr->code_size, NULL, fw_equal);
-            break;
-
-        case connector_firmware_description:
-        case connector_firmware_name_spec:
-            if (request_list[i] == connector_firmware_description)
-            {
-                fw_ptr->desc_length = FW_ID_STRING_LENGTH-fw_ptr->spec_length-1;
-                result = get_fw_config(fw_ptr, connector_firmware_description, &request, sizeof request, (void *)&fw_ptr->description, &fw_ptr->desc_length, fw_less_than);
-            }
-            else
-            {
-                fw_ptr->spec_length = FW_ID_STRING_LENGTH-fw_ptr->desc_length-1;
-                result = get_fw_config(fw_ptr, connector_firmware_name_spec, &request, sizeof request, (void *)&fw_ptr->name_spec, &fw_ptr->spec_length, fw_less_than);
-            }
-
-            if (result == connector_working && (fw_ptr->desc_length + fw_ptr->spec_length) > (FW_ID_STRING_LENGTH -1))
-            {
-                connector_request_t request_id;
-
-                request_id.firmware_request = connector_firmware_description;
-                connector_debug_printf("process_fw_info_request: description length = %lu + name spec length = %lu\n",
-                                        (unsigned long int)fw_ptr->desc_length, (unsigned long int)fw_ptr->spec_length);
-                notify_error_status(connector_ptr->callback, connector_class_firmware, request_id, connector_invalid_data_size);
-                fw_ptr->desc_length = 0;
-                fw_ptr->spec_length = 0;
-                result = connector_abort;
-            }
-            break;
-        default:
-            ASSERT(connector_false);
-            break;
-
-        }
+        result = get_fw_config(fw_ptr, connector_request_id_firmware_info, firmware_info);
         if (result != connector_working)
         {
             goto done;
         }
+#if defined CONNECTOR_RCI_SERVICE
+        else
+        {
+           result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.info.version);
+        }
+#endif
+        fw_ptr->desc_length = strlen(firmware_info->info.description);
+        fw_ptr->desc_length = strlen(firmware_info->info.filename_spec);
+
+        if ((fw_ptr->desc_length + fw_ptr->spec_length) > (FW_ID_STRING_LENGTH -1))
+        {
+            connector_request_t request_id;
+
+            request_id.firmware_request = connector_request_id_firmware_info;
+            connector_debug_printf("process_fw_info_request: description length = %lu + name spec length = %lu\n",
+                                    (unsigned long int)fw_ptr->desc_length, (unsigned long int)fw_ptr->spec_length);
+            notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_size);
+            fw_ptr->desc_length = 0;
+            fw_ptr->spec_length = 0;
+            result = connector_abort;
+        }
     }
 
-    /* once it's done getting all firmware info,
-     * let's build a response.
+    /* let's build a response.
      * build and send firmware info response
     */
-    if (i == request_list_count)
     {
+        connector_firmware_info_t * firmware_info = &fw_ptr->target_info;
+
         uint8_t * edp_header;
         uint8_t * fw_info;
         uint8_t * start_ptr;
@@ -462,26 +390,26 @@ enum fw_info {
 
         message_store_u8(fw_info, opcode, fw_info_response_opcode);
         message_store_u8(fw_info, target, target);
-        message_store_be32(fw_info, version, fw_ptr->version);
-        message_store_be32(fw_info, code_size, fw_ptr->code_size);
+        message_store_be32(fw_info, version, firmware_info->info.version);
+        message_store_be32(fw_info, code_size, firmware_info->info.code_size);
         fw_info += record_bytes(fw_info);
 
-        if (fw_ptr->description != NULL)
+        if (firmware_info->info.description != NULL)
         {
-            memcpy(fw_info, fw_ptr->description, fw_ptr->desc_length);
+            memcpy(fw_info, firmware_info->info.description, fw_ptr->desc_length);
             fw_info += fw_ptr->desc_length;
         }
         *fw_info++ = '\n';
 
-        if (fw_ptr->name_spec != NULL)
+        if (firmware_info->info.filename_spec != NULL)
         {
-            memcpy(fw_info, fw_ptr->name_spec, fw_ptr->spec_length);
+            memcpy(fw_info, firmware_info->info.filename_spec, fw_ptr->spec_length);
             fw_info += fw_ptr->spec_length;
         }
 
         /* reset back to initial values */
-        fw_ptr->version = 0;
-        fw_ptr->code_size = 0;
+        firmware_info->info.version = 0;
+        firmware_info->info.code_size = 0;
         fw_ptr->desc_length = 0;
         fw_ptr->spec_length = 0;
 
@@ -540,17 +468,15 @@ enum fw_download_response {
 };
 
     connector_status_t result = connector_working;
-    connector_fw_download_request_t request_data;
+    connector_firmware_download_start_t download_request;
     fw_abort_status_t response_status;
     size_t string_id_length;
 
     uint8_t abort_opcode = fw_download_abort_opcode;
 
-    CONFIRM(offsetof(connector_fw_download_request_t, timeout) == 0);
+    download_request.target_number = message_load_u8(fw_download_request, target);
 
-    request_data.target = message_load_u8(fw_download_request, target);
-
-    response_status.user_status = connector_fw_device_error;
+    response_status.user_status = connector_firmware_status_device_error;
     if (length < record_bytes(fw_download_request))
     {
         connector_debug_printf("process_fw_download_request: invalid message length\n");
@@ -561,28 +487,21 @@ enum fw_download_response {
 
     if (fw_ptr->update_started == connector_true)
     {
-        connector_debug_printf("process_fw_download_reqeust: cannot start another firmware update target %d\n", request_data.target);
+        connector_debug_printf("process_fw_download_reqeust: cannot start another firmware update target %d\n", download_request.target_number);
         goto error;
     }
 
     /* Parse firmware download request. Then, call the callback
      * with these values and send download request response.
      */
-    request_data.version = message_load_be32(fw_download_request, version);
-    request_data.code_size = message_load_be32(fw_download_request, code_size);
-
-    request_data.file_name_spec = NULL;
-    request_data.filename = NULL;
-    request_data.desc_string = NULL;
+    download_request.image_info.code_size = message_load_be32(fw_download_request, code_size);
 
     string_id_length = (size_t)(length - record_bytes(fw_download_request));
 
     {
         char * string_id_ptr = (char *)fw_download_request;
         unsigned int i;
-        char ** string_id_items[2];
-        string_id_items[0] = &request_data.desc_string;
-        string_id_items[1] = &request_data.file_name_spec;
+        char * string_id_items[2];
 
         string_id_ptr += record_bytes(fw_download_request);
 
@@ -592,7 +511,7 @@ enum fw_download_response {
         for (i=0; i < asizeof(string_id_items); i++)
         {
             char * end_ptr;
-            *string_id_items[i]= string_id_ptr;
+            string_id_items[i]= string_id_ptr;
 
             end_ptr = strchr(string_id_ptr, '\n');
             if (end_ptr != NULL) *end_ptr = '\0';
@@ -603,21 +522,23 @@ enum fw_download_response {
             string_id_ptr++;
         }
         /* get filename */
-        request_data.filename = string_id_ptr;
-        *(request_data.filename + string_id_length) = '\0';
+        download_request.image_info.filename = string_id_ptr;
+        *(download_request.image_info.filename + string_id_length) = '\0';
     }
 
     /* call callback */
-    result = get_fw_config(fw_ptr, connector_firmware_download_request, &request_data, sizeof request_data, &response_status.user_status, NULL, fw_equal);
+    download_request.status = connector_firmware_status_success;
+    result = get_fw_config(fw_ptr, connector_request_id_firmware_download_start, &download_request);
+    if (result == connector_working) response_status.user_status = download_request.status;
 
 error:
     if (result != connector_pending)
     {
         uint8_t * fw_download_response = GET_PACKET_DATA_POINTER(fw_ptr->response_buffer, PACKET_EDP_FACILITY_SIZE);
 
-        if (response_status.user_status >= connector_fw_user_abort)
+        if (response_status.user_status >= connector_firmware_status_user_abort)
         {
-            send_fw_abort(fw_ptr, request_data.target, abort_opcode, response_status);
+            send_fw_abort(fw_ptr, download_request.target_number, abort_opcode, response_status);
             goto done;
         }
 
@@ -626,16 +547,16 @@ error:
 
         /* send firmware download response */
         message_store_u8(fw_download_response, opcode, fw_download_response_opcode);
-        message_store_u8(fw_download_response, target, request_data.target);
-        message_store_u8(fw_download_response, response_type, response_status.user_status);
+        message_store_u8(fw_download_response, target, download_request.target_number);
+        message_store_u8(fw_download_response, response_type, download_request.status);
 
         fw_ptr->response_size = record_bytes(fw_download_response);
 
         send_fw_message(fw_ptr);
-        if (response_status.user_status == connector_fw_success)
+        if (download_request.status == connector_firmware_status_success)
         {
             fw_ptr->update_started = connector_true;
-            fw_ptr->target = request_data.target;
+            fw_ptr->target_info.target_number = download_request.target_number;
         }
 
     }
@@ -680,14 +601,10 @@ enum fw_binary_ack {
     connector_status_t result = connector_idle;
 
     uint8_t ack_required;
-    connector_fw_image_data_t request_data;
-
-    connector_fw_status_t response_status = connector_fw_user_abort;
-
-    CONFIRM(offsetof(connector_fw_image_data_t, timeout) == 0);
+    connector_firmware_download_data_t download_data;
 
     /* Parse firmware binary block */
-    request_data.target = message_load_u8(fw_binary_block, target);
+    download_data.target_number = message_load_u8(fw_binary_block, target);
 
     if (fw_ptr->update_started == connector_false)
     {
@@ -697,26 +614,26 @@ enum fw_binary_ack {
         goto done;
     }
 
-    if ((fw_ptr->target != request_data.target) || (length < record_bytes(fw_binary_block)))
+    if ((fw_ptr->target_info.target_number != download_data.target_number) || (length < record_bytes(fw_binary_block)))
     {
         fw_abort_status_t fw_status;
 
         connector_debug_printf("process_fw_binary_block: invalid target or message length\n");
         fw_status.error_status = fw_invalid_msg;
-        result = send_fw_abort(fw_ptr, request_data.target, fw_error_opcode, fw_status);
+        result = send_fw_abort(fw_ptr, download_data.target_number, fw_error_opcode, fw_status);
         goto done;
     }
 
     /* Parse firmware binary block */
     ack_required = message_load_u8(fw_binary_block, ack_required);
-    request_data.offset = message_load_be32(fw_binary_block, offset);
-    request_data.length = (size_t)(length - record_bytes(fw_binary_block));
+    download_data.image_data.offset = message_load_be32(fw_binary_block, offset);
+    download_data.image_data.length = (size_t)(length - record_bytes(fw_binary_block));
 
-    request_data.data = (fw_binary_block + record_bytes(fw_binary_block));
+    download_data.image_data.data = (fw_binary_block + record_bytes(fw_binary_block));
 
-    result = get_fw_config(fw_ptr, connector_firmware_binary_block, &request_data, sizeof request_data, &response_status, NULL, fw_equal);
+    result = get_fw_config(fw_ptr, connector_request_id_firmware_download_data, &download_data);
 
-    if (result == connector_working && response_status == connector_fw_success)
+    if (result == connector_working && download_data.status == connector_firmware_status_success)
     {
 
         if(ack_required)
@@ -726,9 +643,9 @@ enum fw_binary_ack {
             ASSERT((sizeof fw_ptr->response_buffer - PACKET_EDP_FACILITY_SIZE) > record_bytes(fw_binary_ack));
             /* send firmware binary block acknowledge */
             message_store_u8(fw_binary_ack, opcode, fw_binary_block_ack_opcode);
-            message_store_u8(fw_binary_ack, target,request_data.target);
-            message_store_be32(fw_binary_ack, offset, request_data.offset);
-            message_store_u8(fw_binary_ack, status, connector_fw_success);
+            message_store_u8(fw_binary_ack, target, download_data.target_number);
+            message_store_be32(fw_binary_ack, offset, download_data.image_data.offset);
+            message_store_u8(fw_binary_ack, status, connector_firmware_status_success);
 
             fw_ptr->response_size = record_bytes(fw_binary_ack);
             result = send_fw_message(fw_ptr);
@@ -737,8 +654,8 @@ enum fw_binary_ack {
     else if (result != connector_pending)
     {
         fw_abort_status_t fw_status;
-        fw_status.user_status = response_status;
-        result = send_fw_abort(fw_ptr, request_data.target, fw_download_abort_opcode, fw_status);
+        fw_status.user_status = download_data.status;
+        result = send_fw_abort(fw_ptr, download_data.target_number, fw_download_abort_opcode, fw_status);
     }
 done:
     return result;
@@ -756,28 +673,26 @@ static connector_status_t process_fw_abort(connector_firmware_data_t * const fw_
     }
     else if (fw_ptr->update_started)
     {
-        connector_fw_download_abort_t request_data;
+        connector_firmware_download_abort_t request_data;
         uint8_t abort_status = message_load_u8(fw_abort, status);
 
-        CONFIRM(offsetof(connector_fw_download_abort_t, timeout) == 0);
-
-        request_data.target = message_load_u8(fw_abort, target);
+        request_data.target_number = message_load_u8(fw_abort, target);
         switch (abort_status)
         {
         case fw_user_abort:
-            request_data.status = connector_fw_user_abort;
+            request_data.status = connector_firmware_status_user_abort;
             break;
         case fw_device_error:
-            request_data.status = connector_fw_device_error;
+            request_data.status = connector_firmware_status_device_error;
             break;
         case fw_invalid_offset:
-            request_data.status = connector_fw_invalid_offset;
+            request_data.status = connector_firmware_status_invalid_offset;
             break;
         case fw_invalid_data:
-            request_data.status = connector_fw_invalid_data;
+            request_data.status = connector_firmware_status_invalid_data;
             break;
         case fw_hardware_error:
-            request_data.status = connector_fw_hardware_error;
+            request_data.status = connector_firmware_status_hardware_error;
             break;
         default:
             ASSERT(connector_false);
@@ -785,9 +700,9 @@ static connector_status_t process_fw_abort(connector_firmware_data_t * const fw_
         }
 
         /* call callback */
-        if (fw_ptr->target == request_data.target)
+        if (fw_ptr->target_info.target_number == request_data.target_number)
         {
-            result = get_fw_config(fw_ptr, connector_firmware_download_abort, &request_data, sizeof request_data, NULL, NULL, fw_equal);
+            result = get_fw_config(fw_ptr, connector_request_id_firmware_download_abort, &request_data);
             if (result != connector_pending)
             {
                 fw_ptr->update_started = connector_false;
@@ -836,32 +751,28 @@ enum fw_complete_response {
 };
 
     connector_status_t result = connector_working;
-    connector_fw_download_complete_request_t request_data;
-    connector_fw_download_complete_response_t response_data;
+    connector_firmware_download_complete_t download_complete;
 
-    CONFIRM(offsetof(connector_fw_download_complete_request_t, timeout) == 0);
-
-    request_data.target = message_load_u8(fw_complete_request, target);
+    download_complete.target_number = message_load_u8(fw_complete_request, target);
 
     if ((length != record_bytes(fw_complete_request)) ||
         (fw_ptr->update_started == connector_false) ||
-        (fw_ptr->target != request_data.target))
+        (fw_ptr->target_info.target_number != download_complete.target_number))
     {
         fw_abort_status_t  fw_status;
 
         connector_debug_printf("process_fw_complete: invalid message length, invalid target or no firmware update started\n");
         fw_status.error_status = fw_invalid_msg;
-        result = send_fw_abort(fw_ptr, request_data.target, fw_error_opcode, fw_status);
+        result = send_fw_abort(fw_ptr, download_complete.target_number, fw_error_opcode, fw_status);
         goto done;
     }
 
     /* Parse firmware downlaod complete */
-    request_data.code_size = message_load_be32(fw_complete_request, code_size);
-    request_data.checksum = message_load_be32(fw_complete_request, checksum);
+    download_complete.image_data.code_size = message_load_be32(fw_complete_request, code_size);
+    download_complete.image_data.checksum = message_load_be32(fw_complete_request, checksum);
 
     /* call callback */
-    response_data.calculated_checksum = 0; /* set to 0 since it's reserved */
-    result = get_fw_config(fw_ptr, connector_firmware_download_complete, &request_data, sizeof request_data, &response_data, NULL, fw_equal);
+    result = get_fw_config(fw_ptr, connector_request_id_firmware_download_complete, &download_complete);
     if (result == connector_working)
     {
         uint8_t * fw_complete_response = GET_PACKET_DATA_POINTER(fw_ptr->response_buffer, PACKET_EDP_FACILITY_SIZE);
@@ -870,10 +781,10 @@ enum fw_complete_response {
 
         /* send firmware download complete response */
         message_store_u8(fw_complete_response, opcode, fw_download_complete_response_opcode);
-        message_store_u8(fw_complete_response, target, request_data.target);
-        message_store_be32(fw_complete_response, version, response_data.version);
-        message_store_be32(fw_complete_response, checksum, response_data.calculated_checksum);
-        message_store_u8(fw_complete_response, status, response_data.status);
+        message_store_u8(fw_complete_response, target, download_complete.target_number);
+        message_store_be32(fw_complete_response, version, download_complete.image_status.version);
+        message_store_be32(fw_complete_response, checksum, 0L);
+        message_store_u8(fw_complete_response, status, download_complete.image_status.status);
 
         fw_ptr->last_fw_keepalive_sent_time = 0;
         fw_ptr->fw_keepalive_start = connector_false;
@@ -886,8 +797,8 @@ enum fw_complete_response {
     {
         fw_abort_status_t fw_status;
 
-        fw_status.user_status = connector_fw_user_abort;
-        send_fw_abort(fw_ptr, request_data.target, fw_download_abort_opcode, fw_status);
+        fw_status.user_status = connector_firmware_status_user_abort;
+        send_fw_abort(fw_ptr, download_complete.target_number, fw_download_abort_opcode, fw_status);
     }
 
 
@@ -899,14 +810,14 @@ done:
 static connector_status_t process_target_reset(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_message, uint16_t const length)
 {
     connector_status_t result;
-    connector_fw_config_t request;
+    uint8_t target_number;
 
     UNUSED_PARAMETER(length);
     connector_debug_printf("Firmware Facility: process target reset\n");
 
-    request.target = message_load_u8(fw_message, target);
+    target_number = message_load_u8(fw_message, target);
 
-    result = get_fw_config(fw_ptr, connector_firmware_target_reset, &request, sizeof request, NULL, NULL, fw_equal);
+    result = get_fw_config(fw_ptr, connector_request_id_firmware_target_reset, &target_number);
 
     return result;
 }
@@ -972,22 +883,21 @@ static connector_status_t fw_discovery(connector_data_t * const connector_ptr, v
 
         for (target_number=0; target_number < fw_ptr->target_count; target_number++)
         {
-            uint32_t version = 0;
-            connector_fw_config_t request;
+            connector_firmware_info_t firmware_info;
 
             /* get the current firmware version for this target */
-            request.target = target_number;
+            firmware_info.target_number = target_number;
             /* call callback */
-            result = get_fw_config(fw_ptr, connector_firmware_version, &request, sizeof request, &version, NULL, fw_equal);
+            result = get_fw_config(fw_ptr, connector_request_id_firmware_info, &firmware_info.info.version);
             if (result == connector_working)
             {
 
 #if defined CONNECTOR_RCI_SERVICE
-                result = confirm_fw_version(fw_ptr, request.target, version);
+                result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.info.version);
                 if (result != connector_working) goto error;
 #endif
-                message_store_u8(fw_target_list, target, request.target);
-                message_store_be32(fw_target_list, version, version);
+                message_store_u8(fw_target_list, target, firmware_info.target_number);
+                message_store_be32(fw_target_list, version, firmware_info.info.version);
 
                 /* set up for next target pair info*/
                 fw_target_list += target_list_size;
@@ -1134,7 +1044,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
     connector_status_t result = connector_working;
     connector_firmware_data_t * fw_ptr;
 
-    /* Add firmware access facility to iDigi
+    /* Add firmware access facility to Connector
      *
      * Make sure firmware access facility is not already created. If firmware
      * access facility is already created, we probably reconnect to server
@@ -1154,7 +1064,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
         fw_ptr = ptr;
    }
     fw_ptr->target_count = 0;
-    fw_ptr->target = 0;
+    fw_ptr->target_info.target_number = 0;
     fw_ptr->desc_length = 0;
     fw_ptr->spec_length = 0;
     fw_ptr->last_fw_keepalive_sent_time = 0;
@@ -1164,24 +1074,13 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
     fw_ptr->connector_ptr = connector_ptr;
 
     {
-        unsigned int timeout;
-        uint16_t count = 0;
+        uint8_t count = 0;
 
         /* TODO: Change count to uint8_t in future release */
-        result = get_fw_config(fw_ptr, connector_firmware_target_count, &timeout, sizeof timeout, &count, NULL, fw_equal);
+        result = get_fw_config(fw_ptr, connector_request_id_firmware_target_count, &count);
         if (result == connector_working)
         {
-            if (count > UCHAR_MAX)
-            {
-                connector_request_t request_id;
-                request_id.firmware_request = connector_firmware_target_count;
-                notify_error_status(connector_ptr->callback, connector_class_firmware, request_id, connector_invalid_data_range);
-                result = connector_abort;
-                connector_debug_printf("connector_facility_firmware_init: invalid count %d max count is 255\n", count);
-                goto done;
-            }
-
-            fw_ptr->target_count = (uint8_t)count;
+            fw_ptr->target_count = count;
             if (fw_ptr->target_count > 0)
             {
                 size_t const buffer_size = sizeof connector_ptr->edp_data.send_packet.packet_buffer.buffer;
@@ -1193,8 +1092,8 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
                 {
                     connector_request_t request_id;
 
-                    request_id.firmware_request = connector_firmware_target_count;
-                    notify_error_status(connector_ptr->callback, connector_class_firmware, request_id, connector_invalid_data_range);
+                    request_id.firmware_request = connector_request_id_firmware_target_count;
+                    notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_range);
                     result = connector_abort;
                     goto done;
                 }

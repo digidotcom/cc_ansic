@@ -327,7 +327,7 @@ static connector_status_t process_connection_control(connector_data_t * const co
     {
         connector_request_t request_id;
         request_id.network_request = request;
-        status = connector_callback_no_response(connector_ptr->callback, connector_class_network_tcp, request_id, NULL, 0);
+        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, NULL);
     }
 
     if (status == connector_callback_continue)
