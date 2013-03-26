@@ -453,8 +453,10 @@ typedef enum {
     connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
     connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
     connector_initiate_status_message,  /**< Sends status message to the iDigi Device Cloud. Supported only under UDP and SMS transport methods */
-    connector_initiate_binary_point,    /**< Initiates the action to send data points to the iDigi Device Cloud */
-    connector_initiate_data_point,      /**< Initiates the action to send data points to the iDigi Device Cloud */
+    #if (defined CONNECTOR_DATA_POINT)
+    connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Etherios Device Cloud */
+    connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Etherios Device Cloud */
+    #endif
     connector_initiate_config_message,  /**< Sends device configuration to the iDigi Device Cloud. Supported only under SMS transport method */
     connector_initiate_session_cancel   /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods */
 } connector_initiate_request_t;
@@ -544,6 +546,9 @@ typedef enum
 #include "connector_api_data_service.h"
 #endif
 
+#if (defined CONNECTOR_DATA_POINT)
+#include "connector_api_data_point.h"
+#endif
 
 /**
 * @defgroup connector_request_t Request IDs
@@ -1159,9 +1164,7 @@ typedef struct
 * if the response is requested and it contains just the status.
 *
 * @see connector_status_ping_response
-* @see connector_data_service_dp_response
 * @see connector_sm_device_to_server_config
-* @see connector_initiate_data_point
 * @see connector_initiate_binary_point
 */
 typedef struct
@@ -1235,227 +1238,6 @@ typedef struct
     } content;
 
 } connector_sm_cli_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_point_type_t data types for Data Points
-* @{
-*/
-/**
-* This lists the types supported for Data Points for Devices.
-*
-* @see connector_data_point_request_t
-*/
-typedef enum
-{
-    connector_data_point_type_integer,   /**< data can be represented with a network (big endian) 32-bit two's complement integer */
-    connector_data_point_type_long,      /**< data can be represented with a network (big endian) 64-bit two's complement integer */
-    connector_data_point_type_float,     /**< data can be represented with a network (big endian) 32-bit IEEE754 floating point */
-    connector_data_point_type_double,    /**< data can be represented with a network (big endian) 64-bit IEEE754 floating point */
-    connector_data_point_type_string,    /**< UTF-8 encoding (ASCII compatible) */
-    connector_data_point_type_binary     /**< binary data */
-} connector_data_point_type_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_timeval_t  Structure to represent time in seconds and milliseconds.
-* @{
-*/
-/**
-* The data structure to represent seconds and milliseconds since the epoch (00:00:00 UTC on 1 January 1970).
-* Devices on which milliseconds are not available then use 0 for milliseconds.
-*
-* @see connector_data_point_t
-*/
-typedef struct connector_timeval_t
-{
-    time_t seconds;
-    unsigned int milliseconds;
-} connector_timeval_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_point_t Data structure used to represent each Data Point.
-* @{
-*/
-/**
-* User can use this structure to make linked list of Data Points to send it out in one transaction.
-* Note: All data points must belong to same stream.
-*
-* @see connector_data_point_request_t
-* @see connector_data_point_type_t
-*/
-typedef struct connector_data_point_t
-{
-    struct
-    {
-        enum
-        {
-            connector_data_type_native, /**< the data value is in native format */
-            connector_data_type_text    /**< the data value is in ascii/text format */
-        } type;
-
-        union
-        {
-            union
-            {
-                int int_value;       /**< 32-bit two's complement integer */
-                long long_value;     /**< 64-bit two's complement integer */
-                char * string_value; /**< a null-terminated utf-8 encoding string */
-                #if (defined FLOATING_POINT_SUPPORTED)
-                float float_value;   /**< 32-bit IEEE754 floating point */
-                double double_value; /**< 64-bit IEEE754 floating point */
-                #endif
-            } native;
-
-            char * text;            /**< carries data in ascii format, a null-terminated string */
-        } element;
-
-    } data;
-
-    struct
-    {
-        enum
-        {
-            connector_time_server,          /**< The timev.alue is ignored and the server time is used instead. */
-            connector_time_local_epoch,     /**< A transport-specific time.value is specified in epoch long format. */
-            connector_time_local_iso8601    /**< A transport-specific time.value is specified in ISO 8601 string format. */
-        } source;
-
-        union
-        {
-            connector_timeval_t msec_since_epoch; /**< Time since the Epoch time in milliseconds */
-            char * iso8601_string;      /**< A null-terminated local time in ISO 8601 format */
-        } value;
-
-    } time;   /**< Time at the data point is captured */
-
-    struct
-    {
-        enum
-        {
-            connector_location_type_ignore, /**< location is ignored */
-            #if (defined FLOATING_POINT_SUPPORTED)
-            connector_location_type_native,  /**< location value is represented in float */
-            #endif
-            connector_location_type_text   /**< location value is represented in ascii */
-        } type;
-
-        union
-        {
-            #if (defined FLOATING_POINT_SUPPORTED)
-            struct
-            {
-                float latitude;     /**< latitude in degree */
-                float longitude;    /**< longitude in degree */
-                float elevation;    /**< elevation in meters */
-            } native;
-            #endif
-
-            struct
-            {
-                char * latitude;   /**< latitude in degree (null-terminated string) */
-                char * longitude;  /**< longitude in degree (null-terminated string) */
-                char * elevation;  /**< elevation in meters (null-terminated string) */
-            } text;
-
-        } value;
-
-    } location;
-
-    struct
-    {
-        enum
-        {
-            connector_quality_type_ignore, /**< Quality is ignored */
-            connector_quality_type_native  /**< user specified data quality, an integer value */
-        } type;
-
-        int value;
-    } quality;
-
-    char * description; /**< null terminated description string (optional field, set to NULL if not used) */
-
-    struct connector_data_point_t * next; /**< Points to next data point, set to NULL if this is the last one. */
-} connector_data_point_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_point_header_t Data structure used to represent each binary Data Point.
-* @{
-*/
-/**
-* User can use this structure to send binary data. Small foot print devices can use this data
-* structure to send simple data points.
-*
-* @see connector_data_point_request_t
-* @see connector_data_point_type_t
-*/
-typedef struct connector_data_point_header_t
-{
-    connector_transport_t transport;     /**< transport method (TCP, UDP or SMS) to use */
-    char * path;                     /**< data point path in the stream */
-    unsigned int flags;              /**< set to CONNECTOR_DATA_RESPONSE_NOT_NEEDED if response is not needed, ignored if the transport is TCP */
-    void const * user_context;       /**< user context to be passed back in response */
-} connector_data_point_header_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_binary_point_request_t Data type used to send binary data point of a stream to the Cloud.
-* @{
-*/
-/**
-* This data structure is used when the connector_initiate_action() API is called with connector_initiate_binary_point
-* request id. This can be used on a device where foot print and or the bandwidth is limited.
-*
-* @see connector_message_status_response_t
-* @see connector_initiate_action
-* @see connector_initiate_binary_point
-* @see connector_data_point_header_t
-*/
-typedef struct
-{
-    connector_data_point_header_t header; /**< data point header info */
-    void * point;   /**< binary data of size specified in bytes */
-    size_t bytes;   /**< size of data in bytes */
-} connector_binary_point_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_data_point_request_t Data type used to send Data Points of a stream to the Cloud.
-* @{
-*/
-/**
-* This data structure is used when the connector_initiate_action() API is called with
-* connector_initiate_data_point request id.
-*
-* @see connector_message_status_response_t
-* @see connector_data_point_t
-* @see connector_initiate_action
-* @see connector_initiate_data_point
-* @see connector_data_point_type_t
-* @see connector_data_point_header_t
-*/
-typedef struct
-{
-    connector_data_point_header_t header; /**< data point header info */
-    connector_data_point_type_t type;     /**< data point content type (Ex. integer, float, string, binary...) */
-    char * unit;                      /**< null-terminated unit (optional field, set to NULL if not used), eg: "inch\0" */
-    char * forward_to;                /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
-    connector_data_point_t * point;       /**< data point or list of data points */
-} connector_data_point_request_t;
 /**
 * @}
 */
@@ -1832,8 +1614,11 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Sends status message to the iDigi Device Cloud.  Supported only under
  *                          @ref connector_transport_udp and @ref connector_transport_sms transport methods.
  *
- *                      @li @b connector_initiate_data_point:
- *                          Initiates the action to send data point to the iDigi Device Cloud.
+ *                      @li @b connector_initiate_data_point_binary:
+ *                          Initiates the action to send a binary data point to Etherios Device Cloud.
+ *
+ *                      @li @b connector_initiate_data_point_single:
+ *                          Initiates the action to send data points which are belongs to a single stream on Etherios Device Cloud.
  *
  *                      @li @b connector_initiate_config_message:
  *                          Sends configuration info to the iDigi Device Cloud. Supported only under SMS transport method.
@@ -1852,8 +1637,10 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Pointer to @ref connector_initiate_stop_request_t "connector_initiate_stop_request_t"
  *                      @li @b connector_initiate_status_message:
  *                          Pointer to connector_message_status_request_t
- *                      @li @b connector_initiate_data_point:
- *                          Pointer to connector_data_point_request_t
+ *                      @li @b connector_initiate_data_point_binary:
+ *                          Pointer to connector_request_data_point_binary_t
+ *                      @li @b connector_initiate_data_point_single:
+ *                          Pointer to connector_request_data_point_single_t
  *                      @li @b connector_initiate_config_message:
  *                          Pointer to connector_device_to_server_config_t
  *                      @li @b connector_initiate_session_cancel:

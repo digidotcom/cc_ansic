@@ -28,12 +28,12 @@
  */
 typedef enum {
     connector_request_id_data_service_send_length,      /**< to get the total length of the send data. Not applicable in TCP transport method */
-    connector_request_id_data_service_send_data,        /**< to get the data to send to Etherios device cloud */
+    connector_request_id_data_service_send_data,        /**< to get the data to send to Etherios Device Cloud */
     connector_request_id_data_service_send_status,      /**< to inform the session status */
-    connector_request_id_data_service_send_response,    /**< to inform Etherios device cloud response */
+    connector_request_id_data_service_send_response,    /**< to inform Etherios Device Cloud response */
 
-    connector_request_id_data_service_recieve_target,   /**< to inform the start of Etherios device cloud request for a given target */
-    connector_request_id_data_service_recieve_data,     /**< to pass the received request data from Etherios device cloud */
+    connector_request_id_data_service_recieve_target,   /**< to inform the start of Etherios Device Cloud request for a given target */
+    connector_request_id_data_service_recieve_data,     /**< to pass the received request data from Etherios Device Cloud */
     connector_request_id_data_service_recieve_status,   /**< to inform the session status */
     connector_request_id_data_service_recieve_reply_length, /**< to get the total length of the response data. Not applicable in TCP transport method */
     connector_request_id_data_service_recieve_reply_data    /**< to get the response data */
@@ -111,7 +111,7 @@ typedef struct
     } option;
 
     connector_bool_t response_required; /**< set to connector_true if response is needed */
-} connector_data_service_send_request_t;
+} connector_request_data_service_send_t;
 
 /*** Device request callbacks, API should return error on any error ***/
 typedef struct
