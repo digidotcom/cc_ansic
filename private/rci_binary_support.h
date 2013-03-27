@@ -287,8 +287,8 @@ typedef struct
 
         connector_element_value_t value;
         size_t string_value_length;
-        connector_remote_group_request_t request;
-        connector_remote_group_response_t response;
+
+        connector_remote_config_data_t callback_data
     } shared;
 } rci_t;
 

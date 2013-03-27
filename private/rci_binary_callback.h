@@ -20,8 +20,8 @@ static connector_bool_t is_set_command(connector_remote_action_t const action)
 
 static void rci_error(rci_t * const rci, unsigned int const id, char const * const description, char const * const hint)
 {
-    rci->shared.response.error_id = id;
-    rci->shared.response.element_data.error_hint = hint;
+    rci->shared.callback_data.response.error_id = id;
+    rci->shared.callback_data.response.element_data.error_hint = hint;
 
     rci->error.description = description;
 }
@@ -71,45 +71,45 @@ static connector_bool_t pending_rci_callback(rci_t * const rci)
     return pending;
 }
 
-static void trigger_rci_callback(rci_t * const rci, connector_remote_config_request_t const remote_config_request)
+static void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_config_t const remote_config_request)
 {
     switch (remote_config_request)
     {
-    case connector_remote_config_session_cancel:
+    case connector_request_id_remote_config_session_cancel:
         break;
 
-    case connector_remote_config_session_start:
-    case connector_remote_config_session_end:
-    case connector_remote_config_action_start:
-    case connector_remote_config_action_end:
+    case connector_request_id_remote_config_session_start:
+    case connector_request_id_remote_config_session_end:
+    case connector_request_id_remote_config_action_start:
+    case connector_request_id_remote_config_action_end:
         break;
 
-    case connector_remote_config_group_start:
+    case connector_rrequest_id_emote_config_group_start:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_index(rci));
 
-        rci->shared.request.group.id = get_group_id(rci);
-        rci->shared.request.group.index = get_group_index(rci);
+        rci->shared.callback_data.request.group.id = get_group_id(rci);
+        rci->shared.callback_data.request.group.index = get_group_index(rci);
         break;
 
-    case connector_remote_config_group_end:
+    case connector_request_id_remote_config_group_end:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_index(rci));
         break;
 
-    case connector_remote_config_group_process:
+    case connector_request_id_remote_config_group_process:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_index(rci));
         ASSERT(have_element_id(rci));
 
-        rci->shared.request.element.id = get_element_id(rci);
+        rci->shared.callback_data.request.element.id = get_element_id(rci);
         {
             connector_group_element_t const * const element = get_current_element(rci);
 
-            rci->shared.request.element.type = element->type;
+            rci->shared.callback_data.request.element.type = element->type;
         }
 
-        rci->shared.request.element.value = is_set_command(rci->shared.request.action) ? &rci->shared.value : NULL;
+        rci->shared.callback_data.request.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
     }
 
@@ -120,35 +120,33 @@ static void trigger_rci_callback(rci_t * const rci, connector_remote_config_requ
 static connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
-    connector_remote_group_response_t * response_data = &rci->shared.response;
-    size_t response_length = sizeof *response_data;
-    connector_remote_group_request_t * request_data = NULL;
-    size_t request_length = 0;
+    connector_remote_config_data_t remote_config;
 
-    response_data->error_id = connector_success;
+    remote_config.request = NULL;
+    remote_config.response = &rci->shared.callback_data.response;
+    remote_config.response->error_id = connector_success;
+
 
     switch (rci->callback.request.remote_config_request)
     {
-    case connector_remote_config_session_start:
-    case connector_remote_config_session_end:
+    case connector_request_id_remote_config_session_start:
+    case connector_request_id_remote_config_session_end:
         break;
 
-    case connector_remote_config_action_start:
-    case connector_remote_config_action_end:
-    case connector_remote_config_group_start:
-    case connector_remote_config_group_end:
-    case connector_remote_config_group_process:
-        request_data = &rci->shared.request;
-        request_length = sizeof *request_data;
+    case connector_request_id_remote_config_action_start:
+    case connector_request_id_remote_config_action_end:
+    case connector_request_id_remote_config_group_start:
+    case connector_request_id_remote_config_group_end:
+    case connector_request_id_remote_config_group_process:
+        remote_config.request = &rci->shared.callback_data.request;
         break;
 
-    case connector_remote_config_session_cancel:
-        response_data = rci->shared.response.user_context;
-        response_length = sizeof rci->shared.response.user_context;
+    case connector_request_id_remote_config_session_cancel:
+        response_data = rci->shared.callback_data.user_context;
         break;
     }
 
-    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, rci->callback.request, request_data, request_length, response_data, &response_length);
+    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, rci->callback.request, request_data);
 
     switch (rci->callback.status)
     {

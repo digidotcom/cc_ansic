@@ -42,13 +42,13 @@ static connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     invalidate_group_index(rci);
     invalidate_element_id(rci);
 
-    rci->shared.response.element_data.element_value = &rci->shared.value;
+    rci->shared.callback_data.response.element_data.element_value = &rci->shared.value;
 
     rci->status = rci_status_busy;
     rci->error.command_error = connector_false;
     rci->input.flag = 0;
 
-    trigger_rci_callback(rci, connector_remote_config_session_start);
+    trigger_rci_callback(rci, connector_request_id_remote_config_session_start);
     set_rci_input_state(rci, rci_input_state_command_id);
     state_call(rci, rci_parser_state_input);
 
@@ -83,9 +83,7 @@ static connector_bool_t rci_action_session_active(rci_t * const rci)
 
         case rci_status_more_input:
         {
-#if (defined CONNECTOR_BINARY_RCI_SERVICE)
             connector_debug_hexvalue("rci_binary more request", rci->service_data->input.data, rci->service_data->input.bytes);
-#endif
             rci_set_buffer(&rci->buffer.input, &rci->service_data->input);
             if (!destination_in_storage(rci))
             {
@@ -111,7 +109,7 @@ static connector_bool_t rci_action_session_active(rci_t * const rci)
 
 static connector_bool_t rci_action_session_lost(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_remote_config_session_cancel);
+    trigger_rci_callback(rci, connector_request_id_remote_config_session_cancel);
     {
         connector_bool_t const success = rci_callback(rci);
         ASSERT(success); UNUSED_VARIABLE(success);
@@ -157,7 +155,7 @@ static rci_status_t rci_parser(rci_session_t const action, ...)
 
     if (pending_rci_callback(&rci))
     {
-        connector_remote_group_response_t * const response = &rci.shared.response;
+        connector_remote_group_response_t * const response = &rci.shared.callback_data.response;
 
         if (!rci_callback(&rci))
             goto done;

@@ -13,7 +13,7 @@
 static void rci_output_error_id(rci_t * const rci)
 {
 
-    connector_remote_group_response_t const * const response = &rci->shared.response;
+    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
     uint32_t value;
 
     if (rci->error.command_error)
@@ -65,7 +65,7 @@ static void rci_output_error_description(rci_t * const rci)
 
 static void rci_output_error_hint(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.response;
+    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
     size_t const description_length = (response->element_data.error_hint == NULL) ? 0 : strlen(response->element_data.error_hint);
     connector_bool_t const overflow = rci_output_string(rci, response->element_data.error_hint,  description_length);
 
@@ -104,39 +104,39 @@ static void rci_generate_error(rci_t * const rci)
 
             case rci_error_state_callback:
             {
-                connector_remote_config_request_t const remote_config_request = rci->callback.request.remote_config_request;
+                connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
 
                 switch (remote_config_request)
                 {
-                    case connector_remote_config_action_start:
-                    case connector_remote_config_group_end:
-                        trigger_rci_callback(rci, connector_remote_config_action_end);
+                    case connector_request_id_remote_config_action_start:
+                    case connector_request_id_remote_config_group_end:
+                        trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
                         break;
-                    case connector_remote_config_session_start:
-                        trigger_rci_callback(rci, connector_remote_config_session_end);
+                    case connector_request_id_remote_config_session_start:
+                        trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                         break;
-                    case connector_remote_config_action_end:
+                    case connector_request_id_remote_config_action_end:
                         {
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
                         }
-                        trigger_rci_callback(rci, connector_remote_config_session_end);
+                        trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                         break;
 
-                    case connector_remote_config_group_process:
-                    case connector_remote_config_group_start:
+                    case connector_request_id_remote_config_group_process:
+                    case connector_request_id_remote_config_group_start:
                         {
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
                         }
-                        trigger_rci_callback(rci, connector_remote_config_group_end);
+                        trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
                         break;
 
-                    case connector_remote_config_session_cancel:
+                    case connector_request_id_remote_config_session_cancel:
                         ASSERT(connector_false);
                         break;
 
-                    case connector_remote_config_session_end:
+                    case connector_request_id_remote_config_session_end:
                         rci->status = rci_status_complete;
                         break;
                 }

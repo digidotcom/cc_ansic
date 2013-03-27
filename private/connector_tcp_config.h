@@ -58,7 +58,7 @@ static connector_status_t get_config_vendor_id(connector_data_t * const connecto
 static connector_status_t get_config_device_type(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
-    connector_config_pointer_name_t device_type;
+    connector_config_pointer_string_t device_type;
     connector_request_t request_id;
 
     {
@@ -70,14 +70,14 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
         switch (status)
         {
         case connector_callback_continue:
-            if (device_type.name == NULL)
+            if (device_type.string == NULL)
                 result = connector_invalid_data;
-            else if ((device_type.bytes_in_name == 0) || (device_type.bytes_in_name > DEVICE_TYPE_LENGTH))
+            else if ((device_type.bytes_in_string == 0) || (device_type.bytes_in_string > DEVICE_TYPE_LENGTH))
                 result = connector_invalid_data_size;
             else
             {
-                connector_ptr->edp_data.config.device_type_length = device_type.bytes_in_name;
-                connector_ptr->edp_data.config.device_type = device_type.name;
+                connector_ptr->edp_data.config.device_type_length = device_type.bytes_in_string;
+                connector_ptr->edp_data.config.device_type = device_type.string;
             }
             break;
 
@@ -376,7 +376,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
 static connector_status_t get_config_password(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
-    connector_config_pointer_name_t config_password;
+    connector_config_pointer_string_t config_password;
 
 
     {
@@ -389,15 +389,15 @@ static connector_status_t get_config_password(connector_data_t * const connector
         switch (status)
         {
         case connector_callback_continue:
-            if (config_password.name == NULL)
+            if (config_password.string == NULL)
             {
                 notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data);
                 result = connector_abort;
             }
             else
             {
-                connector_ptr->edp_data.config.password_length = config_password.bytes_in_name;
-                connector_ptr->edp_data.config.password = config_password.name;
+                connector_ptr->edp_data.config.password_length = config_password.bytes_in_string;
+                connector_ptr->edp_data.config.password = config_password.string;
 
             }
             break;

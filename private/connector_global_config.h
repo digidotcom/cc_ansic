@@ -91,7 +91,7 @@ static connector_status_t get_config_server_url(connector_data_t * const connect
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
-    connector_config_pointer_name_t   server_url;
+    connector_config_pointer_string_t   server_url;
     connector_request_t request_id;
 
     request_id.config_request = connector_request_id_config_server_url;
@@ -101,18 +101,18 @@ static connector_status_t get_config_server_url(connector_data_t * const connect
     switch (callback_status)
     {
     case connector_callback_continue:
-        if ((server_url.bytes_in_name == 0) || (server_url.bytes_in_name > SERVER_URL_LENGTH-1))
+        if ((server_url.bytes_in_string == 0) || (server_url.bytes_in_string > SERVER_URL_LENGTH-1))
         {
             result =  connector_invalid_data_size;
         }
-        else if (server_url.name == NULL)
+        else if (server_url.string == NULL)
         {
             result = connector_invalid_data;
         }
         else
         {
-            connector_ptr->device_cloud_url_length = server_url.bytes_in_name;
-            connector_ptr->device_cloud_url = server_url.name;
+            connector_ptr->device_cloud_url_length = server_url.bytes_in_string;
+            connector_ptr->device_cloud_url = server_url.string;
         }
         break;
 
@@ -262,7 +262,7 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
     {
         connector_callback_status_t callback_status;
         connector_request_t request_id;
-        connector_config_pointer_name_t phone_number;
+        connector_config_pointer_string_t phone_number;
 
         request_id.config_request = connector_request_id_config_phone_number;
 
@@ -270,18 +270,18 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
         switch (callback_status)
         {
         case connector_callback_continue:
-            if (phone_number.name == NULL)
+            if (phone_number.string == NULL)
             {
                 result = connector_invalid_data;
             }
-            else if (phone_number.bytes_in_name == 0)
+            else if (phone_number.bytes_in_string == 0)
             {
                 result = connector_invalid_data_size;
             }
             else
             {
-                connector_ptr->phone_dialed_length = phone_number.bytes_in_name;
-                connector_ptr->phone_dialed = phone_number.name;
+                connector_ptr->phone_dialed_length = phone_number.bytes_in_string;
+                connector_ptr->phone_dialed = phone_number.string;
             }
             break;
         case connector_callback_busy:

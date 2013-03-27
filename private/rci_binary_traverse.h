@@ -12,7 +12,7 @@
 
 static void traverse_rci_command(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_remote_config_action_start);
+    trigger_rci_callback(rci, connector_request_id_remote_config_action_start);
 
     set_rci_output_state(rci, rci_output_state_command_id);
     state_call(rci, rci_parser_state_output);
@@ -20,7 +20,7 @@ static void traverse_rci_command(rci_t * const rci)
 }
 static void traverse_group_id(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_remote_config_group_start);
+    trigger_rci_callback(rci, connector_request_id_remote_config_group_start);
 
     set_rci_output_state(rci, rci_output_state_group_id);
     state_call(rci, rci_parser_state_output);
@@ -31,13 +31,13 @@ static void traverse_element_id(rci_t * const rci)
 
     connector_group_element_t const * const element = get_current_element(rci);
 
-    if ((rci->shared.request.action == connector_remote_action_query) &&
+    if ((rci->shared.callback_data.action == connector_remote_action_query) &&
         (element->access == connector_element_access_write_only))
     {
         goto done;
     }
 
-    trigger_rci_callback(rci, connector_remote_config_group_process);
+    trigger_rci_callback(rci, connector_request_id_remote_config_group_process);
     set_rci_output_state(rci, rci_output_state_field_id);
     state_call(rci, rci_parser_state_output);
 
@@ -47,7 +47,7 @@ done:
 
 static void traverse_element_end(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_remote_config_group_end);
+    trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
 
     set_rci_output_state(rci, rci_output_state_field_terminator);
     state_call(rci, rci_parser_state_output);
@@ -55,7 +55,7 @@ static void traverse_element_end(rci_t * const rci)
 
 static void traverse_group_end(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_remote_config_action_end);
+    trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
     set_rci_output_state(rci, rci_output_state_group_terminator);
     state_call(rci, rci_parser_state_output);
 
@@ -131,7 +131,7 @@ static connector_bool_t traverse_all_groups(rci_t * const rci)
     {
         case rci_traverse_process_group:
         {
-            connector_group_table_t const * const table = (connector_rci_config_data.group_table + rci->shared.request.group.type);
+            connector_group_table_t const * const table = (connector_rci_config_data.group_table + rci->shared.callback_data.request.group.type);
 
             if (table->count == 0)
             {

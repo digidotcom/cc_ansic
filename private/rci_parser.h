@@ -43,7 +43,7 @@ static connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     invalidate_group_index(rci);
     invalidate_element_id(rci);
 
-    rci->shared.response.element_data.element_value = &rci->shared.value;
+    rci->shared.callback_data.response.element_data.element_value = &rci->shared.value;
 
     rci->status = rci_status_busy;
 
@@ -110,7 +110,7 @@ static connector_bool_t rci_action_session_active(rci_t * const rci)
 
 static connector_bool_t rci_action_session_lost(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_remote_config_session_cancel);
+    trigger_rci_callback(rci, connector_request_id_remote_config_session_cancel);
     {
         connector_bool_t const success = rci_callback(rci);
         ASSERT(success); UNUSED_VARIABLE(success);

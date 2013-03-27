@@ -320,7 +320,7 @@ static void process_rci_command(rci_t * const rci)
     uint32_t command;
 
     {
-        connector_remote_group_response_t const * const response = &rci->shared.response;
+        connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
 
         if (response->error_id != connector_success)
         {
@@ -343,11 +343,11 @@ static void process_rci_command(rci_t * const rci)
         {
             case rci_command_set_setting:
             case rci_command_query_setting:
-                rci->shared.request.group.type = connector_remote_group_setting;
+                rci->shared.callback_data.request.group.type = connector_remote_group_setting;
                 break;
             case rci_command_set_state:
             case rci_command_query_state:
-                rci->shared.request.group.type = connector_remote_group_state;
+                rci->shared.callback_data.request.group.type = connector_remote_group_state;
                 break;
         }
 
@@ -355,11 +355,11 @@ static void process_rci_command(rci_t * const rci)
         {
             case rci_command_set_setting:
             case rci_command_set_state:
-                rci->shared.request.action = connector_remote_action_set;
+                rci->shared.callback_data.action = connector_remote_action_set;
                 break;
             case rci_command_query_setting:
             case rci_command_query_state:
-                rci->shared.request.action = connector_remote_action_query;
+                rci->shared.callback_data.action = connector_remote_action_query;
                 break;
             default:
                 /* unsupported command.
@@ -430,7 +430,7 @@ static void process_group_id(rci_t * const rci)
         else
         {
             /* Get all groups if no group has been requested before */
-            switch (rci->shared.request.action)
+            switch (rci->shared.callback_data.action)
             {
                 case connector_remote_action_query:
                     set_rci_traverse_state(rci, rci_traverse_state_all_groups);
@@ -517,7 +517,7 @@ static void process_field_id(rci_t * const rci)
         {
             if (!have_element_id(rci))
             {
-                switch (rci->shared.request.action)
+                switch (rci->shared.callback_data.action)
                 {
                     case connector_remote_action_query:
                         /* all fields */
