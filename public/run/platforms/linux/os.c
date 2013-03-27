@@ -28,8 +28,34 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
     int result;
 
     va_start(args, format);
+
+    #if __STDC_VERSION__ >= 199901L
     result = vsnprintf(str, size, format, args);
+    #else
+    {
+        #define SAFE_BUFFER_BYTES 64;
+        size_t const max_format_bytes = 12;
+
+        CONFIRM(strlen(format) < max_format_bytes);
+        if (size >= SAFE_BUFFER_BYTES)
+        {
+            result = vsprintf(str, format, args);
+        }
+        else
+        {
+            char local_buffer[SAFE_BUFFER_BYTES];
+            size_t const bytes_needed = vsprintf(local_buffer, format, args);
+
+            result = (bytes_needed < size) ? bytes_needed : size - 1;
+            memcopy(str, local_buffer, result);
+            str[result] = '\0';
+            result = bytes_needed;
+        }
+        #undef SAFE_BUFFER_BYTES
+    }
+    #endif
     va_end(args);
+
     return result;
 }
 
