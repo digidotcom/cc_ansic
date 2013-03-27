@@ -10,8 +10,9 @@
  * =======================================================================
  */
 
-#ifndef CONNECTOR_FW_API_H_
-#define CONNECTOR_FW_API_H_
+#ifndef CONNECTOR_API_FIRMWARE_H
+#define CONNECTOR_API_FIRMWARE_H
+
 
 /**
 * @defgroup connector_request_id_firmware_t Firmware Requests
@@ -34,48 +35,23 @@ typedef enum {
 * @}
 */
 
+
 /**
-* @defgroup connector_firmware_status_t Firmware download return status
+* @defgroup connector_firmware_count_t Firmware Target Count
 * @{
 */
 /**
-* Return status code for firmware update. These status codes are used for @ref connector_firmware_download_request,
-* @see @ref connector_firmware_binary_block and @ref connector_firmware_download_abort callbacks.
+* Firmware target count for connector_request_id_firmware_count callback which
+* is called to return number of supported targets.
 */
-typedef enum {
-   connector_firmware_status_success,                        /**< No error */
-   connector_firmware_status_download_denied,                /**< Callback denied firmware update */
-   connector_firmware_status_download_invalid_size,          /**< Callback returns invalid size */
-   connector_firmware_status_download_invalid_version,       /**< Callback returns invalid version */
-   connector_firmware_status_download_unauthenticated,       /**< The server has not been authenticated */
-   connector_firmware_status_download_not_allowed,           /**< The server is not allowed to provided updates */
-   connector_firmware_status_download_configured_to_reject,  /**< Callback rejects firmware update */
-   connector_firmware_status_encountered_error,              /**< Callback encountered an error that precludes the firmware update */
-   connector_firmware_status_user_abort,                     /**< User aborted firmware update */
-   connector_firmware_status_device_error,                   /**< Device or server encountered an error in the download data */
-   connector_firmware_status_invalid_offset,                 /**< connector_firmware_binary_block callback found invalid offset. */
-   connector_firmware_status_invalid_data,                   /**< connector_firmware_binary_block callback found invalid data block.*/
-   connector_firmware_status_hardware_error                  /**< Callback found permanent hardware error */
-} connector_firmware_status_t;
+typedef struct {
+    uint8_t count;             /**< Callback writes number of targets supported */
+} connector_firmware_count_t;
+
 /**
 * @}
 */
 
-/**
-* @defgroup connector_fw_download_complete_status_t Firmware complete status codes
-* @{
-*/
-/**
-* Firmware Update Complete status. These status codes are used in @see connector_firmware_download_complete callback.
-*/
-typedef enum {
-   connector_firmware_download_success,               /**< Callback returns this for firmware download finished successfully and calculated checksum matched the checksum sent in the callback */
-   connector_firmware_download_checksum_mismatch,     /**< Callback returns this for download completed successfully, but the calculated checksum did not match the checksum sent in the callback */
-   connector_firmware_download_not_complete           /**< Callback did not complete download successfully */
-} connector_firmware_download_status_t;
-/**
-* @}
-*/
 
 /**
 * @defgroup connector_firmware_info_t Firmware information
@@ -96,21 +72,67 @@ typedef struct {
     } info;                         /**< Callback writes the firmware information */
 } connector_firmware_info_t;
 
+
+/**
+* @defgroup connector_firmware_status_t Firmware download return status
+* @{
+*/
+/**
+* Return status code for firmware update. These status codes are used for @ref connector_request_id_firmware_download_start,
+* @see @ref connector_request_id_firmware_data and @ref connector_request_id_firmware_download_abort callbacks.
+*/
+typedef enum {
+   connector_firmware_status_success,                        /**< No error */
+   connector_firmware_status_download_denied,                /**< Callback denied firmware update */
+   connector_firmware_status_download_invalid_size,          /**< Callback returns invalid size */
+   connector_firmware_status_download_invalid_version,       /**< Callback returns invalid version */
+   connector_firmware_status_download_unauthenticated,       /**< The server has not been authenticated */
+   connector_firmware_status_download_not_allowed,           /**< The server is not allowed to provided updates */
+   connector_firmware_status_download_configured_to_reject,  /**< Callback rejects firmware update */
+   connector_firmware_status_encountered_error,              /**< Callback encountered an error that precludes the firmware update */
+   connector_firmware_status_user_abort,                     /**< User aborted firmware update */
+   connector_firmware_status_device_error,                   /**< Device or server encountered an error in the download data */
+   connector_firmware_status_invalid_offset,                 /**< connector_request_id_firmware_data callback found invalid offset. */
+   connector_firmware_status_invalid_data,                   /**< connector_request_id_firmware_data callback found invalid data block.*/
+   connector_firmware_status_hardware_error                  /**< Callback found permanent hardware error */
+} connector_firmware_status_t;
+/**
+* @}
+*/
+
+
+/**
+* @defgroup connector_fw_download_complete_status_t Firmware complete status codes
+* @{
+*/
+/**
+* Firmware Update Complete status. These status codes are used in @see connector_firmware_download_complete callback.
+*/
+typedef enum {
+   connector_firmware_download_success,               /**< Callback returns this for firmware download finished successfully and calculated checksum matched the checksum sent in the callback */
+   connector_firmware_download_checksum_mismatch,     /**< Callback returns this for download completed successfully, but the calculated checksum did not match the checksum sent in the callback */
+   connector_firmware_download_not_complete           /**< Callback did not complete download successfully */
+} connector_firmware_download_status_t;
+/**
+* @}
+*/
+
+
 /**
 * @defgroup connector_firmware_download_start_t Download Request
 * @{
 */
 /**
-* Firmware download request structure for @ref connector_firmware_download_request callback which
-* is called when server requests firmware download.
+* Firmware download request structure for @ref connector_request_id_firmware_download_start callback which
+* is called when it's requested for firmware download.
 */
 typedef struct {
-    uint8_t target_number;        /**< Target number which target the firmware download is for */
+    uint8_t target_number;  /**< Target number which target the firmware download is for */
 
     struct {
-        uint32_t code_size;       /**< size of the code that is ready to be sent to the target */
+        uint32_t code_size; /**< size of the code that is ready to be sent to the target */
         char * filename;    /**< Pointer to filename of the image to be downloaded */
-    } image_info;                      /**< Contains the firmware download image information */
+    } image_info;           /**< Contains the firmware download image information */
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
 
@@ -119,22 +141,23 @@ typedef struct {
 * @}
 */
 
+
 /**
 * @defgroup connector_firmware_download_data_t Image Data
 * @{
 */
 /**
-* Firmware download image data structure for connector_firmware_binary_block callback which
-* is called when iDigi connector receives a block of image data for firmware download.
+* Firmware download image data structure for connector_request_id_firmware_data callback which
+* is called when the connector receives a block of image data for firmware download.
 */
 typedef struct {
     uint8_t target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
-        uint32_t offset;        /**< Offset value where this particular block of image data fits into the download */
-        uint8_t * data;         /**< Pointer binary image data */
-        size_t length;          /**< Length of binary image data in bytes */
-    } image_data;               /**< Contains the firmware image data */
+        uint32_t offset;    /**< Offset value where this particular block of image data fits into the download */
+        uint8_t * data;     /**< Pointer binary image data */
+        size_t length;      /**< Length of binary image data in bytes */
+    } image_data;           /**< Contains the firmware image data */
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
 
@@ -143,13 +166,14 @@ typedef struct {
 * @}
 */
 
+
 /**
 * @defgroup connector_firmware_download_complete_t Download complete
 * @{
 */
 /**
 * Firmware download complete request structure containing information about firmware image data
-* for connector_firmware_download_complete callback which is called when the iDigi Device Cloud is done
+* for connector_request_id_firmware_download_complete callback which is called when Etherios Device Cloud is done
 * sending all image data.
 */
 typedef struct {
@@ -163,19 +187,20 @@ typedef struct {
     struct {
         uint32_t version;                                /**< Version number of the downloaded image */
         connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
-    } image_status;                                      /**< Callback writes the new image status */
+    } image_status;                                      /**< Callback writes the new image version and status */
 
 } connector_firmware_download_complete_t;
 /**
 * @}
 */
 
+
 /**
 * @defgroup connector_firmware_download_abort_t Download Abort
 * @{
 */
 /**
-* Firmware download abort structure for connector_firmware_abort callback which
+* Firmware download abort structure for connector_request_id_firmware_abort callback which
 * is called when server aborts firmware download process.
 */
 typedef struct {
@@ -187,4 +212,19 @@ typedef struct {
 */
 
 
-#endif /* CONNECTOR_FW_API_H_ */
+/**
+* @defgroup connector_firmware_reset_t Firmware Target Reset
+* @{
+*/
+/**
+* Firmware target reset for connector_request_id_firmware_reset callback which
+* is called to reset the target.
+*/
+typedef struct {
+    uint8_t target_number;             /**< Target number which target the firmware to reset */
+} connector_firmware_reset_t;
+/**
+* @}
+*/
+
+#endif /* CONNECTOR_API_FIRMWARE_H */
