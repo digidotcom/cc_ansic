@@ -29,6 +29,10 @@
 #include "connector_api_config.h"
 #include "connector_api_network.h"
 
+#if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
+#include "connector_api_remote.h"
+#endif
+
 #define asizeof(array)  (sizeof array/sizeof array[0])
 /**
  * @defgroup connector_bool_t Connector Boolean Type
@@ -136,11 +140,17 @@ typedef enum {
 * It tells class id for the request id passed to the application's callback.
 */
 typedef enum {
+<<<<<<< Updated upstream
     connector_class_id_config,             /**< Configuration Class Id */
     connector_class_id_operating_system,   /**< Operating System Class Id */
     connector_class_id_firmware,           /**< Firmware Facility Class Id */
+=======
+    connector_class_id_config,          /**< Configuration Class Id */
+    connector_class_operating_system,   /**< Operating System Class Id */
+    connector_class_id_firmware,        /**< Firmware Facility Class Id */
+>>>>>>> Stashed changes
     connector_class_data_service,       /**< Data Service Class Id */
-    connector_class_remote_config_service, /**< Remote Configuration Class ID */
+    connector_class_id_remote_config,   /**< Remote Configuration Class ID */
     connector_class_file_system,        /**< File System Class Id */
     connector_class_id_network_tcp,     /**< TCP Network Class ID */
     connector_class_network_udp,        /**< UDP Network Class ID */
@@ -185,32 +195,6 @@ typedef enum
 */
 
 
-
-/**
-* @defgroup connector_remote_config_request_t Remote Configuration Requests
-* @{
-*/
-/**
-* Remote Configuration Request Id passed to the application's callback to query or set remote configuration data.
-* The class id for this connector_remote_config_request_t is connector_class_remote_config_service.
-*/
-
-typedef enum {
-    connector_remote_config_session_start,  /**< inform callback to start remote configuration request */
-    connector_remote_config_action_start,   /**< requesting callback to start query or set remote configuration data */
-    connector_remote_config_group_start,    /**< requesting callback to start query or set an individual configuration group */
-    connector_remote_config_group_process,  /**< requesting callback to query or set an element or field of a configuration group */
-    connector_remote_config_group_end,      /**< requesting callback to end query or set an individual configuration group */
-    connector_remote_config_action_end,     /**< requesting callback to end query or set remote configuration data */
-    connector_remote_config_session_end,    /**< inform callback to end remote configuration request
-                                            Callback may start writing data into NVRAM for set remote configuration request.
-                                            Callback should end and release any resources used when it's done. */
-    connector_remote_config_session_cancel  /**< Requesting callback to abort and cancel any query or set remote configuration request.
-                                            Callback should stop and release any resources used */
-} connector_remote_config_request_t;
-/**
-* @}
-*/
 
 /**
 * @defgroup connector_file_system_request_t File System Request IDs
@@ -370,7 +354,7 @@ typedef enum
 * @}
 */
 
-#if (defined CONNECTOR_FIRMWARE_SERVICE)
+#if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
 #include "connector_api_firmware.h"
 #endif
 
@@ -394,6 +378,7 @@ typedef enum
 * @see connector_class_t
 */
 typedef union {
+<<<<<<< Updated upstream
    connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
    connector_request_id_os_t os_request;                        /**< Operating system request ID for operating system class */
    #if (defined CONNECTOR_FIRMWARE_SERVICE)
@@ -407,6 +392,23 @@ typedef union {
    connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
    connector_status_request_t status_request;                   /**< Status request ID for status class */
    connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
+=======
+    connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
+    connector_os_request_t os_request;                           /**< Operating system request ID for operating system class */
+    #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
+    connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
+    #endif
+    #if (defined CONNECTOR_DATA_SERVICE)
+    connector_request_id_data_service_t data_service_request;    /**< Data service request ID for data service class */
+    #endif
+    #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
+    connector_request_id_remote_config_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
+    #endif
+    connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
+    connector_network_request_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+    connector_status_request_t status_request;                   /**< Status request ID for status class */
+    connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
+>>>>>>> Stashed changes
 } connector_request_t;
 /**
 * @}

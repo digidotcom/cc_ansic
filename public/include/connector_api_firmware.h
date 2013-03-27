@@ -15,7 +15,7 @@
 
 
 /**
-* @defgroup connector_request_id_firmware_t Firmware Requests
+* @defgroup connector_request_id_firmware_t Firmware Request IDs
 * @{
 */
 /**
@@ -24,7 +24,9 @@
 */
 typedef enum {
     connector_request_id_firmware_target_count,         /**< Requesting callback to return number of supported target for firmware update */
-    connector_request_id_firmware_info,                 /**< Requesting callback to return the version number, maximum code size, description and regular expression for firmware update image name of specific target */
+    connector_request_id_firmware_info,                 /**< Requesting callback to return the version number,
+                                                             maximum code size, description and
+                                                             regular expression for firmware update image name of specific target */
     connector_request_id_firmware_download_start,       /**< Requesting callback to start firmware update of specific target */
     connector_request_id_firmware_download_data,        /**< Callback is passed with image data for firmware update. This is called for each chunk of image data */
     connector_request_id_firmware_download_complete,    /**< Callback is called to complete firmware update. */
@@ -54,7 +56,7 @@ typedef struct {
 
 
 /**
-* @defgroup connector_firmware_info_t Firmware information
+* @defgroup connector_firmware_info_t Firmware Information
 * @{
 */
 /**
@@ -62,23 +64,23 @@ typedef struct {
 * information about the specific target.
 */
 typedef struct {
-    uint8_t target_number;          /**< Target number which target the firmware information is for*/
-
     struct {
         uint32_t version;           /**< Version number of the target number */
         uint32_t code_size;         /**< Code size of the target number. If size is unknown, set 0xFFFFFFFF */
         char * description;         /**< An ASCII description string of the target number */
         char * filename_spec;       /**< Regular expression for the firmware image name fo the target number */
     } info;                         /**< Callback writes the firmware information */
+
+    uint8_t target_number;          /**< Target number which target the firmware information is for*/
 } connector_firmware_info_t;
 
 
 /**
-* @defgroup connector_firmware_status_t Firmware download return status
+* @defgroup connector_firmware_status_t Firmware Status Codes
 * @{
 */
 /**
-* Return status code for firmware update. These status codes are used for @ref connector_request_id_firmware_download_start,
+* Firmware status codes are used for @ref connector_request_id_firmware_download_start,
 * @see @ref connector_request_id_firmware_data and @ref connector_request_id_firmware_download_abort callbacks.
 */
 typedef enum {
@@ -102,11 +104,11 @@ typedef enum {
 
 
 /**
-* @defgroup connector_fw_download_complete_status_t Firmware complete status codes
+* @defgroup connector_fw_download_complete_status_t Firmware Complete Status Codes
 * @{
 */
 /**
-* Firmware Update Complete status. These status codes are used in @see connector_firmware_download_complete callback.
+* Firmware Update Complete status codes are used in @see connector_firmware_download_complete callback.
 */
 typedef enum {
    connector_firmware_download_success,               /**< Callback returns this for firmware download finished successfully and calculated checksum matched the checksum sent in the callback */
@@ -119,15 +121,14 @@ typedef enum {
 
 
 /**
-* @defgroup connector_firmware_download_start_t Download Request
+* @defgroup connector_firmware_download_start_t Firmware Download Start Structure
 * @{
 */
 /**
-* Firmware download request structure for @ref connector_request_id_firmware_download_start callback which
-* is called when it's requested for firmware download.
+* Firmware download start structure for @ref connector_request_id_firmware_download_start callback which
+* is called when the device is requested for firmware download.
 */
 typedef struct {
-    uint8_t target_number;  /**< Target number which target the firmware download is for */
 
     struct {
         uint32_t code_size; /**< size of the code that is ready to be sent to the target */
@@ -136,6 +137,8 @@ typedef struct {
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
 
+    uint8_t target_number;  /**< Target number which target the firmware download is for */
+
 } connector_firmware_download_start_t;
 /**
 * @}
@@ -143,7 +146,7 @@ typedef struct {
 
 
 /**
-* @defgroup connector_firmware_download_data_t Image Data
+* @defgroup connector_firmware_download_data_t Firmware Download Image Data Structure
 * @{
 */
 /**
@@ -151,7 +154,6 @@ typedef struct {
 * is called when the connector receives a block of image data for firmware download.
 */
 typedef struct {
-    uint8_t target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
         uint32_t offset;    /**< Offset value where this particular block of image data fits into the download */
@@ -161,6 +163,8 @@ typedef struct {
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
 
+    uint8_t target_number;  /**< Target number which firmware target the image data is for */
+
 } connector_firmware_download_data_t;
 /**
 * @}
@@ -168,16 +172,15 @@ typedef struct {
 
 
 /**
-* @defgroup connector_firmware_download_complete_t Download complete
+* @defgroup connector_firmware_download_complete_t Firmware Download Complete Structure
 * @{
 */
 /**
-* Firmware download complete request structure containing information about firmware image data
+* Firmware download complete structure containing information about firmware image data
 * for connector_request_id_firmware_download_complete callback which is called when Etherios Device Cloud is done
 * sending all image data.
 */
 typedef struct {
-    uint8_t target_number;  /**< Target number which firmware target is completed firmware download */
 
     struct {
         uint32_t code_size;     /**< Code size of the entire image data sent */
@@ -189,6 +192,8 @@ typedef struct {
         connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
     } image_status;                                      /**< Callback writes the new image version and status */
 
+    uint8_t target_number;  /**< Target number which firmware target is completed firmware download */
+
 } connector_firmware_download_complete_t;
 /**
 * @}
@@ -196,16 +201,16 @@ typedef struct {
 
 
 /**
-* @defgroup connector_firmware_download_abort_t Download Abort
+* @defgroup connector_firmware_download_abort_t Firmware Download Abort Structure
 * @{
 */
 /**
 * Firmware download abort structure for connector_request_id_firmware_abort callback which
-* is called when server aborts firmware download process.
+* is called when firmware download process is aborted.
 */
 typedef struct {
-    uint8_t target_number;             /**< Target number which target the firmware download is aborted */
-    connector_firmware_status_t status;   /**< Abort reason or status */
+    connector_firmware_status_t status; /**< Abort reason or status */
+    uint8_t target_number;              /**< Target number which target the firmware download is aborted */
 } connector_firmware_download_abort_t;
 /**
 * @}
@@ -213,11 +218,11 @@ typedef struct {
 
 
 /**
-* @defgroup connector_firmware_reset_t Firmware Target Reset
+* @defgroup connector_firmware_reset_t Firmware Target Reset Structure
 * @{
 */
 /**
-* Firmware target reset for connector_request_id_firmware_reset callback which
+* Firmware target reset structure for connector_request_id_firmware_reset callback which
 * is called to reset the target.
 */
 typedef struct {

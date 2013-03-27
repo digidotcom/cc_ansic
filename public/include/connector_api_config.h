@@ -13,7 +13,7 @@
 #define CONNECTOR_API_CONFIG_H
 
 /**
-* @defgroup connector_request_id_config_t Configuration Requests
+* @defgroup connector_request_id_config_t Configuration Request IDs
 * @{
 */
 /**
@@ -56,17 +56,20 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_config_pointer_data_t Configuration Data Pointer
+* @defgroup connector_config_pointer_data_t Data Pointer Configuration
 * @{
 */
 /**
-* Application Configuration Data Pointer
-*
-* @see connector_request_id_config_device_id callback
+* Application Binary Data Pointer Configuration for the following callbacks:
+*   -# @ref connector_request_id_config_device_id
+*   -# @ref connector_request_id_config_mac_addr
+*   -# @ref connector_request_id_config_imei_number
+*   -# @ref connector_request_id_config_esn
+*   -# @ref connector_request_id_config_meid
 */
 typedef struct {
-    uint8_t * data;         /**< Pointer to application device ID */
-    size_t bytes_required;  /**< Number of bytes needed for application device ID */
+    uint8_t * data;         /**< Application data pointer */
+    size_t bytes_required;  /**< Number of bytes required and needed on the application data pointer */
 } connector_config_pointer_data_t;
 /**
 * @}
@@ -74,11 +77,11 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_vendor_t  Vendor ID
+* @defgroup connector_config_vendor_t  Vendor ID Configuration
 * @{
 */
 /**
-* Vendor ID for @see connector_request_id_config_vendor_id callback
+* Vendor ID configuration for @ref connector_request_id_config_vendor_id callback
 */
 typedef struct {
     uint32_t id;    /**< Vendor ID */
@@ -89,29 +92,33 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_name_data_t Configuration Name Pointer
+* @defgroup connector_config_name_data_t String Pointer Configuration
 * @{
 */
 /**
-* Application Name Point
+* Application String Pointer Configuration for the following callbacks:
 *
-* @see connector_request_id_config_device_type callback
-* @see connector_request_id_config_server_url callback
+*   -# @ref connector_request_id_config_device_type
+*   -# @ref connector_request_id_config_server_url
+*   -# @ref connector_request_id_config_phone_number
+*   -# @ref connector_request_id_config_password
 */
 typedef struct {
-    char * name;           /**< Pointer to application string */
-    size_t bytes_in_name;  /**< Length of device type string  */
-} connector_config_pointer_name_t;
+    char * string;           /**< Application string pointer */
+    size_t bytes_in_string;  /**< Number of bytes in the application string pointer */
+} connector_config_pointer_string_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_connection_type_t iDigi connection types
+* @defgroup connector_connection_type_t Connection Types
 * @{
 */
 /**
-* Connection type for @see connector_config_connection_type callback
+* Connection type configuration of the device
+*
+* @see connector_config_connection_type_t callback
 */
 typedef enum {
    connector_lan_connection_type,   /**< LAN connection type for Ethernet or WiFi */
@@ -122,14 +129,14 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_config_connection_type_t Connector Connection types
+* @defgroup connector_config_connection_type_t Connection Type Configuration
 * @{
 */
 /**
-* Connection type for @see connector_request_id_config_connection_type callback
+* Device connection type configuration for @ref connector_request_id_config_connection_type callback
 */
 typedef struct {
-    connector_connection_type_t type; /**< Types of connections */
+    connector_connection_type_t type; /**< Device connection type */
 } connector_config_connection_type_t;
 /**
 * @}
@@ -137,14 +144,16 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_link_speed_t  Link Speed
+* @defgroup connector_config_link_speed_t  Link Speed Configuration
 * @{
 */
 /**
-* Link Speed for WAN connection type for @see connector_request_id_config_link_speed callback
+* Device link speed configuration for WAN connection type for @ref connector_request_id_config_link_speed callback
+*
+* @see connector_request_id_config_connection_type
 */
 typedef struct {
-    uint32_t speed;        /**< Link speed value */
+    uint32_t speed;        /**< Device link speed  */
 } connector_config_link_speed_t;
 /**
 * @}
@@ -152,17 +161,16 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_keepalive_t Keep-Alive Interval
+* @defgroup connector_config_keepalive_t Keep-Alive Interval Configuration
 * @{
 */
 /**
-* Keep-alive interval
-*
-* @see connector_request_id_config_tx_keepalive callback
-* @see connector_request_id_config_rx_keepalive callback
+* Keep-alive interval configuration used for the following callbacks:
+*   -# @ref connector_request_id_config_tx_keepalive
+*   -# @ref connector_request_id_config_rx_keepalive
 */
 typedef struct {
-    uint16_t interval;       /**< Keep-alive interval value */
+    uint16_t interval;       /**< Device keep-alive interval */
 } connector_config_keepalive_t;
 /**
 * @}
@@ -170,13 +178,13 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_wait_count_t Wait Count
+* @defgroup connector_config_wait_count_t Wait Count Configuration
 * @{
 */
 /**
-* Wait count for TX Keep-alive interval
+* Device wait count configuration for @ref connector_request_id_config_wait_count callback
 *
-* @see connector_request_id_config_tx_keepalive callback
+* @see connector_request_id_config_tx_keepalive
 */
 typedef struct {
     uint16_t count;       /**< wait count */
@@ -187,15 +195,15 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_ip_addr_t Device IP Address
+* @defgroup connector_config_ip_addr_t Device IP Address Configuration
 * @{
 */
 /**
-* Device IP Address for @ref connector_request_id_config_ip_addr callback
+* Device IP Address Configuration for @ref connector_request_id_config_ip_addr callback
 */
 typedef struct {
-    uint8_t * addr;         /**< Pointer to device's IP address */
-    size_t bytes_in_addr;  /**< Number of bytes of the IP address */
+    uint8_t * addr;         /**< Device's IP address */
+    size_t bytes_in_addr;  /**< Number of bytes of the device's IP address */
 } connector_config_ip_addr_t;
 /**
 * @}
@@ -203,12 +211,13 @@ typedef struct {
 
 
 /**
-* @defgroup connector_service_supported_status_t Service Support
+* @defgroup connector_service_supported_status_t Service Supported Status
 * @{
 */
 /**
 * Service supported status which is used in the application's callback
 * telling iDigi connector whether application supports a service or not.
+*
 * @see @ref firmware_support
 * @see @ref data_service_support
 */
@@ -222,16 +231,17 @@ typedef enum {
 
 
 /**
-* @defgroup connector_config_support_status_t Supported Status of a Facility or Service
+* @defgroup connector_config_support_status_t Service Supported Status Configuration
 * @{
 */
 /**
-* Support status for @ref connector_request_id_config_firmware_facility,
-* @ref connector_request_id_config_data_service, or
-* @ref connector_request_id_config_file_system callback
+* Service supported status configuarion for the following callbacks:
+*   -# @ref connector_request_id_config_firmware_facility
+*   -# @ref connector_request_id_config_data_service
+*   -# @ref connector_request_id_config_file_system
 */
 typedef struct {
-    connector_service_supported_status_t status; /**< Application supported status  */
+    connector_service_supported_status_t status; /**< Application service supported status */
 } connector_config_supported_status_t;
 /**
 * @}
@@ -243,7 +253,10 @@ typedef struct {
 * @{
 */
 /**
- * Device ID method returned by the application's callback for @ref connector_config_device_id_method callback.
+ * Device ID method type which is used in the applciation's callback telling
+ * the connector how to obtain a device ID.
+ *
+ * @see @ref device_id
  */
 typedef enum {
     connector_auto_device_id_method,                  /**< Callback returns this type telling iDigi connector to
@@ -258,15 +271,14 @@ typedef enum {
 
 
 /**
-* @defgroup connector_config_device_id_method_t Device ID Method
+* @defgroup connector_config_device_id_method_t Device ID Method Configuration
 * @{
 */
 /**
- * Device ID method returned by the application's callback for @ref connector_request_id_config_device_id_method callback.
+ * Device ID method configuration returned by the application's callback for @ref connector_request_id_config_device_id_method callback.
  */
 typedef struct {
     connector_device_id_method_t method;    /**< Device ID method */
-
 } connector_config_device_id_method_t;
 /**
 * @}
@@ -274,11 +286,13 @@ typedef struct {
 
 
 /**
-* @defgroup connector_auto_connect_type_t Action on Network Close
+* @defgroup connector_auto_connect_type_t Network Connection Action Types
 * @{
 */
 /**
-* Response to @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
+* Network connection action used to tell the connector to automatically or manually make connection.
+*
+* @see @ref connector_network_close
 */
 typedef enum {
 
@@ -292,19 +306,18 @@ typedef enum {
 
 
 /**
-* @defgroup connector_config_connect_status_t Connect status
+* @defgroup connector_config_connect_status_t Network Connection Action Configuration
 * @{
 */
 /**
-* Connect status for the connector to make connection to Etherios Device Cloud automatically or manually
-*
-* @see @ref connector_request_id_config_network_tcp,
-* @see @ref connector_request_id_config_network_upd, or
-* @see @ref connector_request_id_config_network_tc
+* Connection action which is used to to tell the connector to make connection to
+* Etherios Device Cloud automatically or manually. It's used for the following callbacks:
+*   -# @ref connector_request_id_config_network_tcp
+*   -# @ref connector_request_id_config_network_upd
+*   -# @ref connector_request_id_config_network_sms
 */
 typedef struct {
-    connector_auto_connect_type_t status;   /**< Connect status */
-
+    connector_auto_connect_type_t status;   /**< Connection action */
 } connector_config_connect_status_t;
 /**
 * @}
@@ -312,11 +325,13 @@ typedef struct {
 
 
 /**
-* @defgroup connector_wan_type_t iDigi WAN types for WAN connection type
+* @defgroup connector_wan_type_t Device WAN Types
 * @{
 */
 /**
- * WAN connection type for @ref connector_config_wan_type callback.
+ * Device WAN connection type which tells the connector the device WAN type for the device WAN ID.
+ *
+ * @ref connector_config_wan_type_t
  */
 typedef enum {
     connector_imei_wan_type,    /**< IMEI number for GSM network */
@@ -329,12 +344,18 @@ typedef enum {
 
 
 /**
-* @defgroup connector_config_wan_type_t Device Configuration WAN Type
+* @defgroup connector_config_wan_type_t Device WAN Type Configuration
 * @{
 */
 /**
-* Device WAN Type
+* Device WAN type configuration for @ref connector_request_id_config_wan_type callback.
+* This is used to tell the connector the device WAN type. The connector uses this WAN type to
+* get a corresponding WAN ID.
 *
+* @ref wan_type
+* @ref imei_number
+* @ref esn_number
+* @ref meid_number
 **/
 typedef struct {
     connector_wan_type_t type;   /**< WAN type */
@@ -350,7 +371,9 @@ typedef struct {
 * @{
 */
 /**
- * Identify verification returned by the application's callback for @ref connector_request_id_config_identity_verification callback.
+ * Identify verification tells the connector to use simple or password identity verification for TCP connection.
+ *
+ * @see @ref connector_config_identity_verification_t
  */
 typedef enum {
     connector_simple_identity_verification,         /**< Callback returns this form for simple identity verification. iDigi connector just transmits the
@@ -365,12 +388,16 @@ typedef enum {
 
 
 /**
-* @defgroup connector_config_identity_verification_t Device Configuration Identity Verification
+* @defgroup connector_config_identity_verification_t Device Identity Verification Configuration
 * @{
 */
 /**
-* Device Identity Verification
+* Identify verification configuration for @ref connector_request_id_config_identity_verification callback.
+* It tells the connector to use simple or password identity verification for TCP connection.
 *
+* @see identity_verification
+* @see password
+* @see connector_request_id_config_password
 **/
 typedef struct {
     connector_identity_verification_t type;   /**< Identity verification type */
@@ -382,12 +409,13 @@ typedef struct {
 
 
 /**
-* @defgroup connector_config_max_transaction_t Device Configuration Maximum Transaction
+* @defgroup connector_config_max_transaction_t Device Maximum Transaction Configuration
 * @{
 */
 /**
-* Device maximum tranaction
+* Device maximum transaction configuration for @ref connector_request_id_config_max_transaction callback.
 *
+* @see @ref max_msg_transactions
 **/
 typedef struct {
     uint8_t count;   /**< Maximum transaction count */
