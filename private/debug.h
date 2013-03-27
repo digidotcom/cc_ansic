@@ -14,21 +14,6 @@
 
 #define enum_to_case(name)  case name:  result = #name;             break
 
-#if (CONNECTOR_VERSION < CONNECTOR_VERSION_1200)
-static void connector_debug_printf(char const * const format, ...)
-{
-#if defined(CONNECTOR_DEBUG)
-    va_list args;
-
-    va_start(args, format);
-    USER_DEBUG_VPRINTF(format, args);
-    va_end(args);
-#else
-    (void) format;
-#endif
-}
-#endif
-
 void connector_debug_hexvalue(char * label, uint8_t * buff, size_t length)
 {
     size_t i;
@@ -55,7 +40,6 @@ static void connector_debug_printf(char const * const format, ...)
 
 #endif
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
 #if (defined CONNECTOR_DEBUG)
 
 static char const * transport_status_to_string(connector_transport_t const value)
@@ -74,6 +58,4 @@ static char const * transport_status_to_string(connector_transport_t const value
 
 #define transport_status_to_string(value)       NULL
 #endif
-
-#endif /* (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300) */
 

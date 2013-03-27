@@ -152,10 +152,7 @@ static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr
             break;
         case connector_callback_abort:
         case connector_callback_unrecognized:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         case connector_callback_error:
-#endif
-
             result = connector_abort;
             goto done;
         }
@@ -810,14 +807,14 @@ done:
 static connector_status_t process_target_reset(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_message, uint16_t const length)
 {
     connector_status_t result;
-    uint8_t target_number;
+    connector_firmware_reset_t firmware_reset;
 
     UNUSED_PARAMETER(length);
     connector_debug_printf("Firmware Facility: process target reset\n");
 
-    target_number = message_load_u8(fw_message, target);
+    firmware_reset.target_number = message_load_u8(fw_message, target);
 
-    result = get_fw_config(fw_ptr, connector_request_id_firmware_target_reset, &target_number);
+    result = get_fw_config(fw_ptr, connector_request_id_firmware_target_reset, &firmware_reset);
 
     return result;
 }
@@ -1074,13 +1071,13 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
     fw_ptr->connector_ptr = connector_ptr;
 
     {
-        uint8_t count = 0;
+        connector_firmware_count_t firmware_data;
 
         /* TODO: Change count to uint8_t in future release */
-        result = get_fw_config(fw_ptr, connector_request_id_firmware_target_count, &count);
+        result = get_fw_config(fw_ptr, connector_request_id_firmware_target_count, &firmware_data);
         if (result == connector_working)
         {
-            fw_ptr->target_count = count;
+            fw_ptr->target_count = firmware_data.count;
             if (fw_ptr->target_count > 0)
             {
                 size_t const buffer_size = sizeof connector_ptr->edp_data.send_packet.packet_buffer.buffer;

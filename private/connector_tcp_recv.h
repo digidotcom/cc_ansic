@@ -238,10 +238,8 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                     result = (connector_ptr->edp_data.receive_packet.index <= receive_packet_length) ? connector_idle : connector_pending;
                     goto done;
                 case connector_callback_abort:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
                     edp_set_close_status(connector_ptr, connector_close_status_abort);
                     /* not break */
-#endif
                 default:
                     result = connector_abort;
                     goto done;

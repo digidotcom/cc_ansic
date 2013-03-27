@@ -334,7 +334,6 @@ static connector_status_t send_identity_verification(connector_data_t * const co
     */
     message_store_u8(edp_security, opcode, SECURITY_OPER_IDENT_FORM);
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     {
 
 #if (defined CONNECTOR_IDENTITY_VERIFICATION)
@@ -353,7 +352,6 @@ static connector_status_t send_identity_verification(connector_data_t * const co
             break;
         }
     }
-#endif
 
     message_store_u8(edp_security, identity, identity);
 
@@ -476,7 +474,6 @@ done:
     return result;
 }
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
 static connector_status_t send_password(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_PASSWORD            0x88
@@ -534,7 +531,6 @@ static connector_status_t send_password(connector_data_t * const connector_ptr)
 done:
     return result;
 }
-#endif
 
 static connector_status_t send_vendor_id(connector_data_t * const connector_ptr)
 {
@@ -549,7 +545,7 @@ static connector_status_t send_vendor_id(connector_data_t * const connector_ptr)
     enum edp_vendor_msg {
         field_define(edp_vendor_msg, security_coding, uint8_t),
         field_define(edp_vendor_msg, opcode, uint8_t),
-        field_define_array(edp_vendor_msg, vendor_id, VENDOR_ID_LENGTH),
+        field_define(edp_vendor_msg, vendor_id, uint32_t),
         record_end(edp_vendor_msg)
     };
 
@@ -569,13 +565,9 @@ static connector_status_t send_vendor_id(connector_data_t * const connector_ptr)
     message_store_u8(edp_vendor_msg, security_coding, SECURITY_PROTO_NONE);
     message_store_u8(edp_vendor_msg, opcode, DISC_OP_VENDOR_ID);
 #if !(defined CONNECTOR_VENDOR_ID)
-    message_store_array(edp_vendor_msg, vendor_id, connector_ptr->edp_data.config.vendor_id, VENDOR_ID_LENGTH);
+    message_store_be32(edp_vendor_msg, vendor_id, connector_ptr->edp_data.config.vendor_id);
 #if (defined CONNECTOR_DEBUG)
-    {
-        uint8_t * const vendor_id = (uint8_t *)connector_ptr->edp_data.config.vendor_id;
-
-        connector_debug_hexvalue("Send vendor id", vendor_id, VENDOR_ID_LENGTH);
-    }
+    connector_debug_printf("Send vendor id = 0x%08X\n", connector_ptr->edp_data.config.vendor_id);
 #endif
 
 #else
@@ -737,13 +729,11 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             connector_ptr->edp_data.receive_packet.packet_buffer.next = NULL;
             connector_ptr->edp_data.receive_packet.free_packet_buffer = &connector_ptr->edp_data.receive_packet.packet_buffer;
         }
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         else if (result == connector_unavailable)
         {
             edp_set_active_state(connector_ptr, connector_transport_idle);
             connector_ptr->edp_data.stop.connect_action = connector_manual_connect;
         }
-#endif
         break;
 
     case edp_communication_send_version:
@@ -809,21 +799,14 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_server_url(connector_ptr);
             if (result == connector_working)
             {
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
-
 #if (defined CONNECTOR_IDENTITY_VERIFICATION)
                 next_state = (CONNECTOR_IDENTITY_VERIFICATION == connector_password_identity_verification) ? edp_security_send_password : edp_discovery_send_vendor_id;
 #else
                 next_state = (connector_ptr->edp_data.config.identity_verification == connector_password_identity_verification) ? edp_security_send_password : edp_discovery_send_vendor_id;
 #endif
-
-#else
-                next_state =  edp_discovery_send_vendor_id;
-#endif
             }
             break;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         case edp_security_send_password:
             result = send_password(connector_ptr);
             if (result == connector_working)
@@ -831,7 +814,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
                 next_state =  edp_discovery_send_vendor_id;
             }
             break;
-#endif
+
         case edp_discovery_send_vendor_id:
             result = send_vendor_id(connector_ptr);
             if (result == connector_working)
@@ -875,10 +858,9 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
                     edp_set_edp_state(connector_ptr, edp_facility_process);
                     edp_set_active_state(connector_ptr, connector_transport_receive);
 
-    #if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
                     if (notify_status(connector_ptr->callback, connector_tcp_communication_started) != connector_working)
                         result = connector_abort;
-    #endif
+
                }
 
                 edp_set_edp_state(connector_ptr, next_state);
@@ -926,8 +908,6 @@ done:
             connector_ptr->edp_data.keepalive.last_tx_received_time = 1;
             connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
-
 #if (defined CONNECTOR_NETWORK_TCP_START)
             if (CONNECTOR_NETWORK_TCP_START == connector_manual_connect)
 #else
@@ -937,7 +917,6 @@ done:
                 /* Application must call initiate_action to start iDigi connector */
                 edp_set_active_state(connector_ptr, connector_transport_idle);
             }
-#endif
 
         }
     }

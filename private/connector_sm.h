@@ -73,18 +73,18 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             sm_ptr->network.class_id = connector_class_network_udp;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_UDP;
             sm_ptr->transport.ms_mtu = sm_ptr->transport.mtu - (sm_ptr->transport.id_length + sm_udp_version_length);
-            request = connector_config_network_udp;
+            request = connector_request_id_config_network_udp;
             break;
         }
         #endif
 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
-            request_id.config_request = connector_config_sms_service_id;
-            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_config, request_id, &sm_ptr->transport.id, &sm_ptr->transport.id_length);
+            request_id.config_request = connector_request_id_config_sms_service_id;
+            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_config, request_id, &sm_ptr->transport.id, &sm_ptr->transport.id_length);
             ASSERT_GOTO(status == connector_callback_continue, error);
 
-            request = connector_config_network_sms;
+            request = connector_request_id_config_network_sms;
             sm_ptr->network.class_id = connector_class_network_sms;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_SMS;
             {
@@ -128,12 +128,15 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->close.stop_condition = connector_stop_immediately;
 
     {
+        connector_config_connect_status_t connect_type;
+
         size_t length = sizeof sm_ptr->transport.connect_type;
 
-        sm_ptr->transport.connect_type = connector_auto_connect;
+        connect_type.status = connector_auto_connect;
         request_id.config_request = request;
-        status = connector_callback_no_request_data(connector_ptr->callback, connector_class_config, request_id, &sm_ptr->transport.connect_type, &length);
+        status = get_config_connect_status(connector_ptr, request_id, &connect_type);
         ASSERT_GOTO(status == connector_callback_continue, error);
+        sm_ptr->transport.connect_type = connect_type.status;
     }
 
     {

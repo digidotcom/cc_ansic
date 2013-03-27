@@ -9,8 +9,6 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-#define CC_IPV6_ADDRESS_LENGTH 16
-#define CC_IPV4_ADDRESS_LENGTH 4
 
 #define FAC_CC_DISCONNECT           0x00
 #define FAC_CC_REDIRECT_TO_SDA      0x03
@@ -52,7 +50,6 @@ typedef struct {
 } connector_cc_data_t;
 
 static connector_status_t get_mac_addr(connector_data_t * const connector_ptr);
-static connector_status_t edp_get_config_parameter(connector_data_t * const connector_ptr, connector_config_request_t const config_request);
 
 static void cc_init(connector_cc_data_t * const cc_ptr)
 {
@@ -224,7 +221,7 @@ enum cc_connection_info {
     }
 
     {
-        result = edp_get_config_parameter(connector_ptr, connector_config_ip_addr);
+        result = get_config_ip_addr(connector_ptr);
 
         if (result != connector_working)
         {
@@ -250,7 +247,7 @@ enum cc_connection_info {
         switch (connector_ptr->connection_type)
         {
         case connector_lan_connection_type:
-            result = get_mac_addr(connector_ptr);
+            result = get_config_mac_addr(connector_ptr);
             if (result != connector_working)
             {
                 goto done;
@@ -312,31 +309,6 @@ done:
     return result;
 }
 
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
-static connector_status_t process_connection_control(connector_data_t * const connector_ptr, connector_cc_data_t * const cc_ptr, connector_network_request_t const request)
-{
-    connector_status_t result = connector_idle;
-
-    connector_callback_status_t status = connector_callback_continue;
-
-    UNUSED_PARAMETER(cc_ptr);
-
-    /* server either disconnects or reboots us */
-    connector_debug_printf("process_connection_control: Connection request %d\n", request);
-
-    {
-        connector_request_t request_id;
-        request_id.network_request = request;
-        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, NULL);
-    }
-
-    if (status == connector_callback_continue)
-    {
-        edp_set_active_state(connector_ptr, connector_transport_close);
-    }
-    return result;
-}
-#endif
 
 static connector_status_t  process_redirect(connector_data_t * const connector_ptr, connector_cc_data_t * const cc_ptr, uint8_t const * const packet)
 {
@@ -423,12 +395,8 @@ static connector_status_t cc_process(connector_data_t * const connector_ptr, voi
         {
 
             edp_set_close_status(connector_ptr, connector_close_status_server_disconnected);
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
             edp_set_active_state(connector_ptr, connector_transport_close);
             result = connector_working;
-#else
-            result = process_connection_control(connector_ptr, cc_ptr, connector_network_disconnected);
-#endif
             break;
         }
         case FAC_CC_REDIRECT_TO_SDA:

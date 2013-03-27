@@ -318,10 +318,9 @@ static connector_status_t edp_tcp_send_process(connector_data_t * const connecto
                 goto done;
 
             case connector_callback_abort:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
                 edp_set_close_status(connector_ptr, connector_close_status_abort);
                 /* no break; */
-#endif
+
             default:
 
                 edp_set_active_state(connector_ptr, connector_transport_close);

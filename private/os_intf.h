@@ -83,40 +83,6 @@ static connector_callback_status_t connector_callback(connector_callback_t const
     return status;
 }
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_t const class_number, connector_request_t const request_number, connector_status_t const status)
-{
-    connector_status_t result = connector_working;
-
-#if (defined CONNECTOR_DEBUG)
-    connector_error_status_t err_status;
-    connector_request_t request_id;
-
-    request_id.config_request = connector_config_error_status;
-    err_status.class_id = class_number;
-    err_status.request_id = request_number;
-    err_status.status = status;
-
-    {
-        connector_callback_status_t const callback_status = connector_callback(callback, connector_class_config, request_id, &err_status);
-        switch (callback_status)
-        {
-            case connector_callback_continue:
-                break;
-            default:
-                result = connector_abort;
-                break;
-        }
-    }
-
-#else
-    UNUSED_PARAMETER(callback);
-    UNUSED_PARAMETER(class_number);
-    UNUSED_PARAMETER(request_number);
-    UNUSED_PARAMETER(status);
-#endif
-    return result;
-}
-
 
 static connector_status_t get_system_time(connector_data_t * const connector_ptr, unsigned long * const uptime)
 {
@@ -173,9 +139,7 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
         break;
     case connector_callback_abort:
     case connector_callback_unrecognized:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     case connector_callback_error:
-#endif
         result = connector_abort;
         break;
     }

@@ -11,7 +11,7 @@
  */
 
 
-#define MANDATORY_FACILITY          (connector_config_request_t)-1
+#define MANDATORY_FACILITY          (connector_request_id_config_t)-1
 
 #define SET_FACILITY_SUPPORT(i) (0x01U << (i))
 #define IS_FACILITY_SUPPORTED(connector_ptr, table_index)    (connector_ptr->edp_data.facilities.supported_mask & SET_FACILITY_SUPPORT(table_index))
@@ -48,21 +48,21 @@ static connector_facility_service_t const connector_supported_service_table[] = 
     #if (defined CONNECTOR_FIRMWARE_SUPPORT) || (defined CONNECTOR_RCI_SERVICE)
         {{MANDATORY_FACILITY}, connector_facility_firmware_init, connector_facility_firmware_delete, NULL, fw_discovery, fw_process},
     #else
-        {{connector_config_firmware_facility}, connector_facility_firmware_init, connector_facility_firmware_delete, NULL, fw_discovery, fw_process},
+        {{connector_request_id_config_firmware_facility}, connector_facility_firmware_init, connector_facility_firmware_delete, NULL, fw_discovery, fw_process},
     #endif
 #endif
 #if (defined CONNECTOR_DATA_SERVICE)
     #if (defined CONNECTOR_DATA_SERVICE_SUPPORT)
         {{MANDATORY_FACILITY}, connector_facility_data_service_init, connector_facility_data_service_delete, connector_facility_data_service_cleanup, msg_discovery, msg_process},
     #else
-        {{connector_config_data_service}, connector_facility_data_service_init, connector_facility_data_service_delete, connector_facility_data_service_cleanup, msg_discovery, msg_process},
+        {{connector_request_id_config_data_service}, connector_facility_data_service_init, connector_facility_data_service_delete, connector_facility_data_service_cleanup, msg_discovery, msg_process},
     #endif
 #endif
 #if (defined CONNECTOR_FILE_SYSTEM)
     #if (defined CONNECTOR_FILE_SYSTEM_SUPPORT)
         {{MANDATORY_FACILITY}, connector_facility_file_system_init, connector_facility_file_system_delete, connector_facility_file_system_cleanup, msg_discovery, msg_process},
     #else
-        {{connector_config_file_system}, connector_facility_file_system_init, connector_facility_file_system_delete, connector_facility_file_system_cleanup, msg_discovery, msg_process},
+        {{connector_request_id_config_file_system}, connector_facility_file_system_init, connector_facility_file_system_delete, connector_facility_file_system_cleanup, msg_discovery, msg_process},
     #endif
 #endif
 
@@ -70,7 +70,7 @@ static connector_facility_service_t const connector_supported_service_table[] = 
     #if (defined CONNECTOR_REMOTE_CONFIGURATION_SUPPORT)
         {{MANDATORY_FACILITY}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process}
     #else
-        {{connector_config_remote_configuration}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process}
+        {{connector_request_id_config_remote_configuration}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process}
     #endif
 #endif
 };
@@ -167,13 +167,15 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
     for (i=0; i < connector_facility_count; i++)
     {
         connector_request_t const request_id = connector_supported_service_table[i].request_id;
-        connector_service_supported_status_t facility_enable = (request_id.config_request == MANDATORY_FACILITY) ? connector_service_supported : connector_service_unsupported;
+        connector_config_supported_status_t config_supported;
+
+        config_supported.status = (request_id.config_request == MANDATORY_FACILITY) ? connector_service_supported : connector_service_unsupported;
 
         if (request_id.config_request != MANDATORY_FACILITY)
         {   /* this is optional facility so ask application whether it supports this facility */
             connector_callback_status_t status;
 
-            status = connector_callback(connector_ptr->callback, connector_class_config, request_id, &facility_enable);
+            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_supported);
             switch (status)
             {
             case connector_callback_busy:
@@ -182,20 +184,18 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
                 result = connector_abort;
                 goto error;
             case connector_callback_abort:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
             case connector_callback_error:
-#endif
                 result = connector_abort;
                 goto done;
             case connector_callback_unrecognized:
-                facility_enable = connector_service_unsupported;
+                config_supported.status = connector_service_unsupported;
                 break;
             case connector_callback_continue:
                 break;
             }
         }
 
-        switch (facility_enable)
+        switch (config_supported.status)
         {
         case connector_service_supported:
             connector_ptr->edp_data.facilities.supported_mask |= (uint16_t)SET_FACILITY_SUPPORT(i);
@@ -213,7 +213,7 @@ error:
     if (result != connector_working)
     {
         connector_request_t const request_id = connector_supported_service_table[i].request_id;
-        if (notify_error_status(connector_ptr->callback, connector_class_config, request_id, result) != connector_working)
+        if (notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result) != connector_working)
             result = connector_abort;
     }
 

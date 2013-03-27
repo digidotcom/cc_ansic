@@ -17,36 +17,6 @@
 #define CONNECTOR_MAX_VENDOR_ID_NUMBER 0xFE000000
 #endif
 
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
-#define connector_unavailable           (connector_status_t)(connector_no_resource + 1)
-#define connector_idle                  (connector_status_t)(connector_no_resource + 2)
-#define connector_working               (connector_status_t)(connector_no_resource + 3)
-#define connector_pending               (connector_status_t)(connector_no_resource + 4)
-#define connector_active                (connector_status_t)(connector_no_resource + 5)
-#define connector_device_error          (connector_status_t)(connector_no_resource + 6)
-#define connector_abort                 connector_configuration_error
-#define connector_open_error            connector_connect_error
-
-typedef enum {
-    connector_close_status_server_disconnected = 1,    /**< iDigi connector received a disconnect from the server. */
-    connector_close_status_server_redirected,          /**< iDigi connector is redirected to different server. */
-    connector_close_status_device_terminated,          /**< iDigi connector is terminated via @ref connector_initiate_action
-                                                 iDigi connector will terminate all active messages or requests and free all memory.
-                                                 @ref connector_auto_connect_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_stopped,             /**< iDigi connector is stopped via @ref connector_initiate_action */
-    connector_close_status_no_keepalive,               /**< iDigi connector has not received keep alive messages from the server */
-    connector_close_status_abort,                      /**< iDigi connector is aborted either it encountered fatal error or callback aborted iDigi connector.
-                                                 iDigi connector will terminate all active messages or requests and free all memory.
-                                                 @ref connector_auto_connect_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_error,               /**< iDigi connector received error from callback which requires to close the connection. */
-
-    /* 1.2 support */
-    connector_close_receive_error,             /* equivalent to connector_receive_error in 1.2 */
-    connector_close_send_error                /* equivalent to connector_send_error in 1.2 */
-} connector_close_status_t;
-
-#endif
-
 #define UNUSED_VARIABLE(x)      ((void) (x))
 #define UNUSED_PARAMETER(x)     UNUSED_VARIABLE(x)
 
@@ -80,10 +50,6 @@ typedef enum {
 
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
-
-#if (CONNECTOR_VERSION < CONNECTOR_VERSION_1200)
-#define asizeof(array)      (sizeof array/sizeof array[0])
-#endif
 
 typedef enum {
     connector_network_tcp,
@@ -172,7 +138,7 @@ typedef enum {
 
 struct connector_data;
 
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200) || (defined CONNECTOR_TRANSPORT_TCP)
+#if (defined CONNECTOR_TRANSPORT_TCP)
 #include "connector_edp_def.h"
 #endif
 
@@ -194,9 +160,7 @@ typedef struct connector_data {
 
     connector_connection_type_t connection_type;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     connector_wan_type_t wan_type;
-#endif
 
 #if !(defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
     uint32_t link_speed;
@@ -207,9 +171,7 @@ typedef struct connector_data {
     size_t phone_dialed_length;
 #endif
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1200)
     connector_device_id_method_t device_id_method;
-#endif
 
     connector_network_type_t first_running_network;
 
@@ -224,7 +186,7 @@ typedef struct connector_data {
     connector_sm_data_t sm_sms;
 #endif
 
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200) || (defined CONNECTOR_TRANSPORT_TCP)
+#if (defined CONNECTOR_TRANSPORT_TCP)
     connector_edp_data_t edp_data;
 #endif
 
@@ -235,10 +197,8 @@ typedef struct connector_data {
             connector_state_terminate_by_initiate_action,
             connector_state_abort_by_callback
         } state;
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         connector_stop_condition_t condition;
         void * user_context;
-#endif
     } stop;
 
 } connector_data_t;

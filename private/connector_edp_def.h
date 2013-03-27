@@ -15,24 +15,12 @@
 
 #include "ei_packet.h"
 
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
-#define connector_class_network_tcp connector_class_network
-#define connector_network_open connector_network_connect
-
-typedef enum {
-    connector_simple_identity_verification,
-    connector_password_identity_verification
-} connector_identity_verification_t;
-
-#endif
-
 #define MSG_MAX_RECV_PACKET_SIZE 1600
 #define MSG_MAX_SEND_PACKET_SIZE 512
 
 #define EDP_MT_VERSION      2
 
 #define DEVICE_TYPE_LENGTH  32
-#define VENDOR_ID_LENGTH    4
 #define CONNECTOR_MAX_TRANSACTIONS_LIMIT    255
 
 /* these are limits for Tx and Rx keepalive
@@ -90,10 +78,6 @@ typedef enum {
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
 
-#if (CONNECTOR_VERSION < CONNECTOR_VERSION_1200)
-#define asizeof(array)      (sizeof array/sizeof array[0])
-#endif
-
 /* IRL EDP States */
 typedef enum {
     edp_communication_connect_server,
@@ -148,7 +132,7 @@ typedef struct connector_edp_data {
 
     struct {
 #if !(defined CONNECTOR_VENDOR_ID)
-        uint32_t * vendor_id;
+        uint32_t vendor_id;
 #endif
 
 #if !(defined CONNECTOR_DEVICE_TYPE)
@@ -229,16 +213,14 @@ typedef struct connector_edp_data {
     connector_close_status_t  close_status;
     connector_network_handle_t * network_handle;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     struct {
         connector_bool_t is_set;
         connector_stop_condition_t condition;
         void * user_context;
         connector_auto_connect_type_t connect_action;
     } stop;
-#endif
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300) && !(defined CONNECTOR_NETWORK_TCP_START)
+#if !(defined CONNECTOR_NETWORK_TCP_START)
     connector_auto_connect_type_t  connect_type;
 #endif
 

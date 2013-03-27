@@ -1941,7 +1941,7 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
     if (msg_ptr == NULL)
     {
         void * fac_ptr = NULL;
-        unsigned int max_transactions = 0;
+        connector_config_max_transaction_t config_max_transaction;
 
         status = add_facility_data(connector_ptr, facility_index, E_MSG_FAC_MSG_NUM, &fac_ptr, sizeof *msg_ptr);
         ASSERT_GOTO(status == connector_working, done);
@@ -1959,21 +1959,15 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
         #endif
 
         #if (defined CONNECTOR_MSG_MAX_TRANSACTION)
-        max_transactions = CONNECTOR_MSG_MAX_TRANSACTION;
+        config_max_transaction.count = CONNECTOR_MSG_MAX_TRANSACTION;
         #else
         {
             connector_request_t request_id;
             connector_callback_status_t callback_status;
 
-            request_id.config_request = connector_config_max_transaction;
-            callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_config, request_id, &max_transactions, NULL);
+            request_id.config_request = connector_request_id_config_max_transaction;
+            callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_max_transaction);
             if (callback_status != connector_callback_continue && callback_status != connector_callback_unrecognized)
-            {
-                status = connector_abort;
-                goto done;
-            }
-            if (max_transactions > CONNECTOR_MAX_TRANSACTIONS_LIMIT &&
-                notify_error_status(connector_ptr->callback, connector_class_config, request_id, connector_invalid_data_range) != connector_working)
             {
                 status = connector_abort;
                 goto done;
@@ -1981,7 +1975,7 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
         }
         #endif
 
-         msg_ptr->capabilities[msg_capability_client].advertised_transactions = (uint8_t)max_transactions;
+         msg_ptr->capabilities[msg_capability_client].advertised_transactions = config_max_transaction.count;
 
          /* TODO: Remove this block when IDIGI-328 is fixed */
         {
@@ -1997,9 +1991,8 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
             services_count++;
             #endif
 
-            max_transactions *= services_count;
-            ASSERT_GOTO(max_transactions < UCHAR_MAX, done);
-            msg_ptr->capabilities[msg_capability_client].max_transactions = (uint8_t)max_transactions;
+            config_max_transaction.count *= services_count;
+            msg_ptr->capabilities[msg_capability_client].max_transactions = config_max_transaction.count;
         }
 
         {

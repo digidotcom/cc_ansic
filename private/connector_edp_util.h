@@ -25,13 +25,11 @@
 #define edp_get_close_status(connector_ptr)                (connector_ptr)->edp_data.close_status
 #define edp_set_close_status(connector_ptr, value)         (connector_ptr)->edp_data.close_status = (value)
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
 #define edp_set_stop_condition(connector_ptr, value)    (connector_ptr)->edp_data.stop.condition = (value)
 #define edp_is_stop_immediately(connector_ptr)          connector_bool((connector_ptr)->edp_data.stop.condition == connector_stop_immediately)
 #define edp_is_stop_request(connector_ptr)              connector_bool((connector_ptr)->edp_data.stop.is_set == connector_true)
 #define edp_set_stop_request(connector_ptr, context)             (connector_ptr)->edp_data.stop.is_set = connector_true; (connector_ptr)->edp_data.stop.user_context = (context)
 #define edp_clear_stop_request(connector_ptr)           (connector_ptr)->edp_data.stop.is_set = connector_false
-#endif
 
 static void edp_reset_initial_data(connector_data_t * const connector_ptr)
 {
@@ -55,9 +53,7 @@ static void edp_reset_initial_data(connector_data_t * const connector_ptr)
     connector_ptr->edp_data.receive_packet.timeout = MAX_RECEIVE_TIMEOUT_IN_SECONDS;
     connector_ptr->edp_data.close_status = (connector_close_status_t)0;
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
     edp_set_stop_condition(connector_ptr, connector_stop_immediately);
-#endif
 
 }
 
@@ -164,7 +160,6 @@ static connector_status_t del_facility_data(connector_data_t * const connector_p
     return status;
 }
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
 static connector_status_t notify_status(connector_callback_t const callback, connector_tcp_status_t const status)
 {
     connector_status_t result;
@@ -191,4 +186,3 @@ static connector_status_t notify_status(connector_callback_t const callback, con
 
     return result;
 }
-#endif

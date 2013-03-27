@@ -25,11 +25,6 @@ static char const * close_status_to_string(connector_close_status_t const value)
         enum_to_case(connector_close_status_no_keepalive);
         enum_to_case(connector_close_status_abort);
         enum_to_case(connector_close_status_device_error);
-#if (CONNECTOR_VERSION <= CONNECTOR_VERSION_1200)
-        enum_to_case(connector_close_receive_error);
-        enum_to_case(connector_close_send_error);
-
-#endif
     }
     return result;
 }
@@ -75,7 +70,6 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
         }
 
 
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         {
                 connector_ptr->edp_data.stop.connect_action = close_data.connect_action;
                 edp_set_active_state(connector_ptr, connector_transport_idle);
@@ -83,52 +77,6 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
                 tcp_send_complete_callback(connector_ptr, connector_abort);
 
         }
-#else
-
-        if (result == connector_working)
-        {
-            connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(edp_get_close_status(connector_ptr)));
-
-            switch (edp_get_close_status(connector_ptr))
-            {
-                case connector_close_status_server_disconnected:
-                    break;
-                case connector_close_status_server_redirected:
-                    break;
-
-                case connector_close_status_device_terminated:
-                    result = connector_device_terminated;
-                    break;
-
-                case connector_close_status_no_keepalive:
-                    result = connector_keepalive_error;
-                    break;
-                case connector_close_status_abort:
-                    result = connector_abort;
-                    break;
-
-                /* 1.2 support */
-                case connector_close_receive_error:
-                    result = connector_receive_error;
-                    break;
-                case connector_close_send_error:
-                    result = connector_send_error;
-                    break;
-                default:
-                    result = connector_abort;
-                    break;
-            }
-        }
-        else if (result == connector_abort)
-        {
-            result = connector_close_error;
-        }
-
-
-        tcp_send_complete_callback(connector_ptr, result);
-        edp_set_active_state(connector_ptr, connector_transport_open);
-
-#endif
         edp_set_edp_state(connector_ptr, edp_communication_connect_server);
 
         layer_remove_facilities(connector_ptr, facility_callback_cleanup);
@@ -141,9 +89,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
     switch (close_status)
     {
         case connector_close_status_device_terminated:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
         case connector_close_status_abort:
-#endif
         {
             /*
               * Terminated by connector_dispatch call
