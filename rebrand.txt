@@ -1,0 +1,8 @@
+# rebrand.txt
+
+# format:
+# search-term [ exclude-term [ exclude-term ...]
+
+digi 'digi international' digit
+server
+platform
