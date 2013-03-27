@@ -118,8 +118,8 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
     send_data.bytes_available = *length;
     send_data.network_handle = connector_ptr->edp_data.network_handle;
 
-    request_id.network_request = connector_network_send;
-    status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &send_data);
+    request_id.network_request = connector_request_id_network_send;
+    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &send_data);
     switch (status)
     {
     case connector_callback_continue:

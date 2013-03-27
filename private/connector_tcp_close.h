@@ -49,9 +49,9 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
         close_data.status = edp_get_close_status(connector_ptr);
 
         connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(close_data.status));
-        request_id.network_request = connector_network_close;
+        request_id.network_request = connector_request_id_network_close;
         /* TODO: fix request_data and stop_action */
-        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &close_data);
+        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data);
 
         switch (status)
         {

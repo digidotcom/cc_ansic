@@ -361,7 +361,7 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
         connector_callback_status_t status;
         connector_request_t request_id;
 
-        request_id.network_request = connector_network_open;
+        request_id.network_request = connector_request_id_network_open;
         status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length, &sm_ptr->network.handle, &length);
         if (status != connector_callback_continue)
             goto error;
@@ -405,7 +405,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
         request_data.network_handle = sm_ptr->network.handle;
         request_data.status = sm_ptr->close.status;
 
-        request_id.network_request = connector_network_close;
+        request_id.network_request = connector_request_id_network_close;
         callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &request_data, sizeof request_data, &close_action, &response_length);
         switch (callback_status)
         {

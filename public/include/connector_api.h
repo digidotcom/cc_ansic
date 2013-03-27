@@ -27,6 +27,7 @@
 #include "connector_types.h"
 
 #include "connector_api_config.h"
+#include "connector_api_network.h"
 
 #define asizeof(array)  (sizeof array/sizeof array[0])
 /**
@@ -86,7 +87,7 @@ typedef enum {
 */
 
  /**
- * @defgroup connector_status_t idigi Status values
+ * @defgroup 412 idigi Status values
  * @{
  */
  /**
@@ -136,12 +137,12 @@ typedef enum {
 */
 typedef enum {
     connector_class_id_config,             /**< Configuration Class Id */
-    connector_class_operating_system,   /**< Operating System Class Id */
+    connector_class_id_operating_system,   /**< Operating System Class Id */
     connector_class_id_firmware,           /**< Firmware Facility Class Id */
     connector_class_data_service,       /**< Data Service Class Id */
     connector_class_remote_config_service, /**< Remote Configuration Class ID */
     connector_class_file_system,        /**< File System Class Id */
-    connector_class_network_tcp,        /**< TCP Network Class ID */
+    connector_class_id_network_tcp,     /**< TCP Network Class ID */
     connector_class_network_udp,        /**< UDP Network Class ID */
     connector_class_network_sms,        /**< SMS Network Class ID */
     connector_class_status,             /**< Class ID for all status */
@@ -183,44 +184,7 @@ typedef enum
 * @}
 */
 
-/**
-* @defgroup connector_network_request_t Network Request IDs
-* @{
-*/
-/**
-* Network Request ID passed to the application's callback for network interface.
-* The class id for this connector_network_request_t is connector_class_network_tcp,
-* connector_class_network_udp, or connector_class_network_sms.
-*/
-typedef enum {
-    connector_network_open,     /**< Requesting callback to set up and make connection to the iDigi Device Cloud */
-    connector_network_send,     /**< Requesting callback to send data to the iDigi Device Cloud */
-    connector_network_receive,  /**< Requesting callback to receive data from the iDigi Device Cloud */
-    connector_network_close     /**< Requesting callback to close the iDigi Device Cloud connection */
-} connector_network_request_t;
-/**
-* @}
-*/
 
-
- /**
- * @defgroup connector_os_request_t OS Request IDs
- * @{
- */
- /**
- * Operating System Request ID passed to the application's callback for operating system interface.
- * The class id for this connector_os_request_t is connector_class_operating_system.
- */
-typedef enum {
-    connector_os_malloc,            /**< Callback used to dynamically allocate memory.. */
-    connector_os_free,              /**< Callback is called to free previous allocated memory. */
-    connector_os_system_up_time,    /**< Callback is called to return system up time in seconds. It is the time that a device has been up and running. */
-    connector_os_yield,             /**< Callback is called with @ref connector_status_t to relinquish for other task to run when @ref connector_run is used. */
-    connector_os_reboot            /**< Callback is called to reboot the system. */
-} connector_os_request_t;
-/**
-* @}
-*/
 
 /**
 * @defgroup connector_remote_config_request_t Remote Configuration Requests
@@ -278,7 +242,7 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_os_status_type_t OS Status Reason Types
+* @defgroup connector_tcp_status_t Status Reason Types
 * @{
 */
 /**
@@ -418,6 +382,9 @@ typedef enum
 #include "connector_api_data_point.h"
 #endif
 
+#include "connector_api_os.h"
+
+
 /**
 * @defgroup connector_request_t Request IDs
 * @{
@@ -427,8 +394,8 @@ typedef enum
 * @see connector_class_t
 */
 typedef union {
-  connector_request_id_config_t config_request;                   /**< Configuration request ID for configuration class */
-   connector_os_request_t os_request;                           /**< Operating system request ID for operating system class */
+   connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
+   connector_request_id_os_t os_request;                        /**< Operating system request ID for operating system class */
    #if (defined CONNECTOR_FIRMWARE_SERVICE)
    connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
    #endif
@@ -437,7 +404,7 @@ typedef union {
    #endif
    connector_remote_config_request_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
    connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
-   connector_network_request_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+   connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
    connector_status_request_t status_request;                   /**< Status request ID for status class */
    connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
 } connector_request_t;
@@ -478,97 +445,7 @@ typedef struct  {
 * @}
 */
 
-/**
-* @defgroup connector_network_open_data_t Network Open Data Structure
-* @{
-*/
-/**
-* Network open data structure for @ref connector_network_open callback which is called to open and connect to the iDigi Device Cloud.
-*/
-typedef struct  {
-    char const * server_url;        /**< Pointer to Etherios Cloud URL */
-    connector_network_handle_t * handle;    /**< Application defined network handle associated with the connection */
-} connector_network_open_data_t;
-/**
-* @}
-*/
 
-
-/**
-* @defgroup connector_network_send_data_t Network Send Data Structure
-* @{
-*/
-/**
-* Send data structure for @ref connector_network_send callback which is called to send data to the iDigi Device Cloud.
-*/
-typedef struct  {
-    connector_network_handle_t * network_handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    uint8_t const * buffer;                     /**< Pointer to data to be sent */
-    size_t bytes_available;                         /**< Number of bytes to send in the buffer */
-    size_t bytes_used;                              /**< Number of bytes sent */
-} connector_network_send_data_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_network_receive_data_t Network Receive Request
-* @{
-*/
-/**
-* Read request structure for connector_network_receive callback which is called to receive
-* a specified number of bytes data from the iDigi Device Cloud.
-*/
-typedef struct  {
-    connector_network_handle_t * network_handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    uint8_t * buffer;                               /**< Pointer to memory where callback writes received data to */
-    size_t bytes_available;                         /**< Number of bytes available in the buffer */
-    size_t bytes_used;                              /**< Number of bytes received and copied to the buffer */
-} connector_network_receive_data_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_close_status_t iDigi Connection Close Status Values
-* @{
-*/
-/**
-* Reasons for @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
-*/
-typedef enum {
-    connector_close_status_server_disconnected = 1,    /**< iDigi connector received a disconnect from the server. */
-    connector_close_status_server_redirected,          /**< iDigi connector is redirected to different server. */
-    connector_close_status_device_terminated,          /**< iDigi connector is terminated via @ref connector_initiate_action
-                                                        iDigi connector will terminate all active messages or requests and free all memory.
-                                                        @ref connector_auto_connect_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_stopped,             /**< iDigi connector is stopped via @ref connector_initiate_action */
-    connector_close_status_no_keepalive,               /**< iDigi connector has not received keep alive messages from the server */
-    connector_close_status_abort,                      /**< iDigi connector is aborted either it encountered fatal error or callback aborted iDigi connector.
-                                                        iDigi connector will terminate all active messages or requests and free all memory.
-                                                        @ref connector_auto_connect_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_error                /**< iDigi connector received error from callback which requires to close the connection. */
-} connector_close_status_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_close_data_t Network Close Request
-* @{
-*/
-/**
-* Close request structure for @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
-*/
-typedef struct  {
-    connector_network_handle_t * network_handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    connector_close_status_t  status;                     /**< Reason for closing the network handle */
-
-    connector_auto_connect_type_t  connect_action;
-} connector_network_close_data_t;
-/**
-* @}
-*/
 
 
 #ifdef CONNECTOR_FILE_SYSTEM
@@ -1526,5 +1403,6 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 /**
 * @}.
 */
+
 #endif /* _CONNECTOR_API_H */
 

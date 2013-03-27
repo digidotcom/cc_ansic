@@ -128,39 +128,42 @@ static connector_callback_status_t app_os_reboot(void)
     reboot(LINUX_REBOOT_CMD_RESTART);
     return connector_callback_continue;
 }
-
-connector_callback_status_t app_os_handler(connector_os_request_t const request,
-                                        void const * const request_data, size_t const request_length,
-                                        void * response_data, size_t * const response_length)
+connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+                                           void * const data);
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
     switch (request)
     {
-    case connector_os_malloc:
+    case connector_request_id_os_malloc:
         {
-            size_t const * const bytes = request_data;
-
-            status = app_os_malloc(*bytes, response_data);
+            connector_os_malloc_t * p = data;
+            status = app_os_malloc(p->size, &p->ptr);
         }
         break;
 
-    case connector_os_free:
-        status = app_os_free(request_data);
+    case connector_request_id_os_free:
+        {
+            connector_os_free_t * p = data;
+            status = app_os_free(p->ptr);
+        }
         break;
 
-    case connector_os_system_up_time:
-        status = app_os_get_system_time(response_data);
+    case connector_request_id_os_system_up_time:
+        {
+            connector_os_system_up_time_t * p = data;
+            status = app_os_get_system_time(&p->sys_uptime);
+        }
         break;
 
-    case connector_os_yield:
-        status = app_os_yield(request_data);
+    case connector_request_id_os_yield:
+        {
+            connector_os_yield_t * p = data;
+            status = app_os_yield(p->status);
+        }
         break;
 
-    case connector_os_reboot:
+    case connector_request_id_os_reboot:
         status = app_os_reboot();
         break;
 

@@ -622,7 +622,7 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
     connector_callback_status_t callback_status;
 
     request_id.os_request = connector_os_reboot;
-    callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_operating_system, request_id, NULL, 0);
+    callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL, 0);
     result = sm_map_callback_status_to_connector_status(callback_status);
 
     return result;

@@ -49,7 +49,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     connector_request_t request_id;
 
     /* Call callback to receive data from server */
-    request_id.network_request = connector_network_receive;
+    request_id.network_request = connector_request_id_network_receive;
 
     {
         connector_network_receive_data_t read_data;
@@ -60,7 +60,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
         read_data.bytes_used = 0;
 
 
-        status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &read_data);
+        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &read_data);
         switch (status)
         {
         case connector_callback_unrecognized:
@@ -121,7 +121,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             if (connector_ptr->edp_data.keepalive.miss_tx_count == GET_WAIT_COUNT(connector_ptr))
             {
                 /* consider a lost connection */
-                if (notify_error_status(connector_ptr->callback, connector_class_network_tcp, request_id, connector_keepalive_error) != connector_working)
+                if (notify_error_status(connector_ptr->callback, connector_class_id_network_tcp, request_id, connector_keepalive_error) != connector_working)
                 {
                     status = connector_callback_abort;
                     goto done;

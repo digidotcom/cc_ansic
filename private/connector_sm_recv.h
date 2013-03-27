@@ -437,7 +437,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
         read_data.buffer = recv_ptr->data;
         read_data.length = sm_ptr->transport.mtu;
 
-        request_id.network_request = connector_network_receive;
+        request_id.network_request = connector_request_id_network_receive;
         status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &read_data, sizeof read_data, &bytes_read, &resp_size);
         switch (status)
         {

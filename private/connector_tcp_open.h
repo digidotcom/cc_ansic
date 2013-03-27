@@ -24,8 +24,8 @@ static connector_status_t connect_server(connector_data_t * const connector_ptr,
     open_data.server_url = server_url;
     open_data.handle = NULL;
 
-    request_id.network_request = connector_network_open;
-    status = connector_callback(connector_ptr->callback, connector_class_network_tcp, request_id, &open_data);
+    request_id.network_request = connector_request_id_network_open;
+    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data);
     switch (status)
     {
     case connector_callback_continue:
