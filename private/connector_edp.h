@@ -26,7 +26,7 @@
 #include "connector_msg.h"
 #endif
 #if (defined CONNECTOR_DATA_SERVICE)
-#include "connector_ds.h"
+#include "connector_data_service.h"
 #endif
 #if (defined CONNECTOR_FILE_SYSTEM)
 #include "connector_fs.h"
