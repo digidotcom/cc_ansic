@@ -19,8 +19,7 @@ static connector_status_t connect_server(connector_data_t * const connector_ptr,
 
     connector_request_id_t request_id;
 
-    open_data.server_url = server_url;
-    open_data.length = server_url_length;
+    open_data.device_cloud_url = server_url;
     open_data.handle = NULL;
 
     request_id.network_request = connector_request_id_network_open;

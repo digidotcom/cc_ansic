@@ -39,13 +39,13 @@ connector_callback_status_t app_get_interface_ip_address(uint8_t ** ip_address, 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_network_tcp_close(connector_network_receive_data_t const data)
+static connector_callback_status_t app_network_tcp_close(connector_network_close_data_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
     app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_server_redirected);
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
+    data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
 
     if (close(*data->handle) < 0)
     {
@@ -69,7 +69,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_recei
  * connector_callback_busy and iDigi connector will ignore the read_data and read_length
  * and continue calling this function.
  */
-static connector_callback_status_t app_network_tcp_receive(connector_network_receive_data_t const data);
+static connector_callback_status_t app_network_tcp_receive(connector_network_receive_data_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
@@ -111,12 +111,12 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
  * EAGAIN  error, return connector_callback_busy and iDigi connector will ignore the
  * sent_length and continue calling this function.
  */
-static connector_callback_status_t app_network_tcp_send(connector_network_send_data_t const data)
+static connector_callback_status_t app_network_tcp_send(connector_network_send_data_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
 
-    ccode = write(*data->network_handle, data->buffer, data->bytes_available);
+    ccode = write(*data->handle, data->buffer, data->bytes_available);
     if (ccode >= 0) 
     {
         data->bytes_used = (size_t)ccode;
@@ -245,7 +245,7 @@ static connector_callback_status_t app_is_tcp_connect_complete(int const fd)
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_open(connector_network_open_data_t const data)
+static connector_callback_status_t app_network_tcp_open(connector_network_open_data_t * const data)
 {
 #define APP_CONNECT_TIMEOUT 30
 
@@ -260,10 +260,10 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_d
     {
         in_addr_t ip_addr;
 
-        status = app_dns_resolve(connector_class_id_network_tcp, data->server_url, data->length, &ip_addr);
+        status = app_dns_resolve(connector_class_id_network_tcp, data->device_cloud_url, &ip_addr);
         if (status != connector_callback_continue)
         {
-            APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", server_name);
+            APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", data->device_cloud_url);
             goto done;
         }
 
@@ -291,7 +291,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_d
     status = app_is_tcp_connect_complete(fd);
     if (status == connector_callback_continue)
     {
-         APP_DEBUG("app_network_tcp_open: connected to %s\n", server_name);
+         APP_DEBUG("app_network_tcp_open: connected to %s\n", data->device_cloud_url);
          goto done;
     }
 
@@ -312,7 +312,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_d
 error:
     if (status == connector_callback_error)
     {
-        APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", server_name);
+        APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", data->device_cloud_url);
         app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
         if (fd >= 0)
@@ -333,6 +333,8 @@ done:
 connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
                                                     void * const data)
 {
+    connector_callback_status_t status;
+
     switch (request)
     {
     case connector_request_id_network_open:
