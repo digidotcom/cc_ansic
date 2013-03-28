@@ -1962,7 +1962,7 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
         config_max_transaction.count = CONNECTOR_MSG_MAX_TRANSACTION;
         #else
         {
-            connector_request_t request_id;
+            connector_request_id_t request_id;
             connector_callback_status_t callback_status;
 
             request_id.config_request = connector_request_id_config_max_transaction;

@@ -32,7 +32,7 @@ extern connector_callback_status_t app_sm_handler(connector_sm_request_t const r
 extern connector_status_t app_send_ping(connector_handle_t handle);
 extern connector_status_t app_send_data(connector_handle_t handle);
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_t const class_id, connector_close_status_t const status)
+connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
@@ -56,7 +56,7 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_t const cl
     return type;
 }
 
-connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length)
 {
@@ -78,19 +78,19 @@ connector_callback_status_t app_connector_callback(connector_class_t const class
         break;
 #endif
 
-    case connector_class_network_udp:
+    case connector_class_id_network_udp:
         status = app_network_udp_handler(request_id.network_request, request_data, request_length, response_data, response_length);
         break;
 
-    case connector_class_data_service:
+    case connector_class_id_data_service:
         status = app_data_service_handler(request_id.data_service_request, request_data, request_length, response_data, response_length);
         break;
 
-    case connector_class_status:
+    case connector_class_id_status:
         status = app_status_handler(request_id.status_request, request_data, request_length, response_data, response_length);
         break;
 
-    case connector_class_sm:
+    case connector_class_id_short_message:
         status = app_sm_handler(request_id.sm_request, request_data, request_length, response_data, response_length);
         break;
 

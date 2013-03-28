@@ -25,7 +25,7 @@
 #include "chk_config.h"
 #include "bele.h"
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_t const class_number, connector_request_t const request_number, connector_status_t const status);
+static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status);
 #include "os_intf.h"
 #include "connector_global_config.h"
 
@@ -198,14 +198,14 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
 
     connector_initiate_stop_request_t stop_request;
 
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     request_id.status_request = connector_status_stop_completed;
 
     stop_request.transport = transport;
     stop_request.user_context = user_context;
 
     {
-        connector_callback_status_t const status =  connector_callback(connector_ptr->callback, connector_class_status, request_id, &stop_request);
+        connector_callback_status_t const status =  connector_callback(connector_ptr->callback, connector_class_id_status, request_id, &stop_request);
 
         switch (status)
         {

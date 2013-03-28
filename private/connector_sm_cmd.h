@@ -164,7 +164,7 @@ static connector_status_t sm_map_callback_status_to_connector_status(connector_c
 static connector_status_t sm_inform_session_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_working;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_callback_status_t callback_status = connector_callback_continue;
 
     if (session->sm_state == connector_sm_state_complete) goto done;
@@ -190,7 +190,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
                 size_t response_bytes = sizeof session->error;
 
                 request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_data_service_put_request : connector_data_service_device_request;
-                callback_status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id, &request_data, sizeof request_data, &session->error, &response_bytes);
+                callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &request_data, sizeof request_data, &session->error, &response_bytes);
             }
             break;
         }
@@ -205,7 +205,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
             cli_request.type = connector_data_service_type_session_status;
             cli_request.content.status = session->error;
             request_id.sm_request = connector_sm_cli_request;
-            callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_sm, request_id, &cli_request, &request_size);
+            callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request, &request_size);
 
             break;
         }
@@ -214,7 +214,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
         default:
         {
             connector_message_status_response_t response_data;
-            connector_class_t class_id;
+            connector_class_id_t class_id;
 
             response_data.user_context = session->user.context;
             response_data.status = session->error;
@@ -223,12 +223,12 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
             switch (session->command)
             {
                 case connector_sm_cmd_config:
-                    class_id = connector_class_sm;
+                    class_id = connector_class_id_short_message;
                     request_id.sm_request = SmIsClientOwned(session->flags) ? connector_sm_device_to_server_config : connector_sm_server_to_device_config;
                     break;
 
                 case connector_sm_cmd_status:
-                    class_id = connector_class_status;
+                    class_id = connector_class_id_status;
                     request_id.status_request = SmIsClientOwned(session->flags) ? connector_status_ping_response : connector_status_ping_request;
                     break;
 
@@ -398,7 +398,7 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
     }
 
     {
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_sm_cli_request_t cli_request;
         size_t request_size = sizeof cli_request;
         connector_callback_status_t callback_status;
@@ -410,7 +410,7 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
         cli_request.content.request.flags = (SmIsResponseNeeded(session->flags)) ? 0 : CONNECTOR_MSG_RESPONSE_NOT_NEEDED;
 
         request_id.sm_request = connector_sm_cli_request;
-        callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_sm, request_id, &cli_request, &request_size);
+        callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request, &request_size);
         result = sm_map_callback_status_to_connector_status(callback_status);
         if (callback_status == connector_callback_continue)
             session->user.context = cli_request.user_context;
@@ -423,7 +423,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
 {
     connector_status_t result = connector_abort;
     connector_callback_status_t status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_sm_cli_request_t cli_response;
     size_t response_bytes = sizeof cli_response;
     size_t const allowed_bytes = (session->user.header != NULL) ? (size_t)session->user.header : SIZE_MAX;
@@ -445,7 +445,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
     cli_response.content.response.buffer = (char *)session->in.data;
     request_id.sm_request = connector_sm_cli_request;
 
-    status = connector_callback_no_request_data(connector_ptr->callback, connector_class_sm, request_id, &cli_response, &response_bytes);
+    status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_response, &response_bytes);
     result = sm_map_callback_status_to_connector_status(status);
     if (status == connector_callback_continue)
     {
@@ -524,12 +524,12 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
     }
 
     {
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         size_t response_data_length = sizeof session->error;
         connector_callback_status_t callback_status;
 
         request_id.sm_request = connector_sm_server_to_device_config;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_sm, request_id, &config_request,
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &config_request,
                                          sizeof config_request, &session->error, &response_data_length);
         result = sm_map_callback_status_to_connector_status(callback_status);
     }
@@ -585,7 +585,7 @@ static connector_status_t sm_process_data_command(connector_data_t * const conne
     response_data.client_data = NULL;
 
     {
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         size_t response_data_length = sizeof response_data;
         connector_callback_status_t callback_status;
 
@@ -598,7 +598,7 @@ static connector_status_t sm_process_data_command(connector_data_t * const conne
 #endif
         {
             request_id.data_service_request = SmIsRequest(session->flags) ? connector_data_service_device_request : connector_data_service_put_request;
-            callback_status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id,
+            callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
                                     &request_data, sizeof request_data, &response_data, &response_data_length);
         }
 
@@ -618,7 +618,7 @@ static connector_status_t sm_process_data_command(connector_data_t * const conne
 static connector_status_t sm_process_reboot(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_abort;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_callback_status_t callback_status;
 
     request_id.os_request = connector_os_reboot;
@@ -628,7 +628,7 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
     return result;
 }
 
-static connector_status_t sm_process_empty_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes, connector_class_t const class_id, connector_request_t const request_id)
+static connector_status_t sm_process_empty_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes, connector_class_id_t const class_id, connector_request_id_t const request_id)
 {
     connector_status_t result = connector_success;
     connector_message_status_response_t response_data;
@@ -671,23 +671,23 @@ static connector_status_t sm_process_empty_response(connector_data_t * const con
 
 static connector_status_t sm_process_status_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
 {
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.status_request = connector_status_ping_response;
-    return sm_process_empty_response(connector_ptr, session, payload, bytes, connector_class_status, request_id);
+    return sm_process_empty_response(connector_ptr, session, payload, bytes, connector_class_id_status, request_id);
 }
 
 static connector_status_t sm_process_status_reqest(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
 {
     connector_status_t result;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_callback_status_t callback_status;
     size_t response_length = sizeof session->error;
 
     UNUSED_PARAMETER(payload);
     UNUSED_PARAMETER(bytes);
     request_id.status_request = connector_status_ping_request;
-    callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_status, request_id, &session->error, &response_length);
+    callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_status, request_id, &session->error, &response_length);
     result = sm_map_callback_status_to_connector_status(callback_status);
 
     return result;
@@ -696,17 +696,17 @@ static connector_status_t sm_process_status_reqest(connector_data_t * const conn
 #if (defined CONNECTOR_TRANSPORT_SMS)
 static connector_status_t sm_process_config_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
 {
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.sm_request = connector_sm_device_to_server_config;
-    return sm_process_empty_response(connector_ptr, session, payload, bytes, connector_class_sm, request_id);
+    return sm_process_empty_response(connector_ptr, session, payload, bytes, connector_class_id_short_message, request_id);
 }
 #endif
 
 static connector_status_t sm_process_opaque_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
 {
     connector_status_t result = connector_success;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_callback_status_t callback_status;
     connector_sm_opaque_response_t opaque_response;
     size_t response_length = sizeof opaque_response;
@@ -718,7 +718,7 @@ static connector_status_t sm_process_opaque_response(connector_data_t * const co
     opaque_response.flags = SmIsLastData(session->flags) ? CONNECTOR_MSG_LAST_DATA : 0;
 
     request_id.sm_request = connector_sm_opaque_response;
-    callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_sm, request_id, &opaque_response, &response_length);
+    callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &opaque_response, &response_length);
     result = sm_map_callback_status_to_connector_status(callback_status);
     if (callback_status == connector_callback_continue)
         session->error = opaque_response.status;

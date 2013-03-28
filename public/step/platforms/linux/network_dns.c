@@ -38,9 +38,9 @@ typedef struct
 } app_dns_cache_t;
 
 static app_dns_cache_t app_dns_cache = {"", INADDR_NONE, 0, 0};
-#define app_dns_is_redirected(class_id) ((class_id) == connector_class_network_udp ? 0 : app_dns_cache.is_redirected)
+#define app_dns_is_redirected(class_id) ((class_id) == connector_class_id_network_udp ? 0 : app_dns_cache.is_redirected)
 
-static int app_dns_cache_is_valid(connector_class_t const class_id,
+static int app_dns_cache_is_valid(connector_class_id_t const class_id,
                                    char const * const server_name,
                                    size_t const length,
                                    in_addr_t * const ip_addr)
@@ -65,7 +65,7 @@ static int app_dns_cache_is_valid(connector_class_t const class_id,
     return valid;
 }
 
-static void app_dns_cache_update(connector_class_t const class_id,
+static void app_dns_cache_update(connector_class_id_t const class_id,
                                  char const * const server_name,
                                  size_t const length,
                                  in_addr_t const ip_addr)
@@ -121,13 +121,13 @@ done:
 }
 
 
-void app_dns_set_redirected(connector_class_t const class_id, int const state)
+void app_dns_set_redirected(connector_class_id_t const class_id, int const state)
 {
     UNUSED_ARGUMENT(class_id);;
     app_dns_cache.is_redirected = state;
 }
 
-void app_dns_cache_invalidate(connector_class_t const class_id)
+void app_dns_cache_invalidate(connector_class_id_t const class_id)
 {
     if (!app_dns_is_redirected(class_id))
     {
@@ -135,7 +135,7 @@ void app_dns_cache_invalidate(connector_class_t const class_id)
     }
 }
 
-connector_callback_status_t app_dns_resolve(connector_class_t const class_id,
+connector_callback_status_t app_dns_resolve(connector_class_id_t const class_id,
                                        char const * const domain_name,
                                        size_t const length,
                                        in_addr_t * const ip_addr)

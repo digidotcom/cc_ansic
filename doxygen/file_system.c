@@ -126,7 +126,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -249,7 +249,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -371,7 +371,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -474,7 +474,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -579,7 +579,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -677,7 +677,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -750,7 +750,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -853,7 +853,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -984,7 +984,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -1119,7 +1119,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -1241,7 +1241,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -1380,7 +1380,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -1471,7 +1471,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
@@ -1551,7 +1551,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>

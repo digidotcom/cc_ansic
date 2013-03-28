@@ -22,7 +22,7 @@ void connector_debug_printf(char const * const format, ...);
 #define UNUSED_ARGUMENT(x)     ((void)x)
 
 
-extern connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length);
 
@@ -31,7 +31,7 @@ extern connector_callback_status_t app_os_handler(connector_os_request_t const r
                            void const * const request_data, size_t const request_length,
                            void * response_data, size_t * const response_length);
 
-extern connector_callback_status_t app_network_handler(connector_class_t const class_id,
+extern connector_callback_status_t app_network_handler(connector_class_id_t const class_id,
                                                    connector_network_request_t const request,
                                                    void const * const request_data, size_t const request_length,
                                                    void * response_data, size_t * const response_length);

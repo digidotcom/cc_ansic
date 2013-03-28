@@ -133,10 +133,10 @@ error:
 static connector_callback_status_t dp_return_response(connector_data_t * const connector_ptr, connector_request_id_data_point_t const request, void * const cb_data)
 {
     connector_callback_status_t callback_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.data_service_request = connector_data_service_dp_response;
-    callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_data_service, request_id, &response_data, sizeof response_data);
+    callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_id_data_service, request_id, &response_data, sizeof response_data);
 
     if (dp_info != NULL)
     {

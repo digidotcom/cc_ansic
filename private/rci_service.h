@@ -194,7 +194,7 @@ static connector_status_t connector_facility_rci_service_init(connector_data_t *
 #if defined connector_request_id_remote_config_configurations
     {
 
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_callback_status_t callback_status;
 
         request_id.remote_config_request = (connector_request_id_remote_config_t)connector_remote_config_configurations;

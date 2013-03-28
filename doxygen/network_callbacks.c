@@ -46,11 +46,11 @@
  *           <li>@endhtmlonly @ref CONNECTOR_SSL_PORT @htmlonly for secure port number.</li>
  *         </ul>
  *       </li> 
- *       <li>@endhtmlonly @ref connector_class_network_udp @htmlonly - Does not guarantee reliable data delivery on
+ *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly - Does not guarantee reliable data delivery on
  *         <ul>
  *           <li>@endhtmlonly @ref CONNECTOR_UDP_PORT @htmlonly for non-secure port number.</li>
  *         </ul>
- *       <li>@endhtmlonly @ref connector_class_network_sms @htmlonly - Does not guarantee reliable data delivery.</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly - Does not guarantee reliable data delivery.</li>
  *    </ul>
  * </td>
  * </tr>
@@ -123,8 +123,8 @@
  * <td> 
  *    <ul>
  *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly</li> 
- *       <li>@endhtmlonly @ref connector_class_network_udp @htmlonly</li>
- *       <li>@endhtmlonly @ref connector_class_network_sms @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul> 
  * </td>
  * </tr>
@@ -199,8 +199,8 @@
  * <td> 
  *    <ul>
  *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly</li> 
- *       <li>@endhtmlonly @ref connector_class_network_udp @htmlonly</li>
- *       <li>@endhtmlonly @ref connector_class_network_sms @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul> 
  * </td>
  * </tr>
@@ -269,8 +269,8 @@
  * <td> 
  *    <ul>
  *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly</li> 
- *       <li>@endhtmlonly @ref connector_class_network_udp @htmlonly</li>
- *       <li>@endhtmlonly @ref connector_class_network_sms @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul> 
  * </td>
  * </tr>

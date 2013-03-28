@@ -6,7 +6,7 @@
  *
  * The SM callbacks APIs are used to send and receive short messages to and from the iDigi Device Cloud.
  * The SM transfers are either communicated over SMS or over UDP transport methods. The following requests
- * under @ref connector_class_sm are listed below:
+ * under @ref connector_class_id_short_message are listed below:
  * 
  * @li @ref cli_request : Carries the CLI command from the iDigi device cloud. The CLI can be initiated either
  * from iDigi connect manager or from a web service client connected to the iDigi Device Cloud.
@@ -41,7 +41,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -109,7 +109,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -247,7 +247,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -319,7 +319,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -390,7 +390,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -453,7 +453,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -520,7 +520,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_sm @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>

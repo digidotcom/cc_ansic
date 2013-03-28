@@ -41,7 +41,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
     if (edp_get_edp_state(connector_ptr) != edp_communication_connect_server)
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         connector_network_close_data_t close_data;
 

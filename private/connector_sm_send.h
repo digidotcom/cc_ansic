@@ -13,7 +13,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
 {
     connector_status_t result = connector_abort;
     connector_callback_status_t status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     switch (session->command)
     {
@@ -37,7 +37,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
                 size_t response_bytes = sizeof session->in.bytes;
 
                 request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_data_service_put_request : connector_data_service_device_request;
-                status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id, &request_data, sizeof request_data, &session->in.bytes, &response_bytes);
+                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &request_data, sizeof request_data, &session->in.bytes, &response_bytes);
             }
             break;
         }
@@ -52,7 +52,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
             cli_request.content.total_bytes_ptr = &session->in.bytes;
             request_id.sm_request = connector_sm_cli_request;
 
-            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_sm, request_id, &cli_request, &response_bytes);
+            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request, &response_bytes);
             break;
         }
 
@@ -97,7 +97,7 @@ static connector_status_t sm_get_more_data(connector_data_t * const connector_pt
         {
             size_t response_bytes = sizeof response_data;
             connector_callback_status_t status;
-            connector_request_t request_id;
+            connector_request_id_t request_id;
 
 #if (defined CONNECTOR_DATA_POINTS)
             if (SmIsDatapoint(session->flags))
@@ -108,7 +108,7 @@ static connector_status_t sm_get_more_data(connector_data_t * const connector_pt
 #endif
             {
                 request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_data_service_put_request : connector_data_service_device_request;
-                status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id, &request_data, sizeof request_data, &response_data, &response_bytes);
+                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &request_data, sizeof request_data, &response_data, &response_bytes);
             }
 
             result = sm_map_callback_status_to_connector_status(status);
@@ -236,7 +236,7 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
     size_t response_bytes = sizeof length_written;
     connector_callback_status_t status;
     connector_write_request_t write_data;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     write_data.timeout = 0;
     write_data.buffer = &send_packet->data[send_packet->processed_bytes];
@@ -312,7 +312,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
     switch (sm_ptr->network.class_id)
     {
         #if (defined CONNECTOR_TRANSPORT_UDP)
-        case connector_class_network_udp:
+        case connector_class_id_network_udp:
         {
             uint8_t const sm_udp_version_num = SM_UDP_VERSION << 4;
             uint8_t const version_byte = sm_udp_version_num | sm_ptr->transport.id_type;
@@ -325,7 +325,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         #endif
 
         #if (defined CONNECTOR_TRANSPORT_SMS)
-        case connector_class_network_sms:
+        case connector_class_id_network_sms:
         {
             /* service ID available? */
             if (sm_ptr->transport.id_length > 0)

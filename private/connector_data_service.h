@@ -143,7 +143,7 @@ static connector_status_t process_device_request(connector_data_t * const connec
 
     {
         /* pass data to the callback */
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_data_service_msg_request_t request_data;
         connector_data_service_msg_response_t response_data;
         connector_data_service_block_t server_data;
@@ -177,7 +177,7 @@ static connector_status_t process_device_request(connector_data_t * const connec
         response_data.client_data = NULL;
 
         request_id.data_service_request = connector_data_service_device_request;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id,
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
                                 &request_data, sizeof request_data, &response_data, &response_data_length);
 
         switch (callback_status)
@@ -191,7 +191,7 @@ static connector_status_t process_device_request(connector_data_t * const connec
             if (response_data_length != sizeof response_data)
             {
                 /* wrong size returned and let's cancel the request */
-                if (notify_error_status(connector_ptr->callback, connector_class_data_service, request_id, connector_invalid_data_size) != connector_working)
+                if (notify_error_status(connector_ptr->callback, connector_class_id_data_service, request_id, connector_invalid_data_size) != connector_working)
                     status = connector_abort;
                 goto done;
             }
@@ -257,7 +257,7 @@ static connector_status_t process_device_response(connector_data_t * const conne
     size_t const header_length = isFirstResponse ? record_bytes(ds_device_response_header) : 0;
     uint8_t * const data_ptr = service_data->data_ptr;
 
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_data_service_msg_request_t request_data;
     connector_data_service_msg_response_t response_data;
     connector_data_service_device_request_t device_request;
@@ -283,7 +283,7 @@ static connector_status_t process_device_response(connector_data_t * const conne
     client_data.flags = 0;
 
     request_id.data_service_request = connector_data_service_device_request;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id,
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
                             &request_data, sizeof request_data, &response_data, &response_data_length);
 
     switch (callback_status)
@@ -293,7 +293,7 @@ static connector_status_t process_device_response(connector_data_t * const conne
         if (response_data_length != sizeof response_data)
         {
             /* wrong size returned and let's cancel the request */
-            if (notify_error_status(connector_ptr->callback, connector_class_data_service, request_id, connector_invalid_data_size) != connector_working)
+            if (notify_error_status(connector_ptr->callback, connector_class_id_data_service, request_id, connector_invalid_data_size) != connector_working)
                 status = connector_abort;
             response_data.message_status = connector_session_error_cancel;
         }
@@ -354,7 +354,7 @@ static connector_status_t process_device_error(connector_data_t * const connecto
 
     msg_session_t * const session = service_request->session;
     data_service_context_t * const device_request_service = session->service_context;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     connector_data_service_msg_request_t request_data;
     connector_data_service_msg_response_t response_data;
@@ -384,7 +384,7 @@ static connector_status_t process_device_error(connector_data_t * const connecto
     {
         connector_callback_status_t callback_status;
 
-        callback_status = connector_callback(connector_ptr->callback, connector_class_data_service, request_id,
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
                                         &request_data, sizeof request_data,
                                         &response_data, &response_data_length);
 
@@ -522,10 +522,10 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
 
     if ((context == NULL) || (context->dp_request == connector_false))
     {
-        connector_request_t request;
+        connector_request_id_t request;
 
         request.data_service_request = request_id;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_data_service, request, cb_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request, cb_data);
     }
     #if (defined CONNECTOR_DATA_POINTS)
     else

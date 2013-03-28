@@ -101,7 +101,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -190,7 +190,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -271,7 +271,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -346,7 +346,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -426,7 +426,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -496,7 +496,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -572,7 +572,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -652,7 +652,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -732,7 +732,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -807,7 +807,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -882,7 +882,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -955,7 +955,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1023,7 +1023,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1098,7 +1098,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1173,7 +1173,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1248,7 +1248,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1323,7 +1323,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1392,7 +1392,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {
@@ -1469,7 +1469,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
  *                              void const * const request_data, size_t const request_length,
  *                              void * response_data, size_t * const response_length)
  * {

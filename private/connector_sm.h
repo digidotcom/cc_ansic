@@ -46,7 +46,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     connector_status_t result = connector_init_error;
     connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, transport);
     connector_config_request_t request;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_callback_status_t status;
 
     ASSERT_GOTO(sm_ptr != NULL, error);
@@ -70,7 +70,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                 sm_ptr->transport.id_length = DEVICE_ID_LENGTH;
             }
 
-            sm_ptr->network.class_id = connector_class_network_udp;
+            sm_ptr->network.class_id = connector_class_id_network_udp;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_UDP;
             sm_ptr->transport.ms_mtu = sm_ptr->transport.mtu - (sm_ptr->transport.id_length + sm_udp_version_length);
             request = connector_request_id_config_network_udp;
@@ -85,7 +85,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             ASSERT_GOTO(status == connector_callback_continue, error);
 
             request = connector_request_id_config_network_sms;
-            sm_ptr->network.class_id = connector_class_network_sms;
+            sm_ptr->network.class_id = connector_class_id_network_sms;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_SMS;
             {
                 size_t const preamble_bytes = ((sm_ptr->transport.id != NULL) && (sm_ptr->transport.id_length > 0)) ? sm_ptr->transport.id_length + 1 : 0;
@@ -359,7 +359,7 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
     {
         size_t length = sizeof *sm_ptr->network.handle;
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.network_request = connector_request_id_network_open;
         status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length, &sm_ptr->network.handle, &length);
@@ -400,7 +400,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
         size_t response_length = sizeof close_action;
         connector_close_request_t request_data;
         connector_callback_status_t callback_status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_data.network_handle = sm_ptr->network.handle;
         request_data.status = sm_ptr->close.status;
@@ -434,7 +434,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
 
     if (sm_ptr->close.callback_needed)
     {
-        connector_transport_t const transport = (sm_ptr->network.class_id == connector_class_network_udp) ? connector_transport_udp : connector_transport_sms;
+        connector_transport_t const transport = (sm_ptr->network.class_id == connector_class_id_network_udp) ? connector_transport_udp : connector_transport_sms;
 
         connector_status_t const stop_status = connector_stop_callback(connector_ptr, transport, sm_ptr->close.user_context);
 
@@ -489,7 +489,7 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
         goto done;
 
 #if (defined CONNECTOR_DATA_POINTS)
-    result = dp_process_request(connector_ptr, (sm_ptr->network.class_id == connector_class_network_udp) ? connector_transport_udp : connector_transport_sms);
+    result = dp_process_request(connector_ptr, (sm_ptr->network.class_id == connector_class_id_network_udp) ? connector_transport_udp : connector_transport_sms);
     if ((result != connector_idle) && (result != connector_working))
         goto error;
 #endif

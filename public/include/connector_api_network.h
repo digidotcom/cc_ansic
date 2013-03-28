@@ -21,7 +21,7 @@
 /**
 * Network Request ID passed to the application's callback for network interface.
 * The class id for this connector_network_request_t is connector_class_network_tcp,
-* connector_class_network_udp.
+* connector_class_id_network_udp.
 */
 typedef enum {
     connector_request_id_network_open,     /**< Requesting callback to set up and make connection to the iDigi Device Cloud */

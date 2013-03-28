@@ -19,7 +19,7 @@ static connector_status_t get_config_vendor_id(connector_data_t * const connecto
 
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_vendor_id;
         status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_vendor);
@@ -59,7 +59,7 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
 {
     connector_status_t result = connector_working;
     connector_config_pointer_string_t device_type;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     {
         connector_callback_status_t status;
@@ -110,7 +110,7 @@ static connector_status_t get_config_keepalive(connector_data_t * const connecto
     ASSERT((config_request == connector_request_id_config_rx_keepalive) || (config_request == connector_request_id_config_tx_keepalive));
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.config_request = config_request;
         status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &keepalive);
@@ -174,7 +174,7 @@ static connector_status_t get_config_wait_count(connector_data_t * const connect
 
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_wait_count;
         status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &wait_count);
@@ -213,7 +213,7 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
 {
     connector_status_t result = connector_working;
     connector_config_ip_addr_t config_ip;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     {
         connector_callback_status_t status;
@@ -295,7 +295,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
 
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.config_request = config_request_id;
         status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_connect);
@@ -337,7 +337,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
 
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_identity_verification;
         status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_identity);
@@ -381,7 +381,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
 
     {
         connector_callback_status_t status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_password;
         status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_password);

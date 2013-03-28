@@ -93,7 +93,7 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     session->user.header = NULL;
     session->user.context = NULL;
 
-    if (sm_ptr->network.class_id == connector_class_network_sms)
+    if (sm_ptr->network.class_id == connector_class_id_network_sms)
         SmSetEncoded(session->flags);
 
     if (client_originated)

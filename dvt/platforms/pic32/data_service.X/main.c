@@ -6,8 +6,8 @@ static void InitAppConfig(void);
 static void InitIDigiConfig(void);
 static int get_uptime(void);
 static void toggle_led(unsigned int);
-connector_callback_status_t connector_callback(connector_class_t const class_id,
-                                        connector_request_t const request_id,
+connector_callback_status_t connector_callback(connector_class_id_t const class_id,
+                                        connector_request_id_t const request_id,
                                         void const * const request_data,
                                         size_t const request_length,
                                         void * response_data,
@@ -840,8 +840,8 @@ static void InitIDigiConfig(void){
     connector_config.connected = false;
 }
 
-connector_callback_status_t connector_callback(connector_class_t const class_id,
-                                        connector_request_t const request_id,
+connector_callback_status_t connector_callback(connector_class_id_t const class_id,
+                                        connector_request_id_t const request_id,
                                         void const * const request_data,
                                         size_t const request_length,
                                         void * response_data,
@@ -862,7 +862,7 @@ connector_callback_status_t connector_callback(connector_class_t const class_id,
             status = connector_network_callback(request_id.network_request,
                     request_data, response_data, response_length);
             break;
-        case connector_class_data_service:
+        case connector_class_id_data_service:
             status = connector_data_service_callback(request_id.data_service_request,
                     request_data, response_data, response_length);
             break;

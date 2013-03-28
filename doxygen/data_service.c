@@ -6,7 +6,7 @@
  *
  * The Data Service API is used to send data to and from the iDigi Device Cloud.  Data service transfers
  * are either initiated from the iDigi Device Cloud or the device itself. The following requests under
- * @ref connector_class_data_service are listed below:
+ * @ref connector_class_id_data_service are listed below:
  * 
  * @li @ref put_request : Data transfers initiated by the device and used to
  * write files on to the iDigi Device Cloud.  The iDigi Device Cloud may send a status response back
@@ -115,7 +115,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_data_service @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -192,7 +192,7 @@
  * An example of an application callback for a put request is shown below:
  *
  * @code
- * connector_callback_status_t app_data_service_callback(connector_class_t const class_id, connector_request_t const request_d,
+ * connector_callback_status_t app_data_service_callback(connector_class_id_t const class_id, connector_request_id_t const request_d,
  *                                                  void const * request_data, size_t const request_length,
  *                                                  void * response_data, size_t * const response_length)
  * {
@@ -201,7 +201,7 @@
  *    connector_data_service_msg_response_t * const put_response = response_data;
  *
  *
- *     if (class_id == connector_class_data_service && request_id.data_service_request == connector_data_service_device_request) 
+ *     if (class_id == connector_class_id_data_service && request_id.data_service_request == connector_data_service_device_request) 
  *    {
  *        switch (put_request->message_type)
  *        {
@@ -291,7 +291,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_data_service @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -376,15 +376,15 @@
  *
  *
  *
- * connector_callback_status_t app_data_service_callback(connector_class_t const request_id,
- *                                                   connector_request_t const request_id,
+ * connector_callback_status_t app_data_service_callback(connector_class_id_t const request_id,
+ *                                                   connector_request_id_t const request_id,
  *                                                   void const * request_data, size_t const request_length,
  *                                                   void * response_data, size_t * const response_length)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *     connector_data_service_msg_request_t const * const service_device_request = request_data;
  *
- *     if (class_id == connector_class_data_service && request_id.data_service_request == connector_data_service_device_request) 
+ *     if (class_id == connector_class_id_data_service && request_id.data_service_request == connector_data_service_device_request) 
  *     {   // Device request from iDigi Device Cloud
  *         switch (service_device_request->message_type)
  *         {
@@ -603,7 +603,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_data_service @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>

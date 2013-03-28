@@ -10,13 +10,13 @@
  * =======================================================================
  */
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_t const class_number, connector_request_t const request_number, connector_status_t const status)
+static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status)
 {
     connector_status_t result = connector_working;
 
 #if (defined CONNECTOR_DEBUG)
     connector_error_status_t err_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_error_status;
     err_status.class_id = class_number;
@@ -48,7 +48,7 @@ static connector_status_t get_config_device_id(connector_data_t * const connecto
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_config_pointer_data_t device_id;
 
     device_id.bytes_required = DEVICE_ID_LENGTH;
@@ -92,7 +92,7 @@ static connector_status_t get_config_server_url(connector_data_t * const connect
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
     connector_config_pointer_string_t   server_url;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_server_url;
 
@@ -144,7 +144,7 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
 #else
     connector_config_connection_type_t  config_connection;
     connector_callback_status_t callback_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_connection_type;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_connection);
@@ -189,7 +189,7 @@ static connector_status_t get_config_mac_addr(connector_data_t * const connector
     if (connector_ptr->mac_addr == NULL)
     {
         connector_callback_status_t callback_status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_config_pointer_data_t mac_addr;
 
         mac_addr.bytes_required = MAC_ADDR_LENGTH;
@@ -232,7 +232,7 @@ static connector_status_t get_config_link_speed(connector_data_t * const connect
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_config_link_speed_t config_link;
 
     request_id.config_request = connector_request_id_config_link_speed;
@@ -261,7 +261,7 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
     if (connector_ptr->phone_dialed == NULL)
     {
         connector_callback_status_t callback_status;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_config_pointer_string_t phone_number;
 
         request_id.config_request = connector_request_id_config_phone_number;
@@ -313,7 +313,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
 #else
     connector_callback_status_t callback_status;
 
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_config_device_id_method_t device_id;
 
     request_id.config_request = connector_request_id_config_device_id_method;
@@ -382,7 +382,7 @@ static connector_status_t get_config_wan_id(connector_data_t * const connector_p
     size_t  bytes_required;
     uint8_t max_digits ;
 
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     switch (config_request_id)
     {
@@ -456,7 +456,7 @@ static connector_status_t get_config_wan_type(connector_data_t * const connector
     connector_ptr->wan_type = CONNECTOR_WAN_TYPE;
 #else
     connector_callback_status_t callback_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_config_wan_type_t config_wan;
 
 

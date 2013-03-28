@@ -38,7 +38,7 @@ typedef uint32_t in_addr_t;
 #define MY_SERVER_URL       "my.idigi.com"
 #define MY_IMEI_NUMBER      "000000-00-000000-0"
 
-extern connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length);
 

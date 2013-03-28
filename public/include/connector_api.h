@@ -144,15 +144,15 @@ typedef enum {
     connector_class_id_config,             /**< Configuration Class Id */
     connector_class_id_operating_system,   /**< Operating System Class Id */
     connector_class_id_firmware,           /**< Firmware Facility Class Id */
-    connector_class_data_service,       /**< Data Service Class Id */
+    connector_class_id_data_service,       /**< Data Service Class Id */
     connector_class_id_remote_config,   /**< Remote Configuration Class ID */
-    connector_class_file_system,        /**< File System Class Id */
+    connector_class_id_file_system,        /**< File System Class Id */
     connector_class_id_network_tcp,     /**< TCP Network Class ID */
-    connector_class_network_udp,        /**< UDP Network Class ID */
-    connector_class_network_sms,        /**< SMS Network Class ID */
-    connector_class_status,             /**< Class ID for all status */
-    connector_class_sm                  /**< Short message specific class ID */
-} connector_class_t;
+    connector_class_id_network_udp,        /**< UDP Network Class ID */
+    connector_class_id_network_sms,        /**< SMS Network Class ID */
+    connector_class_id_status,             /**< Class ID for all status */
+    connector_class_id_short_message                  /**< Short message specific class ID */
+} connector_class_id_t;
 /**
 * @}
 */
@@ -197,7 +197,7 @@ typedef enum
 */
 /**
 * File System Request Id passed to the application's callback to use file system.
-* The class id for this connector_file_system_request_t is connector_class_file_system.
+* The class id for this connector_file_system_request_t is connector_class_id_file_system.
 */
 
 typedef enum {
@@ -246,7 +246,7 @@ typedef enum {
 /**
 * These request IDs are used whenever the iDigi Connector wants to communicate either its
 * status or the iDigi Device Cloud's status to the user.The class ID associated with these
-* request ID is connector_class_status.
+* request ID is connector_class_id_status.
 */
 typedef enum {
     connector_status_ping_response,    /**< Used in a callback when the iDigi Connector receives a status/ping response from the server */
@@ -267,7 +267,7 @@ typedef enum {
 */
 /**
 * Short message related callbacks will use these request IDs. The class ID associated with these request ID is
-* connector_class_sm and supported transport methods under this class are SMS and UDP.
+* connector_class_id_short_message and supported transport methods under this class are SMS and UDP.
 */
 typedef enum {
     connector_sm_cli_request,     /**< Indicates CLI request is received from the iDigi device cloud. Also used to get the CLI response from the user */
@@ -365,12 +365,12 @@ typedef enum
 
 
 /**
-* @defgroup connector_request_t Request IDs
+* @defgroup connector_request_id_t Request IDs
 * @{
 */
 /**
 * Request IDs passed to callback identifying the type of request
-* @see connector_class_t
+* @see connector_class_id_t
 */
 typedef union {
     connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
@@ -388,7 +388,7 @@ typedef union {
     connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
     connector_status_request_t status_request;                   /**< Status request ID for status class */
     connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
-} connector_request_t;
+} connector_request_id_t;
 /**
 * @}
 */
@@ -418,8 +418,8 @@ typedef union {
 * @see connector_request_id_config_t
 */
 typedef struct  {
-    connector_class_t class_id;         /**< Class ID which iDigi connector encounters error with */
-    connector_request_t request_id;     /**< Request ID which iDigi connector encounters error with */
+    connector_class_id_t class_id;         /**< Class ID which iDigi connector encounters error with */
+    connector_request_id_t request_id;     /**< Request ID which iDigi connector encounters error with */
     connector_status_t status;          /**< Error status */
 } connector_error_status_t;
 /**
@@ -1103,7 +1103,7 @@ typedef struct
  * @see connector_callback_status_t
  * @see connector_init()
  */
-typedef connector_callback_status_t (* connector_callback_t) (connector_class_t const class_id, connector_request_t const request_id, void * const data);
+typedef connector_callback_status_t (* connector_callback_t) (connector_class_id_t const class_id, connector_request_id_t const request_id, void * const data);
 /**
 * @}
 */

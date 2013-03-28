@@ -50,7 +50,7 @@ static void free_static_data(connector_data_t * const connector_ptr,
 #endif
 
 
-static connector_callback_status_t connector_callback(connector_callback_t const callback, connector_class_t const class_id,  connector_request_t const request_id,
+static connector_callback_status_t connector_callback(connector_callback_t const callback, connector_class_id_t const class_id,  connector_request_id_t const request_id,
                                                                        void * const data)
 {
     connector_callback_status_t status = callback(class_id, request_id, data);
@@ -88,7 +88,7 @@ static connector_status_t get_system_time(connector_data_t * const connector_ptr
 {
     connector_status_t result = connector_abort;
     connector_callback_status_t status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_os_system_up_time_t data;
 
     /* Call callback to get system up time in second */
@@ -116,7 +116,7 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
     connector_status_t result = connector_working;
     connector_callback_status_t status;
     connector_os_malloc_t data;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.os_request = connector_request_id_os_malloc;
     data.size = length;
@@ -160,7 +160,7 @@ static connector_status_t malloc_data(connector_data_t * const connector_ptr, si
 static connector_status_t free_data(connector_data_t * const connector_ptr, void * const ptr)
 {
     connector_status_t result = connector_working;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_os_free_t data;
 
     request_id.os_request = connector_request_id_os_free;
@@ -215,7 +215,7 @@ static connector_status_t yield_process(connector_data_t * const connector_ptr, 
     connector_status_t result = connector_working;
 
     {
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_os_yield_t data; 
         connector_callback_status_t callback_status;
 
@@ -242,9 +242,9 @@ static connector_status_t connector_reboot(connector_data_t * const connector_pt
     connector_status_t result;
 
     connector_callback_status_t status = connector_callback_continue;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
-    connector_class_t class_id = connector_class_id_operating_system;
+    connector_class_id_t class_id = connector_class_id_operating_system;
     request_id.os_request = connector_request_id_os_reboot;
 
     /* server reboots us */

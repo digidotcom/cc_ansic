@@ -18,7 +18,7 @@ char * status_to_str(connector_status_t arg)
     return "";
 }
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_t const class_id, connector_close_status_t const status)
+connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
@@ -42,7 +42,7 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_t const cl
     return type;
 }
 
-connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length)
 {
@@ -57,10 +57,10 @@ connector_callback_status_t app_connector_callback(connector_class_t const class
         status = app_os_handler(request_id.os_request, request_data, request_length, response_data, response_length);
         break;
     case connector_class_network_tcp:
-    case connector_class_network_udp:
+    case connector_class_id_network_udp:
         status = app_network_handler(class_id, request_id.network_request, request_data, request_length, response_data, response_length);
         break;
-    case connector_class_status:
+    case connector_class_id_status:
         status = app_status_handler(request_id.status_request, request_data, request_length, response_data, response_length);
         break;
     default:

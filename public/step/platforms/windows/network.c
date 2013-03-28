@@ -91,7 +91,7 @@ done:
     return ret;
 }
 
-static connector_callback_status_t app_network_open(connector_class_t const class_id,
+static connector_callback_status_t app_network_open(connector_class_id_t const class_id,
                                                 char const * const domain_name,
                                                 size_t const length,
                                                 connector_network_handle_t ** network_handle)
@@ -223,7 +223,7 @@ done:
  * EAGAIN or EWOULDBLOCK error, 0 bytes must be returned and iDigi Connector will continue
  * calling this function.
  */
-static connector_callback_status_t app_network_send(connector_class_t const class_id,
+static connector_callback_status_t app_network_send(connector_class_id_t const class_id,
                                                 connector_write_request_t const * const write_data,
                                                 size_t * const sent_length)
 {
@@ -257,7 +257,7 @@ static connector_callback_status_t app_network_send(connector_class_t const clas
  * function must not block. If it encounters EAGAIN or EWOULDBLOCK error, 0 
  * bytes must be returned and iDigi Connector will continue calling this function.
  */
-static connector_callback_status_t app_network_receive(connector_class_t const class_id,
+static connector_callback_status_t app_network_receive(connector_class_id_t const class_id,
                                                    connector_read_request_t const * const read_data,
                                                    size_t * const read_length)
 {
@@ -298,7 +298,7 @@ done:
 }
 
 
-static connector_callback_status_t app_network_close(connector_class_t const class_id,
+static connector_callback_status_t app_network_close(connector_class_id_t const class_id,
                                                  connector_close_request_t const * const close_data,
                                                  connector_auto_connect_type_t * const is_to_reconnect)
 {
@@ -342,7 +342,7 @@ done:
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_handler(connector_class_t const class_id,
+connector_callback_status_t app_network_handler(connector_class_id_t const class_id,
                                             connector_network_request_t const request,
                                             void const * const request_data, size_t const request_length,
                                             void * response_data, size_t * const response_length)

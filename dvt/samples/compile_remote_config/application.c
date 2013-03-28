@@ -22,7 +22,7 @@ extern connector_callback_status_t app_remote_config_handler(connector_remote_co
                                                       void const * const request_data, size_t const request_length,
                                                       void * response_data, size_t * const response_length);
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_t const class_id, connector_close_status_t const status)
+connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
@@ -47,7 +47,7 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_t const cl
 }
 
 
-connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length)
 {

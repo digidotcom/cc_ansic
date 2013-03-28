@@ -13,7 +13,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-static connector_callback_status_t app_network_open(connector_class_t const class_id,char const * const host_name, size_t const length, connector_network_handle_t ** network_handle)
+static connector_callback_status_t app_network_open(connector_class_id_t const class_id,char const * const host_name, size_t const length, connector_network_handle_t ** network_handle)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
@@ -25,7 +25,7 @@ static connector_callback_status_t app_network_open(connector_class_t const clas
     return rc;
 }
 
-static connector_callback_status_t app_network_send(connector_class_t const class_id,connector_write_request_t const * const write_data, size_t * const sent_length)
+static connector_callback_status_t app_network_send(connector_class_id_t const class_id,connector_write_request_t const * const write_data, size_t * const sent_length)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
@@ -36,7 +36,7 @@ static connector_callback_status_t app_network_send(connector_class_t const clas
     return rc;
 }
 
-static connector_callback_status_t app_network_receive(connector_class_t const class_id,connector_read_request_t const * const read_data, size_t * const read_length)
+static connector_callback_status_t app_network_receive(connector_class_id_t const class_id,connector_read_request_t const * const read_data, size_t * const read_length)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
@@ -46,7 +46,7 @@ static connector_callback_status_t app_network_receive(connector_class_t const c
     return rc;
 }
 
-static connector_callback_status_t app_network_close(connector_class_t const class_id,connector_close_request_t const * const close_data, connector_auto_connect_type_t * const is_to_reconnect)
+static connector_callback_status_t app_network_close(connector_class_id_t const class_id,connector_close_request_t const * const close_data, connector_auto_connect_type_t * const is_to_reconnect)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -70,7 +70,7 @@ connector_callback_status_t app_network_tcp_handler(connector_network_request_t 
                                             void * response_data, size_t * const response_length)
 {
     connector_callback_status_t status;
-    connector_class_t const class_id = connector_class_network_tcp;
+    connector_class_id_t const class_id = connector_class_network_tcp;
 
     UNUSED_ARGUMENT(request_length);
 
@@ -113,7 +113,7 @@ connector_callback_status_t app_network_udp_handler(connector_network_request_t 
                                             void * response_data, size_t * const response_length)
 {
     connector_callback_status_t status;
-    connector_class_t const class_id = connector_class_network_udp;
+    connector_class_id_t const class_id = connector_class_id_network_udp;
     UNUSED_ARGUMENT(request_length);
 
     switch (request)

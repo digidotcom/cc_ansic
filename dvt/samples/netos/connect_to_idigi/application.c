@@ -12,7 +12,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length)
 {
@@ -29,7 +29,7 @@ connector_callback_status_t app_connector_callback(connector_class_t const class
     case connector_class_network_tcp:
         status = app_network_handler(request_id.network_request, request_data, request_length, response_data, response_length);
         break;
-    case connector_class_status:
+    case connector_class_id_status:
         status = app_status_handler(request_id.status_request, request_data, request_length, response_data, response_length);
         break;
     default:

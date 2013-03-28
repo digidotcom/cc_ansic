@@ -551,7 +551,7 @@ static connector_callback_status_t app_get_sms_service_id(char const ** const se
 
 #define enum_to_case(name)  case name:  result = #name;             break
 
-static char const * app_class_to_string(connector_class_t const value)
+static char const * app_class_to_string(connector_class_id_t const value)
 {
     char const * result = NULL;
     switch (value)
@@ -559,14 +559,14 @@ static char const * app_class_to_string(connector_class_t const value)
         enum_to_case(connector_class_config);
         enum_to_case(connector_class_operating_system);
         enum_to_case(connector_class_firmware);
-        enum_to_case(connector_class_data_service);
+        enum_to_case(connector_class_id_data_service);
         enum_to_case(connector_class_remote_config_service);
-        enum_to_case(connector_class_file_system);
+        enum_to_case(connector_class_id_file_system);
         enum_to_case(connector_class_network_tcp);
-        enum_to_case(connector_class_network_udp);
-        enum_to_case(connector_class_network_sms);
-        enum_to_case(connector_class_status);
-        enum_to_case(connector_class_sm);
+        enum_to_case(connector_class_id_network_udp);
+        enum_to_case(connector_class_id_network_sms);
+        enum_to_case(connector_class_id_status);
+        enum_to_case(connector_class_id_short_message);
     }
     return result;
 }
@@ -780,8 +780,8 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
         APP_DEBUG("Request: %s (%d) ", app_config_class_to_string(error_data->request_id.config_request), error_data->request_id.config_request);
         break;
     case connector_class_network_tcp:
-    case connector_class_network_udp:
-    case connector_class_network_sms:
+    case connector_class_id_network_udp:
+    case connector_class_id_network_sms:
         APP_DEBUG("Request: %s (%d) ", app_network_class_to_string(error_data->request_id.network_request), error_data->request_id.network_request);
         break;
     case connector_class_operating_system:
@@ -790,19 +790,19 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
     case connector_class_firmware:
         APP_DEBUG("Request: %s (%d) ", app_firmware_class_to_string(error_data->request_id.firmware_request), error_data->request_id.firmware_request);
         break;
-    case connector_class_data_service:
+    case connector_class_id_data_service:
         APP_DEBUG("Request: %s (%d) ", app_data_service_class_to_string(error_data->request_id.data_service_request), error_data->request_id.data_service_request);
         break;
-    case connector_class_file_system:
+    case connector_class_id_file_system:
         APP_DEBUG("Request: %s (%d) ", app_file_system_class_to_string(error_data->request_id.file_system_request), error_data->request_id.file_system_request);
         break;
     case connector_class_remote_config_service:
         APP_DEBUG("Request: %s (%d) ", app_remote_config_class_to_string(error_data->request_id.remote_config_request), error_data->request_id.remote_config_request);
         break;
-    case connector_class_status:
+    case connector_class_id_status:
         APP_DEBUG("Request: %s (%d) ", app_status_class_to_string(error_data->request_id.status_request), error_data->request_id.status_request);
         break;
-    case connector_class_sm:
+    case connector_class_id_short_message:
         APP_DEBUG("Request: %s (%d) ", app_sm_class_to_string(error_data->request_id.sm_request), error_data->request_id.sm_request);
         break;
     }

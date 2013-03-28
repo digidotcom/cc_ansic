@@ -112,7 +112,7 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
 {
     connector_callback_status_t status;
     connector_network_send_data_t send_data;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     send_data.buffer = buffer;
     send_data.bytes_available = *length;

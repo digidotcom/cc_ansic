@@ -8,7 +8,7 @@
  * application when TCP communication is established, keep alive message is not received from the iDigi Device Cloud, keep alive
  * message is restored and received from the iDigi Device Cloud, and iDigi connector stops running.
  *
- * The following requests under @ref connector_class_status are listed below:
+ * The following requests under @ref connector_class_id_status are listed below:
  *
  * @li @ref cloud_status
  * - A device originated request to get the iDigi Device Cloud status. If the transport layer is UDP,
@@ -100,7 +100,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_status @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_status @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -170,7 +170,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_status @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_status @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -239,7 +239,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_status @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_status @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>
@@ -297,7 +297,7 @@
  * </tr>
  * <tr>
  *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_status @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_status @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_id</td>

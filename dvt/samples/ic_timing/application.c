@@ -29,7 +29,7 @@
 #include "application.h"
 #include "connector_config.h"
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_t const class_id, connector_close_status_t const status)
+connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
@@ -53,7 +53,7 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_t const cl
     return type;
 }
 
-connector_callback_status_t app_connector_callback(connector_class_t const class_id, connector_request_t const request_id,
+connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length)
 {
@@ -81,7 +81,7 @@ connector_callback_status_t app_connector_callback(connector_class_t const class
         status = app_network_tcp_handler(request_id.network_request, request_data, request_length, response_data, response_length);
         break;
 
-    case connector_class_data_service:
+    case connector_class_id_data_service:
         status = app_data_service_handler(request_id.data_service_request, request_data, request_length, response_data, response_length);
         break;
 
@@ -89,7 +89,7 @@ connector_callback_status_t app_connector_callback(connector_class_t const class
         status = app_firmware_handler(request_id.firmware_request, request_data, request_length, response_data, response_length);
         break;
 
-    case connector_class_file_system:
+    case connector_class_id_file_system:
         status = app_file_system_handler(request_id.file_system_request, request_data, request_length, response_data, response_length);
         break;
 
@@ -97,7 +97,7 @@ connector_callback_status_t app_connector_callback(connector_class_t const class
         status = app_remote_config_handler(request_id.remote_config_request, request_data, request_length, response_data, response_length);
         break;
 
-    case connector_class_status:
+    case connector_class_id_status:
         status = app_status_handler(request_id.status_request, request_data, request_length, response_data, response_length);
         break;
 

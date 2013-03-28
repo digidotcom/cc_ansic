@@ -101,11 +101,11 @@ static connector_status_t fs_set_abort(connector_data_t * const connector_ptr,
                                    connector_status_t const error_status)
 {
 
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     request_id.file_system_request = file_request;
 
     context->error.error_status = connector_file_user_cancel;
-    notify_error_status(connector_ptr->callback, connector_class_file_system, request_id, error_status);
+    notify_error_status(connector_ptr->callback, connector_class_id_file_system, request_id, error_status);
     context->status = connector_abort;
     return context->status;
 }
@@ -163,7 +163,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
         connector_file_data_response_t response;
         size_t response_length = sizeof response;
 
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         request_id.file_system_request = connector_file_system_strerror;
 
         response.error    = &context->error;
@@ -172,7 +172,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
 
         response.user_context = context->user_context;
 
-        callback_status = connector_callback(connector_ptr->callback, connector_class_file_system, request_id,
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_file_system, request_id,
                        NULL, 0, &response, &response_length);
 
         context->user_context = response.user_context;
@@ -223,14 +223,14 @@ static connector_status_t call_file_system_user(connector_data_t * const connect
     size_t response_length_in = response_length;
     connector_status_t status = connector_working;
     connector_callback_status_t callback_status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     request_id.file_system_request = fs_request_id;
 
     response->user_context = context->user_context;
     response->error = &context->error;
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_file_system, request_id,
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_file_system, request_id,
                             request_data, request_length, response, &response_length_in);
 
     context->user_context = response->user_context;
@@ -1669,7 +1669,7 @@ static connector_status_t file_system_error_callback(connector_data_t * const co
 
     connector_file_error_request_t request;
     connector_file_data_response_t response;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     size_t response_length = sizeof response;
 
@@ -1680,7 +1680,7 @@ static connector_status_t file_system_error_callback(connector_data_t * const co
     response.size_in_bytes = 0;
     response.user_context = context == NULL ? NULL : context->user_context;
 
-    connector_callback(connector_ptr->callback, connector_class_file_system, request_id,
+    connector_callback(connector_ptr->callback, connector_class_id_file_system, request_id,
                    &request, sizeof request, &response, &response_length);
 
     if (context != NULL)

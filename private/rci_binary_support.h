@@ -237,7 +237,7 @@ typedef struct
     rci_service_data_t * service_data;
     rci_status_t status;
     struct {
-        connector_request_t request;
+        connector_request_id_t request;
         connector_callback_status_t status;
     } callback;
 

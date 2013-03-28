@@ -360,13 +360,13 @@ void app_config_error(connector_error_status_t * const error_data)
                      error_data->request_id.firmware_request,
                      error_status_string[error_data->status],error_data->status);
         break;
-    case connector_class_data_service:
+    case connector_class_id_data_service:
         APP_DEBUG("connector_error_status: Data service - %s (%d)  status = %s (%d)\n",
                      data_service_string[error_data->request_id.data_service_request],
                      error_data->request_id.data_service_request,
                      error_status_string[error_data->status],error_data->status);
         break;
-    case connector_class_file_system:
+    case connector_class_id_file_system:
            APP_DEBUG("connector_error_status: File system - %s (%d)  status = %s (%d)\n",
                         file_system_string[error_data->request_id.file_system_request],
                         error_data->request_id.file_system_request,

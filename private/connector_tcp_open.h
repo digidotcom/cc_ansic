@@ -17,7 +17,7 @@ static connector_status_t connect_server(connector_data_t * const connector_ptr,
     connector_callback_status_t status;
     connector_network_open_data_t open_data;
 
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     open_data.server_url = server_url;
     open_data.length = server_url_length;

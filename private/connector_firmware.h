@@ -107,7 +107,7 @@ static connector_status_t confirm_fw_version(connector_firmware_data_t * const f
     if (target_number == 0 && version != rci_get_firmware_target_zero_version())
     {
         connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
-        connector_request_t request_id;
+        connector_request_id_t request_id;
 
         connector_debug_printf("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)\n", version, rci_get_firmware_target_zero_version());
         request_id.firmware_request = connector_firmware_version;
@@ -131,7 +131,7 @@ static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr
     unsigned long end_time_stamp = 0;
 
     {
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_callback_status_t status;
 
         request_id.firmware_request = fw_request_id;
@@ -352,7 +352,7 @@ enum fw_info {
 
         if ((fw_ptr->desc_length + fw_ptr->spec_length) > (FW_ID_STRING_LENGTH -1))
         {
-            connector_request_t request_id;
+            connector_request_id_t request_id;
 
             request_id.firmware_request = connector_request_id_firmware_info;
             connector_debug_printf("process_fw_info_request: description length = %lu + name spec length = %lu\n",
@@ -1087,7 +1087,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
                 /* get max count of targets that fit into the response buffer */
                 if (fw_ptr->target_count > max_targets)
                 {
-                    connector_request_t request_id;
+                    connector_request_id_t request_id;
 
                     request_id.firmware_request = connector_request_id_firmware_target_count;
                     notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_range);

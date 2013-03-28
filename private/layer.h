@@ -24,7 +24,7 @@ typedef connector_status_t (* connector_facility_service_process_cb_t )(struct c
                                                                  unsigned int * const receive_timeout);
 
 typedef struct {
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_facility_service_init_cb_t init_cb;
     connector_facility_service_delete_cb_t delete_cb;
     connector_facility_service_delete_cb_t cleanup_cb;
@@ -166,7 +166,7 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
 
     for (i=0; i < connector_facility_count; i++)
     {
-        connector_request_t const request_id = connector_supported_service_table[i].request_id;
+        connector_request_id_t const request_id = connector_supported_service_table[i].request_id;
         connector_config_supported_status_t config_status;
 
         config_status.supported = connector_bool(request_id.config_request == MANDATORY_FACILITY);
@@ -212,7 +212,7 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
 error:
     if (result != connector_working)
     {
-        connector_request_t const request_id = connector_supported_service_table[i].request_id;
+        connector_request_id_t const request_id = connector_supported_service_table[i].request_id;
         if (notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result) != connector_working)
             result = connector_abort;
     }

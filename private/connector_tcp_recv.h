@@ -46,7 +46,7 @@ static void tcp_release_receive_packet(connector_data_t * const connector_ptr, c
 static connector_callback_status_t tcp_receive_buffer(connector_data_t * const connector_ptr, uint8_t  * const buffer, size_t * const length)
 {
     connector_callback_status_t status;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
 
     /* Call callback to receive data from server */
     request_id.network_request = connector_request_id_network_receive;

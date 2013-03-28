@@ -108,11 +108,11 @@ error:
 static connector_status_t sm_more_data_callback(connector_data_t * const connector_ptr)
 {
     connector_status_t result;
-    connector_request_t request_id;
+    connector_request_id_t request_id;
     connector_callback_status_t callback_status;
 
     request_id.sm_request = connector_sm_more_data;
-    callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_sm, request_id, NULL, 0);
+    callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_id_short_message, request_id, NULL, 0);
     result = sm_map_callback_status_to_connector_status(callback_status);
 
     return result;
@@ -426,7 +426,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
         goto done;
 
     {
-        connector_request_t request_id;
+        connector_request_id_t request_id;
         connector_read_request_t read_data;
         connector_callback_status_t status;
         size_t bytes_read = 0;
@@ -452,7 +452,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                 switch (sm_ptr->network.class_id)
                 {
                     #if (defined CONNECTOR_TRANSPORT_SMS)
-                    case connector_class_network_sms:
+                    case connector_class_id_network_sms:
                         result = sm_decode_segment(connector_ptr, recv_ptr);
                         if(result != connector_working) goto done; /* not iDigi packet? */
                         result = sm_verify_sms_preamble(sm_ptr);
@@ -460,7 +460,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                     #endif
 
                     #if (defined CONNECTOR_TRANSPORT_UDP)
-                    case connector_class_network_udp:
+                    case connector_class_id_network_udp:
                         result = sm_verify_udp_header(sm_ptr);
                         break;
                     #endif

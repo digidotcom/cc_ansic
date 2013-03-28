@@ -33,7 +33,7 @@ static connector_callback_status_t app_network_udp_close(connector_close_request
     connector_callback_status_t status = connector_callback_continue;
     connector_network_handle_t * const fd = close_data->network_handle;
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_network_udp, close_data->status);
+    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_udp, close_data->status);
 
     if (close(*fd) < 0)
     {
@@ -77,7 +77,7 @@ static connector_callback_status_t app_network_udp_receive(connector_read_reques
         {
             APP_DEBUG("app_network_udp_receive: recv() failed, errno %d\n", err);
             /* if not timeout (no data) return an error */
-            app_dns_cache_invalidate(connector_class_network_udp);
+            app_dns_cache_invalidate(connector_class_id_network_udp);
             status = connector_callback_error;
         }
     }
@@ -109,7 +109,7 @@ static connector_callback_status_t app_network_udp_send(connector_write_request_
         {
             status = connector_callback_error;
             APP_DEBUG("app_network_udp_send: send() failed, errno %d\n", err);
-            app_dns_cache_invalidate(connector_class_network_udp);
+            app_dns_cache_invalidate(connector_class_id_network_udp);
         }
     }
     *sent_length = (size_t)bytes_sent;
@@ -166,7 +166,7 @@ static connector_callback_status_t app_network_udp_open(char const * const serve
 
     *network_handle = &fd;
 
-    status = app_dns_resolve(connector_class_network_udp, server_name, length, &ip_addr);
+    status = app_dns_resolve(connector_class_id_network_udp, server_name, length, &ip_addr);
     if (status != connector_callback_continue)
     {
         APP_DEBUG("app_network_udp_open: Can't resolve DNS for %s\n", server_name);

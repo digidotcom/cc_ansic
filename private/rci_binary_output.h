@@ -221,7 +221,7 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
 
         if (items != 4 || ip1 > 255 || ip2 > 255 || ip3 > 255 || ip4 > 255 || ip1 < 0 || ip2 < 0 || ip3 < 0 || ip4 < 0)
         {
-            connector_request_t request_id;
+            connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
             notify_error_status(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, request_id, connector_invalid_data_range);
             rci->status = rci_status_error;
@@ -276,7 +276,7 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
         }
         if (dot_count != 4)
         {
-            connector_request_t request_id;
+            connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
             notify_error_status(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, request_id, connector_invalid_data_range);
             rci->status = rci_status_error;
