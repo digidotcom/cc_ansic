@@ -17,7 +17,7 @@ typedef struct
     #else
     #define DP_FILE_PATH_SIZE   32
     #endif
-    connector_data_service_put_request_t header;
+    connector_request_data_service_send_t header;
     char file_path[DP_FILE_PATH_SIZE];
 
     enum
@@ -30,7 +30,7 @@ typedef struct
     {
         struct
         {
-            connector_data_point_request_t const * dp_request;
+            connector_request_data_point_single_t const * dp_request;
             connector_data_point_t  const * current_dp;
             size_t bytes_to_send;
             char * last_entry_ptr;
@@ -56,7 +56,7 @@ typedef struct
 
         struct
         {
-            connector_binary_point_request_t const * bp_request;
+            connector_request_data_point_binary_t const * bp_request;
             uint8_t const * current_bp;
             size_t bytes_to_send;
         } binary;
@@ -65,81 +65,76 @@ typedef struct
 
 } data_point_info_t;
 
-static connector_data_point_request_t const * data_point_pending = NULL;
-static connector_binary_point_request_t const * binary_point_pending = NULL;
+static connector_request_data_point_single_t const * data_point_single_pending = NULL;
+static connector_request_data_point_binary_t const * data_point_binary_pending = NULL;
 
-static connector_status_t dp_initiate_data_point(connector_data_point_request_t const * const dp_ptr)
+static connector_status_t dp_initiate_data_point_single(connector_request_data_point_single_t const * const dp_ptr)
 {
     connector_status_t result = connector_invalid_data;
 
     ASSERT_GOTO(dp_ptr != NULL, error);
 
-    if (data_point_pending != NULL)
+    if (data_point_single_pending != NULL)
     {
         result = connector_service_busy;
         goto error;
     }
 
-    if (dp_ptr->header.path == NULL)
+    if (dp_ptr->path == NULL)
     {
-        connector_debug_printf("dp_initiate_data_point: NULL data point path\n");
+        connector_debug_printf("dp_initiate_data_point_single: NULL data point path\n");
         goto error;
     }
 
     if ((dp_ptr->point == NULL))
     {
-        connector_debug_printf("dp_initiate_data_point: NULL data point\n");
+        connector_debug_printf("dp_initiate_data_point_single: NULL data point\n");
         goto error;
     }
 
-    data_point_pending = dp_ptr;
+    data_point_single_pending = dp_ptr;
     result = connector_success;
 
 error:
     return result;
 }
 
-static connector_status_t dp_initiate_binary_point(connector_binary_point_request_t const * const bp_ptr)
+static connector_status_t dp_initiate_data_point_binary(connector_binary_point_request_t const * const bp_ptr)
 {
     connector_status_t result = connector_invalid_data;
 
     ASSERT_GOTO(bp_ptr != NULL, error);
 
-    if (binary_point_pending != NULL)
+    if (data_point_binary_pending != NULL)
     {
         result = connector_service_busy;
         goto error;
     }
 
-    if (bp_ptr->header.path == NULL)
+    if (bp_ptr->path == NULL)
     {
-        connector_debug_printf("dp_initiate_binary_point: NULL data point path\n");
+        connector_debug_printf("dp_initiate_data_point_binary: NULL data point path\n");
         goto error;
     }
 
     if ((bp_ptr->point == NULL))
     {
-        connector_debug_printf("dp_initiate_binary_point: NULL data point\n");
+        connector_debug_printf("dp_initiate_data_point_binary: NULL data point\n");
         goto error;
     }
 
-    binary_point_pending = bp_ptr;
+    data_point_binary_pending = bp_ptr;
     result = connector_success;
 
 error:
     return result;
 }
 
-static connector_callback_status_t dp_return_response(connector_data_t * const connector_ptr, data_point_info_t * const dp_info, connector_session_status_t const status, char const * const error_str)
+static connector_callback_status_t dp_return_response(connector_data_t * const connector_ptr, connector_request_id_data_point_t const request, void * const cb_data)
 {
     connector_callback_status_t callback_status;
-    connector_message_status_response_t response_data;
     connector_request_t request_id;
-    void const * const context = (dp_info->type == dp_content_type_binary) ? dp_info->data.binary.bp_request->header.user_context : dp_info->data.csv.dp_request->header.user_context;
 
-    response_data.user_context = context;
-    response_data.status = status;
-    response_data.error_text = error_str;
     request_id.data_service_request = connector_data_service_dp_response;
     callback_status = connector_callback_no_response(connector_ptr->callback, connector_class_data_service, request_id, &response_data, sizeof response_data);
 

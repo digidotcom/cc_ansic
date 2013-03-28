@@ -230,10 +230,11 @@ typedef struct
     connector_transport_t transport;    /**< transport method to use */
     void const * user_context;          /**< user context to be passed back in response */
 
-    connector_data_point_type_t type;   /**< data point content type */
+    char const * path;                  /**< data point path in the stream */
     char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
     connector_data_point_t * point;     /**< pointer to list of data points */
+    connector_data_point_type_t type;   /**< data point content type */
 } connector_request_data_point_single_t;
 /**
 * @}
