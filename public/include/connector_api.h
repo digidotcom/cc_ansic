@@ -240,8 +240,8 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_status_request_t  iDigi Connector/Cloud status request IDs
-* @{
+* @defgroup connector_request_id_status_t  iDigi Connector/Cloud 
+* status request IDs @{ 
 */
 /**
 * These request IDs are used whenever the iDigi Connector wants to communicate either its
@@ -249,14 +249,14 @@ typedef enum {
 * request ID is connector_class_id_status.
 */
 typedef enum {
-    connector_status_ping_response,    /**< Used in a callback when the iDigi Connector receives a status/ping response from the server */
-    connector_status_ping_request,     /**< Used in a callback when the iDigi Connector receives a status/ping request from the server */
-    connector_status_tcp,              /**< Used in a callback for iDigi connector TCP status. The callback is called to notify the application that
+    connector_request_id_status_ping_response,    /**< Used in a callback when the iDigi Connector receives a status/ping response from the server */
+    connector_request_id_status_ping_request,     /**< Used in a callback when the iDigi Connector receives a status/ping request from the server */
+    connector_request_id_status_tcp,              /**< Used in a callback for iDigi connector TCP status. The callback is called to notify the application that
                                         TCP connection has been established, a keep-alive message was not received, or keep-alive message was received and restored.
                                           @see connector_tcp_status_t */
-    connector_status_stop_completed    /**< Used in a callback when the iDigi connector has stopped a transport running via @ref connector_initiate_action call with @ref connector_initiate_transport_stop. */
+    connector_request_id_status_stop_completed    /**< Used in a callback when the iDigi connector has stopped a transport running via @ref connector_initiate_action call with @ref connector_initiate_transport_stop. */
 
-} connector_status_request_t;
+} connector_request_id_status_t;
 /**
 * @}
 */
@@ -386,7 +386,7 @@ typedef union {
     #endif
     connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
     connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
-    connector_status_request_t status_request;                   /**< Status request ID for status class */
+    connector_request_id_status_t status_request;                   /**< Status request ID for status class */
     connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
 } connector_request_id_t;
 /**

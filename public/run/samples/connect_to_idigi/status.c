@@ -31,17 +31,17 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_status_handler(connector_status_request_t const request,
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request,
                                                void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
     switch (request)
     {
-    case connector_status_tcp:
+    case connector_request_id_status_tcp:
         status = app_tcp_status(data);
         break;
-    case connector_status_stop_completed:
+    case connector_request_id_status_stop_completed:
         APP_DEBUG("app_status_handle: connector_status_stop_completed\n");
         break;
     default:
