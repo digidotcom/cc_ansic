@@ -342,7 +342,6 @@ connector_callback_status_t app_network_tcp_handler(connector_request_id_network
         break;
 
     case connector_request_id_network_send:
-        //connector_network_open_data_t * p = data;
         status = app_network_tcp_send(data);
         break;
 

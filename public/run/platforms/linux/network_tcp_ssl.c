@@ -328,7 +328,7 @@ static connector_callback_status_t app_tcp_connect(in_addr_t const ip_addr,
 
 error:
     app_free_ssl_info(&ssl_info);
-    app_dns_set_redirected(connector_class_network_tcp, 0);
+    app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
 done:
     return status;
@@ -337,49 +337,46 @@ done:
 /*
  * Send data to the iDigi Device Cloud, this routine must not block.
  */
-static connector_callback_status_t app_network_tcp_send(connector_write_request_t const * const write_data,
-                                            size_t * const sent_length)
+static connector_callback_status_t app_network_tcp_send(connector_network_send_data_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_ssl_t * const ssl_ptr = (app_ssl_t *)write_data->network_handle;
+    app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
     int bytes_sent = 0;
 
-    bytes_sent = SSL_write(ssl_ptr->ssl, write_data->buffer, write_data->length);
+    bytes_sent = SSL_write(ssl_ptr->ssl, data->buffer, data->bytes_available);
     if (bytes_sent <= 0)
     {
         APP_DEBUG("SSL_write failed %d\n", bytes_sent);
         SSL_set_shutdown(ssl_ptr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
-        app_dns_cache_invalidate(connector_class_network_tcp);
+        app_dns_cache_invalidate(connector_class_id_network_tcp);
         status = connector_callback_error;
     }
 
-    *sent_length = bytes_sent;
+    data->bytes_used = bytes_sent;
     return status;
 }
 
 /*
  * This routine reads a specified number of bytes from the iDigi Device Cloud.
  */
-static connector_callback_status_t app_network_tcp_receive(connector_read_request_t const * const read_data, size_t * const read_length)
+static connector_callback_status_t app_network_tcp_receive(connector_network_receive_data_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_ssl_t * const ssl_ptr = (app_ssl_t *)read_data->network_handle;
+    app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
     int bytes_read = 0;
 
-    *read_length = 0;
     if (SSL_pending(ssl_ptr->ssl) == 0)
     {
         int ready;
         struct timeval timeout;
         fd_set read_set;
 
-        timeout.tv_sec = read_data->timeout;
+        timeout.tv_sec = 0;
         timeout.tv_usec = 0;
 
         FD_ZERO(&read_set);
         FD_SET(ssl_ptr->sfd, &read_set);
 
-        /* Blocking point for iDigi connector */
         ready = select(ssl_ptr->sfd + 1, &read_set, NULL, NULL, &timeout);
         if (ready == 0)
         {
@@ -394,7 +391,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_read_reques
         }
     }
 
-    bytes_read = SSL_read(ssl_ptr->ssl, read_data->buffer, read_data->length);
+    bytes_read = SSL_read(ssl_ptr->ssl, data->buffer, data->bytes_available);
     if (bytes_read <= 0)
     {
         int ssl_error = SSL_get_error(ssl_ptr->ssl, bytes_read);
@@ -407,21 +404,20 @@ static connector_callback_status_t app_network_tcp_receive(connector_read_reques
         /* EOF on input: the connection was closed. */
         SSL_set_shutdown(ssl_ptr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
         APP_DEBUG("SSL_read failed %d\n", bytes_read);
-        app_dns_cache_invalidate(connector_class_network_tcp);
+        app_dns_cache_invalidate(connector_class_id_network_tcp);
         status = connector_callback_error;
     }
 
-    *read_length = (size_t)bytes_read;
+    data->bytes_used = (size_t)bytes_read;
 
 done:
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_close(connector_close_request_t const * const close_data,
-                                                 connector_auto_connect_type_t * const is_to_reconnect)
+static connector_callback_status_t app_network_tcp_close(connector_network_close_data_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_ssl_t * const ssl_ptr = (app_ssl_t *)close_data->network_handle;
+    app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
 
     /* send close notify to peer */
     if (SSL_shutdown(ssl_ptr->ssl) == 0)
@@ -429,33 +425,31 @@ static connector_callback_status_t app_network_tcp_close(connector_close_request
 
     app_free_ssl_info(ssl_ptr);
 
-    app_dns_set_redirected(connector_class_network_tcp, close_data->status == connector_close_status_server_redirected);
+    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_server_redirected);
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_network_tcp, close_data->status);
+    data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_open(char const * const server_name,
-                                                    size_t const length,
-                                                    connector_network_handle_t ** network_handle)
+static connector_callback_status_t app_network_tcp_open(connector_network_open_data_t * const data)
 {
     connector_callback_status_t status;
     in_addr_t ip_addr;
 
-    status = app_dns_resolve(connector_class_network_tcp, server_name, length, &ip_addr);
+    status = app_dns_resolve(connector_class_id_network_tcp, data->device_cloud_url, &ip_addr);
     if (status != connector_callback_continue)
     {
-        APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", server_name);
+        APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", data->device_cloud_url);
         goto done;
     }
 
-    status = app_tcp_connect(ip_addr, network_handle);
+    status = app_tcp_connect(ip_addr, &data->handle);
 
     if (status == connector_callback_continue)
-        APP_DEBUG("network_tcp_open: connected to %s\n", server_name);
+        APP_DEBUG("network_tcp_open: connected to %s\n", data->device_cloud_url);
     else
     if (status == connector_callback_error)
-        APP_DEBUG("network_tcp_open: failed to connect to %s\n", server_name);
+        APP_DEBUG("network_tcp_open: failed to connect to %s\n", data->device_cloud_url);
 
 done:
     return status;
@@ -465,37 +459,34 @@ done:
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_tcp_handler(connector_network_request_t const request,
-                                            void const * const request_data, size_t const request_length,
-                                            void * response_data, size_t * const response_length)
+connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
+                                                    void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-
     switch (request)
     {
-        case connector_network_open:
-            status = app_network_tcp_open(request_data, request_length, response_data);
-            *response_length = sizeof(connector_network_handle_t);
-            break;
+    case connector_request_id_network_open:
+        status = app_network_tcp_open(data);
+        break;
 
-        case connector_network_send:
-            status = app_network_tcp_send(request_data, response_data);
-            break;
+    case connector_request_id_network_send:
+        status = app_network_tcp_send(data);
+        break;
 
-        case connector_network_receive:
-            status = app_network_tcp_receive(request_data, response_data);
-            break;
+    case connector_request_id_network_receive:
+        status = app_network_tcp_receive(data);
+        break;
 
-        case connector_network_close:
-            status = app_network_tcp_close(request_data, response_data);
-            break;
+    case connector_request_id_network_close:
+        status = app_network_tcp_close(data);
+        break;
 
-        default:
-            APP_DEBUG("app_network_handler: unrecognized tcp callback request [%d]\n", request);
-            status = connector_callback_unrecognized;
-            break;
+    default:
+        APP_DEBUG("app_network_tcp_handler: unrecognized callback request [%d]\n", request);
+        status = connector_callback_unrecognized;
+        break;
+
     }
 
     return status;
