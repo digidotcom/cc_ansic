@@ -26,12 +26,6 @@
 #include "connector_config.h"
 #include "connector_types.h"
 
-#include "connector_api_config.h"
-#include "connector_api_network.h"
-
-#if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
-#include "connector_api_remote.h"
-#endif
 
 #define asizeof(array)  (sizeof array/sizeof array[0])
 /**
@@ -46,6 +40,13 @@ typedef enum {
     connector_false,    /**< False */
     connector_true      /**< True */
 } connector_bool_t;
+
+#include "connector_api_config.h"
+#include "connector_api_network.h"
+
+#if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
+#include "connector_api_remote.h"
+#endif
 
  /**
  * @defgroup connector_port_numbers iDigi Port Numbers
@@ -140,15 +141,9 @@ typedef enum {
 * It tells class id for the request id passed to the application's callback.
 */
 typedef enum {
-<<<<<<< Updated upstream
     connector_class_id_config,             /**< Configuration Class Id */
     connector_class_id_operating_system,   /**< Operating System Class Id */
     connector_class_id_firmware,           /**< Firmware Facility Class Id */
-=======
-    connector_class_id_config,          /**< Configuration Class Id */
-    connector_class_operating_system,   /**< Operating System Class Id */
-    connector_class_id_firmware,        /**< Firmware Facility Class Id */
->>>>>>> Stashed changes
     connector_class_data_service,       /**< Data Service Class Id */
     connector_class_id_remote_config,   /**< Remote Configuration Class ID */
     connector_class_file_system,        /**< File System Class Id */
@@ -378,23 +373,8 @@ typedef enum
 * @see connector_class_t
 */
 typedef union {
-<<<<<<< Updated upstream
-   connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
-   connector_request_id_os_t os_request;                        /**< Operating system request ID for operating system class */
-   #if (defined CONNECTOR_FIRMWARE_SERVICE)
-   connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
-   #endif
-   #if (defined CONNECTOR_DATA_SERVICE)
-   connector_request_id_data_service_t data_service_request;    /**< Data service request ID for data service class */
-   #endif
-   connector_remote_config_request_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
-   connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
-   connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
-   connector_status_request_t status_request;                   /**< Status request ID for status class */
-   connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
-=======
     connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
-    connector_os_request_t os_request;                           /**< Operating system request ID for operating system class */
+    connector_request_id_os_t os_request;                           /**< Operating system request ID for operating system class */
     #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
     connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
     #endif
@@ -405,10 +385,9 @@ typedef union {
     connector_request_id_remote_config_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
     #endif
     connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
-    connector_network_request_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+    connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
     connector_status_request_t status_request;                   /**< Status request ID for status class */
     connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
->>>>>>> Stashed changes
 } connector_request_t;
 /**
 * @}

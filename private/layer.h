@@ -167,15 +167,15 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
     for (i=0; i < connector_facility_count; i++)
     {
         connector_request_t const request_id = connector_supported_service_table[i].request_id;
-        connector_config_supported_status_t config_supported;
+        connector_config_supported_status_t config_status;
 
-        config_supported.status = (request_id.config_request == MANDATORY_FACILITY) ? connector_service_supported : connector_service_unsupported;
+        config_status.supported = connector_bool(request_id.config_request == MANDATORY_FACILITY);
 
         if (request_id.config_request != MANDATORY_FACILITY)
         {   /* this is optional facility so ask application whether it supports this facility */
             connector_callback_status_t status;
 
-            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_supported);
+            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_status);
             switch (status)
             {
             case connector_callback_busy:
@@ -188,19 +188,19 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
                 result = connector_abort;
                 goto done;
             case connector_callback_unrecognized:
-                config_supported.status = connector_service_unsupported;
+                config_status.supported = connector_false;
                 break;
             case connector_callback_continue:
                 break;
             }
         }
 
-        switch (config_supported.status)
+        switch (config_status.supported)
         {
-        case connector_service_supported:
+        case connector_true:
             connector_ptr->edp_data.facilities.supported_mask |= (uint16_t)SET_FACILITY_SUPPORT(i);
             break;
-        case connector_service_unsupported:
+        case connector_false:
             break;
         default:
             result = connector_invalid_data_range;
