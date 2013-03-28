@@ -98,10 +98,11 @@ typedef struct {
 /**
 * Application String Pointer Configuration for the following callbacks:
 *
-*   -# @ref connector_request_id_config_device_type
-*   -# @ref connector_request_id_config_server_url
-*   -# @ref connector_request_id_config_phone_number
-*   -# @ref connector_request_id_config_password
+*   -# connector_request_id_config_device_type
+*   -# connector_request_id_config_server_url
+*   -# connector_request_id_config_phone_number
+*   -# connector_request_id_config_password
+*   -# connector_request_id_config_sms_service_id
 */
 typedef struct {
     char * string;           /**< Application string pointer */
@@ -211,26 +212,6 @@ typedef struct {
 
 
 /**
-* @defgroup connector_service_supported_status_t Service Supported Status
-* @{
-*/
-/**
-* Service supported status which is used in the application's callback
-* telling iDigi connector whether application supports a service or not.
-*
-* @see @ref firmware_support
-* @see @ref data_service_support
-*/
-typedef enum {
-    connector_service_unsupported,  /**< Service is not supported */
-    connector_service_supported     /**< Service is supported */
-} connector_service_supported_status_t;
-/**
-* @}
-*/
-
-
-/**
 * @defgroup connector_config_support_status_t Service Supported Status Configuration
 * @{
 */
@@ -241,7 +222,7 @@ typedef enum {
 *   -# @ref connector_request_id_config_file_system
 */
 typedef struct {
-    connector_service_supported_status_t status; /**< Application service supported status */
+    connector_bool_t supported; /**< Application service supported status */
 } connector_config_supported_status_t;
 /**
 * @}
@@ -359,7 +340,6 @@ typedef enum {
 **/
 typedef struct {
     connector_wan_type_t type;   /**< WAN type */
-
 } connector_config_wan_type_t;
 /**
 * @}
