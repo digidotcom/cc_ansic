@@ -189,7 +189,7 @@ typedef struct connector_sm_data_t
         size_t id_length;
         connector_sm_id_type_t id_type;
         connector_transport_state_t state;
-        connector_auto_connect_type_t connect_type;
+        connector_connect_auto_type_t connect_type;
     } transport;
 
     struct

@@ -88,7 +88,7 @@ typedef enum {
     edp_initialization_receive_protocol_version,
     edp_security_send_identity_verification,
     edp_security_send_device_id,
-    edp_security_send_server_url,
+    edp_security_send_device_cloud_url,
     edp_security_send_password,
     edp_discovery_send_vendor_id,
     edp_discovery_send_device_type,
@@ -217,11 +217,11 @@ typedef struct connector_edp_data {
         connector_bool_t is_set;
         connector_stop_condition_t condition;
         void * user_context;
-        connector_auto_connect_type_t connect_action;
+        connector_bool_t  auto_connect;
     } stop;
 
 #if !(defined CONNECTOR_NETWORK_TCP_START)
-    connector_auto_connect_type_t  connect_type;
+    connector_connect_auto_type_t  connect_type;
 #endif
 
 } connector_edp_data_t;

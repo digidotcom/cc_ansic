@@ -31,7 +31,7 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:
-             type = connector_manual_connect;
+             type = connector_connect_manual;
              break;
 
        /* otherwise it's an error and we want to retry */

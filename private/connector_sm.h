@@ -132,7 +132,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
         size_t length = sizeof sm_ptr->transport.connect_type;
 
-        connect_type.status = connector_auto_connect;
+        connect_type.status = connector_connect_auto;
         request_id.config_request = request;
         status = get_config_connect_status(connector_ptr, request_id, &connect_type);
         ASSERT_GOTO(status == connector_callback_continue, error);
@@ -396,7 +396,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
 
     if (sm_ptr->network.handle != NULL)
     {
-        connector_auto_connect_type_t close_action = connector_manual_connect;
+        connector_connect_auto_type_t close_action = connector_connect_manual;
         size_t response_length = sizeof close_action;
         connector_close_request_t request_data;
         connector_callback_status_t callback_status;
@@ -499,7 +499,7 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
         switch (sm_ptr->transport.state)
         {
             case connector_transport_idle:
-                if ((sm_ptr->transport.connect_type == connector_auto_connect) && (sm_ptr->close.status == connector_close_status_device_error))
+                if ((sm_ptr->transport.connect_type == connector_connect_auto) && (sm_ptr->close.status == connector_close_status_device_error))
                     sm_ptr->transport.state = connector_transport_open;
                 goto done;
 

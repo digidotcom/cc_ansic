@@ -72,11 +72,11 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
         case connector_callback_continue:
             if (device_type.string == NULL)
                 result = connector_invalid_data;
-            else if ((device_type.bytes_in_string == 0) || (device_type.bytes_in_string > DEVICE_TYPE_LENGTH))
+            else if ((device_type.length == 0) || (device_type.length > DEVICE_TYPE_LENGTH))
                 result = connector_invalid_data_size;
             else
             {
-                connector_ptr->edp_data.config.device_type_length = device_type.bytes_in_string;
+                connector_ptr->edp_data.config.device_type_length = device_type.length;
                 connector_ptr->edp_data.config.device_type = device_type.string;
             }
             break;
@@ -133,7 +133,7 @@ static connector_status_t get_config_keepalive(connector_data_t * const connecto
                 uint16_t const min_interval = MIN_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
                 uint16_t const max_interval = MAX_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
 #endif
-                if ((keepalive.interval < min_interval) || (keepalive.interval > max_interval))
+                if ((keepalive.interval_in_seconds < min_interval) || (keepalive.interval_in_seconds > max_interval))
                 {
                     notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
                     result = connector_abort;
@@ -148,7 +148,7 @@ static connector_status_t get_config_keepalive(connector_data_t * const connecto
 #elif !defined(CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
                     uint16_t * const keepalive_store_at = &connector_ptr->edp_data.config.rx_keepalive_interval;
 #endif
-                    *keepalive_store_at = keepalive.interval;
+                    *keepalive_store_at = keepalive.interval_in_seconds;
                 }
                 break;
             }
@@ -206,13 +206,14 @@ static connector_status_t get_config_wait_count(connector_data_t * const connect
 }
 #endif
 
-#define CC_IPV6_ADDRESS_LENGTH 16
-#define CC_IPV4_ADDRESS_LENGTH 4
 
 static connector_status_t get_config_ip_addr(connector_data_t * const connector_ptr)
 {
+#define CC_IPV6_ADDRESS_LENGTH 16
+#define CC_IPV4_ADDRESS_LENGTH 4
+
     connector_status_t result = connector_working;
-    connector_config_ip_addr_t config_ip;
+    connector_config_ip_address_t config_ip;
     connector_request_id_t request_id;
 
     {
@@ -228,23 +229,23 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
             #define CC_ZERO_IP_ADDR         0x00000000
             #define CC_BROADCAST_IP_ADDR    0xFFFFFFFF
 
-            if (config_ip.addr == NULL)
+            if (config_ip.address == NULL)
             {
                 result = connector_invalid_data;
                 goto error;
             }
-            if ((config_ip.bytes_in_addr != CC_IPV6_ADDRESS_LENGTH) && (config_ip.bytes_in_addr != CC_IPV4_ADDRESS_LENGTH))
+            if ((config_ip.ip_address_type != connector_ip_address_ipv6) && (config_ip.ip_address_type != connector_ip_address_ipv4))
             {
                 result =  connector_invalid_data_size;
                 goto error;
             }
 
-            if (config_ip.bytes_in_addr == CC_IPV4_ADDRESS_LENGTH)
+            if (config_ip.ip_address_type == connector_ip_address_ipv4)
             {
                 static uint32_t const zero_ip_addr = CC_ZERO_IP_ADDR;
                 static uint32_t const broadcast_ip_addr = CC_BROADCAST_IP_ADDR;
 
-                uint32_t const ip =  LoadBE32(config_ip.addr);
+                uint32_t const ip =  LoadBE32(config_ip.address);
 
                 if ((ip == LoadBE32(&zero_ip_addr)) || (ip == LoadBE32(&broadcast_ip_addr)))
                 {
@@ -253,8 +254,8 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
                 }
             }
 
-            connector_ptr->edp_data.config.ip_addr_length = config_ip.bytes_in_addr;
-            connector_ptr->edp_data.config.ip_addr = config_ip.addr;
+            connector_ptr->edp_data.config.ip_addr_length = (config_ip.ip_address_type == connector_ip_address_ipv4) ? CC_IPV4_ADDRESS_LENGTH : CC_IPV6_ADDRESS_LENGTH;
+            connector_ptr->edp_data.config.ip_addr = config_ip.address;
             break;
         }
 
@@ -282,7 +283,7 @@ done:
 
 static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
-                                                        connector_config_connect_status_t * const config_connect)
+                                                        connector_config_connect_type_t * const config_connect)
 {
     connector_status_t result = connector_working;
 
@@ -291,7 +292,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
            (config_request_id == connector_request_id_config_network_udp) ||
            (config_request_id == connector_request_id_config_network_sms));
 
-    config_connect->status = connector_auto_connect;
+    config_connect->type = connector_connect_auto;
 
     {
         connector_callback_status_t status;
@@ -303,10 +304,10 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
         switch (status)
         {
         case connector_callback_continue:
-            switch (config_connect->status)
+            switch (config_connect->type)
             {
-            case connector_auto_connect:
-            case connector_manual_connect:
+            case connector_connect_auto:
+            case connector_connect_manual:
                 break;
             default:
                 notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
@@ -347,8 +348,8 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
         case connector_callback_continue:
             switch (config_identity.type)
             {
-            case connector_simple_identity_verification:
-            case connector_password_identity_verification:
+            case connector_identity_verification_simple:
+            case connector_identity_verification_password:
                 connector_ptr->edp_data.config.identity_verification = config_identity.type;
                 break;
             default:
@@ -365,7 +366,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
             break;
 
         case connector_callback_unrecognized:
-            connector_ptr->edp_data.config.identity_verification = connector_simple_identity_verification;
+            connector_ptr->edp_data.config.identity_verification = connector_identity_verification_simple;
             break;
         }
     }
@@ -396,7 +397,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
             }
             else
             {
-                connector_ptr->edp_data.config.password_length = config_password.bytes_in_string;
+                connector_ptr->edp_data.config.password_length = config_password.length;
                 connector_ptr->edp_data.config.password = config_password.string;
 
             }

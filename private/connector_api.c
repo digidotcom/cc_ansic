@@ -80,13 +80,13 @@ enum {
 
             switch (connector_ptr->wan_type)
             {
-            case connector_imei_wan_type:
+            case connector_wan_type_imei:
                 wan_string = "IMEI";
                 break;
-            case connector_esn_wan_type:
+            case connector_wan_type_esn:
                 wan_string = "ESN";
                 break;
-            case connector_meid_wan_type:
+            case connector_wan_type_meid:
                 wan_string = "MEID";
                 break;
             }
@@ -97,13 +97,13 @@ enum {
 
         switch (connector_ptr->wan_type)
         {
-        case connector_imei_wan_type:
+        case connector_wan_type_imei:
             device_id[1] = imei_device_id_prefix;
             break;
-        case connector_esn_wan_type:
+        case connector_wan_type_esn:
             device_id[1] = esn_hex_device_id_prefix;
             break;
-        case connector_meid_wan_type:
+        case connector_wan_type_meid:
             device_id[1] = meid_hex_device_id_prefix;
             break;
         }
@@ -121,7 +121,7 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
 
     if (connector_got_device_id)
     {
-        connector_ptr->device_id_method = connector_manual_device_id_method;
+        connector_ptr->device_id_method = connector_device_id_method_manual;
         goto done;
     }
     result = get_config_device_id_method(connector_ptr);
@@ -129,20 +129,20 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
 
     switch (connector_ptr->device_id_method)
     {
-        case connector_manual_device_id_method:
+        case connector_device_id_method_manual:
             result = get_config_device_id(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
             memcpy(connector_device_id, connector_ptr->device_id, sizeof connector_device_id);
             break;
 
-        case connector_auto_device_id_method:
+        case connector_device_id_method_auto:
         {
             result = get_config_connection_type(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
 
             switch (connector_ptr->connection_type)
             {
-                case connector_lan_connection_type:
+                case connector_connection_type_lan:
                 {
                     result = get_config_mac_addr(connector_ptr);
                     COND_ELSE_GOTO(result == connector_working, error);
@@ -158,20 +158,20 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
                 }
                 break;
 
-                case connector_wan_connection_type:
+                case connector_connection_type_wan:
                     /* TODO: get wan type */
                     result = get_config_wan_type(connector_ptr);
                     COND_ELSE_GOTO(result == connector_working, error);
 
                     switch (connector_ptr->wan_type)
                     {
-                    case connector_imei_wan_type:
+                    case connector_wan_type_imei:
                         result = get_wan_device_id(connector_ptr, connector_device_id, connector_request_id_config_imei_number);
                         break;
-                    case connector_esn_wan_type:
+                    case connector_wan_type_esn:
                         result = get_wan_device_id(connector_ptr, connector_device_id, connector_request_id_config_esn);
                         break;
-                    case connector_meid_wan_type:
+                    case connector_wan_type_meid:
                         result = get_wan_device_id(connector_ptr, connector_device_id, connector_request_id_config_meid);
                         break;
                     }
@@ -199,7 +199,7 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
     connector_initiate_stop_request_t stop_request;
 
     connector_request_id_t request_id;
-    request_id.status_request = connector_status_stop_completed;
+    request_id.status_request = connector_request_id_status_stop_completed;
 
     stop_request.transport = transport;
     stop_request.user_context = user_context;

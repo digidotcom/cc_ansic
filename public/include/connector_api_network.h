@@ -96,12 +96,12 @@ typedef enum {
     connector_close_status_server_redirected,          /**< iDigi connector is redirected to different server. */
     connector_close_status_device_terminated,          /**< iDigi connector is terminated via @ref connector_initiate_action
                                                         iDigi connector will terminate all active messages or requests and free all memory.
-                                                        @ref connector_auto_connect_type_t returned status from the close callback will be ignored. */
+                                                        @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
     connector_close_status_device_stopped,             /**< iDigi connector is stopped via @ref connector_initiate_action */
     connector_close_status_no_keepalive,               /**< iDigi connector has not received keep alive messages from the server */
     connector_close_status_abort,                      /**< iDigi connector is aborted either it encountered fatal error or callback aborted iDigi connector.
                                                         iDigi connector will terminate all active messages or requests and free all memory.
-                                                        @ref connector_auto_connect_type_t returned status from the close callback will be ignored. */
+                                                        @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
     connector_close_status_device_error                /**< iDigi connector received error from callback which requires to close the connection. */
 } connector_close_status_t;
 /**

@@ -94,14 +94,14 @@ static connector_status_t get_config_server_url(connector_data_t * const connect
     connector_config_pointer_string_t   server_url;
     connector_request_id_t request_id;
 
-    request_id.config_request = connector_request_id_config_server_url;
+    request_id.config_request = connector_request_id_config_device_cloud_url;
 
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &server_url);
     switch (callback_status)
     {
     case connector_callback_continue:
-        if ((server_url.bytes_in_string == 0) || (server_url.bytes_in_string > SERVER_URL_LENGTH-1))
+        if ((server_url.length == 0) || (server_url.length > SERVER_URL_LENGTH-1))
         {
             result =  connector_invalid_data_size;
         }
@@ -111,7 +111,7 @@ static connector_status_t get_config_server_url(connector_data_t * const connect
         }
         else
         {
-            connector_ptr->device_cloud_url_length = server_url.bytes_in_string;
+            connector_ptr->device_cloud_url_length = server_url.length;
             connector_ptr->device_cloud_url = server_url.string;
         }
         break;
@@ -155,8 +155,8 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
 
         switch (config_connection.type)
         {
-        case connector_lan_connection_type:
-        case connector_wan_connection_type:
+        case connector_connection_type_lan:
+        case connector_connection_type_wan:
             connector_ptr->connection_type = config_connection.type;
             break;
 
@@ -274,13 +274,13 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
             {
                 result = connector_invalid_data;
             }
-            else if (phone_number.bytes_in_string == 0)
+            else if (phone_number.length == 0)
             {
                 result = connector_invalid_data_size;
             }
             else
             {
-                connector_ptr->phone_dialed_length = phone_number.bytes_in_string;
+                connector_ptr->phone_dialed_length = phone_number.length;
                 connector_ptr->phone_dialed = phone_number.string;
             }
             break;
@@ -323,8 +323,8 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
     case connector_callback_continue:
         switch (device_id.method)
         {
-        case connector_manual_device_id_method:
-        case connector_auto_device_id_method:
+        case connector_device_id_method_manual:
+        case connector_device_id_method_auto:
             connector_ptr->device_id_method = device_id.method;
             break;
 
@@ -336,7 +336,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
         break;
 
     case connector_callback_unrecognized:
-        connector_ptr->device_id_method = connector_manual_device_id_method;
+        connector_ptr->device_id_method = connector_device_id_method_manual;
         break;
 
     case connector_callback_busy:
@@ -467,9 +467,9 @@ static connector_status_t get_config_wan_type(connector_data_t * const connector
     case connector_callback_continue:
         switch (config_wan.type)
         {
-        case connector_imei_wan_type:
-        case connector_esn_wan_type:
-        case connector_meid_wan_type:
+        case connector_wan_type_imei:
+        case connector_wan_type_esn:
+        case connector_wan_type_meid:
             connector_ptr->wan_type = config_wan.type;
             break;
         default:

@@ -238,7 +238,7 @@ enum cc_connection_info {
     }
 
     {
-        cc_connection_type_t const connection_type =  (connector_ptr->connection_type == connector_lan_connection_type) ? ethernet_type : ppp_over_modem_type;
+        cc_connection_type_t const connection_type =  (connector_ptr->connection_type == connector_connection_type_lan) ? ethernet_type : ppp_over_modem_type;
 
         message_store_u8(connection_report, connection_type, connection_type);
 
@@ -246,7 +246,7 @@ enum cc_connection_info {
 
         switch (connector_ptr->connection_type)
         {
-        case connector_lan_connection_type:
+        case connector_connection_type_lan:
             result = get_config_mac_addr(connector_ptr);
             if (result != connector_working)
             {
@@ -266,7 +266,7 @@ enum cc_connection_info {
 
                 break;
             }
-        case connector_wan_connection_type:
+        case connector_connection_type_wan:
             {
                 /* build Link speed for WAN connection type */
                 uint8_t * connection_info = connection_report + record_bytes(connection_report);
@@ -562,14 +562,15 @@ static connector_status_t edp_redirect_process(connector_data_t * const connecto
                 ASSERT(server_url_length < sizeof connector_ptr->edp_data.config.server_url);
                 ASSERT(server_url_length != 0);
 
-                result = connect_server(connector_ptr, server_url, server_url_length);
+                memcpy(connector_ptr->edp_data.config.server_url, server_url, server_url_length);
+                connector_ptr->edp_data.config.server_url_length = server_url_length;
+                connector_ptr->edp_data.config.server_url[server_url_length] = 0x0;
+
+                result = connect_server(connector_ptr, connector_ptr->edp_data.config.server_url);
             }
 
             if (result == connector_working)
             {
-                memcpy(connector_ptr->edp_data.config.server_url, server_url, server_url_length);
-                connector_ptr->edp_data.config.server_url_length = server_url_length;
-                connector_ptr->edp_data.config.server_url[server_url_length] = 0x0;
                 cc_ptr->report_code = cc_redirect_success;
                 cc_ptr->state = cc_state_redirect_report;
                 edp_set_active_state(connector_ptr, connector_transport_open);
@@ -594,6 +595,8 @@ static connector_status_t edp_redirect_process(connector_data_t * const connecto
             cc_ptr->report_code = cc_redirect_error;
             cc_ptr->state = cc_state_redirect_report;
             edp_set_active_state(connector_ptr, connector_transport_open);
+            /* restore the original url */
+            edp_get_device_cloud(connector_ptr);
         }
         break;
     }

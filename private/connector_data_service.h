@@ -111,7 +111,6 @@ static connector_status_t process_device_request(connector_data_t * const connec
         }
 
         target_string = (char *)ds_device_request;
-        device_request_service->request_type = connector_data_service_device_request;
 
         ds_device_request += target_length;
 
@@ -562,7 +561,7 @@ if (service_request->service_type == msg_service_type_need_data)
 
         }
         break;
- 
+
     return status;
 }
 

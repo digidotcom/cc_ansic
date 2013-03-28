@@ -54,6 +54,12 @@ typedef struct {
 * @}
 */
 
+typedef struct {
+    uint8_t major;      /**< Major number */
+    uint8_t minor;      /**< Minor number */
+    uint8_t revision;   /**< revision number */
+    uint8_t build;      /**< build number */
+} connector_firmware_version_t;
 
 /**
 * @defgroup connector_firmware_info_t Firmware Information
@@ -64,14 +70,13 @@ typedef struct {
 * information about the specific target.
 */
 typedef struct {
-    struct {
-        uint32_t version;           /**< Version number of the target number */
-        uint32_t code_size;         /**< Code size of the target number. If size is unknown, set 0xFFFFFFFF */
-        char * description;         /**< An ASCII description string of the target number */
-        char * filename_spec;       /**< Regular expression for the firmware image name fo the target number */
-    } info;                         /**< Callback writes the firmware information */
 
-    uint8_t target_number;          /**< Target number which target the firmware information is for*/
+    connector_firmware_version_t version; /**< Version number of the target TODO: Paul m.m.v.b */
+    uint32_t image_size;        /**< TODO: ask Adam...what is this Code size of the target (avail, max, current). If size is unknown, set 0xFFFFFFFF */
+    char const * description;   /**< An ASCII description string of the target */
+    char const * filespec;      /**< Regular expression for the firmware image name for  the target */
+
+    unsigned int target_number; /**< Target number which target the firmware information is for*/
 } connector_firmware_info_t;
 
 
@@ -129,15 +134,14 @@ typedef enum {
 * is called when the device is requested for firmware download.
 */
 typedef struct {
+    unsigned int target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
-        uint32_t code_size; /**< size of the code that is ready to be sent to the target */
+        uint32_t size; /**< size of the code that is ready to be sent to the target */
         char * filename;    /**< Pointer to filename of the image to be downloaded */
-    } image_info;           /**< Contains the firmware download image information */
+    } image;           /**< Contains the firmware download image information */
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
-
-    uint8_t target_number;  /**< Target number which target the firmware download is for */
 
 } connector_firmware_download_start_t;
 /**
@@ -154,16 +158,15 @@ typedef struct {
 * is called when the connector receives a block of image data for firmware download.
 */
 typedef struct {
+    unsigned int target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
         uint32_t offset;    /**< Offset value where this particular block of image data fits into the download */
-        uint8_t * data;     /**< Pointer binary image data */
-        size_t length;      /**< Length of binary image data in bytes */
-    } image_data;           /**< Contains the firmware image data */
+        uint8_t const * data;     /**< Pointer binary image data */
+        size_t bytes_used;  /**< Length of binary image data in bytes */
+    } image;                /**< Contains the firmware image data */
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
-
-    uint8_t target_number;  /**< Target number which firmware target the image data is for */
 
 } connector_firmware_download_data_t;
 /**
@@ -181,18 +184,21 @@ typedef struct {
 * sending all image data.
 */
 typedef struct {
+    unsigned int target_number;  /**< Target number which firmware target the image data is for */
 
+#if PAUL_CONFIRM
     struct {
-        uint32_t code_size;     /**< Code size of the entire image data sent */
+        uint32_t code_size;     /**< TODO: check with Adam...Needed?....Code size of the entire image data sent */
         uint32_t checksum;      /**< CRC-32 value computed from offset 0 to code size. If it's 0, no checksum is required */
     } image_data;               /**< Contains information of the image data sent */
 
     struct {
-        uint32_t version;                                /**< Version number of the downloaded image */
+        connector_firmware_version_t version;            /**< TODO: Check with Adam why? Version number of the downloaded image */
         connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
     } image_status;                                      /**< Callback writes the new image version and status */
-
-    uint8_t target_number;  /**< Target number which firmware target is completed firmware download */
+#else
+    connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
+#endif
 
 } connector_firmware_download_complete_t;
 /**
@@ -209,8 +215,9 @@ typedef struct {
 * is called when firmware download process is aborted.
 */
 typedef struct {
+    unsigned int target_number;         /**< Target number which target the firmware download is aborted */
+
     connector_firmware_status_t status; /**< Abort reason or status */
-    uint8_t target_number;              /**< Target number which target the firmware download is aborted */
 } connector_firmware_download_abort_t;
 /**
 * @}
@@ -226,7 +233,7 @@ typedef struct {
 * is called to reset the target.
 */
 typedef struct {
-    uint8_t target_number;             /**< Target number which target the firmware to reset */
+    unsigned int target_number;             /**< Target number which target the firmware to reset */
 } connector_firmware_reset_t;
 /**
 * @}

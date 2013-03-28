@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static connector_status_t connect_server(connector_data_t * const connector_ptr, char const * server_url, size_t const server_url_length)
+static connector_status_t connect_server(connector_data_t * const connector_ptr, char const * server_url)
 {
     connector_status_t result = connector_idle;
 
@@ -342,10 +342,10 @@ static connector_status_t send_identity_verification(connector_data_t * const co
 
         switch (identity_verification)
         {
-        case connector_simple_identity_verification:
+        case connector_identity_verification_simple:
             identity = SECURITY_IDENT_FORM_SIMPLE;
             break;
-        case connector_password_identity_verification:
+        case connector_identity_verification_password:
             identity = SECURITY_IDENT_FORM_PASSWORD;
             break;
         }
@@ -717,7 +717,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
             connector_ptr->edp_data.keepalive.last_tx_received_time = 0;
         }
-        result = connect_server(connector_ptr, connector_ptr->edp_data.config.server_url, connector_ptr->edp_data.config.server_url_length);
+        result = connect_server(connector_ptr, connector_ptr->edp_data.config.server_url);
 
         if (result == connector_working)
         {
@@ -730,7 +730,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
         else if (result == connector_unavailable)
         {
             edp_set_active_state(connector_ptr, connector_transport_idle);
-            connector_ptr->edp_data.stop.connect_action = connector_manual_connect;
+            connector_ptr->edp_data.stop.auto_connect = connector_false;
         }
         break;
 
@@ -739,7 +739,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
     case edp_initialization_send_protocol_version:
     case edp_security_send_identity_verification:
     case edp_security_send_device_id:
-    case edp_security_send_server_url:
+    case edp_security_send_device_cloud_url:
     case edp_security_send_password:
     case edp_discovery_send_vendor_id:
     case edp_discovery_send_device_type:
@@ -790,17 +790,17 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_device_id(connector_ptr);
             if (result == connector_working)
             {
-                next_state = edp_security_send_server_url;
+                next_state = edp_security_send_device_cloud_url;
             }
             break;
-        case edp_security_send_server_url:
+        case edp_security_send_device_cloud_url:
             result = send_server_url(connector_ptr);
             if (result == connector_working)
             {
 #if (defined CONNECTOR_IDENTITY_VERIFICATION)
-                next_state = (CONNECTOR_IDENTITY_VERIFICATION == connector_password_identity_verification) ? edp_security_send_password : edp_discovery_send_vendor_id;
+                next_state = (CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_password) ? edp_security_send_password : edp_discovery_send_vendor_id;
 #else
-                next_state = (connector_ptr->edp_data.config.identity_verification == connector_password_identity_verification) ? edp_security_send_password : edp_discovery_send_vendor_id;
+                next_state = (connector_ptr->edp_data.config.identity_verification == connector_identity_verification_password) ? edp_security_send_password : edp_discovery_send_vendor_id;
 #endif
             }
             break;
@@ -907,9 +907,9 @@ done:
             connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
 
 #if (defined CONNECTOR_NETWORK_TCP_START)
-            if (CONNECTOR_NETWORK_TCP_START == connector_manual_connect)
+            if (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
 #else
-            if (connector_ptr->edp_data.connect_type == connector_manual_connect)
+            if (connector_ptr->edp_data.connect_type == connector_connect_manual)
 #endif
             {
                 /* Application must call initiate_action to start iDigi connector */

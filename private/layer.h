@@ -167,7 +167,7 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
     for (i=0; i < connector_facility_count; i++)
     {
         connector_request_id_t const request_id = connector_supported_service_table[i].request_id;
-        connector_config_supported_status_t config_status;
+        connector_config_supported_t config_status;
 
         config_status.supported = connector_bool(request_id.config_request == MANDATORY_FACILITY);
 

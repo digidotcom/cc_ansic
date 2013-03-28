@@ -167,7 +167,7 @@ static connector_status_t notify_status(connector_callback_t const callback, con
     connector_request_id_t request_id;
     connector_tcp_status_t  tcp_status = status;
 
-    request_id.status_request = connector_status_tcp;
+    request_id.status_request = connector_request_id_status_tcp;
 
     {
         connector_callback_status_t const callback_status =  connector_callback(callback, connector_class_id_status, request_id, &tcp_status);
@@ -186,3 +186,11 @@ static connector_status_t notify_status(connector_callback_t const callback, con
 
     return result;
 }
+
+static void edp_get_device_cloud(connector_data_t * const connector_ptr)
+{
+    memcpy(connector_ptr->edp_data.config.server_url, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length);
+    connector_ptr->edp_data.config.server_url[connector_ptr->device_cloud_url_length] = 0x0;
+    connector_ptr->edp_data.config.server_url_length = connector_ptr->device_cloud_url_length;
+}
+

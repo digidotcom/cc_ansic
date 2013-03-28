@@ -45,7 +45,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
 
         connector_network_close_data_t close_data;
 
-        close_data.network_handle = connector_ptr->edp_data.network_handle;
+        close_data.handle = connector_ptr->edp_data.network_handle;
         close_data.status = edp_get_close_status(connector_ptr);
 
         connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(close_data.status));
@@ -71,7 +71,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
 
 
         {
-                connector_ptr->edp_data.stop.connect_action = close_data.connect_action;
+                connector_ptr->edp_data.stop.auto_connect = close_data.reconnect;
                 edp_set_active_state(connector_ptr, connector_transport_idle);
 
                 tcp_send_complete_callback(connector_ptr, connector_abort);

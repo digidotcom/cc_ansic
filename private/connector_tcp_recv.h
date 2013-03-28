@@ -54,7 +54,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     {
         connector_network_receive_data_t read_data;
 
-        read_data.network_handle = connector_ptr->edp_data.network_handle;
+        read_data.handle = connector_ptr->edp_data.network_handle;
         read_data.buffer = buffer;
         read_data.bytes_available = *length;
         read_data.bytes_used = 0;

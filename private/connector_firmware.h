@@ -81,13 +81,14 @@ enum fw_target_list{
     record_end(fw_target_list)
 };
 
+#define FW_VERION_NUMBER(version)  ((version.major << 12) | (version.minor << 8) | (version.revision << 4) | version.build)
+
 static size_t const target_list_header_size = field_named_data(fw_target_list, opcode, size);
 static size_t const target_list_size = record_bytes(fw_target_list);
 
 typedef struct {
     connector_data_t * connector_ptr;
     unsigned long last_fw_keepalive_sent_time;
-    connector_firmware_info_t target_info;
 
     size_t desc_length;
     size_t spec_length;
@@ -95,14 +96,17 @@ typedef struct {
     connector_bool_t send_busy;
     connector_bool_t update_started;
     connector_bool_t fw_keepalive_start;
-    uint8_t target_count;
+    connector_firmware_info_t target_info;
+
     uint8_t response_buffer[FW_MESSAGE_RESPONSE_MAX_SIZE + PACKET_EDP_FACILITY_SIZE];
+    uint8_t target_count;
 } connector_firmware_data_t;
 
 #if defined CONNECTOR_RCI_SERVICE
-static connector_status_t confirm_fw_version(connector_firmware_data_t * const fw_ptr, uint8_t target_number, uint32_t version)
+static connector_status_t confirm_fw_version(connector_firmware_data_t * const fw_ptr, uint8_t target_number, connector_firmware_version_t const version)
 {
     connector_status_t result = connector_working;
+    uint32_t const version_number = FW_VERION_NUMBER(version);
 
     if (target_number == 0 && version != rci_get_firmware_target_zero_version())
     {
@@ -344,11 +348,11 @@ enum fw_info {
 #if defined CONNECTOR_RCI_SERVICE
         else
         {
-           result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.info.version);
+           result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.version);
         }
 #endif
-        fw_ptr->desc_length = strlen(firmware_info->info.description);
-        fw_ptr->desc_length = strlen(firmware_info->info.filename_spec);
+        fw_ptr->desc_length = strlen(firmware_info->description);
+        fw_ptr->desc_length = strlen(firmware_info->filespec);
 
         if ((fw_ptr->desc_length + fw_ptr->spec_length) > (FW_ID_STRING_LENGTH -1))
         {
@@ -387,26 +391,29 @@ enum fw_info {
 
         message_store_u8(fw_info, opcode, fw_info_response_opcode);
         message_store_u8(fw_info, target, target);
-        message_store_be32(fw_info, version, firmware_info->info.version);
-        message_store_be32(fw_info, code_size, firmware_info->info.code_size);
+        message_store_be32(fw_info, version, FW_VERION_NUMBER(firmware_info->version));
+        message_store_be32(fw_info, code_size, firmware_info->image_size);
         fw_info += record_bytes(fw_info);
 
-        if (firmware_info->info.description != NULL)
+        if (firmware_info->description != NULL)
         {
-            memcpy(fw_info, firmware_info->info.description, fw_ptr->desc_length);
+            memcpy(fw_info, firmware_info->description, fw_ptr->desc_length);
             fw_info += fw_ptr->desc_length;
         }
         *fw_info++ = '\n';
 
-        if (firmware_info->info.filename_spec != NULL)
+        if (firmware_info->filespec != NULL)
         {
-            memcpy(fw_info, firmware_info->info.filename_spec, fw_ptr->spec_length);
+            memcpy(fw_info, firmware_info->filespec, fw_ptr->spec_length);
             fw_info += fw_ptr->spec_length;
         }
 
         /* reset back to initial values */
-        firmware_info->info.version = 0;
-        firmware_info->info.code_size = 0;
+        firmware_info->version.major = 0;
+        firmware_info->version.minor = 0;
+        firmware_info->version.revision = 0;
+        firmware_info->version.build = 0;
+        firmware_info->image_size = 0;
         fw_ptr->desc_length = 0;
         fw_ptr->spec_length = 0;
 
@@ -491,7 +498,7 @@ enum fw_download_response {
     /* Parse firmware download request. Then, call the callback
      * with these values and send download request response.
      */
-    download_request.image_info.code_size = message_load_be32(fw_download_request, code_size);
+    download_request.image.size = message_load_be32(fw_download_request, code_size);
 
     string_id_length = (size_t)(length - record_bytes(fw_download_request));
 
@@ -519,8 +526,8 @@ enum fw_download_response {
             string_id_ptr++;
         }
         /* get filename */
-        download_request.image_info.filename = string_id_ptr;
-        *(download_request.image_info.filename + string_id_length) = '\0';
+        download_request.image.filename = string_id_ptr;
+        *(download_request.image.filename + string_id_length) = '\0';
     }
 
     /* call callback */
@@ -623,10 +630,10 @@ enum fw_binary_ack {
 
     /* Parse firmware binary block */
     ack_required = message_load_u8(fw_binary_block, ack_required);
-    download_data.image_data.offset = message_load_be32(fw_binary_block, offset);
-    download_data.image_data.length = (size_t)(length - record_bytes(fw_binary_block));
+    download_data.image.offset = message_load_be32(fw_binary_block, offset);
+    download_data.image.bytes_used = (size_t)(length - record_bytes(fw_binary_block));
 
-    download_data.image_data.data = (fw_binary_block + record_bytes(fw_binary_block));
+    download_data.image.data = (fw_binary_block + record_bytes(fw_binary_block));
 
     result = get_fw_config(fw_ptr, connector_request_id_firmware_download_data, &download_data);
 
@@ -641,7 +648,7 @@ enum fw_binary_ack {
             /* send firmware binary block acknowledge */
             message_store_u8(fw_binary_ack, opcode, fw_binary_block_ack_opcode);
             message_store_u8(fw_binary_ack, target, download_data.target_number);
-            message_store_be32(fw_binary_ack, offset, download_data.image_data.offset);
+            message_store_be32(fw_binary_ack, offset, download_data.image.offset);
             message_store_u8(fw_binary_ack, status, connector_firmware_status_success);
 
             fw_ptr->response_size = record_bytes(fw_binary_ack);
@@ -765,8 +772,11 @@ enum fw_complete_response {
     }
 
     /* Parse firmware downlaod complete */
+#if TODO
+    /* TODO: needed? */
     download_complete.image_data.code_size = message_load_be32(fw_complete_request, code_size);
     download_complete.image_data.checksum = message_load_be32(fw_complete_request, checksum);
+#endif
 
     /* call callback */
     result = get_fw_config(fw_ptr, connector_request_id_firmware_download_complete, &download_complete);
@@ -779,9 +789,14 @@ enum fw_complete_response {
         /* send firmware download complete response */
         message_store_u8(fw_complete_response, opcode, fw_download_complete_response_opcode);
         message_store_u8(fw_complete_response, target, download_complete.target_number);
+#if TODO
+    /* TODO: needed? */
         message_store_be32(fw_complete_response, version, download_complete.image_status.version);
+#endif
+        message_store_be32(fw_complete_response, version, 0L);
+
         message_store_be32(fw_complete_response, checksum, 0L);
-        message_store_u8(fw_complete_response, status, download_complete.image_status.status);
+        message_store_u8(fw_complete_response, status, download_complete.status);
 
         fw_ptr->last_fw_keepalive_sent_time = 0;
         fw_ptr->fw_keepalive_start = connector_false;
@@ -885,16 +900,16 @@ static connector_status_t fw_discovery(connector_data_t * const connector_ptr, v
             /* get the current firmware version for this target */
             firmware_info.target_number = target_number;
             /* call callback */
-            result = get_fw_config(fw_ptr, connector_request_id_firmware_info, &firmware_info.info.version);
+            result = get_fw_config(fw_ptr, connector_request_id_firmware_info, &firmware_info);
             if (result == connector_working)
             {
 
 #if defined CONNECTOR_RCI_SERVICE
-                result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.info.version);
+                result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.version);
                 if (result != connector_working) goto error;
 #endif
                 message_store_u8(fw_target_list, target, firmware_info.target_number);
-                message_store_be32(fw_target_list, version, firmware_info.info.version);
+                message_store_be32(fw_target_list, version, FW_VERION_NUMBER(firmware_info.version));
 
                 /* set up for next target pair info*/
                 fw_target_list += target_list_size;

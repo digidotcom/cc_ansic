@@ -38,18 +38,12 @@
 
 #include "layer.h"
 
-static void edp_get_device_cloud(connector_data_t * const connector_ptr)
-{
-    memcpy(connector_ptr->edp_data.config.server_url, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length);
-    connector_ptr->edp_data.config.server_url[connector_ptr->device_cloud_url_length] = 0x0;
-    connector_ptr->edp_data.config.server_url_length = connector_ptr->device_cloud_url_length;
-}
 
 static connector_status_t edp_config_init(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
-    if (connector_ptr->device_id_method == connector_manual_device_id_method)
+    if (connector_ptr->device_id_method == connector_device_id_method_manual)
     {
         /* then we have to obtain connection type from the callback */
         result = get_config_connection_type(connector_ptr);
@@ -58,9 +52,9 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
 
     switch (connector_ptr->connection_type)
     {
-    case connector_lan_connection_type:
+    case connector_connection_type_lan:
         break;
-    case connector_wan_connection_type:
+    case connector_connection_type_wan:
 #if (!defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
         result = get_config_link_speed(connector_ptr);
         COND_ELSE_GOTO(result == connector_working, done);
@@ -101,20 +95,20 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
 
 #if !(defined CONNECTOR_NETWORK_TCP_START)
     {
-        connector_config_connect_status_t config_connect;
+        connector_config_connect_type_t config_connect;
 
         result = get_config_connect_status(connector_ptr, connector_request_id_config_network_tcp, &config_connect);
         COND_ELSE_GOTO(result == connector_working, done);
 
-        connector_ptr->edp_data.connect_type = config_connect.status;
-        connector_ptr->edp_data.stop.connect_action = config_connect.status;
+        connector_ptr->edp_data.connect_type = config_connect.type;
+        connector_ptr->edp_data.stop.auto_connect = connector_bool(config_connect.type == connector_connect_auto);
     }
 #else
-    if (CONNECTOR_NETWORK_TCP_START == connector_auto_connect)
+    if (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
     {
         edp_set_active_state(connector_ptr, connector_transport_open);
     }
-    connector_ptr->edp_data.stop.connect_action = CONNECTOR_NETWORK_TCP_START;
+    connector_ptr->edp_data.stop.auto_connect = connector_bool(CONNECTOR_NETWORK_TCP_START == connector_connect_auto);
 #endif
 
 
@@ -128,7 +122,7 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
         connector_identity_verification_t const identity_verification = CONNECTOR_IDENTITY_VERIFICATION;
 #endif
 
-        if (identity_verification == connector_password_identity_verification)
+        if (identity_verification == connector_identity_verification_password)
         {
             /* get password for password identity verification */
             result =  get_config_password(connector_ptr);
@@ -189,7 +183,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         switch (edp_get_active_state(connector_ptr))
         {
         case connector_transport_idle:
-            if (connector_ptr->edp_data.stop.connect_action == connector_auto_connect)
+            if (connector_ptr->edp_data.stop.auto_connect)
             {
                 edp_set_active_state(connector_ptr, connector_transport_open);
             }
@@ -257,7 +251,7 @@ check_state:
             switch (edp_get_active_state(connector_ptr))
             {
                 case connector_transport_idle:
-                    connector_ptr->edp_data.stop.connect_action = connector_manual_connect;
+                    connector_ptr->edp_data.stop.auto_connect = connector_false;
                     edp_set_initiate_state(connector_ptr, connector_transport_idle);
 
                     if (edp_is_stop_request(connector_ptr))
@@ -278,7 +272,7 @@ check_state:
                     goto done;
 
                 case connector_transport_close:
-                    connector_ptr->edp_data.stop.connect_action = connector_manual_connect;
+                    connector_ptr->edp_data.stop.auto_connect = connector_false;
                     /* no break */
                 case connector_transport_terminate:
                     break;
@@ -290,7 +284,7 @@ check_state:
                     }
                     if (edp_is_stop_immediately(connector_ptr))
                     {
-                        connector_ptr->edp_data.stop.connect_action = connector_manual_connect;
+                        connector_ptr->edp_data.stop.auto_connect = connector_false;
                         edp_set_close_status(connector_ptr, connector_close_status_device_stopped);
                         edp_set_active_state(connector_ptr, connector_transport_close);
                     }
