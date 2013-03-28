@@ -32,19 +32,14 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
 }
 
 connector_callback_status_t app_status_handler(connector_status_request_t const request,
-                                           void const * const request_data, size_t const request_length,
-                                           void * response_data, size_t * const response_length)
+                                               void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-
-    UNUSED_ARGUMENT(response_data);
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
 
     switch (request)
     {
     case connector_status_tcp:
-        status = app_tcp_status(request_data);
+        status = app_tcp_status(data);
         break;
     case connector_status_stop_completed:
         APP_DEBUG("app_status_handle: connector_status_stop_completed\n");

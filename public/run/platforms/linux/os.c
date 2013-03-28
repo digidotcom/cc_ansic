@@ -129,7 +129,7 @@ static connector_callback_status_t app_os_reboot(void)
     return connector_callback_continue;
 }
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
-                                           void * const data);
+                                           void * const data)
 {
     connector_callback_status_t status;
 
@@ -159,7 +159,7 @@ connector_callback_status_t app_os_handler(connector_request_id_os_t const reque
     case connector_request_id_os_yield:
         {
             connector_os_yield_t * p = data;
-            status = app_os_yield(p->status);
+            status = app_os_yield(&p->status);
         }
         break;
 
