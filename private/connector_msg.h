@@ -218,7 +218,7 @@ typedef struct
     msg_service_type_t service_type;
     msg_service_data_t * need_data;
     msg_service_data_t * have_data;
-    connector_msg_error_t error_value;
+    connector_session_error_t error_value;
 } msg_service_request_t;
 
 typedef struct msg_session_t
@@ -232,7 +232,7 @@ typedef struct msg_session_t
     size_t send_data_bytes;
     msg_data_block_t * in_dblock;
     msg_data_block_t * out_dblock;
-    connector_msg_error_t error;
+    connector_session_error_t error;
     unsigned int error_flag;
     msg_service_request_t service_layer_data;
     struct msg_session_t * next;
@@ -312,7 +312,7 @@ static unsigned int msg_find_next_available_id(connector_msg_data_t * const msg_
     return new_id;
 }
 
-static void msg_set_error(msg_session_t * const session, connector_msg_error_t const error_code)
+static void msg_set_error(msg_session_t * const session, connector_session_error_t const error_code)
 {
     msg_data_block_t * const dblock = (session->in_dblock != NULL) ? session->in_dblock : session->out_dblock;
     connector_bool_t const client_request_error = connector_bool(MsgIsClientOwned(dblock->status_flag) && MsgIsNotReceiving(dblock->status_flag));
@@ -371,7 +371,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_inform_error(connector_data_t * const connector_ptr, msg_session_t * const session, connector_msg_error_t error_code)
+static connector_status_t msg_inform_error(connector_data_t * const connector_ptr, msg_session_t * const session, connector_session_error_t error_code)
 {
     session->service_layer_data.error_value = error_code;
 
@@ -468,7 +468,7 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
 
     session->session_id = session_id;
     session->service_id = service_id;
-    session->error = connector_msg_error_none;
+    session->error = connector_session_error_none;
     session->error_flag = 0;
     session->send_data_bytes = 0;
     session->service_context = NULL;
@@ -567,9 +567,9 @@ static void msg_default_data_block(msg_data_block_t * dblock, uint32_t const win
     MsgClearLastData(dblock->status_flag);
 }
 
-static connector_msg_error_t msg_initialize_data_block(msg_session_t * const session, uint32_t const window_size, msg_block_state_t state)
+static connector_session_error_t msg_initialize_data_block(msg_session_t * const session, uint32_t const window_size, msg_block_state_t state)
 {
-    connector_msg_error_t result = connector_msg_error_none;
+    connector_session_error_t result = connector_session_error_none;
 
     ASSERT_GOTO(session != NULL, error);
 
@@ -647,7 +647,7 @@ static connector_msg_error_t msg_initialize_data_block(msg_session_t * const ses
 
 #if (defined CONNECTOR_COMPRESSION)
 compression_error:
-    result = connector_msg_error_compression_failure;
+    result = connector_session_error_compression_failure;
 #endif
 
 error:
@@ -655,7 +655,7 @@ done:
     return result;
 }
 
-static connector_status_t msg_send_error(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, uint16_t const session_id, connector_msg_error_t const error_value, uint8_t const flag)
+static connector_status_t msg_send_error(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, uint16_t const session_id, connector_session_error_t const error_value, uint8_t const flag)
 {
     connector_status_t status = connector_working;
     uint8_t * error_packet;
@@ -858,7 +858,7 @@ static connector_status_t msg_send_complete(connector_data_t * const connector_p
             break;
 
         default:
-            msg_inform_error(connector_ptr, session, connector_msg_error_send);
+            msg_inform_error(connector_ptr, session, connector_session_error_send);
             break;
     }
 
@@ -933,7 +933,7 @@ static connector_status_t msg_compress_data(connector_data_t * const connector_p
         break;
 
     default:
-        status = msg_inform_error(connector_ptr, session, connector_msg_error_compression_failure);
+        status = msg_inform_error(connector_ptr, session, connector_session_error_compression_failure);
         goto done;
     }
 
@@ -1128,7 +1128,7 @@ error:
     return success;
 }
 
-static connector_status_t msg_handle_pending_request(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, connector_msg_error_t const result)
+static connector_status_t msg_handle_pending_request(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, connector_session_error_t const result)
 {
     connector_status_t status = connector_working;
     connector_msg_callback_t * const cb_fn = msg_ptr->service_cb[msg_service_id_data];
@@ -1143,7 +1143,7 @@ static connector_status_t msg_handle_pending_request(connector_data_t * const co
         service_data.error_value = result;
 
         cb_fn(connector_ptr, &service_data);
-        if ((service_data.error_value != connector_msg_error_none) && (session != NULL))
+        if ((service_data.error_value != connector_session_error_none) && (session != NULL))
             status = msg_delete_session(connector_ptr, msg_ptr, session);
     }
 
@@ -1160,7 +1160,7 @@ static connector_status_t msg_start_session(connector_data_t * const connector_p
     if (session == NULL) goto error;
 
     {
-        connector_msg_error_t const result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_server].window_size, msg_block_state_send_request);
+        connector_session_error_t const result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_server].window_size, msg_block_state_send_request);
 
         status = msg_handle_pending_request(connector_ptr, msg_ptr, session, result);
     }
@@ -1297,13 +1297,13 @@ static connector_status_t msg_pass_service_data(connector_data_t * const connect
             if (MsgIsRequest(dblock->status_flag))
             {
                 connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
-                connector_msg_error_t result;
+                connector_session_error_t result;
 
                 ASSERT_GOTO(msg_ptr != NULL, error);
                 if (MsgIsDoubleBuf(dblock->status_flag) == connector_false)
                 {
                     result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_server].window_size, msg_block_state_send_response);
-                    if (result != connector_msg_error_none)
+                    if (result != connector_session_error_none)
                         status = msg_inform_error(connector_ptr, session, result);
                 }
                 else
@@ -1427,7 +1427,7 @@ static connector_status_t msg_decompress_data(connector_data_t * const connector
     goto done;
 
 error:
-    status = msg_inform_error(connector_ptr, session, connector_msg_error_decompression_failure);
+    status = msg_inform_error(connector_ptr, session, connector_session_error_decompression_failure);
 
 done:
     return status;
@@ -1497,7 +1497,7 @@ done:
 static connector_status_t msg_process_start(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, uint8_t * ptr, uint16_t const length)
 {
     connector_status_t status = connector_working;
-    connector_msg_error_t result = connector_msg_error_none;
+    connector_session_error_t result = connector_session_error_none;
     msg_session_t * session;
     uint8_t * start_packet = ptr;
     uint8_t flag = message_load_u8(start_packet, flags);
@@ -1511,7 +1511,7 @@ static connector_status_t msg_process_start(connector_data_t * const connector_p
 
         if (client_owned)
         {
-             result = connector_msg_error_unknown_session;
+             result = connector_session_error_unknown_session;
              goto error;
         }
 
@@ -1521,12 +1521,12 @@ static connector_status_t msg_process_start(connector_data_t * const connector_p
             switch (status)
             {
                 case connector_pending:
-                    result = connector_msg_error_busy;
+                    result = connector_session_error_busy;
                     status = connector_working;
                     break;
 
                 default:
-                    result = connector_msg_error_fatal;
+                    result = connector_session_error_fatal;
                     break;
             }
 
@@ -1537,12 +1537,12 @@ static connector_status_t msg_process_start(connector_data_t * const connector_p
         if (session->out_dblock != NULL)
         {
             result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_client].window_size, msg_block_state_send_response);
-            if (result != connector_msg_error_none)
+            if (result != connector_session_error_none)
                 goto error;
         }
 
         result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_client].window_size, msg_block_state_recv_request);
-        if (result != connector_msg_error_none)
+        if (result != connector_session_error_none)
             goto error;
     }
     else
@@ -1553,7 +1553,7 @@ static connector_status_t msg_process_start(connector_data_t * const connector_p
         if (client_owned)
         {
             result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_client].window_size, msg_block_state_recv_response);
-            if (result != connector_msg_error_none)
+            if (result != connector_session_error_none)
                 goto error;
         }
     }
@@ -1567,7 +1567,7 @@ static connector_status_t msg_process_start(connector_data_t * const connector_p
         #else
         if (compression != MSG_COMPRESSION_NONE)
         {
-            result = connector_msg_error_decompression_failure;
+            result = connector_session_error_decompression_failure;
             goto error;
         }
         #endif
@@ -1601,7 +1601,7 @@ static connector_status_t msg_process_data(connector_data_t * const connector_pt
     session = msg_find_session(msg_ptr, session_id, client_owned);
     if (session == NULL)
     {
-        status = msg_send_error(connector_ptr, msg_ptr, session, session_id, connector_msg_error_unknown_session, flag);
+        status = msg_send_error(connector_ptr, msg_ptr, session, session_id, connector_session_error_unknown_session, flag);
         goto done;
     }
 
@@ -1664,9 +1664,9 @@ static connector_status_t msg_process_error(connector_data_t * const connector_p
         {
             uint8_t const error_val = message_load_u8(error_packet, error_code);
 
-            ASSERT_GOTO(error_val < connector_msg_error_count, error);
+            ASSERT_GOTO(error_val < connector_session_error_count, error);
             {
-                connector_msg_error_t const msg_error = (connector_msg_error_t)error_val;
+                connector_session_error_t const msg_error = (connector_session_error_t)error_val;
 
                 status = msg_inform_error(connector_ptr, session, msg_error);
                 if ((status != connector_pending) && (status != connector_abort))
@@ -1878,7 +1878,7 @@ static connector_status_t msg_cleanup_all_sessions(connector_data_t * const conn
         if (session->service_id == service_id)
         {
             if (session->current_state != msg_state_delete && session->current_state != msg_state_send_error)
-                msg_inform_error(connector_ptr, session, connector_msg_error_cancel);
+                msg_inform_error(connector_ptr, session, connector_session_error_cancel);
 
             status = msg_delete_session(connector_ptr, msg_ptr, session);
             if (status != connector_working) goto error;
@@ -1889,7 +1889,7 @@ static connector_status_t msg_cleanup_all_sessions(connector_data_t * const conn
 
 #if (defined CONNECTOR_DATA_SERVICE)
     if (msg_ptr->pending_service_request != NULL)
-        status = msg_handle_pending_request(connector_ptr, msg_ptr, NULL, connector_msg_error_cancel);
+        status = msg_handle_pending_request(connector_ptr, msg_ptr, NULL, connector_session_error_cancel);
 #endif
 
 error:
