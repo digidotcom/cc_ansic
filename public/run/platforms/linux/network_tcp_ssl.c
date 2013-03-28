@@ -459,12 +459,12 @@ done:
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
+connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request_id,
                                                     void * const data)
 {
     connector_callback_status_t status;
 
-    switch (request)
+    switch (request_id)
     {
     case connector_request_id_network_open:
         status = app_network_tcp_open(data);
@@ -483,7 +483,7 @@ connector_callback_status_t app_network_tcp_handler(connector_request_id_network
         break;
 
     default:
-        APP_DEBUG("app_network_tcp_handler: unrecognized callback request [%d]\n", request);
+        APP_DEBUG("app_network_tcp_handler: unrecognized callback request_id [%d]\n", request_id);
         status = connector_callback_unrecognized;
         break;
 
