@@ -1385,5 +1385,31 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 * @}.
 */
 
+/* configuration check */
+#if (!defined CONNECTOR_TRANSPORT_TCP)
+
+    #if (defined CONNECTOR_FIRMWARE_SERVICE)
+        #error CONNECTOR_FIRMWARE_SERVICE is defined but not CONNECTOR_TRANSPORT_TCP
+    #endif
+
+    #if (defined CONNECTOR_FILE_SYSTEM)
+        #error CONNECTOR_FILE_SYSTEM is defined but not CONNECTOR_TRANSPORT_TCP
+    #endif
+
+    #if (defined CONNECTOR_RCI_SERVICE)
+        #error CONNECTOR_RCI_SERVICE is defined but not CONNECTOR_TRANSPORT_TCP
+    #endif
+
+    #if (!defined CONNECTOR_TRANSPORT_UDP) && (!defined CONNECTOR_TRANSPORT_SMS)
+        #error All transports are disabled!
+    #endif
+#endif
+
+#if (!defined CONNECTOR_DATA_SERVICE)
+    #if (defined CONNECTOR_DATA_POINTS)
+        #error CONNECTOR_DATA_POINTS is defined but not CONNECTOR_DATA_SERVICE
+    #endif
+#endif
+
 #endif /* _CONNECTOR_API_H */
 
