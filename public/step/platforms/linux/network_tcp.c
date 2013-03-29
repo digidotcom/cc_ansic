@@ -57,9 +57,9 @@ static connector_callback_status_t app_network_tcp_close(connector_close_request
     }
 #endif
 
-    app_dns_set_redirected(connector_class_network_tcp, close_data->status == connector_close_status_server_redirected);
+    app_dns_set_redirected(connector_class_id_network_tcp, close_data->status == connector_close_status_server_redirected);
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_network_tcp, close_data->status);
+    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_tcp, close_data->status);
 
     if (close(*fd) < 0)
     {
@@ -114,7 +114,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_read_reques
         {
             APP_DEBUG("network_receive: recv() failed, errno %d\n", err);
             /* if not timeout (no data) return an error */
-            app_dns_cache_invalidate(connector_class_network_tcp);
+            app_dns_cache_invalidate(connector_class_id_network_tcp);
             status = connector_callback_error;
         }
     }
@@ -147,7 +147,7 @@ static connector_callback_status_t app_network_tcp_send(connector_write_request_
         {
             status = connector_callback_error;
             APP_DEBUG("app_network_tcp_send: send() failed, errno %d\n", err);
-            app_dns_cache_invalidate(connector_class_network_tcp);
+            app_dns_cache_invalidate(connector_class_id_network_tcp);
         }
     }
     *sent_length = (size_t)bytes_sent;
@@ -278,7 +278,7 @@ static connector_callback_status_t app_network_tcp_open(char const * const serve
     {
         in_addr_t ip_addr;
 
-        status = app_dns_resolve(connector_class_network_tcp, server_name, length, &ip_addr);
+        status = app_dns_resolve(connector_class_id_network_tcp, server_name, length, &ip_addr);
         if (status != connector_callback_continue)
         {
             APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", server_name);
@@ -331,7 +331,7 @@ error:
     if (status == connector_callback_error)
     {
         APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", server_name);
-        app_dns_set_redirected(connector_class_network_tcp, 0);
+        app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
         if (fd >= 0)
         {

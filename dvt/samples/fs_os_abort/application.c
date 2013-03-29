@@ -253,43 +253,43 @@ done:
     return result;
 }
 
-connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
-                                    void const * const request_data, size_t const request_length,
-                                    void * response_data, size_t * const response_length)
+connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+                                                   connector_request_id_t const request_id,
+                                                   void * const data)
 {
     connector_callback_status_t   status = connector_callback_continue;
 
     switch (class_id)
     {
-    case connector_class_config:
+    case connector_class_id_config:
         if (dvt_data.test_type == test_type_config_notify &&
-            dvt_os_pre_test(request_id.config_request, request_data, response_data, response_length, &status) != 0)
+            dvt_os_pre_test(request_id.config_request, data &status) != 0)
         {
             break;
         }
-        status = app_config_handler(request_id.config_request, request_data, request_length, response_data, response_length);
+        status = app_config_handler(request_id.config_request, data);
         break;
 
-    case connector_class_operating_system:
+    case connector_class_id_operating_system:
         if (dvt_data.test_type == test_type_os &&
-            dvt_os_pre_test(request_id.os_request, request_data, response_data, response_length, &status) != 0)
+            dvt_os_pre_test(request_id.os_request, data, &status) != 0)
         {
             break;
         }
-        status = app_os_handler(request_id.os_request, request_data, request_length, response_data, response_length);
+        status = app_os_handler(request_id.os_request, data);
         break;
 
-    case connector_class_network_tcp:
-        status = app_network_tcp_handler(request_id.network_request, request_data, request_length, response_data, response_length);
+    case connector_class_id_network_tcp:
+        status = app_network_tcp_handler(request_id.network_request, data);
         break;
 
     case connector_class_id_file_system:
         dvt_new_test(request_id.file_system_request, request_data);
-        status = app_file_system_handler(request_id.file_system_request, request_data, request_length, response_data, response_length);
+        status = app_file_system_handler(request_id.file_system_request, data);
          break;
 
     case connector_class_id_status:
-        status = app_status_handler(request_id.status_request, request_data, request_length, response_data, response_length);
+        status = app_status_handler(request_id.status_request, data);
         break;
 
     default:
@@ -305,10 +305,5 @@ int application_run(connector_handle_t handle)
 
     return 0;
 }
-
-
-
-
-
 
 

@@ -17,7 +17,7 @@
 #include "application.h"
 
 typedef struct device_request_handle {
-    connector_data_service_request_t request;
+    connector_request_id_data_service_t request;
     void * device_handle;
     char const * response_data;
     device_request_target_t target;
@@ -671,7 +671,7 @@ connector_callback_status_t app_put_request_handler(void const * request_data, s
     return status;
 }
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length)
 {

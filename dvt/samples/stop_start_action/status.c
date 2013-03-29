@@ -54,30 +54,25 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
 connector_callback_status_t stop_callback_status = connector_callback_continue;
 unsigned stop_transport_count[connector_transport_all + 1] = {0};
 
-connector_callback_status_t app_status_handler(connector_status_request_t const request,
-                                           void const * const request_data, size_t const request_length,
-                                           void * response_data, size_t * const response_length)
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(response_data);
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
 
     switch (request)
     {
-    case connector_status_tcp:
-        status = app_tcp_status(request_data);
+    case connector_request_id_status_tcp:
+        status = app_tcp_status(data);
         break;
-    case connector_status_stop_completed:
+    case connector_request_id_status_stop_completed:
     {
-        connector_initiate_stop_request_t const * const stop_request = request_data;
+        connector_initiate_stop_request_t const * const stop_request = data;
         status = stop_callback_status;
         stop_callback_status = connector_callback_continue;
         if (status == connector_callback_abort) initiate_action.target = device_request_not_support;
 
         stop_transport_count[stop_request->transport]--;
-        APP_DEBUG("app_status_handler: +++++ %s [%d] +++++ connector_status_stop_completed\n", transport_to_string(stop_request->transport), stop_transport_count[stop_request->transport]);
+        APP_DEBUG("app_status_handler: +++++ %s [%d] +++++ connector_request_id_status_stop_completed\n", transport_to_string(stop_request->transport), stop_transport_count[stop_request->transport]);
 
         if (stop_request->user_context != NULL)
         {
@@ -93,7 +88,7 @@ connector_callback_status_t app_status_handler(connector_status_request_t const 
 #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
     case connector_status_ping_response:
     {
-        connector_message_status_response_t const * const status_response = request_data;
+        connector_message_status_response_t const * const status_response = data;
 
         APP_DEBUG("app_status_handler: Received ping response [%s].\n", session_status_to_string(status_response->status));
         break;
@@ -101,7 +96,7 @@ connector_callback_status_t app_status_handler(connector_status_request_t const 
 
     case connector_status_ping_request:
     {
-        connector_session_status_t * const status_request = response_data;
+        connector_session_status_t * const status_request = data;
 
 //        *status_request = connector_session_status_device_error; // connector_success;
         APP_DEBUG("app_status_handler: Received ping request %d\n", *status_request);

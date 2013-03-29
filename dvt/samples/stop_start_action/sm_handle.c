@@ -50,7 +50,7 @@ connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
             APP_DEBUG("connector_sm_send_complete %p\n", msg_resp->user_context);
             if (msg_resp->user_context != NULL)
             {
-                connector_data_service_request_t  * const request_id = (connector_data_service_request_t *)msg_resp->user_context;
+                connector_request_id_data_service_t  * const request_id = (connector_request_id_data_service_t *)msg_resp->user_context;
 
                 switch (*request_id)
                 {

@@ -365,7 +365,7 @@ static connector_callback_status_t app_network_close(connector_close_request_t c
         dvt_fw_complete_called = 0;
     }
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_network_tcp, close_data->status);
+    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_tcp, close_data->status);
 
     return status;
 }

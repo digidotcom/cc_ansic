@@ -55,8 +55,8 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
 {
     connector_status_t status = connector_success;
 
-    if (app_send_data != NULL) 
-    {   
+    if (app_send_data != NULL)
+    {
        static connector_message_status_request_t request;
 
        request.transport = app_transport;
@@ -65,7 +65,7 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
 
        APP_DEBUG("Previous data send pending, cancel it\n");
        status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
-       if (status == connector_success) 
+       if (status == connector_success)
            status = connector_service_busy;
        else
            APP_DEBUG("connector_initiate_session_cancel returned %d\n", status);
@@ -81,8 +81,8 @@ connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t re
     static char const buffer[] = "iDigi sm_send_data sample data\n";
 
 
-    if (app_send_data != NULL) 
-    {   
+    if (app_send_data != NULL)
+    {
        status = connector_service_busy;
        goto done;
     }
@@ -122,12 +122,12 @@ connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t re
         free(app_send_data);
         app_send_data = NULL;
     }
-    
+
 done:
     return status;
 }
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length)
 {
@@ -260,20 +260,16 @@ connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
     return status;
 }
 
-connector_callback_status_t app_status_handler(connector_status_request_t const request,
-                                           void const * const request_data, size_t const request_length,
-                                           void * response_data, size_t * const response_length)
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
 
     switch (request)
     {
         case connector_status_ping_response:
         {
-            connector_message_status_response_t const * const status_response = request_data;
+            connector_message_status_response_t const * const status_response = data;
 
             APP_DEBUG("Received ping response [%d].\n", status_response->status);
             break;
@@ -281,7 +277,7 @@ connector_callback_status_t app_status_handler(connector_status_request_t const 
 
         case connector_status_ping_request:
         {
-            connector_status_t * const status_request = response_data;
+            connector_status_t * const status_request = data;
 
             APP_DEBUG("Received ping request.\n");
             *status_request = connector_success;

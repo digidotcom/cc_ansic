@@ -1066,7 +1066,7 @@ typedef struct
                                              - @ref connector_stop_immediately
                                              - @ref connector_wait_sessions_complete */
 
-    void * user_context;                /**< User's defined context that will be passed to @ref connector_status_stop_completed after the transport of  iDigi connector has stopped running. */
+    void * user_context;                /**< User's defined context that will be passed to @ref connector_request_id_status_stop_completed after the transport of  iDigi connector has stopped running. */
 
 } connector_initiate_stop_request_t;
 /**
@@ -1326,7 +1326,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref connector_transport_udp - UDP transport
  *                              - @ref connector_transport_sms - SMS transport
  *                              - @ref connector_transport_all - all transports.
- *                              - @ref @b Note: This triggers @ref connector_status_stop_completed callback. @b See @ref status_stop_completed callback.
+ *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *
  *                      @li @b connector_initiate_status_message:
  *                          Sends status message to the iDigi Device Cloud.  Supported only under

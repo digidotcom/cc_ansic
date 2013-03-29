@@ -32,11 +32,11 @@ typedef enum {
     connector_request_id_data_service_send_status,      /**< to inform the session status */
     connector_request_id_data_service_send_response,    /**< to inform Etherios Device Cloud response */
 
-    connector_request_id_data_service_recieve_target,   /**< to inform the start of Etherios Device Cloud request for a given target */
-    connector_request_id_data_service_recieve_data,     /**< to pass the received request data from Etherios Device Cloud */
-    connector_request_id_data_service_recieve_status,   /**< to inform the session status */
-    connector_request_id_data_service_recieve_reply_length, /**< to get the total length of the response data. Not applicable in TCP transport method */
-    connector_request_id_data_service_recieve_reply_data    /**< to get the response data */
+    connector_request_id_data_service_receive_target,   /**< to inform the start of Etherios Device Cloud request for a given target */
+    connector_request_id_data_service_receive_data,     /**< to pass the received request data from Etherios Device Cloud */
+    connector_request_id_data_service_receive_status,   /**< to inform the session status */
+    connector_request_id_data_service_receive_reply_length, /**< to get the total length of the response data. Not applicable in TCP transport method */
+    connector_request_id_data_service_receive_reply_data    /**< to get the response data */
 } connector_request_id_data_service_t;
 /**
 * @}
@@ -121,7 +121,7 @@ typedef struct
 
     char const * target;                /**< IN: target of the data received */
     connector_bool_t response_required; /**< IN: connector_true means the cloud needs the response and will get the callbacks to collect the response */
-} connector_data_service_recieve_target_t;
+} connector_data_service_receive_target_t;
 
 typedef struct
 {
@@ -131,7 +131,7 @@ typedef struct
     uint8_t const * buffer;             /**< IN: received data */
     size_t bytes_used;                  /**< IN: bytes filled in the buffer */
     connector_bool_t more_data;         /**< IN: connector_true means more request to follow */
-} connector_data_service_recieve_data_t;
+} connector_data_service_receive_data_t;
 
 typedef struct
 {
@@ -140,15 +140,15 @@ typedef struct
 
     enum
     {
-        connector_data_service_recieve_status_cancel,
-        connector_data_service_recieve_status_timeout,
-        connector_data_service_recieve_status_no_resource,
-        connector_data_service_recieve_status_session_error
+        connector_data_service_receive_status_cancel,
+        connector_data_service_receive_status_timeout,
+        connector_data_service_receive_status_no_resource,
+        connector_data_service_receive_status_session_error
     } status;                           /**< IN: reason for the end of session */
 
-    connector_session_error_t   session_error;   /**< IN: applicable only if the status is set to connector_data_service_recieve_status_session_error */
+    connector_session_error_t   session_error;   /**< IN: applicable only if the status is set to connector_data_service_receive_status_session_error */
 
-} connector_data_service_recieve_status_t;
+} connector_data_service_receive_status_t;
 
 typedef struct
 {
@@ -156,7 +156,7 @@ typedef struct
     void * user_context;                /**< IN/OUT: user context passed */
 
     size_t total_bytes;                 /**< OUT: total response data length */
-} connector_data_service_recieve_reply_length_t;
+} connector_data_service_receive_reply_length_t;
 
 typedef struct
 {
@@ -167,7 +167,7 @@ typedef struct
     size_t bytes_available;             /**< IN: number of bytes available */
     size_t bytes_used;                  /**< OUT: number of bytes filled */
     connector_bool_t more_data;         /**< OUT: connector_true means more response to fill */
-} connector_data_service_recieve_reply_data_t;
+} connector_data_service_receive_reply_data_t;
 
 #endif /* _CONNECTOR_DS_API_H */
 

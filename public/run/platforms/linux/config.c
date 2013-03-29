@@ -186,7 +186,6 @@ static connector_callback_status_t app_get_server_url(connector_config_pointer_s
 {
 #error "Specify iDigi Device Cloud URL"
     static  char const connector_server_url[] = "my.idigi.com";
-
     /* Return pointer to device type. */
     config_url->string = (char *)connector_server_url;
     config_url->length = sizeof connector_server_url -1;
@@ -277,7 +276,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
 #endif
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE) && !(defined CONNECTOR_FIRMWARE_SUPPORT)
-static connector_callback_status_t app_get_firmware_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_firmware_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -286,7 +285,7 @@ static connector_callback_status_t app_get_firmware_support(connector_config_sup
 #endif
 
 #if (defined CONNECTOR_DATA_SERVICE) && !(defined CONNECTOR_DATA_SERVICE_SUPPORT)
-static connector_callback_status_t app_get_data_service_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_data_service_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -295,7 +294,7 @@ static connector_callback_status_t app_get_data_service_support(connector_config
 #endif
 
 #if (defined CONNECTOR_FILE_SYSTEM) && !(defined CONNECTOR_FILE_SYSTEM_SUPPORT)
-static connector_callback_status_t app_get_file_system_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_file_system_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -304,7 +303,7 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
 #endif
 
 #if (defined CONNECTOR_RCI_SERVICE) && !(defined CONNECTOR_REMOTE_CONFIGURATION_SUPPORT)
-static connector_callback_status_t app_get_remote_configuration_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_remote_configuration_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -700,11 +699,11 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
         enum_to_case(connector_request_id_data_service_send_data);
         enum_to_case(connector_request_id_data_service_send_status);
         enum_to_case(connector_request_id_data_service_send_response);
-        enum_to_case(connector_request_id_data_service_recieve_target);
-        enum_to_case(connector_request_id_data_service_recieve_data);
-        enum_to_case(connector_request_id_data_service_recieve_status);
-        enum_to_case(connector_request_id_data_service_recieve_reply_length);
-        enum_to_case(connector_request_id_data_service_recieve_reply_data);
+        enum_to_case(connector_request_id_data_service_receive_target);
+        enum_to_case(connector_request_id_data_service_receive_data);
+        enum_to_case(connector_request_id_data_service_receive_status);
+        enum_to_case(connector_request_id_data_service_receive_reply_length);
+        enum_to_case(connector_request_id_data_service_receive_reply_data);
     }
     return result;
 }

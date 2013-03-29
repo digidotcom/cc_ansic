@@ -328,7 +328,7 @@ static connector_callback_status_t app_tcp_connect(in_addr_t const ip_addr,
 
 error:
     app_free_ssl_info(&ssl_info);
-    app_dns_set_redirected(connector_class_network_tcp, 0);
+    app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
 done:
     return status;
@@ -349,7 +349,7 @@ static connector_callback_status_t app_network_tcp_send(connector_write_request_
     {
         APP_DEBUG("SSL_write failed %d\n", bytes_sent);
         SSL_set_shutdown(ssl_ptr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
-        app_dns_cache_invalidate(connector_class_network_tcp);
+        app_dns_cache_invalidate(connector_class_id_network_tcp);
         status = connector_callback_error;
     }
 
@@ -407,7 +407,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_read_reques
         /* EOF on input: the connection was closed. */
         SSL_set_shutdown(ssl_ptr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
         APP_DEBUG("SSL_read failed %d\n", bytes_read);
-        app_dns_cache_invalidate(connector_class_network_tcp);
+        app_dns_cache_invalidate(connector_class_id_network_tcp);
         status = connector_callback_error;
     }
 
@@ -429,9 +429,9 @@ static connector_callback_status_t app_network_tcp_close(connector_close_request
 
     app_free_ssl_info(ssl_ptr);
 
-    app_dns_set_redirected(connector_class_network_tcp, close_data->status == connector_close_status_server_redirected);
+    app_dns_set_redirected(connector_class_id_network_tcp, close_data->status == connector_close_status_server_redirected);
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_network_tcp, close_data->status);
+    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_tcp, close_data->status);
     return status;
 }
 
@@ -442,7 +442,7 @@ static connector_callback_status_t app_network_tcp_open(char const * const serve
     connector_callback_status_t status;
     in_addr_t ip_addr;
 
-    status = app_dns_resolve(connector_class_network_tcp, server_name, length, &ip_addr);
+    status = app_dns_resolve(connector_class_id_network_tcp, server_name, length, &ip_addr);
     if (status != connector_callback_continue)
     {
         APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", server_name);

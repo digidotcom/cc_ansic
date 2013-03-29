@@ -71,8 +71,7 @@ typedef struct {
 */
 typedef struct {
 
-    connector_firmware_version_t version; /**< Version number of the target TODO: Paul m.m.v.b */
-    uint32_t image_size;        /**< TODO: ask Adam...what is this Code size of the target (avail, max, current). If size is unknown, set 0xFFFFFFFF */
+    connector_firmware_version_t version; /**< Version number of the target */
     char const * description;   /**< An ASCII description string of the target */
     char const * filespec;      /**< Regular expression for the firmware image name for  the target */
 
@@ -136,10 +135,7 @@ typedef enum {
 typedef struct {
     unsigned int target_number;  /**< Target number which firmware target the image data is for */
 
-    struct {
-        uint32_t size; /**< size of the code that is ready to be sent to the target */
-        char * filename;    /**< Pointer to filename of the image to be downloaded */
-    } image;           /**< Contains the firmware download image information */
+    char * filename;    /**< Pointer to filename of the image to be downloaded */
 
     connector_firmware_status_t status; /** Callback writes error status if error is encountered */
 
@@ -186,19 +182,7 @@ typedef struct {
 typedef struct {
     unsigned int target_number;  /**< Target number which firmware target the image data is for */
 
-#if PAUL_CONFIRM
-    struct {
-        uint32_t code_size;     /**< TODO: check with Adam...Needed?....Code size of the entire image data sent */
-        uint32_t checksum;      /**< CRC-32 value computed from offset 0 to code size. If it's 0, no checksum is required */
-    } image_data;               /**< Contains information of the image data sent */
-
-    struct {
-        connector_firmware_version_t version;            /**< TODO: Check with Adam why? Version number of the downloaded image */
-        connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
-    } image_status;                                      /**< Callback writes the new image version and status */
-#else
     connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
-#endif
 
 } connector_firmware_download_complete_t;
 /**

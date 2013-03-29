@@ -39,7 +39,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     static connector_message_status_request_t request; /* idigi connector will hold this until reply received or send completes */
 
     if (app_ping_pending)
-    {   
+    {
        static connector_message_status_request_t request;
 
        request.transport = connector_transport_udp;
@@ -48,7 +48,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
 
        APP_DEBUG("Previous ping pending, cancel it\n");
        status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
-       if (status == connector_success) 
+       if (status == connector_success)
            status = connector_service_busy;
        else
            APP_DEBUG("connector_initiate_session_cancel returned %d\n", status);
@@ -60,7 +60,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.user_context = &app_ping_pending;
     request.flags = 0;
     status = connector_initiate_action(handle, connector_initiate_status_message, &request);
-    if (status != connector_success) 
+    if (status != connector_success)
         app_ping_pending = app_false;
 
     APP_DEBUG("Sent ping [%d].\n", status);
@@ -228,7 +228,7 @@ static connector_callback_status_t app_process_device_error(connector_data_servi
 
     device_request_active_count--;
     free(client_device_request);
- 
+
     return connector_callback_continue;
 }
 
@@ -253,7 +253,7 @@ static connector_callback_status_t app_process_session_status(connector_data_ser
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                       void const * const request_data, size_t const request_length,
                                                       void * response_data, size_t * const response_length)
 {
@@ -331,21 +331,16 @@ connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
     return status;
 }
 
-connector_callback_status_t app_status_handler(connector_status_request_t const request,
-                                           void const * const request_data, size_t const request_length,
-                                           void * response_data, size_t * const response_length)
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
 
     switch (request)
     {
 #ifdef CONNECTOR_TRANSPORT_UDP
         case connector_status_ping_response:
         {
-            connector_message_status_response_t const * const status_response = request_data;
+            connector_message_status_response_t const * const status_response = data;
             app_ping_pending = app_false;
 
             APP_DEBUG("Received ping response [%d].\n", status_response->status);
@@ -355,7 +350,7 @@ connector_callback_status_t app_status_handler(connector_status_request_t const 
 
         case connector_status_ping_request:
         {
-            connector_status_t * const status_response = response_data;
+            connector_status_t * const status_response = data;
 
             APP_DEBUG("Received ping request.\n");
             *status_response = connector_success;

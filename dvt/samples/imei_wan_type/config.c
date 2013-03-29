@@ -571,13 +571,13 @@ static char const * app_class_to_string(connector_class_id_t const value)
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_class_config);
-        enum_to_case(connector_class_operating_system);
+        enum_to_case(connector_class_id_config);
+        enum_to_case(connector_class_id_operating_system);
         enum_to_case(connector_class_firmware);
         enum_to_case(connector_class_id_data_service);
         enum_to_case(connector_class_remote_config_service);
         enum_to_case(connector_class_id_file_system);
-        enum_to_case(connector_class_network_tcp);
+        enum_to_case(connector_class_id_network_tcp);
         enum_to_case(connector_class_id_network_udp);
         enum_to_case(connector_class_id_network_sms);
         enum_to_case(connector_class_id_status);
@@ -710,7 +710,7 @@ static char const * app_file_system_class_to_string(connector_file_system_reques
     return result;
 }
 
-static char const * app_data_service_class_to_string(connector_data_service_request_t const value)
+static char const * app_data_service_class_to_string(connector_request_id_data_service_t const value)
 {
     char const * result = NULL;
     switch (value)
@@ -722,15 +722,15 @@ static char const * app_data_service_class_to_string(connector_data_service_requ
     return result;
 }
 
-static char const * app_status_class_to_string(connector_status_request_t const value)
+static char const * app_status_class_to_string(connector_request_id_status_t const value)
 {
     char const * result = NULL;
     switch (value)
     {
         enum_to_case(connector_status_ping_response);
         enum_to_case(connector_status_ping_request);
-        enum_to_case(connector_status_tcp);
-        enum_to_case(connector_status_stop_completed);
+        enum_to_case(connector_request_id_status_tcp);
+        enum_to_case(connector_request_id_status_stop_completed);
     }
     return result;
 }
@@ -794,15 +794,15 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
 
     switch (error_data->class_id)
     {
-    case connector_class_config:
+    case connector_class_id_config:
         APP_DEBUG("Request: %s (%d) ", app_config_class_to_string(error_data->request_id.config_request), error_data->request_id.config_request);
         break;
-    case connector_class_network_tcp:
+    case connector_class_id_network_tcp:
     case connector_class_id_network_udp:
     case connector_class_id_network_sms:
         APP_DEBUG("Request: %s (%d) ", app_network_class_to_string(error_data->request_id.network_request), error_data->request_id.network_request);
         break;
-    case connector_class_operating_system:
+    case connector_class_id_operating_system:
         APP_DEBUG("Request: %s (%d) ", app_os_class_to_string(error_data->request_id.os_request), error_data->request_id.os_request);
         break;
     case connector_class_firmware:

@@ -70,7 +70,7 @@ typedef enum {
 
 typedef struct
 {
-    connector_data_service_request_t request;
+    connector_request_id_data_service_t request;
     connector_data_service_put_request_t header;
     char file_path[DS_FILE_NAME_LEN];
     size_t bytes_sent;

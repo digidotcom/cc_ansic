@@ -700,11 +700,11 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
         enum_to_case(connector_request_id_data_service_send_data);
         enum_to_case(connector_request_id_data_service_send_status);
         enum_to_case(connector_request_id_data_service_send_response);
-        enum_to_case(connector_request_id_data_service_recieve_target);
-        enum_to_case(connector_request_id_data_service_recieve_data);
-        enum_to_case(connector_request_id_data_service_recieve_status);
-        enum_to_case(connector_request_id_data_service_recieve_reply_length);
-        enum_to_case(connector_request_id_data_service_recieve_reply_data);
+        enum_to_case(connector_request_id_data_service_receive_target);
+        enum_to_case(connector_request_id_data_service_receive_data);
+        enum_to_case(connector_request_id_data_service_receive_status);
+        enum_to_case(connector_request_id_data_service_receive_reply_length);
+        enum_to_case(connector_request_id_data_service_receive_reply_data);
     }
     return result;
 }
