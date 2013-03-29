@@ -12,7 +12,7 @@
 
 static connector_status_t connect_server(connector_data_t * const connector_ptr, char const * server_url)
 {
-    connector_status_t result = connector_idle;
+    connector_status_t result = connector_working;
 
     connector_callback_status_t status;
     connector_network_open_data_t open_data;
