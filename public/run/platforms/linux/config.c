@@ -559,6 +559,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
         enum_to_case(connector_class_id_network_sms);
         enum_to_case(connector_class_id_status);
         enum_to_case(connector_class_id_short_message);
+        enum_to_case(connector_class_id_data_point);
     }
     return result;
 }
@@ -695,9 +696,30 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_request_id_data_service_put_request);
-        enum_to_case(connector_request_id_data_service_device_request);
-        enum_to_case(connector_request_id_data_service_dp_response);
+        enum_to_case(connector_request_id_data_service_send_length);
+        enum_to_case(connector_request_id_data_service_send_data);
+        enum_to_case(connector_request_id_data_service_send_status);
+        enum_to_case(connector_request_id_data_service_send_response);
+        enum_to_case(connector_request_id_data_service_recieve_target);
+        enum_to_case(connector_request_id_data_service_recieve_data);
+        enum_to_case(connector_request_id_data_service_recieve_status);
+        enum_to_case(connector_request_id_data_service_recieve_reply_length);
+        enum_to_case(connector_request_id_data_service_recieve_reply_data);
+    }
+    return result;
+}
+#endif
+
+#if (defined CONNECTOR_DATA_POINT)
+static char const * app_data_point_class_to_string(connector_request_id_data_point_t const value)
+{
+    char const * result = NULL;
+    switch (value)
+    {
+        enum_to_case(connector_request_id_data_point_binary_response);
+        enum_to_case(connector_request_id_data_point_binary_status);
+        enum_to_case(connector_request_id_data_point_single_response);
+        enum_to_case(connector_request_id_data_point_single_status);
     }
     return result;
 }
@@ -796,6 +818,12 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
 #if (defined CONNECTOR_DATA_SERVICE)
     case connector_class_id_data_service:
         APP_DEBUG("Request: %s (%d) ", app_data_service_class_to_string(error_data->request_id.data_service_request), error_data->request_id.data_service_request);
+        break;
+#endif
+
+#if (defined CONNECTOR_DATA_POINT)
+    case connector_class_id_data_point:
+        APP_DEBUG("Request: %s (%d) ", app_data_point_class_to_string(error_data->request_id.data_point_request), error_data->request_id.data_point_request);
         break;
 #endif
 

@@ -756,7 +756,7 @@ typedef struct
 */
 typedef struct
 {
-    connector_msg_error_t message_status;   /**< Error status in messaging layer */
+    connector_session_error_t message_status;   /**< Error status in messaging layer */
 } connector_file_error_request_t;
 /**
 * @}
