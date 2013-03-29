@@ -233,6 +233,7 @@ typedef struct {
 /**
 * @defgroup connector_device_id_method_t Device ID Method Types
 * @{
+*
 */
 /**
  * Device ID method type which is used in the applciation's callback telling

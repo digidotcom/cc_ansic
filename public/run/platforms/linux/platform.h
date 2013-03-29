@@ -54,7 +54,7 @@ extern int application_run(connector_handle_t handle);
 
 extern connector_callback_status_t app_os_get_system_time(unsigned long * const uptime);
 
-extern connector_connect_auto_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status);
+extern connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status);
 extern connector_callback_status_t app_status_handler(connector_request_id_status_t const request,
                                                       void * const data);
 

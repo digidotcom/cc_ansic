@@ -14,30 +14,30 @@
 #include "platform.h"
 
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
+connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
-    connector_auto_connect_type_t type;
+    connector_bool_t type;
 
     switch (status)
     {
        /* if either the server or our application cuts the connection, don't reconnect */
        case connector_close_status_device_terminated:
        case connector_close_status_device_stopped:
-             type = connector_manual_connect;
+             type = connector_false;
              break;
 
        /* otherwise it's an error and we want to retry */
         default:
-             type = connector_auto_connect;
+             type = connector_true;
              break;
     }
 
     return type;
 }
 
-typedef enum 
+typedef enum
 {
     action_none,
     return_abort,
@@ -58,23 +58,23 @@ typedef enum
 {
     test_type_none,
     test_type_os,
-    test_type_config_notify     
+    test_type_config_notify
 
 } dvt_test_t;
 
-typedef struct 
+typedef struct
 {
     char name[256];
     int  callback_cnt;
     dvt_test_t test_type;
-    
+
 } dvt_data_t;
 
 static dvt_data_t dvt_data = {"", 0, test_type_none};
 
-typedef struct 
+typedef struct
 {
- 
+
     char * name;
     int    callback_cnt;
     connector_os_request_t callback_id;
@@ -96,25 +96,25 @@ static dvt_test_data_t test_table[] = {
     {"dvt_os_reboot_abort",         1, connector_os_reboot, return_abort},
     {"dvt_os_notify_abort",         2, connector_os_malloc, set_null_data},
     {"dvt_config_notify_abort",     1, connector_config_error_status, return_abort},
-        
+
     {"dvt_os_malloc_busy2",        2, connector_os_malloc, return_busy},
     {"dvt_os_reboot_busy",         1, connector_os_reboot, return_busy},
 };
 
 static void dvt_init_test(char const * name)
 {
-    
+
 
     dvt_data.callback_cnt = 0;
     if (strstr(name, "dvt_os_"))
     {
-        strcpy(dvt_data.name, name); 
+        strcpy(dvt_data.name, name);
         dvt_data.test_type = test_type_os;
     }
     else
     if (strstr(name, "dvt_config_notify_"))
     {
-        strcpy(dvt_data.name, name); 
+        strcpy(dvt_data.name, name);
         dvt_data.test_type = test_type_config_notify;
     }
 
@@ -140,7 +140,7 @@ static void dvt_new_test(connector_file_system_request_t const request_id,
         ptr = strstr(file_request->path, "dvt_os_");
         if (ptr == NULL)
             ptr = strstr(file_request->path, "dvt_config_");
-        if (ptr != NULL) 
+        if (ptr != NULL)
             dvt_init_test(ptr);
     }
 }
@@ -157,10 +157,10 @@ static test_action_t dvt_find_test(connector_os_request_t const request_id, void
     if (dvt_data.test_type == test_type_none)
         goto done;
 
-    for (i = 0; i < sizeof test_table / sizeof test_table[0]; i++) 
+    for (i = 0; i < sizeof test_table / sizeof test_table[0]; i++)
     {
-        if ((test_table[i].callback_id == request_id) && 
-            strcmp(dvt_data.name, test_table[i].name) == 0) 
+        if ((test_table[i].callback_id == request_id) &&
+            strcmp(dvt_data.name, test_table[i].name) == 0)
         {
             dvt_data.callback_cnt++;
             if (dvt_data.callback_cnt == test_table[i].callback_cnt)
@@ -183,8 +183,8 @@ done:
 
 
 static int dvt_os_pre_test(connector_os_request_t const request_id,
-                        void const * const request_data, 
-                        void * const response_data, 
+                        void const * const request_data,
+                        void * const response_data,
                         size_t * const response_length,
                         connector_callback_status_t * status)
 {
@@ -204,7 +204,7 @@ static int dvt_os_pre_test(connector_os_request_t const request_id,
         case return_busy:
             *status = connector_callback_busy;
             break;
- 
+
         case return_unrecognized:
             *status = connector_callback_unrecognized;
             break;
@@ -222,12 +222,12 @@ static int dvt_os_pre_test(connector_os_request_t const request_id,
             break;
 
         case set_null_data:
-            if (request_id == connector_os_malloc) 
+            if (request_id == connector_os_malloc)
             {
                 void ** ptr = (void **)response_data;
                 *ptr = NULL;
 
-                if (strcmp(dvt_data.name, "dvt_os_notify_abort") == 0) 
+                if (strcmp(dvt_data.name, "dvt_os_notify_abort") == 0)
                 {
                     strcpy(dvt_data.name, "dvt_config_notify_abort");
                     dvt_data.test_type = test_type_config_notify;
@@ -244,7 +244,7 @@ static int dvt_os_pre_test(connector_os_request_t const request_id,
     }
 
     if (dvt_data.test_type != test_type_none &&
-        action !=  action_none && action !=  return_busy) 
+        action !=  action_none && action !=  return_busy)
     {
         dvt_cleanup_test();
     }
@@ -258,11 +258,11 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
                                     void * response_data, size_t * const response_length)
 {
     connector_callback_status_t   status = connector_callback_continue;
-   
+
     switch (class_id)
     {
     case connector_class_config:
-        if (dvt_data.test_type == test_type_config_notify && 
+        if (dvt_data.test_type == test_type_config_notify &&
             dvt_os_pre_test(request_id.config_request, request_data, response_data, response_length, &status) != 0)
         {
             break;
@@ -271,7 +271,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         break;
 
     case connector_class_operating_system:
-        if (dvt_data.test_type == test_type_os && 
+        if (dvt_data.test_type == test_type_os &&
             dvt_os_pre_test(request_id.os_request, request_data, response_data, response_length, &status) != 0)
         {
             break;

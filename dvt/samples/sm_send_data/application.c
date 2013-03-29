@@ -19,11 +19,11 @@
 #include "platform.h"
 #include "application.h"
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
+connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
-    connector_auto_connect_type_t type;
+    connector_bool_t type;
 
     switch (status)
     {
@@ -31,12 +31,12 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:
-             type = connector_manual_connect;
+             type = connector_false;
              break;
 
        /* otherwise it's an error and we want to retry */
        default:
-             type = connector_auto_connect;
+             type = connector_true;
              break;
     }
 
@@ -94,10 +94,10 @@ int application_run(connector_handle_t handle)
     app_bool_t response_needed = app_true;
     unsigned int send_cnt = 0;
 
-    for (send_cnt = 0; send_cnt < send_cnt_max; ) 
+    for (send_cnt = 0; send_cnt < send_cnt_max; )
     {
         connector_status_t status = app_send_put_request(handle, response_needed);
-        switch(status) 
+        switch(status)
         {
             case connector_success:
             {
@@ -120,25 +120,25 @@ int application_run(connector_handle_t handle)
                 }
                 break;
              }
-    
+
             case connector_init_error:
             case connector_service_busy:
             case connector_unavailable:
                 sleep(sleep_sec_busy);
                 break;
-    
+
             default:
                 APP_DEBUG("Send data failed [%d]\n", status);
                 goto done;
         }
     }
 
-#ifdef APP_USE_SM_UDP 
-    for (;;) 
+#ifdef APP_USE_SM_UDP
+    for (;;)
     {
         const unsigned int sleep_sec_ping = 10;
         connector_status_t status = app_send_ping(handle);
-        switch (status) 
+        switch (status)
         {
             case connector_service_busy:
                 sleep(sleep_sec_busy);
@@ -147,7 +147,7 @@ int application_run(connector_handle_t handle)
             case connector_success:
                 sleep(sleep_sec_ping);
                 break;
-       
+
             default:
                 APP_DEBUG("Send data failed [%d]\n", status);
                 goto done;

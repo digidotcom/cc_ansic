@@ -18,11 +18,11 @@
 #include "platform.h"
 #include "application.h"
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
+connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
-    connector_auto_connect_type_t type;
+    connector_bool_t type;
 
     switch (status)
     {
@@ -30,12 +30,12 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:
-             type = connector_manual_connect;
+             type = connector_false;
              break;
 
        /* otherwise it's an error and we want to retry */
        default:
-             type = connector_auto_connect;
+             type = connector_true;
              break;
     }
 
@@ -96,20 +96,20 @@ int application_run(connector_handle_t handle)
     {
         connector_status_t const status = app_send_ping(handle);
 
-        switch (status) 
+        switch (status)
         {
             case connector_init_error:
             case connector_service_busy:
             case connector_unavailable:
                 sleep(2);
                 break;
-            
+
         case connector_success:
                 sleep(2);
                 if (!app_ping_pending)
                      sleep(ping_interval_in_seconds - 2);
                 break;
- 
+
             default:
                 return_status = 1;
                 break;

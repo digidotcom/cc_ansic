@@ -24,11 +24,11 @@ extern connector_callback_status_t app_data_service_handler(connector_data_servi
 
 extern connector_status_t app_send_put_request(connector_handle_t handle);
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
+connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
-    connector_auto_connect_type_t type;
+    connector_bool_t type;
 
     switch (status)
     {
@@ -36,12 +36,12 @@ connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:
-             type = connector_connect_manual;
+             type = connector_false;
              break;
 
        /* otherwise it's an error and we want to retry */
        default:
-             type = connector_auto_connect;
+             type = connector_true;
              break;
     }
 
@@ -91,8 +91,8 @@ int application_run(connector_handle_t handle)
     for (;;)
     {
         connector_status_t const status = app_send_put_request(handle);
-        
-        switch (status) 
+
+        switch (status)
         {
         case connector_init_error:
             {
@@ -104,7 +104,7 @@ int application_run(connector_handle_t handle)
 
         case connector_success:
             goto done;
-        
+
         default:
             APP_DEBUG("Send data failed [%d]\n", status);
             return_status = 1;

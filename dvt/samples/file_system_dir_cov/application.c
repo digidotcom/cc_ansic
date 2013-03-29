@@ -14,23 +14,23 @@
 #include "platform.h"
 
 
-connector_auto_connect_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
+connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
     UNUSED_ARGUMENT(class_id);
 
-    connector_auto_connect_type_t type;
+    connector_bool_t type;
 
     switch (status)
     {
        /* if either the server or our application cuts the connection, don't reconnect */
        case connector_close_status_device_terminated:
        case connector_close_status_device_stopped:
-             type = connector_manual_connect;
+             type = connector_false;
              break;
 
        /* otherwise it's an error and we want to retry */
         default:
-             type = connector_auto_connect;
+             type = connector_true;
              break;
     }
 
@@ -42,7 +42,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
                                     void * response_data, size_t * const response_length)
 {
     connector_callback_status_t   status = connector_callback_continue;
-   
+
     switch (class_id)
     {
     case connector_class_config:
