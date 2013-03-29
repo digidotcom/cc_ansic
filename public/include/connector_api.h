@@ -141,17 +141,18 @@ typedef enum {
 * It tells class id for the request id passed to the application's callback.
 */
 typedef enum {
-    connector_class_id_config,             /**< Configuration Class Id */
-    connector_class_id_operating_system,   /**< Operating System Class Id */
-    connector_class_id_firmware,           /**< Firmware Facility Class Id */
-    connector_class_id_data_service,       /**< Data Service Class Id */
-    connector_class_id_remote_config,   /**< Remote Configuration Class ID */
-    connector_class_id_file_system,        /**< File System Class Id */
-    connector_class_id_network_tcp,     /**< TCP Network Class ID */
-    connector_class_id_network_udp,        /**< UDP Network Class ID */
-    connector_class_id_network_sms,        /**< SMS Network Class ID */
-    connector_class_id_status,             /**< Class ID for all status */
-    connector_class_id_short_message                  /**< Short message specific class ID */
+    connector_class_id_config,           /**< Configuration Class Id */
+    connector_class_id_operating_system, /**< Operating System Class Id */
+    connector_class_id_firmware,         /**< Firmware Facility Class Id */
+    connector_class_id_data_service,     /**< Data Service Class Id */
+    connector_class_id_remote_config,    /**< Remote Configuration Class ID */
+    connector_class_id_file_system,      /**< File System Class Id */
+    connector_class_id_network_tcp,      /**< TCP Network Class ID */
+    connector_class_id_network_udp,      /**< UDP Network Class ID */
+    connector_class_id_network_sms,      /**< SMS Network Class ID */
+    connector_class_id_status,           /**< Class ID for all status */
+    connector_class_id_short_message,    /**< Short message specific class ID */
+    connector_class_id_data_point
 } connector_class_id_t;
 /**
 * @}
@@ -373,21 +374,24 @@ typedef enum
 * @see connector_class_id_t
 */
 typedef union {
-    connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
-    connector_request_id_os_t os_request;                           /**< Operating system request ID for operating system class */
-    #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
-    connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
+    connector_request_id_config_t config_request;               /**< Configuration request ID for configuration class */
+    connector_request_id_os_t os_request;                       /**< Operating system request ID for operating system class */
+    #if (defined CONNECTOR_FIRMWARE_SERVICE)
+    connector_request_id_firmware_t firmware_request;           /**< Firmware request ID for firmware facility class */
     #endif
     #if (defined CONNECTOR_DATA_SERVICE)
-    connector_request_id_data_service_t data_service_request;    /**< Data service request ID for data service class */
+    connector_request_id_data_service_t data_service_request;   /**< Data service request ID for data service class */
     #endif
-    #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
-    connector_request_id_remote_config_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
+    #if (defined CONNECTOR_DATA_POINT)
+    connector_request_id_data_point_t data_point_request;       /**< Data service request ID for data service class */
     #endif
-    connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
-    connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
-    connector_request_id_status_t status_request;                   /**< Status request ID for status class */
-    connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
+    #if (defined CONNECTOR_RCI_SERVICE)
+    connector_request_id_remote_config_t remote_config_request; /**< Remote configuration request ID for remote configuration service class */
+    #endif
+    connector_file_system_request_t   file_system_request;      /**< File system request ID for file system class */
+    connector_request_id_network_t  network_request;            /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+    connector_request_id_status_t status_request;               /**< Status request ID for status class */
+    connector_sm_request_t sm_request;                          /**< Short message request ID for SM class */
 } connector_request_id_t;
 /**
 * @}

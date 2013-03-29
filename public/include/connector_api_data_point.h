@@ -69,7 +69,7 @@ typedef enum
 *
 * @see connector_data_point_t
 */
-typedef struct connector_timeval_t
+typedef struct
 {
     uint32_t seconds;
     unsigned int milliseconds;
@@ -234,6 +234,7 @@ typedef struct
     char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
     connector_data_point_t * point;     /**< pointer to list of data points */
+    connector_bool_t response_required; /**< set to connector_true if response is needed */
     connector_data_point_type_t type;   /**< data point content type */
 } connector_request_data_point_single_t;
 /**
@@ -266,6 +267,7 @@ typedef struct
         connector_data_point_response_cloud_error
     } response;
 
+    char const * hint; /** IN: error hint returned from the cloud, NULL if success or hint not available */
 } connector_data_point_response_t;
 
 /**
@@ -291,6 +293,7 @@ typedef struct
         connector_data_point_status_complete,      /**< response is not requested and session is complete successfully */
         connector_data_point_status_cancel,        /**< session is cancelled by the user */
         connector_data_point_status_timeout,       /**< session timed out */
+        connector_data_point_status_invalid_data,  /**< could not process the data passed in initiate action */
         connector_data_point_status_session_error  /**< error from lower communication layer  */
     } status;       /**< IN: reason for end of session */
 
