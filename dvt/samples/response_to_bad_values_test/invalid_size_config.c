@@ -37,255 +37,239 @@
  * platform.
  */
 
-connector_callback_status_t app_get_invalid_size_ip_address(void ** ip_address, size_t *size)
+connector_callback_status_t app_get_invalid_size_ip_address(connector_config_ip_address_t * const config_ip)
 {
     static uint8_t invalid_size_ip_address;
 
-    APP_DEBUG("Entering app_get_invalid_size_forced_error_ip_address\n");
-
-    *ip_address = &invalid_size_ip_address;
-    *size = sizeof invalid_size_ip_address;
+    memset(&config_ip->ip_address_type, 0xFF, sizeof config_ip->ip_address_type);
+    config_ip->address = (uint8_t *)&invalid_size_ip_address;
 
     return connector_callback_continue;
 }
 
 /* MAC address used in this sample */
-static connector_callback_status_t app_get_invalid_size_mac_addr(uint8_t ** addr, size_t * size)
+static connector_callback_status_t app_get_invalid_size_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
     static uint8_t invalid_size_mac_addr;
 
     APP_DEBUG("entering app_get_invalid_size_mac_addr\n");
 
-    *addr = &invalid_size_mac_addr;
-    *size = sizeof invalid_size_mac_addr;
+    config_mac->data = &invalid_size_mac_addr;
+    config_mac->bytes_required = sizeof invalid_size_mac_addr;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_device_id(uint8_t ** id, size_t * size)
+static connector_callback_status_t app_get_invalid_size_device_id(connector_config_pointer_data_t * const config_device_id)
 {
     static uint8_t invalid_size_device_id;
 
-    *id   = &invalid_size_device_id;
-    *size = sizeof invalid_size_device_id;
+    config_device_id->data   = &invalid_size_device_id;
+    config_device_id->bytes_required = sizeof invalid_size_device_id;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_vendor_id(uint8_t ** id, size_t * size)
+static connector_callback_status_t app_get_invalid_size_vendor_id(connector_config_vendor_id_t * const config_vendor)
 {
-    static uint8_t invalid_size_vendor_id;
-
-    *id   = &invalid_size_vendor_id;
-    *size = sizeof invalid_size_vendor_id;
+    /* no invalid size for vendor id */
+    config_vendor->id = 0x0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_device_type(char ** type, size_t * size)
+static connector_callback_status_t app_get_invalid_size_device_type(connector_config_pointer_string_t * const config_device_type)
 {
     static char invalid_size_device_type;
 
-    *type = &invalid_size_device_type;
-    *size = 0;
+    config_device_type->string = &invalid_size_device_type;
+    config_device_type->length = 0;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_size_server_url(char ** url, size_t * size)
+static connector_callback_status_t app_get_invalid_size_server_url(connector_config_pointer_string_t * const config_url)
 {
 //#error "Specify iDigi Server URL"
 
     static char  invalid_size_server_url;
 
     /* Return pointer to device type. */
-    *url = &invalid_size_server_url;
-    *size = 0;
+    config_url->string = &invalid_size_server_url;
+    config_url->length = 0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_connection_type(connector_connection_type_t ** type)
+static connector_callback_status_t app_get_invalid_size_connection_type(connector_config_connection_type_t * const config_connection)
 {
 
     /* No invalid_size for connection type so return good connection type */
-    *type = &device_connection_type;
+    config_connection->type = device_connection_type;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_link_speed(uint32_t **speed, size_t * size)
+static connector_callback_status_t app_get_invalid_size_link_speed(connector_config_link_speed_t * const config_link)
 {
-    static uint8_t invalid_size_link_speed;
-
-    *speed = cast_for_alignment(uint32_t *, &invalid_size_link_speed);
-    *size = sizeof invalid_size_link_speed;
-
-
+    /* no invalid size */
+    config_link->speed = 0;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_phone_number(char ** number, size_t * size)
+static connector_callback_status_t app_get_invalid_size_phone_number(connector_config_pointer_string_t * const config_phone_number)
 {
     static char invalid_size_phone_number;
 
-    *number = &invalid_size_phone_number;
-    *size = 0;
+    config_phone_number->string = &invalid_size_phone_number;
+    config_phone_number->length = 0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_tx_keepalive_interval(uint16_t **interval, size_t * size)
+static connector_callback_status_t app_get_invalid_size_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-
-    static uint8_t invalid_size_tx_keepalive_interval;
-
-    *interval = cast_for_alignment(uint16_t *, &invalid_size_tx_keepalive_interval);
-    *size = sizeof invalid_size_tx_keepalive_interval;
+    /* no invalid size */
+    config_keepalive->interval_in_seconds = 0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_rx_keepalive_interval(uint16_t **interval, size_t * size)
+static connector_callback_status_t app_get_invalid_size_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-    static uint8_t invalid_size_rx_keepalive_interval;
-
-    *interval = cast_for_alignment(uint16_t *, &invalid_size_rx_keepalive_interval);
-    *size = sizeof invalid_size_rx_keepalive_interval;
+    /* no invalid size */
+    config_keepalive->interval_in_seconds = 0;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_size_wait_count(uint16_t **count, size_t * size)
+static connector_callback_status_t app_get_invalid_size_wait_count(connector_config_wait_count_t * const config_wait)
 {
-    static uint8_t invalid_size_wait_count;
-
-    *count = cast_for_alignment(uint16_t *, &invalid_size_wait_count);
-    *size = sizeof invalid_size_wait_count;
+    /* no invalid size */
+    config_wait->count = 0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_firmware_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t app_get_invalid_size_firmware_support(connector_config_supported_t * const config_status)
 {
     /* not invalid size so return valid response */
-    *is_supported = connector_service_supported;
+    config_status->supported = connector_true;
     return connector_callback_continue;
 
 }
 
-static connector_callback_status_t app_get_invalid_size_data_service_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t app_get_invalid_size_data_service_support(connector_config_supported_t * const config_status)
 {
     /* not invalid size so return valid response */
-    *is_supported = connector_service_supported;
+    config_status->supported = connector_true;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t  app_get_invalid_size_file_system_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t  app_get_invalid_size_file_system_support(connector_config_supported_t * const config_status)
 {
     /* not invalid size so return valid response */
-    *is_supported = connector_service_supported;
+    config_status->supported = connector_true;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t  app_get_invalid_size_remote_configuration_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t  app_get_invalid_size_remote_configuration_support(connector_config_supported_t * const config_status)
 {
     /* not invalid size so return valid response */
-    *is_supported = connector_service_supported;
+    config_status->supported = connector_true;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_max_message_transactions(unsigned int * max_transactions)
+static connector_callback_status_t app_get_invalid_size_max_message_transactions(connector_config_max_transaction_t * const config_max_transaction)
 {
-#define CONNECTOR_MAX_MSG_TRANSACTIONS   1
     /* not invalid size so return valid response */
-    *max_transactions =  CONNECTOR_MAX_MSG_TRANSACTIONS;
+    config_max_transaction->count = 0;
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_size_device_id_method(connector_device_id_method_t * const method)
+static connector_callback_status_t app_get_invalid_size_device_id_method(connector_config_device_id_method_t * const config_device)
 {
 
     /* not invalid size so return valid response */
-    *method = device_id_method;
+    config_device->method = device_id_method;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_imei_number(uint8_t ** const imei_number, size_t * size)
+static connector_callback_status_t app_get_invalid_size_imei_number(connector_config_pointer_data_t * const config_imei)
 {
 #define APP_INVALID_SIZE_IMEI_LENGTH   4 /* 8 is right size */
 
     static uint8_t invalid_size_imei_number[APP_INVALID_SIZE_IMEI_LENGTH];
 
-    *imei_number = invalid_size_imei_number;
-    *size = sizeof invalid_size_imei_number;
+    config_imei->data = invalid_size_imei_number;
+    config_imei->bytes_required = 0;
 
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_start_network_tcp(connector_auto_connect_type_t * const connect_type)
+static connector_callback_status_t app_start_network_tcp(connector_config_connect_type_t * const config_connect)
 {
     /* not invalid size so return valid response */
-    *connect_type = connector_auto_connect;
+    config_connect->type = connector_connect_auto;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_wan_type(connector_wan_type_t * const type)
+static connector_callback_status_t app_get_invalid_size_wan_type(connector_config_wan_type_t * const config_wan)
 {
 
     /* not invalid size so return valid response */
-    *type = connector_imei_wan_type;
+    config_wan->type = connector_wan_type_imei;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_size_esn(uint8_t ** const esn_number, size_t * size)
+static connector_callback_status_t app_get_invalid_size_esn(connector_config_pointer_data_t * const config_esn)
 {
 #define APP_INVALID_SIZE_ESN_HEX_LENGTH 2
 
     static uint8_t invalid_size_esn[APP_INVALID_SIZE_ESN_HEX_LENGTH];
 
-    *esn_number = invalid_size_esn;
-    *size = sizeof invalid_size_esn;
+    config_esn->data = invalid_size_esn;
+    config_esn->bytes_required = 0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_meid(uint8_t ** const meid_number, size_t * size)
+static connector_callback_status_t app_get_invalid_size_meid(connector_config_pointer_data_t * const config_meid)
 {
 #define APP_INVALID_SIZE_MEID_HEX_LENGTH 4
     static uint8_t invalid_size_meid[APP_INVALID_SIZE_MEID_HEX_LENGTH];
 
-    *meid_number = invalid_size_meid;
-    *size = sizeof invalid_size_meid;
+    config_meid->data = invalid_size_meid;
+    config_meid->bytes_required = 0;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_size_identity_verification(connector_identity_verification_t * const identity)
+static connector_callback_status_t app_get_invalid_size_identity_verification(connector_config_identity_verification_t * const config_identity)
 {
 
     /* not invalid size so return valid response */
-    *identity = connector_simple_identity_verification;
+    config_identity->type = connector_identity_verification_simple;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_size_password(char const ** password, size_t * const size)
+static connector_callback_status_t app_get_invalid_size_password(connector_config_pointer_string_t * const config_password)
 {
-    static  char const connector_password[] = "";
+    static char const connector_password[] = "";
 
     /* Return pointer to password. */
-    *password = connector_password;
-    *size = sizeof connector_password -1;
+    config_password->string = (char *)connector_password;
+    config_password->length = 0;
 
     return connector_callback_continue;
 }
@@ -297,141 +281,139 @@ static connector_callback_status_t app_get_invalid_size_password(char const ** p
 /*
  * Configuration callback routine.
  */
-connector_callback_status_t app_invalid_size_config_handler(connector_config_request_t const request,
-                                              void const * const request_data,
-                                              size_t const request_length,
-                                              void * response_data,
-                                              size_t * const response_length)
+extern char const * app_config_class_to_string(connector_request_id_config_t const value);
+
+connector_callback_status_t app_invalid_size_config_handler(connector_request_id_config_t const request_id,
+                                              void * const data)
 {
     connector_callback_status_t status = connector_callback_unrecognized;
 
-    UNUSED_ARGUMENT(request_length);
+    APP_DEBUG("app_invalid_size_config_handler: %s\n", app_config_class_to_string(request_id));
 
-    switch (request)
+    switch (request_id)
     {
-    case connector_config_device_id:
+    case connector_request_id_config_device_id:
         APP_DEBUG("app_config_handler:connector_config_device_id\n");
-        status = app_get_invalid_size_device_id(response_data, response_length);
+        status = app_get_invalid_size_device_id(data);
         break;
 
-    case connector_config_mac_addr:
+    case connector_request_id_config_mac_addr:
         APP_DEBUG("app_config_handler:connector_config_mac_addr\n");
-        status = app_get_invalid_size_mac_addr(response_data, response_length);
+        status = app_get_invalid_size_mac_addr(data);
         break;
 
-    case connector_config_vendor_id:
+    case connector_request_id_config_vendor_id:
         APP_DEBUG("app_config_handler:connector_config_vendor_id\n");
-        status = app_get_invalid_size_vendor_id(response_data, response_length);
+        status = app_get_invalid_size_vendor_id(data);
         break;
 
-    case connector_config_device_type:
+    case connector_request_id_config_device_type:
         APP_DEBUG("app_config_handler:connector_config_vendor_id\n");
-        status = app_get_invalid_size_device_type(response_data, response_length);
+        status = app_get_invalid_size_device_type(data);
         break;
 
-    case connector_config_server_url:
+    case connector_request_id_config_device_cloud_url:
         APP_DEBUG("app_config_handler:connector_config_server_url\n");
-        status = app_get_invalid_size_server_url(response_data, response_length);
+        status = app_get_invalid_size_server_url(data);
         break;
 
-    case connector_config_connection_type:
+    case connector_request_id_config_connection_type:
         APP_DEBUG("app_config_handler:connector_config_connection_type\n");
-        status = app_get_invalid_size_connection_type(response_data);
+        status = app_get_invalid_size_connection_type(data);
         break;
 
-    case connector_config_link_speed:
+    case connector_request_id_config_link_speed:
         APP_DEBUG("app_config_handler:connector_config_link_speed\n");
-        status = app_get_invalid_size_link_speed(response_data, response_length);
+        status = app_get_invalid_size_link_speed(data);
         break;
 
-    case connector_config_phone_number:
+    case connector_request_id_config_phone_number:
         APP_DEBUG("app_config_handler:connector_config_phone_number\n");
-        status = app_get_invalid_size_phone_number(response_data, response_length);
+        status = app_get_invalid_size_phone_number(data);
         break;
 
-    case connector_config_tx_keepalive:
+    case connector_request_id_config_tx_keepalive:
         APP_DEBUG("app_config_handler:connector_config_tx_keepalive\n");
-        status = app_get_invalid_size_tx_keepalive_interval(response_data, response_length);
+        status = app_get_invalid_size_tx_keepalive_interval(data);
         break;
 
-    case connector_config_rx_keepalive:
+    case connector_request_id_config_rx_keepalive:
         APP_DEBUG("app_config_handler:connector_config_rx_keepalive\n");
-        status = app_get_invalid_size_rx_keepalive_interval(response_data, response_length);
+        status = app_get_invalid_size_rx_keepalive_interval(data);
         break;
 
-    case connector_config_wait_count:
+    case connector_request_id_config_wait_count:
         APP_DEBUG("app_config_handler:connector_config_wait_count\n");
-        status = app_get_invalid_size_wait_count(response_data, response_length);
+        status = app_get_invalid_size_wait_count(data);
         break;
 
-    case connector_config_ip_addr:
+    case connector_request_id_config_ip_addr:
         APP_DEBUG("app_config_handler:connector_config_ip_addr\n");
-        status = app_get_invalid_size_ip_address(response_data, response_length);
+        status = app_get_invalid_size_ip_address(data);
         break;
 
-    case connector_config_error_status:
+    case connector_request_id_config_error_status:
         APP_DEBUG("app_config_handler:connector_config_error_status\n");
-        app_config_error(request_data);
-        status = connector_callback_continue;
+        status = app_config_error(data);
         break;
 
-    case connector_config_firmware_facility:
+    case connector_request_id_config_firmware_facility:
         APP_DEBUG("app_config_handler:connector_config_firmware_support\n");
-        status = app_get_invalid_size_firmware_support(response_data);
+        status = app_get_invalid_size_firmware_support(data);
         break;
 
-    case connector_config_data_service:
+    case connector_request_id_config_data_service:
         APP_DEBUG("app_config_handler:connector_config_data_service_support\n");
-        status = app_get_invalid_size_data_service_support(response_data);
+        status = app_get_invalid_size_data_service_support(data);
         break;
 
-    case connector_config_file_system:
-        status = app_get_invalid_size_file_system_support(response_data);
+    case connector_request_id_config_file_system:
+        status = app_get_invalid_size_file_system_support(data);
         break;
 
-    case connector_config_remote_configuration:
-        status = app_get_invalid_size_remote_configuration_support(response_data);
+    case connector_request_id_config_remote_configuration:
+        status = app_get_invalid_size_remote_configuration_support(data);
         break;
 
-    case connector_config_max_transaction:
+    case connector_request_id_config_max_transaction:
         APP_DEBUG("app_config_handler:connector_config_max_message_transactions\n");
-        status = app_get_invalid_size_max_message_transactions(response_data);
+        status = app_get_invalid_size_max_message_transactions(data);
         break;
 
-    case connector_config_device_id_method:
-        status = app_get_invalid_size_device_id_method(response_data);
+    case connector_request_id_config_device_id_method:
+        status = app_get_invalid_size_device_id_method(data);
         break;
 
-     case connector_config_network_tcp:
-         status = app_start_network_tcp(response_data);
+     case connector_request_id_config_network_tcp:
+         status = app_start_network_tcp(data);
          break;
 
-     case connector_config_imei_number:
-         status = app_get_invalid_size_imei_number(response_data, response_length);
+     case connector_request_id_config_imei_number:
+         status = app_get_invalid_size_imei_number(data);
          break;
 
-     case connector_config_wan_type:
-         status = app_get_invalid_size_wan_type(response_data);
+     case connector_request_id_config_wan_type:
+         status = app_get_invalid_size_wan_type(data);
          break;
 
-     case connector_config_esn:
-         status = app_get_invalid_size_esn(response_data, response_length);
+     case connector_request_id_config_esn:
+         status = app_get_invalid_size_esn(data);
          break;
 
-     case connector_config_meid:
-         status = app_get_invalid_size_meid(response_data, response_length);
+     case connector_request_id_config_meid:
+         status = app_get_invalid_size_meid(data);
          break;
 
-     case connector_config_identity_verification:
-         status = app_get_invalid_size_identity_verification(response_data);
+     case connector_request_id_config_identity_verification:
+         status = app_get_invalid_size_identity_verification(data);
          break;
 
-     case connector_config_password:
-         status = app_get_invalid_size_password(response_data, response_length);
+     case connector_request_id_config_password:
+         status = app_get_invalid_size_password(data);;
          break;
 
     default:
-        APP_DEBUG("connector_invalid_size_config_callback: unknown configuration request= %d\n", request);
+        APP_DEBUG("connector_invalid_size_config_callback: unknown configuration request= %d\n", request_id);
         break;
     }
 

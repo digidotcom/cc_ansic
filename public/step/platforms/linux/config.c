@@ -185,7 +185,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 static connector_callback_status_t app_get_server_url(connector_config_pointer_string_t * const config_url)
 {
 #error "Specify iDigi Device Cloud URL"
-    static  char const connector_server_url[] = "my.idigi.com";
+    static  char const connector_server_url[] = "login.etherios.com";
 
     /* Return pointer to device type. */
     config_url->string = (char *)connector_server_url;
@@ -637,7 +637,7 @@ static char const * app_firmware_class_to_string(connector_request_id_firmware_t
         enum_to_case(connector_request_id_firmware_target_count);
         enum_to_case(connector_request_id_firmware_info);
         enum_to_case(connector_request_id_firmware_download_start);
-        enum_to_case(connector_request_id_firmware_data);
+        enum_to_case(connector_request_id_firmware_download_data);
         enum_to_case(connector_request_id_firmware_download_complete);
         enum_to_case(connector_request_id_firmware_download_abort);
         enum_to_case(connector_request_id_firmware_target_reset);

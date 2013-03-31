@@ -179,11 +179,11 @@ static connector_callback_status_t app_process_device_request_status(connector_d
     {
     case connector_data_service_receive_status_session_error:
         APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
-                   (void *) status_data, status_data->session_error);
+                   (void *) device_request, status_data->session_error);
         break;
     default:
         APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
-                    (void *)status_data, status_data->status);
+                    (void *)device_request, status_data->status);
         break;
     }
 

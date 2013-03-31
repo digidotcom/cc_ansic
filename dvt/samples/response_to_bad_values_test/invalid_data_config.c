@@ -31,229 +31,207 @@
 #define VENDOR_ID_LENGTH    4
 #define MAC_ADDR_LENGTH     6
 
-static connector_callback_status_t app_get_invalid_data_ip_address(uint8_t ** ip_address, size_t *size)
+static connector_callback_status_t app_get_invalid_data_ip_address(connector_config_ip_address_t * const config_ip)
 {
     static uint32_t invalid_data_ip_address = 0;
-    *ip_address = (uint8_t *)&invalid_data_ip_address;
-    *size = sizeof invalid_data_ip_address;
+
+    config_ip->ip_address_type = connector_ip_address_ipv4;
+    config_ip->address = (uint8_t *)&invalid_data_ip_address;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_mac_addr(uint8_t ** addr, size_t * size)
+static connector_callback_status_t app_get_invalid_data_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
 //#error "Specify device MAC address for LAN connection"
 
-    APP_DEBUG("Entering app_get_invalid_data_mac_addr\n");
-
-    *addr = NULL;
-    *size = MAC_ADDR_LENGTH;
+    config_mac->data = NULL;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_data_device_id(uint8_t ** id, size_t * size)
+static connector_callback_status_t app_get_invalid_data_device_id(connector_config_pointer_data_t * const config_device_id)
 {
 
-    APP_DEBUG("Entering app_get_invalid_data_forced_error_device_id \n");
-
-    *id = NULL;
-    *size = DEVICE_ID_LENGTH;
+    config_device_id->data = NULL;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_vendor_id(uint8_t ** id, size_t * size)
+static connector_callback_status_t app_get_invalid_data_vendor_id(connector_config_vendor_id_t * const config_vendor)
 {
-    static uint8_t const invalid_data_vendor_id[VENDOR_ID_LENGTH] = {0x00, 0x00, 0x00, 0x00};
-    APP_DEBUG("Entering app_get_invalid_data_forced_error_vendor_id \n");
+    static uint32_t const invalid_device_vendor_id = 0x00000000;
 
-    *id = (uint8_t *)&invalid_data_vendor_id;
-    *size = VENDOR_ID_LENGTH;
+    config_vendor->id  =  invalid_device_vendor_id;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_device_type(char ** type, size_t * size)
-{
-    APP_DEBUG("Entering app_get_invalid_data_forced_error_device_type\n");
-
-    *type = NULL;
-    *size = 10;
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_get_invalid_data_server_url(char ** url, size_t * size)
+static connector_callback_status_t app_get_invalid_data_device_type(connector_config_pointer_string_t * const config_device_type)
 {
 
-    /* Return pointer to device type. */
-    *url = (char *)NULL;
-    *size = 10;
+    config_device_type->string = NULL;
+    config_device_type->length = 5;
 
     return connector_callback_continue;
 }
 
-
-static connector_callback_status_t app_get_invalid_data_connection_type(connector_connection_type_t ** type)
+static connector_callback_status_t app_get_invalid_data_server_url(connector_config_pointer_string_t * const config_url)
 {
-    /* Return pointer to connection type */
-    static connector_connection_type_t  invalid_data_connection_type = (connector_connection_type_t) -1;
 
-    *type = &invalid_data_connection_type;
+    config_url->string = NULL;
+    config_url->length = 5;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_data_link_speed(uint32_t **speed, size_t * size)
+static connector_callback_status_t app_get_invalid_data_connection_type(connector_config_connection_type_t * const config_connection)
 {
-    *speed = NULL;
-    *size = 0;
+
+    config_connection->type = (connector_connection_type_t) -1;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_phone_number(char ** number, size_t * size)
+
+static connector_callback_status_t app_get_invalid_data_link_speed(connector_config_link_speed_t * const config_link)
+{
+    /* there is no invalid data can be returned */
+    config_link->speed = 0;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_get_invalid_data_phone_number(connector_config_pointer_string_t * const config_phone_number)
 {
     /*
      * Return pointer to phone number for WAN connection type.
      */
-    *number = NULL;
-    *size = 0;
+    config_phone_number->string = NULL;
+    config_phone_number->length = 5;
+
     return connector_callback_continue;
 }
 
 /* Keep alives are from the prospective of the server */
 /* This keep alive is sent from the server to the device */
-static connector_callback_status_t app_get_invalid_data_tx_keepalive_interval(uint16_t **interval, size_t * size)
+static connector_callback_status_t app_get_invalid_data_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-    UNUSED_ARGUMENT(size);
-
-    /* Return pointer to Tx keepalive interval in seconds */
-    *interval = NULL;
+    config_keepalive->interval_in_seconds = 0;
 
     return connector_callback_continue;
 }
 
 /* This keep alive is sent from the device to the server  */
-static connector_callback_status_t app_get_invalid_data_rx_keepalive_interval(uint16_t **interval, size_t * size)
+static connector_callback_status_t app_get_invalid_data_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-    UNUSED_ARGUMENT(size);
-
-    *interval = NULL;
+    config_keepalive->interval_in_seconds = 0;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_data_wait_count(uint16_t **count, size_t * size)
+static connector_callback_status_t app_get_invalid_data_wait_count(connector_config_wait_count_t * const config_wait)
 {
-    UNUSED_ARGUMENT(size);
-    *count = NULL;
+    config_wait->count = 0;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_firmware_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t app_get_invalid_data_firmware_support(connector_config_supported_t * const config_status)
 {
-    *is_supported = (connector_callback_status_t)-1;
+
+    config_status->supported = (connector_bool_t)-1;
     return connector_callback_continue;
 
 }
 
-static connector_callback_status_t app_get_invalid_data_data_service_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t app_get_invalid_data_data_service_support(connector_config_supported_t * const config_status)
 {
-    *is_supported = (connector_callback_status_t)-1;
+    config_status->supported = (connector_bool_t)-1;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t  app_get_invalid_data_file_system_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t  app_get_invalid_data_file_system_support(connector_config_supported_t * const config_status)
 {
-    *is_supported = (connector_callback_status_t)-1;
+    config_status->supported = (connector_bool_t)-1;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t  app_get_invalid_data_remote_configuration_support(connector_service_supported_status_t * is_supported)
+static connector_callback_status_t  app_get_invalid_data_remote_configuration_support(connector_config_supported_t * const config_status)
 {
-    *is_supported = (connector_callback_status_t)-1;
+    config_status->supported = (connector_bool_t)-1;
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_max_message_transactions(unsigned int * max_transactions)
+static connector_callback_status_t app_get_invalid_data_max_message_transactions(connector_config_max_transaction_t * const config_max_transaction)
 {
-#define CONNECTOR_MAX_MSG_TRANSACTIONS   256
-
-    *max_transactions =  CONNECTOR_MAX_MSG_TRANSACTIONS;
-    return connector_callback_continue;
-}
-
-
-static connector_callback_status_t app_get_invalid_data_device_id_method(connector_device_id_method_t * const method)
-{
-
-    *method = (connector_device_id_method_t)-1;
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_get_invalid_data_imei_number(uint8_t ** const imei_number, size_t * size)
-{
-#define APP_MEID_HEX_LENGTH 8
-
-    *imei_number = NULL;
-    *size = APP_MEID_HEX_LENGTH;
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_start_network_tcp(connector_auto_connect_type_t * const connect_type)
-{
-    *connect_type = (connector_auto_connect_type_t)-1;
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_get_invalid_data_wan_type(connector_wan_type_t * const type)
-{
-    *type = (connector_wan_type_t)-1;
+    /* no invalid data can be set */
+    config_max_transaction->count = 0;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_data_esn(uint8_t ** const esn_number, size_t * size)
+static connector_callback_status_t app_get_invalid_data_device_id_method(connector_config_device_id_method_t * const config_device)
 {
-    UNUSED_ARGUMENT(size);
 
-    *esn_number = NULL;
+    config_device->method = (connector_device_id_method_t)-1;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_meid(uint8_t ** const meid_number, size_t * size)
+static connector_callback_status_t app_get_invalid_data_imei_number(connector_config_pointer_data_t * const config_imei)
 {
-    UNUSED_ARGUMENT(size);
+    config_imei->data = NULL;
 
-    *meid_number = NULL;
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_start_network_tcp(connector_config_connect_type_t * const config_connect)
+{
+    config_connect->type = (connector_connect_auto_type_t)-1;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_get_invalid_data_wan_type(connector_config_wan_type_t * const config_wan)
+{
+    config_wan->type = (connector_wan_type_t)-1;
 
     return connector_callback_continue;
 }
 
 
-static connector_callback_status_t app_get_invalid_data_identity_verification(connector_identity_verification_t * const identity)
+static connector_callback_status_t app_get_invalid_data_esn(connector_config_pointer_data_t * const config_esn)
 {
-
-    *identity = (connector_identity_verification_t)-1;
+    config_esn->data = NULL;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_password(char const ** password, size_t * const size)
+static connector_callback_status_t app_get_invalid_data_meid(connector_config_pointer_data_t * const config_meid)
 {
-    *password = NULL;
-    *size = 0;
+    config_meid->data = NULL;
+
+    return connector_callback_continue;
+}
+
+
+static connector_callback_status_t app_get_invalid_data_identity_verification(connector_config_identity_verification_t * const config_identity)
+{
+
+    config_identity->type = (connector_identity_verification_t)-1;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_get_invalid_data_password(connector_config_pointer_string_t * const config_password)
+{
+    config_password->string = NULL;
+    config_password->length = 0;
 
     return connector_callback_continue;
 }
@@ -264,141 +242,122 @@ static connector_callback_status_t app_get_invalid_data_password(char const ** p
 /*
  * Configuration callback routine.
  */
-connector_callback_status_t app_invalid_data_config_handler(connector_config_request_t const request,
-                                              void const * const request_data,
-                                              size_t const request_length,
-                                              void * response_data,
-                                              size_t * const response_length)
+extern char const * app_config_class_to_string(connector_request_id_config_t const value);
+
+connector_callback_status_t app_invalid_data_config_handler(connector_request_id_config_t const request_id, void * const data)
 {
     connector_callback_status_t status = connector_callback_unrecognized;
 
-    UNUSED_ARGUMENT(request_length);
+    APP_DEBUG("app_invalid_data_config_handler: %s\n", app_config_class_to_string(request_id));
 
-    switch (request)
+    switch (request_id)
     {
-    case connector_config_device_id:
-        APP_DEBUG("app_config_handler:connector_config_device_id\n");
-        status = app_get_invalid_data_device_id(response_data, response_length);
+    case connector_request_id_config_device_id:
+        status = app_get_invalid_data_device_id(data);
         break;
 
-    case connector_config_mac_addr:
-        APP_DEBUG("app_config_handler:connector_config_mac_addr\n");
-        status = app_get_invalid_data_mac_addr(response_data, response_length);
+    case connector_request_id_config_mac_addr:
+        status = app_get_invalid_data_mac_addr(data);
         break;
 
-    case connector_config_vendor_id:
-        APP_DEBUG("app_config_handler:connector_config_vendor_id\n");
-        status = app_get_invalid_data_vendor_id(response_data, response_length);
+    case connector_request_id_config_vendor_id:
+        status = app_get_invalid_data_vendor_id(data);
         break;
 
-    case connector_config_device_type:
-        APP_DEBUG("app_config_handler:connector_config_vendor_id\n");
-        status = app_get_invalid_data_device_type(response_data, response_length);
+    case connector_request_id_config_device_type:
+        status = app_get_invalid_data_device_type(data);
         break;
 
-    case connector_config_server_url:
-        APP_DEBUG("app_config_handler:connector_config_server_url\n");
-        status = app_get_invalid_data_server_url(response_data, response_length);
+    case connector_request_id_config_device_cloud_url:
+         status = app_get_invalid_data_server_url(data);
         break;
 
-    case connector_config_connection_type:
-        APP_DEBUG("app_config_handler:connector_config_connection_type\n");
-        status = app_get_invalid_data_connection_type(response_data);
+    case connector_request_id_config_connection_type:
+        status = app_get_invalid_data_connection_type(data);
         break;
 
-    case connector_config_link_speed:
-        APP_DEBUG("app_config_handler:connector_config_link_speed\n");
-        status = app_get_invalid_data_link_speed(response_data, response_length);
+    case connector_request_id_config_link_speed:
+        status = app_get_invalid_data_link_speed(data);
         break;
 
-    case connector_config_phone_number:
-        APP_DEBUG("app_config_handler:connector_config_phone_number\n");
-        status = app_get_invalid_data_phone_number(response_data, response_length);
+    case connector_request_id_config_phone_number:
+        status = app_get_invalid_data_phone_number(data);
         break;
 
-    case connector_config_tx_keepalive:
-        APP_DEBUG("app_config_handler:connector_config_tx_keepalive\n");
-        status = app_get_invalid_data_tx_keepalive_interval(response_data, response_length);
+    case connector_request_id_config_tx_keepalive:
+        status = app_get_invalid_data_tx_keepalive_interval(data);
         break;
 
-    case connector_config_rx_keepalive:
-        APP_DEBUG("app_config_handler:connector_config_rx_keepalive\n");
-        status = app_get_invalid_data_rx_keepalive_interval(response_data, response_length);
+    case connector_request_id_config_rx_keepalive:
+        status = app_get_invalid_data_rx_keepalive_interval(data);
         break;
 
-    case connector_config_wait_count:
-        APP_DEBUG("app_config_handler:connector_config_wait_count\n");
-        status = app_get_invalid_data_wait_count(response_data, response_length);
+    case connector_request_id_config_wait_count:
+         status = app_get_invalid_data_wait_count(data);
         break;
 
-    case connector_config_ip_addr:
-        APP_DEBUG("app_config_handler:connector_config_ip_addr\n");
-        status = app_get_invalid_data_ip_address(response_data, response_length);
+    case connector_request_id_config_ip_addr:
+        status = app_get_invalid_data_ip_address(data);
         break;
 
-    case connector_config_error_status:
-        APP_DEBUG("app_config_handler:connector_config_error_status\n");
-        app_config_error(request_data);
-        status = connector_callback_continue;
+    case connector_request_id_config_error_status:
+        status = app_config_error(data);
         break;
 
-    case connector_config_firmware_facility:
-        APP_DEBUG("app_config_handler:connector_config_firmware_support\n");
-        status = app_get_invalid_data_firmware_support(response_data);
+    case connector_request_id_config_firmware_facility:
+        status = app_get_invalid_data_firmware_support(data);
         break;
 
-    case connector_config_data_service:
-        APP_DEBUG("app_config_handler:connector_config_data_service_support\n");
-        status = app_get_invalid_data_data_service_support(response_data);
+    case connector_request_id_config_data_service:
+        status = app_get_invalid_data_data_service_support(data);
         break;
 
-    case connector_config_file_system:
-        status = app_get_invalid_data_file_system_support(response_data);
+    case connector_request_id_config_file_system:
+        status = app_get_invalid_data_file_system_support(data);
         break;
 
-    case connector_config_remote_configuration:
-        status = app_get_invalid_data_remote_configuration_support(response_data);
+    case connector_request_id_config_remote_configuration:
+        status = app_get_invalid_data_remote_configuration_support(data);
         break;
 
-    case connector_config_max_transaction:
-        APP_DEBUG("app_config_handler:connector_config_max_message_transactions\n");
-        status = app_get_invalid_data_max_message_transactions(response_data);
+    case connector_request_id_config_max_transaction:
+         status = app_get_invalid_data_max_message_transactions(data);
         break;
 
-    case connector_config_device_id_method:
-        status = app_get_invalid_data_device_id_method(response_data);
+    case connector_request_id_config_device_id_method:
+        status = app_get_invalid_data_device_id_method(data);
         break;
 
-     case connector_config_network_tcp:
-         status = app_start_network_tcp(response_data);
+     case connector_request_id_config_network_tcp:
+         status = app_start_network_tcp(data);
          break;
 
-     case connector_config_imei_number:
-         status = app_get_invalid_data_imei_number(response_data, response_length);
+     case connector_request_id_config_imei_number:
+         status = app_get_invalid_data_imei_number(data);
          break;
 
-     case connector_config_wan_type:
-         status = app_get_invalid_data_wan_type(response_data);
+     case connector_request_id_config_wan_type:
+         status = app_get_invalid_data_wan_type(data);
          break;
 
-     case connector_config_esn:
-         status = app_get_invalid_data_esn(response_data, response_length);
+     case connector_request_id_config_esn:
+         status = app_get_invalid_data_esn(data);
          break;
 
-     case connector_config_meid:
-         status = app_get_invalid_data_meid(response_data, response_length);
+     case connector_request_id_config_meid:
+         status = app_get_invalid_data_meid(data);
          break;
 
-     case connector_config_identity_verification:
-         status = app_get_invalid_data_identity_verification(response_data);
+     case connector_request_id_config_identity_verification:
+         status = app_get_invalid_data_identity_verification(data);
          break;
 
-     case connector_config_password:
-         status = app_get_invalid_data_password(response_data, response_length);
+     case connector_request_id_config_password:
+         status = app_get_invalid_data_password(data);
          break;
 
     default:
-        APP_DEBUG("connector_config_callback: unknown configuration request= %d\n", request);
+        APP_DEBUG("connector_config_callback: unknown configuration request= %d\n", request_id);
         break;
     }
 

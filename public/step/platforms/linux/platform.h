@@ -31,13 +31,13 @@ extern connector_callback_status_t app_connector_callback(connector_class_id_t c
 extern connector_callback_status_t app_os_handler(connector_os_request_t const request,
                            void * const data);
 
-extern connector_callback_status_t app_network_tcp_handler(connector_network_request_t const request,
+extern connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
                                                    void * const data);
 
-extern connector_callback_status_t app_network_udp_handler(connector_network_request_t const request,
+extern connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request,
                                                    void * const data);
 
-extern connector_callback_status_t app_config_handler(connector_config_request_t const request,
+extern connector_callback_status_t app_config_handler(connector_request_id_config_t const request,
                                               void * const data);
 
 extern connector_callback_status_t app_file_system_handler(connector_file_system_request_t const request,

@@ -25,7 +25,7 @@ import StringIO
 import uuid
 import tempfile
 import shutil
-from connector_rest_api import rest_session, rest_mapper
+from idigi_rest_api import rest_session, rest_mapper
 import nose
 sys.path.insert(0, './dvt/scripts')
 sys.path.insert(0, './dvt/cases')

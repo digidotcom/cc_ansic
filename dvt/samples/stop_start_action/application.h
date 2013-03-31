@@ -42,6 +42,7 @@
 
 typedef enum {
     device_request_not_support,
+    device_request_invalid_data,
     device_request_stop_idigi,
     device_request_start_idigi,
     device_request_stop_terminate_idigi,

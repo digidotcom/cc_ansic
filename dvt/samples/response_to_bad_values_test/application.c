@@ -19,18 +19,11 @@
 #include "application.h"
 
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void * const data);
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
-                                                  void * const data);
-
-extern connector_status_t send_put_request(connector_handle_t handle, char * const filename, char * const content);
-
 /*
  * This table lists all the errors we wish to cause in response to the callbacks.
  */
 
-config_test_t config_test[connector_config_password +1] = {config_test_invalid_data};
+config_test_t config_test[connector_request_id_config_password +1] = {config_test_invalid_data};
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -81,7 +74,9 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
             config_test[i]++;
             break;
         case config_test_none:
-            if (request_id.config_request == connector_config_meid || request_id.config_request == connector_config_esn || request_id.config_request == connector_config_imei_number)
+            if ((request_id.config_request == connector_request_id_config_meid) ||
+                (request_id.config_request == connector_request_id_config_esn) ||
+                (request_id.config_request == connector_request_id_config_imei_number))
             {
                 status = app_invalid_size_config_handler(request_id.config_request, data);
             }
@@ -100,14 +95,6 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
     case connector_class_id_network_tcp:
         status = app_network_tcp_handler(request_id.network_request, data);
-        break;
-
-    case connector_class_id_data_service:
-        status = app_data_service_handler(request_id.data_service_request, data);
-        break;
-
-    case connector_class_firmware:
-        status = app_firmware_handler(request_id.firmware_request, data);
         break;
 
     case connector_class_id_status:

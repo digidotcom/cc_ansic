@@ -1,68 +1,64 @@
+# -*- coding: utf-8 -*-
 import os
 import time
 import ic_testcase
 
 # Expected errors encountered.
 test_table = [
-              "connector_config_device_id_method,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_device_id_method,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_device_id,connector_invalid_data,connector_init failed\n",
-              "connector_config_device_id,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_device_id,connector_invalid_data,connector_init failed\n",
 
-              "connector_config_server_url,connector_invalid_data,connector_init failed\n",
-              "connector_config_server_url,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_device_cloud_url,connector_invalid_data,connector_init failed\n",
+              "connector_request_id_config_device_cloud_url,connector_invalid_data_size,connector_init failed\n",
 
-              "connector_config_connection_type,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_connection_type,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_mac_addr,connector_invalid_data,connector_run thread terminated\n",
-              "connector_config_mac_addr,connector_invalid_data_size,connector_run thread terminated\n",
+              "connector_request_id_config_mac_addr,connector_invalid_data,connector_run thread terminated\n",
+              "connector_request_id_config_mac_addr,connector_invalid_data_size,connector_run thread terminated\n",
 
-              "connector_config_vendor_id,connector_invalid_data_range,connector_init failed\n",
-              "connector_config_vendor_id,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_vendor_id,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_vendor_id,connector_invalid_data_size,connector_init failed\n",
 
-              "connector_config_device_type,connector_invalid_data,connector_init failed\n",
-              "connector_config_device_type,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_device_type,connector_invalid_data,connector_init failed\n",
+              "connector_request_id_config_device_type,connector_invalid_data_size,connector_init failed\n",
 
-              "connector_config_rx_keepalive,connector_invalid_data,connector_init failed\n",
-              "connector_config_rx_keepalive,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_rx_keepalive,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_tx_keepalive,connector_invalid_data,connector_init failed\n",
-              "connector_config_tx_keepalive,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_tx_keepalive,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_wait_count,connector_invalid_data,connector_init failed\n",
-              "connector_config_wait_count,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_wait_count,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_network_tcp,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_network_tcp,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_identity_verification,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_identity_verification,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_ip_addr,connector_invalid_data_range,connector_run thread terminated\n",
-              "connector_config_ip_addr,connector_invalid_data_size,connector_run thread terminated\n",
+              "connector_request_id_config_ip_addr,connector_invalid_data_range,connector_run thread terminated\n",
+              "connector_request_id_config_ip_addr,connector_invalid_data_size,connector_run thread terminated\n",
 
-              "connector_config_firmware_facility,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_firmware_facility,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_data_service,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_data_service,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_max_transaction,connector_invalid_data_range,connector_run thread terminated\n",
+              "connector_request_id_config_max_transaction,connector_invalid_data_range,connector_run thread terminated\n",
 
-              "connector_config_wan_type,connector_invalid_data_range,connector_init failed\n",
+              "connector_request_id_config_wan_type,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_config_imei_number,connector_invalid_data,connector_init failed\n",
-              "connector_config_imei_number,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_imei_number,connector_invalid_data,connector_init failed\n",
+              "connector_request_id_config_imei_number,connector_invalid_data_size,connector_init failed\n",
               
-              "connector_config_link_speed,connector_invalid_data,connector_init failed\n",
-              "connector_config_link_speed,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_link_speed,connector_invalid_data_size,connector_init failed\n",
               
-              "connector_config_phone_number,connector_invalid_data,connector_init failed\n",
-              "connector_config_phone_number,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_phone_number,connector_invalid_data,connector_init failed\n",
+              "connector_request_id_config_phone_number,connector_invalid_data_size,connector_init failed\n",
               
-              "connector_config_esn,connector_invalid_data,connector_init failed\n",
-              "connector_config_esn,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_esn,connector_invalid_data,connector_init failed\n",
+              "connector_request_id_config_esn,connector_invalid_data_size,connector_init failed\n",
               
-              "connector_config_meid,connector_invalid_data,connector_init failed\n",
-              "connector_config_meid,connector_invalid_data_size,connector_init failed\n",
+              "connector_request_id_config_meid,connector_invalid_data,connector_init failed\n",
+              "connector_request_id_config_meid,connector_invalid_data_size,connector_init failed\n",
               
-              "connector_config_password,connector_invalid_data,connector_init failed\n"
+              "connector_request_id_config_password,connector_invalid_data,connector_init failed\n"
 
 ]
 

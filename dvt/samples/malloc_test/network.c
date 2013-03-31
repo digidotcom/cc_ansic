@@ -353,7 +353,7 @@ done:
 }
 
 static connector_callback_status_t app_network_close(connector_close_request_t const * const close_data,
-                                                 connector_auto_connect_type_t * const is_to_reconnect)
+                                                 connector_connect_auto_type_t * const is_to_reconnect)
 {
     connector_callback_status_t status = connector_callback_continue;
     connector_network_handle_t * const fd = close_data->network_handle;
@@ -390,7 +390,7 @@ static connector_callback_status_t app_network_close(connector_close_request_t c
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_tcp_handler(connector_network_request_t const request,
+connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
                                             void const * const request_data, size_t const request_length,
                                             void * response_data, size_t * const response_length)
 {

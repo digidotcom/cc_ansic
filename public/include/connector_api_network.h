@@ -20,7 +20,7 @@
 */
 /**
 * Network Request ID passed to the application's callback for network interface.
-* The class id for this connector_network_request_t is connector_class_id_network_tcp,
+* The class id for this connector_request_id_network_t is connector_class_id_network_tcp,
 * connector_class_id_network_udp.
 */
 typedef enum {

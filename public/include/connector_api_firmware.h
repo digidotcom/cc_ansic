@@ -85,7 +85,7 @@ typedef struct {
 */
 /**
 * Firmware status codes are used for @ref connector_request_id_firmware_download_start,
-* @see @ref connector_request_id_firmware_data and @ref connector_request_id_firmware_download_abort callbacks.
+* @see @ref connector_request_id_firmware_download_data and @ref connector_request_id_firmware_download_abort callbacks.
 */
 typedef enum {
    connector_firmware_status_success,                        /**< No error */
@@ -98,8 +98,8 @@ typedef enum {
    connector_firmware_status_encountered_error,              /**< Callback encountered an error that precludes the firmware update */
    connector_firmware_status_user_abort,                     /**< User aborted firmware update */
    connector_firmware_status_device_error,                   /**< Device or server encountered an error in the download data */
-   connector_firmware_status_invalid_offset,                 /**< connector_request_id_firmware_data callback found invalid offset. */
-   connector_firmware_status_invalid_data,                   /**< connector_request_id_firmware_data callback found invalid data block.*/
+   connector_firmware_status_invalid_offset,                 /**< connector_request_id_firmware_download_data callback found invalid offset. */
+   connector_firmware_status_invalid_data,                   /**< connector_request_id_firmware_download_data callback found invalid data block.*/
    connector_firmware_status_hardware_error                  /**< Callback found permanent hardware error */
 } connector_firmware_status_t;
 /**
@@ -150,7 +150,7 @@ typedef struct {
 * @{
 */
 /**
-* Firmware download image data structure for connector_request_id_firmware_data callback which
+* Firmware download image data structure for connector_request_id_firmware_download_data callback which
 * is called when the connector receives a block of image data for firmware download.
 */
 typedef struct {

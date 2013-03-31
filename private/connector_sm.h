@@ -45,7 +45,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 {
     connector_status_t result = connector_init_error;
     connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, transport);
-    connector_config_request_t request;
+    connector_request_id_config_t request;
     connector_request_id_t request_id;
     connector_callback_status_t status;
 

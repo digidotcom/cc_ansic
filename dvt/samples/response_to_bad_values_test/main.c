@@ -65,22 +65,22 @@ int main (void)
     unsigned long callback;
 
 #if (defined CONNECTOR_WAN_PHONE_NUMBER_DIALED)
-    config_test[connector_config_phone_number] = config_test_none;
+    config_test[connector_request_id_config_phone_number] = config_test_none;
 #endif
 
 #if (defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
-    config_test[connector_config_link_speed] = config_test_none;
+    config_test[connector_request_id_config_link_speed] = config_test_none;
 #endif
 
 #if (defined CONNECTOR_MSG_MAX_TRANSACTION)
-    config_test[connector_config_max_transaction] = config_test_none;
+    config_test[connector_request_id_config_max_transaction] = config_test_none;
 #endif
 
 
 #if (defined CONNECTOR_DEVICE_ID_METHOD) || (defined CONNECTOR_WAN_TYPE)
-    config_test[connector_config_meid] = config_test_none;
-    config_test[connector_config_esn] = config_test_none;
-    config_test[connector_config_imei_number] = config_test_none;
+    config_test[connector_request_id_config_meid] = config_test_none;
+    config_test[connector_request_id_config_esn] = config_test_none;
+    config_test[connector_request_id_config_imei_number] = config_test_none;
 #endif
 
 
@@ -101,7 +101,7 @@ int main (void)
 
         if (connector_handle != NULL)
         {
-            if (connector_connect_tcp == connector_manual_connect)
+            if (connector_connect_tcp == connector_connect_manual)
             {
                 connector_status_t status;
 
@@ -148,38 +148,34 @@ int main (void)
             APP_DEBUG("unable to initialize iDigi\n");
         }
 
-        if (config_test[connector_config_device_id] == config_test_none)
+        if (config_test[connector_request_id_config_device_id] == config_test_none)
         {
-            connector_identity_verification = connector_password_identity_verification;
+            connector_identity_verification = connector_identity_verification_password;
         }
 
-        if ((config_test[connector_config_phone_number] == config_test_none) &&
-            (config_test[connector_config_link_speed] == config_test_none))
+        if ((config_test[connector_request_id_config_phone_number] == config_test_none) &&
+            (config_test[connector_request_id_config_link_speed] == config_test_none))
         {
-            device_connection_type = connector_lan_connection_type;
+            device_connection_type = connector_connection_type_lan;
         }
 
-        if (config_test[connector_config_max_transaction] == config_test_none)
+        if (config_test[connector_request_id_config_password] == config_test_none)
         {
-            connector_connect_tcp = connector_auto_connect;
+            connector_identity_verification = connector_identity_verification_simple;
+            connector_connect_tcp = connector_connect_auto;
         }
 
-        if (config_test[connector_config_password] == config_test_none)
+        if (config_test[connector_request_id_config_meid] == config_test_none)
         {
-            connector_identity_verification = connector_simple_identity_verification;
+            device_id_method = connector_device_id_method_manual;
         }
-
-        if (config_test[connector_config_meid] == config_test_none)
+        else if (config_test[connector_request_id_config_esn] == config_test_none)
         {
-            device_id_method = connector_manual_device_id_method;
+            connector_wan_type = connector_wan_type_meid;
         }
-        else if (config_test[connector_config_esn] == config_test_none)
+        else if (config_test[connector_request_id_config_imei_number] == config_test_none)
         {
-            connector_wan_type = connector_meid_wan_type;
-        }
-        else if (config_test[connector_config_imei_number] == config_test_none)
-        {
-            connector_wan_type = connector_esn_wan_type;
+            connector_wan_type = connector_wan_type_esn;
         }
 
         connector_run_thread_status = connector_success;
