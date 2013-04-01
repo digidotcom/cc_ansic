@@ -777,21 +777,20 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 */
 
 /* configuration check */
-#if (!defined CONNECTOR_TRANSPORT_TCP)
-
-    #if ((defined CONNECTOR_FIRMWARE_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE) || \
-                                            (!(defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_TRANSPORT_SMS)))
-        #define CONNECTOR_TRANSPORT_TCP
-    #endif
+#define CONNECTOR_HAS_TRANSPORT_DEFINED ((defined CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS))
+#if !CONNECTOR_HAS_TRANSPORT_DEFINED
+#define CONNECTOR_TRANSPORT_TCP
 #endif
+#undef CONNECTOR_HAS_TRANSPORT_DEFINED
 
-#if (!(defined CONNECTOR_DATA_SERVICE) && (defined CONNECTOR_DATA_POINTS))
-    #define CONNECTOR_DATA_SERVICE
+#define CONNECTOR_REQUIRES_TRANSPORT_TCP ((defined CONNECTOR_FIRMWARE_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE))
+#if CONNECTOR_REQUIRES_TRANSPORT_TCP && !(defined CONNECTOR_TRANSPORT_TCP)
+#define CONNECTOR_TRANSPORT_TCP
 #endif
+#undef CONNECTOR_REQUIRES_TRANSPORT_TCP
 
-#if (defined CONNECTOR_CONST_PROTECTION)
-#undef CONST
-#define CONST CONNECTOR_CONST_PROTECTION
+#if (defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DATA_SERVICE)
+#define CONNECTOR_DATA_SERVICE
 #endif
 
 #endif /* _CONNECTOR_API_H */
