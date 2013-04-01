@@ -15,8 +15,6 @@
 #include "remote_config.h"
 
 
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
-                                                  void * const data);
 extern connector_callback_status_t app_remote_config_handler(connector_remote_config_request_t const request,
                                                       void * const data);
 

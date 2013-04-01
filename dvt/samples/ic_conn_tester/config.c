@@ -425,7 +425,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
     {
         enum_to_case(connector_class_config);
         enum_to_case(connector_class_operating_system);
-        enum_to_case(connector_class_firmware);
+        enum_to_case(connector_class_id_firmware);
         enum_to_case(connector_class_id_data_service);
         enum_to_case(connector_class_remote_config_service);
         enum_to_case(connector_class_id_file_system);
@@ -658,7 +658,7 @@ static void app_config_error(connector_error_status_t const * const error_data)
     case connector_class_operating_system:
         APP_DEBUG("Request: %s (%d) ", app_os_class_to_string(error_data->request_id.os_request), error_data->request_id.os_request);
         break;
-    case connector_class_firmware:
+    case connector_class_id_firmware:
         APP_DEBUG("Request: %s (%d) ", app_firmware_class_to_string(error_data->request_id.firmware_request), error_data->request_id.firmware_request);
         break;
     case connector_class_id_data_service:
