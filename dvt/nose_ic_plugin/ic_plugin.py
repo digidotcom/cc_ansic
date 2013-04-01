@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from nose.plugins import Plugin
 import os
-import connector_rest_api
-import connector_monitor_api
+import idigi_rest_api
+import idigi_monitor_api
 import logging
 import requests
 from nose.tools import *
@@ -41,7 +42,7 @@ class ICPlugin(Plugin):
         ICPlugin.hostname      = options.hostname
         ICPlugin.username      = options.username
         ICPlugin.password      = options.password
-        ICPlugin.rest_session  = connector_rest_api.rest_session(options.hostname,
+        ICPlugin.rest_session  = idigi_rest_api.rest_session(options.hostname,
             auth=(options.username, options.password), verify=False,
             timeout=120)
         ICPlugin.session       = requests.session(
@@ -50,7 +51,7 @@ class ICPlugin(Plugin):
         ICPlugin.admin_session = requests.session(
                                     auth=('testbed', 'sa!test'),
                                     verify=False)
-        ICPlugin.push_client   = connector_monitor_api.push_client(options.username,
+        ICPlugin.push_client   = idigi_monitor_api.push_client(options.username,
                                     options.password, hostname=options.hostname, 
                                     secure=False)
         ICPlugin.device_id     = options.device_id

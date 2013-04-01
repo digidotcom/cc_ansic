@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -5,7 +6,7 @@ import re
 import os
 from base64 import b64decode
 from requests import sessions
-from connector_rest_api import rest_mapper
+from idigi_rest_api import rest_mapper
 
 import xml.dom.minidom
 from xml.dom.minidom import getDOMImplementation

@@ -12,7 +12,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request_id,
                                                   void * const data);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)

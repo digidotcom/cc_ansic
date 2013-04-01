@@ -22,7 +22,7 @@ typedef struct {
 static firmware_list_t firmware_list[] = {
     /* version       name_spec          description */
     {{1,0,0,0}, ".*\\.[bB][iI][nN]", "Binary Image" },  /* any *.bin files */
-    {{0,0,1,0}, ".*\\.a",            "Libaray Image"}   /* any *.a files */
+    {{0,0,1,0}, ".*\\.a",            "Library Image"}   /* any *.a files */
 };
 
 static int firmware_download_started = 0;
