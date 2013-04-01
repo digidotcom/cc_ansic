@@ -43,7 +43,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
         connector_callback_status_t status;
         connector_request_id_t request_id;
 
-        connector_network_close_data_t close_data;
+        connector_network_close_t close_data;
 
         close_data.handle = connector_ptr->edp_data.network_handle;
         close_data.status = edp_get_close_status(connector_ptr);

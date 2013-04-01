@@ -39,7 +39,7 @@ connector_callback_status_t app_get_interface_ip_address(uint8_t ** ip_address, 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_network_tcp_close(connector_network_close_data_t * const data)
+static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -69,7 +69,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
  * connector_callback_busy and iDigi connector will ignore the read_data and read_length
  * and continue calling this function.
  */
-static connector_callback_status_t app_network_tcp_receive(connector_network_receive_data_t * const data)
+static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
@@ -111,7 +111,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
  * EAGAIN  error, return connector_callback_busy and iDigi connector will ignore the
  * sent_length and continue calling this function.
  */
-static connector_callback_status_t app_network_tcp_send(connector_network_send_data_t * const data)
+static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
@@ -245,7 +245,7 @@ static connector_callback_status_t app_is_tcp_connect_complete(int const fd)
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_open(connector_network_open_data_t * const data)
+static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
 {
 #define APP_CONNECT_TIMEOUT 30
 
