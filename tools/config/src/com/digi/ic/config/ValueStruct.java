@@ -29,11 +29,8 @@ public class ValueStruct {
                 .format("<value value=\"%s\"", name);
         if (descText.length() > 0)
             descriptor += String.format(" desc=\"%s\"", descText);
-        if (ConfigGenerator.getBinaryOption()) 
-            descriptor += String.format(" bin_id=\"%d\" ", id);
+        descriptor += String.format(" bin_id=\"%d\"/>", id);
         
-        descriptor += "/>";
-
         return descriptor;
     }
 

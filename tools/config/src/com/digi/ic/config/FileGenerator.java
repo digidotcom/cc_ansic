@@ -14,14 +14,12 @@ public class FileGenerator {
     private final static String HEADER_FILENAME = "remote_config.h";
     private final static String SOURCE_NAME = "rci_config";
 
-    private final static String RCI_PREFIX = "RCI_";
-
     private final static String IDIGI = "idigi";
     private final static String DEFINE = "#define ";
     private final static String INCLUDE = "#include ";
     private final static String ERROR = "error";
 
-    private final static String CONNECTOR_REMOTE_HEADER = "\"connector_remote.h\"\n\n";
+    private final static String CONNECTOR_REMOTE_HEADER = "\"connector_api_remote.h\"\n\n";
     private final static String FLOAT_HEADER = "\"float.h\"\n";
 
     private final static String TYPEDEF_ENUM = "typedef enum {\n";
@@ -32,22 +30,13 @@ public class FileGenerator {
     private final static String CONNECTOR_REMOTE_ALL_STRING = "connector_remote_all_strings";
     private final static String CONNECTOR_REMOTE_GROUP_TABLE = "connector_group_table";
 
-    private final static String CONNECTOR_ELEMENT_VALUE_UNSIGNED = "connector_element_value_unsigned_integer_t";
-    private final static String CONNECTOR_ELEMENT_VALUE_SIGNED = "connector_element_value_signed_integer_t";
-    private final static String CONNECTOR_ELEMENT_VALUE_STRING = "connector_element_value_string_t";
-    private final static String CONNECTOR_ELEMENT_VALUE_ENUM = "connector_element_value_enum_t";
-    private final static String CONNECTOR_ELEMENT_VALUE_FLOAT = "connector_element_value_float_t";
-
     private final static String COUNT_STRING = "COUNT";
     private final static String OFFSET_STRING = "OFFSET";
     private final static String STATIC = "static ";
     private final static String CONST = " const ";
-    private final static String LIMIT = "limit";
 
     private final static String CHAR_CONST_STRING = STATIC + "char" + CONST
             + "*" + CONST;
-    private final static String ENUM_STRING = "enum";
-
     private final static String ID_T_STRING = "_id_t;\n\n";
     private final static String TYPEDEF_STRUCT = "\ntypedef struct {\n";
 
@@ -59,12 +48,65 @@ public class FileGenerator {
     private final static String RCI_PARSER_USES_UNSIGNED_INTEGER = RCI_PARSER_USES + "UNSIGNED_INTEGER\n";
     
     private final static String RCI_PARSER_DATA = "CONNECTOR_RCI_PARSER_INTERNAL_DATA";
-    private final static String CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE = "\ntypedef struct {\n connector_group_table_t const * group_table;\n" +
-    		" char const * const * error_table;\n" +
-    		" unsigned int global_error_count;\n" +
-    		" uint32_t firmware_target_zero_version;\n" +
-    		"} connector_remote_config_data_t;\n";
+    
+    private final static String CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE = "\ntypedef struct {\n" +
+    " connector_remote_group_table_t const * group_table;\n" +
+	" char const * const * error_table;\n" +
+	" unsigned int global_error_count;\n" +
+	" uint32_t firmware_target_zero_version;\n" +
+	"} connector_remote_config_data_t;\n";
 
+    private final static String CONNECTOR_GROUP_ELEMENT_T = "\ntypedef struct {\n" +
+    "    connector_element_access_t access;\n" +
+    "    connector_element_value_type_t type;\n" +
+    "} connector_group_element_t;\n";
+
+    private final static String CONNECTOR_GROUP_T = "\ntypedef struct {\n" +
+    "  size_t instances;\n" +
+    "  struct {\n" +
+    "    size_t count;\n" +
+    "    connector_group_element_t const * const data;\n" +
+    "  } elements;\n\n" +
+    "  struct {\n" +
+    "      size_t count;\n" +
+    "     char const * const * description;\n" +
+    "  } errors;\n" +
+    "} connector_group_t;\n";
+
+    private final static String CONNECTOR_REMOTE_GROUP_T = "\ntypedef struct {\n" +
+    "  connector_remote_group_type_t type;\n" +
+    "  unsigned int id;\n" +
+    "  unsigned int index;\n" +
+    "} connector_remote_group_t;\n";
+    	
+    private final static String CONNECTOR_REMOTE_ELEMENT_T = "\ntypedef struct {\n" +
+    "  unsigned int id;\n" +
+    "  connector_element_value_type_t type;\n" +
+    "  connector_element_value_t * value;\n" +
+    "} connector_remote_element_t;\n";
+
+    private final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
+    "  void * user_context;\n" +
+    "  connector_remote_action_t action;\n" +
+    "  connector_remote_group_t group;\n" +
+    "  connector_remote_element_t element;\n" +
+    "  unsigned int error_id;\n" +
+    "\n" +
+    "  union {\n" +
+    "      char const * error_hint;\n" +
+    "      connector_element_value_t * element_value;\n" +
+    "  } response;\n" +
+    "} connector_remote_config_t;\n";
+    	
+    private final static String CONNECTOR_REMOTE_CONFIG_CANCEL_T = "\ntypedef struct {\n" +
+    "  void * user_context;\n" +
+    "} connector_remote_config_cancel_t;\n";
+        
+    private final static String CONNECTOR_REMOTE_GROUP_TABLE_T = "\ntypedef struct {\n" +
+    "  connector_group_t const * groups;\n" +
+    "  size_t count;\n" +
+    "} connector_remote_group_table_t;\n";
+    	
     private String filePath = "";
     private String generatedFile = "";
     private String headerFile = "";
@@ -168,10 +210,8 @@ public class FileGenerator {
                 fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
                 fileWriter.write(String.format("%s \"connector_api.h\"\n\n", INCLUDE));
                 
-                if (ConfigGenerator.getBinaryOption()) {
-                    fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n");
-                    fileWriter.write("#define connector_remote_config_configurations    (connector_remote_config_request_t)-1\n\n");
-                }
+                fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n");
+                fileWriter.write("#define connector_request_id_remote_config_configurations    (connector_request_id_remote_config_t)-1\n\n");
 
                 writeHeaderFile(configData);
                 break;
@@ -197,8 +237,7 @@ public class FileGenerator {
                  * 3. all strings in connector_remote_all_strings[]
                  */
                 fileWriter.write(String.format("\n\n#if defined %s\n\n", RCI_PARSER_DATA));
-                if (ConfigGenerator.getBinaryOption())
-                    fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n\n");
+                fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n\n");
                 
                 fileWriter.write(String.format("#define FIRMWARE_TARGET_ZERO_VERSION  0x%X\n\n",ConfigGenerator.getFirmware()));
                 break;
@@ -207,17 +246,7 @@ public class FileGenerator {
 
             switch (ConfigGenerator.fileTypeOption()) {
             case GLOBAL_HEADER:
-                if (ConfigGenerator.getBinaryOption()) {
-                    fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE);
-                } else {
-                    fileWriter.write(String.format("\n\nextern uint32_t const FIRMWARE_TARGET_ZERO_VERSION;\n"));
-                    fileWriter.write("extern unsigned int connector_global_error_COUNT;\n\n");
-                    fileWriter.write(String.format("extern connector_group_table_t const %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
-                    if (!ConfigGenerator.excludeErrorDescription()) {
-                        fileWriter.write(String.format("extern char const * const %ss[];\n",GLOBAL_RCI_ERROR));
-                    }
-                }
-                
+                fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE);
                 fileWriter.write(String.format("\n#endif /* %s */\n", defineName));
                 break;
             case SOURCE:
@@ -275,8 +304,6 @@ public class FileGenerator {
 
         writeDefinesAndStructures(configData);
         
-        writeDefineRciParserStringsHeader(configData);
-        
         /* Write all global error enum in H file */
         writeRciErrorEnumHeader(configData);
         
@@ -301,13 +328,6 @@ public class FileGenerator {
                                     + "} connector_on_off_t;\n";
                     break;
 
-                case BOOLEAN:
-                    enumString += "\ntypedef enum {\n"
-                                    + "    connector_boolean_false,\n"
-                                    + "    connector_boolean_true\n"
-                                    + "} connector_boolean_t;\n";
-                    break;
-                    
                 default:
                   break;
                 }
@@ -343,87 +363,9 @@ public class FileGenerator {
         fileWriter.write(enumString);
     }
 
-    private void writeElementLimitStruct() throws IOException {
-
-        String headerString = "";
-        String structString = "";
-        int optionCount = 0;
-        
-        if (!ConfigGenerator.getBinaryOption())
-        {
-            Boolean isStringDefined = false;
-            Boolean isUnsignedIntegerDefined = false;
-    
-            for (ElementStruct.ElementType type : ElementStruct.ElementType.values()) {
-                if (type.isSet()) {
-                    switch (type) {
-                    case UINT32:
-                    case HEX32:
-                    case X_HEX32:
-                        if (!isUnsignedIntegerDefined) {
-                            /* if not defined yet, then define it */
-                            structString += "    connector_element_value_unsigned_integer_t unsigned_integer_value;\n";
-                            isUnsignedIntegerDefined = true;
-                            optionCount++;
-                        }
-                        break;
-                        
-                    case INT32:
-                        structString += "    connector_element_value_signed_integer_t signed_integer_value;\n";
-                        optionCount++;
-                        break;
-                        
-                    case ENUM:
-                        structString += "    connector_element_value_enum_t enum_value;\n";
-                        optionCount++;
-                        break;
-                        
-                    case FLOAT:
-                        structString += "    connector_element_value_float_t float_value;\n";
-                        optionCount++;
-                        break;
-                        
-                    case ON_OFF:
-                       break;
-    
-                    case BOOLEAN:
-                        break;
-                        
-                    default:
-                        if (!isStringDefined) {
-                            structString += "    connector_element_value_string_t string_value;\n";
-                            isStringDefined = true;
-                            optionCount++;
-                        }
-                      break;
-                    }
-                }
-            }
-        }
-        
-        
-        if (optionCount > 0) {
-            
-            if (optionCount > 1) 
-                headerString += "\n\n typedef union {";
-            else 
-                headerString += "\n\n typedef struct {";
-            
-            headerString += "\n" + structString + "} connector_element_value_limit_t;\n";
-        } else {
-            headerString += "\n\ntypedef void connector_element_value_limit_t;\n";
-        }
-
-        fileWriter.write(headerString);
-    }
-
     private String enumStructureString() {
         String string = TYPEDEF_STRUCT
                       + "    size_t count;\n";
-        if (!ConfigGenerator.getBinaryOption()) {
-                string += "    char const * const * value;\n";
-        }
-        
         string += "} connector_element_value_enum_t;\n";
 
         return string;
@@ -502,7 +444,7 @@ public class FileGenerator {
                         structString += enumStructureString();
                         isEnumValueStructDefined = true;
                     }
-                    elementValueStruct += "    connector_boolean_t  boolean_value;\n";
+                    elementValueStruct += "    connector_bool_t  boolean_value;\n";
                     optionCount++;
                     break;
                     
@@ -584,16 +526,10 @@ public class FileGenerator {
             } else if (!type.isSet()) {
                 switch (type) {
                 case ON_OFF:
-                    /* remove before writing the defines and strings */
-                    configData.getRciStrings().remove("OFF");
-                    configData.getRciStrings().remove("ON");
                     break;
                     
                 case BOOLEAN:
-                    /* remove before writing the defines and strings */
-                    configData.getRciStrings().remove("TRUE");
-                    configData.getRciStrings().remove("FALSE");
-                    break;
+                     break;
                 default:
                     break;
                 }
@@ -619,12 +555,20 @@ public class FileGenerator {
             writeOnOffBooleanEnum();
             writeElementTypeEnum();
             writeElementValueStruct();
-            writeElementLimitStruct();
             String headerString = "\n\n" + INCLUDE + CONNECTOR_REMOTE_HEADER;
 
             fileWriter.write(headerString);
+            
+            fileWriter.write(CONNECTOR_GROUP_ELEMENT_T);
+            fileWriter.write(CONNECTOR_GROUP_T);
+            fileWriter.write(CONNECTOR_REMOTE_GROUP_T);
+            fileWriter.write(CONNECTOR_REMOTE_ELEMENT_T);
+            fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
+            fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
+            fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
             break;
-        }        
+        }
+        
     }
 
     private void writeRemoteAllStrings(ConfigData configData) throws Exception {
@@ -633,10 +577,6 @@ public class FileGenerator {
                     CONNECTOR_REMOTE_ALL_STRING));
         }
         
-        if (!ConfigGenerator.getBinaryOption()) {
-            writeRemoteRciParserStrings(configData);
-        }
-
         writeRciErrorsRemoteAllStrings(configData);
 
         for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
@@ -652,41 +592,9 @@ public class FileGenerator {
         }
         writeErrorsRemoteAllStrings(configData);
 
-        if (!ConfigGenerator.excludeErrorDescription() || !ConfigGenerator.getBinaryOption()) {
+        if (!ConfigGenerator.excludeErrorDescription()) {
             fileWriter.write("\n};\n\n"); // end of CONNECTOR_REMOTE_ALL_STRING
         }
-    }
-
-    private void writeDefineRciParserStringsHeader(ConfigData configData) throws IOException {
-        if (!ConfigGenerator.getBinaryOption()) {
-            LinkedHashMap<String, String> rciStrings = configData.getRciStrings();
-    
-            if (rciStrings.size() > 0) {
-                switch (ConfigGenerator.fileTypeOption()) {
-                case GLOBAL_HEADER:
-                case NONE:
-                    fileWriter.write(String.format("extern char const %s[];\n\n", CONNECTOR_REMOTE_ALL_STRING));
-                }
-            }
-    
-            
-            for (String key : rciStrings.keySet()) {
-                String defineName = RCI_PREFIX + key.toUpperCase();
-                /* define name string index for each RCI string
-                 * #define [RCI prefix + rci string name]
-                 */
-                fileWriter.write(getDefineStringIndex(defineName, rciStrings.get(key).toUpperCase(), ConfigGenerator.FileType.GLOBAL_HEADER));
-            }
-        }        
-    }
-
-    private void writeRemoteRciParserStrings(ConfigData configData) throws IOException {
-        LinkedHashMap<String, String> rciStrings = configData.getRciStrings();
-
-        for (String key : rciStrings.keySet()) {
-            fileWriter.write(getCharString(rciStrings.get(key)));
-        }
-
     }
 
     private void writeDefineStrings(ConfigData configData) throws Exception {
@@ -703,30 +611,6 @@ public class FileGenerator {
                 /* define name string index
                  * #define [group name]
                  */
-                if (!ConfigGenerator.getBinaryOption()) {
-                    fileWriter.write(getDefineStringIndex(defineName, group.getName(), ConfigGenerator.FileType.SOURCE));
-                }
-
-                if (!ConfigGenerator.getBinaryOption()) {
-                    for (ElementStruct element : group.getElements()) {
-                        defineName = getDefineString(group.getName() + "_" + element.getName());
-                        /* define name string index for each element
-                         * #define [group name + element name] 
-                         */
-                        fileWriter.write(getDefineStringIndex(defineName, element.getName(), ConfigGenerator.FileType.SOURCE));
-    
-                        if (ElementStruct.ElementType.toElementType(element.getType()) == ElementStruct.ElementType.ENUM) {
-                            
-                            for (ValueStruct value : element.getValues()) {
-                                defineName = getDefineString(group.getName() + "_" + element.getName() + "_" + value.getName());
-                                /* define name string index for each enum value in the element
-                                 * #define [group name + element name + enum name]
-                                 */
-                                fileWriter.write(getDefineStringIndex(defineName, value.getName(), ConfigGenerator.FileType.SOURCE));
-                            }
-                        }
-                    }
-                }
 
                 if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                     LinkedHashMap<String, String> errorMap = group.getErrors();
@@ -745,20 +629,6 @@ public class FileGenerator {
 
     private void writeGroupRemoteAllStrings(LinkedList<GroupStruct> groups) throws Exception {
         for (GroupStruct group : groups) {
-            if (!ConfigGenerator.getBinaryOption()) { 
-                fileWriter.write(getCharString(group.getName()));
-    
-                for (ElementStruct element : group.getElements()) {
-                    fileWriter.write(getCharString(element.getName()));
-    
-                    if (ElementStruct.ElementType.toElementType(element.getType()) == ElementStruct.ElementType.ENUM) {
-                        for (ValueStruct value : element.getValues()) {
-                            fileWriter.write(getCharString(value.getName()));
-                        }
-                    }
-                }
-            }
-            
             if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 for (String key : errorMap.keySet()) {
@@ -784,15 +654,7 @@ public class FileGenerator {
 
     private void writeDefineRciErrors(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciCommonErrors(), ConfigGenerator.FileType.SOURCE);
-            
-
             writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE);
-
-            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciCommandErrors(), ConfigGenerator.FileType.SOURCE);
-
-            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGroupErrors(), ConfigGenerator.FileType.SOURCE);
-            
         }
     }
     
@@ -810,120 +672,8 @@ public class FileGenerator {
 
     private void writeRciErrorsRemoteAllStrings(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getRciCommonErrors());
-
             writeLinkedHashMapStrings(configData.getRciGlobalErrors());
-
-            writeLinkedHashMapStrings(configData.getRciCommandErrors());
-
-            writeLinkedHashMapStrings(configData.getRciGroupErrors());
-
         }
-    }
-
-    private void writeEnumStructure(String enum_name, LinkedList<ValueStruct> values) throws IOException {
-        if (!ConfigGenerator.getBinaryOption()) {
-            String enum_string = enum_name.toLowerCase() + "_" + ENUM_STRING;
-
-            /* write element enum strings array */
-            fileWriter.write(CHAR_CONST_STRING + enum_string + "[] = {\n");
-
-            int size = values.size();
-            
-            for (int i=0; i < size; i++)
-            {
-                ValueStruct value = values.get(i);
-                
-                /* write connector_remote_all_strings reference */
-                fileWriter.write(getRemoteString(enum_name + "_" + value.getName()));
-                
-                if (i < (size-1)) fileWriter.write(",");
-                /* write comment */
-                fileWriter.write(COMMENTED(value.getName()));
-            }
-            /* end of writing element enum strings array */
-            fileWriter.write("};\n\n");
-    
-            /* write element value limit structure for enum type */
-            String enum_limit_string = String.format("static %s const %s_limit = {\n asizeof(%s),\n %s\n};\n\n",
-                                                CONNECTOR_ELEMENT_VALUE_ENUM, enum_name.toLowerCase(), enum_string,
-                                                enum_string);
-            fileWriter.write(enum_limit_string);
-            
-        }
-    }
-
-    private void writeElementLimitValueStruct(String element_name, ElementStruct element) throws Exception {
-        /* write element value limit structure */
-        String limit_string = STATIC;
-
-        ElementStruct.ElementType type = ElementStruct.ElementType.toElementType(element.getType());
-
-        switch (type) {
-        case FLOAT:
-            limit_string += CONNECTOR_ELEMENT_VALUE_FLOAT;
-            break;
-        case UINT32:
-        case HEX32:
-        case X_HEX32:
-            limit_string += CONNECTOR_ELEMENT_VALUE_UNSIGNED;
-            break;
-        case INT32:
-            limit_string += CONNECTOR_ELEMENT_VALUE_SIGNED;
-            break;
-        default:
-            limit_string += CONNECTOR_ELEMENT_VALUE_STRING;
-            break;
-        }
-
-        limit_string += CONST + element_name.toLowerCase() + "_" + LIMIT + " = {\n";
-
-        if (element.getMin() == null) {
-            switch (type) {
-            case FLOAT:
-                limit_string += " " + "FLT_MIN";
-                break;
-            case INT32:
-                limit_string += " " + "INT32_MIN";
-                break;
-            default:
-                limit_string += " " + "0";
-                break;
-            }
-        } else {
-            limit_string += " ";
-            if (type == ElementStruct.ElementType.HEX32)
-                limit_string += "0x";
-            limit_string += element.getMin();
-        }
-
-        limit_string += ",\n";
-
-        if (element.getMax() == null) {
-            switch (type) {
-            case FLOAT:
-                limit_string += " " + "FLT_MAX";
-                break;
-            case INT32:
-                limit_string += " " + "INT32_MAX";
-                break;
-            case UINT32:
-            case HEX32:
-            case X_HEX32:
-                limit_string += " " + "UINT32_MAX";
-                break;
-            default:
-                limit_string += " " + "SIZE_MAX";
-                break;
-            }
-        } else {
-            limit_string += " ";
-            if (type == ElementStruct.ElementType.HEX32) limit_string += "0x";
-            limit_string += element.getMax();
-        }
-
-        fileWriter.write(limit_string);
-        fileWriter.write("\n};\n\n");
     }
 
     private void writeElementArrays(String group_name, LinkedList<ElementStruct> elements) throws Exception {
@@ -934,32 +684,14 @@ public class FileGenerator {
         for (int element_index = 0; element_index < elements.size(); element_index++) {
             ElementStruct element = elements.get(element_index);
 
-            String element_name = getDefineString(group_name + "_" + element.getName());
             String element_string = String.format("\n { %s", COMMENTED(element.getName()));
 
-            /*
-             * Should not have element name in the structure for iC v2.0. Keep
-             * it for iC v1.2 compatibility. Just use NULL.
-             */
-            if (ConfigGenerator.getBinaryOption()) {
-                element_string += "  NULL,\n";
-            } else {
-                element_string += String.format("  %s,\n", getRemoteString(element_name));
-            }
 
             element_string += String.format("   %s",  getElementDefine("access", getAccess(element.getAccess())));
             
             element_string += String.format("   %s", getElementDefine("type", element.getType()));
 
-            if ((!ConfigGenerator.getBinaryOption()) &&
-                ((ElementStruct.ElementType.toElementType(element.getType()) == ElementStruct.ElementType.ENUM)
-                  || (element.getMin() != null) || (element.getMax() != null))) {
-                
-                element_string += String.format("  (connector_element_value_limit_t *)&%s_limit",
-                                                element_name.toLowerCase());
-            } else {
-                element_string += "  NULL";
-            }
+            element_string += "  NULL";
             element_string += "\n }";
 
             if (element_index < (elements.size() - 1)) {
@@ -975,10 +707,7 @@ public class FileGenerator {
     private void writeGlobalErrorStructures(ConfigData configData) throws IOException {
         
         if (!ConfigGenerator.excludeErrorDescription()) {
-            int errorCount = configData.getRciCommonErrors().size()
-                            + configData.getRciGlobalErrors().size()
-                            + configData.getRciCommandErrors().size()
-                            + configData.getRciGroupErrors().size()
+            int errorCount = configData.getRciGlobalErrors().size()
                             + configData.getUserGlobalErrors().size();
 
             if (errorCount > 0) {
@@ -988,21 +717,9 @@ public class FileGenerator {
 
                 fileWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
                         
-                /* top-level all errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
-                             configData.getRciCommonErrors());
-
                 /* top-level global errors */
                 errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
                              configData.getRciGlobalErrors());
-
-                /* top-level command errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
-                             configData.getRciCommandErrors());
-
-                /* top-level group errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
-                             configData.getRciGroupErrors());
 
                 /* group global errors */
                 errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR,
@@ -1048,26 +765,8 @@ public class FileGenerator {
 
     private void writeGroupStructures(LinkedList<GroupStruct> groups) throws Exception {
         
-        String define_name;
-
         for (int group_index = 0; group_index < groups.size(); group_index++) {
             GroupStruct group = groups.get(group_index);
-
-            for (int element_index = 0; element_index < group.getElements()
-                    .size(); element_index++) {
-                ElementStruct element = group.getElements().get(element_index);
-
-                define_name = getDefineString(group.getName() + "_" + element.getName());
-
-                if (ElementStruct.ElementType.toElementType(element.getType()) == ElementStruct.ElementType.ENUM) {
-                    /* write enum structure */
-                    writeEnumStructure(define_name, element.getValues());
-                } else if ((!ConfigGenerator.getBinaryOption()) &&
-                           ((element.getMax() != null) || (element.getMin() != null))) {
-                    /* write limit structure */
-                    writeElementLimitValueStruct(define_name, element);
-                }
-            }
 
             /* write element structure */
             writeElementArrays(group.getName(), group.getElements());
@@ -1098,16 +797,6 @@ public class FileGenerator {
                     define_name = getDefineString(group.getName() + "_elements");
                     String group_string = String.format("\n { %s", COMMENTED(group.getName()));
 
-                    /*
-                     * Should not have group name in the structure for iC v2.0.
-                     * Keep it for iC v1.2 compatibility. Just NULL it.
-                     */
-                     if (ConfigGenerator.getBinaryOption()) {
-                        group_string += "  NULL,\n";
-                    } else {
-                        group_string += String.format("  %s,\n", getRemoteString(getDefineString(group.getName())));
-                    }
-                    
                     group_string += String.format("   %d,\n", group.getInstances())
                                   + String.format("   { asizeof(%s),\n", define_name.toLowerCase())
                                   + String.format("     %s\n   },\n", define_name.toLowerCase());
@@ -1186,15 +875,7 @@ public class FileGenerator {
         case NONE:
         /* write typedef enum for rci errors */
             fileWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
-    
-            writeErrorHeader(configData.getRciCommonErrorsIndex(), GLOBAL_RCI_ERROR, configData.getRciCommonErrors(), fileWriter);
-    
             writeErrorHeader(configData.getRciGlobalErrorsIndex(), GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), fileWriter);
-    
-            writeErrorHeader(configData.getRciCommandErrorsIndex(), GLOBAL_RCI_ERROR, configData.getRciCommandErrors(), fileWriter);
-    
-            writeErrorHeader(configData.getRciGroupErrorsIndex(), GLOBAL_RCI_ERROR, configData.getRciGroupErrors(), fileWriter);
-    
             fileWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + GLOBAL_RCI_ERROR + ID_T_STRING);
         }
     }

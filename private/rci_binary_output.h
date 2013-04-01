@@ -223,7 +223,7 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
         {
             connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
-            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, request_id, connector_invalid_data_range);
+            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range);
             rci->status = rci_status_error;
             overflow = connector_false;
             connector_debug_printf("Invalid IPv4 %s\n", string);
@@ -278,7 +278,7 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
         {
             connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
-            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, request_id, connector_invalid_data_range);
+            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range);
             rci->status = rci_status_error;
             overflow = connector_false;
             connector_debug_printf("Invalid IPv4 \"%s\"\n", string);
@@ -326,10 +326,10 @@ static connector_bool_t rci_output_float(rci_t * const rci, float const value)
 
 static void rci_output_command_id(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t command_id = 0;
 
-    switch (rci->shared.callback_data.request.group.type)
+    switch (rci->shared.callback_data.group.type)
     {
         case connector_remote_group_setting:
             switch (rci->shared.callback_data.action)
@@ -360,7 +360,7 @@ static void rci_output_command_id(rci_t * const rci)
 
         if (!overflow)
         {
-            if (response->error_id != connector_success)
+            if (remote_config->error_id != connector_success)
                 state_call(rci, rci_parser_state_error);
             else
                 state_call(rci, rci_parser_state_traverse);
@@ -372,7 +372,7 @@ static void rci_output_command_id(rci_t * const rci)
 
 static void rci_output_group_id(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t encoding_data;
 
     if (!have_group_id(rci))
@@ -391,7 +391,7 @@ static void rci_output_group_id(rci_t * const rci)
 
         if (!overflow)
         {
-            if (response->error_id != connector_success)
+            if (remote_config->error_id != connector_success)
                 state_call(rci, rci_parser_state_error);
             else
                 set_rci_output_state(rci, rci_output_state_group_attribute);
@@ -437,7 +437,7 @@ static void rci_output_group_attribute(rci_t * const rci)
 
 static void rci_output_field_id(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
     if (!have_element_id(rci))
     {
@@ -449,14 +449,14 @@ static void rci_output_field_id(rci_t * const rci)
         /* output field id */
         uint32_t id =  encode_element_id(get_element_id(rci));
 
-        if (response->error_id != connector_success) id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
+        if (remote_config->error_id != connector_success) id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
 
         {
             connector_bool_t const overflow = rci_output_uint32(rci, id);
 
             if (overflow) goto done;
 
-            if (response->error_id != connector_success)
+            if (remote_config->error_id != connector_success)
                 state_call(rci, rci_parser_state_error);
             else
                 set_rci_output_state(rci, rci_output_state_field_value);
@@ -582,14 +582,14 @@ done:
 
 static void rci_output_field_terminator(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
     connector_bool_t const overflow = rci_output_terminator(rci);
     if (!overflow)
     {
         invalidate_element_id(rci);
 
-        if (response->error_id != connector_success)
+        if (remote_config->error_id != connector_success)
             state_call(rci, rci_parser_state_error);
         else
             state_call(rci, rci_parser_state_traverse);
@@ -599,9 +599,9 @@ static void rci_output_field_terminator(rci_t * const rci)
 
 static void rci_output_group_terminator(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
-    if (response->error_id != connector_success)
+    if (remote_config->error_id != connector_success)
     {
         state_call(rci, rci_parser_state_error);
     }
@@ -673,8 +673,8 @@ static void rci_generate_output(rci_t * const rci)
 
             case rci_output_state_done:
             {
-                connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
-                if (response->error_id != connector_success)
+                connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+                if (remote_config->error_id != connector_success)
                     state_call(rci, rci_parser_state_error);
                 else
                     rci->status = rci_status_complete;

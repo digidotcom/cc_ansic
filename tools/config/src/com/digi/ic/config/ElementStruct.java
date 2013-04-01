@@ -142,8 +142,7 @@ public class ElementStruct {
         if (units != null)
             descriptor += String.format(" units=\"%s\"", units);
 
-        if (ConfigGenerator.getBinaryOption())
-            descriptor += String.format(" bin_id=\"%d\"", id);
+        descriptor += String.format(" bin_id=\"%d\"", id);
         
         try {
 

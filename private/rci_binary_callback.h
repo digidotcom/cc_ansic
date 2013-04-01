@@ -20,8 +20,8 @@ static connector_bool_t is_set_command(connector_remote_action_t const action)
 
 static void rci_error(rci_t * const rci, unsigned int const id, char const * const description, char const * const hint)
 {
-    rci->shared.callback_data.response.error_id = id;
-    rci->shared.callback_data.response.element_data.error_hint = hint;
+    rci->shared.callback_data.error_id = id;
+    rci->shared.callback_data.response.error_hint = hint;
 
     rci->error.description = description;
 }
@@ -84,12 +84,12 @@ static void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     case connector_request_id_remote_config_action_end:
         break;
 
-    case connector_rrequest_id_emote_config_group_start:
+    case connector_request_id_remote_config_group_start:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_index(rci));
 
-        rci->shared.callback_data.request.group.id = get_group_id(rci);
-        rci->shared.callback_data.request.group.index = get_group_index(rci);
+        rci->shared.callback_data.group.id = get_group_id(rci);
+        rci->shared.callback_data.group.index = get_group_index(rci);
         break;
 
     case connector_request_id_remote_config_group_end:
@@ -102,14 +102,14 @@ static void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         ASSERT(have_group_index(rci));
         ASSERT(have_element_id(rci));
 
-        rci->shared.callback_data.request.element.id = get_element_id(rci);
+        rci->shared.callback_data.element.id = get_element_id(rci);
         {
             connector_group_element_t const * const element = get_current_element(rci);
 
-            rci->shared.callback_data.request.element.type = element->type;
+            rci->shared.callback_data.element.type = element->type;
         }
 
-        rci->shared.callback_data.request.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
+        rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
     }
 
@@ -120,33 +120,34 @@ static void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 static connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
-    connector_remote_config_data_t remote_config;
-
-    remote_config.request = NULL;
-    remote_config.response = &rci->shared.callback_data.response;
-    remote_config.response->error_id = connector_success;
-
+    connector_remote_config_t * remote_config = &rci->shared.callback_data;
+    connector_remote_config_cancel_t remote_cancel;
+    void * callback_data = NULL;
 
     switch (rci->callback.request.remote_config_request)
     {
     case connector_request_id_remote_config_session_start:
     case connector_request_id_remote_config_session_end:
-        break;
-
     case connector_request_id_remote_config_action_start:
     case connector_request_id_remote_config_action_end:
     case connector_request_id_remote_config_group_start:
     case connector_request_id_remote_config_group_end:
     case connector_request_id_remote_config_group_process:
-        remote_config.request = &rci->shared.callback_data.request;
-        break;
-
-    case connector_request_id_remote_config_session_cancel:
-        response_data = rci->shared.callback_data.user_context;
+    {
+        remote_config->error_id = connector_success;
+        callback_data = remote_config;
         break;
     }
 
-    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_remote_config_service, rci->callback.request, request_data);
+    case connector_request_id_remote_config_session_cancel:
+    {
+        remote_cancel.user_context = remote_config->user_context;
+        callback_data =  &remote_cancel;
+        break;
+    }
+    }
+
+    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data);
 
     switch (rci->callback.status)
     {

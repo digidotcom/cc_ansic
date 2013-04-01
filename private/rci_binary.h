@@ -42,7 +42,7 @@ static connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     invalidate_group_index(rci);
     invalidate_element_id(rci);
 
-    rci->shared.callback_data.response.element_data.element_value = &rci->shared.value;
+    rci->shared.callback_data.response.element_value = &rci->shared.value;
 
     rci->status = rci_status_busy;
     rci->error.command_error = connector_false;
@@ -121,7 +121,7 @@ static connector_bool_t rci_action_session_lost(rci_t * const rci)
 }
 
 
-static rci_status_t rci_parser(rci_session_t const action, ...)
+static rci_status_t rci_binary(rci_session_t const action, ...)
 {
     static rci_t rci;
 
@@ -155,14 +155,14 @@ static rci_status_t rci_parser(rci_session_t const action, ...)
 
     if (pending_rci_callback(&rci))
     {
-        connector_remote_group_response_t * const response = &rci.shared.callback_data.response;
+        connector_remote_config_t * const remote_config = &rci.shared.callback_data;
 
         if (!rci_callback(&rci))
             goto done;
 
-        if (response->error_id != connector_success)
+        if (remote_config->error_id != connector_success)
         {
-            rci_group_error(&rci, response->error_id, response->element_data.error_hint);
+            rci_group_error(&rci, remote_config->error_id, remote_config->response.error_hint);
             goto done;
         }
     }

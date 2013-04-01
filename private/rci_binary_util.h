@@ -10,8 +10,8 @@
  * =======================================================================
  */
 
-#if defined connector_remote_config_configurations
-static connector_remote_config_t connector_rci_config_data = {
+#if (defined connector_request_id_remote_config_configurations)
+static connector_remote_config_data_t connector_rci_config_data = {
         NULL, NULL, connector_rci_error_COUNT, 0
 };
 
@@ -21,9 +21,9 @@ typedef struct {
     char const * const * error_table;
     unsigned int global_error_count;
     uint32_t firmware_target_zero_version;
-} connector_remote_config_t;
+} connector_remote_config_data_t;
 
-static connector_remote_config_t const connector_rci_config_data = {
+static connector_remote_config_data_t const connector_rci_config_data = {
         connector_group_table,
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
         connector_rci_errors,

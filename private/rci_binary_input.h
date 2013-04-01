@@ -320,9 +320,9 @@ static void process_rci_command(rci_t * const rci)
     uint32_t command;
 
     {
-        connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+        connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
-        if (response->error_id != connector_success)
+        if (remote_config->error_id != connector_success)
         {
             set_rci_output_state(rci, rci_output_state_field_id);
             state_call(rci, rci_parser_state_output);
@@ -343,11 +343,11 @@ static void process_rci_command(rci_t * const rci)
         {
             case rci_command_set_setting:
             case rci_command_query_setting:
-                rci->shared.callback_data.request.group.type = connector_remote_group_setting;
+                rci->shared.callback_data.group.type = connector_remote_group_setting;
                 break;
             case rci_command_set_state:
             case rci_command_query_state:
-                rci->shared.callback_data.request.group.type = connector_remote_group_state;
+                rci->shared.callback_data.group.type = connector_remote_group_state;
                 break;
         }
 
@@ -788,7 +788,7 @@ static void process_field_value(rci_t * const rci)
         {
             goto done;
         }
-        rci->shared.value.boolean_value = (value == 0)? connector_boolean_false : connector_boolean_true;
+        rci->shared.value.boolean_value = (value == 0)? connector_false : connector_true;
         error = connector_bool((value != 0) && (value != 1));
         break;
     }
@@ -905,7 +905,7 @@ static void process_field_no_value(rci_t * const rci)
 
 #if defined RCI_PARSER_USES_BOOLEAN
         case connector_element_type_boolean:
-            rci->shared.value.boolean_value = connector_boolean_false;
+            rci->shared.value.boolean_value = connector_false;
             break;
 #endif
         }

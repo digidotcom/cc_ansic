@@ -42,10 +42,7 @@ public class GroupStruct {
         String descriptor = String.format(
                 "<descriptor element=\"%s\" desc=\"%s\"", name, descText);
         
-        if (ConfigGenerator.getBinaryOption()) 
-            descriptor += String.format(" bin_id=\"%d\"", id);
-        
-        descriptor += ">";
+        descriptor += String.format(" bin_id=\"%d\">", id);
         return descriptor;
     }
 

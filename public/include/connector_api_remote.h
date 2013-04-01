@@ -10,8 +10,8 @@
  * =======================================================================
  */
 
-#ifndef _CONNECTOR_REMOTE_H
-#define _CONNECTOR_REMOTE_H
+#ifndef _CONNECTOR_API_REMOTE_H
+#define _CONNECTOR_API_REMOTE_H
 
 #include "connector_types.h"
 /**
@@ -20,7 +20,7 @@
 */
 /**
 * Remote Configuration Request ID passed to the application's callback to query or set remote configuration data.
-* The class id for this connector_remote_config_request_t is connector_class_remote_config_service.
+* The class id for this connector_remote_config_request_t is connector_class_id_remote_config.
 */
 
 typedef enum {
@@ -90,4 +90,4 @@ typedef enum {
 */
 
 
-#endif /* connector_element_H_ */
+#endif /* connector_api_element_H_ */

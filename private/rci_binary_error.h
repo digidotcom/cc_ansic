@@ -13,7 +13,7 @@
 static void rci_output_error_id(rci_t * const rci)
 {
 
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
+    connector_remote_config_t const * const response = &rci->shared.callback_data;
     uint32_t value;
 
     if (rci->error.command_error)
@@ -65,9 +65,9 @@ static void rci_output_error_description(rci_t * const rci)
 
 static void rci_output_error_hint(rci_t * const rci)
 {
-    connector_remote_group_response_t const * const response = &rci->shared.callback_data.response;
-    size_t const description_length = (response->element_data.error_hint == NULL) ? 0 : strlen(response->element_data.error_hint);
-    connector_bool_t const overflow = rci_output_string(rci, response->element_data.error_hint,  description_length);
+    connector_remote_config_t const * const remote_config_ = &rci->shared.callback_data;
+    size_t const description_length = (remote_config_->response.error_hint == NULL) ? 0 : strlen(remote_config_->response.error_hint);
+    connector_bool_t const overflow = rci_output_string(rci, remote_config_->response.error_hint,  description_length);
 
     if (!overflow)
     {

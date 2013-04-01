@@ -131,7 +131,7 @@ static connector_bool_t traverse_all_groups(rci_t * const rci)
     {
         case rci_traverse_process_group:
         {
-            connector_group_table_t const * const table = (connector_rci_config_data.group_table + rci->shared.callback_data.request.group.type);
+            connector_remote_group_table_t const * const table = (connector_rci_config_data.group_table + rci->shared.callback_data.group.type);
 
             if (table->count == 0)
             {

@@ -9,8 +9,9 @@ import java.util.regex.Pattern;
 public class ConfigGenerator {
 
 // 1.0.0.0 version XML RCI
-// 1.1.0.0 version Add binary RCI
-    public final static String VERSION = "1.1.0.0";
+// 2.0.0.0 version Binary RCI only
+
+    public final static String VERSION = "2.0.0.0";
     
     private final static long FIRMWARE_VERSION_MAX_VALUE = 4294967295L;
 
@@ -19,13 +20,12 @@ public class ConfigGenerator {
     private final static String VERBOSE_OPTION = "verbose";
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
-    private final static String BINARY_OPTION = "binary";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
 
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String SERVER_OPTION = "server";
-    private final static String SERVER_NAME = "my.idigi.com";
+    private final static String SERVER_NAME = "login.etherios.com";
 
     public final static String DASH = "-";
 
@@ -47,7 +47,6 @@ public class ConfigGenerator {
     private static String directoryPath;
     private static boolean noErrorDescription;
     private static boolean verboseOption;
-    private static boolean binaryOption = true;
     private static FileType fileType = FileType.NONE;
     private static boolean deleteDescriptor;
 
@@ -139,11 +138,6 @@ public class ConfigGenerator {
 
         log(String
                 .format(
-                        "\t%-16s \t= optional option to exclude all configuration strings. Use \"%s\" option to opt-out error descriptions.",
-                        DASH + BINARY_OPTION, NO_DESC_OPTION));
-
-        log(String
-                .format(
                         "\n\t%-16s \t= username to log in the iDigi Device Cloud. If no password is given you will be prompted to enter the password",
                         USERNAME));
         log(String
@@ -213,8 +207,6 @@ public class ConfigGenerator {
                 } else if (keys[0].equals(FILE_TYPE_OPTION)) {
                     fileType = FileType.toFileType(keys[1]);
                     
-                } else if (keys[0].equals(BINARY_OPTION)) {
-                    binaryOption = Boolean.parseBoolean(keys[1]);
                 } else {
                     throw new Exception("Invalid Option: " + keys[0]);
                 }
@@ -357,9 +349,6 @@ public class ConfigGenerator {
 
     public static String getServerName() {
         return serverName;
-    }
-    public static boolean getBinaryOption() {
-        return binaryOption;
     }
 
     public ConfigGenerator(String args[]) {

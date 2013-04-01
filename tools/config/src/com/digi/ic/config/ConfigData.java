@@ -17,12 +17,7 @@ public class ConfigData {
     /* user global error */
     private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
 
-    private RciStrings rciCommonErrors = new RciCommonErrors();
     private RciStrings rciGlobalErrors = new RciGlobalErrors();
-    private RciStrings rciCommandErrors = new RciCommandErrors();
-    private RciStrings rciGroupErrors = new RciGroupErrors();
-    private RciStrings rciStrings = new RciParserStrings();
-
 
     public enum ConfigType {
         SETTING(0), STATE(1);
@@ -69,19 +64,10 @@ public class ConfigData {
         groupList.add(type.getIndex(), groups);
 
         int index = 1;
-        rciErrorMap.put(rciCommonErrors, index);
-
-        index += rciCommonErrors.size();
         rciErrorMap.put(rciGlobalErrors, index);
 
         index += rciGlobalErrors.size();
-        rciErrorMap.put(rciCommandErrors, index);
-
-        index += rciCommandErrors.size();
-        rciErrorMap.put(rciGroupErrors, index);
-
-        index += rciGroupErrors.size();
-        rciErrorMap.put(userGlobalErrors, index);
+         rciErrorMap.put(userGlobalErrors, index);
     }
 
     public LinkedList<GroupStruct> getSettingGroups() throws Exception {
@@ -118,44 +104,17 @@ public class ConfigData {
         userGlobalErrors.addStrings(name, description);
     }
 
-    public LinkedHashMap<String, String> getRciCommonErrors() {
-        return rciCommonErrors.getStrings();
-    }
-
     public LinkedHashMap<String, String> getRciGlobalErrors() {
         return rciGlobalErrors.getStrings();
     }
 
-    public LinkedHashMap<String, String> getRciCommandErrors() {
-        return rciCommandErrors.getStrings();
-    }
-
-    public LinkedHashMap<String, String> getRciGroupErrors() {
-        return rciGroupErrors.getStrings();
-    }
-
-    public int getRciCommonErrorsIndex() {
-        return rciErrorMap.get(rciCommonErrors);
-    }
 
     public int getRciGlobalErrorsIndex() {
         return rciErrorMap.get(rciGlobalErrors);
     }
 
-    public int getRciCommandErrorsIndex() {
-        return rciErrorMap.get(rciCommandErrors);
-    }
-
-    public int getRciGroupErrorsIndex() {
-        return rciErrorMap.get(rciGroupErrors);
-    }
-
     public int getUserGlobalErrorsIndex() {
         return rciErrorMap.get(userGlobalErrors);
-    }
-
-    public LinkedHashMap<String, String> getRciStrings() {
-        return rciStrings.getStrings();
     }
 
     public Map<Object, Integer> getRciErrorMap() {
@@ -163,8 +122,7 @@ public class ConfigData {
     }
 
     public int getAllErrorsSize() {
-        int size = rciCommonErrors.size() + rciGlobalErrors.size()
-                + rciCommandErrors.size() + rciGroupErrors.size() 
+        int size = rciGlobalErrors.size()
                 + userGlobalErrors.size();
 
         return size;

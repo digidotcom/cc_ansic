@@ -19,7 +19,7 @@ static uint32_t rci_get_firmware_target_zero_version(void)
     return connector_rci_config_data.firmware_target_zero_version;
 }
 
-static void set_rci_service_error(msg_service_request_t * const service_request, connector_msg_error_t const error_code)
+static void set_rci_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
 {
     service_request->error_value = error_code;
     service_request->service_type = msg_service_type_error;
@@ -28,7 +28,7 @@ static void set_rci_service_error(msg_service_request_t * const service_request,
 static connector_status_t rci_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_working;
-    connector_msg_error_t error_status = connector_msg_error_none;
+    connector_session_error_t error_status = connector_session_error_none;
     msg_session_t * session;
     rci_service_data_t * service_data;
 
@@ -61,7 +61,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
             {
                 if (status != connector_pending)
                 {
-                    error_status = connector_msg_error_cancel;
+                    error_status = connector_session_error_cancel;
                 }
                 goto done;
             }
@@ -87,7 +87,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
 
         service_data->input.flags = service_request->have_data->flags;
         service_data->output.flags = service_request->need_data->flags;
-        rci_status = rci_parser(parser_action, service_data);
+        rci_status = rci_binary(parser_action, service_data);
 
         switch (rci_status)
         {
@@ -119,14 +119,14 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
 
             /* no break; */
         case rci_status_internal_error:
-            error_status = connector_msg_error_cancel;
+            error_status = connector_session_error_cancel;
             break;
         }
         break;
     }
     case msg_service_type_error:
     {
-        rci_status_t const rci_status = rci_parser(rci_session_lost, service_data);
+        rci_status_t const rci_status = rci_binary(rci_session_lost, service_data);
 
         switch (rci_status)
         {
@@ -165,7 +165,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
     }
 
 done:
-    if (error_status != connector_msg_error_none)
+    if (error_status != connector_session_error_none)
     {
         set_rci_service_error(service_request, error_status);
     }
@@ -191,15 +191,15 @@ static connector_status_t connector_facility_rci_service_init(connector_data_t *
 
     msg_service_id_t const service_id = msg_service_id_brci;
 
-#if defined connector_request_id_remote_config_configurations
+#if (defined connector_request_id_remote_config_configurations)
     {
 
         connector_request_id_t request_id;
         connector_callback_status_t callback_status;
 
-        request_id.remote_config_request = (connector_request_id_remote_config_t)connector_remote_config_configurations;
-        callback_status = connector_callback_no_request_data(connector_ptr->callback, connector_class_remote_config_service, request_id,
-                                                &connector_rci_config_data, NULL);
+        request_id.remote_config_request = (connector_request_id_remote_config_t)connector_request_id_remote_config_configurations;
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
+                                             request_id, &connector_rci_config_data);
         switch (callback_status)
         {
             case connector_callback_unrecognized:
@@ -222,7 +222,7 @@ static connector_status_t connector_facility_rci_service_init(connector_data_t *
 
     result = msg_init_facility(connector_ptr, facility_index, service_id, rci_service_callback);
 
-#if defined connector_remote_config_configurations
+#if (defined connector_request_id_remote_config_configurations)
 done:
 #endif
     return result;

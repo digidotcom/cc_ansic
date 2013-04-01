@@ -48,7 +48,7 @@ typedef enum {
     connector_request_id_config_esn,               /**< Requesting callback to return CDMA ESN (Electronic Serial Number) */
     connector_request_id_config_meid,              /**< Requesting callback to return CDMA MEID (Mobile Equipment Identifier) */
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
-    connector_request_id_config_password,          /**< Requesting callback to return password for the password identity verification form */
+    connector_request_id_config_password           /**< Requesting callback to return password for the password identity verification form */
 } connector_request_id_config_t;
 /**
 * @}

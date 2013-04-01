@@ -380,7 +380,7 @@ static connector_status_t get_config_wan_id(connector_data_t * const connector_p
     connector_callback_status_t callback_status;
     connector_config_pointer_data_t request_data;
     size_t  bytes_required;
-    uint8_t max_digits ;
+    uint8_t max_digits;
 
     connector_request_id_t request_id;
 
@@ -403,7 +403,8 @@ static connector_status_t get_config_wan_id(connector_data_t * const connector_p
 
         default:
             ASSERT(connector_false);
-            break;
+            result = connector_abort;
+            goto done;
     }
 
     request_data.bytes_required = bytes_required;
