@@ -51,7 +51,7 @@ typedef struct
     dvt_ds_test_cases_t test_case;
     dvt_state_t state;
     char file_path[MAX_FILE_PATH_SIZE];
-    connector_data_service_put_request_t header;
+    connector_request_data_service_send_t header;
     char * file_buf;
     size_t file_size;
     size_t bytes_sent;

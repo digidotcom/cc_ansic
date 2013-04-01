@@ -21,10 +21,8 @@ extern void clear_stack_size(void);
 
 dvt_ds_t  data_service_info;
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void * const data);
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
-                                                  void * const data);
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request, void * const data);
 
 extern connector_status_t send_put_request(connector_handle_t handle, dvt_ds_t * const ds_info);
 
@@ -78,7 +76,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         status = app_data_service_handler(request_id.data_service_request, data);
         break;
 
-    case connector_class_firmware:
+    case connector_class_id_firmware:
         status = app_firmware_handler(request_id.firmware_request, data);
         break;
 

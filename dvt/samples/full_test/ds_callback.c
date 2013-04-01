@@ -19,7 +19,7 @@ connector_status_t send_put_request(connector_handle_t handle, dvt_ds_t * const 
 {
     connector_status_t status = connector_success;
     static char file_type[] = "text/plain";
-    connector_data_service_put_request_t * header = NULL;
+    connector_request_data_service_send_t * header = NULL;
 
     ds_info->bytes_sent = 0;
     header = &ds_info->header;
@@ -27,27 +27,26 @@ connector_status_t send_put_request(connector_handle_t handle, dvt_ds_t * const 
     switch (ds_info->test_case)
     {
     case dvt_case_put_request_ds_append:
-        header->flags = CONNECTOR_DATA_PUT_APPEND;
+        header->option = connector_data_service_send_option_append;
         break;
 
     case dvt_case_put_request_ds_archive:
-        header->flags = CONNECTOR_DATA_PUT_ARCHIVE;
+        header->option = connector_data_service_send_option_archive;
         break;
 
     case dvt_case_put_request_ds_both:
-        header->flags = CONNECTOR_DATA_PUT_APPEND | CONNECTOR_DATA_PUT_ARCHIVE;
+        header->option = connector_data_service_send_option_transient;
         break;
 
     default:
-        header->flags = 0;
+        header->option = connector_data_service_send_option_overwrite;
         break;
     }
 
     header->path  = ds_info->file_path;
     header->content_type = file_type;
-    header->context = ds_info;
+    header->user_context = ds_info;
     header->transport = connector_transport_tcp;
-
 
     status = connector_initiate_action(handle, connector_initiate_send_data, header);
     if (status == connector_success)
@@ -57,144 +56,128 @@ connector_status_t send_put_request(connector_handle_t handle, dvt_ds_t * const 
     return status;
 }
 
-connector_callback_status_t app_put_request_handler(void const * request_data, size_t const request_length,
-                                                   void * response_data, size_t * const response_length)
+connector_callback_status_t app_put_request_handler(connector_request_id_data_service_t const request_id, void * const data)
 {
-    connector_data_service_msg_request_t const * const put_request = request_data;
-    connector_data_service_msg_response_t * const put_response = response_data;
-    connector_data_service_put_request_t const * const header = put_request->service_context;
-    dvt_ds_t * const ds_info = (dvt_ds_t * const)header->context;
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    if ((put_request == NULL) || (put_response == NULL))
+    if (data == NULL)
     {
-         APP_DEBUG("connector_put_request_callback: Invalid request_data [%p] or response_data[%p]\n", request_data, response_data);
-         goto done;
+        APP_DEBUG("app_put_request_handler: Callback has NULL data\n");
+        goto done;
     }
 
-    switch (put_request->message_type)
+    switch (request_id)
     {
-    case connector_data_service_type_need_data:
-        switch (ds_info->test_case)
+        case connector_request_id_data_service_send_data:
         {
-        case dvt_case_put_request_ds_busy:
-            {
-                static bool first_time = true;
+            connector_data_service_send_data_t * const send_ptr = data;
+            dvt_ds_t * const ds_info = send_ptr->user_context;
 
-                if (first_time)
+            ASSERT(ds_info != NULL);
+            switch (ds_info->test_case)
+            {
+                case dvt_case_put_request_ds_busy:
                 {
-                    APP_DEBUG("busy\n");
-                    status = connector_callback_busy;
-                    first_time = false;
-                    goto done;
+                    static bool first_time = true;
+
+                    if (first_time)
+                    {
+                        APP_DEBUG("busy\n");
+                        status = connector_callback_busy;
+                        first_time = false;
+                        goto done;
+                    }
+
+                    break;
                 }
 
-                break;
+                case dvt_case_put_request_ds_zero:
+                    send_ptr->more_data = connector_false;
+                    send_ptr->bytes_used = 0;
+                    ds_info->state = dvt_state_request_complete;
+                    goto done;
+
+                case dvt_case_put_request_ds_cancel_start:
+                    ds_info->state = dvt_state_request_error;
+                    status = connector_callback_error;
+                    goto done;
+
+                default:
+                    break;
             }
 
-        case dvt_case_put_request_ds_zero:
-            {
-                connector_data_service_block_t * message = put_response->client_data;
+            send_ptr->bytes_used = ds_info->file_size - ds_info->bytes_sent;
+            if (send_ptr->bytes_used > send_ptr->bytes_available)
+                send_ptr->bytes_used = send_ptr->bytes_available;
 
-                message->flags = CONNECTOR_MSG_FIRST_DATA | CONNECTOR_MSG_LAST_DATA;
-                message->length_in_bytes = 0;
-                ds_info->state = dvt_state_request_complete;
-                goto done;
-            }
-
-        case dvt_case_put_request_ds_cancel_start:
-            goto error;
-
-        default:
-            break;
-        }
-
-        {
-            connector_data_service_block_t * message = put_response->client_data;
-            char * dptr = message->data;
-            size_t const bytes_available = message->length_in_bytes;
-            size_t const bytes_to_send = ds_info->file_size - ds_info->bytes_sent;
-            size_t bytes_copy = (bytes_to_send > bytes_available) ? bytes_available : bytes_to_send;
-
-            memcpy(dptr, &ds_info->file_buf[ds_info->bytes_sent], bytes_copy);
-            message->length_in_bytes = bytes_copy;
-            message->flags = 0;
-            if (ds_info->bytes_sent == 0)
-            {
-                message->flags |= CONNECTOR_MSG_FIRST_DATA;
-            }
-
-            ds_info->bytes_sent += bytes_copy;
+            memcpy(send_ptr->buffer, &ds_info->file_buf[ds_info->bytes_sent], send_ptr->bytes_used);
+            ds_info->bytes_sent += send_ptr->bytes_used;
             if (ds_info->bytes_sent >= ds_info->file_size)
             {
                 switch (ds_info->test_case)
                 {
-                case dvt_case_put_request_ds_timeout:
-                    status = connector_callback_busy;
-                    goto done;
+                    case dvt_case_put_request_ds_timeout:
+                        status = connector_callback_busy;
+                        break;
 
-                case dvt_case_put_request_ds_cancel_middle:
-                    goto error;
+                    case dvt_case_put_request_ds_cancel_middle:
+                        ds_info->state = dvt_state_request_error;
+                        status = connector_callback_error;
+                        break;
 
-                default:
-                    break;
+                    default:
+                        send_ptr->more_data = connector_false;
+                        ds_info->state = dvt_state_request_complete;
+                        break;
                 }
-
-                message->flags |= CONNECTOR_MSG_LAST_DATA;
-                ds_info->state = dvt_state_request_complete;
             }
+            else
+                send_ptr->more_data = connector_true;
+
+            break;
         }
-        break;
 
-    case connector_data_service_type_have_data:
+        case connector_request_id_data_service_send_response:
         {
-            connector_data_service_block_t * message = put_request->server_data;
-            uint8_t * const data = message->data;
+            connector_data_service_send_response_t * const resp_ptr = data;
+            dvt_ds_t * const ds_info = resp_ptr->user_context;
 
+            ASSERT(ds_info != NULL);
             if (ds_info->state != dvt_state_request_complete)
             {
                 APP_DEBUG("connector_put_request_callback: got response before complete\n");
-                goto error;
+                ds_info->state = dvt_state_request_error;
+                status = connector_callback_error;
+                break;
             }
 
-            APP_DEBUG("connector_put_request_callback (have_data): Received %s (0x%x) response from server\n",
-                                        (((message->flags & CONNECTOR_MSG_RESP_SUCCESS) != 0) ? "success" : "error"), (unsigned)message->flags);
-            if (message->length_in_bytes > 0)
+            APP_DEBUG("Received response for put %s: Received %s[%d] from Cloud\n", ds_info->file_path,
+                      ((resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error"), resp_ptr->response);
+            if (resp_ptr->hint != NULL)
             {
-                data[message->length_in_bytes] = '\0';
-                APP_DEBUG("connector_put_request_callback: server response %s\n", (char *)data);
+                APP_DEBUG("Cloud response [%s]: %s\n", ds_info->file_path, resp_ptr->hint);
             }
 
-            ds_info->state = ((message->flags & CONNECTOR_MSG_RESP_SUCCESS) == CONNECTOR_MSG_RESP_SUCCESS) ? dvt_state_response_complete : dvt_state_request_error;
-            goto done;
+            ds_info->state = (resp_ptr->response != connector_data_service_send_response_success)? dvt_state_response_complete : dvt_state_request_error;
+            break;
         }
 
-    case connector_data_service_type_error:
+        case connector_request_id_data_service_send_status:
         {
-            connector_data_service_block_t * message = put_request->server_data;
-            connector_msg_error_t const * const error_value = message->data;
+            connector_data_service_send_status_t * error_ptr = data;
+            dvt_ds_t * const ds_info = error_ptr->user_context;
 
-            if (error_value == NULL)
-            {
-                APP_DEBUG("connector_put_request_callback: Data service error %d\n", *error_value);
-            }
-
-            goto error;
+            ASSERT(ds_info != NULL);
+            APP_DEBUG("Error response %d for %s\n", error_ptr->status, ds_info->file_path);
+            ds_info->state = dvt_state_request_error;
+            status = connector_callback_error;
+            break;
         }
 
-    default:
-        APP_DEBUG("connector_put_request_callback: Unexpected message type: %d\n", put_request->message_type);
-        break;
+        default:
+            APP_DEBUG("DvtError: Unexpected message type: %d\n", request_id);
+            break;
     }
-    goto done;
-
-error:
-    APP_DEBUG("connector_put_request_callback error: target[%s] cancel this session\n", ds_info->file_path);
-    put_response->message_status = connector_msg_error_cancel;
-    ds_info->state = dvt_state_request_error;
 
 done:
     return status;
@@ -245,7 +228,7 @@ static device_request_handle_t device_request_targets[] =
 
 #define DVT_DS_MAX_DATA_SIZE  0x8000
 
-static void start_put_request(device_request_handle_t * target_info, connector_data_service_block_t * server_data)
+static void start_put_request(device_request_handle_t * target_info, uint8_t const * const data_path, size_t const path_bytes)
 {
     dvt_ds_t * const ds_info = &data_service_info;
 
@@ -255,15 +238,15 @@ static void start_put_request(device_request_handle_t * target_info, connector_d
         goto done;
     }
 
-    if (server_data->length_in_bytes > sizeof ds_info->file_path)
+    if (path_bytes >= sizeof ds_info->file_path)
     {
-        APP_DEBUG("start_put_request: unexpected data length %zu\n", server_data->length_in_bytes);
+        APP_DEBUG("start_put_request: unexpected data length %zu\n", path_bytes);
         goto done;
     }
 
 
-    memcpy(ds_info->file_path, server_data->data, server_data->length_in_bytes);
-    ds_info->file_path[server_data->length_in_bytes] = '\0';
+    memcpy(ds_info->file_path, data_path, path_bytes);
+    ds_info->file_path[path_bytes] = '\0';
     ds_info->test_case = atoi(&ds_info->file_path[strlen("test/dvt_ds")]);
     target_info->data = ds_info->file_path;
 
@@ -271,7 +254,7 @@ done:
     return;
 }
 
-static void prepare_put_request_response(device_request_handle_t * target_info, connector_data_service_block_t * client_data)
+static void prepare_put_request_response(device_request_handle_t * target_info, connector_data_service_receive_reply_data_t * const reply)
 {
     dvt_ds_t * const ds_info = &data_service_info;
     static char const ds_error[] = "error";
@@ -319,9 +302,10 @@ static void prepare_put_request_response(device_request_handle_t * target_info, 
         break;
     }
 
-    APP_DEBUG("Sending response [%s] state[%d]\n", resp, ds_info->state);
-    client_data->length_in_bytes = strlen(resp);
-    memcpy(client_data->data, resp, client_data->length_in_bytes);
+    APP_DEBUG("%s: Sending response [%s] state[%d]\n", ds_info->file_path, resp, ds_info->state);
+    reply->bytes_used = strlen(resp);
+    ASSERT(reply->bytes_used < reply->bytes_available);
+    memcpy(reply->buffer, resp, reply->bytes_used);
 }
 
 static device_request_handle_t * get_test_case_record (char const * const target)
@@ -341,43 +325,28 @@ static device_request_handle_t * get_test_case_record (char const * const target
     return record;
 }
 
-static connector_callback_status_t process_device_request(connector_data_service_msg_request_t const * const request_data,
-                                                      connector_data_service_msg_response_t * const response_data)
+static connector_callback_status_t app_process_device_request_data(connector_data_service_receive_data_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_device_request_t * const request_info = request_data->service_context;
-    device_request_handle_t * target_info = response_data->user_context;
-    connector_data_service_block_t * server_data = request_data->server_data;
+    device_request_handle_t * target_info = data_ptr->user_context;
 
-    ASSERT(server_data != NULL);
-
-    if ((server_data->flags & CONNECTOR_MSG_FIRST_DATA) == CONNECTOR_MSG_FIRST_DATA)
+    if (target_info != NULL)
     {
-        target_info = get_test_case_record(request_info->target);
-
-        if (target_info == NULL)
-        {
-            /* no memeory stop iDigi Connector */
-            APP_DEBUG("process_device_request: unknown target %s\n", request_info->target);
-            goto cancel;
-        }
-
-        target_info->bytes_sent = 0;
-        target_info->length_in_bytes = 0;
-        response_data->user_context = target_info;
+        APP_DEBUG("app_process_device_request_data: couldn't find the target\n");
+        goto cancel;
     }
 
     switch (target_info->test_case)
     {
-    case dvt_case_ds_invalid_target:
-        goto cancel;
-
-    case dvt_case_ds_cancel_request:
-        if (target_info->length_in_bytes > 0)
+        case dvt_case_ds_invalid_target:
             goto cancel;
-        break;
 
-    case dvt_case_ds_busy_response:
+        case dvt_case_ds_cancel_request:
+            if (target_info->length_in_bytes > 0)
+                goto cancel;
+            break;
+
+        case dvt_case_ds_busy_response:
         {
             static bool first_time = true;
 
@@ -388,60 +357,59 @@ static connector_callback_status_t process_device_request(connector_data_service
                 first_time = false;
                 goto done;
             }
-        }
-        break;
 
-    case dvt_case_ds_start_put_request:
+            break;
+        }
+
+        case dvt_case_ds_start_put_request:
         {
             dvt_ds_t * const ds_info = &data_service_info;
 
-            start_put_request(target_info, server_data);
+            start_put_request(target_info, data_ptr->buffer, data_ptr->bytes_used);
             APP_DEBUG("Received start %s\n", ds_info->file_path);
-            response_data->message_status = connector_msg_error_none;
-        }
-        goto done;
 
-    case dvt_case_ds_query_put_request:
+            goto done;
+        }
+
+        case dvt_case_ds_query_put_request:
         {
             dvt_ds_t * const ds_info = &data_service_info;
 
             APP_DEBUG("Received query %s\n", ds_info->file_path);
-            if (strncmp(server_data->data, ds_info->file_path, server_data->length_in_bytes))
+            if (memcmp(data_ptr->buffer, ds_info->file_path, data_ptr->bytes_used))
             {
-                APP_DEBUG("Received query %s, mismatch \n", ds_info->file_path);
+                APP_DEBUG("Expected/received %s mismatch\n", (char *)data_ptr->buffer);
                 ds_info->state = dvt_state_request_error;
             }
 
-            response_data->message_status = connector_msg_error_none;
+            goto done;
         }
-        goto done;
 
-    default:
-        break;
+        default:
+            break;
     }
 
-    if ((server_data->flags & CONNECTOR_MSG_FIRST_DATA) == CONNECTOR_MSG_FIRST_DATA)
+    if (target_info->data == NULL)
     {
         target_info->data = malloc(DVT_DS_MAX_DATA_SIZE);
         if (target_info->data == NULL)
         {
-            APP_DEBUG("process_device_request: malloc failed %s\n", request_info->target);
-            response_data->message_status = connector_msg_error_memory;
+            APP_DEBUG("process_device_request: malloc failed %s\n", target_info->target);
+            status = connector_callback_error;
             goto clear;
         }
     }
 
-    if ((server_data->length_in_bytes > 0) && ((target_info->length_in_bytes + server_data->length_in_bytes) < DVT_DS_MAX_DATA_SIZE))
+    if ((data_ptr->bytes_used > 0) && ((target_info->length_in_bytes + data_ptr->bytes_used) < DVT_DS_MAX_DATA_SIZE))
     {
-        memcpy(&target_info->data[target_info->length_in_bytes], server_data->data, server_data->length_in_bytes);
-        target_info->length_in_bytes += server_data->length_in_bytes;
+        memcpy(&target_info->data[target_info->length_in_bytes], data_ptr->buffer, data_ptr->bytes_used);
+        target_info->length_in_bytes += data_ptr->bytes_used;
     }
 
-    response_data->message_status = connector_msg_error_none;
     goto done;
 
 cancel:
-    response_data->message_status = connector_msg_error_cancel;
+    status = connector_callback_error;
 
 clear:
     if (target_info != NULL && target_info->data != NULL)
@@ -454,20 +422,16 @@ done:
     return status;
 }
 
-static connector_callback_status_t process_device_response(connector_data_service_msg_response_t * const response_data)
+static connector_callback_status_t app_process_device_request_response(connector_data_service_receive_reply_data_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_continue;
-    device_request_handle_t * const target_info = response_data->user_context;
-    connector_data_service_block_t * const client_data = response_data->client_data;
+    device_request_handle_t * const target_info = data_ptr->user_context;
 
-    ASSERT(response_data->client_data != NULL);
-    ASSERT(target_info != NULL); /* we use user_context for our client_device_request */
+    ASSERT(target_info != NULL);
 
-    client_data->flags = (target_info->bytes_sent == 0) ? CONNECTOR_MSG_FIRST_DATA : 0;
-    response_data->message_status = connector_msg_error_none;
     switch (target_info->test_case)
     {
-    case dvt_case_ds_busy_response:
+        case dvt_case_ds_busy_response:
         {
             static bool first_time = true;
 
@@ -481,62 +445,60 @@ static connector_callback_status_t process_device_response(connector_data_servic
         }
         break;
 
-    case dvt_case_ds_cancel_in_middle:
-        goto cancel;
-
-    case dvt_case_ds_cancel_response:
-        if (target_info->bytes_sent > target_info->length_in_bytes/2)
+        case dvt_case_ds_cancel_in_middle:
             goto cancel;
-        break;
 
-    case dvt_case_ds_timeout_response:
-        if (target_info->bytes_sent > target_info->length_in_bytes/2)
-        {
-            status = connector_callback_busy;
+        case dvt_case_ds_cancel_response:
+            if (target_info->bytes_sent > target_info->length_in_bytes/2)
+                goto cancel;
+            break;
+
+        case dvt_case_ds_timeout_response:
+            if (target_info->bytes_sent > target_info->length_in_bytes/2)
+            {
+                status = connector_callback_busy;
+                goto done;
+            }
+            break;
+
+        case dvt_case_ds_not_handle:
+            status = connector_callback_error;
+            goto clear;
+
+        case dvt_case_ds_start_put_request:
+        case dvt_case_ds_query_put_request:
+            prepare_put_request_response(target_info, data_ptr);
+            data_ptr->more_data = connector_false;
             goto done;
-        }
-        break;
 
-    case dvt_case_ds_not_handle:
-        client_data->flags |= (CONNECTOR_MSG_LAST_DATA | CONNECTOR_MSG_DATA_NOT_PROCESSED);
-        client_data->length_in_bytes = 0;
-        goto clear;
-
-    case dvt_case_ds_start_put_request:
-    case dvt_case_ds_query_put_request:
-        prepare_put_request_response(target_info, client_data);
-        client_data->flags |= CONNECTOR_MSG_LAST_DATA;
-        goto done;
-
-    default:
-        break;
+        default:
+            break;
     }
 
     {
-        size_t const bytes_to_send = target_info->length_in_bytes - target_info->bytes_sent;
-        size_t const bytes = (bytes_to_send < client_data->length_in_bytes) ? bytes_to_send : client_data->length_in_bytes;
+        data_ptr->bytes_used = target_info->length_in_bytes - target_info->bytes_sent;
+        if (data_ptr->bytes_used > data_ptr->bytes_available)
+            data_ptr->bytes_used =  data_ptr->bytes_available;
 
         /* let's copy the response data to service_response buffer */
-        if (bytes_to_send > 0)
+        if (data_ptr->bytes_used > 0)
         {
-            memcpy(client_data->data, &target_info->data[target_info->bytes_sent], bytes);
-            target_info->bytes_sent += bytes;
+            memcpy(data_ptr->buffer, &target_info->data[target_info->bytes_sent], data_ptr->bytes_used);
+            target_info->bytes_sent += data_ptr->bytes_used;
         }
         else
             APP_DEBUG("Sending 0 bytes\n");
 
-        client_data->length_in_bytes = bytes;
-        if (target_info->bytes_sent >= target_info->length_in_bytes)
-        {
-            client_data->flags |= CONNECTOR_MSG_LAST_DATA;
+        if (target_info->bytes_sent < target_info->length_in_bytes)
+            data_ptr->more_data = connector_true;
+        else
             goto clear;
-        }
     }
 
     goto done;
 
 cancel:
-    response_data->message_status = connector_msg_error_cancel;
+    status = connector_callback_error;
 
 clear:
     if (target_info != NULL && target_info->data != NULL)
@@ -549,12 +511,32 @@ done:
     return status;
 }
 
+static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const data_ptr)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    device_request_handle_t * const target_info = get_test_case_record(data_ptr->target);
+
+    if (target_info != NULL)
+    {
+        target_info->bytes_sent = 0;
+        target_info->length_in_bytes = 0;
+        data_ptr->user_context = target_info;
+        data_ptr->response_required = connector_true;
+    }
+    else
+    {
+        APP_DEBUG("process_device_request: unknown target %s\n", data_ptr->target);
+        status = connector_callback_error;
+    }
+
+    return status;
+}
+
 static connector_callback_status_t app_process_device_request_status(connector_data_service_receive_status_t const * const status_data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    device_request_handle_t * const device_request = status_data->user_context;
-    device_request_handle_t * const target_info = response_data->user_context;
+    device_request_handle_t * const target_info = status_data->user_context;
 
 
     switch (status_data->status)
@@ -571,15 +553,11 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
     if (target_info != NULL && target_info->data != NULL)
     {
-        APP_DEBUG("app_process_device_request_status: target [%s] error [%d] from server\n", target_info->target, error_code);
-
         free(target_info->data);
         target_info->data = NULL;
     }
 
-
     return status;
-
 }
 
 connector_callback_status_t app_device_request_handler(connector_request_id_data_service_t const request_id, void * data)
@@ -610,8 +588,7 @@ connector_callback_status_t app_device_request_handler(connector_request_id_data
 }
 
 
-connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id,
-                                                  void * const data)
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
