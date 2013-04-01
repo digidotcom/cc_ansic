@@ -111,7 +111,7 @@ static connector_status_t tcp_initiate_send_facility_packet(connector_data_t * c
 static connector_callback_status_t tcp_send_buffer(connector_data_t * const connector_ptr, uint8_t * const buffer, size_t * const length)
 {
     connector_callback_status_t status;
-    connector_network_send_data_t send_data;
+    connector_network_send_t send_data;
     connector_request_id_t request_id;
 
     send_data.buffer = buffer;

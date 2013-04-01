@@ -22,8 +22,6 @@ char connector_close_status_text[100] = "\0";
 
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void * const data);
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
-                                                  void * const data);
 
 extern connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
                                        void * const data);
@@ -53,7 +51,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
     {
         enum_to_case(connector_class_id_config);
         enum_to_case(connector_class_id_operating_system);
-        enum_to_case(connector_class_firmware);
+        enum_to_case(connector_class_id_firmware);
         enum_to_case(connector_class_id_data_service);
         enum_to_case(connector_class_remote_config_service);
         enum_to_case(connector_class_id_file_system);

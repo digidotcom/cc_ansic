@@ -61,7 +61,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     case connector_class_id_network_tcp:
         status = app_network_tcp_handler(request_id.network_request, data);
         break;
-    case connector_class_firmware:
+    case connector_class_id_firmware:
         status = app_firmware_handler(request_id.firmware_request, data);
         break;
     case connector_class_remote_config_service:

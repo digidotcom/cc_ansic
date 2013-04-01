@@ -52,7 +52,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     request_id.network_request = connector_request_id_network_receive;
 
     {
-        connector_network_receive_data_t read_data;
+        connector_network_receive_t read_data;
 
         read_data.handle = connector_ptr->edp_data.network_handle;
         read_data.buffer = buffer;

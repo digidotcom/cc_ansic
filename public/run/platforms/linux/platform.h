@@ -30,7 +30,7 @@ typedef enum {
     connector_connector_running
 } connector_connector_state_t;
 
-extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, 
+extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                           connector_request_id_t const request_id,
                                                           void * const data);
 
@@ -47,8 +47,10 @@ extern connector_callback_status_t app_network_udp_handler(connector_request_id_
 extern connector_callback_status_t app_config_handler(connector_request_id_config_t const request,
                                                       void * const data);
 
-extern connector_callback_status_t app_file_system_handler(connector_file_system_request_t const request,
+#if (defined CONNECTOR_FILE_SYSTEM)
+extern connector_callback_status_t app_file_system_handler(connector_request_id_file_system_t const request,
                                                            void * const data);
+#endif
 
 extern int application_run(connector_handle_t handle);
 

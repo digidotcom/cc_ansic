@@ -217,7 +217,7 @@ typedef struct {
 * is called to reset the target.
 */
 typedef struct {
-    unsigned int target_number;             /**< Target number which target the firmware to reset */
+    unsigned int target_number;     /**< Target number which target the firmware to reset */
 } connector_firmware_reset_t;
 /**
 * @}

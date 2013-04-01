@@ -27,7 +27,7 @@
 
 #if defined CONNECTOR_TRANSPORT_UDP
 
-static connector_callback_status_t app_network_udp_close(connector_network_close_data_t * const data)
+static connector_callback_status_t app_network_udp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     connector_network_handle_t * const fd = data->handle;
@@ -54,7 +54,7 @@ static connector_callback_status_t app_network_udp_close(connector_network_close
  * connector_callback_busy and iDigi connector will ignore the read_data and read_length
  * and continue calling this function.
  */
-static connector_callback_status_t app_network_udp_receive(connector_network_receive_data_t * const data)
+static connector_callback_status_t app_network_udp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
@@ -88,7 +88,7 @@ static connector_callback_status_t app_network_udp_receive(connector_network_rec
  * EAGAIN  error, return connector_callback_busy and iDigi connector will ignore the
  * sent_length and continue calling this function.
  */
-static connector_callback_status_t app_network_udp_send(connector_network_send_data_t * const data)
+static connector_callback_status_t app_network_udp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -151,7 +151,7 @@ static connector_callback_status_t app_udp_connect(int const fd, in_addr_t const
     return status;
 }
 
-static connector_callback_status_t app_network_udp_open(connector_network_open_data_t * const data)
+static connector_callback_status_t app_network_udp_open(connector_network_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     in_addr_t ip_addr;

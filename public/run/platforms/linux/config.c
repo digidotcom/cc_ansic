@@ -525,18 +525,6 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_sms_service_id(connector_config_pointer_string_t * const config_service_id)
-{
-#error "Specify SMS service id. It is optional, set *service_id to NULL and *size to 0 if not used"
-    static  char const sms_service_id[] = "IDGP";
-
-    /* Return pointer to service_id. */
-    config_service_id->string = (char *)sms_service_id;
-    config_service_id->length = sizeof sms_service_id -1;
-
-    return connector_callback_continue;
-}
-
 /* End of iDigi connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
@@ -636,7 +624,7 @@ static char const * app_firmware_class_to_string(connector_request_id_firmware_t
         enum_to_case(connector_request_id_firmware_target_count);
         enum_to_case(connector_request_id_firmware_info);
         enum_to_case(connector_request_id_firmware_download_start);
-        enum_to_case(connector_request_id_firmware_data);
+        enum_to_case(connector_request_id_firmware_download_data);
         enum_to_case(connector_request_id_firmware_download_complete);
         enum_to_case(connector_request_id_firmware_download_abort);
         enum_to_case(connector_request_id_firmware_target_reset);

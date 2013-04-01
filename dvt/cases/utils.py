@@ -5,7 +5,7 @@ import datetime
 import logging
 import time
 import json
-import connector_rest_api
+import idigi_rest_api
 
 from threading import Event
 from xml.dom.minidom import getDOMImplementation
@@ -32,7 +32,7 @@ class PollingDeviceConnectionMonitor(object):
         username = push_client.username
         password = push_client.password
         hostname = push_client.hostname
-        self.rest_session  = connector_rest_api.rest_session(hostname,
+        self.rest_session  = idigi_rest_api.rest_session(hostname,
             auth=(username, password), verify=False)
 
     def __get_device_core(self):
@@ -134,7 +134,7 @@ class DeviceConnectionMonitor(object):
         username = push_client.username
         password = push_client.password
         hostname = push_client.hostname
-        self.rest_session  = connector_rest_api.rest_session(hostname,
+        self.rest_session  = idigi_rest_api.rest_session(hostname,
             auth=(username, password), verify=False)
 
     def __get_device_core(self):
