@@ -60,10 +60,10 @@ typedef struct
 typedef struct
 {
     uint32_t target;
-    uint32_t version;
+    connector_firmware_version_t version;
     dvt_state_t state;
     char * description;
-    char * name_spec;
+    char * filespec;
     char * file_name;
     size_t file_size;
 } dvt_data_t;

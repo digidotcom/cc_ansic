@@ -430,50 +430,55 @@ static connector_callback_status_t process_device_error(connector_data_service_m
     return status;
 }
 
-connector_callback_status_t app_device_request_handler(void const * request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length)
+connector_callback_status_t app_device_request_handler(connector_request_id_data_service_t const request_id, void * data)
 {
-    connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_msg_request_t const * const service_device_request = request_data;
+    connector_callback_status_t status = connector_callback_unrecognized;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    switch (service_device_request->message_type)
+    switch (request_id)
     {
-    case connector_data_service_type_have_data:
-        status = process_device_request(request_data, response_data);
-        break;
-    case connector_data_service_type_need_data:
-        status = process_device_response(request_data, response_data);
-        break;
-    case connector_data_service_type_error:
-        status = process_device_error(request_data, response_data);
-        break;
-    default:
-        APP_DEBUG("app_device_request_handler: unknown message type %d for connector_data_service_device_request\n", service_device_request->message_type);
-        break;
+        case connector_request_id_data_service_receive_target:
+            status = app_process_device_request_target(data);
+            break;
+        case connector_request_id_data_service_receive_data:
+            status = app_process_device_request_data(data);
+            break;
+        case connector_request_id_data_service_receive_status:
+            status = app_process_device_request_status(data);
+            break;
+        case connector_request_id_data_service_receive_reply_data:
+            status = app_process_device_request_response(data);
+            break;
+        case connector_request_id_data_service_receive_reply_length:
+        default:
+            APP_DEBUG("app_device_request_handler: unknown request id type %d for connector_request_id_data_service\n", request_id);
+            break;
     }
 
     return status;
 }
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length)
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id,
+                                                  void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    switch (request)
+    switch (request_id)
     {
-    case connector_data_service_put_request:
-        status = app_put_request_handler(request_data, request_length, response_data, response_length);
+    case connector_request_id_data_service_send_length:
+    case connector_request_id_data_service_send_data:
+    case connector_request_id_data_service_send_status:
+    case connector_request_id_data_service_send_response:
+        status = app_put_request_handler(request_id, data);
         break;
-    case connector_data_service_device_request:
-        status = app_device_request_handler(request_data, request_length, response_data, response_length);
+    case connector_request_id_data_service_receive_target:
+    case connector_request_id_data_service_receive_data:
+    case connector_request_id_data_service_receive_status:
+    case connector_request_id_data_service_receive_reply_data:
+    case connector_request_id_data_service_receive_reply_length:
+        status = app_device_request_handler(request_id, data);
         break;
     default:
-        APP_DEBUG("app_data_service_handler: Request not supported: %d\n", request);
+        APP_DEBUG("app_data_service_handler: Request not supported: %d\n", request_id);
         break;
     }
     return status;

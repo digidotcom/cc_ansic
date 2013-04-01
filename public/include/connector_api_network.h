@@ -20,8 +20,9 @@
 */
 /**
 * Network Request ID passed to the application's callback for network interface.
-* The class id for this connector_network_request_t is connector_class_network_tcp,
-* connector_class_id_network_udp.
+* The class id for this connector_request_id_network_t is 
+* connector_class_id_network_tcp, 
+* connector_class_id_network_udp. 
 */
 typedef enum {
     connector_request_id_network_open,     /**< Requesting callback to set up and make connection to the iDigi Device Cloud */
@@ -34,52 +35,52 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_network_open_data_t Network Open Data Structure
+* @defgroup connector_network_open_t Network Open Data Structure
 * @{
 */
 /**
-* Network open data structure for @ref connector_network_open callback which is called to open and connect to the iDigi Device Cloud.
+* Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to the iDigi Device Cloud.
 */
 typedef struct  {
-    char const * device_cloud_url;          /**< Pointer to Etherios Cloud URL */
+    char const * device_cloud_url;          /**< Pointer to Etherios Device Cloud URL  */
     connector_network_handle_t * handle;    /**< Application defined network handle associated with the connection */
-} connector_network_open_data_t;
+} connector_network_open_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_network_send_data_t Network Send Data Structure
+* @defgroup connector_network_send_t Network Send Data Structure
 * @{
 */
 /**
-* Send data structure for @ref connector_network_send callback which is called to send data to the iDigi Device Cloud.
+* Send data structure for @ref connector_request_id_network_send callback which is called to send data to the iDigi Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t * handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    uint8_t const * buffer;                 /**< Pointer to data to be sent */
+    void const * buffer;                 	/**< Pointer to data to be sent */
     size_t bytes_available;                 /**< Number of bytes to send in the buffer */
     size_t bytes_used;                      /**< Number of bytes sent */
-} connector_network_send_data_t;
+} connector_network_send_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_network_receive_data_t Network Receive Request
+* @defgroup connector_network_receive_t Network Receive Request
 * @{
 */
 /**
-* Read request structure for connector_network_receive callback which is called to receive
+* Read request structure for connector_request_id_network_receive callback which is called to receive
 * a specified number of bytes data from the iDigi Device Cloud.
 */
 typedef struct  {
-    connector_network_handle_t * handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    uint8_t * buffer;                       /**< Pointer to memory where callback writes received data to */
-    size_t bytes_available;                 /**< Number of bytes available in the buffer */
-    size_t bytes_used;                      /**< Number of bytes received and copied to the buffer */
-} connector_network_receive_data_t;
+    connector_network_handle_t * handle; /**< Pointer to network handle associated with a connection through the connector_network_open callback */
+    void * buffer;                       /**< Pointer to memory where callback writes received data to */
+    size_t bytes_available;              /**< Number of bytes available in the buffer */
+    size_t bytes_used;                   /**< Number of bytes received and copied to the buffer */
+} connector_network_receive_t;
 /**
 * @}
 */
@@ -89,7 +90,7 @@ typedef struct  {
 * @{
 */
 /**
-* Reasons for @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
+* Reasons for @ref connector_request_id_network_close callback which is called to close the connection to the iDigi Device Cloud.
 */
 typedef enum {
     connector_close_status_server_disconnected = 1,    /**< iDigi connector received a disconnect from the server. */
@@ -109,18 +110,18 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_close_data_t Network Close Request
+* @defgroup connector_network_close_t Network Close Request
 * @{
 */
 /**
-* Close request structure for @ref connector_network_close callback which is called to close the connection to the iDigi Device Cloud.
+* Close request structure for @ref connector_request_id_network_close callback which is called to close the connection to the iDigi Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t * handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
-    connector_close_status_t  status;               /**< Reason for closing the network handle */
+    connector_close_status_t  status;       /**< Reason for closing the network handle */
 
-    connector_bool_t  reconnect;                     /**< connector_true - reconnect, connector_false - don't reconnect */
-} connector_network_close_data_t;
+    connector_bool_t  reconnect;            /**< connector_true - reconnect, connector_false - don't reconnect */
+} connector_network_close_t;
 /**
 * @}
 */

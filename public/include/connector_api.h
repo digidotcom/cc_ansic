@@ -13,6 +13,14 @@
 #ifndef _CONNECTOR_API_H
 #define _CONNECTOR_API_H
 
+#if ! (defined CONNECTOR_CONST_PROTECTION)
+#if (defined CONST)
+#define CONNECTOR_CONST_PROTECTION CONST
+#undef CONST
+#endif
+#define CONST const
+#endif
+
 /**
  * Current version of the iDigi connector that application is using or built for.
  *
@@ -24,6 +32,11 @@
 #define CONNECTOR_VERSION   0x01000000UL
 
 #include "connector_config.h"
+
+#if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
+#define CONNECTOR_HAS_64_BIT_INTEGERS
+#endif
+
 #include "connector_types.h"
 
 
@@ -141,17 +154,18 @@ typedef enum {
 * It tells class id for the request id passed to the application's callback.
 */
 typedef enum {
-    connector_class_id_config,             /**< Configuration Class Id */
-    connector_class_id_operating_system,   /**< Operating System Class Id */
-    connector_class_id_firmware,           /**< Firmware Facility Class Id */
-    connector_class_id_data_service,       /**< Data Service Class Id */
-    connector_class_id_remote_config,   /**< Remote Configuration Class ID */
-    connector_class_id_file_system,        /**< File System Class Id */
-    connector_class_id_network_tcp,     /**< TCP Network Class ID */
-    connector_class_id_network_udp,        /**< UDP Network Class ID */
-    connector_class_id_network_sms,        /**< SMS Network Class ID */
-    connector_class_id_status,             /**< Class ID for all status */
-    connector_class_id_short_message                  /**< Short message specific class ID */
+    connector_class_id_config,           /**< Configuration Class Id */
+    connector_class_id_operating_system, /**< Operating System Class Id */
+    connector_class_id_firmware,         /**< Firmware Facility Class Id */
+    connector_class_id_data_service,     /**< Data Service Class Id */
+    connector_class_id_remote_config,    /**< Remote Configuration Class ID */
+    connector_class_id_file_system,      /**< File System Class Id */
+    connector_class_id_network_tcp,      /**< TCP Network Class ID */
+    connector_class_id_network_udp,      /**< UDP Network Class ID */
+    connector_class_id_network_sms,      /**< SMS Network Class ID */
+    connector_class_id_status,           /**< Class ID for all status */
+    connector_class_id_short_message,    /**< Short message specific class ID */
+    connector_class_id_data_point
 } connector_class_id_t;
 /**
 * @}
@@ -189,36 +203,6 @@ typedef enum
 * @}
 */
 
-
-
-/**
-* @defgroup connector_file_system_request_t File System Request IDs
-* @{
-*/
-/**
-* File System Request Id passed to the application's callback to use file system.
-* The class id for this connector_file_system_request_t is connector_class_id_file_system.
-*/
-
-typedef enum {
-    connector_file_system_open,             /**< inform callback to open a file */
-    connector_file_system_read,             /**< inform callback to read a file */
-    connector_file_system_write,            /**< inform callback to write a file */
-    connector_file_system_lseek,            /**< inform callback to seek file position */
-    connector_file_system_ftruncate,        /**< inform callback to truncate a file */
-    connector_file_system_close,            /**< inform callback to close a file */
-    connector_file_system_rm,               /**< inform callback to remove a file */
-    connector_file_system_stat,             /**< inform callback to geten file status */
-    connector_file_system_opendir,          /**< inform callback to start processing a directory */
-    connector_file_system_readdir,          /**< inform callback to read next directory entry */
-    connector_file_system_closedir,         /**< inform callback to end processing a directory */
-    connector_file_system_strerror,         /**< inform callback to get an error code description  */
-    connector_file_system_msg_error,        /**< inform callback of an error in messaging layer */
-    connector_file_system_hash              /**< inform callback to return file hash value */
-} connector_file_system_request_t;
-/**
-* @}
-*/
 
 /**
 * @defgroup connector_tcp_status_t Status Reason Types
@@ -361,6 +345,10 @@ typedef enum
 #include "connector_api_data_point.h"
 #endif
 
+#if (defined CONNECTOR_FILE_SYSTEM)
+#include "connector_api_file_system.h"
+#endif
+
 #include "connector_api_os.h"
 
 
@@ -373,21 +361,26 @@ typedef enum
 * @see connector_class_id_t
 */
 typedef union {
-    connector_request_id_config_t config_request;                /**< Configuration request ID for configuration class */
-    connector_request_id_os_t os_request;                           /**< Operating system request ID for operating system class */
-    #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
-    connector_request_id_firmware_t firmware_request;            /**< Firmware request ID for firmware facility class */
+    connector_request_id_config_t config_request;               /**< Configuration request ID for configuration class */
+    connector_request_id_os_t os_request;                       /**< Operating system request ID for operating system class */
+    #if (defined CONNECTOR_FIRMWARE_SERVICE)
+    connector_request_id_firmware_t firmware_request;           /**< Firmware request ID for firmware facility class */
     #endif
     #if (defined CONNECTOR_DATA_SERVICE)
-    connector_request_id_data_service_t data_service_request;    /**< Data service request ID for data service class */
+    connector_request_id_data_service_t data_service_request;   /**< Data service request ID for data service class */
     #endif
-    #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
-    connector_request_id_remote_config_t remote_config_request;     /**< Remote configuration request ID for remote configuration service class */
+    #if (defined CONNECTOR_DATA_POINT)
+    connector_request_id_data_point_t data_point_request;       /**< Data service request ID for data service class */
     #endif
-    connector_file_system_request_t   file_system_request;       /**< File system request ID for file system class */
-    connector_request_id_network_t  network_request;                /**< Network request ID for network TCP class, network UDP class, and network SMS class */
-    connector_request_id_status_t status_request;                   /**< Status request ID for status class */
-    connector_sm_request_t sm_request;                           /**< Short message request ID for SM class */
+    #if (defined CONNECTOR_RCI_SERVICE)
+    connector_request_id_remote_config_t remote_config_request; /**< Remote configuration request ID for remote configuration service class */
+    #endif
+    #if (defined CONNECTOR_FILE_SYSTEM)
+    connector_request_id_file_system_t   file_system_request;   /**< File system request ID for file system class */
+    #endif
+    connector_request_id_network_t  network_request;            /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+    connector_request_id_status_t status_request;               /**< Status request ID for status class */
+    connector_sm_request_t sm_request;                          /**< Short message request ID for SM class */
 } connector_request_id_t;
 /**
 * @}
@@ -426,445 +419,6 @@ typedef struct  {
 * @}
 */
 
-
-
-
-#ifdef CONNECTOR_FILE_SYSTEM
-/**
-* @defgroup connector_file_seek_origin_t File seek origin
-* @{
-*/
-/**
- * Seek file position relative to start-of-file.
- *
- * @see connector_file_lseek_request_t
- * @see connector_file_system_lseek
- */
-#define CONNECTOR_SEEK_SET	0
-
-/**
- * Seek file position relative to current position.
- *
- * @see connector_file_lseek_request_t
- * @see connector_file_system_lseek
- */
-#define CONNECTOR_SEEK_CUR	1
-
-/**
- * Seek file position relative to end-of-file.
- *
- * @see connector_file_lseek_request_t
- * @see connector_file_system_lseek
- */
-#define CONNECTOR_SEEK_END	2
-/**
-* @}
-*/
-
-/**
-* @defgroup file_open_flag_t File open flags
-* @{
-*/
-/**
- * Open file for reading only.
- *
- * @see connector_file_open_request_t
- * @see connector_file_system_open callback
- */
-#define	CONNECTOR_O_RDONLY	0
-
-/**
- * Open for writing only.
- *
- * @see connector_file_open_request_t
- * @see connector_file_system_open callback
- */
-#define	CONNECTOR_O_WRONLY	1
-
-/**
- * Open for reading and writing.
- *
- * @see connector_file_open_request_t
- * @see connector_file_system_open callback
- */
-#define	CONNECTOR_O_RDWR	2
-
-/**
- * File offset shall be set to the end of the file prior to each write.
- *
- * @see connector_file_open_request_t
- * @see connector_file_system_open callback
- */
-#define	CONNECTOR_O_APPEND	0x0008
-
-/**
- * Create file, if does not exist.
- *
- * @see connector_file_open_request_t
- * @see connector_file_system_open callback
- */
-#define	CONNECTOR_O_CREAT	0x0200
-
-/**
- *
- * Truncate file, successfully opened for writing to 0 length, don't change
- * the owner and ile access modes.
- *
- * @see connector_file_open_request_t
- * @see connector_file_system_open callback
- */
-#define	CONNECTOR_O_TRUNC	0x0400
-/**
-* @}
-*/
-
-/**
-* @defgroup file_stat_flag_t File status flags
-* @{
-*/
-/**
- * File is a directory.
- *
- * @see connector_file_stat_t
- * @see connector_file_system_stat callback
- */
-#define CONNECTOR_FILE_IS_DIR   0x01
-
-/**
- * File is a regular file.
- *
- * @see connector_file_stat_t
- * @see connector_file_system_stat callback
- */
-#define CONNECTOR_FILE_IS_REG   0x02
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_error_status_t File system error status
-* @{
-*/
-/**
-* Error code, used on return in the error_status field of @ref connector_file_error_data_t
-* in all file system callbacks.
-*/
-typedef enum
-{
-    connector_file_noerror,                      /**< No error */
-    connector_file_user_cancel,                  /**< User application requests to cancel the session */
-    connector_file_unspec_error,                 /**< Fatal unspecified error */
-    connector_file_path_not_found,               /**< Path not found */
-    connector_file_insufficient_storage_space,   /**< Insufficient storage space */
-    connector_file_request_format_error,         /**< Request format error */
-    connector_file_invalid_parameter,            /**< Invalid parameter */
-    connector_file_out_of_memory,                /**< Out of memory */
-    connector_file_permision_denied              /**< Permision denied */
-} connector_file_error_status_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_hash_algorithm_t File system hash algorithm
-* @{
-*/
-/**
-* Hash algorithm gives different options for hash values returned in the file lisings.
-*
-* @see @ref connector_file_system_stat
-* @see @ref connector_file_system_hash
-*/
-typedef enum
-{
-    connector_file_hash_none,       /**< Don't return hash value */
-    connector_file_hash_best,       /**< Use best available algorithm */
-    connector_file_hash_crc32,      /**< Use crc32 */
-    connector_file_hash_md5         /**< Use md5 */
-} connector_file_hash_algorithm_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_stat_t File status data
-* @{
-*/
-/**
-* File status data structure is used to return the status of a direcory or a file, specified by the path.
-* It is used in @ref connector_file_stat_response_t for @ref connector_file_system_stat callback.
-* The returned hash_alg value will be used in the consequent @ref connector_file_system_hash callbacks.
-*/
-typedef struct
-{
-  uint32_t     last_modified; /**< Last modified time for the entry (seconds since 1970). If not supported, use 0 */
-  size_t       file_size;               /**< File size in bytes */
-  connector_file_hash_algorithm_t hash_alg; /**< hash algorithm */
-  uint8_t flags;                   /**< 0, or @ref file_stat_flag_t */
-} connector_file_stat_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_request_t File or directory request
-* @{
-*/
-/**
-* File or directory request structure is used for @ref connector_file_system_read, @ref connector_file_system_close,
-* @ref connector_file_system_readdir, and @ref connector_file_system_closedir,
-*/
-typedef struct
-{
-    void * handle;            /**< Application defined file or directory handle */
-
-} connector_file_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_lseek_request_t File lseek request
-* @{
-*/
-/**
-* File lseek request structure is used for @ref connector_file_system_lseek callback.
-*/
-typedef struct
-{
-    void   * handle;      /**< Application defined file handle */
-    long int offset;      /**< File offset */
-    int      origin;      /**< File seek origin of @ref connector_file_seek_origin_t type */
-
-} connector_file_lseek_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_ftruncate_request_t File ftruncate request
-* @{
-*/
-/**
-* File ftruncate request structure is used for @ref connector_file_system_ftruncate callback.
-*/
-typedef struct
-{
-    void   * handle; /**< Application defined file handle */
-    long int length;      /**< File length in bytes to truncate to */
-
-} connector_file_ftruncate_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_write_request_t File write request
-* @{
-*/
-/**
-* File write request structure is used for @ref connector_file_system_write callback.
-*/
-typedef struct
-{
-    void       * handle;        /**< Application defined file handle */
-    void const * data_ptr;      /**< A pointer to data to be written to a file */
-    size_t       size_in_bytes; /**< Number of bytes to write */
-
-} connector_file_write_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_open_request_t File open request
-* @{
-*/
-/**
-* File open request structure is used for @ref connector_file_system_open callback.
-*/
-typedef struct
-{
-    char const * path;                      /**< File path */
-    int          oflag;                     /**< bitwise-inclusive OR of @ref file_open_flag_t flags */
-} connector_file_open_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_stat_request_t File status request
-* @{
-*/
-/**
-* File status request structure is used for @ref connector_file_system_stat and @ref connector_file_system_hash
-* callbacks.
-*/
-typedef struct
-{
-    char const * path;                      /**< File path */
-    connector_file_hash_algorithm_t hash_alg;   /**< suggested hash algorithm */
-} connector_file_stat_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_path_request_t File path request
-* @{
-*/
-/**
-* File path request structure is used for @ref connector_file_system_rm and
-* @ref connector_file_system_opendir callbacks.
-*/
-typedef struct
-{
-    char const * path;                      /**< File path */
-} connector_file_path_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_error_data_t File error data
-* @{
-*/
-/**
-* Error data structure is used to return error status and error token for all file system callbacks.
-* An error token is used to return an error description in a future @ref connector_file_system_strerror callback.
-*
-*/
-typedef struct
-{
-    void const * errnum;                    /**< Application defined error token.*/
-    connector_file_error_status_t error_status; /**< Error status of @ref connector_file_error_status_t type */
-} connector_file_error_data_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_error_request_t File system messaging error request
-* @{
-*/
-/**
-* Messaging error request structure is used for @ref connector_file_system_msg_error callback.
-*/
-typedef struct
-{
-    connector_msg_error_t message_status;   /**< Error status in messaging layer */
-} connector_file_error_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_data_response_t File system data response
-* @{
-*/
-/**
-* File system data response structure is used for @ref connector_file_system_read,
-* @ref connector_file_system_readdir, and @ref connector_file_system_strerror callbacks.
-*/
-typedef struct
-{
-    void                    * user_context; /**< To hold the user context */
-    connector_file_error_data_t * error;        /**< Holds error status of @ref connector_file_error_status_t type and errnum */
-    void                    * data_ptr;     /**< Pointer to write response data */
-    size_t                  size_in_bytes;  /**< On input size of data buffer, on output size of response data */
-} connector_file_data_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_response_t File system basic response
-* @{
-*/
-/**
-* File system basic response structure is used for @ref connector_file_system_close,
-* @ref connector_file_system_rm, @ref connector_file_system_closedir,
-* @ref connector_file_system_ftruncate, and  @ref connector_file_system_msg_error callbacks.
-*/
-typedef struct
-{
-    void                    * user_context; /**< To hold the user context */
-    connector_file_error_data_t * error;        /**< Pointer to file error data */
-} connector_file_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_open_response_t File or directory open response
-* @{
-*/
-/**
-* File or directory open response structure is used for the @ref connector_file_system_open
-* and @ref connector_file_system_opendir callback.
-*/
-typedef struct
-{
-    void                    * user_context; /**< To hold the user context */
-    connector_file_error_data_t * error;        /**< Pointer to file error data */
-    void                    * handle;       /**< Application defined file handle or directory */
-} connector_file_open_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_lseek_response_t File lseek response
-* @{
-*/
-/**
-* File lseek response structure is used for @ref connector_file_system_lseek callback.
-*/
-typedef struct
-{
-    void                    * user_context; /**< To hold the user context */
-    connector_file_error_data_t * error;        /**< Pointer to file error data */
-    long int                  offset;       /**< Resulting file position */
-} connector_file_lseek_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_file_write_response_t File write response
-* @{
-*/
-/**
-* File write response structure is used for @ref connector_file_system_write callback.
-*/
-typedef struct
-{
-    void                    * user_context;  /**< To hold the user context */
-    connector_file_error_data_t * error;         /**< Pointer to file error data */
-    size_t                    size_in_bytes; /**< On input size of data buffer, on output size of response data */
-} connector_file_write_response_t;
-/**
-* @}
-*/
-
-
-/**
-* @defgroup connector_file_stat_response_t File status response
-* @{
-*/
-/**
-* File status response structure is used for @ref connector_file_system_stat callback.
-*/
-typedef struct
-{
-    void                    * user_context; /**< To hold the user context */
-    connector_file_error_data_t * error;        /**< Pointer to file error data */
-    connector_file_stat_t         statbuf;      /**< Pointer to place file status data on output */
-} connector_file_stat_response_t;
-/**
-* @}
-*/
-#endif
 
 #ifdef CONNECTOR_SM
 /**
@@ -1062,7 +616,7 @@ typedef struct
                                              - @ref connector_stop_immediately
                                              - @ref connector_wait_sessions_complete */
 
-    void * user_context;                /**< User's defined context that will be passed to @ref connector_status_stop_completed after the transport of  iDigi connector has stopped running. */
+    void * user_context;                /**< User's defined context that will be passed to @ref connector_request_id_status_stop_completed after the transport of  iDigi connector has stopped running. */
 
 } connector_initiate_stop_request_t;
 /**
@@ -1322,7 +876,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref connector_transport_udp - UDP transport
  *                              - @ref connector_transport_sms - SMS transport
  *                              - @ref connector_transport_all - all transports.
- *                              - @ref @b Note: This triggers @ref connector_status_stop_completed callback. @b See @ref status_stop_completed callback.
+ *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *
  *                      @li @b connector_initiate_status_message:
  *                          Sends status message to the iDigi Device Cloud.  Supported only under
@@ -1409,6 +963,11 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
     #if (defined CONNECTOR_DATA_POINTS)
         #error CONNECTOR_DATA_POINTS is defined but not CONNECTOR_DATA_SERVICE
     #endif
+#endif
+
+#if (defined CONNECTOR_CONST_PROTECTION)
+#undef CONST
+#define CONST CONNECTOR_CONST_PROTECTION
 #endif
 
 #endif /* _CONNECTOR_API_H */

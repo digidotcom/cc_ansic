@@ -42,7 +42,7 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
         status = app_tcp_status(data);
         break;
     case connector_request_id_status_stop_completed:
-        APP_DEBUG("app_status_handle: connector_status_stop_completed\n");
+        APP_DEBUG("app_status_handle: connector_request_id_status_stop_completed\n");
         break;
     default:
         /* unsupported */

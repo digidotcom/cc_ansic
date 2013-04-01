@@ -23,11 +23,7 @@ typedef struct
     void * callback_context;
     connector_bool_t dp_request;
 
-    enum
-    {
-        data_service_put_request,
-        data_service_device_request
-    } request_type;
+    connector_request_id_data_service_t request_type;
 
 } data_service_context_t;
 
@@ -37,200 +33,266 @@ static void set_data_service_error(msg_service_request_t * const service_request
     service_request->service_type = msg_service_type_error;
 }
 
-static connector_status_t process_device_request(connector_data_t * const connector_ptr,
-                                                      msg_service_request_t * const service_request)
+
+static connector_status_t call_ds_receive_callback(connector_data_t * const connector_ptr,
+                                                   data_service_context_t * const data_service,
+                                                   void * const data)
 {
-    connector_status_t status = connector_working;
-    msg_session_t * const session = service_request->session;
-    data_service_context_t * device_request_service = session->service_context;
-    msg_service_data_t * const service_data = service_request->have_data;
-    uint8_t const * ds_device_request = service_data->data_ptr;
-    connector_session_error_t error_status = connector_session_error_cancel;
-    connector_bool_t const isFirstRequest = connector_bool(MsgIsStart(service_data->flags));
+    connector_status_t result = connector_working;
+    connector_request_id_t request_id;
+
+    request_id.data_service_request = data_service->request_type;
+    switch (request_id.data_service_request)
+    {
+        case connector_request_id_data_service_receive_reply_length:
+            request_id.data_service_request = connector_request_id_data_service_receive_reply_data;
+            /* fall thru for error (not-handle) response data */
+        case connector_request_id_data_service_receive_target:
+        case connector_request_id_data_service_receive_data:
+        case connector_request_id_data_service_receive_status:
+        case connector_request_id_data_service_receive_reply_data:
+        {
+            connector_callback_status_t const status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, data);
+            switch (status)
+            {
+                case connector_callback_continue:
+                    break;
+                case connector_callback_error:
+                    data_service->request_type = connector_request_id_data_service_receive_reply_length;
+                    break;
+                case connector_callback_busy:
+                    result = connector_pending;
+                    break;
+                default:
+                    result = connector_abort;
+                    break;
+
+            }
+            break;
+        }
+
+        default:
+            ASSERT(connector_false);
+            break;;
+    }
+
+    return result;
+}
+
+static connector_status_t process_ds_receive_target(connector_data_t * const connector_ptr,
+                                                    data_service_context_t * const data_service,
+                                                    uint8_t const * const data,
+                                                    size_t * const data_length)
+{
+    /* 1st message so let's parse message-start packet:
+     *
+     * Data Service Device request format:
+     *  -------------------------------------------------------------------------------------------------------
+     * |   0    |   1    |  2+N   |    +1     |     +1      |    +1       |    +M       |  ...       | +P      |
+     *  -------------------------------------------------------------------------------------------------------
+     * | Opcode | Target | Target | Parameter | Parameter 1 | Parameter 1 | Parameter 1 | Additioanl | Payload |
+     * |        | length | string |   count   |     ID      | data length |    data     | parameters |         |
+     *  -------------------------------------------------------------------------------------------------------
+     *
+     */
+    enum {
+        field_define(ds_device_request, opcode, uint8_t),
+        field_define(ds_device_request, target_length, uint8_t),
+        record_end(ds_device_request_header)
+    };
+
+    enum {
+        field_define(ds_device_request, parameter_count, uint8_t)
+    };
+
+    enum {
+        field_define(ds_device_request, parameter_id, uint8_t),
+        field_define(ds_device_request, parameter_length, uint8_t),
+        record_end(ds_device_request_parameter)
+    };
+
+    connector_status_t result = connector_working;
+    uint8_t const * ds_device_request = data;
+
     char * target_string = NULL;
-    connector_callback_status_t callback_status;
+    uint8_t const target_length =  message_load_u8(ds_device_request, target_length);
+
+    size_t const min_data_length = (size_t)(target_length +
+                      record_bytes(ds_device_request_header) +
+                      field_named_data(ds_device_request, parameter_count, size));
+
+    ASSERT_GOTO((message_load_u8(ds_device_request, opcode) == data_service_opcode_device_request), done);
+    ASSERT_GOTO(*data_length >= min_data_length, done);
+
+    ds_device_request += record_bytes(ds_device_request_header);
+
+    target_string = (char *)ds_device_request;
+    ds_device_request += target_length;
+
+    {
+        /* TODO: Parse and process each parameter in the future.
+         *      Ignore all parameters now.
+         */
+
+        uint8_t const parameter_count = message_load_u8(ds_device_request, parameter_count);
+        uint8_t i;
+
+        ds_device_request += field_named_data(ds_device_request, parameter_count, size);
+
+        for (i=0; i < parameter_count; i++)
+        {
+             unsigned int const parameter_length = message_load_u8(ds_device_request, parameter_length);
+             size_t const min_parameter_length = min_data_length + record_bytes(ds_device_request_parameter) + parameter_length;
+             ASSERT_GOTO(*data_length >= min_parameter_length, done);
+
+             ds_device_request += record_bytes(ds_device_request_parameter); /* skip id and length */
+             ds_device_request += parameter_length;
+
+        }
+    }
+
+    *data_length = (ds_device_request - data);
+
+    /* Add NUL to the target string. Must NUL-terminate it after parsing all parameters.
+     * The NUL char is on parameter_count field in the request.
+     */
+    target_string[target_length] = '\0';
+
+    switch (data_service->request_type)
+    {
+        case connector_request_id_data_service_receive_target:
+        {
+
+            connector_data_service_receive_target_t device_request;
+
+            device_request.transport = connector_transport_tcp;
+            device_request.user_context = data_service->callback_context;
+            device_request.target = target_string;
+            device_request.response_required = connector_true;
+
+            result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
+            data_service->callback_context = device_request.user_context;
+            break;
+        }
+        default:
+            /* just skip the header and return */
+            break;
+    }
+
+done:
+    return result;
+}
+
+static connector_status_t process_ds_receive_data(connector_data_t * const connector_ptr,
+                                                  data_service_context_t * const data_service,
+                                                  uint8_t const * const data,
+                                                  size_t const data_length,
+                                                  unsigned int const flags)
+{
+    connector_status_t result;
+
+    connector_data_service_receive_data_t device_request;
+
+    device_request.transport = connector_transport_tcp;
+    device_request.user_context = data_service->callback_context;
+    device_request.buffer = data;
+    device_request.bytes_used = data_length;
+    device_request.more_data = MsgIsLastData(flags) ? connector_false : connector_true;
+
+    result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
+    data_service->callback_context = device_request.user_context;
+
+    return result;
+}
+static connector_status_t process_data_service_device_request(connector_data_t * const connector_ptr,
+                                                 msg_service_request_t * const service_request)
+{
+    connector_status_t result = connector_working;
+    msg_session_t * const session = service_request->session;
+    data_service_context_t * data_service = session->service_context;
+    msg_service_data_t * const service_data = service_request->have_data;
+
+    uint8_t const * ds_device_request = service_data->data_ptr;
+    size_t ds_device_request_length = service_data->length_in_bytes;
+
+    connector_bool_t const isFirstRequest = connector_bool(MsgIsStart(service_data->flags));
 
     if (isFirstRequest)
     {
-        /* 1st message so let's parse message-start packet:
-         *
-         * Data Service Device request format:
-         *  -------------------------------------------------------------------------------------------------------
-         * |   0    |   1    |  2+N   |    +1     |     +1      |    +1       |    +M       |  ...       | +P      |
-         *  -------------------------------------------------------------------------------------------------------
-         * | Opcode | Target | Target | Parameter | Parameter 1 | Parameter 1 | Parameter 1 | Additioanl | Payload |
-         * |        | length | string |   count   |     ID      | data length |    data     | parameters |         |
-         *  -------------------------------------------------------------------------------------------------------
-         *
-         */
-        enum {
-            field_define(ds_device_request, opcode, uint8_t),
-            field_define(ds_device_request, target_length, uint8_t),
-            record_end(ds_device_request_header)
-        };
-
-        enum {
-            field_define(ds_device_request, parameter_count, uint8_t)
-        };
-
-        enum {
-            field_define(ds_device_request, parameter_id, uint8_t),
-            field_define(ds_device_request, parameter_length, uint8_t),
-            record_end(ds_device_request_parameter)
-        };
-
-        uint8_t const target_length =  message_load_u8(ds_device_request, target_length);
-
-        size_t const min_data_length = (size_t)(target_length +
-                          record_bytes(ds_device_request_header) +
-                          field_named_data(ds_device_request, parameter_count, size));
-
-        ASSERT_GOTO((message_load_u8(ds_device_request, opcode) == data_service_opcode_device_request), done);
-        ASSERT_GOTO(service_data->length_in_bytes >= min_data_length, done);
-
-        ds_device_request += record_bytes(ds_device_request_header);
-
-        if (device_request_service == NULL)
+        if (data_service == NULL)
         {
             /* 1st time here so let's allocate service context memory for device request service */
             void * ptr;
 
-            status = malloc_data_buffer(connector_ptr, sizeof *device_request_service, named_buffer_id(msg_service), &ptr);
-            if (status != connector_working)
+            result = malloc_data_buffer(connector_ptr, sizeof *data_service, named_buffer_id(msg_service), &ptr);
+            if (result != connector_working)
             {
-                if (status == connector_pending)
-                {
-                    error_status = connector_session_error_none;
-                }
                 goto done;
             }
 
-            device_request_service = ptr;
-            session->service_context = device_request_service;
-            device_request_service->callback_context = NULL;
+            data_service = ptr;
+            session->service_context = data_service;
+            data_service->callback_context = NULL;
+            data_service->request_type = connector_request_id_data_service_receive_target;
         }
+    }
 
-        target_string = (char *)ds_device_request;
+    switch (data_service->request_type)
+    {
+        case connector_request_id_data_service_receive_target:
+            ds_device_request_length = service_data->length_in_bytes;
 
-        ds_device_request += target_length;
+            result = process_ds_receive_target(connector_ptr, data_service, ds_device_request, &ds_device_request_length);
 
-        {
-            /* TODO: Parse and process each parameter in the future.
-             *      Ignore all parameters now.
+            switch (result)
+            {
+            case connector_working:
+                if (data_service->request_type == connector_request_id_data_service_receive_target)
+                    data_service->request_type = connector_request_id_data_service_receive_data;
+                /* make it return busy so it comes here to skip parsing the header for the 1st data block */
+                result = connector_pending;
+                break;
+            default:
+                break;
+            }
+            break;
+
+        case connector_request_id_data_service_receive_data:
+            if (isFirstRequest)
+            {
+                /* skip the header; just get the point to data  */
+                result = process_ds_receive_target(connector_ptr, data_service, ds_device_request, &ds_device_request_length);
+                if (result != connector_working) goto done;
+                ds_device_request += ds_device_request_length;
+            }
+            {
+                size_t const data_length = (size_t)(ds_device_request - (uint8_t *)service_data->data_ptr);
+                ds_device_request_length = service_data->length_in_bytes - data_length;
+
+                result = process_ds_receive_data(connector_ptr, data_service, ds_device_request, ds_device_request_length, service_data->flags);
+                break;
+            }
+        case connector_request_id_data_service_receive_reply_length:
+            /* We set this when callback returns error.
+             * We need to respond with an error after receiving all request data.
              */
-
-            uint8_t const parameter_count = message_load_u8(ds_device_request, parameter_count);
-            uint8_t i;
-
-            ds_device_request += field_named_data(ds_device_request, parameter_count, size);
-
-            for (i=0; i < parameter_count; i++)
-            {
-                 unsigned int const parameter_length = message_load_u8(ds_device_request, parameter_length);
-                 size_t const data_length = min_data_length + record_bytes(ds_device_request_parameter) + parameter_length;
-                 ASSERT_GOTO(service_data->length_in_bytes >= data_length, done);
-
-                 ds_device_request += record_bytes(ds_device_request_parameter); /* skip id and length */
-                 ds_device_request += parameter_length;
-            }
-        }
-        /* Add NUL to the target string. Must NUL-terminate it after parsing all parameters.
-         * The NUL char is on parameter_count field in the request.
-         */
-        target_string[target_length] = '\0';
-    }
-
-    {
-        /* pass data to the callback */
-        connector_request_id_t request_id;
-        connector_data_service_msg_request_t request_data;
-        connector_data_service_msg_response_t response_data;
-        connector_data_service_block_t server_data;
-        connector_data_service_device_request_t device_request;
-
-        size_t response_data_length = sizeof response_data;
-
-        ASSERT(device_request_service != NULL);
-        /* setup structure to the callback */
-        request_data.message_type = connector_data_service_type_have_data;
-        request_data.service_context = &device_request;
-        request_data.server_data = &server_data;
-        /* setup device request data */
-        server_data.data = (void *)ds_device_request;
-
-        {
-            size_t const data_length = (size_t)(ds_device_request - (uint8_t *)service_data->data_ptr);
-            server_data.length_in_bytes = service_data->length_in_bytes - data_length;
-        }
-
-        server_data.flags = ((isFirstRequest ? CONNECTOR_MSG_FIRST_DATA : 0U) |
-                            (MsgIsLastData(service_data->flags) ? CONNECTOR_MSG_LAST_DATA: 0U));
-
-        /* setup request target */
-        device_request.target = target_string;
-        device_request.device_handle = session;
-
-
-        response_data.user_context = device_request_service->callback_context;
-        response_data.message_status = connector_session_error_none;
-        response_data.client_data = NULL;
-
-        request_id.data_service_request = connector_data_service_device_request;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
-                                &request_data, sizeof request_data, &response_data, &response_data_length);
-
-        switch (callback_status)
-        {
-        case connector_callback_unrecognized:
-            /* let message continue to process error status */
-            status = connector_working;
-            goto done;
-
-        case connector_callback_continue:
-            if (response_data_length != sizeof response_data)
-            {
-                /* wrong size returned and let's cancel the request */
-                if (notify_error_status(connector_ptr->callback, connector_class_id_data_service, request_id, connector_invalid_data_size) != connector_working)
-                    status = connector_abort;
-                goto done;
-            }
-
-            if (response_data.message_status != connector_session_error_none)
-            {
-                /* error returned so cancel this message */
-                error_status = response_data.message_status;
-                goto done;
-            }
-            error_status = connector_session_error_none;
-            status = connector_working;
             break;
 
-        case connector_callback_busy:
-            error_status = connector_session_error_none;
-            status = connector_pending;
-            break;
-
-        case connector_callback_abort:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
-        case connector_callback_error:
-#endif
-            /* cancel the message */
-            status = connector_abort;
+        default:
+            ASSERT(connector_false);
             goto done;
-        }
-        device_request_service->callback_context = response_data.user_context;
     }
 
+    if ((result == connector_working) &&
+        (MsgIsLastData(service_data->flags)) &&
+        (data_service->request_type != connector_request_id_data_service_receive_reply_length))
+        data_service->request_type = connector_request_id_data_service_receive_reply_data;
 done:
-    if (error_status != connector_session_error_none)
-    {
-        set_data_service_error(service_request, error_status);
-    }
-    return status;
+    return result;
 }
 
-static connector_status_t process_device_response(connector_data_t * const connector_ptr,
-                                                       msg_service_request_t * const service_request)
+static connector_status_t process_data_service_device_response(connector_data_t * const connector_ptr,
+                                                               msg_service_request_t * const service_request)
 {
     /* Data Service Device response format:
      *  ---------------------------------
@@ -245,167 +307,110 @@ static connector_status_t process_device_response(connector_data_t * const conne
         record_end(ds_device_response_header)
     };
 
-    connector_status_t status = connector_working;
-    connector_callback_status_t callback_status;
+    connector_status_t result = connector_working;
     msg_service_data_t * const service_data = service_request->need_data;
     msg_session_t * const session = service_request->session;
-    data_service_context_t * const device_request_service = session->service_context;
+    data_service_context_t * const data_service = session->service_context;
     connector_bool_t const isFirstResponse = connector_bool(MsgIsStart(service_data->flags));
 
     /* save some room for response header on 1st response data */
     size_t const header_length = isFirstResponse ? record_bytes(ds_device_response_header) : 0;
     uint8_t * const data_ptr = service_data->data_ptr;
 
-    connector_request_id_t request_id;
-    connector_data_service_msg_request_t request_data;
-    connector_data_service_msg_response_t response_data;
-    connector_data_service_device_request_t device_request;
-    connector_data_service_block_t client_data;
 
-    size_t response_data_length = sizeof response_data;
+    connector_data_service_receive_reply_data_t device_request;
 
-    /* setup request data passed to callback */
-    request_data.service_context = &device_request;
-    request_data.message_type = connector_data_service_type_need_data;
-    request_data.server_data = NULL;
+    device_request.transport = connector_transport_tcp;
+    device_request.user_context = data_service->callback_context;
+    device_request.buffer = data_ptr + header_length;
+    device_request.bytes_available = service_data->length_in_bytes - header_length;
+    device_request.bytes_used = 0;
+    device_request.more_data = connector_false;
 
-    device_request.target = NULL;
-    device_request.device_handle = service_request->session;
-
-    /* setup response data so that callback updates it */
-    response_data.client_data = &client_data;
-    response_data.user_context = device_request_service->callback_context;
-    response_data.message_status = connector_session_error_none;
-
-    client_data.data = data_ptr + header_length;
-    client_data.length_in_bytes = service_data->length_in_bytes - header_length;
-    client_data.flags = 0;
-
-    request_id.data_service_request = connector_data_service_device_request;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
-                            &request_data, sizeof request_data, &response_data, &response_data_length);
-
-    switch (callback_status)
+    switch (data_service->request_type)
     {
-    case connector_callback_continue:
-        status = connector_working;
-        if (response_data_length != sizeof response_data)
+        case connector_request_id_data_service_receive_reply_length:
+        /* We got here because callback returns error for request data.
+         * Get the replay data.
+         */
+         /* fall thru */
+        case connector_request_id_data_service_receive_reply_data:
         {
-            /* wrong size returned and let's cancel the request */
-            if (notify_error_status(connector_ptr->callback, connector_class_id_data_service, request_id, connector_invalid_data_size) != connector_working)
-                status = connector_abort;
-            response_data.message_status = connector_session_error_cancel;
+
+            result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
+            data_service->callback_context = device_request.user_context;
+            break;
         }
-        if (response_data.message_status != connector_session_error_none)
-        {
-            /* cancel this message */
-            set_data_service_error(service_request, response_data.message_status);
+        default:
+            /* should be here */
+            ASSERT(connector_false);
             goto done;
-        }
-
-        if (isFirstResponse)
-        {
-            enum {
-                connector_data_service_device_success,
-                connector_data_service_device_not_handled
-            };
-
-            /* Add header for 1st response message */
-            uint8_t * const ds_device_response = service_data->data_ptr;
-            uint8_t const status = ((client_data.flags & CONNECTOR_MSG_DATA_NOT_PROCESSED) == CONNECTOR_MSG_DATA_NOT_PROCESSED) ?
-                                    connector_data_service_device_not_handled : connector_data_service_device_success;
-
-            message_store_u8(ds_device_response, opcode, data_service_opcode_device_response);
-            message_store_u8(ds_device_response, status, status);
-        }
-
-        if ((client_data.flags & CONNECTOR_MSG_LAST_DATA) == CONNECTOR_MSG_LAST_DATA)
-        {
-            MsgSetLastData(service_data->flags);
-        }
-        service_data->length_in_bytes = client_data.length_in_bytes + header_length;
-        device_request_service->callback_context = response_data.user_context;
-        break;
-
-    case connector_callback_busy:
-        status = connector_pending;
-        break;
-
-    case connector_callback_abort:
-    case connector_callback_unrecognized:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
-    case connector_callback_error:
-#endif
-
-        status = connector_abort;
-        break;
     }
 
+    if (isFirstResponse)
+    {
+
+        enum {
+            connector_data_service_device_success,
+            connector_data_service_device_not_handled
+        };
+
+        /* Add header for 1st response message */
+        uint8_t * const ds_device_response = service_data->data_ptr;
+        uint8_t const target_status = (data_service->request_type == connector_request_id_data_service_receive_reply_length) ?
+                                connector_data_service_device_not_handled: connector_data_service_device_success;
+
+        message_store_u8(ds_device_response, opcode, data_service_opcode_device_response);
+        message_store_u8(ds_device_response, status, target_status);
+    }
+
+    if (!device_request.more_data)
+    {
+        MsgSetLastData(service_data->flags);
+    }
+    service_data->length_in_bytes = device_request.bytes_used + header_length;
 
 done:
-    return status;
+    return result;
 }
 
-static connector_status_t process_device_error(connector_data_t * const connector_ptr,
+
+static connector_status_t process_data_service_device_error(connector_data_t * const connector_ptr,
                                                        msg_service_request_t * const service_request)
 {
-    connector_status_t status = connector_working;
+    connector_status_t result = connector_working;
 
     msg_session_t * const session = service_request->session;
-    data_service_context_t * const device_request_service = session->service_context;
-    connector_request_id_t request_id;
+    data_service_context_t * const data_service = session->service_context;
 
-    connector_data_service_msg_request_t request_data;
-    connector_data_service_msg_response_t response_data;
-    connector_data_service_device_request_t device_request;
-    connector_data_service_block_t server_data;
 
-    size_t response_data_length = sizeof response_data;
+    connector_data_service_receive_status_t device_request;
 
-    device_request.target = NULL;
-    device_request.device_handle = session;
+    device_request.transport = connector_transport_tcp;
+    device_request.user_context = data_service->callback_context;
+    data_service->request_type = connector_request_id_data_service_receive_status;
 
-    request_data.service_context = &device_request;
-    request_data.message_type = connector_data_service_type_error;
-    request_data.server_data = &server_data;
-
-    /* get error code from the data pointer */
-    server_data.data = &service_request->error_value;
-    server_data.length_in_bytes = sizeof service_request->error_value;
-    server_data.flags = CONNECTOR_MSG_FIRST_DATA | CONNECTOR_MSG_LAST_DATA;
-
-    response_data.user_context = device_request_service->callback_context;
-    response_data.message_status = connector_session_error_none;
-    response_data.client_data = NULL;
-
-    request_id.data_service_request = connector_data_service_device_request;
-
+    switch (service_request->error_value)
     {
-        connector_callback_status_t callback_status;
+        case connector_session_error_cancel:
+            device_request.status = connector_data_service_send_status_cancel;
+            break;
 
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id,
-                                        &request_data, sizeof request_data,
-                                        &response_data, &response_data_length);
+        case connector_session_error_timeout:
+            device_request.status = connector_data_service_send_status_timeout;
+            break;
 
-        switch (callback_status)
-        {
-        case connector_callback_continue:
-            status = connector_working;
+        default:
+            device_request.status = connector_data_service_send_status_session_error;
+            device_request.session_error = service_request->error_value;
             break;
-        case connector_callback_busy:
-            status = connector_pending;
-            break;
-        case connector_callback_abort:
-        case connector_callback_unrecognized:
-#if (CONNECTOR_VERSION >= CONNECTOR_VERSION_1300)
-        case connector_callback_error:
-#endif
-            status = connector_abort;
-            break;
-        }
     }
 
-    return status;
+    result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
+
+    data_service->callback_context = device_request.user_context;
+
+    return result;
 }
 
 static connector_status_t data_service_device_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
@@ -415,15 +420,15 @@ static connector_status_t data_service_device_request_callback(connector_data_t 
     switch (service_request->service_type)
     {
     case msg_service_type_need_data:
-        status = process_device_response(connector_ptr, service_request);
+        status = process_data_service_device_response(connector_ptr, service_request);
         break;
 
     case msg_service_type_have_data:
-        status = process_device_request(connector_ptr, service_request);
+        status = process_data_service_device_request(connector_ptr, service_request);
         break;
 
     case msg_service_type_error:
-        status = process_device_error(connector_ptr, service_request);
+        status = process_data_service_device_error(connector_ptr, service_request);
         break;
 
     case msg_service_type_free:
@@ -517,7 +522,7 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
     connector_status_t status = connector_working;
     msg_session_t * const session = service_request->session;
     data_service_context_t * const context = (session != NULL) ? session->service_context : NULL;
-    connector_callback_status_t callback_status;
+    connector_callback_status_t callback_status = connector_callback_continue;
 
     if ((context == NULL) || (context->dp_request == connector_false))
     {
@@ -553,21 +558,13 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
             break;
     }
 
-if (service_request->service_type == msg_service_type_need_data)
-        {
-            msg_service_data_t * const service_data = service_request->need_data;
-            connector_data_service_block_t * const user_data = response->client_data;
-
-
-        }
-        break;
-
     return status;
 }
 
 static connector_status_t process_send_request(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * cb_context)
 {
     connector_status_t status = connector_working;
+#if VID
     msg_service_data_t * const service_data = service_request->need_data;
     connector_data_service_send_data_t user_data;
 
@@ -608,6 +605,11 @@ error:
     set_data_service_error(service_request, connector_session_error_format);
 
 done:
+#else
+    UNUSED_PARAMETER(connector_ptr);
+    UNUSED_PARAMETER(service_request);
+    UNUSED_PARAMETER(cb_context);
+#endif
     return status;
 }
 
@@ -648,7 +650,7 @@ static connector_status_t process_send_response(connector_data_t * const connect
 
     user_data.transport = connector_transport_tcp;
     user_data.user_context = cb_context;
-    user_data.hint = (char *)(service_data->length_in_bytes > record_end(put_response)) ? put_response + record_end(put_response) : NULL;
+    user_data.hint = (char *)((service_data->length_in_bytes > record_end(put_response)) ? put_response + record_end(put_response) : NULL);
 
     switch (result)
     {
@@ -686,7 +688,6 @@ done:
 static connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * cb_context)
 {
     connector_status_t status = connector_working;
-    msg_service_data_t * const service_data = service_request->need_data;
     connector_data_service_send_status_t user_data;
 
     user_data.transport = connector_transport_tcp;
@@ -709,7 +710,7 @@ static connector_status_t process_send_error(connector_data_t * const connector_
             break;
     }
 
-    status = call_put_request_user(idigi_ptr, service_request, connector_request_id_data_service_send_status, &user_data);
+    status = call_put_request_user(connector_ptr, service_request, connector_request_id_data_service_send_status, &user_data);
 
     return status;
 }
@@ -773,9 +774,9 @@ static connector_status_t data_service_put_request_init(connector_data_t * const
         }
 
         context = data_ptr;
-        context->request_type = connector_data_service_put_request;
+        context->request_type = connector_request_id_data_service_send_data;
         session->service_context = context;
-
+#if VID
         {
             char const data_point_prefix[] = "DataPoint/";
             connector_request_data_service_send_t * const request = service_request->have_data;
@@ -783,9 +784,11 @@ static connector_status_t data_service_put_request_init(connector_data_t * const
             context->callback_context = request->user_context;
             context->dp_request = connector_bool(strncmp(request->path,data_point_prefix, strlen(data_point_prefix)) == 0);
         }
-
+#endif
         goto done;
+
     }
+
 
 error:
     set_data_service_error(service_request, result);
@@ -814,11 +817,18 @@ static connector_status_t data_service_callback(connector_data_t * const connect
 
     switch (context->request_type)
     {
-        case connector_data_service_put_request:
+        case connector_request_id_data_service_send_length:
+        case connector_request_id_data_service_send_data:
+        case connector_request_id_data_service_send_status:
+        case connector_request_id_data_service_send_response:
             status = data_service_put_request_callback(connector_ptr, service_request);
             break;
 
-        case connector_data_service_device_request:
+        case connector_request_id_data_service_receive_target:
+        case connector_request_id_data_service_receive_data:
+        case connector_request_id_data_service_receive_status:
+        case connector_request_id_data_service_receive_reply_length:
+        case connector_request_id_data_service_receive_reply_data:
             status = data_service_device_request_callback(connector_ptr, service_request);
             break;
 

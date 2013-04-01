@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 from base64 import encodestring
@@ -20,10 +21,10 @@ FIRMWARE_QUERY_REQUEST = \
 </sci_request>"""
 
 expected_firmware_version = '1.0.0.0'
-firmware_targets = [('Library Image', '.*\.a'           , '1.0.0.0'),
-                    ('Binary Image' , '.*\.[bB][iI][nN]', '0.0.1.0')]
-firmware_files   = ['dvt/cases/test_files/firmware.a', 
-                    'dvt/cases/test_files/firmware.bin']
+firmware_targets = [('Binary Image' , '.*\.[bB][iI][nN]', '1.0.0.0'),
+                    ('Library Image', '.*\.a'           , '0.0.1.0')]
+firmware_files   = ['dvt/cases/test_files/firmware.bin', 
+                    'dvt/cases/test_files/firmware.a']
 class FirmwareTestCase(ic_testcase.TestCase):    
 
     def test_check_firmware_version_match(self):

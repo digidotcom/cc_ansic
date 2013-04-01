@@ -25,6 +25,7 @@
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
+/* #define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES  */
 
 /* #define CONNECTOR_NO_MALLOC */
 #if defined CONNECTOR_NO_MALLOC && defined CONNECTOR_TRANSPORT_TCP && !defined ENABLE_COMPILE_TIME_DATA_PASSING
@@ -33,7 +34,7 @@
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "iDigi connector Linux Sample"
-#define CONNECTOR_CLOUD_URL                            "my.idigi.com"
+#define CONNECTOR_CLOUD_URL                            "login.etherios.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              5
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
 #define CONNECTOR_WAIT_COUNT                           5

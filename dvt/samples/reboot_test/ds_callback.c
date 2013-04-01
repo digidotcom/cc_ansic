@@ -179,115 +179,119 @@ done:
 /* we only supported 1 target */
 static char const request_reboot_ready[] = "request_reboot_ready";
 
-static connector_callback_status_t process_device_request(connector_data_service_msg_request_t const * const request_data,
-                                                      connector_data_service_msg_response_t * const response_data)
+static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_device_request_t * const server_device_request = request_data->service_context;
-    connector_data_service_block_t * server_data = request_data->server_data;
 
-    ASSERT(server_data != NULL);
-    ASSERT(server_device_request != NULL);
-
-
-    if ((server_data->flags & CONNECTOR_MSG_FIRST_DATA) == CONNECTOR_MSG_FIRST_DATA)
+    if (strcmp(target_data->target, request_reboot_ready) == 0)
     {
-        if (strcmp(server_device_request->target, request_reboot_ready) == 0)
-        {
-            /* cause to delay calling receive */
-            if (delay_receive_state == no_delay_receive)
-                delay_receive_state = start_delay_receive;
-            else
-                APP_DEBUG("process_device_request: %s already started\n", request_reboot_ready);
-        }
+        /* cause to delay calling receive */
+        if (delay_receive_state == no_delay_receive)
+            delay_receive_state = start_delay_receive;
         else
-        {
-            /* testing to return unrecognized status */
-            APP_DEBUG("process_device_request: unrecognized target = \"%s\"\n", server_device_request->target);
-            response_data->message_status = connector_msg_error_cancel;
-        }
+            APP_DEBUG("app_process_device_request_target: %s already started\n", request_reboot_ready);
+    }
+    else
+    {
+        /* testing to return unrecognized status */
+        APP_DEBUG("process_device_request: unrecognized target = \"%s\"\n", target_info->target);
+        status = connector_callback_error;
     }
     /* don't care any data in the request */
     return status;
 }
 
-static connector_callback_status_t process_device_response(connector_data_service_msg_request_t const * const request_data,
-                                                       connector_data_service_msg_response_t * const response_data)
+static connector_callback_status_t app_process_device_request_data(connector_data_service_receive_data_t * const receive_data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_block_t * const client_data = response_data->client_data;
+
+    /* don't care any data in the request */
+    return status;
+}
+
+static connector_callback_status_t app_process_device_request_response(connector_data_service_receive_reply_data_t * const reply_data)
+{
+    connector_callback_status_t status = connector_callback_continue;
     /* user just lets us know that reboot request is about to start.
      * just respond so he knows we are connected and ready.
      */
-    UNUSED_ARGUMENT(request_data);
-
-    ASSERT(client_data != NULL);
-    client_data->length_in_bytes = 0; /* no data */
-    client_data->flags = CONNECTOR_MSG_LAST_DATA;
+    reply_data->bytes_used = 0; /* no data */
 
     return status;
 }
 
-static connector_callback_status_t process_device_error(connector_data_service_msg_request_t const * const request_data,
-                                                    connector_data_service_msg_response_t * const response_data)
+static connector_callback_status_t app_process_device_request_status(connector_data_service_receive_status_t const * const status_data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_block_t * error_data = request_data->server_data;
-    connector_msg_error_t const error_code = *((connector_msg_error_t *)error_data->data);
 
-    UNUSED_ARGUMENT(response_data);
 
-    APP_DEBUG("process_device_error: error %d from server\n", error_code);
-
-    return status;
-}
-
-connector_callback_status_t app_device_request_handler(void const * request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_msg_request_t const * const service_device_request = request_data;
-
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    switch (service_device_request->message_type)
+    switch (status_data->status)
     {
-    case connector_data_service_type_have_data:
-        status = process_device_request(request_data, response_data);
-        break;
-    case connector_data_service_type_need_data:
-        status = process_device_response(request_data, response_data);
-        break;
-    case connector_data_service_type_error:
-        status = process_device_error(request_data, response_data);
+    case connector_data_service_receive_status_session_error:
+        APP_DEBUG("app_process_device_request_error: session error %d\n",
+                   status_data->session_error);
         break;
     default:
-        APP_DEBUG("app_device_request_handler: unknown message type %d for connector_data_service_device_request\n", service_device_request->message_type);
+        APP_DEBUG("app_process_device_request_error: error %d\n",
+                   status_data->status);
         break;
     }
 
     return status;
 }
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length)
+connector_callback_status_t app_device_request_handler(connector_request_id_data_service_t const request_id, void * data)
+{
+    connector_callback_status_t status = connector_callback_unrecognized;
+
+    switch (request_id)
+    {
+        case connector_request_id_data_service_receive_target:
+            status = app_process_device_request_target(data);
+            break;
+        case connector_request_id_data_service_receive_data:
+            status = app_process_device_request_data(data);
+            break;
+        case connector_request_id_data_service_receive_status:
+            status = app_process_device_request_status(data);
+            break;
+        case connector_request_id_data_service_receive_reply_data:
+            status = app_process_device_request_response(data);
+            break;
+        case connector_request_id_data_service_receive_reply_length:
+        default:
+            APP_DEBUG("app_device_request_handler: unknown request id type %d for connector_request_id_data_service\n", request_id);
+            break;
+    }
+
+    return status;
+}
+
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id,
+                                                  void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    switch (request)
+    switch (request_id)
     {
-    case connector_data_service_put_request:
-        status = app_put_request_handler(request_data, request_length, response_data, response_length);
+    case connector_request_id_data_service_send_length:
+    case connector_request_id_data_service_send_data:
+    case connector_request_id_data_service_send_status:
+    case connector_request_id_data_service_send_response:
+        status = app_put_request_handler(request_id, data);
         break;
-    case connector_data_service_device_request:
-        status = app_device_request_handler(request_data, request_length, response_data, response_length);
+    case connector_request_id_data_service_receive_target:
+    case connector_request_id_data_service_receive_data:
+    case connector_request_id_data_service_receive_status:
+    case connector_request_id_data_service_receive_reply_data:
+    case connector_request_id_data_service_receive_reply_length:
+        status = app_device_request_handler(request_id, data);
         break;
     default:
-        APP_DEBUG("app_data_service_handler: Request not supported: %d\n", request);
+        APP_DEBUG("app_data_service_handler: Request not supported: %d\n", request_id);
         break;
     }
     return status;
 }
+
 

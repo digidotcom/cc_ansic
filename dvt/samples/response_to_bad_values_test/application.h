@@ -41,20 +41,14 @@ typedef enum {
 typedef enum
 {
     connector_connector_stop,
-    connector_connector_start,
+    connector_connector_start
 } connector_connector_status_t;
 
-extern void app_config_error(connector_error_status_t const * const error_data);
-extern connector_callback_status_t app_invalid_size_config_handler(connector_config_request_t const request,
-                                              void const * const request_data,
-                                              size_t const request_length,
-                                              void * response_data,
-                                              size_t * const response_length);
-extern connector_callback_status_t app_invalid_data_config_handler(connector_config_request_t const request,
-                                              void const * const request_data,
-                                              size_t const request_length,
-                                              void * response_data,
-                                              size_t * const response_length);
+extern connector_callback_status_t app_config_error(connector_error_status_t const * const error_data);
+extern connector_callback_status_t app_invalid_size_config_handler(connector_request_id_config_t const request_id,
+                                              void * const data);
+extern connector_callback_status_t app_invalid_data_config_handler(connector_request_id_config_t const request_id,
+                                              void * const data);
 
 extern void write_python_result_file(char *file_buffer);
 
@@ -67,7 +61,7 @@ extern connector_connector_status_t connector_connector_status;
 extern connector_connection_type_t  device_connection_type;
 extern connector_wan_type_t connector_wan_type;
 extern connector_identity_verification_t connector_identity_verification;
-extern connector_auto_connect_type_t connector_connect_tcp;
+extern connector_connect_auto_type_t connector_connect_tcp;
 extern config_test_t config_test[];
 
 extern char python_file_buffer[256];

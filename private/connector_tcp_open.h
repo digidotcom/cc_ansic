@@ -15,7 +15,7 @@ static connector_status_t connect_server(connector_data_t * const connector_ptr,
     connector_status_t result = connector_working;
 
     connector_callback_status_t status;
-    connector_network_open_data_t open_data;
+    connector_network_open_t open_data;
 
     connector_request_id_t request_id;
 

@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2013 Digi International Inc.,
+ * All rights not expressly granted are reserved.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
+ * =======================================================================
+ */
+ /**
+  * @file
+  *  @brief Functions and prototypes for Connector Data Service related API
+  *         public API
+  *
+  */
+#ifndef _CONNECTOR_API_FILE_SYSTEM_H
+#define _CONNECTOR_API_FILE_SYSTEM_H
+
+
 /** TODO: need a reference to off_t to allow the user to override
  * Needs the number of bits as well -- does this go into
  * connector_types.h?
@@ -7,6 +28,15 @@
  * TODO: Add 64 bit types to connector_types.h
  * */
 
+/**
+* @defgroup connector_request_id_file_system_t File System 
+* Request IDs @{ 
+*/
+/**
+* File System Request Id passed to the application's callback to use file system.
+* The class id for this connector_request_id_file_system_t is 
+* connector_class_id_file_system. 
+*/
 typedef enum {
     connector_request_id_file_system_open,             /**< inform callback to open a file */
     connector_request_id_file_system_read,             /**< inform callback to read a file */
@@ -24,17 +54,85 @@ typedef enum {
     connector_request_id_file_system_session_error,     /**< inform callback of an error condition */
     connector_request_id_file_system_hash              /**< inform callback to return file hash value */
 } connector_request_id_file_system_t;
+/**
+* @}
+*/
 
 
+#if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
+typedef int64_t connector_file_offset_t;
+#else
+typedef int32_t connector_file_offset_t;
+#endif
 
 /** TODO: map the local file system flags */
+/**
+* @defgroup connector_file_system_open_flag_t File open flags
+* @{
+*/
+/**
+ * Open file for reading only.
+ *
+ * @see connector_file_system_open_data_t
+ * @see connector_request_id_file_system_open callback
+ */
 #define	CONNECTOR_FILE_O_RDONLY	0
-#define	CONNECTOR_FILE_O_WRONLY	1
-#define	CONNECTOR_FILE_O_RDWR	2
-#define	CONNECTOR_FILE_O_APPEND	0x0008
-#define	CONNECTOR_FILE_O_CREAT	0x0200
-#define	CONNECTOR_FILE_O_TRUNC	0x0400
 
+/**
+ * Open for writing only.
+ *
+ * @see connector_file_system_open_data_t
+ * @see connector_request_id_file_system_open callback
+ */
+#define	CONNECTOR_FILE_O_WRONLY	1
+
+/**
+ * Open for reading and writing.
+ *
+ * @see connector_file_system_open_data_t
+ * @see connector_request_id_file_system_open callback
+ */
+#define	CONNECTOR_FILE_O_RDWR	2
+
+/**
+ * File offset shall be set to the end of the file prior to each write.
+ *
+ * @see connector_file_system_open_data_t
+ * @see connector_request_id_file_system_open callback
+ */
+#define	CONNECTOR_FILE_O_APPEND	0x0008
+
+/**
+ * Create file, if does not exist.
+ *
+ * @see connector_file_system_open_data_t
+ * @see connector_request_id_file_system_open callback
+ */
+#define	CONNECTOR_FILE_O_CREAT	0x0200
+
+/**
+ *
+ * Truncate file, successfully opened for writing to 0 length, don't change
+ * the owner and ile access modes.
+ *
+ * @see connector_file_system_open_data_t
+ * @see connector_request_id_file_system_open callback
+ */
+#define	CONNECTOR_FILE_O_TRUNC	0x0400
+/**
+* @}
+*/
+ 
+ 
+/**
+* @defgroup connector_file_system_open_data_t Data type used 
+* for file system open callback 
+* @{ 
+*/
+/**
+* Data structure used in connector_request_id_file_system_open 
+* callback. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -45,27 +143,50 @@ typedef struct
     void * handle;                          /**< TODO: Don't check handle in private code!!!  Application defined file handle */
 
 } connector_file_system_open_data_t;
+/**
+* @}
+*/
 
-
+/**
+* @defgroup connector_file_system_lseek_data_t Data type used 
+* for file system lseek callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_lseek callback. 
+*/
 typedef struct
 {
-   void * user_context;                    /**< Holds user context */
-   void * errnum;                          /**< Application defined error token */
+   void * user_context;                    		/**< Holds user context */
+   void * errnum;                          		/**< Application defined error token */
 
-   void * handle;                          /**< Application defined file handle */
-   off_t  requested_offset;                /**< Requested file offset */
-   off_t  resulting_offset;                /**< Resulting file position */
+   void * handle;                          		/**< Application defined file handle */
+   connector_file_offset_t requested_offset; /**< Requested file offset */
+   connector_file_offset_t resulting_offset;	/**< Resulting file position */
    enum
    {
-        connector_file_system_seek_set,
-        connector_file_system_seek_cur,
-        connector_file_system_seek_end
+        connector_file_system_seek_set,    		/**<  Seek file position relative to start-of-file */
+        connector_file_system_seek_cur,    		/**<  Seek file position relative to current position */
+        connector_file_system_seek_end     		/**<  Seek file position relative to end-of-file */
 
    } origin;                                    /**< File seek origin */
 
 } connector_file_system_lseek_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_write_data_t Data type used 
+* for file system write callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_write callback. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -77,19 +198,42 @@ typedef struct
     size_t  bytes_used;                     /**< Number of bytes written to a file */
 
 } connector_file_system_write_data_t;
+/**
+* @}
+*/
 
-
+/**
+* @defgroup connector_file_system_truncate_data_t Data type used 
+* for file system truncate callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_ftruncate callback. 
+*/
 typedef struct
 {
-    void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    void * user_context;                    	/**< Holds user context */
+    void * errnum;                          	/**< Application defined error token */
 
-    void * handle;                          /**< Application defined file handle */
-    off_t length_in_bytes;                  /**< File length in bytes to truncate to */
+    void * handle;                          	/**< Application defined file handle */
+    connector_file_offset_t length_in_bytes; /**< File length in bytes to truncate to */
 
 } connector_file_system_truncate_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_read_data_t Data type used 
+* for file system read callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_read callback. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -101,8 +245,20 @@ typedef struct
     size_t  bytes_used;                     /**< Number of bytes read from a file and copied to memory buffer */
 
 } connector_file_system_read_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_close_data_t Data type used 
+* for file system close callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_close callback. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -111,8 +267,20 @@ typedef struct
     void * handle;                          /**< Application defined file or directory handle */
 
 } connector_file_close_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_opendir_data_t Data type used 
+* for file system opendir callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_opendir callback. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -122,8 +290,22 @@ typedef struct
     void * handle;                          /**< Application defined directory handle */
 
 } connector_file_system_opendir_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_hash_algorithm_t File system 
+* hash algorithm 
+* @{ 
+*/
+/**
+* Hash algorithm gives different options for hash values returned in the file lisings.
+*
+* @see @ref connector_request_id_file_system_stat
+* @see @ref connector_request_id_file_system_hash
+*/
 typedef enum
 {
     connector_file_system_hash_none,       /**< Don't return hash value */
@@ -131,8 +313,19 @@ typedef enum
     connector_file_system_hash_crc32,      /**< Use crc32 */
     connector_file_system_hash_md5         /**< Use md5 */
 } connector_file_system_hash_algorithm_t;
+/**
+* @}
+*/
 
-
+/**
+* @defgroup connector_file_system_hash_data_t Data type used 
+* for file system hash callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_hash callback. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -145,22 +338,47 @@ typedef struct
     size_t bytes_used;                      /**< Hash value size in bytes */
 
 } connector_file_system_hash_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_stat_t File status data
+* @{
+*/
+/**
+* File status data structure is used to return the status of a direcory or a file, specified by the path.
+* It is used in  
+* @ref connector_request_id_file_system_stat and 
+* @ref connector_request_id_file_system_stat_dir_entr callbacks.
+*/
 typedef struct
 {
     uint32_t last_modified;                       /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
-    off_t file_size;                            /**< File size in bytes */
+    connector_file_offset_t file_size;          /**< File size in bytes */
     enum
     {
-        connector_file_system_file_type_none,
-        connector_file_system_file_type_is_dir,
-        connector_file_system_file_type_is_reg
-    } flags;                                    /**< directory, regular, or neither */
+        connector_file_system_file_type_none,   /**< Is not a regular file or directory. */
+        connector_file_system_file_type_is_dir, /**< Is a directory. */
+        connector_file_system_file_type_is_reg  /**< Is a regular file. */
+    } flags;                                    /**< Directory, regular, or neither */
 
 } connector_file_system_stat_t;
+/**
+* @}
+*/
 
-
+/**
+* @defgroup connector_file_system_stat_data_t Data type used 
+* for file system status callback @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_stat callback, used 
+* to get status for a path received from Etherios Device Cloud 
+* for ls request. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -177,8 +395,23 @@ typedef struct
 
 
 } connector_file_system_stat_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_stat_dir_entry_data_t Data 
+* type used for file system directory entry status callback 
+* @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_stat_dir_entry callback, 
+* used to get status for for each directory entry in 
+* the directory path, received from Etherios Device Cloud for ls
+* request. 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -188,9 +421,19 @@ typedef struct
     connector_file_system_stat_t statbuf;   /**< File status data */
 
 } connector_file_system_stat_dir_entry_data_t;
+/**
+* @}
+*/
 
 
-
+/**
+* @defgroup connector_file_system_readdir_data_t Data type used 
+* for file system readdir callback @{ 
+*/
+/**
+* Data structure used in  
+* connector_request_id_file_system_readdir callback
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -201,8 +444,19 @@ typedef struct
     size_t bytes_available;                 /**< Size of a memory buffer for directory entry name */
 
 } connector_file_system_readdir_data_t;
+/**
+* @}
+*/
 
 
+/**
+* @defgroup connector_file_system_remove_data_t Data type used 
+* for file system remove callback @{ 
+*/
+/**
+* Data structure used in connector_request_id_file_system_remove 
+* callback 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
@@ -211,15 +465,27 @@ typedef struct
     char const * path;                      /**< File path */
 
 } connector_file_system_remove_data_t;
+/**
+* @}
+*/
 
-
+/**
+* @defgroup connector_file_system_get_error_data_t Data type 
+* used for file system ret error data callback @{ 
+*/
+/**
+* Data structure used in 
+* connector_request_id_file_system_get_error callback, to get 
+* error status and description for a previously recorder error 
+* token. 
+*/
 typedef struct
 {
-    void * user_context;                    /**< Holds user context*/
-    void * errnum;                          /**< Application defined error token */
+    void * user_context;               /**< Holds user context*/
+    void * errnum;                     /**< Application defined error token */
 
     void  * buffer;                    /**< A pointer to memory, where callback writes error description */
-    size_t  bytes_abailable;                /**< Size of a error description buffer */
+    size_t  bytes_available;                /**< Size of a error description buffer */
     size_t  bytes_used;                     /**< Number of error descriptio bytes */
     enum
     {
@@ -233,14 +499,28 @@ typedef struct
     } error_status;                                         /**< Error status */
 
 } connector_file_system_get_error_data_t;
+/**
+* @}
+*/
 
-
+/**
+* @defgroup connector_file_system_session_error_data_t Data type 
+* used for file system session error callback 
+* @{ 
+*/
+/**
+* Data structure used in 
+* connector_request_id_file_system_session_error callback 
+*/
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
 
-    connector_msg_error_t   session_error;      /**	TODO: Needs a describe 	*/
+    connector_msg_error_t   session_error;  /**	TODO: Needs a describe 	*/
 
 } connector_file_system_session_error_data_t;
+/**
+* @}
+*/
 
-
+#endif

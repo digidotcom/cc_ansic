@@ -185,8 +185,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 static connector_callback_status_t app_get_server_url(connector_config_pointer_string_t * const config_url)
 {
 #error "Specify iDigi Device Cloud URL"
-    static  char const connector_server_url[] = "my.idigi.com";
-
+    static  char const connector_server_url[] = "login.etherios.com";
     /* Return pointer to device type. */
     config_url->string = (char *)connector_server_url;
     config_url->length = sizeof connector_server_url -1;
@@ -277,7 +276,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
 #endif
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE) && !(defined CONNECTOR_FIRMWARE_SUPPORT)
-static connector_callback_status_t app_get_firmware_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_firmware_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -286,7 +285,7 @@ static connector_callback_status_t app_get_firmware_support(connector_config_sup
 #endif
 
 #if (defined CONNECTOR_DATA_SERVICE) && !(defined CONNECTOR_DATA_SERVICE_SUPPORT)
-static connector_callback_status_t app_get_data_service_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_data_service_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -295,7 +294,7 @@ static connector_callback_status_t app_get_data_service_support(connector_config
 #endif
 
 #if (defined CONNECTOR_FILE_SYSTEM) && !(defined CONNECTOR_FILE_SYSTEM_SUPPORT)
-static connector_callback_status_t app_get_file_system_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_file_system_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -304,7 +303,7 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
 #endif
 
 #if (defined CONNECTOR_RCI_SERVICE) && !(defined CONNECTOR_REMOTE_CONFIGURATION_SUPPORT)
-static connector_callback_status_t app_get_remote_configuration_support(connector_config_supported_status_t * const config_status)
+static connector_callback_status_t app_get_remote_configuration_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -526,18 +525,6 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_sms_service_id(connector_config_pointer_string_t * const config_service_id)
-{
-#error "Specify SMS service id. It is optional, set *service_id to NULL and *size to 0 if not used"
-    static  char const sms_service_id[] = "IDGP";
-
-    /* Return pointer to service_id. */
-    config_service_id->string = (char *)sms_service_id;
-    config_service_id->length = sizeof sms_service_id -1;
-
-    return connector_callback_continue;
-}
-
 /* End of iDigi connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
@@ -559,6 +546,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
         enum_to_case(connector_class_id_network_sms);
         enum_to_case(connector_class_id_status);
         enum_to_case(connector_class_id_short_message);
+        enum_to_case(connector_class_id_data_point);
     }
     return result;
 }
@@ -636,7 +624,7 @@ static char const * app_firmware_class_to_string(connector_request_id_firmware_t
         enum_to_case(connector_request_id_firmware_target_count);
         enum_to_case(connector_request_id_firmware_info);
         enum_to_case(connector_request_id_firmware_download_start);
-        enum_to_case(connector_request_id_firmware_data);
+        enum_to_case(connector_request_id_firmware_download_data);
         enum_to_case(connector_request_id_firmware_download_complete);
         enum_to_case(connector_request_id_firmware_download_abort);
         enum_to_case(connector_request_id_firmware_target_reset);
@@ -695,9 +683,30 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_request_id_data_service_put_request);
-        enum_to_case(connector_request_id_data_service_device_request);
-        enum_to_case(connector_request_id_data_service_dp_response);
+        enum_to_case(connector_request_id_data_service_send_length);
+        enum_to_case(connector_request_id_data_service_send_data);
+        enum_to_case(connector_request_id_data_service_send_status);
+        enum_to_case(connector_request_id_data_service_send_response);
+        enum_to_case(connector_request_id_data_service_receive_target);
+        enum_to_case(connector_request_id_data_service_receive_data);
+        enum_to_case(connector_request_id_data_service_receive_status);
+        enum_to_case(connector_request_id_data_service_receive_reply_length);
+        enum_to_case(connector_request_id_data_service_receive_reply_data);
+    }
+    return result;
+}
+#endif
+
+#if (defined CONNECTOR_DATA_POINT)
+static char const * app_data_point_class_to_string(connector_request_id_data_point_t const value)
+{
+    char const * result = NULL;
+    switch (value)
+    {
+        enum_to_case(connector_request_id_data_point_binary_response);
+        enum_to_case(connector_request_id_data_point_binary_status);
+        enum_to_case(connector_request_id_data_point_single_response);
+        enum_to_case(connector_request_id_data_point_single_status);
     }
     return result;
 }
@@ -796,6 +805,12 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
 #if (defined CONNECTOR_DATA_SERVICE)
     case connector_class_id_data_service:
         APP_DEBUG("Request: %s (%d) ", app_data_service_class_to_string(error_data->request_id.data_service_request), error_data->request_id.data_service_request);
+        break;
+#endif
+
+#if (defined CONNECTOR_DATA_POINT)
+    case connector_class_id_data_point:
+        APP_DEBUG("Request: %s (%d) ", app_data_point_class_to_string(error_data->request_id.data_point_request), error_data->request_id.data_point_request);
         break;
 #endif
 

@@ -98,7 +98,7 @@ static connector_callback_status_t app_get_connection_type(connector_connection_
 //#error "Specify LAN or WAN connection type"
 
     /* Return pointer to connection type */
-    static connector_connection_type_t const device_connection_type = connector_lan_connection_type;
+    static connector_connection_type_t const device_connection_type = connector_connection_type_lan;
 
     *type = &device_connection_type;
 
@@ -225,7 +225,7 @@ static connector_callback_status_t app_get_max_message_transactions(unsigned int
 static connector_callback_status_t app_get_device_id_method(connector_device_id_method_t * const method)
 {
 
-    *method = connector_auto_device_id_method;
+    *method = connector_device_id_method_auto;
 
     return connector_callback_continue;
 }
@@ -234,7 +234,7 @@ static connector_callback_status_t app_get_imei_number(uint8_t ** const imei_num
 {
 #define APP_IMEI_LENGTH 8
 
-//#error "Specify the IMEI number for WAN connection type if app_get_device_id_method returns connector_auto_device_id_method and app_get_device_id_method returns connector_imei_wan_type"
+//#error "Specify the IMEI number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_imei"
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -269,32 +269,32 @@ static connector_callback_status_t app_get_imei_number(uint8_t ** const imei_num
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_start_network_tcp(connector_auto_connect_type_t * const connect_type)
+static connector_callback_status_t app_start_network_tcp(connector_connect_auto_type_t * const connect_type)
 {
-    *connect_type = connector_auto_connect;
+    *connect_type = connector_connect_auto;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_start_network_udp(connector_auto_connect_type_t * const connect_type)
+static connector_callback_status_t app_start_network_udp(connector_connect_auto_type_t * const connect_type)
 {
-    *connect_type = connector_auto_connect;
+    *connect_type = connector_connect_auto;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_start_network_sms(connector_auto_connect_type_t * const connect_type)
+static connector_callback_status_t app_start_network_sms(connector_connect_auto_type_t * const connect_type)
 {
-    *connect_type = connector_auto_connect;
+    *connect_type = connector_connect_auto;
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const type)
 {
-//#error "Specify connector_imei_wan_type for IMEI, connector_esn_wan_type for ESN, or connector_meid_wan_type for MEID WAN type"
+//#error "Specify connector_wan_type_imei for IMEI, connector_wan_type_esn for ESN, or connector_wan_type_meid for MEID WAN type"
 
-    *type = connector_imei_wan_type;
+    *type = connector_wan_type_imei;
 
     return connector_callback_continue;
 }
@@ -305,7 +305,7 @@ static connector_callback_status_t app_get_esn(uint8_t ** const esn_number, size
 #define APP_ESN_HEX_LENGTH 4
 #define APP_ESN_HEX_STRING_LENGTH 8
 
-//#error "Specify the ESN number for WAN connection type if app_get_device_id_method returns connector_auto_device_id_method and app_get_device_id_method returns connector_esn_wan_type."
+//#error "Specify the ESN number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_esn."
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -345,7 +345,7 @@ static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, si
 #define APP_MEID_HEX_LENGTH 8
 #define APP_MEID_HEX_STRING_LENGTH 15
 
-//#error "Specify the MEID number for WAN connection type if app_get_device_id_method returns connector_auto_device_id_method and app_get_device_id_method returns connector_meid_wan_type."
+//#error "Specify the MEID number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_meid."
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -384,7 +384,7 @@ static connector_callback_status_t app_get_identity_verification(connector_ident
 {
 //#error "Specify connector_identity_verification for simple or password identify verification form"
 
-    *identity = connector_simple_identity_verification;
+    *identity = connector_identity_verification_simple;
 
     return connector_callback_continue;
 }
@@ -425,7 +425,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
     {
         enum_to_case(connector_class_config);
         enum_to_case(connector_class_operating_system);
-        enum_to_case(connector_class_firmware);
+        enum_to_case(connector_class_id_firmware);
         enum_to_case(connector_class_id_data_service);
         enum_to_case(connector_class_remote_config_service);
         enum_to_case(connector_class_id_file_system);
@@ -438,7 +438,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
     return result;
 }
 
-static char const * app_config_class_to_string(connector_config_request_t const value)
+static char const * app_config_class_to_string(connector_request_id_config_t const value)
 {
     char const * result = NULL;
     switch (value)
@@ -476,7 +476,7 @@ static char const * app_config_class_to_string(connector_config_request_t const 
     return result;
 }
 
-static char const * app_network_class_to_string(connector_network_request_t const value)
+static char const * app_network_class_to_string(connector_request_id_network_t const value)
 {
     char const * result = NULL;
     switch (value)
@@ -658,7 +658,7 @@ static void app_config_error(connector_error_status_t const * const error_data)
     case connector_class_operating_system:
         APP_DEBUG("Request: %s (%d) ", app_os_class_to_string(error_data->request_id.os_request), error_data->request_id.os_request);
         break;
-    case connector_class_firmware:
+    case connector_class_id_firmware:
         APP_DEBUG("Request: %s (%d) ", app_firmware_class_to_string(error_data->request_id.firmware_request), error_data->request_id.firmware_request);
         break;
     case connector_class_id_data_service:
@@ -688,7 +688,7 @@ static void app_config_error(connector_error_status_t const * const error_data)
 /*
  * Configuration callback routine.
  */
-connector_callback_status_t app_config_handler(connector_config_request_t const request,
+connector_callback_status_t app_config_handler(connector_request_id_config_t const request,
                                               void const * const request_data,
                                               size_t const request_length,
                                               void * response_data,

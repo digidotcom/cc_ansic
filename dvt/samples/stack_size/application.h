@@ -63,16 +63,13 @@ extern size_t total_malloc_size;
 #define STACKSIZE_HTML_CLOSE_BODY     "       </body></html>\n"
 
 
-extern connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id,
+                                                  void * const data);
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request_id,
+                                                  void * const data);
 
-extern connector_callback_status_t app_remote_config_handler(connector_remote_config_request_t const request,
-                                                      void const * const request_data, size_t const request_length,
-                                                      void * response_data, size_t * const response_length);
+extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
+                                                      void * const data);
 
 extern connector_status_t send_put_request(connector_handle_t handle);
 

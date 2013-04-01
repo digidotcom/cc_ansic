@@ -177,26 +177,23 @@ typedef struct {
 
     connector_remote_action_t action;       /**< @htmlonly <ul><li> @endhtmlonly @ref connector_remote_action_set @htmlonly for setting remote configuration or</li>
                                                  <li> @endhtmlonly @ref connector_remote_action_query @htmlonly for querying remote configuration </li></ul> @endhtmlonly */
-    struct {
-        connector_remote_group_t group;     /**< Group configuration to be accessed */
-        connector_remote_element_t element; /**< Element of the group configuration */
-    } request;                              /**< Callback request data */
+    connector_remote_group_t group;         /**< Group configuration to be accessed */
+    connector_remote_element_t element;     /**< Element of the group configuration */
 
-    struct {
-        unsigned int error_id;                  /**< Callback writes error enumeration value if error is encountered.
-                                                     Error description is sent if it's provided for the given error_id. */
-        union {
-            char const * error_hint;            /**< Callback returns a pointer to a constant null-terminated string which will be sent
-                                                     to the iDigi connector Device Cloud if error is encountered.
-                                                     Note: this string cannot be altered until next callback call. */
-            connector_element_value_t * value;  /**< Pointer to memory where callback write the element value */
-        } element;                              /**< Callback's response element data or error hint */
-    } response;                                 /**< Callback response data */
+    unsigned int error_id;                  /**< Callback writes error enumeration value if error is encountered.
+                                                 Error description is sent if it's provided for the given error_id. */
+    union {
+        char const * error_hint;            /**< Callback returns a pointer to a constant null-terminated string which will be sent
+                                                 to the iDigi connector Device Cloud if error is encountered.
+                                                 Note: this string cannot be altered until next callback call. */
+        connector_element_value_t * value;  /**< Pointer to memory where callback write the element value */
+    } response;                              /**< Callback's response element data or error hint */
 
-} connector_remote_config_data_t;
+} connector_remote_config_t;
 /**
 * @}
 */
+
 
 typedef struct {
     connector_remote_group_t const * groups;
@@ -205,18 +202,18 @@ typedef struct {
 
 
 typedef enum {
- connector_rci_error_OFFSET = 1,
- connector_rci_error_bad_command =  connector_rci_error_OFFSET,
- connector_rci_error_bad_descriptor,
- connector_rci_error_COUNT
+    connector_rci_error_OFFSET = 1,
+    connector_rci_error_bad_command =  connector_rci_error_OFFSET,
+    connector_rci_error_bad_descriptor,
+    connector_rci_error_COUNT
 } connector_rci_error_id_t;
 
 
 typedef struct {
- connector_group_table_t const * group_table;
- char const * const * error_table;
- unsigned int global_error_count;
- uint32_t firmware_target_zero_version;
-} connector_remote_config_t;
+    connector_group_table_t const * group_table;
+    char const * const * error_table;
+    unsigned int global_error_count;
+    uint32_t firmware_target_zero_version;
+} connector_remote_config_data_t;
 
 #endif /* remote_config_h */

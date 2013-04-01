@@ -372,7 +372,7 @@ error:
     return status;
 }
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length)
 {
@@ -450,20 +450,16 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_status_handler(connector_status_request_t const request,
-                                           void const * const request_data, size_t const request_length,
-                                           void * response_data, size_t * const response_length)
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
 
     switch (request)
     {
         case connector_status_ping_response:
         {
-            connector_message_status_response_t const * const status_response = request_data;
+            connector_message_status_response_t const * const status_response = data;
 
             if (status_response->status == connector_session_status_success)
                 app_waiting_for_ping_response = 0;
@@ -475,18 +471,18 @@ connector_callback_status_t app_status_handler(connector_status_request_t const 
 
         case connector_status_ping_request:
         {
-            connector_session_status_t * const status = response_data;
+            connector_session_status_t * const status = data;
 
             APP_DEBUG("Received ping request.\n");
             *status = connector_session_status_success;
             break;
         }
 
-        case connector_status_tcp:
-            status = app_tcp_status(request_data);
+        case connector_request_id_status_tcp:
+            status = app_tcp_status(data);
             break;
 
-        case connector_status_stop_completed:
+        case connector_request_id_status_stop_completed:
             APP_DEBUG("connector_restore_keepalive\n");
             break;
 

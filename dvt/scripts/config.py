@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import ConfigParser
 import os
 import fileinput, string, sys
@@ -127,20 +128,21 @@ def update_platform_h(platform_file, target_ssl_cert='public/certificates/idigi-
 def update_config_c(cnfg_file, **device_config):
 
   old_mac = '{0x00, 0x00, 0x00, 0x00, 0x00, 0x00}'
-  old_vendor_id = '{0x00, 0x00, 0x00, 0x00}'
+  old_vendor_id = '0x00000000'
   old_device_type = '"Linux Application"'
   old_imei = '"000000-00-000000-0"'
   old_esn = '"00000000"'
   old_meid = '"00000000000000"'
   # For backwards compatibility of old tests, replace 'my.idigi.com'
   # or 'developer.idigi.com' with target server.
-  old_server_urls = ['"my.idigi.com"', '"developer.idigi.com"']
+  old_server_urls = ['"login.etherios.com"', '"my.idigi.com"', '"developer.idigi.com"']
 
   # Setup Vendor ID
   vendor_id = device_config['vendor_id'] if device_config.has_key('vendor_id') else 0
-  hex_string = '%08X' % vendor_id
-  new_vendor_id  = '{%s}' % ', '.join([ '0x%s' % hex_string[x:x+2] for x in xrange(0,len(hex_string), 2)])
-
+  # hex_string = '%08X' % vendor_id
+  # new_vendor_id  = '{%s}' % ', '.join([ '0x%s' % hex_string[x:x+2] for x in xrange(0,len(hex_string), 2)])
+  new_vendor_id = '0x%08X' % vendor_id
+  
   # Setup Device ID
   device_id = device_config['device_type'] if device_config.has_key('device_type') else 'iC DVT'
 

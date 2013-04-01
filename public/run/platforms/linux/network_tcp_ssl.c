@@ -337,7 +337,7 @@ done:
 /*
  * Send data to the iDigi Device Cloud, this routine must not block.
  */
-static connector_callback_status_t app_network_tcp_send(connector_network_send_data_t * const data)
+static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
@@ -359,7 +359,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_d
 /*
  * This routine reads a specified number of bytes from the iDigi Device Cloud.
  */
-static connector_callback_status_t app_network_tcp_receive(connector_network_receive_data_t * const data)
+static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
@@ -414,7 +414,7 @@ done:
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_close(connector_network_close_data_t * const data)
+static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
@@ -431,7 +431,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_open(connector_network_open_data_t * const data)
+static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
 {
     connector_callback_status_t status;
     in_addr_t ip_addr;

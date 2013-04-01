@@ -42,6 +42,7 @@
 
 typedef enum {
     device_request_not_support,
+    device_request_invalid_data,
     device_request_stop_idigi,
     device_request_start_idigi,
     device_request_stop_terminate_idigi,
@@ -70,7 +71,7 @@ typedef enum {
 
 typedef struct
 {
-    connector_data_service_request_t request;
+    connector_request_id_data_service_t request;
     connector_data_service_put_request_t header;
     char file_path[DS_FILE_NAME_LEN];
     size_t bytes_sent;

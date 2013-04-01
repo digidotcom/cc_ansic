@@ -38,7 +38,7 @@ connector_status_t app_send_put_request(connector_handle_t handle)
 }
 #define BUFFER_SIZE 64
 
-connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length)
 {

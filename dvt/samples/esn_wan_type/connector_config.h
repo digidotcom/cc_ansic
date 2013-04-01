@@ -33,7 +33,7 @@
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "iDigi connector Linux Sample"
-#define CONNECTOR_CLOUD_URL                            "my.idigi.com"
+#define CONNECTOR_CLOUD_URL                            "login.etherios.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              5
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
 #define CONNECTOR_WAIT_COUNT                           5
@@ -47,12 +47,12 @@
 #define CONNECTOR_FILE_SYSTEM_SUPPORT
 #define CONNECTOR_REMOTE_CONFIGURATION_SUPPORT
 
-#define CONNECTOR_DEVICE_ID_METHOD                      connector_auto_device_id_method
-#define CONNECTOR_NETWORK_TCP_START                     connector_auto_connect
-#define CONNECTOR_NETWORK_UDP_START                     connector_auto_connect
-#define CONNECTOR_NETWORK_SMS_START                     connector_auto_connect
-#define CONNECTOR_WAN_TYPE                              connector_esn_wan_type
-#define CONNECTOR_IDENTITY_VERIFICATION                 connector_simple_identity_verification
+#define CONNECTOR_DEVICE_ID_METHOD                      connector_device_id_method_auto
+#define CONNECTOR_NETWORK_TCP_START                     connector_connect_auto
+#define CONNECTOR_NETWORK_UDP_START                     connector_connect_auto
+#define CONNECTOR_NETWORK_SMS_START                     connector_connect_auto
+#define CONNECTOR_WAN_TYPE                              connector_wan_type_esn
+#define CONNECTOR_IDENTITY_VERIFICATION                 connector_identity_verification_simple
 
 #endif
 
