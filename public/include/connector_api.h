@@ -224,21 +224,18 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_request_id_status_t  iDigi Connector/Cloud 
+* @defgroup connector_request_id_status_t  Cloud Connector status
 * status request IDs @{ 
 */
 /**
-* These request IDs are used whenever the iDigi Connector wants to communicate either its
-* status or the iDigi Device Cloud's status to the user.The class ID associated with these
-* request ID is connector_class_id_status.
+* These request IDs are used by Cloud Connector to communicate its status change to the user.
+* The class ID associated with these request ID is connector_class_id_status.
 */
 typedef enum {
-    connector_request_id_status_ping_response,    /**< Used in a callback when the iDigi Connector receives a status/ping response from the server */
-    connector_request_id_status_ping_request,     /**< Used in a callback when the iDigi Connector receives a status/ping request from the server */
-    connector_request_id_status_tcp,              /**< Used in a callback for iDigi connector TCP status. The callback is called to notify the application that
-                                        TCP connection has been established, a keep-alive message was not received, or keep-alive message was received and restored.
-                                          @see connector_tcp_status_t */
-    connector_request_id_status_stop_completed    /**< Used in a callback when the iDigi connector has stopped a transport running via @ref connector_initiate_action call with @ref connector_initiate_transport_stop. */
+    connector_request_id_status_tcp,            /**< Used in a callback for iDigi connector TCP status. The callback is called to notify the application that
+                                                    TCP connection has been established, a keep-alive message was not received, or keep-alive message was received and restored.
+                                                    @see connector_tcp_status_t */
+    connector_request_id_status_stop_completed  /**< Used in a callback when the iDigi connector has stopped a transport running via @ref connector_initiate_action call with @ref connector_initiate_transport_stop. */
 
 } connector_request_id_status_t;
 /**
@@ -418,166 +415,6 @@ typedef struct  {
 /**
 * @}
 */
-
-
-#ifdef CONNECTOR_SM
-/**
-* @defgroup connector_message_status_response_t Data type used in all the status responses
-* @{
-*/
-/**
-* This data structure is used when the callback is called with the iDigi Device Cloud response
-* if the response is requested and it contains just the status.
-*
-* @see connector_status_ping_response
-* @see connector_sm_device_to_server_config
-* @see connector_initiate_binary_point
-*/
-typedef struct
-{
-    void const * user_context;  /**< User context passed in the request */
-    connector_session_status_t status;  /**< Response status */
-    char const * error_text;    /**< An optional, null-terminated error string */
-} connector_message_status_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_message_status_request_t Data type used for status message/response
-* @{
-*/
-/**
-* This data structure is used when the connector_initiate_action() API is called with
-* connector_initiate_status_message, connector_initiate_config_message where only the status
-* is returned from the iDigi Device Cloud.
-*
-* @see connector_initiate_status_message
-* @see connector_initiate_config_message
-* @see connector_initiate_action
-* @see connector_initiate_session_cancel
-*/
-typedef struct
-{
-    connector_transport_t transport;    /**< Transport method to use */
-    unsigned int flags;             /**< Set to CONNECTOR_DATA_RESPONSE_NOT_NEEDED if response is not needed */
-    void const * user_context;      /**< User provided application context */
-} connector_message_status_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_sm_cli_request_t Data type used for cli request and response
-* @{
-*/
-/**
-* This data structure is used when the callback is called to pass the request or to get the response.
-*
-* @see connector_sm_cli_request
-*
-*/
-typedef struct
-{
-    connector_data_service_type_t type;    /**< Type to select the content to use. have_data: CLI request, need_data: CLI response,  total_length: Need total response bytes */
-    void const * user_context;         /**< User context, will be NULL when request is called, so that user can update this. Will carry user assigned context in the response */
-
-    union
-    {
-        struct
-        {
-            char const * buffer;       /**< Buffer pointer to write the CLI response to */
-            size_t bytes;              /**< It carries the sizeof CLI command */
-            unsigned int flags;        /**< Will be set to CONNECTOR_MSG_RESPONSE_NOT_NEEDED if response is not needed */
-        } request;
-
-        struct
-        {
-            char * buffer;             /**< Buffer pointer to write the CLI response to */
-            size_t bytes;              /**< When called it contains the size of the available response buffer size, in return it will carry the filled buffer size */
-            connector_session_status_t status; /**< Response status */
-        } response;
-
-        connector_session_status_t status; /**< When the type is connector_data_service_type_session_status, then this field will carry the reason for the session close */
-        size_t * total_bytes_ptr;      /**< When the type is connector_data_service_type_total_length, then user need to update the content of this pointer
-                                            with total response length. Applicable only for UDP and SMS transport methods */
-    } content;
-
-} connector_sm_cli_request_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_server_to_device_config_t Data type used for the Cloud to device config request
-* @{
-*/
-/**
-* This data structure is used when the callback is called with connector_data_service_server_to_device_config request id.
-*
-* @see connector_sm_server_to_device_config
-*
-*/
-typedef struct
-{
-    char * phone_number;    /**< A null-terminated phone number */
-    char * service_id;      /**< A null-terminated service identifier. It can be empty */
-} connector_server_to_device_config_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_device_to_server_config_t Data type used to send transport specific configuration message
-* @{
-*/
-/**
-* This data structure is used when the connector_initiate_action() API is called with
-* connector_initiate_config_message request id.
-*
-* @see connector_initiate_action
-* @see connector_initiate_config_message
-* @see connector_sm_device_to_server_config
-* @see connector_message_status_response_t
-*/
-typedef struct
-{
-    connector_transport_t transport; /**< Transport layer to use */
-    unsigned int flags;          /**< Set to CONNECTOR_DATA_RESPONSE_NOT_NEEDED if response is not needed */
-    void const * user_context;   /**< User context to be passed back in the response */
-    unsigned int sim_slot;       /**< The SIM slot number, use 0 for unknown */
-    char * identifier;           /**< A null-terminated, SIM or phone number identifier */
-} connector_device_to_server_config_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_sm_opaque_response_t Data type used to deliver the opaque response from the Cloud
-* @{
-*/
-/**
-* This data structure is used when the callback is called to pass the Cloud response for which the
-* associated request is not present. It may be cancelled by the user or iDigi Connector maybe restarted
-* after sending the request.
-*
-* @see connector_sm_opaque_response
-*
-*/
-typedef struct
-{
-    uint32_t id;                    /**< Can be used to keep track of a multipart response */
-    void * data;                    /**< Pointer to opaque response */
-    size_t bytes;                   /**< Number of bytes available in the data */
-    unsigned int flags;             /**< Can be used to track last data block */
-    connector_session_status_t status;  /**< Response status, Application can use this to discard the subsequent
-                                        parts by returning connector_session_status_cancel */
-} connector_sm_opaque_response_t;
-/**
-* @}
-*/
-#endif
-
 
 /**
 * @defgroup connector_stop_condition_t Condition used on @ref connector_initiate_transport_stop in @ref connector_initiate_action
@@ -942,27 +779,14 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 /* configuration check */
 #if (!defined CONNECTOR_TRANSPORT_TCP)
 
-    #if (defined CONNECTOR_FIRMWARE_SERVICE)
-        #error CONNECTOR_FIRMWARE_SERVICE is defined but not CONNECTOR_TRANSPORT_TCP
-    #endif
-
-    #if (defined CONNECTOR_FILE_SYSTEM)
-        #error CONNECTOR_FILE_SYSTEM is defined but not CONNECTOR_TRANSPORT_TCP
-    #endif
-
-    #if (defined CONNECTOR_RCI_SERVICE)
-        #error CONNECTOR_RCI_SERVICE is defined but not CONNECTOR_TRANSPORT_TCP
-    #endif
-
-    #if (!defined CONNECTOR_TRANSPORT_UDP) && (!defined CONNECTOR_TRANSPORT_SMS)
-        #error All transports are disabled!
+    #if ((defined CONNECTOR_FIRMWARE_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE) || \
+                                            (!(defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_TRANSPORT_SMS)))
+        #define CONNECTOR_TRANSPORT_TCP
     #endif
 #endif
 
-#if (!defined CONNECTOR_DATA_SERVICE)
-    #if (defined CONNECTOR_DATA_POINTS)
-        #error CONNECTOR_DATA_POINTS is defined but not CONNECTOR_DATA_SERVICE
-    #endif
+#if (!(defined CONNECTOR_DATA_SERVICE) && (defined CONNECTOR_DATA_POINTS))
+    #define CONNECTOR_DATA_SERVICE
 #endif
 
 #if (defined CONNECTOR_CONST_PROTECTION)

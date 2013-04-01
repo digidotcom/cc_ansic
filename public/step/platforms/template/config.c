@@ -576,10 +576,8 @@ static char const * app_status_class_to_string(connector_status_request_t const 
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_status_ping_response);
-        enum_to_case(connector_status_ping_request);
-        enum_to_case(connector_status_tcp);
-        enum_to_case(connector_status_stop_completed);
+        enum_to_case(connector_request_id_status_tcp);
+        enum_to_case(connector_request_id_status_stop_completed);
     }
     return result;
 }
@@ -589,11 +587,12 @@ static char const * app_sm_class_to_string(connector_sm_request_t const value)
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_sm_cli_request);
-        enum_to_case(connector_sm_server_to_device_config);
-        enum_to_case(connector_sm_device_to_server_config);
-        enum_to_case(connector_sm_more_data);
-        enum_to_case(connector_sm_opaque_response);
+        enum_to_case(connector_request_id_sm_ping_request);
+        enum_to_case(connector_request_id_sm_ping_response);
+        enum_to_case(connector_request_id_sm_cli_request);
+        enum_to_case(connector_request_id_sm_cli_response);
+        enum_to_case(connector_request_id_sm_more_data);
+        enum_to_case(connector_request_id_sm_opaque_response);
     }
     return result;
 }
