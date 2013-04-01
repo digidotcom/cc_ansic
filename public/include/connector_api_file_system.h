@@ -59,6 +59,12 @@ typedef enum {
 */
 
 
+#if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
+typedef int64_t connector_file_offset_t;
+#else
+typedef int32_t connector_file_offset_t;
+#endif
+
 /** TODO: map the local file system flags */
 /**
 * @defgroup connector_file_system_open_flag_t File open flags
@@ -152,17 +158,17 @@ typedef struct
 */
 typedef struct
 {
-   void * user_context;                    /**< Holds user context */
-   void * errnum;                          /**< Application defined error token */
+   void * user_context;                    		/**< Holds user context */
+   void * errnum;                          		/**< Application defined error token */
 
-   void * handle;                          /**< Application defined file handle */
-   off_t  requested_offset;                /**< Requested file offset */
-   off_t  resulting_offset;                /**< Resulting file position */
+   void * handle;                          		/**< Application defined file handle */
+   connector_file_offset_t requested_offset; /**< Requested file offset */
+   connector_file_offset_t resulting_offset;	/**< Resulting file position */
    enum
    {
-        connector_file_system_seek_set,    /**<  Seek file position relative to start-of-file */
-        connector_file_system_seek_cur,    /**<  Seek file position relative to current position */
-        connector_file_system_seek_end     /**<  Seek file position relative to end-of-file */
+        connector_file_system_seek_set,    		/**<  Seek file position relative to start-of-file */
+        connector_file_system_seek_cur,    		/**<  Seek file position relative to current position */
+        connector_file_system_seek_end     		/**<  Seek file position relative to end-of-file */
 
    } origin;                                    /**< File seek origin */
 
@@ -207,11 +213,11 @@ typedef struct
 */
 typedef struct
 {
-    void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    void * user_context;                    	/**< Holds user context */
+    void * errnum;                          	/**< Application defined error token */
 
-    void * handle;                          /**< Application defined file handle */
-    off_t length_in_bytes;                  /**< File length in bytes to truncate to */
+    void * handle;                          	/**< Application defined file handle */
+    connector_file_offset_t length_in_bytes; /**< File length in bytes to truncate to */
 
 } connector_file_system_truncate_data_t;
 /**
@@ -349,8 +355,8 @@ typedef struct
 */
 typedef struct
 {
-    uint32_t last_modified;                     /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
-    off_t file_size;                            /**< File size in bytes */
+    uint32_t last_modified;                       /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
+    connector_file_offset_t file_size;          /**< File size in bytes */
     enum
     {
         connector_file_system_file_type_none,   /**< Is not a regular file or directory. */
@@ -479,8 +485,8 @@ typedef struct
     void * errnum;                     /**< Application defined error token */
 
     void  * buffer;                    /**< A pointer to memory, where callback writes error description */
-    size_t  bytes_abailable;           /**< Size of a error description buffer */
-    size_t  bytes_used;                /**< Number of error descriptio bytes */
+    size_t  bytes_available;                /**< Size of a error description buffer */
+    size_t  bytes_used;                     /**< Number of error descriptio bytes */
     enum
     {
         connector_file_system_unspec_error,                 /**< Fatal unspecified error */

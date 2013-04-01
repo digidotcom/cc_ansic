@@ -70,16 +70,6 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned short uint16_t;
 
-/**
- *  Unsigned 32 bit value.
- */
-  typedef unsigned int uint32_t;
-
-/**
-*  Signed 32 bit value.
-*/
-   typedef int int32_t;
-
 #ifndef UINT16_MAX
 /**
 *  Unsigned 16 bit maximum value.
@@ -87,39 +77,16 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 #define UINT16_MAX  0xFFFF
 #endif
 
-#ifndef INT32_MIN
 /**
-*  Signed 32 bit minimum value.
-*/
-#define INT32_MIN (-2147483647 -1)
-#endif
-
-#ifndef INT32_MAX
-/**
-*  Signed 32 bit maximum value.
-*/
-#define INT32_MAX 2147483647
-#endif
+ *  Unsigned 32 bit value.
+ */
+  typedef unsigned long int uint32_t;
 
 #ifndef UINT32_MAX
 /**
 *  Unsigned 32 bit maximum value.
 */
-#define UINT32_MAX 4294967295U
-#endif
-
-#ifndef SIZE_MAX
-/**
-*  size_t maximum value.
-*/
-#define SIZE_MAX  UINT32_MAX
-#endif
-
-#ifndef SCNd32
-/**
-*  Scan format specifier for signed 32 bit value.
-*/
-#define SCNd32 "ld"
+#define UINT32_MAX 4294967295UL
 #endif
 
 #ifndef SCNu32
@@ -129,11 +96,37 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 #define SCNu32 "lu"
 #endif
 
-#ifndef SCNx32
+#ifndef PRIu32
 /**
-*  Scan format specifier for 32 bit hex value.
+*  Print format specifier for unsigned 32 bit value.
 */
-#define SCNx32 "lx"
+#define PRIu32 "lu"
+#endif
+
+/**
+*  Signed 32 bit value.
+*/
+   typedef long int int32_t;
+
+#ifndef INT32_MIN
+/**
+*  Signed 32 bit minimum value.
+*/
+#define INT32_MIN -2147483648L
+#endif
+
+#ifndef INT32_MAX
+/**
+*  Signed 32 bit maximum value.
+*/
+#define INT32_MAX 2147483647L
+#endif
+
+#ifndef SCNd32
+/**
+*  Scan format specifier for signed 32 bit value.
+*/
+#define SCNd32 "ld"
 #endif
 
 #ifndef PRId32
@@ -143,11 +136,11 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 #define PRId32 "ld"
 #endif
 
-#ifndef PRIu32
+#ifndef SCNx32
 /**
-*  Print format specifier for unsigned 32 bit value.
+*  Scan format specifier for 32 bit hex value.
 */
-#define PRIu32 "lu"
+#define SCNx32 "lx"
 #endif
 
 #ifndef PRIx32
@@ -155,6 +148,90 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 *  Print format specifier for 32 bit hex value.
 */
 #define PRIx32 "lx"
+#endif
+
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+
+/**
+ *  Unsigned 64 bit value.
+ */
+  typedef unsigned long long int uint64_t;
+
+#ifndef UINT64_MAX
+/**
+*  Unsigned 64 bit maximum value.
+*/
+#define UINT64_MAX 18446744073709551615ULL
+#endif
+
+#ifndef SCNu64
+/**
+*  Scan format specifier for unsigned 64 bit value.
+*/
+#define SCNu64 "llu"
+#endif
+
+#ifndef PRIu64
+/**
+*  Print format specifier for unsigned 64 bit value.
+*/
+#define PRIu64 "llu"
+#endif
+
+/**
+*  Signed 32 bit value.
+*/
+   typedef long long int int64_t;
+
+#ifndef INT64_MIN
+/**
+*  Signed 64 bit minimum value.
+*/
+#define INT64_MIN -9223372036854775808LL
+#endif
+
+#ifndef INT64_MAX
+/**
+*  Signed 64 bit maximum value.
+*/
+#define INT64_MAX 9223372036854775807LL
+#endif
+
+#ifndef SCNd64
+/**
+*  Scan format specifier for signed 64 bit value.
+*/
+#define SCNd64 "lld"
+#endif
+
+#ifndef PRId64
+/**
+*  Print format specifier for signed 64 bit value.
+*/
+#define PRId64 "lld"
+#endif
+
+#ifndef SCNx64
+/**
+*  Scan format specifier for 64 bit hex value.
+*/
+#define SCNx64 "llx"
+#endif
+
+#ifndef PRIx64
+/**
+*  Print format specifier for 64 bit hex value.
+*/
+#define PRIx64 "llx"
+#endif
+
+#endif
+
+#ifndef SIZE_MAX
+/**
+*  size_t maximum value.
+*/
+#define SIZE_MAX  UINT32_MAX
 #endif
 
 /**

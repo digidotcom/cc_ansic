@@ -60,7 +60,7 @@ typedef enum
 */
 
 /**
-* @defgroup connector_timeval_t  Structure to represent time in seconds and milliseconds.
+* @defgroup connector_time_epoch_fractional_t  Structure to represent time in seconds and milliseconds.
 * @{
 */
 /**
@@ -72,11 +72,30 @@ typedef enum
 typedef struct
 {
     uint32_t seconds;
-    unsigned int milliseconds;
-} connector_timeval_t;
+    uint32_t milliseconds;
+} connector_time_epoch_fractional_t;
 /**
 * @}
 */
+
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+/**
+* @defgroup connector_time_epoch_whole_t  Structure to represent time in milliseconds.
+* @{
+*/
+/**
+* The data structure to represent milliseconds since the epoch (00:00:00 UTC on 1 January 1970).
+*
+* @see connector_data_point_t
+*/
+typedef struct
+{
+    uint64_t milliseconds;
+} connector_time_epoch_whole_t;
+/**
+* @}
+*/
+#endif
 
 /**
 * @defgroup connector_data_point_t Data structure used to represent each Data Point.
@@ -89,7 +108,7 @@ typedef struct
 * @see connector_request_data_point_single_t
 * @see connector_data_point_type_t
 */
-typedef struct connector_data_point_t
+typedef struct
 {
     struct
     {
@@ -122,13 +141,19 @@ typedef struct connector_data_point_t
         enum
         {
             connector_time_server,          /**< The timev.alue is ignored and the server time is used instead. */
-            connector_time_local_epoch,     /**< A transport-specific time.value is specified in epoch long format. */
+            connector_time_local_epoch_fractional,     /**< A transport-specific time.value is specified in epoch sec/msec format. */
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+            connector_time_local_epoch_whole, /**< A transport-specific time.value is specified in epoch 64-bit format. */
+#endif
             connector_time_local_iso8601    /**< A transport-specific time.value is specified in ISO 8601 string format. */
         } source;
 
         union
         {
-            connector_timeval_t msec_since_epoch; /**< Time since the Epoch time in milliseconds */
+            connector_time_epoch_fractional_t since_epoch_fractional; /**< Time since the Epoch time in seconds and milliseconds */
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+            connector_time_epoch_whole_t since_epoch_whole; /**< Time since the Epoch time in milliseconds */
+#endif
             char * iso8601_string;      /**< A null-terminated local time in ISO 8601 format */
         } value;
 

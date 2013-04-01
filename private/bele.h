@@ -29,6 +29,20 @@
 #define BYTE32_1(x32)   ((uint8_t) (((uint32_t)(x32)) >>  8))
 #define BYTE32_0(x32)   ((uint8_t)  ((uint32_t)(x32)))
 
+#if CONNECTOR_HAS_64_BIT_INTEGERS
+#define	LOW32(x64)      ((uint32_t) (x64))
+#define	HIGH32(x64)     ((uint32_t) (((uint64_t)(x64)) >> 32))
+
+#define BYTE32_7(x64)   ((uint8_t) (((uint64_t)(x64)) >> 56))
+#define BYTE32_6(x64)   ((uint8_t) (((uint64_t)(x64)) >> 48))
+#define BYTE32_5(x64)   ((uint8_t) (((uint64_t)(x64)) >> 40))
+#define BYTE32_4(x64)   ((uint8_t) (((uint64_t)(x64)) >> 32))
+#define BYTE32_3(x64)   ((uint8_t) (((uint64_t)(x64)) >> 24))
+#define BYTE32_2(x64)   ((uint8_t) (((uint64_t)(x64)) >> 16))
+#define BYTE32_1(x64)   ((uint8_t) (((uint64_t)(x64)) >>  8))
+#define BYTE32_0(x64)   ((uint8_t)  ((uint64_t)(x64)))
+#endif
+
 /*
  *	Endian-independent multi-byte-creation macros
  */

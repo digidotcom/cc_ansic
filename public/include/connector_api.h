@@ -13,6 +13,14 @@
 #ifndef _CONNECTOR_API_H
 #define _CONNECTOR_API_H
 
+#if ! (defined CONNECTOR_CONST_PROTECTION)
+#if (defined CONST)
+#define CONNECTOR_CONST_PROTECTION CONST
+#undef CONST
+#endif
+#define CONST const
+#endif
+
 /**
  * Current version of the iDigi connector that application is using or built for.
  *
@@ -24,6 +32,11 @@
 #define CONNECTOR_VERSION   0x01000000UL
 
 #include "connector_config.h"
+
+#if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
+#define CONNECTOR_HAS_64_BIT_INTEGERS
+#endif
+
 #include "connector_types.h"
 
 
@@ -1413,6 +1426,11 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
     #if (defined CONNECTOR_DATA_POINTS)
         #error CONNECTOR_DATA_POINTS is defined but not CONNECTOR_DATA_SERVICE
     #endif
+#endif
+
+#if (defined CONNECTOR_CONST_PROTECTION)
+#undef CONST
+#define CONST CONNECTOR_CONST_PROTECTION
 #endif
 
 #endif /* _CONNECTOR_API_H */
