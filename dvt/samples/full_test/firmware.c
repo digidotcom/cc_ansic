@@ -104,7 +104,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
     APP_DEBUG("filename = %s\n", download_info->filename);
     dvt_current_ptr->file_size = 0;
 
-    switch (download_info->target)
+    switch (download_info->target_number)
     {
     case dvt_case_fw_download_denied:
         download_info->status = connector_firmware_status_download_denied;
@@ -119,7 +119,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         break;
 
     case dvt_case_fw_unauthenticated:
-        download_info->status = connector_firmware_status__download_unauthenticated;
+        download_info->status = connector_firmware_status_download_unauthenticated;
         break;
 
     case dvt_case_fw_not_allowed:
@@ -172,7 +172,7 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
 
     APP_DEBUG("target = %d, offset = 0x%04X, length = %zu\n", image_data->target_number, image_data->image.offset, image_data->image.bytes_used);
 
-    switch (image_data->target)
+    switch (image_data->target_number)
     {
     case dvt_case_fw_user_abort:
         image_data->status = connector_firmware_status_user_abort;
@@ -219,18 +219,18 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
 
     if (dvt_current_ptr == NULL)
     {
-        complete_response->status = connector_firmware_status_device_error;
+        complete_response->status = connector_firmware_download_not_complete;
         goto done;
     }
 
     if (dvt_current_ptr->state != dvt_state_fw_download_progress)
     {
         APP_DEBUG("firmware_download_complete: invalid DVT state [%d]\n", dvt_current_ptr->state);
-        complete_response->status = connector_firmware_status_device_error;
+        complete_response->status = connector_firmware_download_not_complete;
     }
     else
     {
-        complete_response->status = connector_firmware_status_download_success;
+        complete_response->status = connector_firmware_download_success;
     }
 
     APP_DEBUG("Download complete: target    = %d\n",    complete_response->target_number);
