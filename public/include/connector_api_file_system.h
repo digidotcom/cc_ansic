@@ -266,7 +266,7 @@ typedef struct
 
     void * handle;                          /**< Application defined file or directory handle */
 
-} connector_file_close_data_t;
+} connector_file_system_close_data_t;
 /**
 * @}
 */
@@ -333,7 +333,7 @@ typedef struct
 
     char const * path;                      /**< File path */
     connector_file_system_hash_algorithm_t  hash_algorithm;     /**< hash algorithm */
-    void const * hash_value;                /**< A pointer to memory, where callback writes hash value */
+    void * hash_value;                /**< A pointer to memory, where callback writes hash value */
     size_t bytes_requested;                 /**< Size of a memory buffer */
 
 } connector_file_system_hash_data_t;
