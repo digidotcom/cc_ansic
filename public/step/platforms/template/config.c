@@ -582,6 +582,7 @@ static char const * app_status_class_to_string(connector_status_request_t const 
     return result;
 }
 
+#if (defined CONNECTOR_SHORT_MESSAGE)
 static char const * app_sm_class_to_string(connector_sm_request_t const value)
 {
     char const * result = NULL;
@@ -596,6 +597,7 @@ static char const * app_sm_class_to_string(connector_sm_request_t const value)
     }
     return result;
 }
+#endif
 
 static char const * app_status_error_to_string(connector_status_t const value)
 {
@@ -677,9 +679,11 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
     case connector_class_id_status:
         APP_DEBUG("Request: %s (%d) ", app_status_class_to_string(error_data->request_id.status_request), error_data->request_id.status_request);
         break;
+#if (defined CONNECTOR_SHORT_MESSAGE)
     case connector_class_id_short_message:
         APP_DEBUG("Request: %s (%d) ", app_sm_class_to_string(error_data->request_id.sm_request), error_data->request_id.sm_request);
         break;
+#endif
     }
 
     APP_DEBUG("Error status: %s (%d)\n", app_status_error_to_string(error_data->status), error_data->status);

@@ -330,6 +330,10 @@ typedef enum
 * @}
 */
 
+#if (defined CONNECTOR_TRANSPORT_UDP)
+#define CONNECTOR_SHORT_MESSAGE
+#endif
+
 #if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
 #include "connector_api_firmware.h"
 #endif
@@ -344,6 +348,10 @@ typedef enum
 
 #if (defined CONNECTOR_FILE_SYSTEM)
 #include "connector_api_file_system.h"
+#endif
+
+#if (defined CONNECTOR_SHORT_MESSAGE)
+#include "connector_api_short_message.h"
 #endif
 
 #include "connector_api_os.h"
