@@ -34,9 +34,6 @@
 #define CONNECTOR_SM_TIMEOUT        10  /* In seconds, 0: Wait forever for the complete request/response */
 
 /* #define CONNECTOR_NO_MALLOC */
-#if defined CONNECTOR_NO_MALLOC && defined CONNECTOR_TRANSPORT_TCP && !defined ENABLE_COMPILE_TIME_DATA_PASSING
-#define CONNECTOR_MSG_MAX_TRANSACTION           1
-#endif
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "Etherios Connector Linux Sample"
