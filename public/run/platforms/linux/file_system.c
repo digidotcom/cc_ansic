@@ -104,7 +104,7 @@ static int app_convert_file_open_mode(int const oflag)
 #endif
 }
 
-static connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_data_t * const data)
+static connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
 {
     long int errnum = (long int)data->errnum;
 
@@ -174,7 +174,7 @@ static app_md5_ctx * app_allocate_md5_ctx(unsigned int const flags)
     return ctx;
 }
 
-static connector_callback_status_t app_process_file_session_error(connector_file_session_error_data_t * const data)
+static connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
 {
      APP_DEBUG("Session Error %d\n", data-session_error);
 
@@ -192,7 +192,7 @@ static connector_callback_status_t app_process_file_session_error(connector_file
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_file_hash(connector_file_system_hash_data_t * const data)
+static connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     app_md5_ctx * ctx = data->user_context;
@@ -255,7 +255,7 @@ done:
 }
 #else
 
-static connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_data_t * const data)
+static connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
 {
     UNUSED_ARGUMENT(data);
     APP_DEBUG("Session Error %d\n", data->session_error);
@@ -264,7 +264,7 @@ static connector_callback_status_t app_process_file_session_error(connector_file
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_file_hash(connector_file_system_hash_data_t * const data)
+static connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
 {
 
     /* app_process_file_hash() should not be called if APP_ENABLE_MD5 is not defined */
@@ -275,10 +275,10 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 }
 #endif
 
-static connector_callback_status_t app_process_file_stat(connector_file_system_stat_data_t * const data)
+static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
 {
     struct stat statbuf;
-    connector_file_system_stat_t * pstat = &data->statbuf;
+    connector_file_system_statbuf_t * pstat = &data->statbuf;
     connector_callback_status_t status = connector_callback_continue;
 
     int const result = stat(data->path, &statbuf);
@@ -335,10 +335,10 @@ done:
 }
 
 
-static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_data_t * const data)
+static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
     struct stat statbuf;
-    connector_file_system_stat_t * pstat = &data->statbuf;
+    connector_file_system_statbuf_t * pstat = &data->statbuf;
     connector_callback_status_t status = connector_callback_continue;
 
     int const result = stat(data->path, &statbuf);
@@ -367,7 +367,7 @@ done:
     return status;
 }
 
-static connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_data_t * const data)
+static connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_t * const data)
 {
 
     connector_callback_status_t status = connector_callback_continue;
@@ -400,7 +400,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     return status;
 }
 
-static connector_callback_status_t app_process_file_closedir(connector_file_system_close_data_t * const data)
+static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
     app_dir_data_t * dir_data = data->handle;
 
@@ -423,7 +423,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_data_t * const data)
+static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     app_dir_data_t * dir_data = data->handle;
@@ -471,7 +471,7 @@ done:
 }
 
 
-static connector_callback_status_t app_process_file_open(connector_file_system_open_data_t * const data)
+static connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int const oflag = app_convert_file_open_mode(data->oflag);
@@ -492,7 +492,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
 }
 
 
-static connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_data_t * const data)
+static connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
@@ -527,7 +527,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
     return status;
 }
 
-static connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_data_t * const data)
+static connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
@@ -544,7 +544,7 @@ static connector_callback_status_t app_process_file_ftruncate(connector_file_sys
     return status;
 }
 
-static connector_callback_status_t app_process_file_remove(connector_file_system_remove_data_t * const data)
+static connector_callback_status_t app_process_file_remove(connector_file_system_remove_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -560,7 +560,7 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     return status;
 }
 
-static connector_callback_status_t app_process_file_read(connector_file_system_read_data_t * const data)
+static connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
@@ -581,7 +581,7 @@ done:
     return status;
 }
 
-static connector_callback_status_t app_process_file_write(connector_file_system_write_data_t * const data)
+static connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
@@ -603,7 +603,7 @@ done:
     return status;
 }
 
-static connector_callback_status_t app_process_file_close(connector_file_system_close_data_t * const data)
+static connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;

@@ -73,7 +73,7 @@ typedef int32_t connector_file_offset_t;
 /**
  * Open file for reading only.
  *
- * @see connector_file_system_open_data_t
+ * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
 #define	CONNECTOR_FILE_O_RDONLY	0
@@ -81,7 +81,7 @@ typedef int32_t connector_file_offset_t;
 /**
  * Open for writing only.
  *
- * @see connector_file_system_open_data_t
+ * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
 #define	CONNECTOR_FILE_O_WRONLY	1
@@ -89,7 +89,7 @@ typedef int32_t connector_file_offset_t;
 /**
  * Open for reading and writing.
  *
- * @see connector_file_system_open_data_t
+ * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
 #define	CONNECTOR_FILE_O_RDWR	2
@@ -97,7 +97,7 @@ typedef int32_t connector_file_offset_t;
 /**
  * File offset shall be set to the end of the file prior to each write.
  *
- * @see connector_file_system_open_data_t
+ * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
 #define	CONNECTOR_FILE_O_APPEND	0x0008
@@ -105,7 +105,7 @@ typedef int32_t connector_file_offset_t;
 /**
  * Create file, if does not exist.
  *
- * @see connector_file_system_open_data_t
+ * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
 #define	CONNECTOR_FILE_O_CREAT	0x0200
@@ -115,7 +115,7 @@ typedef int32_t connector_file_offset_t;
  * Truncate file, successfully opened for writing to 0 length, don't change
  * the owner and ile access modes.
  *
- * @see connector_file_system_open_data_t
+ * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
 #define	CONNECTOR_FILE_O_TRUNC	0x0400
@@ -125,7 +125,7 @@ typedef int32_t connector_file_offset_t;
  
  
 /**
-* @defgroup connector_file_system_open_data_t Data type used 
+* @defgroup connector_file_system_open_t Data type used 
 * for file system open callback 
 * @{ 
 */
@@ -142,13 +142,13 @@ typedef struct
     int  oflag;                             /**< bitwise-inclusive OR of @ref connector_file_system_open_flag_t flags */
     void * handle;                          /**< TODO: Don't check handle in private code!!!  Application defined file handle */
 
-} connector_file_system_open_data_t;
+} connector_file_system_open_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_lseek_data_t Data type used 
+* @defgroup connector_file_system_lseek_t Data type used 
 * for file system lseek callback 
 * @{ 
 */
@@ -172,14 +172,14 @@ typedef struct
 
    } origin;                                    /**< File seek origin */
 
-} connector_file_system_lseek_data_t;
+} connector_file_system_lseek_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_write_data_t Data type used 
+* @defgroup connector_file_system_write_t Data type used 
 * for file system write callback 
 * @{ 
 */
@@ -197,13 +197,13 @@ typedef struct
     size_t  bytes_available;                /**< Number of bytes to write */
     size_t  bytes_used;                     /**< Number of bytes written to a file */
 
-} connector_file_system_write_data_t;
+} connector_file_system_write_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_truncate_data_t Data type used 
+* @defgroup connector_file_system_truncate_t Data type used 
 * for file system truncate callback 
 * @{ 
 */
@@ -219,14 +219,14 @@ typedef struct
     void * handle;                          	/**< Application defined file handle */
     connector_file_offset_t length_in_bytes; /**< File length in bytes to truncate to */
 
-} connector_file_system_truncate_data_t;
+} connector_file_system_truncate_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_read_data_t Data type used 
+* @defgroup connector_file_system_read_t Data type used 
 * for file system read callback 
 * @{ 
 */
@@ -244,14 +244,14 @@ typedef struct
     size_t  bytes_available;                /**< Size of a memory buffer */
     size_t  bytes_used;                     /**< Number of bytes read from a file and copied to memory buffer */
 
-} connector_file_system_read_data_t;
+} connector_file_system_read_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_close_data_t Data type used 
+* @defgroup connector_file_system_close_t Data type used 
 * for file system close callback 
 * @{ 
 */
@@ -266,14 +266,14 @@ typedef struct
 
     void * handle;                          /**< Application defined file or directory handle */
 
-} connector_file_system_close_data_t;
+} connector_file_system_close_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_opendir_data_t Data type used 
+* @defgroup connector_file_system_opendir_t Data type used 
 * for file system opendir callback 
 * @{ 
 */
@@ -289,7 +289,7 @@ typedef struct
     char const * path;                      /**< Directory path */
     void * handle;                          /**< Application defined directory handle */
 
-} connector_file_system_opendir_data_t;
+} connector_file_system_opendir_t;
 /**
 * @}
 */
@@ -318,7 +318,7 @@ typedef enum
 */
 
 /**
-* @defgroup connector_file_system_hash_data_t Data type used 
+* @defgroup connector_file_system_hash_t Data type used 
 * for file system hash callback 
 * @{ 
 */
@@ -336,14 +336,14 @@ typedef struct
     void * hash_value;                /**< A pointer to memory, where callback writes hash value */
     size_t bytes_requested;                 /**< Size of a memory buffer */
 
-} connector_file_system_hash_data_t;
+} connector_file_system_hash_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_stat_t File status data
+* @defgroup connector_file_system_statbuf_t File status data
 * @{
 */
 /**
@@ -363,13 +363,13 @@ typedef struct
         connector_file_system_file_type_is_reg  /**< Is a regular file. */
     } flags;                                    /**< Directory, regular, or neither */
 
-} connector_file_system_stat_t;
+} connector_file_system_statbuf_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_stat_data_t Data type used 
+* @defgroup connector_file_system_stat_t Data type used 
 * for file system status callback @{ 
 */
 /**
@@ -384,7 +384,7 @@ typedef struct
     void * errnum;                          /**< Application defined error token */
 
     char const * path;                      /**< File path */
-    connector_file_system_stat_t statbuf;   /**< File status data */
+    connector_file_system_statbuf_t statbuf;   /**< File status data */
 
     struct
     {
@@ -393,14 +393,14 @@ typedef struct
     } hash_algorithm;
 
 
-} connector_file_system_stat_data_t;
+} connector_file_system_stat_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_stat_dir_entry_data_t Data 
+* @defgroup connector_file_system_stat_dir_entry_t Data 
 * type used for file system directory entry status callback 
 * @{ 
 */
@@ -417,16 +417,16 @@ typedef struct
     void * errnum;                          /**< Application defined error token */
 
     char const * path;                      /**< Full path */
-    connector_file_system_stat_t statbuf;   /**< File status data */
+    connector_file_system_statbuf_t statbuf;   /**< File status data */
 
-} connector_file_system_stat_dir_entry_data_t;
+} connector_file_system_stat_dir_entry_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_readdir_data_t Data type used 
+* @defgroup connector_file_system_readdir_t Data type used 
 * for file system readdir callback @{ 
 */
 /**
@@ -442,14 +442,14 @@ typedef struct
     char * entry_name;                      /**< A pointer to memory, where callback writes directory entry name */
     size_t bytes_available;                 /**< Size of a memory buffer for directory entry name */
 
-} connector_file_system_readdir_data_t;
+} connector_file_system_readdir_t;
 /**
 * @}
 */
 
 
 /**
-* @defgroup connector_file_system_remove_data_t Data type used 
+* @defgroup connector_file_system_remove_t Data type used 
 * for file system remove callback @{ 
 */
 /**
@@ -463,13 +463,13 @@ typedef struct
 
     char const * path;                      /**< File path */
 
-} connector_file_system_remove_data_t;
+} connector_file_system_remove_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_get_error_data_t Data type 
+* @defgroup connector_file_system_get_error_t Data type 
 * used for file system ret error data callback @{ 
 */
 /**
@@ -497,13 +497,13 @@ typedef struct
         connector_file_system_permision_denied              /**< Permision denied */
     } error_status;                                         /**< Error status */
 
-} connector_file_system_get_error_data_t;
+} connector_file_system_get_error_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_session_error_data_t Data type 
+* @defgroup connector_file_system_session_error_t Data type 
 * used for file system session error callback 
 * @{ 
 */
@@ -517,7 +517,7 @@ typedef struct
 
     connector_session_error_t   session_error;  /**	TODO: Needs a describe 	*/
 
-} connector_file_system_session_error_data_t;
+} connector_file_system_session_error_t;
 /**
 * @}
 */

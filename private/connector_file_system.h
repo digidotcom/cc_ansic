@@ -145,7 +145,7 @@ static connector_status_t fs_set_abort(connector_data_t * const connector_ptr,
     return context->status;
 }
 
-static void fs_get_internal_error_data(connector_file_system_get_error_data_t * const data)
+static void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
 {
         
     unsigned code = (int) data->errnum;
@@ -210,7 +210,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
      size_t const buffer_size  = MIN_VALUE(service_data->length_in_bytes - header_bytes, UCHAR_MAX);
 
      uint8_t * fs_error_response = service_data->data_ptr;
-     connector_file_system_get_error_data_t data;
+     connector_file_system_get_error_t data;
 
      data.errnum = context->errnum;  
      data.bytes_available = buffer_size;
@@ -342,7 +342,7 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
 {
     connector_status_t status;
 
-    connector_file_system_stat_data_t data;
+    connector_file_system_stat_t data;
     data.path = path;
     data.hash_algorithm.requested = hash_alg;
 
@@ -413,7 +413,7 @@ static connector_status_t call_file_stat_dir_entry_user(connector_data_t * const
 {
     connector_status_t status;
 
-    connector_file_system_stat_dir_entry_data_t data;
+    connector_file_system_stat_dir_entry_t data;
     data.path = path;
 
     status = fs_call_user(connector_ptr, 
@@ -452,7 +452,7 @@ static connector_status_t call_file_opendir_user(connector_data_t * const connec
                                                  char const * const path)
 {
     connector_status_t   status;
-    connector_file_system_opendir_data_t data;
+    connector_file_system_opendir_t data;
 
     data.path = path;
     data.handle = NULL;
@@ -497,7 +497,7 @@ static connector_status_t call_file_readdir_user(connector_data_t * const connec
 {
     connector_status_t  status;
 
-    connector_file_system_readdir_data_t data;
+    connector_file_system_readdir_t data;
     data.handle = context->handle;
     data.entry_name = path;
     data.bytes_available = buffer_size;
@@ -534,7 +534,7 @@ static connector_status_t call_file_close_user(connector_data_t * const connecto
     if (FsGetState(context) >= fs_state_closed)
         goto done;
     
-    connector_file_system_close_data_t data;
+    connector_file_system_close_t data;
     data.handle = context->handle;
 
     FsSetState(context, fs_state_closing);
@@ -559,7 +559,7 @@ static connector_status_t call_file_hash_user(connector_data_t * const connector
                                               uint8_t * const hash_ptr)
 {
     connector_status_t status = connector_working;
-    connector_file_system_hash_data_t data;
+    connector_file_system_hash_t data;
  
     data.bytes_requested = file_hash_size(context->data.d.hash_alg);
 
@@ -585,7 +585,7 @@ static connector_status_t call_file_open_user(connector_data_t * const connector
                                               int const oflag)
 {
     connector_status_t  status;
-    connector_file_system_open_data_t data;
+    connector_file_system_open_t data;
  
     data.path  = path;
     data.oflag = oflag;
@@ -630,7 +630,7 @@ static connector_status_t call_file_lseek_user(connector_data_t * const connecto
                                                int  const origin,
                                                connector_file_offset_t * const offset_out)
 {
-    connector_file_system_lseek_data_t data;
+    connector_file_system_lseek_t data;
     connector_status_t status;
 
     data.handle = context->handle;
@@ -655,7 +655,7 @@ static connector_status_t call_file_ftruncate_user(connector_data_t * const conn
                                                    fs_context_t * const context)
 {
     connector_status_t status;
-    connector_file_system_truncate_data_t data;
+    connector_file_system_truncate_t data;
 
     data.handle = context->handle;
     data.length_in_bytes = context->data.f.offset;
@@ -674,7 +674,7 @@ static connector_status_t call_file_rm_user(connector_data_t * const connector_p
                                             char const * const path)
 {
     connector_status_t status;
-    connector_file_system_remove_data_t data;
+    connector_file_system_remove_t data;
     data.path = path;
 
     status = fs_call_user(connector_ptr,
@@ -692,7 +692,7 @@ static connector_status_t call_file_read_user(connector_data_t * const connector
                                               size_t * const buffer_size)
 {
     connector_status_t status;
-    connector_file_system_read_data_t data;
+    connector_file_system_read_t data;
 
     data.handle = context->handle;
     data.buffer = buffer;
@@ -730,7 +730,7 @@ static connector_status_t call_file_write_user(connector_data_t * const connecto
                                                size_t * const bytes_done)
 {
     connector_status_t status;
-    connector_file_system_write_data_t data;
+    connector_file_system_write_t data;
 
     data.handle = context->handle;
     data.buffer = buffer;
@@ -1739,7 +1739,7 @@ static connector_status_t file_system_error_callback(connector_data_t * const co
     msg_session_t * const session = service_request->session;
     fs_context_t * const context = session->service_context;
     connector_status_t status = connector_working;
-    connector_file_system_session_error_data_t data;
+    connector_file_system_session_error_t data;
     connector_request_id_t request_id;
 
     request_id.file_system_request = connector_request_id_file_system_session_error;
