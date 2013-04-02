@@ -12,7 +12,7 @@
 static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
-    unsigned int flags;
+    connector_bool_t response_needed;
 
     ASSERT_GOTO(sm_ptr->pending.data != NULL, error);
     session->bytes_processed = 0;
@@ -21,25 +21,34 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
     {
         case connector_initiate_ping_request:
         {
-            connector_message_status_request_t const * const request = sm_ptr->pending.data;
+            connector_sm_ping_request_t const * const request = sm_ptr->pending.data;
 
             session->user.context = request->user_context;
             session->user.header = NULL;
-            session->command = connector_sm_cmd_status;
-            flags = request->flags;
+            session->command = connector_sm_cmd_ping;
+            response_needed = request->response_required;
             session->sm_state = connector_sm_state_prepare_segment;
             break;
         }
 
         case connector_initiate_send_data:
         {
-            connector_data_service_put_request_t const * const request = sm_ptr->pending.data;
+            connector_request_data_service_send_t const * const request = sm_ptr->pending.data;
 
-            session->user.context = request;
-            session->user.header = request;
+            session->user.context = request->user_context;
+            session->user.header = request->path;
             session->command = (request->path != NULL) ? connector_sm_cmd_data : connector_sm_cmd_no_path_data;
-            flags = request->flags;
+            response_needed = request->response_required;
             session->sm_state = connector_sm_state_get_total_length;
+            #if (defined CONNECTOR_DATA_POINTS)
+            {
+                char const dp_prefix[] = "DataPoint/";
+                size_t const dp_prefix_bytes = sizeof dp_prefix - 1;
+
+                if (!strncmp(request->path, dp_prefix, dp_prefix_bytes))
+                    SmSetDatapoint(session->flags);
+            }
+            #endif
             break;
         }
 
@@ -52,7 +61,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             session->user.context = request->user_context;
             session->user.header = request;
             session->command = connector_sm_cmd_config;
-            flags = request->flags;
+            response_needed = request->response_required;
             session->sm_state = connector_sm_state_prepare_payload;
             break;
         }
@@ -63,13 +72,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             break;
     }
 
-    if ((flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == 0)
-        SmSetResponseNeeded(session->flags);
-
-#if (defined CONNECTOR_DATA_POINTS)
-    if ((flags & CONNECTOR_DATA_POINT_REQUEST) == CONNECTOR_DATA_POINT_REQUEST)
-        SmSetDatapoint(session->flags);
-#endif
+    if (response_needed) SmSetResponseNeeded(session->flags);
 
     result = connector_working;
 
@@ -174,23 +177,43 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
         case connector_sm_cmd_data:
         case connector_sm_cmd_no_path_data:
         {
-            connector_data_service_msg_request_t request_data;
+            connector_data_service_send_status_t status_info;
 
-            request_data.server_data = NULL;
-            request_data.service_context = (void *)session->user.context;  /* FIXME: why unconsting? */
-            request_data.message_type = connector_data_service_type_session_status;
+            status_info.transport = session->transport;
+            status_info.user_context = session->user.context;
+            status_info.session_error = connector_session_error_none;
+            switch (session->error)
+            {
+                case connector_session_error_cancel:
+                    status_info.status = connector_data_service_send_status_cancel;
+                    break;
+
+                case connector_session_error_timeout:
+                    status_info.status = connector_data_service_send_status_timeout;
+                    break;
+
+                case connector_session_error_none:
+                    status_info.status = connector_data_service_send_status_complete;
+                    break;
+
+                default:
+                    status_info.status = connector_data_service_send_status_session_error;
+                    status_info.session_error = session->error;
+                    break;
+            }
+
             #if (defined CONNECTOR_DATA_POINTS)
             if (SmIsDatapoint(session->flags))
             {
-                callback_status = dp_handle_callback(connector_ptr, &request_data, &session->error);
+                callback_status = dp_handle_callback(connector_ptr, connector_request_id_data_service_send_status, &status_info);
             }
             else
             #endif
             {
                 size_t response_bytes = sizeof session->error;
 
-                request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_data_service_put_request : connector_data_service_device_request;
-                callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &request_data, sizeof request_data, &session->error, &response_bytes);
+                request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_status : connector_request_id_data_service_receive_status;
+                callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &status_info);
             }
             break;
         }
@@ -227,7 +250,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
                     request_id.sm_request = SmIsClientOwned(session->flags) ? connector_sm_device_to_server_config : connector_sm_server_to_device_config;
                     break;
 
-                case connector_sm_cmd_status:
+                case connector_sm_cmd_ping:
                     class_id = connector_class_id_status;
                     request_id.status_request = SmIsClientOwned(session->flags) ? connector_status_ping_response : connector_status_ping_request;
                     break;
@@ -807,7 +830,7 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
             #endif
             goto done;
 
-        case connector_sm_cmd_status:
+        case connector_sm_cmd_ping:
             process_fn = SmIsCloudOwned(session->flags) ? sm_process_status_reqest : sm_process_status_response;
             if (SmIsClientOwned(session->flags))
                 new_state = connector_sm_state_complete;

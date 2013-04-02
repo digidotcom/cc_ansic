@@ -37,19 +37,20 @@ typedef enum
 */
 
 /**
-* @defgroup connector_sm_ping_request_t Data type used in incoming ping request.
+* @defgroup connector_sm_ping_request_t Data type used in ping request.
 * @{
 */
 /**
-* This data structure is used when the callback is called with the connector_request_id_sm_ping_request.
-* A ping request is received from Etherios Device Cloud. Returning error from the callback will result in error
-* response to Etherios Device Cloud.
+* This data structure is used when the device initiates the ping request or when the callback is called with the
+* connector_request_id_sm_ping_request. In the latter case, a ping request is received from Etherios Device Cloud, and
+* user context will not be used. Returning error from the callback will result in error response to Etherios Device Cloud.
 *
 * @see connector_request_id_sm_ping_request
 */
 typedef struct
 {
     connector_transport_t transport;
+    void * user_context;
     connector_bool_t response_required;
 } connector_sm_ping_request_t;
 /**

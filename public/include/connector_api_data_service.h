@@ -68,15 +68,15 @@ typedef struct
 
     enum
     {
-        connector_data_service_send_status_complete,      /**< response is not requested and session is complete successfully */
-        connector_data_service_send_status_cancel,        /**< session is cancelled by the user */
-        connector_data_service_send_status_timeout,       /**< session timed out */
-        connector_data_service_send_status_session_error  /**< error from lower communication layer  */
+        connector_data_service_status_complete,      /**< response is not requested and session is complete successfully */
+        connector_data_service_status_cancel,        /**< session is cancelled by the user */
+        connector_data_service_status_timeout,       /**< session timed out */
+        connector_data_service_status_session_error  /**< error from lower communication layer  */
     } status;       /**< IN: reason for end of session */
 
     connector_session_error_t session_error;              /**< IN: reason for lower communication layer error */
 
-} connector_data_service_send_status_t;
+} connector_data_service_status_t;
 
 typedef struct
 {
@@ -132,23 +132,6 @@ typedef struct
     size_t bytes_used;                  /**< IN: bytes filled in the buffer */
     connector_bool_t more_data;         /**< IN: connector_true means more request to follow */
 } connector_data_service_receive_data_t;
-
-typedef struct
-{
-    connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
-    void * user_context;                /**< IN/OUT: user context passed */
-
-    enum
-    {
-        connector_data_service_receive_status_cancel,
-        connector_data_service_receive_status_timeout,
-        connector_data_service_receive_status_no_resource,
-        connector_data_service_receive_status_session_error
-    } status;                           /**< IN: reason for the end of session */
-
-    connector_session_error_t   session_error;   /**< IN: applicable only if the status is set to connector_data_service_receive_status_session_error */
-
-} connector_data_service_receive_status_t;
 
 typedef struct
 {

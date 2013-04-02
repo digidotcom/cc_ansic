@@ -94,7 +94,12 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     session->user.context = NULL;
 
     if (sm_ptr->network.class_id == connector_class_id_network_sms)
+    {
+        session->transport = connector_transport_sms;
         SmSetEncoded(session->flags);
+    }
+    else
+        session->transport = connector_transport_udp;
 
     if (client_originated)
     {

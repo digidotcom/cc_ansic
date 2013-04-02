@@ -80,7 +80,7 @@
 
 typedef enum
 {
-    connector_sm_cmd_status,
+    connector_sm_cmd_ping,
     connector_sm_cmd_connect,
     connector_sm_cmd_reboot,
     connector_sm_cmd_cli,
@@ -134,10 +134,11 @@ typedef struct connector_sm_session_t
 {
     struct
     {
-        void const * context;
+        void * context;
         void const * header;
     } user;
 
+    connector_transport_t transport;
     connector_sm_state_t sm_state;
     connector_sm_cmd_t command;
     connector_session_status_t error;
