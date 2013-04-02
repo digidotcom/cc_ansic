@@ -37,8 +37,8 @@
  *          -# @ref step9
  *
  * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_idigi", will be used to confirm your compilation tool chain
- * and integration, respectively.  When complete, your device will be connected to the iDigi Device Cloud and be displayed
- * in <a href="http://www.idigi.com/idigimanagerpro">iDigi Manager Pro</a>.
+ * and integration, respectively.  When complete, your device will be connected to Etherios Device Cloud and displayed
+ * in the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
  * @section step1 Step 1: Determine if your compiler is C89 or C99 compliant
  *

@@ -202,7 +202,7 @@
  * Once successfully built, run the executable, in Linux type ./idigi to run the
  * sample.
  *
- * Login to @htmlonly <a href="http://www.idigi.com">iDigi Device Cloud</a>@endhtmlonly 
+ * Login to @htmlonly <a href="http://login.etherios.com/">Etherios Device Cloud</a>@endhtmlonly
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged, go to iDigi Manager Pro tab and click the Refresh button.
  * The device's status should show as 'Connected'. 

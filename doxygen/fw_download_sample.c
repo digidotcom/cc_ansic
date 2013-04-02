@@ -136,12 +136,12 @@
  * Once successfully built, run the executable, in Linux type ./idigi to run the
  * sample.
  *
- * Firmware downloads can be initiated by the iDigi Device Cloud using <a href="http://www.idigi.com/idigimanagerpro">iDigi Manager Pro</a>
+ * Firmware downloads can be initiated by the iDigi Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
  * or by issuing a @ref services "SCI update_firmware operation".
  *
  * @subsection fw_gui Firmware Download using the iDigi Device Cloud GUI
  *
- * Login to the iDigi Device Cloud at http://www.idigi.com  and click on your device
+ * Login to the iDigi Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged to see your device, click the Refresh button.
  * The device's status should show as 'Connected'.

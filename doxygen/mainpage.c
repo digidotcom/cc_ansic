@@ -243,7 +243,7 @@
  *     @li Reboot a device
  *
  * @section communicating Communicating with your device
- * To manage your device you can use the <a href="http://www.idigi.com/idigimanagerpro">iDigi Manager Pro</a>
+ * To manage your device you can use the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
  * interface by logging into your @ref step4 "iDigi Device Cloud account".  Alternatively, you can communicate with
  * your device programmatically by using @ref web_services "iDigi Web Services".
  *
