@@ -33,8 +33,31 @@
 
 #include "connector_config.h"
 
+/* NOTE: The configuration macro validation below must stay in this place, which is
+         after connector_config.h and before defining module specific data types. */
+
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
 #define CONNECTOR_HAS_64_BIT_INTEGERS
+#endif
+
+#define CONNECTOR_HAS_TRANSPORT_DEFINED ((defined CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS))
+#if !CONNECTOR_HAS_TRANSPORT_DEFINED
+#define CONNECTOR_TRANSPORT_TCP
+#endif
+#undef CONNECTOR_HAS_TRANSPORT_DEFINED
+
+#define CONNECTOR_REQUIRES_TRANSPORT_TCP ((defined CONNECTOR_FIRMWARE_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE))
+#if CONNECTOR_REQUIRES_TRANSPORT_TCP && !(defined CONNECTOR_TRANSPORT_TCP)
+#define CONNECTOR_TRANSPORT_TCP
+#endif
+#undef CONNECTOR_REQUIRES_TRANSPORT_TCP
+
+#if (defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DATA_SERVICE)
+#define CONNECTOR_DATA_SERVICE
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP)
+#define CONNECTOR_SHORT_MESSAGE
 #endif
 
 #include "connector_types.h"
@@ -57,7 +80,7 @@ typedef enum {
 #include "connector_api_config.h"
 #include "connector_api_network.h"
 
-#if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_RCI_SERVICE)
+#if (defined CONNECTOR_RCI_SERVICE)
 #include "connector_api_remote.h"
 #endif
 
@@ -276,12 +299,13 @@ typedef enum {
     #endif
     connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
     connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
+    #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_initiate_ping_request,    /**< Sends a ping request to Etherios Device Cloud. Supported only under UDP and SMS transport methods */
+    #endif
     #if (defined CONNECTOR_DATA_POINT)
     connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Etherios Device Cloud */
     connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Etherios Device Cloud */
     #endif
-    connector_initiate_config_message,  /**< Sends device configuration to the iDigi Device Cloud. Supported only under SMS transport method */
     connector_initiate_session_cancel   /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods */
 } connector_initiate_request_t;
 /**
@@ -330,11 +354,7 @@ typedef enum
 * @}
 */
 
-#if (defined CONNECTOR_TRANSPORT_UDP)
-#define CONNECTOR_SHORT_MESSAGE
-#endif
-
-#if (defined CONNECTOR_TRANSPORT_TCP) && (defined CONNECTOR_FIRMWARE_SERVICE)
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
 #include "connector_api_firmware.h"
 #endif
 
@@ -385,7 +405,9 @@ typedef union {
     #endif
     connector_request_id_network_t  network_request;            /**< Network request ID for network TCP class, network UDP class, and network SMS class */
     connector_request_id_status_t status_request;               /**< Status request ID for status class */
-    connector_sm_request_t sm_request;                          /**< Short message request ID for SM class */
+    #if (defined CONNECTOR_SHORT_MESSAGE)
+    connector_request_id_sm_t sm_request;                       /**< Short message request ID for short message class */
+    #endif
 } connector_request_id_t;
 /**
 * @}
@@ -784,22 +806,4 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 * @}.
 */
 
-/* configuration check */
-#define CONNECTOR_HAS_TRANSPORT_DEFINED ((defined CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS))
-#if !CONNECTOR_HAS_TRANSPORT_DEFINED
-#define CONNECTOR_TRANSPORT_TCP
-#endif
-#undef CONNECTOR_HAS_TRANSPORT_DEFINED
-
-#define CONNECTOR_REQUIRES_TRANSPORT_TCP ((defined CONNECTOR_FIRMWARE_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE))
-#if CONNECTOR_REQUIRES_TRANSPORT_TCP && !(defined CONNECTOR_TRANSPORT_TCP)
-#define CONNECTOR_TRANSPORT_TCP
-#endif
-#undef CONNECTOR_REQUIRES_TRANSPORT_TCP
-
-#if (defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DATA_SERVICE)
-#define CONNECTOR_DATA_SERVICE
-#endif
-
 #endif /* _CONNECTOR_API_H */
-
