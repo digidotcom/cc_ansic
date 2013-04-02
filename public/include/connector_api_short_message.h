@@ -27,6 +27,7 @@ typedef enum
     connector_request_id_sm_ping_response,  /**< used when Cloud Connector receives ping response from Etherios Device Cloud */
     connector_request_id_sm_cli_request,    /**< used when Cloud Connector receives CLI request from Etherios Device Cloud */
     connector_request_id_sm_cli_response,   /**< used to get the CLI response */
+    // connector_request_id_sm_cli_status,     /**< called when error occurs in CLI session */
     connector_request_id_sm_more_data,      /**< indicates pending messages are available on Etherios Device Cloud,
                                                  User need to use new request (can be ping) to pull the pending messages from iDigi Device Cloud. */
     connector_request_id_sm_opaque_response /**< Cloud Connector will use this to provide Etherios Device Cloud response for which
