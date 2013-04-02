@@ -86,7 +86,7 @@ int main (void)
 
     for (;;)
     {
-        APP_DEBUG("Start iDigi\n");
+        APP_DEBUG("Start Etherios Connector\n");
 
         if (first_time == 1)
         {
@@ -145,7 +145,7 @@ int main (void)
             snprintf(python_file_buffer, sizeof(python_file_buffer), "connector_init failed\n");
             write_python_result_file(python_file_buffer);
 
-            APP_DEBUG("unable to initialize iDigi\n");
+            APP_DEBUG("Unable to initialize the connector\n");
         }
 
         if (config_test[connector_request_id_config_device_id] == config_test_none)

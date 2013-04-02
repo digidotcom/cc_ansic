@@ -278,7 +278,7 @@ public class Descriptors {
             }
             catch (Exception e)
             {
-                ConfigGenerator.log("ERROR: Invalid iDigi Server\n");
+                ConfigGenerator.log("ERROR: Invalid Etherios Device Cloud\n");
                 System.exit(1);
             }
         }
@@ -338,7 +338,7 @@ public class Descriptors {
                 ConfigGenerator
                         .log("Cannot create a new vendor ID for "
                                 + username
-                                + "user. User needs to manually create one. Refer to \"Setup your iDigi Acount\" section of the Getting started guide to obtain one.");
+                                + "user. User needs to manually create one. Refer to \"Setup your Etherios Acount\" section of the Getting started guide to obtain one.");
                 System.exit(1);
             }
 
@@ -352,7 +352,7 @@ public class Descriptors {
         }
 
         if (vendorId != null)
-            ConfigGenerator.log(String.format("The iDigi Device Cloud registered vendor ID: 0x%X", Integer
+            ConfigGenerator.log(String.format("Etherios Device Cloud registered vendor ID: 0x%X", Integer
                     .parseInt(vendorId)));
     }
 

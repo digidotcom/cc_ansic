@@ -15,9 +15,9 @@
 
 #include "remote_config.h"
 
-extern connector_callback_status_t app_system_session_start(connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_session_start(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_session_end(connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_session_end(connector_remote_config_t * const remote_config);
 
 extern connector_callback_status_t app_system_action_start(connector_remote_group_request_t const * const request,
                                                         connector_remote_group_response_t * const response);

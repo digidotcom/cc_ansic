@@ -22,7 +22,7 @@ extern connector_callback_status_t app_sm_handler(connector_sm_request_t const r
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length);
 
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length);
 

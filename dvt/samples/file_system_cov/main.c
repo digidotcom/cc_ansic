@@ -50,17 +50,17 @@ static void * application_run_thread(void * arg)
 
 int main (void)
 {
-    while (1) 
+    while (1)
     {
         pthread_t connector_thread;
 
         pthread_t application_thread;
-    
+
         connector_handle_t connector_handle;
-    
-        APP_DEBUG("Start iDigi\n");
+
+        APP_DEBUG("Start Etherios Connector\n");
         connector_handle = connector_init(app_connector_callback);
-    
+
         if (connector_handle != NULL)
         {
             int ccode = pthread_create(&connector_thread, NULL, connector_run_thread, connector_handle);
@@ -69,14 +69,14 @@ int main (void)
                 APP_DEBUG("thread_create() error on connector_run_thread %d\n", ccode);
                 goto done;
             }
-    
+
             ccode = pthread_create(&application_thread, NULL, application_run_thread, connector_handle);
             if (ccode != 0)
             {
                 APP_DEBUG("thread_create() error on application_run_thread %d\n", ccode);
                 goto done;
             }
-    
+
             pthread_join(connector_thread, NULL);
             pthread_join(application_thread, NULL);
             APP_DEBUG("iDigi terminated\n");
@@ -84,7 +84,7 @@ int main (void)
         }
         else
         {
-            APP_DEBUG("unable to initialize iDigi\n");
+            APP_DEBUG("Unable to initialize the connector\n");
             goto done;
         }
     }

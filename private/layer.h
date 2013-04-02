@@ -32,12 +32,12 @@ typedef struct {
     connector_facility_service_process_cb_t process_cb;
 } connector_facility_service_t;
 
-/* Table of all facilites that iDigi supports.
+/* Table of all supported facilites.
  *
- * iDigi will call the callback to see whether it supports each optional facility.
- * iDigi will call init_cb to initialize the facility and delete_cb to remove the facility.
- * The init_cb must call add_facility_data() to add the facility into iDigi facility list.
- * The delete_cb is called to delete the facility from iDigi facility list when user terminates iDigi.
+ * The connector will call the callback to see whether it supports each optional facility.
+ * It will call init_cb to initialize the facility and delete_cb to remove the facility.
+ * The init_cb must call add_facility_data() to add the facility into the facility list.
+ * The delete_cb is called to delete the facility from the facility list when user terminates the connector.
  */
 static connector_facility_service_t const connector_supported_service_table[] = {
         /* mandatory facilities */
@@ -160,7 +160,7 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
     ASSERT(CHAR_BIT == 8);
     ASSERT(connector_facility_count <= (sizeof connector_ptr->edp_data.facilities.supported_mask * NUMBER_FACILITY_PER_BYTE));
 
-    /* connector_supported_service_table[] table includes a list of facilities that iDigi supports.
+    /* connector_supported_service_table[] table includes a list of supported facilities.
      * Call callback to see which facility is supported.
      */
 

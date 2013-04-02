@@ -33,7 +33,7 @@ typedef struct {
     connector_setting_ethernet_duplex_id_t duplex;
     char dns[ETHERNET_DNS_FQDN_LENGTH];
 
-    connector_boolean_t dhcp_enabled;
+    connector_bool_t dhcp_enabled;
 } ethernet_config_data_t;
 
 typedef struct {
@@ -42,10 +42,10 @@ typedef struct {
     char gateway[ETHERNET_IPV4_STRING_LENGTH];
     char dns[ETHERNET_DNS_FQDN_LENGTH];
     connector_setting_ethernet_duplex_id_t  duplex;
-    connector_boolean_t dhcp_enabled;
+    connector_bool_t dhcp_enabled;
 } ethernet_connector_data_t;
 
-ethernet_config_data_t ethernet_config_data = {0, 0, 0, connector_setting_ethernet_duplex_auto, "\0", connector_boolean_true};
+ethernet_config_data_t ethernet_config_data = {0, 0, 0, connector_setting_ethernet_duplex_auto, "\0", connector_true};
 
 int ethernet_configuration_init(void)
 {
@@ -138,21 +138,20 @@ void ethernet_get_ip_address(unsigned char ** addr, size_t * size)
     *size = sizeof ethernet_config_data.ip_address;
 }
 
-connector_callback_status_t app_ethernet_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_ethernet_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     void * ptr;
     ethernet_connector_data_t * ethernet_ptr = NULL;
 
-    UNUSED_ARGUMENT(request);
     ASSERT(session_ptr != NULL);
 
 
     ptr = malloc(sizeof *ethernet_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -170,11 +169,11 @@ done:
     return status;
 }
 
-connector_callback_status_t app_ethernet_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr;
 
     ASSERT(session_ptr != NULL);
@@ -182,23 +181,23 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_group_reques
 
     ethernet_ptr = session_ptr->group_context;
 
-    printf("app_ethernet_group_get: id = %d\n", request->element.id);
+    printf("app_ethernet_group_get: id = %d\n", remote_config->element.id);
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_ethernet_dhcp:
-        ASSERT(request->element.type == connector_element_type_boolean);
-        response->element_data.element_value->boolean_value = ethernet_ptr->dhcp_enabled;
+        ASSERT(remote_config->element.type == connector_element_type_boolean);
+        remote_config->response.element_value->boolean_value = ethernet_ptr->dhcp_enabled;
         break;
 
     case connector_setting_ethernet_dns:
-        ASSERT(request->element.type == connector_element_type_fqdnv4);
-        response->element_data.element_value->string_value = ethernet_ptr->dns;
+        ASSERT(remote_config->element.type == connector_element_type_fqdnv4);
+        remote_config->response.element_value->string_value = ethernet_ptr->dns;
         break;
 
     case connector_setting_ethernet_duplex:
-        ASSERT(request->element.type == connector_element_type_enum);
-        response->element_data.element_value->enum_value = ethernet_ptr->duplex;
+        ASSERT(remote_config->element.type == connector_element_type_enum);
+        remote_config->response.element_value->enum_value = ethernet_ptr->duplex;
         break;
 
     case connector_setting_ethernet_ip:
@@ -207,8 +206,8 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_group_reques
     {
         char * config_data[] = {ethernet_ptr->ip_address, ethernet_ptr->subnet, ethernet_ptr->gateway};
 
-        ASSERT(request->element.type == connector_element_type_ipv4);
-        response->element_data.element_value->string_value = config_data[request->element.id];
+        ASSERT(remote_config->element.type == connector_element_type_ipv4);
+        remote_config->response.element_value->string_value = config_data[remote_config->element.id];
         break;
     }
 
@@ -220,39 +219,39 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_group_reques
     return status;
 }
 
-connector_callback_status_t app_ethernet_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_ethernet_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr;
     size_t length;
 
     ASSERT(session_ptr != NULL);
     ASSERT(session_ptr->group_context != NULL);
-    ASSERT(request->element.value != NULL);
+    ASSERT(remote_config->element.value != NULL);
 
     ethernet_ptr = session_ptr->group_context;
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_ethernet_dhcp:
-        ASSERT(request->element.type == connector_element_type_boolean);
-        ethernet_ptr->dhcp_enabled = request->element.value->boolean_value;
+        ASSERT(remote_config->element.type == connector_element_type_boolean);
+        ethernet_ptr->dhcp_enabled = remote_config->element.value->boolean_value;
         break;
 
     case connector_setting_ethernet_dns:
-        ASSERT(request->element.type == connector_element_type_fqdnv4);
-        length = strlen(request->element.value->string_value);
+        ASSERT(remote_config->element.type == connector_element_type_fqdnv4);
+        length = strlen(remote_config->element.value->string_value);
 
         ASSERT(length < sizeof ethernet_ptr->dns);
-        memcpy(ethernet_ptr->dns, request->element.value->string_value, length);
+        memcpy(ethernet_ptr->dns, remote_config->element.value->string_value, length);
         ethernet_ptr->dns[length] = '\0';
         break;
 
     case connector_setting_ethernet_duplex:
-        ASSERT(request->element.type == connector_element_type_enum);
-        ethernet_ptr->duplex = (connector_setting_ethernet_duplex_id_t)request->element.value->enum_value;
+        ASSERT(remote_config->element.type == connector_element_type_enum);
+        ethernet_ptr->duplex = (connector_setting_ethernet_duplex_id_t)remote_config->element.value->enum_value;
         break;
 
     case connector_setting_ethernet_ip:
@@ -268,13 +267,13 @@ connector_callback_status_t app_ethernet_group_set(connector_remote_group_reques
                 {ethernet_ptr->gateway, sizeof ethernet_ptr->gateway}
         };
 
-        ASSERT(request->element.type == connector_element_type_ipv4);
+        ASSERT(remote_config->element.type == connector_element_type_ipv4);
 
-        length = strlen(request->element.value->string_value);
+        length = strlen(remote_config->element.value->string_value);
 
-        ASSERT(length <= config_data[request->element.id].max_length);
-        memcpy(config_data[request->element.id].data, request->element.value->string_value, length);
-        config_data[request->element.id].data[length] = '\0';
+        ASSERT(length <= config_data[remote_config->element.id].max_length);
+        memcpy(config_data[remote_config->element.id].data, remote_config->element.value->string_value, length);
+        config_data[remote_config->element.id].data[length] = '\0';
         break;
     }
     default:
@@ -285,10 +284,10 @@ connector_callback_status_t app_ethernet_group_set(connector_remote_group_reques
     return status;
 }
 
-connector_callback_status_t app_ethernet_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr = NULL;
 
     /* save the data */
@@ -298,29 +297,29 @@ connector_callback_status_t app_ethernet_group_end(connector_remote_group_reques
 
     ethernet_ptr = session_ptr->group_context;
 
-    if (request->action == connector_remote_action_set)
+    if (remote_config->action == connector_remote_action_set)
     {
         int ccode;
 
         if (inet_aton(ethernet_ptr->ip_address, (struct in_addr *)&ethernet_config_data.ip_address) == 0)
         {
-            response->error_id = connector_global_error_load_fail;
-            response->element_data.error_hint = "IP address";
+            remote_config->error_id = connector_global_error_load_fail;
+            remote_config->response.error_hint = "IP address";
             goto done;
         }
 
         if (inet_aton(ethernet_ptr->subnet, (struct in_addr *)&ethernet_config_data.subnet) == 0)
         {
-            response->error_id = connector_setting_ethernet_error_invalid_subnet;
-            response->element_data.error_hint = "Subnet";
+            remote_config->error_id = connector_setting_ethernet_error_invalid_subnet;
+            remote_config->response.error_hint = "Subnet";
             goto done;
         }
 
         ccode = inet_aton(ethernet_ptr->gateway, (struct in_addr *)&ethernet_config_data.gateway);
         if (ccode == 0)
         {
-            response->error_id = connector_setting_ethernet_error_invalid_gateway;
-            response->element_data.error_hint = "Gateway";
+            remote_config->error_id = connector_setting_ethernet_error_invalid_gateway;
+            remote_config->response.error_hint = "Gateway";
             goto done;
         }
 
@@ -338,9 +337,9 @@ done:
     return status;
 }
 
-void app_ethernet_group_cancel(void * const  context)
+void app_ethernet_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     if (session_ptr != NULL)
     {

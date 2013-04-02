@@ -912,7 +912,7 @@ done:
             if (connector_ptr->edp_data.connect_type == connector_connect_manual)
 #endif
             {
-                /* Application must call initiate_action to start iDigi connector */
+                /* Application must call initiate_action to Start Etherios Connector connector */
                 edp_set_active_state(connector_ptr, connector_transport_idle);
             }
 

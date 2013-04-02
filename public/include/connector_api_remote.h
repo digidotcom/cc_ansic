@@ -15,12 +15,12 @@
 
 #include "connector_types.h"
 /**
-* @defgroup connector_remote_config_request_t Remote Configuration Request IDs
+* @defgroup connector_request_id_remote_config_t Remote Configuration Request IDs
 * @{
 */
 /**
 * Remote Configuration Request ID passed to the application's callback to query or set remote configuration data.
-* The class id for this connector_remote_config_request_t is connector_class_id_remote_config.
+* The class id for this connector_request_id_remote_config_t is connector_class_id_remote_config.
 */
 
 typedef enum {

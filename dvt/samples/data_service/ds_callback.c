@@ -59,7 +59,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
         connector_callback_status_t const is_ok = app_os_malloc(sizeof *user, &ptr);
         if (is_ok != connector_callback_continue || ptr == NULL)
         {
-            /* no memeory stop iDigi Connector */
+            /* no memeory stop the Connector */
             APP_DEBUG("send_put_request: malloc fails\n");
             status = connector_no_resource;
             goto done;
@@ -289,7 +289,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
         connector_callback_status_t const ccode = app_os_malloc(sizeof *device_request, &ptr);
         if (ccode != connector_callback_continue || ptr == NULL)
         {
-            /* no memeory stop iDigi Connector */
+            /* no memeory stop the Connector */
             APP_DEBUG("process_device_request: malloc fails for device request on session %p\n", server_device_request->device_handle);
             status = connector_callback_error;
             goto done;

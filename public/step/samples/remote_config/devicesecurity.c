@@ -26,7 +26,7 @@ typedef struct {
 
 device_security_data_t device_security_data = {connector_setting_devicesecurity_identityVerificationForm_simple, "\0"};
 
-connector_callback_status_t app_device_security_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_security_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -52,7 +52,7 @@ done:
     return status;
 }
 
-connector_callback_status_t app_device_security_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_security_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -63,17 +63,17 @@ connector_callback_status_t app_device_security_group_get(connector_remote_group
 
     device_security_ptr = session_ptr->group_context;
 
-     switch (request->element.id)
+     switch (remote_config->element.id)
     {
     case connector_setting_devicesecurity_identityVerificationForm:
     {
-        ASSERT(request->element.type == connector_element_type_enum);
-        response->element_data.element_value->enum_value = device_security_ptr->identity_verification_form;
+        ASSERT(remote_config->element.type == connector_element_type_enum);
+        remote_config->response.element_value->enum_value = device_security_ptr->identity_verification_form;
         break;
     }
     case connector_setting_devicesecurity_password:
-        ASSERT(request->element.type == connector_element_type_password);
-        response->element_data.element_value->string_value = device_security_ptr->password;
+        ASSERT(remote_config->element.type == connector_element_type_password);
+        remote_config->response.element_value->string_value = device_security_ptr->password;
         break;
 
     default:
@@ -84,7 +84,7 @@ connector_callback_status_t app_device_security_group_get(connector_remote_group
     return status;
 }
 
-connector_callback_status_t app_device_security_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_security_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -92,28 +92,28 @@ connector_callback_status_t app_device_security_group_set(connector_remote_group
 
     UNUSED_ARGUMENT(response);
 
-    ASSERT(request->element.value != NULL);
+    ASSERT(remote_config->element.value != NULL);
     ASSERT(session_ptr != NULL);
     ASSERT(session_ptr->group_context != NULL);
 
     device_security_ptr = session_ptr->group_context;
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_devicesecurity_identityVerificationForm:
-        ASSERT(request->element.type == connector_element_type_enum);
+        ASSERT(remote_config->element.type == connector_element_type_enum);
 
-        device_security_ptr->identity_verification_form = (connector_setting_devicesecurity_identityVerificationForm_id_t)request->element.value->enum_value;
+        device_security_ptr->identity_verification_form = (connector_setting_devicesecurity_identityVerificationForm_id_t)remote_config->element.value->enum_value;
         break;
 
     case connector_setting_devicesecurity_password:
     {
-        size_t length = strlen(request->element.value->string_value);
+        size_t length = strlen(remote_config->element.value->string_value);
 
-        ASSERT(request->element.type == connector_element_type_password);
+        ASSERT(remote_config->element.type == connector_element_type_password);
         ASSERT(length < sizeof device_security_ptr->password);
 
-        memcpy(device_security_ptr->password, request->element.value->string_value, length);
+        memcpy(device_security_ptr->password, remote_config->element.value->string_value, length);
         device_security_ptr->password[length] = '\0';
         break;
     }
@@ -126,7 +126,7 @@ connector_callback_status_t app_device_security_group_set(connector_remote_group
     return status;
 }
 
-connector_callback_status_t app_device_security_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_security_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -137,7 +137,7 @@ connector_callback_status_t app_device_security_group_end(connector_remote_group
 
     device_security_ptr = session_ptr->group_context;
 
-    if (request->action == connector_remote_action_set)
+    if (remote_config->action == connector_remote_action_set)
     {
         /* save data */
         device_security_data = *device_security_ptr;

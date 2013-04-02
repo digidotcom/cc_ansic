@@ -134,7 +134,7 @@ static int start_connector_thread(void)
     }
     else
     {
-        APP_DEBUG("unable to initialize iDigi\n");
+        APP_DEBUG("Unable to initialize the connector\n");
     }
 
     return ccode;

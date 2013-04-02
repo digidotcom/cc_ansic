@@ -100,7 +100,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
 
     if (download_info == NULL)
     {
-        APP_DEBUG("firmware_download_request ERROR: iDigi passes incorrect parameters\n");
+        APP_DEBUG("firmware_download_request ERROR: Invalid parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -149,7 +149,7 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
 
     if (download_complete == NULL)
     {
-        APP_DEBUG("firmware_download_complete Error: iDigi passes incorrect parameters\n");
+        APP_DEBUG("firmware_download_complete Error: Invalid parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -207,7 +207,7 @@ static connector_callback_status_t app_firmware_reset(connector_firmware_reset_t
     return status;
 }
 
-connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
+connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length)
 {

@@ -27,13 +27,12 @@
 
 #if defined CONNECTOR_TRANSPORT_UDP
 
-static connector_callback_status_t app_network_udp_close(connector_close_request_t const * const close_data,
-                                                 connector_connect_auto_type_t * const is_to_reconnect)
+static connector_callback_status_t app_network_udp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_network_handle_t * const fd = close_data->network_handle;
+    connector_network_handle_t * const fd = data->handle;
 
-    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_udp, close_data->status);
+    data->reconnect = app_connector_reconnect(connector_class_id_network_udp, data->status);
 
     if (close(*fd) < 0)
     {
@@ -50,20 +49,17 @@ static connector_callback_status_t app_network_udp_close(connector_close_request
 
 
 /*
- * This routine reads a specified number of bytes from the iDigi Device Cloud.  This
+ * This routine reads a specified number of bytes from Etherios Device Cloud.  This
  * function must not block. If it encounters EAGAIN  error, return
  * connector_callback_busy and iDigi connector will ignore the read_data and read_length
  * and continue calling this function.
  */
-static connector_callback_status_t app_network_udp_receive(connector_read_request_t const * const read_data,
-                                                       size_t * const read_length)
+static connector_callback_status_t app_network_udp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
 
-    *read_length = 0;
-
-    ccode = read(*read_data->network_handle, read_data->buffer, read_data->length);
+        ccode = read(*data->handle, data->buffer, data->bytes_available);
 
     if (ccode < 0)
     {
@@ -82,22 +78,21 @@ static connector_callback_status_t app_network_udp_receive(connector_read_reques
         }
     }
 
-    *read_length = (size_t)ccode;
+    data->bytes_used = (size_t)ccode;
 
     return status;
 }
 
 /*
- * Sends data to the iDigi Device Cloud, this routine must not block.  If it encounters
+ * Sends data to Etherios Device Cloud, this routine must not block.  If it encounters
  * EAGAIN  error, return connector_callback_busy and iDigi connector will ignore the
  * sent_length and continue calling this function.
  */
-static connector_callback_status_t app_network_udp_send(connector_write_request_t const * const write_data,
-                                                size_t * const sent_length)
+static connector_callback_status_t app_network_udp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    int const bytes_sent = write(*write_data->network_handle, write_data->buffer, write_data->length);
+    int bytes_sent = write(*data->handle, data->buffer, data->bytes_available);
     if (bytes_sent < 0)
     {
         int const err = errno;
@@ -112,7 +107,7 @@ static connector_callback_status_t app_network_udp_send(connector_write_request_
             app_dns_cache_invalidate(connector_class_id_network_udp);
         }
     }
-    *sent_length = (size_t)bytes_sent;
+    data->bytes_used = (size_t)bytes_sent;
 
     return status;
 }
@@ -156,20 +151,18 @@ static connector_callback_status_t app_udp_connect(int const fd, in_addr_t const
     return status;
 }
 
-static connector_callback_status_t app_network_udp_open(char const * const server_name,
-                                                    size_t const length,
-                                                    connector_network_handle_t ** network_handle)
+static connector_callback_status_t app_network_udp_open(connector_network_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     in_addr_t ip_addr;
     static int fd = -1;
 
-    *network_handle = &fd;
+    data->handle = &fd;
 
-    status = app_dns_resolve(connector_class_id_network_udp, server_name, length, &ip_addr);
+    status = app_dns_resolve(connector_class_id_network_udp, data->device_cloud_url, &ip_addr);
     if (status != connector_callback_continue)
     {
-        APP_DEBUG("app_network_udp_open: Can't resolve DNS for %s\n", server_name);
+        APP_DEBUG("app_network_udp_open: Can't resolve DNS for %s\n", data->device_cloud_url);
         goto done;
     }
 
@@ -199,35 +192,31 @@ done:
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request,
-                                            void const * const request_data, size_t const request_length,
-                                            void * response_data, size_t * const response_length)
+connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request_id,
+                                                    void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-
-    switch (request)
+    switch (request_id)
     {
-    case connector_network_open:
-        status = app_network_udp_open(request_data, request_length, response_data);
-        *response_length = sizeof(connector_network_handle_t);
+    case connector_request_id_network_open:
+        status = app_network_udp_open(data);
         break;
 
-    case connector_network_send:
-        status = app_network_udp_send(request_data, response_data);
+    case connector_request_id_network_send:
+        status = app_network_udp_send(data);
         break;
 
-    case connector_network_receive:
-        status = app_network_udp_receive(request_data, response_data);
+    case connector_request_id_network_receive:
+        status = app_network_udp_receive(data);
         break;
 
-    case connector_network_close:
-        status = app_network_udp_close(request_data, response_data);
+    case connector_request_id_network_close:
+        status = app_network_udp_close(data);
         break;
 
     default:
-        APP_DEBUG("app_network_udp_handler: unrecognized callback request [%d]\n", request);
+        APP_DEBUG("app_network_udp_handler: unrecognized callback request_id [%d]\n", request_id);
         status = connector_callback_unrecognized;
         break;
 

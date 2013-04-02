@@ -28,7 +28,7 @@ typedef struct {
 
 device_time_config_data_t device_time_config_data = {{0}, "\0"};
 
-connector_callback_status_t app_device_time_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_time_group_init(connector_remote_config_t * const remote_config)
 {
 
     remote_group_session_t * const session_ptr = response->user_context;
@@ -44,7 +44,7 @@ connector_callback_status_t app_device_time_group_init(connector_remote_group_re
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_device_time_group_get(connector_remote_group_request_t const * const  request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_time_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -56,13 +56,13 @@ connector_callback_status_t app_device_time_group_get(connector_remote_group_req
 
     device_time_ptr = session_ptr->group_context;
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_device_time_curtime:
     {
         struct tm * the_time;
 
-        ASSERT(request->element.type == connector_element_type_datetime);
+        ASSERT(remote_config->element.type == connector_element_type_datetime);
 
 //        the_time = localtime(&device_time_ptr->current_time.time);
         the_time = gmtime(&device_time_ptr->current_time.time);
@@ -70,7 +70,7 @@ connector_callback_status_t app_device_time_group_get(connector_remote_group_req
         if (the_time == NULL)
         {
             response->error_id = connector_global_error_load_fail;
-            response->element_data.error_hint = "Time is not available.";
+            remote_config->response.error_hint = "Time is not available.";
             goto done;
         }
 
@@ -90,7 +90,7 @@ connector_callback_status_t app_device_time_group_get(connector_remote_group_req
                                      (device_time_ptr->current_time.timezone > 0) ? '-' : '+',
                                      tz_hour, tz_min);
 
-            response->element_data.element_value->string_value = device_time_ptr->timestring;
+            remote_config->response.element_value->string_value = device_time_ptr->timestring;
         }
         break;
     }
@@ -104,7 +104,7 @@ done:
     return status;
 }
 
-connector_callback_status_t app_device_time_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_time_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -116,7 +116,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
 
     device_time_ptr = session_ptr->group_context;
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_device_time_curtime:
     {
@@ -135,23 +135,23 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
         size_t current_length = 0;
         int timezone;
 
-        ASSERT(request->element.type == connector_element_type_datetime);
-        ASSERT(request->element.value != NULL);
-        ASSERT(request->element.value->string_value != NULL);
+        ASSERT(remote_config->element.type == connector_element_type_datetime);
+        ASSERT(remote_config->element.value != NULL);
+        ASSERT(remote_config->element.value->string_value != NULL);
 
         lt = localtime(&device_time_ptr->current_time.time);
         if (lt == NULL)
         {
             response->error_id = connector_global_error_save_fail;
-            response->element_data.error_hint = "Time is not available.";
+            remote_config->response.error_hint = "Time is not available.";
             goto done;
         }
 
-        string_length = strlen(request->element.value->string_value);
+        string_length = strlen(remote_config->element.value->string_value);
 
         while (current_length < string_length && state != get_done)
         {
-            char const * const ptr = &request->element.value->string_value[current_length];
+            char const * const ptr = &remote_config->element.value->string_value[current_length];
             size_t len =0;
 
             switch (state)
@@ -201,7 +201,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 1900)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "must be > 1900";
+                        remote_config->response.error_hint = "must be > 1900";
                         goto done;
                     }
                     lt->tm_year = t - 1900;
@@ -222,7 +222,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 0 || t > 12)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "month between 1 and 12";
+                        remote_config->response.error_hint = "month between 1 and 12";
                         goto done;
                     }
                     lt->tm_mon = t -1;
@@ -234,7 +234,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 1 || t > 31) /* day */
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "day of the month between 1 and 31";
+                        remote_config->response.error_hint = "day of the month between 1 and 31";
                         goto done;
                     }
                     lt->tm_mday = t;
@@ -254,7 +254,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 0 || t > 23)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "hour between 0 and 23";
+                        remote_config->response.error_hint = "hour between 0 and 23";
                         goto done;
                     }
                     lt->tm_hour = t;
@@ -275,7 +275,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 0 || t > 59)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "Minute between 0 and 59";
+                        remote_config->response.error_hint = "Minute between 0 and 59";
                         goto done;
                     }
                     lt->tm_min = t;
@@ -287,7 +287,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 0 || t > 59)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "Second between 0 and 59";
+                        remote_config->response.error_hint = "Second between 0 and 59";
                         goto done;
                     }
                     lt->tm_sec = t;
@@ -321,7 +321,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 0 || t > 24)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "Invalid timezone";
+                        remote_config->response.error_hint = "Invalid timezone";
                         goto done;
                     }
                     timezone *= (t * 60);
@@ -333,7 +333,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
                     if (t < 0 || t > 59)
                     {
                         response->error_id = connector_setting_device_time_error_invalid_time;
-                        response->element_data.error_hint = "Invalid timezone";
+                        remote_config->response.error_hint = "Invalid timezone";
                         goto done;
                     }
                     timezone += t;
@@ -355,7 +355,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
         if (mktime(lt) == -1)
         {
             response->error_id = connector_global_error_save_fail;
-            response->element_data.error_hint = "Cannot set time";
+            remote_config->response.error_hint = "Cannot set time";
             goto done;
         }
 
@@ -371,7 +371,7 @@ connector_callback_status_t app_device_time_group_set(connector_remote_group_req
 
 error:
     response->error_id = connector_setting_device_time_error_invalid_time;
-    response->element_data.error_hint = TIME_FORMAT_ERROR_HINT;
+    remote_config->response.error_hint = TIME_FORMAT_ERROR_HINT;
 
 done:
     return status;

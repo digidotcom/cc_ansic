@@ -33,7 +33,7 @@ def send_device_request(target_name, expectedmsg, request_length):
     """%(device_id, target_name, request_data)
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("test.idigi.com",80)
+    webservice = httplib.HTTP("login.etherios.com",80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header

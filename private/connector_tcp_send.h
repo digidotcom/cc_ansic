@@ -151,7 +151,7 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
 
 static connector_status_t tcp_release_packet_buffer(connector_data_t * const connector_ptr, uint8_t const * const packet, connector_status_t const status, void * const user_data)
 {
-    /* this is called when iDigi Connector is done sending or after tcp_get_packet_buffer()
+    /* this is called when the Connector is done sending or after tcp_get_packet_buffer()
      * is called to release connector_ptr->edp_data.send_packet.packet_buffer.buffer.
      *
      */

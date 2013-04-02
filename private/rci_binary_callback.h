@@ -163,7 +163,7 @@ static connector_bool_t rci_callback(rci_t * const rci)
         {
             switch (rci->callback.request.remote_config_request)
             {
-            case connector_remote_config_session_end:
+            case connector_request_id_remote_config_session_end:
                 callback_complete = connector_false;
                 rci->status = rci_status_internal_error;
                 break;

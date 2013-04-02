@@ -21,7 +21,7 @@ extern connector_status_t connector_run_thread_status;
 
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void * const data);
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request,
                                                   void * const data);
 
 extern connector_status_t send_put_request(connector_handle_t handle, int index);

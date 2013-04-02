@@ -20,7 +20,7 @@
 */
 /**
 * Firmware Facility Request ID passed to the application's callback for firmware update interface.
-* The class id for this connector_firmware_request_t is connector_class_id_firmware.
+* The class id for this connector_request_id_firmware_t is connector_class_id_firmware.
 */
 typedef enum {
     connector_request_id_firmware_target_count,         /**< Requesting callback to return number of supported target for firmware update */

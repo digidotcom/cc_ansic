@@ -279,8 +279,8 @@ typedef struct {
 */
 typedef enum {
 
-    connector_connect_auto,     /**< Connect to the iDigi Device Cloud automatically */
-    connector_connect_manual   /**< Connect to the iDigi Device Cloud manually */
+    connector_connect_auto,     /**< Automic connect to Etherios Device Cloud */
+    connector_connect_manual   /**< Manual connect to Etherios Device Cloud */
 } connector_connect_auto_type_t;
 /**
 * @}
@@ -358,9 +358,9 @@ typedef struct {
  */
 typedef enum {
     connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. iDigi connector just transmits the
-                                                     device ID and the iDigi Device Cloud URL. */
+                                                     device ID and Etherios Device Cloud URL. */
     connector_identity_verification_password        /**< Callback returns this form for password identity verification. iDigi connector exchanges a pre-shared
-                                                     secret password with the iDigi Device Cloud. The password must match the password set in the iDigi Device Cloud.
+                                                     secret password with Etherios Device Cloud. The password must match the password set in Etherios Device Cloud.
                                                      @note iDigi connector will call @ref connector_request_id_config_password callback for the password. */
 } connector_identity_verification_t;
 /**

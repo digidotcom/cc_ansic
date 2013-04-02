@@ -191,7 +191,7 @@ int start_connector_thread(void)
     }
     else
     {
-        APP_DEBUG("unable to initialize iDigi\n");
+        APP_DEBUG("Unable to initialize the connector\n");
     }
 
     return ccode;
@@ -219,7 +219,7 @@ int main (void)
 
     for (;;)
     {
-        APP_DEBUG("Start iDigi\n");
+        APP_DEBUG("Start Etherios Connector\n");
 
         rc = start_connector_thread();
         if (rc != 0)
@@ -238,7 +238,7 @@ int main (void)
 
         if (total_malloc_size != 0)
         {
-            /* terminate iik so it will not reconnect to iDigi */
+            /* terminate iik so it will not reconnect to the connector */
             APP_DEBUG("total malloc memory = %zu after all threads are canceled\n", total_malloc_size);
             if (connector_run_thread_status == connector_device_terminated)
             {
@@ -251,7 +251,7 @@ int main (void)
             rc = -1;
             break;
         }
-        /* continue and reconnect iDigi so python test will not fail */
+        /* continue and reconnect so python test will not fail */
     }
 
 done:

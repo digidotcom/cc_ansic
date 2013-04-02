@@ -25,10 +25,10 @@
 * connector_class_id_network_udp. 
 */
 typedef enum {
-    connector_request_id_network_open,     /**< Requesting callback to set up and make connection to the iDigi Device Cloud */
-    connector_request_id_network_send,     /**< Requesting callback to send data to the iDigi Device Cloud */
-    connector_request_id_network_receive,  /**< Requesting callback to receive data from the iDigi Device Cloud */
-    connector_request_id_network_close     /**< Requesting callback to close the iDigi Device Cloud connection */
+    connector_request_id_network_open,     /**< Requesting callback to set up and make connection to Etherios Device Cloud */
+    connector_request_id_network_send,     /**< Requesting callback to send data to Etherios Device Cloud */
+    connector_request_id_network_receive,  /**< Requesting callback to receive data from Etherios Device Cloud */
+    connector_request_id_network_close     /**< Requesting callback to close Etherios Device Cloud connection */
 } connector_request_id_network_t;
 /**
 * @}
@@ -39,7 +39,7 @@ typedef enum {
 * @{
 */
 /**
-* Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to the iDigi Device Cloud.
+* Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to Etherios Device Cloud.
 */
 typedef struct  {
     char const * device_cloud_url;          /**< Pointer to Etherios Device Cloud URL  */
@@ -55,7 +55,7 @@ typedef struct  {
 * @{
 */
 /**
-* Send data structure for @ref connector_request_id_network_send callback which is called to send data to the iDigi Device Cloud.
+* Send data structure for @ref connector_request_id_network_send callback which is called to send data to Etherios Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t * handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */
@@ -73,7 +73,7 @@ typedef struct  {
 */
 /**
 * Read request structure for connector_request_id_network_receive callback which is called to receive
-* a specified number of bytes data from the iDigi Device Cloud.
+* a specified number of bytes data from Etherios Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t * handle; /**< Pointer to network handle associated with a connection through the connector_network_open callback */
@@ -90,7 +90,7 @@ typedef struct  {
 * @{
 */
 /**
-* Reasons for @ref connector_request_id_network_close callback which is called to close the connection to the iDigi Device Cloud.
+* Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
 */
 typedef enum {
     connector_close_status_server_disconnected = 1,    /**< iDigi connector received a disconnect from the server. */
@@ -114,7 +114,7 @@ typedef enum {
 * @{
 */
 /**
-* Close request structure for @ref connector_request_id_network_close callback which is called to close the connection to the iDigi Device Cloud.
+* Close request structure for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t * handle;    /**< Pointer to network handle associated with a connection through the connector_network_open callback */

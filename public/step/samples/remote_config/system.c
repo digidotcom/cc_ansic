@@ -27,7 +27,7 @@ typedef struct {
 
 system_data_t system_config_data = {"\0", "\0", "\0"};
 
-connector_callback_status_t app_system_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_system_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -53,7 +53,7 @@ done:
     return status;
 }
 
-connector_callback_status_t app_system_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_system_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -63,19 +63,19 @@ connector_callback_status_t app_system_group_get(connector_remote_group_request_
     ASSERT(session_ptr->group_context != NULL);
     system_ptr = session_ptr->group_context;
 
-    ASSERT(request->element.type == connector_element_type_string);
+    ASSERT(remote_config->element.type == connector_element_type_string);
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_system_contact:
-        response->element_data.element_value->string_value = system_ptr->contact;
+        remote_config->response.element_value->string_value = system_ptr->contact;
         break;
     case connector_setting_system_location:
-        response->element_data.element_value->string_value = system_ptr->location;
+        remote_config->response.element_value->string_value = system_ptr->location;
 
         break;
     case connector_setting_system_description:
-        response->element_data.element_value->string_value = system_ptr->description;
+        remote_config->response.element_value->string_value = system_ptr->description;
         break;
     default:
         ASSERT(0);
@@ -85,7 +85,7 @@ connector_callback_status_t app_system_group_get(connector_remote_group_request_
     return status;
 }
 
-connector_callback_status_t app_system_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_system_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -99,20 +99,20 @@ connector_callback_status_t app_system_group_set(connector_remote_group_request_
 
     system_ptr = session_ptr->group_context;
 
-    ASSERT(request->element.type == connector_element_type_string);
+    ASSERT(remote_config->element.type == connector_element_type_string);
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_system_contact:
-        ASSERT(strlen(request->element.value->string_value) < sizeof system_ptr->contact);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof system_ptr->contact);
         src_ptr = system_ptr->contact;
         break;
     case connector_setting_system_location:
-        ASSERT(strlen(request->element.value->string_value) < sizeof system_ptr->location);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof system_ptr->location);
         src_ptr = system_ptr->location;
         break;
     case connector_setting_system_description:
-        ASSERT(strlen(request->element.value->string_value) < sizeof system_ptr->description);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof system_ptr->description);
         src_ptr = system_ptr->description;
         break;
     default:
@@ -122,14 +122,14 @@ connector_callback_status_t app_system_group_set(connector_remote_group_request_
 
     if (src_ptr != NULL)
     {
-        size_t const length = strlen(request->element.value->string_value);
-        memcpy(src_ptr, request->element.value->string_value, length);
+        size_t const length = strlen(remote_config->element.value->string_value);
+        memcpy(src_ptr, remote_config->element.value->string_value, length);
         src_ptr[length] = '\0';
     }
     return status;
 }
 
-connector_callback_status_t app_system_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_system_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = response->user_context;
@@ -140,7 +140,7 @@ connector_callback_status_t app_system_group_end(connector_remote_group_request_
 
     system_ptr = session_ptr->group_context;
 
-    if (request->action == connector_remote_action_set)
+    if (remote_config->action == connector_remote_action_set)
     {
         /* save data */
         system_config_data = *system_ptr;

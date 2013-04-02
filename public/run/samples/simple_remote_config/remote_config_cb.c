@@ -18,7 +18,7 @@
 #error "Must define CONNECTOR_RCI_SERVICE in connector_config.h to run this sample"
 #endif
 
-typedef connector_callback_status_t(* remote_group_cb_t) (connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
+typedef connector_callback_status_t(* remote_group_cb_t) (connector_remote_config_t * const remote_config);
 typedef void (* remote_group_cancel_cb_t) (void * const context);
 
 typedef struct remote_group_table {
@@ -50,7 +50,7 @@ remote_group_table_t remote_state_table[] = {
 };
 
 
-static connector_callback_status_t app_process_session_start(connector_remote_group_response_t * const response)
+static connector_callback_status_t app_process_session_start(connector_remote_config_t * const remote_config)
 {
     void * ptr;
     remote_group_session_t * session_ptr;
@@ -72,7 +72,7 @@ done:
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_session_end(connector_remote_group_response_t * const response)
+static connector_callback_status_t app_process_session_end(connector_remote_config_t * const remote_config)
 {
     APP_DEBUG("app_process_session_end\n");
 
@@ -130,7 +130,7 @@ static connector_callback_status_t app_process_group_start(connector_remote_grou
                                                        connector_remote_group_response_t * const response)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_table_t * group_ptr = get_group_table(request->group.type, request->group.id);
+    remote_group_table_t * group_ptr = get_group_table(request->group.type, remote_config->group.id);
 
     ASSERT(group_ptr != NULL);
 
@@ -146,12 +146,12 @@ static connector_callback_status_t app_process_group_process(connector_remote_gr
                                                          connector_remote_group_response_t * const response)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_table_t * group_ptr = get_group_table(request->group.type, request->group.id);
+    remote_group_table_t * group_ptr = get_group_table(request->group.type, remote_config->group.id);
     remote_group_cb_t callback;
 
     ASSERT(group_ptr != NULL);
 
-    callback = (request->action == connector_remote_action_set) ? group_ptr->set_cb : group_ptr->get_cb;
+    callback = (remote_config->action == connector_remote_action_set) ? group_ptr->set_cb : group_ptr->get_cb;
 
     if (callback)
     {
@@ -164,7 +164,7 @@ static connector_callback_status_t app_process_group_end(connector_remote_group_
                                                      connector_remote_group_response_t * const response)
     {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_table_t * group_ptr = get_group_table(request->group.type, request->group.id);
+    remote_group_table_t * group_ptr = get_group_table(request->group.type, remote_config->group.id);
 
     ASSERT(group_ptr != NULL);
 
@@ -193,7 +193,7 @@ static connector_callback_status_t app_process_session_cancel(void const * const
     return status;
 }
 
-connector_callback_status_t app_remote_config_handler(connector_remote_config_request_t const request,
+connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request,
                                                       void const * const request_data, size_t const request_length,
                                                       void * response_data, size_t * const response_length)
 {
@@ -204,35 +204,35 @@ connector_callback_status_t app_remote_config_handler(connector_remote_config_re
 
     switch (request)
     {
-    case connector_remote_config_session_start:
+    case connector_request_id_remote_config_session_start:
         status = app_process_session_start(response_data);
         break;
 
-    case connector_remote_config_action_start:
+    case connector_request_id_remote_config_action_start:
         status = app_process_action_start(request_data, response_data);
         break;
 
-    case connector_remote_config_group_start:
+    case connector_request_id_remote_config_group_start:
         status = app_process_group_start( request_data, response_data);
         break;
 
-    case connector_remote_config_group_process:
+    case connector_request_id_remote_config_group_process:
         status = app_process_group_process(request_data, response_data);
         break;
 
-    case connector_remote_config_group_end:
+    case connector_request_id_remote_config_group_end:
         status = app_process_group_end(request_data, response_data);
         break;
 
-    case connector_remote_config_action_end:
+    case connector_request_id_remote_config_action_end:
         status = app_process_action_end(request_data, response_data);
         break;
 
-    case connector_remote_config_session_end:
+    case connector_request_id_remote_config_session_end:
         status = app_process_session_end(response_data);
         break;
 
-    case connector_remote_config_session_cancel:
+    case connector_request_id_remote_config_session_cancel:
         status = app_process_session_cancel(request_data);
         break;
     default:

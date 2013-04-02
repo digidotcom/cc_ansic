@@ -72,7 +72,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         status = app_file_system_handler(request_id.file_system_request, data);
         break;
 
-    case connector_class_remote_config_service:
+    case connector_class_id_remote_config:
         status = app_remote_config_handler(request_id.remote_config_request, data);
         break;
 

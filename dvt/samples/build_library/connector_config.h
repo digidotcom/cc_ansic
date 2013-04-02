@@ -17,9 +17,10 @@
 #define CONNECTOR_FIRMWARE_SERVICE
 #define CONNECTOR_COMPRESSION
 #define CONNECTOR_DATA_SERVICE
-#define CONNECTOR_FILE_SYSTEM
+/* #define CONNECTOR_FILE_SYSTEM */
 #define CONNECTOR_RCI_SERVICE
 #define CONNECTOR_TRANSPORT_TCP
+
 #define CONNECTOR_TRANSPORT_UDP
 #define CONNECTOR_TRANSPORT_SMS
 
@@ -45,7 +46,7 @@
 
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
-#define CONNECTOR_DEVICE_TYPE                          "iDigi connector Linux Sample"
+#define CONNECTOR_DEVICE_TYPE                          "Etherios Connector Linux Sample"
 #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              5
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75

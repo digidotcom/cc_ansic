@@ -135,7 +135,7 @@ static char const * const setting_system_errors[] = {
  SETTING_SYSTEM_ERROR_INVALID_LENGTH /*invalid_length*/
 };
 
-static connector_group_t const connector_setting_groups[] = {
+static connector_remote_group_t const connector_setting_groups[] = {
  {  /*system*/
   NULL,
    1,
@@ -164,7 +164,7 @@ static connector_group_element_t const state_gps_stats_elements[] = {
  }
 };
 
-static connector_group_t const connector_state_groups[] = {
+static connector_remote_group_t const connector_state_groups[] = {
  {  /*gps_stats*/
   NULL,
    1,
@@ -177,7 +177,7 @@ static connector_group_t const connector_state_groups[] = {
  }
 };
 
-static connector_group_table_t const connector_group_table[] = {
+static connector_remote_group_table_t const connector_remote_group_table[] = {
  {connector_setting_groups,
  asizeof(connector_setting_groups)
  },

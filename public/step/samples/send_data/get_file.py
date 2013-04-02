@@ -10,7 +10,7 @@
 #
 # ***************************************************************************
 # get_file.py
-# Get a file from the iDigi Device Cloud storage
+# Get a file from Etherios Device Cloud storage
 # -------------------------------------------------
 # Usage: get_file.py <username> <password> <device_id>
 # -------------------------------------------------
@@ -31,7 +31,7 @@ def GetMessage(username, password, device_id):
     path = """/ws/FileData/~/%s/test/test.txt"""%(device_id)
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("my.idigi.com",80)
+    webservice = httplib.HTTP("login.etherios.com",80)
     webservice.putrequest("GET", path)
     
     # add the authorization string into the HTTP header

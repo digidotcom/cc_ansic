@@ -15,7 +15,7 @@
 #include "remote_config.h"
 
 
-extern connector_callback_status_t app_remote_config_handler(connector_remote_config_request_t const request,
+extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request,
                                                       void * const data);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
@@ -59,7 +59,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     case connector_class_id_network_tcp:
         status = app_network_tcp_handler(request_id.network_request, data);
         break;
-    case connector_class_remote_config_service:
+    case connector_class_id_remote_config:
         status = app_remote_config_handler(request_id.remote_config_request, data);
         break;
     case connector_class_id_status:

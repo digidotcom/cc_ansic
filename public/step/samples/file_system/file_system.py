@@ -53,7 +53,7 @@ def PostMessage(username, password, device_id):
     """ % (device_id, put_path, put_data, get_path, ls_path)
 
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("my.idigi.com",80)
+    webservice = httplib.HTTP("login.etherios.com",80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header

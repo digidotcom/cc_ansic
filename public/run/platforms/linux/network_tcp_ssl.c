@@ -335,7 +335,7 @@ done:
 }
 
 /*
- * Send data to the iDigi Device Cloud, this routine must not block.
+ * Send data to Etherios Device Cloud, this routine must not block.
  */
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
@@ -357,7 +357,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
 }
 
 /*
- * This routine reads a specified number of bytes from the iDigi Device Cloud.
+ * This routine reads a specified number of bytes from Etherios Device Cloud.
  */
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {

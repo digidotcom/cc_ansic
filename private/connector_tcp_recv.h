@@ -429,7 +429,7 @@ enum {
     connector_facility_t * fac_ptr;
 
 
-    /* Facility layer is the layer that iDigi Connector has fully established
+    /* Facility layer is the layer that the Connector has fully established
      * communication with server. It keeps waiting messages from server
      * and passes it to the appropriate facility:
      * 1. waits message from server

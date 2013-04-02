@@ -51,7 +51,7 @@ def PostMessage(username, password, device_id):
     """%(image_file, device_id, base64.encodestring("%s"%fileHandle.read())[:-1])
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("my.idigi.com",80)
+    webservice = httplib.HTTP("login.etherios.com",80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header

@@ -24,7 +24,7 @@ uint32_t init_unsigned = 1;
 float init_float = 0.1;
 char * init_string = "default\0";
 char * init_ipv4 = "0.0.0.0\0";
-char * init_fqdnv4 = "test.idigi.com\0";
+char * init_fqdnv4 = "login.etherios.com\0";
 char * init_datetime = "2012-12-21T00:00:00Z\0";
 
 void * ptr = 0;
@@ -70,9 +70,9 @@ void add_setting_data(connector_remote_group_request_t const * const request,
 void * get_setting_data(connector_remote_group_request_t const * const request,
     const void * def, int length){
 
-    unsigned int group_id = request->group.id;
-    unsigned int index = request->group.index;
-    unsigned int element_id = request->element.id;
+    unsigned int group_id = remote_config->group.id;
+    unsigned int index = remote_config->group.index;
+    unsigned int element_id = remote_config->element.id;
 
     rci_data_t * r_data = &rci_data[request->group.type];
 
@@ -111,9 +111,9 @@ void * get_setting_data(connector_remote_group_request_t const * const request,
 void add_setting_data(connector_remote_group_request_t const * const request,
     const void * data, int length){
 
-    unsigned int group_id = request->group.id;
-    unsigned int index = request->group.index;
-    unsigned int element_id = request->element.id;
+    unsigned int group_id = remote_config->group.id;
+    unsigned int index = remote_config->group.index;
+    unsigned int element_id = remote_config->element.id;
 
     rci_data_t * r_data = &rci_data[request->group.type];
 
@@ -193,7 +193,7 @@ static connector_callback_status_t app_rci_group_process(
     UNUSED_ARGUMENT(response);
     UNUSED_ARGUMENT(request);
 
-    if(request->action == connector_remote_action_query){
+    if(remote_config->action == connector_remote_action_query){
         return app_rci_group_get(request, response);
     }
     else{
@@ -207,50 +207,50 @@ static connector_callback_status_t app_rci_group_get(
 
     void * data;
 
-    switch(request->element.type){
+    switch(remote_config->element.type){
         case connector_element_type_string:
         case connector_element_type_multiline_string:
         case connector_element_type_password:
             data = get_setting_data(request, init_string,
                 sizeof(char)*(strlen(init_string) + 1));
-            response->element_data.element_value->string_value = data;
+            remote_config->response.element_value->string_value = data;
             break;
         case connector_element_type_int32:
             data = get_setting_data(request, &init_signed, sizeof(int32_t));
-            response->element_data.element_value->signed_integer_value = *(int32_t *)data;
+            remote_config->response.element_value->signed_integer_value = *(int32_t *)data;
             break;
         case connector_element_type_uint32:
         case connector_element_type_hex32:
         case connector_element_type_0x_hex32:
             data = get_setting_data(request, &init_unsigned,
                 sizeof(uint32_t));
-            response->element_data.element_value->unsigned_integer_value = *(uint32_t *)data;
+            remote_config->response.element_value->unsigned_integer_value = *(uint32_t *)data;
             break;
         case connector_element_type_float:
             data = get_setting_data(request, &init_float, sizeof(float));
-            response->element_data.element_value->float_value = init_float;
+            remote_config->response.element_value->float_value = init_float;
             break;
         case connector_element_type_enum:
         case connector_element_type_on_off:
         case connector_element_type_boolean:
             data = get_setting_data(request, &init_unsigned, sizeof(uint32_t));
-            response->element_data.element_value->unsigned_integer_value = *(uint32_t *)data;
+            remote_config->response.element_value->unsigned_integer_value = *(uint32_t *)data;
             break;
         case connector_element_type_ipv4:
             data = get_setting_data(request, init_ipv4,
                 sizeof(char)*(strlen(init_ipv4)+1));
-            response->element_data.element_value->string_value = data;
+            remote_config->response.element_value->string_value = data;
             break;
         case connector_element_type_fqdnv4:
         case connector_element_type_fqdnv6:
             data =  get_setting_data(request, init_fqdnv4,
                 sizeof(char)*(strlen(init_fqdnv4)+1));
-            response->element_data.element_value->string_value = data;
+            remote_config->response.element_value->string_value = data;
             break;
         case connector_element_type_datetime:
             data = get_setting_data(request, init_datetime,
                 sizeof(char)*(strlen(init_datetime)+1));
-            response->element_data.element_value->string_value = data;
+            remote_config->response.element_value->string_value = data;
             break;
         default:
             APP_DEBUG("Unknown Type.\n");
@@ -266,7 +266,7 @@ static connector_callback_status_t app_rci_group_set(
     UNUSED_ARGUMENT(response);
 
 
-    switch(request->element.type){
+    switch(remote_config->element.type){
         case connector_element_type_string:
         case connector_element_type_multiline_string:
         case connector_element_type_password:
@@ -274,32 +274,32 @@ static connector_callback_status_t app_rci_group_set(
         case connector_element_type_fqdnv4:
         case connector_element_type_fqdnv6:
         case connector_element_type_datetime:
-            add_setting_data(request, request->element.value->string_value,
-                sizeof(char)*(strlen(request->element.value->string_value)+1));
+            add_setting_data(request, remote_config->element.value->string_value,
+                sizeof(char)*(strlen(remote_config->element.value->string_value)+1));
             break;
         case connector_element_type_int32:
             add_setting_data(request,
-                &request->element.value->signed_integer_value,
-                sizeof(request->element.value->signed_integer_value));
+                &remote_config->element.value->signed_integer_value,
+                sizeof(remote_config->element.value->signed_integer_value));
             break;
         case connector_element_type_uint32:
         case connector_element_type_hex32:
         case connector_element_type_0x_hex32:
             add_setting_data(request,
-                &request->element.value->unsigned_integer_value,
-                sizeof(request->element.value->unsigned_integer_value));
+                &remote_config->element.value->unsigned_integer_value,
+                sizeof(remote_config->element.value->unsigned_integer_value));
             break;
         case connector_element_type_float:
             add_setting_data(request,
-                &request->element.value->float_value,
-                sizeof(request->element.value->float_value));
+                &remote_config->element.value->float_value,
+                sizeof(remote_config->element.value->float_value));
             break;
         case connector_element_type_enum:
         case connector_element_type_on_off:
         case connector_element_type_boolean:
             add_setting_data(request,
-                &request->element.value->boolean_value,
-                sizeof(request->element.value->boolean_value));
+                &remote_config->element.value->boolean_value,
+                sizeof(remote_config->element.value->boolean_value));
             break;
     }
 
@@ -308,7 +308,7 @@ static connector_callback_status_t app_rci_group_set(
 }
 
 connector_callback_status_t app_remote_config_handler(
-    connector_remote_config_request_t const request,
+    connector_request_id_remote_config_t const request,
     void const * const request_data, size_t const request_length,
     void * response_data, size_t * const response_length){
 
@@ -318,16 +318,16 @@ connector_callback_status_t app_remote_config_handler(
     UNUSED_ARGUMENT(response_length);
 
     switch(request){
-        case connector_remote_config_session_start:
-        case connector_remote_config_action_start:
-        case connector_remote_config_group_start:
-        case connector_remote_config_group_end:
-        case connector_remote_config_action_end:
-        case connector_remote_config_session_end:
-        case connector_remote_config_session_cancel:
+        case connector_request_id_remote_config_session_start:
+        case connector_request_id_remote_config_action_start:
+        case connector_request_id_remote_config_group_start:
+        case connector_request_id_remote_config_group_end:
+        case connector_request_id_remote_config_action_end:
+        case connector_request_id_remote_config_session_end:
+        case connector_request_id_remote_config_session_cancel:
             // do nothing here.
             break;
-        case connector_remote_config_group_process:
+        case connector_request_id_remote_config_group_process:
             status = app_rci_group_process(request_data, response_data);
             break;
         default:

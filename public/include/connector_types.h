@@ -106,7 +106,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 /**
 *  Signed 32 bit value.
 */
-   typedef long int int32_t;
+/*    typedef long int int32_t; */
 
 #ifndef INT32_MIN
 /**

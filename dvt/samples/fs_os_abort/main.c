@@ -58,7 +58,7 @@ int main (void)
     
         connector_handle_t connector_handle;
     
-        APP_DEBUG("Start iDigi\n");
+        APP_DEBUG("Start Etherios Connector\n");
         connector_handle = connector_init(app_connector_callback);
     
         if (connector_handle != NULL)
@@ -84,7 +84,7 @@ int main (void)
         }
         else
         {
-            APP_DEBUG("unable to initialize iDigi\n");
+            APP_DEBUG("Unable to initialize the connector\n");
             goto done;
         }
     }

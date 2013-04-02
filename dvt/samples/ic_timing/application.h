@@ -92,11 +92,11 @@ extern int startWritingCount;
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length);
-extern connector_callback_status_t app_firmware_handler(connector_firmware_request_t const request,
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request,
                                                   void const * const request_data, size_t const request_length,
                                                   void * response_data, size_t * const response_length);
 
-extern connector_callback_status_t app_remote_config_handler(connector_remote_config_request_t const request,
+extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request,
                                                       void const * const request_data, size_t const request_length,
                                                       void * response_data, size_t * const response_length);
 

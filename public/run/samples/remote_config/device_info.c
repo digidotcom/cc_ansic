@@ -33,21 +33,19 @@ typedef struct {
     size_t desc_length;
 } device_info_config_data_t;
 
-device_info_config_data_t device_info_config_data = {"iDigi Connector Product\0", "\0", "Digi International Inc.\0", "iDigi Connector Demo on Linux\n"
+device_info_config_data_t device_info_config_data = {"Etherios Connector Product\0", "\0", "Digi International Inc.\0", "Etherios Connector Demo on Linux\n"
         "with firmware upgrade, and remote configuration supports\0", 102};
 
 void print_device_info_desc(void)
 {
     printf("%s", device_info_config_data.desc);
 }
-connector_callback_status_t app_device_info_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_info_group_init(connector_remote_config_t * const remote_config)
 {
 
     void * ptr;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_info_config_data_t * device_info_ptr = NULL;
-
-    UNUSED_ARGUMENT(request);
 
     ASSERT(session_ptr != NULL);
 
@@ -55,7 +53,7 @@ connector_callback_status_t app_device_info_group_init(connector_remote_group_re
 
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -67,20 +65,19 @@ done:
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_device_info_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_info_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
-
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     ASSERT(session_ptr != NULL);
     ASSERT(session_ptr->group_context != NULL);
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_device_info_version:
-        ASSERT(request->element.type == connector_element_type_0x_hex32);
-        response->element_data.element_value->unsigned_integer_value = CONNECTOR_VERSION;
+        ASSERT(remote_config->element.type == connector_element_type_0x_hex32);
+        remote_config->response.element_value->unsigned_integer_value = CONNECTOR_VERSION;
         break;
     case connector_setting_device_info_product:
     case connector_setting_device_info_model:
@@ -94,14 +91,14 @@ connector_callback_status_t app_device_info_group_get(connector_remote_group_req
 
         ASSERT(asizeof(config_data) == connector_setting_device_info_COUNT);
 
-        response->element_data.element_value->string_value = config_data[request->element.id];
-        if (request->element.id == connector_setting_device_info_desc)
+        remote_config->response.element_value->string_value = config_data[remote_config->element.id];
+        if (remote_config->element.id == connector_setting_device_info_desc)
         {
-            ASSERT(request->element.type == connector_element_type_multiline_string);
+            ASSERT(remote_config->element.type == connector_element_type_multiline_string);
         }
         else
         {
-            ASSERT(request->element.type == connector_element_type_string);
+            ASSERT(remote_config->element.type == connector_element_type_string);
         }
         break;
     }
@@ -113,10 +110,10 @@ connector_callback_status_t app_device_info_group_get(connector_remote_group_req
     return status;
 }
 
-connector_callback_status_t app_device_info_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_info_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     device_info_config_data_t * device_info_ptr;
     char * src_ptr = NULL;
@@ -126,22 +123,22 @@ connector_callback_status_t app_device_info_group_set(connector_remote_group_req
 
     device_info_ptr = session_ptr->group_context;
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_setting_device_info_product:
-        ASSERT(strlen(request->element.value->string_value) < sizeof device_info_ptr->product);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof device_info_ptr->product);
         src_ptr = device_info_ptr->product;
         break;
     case connector_setting_device_info_model:
-        ASSERT(strlen(request->element.value->string_value) < sizeof device_info_ptr->model);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof device_info_ptr->model);
         src_ptr = device_info_ptr->model;
         break;
     case connector_setting_device_info_company:
-        ASSERT(strlen(request->element.value->string_value) < sizeof device_info_ptr->company);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof device_info_ptr->company);
         src_ptr = device_info_ptr->company;
         break;
     case connector_setting_device_info_desc:
-        ASSERT(strlen(request->element.value->string_value) < sizeof device_info_ptr->desc);
+        ASSERT(strlen(remote_config->element.value->string_value) < sizeof device_info_ptr->desc);
         src_ptr = device_info_ptr->desc;
         break;
     default:
@@ -151,11 +148,11 @@ connector_callback_status_t app_device_info_group_set(connector_remote_group_req
 
     if (src_ptr != NULL)
     {
-        size_t const length = strlen(request->element.value->string_value);
-        memcpy(src_ptr, request->element.value->string_value, length);
+        size_t const length = strlen(remote_config->element.value->string_value);
+        memcpy(src_ptr, remote_config->element.value->string_value, length);
         src_ptr[length] = '\0';
 
-        if (request->element.id == connector_setting_device_info_desc)
+        if (remote_config->element.id == connector_setting_device_info_desc)
         {
              device_info_ptr->desc_length = length;
         }
@@ -164,11 +161,11 @@ connector_callback_status_t app_device_info_group_set(connector_remote_group_req
     return status;
 }
 
-connector_callback_status_t app_device_info_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_device_info_group_end(connector_remote_config_t * const remote_config)
 {
 
     device_info_config_data_t * device_info_ptr;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     /* save the data */
 
@@ -177,7 +174,7 @@ connector_callback_status_t app_device_info_group_end(connector_remote_group_req
 
     device_info_ptr = session_ptr->group_context;
 
-    if (request->action == connector_remote_action_set)
+    if (remote_config->action == connector_remote_action_set)
     {
         device_info_config_data = *device_info_ptr;
     }
@@ -189,9 +186,9 @@ connector_callback_status_t app_device_info_group_end(connector_remote_group_req
     return connector_callback_continue;
 }
 
-void app_device_info_group_cancel(void * const context)
+void app_device_info_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     if (session_ptr != NULL)
     {

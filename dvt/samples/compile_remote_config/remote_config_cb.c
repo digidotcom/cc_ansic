@@ -18,7 +18,7 @@
 #error "Must define CONNECTOR_RCI_SERVICE in connector_config.h to run this sample"
 #endif
 
-connector_callback_status_t app_remote_config_handler(connector_remote_config_request_t const request,
+connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request,
                                                       void const * const request_data, size_t const request_length,
                                                       void * response_data, size_t * const response_length)
 {
@@ -32,14 +32,14 @@ connector_callback_status_t app_remote_config_handler(connector_remote_config_re
 
     switch (request)
     {
-    case connector_remote_config_session_start:
-    case connector_remote_config_session_end:
-    case connector_remote_config_action_start:
-    case connector_remote_config_action_end:
-    case connector_remote_config_group_start:
-    case connector_remote_config_group_end:
-    case connector_remote_config_group_process:
-    case connector_remote_config_session_cancel:
+    case connector_request_id_remote_config_session_start:
+    case connector_request_id_remote_config_session_end:
+    case connector_request_id_remote_config_action_start:
+    case connector_request_id_remote_config_action_end:
+    case connector_request_id_remote_config_group_start:
+    case connector_request_id_remote_config_group_end:
+    case connector_request_id_remote_config_group_process:
+    case connector_request_id_remote_config_session_cancel:
         break;
     default:
         ASSERT(0);

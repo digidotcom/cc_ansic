@@ -504,7 +504,7 @@ static char const * app_os_class_to_string(connector_os_request_t const value)
     return result;
 }
 
-static char const * app_firmware_class_to_string(connector_firmware_request_t const value)
+static char const * app_firmware_class_to_string(connector_request_id_firmware_t const value)
 {
     char const * result = NULL;
     switch (value)
@@ -523,19 +523,19 @@ static char const * app_firmware_class_to_string(connector_firmware_request_t co
     return result;
 }
 
-static char const * app_remote_config_class_to_string(connector_remote_config_request_t const value)
+static char const * app_remote_config_class_to_string(connector_request_id_remote_config_t const value)
 {
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_remote_config_session_start);
-        enum_to_case(connector_remote_config_action_start);
-        enum_to_case(connector_remote_config_group_start);
-        enum_to_case(connector_remote_config_group_process);
-        enum_to_case(connector_remote_config_group_end);
-        enum_to_case(connector_remote_config_action_end);
-        enum_to_case(connector_remote_config_session_end);
-        enum_to_case(connector_remote_config_session_cancel);
+        enum_to_case(connector_request_id_remote_config_session_start);
+        enum_to_case(connector_request_id_remote_config_action_start);
+        enum_to_case(connector_request_id_remote_config_group_start);
+        enum_to_case(connector_request_id_remote_config_group_process);
+        enum_to_case(connector_request_id_remote_config_group_end);
+        enum_to_case(connector_request_id_remote_config_action_end);
+        enum_to_case(connector_request_id_remote_config_session_end);
+        enum_to_case(connector_request_id_remote_config_session_cancel);
     }
     return result;
 }

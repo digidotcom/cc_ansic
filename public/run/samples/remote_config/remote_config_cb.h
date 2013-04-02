@@ -21,45 +21,45 @@ typedef struct {
     void * group_context;
 } remote_group_session_t;
 
-extern connector_callback_status_t app_serial_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_serial_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_serial_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_serial_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern void app_serial_group_cancel(void * const context);
+extern connector_callback_status_t app_serial_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_serial_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_serial_group_set(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_serial_group_end(connector_remote_config_t * const remote_config);
+extern void app_serial_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
-extern connector_callback_status_t app_ethernet_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_ethernet_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_ethernet_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_ethernet_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern void app_ethernet_group_cancel(void * const context);
+extern connector_callback_status_t app_ethernet_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_ethernet_group_set(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * const remote_config);
+extern void app_ethernet_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
-extern connector_callback_status_t app_device_time_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_time_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_time_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_device_time_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_time_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_time_group_set(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_device_info_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_info_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_info_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_info_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern void app_device_info_group_cancel(void * const context);
+extern connector_callback_status_t app_device_info_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_info_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_info_group_set(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_info_group_end(connector_remote_config_t * const remote_config);
+extern void app_device_info_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
-extern connector_callback_status_t app_gps_stats_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_gps_stats_group_get(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_system_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_system_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_system_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern void app_system_group_cancel(void * const context);
+extern connector_callback_status_t app_system_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_system_group_set(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_system_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_system_group_end(connector_remote_config_t * const remote_config);
+extern void app_system_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
-extern connector_callback_status_t app_device_state_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_state_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_state_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_device_state_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_state_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_state_group_set(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_device_security_group_init(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_security_group_set(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_security_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern connector_callback_status_t app_device_security_group_end(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response);
-extern void app_device_security_group_cancel(void * const context);
+extern connector_callback_status_t app_device_security_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_security_group_set(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_security_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_device_security_group_end(connector_remote_config_t * const remote_config);
+extern void app_device_security_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
 
 #endif /* REMOTE_CONFIG_CB_H_ */

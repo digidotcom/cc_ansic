@@ -143,7 +143,7 @@ typedef enum {
    connector_keepalive_error,       /**< iDigi connector did not receive keepalive messages. Server may be offline. */
    connector_bad_version,           /**< Invalid firmware version number. Incorrect firmware version number used in Remote Configuration (RCI) */
    connector_device_terminated,     /**< iDigi connector was terminated by user via connector_initiate_action call.
-                                     All memory is freed and connector_init must be called to restart iDigi connector. */
+                                     All memory is freed and connector_init must be called to reStart Etherios Connector connector. */
    connector_service_busy,          /**< Someone else is using the same service or the device is busy. */
    connector_invalid_response,      /**< Received invalid response from the server. */
    connector_no_resource,           /**< Lack of resource */
@@ -155,7 +155,7 @@ typedef enum {
                                      iDigi connector to relinquish for other task to run. */
    connector_active,                /**< iDigi connector is processing a message and it should be called at the earliest possible time. */
    connector_abort,                 /**< iDigi connector was aborted and terminated either iDigi connector encountered fatal error or callback aborted iDigi connector.
-                                     All memory is freed and connector_init must be called to restart iDigi connector. */
+                                     All memory is freed and connector_init must be called to reStart Etherios Connector connector. */
    connector_device_error,          /**< Close Callback returns error. If connector_step or connector_run is called again, it will re-establish the connection. */
 
    connector_exceed_timeout,        /**< Callback exceeded timeout value before it returned. */
@@ -237,7 +237,7 @@ typedef enum
 * These status values are used for an event notification.
 */
 typedef enum {
-    connector_tcp_communication_started,      /**< iDigi connector has established connection with the iDigi Device Cloud and starts communicating. */
+    connector_tcp_communication_started,      /**< iDigi connector has established connection with Etherios Device Cloud and starts communicating. */
     connector_tcp_keepalive_missed,           /**< iDigi connector didn't receive a keep alive message within the specified keep alive interval @ref tx_keepalive. */
     connector_tcp_keepalive_restored          /**< iDigi connector received a keep alive message after a keep alive message was not received.
                                          This is called after the callback has been previously notified with connector_miss_keepalive status. */
@@ -274,7 +274,7 @@ typedef enum {
 * connector_class_id_short_message and supported transport methods under this class are SMS and UDP.
 */
 typedef enum {
-    connector_sm_cli_request,     /**< Indicates CLI request is received from the iDigi device cloud. Also used to get the CLI response from the user */
+    connector_sm_cli_request,     /**< Indicates CLI request is received from Etherios Device Cloud. Also used to get the CLI response from the user */
     connector_sm_server_to_device_config,  /**< Used when device receives a server to device config request from iDigi Device Cloud. Used only if the transport method is SMS */
     connector_sm_device_to_server_config,  /**< Used when device receives a device to server config response from iDigi Device Cloud. Used only if the transport method is SMS */
     connector_sm_more_data,       /**< More data is available on the server. Applicable only if UDP transport method is used.
@@ -322,9 +322,9 @@ typedef enum {
 typedef enum  {
     connector_callback_continue,        /**< Continues with no error */
     connector_callback_busy,            /**< Callback is busy */
-    connector_callback_abort,           /**< Aborts iDigi connector. iDigi connector frees all memory. @ref connector_init must be called to restart iDigi connector. */
+    connector_callback_abort,           /**< Aborts iDigi connector. iDigi connector frees all memory. @ref connector_init must be called to reStart Etherios Connector connector. */
     connector_callback_unrecognized,    /**< Unsupported callback request */
-    connector_callback_error            /**< Exits iDigi connector when error is encountered. iDigi connector will try reconnecting to the iDigi Device Cloud
+    connector_callback_error            /**< Exits iDigi connector when error is encountered. iDigi connector will try reconnecting to Etherios Device Cloud
                                          if @ref connector_step or @ref connector_run is called again. */
 } connector_callback_status_t;
 /**
@@ -710,7 +710,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  * @brief   Requests the iDigi Connector to perform an asynchronous action.
  *
  * This function is called to initiate an iDigi Connector action.  It can be
- * used to initiate a send data sequence from the device to the iDigi Device Cloud,
+ * used to initiate a send data sequence from the device to Etherios Device Cloud,
  * or to terminate the iDigi Connector library.
  *
  * @param [in] handle  Handle returned from the connector_init() call.
@@ -726,7 +726,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *
  *                      @li @b connector_initiate_send_data:
  *                           This is used to trigger the send
- *                           data to the iDigi Device Cloud. Only the
+ *                           data to Etherios Device Cloud. Only the
  *                           header information is passed by
  *                           this method. The actual data is
  *                           transferred through callbacks. The
@@ -746,7 +746,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *
  *                      @li @b connector_initiate_ping_request:
- *                          Sends status message to the iDigi Device Cloud.  Supported only under
+ *                          Sends status message to the Etherios Device Cloud.  Supported only under
  *                          @ref connector_transport_udp and @ref connector_transport_sms transport methods.
  *
  *                      @li @b connector_initiate_data_point_binary:
@@ -756,7 +756,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Initiates the action to send data points which are belongs to a single stream on Etherios Device Cloud.
  *
  *                      @li @b connector_initiate_config_message:
- *                          Sends configuration info to the iDigi Device Cloud. Supported only under SMS transport method.
+ *                          Sends configuration info to Etherios Device Cloud. Supported only under SMS transport method.
  *
  *                      @li @b connector_initiate_session_cancel:
  *                          Initiates the action to cancel the timedout session.
@@ -782,7 +782,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Pointer to connector_message_status_request_t
  *
 * @retval connector_success              No error
- * @retval connector_init_error           iDigi connector was not initialized or not connected to the iDigi Device Cloud.
+ * @retval connector_init_error           iDigi connector was not initialized or not connected to Etherios Device Cloud.
  * @retval connector_abort                Callback aborted iDigi connector.
  * @retval connector_invalid_data         Invalid parameter
  * @retval connector_no_resource          Insufficient memory

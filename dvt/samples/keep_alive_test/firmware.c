@@ -109,7 +109,7 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
 
     if (download_complete == NULL)
     {
-        APP_DEBUG("app_firmware_download_complete Error: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_complete Error: Invalid parameters\n");
         status = connector_callback_abort;
         goto done;
     }

@@ -14,7 +14,7 @@ public class FileGenerator {
     private final static String HEADER_FILENAME = "remote_config.h";
     private final static String SOURCE_NAME = "rci_config";
 
-    private final static String IDIGI = "idigi";
+    private final static String CONNECTOR_PREFIX = "connector";
     private final static String DEFINE = "#define ";
     private final static String INCLUDE = "#include ";
     private final static String ERROR = "error";
@@ -687,11 +687,10 @@ public class FileGenerator {
             String element_string = String.format("\n { %s", COMMENTED(element.getName()));
 
 
-            element_string += String.format("   %s",  getElementDefine("access", getAccess(element.getAccess())));
+            element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
             
             element_string += String.format("   %s", getElementDefine("type", element.getType()));
 
-            element_string += "  NULL";
             element_string += "\n }";
 
             if (element_index < (elements.size() - 1)) {
@@ -1016,7 +1015,7 @@ public class FileGenerator {
     }
 
     private String getEnumString(String enum_name) {
-        String str = " " + IDIGI + "_" + configType;
+        String str = " " + CONNECTOR_PREFIX + "_" + configType;
 
         if (enum_name != null) {
             str += "_" + enum_name;
@@ -1089,7 +1088,7 @@ public class FileGenerator {
     }
 
     private String getElementDefine(String type_name, String element_name) {
-        return (String.format("%s_element_%s_%s,\n", IDIGI, type_name, element_name));
+        return (String.format("%s_element_%s_%s", CONNECTOR_PREFIX, type_name, element_name));
     }
 
     private String getAccess(String access) {

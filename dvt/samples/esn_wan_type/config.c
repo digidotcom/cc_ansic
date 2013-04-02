@@ -20,7 +20,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-/* iDigi connector Configuration routines */
+/* the connector Configuration routines */
 
 /*
  * Routine to get the IP address, you will need to modify this routine for your
@@ -184,7 +184,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #if !(defined CONNECTOR_CLOUD_URL)
 static connector_callback_status_t app_get_server_url(connector_config_pointer_string_t * const config_url)
 {
-#error "Specify iDigi Device Cloud URL"
+#error "Specify Etherios Device Cloud URL"
     static  char const connector_server_url[] = "login.etherios.com";
     /* Return pointer to device type. */
     config_url->string = (char *)connector_server_url;
@@ -543,7 +543,7 @@ static connector_callback_status_t app_get_sms_service_id(connector_config_point
     return connector_callback_continue;
 }
 
-/* End of iDigi connector configuration routines */
+/* End of the connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
 #define enum_to_case(name)  case name:  result = #name;             break
@@ -791,7 +791,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
 }
 
 /*
- * This routine is called when a configuration error is encountered by the iDigi connector.
+ * This routine is called when a configuration error is encountered by the connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 static connector_callback_status_t app_config_error(connector_error_status_t const * const error_data)

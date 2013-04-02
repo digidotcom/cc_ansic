@@ -69,9 +69,9 @@ void print_remote_configurations(void)
     for (n = 0; n < 2; n++)
     {
 
-    for (i = 0; i < connector_group_table[n].count; i++)
+    for (i = 0; i < connector_remote_group_table[n].count; i++)
     {
-        connector_group_t const * const group_ptr = &connector_group_table[n].groups[i];
+        connector_remote_group_t const * const group_ptr = &connector_remote_group_table[n].groups[i];
         size_t j;
 
         print_name(fp, "\n\ngroup", group_ptr->name);

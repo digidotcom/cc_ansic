@@ -78,7 +78,7 @@ int start_connector_thread(void)
     }
     else
     {
-        APP_DEBUG("unable to initialize iDigi\n");
+        APP_DEBUG("Unable to initialize the connector\n");
     }
 
     return ccode;
@@ -107,7 +107,7 @@ int main (void)
 
     for (;;)
     {
-        APP_DEBUG("Start iDigi\n");
+        APP_DEBUG("Start Etherios Connector\n");
 
         rc = start_connector_thread();
         if (rc != 0)

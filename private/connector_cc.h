@@ -324,7 +324,7 @@ enum cc_redirect {
 
     connector_debug_printf("process_redirect:  redirect to new destination\n");
     /* Redirect to new destination:
-     * iDigi will close connection and connect to new destination. If connect
+     * The connector will close connection and connect to new destination. If connect
      * to new destination fails, this function will returns SUCCESS to try
      * connecting to the original server.
      */
@@ -468,7 +468,7 @@ static connector_status_t connector_facility_cc_init(connector_data_t * const co
     connector_status_t result = connector_working;
     connector_cc_data_t * cc_ptr;
 
-    /* Add Connection control facility to iDigi
+    /* Add Connection control facility
      *
      * Make sure connection control is not already created. If Connection
      * control facility is already created, we probably reconnect to server

@@ -53,7 +53,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
         enum_to_case(connector_class_id_operating_system);
         enum_to_case(connector_class_id_firmware);
         enum_to_case(connector_class_id_data_service);
-        enum_to_case(connector_class_remote_config_service);
+        enum_to_case(connector_class_id_remote_config);
         enum_to_case(connector_class_id_file_system);
         enum_to_case(connector_class_id_network_tcp);
         enum_to_case(connector_class_id_network_udp);

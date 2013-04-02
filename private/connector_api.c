@@ -248,7 +248,7 @@ static connector_bool_t is_connector_stopped(connector_data_t * const connector_
     return connector_bool(count == 0);
 }
 
-static void abort_idigi(connector_data_t * const connector_ptr)
+static void abort_connector(connector_data_t * const connector_ptr)
 {
     connector_status_t status;
 
@@ -263,7 +263,7 @@ static void abort_idigi(connector_data_t * const connector_ptr)
     connector_ptr->sm_sms.close.status = connector_close_status_abort;
 #endif
     if (status != connector_success)
-        connector_debug_printf("abort_idigi: sm_initiate_action returns error %d\n", status);
+        connector_debug_printf("abort_connector: sm_initiate_action returns error %d\n", status);
 #endif
 
 
@@ -271,7 +271,7 @@ static void abort_idigi(connector_data_t * const connector_ptr)
     status = edp_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
     edp_set_close_status(connector_ptr, connector_close_status_abort);
     if (status != connector_success)
-        connector_debug_printf("abort_idigi: edp_initiate_action returns error %d\n", status);
+        connector_debug_printf("abort_connector: edp_initiate_action returns error %d\n", status);
 #endif
 
     connector_ptr->stop.state = connector_state_abort_by_callback;
@@ -285,9 +285,9 @@ connector_handle_t connector_init(connector_callback_t const callback)
     connector_status_t status;
 
 #if (defined CONNECTOR_SW_DESCRIPTION)
-    connector_debug_printf("iDigi Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
+    connector_debug_printf("Etherios Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
 #else
-    connector_debug_printf("iDigi Connector v%s\n", CONNECTOR_SW_VERSION);
+    connector_debug_printf("Etherios Connector v%s\n", CONNECTOR_SW_VERSION);
 #endif
 
     {
@@ -435,7 +435,7 @@ error:
         (connector_ptr->stop.state != connector_state_abort_by_callback))
     {
         /* let's abort idigi */
-        abort_idigi(connector_ptr);
+        abort_connector(connector_ptr);
     }
     /* wait until SMS/UDP/TCP are in terminated state */
     if ((result == connector_abort) || (result == connector_device_terminated)) result = connector_working;
@@ -456,7 +456,7 @@ connector_status_t connector_run(connector_handle_t const handle)
         {
             if (yield_process(handle, rc) != connector_working)
             {
-                abort_idigi(handle);
+                abort_connector(handle);
                 rc = connector_success;
             }
         }

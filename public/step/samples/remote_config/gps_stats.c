@@ -23,17 +23,17 @@ typedef struct {
 
 static gps_location_t gps_data = { "44.932017", "-93.461594"};
 
-connector_callback_status_t app_gps_stats_group_get(connector_remote_group_request_t const * const request, connector_remote_group_response_t * const response)
+connector_callback_status_t app_gps_stats_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    switch (request->element.id)
+    switch (remote_config->element.id)
     {
     case connector_state_gps_stats_latitude:
-        response->element_data.element_value->string_value = gps_data.latitude;
+        remote_config->response.element_value->string_value = gps_data.latitude;
         break;
     case connector_state_gps_stats_longitude:
-        response->element_data.element_value->string_value = gps_data.longitude;
+        remote_config->response.element_value->string_value = gps_data.longitude;
         break;
     default:
         ASSERT(0);

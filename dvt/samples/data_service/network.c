@@ -212,7 +212,7 @@ static connector_callback_status_t app_network_send(connector_write_request_t co
     connector_callback_status_t rc = connector_callback_continue;
     int ccode = write(*write_data->network_handle, (char *)write_data->buffer, write_data->length);
 
-    if (ccode < 0) 
+    if (ccode < 0)
     {
         int err = errno;
         if (err == EAGAIN)
@@ -295,7 +295,7 @@ static connector_callback_status_t app_network_receive(connector_read_request_t 
     FD_ZERO(&read_set);
     FD_SET(*read_data->network_handle, &read_set);
 
-    /* Blocking point for iDigi Connector */
+    /* Blocking point for the Connector */
     ccode = select((*read_data->network_handle)+1, &read_set, NULL, NULL, &timeout);
     if (ccode < 0)
     {

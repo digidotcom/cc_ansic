@@ -103,9 +103,9 @@ public class ConfigGenerator {
                         CONFIG_FILENAME));
 
         log("Description:");
-        log("\tIt generates and uploads configuration information (descriptors) to the iDigi Device Cloud");
+        log("\tIt generates and uploads configuration information (descriptors) to Etherios Device Cloud");
         log("\tand it also generates ANSI C header file (remote_config.h) ");
-        log("\tfrom the input iDigi Connector remote configuration file.\n");
+        log("\tfrom the input configuration file.\n");
 
         log("Options:");
         log(String.format("\t%-16s \t= optional option to show this menu", DASH
@@ -120,7 +120,7 @@ public class ConfigGenerator {
                         DASH + NO_DESC_OPTION));
         log(String
                 .format(
-                        "\t%-16s \t= optional option for vendor ID obtained from the iDigi Device Cloud registration.",
+                        "\t%-16s \t= optional option for vendor ID obtained from Etherios Device Cloud registration.",
                         DASH + VENDOR_OPTION + "=<vendorID>"));
         log(String
                 .format(
@@ -133,16 +133,16 @@ public class ConfigGenerator {
                         DASH + DIRECTORY_OPTION + "=<directory path>"));
         log(String
                 .format(
-"\t%-16s \t= optional option for the iDigi Device Cloud. Default is my.idigi.com",
-                        DASH + SERVER_OPTION + "=<server address>"));
+"\t%-16s \t= optional option for Etherios Device Cloud. Default is %s",
+                        DASH + SERVER_OPTION + "=<server address>", SERVER_NAME));
 
         log(String
                 .format(
-                        "\n\t%-16s \t= username to log in the iDigi Device Cloud. If no password is given you will be prompted to enter the password",
+                        "\n\t%-16s \t= username to log in Etherios Device Cloud. If no password is given you will be prompted to enter the password",
                         USERNAME));
         log(String
                 .format(
-                        "\t%-16s \t= optional option for password to log in the iDigi Device Cloud",
+                        "\t%-16s \t= optional option for password to log in Etherios Device Cloud",
                         PASSWORD));
         log(String
                 .format(
@@ -150,7 +150,7 @@ public class ConfigGenerator {
                         DEVICE_TYPE));
         log(String.format("\t%-16s \t= firmware version (i.e. 1.0.0.0)",
                 FIRMWARE_VERSION));
-        log(String.format("\t%-16s \t= iDigi Connector Configration file",
+        log(String.format("\t%-16s \t= The Connector Configration file",
                 CONFIG_FILENAME));
         System.exit(1);
     }
