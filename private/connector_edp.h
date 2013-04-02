@@ -29,7 +29,7 @@
 #include "connector_data_service.h"
 #endif
 #if (defined CONNECTOR_FILE_SYSTEM)
-#include "connector_fs.h"
+#include "connector_file_system.h"
 #endif
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
