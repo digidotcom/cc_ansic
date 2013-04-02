@@ -1139,7 +1139,7 @@ static connector_status_t msg_handle_pending_request(connector_data_t * const co
 
         service_data.session = session;
         service_data.service_type = msg_service_type_pending_request;
-        service_data.have_data = (void *)msg_ptr->pending_service_request;
+        session->service_context = (void *)msg_ptr->pending_service_request;
         service_data.error_value = result;
 
         cb_fn(connector_ptr, &service_data);

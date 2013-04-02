@@ -21,10 +21,9 @@ typedef enum
 typedef struct
 {
     void * callback_context;
+    connector_request_data_service_send_t const * header;
     connector_bool_t dp_request;
-
     connector_request_id_data_service_t request_type;
-
 } data_service_context_t;
 
 static void set_data_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
@@ -561,24 +560,28 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
     return status;
 }
 
-static connector_status_t process_send_request(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * cb_context)
+static connector_status_t process_send_request(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, data_service_context_t * const ds_ptr)
 {
     connector_status_t status = connector_working;
-#if VID
     msg_service_data_t * const service_data = service_request->need_data;
     connector_data_service_send_data_t user_data;
 
     user_data.transport = connector_transport_tcp;
-    user_data.user_context = cb_context;
+    user_data.user_context = ds_ptr->callback_context;
     user_data.bytes_used = 0;
     user_data.more_data = connector_false;
 
     if (MsgIsStart(service_data->flags))
     {
         uint8_t * dptr = service_data->data_ptr;
-        size_t const bytes = fill_put_request_header(request->service_context, dptr);
+        size_t const bytes = fill_put_request_header(ds_ptr->header, dptr);
 
-        ASSERT_GOTO(bytes < service_data->length_in_bytes, error);
+        if (bytes >= service_data->length_in_bytes)
+        {
+            connector_debug_printf("process_send_request: required bytes [%zu] is more than available [%zu]\n", bytes, service_data->length_in_bytes);
+            goto error;
+        }
+
         user_data.buffer = dptr + bytes;
         user_data.bytes_available = service_data->length_in_bytes - bytes;
         service_data->length_in_bytes = bytes;
@@ -590,30 +593,25 @@ static connector_status_t process_send_request(connector_data_t * const connecto
         service_data->length_in_bytes = 0;
     }
 
-    status = call_put_request_user(idigi_ptr, service_request, connector_request_id_data_service_send_data, &user_data);
-    if (status == idigi_working)
+    status = call_put_request_user(connector_ptr, service_request, connector_request_id_data_service_send_data, &user_data);
+    if (status == connector_working)
     {
         service_data->flags = 0;
         service_data->length_in_bytes += user_data.bytes_used;
         if (user_data.more_data == connector_false)
             MsgSetLastData(service_data->flags);
-    }
 
-    goto done;
+        goto done;
+    }
 
 error:
     set_data_service_error(service_request, connector_session_error_format);
 
 done:
-#else
-    UNUSED_PARAMETER(connector_ptr);
-    UNUSED_PARAMETER(service_request);
-    UNUSED_PARAMETER(cb_context);
-#endif
     return status;
 }
 
-static connector_status_t process_send_response(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * cb_context)
+static connector_status_t process_send_response(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, data_service_context_t * const ds_ptr)
 {
     connector_status_t status = connector_working;
     connector_data_service_send_response_t user_data;
@@ -649,7 +647,7 @@ static connector_status_t process_send_response(connector_data_t * const connect
     ASSERT_GOTO(opcode == data_service_opcode_put_response, error);
 
     user_data.transport = connector_transport_tcp;
-    user_data.user_context = cb_context;
+    user_data.user_context = ds_ptr->callback_context;
     user_data.hint = (char *)((service_data->length_in_bytes > record_end(put_response)) ? put_response + record_end(put_response) : NULL);
 
     switch (result)
@@ -685,7 +683,7 @@ done:
     return status;
 }
 
-static connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * cb_context)
+static connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * const cb_context)
 {
     connector_status_t status = connector_working;
     connector_data_service_status_t user_data;
@@ -719,80 +717,82 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
 {
     connector_status_t status;
     msg_session_t * const session = service_request->session;
-    data_service_context_t * const context = (session != NULL) ? session->service_context : NULL;
-    void * cb_context = (context != NULL) ? context->callback_context : NULL;
+    data_service_context_t * const ds_ptr = session->service_context;
 
     switch (service_request->service_type)
     {
         case msg_service_type_need_data:
-            status = process_send_request(connector_ptr, service_request, cb_context);
+            status = process_send_request(connector_ptr, service_request, ds_ptr);
             break;
 
         case msg_service_type_have_data:
-            status = process_send_response(connector_ptr, service_request, cb_context);
+            status = process_send_response(connector_ptr, service_request, ds_ptr);
             break;
 
         case msg_service_type_error:
-            status = process_send_error(connector_ptr, service_request, cb_context);
+            status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
             break;
 
         case msg_service_type_free:
-            if (context != NULL)
-                status = free_data_buffer(connector_ptr, named_buffer_id(put_request), context);
+            if (ds_ptr != NULL)
+                status = free_data_buffer(connector_ptr, named_buffer_id(put_request), ds_ptr);
             else
                 status = connector_working;
-            goto done;
+            break;
 
         default:
             status = connector_idle;
-            ASSERT_GOTO(connector_false, error);
+            ASSERT(connector_false);
             break;
     }
 
-error:
-done:
     return status;
 }
 
 static connector_status_t data_service_put_request_init(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_session_error_t result = service_request->error_value;
+    msg_session_t * const session = service_request->session;
+    connector_request_data_service_send_t * send_ptr = session->service_context;
+    data_service_context_t * ds_ptr = NULL;
 
-    if (result != connector_session_error_none)
-        goto error;
-
+    if (send_ptr != NULL)
     {
-        msg_session_t * const session = service_request->session;
-        data_service_context_t * context = NULL;
-        void * data_ptr;
-        connector_status_t const ret = malloc_data_buffer(connector_ptr, sizeof *context, named_buffer_id(put_request), &data_ptr);
+        void * ptr;
 
-        if (ret != connector_working)
-        {
-            result = connector_session_error_memory;
+        if (result != connector_session_error_none) goto error;
+
+        result = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
+        if (result != connector_working)
             goto error;
-        }
 
-        context = data_ptr;
-        context->request_type = connector_request_id_data_service_send_data;
-        session->service_context = context;
-#if VID
-        {
-            char const data_point_prefix[] = "DataPoint/";
-            connector_request_data_service_send_t * const request = service_request->have_data;
-
-            context->callback_context = request->user_context;
-            context->dp_request = connector_bool(strncmp(request->path,data_point_prefix, strlen(data_point_prefix)) == 0);
-        }
-#endif
-        goto done;
-
+        ds_ptr = ptr;
+    }
+    else
+    {
+        result = connector_invalid_data;
+        ASSERT_GOTO(connector_false, done);
     }
 
+    ds_ptr->header = send_ptr;
+    ds_ptr->callback_context = send_ptr->user_context;
+    ds_ptr->request_type = connector_request_id_data_service_send_data;
+    ds_ptr->dp_request = connector_false;
+    session->service_context = ds_ptr;
+
+    #if (defined CONNECTOR_DATA_POINTS)
+    {
+        char const data_point_prefix[] = "DataPoint/";
+
+        ds_ptr->dp_request = connector_bool(!strncmp(ds_ptr->header->path, data_point_prefix, strlen(data_point_prefix)));
+    }
+    #endif
+
+    goto done;
 
 error:
     set_data_service_error(service_request, result);
-    data_service_put_request_callback(connector_ptr, service_request);
+    process_send_error(connector_ptr, service_request, send_ptr->user_context);
 
 done:
     return connector_working;
@@ -802,20 +802,24 @@ static connector_status_t data_service_callback(connector_data_t * const connect
 {
     connector_status_t status = connector_idle;
     msg_session_t * const session = service_request->session;
-    data_service_context_t const * const context = (session != NULL) ? session->service_context : NULL;
+    data_service_context_t * const ds_ptr = session->service_context;
 
     ASSERT_GOTO(connector_ptr != NULL, done);
     ASSERT_GOTO(service_request != NULL, done);
 
-    if (context == NULL)
+    if (service_request->service_type == msg_service_type_pending_request)
     {
-        connector_msg_callback_t * const init_fn = (service_request->service_type == msg_service_type_pending_request) ? data_service_put_request_init : data_service_device_request_callback;
-
-        status = init_fn(connector_ptr, service_request);
+        status = data_service_put_request_init(connector_ptr, service_request);
         goto done;
     }
 
-    switch (context->request_type)
+    if (ds_ptr == NULL)
+    {
+        status = data_service_device_request_callback(connector_ptr, service_request);
+        goto done;
+    }
+
+    switch (ds_ptr->request_type)
     {
         case connector_request_id_data_service_send_length:
         case connector_request_id_data_service_send_data:

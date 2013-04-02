@@ -43,8 +43,6 @@
 
 #define MAC_ADDR_LENGTH     6
 
-#define CONNECTOR_DATA_POINT_REQUEST      0x8000
-
 #define MIN_VALUE(x,y)        (((x) < (y))? (x): (y))
 #define MAX_VALUE(x,y)        (((x) > (y))? (x): (y))
 

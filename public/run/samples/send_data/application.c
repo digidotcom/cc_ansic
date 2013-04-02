@@ -18,9 +18,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void * const data);
-
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
 extern connector_status_t app_send_put_request(connector_handle_t handle);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
