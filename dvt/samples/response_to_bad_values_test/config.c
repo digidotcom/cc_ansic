@@ -849,7 +849,7 @@ connector_callback_status_t app_config_error(connector_error_status_t const * co
 #endif
 
 #if (defined CONNECTOR_RCI_SERVICE)
-    case connector_class_id_remote_config_service:
+    case connector_class_id_remote_config:
         request_name = app_remote_config_class_to_string(error_data->request_id.remote_config_request);
         request_id = error_data->request_id.remote_config_request;
         break;

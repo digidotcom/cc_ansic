@@ -822,7 +822,7 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
 #endif
 
 #if (defined CONNECTOR_RCI_SERVICE)
-    case connector_class_id_remote_config_service:
+    case connector_class_id_remote_config:
         APP_DEBUG("Request: %s (%d) ", app_remote_config_class_to_string(error_data->request_id.remote_config_request), error_data->request_id.remote_config_request);
            break;
 #endif
