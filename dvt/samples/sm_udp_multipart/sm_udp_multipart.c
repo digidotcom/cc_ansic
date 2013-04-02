@@ -31,7 +31,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = NULL;
     request.flags = (request.flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) ? 0 : CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
+    status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
     APP_DEBUG("Sent ping [%d].\n", status);
 
     return status;

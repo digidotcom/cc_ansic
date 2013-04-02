@@ -19,7 +19,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
 
     switch (sm_ptr->pending.request)
     {
-        case connector_initiate_status_message:
+        case connector_initiate_ping_request:
         {
             connector_message_status_request_t const * const request = sm_ptr->pending.data;
 

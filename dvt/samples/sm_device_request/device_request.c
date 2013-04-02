@@ -59,7 +59,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &app_ping_pending;
     request.flags = 0;
-    status = connector_initiate_action(handle, connector_initiate_status_message, &request);
+    status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
     if (status != connector_success)
         app_ping_pending = app_false;
 

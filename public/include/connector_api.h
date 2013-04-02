@@ -276,7 +276,7 @@ typedef enum {
     #endif
     connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
     connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
-    connector_initiate_status_message,  /**< Sends status message to the iDigi Device Cloud. Supported only under UDP and SMS transport methods */
+    connector_initiate_ping_request,    /**< Sends a ping request to Etherios Device Cloud. Supported only under UDP and SMS transport methods */
     #if (defined CONNECTOR_DATA_POINT)
     connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Etherios Device Cloud */
     connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Etherios Device Cloud */
@@ -715,7 +715,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref connector_transport_all - all transports.
  *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *
- *                      @li @b connector_initiate_status_message:
+ *                      @li @b connector_initiate_ping_request:
  *                          Sends status message to the iDigi Device Cloud.  Supported only under
  *                          @ref connector_transport_udp and @ref connector_transport_sms transport methods.
  *
@@ -740,7 +740,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Pointer to @ref connector_transport_t "connector_transport_t"
  *                      @li @b connector_initiate_transport_stop:
  *                          Pointer to @ref connector_initiate_stop_request_t "connector_initiate_stop_request_t"
- *                      @li @b connector_initiate_status_message:
+ *                      @li @b connector_initiate_ping_request:
  *                          Pointer to connector_message_status_request_t
  *                      @li @b connector_initiate_data_point_binary:
  *                          Pointer to connector_request_data_point_binary_t

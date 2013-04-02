@@ -31,7 +31,7 @@
  * @subsection initiate_ping Initiate the ping/cloud status request
  *
  * The application initiates the Ping/status request to the iDigi Device Cloud by calling connector_initiate_action()
- * with @ref connector_initiate_status_message request and @ref connector_message_status_request_t "status request"
+ * with @ref connector_initiate_ping_request request and @ref connector_message_status_request_t "status request"
  * as request_data.
  *
  * The connector_initiate_action() is called with the following arguments:
@@ -51,7 +51,7 @@
  * </tr>
  * <tr>
  *   <td>request</td>
- *   <td>@endhtmlonly @ref connector_initiate_status_message @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_initiate_ping_request @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_data</td>
@@ -111,7 +111,7 @@
  *   <td>[IN] pointer to @endhtmlonly connector_message_status_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>user_context</i></b> set to the user_context passed to the @endhtmlonly connector_initiate_action() @htmlonly with
- *             @endhtmlonly @ref connector_initiate_status_message @htmlonly call</li>
+ *             @endhtmlonly @ref connector_initiate_ping_request @htmlonly call</li>
  *       <li><b><i>status</i></b> response @endhtmlonly @ref connector_session_status_t @htmlonly returned from the iDigi device cloud
  *             or any error while preparing/sending ping request</li>
  *       <li><b><i>error_text</i></b> an optional error reason string</li>
