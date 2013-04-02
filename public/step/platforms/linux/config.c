@@ -664,13 +664,14 @@ static char const * app_file_system_class_to_string(connector_request_id_file_sy
         enum_to_case(connector_request_id_file_system_lseek);
         enum_to_case(connector_request_id_file_system_ftruncate);
         enum_to_case(connector_request_id_file_system_close);
-        enum_to_case(connector_request_id_file_system_rm);
+        enum_to_case(connector_request_id_file_system_remove);
         enum_to_case(connector_request_id_file_system_stat);
+        enum_to_case(connector_request_id_file_system_stat_dir_entry);
         enum_to_case(connector_request_id_file_system_opendir);
         enum_to_case(connector_request_id_file_system_readdir);
         enum_to_case(connector_request_id_file_system_closedir);
-        enum_to_case(connector_request_id_file_system_strerror);
-        enum_to_case(connector_request_id_file_system_msg_error);
+        enum_to_case(connector_request_id_file_system_get_error);
+        enum_to_case(connector_request_id_file_system_session_error);
         enum_to_case(connector_request_id_file_system_hash);
     }
     return result;

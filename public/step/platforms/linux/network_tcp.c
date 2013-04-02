@@ -27,6 +27,7 @@
 
 #if defined CONNECTOR_TRANSPORT_TCP
 
+
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
 
@@ -38,38 +39,23 @@ connector_callback_status_t app_get_interface_ip_address(uint8_t ** ip_address, 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_network_tcp_close(connector_close_request_t const * const close_data,
-                                                     connector_connect_auto_type_t * const is_to_reconnect)
+static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_network_handle_t * const fd = close_data->network_handle;
 
-#if 0
+    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_server_redirected);
+
+    data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
+
+    if (close(*data->handle) < 0)
     {
-        struct linger ling_opt;
-        ling_opt.l_onoff = 1;
-        ling_opt.l_linger = 1;
-
-        if setsockopt(*fd, SOL_SOCKET, SO_LINGER, &ling_opt, sizeof(ling_opt) ) < 0)
-        {
-            APP_DEBUG("network_tcp_close: setsockopt fails: errno %d\n", errno);
-        }
-    }
-#endif
-
-    app_dns_set_redirected(connector_class_id_network_tcp, close_data->status == connector_close_status_server_redirected);
-
-    *is_to_reconnect = app_connector_reconnect(connector_class_id_network_tcp, close_data->status);
-
-    if (close(*fd) < 0)
-    {
-        APP_DEBUG("network_tcp_close: close() failed, fd %d, errno %d\n", *fd, errno);
+        APP_DEBUG("network_tcp_close: close() failed, fd %d, errno %d\n", *data->handle, errno);
     }
     else
-        APP_DEBUG("network_tcp_close: fd %d\n", *fd);
+        APP_DEBUG("network_tcp_close: fd %d\n", *data->handle);
 
     {
-        int * user_fd = (int *)fd;
+        int * user_fd = (int *)data->handle;
         *user_fd = -1;
     }
 
@@ -78,31 +64,30 @@ static connector_callback_status_t app_network_tcp_close(connector_close_request
 
 
 /*
- * This routine reads a specified number of bytes from the iDigi Device Cloud.  This
+ * This routine reads a specified number of bytes from Etherios Device Cloud.  This
  * function must not block. If it encounters EAGAIN  error, return
  * connector_callback_busy and iDigi connector will ignore the read_data and read_length
  * and continue calling this function.
  */
-static connector_callback_status_t app_network_tcp_receive(connector_read_request_t const * const read_data,
-                                                       size_t * const read_length)
+static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     int ccode;
 
-    *read_length = 0;
-
-    ccode = read(*read_data->network_handle, read_data->buffer, read_data->length);
-
+    ccode = read(*data->handle, data->buffer, data->bytes_available);
+    if (ccode > 0) 
+    {
+        data->bytes_used = (size_t)ccode;
+    }
+    else
     if (ccode == 0)
     {
         /* EOF on input: the connection was closed. */
         APP_DEBUG("network_receive: EOF on socket\n");
         errno = ECONNRESET;
         status = connector_callback_error;
-        goto done;
     }
-
-    if (ccode < 0)
+    else
     {
         int const err = errno;
         /* An error of some sort occurred: handle it appropriately. */
@@ -118,25 +103,25 @@ static connector_callback_status_t app_network_tcp_receive(connector_read_reques
             status = connector_callback_error;
         }
     }
-
-    *read_length = (size_t)ccode;
-
-done:
     return status;
 }
 
 /*
- * Sends data to the iDigi Device Cloud, this routine must not block.  If it encounters
+ * Sends data to Etherios Device Cloud, this routine must not block.  If it encounters
  * EAGAIN  error, return connector_callback_busy and iDigi connector will ignore the
  * sent_length and continue calling this function.
  */
-static connector_callback_status_t app_network_tcp_send(connector_write_request_t const * const write_data,
-                                                    size_t * const sent_length)
+static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
+    int ccode;
 
-    int const bytes_sent = write(*write_data->network_handle, write_data->buffer, write_data->length);
-    if (bytes_sent < 0)
+    ccode = write(*data->handle, data->buffer, data->bytes_available);
+    if (ccode >= 0) 
+    {
+        data->bytes_used = (size_t)ccode;
+    }
+    else
     {
         int const err = errno;
         if (err == EAGAIN)
@@ -150,8 +135,7 @@ static connector_callback_status_t app_network_tcp_send(connector_write_request_
             app_dns_cache_invalidate(connector_class_id_network_tcp);
         }
     }
-    *sent_length = (size_t)bytes_sent;
-
+  
     return status;
 }
 
@@ -200,6 +184,7 @@ static connector_callback_status_t app_tcp_connect(int const fd, in_addr_t const
     sin.sin_family = AF_INET;
 
     APP_DEBUG("app_tcp_connect: fd %d\n", fd);
+
 
     if (connect(fd, &sin, sizeof(sin)) < 0)
     {
@@ -260,9 +245,7 @@ static connector_callback_status_t app_is_tcp_connect_complete(int const fd)
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_open(char const * const server_name,
-                                                    size_t const length,
-                                                    connector_network_handle_t ** network_handle)
+static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
 {
 #define APP_CONNECT_TIMEOUT 30
 
@@ -271,17 +254,16 @@ static connector_callback_status_t app_network_tcp_open(char const * const serve
     socklen_t interface_addr_len;
 
     connector_callback_status_t status = connector_callback_error;
-
-    *network_handle = &fd;
+    data->handle = &fd;
 
     if (fd == -1)
     {
         in_addr_t ip_addr;
 
-        status = app_dns_resolve(connector_class_id_network_tcp, server_name, length, &ip_addr);
+        status = app_dns_resolve(connector_class_id_network_tcp, data->device_cloud_url, &ip_addr);
         if (status != connector_callback_continue)
         {
-            APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", server_name);
+            APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", data->device_cloud_url);
             goto done;
         }
 
@@ -309,7 +291,7 @@ static connector_callback_status_t app_network_tcp_open(char const * const serve
     status = app_is_tcp_connect_complete(fd);
     if (status == connector_callback_continue)
     {
-         APP_DEBUG("app_network_tcp_open: connected to %s\n", server_name);
+         APP_DEBUG("app_network_tcp_open: connected to %s\n", data->device_cloud_url);
          goto done;
     }
 
@@ -330,7 +312,7 @@ static connector_callback_status_t app_network_tcp_open(char const * const serve
 error:
     if (status == connector_callback_error)
     {
-        APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", server_name);
+        APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", data->device_cloud_url);
         app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
         if (fd >= 0)
@@ -348,35 +330,31 @@ done:
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
-                                                void const * const request_data, size_t const request_length,
-                                                void * response_data, size_t * const response_length)
+connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request_id,
+                                                    void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-
-    switch (request)
+    switch (request_id)
     {
-    case connector_network_open:
-        status = app_network_tcp_open(request_data, request_length, response_data);
-        *response_length = sizeof(connector_network_handle_t);
+    case connector_request_id_network_open:
+        status = app_network_tcp_open(data);
         break;
 
-    case connector_network_send:
-        status = app_network_tcp_send(request_data, response_data);
+    case connector_request_id_network_send:
+        status = app_network_tcp_send(data);
         break;
 
-    case connector_network_receive:
-        status = app_network_tcp_receive(request_data, response_data);
+    case connector_request_id_network_receive:
+        status = app_network_tcp_receive(data);
         break;
 
-    case connector_network_close:
-        status = app_network_tcp_close(request_data, response_data);
+    case connector_request_id_network_close:
+        status = app_network_tcp_close(data);
         break;
 
     default:
-        APP_DEBUG("app_network_tcp_handler: unrecognized callback request [%d]\n", request);
+        APP_DEBUG("app_network_tcp_handler: unrecognized callback request_id [%d]\n", request_id);
         status = connector_callback_unrecognized;
         break;
 

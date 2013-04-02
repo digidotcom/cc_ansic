@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include "connector_api.h"
 #include "platform.h"
+#include <linux/reboot.h>
+#include <sys/reboot.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,14 +28,40 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
     int result;
 
     va_start(args, format);
+
+    #if __STDC_VERSION__ >= 199901L
     result = vsnprintf(str, size, format, args);
+    #else
+    {
+        #define SAFE_BUFFER_BYTES 64;
+        size_t const max_format_bytes = 12;
+
+        CONFIRM(strlen(format) < max_format_bytes);
+        if (size >= SAFE_BUFFER_BYTES)
+        {
+            result = vsprintf(str, format, args);
+        }
+        else
+        {
+            char local_buffer[SAFE_BUFFER_BYTES];
+            size_t const bytes_needed = vsprintf(local_buffer, format, args);
+
+            result = (bytes_needed < size) ? bytes_needed : size - 1;
+            memcopy(str, local_buffer, result);
+            str[result] = '\0';
+            result = bytes_needed;
+        }
+        #undef SAFE_BUFFER_BYTES
+    }
+    #endif
     va_end(args);
+
     return result;
 }
 
 connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
 {
-    connector_callback_status_t status=connector_callback_abort;
+    connector_callback_status_t status = connector_callback_abort;
 
     *ptr = malloc(size);
     if (*ptr != NULL)
@@ -64,9 +92,10 @@ connector_callback_status_t app_os_free(void const * const ptr)
     return connector_callback_continue;
 }
 
+time_t start_system_up_time;
+
 connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
 {
-	static time_t start_system_up_time;
 	time_t present_time;
 
     time(&present_time);
@@ -94,43 +123,47 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
 static connector_callback_status_t app_os_reboot(void)
 {
 
-    APP_DEBUG("Reboot from server\n");
-    /* should not return from rebooting the system */
+    /* Note: we must be running as the superuser to reboot the system */
+    sync();
+    reboot(LINUX_REBOOT_CMD_RESTART);
     return connector_callback_continue;
 }
-
-connector_callback_status_t app_os_handler(connector_os_request_t const request,
-                                        void const * const request_data, size_t const request_length,
-                                        void * response_data, size_t * const response_length)
+connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+                                           void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
     switch (request)
     {
-    case connector_os_malloc:
+    case connector_request_id_os_malloc:
         {
-            size_t const * const bytes = request_data;
-
-            status    = app_os_malloc(*bytes, response_data);
+            connector_os_malloc_t * p = data;
+            status = app_os_malloc(p->size, &p->ptr);
         }
         break;
 
-    case connector_os_free:
-        status = app_os_free(request_data);
+    case connector_request_id_os_free:
+        {
+            connector_os_free_t * p = data;
+            status = app_os_free(p->ptr);
+        }
         break;
 
-    case connector_os_system_up_time:
-        status = app_os_get_system_time(response_data);
+    case connector_request_id_os_system_up_time:
+        {
+            connector_os_system_up_time_t * p = data;
+            status = app_os_get_system_time(&p->sys_uptime);
+        }
         break;
 
-    case connector_os_yield:
-        status = app_os_yield(request_data);
+    case connector_request_id_os_yield:
+        {
+            connector_os_yield_t * p = data;
+            status = app_os_yield(&p->status);
+        }
         break;
 
-    case connector_os_reboot:
+    case connector_request_id_os_reboot:
         status = app_os_reboot();
         break;
 

@@ -15,7 +15,6 @@
 
 extern connector_callback_status_t app_dns_resolve(connector_class_id_t const class_id,
                                                char const * const domain_name,
-                                               size_t const length,
                                                in_addr_t * const ip_addr);
 extern void app_dns_set_redirected(connector_class_id_t const class_id, int const state);
 extern void app_dns_cache_invalidate(connector_class_id_t const class_id);

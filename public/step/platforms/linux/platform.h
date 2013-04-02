@@ -24,24 +24,27 @@
    In some cases these structures are in system header files and cannot be changed. This macro should be used in those situations. */
 #define cast_for_alignment(cast, ptr)   ((cast) ((void *) (ptr)))
 
-extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id,
-                                    void * const data);
+extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+                                                          connector_request_id_t const request_id,
+                                                          void * const data);
 
 /* Callbacks for this platform */
-extern connector_callback_status_t app_os_handler(connector_os_request_t const request,
-                           void * const data);
+extern connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+                                                  void * const data);
 
 extern connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request,
-                                                   void * const data);
+                                                           void * const data);
 
 extern connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request,
-                                                   void * const data);
+                                                           void * const data);
 
 extern connector_callback_status_t app_config_handler(connector_request_id_config_t const request,
-                                              void * const data);
+                                                      void * const data);
 
-extern connector_callback_status_t app_file_system_handler(connector_file_system_request_t const request,
-                                                void * const data)
+#if (defined CONNECTOR_FILE_SYSTEM)
+extern connector_callback_status_t app_file_system_handler(connector_request_id_file_system_t const request,
+                                                           void * const data);
+#endif
 
 extern int application_step(connector_handle_t handle);
 
