@@ -27,6 +27,6 @@ extern connector_callback_status_t app_system_group_init(connector_remote_config
 extern connector_callback_status_t app_system_group_set(connector_remote_config_t * const remote_config);
 extern connector_callback_status_t app_system_group_get(connector_remote_config_t * const remote_config);
 extern connector_callback_status_t app_system_group_end(connector_remote_config_t * const remote_config);
-extern void app_system_group_cancel(void * const context);
+extern void app_system_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
 #endif /* REMOTE_CONFIG_CB_H_ */

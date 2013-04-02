@@ -17,7 +17,7 @@ static connector_remote_config_data_t connector_rci_config_data = {
 
 #else
 typedef struct {
-    connector_group_table_t const * group_table;
+    connector_remote_group_table_t const * group_table;
     char const * const * error_table;
     unsigned int global_error_count;
     uint32_t firmware_target_zero_version;

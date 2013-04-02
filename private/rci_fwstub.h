@@ -47,9 +47,9 @@ typedef union {
         fw_hardware_error
     } abort_status;
 
-    connector_fw_status_t   user_status;
-
 } fw_abort_status_t;
+
+#define connector_firmware_status_download_configured_to_reject 0x06
 
 /* Firmware message header format:
  *  ------------------------
@@ -75,46 +75,6 @@ typedef struct {
     uint8_t response_buffer[FW_MESSAGE_RESPONSE_MAX_SIZE + PACKET_EDP_FACILITY_SIZE];
 } connector_firmware_data_t;
 
-
-static fw_abort_status_t get_abort_status_code(connector_fw_status_t const status)
-{
-    fw_abort_status_t code;
-
-    code.abort_status = fw_user_abort;
-
-    /* convert status to abort status code for abort message */
-    switch (status)
-    {
-    case connector_fw_user_abort:
-        code.abort_status = fw_user_abort;
-        break;
-    case connector_fw_invalid_offset:
-        code.abort_status = fw_invalid_offset;
-        break;
-    case connector_fw_invalid_data:
-        code.abort_status = fw_invalid_data;
-        break;
-    case connector_fw_hardware_error:
-        code.abort_status = fw_hardware_error;
-        break;
-    case connector_fw_device_error:
-    case connector_fw_download_denied:
-    case connector_fw_download_invalid_size:
-    case connector_fw_download_invalid_version:
-    case connector_fw_download_unauthenticated:
-    case connector_fw_download_not_allowed:
-    case connector_fw_download_configured_to_reject:
-    case  connector_fw_encountered_error:
-        /* not abort status so defult to device error */
-        code.abort_status = fw_device_error;
-        break;
-    case connector_fw_success:
-        ASSERT(connector_false);
-        break;
-
-    }
-    return code;
-}
 
 /* abort and error message format:
  *  --------------------------
@@ -153,18 +113,6 @@ static connector_status_t send_fw_abort(connector_firmware_data_t * const fw_ptr
     uint8_t abort_code = (uint8_t)abort_status.error_status;
 
     ASSERT(abort_status.error_status <= UCHAR_MAX);
-
-    /* need to adjust abort status code in the fw_status_t */
-    if (msg_opcode != fw_error_opcode)
-    {
-        fw_abort_status_t status;
-        status = get_abort_status_code(abort_status.user_status);
-
-        ASSERT(status.abort_status <= UCHAR_MAX);
-        abort_code = (uint8_t)status.abort_status;
-
-    }
-
     ASSERT((sizeof fw_ptr->response_buffer - PACKET_EDP_FACILITY_SIZE) > FW_ABORT_HEADER_SIZE);
 
     /* build abort message */
@@ -332,10 +280,9 @@ enum fw_download_response {
         ASSERT((sizeof fw_ptr->response_buffer - PACKET_EDP_FACILITY_SIZE) > record_bytes(fw_download_response));
 
         /* send error firmware download response */
-        response_status.user_status = connector_fw_download_configured_to_reject;
         message_store_u8(fw_download_response, opcode, fw_download_response_opcode);
         message_store_u8(fw_download_response, target, target_number);
-        message_store_u8(fw_download_response, response_type, response_status.user_status);
+        message_store_u8(fw_download_response, response_type, connector_firmware_status_download_configured_to_reject);
 
         fw_ptr->response_size = record_bytes(fw_download_response);
 

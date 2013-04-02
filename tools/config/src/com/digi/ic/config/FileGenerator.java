@@ -253,7 +253,7 @@ public class FileGenerator {
                 headerWriter.write(String.format("\n\nextern uint32_t const FIRMWARE_TARGET_ZERO_VERSION;\n"));
                 headerWriter.write("extern unsigned int connector_global_error_COUNT;\n\n");
                 headerWriter.write(String.format("extern char const * const %ss[];\n",GLOBAL_RCI_ERROR));
-                headerWriter.write(String.format("extern connector_group_table_t const %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
+                headerWriter.write(String.format("extern connector_remote_group_table_t const %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
                 /* no break */
             case NONE:
                 writeDefineRciErrors(configData);
@@ -823,7 +823,7 @@ public class FileGenerator {
         String idigiGroupString = "static ";
         if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) idigiGroupString = "";
         
-        idigiGroupString += String.format("connector_group_table_t const %s[] = {\n",
+        idigiGroupString += String.format("connector_remote_group_table_t const %s[] = {\n",
                                                 CONNECTOR_REMOTE_GROUP_TABLE);
 
         for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
