@@ -27,7 +27,7 @@ typedef enum
     connector_request_id_sm_ping_response,  /**< used when Cloud Connector receives ping response from Etherios Device Cloud */
     connector_request_id_sm_cli_request,    /**< used when Cloud Connector receives CLI request from Etherios Device Cloud */
     connector_request_id_sm_cli_response,   /**< used to get the CLI response */
-    // connector_request_id_sm_cli_status,     /**< called when error occurs in CLI session */
+    connector_request_id_sm_cli_status,     /**< called when error occurs in CLI session */
     connector_request_id_sm_more_data,      /**< indicates pending messages are available on Etherios Device Cloud,
                                                  User need to use new request (can be ping) to pull the pending messages from iDigi Device Cloud. */
     connector_request_id_sm_opaque_response /**< Cloud Connector will use this to provide Etherios Device Cloud response for which
@@ -131,6 +131,33 @@ typedef struct
     size_t bytes_used;          /**< bytes filled */
     connector_bool_t more_data; /**< */    
 } connector_sm_cli_response_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_sm_cli_status_t Data type used to pass CLI status.
+* @{
+*/
+/**
+* This data structure is used when the callback is called to indicate the
+* termination of CLI session.
+*
+* @see connector_request_id_sm_cli_response
+*
+*/
+typedef struct
+{
+    connector_transport_t transport;
+    void * user_context;        /**< the user context passed during CLI request callback */
+
+    enum
+    {
+        connector_sm_cli_status_cancel,
+        connector_sm_cli_status_error
+    } status;
+
+} connector_sm_cli_status_t;
 /**
 * @}
 */
