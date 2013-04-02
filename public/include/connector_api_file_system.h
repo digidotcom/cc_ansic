@@ -332,10 +332,9 @@ typedef struct
     void * errnum;                          /**< Application defined error token */
 
     char const * path;                      /**< File path */
-    cc_file_hash_algorithm_t  hash_algorithm;     /**< hash algorithm */
+    connector_file_system_hash_algorithm_t  hash_algorithm;     /**< hash algorithm */
     void const * hash_value;                /**< A pointer to memory, where callback writes hash value */
-    size_t bytes_available;                 /**< Size of a memory buffer */
-    size_t bytes_used;                      /**< Hash value size in bytes */
+    size_t bytes_requested;                 /**< Size of a memory buffer */
 
 } connector_file_system_hash_data_t;
 /**
@@ -516,7 +515,7 @@ typedef struct
 {
     void * user_context;                    /**< Holds user context */
 
-    connector_msg_error_t   session_error;  /**	TODO: Needs a describe 	*/
+    connector_session_error_t   session_error;  /**	TODO: Needs a describe 	*/
 
 } connector_file_system_session_error_data_t;
 /**
