@@ -5,8 +5,8 @@
  * @section rci_tool_overview Overview
  *
  * The remote configuration tool is used to generate device configuration header file and upload
- * device configuration information to the iDigi Device Cloud. It allows user to define all device configuration
- * data and information that can be accessed through the iDigi Device Cloud using iDigi connector.
+ * device configuration information to Etherios Device Cloud. It allows user to define all device configuration
+ * data and information that can be accessed through Etherios Device Cloud using Etherios connector.
  * User must include the generated header file and provide callback functions to handle all
  * device configuration in an application.
  *
@@ -30,9 +30,9 @@
  *   <th colspan="2" class="title">Description</th>
  * </tr>
  * <tr>
- *   <td colspan="2">It generates and uploads configuration information (descriptors) to the iDigi Device
+ *   <td colspan="2">It generates and uploads configuration information (descriptors) to Etherios Device
  *       Cloud and it also generates ANSI C header files (remote_config.h) from the input
- *       iDigi connector configuration file.  This header file must be included  in the application.
+ *       Etherios connector configuration file.  This header file must be included  in the application.
  *   </td>
  * </tr>
  * <tr>
@@ -49,14 +49,14 @@
  * <tr>
  *   <th> -nodesc</th>
  *   <td> Optional option to exclude error description in the generated file. Error description will
- *        not be included and sent to the iDigi Device Cloud when error is encountered.
+ *        not be included and sent to Etherios Device Cloud when error is encountered.
  *        This is used to reduce the code size.
  *   </td>
  * </tr>
  * <tr>
  *   <th> -vendor</th>
- *   <td> Optional option for vendor ID obtained from the iDigi Device Cloud registration.
- *        If not given, tool tries to retrieve it from the iDigi Device Cloud.
+ *   <td> Optional option for vendor ID obtained from Etherios Device Cloud registration.
+ *        If not given, tool tries to retrieve it from Etherios Device Cloud.
  *   </td>
  * </tr>
  * <tr>
@@ -65,15 +65,15 @@
  * </tr>
  * <tr>
  *   <th> -server</th>
- *   <td> Optional options for the iDigi Device Cloud URL. Default is my.idigi.com </td>
+ *   <td> Optional options for Etherios Device Cloud URL. Default is login.etherios.com </td>
  * </tr>
  * <tr>
  *   <th> username </th>
- *   <td> Username to log in the iDigi Device Cloud.  </td>
+ *   <td> Username to log in Etherios Device Cloud.  </td>
  * </tr>
  * <tr>
  *   <th> password </th>
- *   <td> Optional for password to log in the iDigi Device Cloud.
+ *   <td> Optional for password to log in Etherios Device Cloud.
  *        If it's not specified in the command line, you will be prompted for password.
  *   </td>
  * </tr>
@@ -92,12 +92,12 @@
  * </table>
  * @endhtmlonly
  *
- * @a @b username, @a @b password,@a @b vendor_id, @a @b device_type, and @a @b firmware_version are used for accessing the iDigi
+ * @a @b username, @a @b password,@a @b vendor_id, @a @b device_type, and @a @b firmware_version are used for accessing Etherios
  * Device Cloud account and uploading the device configuration information (descriptors) for your device.
  *
  * @section rci_tool_file   Input Configuration File
  *
- * User must define all device configuration data and system information that is accessed through the iDigi Device Cloud and run the
+ * User must define all device configuration data and system information that is accessed through Etherios Device Cloud and run the
  * tool to generate remote_config.h file. User must include this remote_config.h header file and
  * provide callbacks to handle all device configuration data and system information.
  *
@@ -115,7 +115,7 @@
  * -# @ref comment
  *
  * @subsection globalerror  globalerror keyword
- * A @a @b globalerror is used to define the text in the iDigi Device Cloud when
+ * A @a @b globalerror is used to define the text in Etherios Device Cloud when
  * an error condition occurs. @a @b Globalerrors define errors common to all configurations.
  *
  * @htmlonly
@@ -134,7 +134,7 @@
  * </tr> <tr>
  * <th>description</th>
  * <td> Error string message with quotes (e.g. "Unable to write to NVRam").
- *     This description is sent to the iDigi Device Cloud along with the enumeration value. </td>
+ *     This description is sent to Etherios Device Cloud along with the enumeration value. </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -171,7 +171,7 @@
  * <th>name</th>
  * <td> Label (no spaces) of the group.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<type\>_ prefix enumeration value to identify
- *          the group. The iDigi connector passes this enumeration value to the application-defined callback for accessing the group.
+ *          the group. Etherios connector passes this enumeration value to the application-defined callback for accessing the group.
  *         @htmlonly
  *     </p> </td>
  * </tr><tr>
@@ -200,7 +200,7 @@
  * @endcode
  *
  * @subsection error  error keyword
- * An @a @b error is used to define the text in the iDigi Device Cloud when an error
+ * An @a @b error is used to define the text in Etherios Device Cloud when an error
  * condition occurs. It is used to specify an error for individual group.
  *
  * @htmlonly
@@ -218,7 +218,7 @@
  * </tr> <tr>
  * <th>description</th>
  * <td> Error string message with quotes (e.g. "Invalid data bits rate").
- *     This description is sent to the iDigi Device Cloud along with the enumeration value. </td>
+ *     This description is sent to Etherios Device Cloud along with the enumeration value. </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -254,7 +254,7 @@
  *   <th>name</th>
  *   <td> Label (no spaces) of the element.
  *         @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_ prefix enumeration value
- *         to identify the element. The iDigi connector passes this enumeration value to the application-defined
+ *         to identify the element. Etherios connector passes this enumeration value to the application-defined
  *         callback for accessing the element. @htmlonly
  *   </td>
  * </tr>
@@ -302,7 +302,7 @@
  * @subsection type type keyword
  * The @a @b type is used to indicate the value type of an element's value named in the
  * @ref element. The type indicates to the descriptor user what restrictions to
- * place on a value and how to interpret a value received from iDigi connector.
+ * place on a value and how to interpret a value received from Etherios connector.
  *
  * @htmlonly
  * <table class="apitable">
@@ -315,11 +315,11 @@
  * </tr> <tr>
  * <th>multiline_string</th>
  * <td>This type is used for a null-terminated string that may be more than one line. A "text area" is shown
- *     in the iDigi Device Cloud that allows a user to form multiple lines by pressing enter. </td>
+ *     in Etherios Device Cloud that allows a user to form multiple lines by pressing enter. </td>
  * </tr><tr>
  * <th>password</th>
  * <td>This Password type is same as string type except it's shown "*"when a user types in
- *     characters in the iDigi Device Cloud. </td>
+ *     characters in Etherios Device Cloud. </td>
  * </tr> <tr>
  * <th>int32</th>
  * <td>32-bit signed integer value. </td>
@@ -331,20 +331,20 @@
  * <td> 32-bit unsigned hexadecimal </td>
  * </tr><tr>
  * <th>0x_hex32</th>
- * <td>32-bit unsigned hexadecimal with 0x prefix shown in the iDigi Device Cloud. </td>
+ * <td>32-bit unsigned hexadecimal with 0x prefix shown in Etherios Device Cloud. </td>
  * </tr> <tr>
  * <th>float</th>
  * <td>Floating value. float.h is included in the generated header file. </td>
  * </tr><tr>
  * <th>enum</th>
  * <td> enum is used to define a set of allowed values for an element. This is a
- * pull-down menu shown in the iDigi Device Cloud. See @endhtmlonly @ref value @htmlonly to define set
+ * pull-down menu shown in Etherios Device Cloud. See @endhtmlonly @ref value @htmlonly to define set
  * of enum values for the element. <p> Note: min and max keywords will throw an error.</p></td>
  * </tr><tr>
  * <th>on_off</th>
  * <td> "on" or "off " value. Application-defined callback should use <i> <b> connector_on </b> </i> value
  *       for "on"  or <i> <b> connector_off </b> </i> value for "off". This type is shown as
- *       radio buttons in the iDigi Device Cloud.
+ *       radio buttons in Etherios Device Cloud.
  *       <p>Note: min and max keywords will throw an error.</p> </td>
  * </tr><tr>
  * <th>boolean</th>
@@ -353,7 +353,7 @@
  *     <p>Note: min and max keywords will throw an error.</p> </td>
  * </tr> <tr>
  * <th>ipv4</th>
- * <td>Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in the iDigi Device Cloud
+ * <td>Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in Etherios Device Cloud
  *     <p>Note: min and max keywords will throw an error.</p></td>
  * </tr><tr>
  * <th>fqdnv4</th>
@@ -408,7 +408,7 @@
  * <td> Label (no spaces) of the enum value.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_\<group_name\>_\<element_name\>_
  *         prefix enumeration value for each values.
- *         The iDigi connector and the application-defined callback use this enumeration value to set and retrieve the value of an element.
+ *         Etherios connector and the application-defined callback use this enumeration value to set and retrieve the value of an element.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
@@ -451,9 +451,9 @@
  * <tr>
  * <th>value</th>
  * <td> Minimum value or length in bytes.
- *     <p> The iDigi connector will have this range check included.
+ *     <p> Etherios connector will have this range check included.
  *         The user can do additional checks, as well. Need to determine a list of
- *         built-in errors that the iDigi connector or user can use.</p> </td>
+ *         built-in errors that Etherios connector or user can use.</p> </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -476,9 +476,9 @@
  * <tr>
  * <th>value</th>
  * <td> Maximum value or length in bytes.
- *     <p> The iDigi connector will have this range check included.
+ *     <p> Etherios connector will have this range check included.
  *         The user can do additional checks, as well. Need to determine a list of
- *         built-in errors that the iDigi connector or user can use.</p> </td>
+ *         built-in errors that Etherios connector or user can use.</p> </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -492,7 +492,7 @@
  *
  * @subsection access access keyword
  * The @a @b access is used to define accessibility of an element named in the element
- * keyword. Default is read_write. This tells iDigi connector and the iDigi Device Cloud that an element
+ * keyword. Default is read_write. This tells Etherios connector and Etherios Device Cloud that an element
  * is settable or unsettable. It's grayed out if read_only is specified.
  *
  * @htmlonly
@@ -521,7 +521,7 @@
  * @endcode
  *
  * @subsection units  units keyword
- * The @a @b units is used to define the displayable text in the iDigi Device Cloud. It's used as
+ * The @a @b units is used to define the displayable text in Etherios Device Cloud. It's used as
  * the units for the element.
  *
  * @htmlonly
@@ -532,7 +532,7 @@
  * <tr>
  * <th>description</th>
  * <td> Units string with quotes (e.g. "seconds").
- *     This description is shown in the iDigi Device Cloud. </td>
+ *     This description is shown in Etherios Device Cloud. </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -554,7 +554,7 @@
  * @code
  *
  *      # State configuration for GPS
- *      # Must setup the following group in order for GPS shown in the iDigi Device Cloud.
+ *      # Must setup the following group in order for GPS shown in Etherios Device Cloud.
  *
  * @endcode
  *
@@ -596,7 +596,7 @@
  *     element syspwd "System password" type password access  read_write  max  64
  *     error invalid_length "invalid length"
  *
- * group state debug_info "Debug info on iDigi connector thread"
+ * group state debug_info "Debug info on Etherios connector thread"
  *     element version "Version" type string access  read_only
  *     element stacktop "Stack begin" type 0x_hex32 access  read_only
  *     element stacksize "Stack size" type hex32 access  read_only
@@ -604,7 +604,7 @@
  *     element usedmem "Allocated memory used" type uint32 access  read_only
  *
  * # State configuration for GPS
- * # Must setup the following group in order for GPS shown in the iDigi Device Cloud.
+ * # Must setup the following group in order for GPS shown in Etherios Device Cloud.
  * group state gps_stats "GPS"
  *     element latitude "Latitude" type float access read_only
  *     element longitude "Longitude" type float access read_only

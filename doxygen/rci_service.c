@@ -5,12 +5,12 @@
  * @section rci_overview Remote Configuration Overview
  *
  * Remote configuration is an optional service for applications to
- * exchange device configruation data and information between the device and the iDigi Device Cloud using
+ * exchange device configruation data and information between the device and Etherios Device Cloud using
  * remote command interface (RCI).
- * User must define all device configurations that are accessed by the iDigi Device Cloud and run the @ref rci_tool
+ * User must define all device configurations that are accessed by Etherios Device Cloud and run the @ref rci_tool
  * to generate a source and header files for remote configuration support.
  *
- * The iDigi connector invokes the application-defined callbacks to configure and retrieve information from the device.
+ * The Etherios connector invokes the application-defined callbacks to configure and retrieve information from the device.
  *
  *  -# @ref rci_cancel
  *  -# @ref rci_session_start
@@ -25,30 +25,30 @@
  *
  *
  * The sequence calling an application-defined callback for remote configuration is:
- *  -# iDigi connector calls application-defined @ref rci_session_start callback to start remote configuration request.
- *  -# iDigi connector calls application-defined @ref rci_action_start callback to start setting or querying remote configuration.
- *  -# iDigi connector calls application-defined @ref rci_group_start callback to start each configuration group.
- *  -# iDigi connector calls application-defined:
+ *  -# Etherios connector calls application-defined @ref rci_session_start callback to start remote configuration request.
+ *  -# Etherios connector calls application-defined @ref rci_action_start callback to start setting or querying remote configuration.
+ *  -# Etherios connector calls application-defined @ref rci_group_start callback to start each configuration group.
+ *  -# Etherios connector calls application-defined:
  *      -# @ref rci_group_set callback number of times, until
  *      all the requested elements or data items of the configuration group are processed.
  *      -# @ref rci_group_query callback number of times, until
  *      all the requested elements or data items of the configuration group are retrieved.
- *  -# iDigi connector calls application-defined @ref rci_group_end callback after all requested elements
+ *  -# Etherios connector calls application-defined @ref rci_group_end callback after all requested elements
  *     of the configuration group are processed.
- *  -# iDigi connector calls application-defined @ref rci_action_end callback when it's done setting or querying all requested
+ *  -# Etherios connector calls application-defined @ref rci_action_end callback when it's done setting or querying all requested
  *     configuration groups.
- *  -# iDigi connector calls application-defined @ref rci_session_end callback to end remote configuration request.
+ *  -# Etherios connector calls application-defined @ref rci_session_end callback to end remote configuration request.
  *
  *
- * @note iDigi connector calls step 3 to 5 repeatedly for each configuration group.
+ * @note Etherios connector calls step 3 to 5 repeatedly for each configuration group.
  * @note See @ref rci_support under Configuration to enable or disable remote configuration.
  * @note See RCI tool for generating remote configruation source and header files.
  *
  * @section rci_cancel Termination and Error Processing
  * The application-defined callback sets <b><i>error_id</i></b> field in the
- * @ref connector_remote_group_response_t "remote configuration response" structure
- * to cancel remote configuration request and iDigi connector sends an error response to the iDigi Device Cloud.
- * If iDigi connector encounters error, it calls application-defined @ref rci_session_cancel callback
+ * @ref connector_remote_config_t "remote configuration response" structure
+ * to cancel remote configuration request and Etherios connector sends an error response to Etherios Device Cloud.
+ * If Etherios connector encounters error, it calls application-defined @ref rci_session_cancel callback
  * to cancel remote configuration request.
  *
  * All application memory must be released in the last callback, @ref rci_session_end
@@ -66,30 +66,25 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_remote_config_session_start @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_session_start @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> NULL </td></tr>
- * <tr>
- * <th>request_length</th>
- * <td> 0 </td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [OUT] pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <th>data</th>
+ * <td> [OUT] pointer to @endhtmlonly @ref connector_remote_config_t @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Callback writes its own context which will be passed back to
  *                     subsequential callback.</dd>
+ *              <dt><i>group</i></dt><dd>Not applicable</dd>
+ *              <dt><i>element</i></dt><dd>Not applicable</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generated by @endhtmlonly @ref rci_tool @htmlonly if
- *                     error is encountered. iDigi connector sends error description if it's provided for the given error_id.</dd>
- *              <dt><i>element_data</i></dt>
+ *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
+ *              <dt><i>response</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
  *                  <dd> - Callback returns a pointer to a constant null-terminated hint string
@@ -99,10 +94,6 @@
  *                  </dl></dd>
  *            </dl>
  * </td></tr>
- * <tr>
- * <th>response_length</th>
- * <td>[OUT/IN] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
- * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -111,7 +102,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -120,7 +111,7 @@
  *
  * @code
  *
- * static connector_callback_status_t app_process_session_start(connector_remote_group_response_t * const response)
+ * static connector_callback_status_t app_process_session_start(connector_remote_config_t * const response)
  * {
  *     void * ptr;
  *     remote_group_session_t * session_ptr;
@@ -145,7 +136,7 @@
  *
  * @section rci_action_start    Start setting or querying remote configuration
  *
- * Callback is called indicating whether iDigi connector starts setting or querying remote configuration
+ * Callback is called indicating whether Etherios connector starts setting or querying remote configuration
  *
  * @htmlonly
  * <table class="apitable">
@@ -153,11 +144,11 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_remote_config_action_start @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_action_start @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_data</th>
@@ -185,7 +176,7 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Pointer to callback's context returned from previous callback.
@@ -193,7 +184,7 @@
  *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by @endhtmlonly @ref rci_tool @htmlonly if
- *                     error is encountered. iDigi connector sends error description if it's provided for the given error_id.</dd>
+ *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
  *              <dt><i>element_data</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
@@ -206,7 +197,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -216,7 +207,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -226,7 +217,7 @@
  * @code
  *
  * static connector_callback_status_t app_process_action_start(connector_remote_group_request_t * const request,
- *                                                         connector_remote_group_response_t * const response)
+ *                                                         connector_remote_config_t * const response)
  * {
  *     UNUSED_ARGUMENT(request);
  *     UNUSED_ARGUMENT(response);
@@ -246,7 +237,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -279,7 +270,7 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Pointer to callback's context returned from previous callback.
@@ -287,7 +278,7 @@
  *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by  @endhtmlonly @ref rci_tool @htmlonly if
- *                     error is encountered. iDigi connector sends error description if it's provided for the given error_id.</dd>
+ *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
  *              <dt><i>element_data</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
@@ -300,7 +291,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -310,7 +301,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -319,7 +310,7 @@
  *
  * @code
  * static connector_callback_status_t app_process_group_init(connector_remote_group_request_t * const request,
- *                                                  connector_remote_group_response_t * const response)
+ *                                                  connector_remote_config_t * const response)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *     remote_group_table_t * group_ptr = NULL;
@@ -367,7 +358,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -464,7 +455,7 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Pointer to callback's context returned from previous callback.
@@ -472,7 +463,7 @@
  *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by @endhtmlonly @ref rci_tool @htmlonly if
- *                     error is encountered. iDigi connector sends error description if it's provided for the given error_id.</dd>
+ *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
  *              <dt><i>element_data</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
@@ -485,7 +476,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -495,7 +486,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -504,7 +495,7 @@
  *
  * @code
  * static connector_callback_status_t app_process_group_set(connector_remote_group_request_t * const request,
- *                                                  connector_remote_group_response_t * const response)
+ *                                                  connector_remote_config_t * const response)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *     remote_config_session_t * session_ptr = response->user_context;
@@ -543,7 +534,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -581,7 +572,7 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *   <dl>
  *     <dt><i>user_context</i></dt>
  *     <dd> - Pointer to callback's context returned from previous callback.
@@ -590,7 +581,7 @@
  *     </dd>
  *     <dt><i>error_id</i></dt>
  *     <dd> - Callback writes error enumeration value generatied by @endhtmlonly @ref rci_tool @htmlonly if
- *          error is encountered. iDigi connector sends error description if it's provided for the given error_id.
+ *          error is encountered. Etherios connector sends error description if it's provided for the given error_id.
  *     </dd>
  *     <dt><i>element_data</i></dt>
  *     <dd>
@@ -634,7 +625,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -644,7 +635,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -653,7 +644,7 @@
  *
  * @code
  * static connector_callback_status_t app_process_group_get(connector_remote_group_request_t * const request,
- *                                                  connector_remote_group_response_t * const response)
+ *                                                  connector_remote_config_t * const response)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *     remote_config_session_t * session_ptr = response->user_context;
@@ -685,7 +676,7 @@
  *
  * @section rci_group_end   End of a configuration group
  *
- * Callback is called indicating iDigi connector is done processing a configuration group.
+ * Callback is called indicating Etherios connector is done processing a configuration group.
  * Callback may start writing the configuration onto NvRAM or flash in a separated thread.
  *
  * @htmlonly
@@ -694,7 +685,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -727,7 +718,7 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Pointer to callback's context returned from previous callback.
@@ -735,7 +726,7 @@
  *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by @endhtmlonly @ref rci_tool @htmlonly if
- *                     error is encountered. iDigi connector sends error description if it's provided for the given error_id.</dd>
+ *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
  *              <dt><i>element_data</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
@@ -748,7 +739,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -758,7 +749,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -771,7 +762,7 @@
  *
  * @code
  * static connector_callback_status_t app_process_group_end(connector_remote_group_request_t * const request,
- *                                                  connector_remote_group_response_t * const response)
+ *                                                  connector_remote_config_t * const response)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *     remote_config_session_t * session_ptr = response->user_context;
@@ -794,7 +785,7 @@
  *
  * @section rci_action_end   End of setting or querying device configuration
  *
- * Callback is called indicating iDigi connector is done setting or querying device configuration.
+ * Callback is called indicating Etherios connector is done setting or querying device configuration.
  * Callback may start writing device configurations onto NvRAM or flash in a separated thread.
  *
  * @htmlonly
@@ -803,7 +794,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -835,7 +826,7 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Pointer to callback's context returned from previous callback.
@@ -843,7 +834,7 @@
  *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by @endhtmlonly @ref rci_tool @htmlonly if
- *                     error is encountered. iDigi connector sends error description if it's provided for the given error_id.</dd>
+ *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
  *              <dt><i>element_data</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
@@ -856,7 +847,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -866,7 +857,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -879,7 +870,7 @@
  *
  * @code
  * static connector_callback_status_t app_process_action_end(connector_remote_group_request_t * const request,
- *                                                       connector_remote_group_response_t * const response)
+ *                                                       connector_remote_config_t * const response)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *
@@ -906,7 +897,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -921,13 +912,13 @@
  * </tr>
  * <tr>
  * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure:
+ * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
  *          <dl>
  *              <dt><i>user_context</i></dt>
  *              <dd> - Pointer to callback's context returned from previous callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generated by @endhtmlonly @ref rci_tool @htmlonly
- *                     if error is encounted. iDigi connector sends error description if it's provided for
+ *                     if error is encounted. Etherios connector sends error description if it's provided for
  *                     the given error_id.</dd>
  *              <dt><i>element_data</i></dt>
  *              <dd><dl>
@@ -941,7 +932,7 @@
  * </td></tr>
  * <tr>
  * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_group_response_t "Remote configuration response" @htmlonly structure</td>
+ * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -951,7 +942,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -963,7 +954,7 @@
  * Example:
  *
  * @code
- * static connector_callback_status_t app_process_session_end(connector_remote_group_response_t * const response)
+ * static connector_callback_status_t app_process_session_end(connector_remote_config_t * const response)
  * {
  *     printf("process_session_end\n");
  *     if (response->user_context != NULL)
@@ -986,7 +977,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_remote_config_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -994,7 +985,7 @@
  * </tr>
  * <tr>
  * <th>request_data</th>
- * <td> Pointer to callback's context returned from previous callback in @endhtmlonly @ref connector_remote_group_response_t @htmlonly </td></tr>
+ * <td> Pointer to callback's context returned from previous callback in @endhtmlonly @ref connector_remote_config_t @htmlonly </td></tr>
  * <tr>
  * <th>request_length</th>
  * <td> not applicable.</td>
