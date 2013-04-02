@@ -69,10 +69,11 @@ typedef enum {
 
 #define DS_FILE_NAME_LEN  20
 
+
 typedef struct
 {
     connector_request_id_data_service_t request;
-    connector_data_service_put_request_t header;
+    connector_request_data_service_send_t header;
     char file_path[DS_FILE_NAME_LEN];
     size_t bytes_sent;
     size_t file_length_in_bytes;

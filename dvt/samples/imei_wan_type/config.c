@@ -22,6 +22,7 @@
 
 /* iDigi connector Configuration routines */
 
+char * wan_id_string = NULL;
 /*
  * Routine to get the IP address, you will need to modify this routine for your
  * platform.
@@ -388,6 +389,9 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
 
     config_imei->data = app_imei_number;
     ASSERT(config_imei->bytes_required == sizeof app_imei_number);
+
+    wan_id_string = (char *)app_imei_number_string;
+
     return connector_callback_continue;
 }
 
@@ -465,6 +469,8 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
     config_esn->data = app_esn_hex;
     ASSERT(config_esn->bytes_required == sizeof app_esn_hex);
 
+    wan_id_string = (char *)app_esn_hex_string;
+
     return connector_callback_continue;
 }
 
@@ -504,6 +510,8 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
 
     config_meid->data = app_meid_hex;
     ASSERT(config_meid->bytes_required == sizeof app_meid_hex);
+
+    wan_id_string = (char *)app_meid_hex_string;
 
     return connector_callback_continue;
 }

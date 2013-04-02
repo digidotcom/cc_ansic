@@ -15,36 +15,28 @@
 #include "platform.h"
 #include "application.h"
 
-#define PUT_REQUEST_TEST_ERROR
-
-#define INITIAL_WAIT_COUNT      4
-
+#define DS_MAX_USER   1
 #define DS_FILE_NAME_LEN  20
 
 typedef struct
 {
-    connector_data_service_put_request_t header;
+    connector_request_data_service_send_t header;
     char file_path[DS_FILE_NAME_LEN];
     size_t bytes_sent;
     size_t file_length_in_bytes;
     char * file_data;
     int index;
-} ds_record_t;
+ } ds_record_t;
 
 unsigned int put_file_active_count = 0;
 
-connector_status_t send_put_request(connector_handle_t handle, char * const filename, char * const content)
+static connector_status_t send_file(connector_handle_t handle, int index, char * const filename, char * const content, size_t content_length)
 {
 
     connector_status_t status = connector_success;
     static char file_type[] = "text/plain";
     ds_record_t * user;
 
-    if (put_file_active_count != 0)
-    {
-        status = connector_service_busy;
-        goto done;
-    }
     {
         void * ptr;
 
@@ -60,18 +52,20 @@ connector_status_t send_put_request(connector_handle_t handle, char * const file
     }
 
     sprintf(user->file_path, "%s", filename);
-    user->header.flags = 0;
+    user->header.option = connector_data_service_send_option_overwrite;
     user->header.path  = user->file_path;
     user->header.content_type = file_type;
-    user->header.context = user;
+    user->header.user_context = user;
     user->header.transport = connector_transport_tcp;
     user->bytes_sent = 0;
     user->file_data = content;
-    user->file_length_in_bytes = strlen(content);
+    user->file_length_in_bytes = content_length;
+    user->index = index;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &user->header);
     if (status == connector_success)
     {
+        APP_DEBUG("send_file: %p %s length %zu\n", (void *)user, user->file_path, user->file_length_in_bytes);
         put_file_active_count++;
     }
     else
@@ -83,107 +77,107 @@ done:
     return status;
 }
 
-connector_callback_status_t app_put_request_handler(void const * request_data, size_t const request_length,
-                                                   void * response_data, size_t * const response_length)
+connector_status_t send_put_request(connector_handle_t handle, char * const filename, char * const content)
+{
+
+    connector_status_t status = connector_success;
+
+    if (put_file_active_count >= DS_MAX_USER)
+    {
+        status = connector_service_busy;
+        goto done;
+    }
+
+    status = send_file(handle, put_file_active_count, filename, content, strlen(content));
+
+done:
+    return status;
+}
+
+connector_callback_status_t app_put_request_handler(connector_request_id_data_service_t const request_id, void * const cb_data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
+    switch (request_id)
     {
-        connector_data_service_msg_request_t const * const put_request = request_data;
-        connector_data_service_msg_response_t * const put_response = response_data;
-
-        connector_data_service_put_request_t const * const header = put_request->service_context;
-        ds_record_t * const user = (ds_record_t * const)header->context;
-
-        if ((put_request == NULL) || (put_response == NULL))
+        case connector_request_id_data_service_send_data:
         {
-             APP_DEBUG("app_put_request_handler: Invalid request_data [%p] or response_data[%p]\n", request_data, response_data);
-             goto done;
-        }
+            connector_data_service_send_data_t * const send_ptr = cb_data;
+            ds_record_t * const user = send_ptr->user_context;
 
-        switch (put_request->message_type)
-        {
-        case connector_data_service_type_need_data:
-             {
+            {
+                send_ptr->bytes_used = user->file_length_in_bytes - user->bytes_sent;
 
-                connector_data_service_block_t * message = put_response->client_data;
-                char * dptr = message->data;
-                size_t const bytes_available = message->length_in_bytes;
-                size_t const bytes_to_send = user->file_length_in_bytes - user->bytes_sent;
-                size_t bytes_copy = (bytes_to_send > bytes_available) ? bytes_available : bytes_to_send;
+                if (send_ptr->bytes_used > send_ptr->bytes_available)
+                    send_ptr->bytes_used = send_ptr->bytes_available;
 
-                memcpy(dptr, &user->file_data[user->bytes_sent], bytes_copy);
-                message->length_in_bytes = bytes_copy;
-                message->flags = 0;
+                memcpy(send_ptr->buffer, &user->file_data[user->bytes_sent], send_ptr->bytes_used);
                 if (user->bytes_sent == 0)
-                    message->flags |= CONNECTOR_MSG_FIRST_DATA;
+                {
+                    APP_DEBUG("app_put_request_handler: (data request) %s %p\n", user->file_path, (void *)user);
+                }
 
-                user->bytes_sent += bytes_copy;
+                user->bytes_sent += send_ptr->bytes_used;
                 if (user->bytes_sent == user->file_length_in_bytes)
                 {
-                    message->flags |= CONNECTOR_MSG_LAST_DATA;
-                    APP_DEBUG("app_put_request_handle: (need_data) done sending %s file\n", user->file_path);
+                    send_ptr->more_data = connector_false;
                 }
-
+                else
+                    send_ptr->more_data = connector_true;
             }
-            break;
 
-        case connector_data_service_type_have_data:
-            {
-                connector_data_service_block_t * message = put_request->server_data;
-                uint8_t const * data = message->data;
-
-                ASSERT(user != NULL);
-
-                if (message->length_in_bytes > 0)
-                {
-                    APP_DEBUG("app_put_request_handler: (have_data) server response for %s file: %s\n",
-                            user->file_path, (char *)data);
-                }
-                if ((message->flags & CONNECTOR_MSG_RESP_SUCCESS) != CONNECTOR_MSG_RESP_SUCCESS)
-                {
-                    APP_DEBUG("app_put_request_handler: (have data) server response for %s file with an error 0x%X\n",
-                                user->file_path, message->flags);
-                }
-
-                /* should be done now */
-                free(user);
-                put_file_active_count--;
-                reboot_state = no_reboot_received;
-                delay_receive_state = no_delay_receive;
-            }
-            break;
-
-        case connector_data_service_type_error:
-            {
-
-                ASSERT(user != NULL);
-                APP_DEBUG("app_put_request_handler: type_error for putting %s file\n", user->file_path);
-                free(user);
-                put_file_active_count--;
-            }
-            break;
-
-        default:
-            APP_DEBUG("app_put_request_handler: Unexpected message type: %d\n", put_request->message_type);
             break;
         }
+
+        case connector_request_id_data_service_send_response:
+        {
+            connector_data_service_send_response_t * const resp_ptr = cb_data;
+            ds_record_t * const user = resp_ptr->user_context;
+
+           APP_DEBUG("app_put_request_handler: (response) %s %p\n", user->file_path, (void *)user);
+
+            if (resp_ptr->hint != NULL)
+            {
+                APP_DEBUG("app_put_request_handler: server response %s\n", resp_ptr->hint);
+            }
+
+            /* should be done now */
+            free(user);
+            APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
+            put_file_active_count--;
+
+            break;
+        }
+
+        case connector_request_id_data_service_send_status:
+        {
+            connector_data_service_status_t * const error_ptr = cb_data;
+            ds_record_t * const user = error_ptr->user_context;
+
+            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
+            ASSERT(user != NULL);
+            free(user);
+            put_file_active_count--;
+
+            break;
+        }
+
+        default:
+            APP_DEBUG("app_put_request_handler: Unexpected request ID: %d\n", request_id);
+            break;
     }
-done:
+
     return status;
 }
 
 /* we only supported 1 target */
 static char const request_reboot_ready[] = "request_reboot_ready";
 
-static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_data)
+static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_info)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    if (strcmp(target_data->target, request_reboot_ready) == 0)
+    if (strcmp(target_info->target, request_reboot_ready) == 0)
     {
         /* cause to delay calling receive */
         if (delay_receive_state == no_delay_receive)
@@ -205,6 +199,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
 {
     connector_callback_status_t status = connector_callback_continue;
 
+    UNUSED_ARGUMENT(receive_data);
     /* don't care any data in the request */
     return status;
 }

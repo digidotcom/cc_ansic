@@ -326,26 +326,36 @@ static connector_status_t process_data_service_device_response(connector_data_t 
     device_request.bytes_used = 0;
     device_request.more_data = connector_false;
 
-    switch (data_service->request_type)
     {
-        case connector_request_id_data_service_receive_reply_length:
-        /* We got here because callback returns error for request data.
-         * Get the replay data.
-         */
-         /* fall thru */
-        case connector_request_id_data_service_receive_reply_data:
+        connector_request_id_data_service_t const request_type = data_service->request_type;
+
+        switch (request_type)
         {
+            case connector_request_id_data_service_receive_reply_length:
+            /* We got here because callback returns error for request data.
+             * Get the replay data.
+             */
+             /* fall thru */
+            case connector_request_id_data_service_receive_reply_data:
+            {
 
-            result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
-            data_service->callback_context = device_request.user_context;
-            break;
+                result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
+                data_service->callback_context = device_request.user_context;
+                if (request_type != data_service->request_type &&
+                    data_service->request_type == connector_request_id_data_service_receive_reply_length)
+                {
+                    /* callback returns error on reply data */
+                    device_request.bytes_used = 0;
+                    device_request.more_data = connector_false;
+                }
+                break;
+            }
+            default:
+                /* should be here */
+                ASSERT(connector_false);
+                goto done;
         }
-        default:
-            /* should be here */
-            ASSERT(connector_false);
-            goto done;
     }
-
     if (isFirstResponse)
     {
 

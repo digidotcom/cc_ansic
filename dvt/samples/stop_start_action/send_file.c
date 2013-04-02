@@ -38,7 +38,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
 {
 
     connector_status_t status = connector_success;
-    static char const file_type[] = "text/plain";
+    static char file_type[] = "text/plain";
     ds_record_t * user;
 
     {
@@ -56,10 +56,10 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
     }
 
     sprintf(user->file_path, "%s", filename);
-    user->header.flags = 0;
+    user->header.option = connector_data_service_send_option_overwrite;
     user->header.path  = user->file_path;
     user->header.content_type = file_type;
-    user->header.context = user;
+    user->header.user_context = user;
     user->header.transport = transport;
     user->bytes_sent = 0;
     user->file_data = content;
@@ -89,15 +89,6 @@ connector_status_t send_put_request(connector_handle_t handle, int index, connec
     char filename[DS_FILE_NAME_LEN];
     int fileindex = put_file_active_count[transport];
 
-#if 0
-    if ((transport == connector_transport_udp) && (put_file_active_count[transport] >= 1))
-    {
-        status = connector_invalid_data_range;
-        goto done;
-
-    }
-#endif
-
     if (put_file_active_count[transport] >= DS_MAX_USER)
     {
         status = connector_invalid_data_range;
@@ -119,6 +110,7 @@ connector_status_t send_put_request(connector_handle_t handle, int index, connec
 
     sprintf(filename, "test/dvt%02X.txt", fileindex);
     status = send_file(handle, index, filename, ds_buffer, (rand() % (DS_DATA_SIZE +1)), transport);
+
 
 done:
     return status;

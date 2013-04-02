@@ -13,6 +13,7 @@
 #include "platform.h"
 #include "application.h"
 
+#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
 #define enum_to_case(name)  case name:  result = #name;             break
 
 static char const * session_status_to_string(connector_session_status_t const value)
@@ -31,6 +32,7 @@ static char const * session_status_to_string(connector_session_status_t const va
     }
     return result;
 }
+#endif
 
 static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
 {

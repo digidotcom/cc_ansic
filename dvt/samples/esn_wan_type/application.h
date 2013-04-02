@@ -28,6 +28,8 @@ extern char * wan_id_string;
 
 extern connector_status_t app_terminate_tcp_transport(connector_handle_t handle);
 extern int initiate_run(connector_handle_t handle);
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id,
+                                                  void * const data);
 
 extern device_request_target_t device_request_target;
 

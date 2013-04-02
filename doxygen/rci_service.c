@@ -151,10 +151,14 @@
  * <td>@endhtmlonly @ref connector_request_id_remote_config_action_start @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] Pointer to @endhtmlonly @ref connector_remote_group_request_t "Remote configuration request" @htmlonly
+ * <th>data</th>
+ * <td> [IN] Pointer to @endhtmlonly @ref connector_remote_config_t @htmlonly
  *      structure:
  *          <dl>
+ *              <dt><i>user_context</i></dt>
+ *              <dd> - Pointer to callback's context returned from previous callback.
+ *                     Callback may write its own context which will be passed back to
+ *                     subsequential callback.</dd>
  *              <dt><i>action</i></dt>
  *              <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                    <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
@@ -168,37 +172,19 @@
  *                  </dl> </dd>
  *              <dt><i>element</i></dt>
  *              <dd>- not applicable.</dd>
- *            </dl>
- * </td></tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly @ref connector_remote_group_request_t "Remote configuration request" @htmlonly structure </td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
- *          <dl>
- *              <dt><i>user_context</i></dt>
- *              <dd> - Pointer to callback's context returned from previous callback.
- *                     Callback may write its own context which will be passed back to
- *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by @endhtmlonly @ref rci_tool @htmlonly if
  *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
- *              <dt><i>element_data</i></dt>
+ *              <dt><i>response</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
  *                  <dd> - Callback returns a pointer to a constant null-terminated hint string
  *                         which will be sent to the server if error is encountered.
  *                         This string cannot be altered until next callback call.
  *                         Note: This must be set to NULL for no hint string when error_id is set.</dd>
- *                  </dl></dd>
- *            </dl>
+ *              </dl></dd>
+ *           </dl>
  * </td></tr>
- * <tr>
- * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
- * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -216,11 +202,9 @@
  *
  * @code
  *
- * static connector_callback_status_t app_process_action_start(connector_remote_group_request_t * const request,
- *                                                         connector_remote_config_t * const response)
+ * static connector_callback_status_t app_process_action_start(connector_remote_config_t * const data)
  * {
- *     UNUSED_ARGUMENT(request);
- *     UNUSED_ARGUMENT(response);
+ *     UNUSED_ARGUMENT(data);
  *     printf("process_action_start\n");
  *     return connector_callback_continue;
  * }
@@ -241,13 +225,17 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_remote_config_group_start @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_group_start @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_data</th>
- * <td> [IN] Pointer to @endhtmlonly @ref connector_remote_group_request_t "Remote configuration request" @htmlonly
+ * <td> [IN] Pointer to @endhtmlonly @ref connector_remote_config_t @htmlonly
  *      structure:
  *          <dl>
+ *              <dt><i>user_context</i></dt>
+ *              <dd> - Pointer to callback's context returned from previous callback.
+ *                     Callback may write its own context which will be passed back to
+ *                     subsequential callback.</dd>
  *              <dt><i>action</i></dt>
  *              <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                    <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
@@ -262,24 +250,10 @@
  *                  </dl> </dd>
  *              <dt><i>element</i></dt>
  *                  <dd> not applicable.</dd>
- *            </dl>
- * </td></tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly @ref connector_remote_group_request_t "Remote configuration request" @htmlonly structure </td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [OUT/IN] Pointer to @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure:
- *          <dl>
- *              <dt><i>user_context</i></dt>
- *              <dd> - Pointer to callback's context returned from previous callback.
- *                     Callback may write its own context which will be passed back to
- *                     subsequential callback.</dd>
  *              <dt><i>error_id</i></dt>
  *              <dd> - Callback writes error enumeration value generatied by  @endhtmlonly @ref rci_tool @htmlonly if
  *                     error is encountered. Etherios connector sends error description if it's provided for the given error_id.</dd>
- *              <dt><i>element_data</i></dt>
+ *              <dt><i>response</i></dt>
  *              <dd><dl>
  *                  <dt><i>error_hint</i></dt>
  *                  <dd> - Callback returns a pointer to a constant null-terminated hint string
@@ -289,10 +263,6 @@
  *                  </dl></dd>
  *            </dl>
  * </td></tr>
- * <tr>
- * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly @ref connector_remote_config_t "Remote configuration response" @htmlonly structure</td>
- * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -309,23 +279,22 @@
  * Example:
  *
  * @code
- * static connector_callback_status_t app_process_group_init(connector_remote_group_request_t * const request,
- *                                                  connector_remote_config_t * const response)
+ * static connector_callback_status_t app_process_group_init(connector_remote_config_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *     remote_group_table_t * group_ptr = NULL;
- *     remote_config_session_t * session_ptr = response->user_context;
+ *     remote_config_session_t * session_ptr = data->user_context;
  *
  *     ASSERT(session_ptr != NULL);
  *
  *     printf("process_group_init\n");
  *
- *     switch (request->group.type)
+ *     switch (data->group.type)
  *     {
  *     case connector_remote_group_setting:
- *         if (request->group.id <= sizeof (remote_setting_table))
+ *         if (data->group.id <= sizeof (remote_setting_table))
  *         {
- *             group_ptr = &remote_setting_table[request->group.id];
+ *             group_ptr = &remote_setting_table[data->group.id];
  *             session_ptr->group = group_ptr;
  *         }
  *         else
@@ -340,7 +309,7 @@
  *
  *     if (group_ptr->init_cb)
  *     {
- *         status = group_ptr->init_cb(request, response, &session_ptr->group_context);
+ *         status = group_ptr->init_cb(data);
  *     }
  *
  *     return status;
@@ -362,13 +331,17 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_remote_config_group_process @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_group_process @htmlonly</td>
  * </tr>
  * <tr>
- *   <th>request_data</th>
- *   <td> [IN] Pointer to @endhtmlonly @ref connector_remote_group_request_t "Remote configuration request" @htmlonly
+ *   <th>data</th>
+ *   <td> [IN] Pointer to @endhtmlonly @ref connector_remote_config_t @htmlonly
  *        structure:
  *     <dl>
+ *              <dt><i>user_context</i></dt>
+ *              <dd> - Pointer to callback's context returned from previous callback.
+ *                     Callback may write its own context which will be passed back to
+ *                     subsequential callback.</dd>
  *        <dt><i>action</i></dt>
  *          <dd> - the @endhtmlonly @ref connector_remote_action_set @htmlonly
  *          </dd>

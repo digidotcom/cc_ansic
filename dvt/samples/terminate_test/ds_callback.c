@@ -20,7 +20,7 @@
 terminate_flag_t terminate_flag = device_request_idle;
 
 extern connector_callback_status_t app_os_malloc(size_t const size, void ** ptr);
-extern void app_os_free(void * const ptr);
+extern connector_callback_status_t app_os_free(void * const ptr);
 
 #define DS_MAX_USER   5
 #define DS_FILE_NAME_LEN  20
@@ -70,7 +70,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
     user->header.option = connector_data_service_send_option_overwrite;
     user->header.path  = user->file_path;
     user->header.content_type = file_type;
-    user->header.context = user;
+    user->header.user_context = user;
     user->header.transport = connector_transport_tcp;
     user->bytes_sent = 0;
     user->file_data = content;
@@ -183,7 +183,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
                 if (send_ptr->bytes_used > send_ptr->bytes_available)
                     send_ptr->bytes_used = send_ptr->bytes_available;
 
-                memcpy(dptr, &user->file_data[user->bytes_sent], send_ptr->bytes_used);
+                memcpy(send_ptr->buffer, &user->file_data[user->bytes_sent], send_ptr->bytes_used);
                 if (user->bytes_sent == 0)
                 {
                     app_os_get_system_time(&user->first_data_time);
@@ -254,7 +254,6 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
         default:
             APP_DEBUG("app_put_request_handler: Unexpected request ID: %d\n", request_id);
             break;
-        }
     }
 
 done:
@@ -265,12 +264,10 @@ done:
 static char const request_terminate_target[] = "request_terminate_in_callback";
 static char const request_terminate_application_target[] = "request_terminate_in_application";
 
-static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_data)
+static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_info)
 {
     connector_callback_status_t status = connector_callback_continue;
-    ASSERT(server_data != NULL);
-    ASSERT(server_device_request != NULL);
-
+    ASSERT(target_info != NULL);
 
     {
         unsigned long current_time;
@@ -287,7 +284,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
         else
         {
             /* testing to return unrecognized status */
-            APP_DEBUG("app_process_device_request_target: unrecognized target = \"%s\"\n", target_data->target);
+            APP_DEBUG("app_process_device_request_target: unrecognized target = \"%s\"\n", target_info->target);
             status = connector_callback_error;
         }
 
@@ -303,7 +300,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
             {
                 app_os_get_system_time(&current_time);
                 APP_DEBUG("process_device_request: request = %d time stamp = %lu (active session = %d)\n", request_flag, current_time, put_file_active_count);
-                target_data->user_context = &terminate_flag;
+                target_info->user_context = &terminate_flag;
                 terminate_flag = request_flag;
             }
         }
@@ -348,7 +345,7 @@ static connector_callback_status_t app_process_device_request_response(connector
             APP_DEBUG("app_process_device_request_response: unknown terminate_flag = %d\n", terminate_flag);
         }
     }
-    reply_data->length_in_bytes = 0;
+    reply_data->bytes_used = 0;
 
     return status;
 }

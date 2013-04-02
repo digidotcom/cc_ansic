@@ -60,6 +60,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
         enum_to_case(connector_class_id_network_sms);
         enum_to_case(connector_class_id_status);
         enum_to_case(connector_class_id_short_message);
+        enum_to_case(connector_class_id_data_point);
     }
     return result;
 }
@@ -133,9 +134,11 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         status = app_status_handler(request_id.status_request, data);
         break;
 
+#if (defined CONNECT_SHORT_MESSAGE)
     case connector_class_id_short_message:
         status = app_sm_handler(request_id.sm_request, data);
         break;
+#endif
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
     case connector_class_id_network_udp:
