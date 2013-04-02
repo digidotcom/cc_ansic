@@ -177,7 +177,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
         case connector_sm_cmd_data:
         case connector_sm_cmd_no_path_data:
         {
-            connector_data_service_send_status_t status_info;
+            connector_data_service_status_t status_info;
 
             status_info.transport = session->transport;
             status_info.user_context = session->user.context;
@@ -185,19 +185,19 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
             switch (session->error)
             {
                 case connector_session_error_cancel:
-                    status_info.status = connector_data_service_send_status_cancel;
+                    status_info.status = connector_data_service_status_cancel;
                     break;
 
                 case connector_session_error_timeout:
-                    status_info.status = connector_data_service_send_status_timeout;
+                    status_info.status = connector_data_service_status_timeout;
                     break;
 
                 case connector_session_error_none:
-                    status_info.status = connector_data_service_send_status_complete;
+                    status_info.status = connector_data_service_status_complete;
                     break;
 
                 default:
-                    status_info.status = connector_data_service_send_status_session_error;
+                    status_info.status = connector_data_service_status_session_error;
                     status_info.session_error = session->error;
                     break;
             }

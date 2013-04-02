@@ -710,7 +710,7 @@ error:
     return callback_status;
 }
 
-static connector_callback_status_t dp_handle_status_callback(connector_data_t * const connector_ptr, connector_data_service_send_status_t * const data_ptr)
+static connector_callback_status_t dp_handle_status_callback(connector_data_t * const connector_ptr, connector_data_service_status_t * const data_ptr)
 {
     connector_callback_status_t callback_status = connector_abort;
     data_point_info_t * const dp_info = data_ptr->user_context;

@@ -372,7 +372,7 @@ static connector_callback_status_t app_process_device_request_response(connector
     return status;
 }
 
-static connector_callback_status_t app_process_device_request_status(connector_data_service_receive_status_t const * const status_data)
+static connector_callback_status_t app_process_device_request_status(connector_data_service_status_t const * const status_data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -382,7 +382,7 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
     switch (status_data->status)
     {
-    case connector_data_service_receive_status_session_error:
+    case connector_data_service_status_session_error:
         APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
                    (void *) device_request, status_data->session_error);
         break;

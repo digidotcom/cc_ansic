@@ -384,7 +384,7 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     data_service_context_t * const data_service = session->service_context;
 
 
-    connector_data_service_receive_status_t device_request;
+    connector_data_service_status_t device_request;
 
     device_request.transport = connector_transport_tcp;
     device_request.user_context = data_service->callback_context;
@@ -393,15 +393,15 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     switch (service_request->error_value)
     {
         case connector_session_error_cancel:
-            device_request.status = connector_data_service_send_status_cancel;
+            device_request.status = connector_data_service_status_cancel;
             break;
 
         case connector_session_error_timeout:
-            device_request.status = connector_data_service_send_status_timeout;
+            device_request.status = connector_data_service_status_timeout;
             break;
 
         default:
-            device_request.status = connector_data_service_send_status_session_error;
+            device_request.status = connector_data_service_status_session_error;
             device_request.session_error = service_request->error_value;
             break;
     }
@@ -688,7 +688,7 @@ done:
 static connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * cb_context)
 {
     connector_status_t status = connector_working;
-    connector_data_service_send_status_t user_data;
+    connector_data_service_status_t user_data;
 
     user_data.transport = connector_transport_tcp;
     user_data.user_context = cb_context;
@@ -697,15 +697,15 @@ static connector_status_t process_send_error(connector_data_t * const connector_
     switch (service_request->error_value)
     {
         case connector_session_error_cancel:
-            user_data.status = connector_data_service_send_status_cancel;
+            user_data.status = connector_data_service_status_cancel;
             break;
 
         case connector_session_error_timeout:
-            user_data.status = connector_data_service_send_status_timeout;
+            user_data.status = connector_data_service_status_timeout;
             break;
 
         default:
-            user_data.status = connector_data_service_send_status_session_error;
+            user_data.status = connector_data_service_status_session_error;
             user_data.session_error = service_request->error_value;
             break;
     }

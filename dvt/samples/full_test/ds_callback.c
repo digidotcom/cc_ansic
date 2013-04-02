@@ -164,7 +164,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
         case connector_request_id_data_service_send_status:
         {
-            connector_data_service_send_status_t * error_ptr = data;
+            connector_data_service_status_t * error_ptr = data;
             dvt_ds_t * const ds_info = error_ptr->user_context;
 
             ASSERT(ds_info != NULL);
@@ -532,7 +532,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
     return status;
 }
 
-static connector_callback_status_t app_process_device_request_status(connector_data_service_receive_status_t const * const status_data)
+static connector_callback_status_t app_process_device_request_status(connector_data_service_status_t const * const status_data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -541,7 +541,7 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
     switch (status_data->status)
     {
-    case connector_data_service_receive_status_session_error:
+    case connector_data_service_status_session_error:
         APP_DEBUG("app_process_device_request_status: session error %d\n",
                     status_data->session_error);
         break;
