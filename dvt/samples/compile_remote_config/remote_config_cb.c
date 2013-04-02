@@ -18,19 +18,12 @@
 #error "Must define CONNECTOR_RCI_SERVICE in connector_config.h to run this sample"
 #endif
 
-connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request,
-                                                      void const * const request_data, size_t const request_length,
-                                                      void * response_data, size_t * const response_length)
+connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
+                                                      void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request_data);
-    UNUSED_ARGUMENT(response_data);
-
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    switch (request)
+    switch (request_id)
     {
     case connector_request_id_remote_config_session_start:
     case connector_request_id_remote_config_session_end:

@@ -15,7 +15,6 @@
 #include "connector_api.h"
 #include "connector_config.h"
 #include "remote_config.h"
-#include "connector_remote.h"
 #include "platform.h"
 #include <string.h>
 
@@ -62,28 +61,28 @@ typedef struct {
     void * group_context;
 } remote_group_session_t;
 
-void * get_setting_data(connector_remote_group_request_t const * const request,
+void * get_setting_data(connector_remote_config_t * const remote_config,
     const void * def, int length);
-void add_setting_data(connector_remote_group_request_t const * const request,
+void add_setting_data(connector_remote_config_t * const remote_config,
     const void * data, int length);
 
-void * get_setting_data(connector_remote_group_request_t const * const request,
+void * get_setting_data(connector_remote_config_t * const remote_config,
     const void * def, int length){
 
     unsigned int group_id = remote_config->group.id;
     unsigned int index = remote_config->group.index;
     unsigned int element_id = remote_config->element.id;
 
-    rci_data_t * r_data = &rci_data[request->group.type];
+    rci_data_t * r_data = &rci_data[remote_config->group.type];
 
     // Check to see if the setting data already exists.
     if(r_data->setting_data != NULL && group_id < r_data->capacity){
         // Note: Unfortunately if there are indexed groups, the rci_data_t
-        // structure does not provide direct access, so we first lookup the 
-        // data by group id, if there is a data mistmatch, we increment until 
+        // structure does not provide direct access, so we first lookup the
+        // data by group id, if there is a data mistmatch, we increment until
         // we find the data.
         // This can be enhanced by nesting a struct inside setting_data_t,
-        // separating out indexed data, but that would complicate things a bit 
+        // separating out indexed data, but that would complicate things a bit
         // more, so we have this instead.
         unsigned int i;
         for(i = group_id; i < r_data->capacity; i++){
@@ -104,18 +103,18 @@ void * get_setting_data(connector_remote_group_request_t const * const request,
     // Data doesn't exist, add it, note: if this fails to store data,
     // we could enter infinite recursion, so be careful when modifying
     // add_setting_data.
-    add_setting_data(request, def, length);
-    return get_setting_data(request, def, length);
+    add_setting_data(remote_config, def, length);
+    return get_setting_data(remote_config, def, length);
 }
 
-void add_setting_data(connector_remote_group_request_t const * const request,
+void add_setting_data(connector_remote_config_t * const remote_config,
     const void * data, int length){
 
     unsigned int group_id = remote_config->group.id;
     unsigned int index = remote_config->group.index;
     unsigned int element_id = remote_config->element.id;
 
-    rci_data_t * r_data = &rci_data[request->group.type];
+    rci_data_t * r_data = &rci_data[remote_config->group.type];
 
     // Init setting data if not set.
     //APP_DEBUG("Setting Data for %d:%d.\n", group_id, element_id);
@@ -172,83 +171,71 @@ void add_setting_data(connector_remote_group_request_t const * const request,
     s_data->count += 1;
 }
 
-static connector_callback_status_t app_rci_group_process(
-    connector_remote_group_request_t const * const request,
-    connector_remote_group_response_t * const response);
+static connector_callback_status_t app_rci_group_process(connector_remote_config_t * const remote_config);
 
-static connector_callback_status_t app_rci_group_get(
-    connector_remote_group_request_t const * const request,
-    connector_remote_group_response_t * const response);
+static connector_callback_status_t app_rci_group_get(connector_remote_config_t * const remote_config);
 
-static connector_callback_status_t app_rci_group_set(
-    connector_remote_group_request_t const * const request,
-    connector_remote_group_response_t * const response);
+static connector_callback_status_t app_rci_group_set(connector_remote_config_t * const remote_config);
 
 
 
-static connector_callback_status_t app_rci_group_process(
-    connector_remote_group_request_t const * const request,
-    connector_remote_group_response_t * const response){
-
-    UNUSED_ARGUMENT(response);
-    UNUSED_ARGUMENT(request);
+static connector_callback_status_t app_rci_group_process(connector_remote_config_t * const remote_config)
+{
 
     if(remote_config->action == connector_remote_action_query){
-        return app_rci_group_get(request, response);
+        return app_rci_group_get(remote_config);
     }
     else{
-        return app_rci_group_set(request, response);
+        return app_rci_group_set(remote_config);
     }
 }
 
-static connector_callback_status_t app_rci_group_get(
-    connector_remote_group_request_t const * const request,
-    connector_remote_group_response_t * const response){
-
+static connector_callback_status_t app_rci_group_get(connector_remote_config_t * const remote_config)
+{
     void * data;
 
     switch(remote_config->element.type){
         case connector_element_type_string:
         case connector_element_type_multiline_string:
         case connector_element_type_password:
-            data = get_setting_data(request, init_string,
+            data = get_setting_data(remote_config, init_string,
                 sizeof(char)*(strlen(init_string) + 1));
             remote_config->response.element_value->string_value = data;
             break;
         case connector_element_type_int32:
-            data = get_setting_data(request, &init_signed, sizeof(int32_t));
+            data = get_setting_data(remote_config, &init_signed, sizeof(int32_t));
             remote_config->response.element_value->signed_integer_value = *(int32_t *)data;
             break;
         case connector_element_type_uint32:
         case connector_element_type_hex32:
         case connector_element_type_0x_hex32:
-            data = get_setting_data(request, &init_unsigned,
+            data = get_setting_data(remote_config, &init_unsigned,
                 sizeof(uint32_t));
             remote_config->response.element_value->unsigned_integer_value = *(uint32_t *)data;
             break;
         case connector_element_type_float:
-            data = get_setting_data(request, &init_float, sizeof(float));
+            data = get_setting_data(remote_config, &init_float, sizeof(float));
             remote_config->response.element_value->float_value = init_float;
             break;
         case connector_element_type_enum:
         case connector_element_type_on_off:
         case connector_element_type_boolean:
-            data = get_setting_data(request, &init_unsigned, sizeof(uint32_t));
+            data = get_setting_data(remote_config, &init_unsigned, sizeof(uint32_t));
             remote_config->response.element_value->unsigned_integer_value = *(uint32_t *)data;
             break;
         case connector_element_type_ipv4:
-            data = get_setting_data(request, init_ipv4,
+            data = get_setting_data(remote_config, init_ipv4,
                 sizeof(char)*(strlen(init_ipv4)+1));
             remote_config->response.element_value->string_value = data;
             break;
         case connector_element_type_fqdnv4:
         case connector_element_type_fqdnv6:
-            data =  get_setting_data(request, init_fqdnv4,
+            data =  get_setting_data(remote_config, init_fqdnv4,
                 sizeof(char)*(strlen(init_fqdnv4)+1));
             remote_config->response.element_value->string_value = data;
             break;
         case connector_element_type_datetime:
-            data = get_setting_data(request, init_datetime,
+            data = get_setting_data(remote_config, init_datetime,
                 sizeof(char)*(strlen(init_datetime)+1));
             remote_config->response.element_value->string_value = data;
             break;
@@ -259,12 +246,8 @@ static connector_callback_status_t app_rci_group_get(
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_rci_group_set(
-    connector_remote_group_request_t const * const request,
-    connector_remote_group_response_t * const response){
-
-    UNUSED_ARGUMENT(response);
-
+static connector_callback_status_t app_rci_group_set(connector_remote_config_t * const remote_config)
+{
 
     switch(remote_config->element.type){
         case connector_element_type_string:
@@ -274,30 +257,30 @@ static connector_callback_status_t app_rci_group_set(
         case connector_element_type_fqdnv4:
         case connector_element_type_fqdnv6:
         case connector_element_type_datetime:
-            add_setting_data(request, remote_config->element.value->string_value,
+            add_setting_data(remote_config, remote_config->element.value->string_value,
                 sizeof(char)*(strlen(remote_config->element.value->string_value)+1));
             break;
         case connector_element_type_int32:
-            add_setting_data(request,
+            add_setting_data(remote_config,
                 &remote_config->element.value->signed_integer_value,
                 sizeof(remote_config->element.value->signed_integer_value));
             break;
         case connector_element_type_uint32:
         case connector_element_type_hex32:
         case connector_element_type_0x_hex32:
-            add_setting_data(request,
+            add_setting_data(remote_config,
                 &remote_config->element.value->unsigned_integer_value,
                 sizeof(remote_config->element.value->unsigned_integer_value));
             break;
         case connector_element_type_float:
-            add_setting_data(request,
+            add_setting_data(remote_config,
                 &remote_config->element.value->float_value,
                 sizeof(remote_config->element.value->float_value));
             break;
         case connector_element_type_enum:
         case connector_element_type_on_off:
         case connector_element_type_boolean:
-            add_setting_data(request,
+            add_setting_data(remote_config,
                 &remote_config->element.value->boolean_value,
                 sizeof(remote_config->element.value->boolean_value));
             break;
@@ -307,17 +290,12 @@ static connector_callback_status_t app_rci_group_set(
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_remote_config_handler(
-    connector_request_id_remote_config_t const request,
-    void const * const request_data, size_t const request_length,
-    void * response_data, size_t * const response_length){
+connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
+                                                      void * const data)
+{
+    connector_callback_status_t status = connector_callback_unrecognized;
 
-    connector_callback_status_t status = connector_callback_continue;
-
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    switch(request){
+    switch(request_id){
         case connector_request_id_remote_config_session_start:
         case connector_request_id_remote_config_action_start:
         case connector_request_id_remote_config_group_start:
@@ -328,10 +306,10 @@ connector_callback_status_t app_remote_config_handler(
             // do nothing here.
             break;
         case connector_request_id_remote_config_group_process:
-            status = app_rci_group_process(request_data, response_data);
+            status = app_rci_group_process(data);
             break;
         default:
-            APP_DEBUG("Request Unknown: %d.\n", request);
+            APP_DEBUG("Request Unknown: %d.\n", request_id);
             ASSERT(0);
             break;
     }

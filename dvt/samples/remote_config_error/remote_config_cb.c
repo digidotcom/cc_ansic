@@ -38,7 +38,7 @@ static connector_callback_status_t app_process_session_start(connector_remote_co
 
     if (session_fail_state == fail_start_session)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         remote_config->response.error_hint = NULL;
         session_fail_state = no_fail;
     }
@@ -52,7 +52,7 @@ static connector_callback_status_t app_process_session_end(connector_remote_conf
 
     if (session_fail_state == fail_end_session)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         remote_config->response.error_hint = NULL;
         session_fail_state = no_fail;
     }
@@ -67,7 +67,7 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
 
     if (session_fail_state == fail_start_action)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         remote_config->response.error_hint = NULL;
         session_fail_state = no_fail;
     }
@@ -75,15 +75,13 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_action_end(connector_remote_group_request_t const * const request,
-                                                      connector_remote_group_response_t * const response)
+static connector_callback_status_t app_process_action_end(connector_remote_config_t * const remote_config)
 {
-    UNUSED_ARGUMENT(request);
     APP_DEBUG("app_process_action_end\n");
 
     if (session_fail_state == fail_end_action)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         remote_config->response.error_hint = NULL;
         session_fail_state = no_fail;
     }
@@ -91,14 +89,12 @@ static connector_callback_status_t app_process_action_end(connector_remote_group
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_group_start(connector_remote_group_request_t const * const request,
-                                                       connector_remote_group_response_t * const response)
+static connector_callback_status_t app_process_group_start(connector_remote_config_t * const remote_config)
 {
-    UNUSED_ARGUMENT(request);
 
     if (session_fail_state == fail_start_group)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         remote_config->response.error_hint = NULL;
         session_fail_state = no_fail;
     }
@@ -106,13 +102,12 @@ static connector_callback_status_t app_process_group_start(connector_remote_grou
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_group_process(connector_remote_group_request_t const * const request,
-                                                         connector_remote_group_response_t * const response)
+static connector_callback_status_t app_process_group_process(connector_remote_config_t * const remote_config)
 {
 
     if (session_fail_state == fail_process_group)
     {
-        response->error_id = connector_global_error_load_fail;
+        remote_config->error_id = connector_global_error_load_fail;
         remote_config->response.error_hint = "Hint";
         session_fail_state = no_fail;
         goto done;
@@ -153,15 +148,13 @@ done:
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_group_end(connector_remote_group_request_t const * const request,
-                                                     connector_remote_group_response_t * const response)
+static connector_callback_status_t app_process_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request);
     if (session_fail_state == fail_end_group)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         remote_config->response.error_hint = NULL;
         session_fail_state = no_fail;
     }
@@ -169,61 +162,57 @@ static connector_callback_status_t app_process_group_end(connector_remote_group_
     return status;
 }
 
-static connector_callback_status_t app_process_session_cancel(void const * const context)
+static connector_callback_status_t app_process_session_cancel(connector_remote_config_cancel_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(context);
+    UNUSED_ARGUMENT(remote_config);
 
     APP_DEBUG("app_process_session_cancel\n");
 
     return status;
 }
 
-connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request,
-                                                      void const * const request_data, size_t const request_length,
-                                                      void * response_data, size_t * const response_length)
+connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
+                                                      void * const data)
 {
-    connector_callback_status_t status = connector_callback_continue;
+    connector_callback_status_t status = connector_callback_unrecognized;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    switch (request)
+    switch (request_id)
     {
     case connector_request_id_remote_config_session_start:
-        status = app_process_session_start(response_data);
+        status = app_process_session_start(data);
         break;
 
     case connector_request_id_remote_config_action_start:
-        status = app_process_action_start(request_data, response_data);
+        status = app_process_action_start(data);
         break;
 
     case connector_request_id_remote_config_group_start:
-        status = app_process_group_start( request_data, response_data);
+        status = app_process_group_start( data);
         break;
 
     case connector_request_id_remote_config_group_process:
-        status = app_process_group_process(request_data, response_data);
+        status = app_process_group_process(data);
         break;
 
     case connector_request_id_remote_config_group_end:
-        status = app_process_group_end(request_data, response_data);
+        status = app_process_group_end(data);
         break;
 
     case connector_request_id_remote_config_action_end:
-        status = app_process_action_end(request_data, response_data);
+        status = app_process_action_end(data);
         break;
 
     case connector_request_id_remote_config_session_end:
-        status = app_process_session_end(response_data);
+        status = app_process_session_end(data);
         break;
 
     case connector_request_id_remote_config_session_cancel:
-        status = app_process_session_cancel(request_data);
+        status = app_process_session_cancel(data);
         break;
     default:
-        APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request);
+        APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request_id);
         break;
     }
 
