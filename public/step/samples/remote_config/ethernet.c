@@ -33,7 +33,7 @@ typedef struct {
     connector_setting_ethernet_duplex_id_t duplex;
     char dns[ETHERNET_DNS_FQDN_LENGTH];
 
-    connector_t dhcp_enabled;
+    connector_bool_t dhcp_enabled;
 } ethernet_config_data_t;
 
 typedef struct {
@@ -42,7 +42,7 @@ typedef struct {
     char gateway[ETHERNET_IPV4_STRING_LENGTH];
     char dns[ETHERNET_DNS_FQDN_LENGTH];
     connector_setting_ethernet_duplex_id_t  duplex;
-    connector_t dhcp_enabled;
+    connector_bool_t dhcp_enabled;
 } ethernet_connector_data_t;
 
 ethernet_config_data_t ethernet_config_data = {0, 0, 0, connector_setting_ethernet_duplex_auto, "\0", connector_true};
@@ -141,18 +141,17 @@ void ethernet_get_ip_address(unsigned char ** addr, size_t * size)
 connector_callback_status_t app_ethernet_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     void * ptr;
     ethernet_connector_data_t * ethernet_ptr = NULL;
 
-    UNUSED_ARGUMENT(request);
     ASSERT(session_ptr != NULL);
 
 
     ptr = malloc(sizeof *ethernet_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -174,7 +173,7 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * c
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr;
 
     ASSERT(session_ptr != NULL);
@@ -224,7 +223,7 @@ connector_callback_status_t app_ethernet_group_set(connector_remote_config_t * c
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr;
     size_t length;
 
@@ -288,7 +287,7 @@ connector_callback_status_t app_ethernet_group_set(connector_remote_config_t * c
 connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr = NULL;
 
     /* save the data */
@@ -304,14 +303,14 @@ connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * c
 
         if (inet_aton(ethernet_ptr->ip_address, (struct in_addr *)&ethernet_config_data.ip_address) == 0)
         {
-            response->error_id = connector_global_error_load_fail;
+            remote_config->error_id = connector_global_error_load_fail;
             remote_config->response.error_hint = "IP address";
             goto done;
         }
 
         if (inet_aton(ethernet_ptr->subnet, (struct in_addr *)&ethernet_config_data.subnet) == 0)
         {
-            response->error_id = connector_setting_ethernet_error_invalid_subnet;
+            remote_config->error_id = connector_setting_ethernet_error_invalid_subnet;
             remote_config->response.error_hint = "Subnet";
             goto done;
         }
@@ -319,7 +318,7 @@ connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * c
         ccode = inet_aton(ethernet_ptr->gateway, (struct in_addr *)&ethernet_config_data.gateway);
         if (ccode == 0)
         {
-            response->error_id = connector_setting_ethernet_error_invalid_gateway;
+            remote_config->error_id = connector_setting_ethernet_error_invalid_gateway;
             remote_config->response.error_hint = "Gateway";
             goto done;
         }
@@ -338,9 +337,9 @@ done:
     return status;
 }
 
-void app_ethernet_group_cancel(void * const  context)
+void app_ethernet_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     if (session_ptr != NULL)
     {

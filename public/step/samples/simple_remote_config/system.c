@@ -30,17 +30,15 @@ system_data_t system_config_data = {"\0", "\0", "\0"};
 connector_callback_status_t app_system_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * system_ptr;
 
     void * ptr;
 
-    UNUSED_ARGUMENT(request);
-
     ptr = malloc(sizeof *system_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -55,7 +53,7 @@ done:
 connector_callback_status_t app_system_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
     switch (remote_config->element.id)
@@ -80,12 +78,10 @@ connector_callback_status_t app_system_group_get(connector_remote_config_t * con
 connector_callback_status_t app_system_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
     char * src_ptr = NULL;
-
-    UNUSED_ARGUMENT(response);
 
     switch (remote_config->element.id)
     {
@@ -109,13 +105,14 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
         memcpy(src_ptr, remote_config->element.value->string_value, length);
         src_ptr[length] = '\0';
     }
+
     return status;
 }
 
 connector_callback_status_t app_system_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
     if (remote_config->action == connector_remote_action_set)
@@ -129,9 +126,9 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
     return status;
 }
 
-void app_system_group_cancel(void * const context)
+void app_system_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
     if (system_ptr != NULL)

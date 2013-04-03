@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ***************************************************************************
 # Copyright (c) 2011, 2012 Digi International Inc.,
 # All rights not expressly granted are reserved.
@@ -10,7 +11,7 @@
 #
 # ***************************************************************************
 #
-# Build the iDigi Connector test harness
+# Build the Etherios Connector test harness
 #
 import logging
 import commands
@@ -82,7 +83,7 @@ class TestType(object):
 
 sample_tests = {
     'compile_and_link'  : [],
-    'connect_to_idigi'  : ('test_discovery.py',),
+    'connect_to_device_cloud'  : ('test_discovery.py',),
     'connect_on_ssl'    : ('test_ssl.py',),
     'firmware_download' : ('test_firmware.py',),
     'send_data'         : ('test_send_data.py',),
@@ -96,11 +97,13 @@ step_sample = TestType('step_sample', 'public/step/samples/',
                        'dvt/cases/sample_tests', sample_tests)
 
 dvt_tests = {
-    'full_test'                   : ('test_firmware_errors.py', 
-                                     'test_device_request.py',
-                                     'test_put_request.py',
-                                     'test_reboot.py',
-                                     'test_disconnect.py',),
+    'full_test'                   : (
+#                                     'test_firmware_errors.py',
+#                                     'test_device_request.py',
+                                     'test_put_request.py',),
+#                                     'test_reboot.py',
+#                                     'test_disconnect.py',),
+
 #    'fs_os_abort'                 : ('test_fs_os_abort.py',
 #                                     'test_debug_fs_os_abort.py',),
     'file_system_cov'             : ('test_fs_cov.py',),
@@ -113,7 +116,7 @@ dvt_tests = {
 #    'response_to_bad_values_test' : ('test_debug_bad_values.py',),
     'compile_remote_config'       : (),
     'remote_config'               : ('test_brci_descriptors.py',),
-    'connect_disconnect_to_idigi' : ('test_disconnect.py',),
+    'connect_disconnect_to_device_cloud' : ('test_disconnect.py',),
     'sm_udp'                      : ('test_sm_udp.py',),
     'sm_udp_negative'             : ('test_sm_udp_negative.py',),
     'sm_udp_multipart'            : ('test_sm_udp_multipart.py',),
@@ -242,7 +245,7 @@ def generate_id(rest_session, method="mac"):
             generated_id["meid"] = meid_id
 
 
-        TestRunner.log.info("Generated Device ID and adding to iDigi Account.", 
+        TestRunner.log.info("Generated Device ID and adding to Etherios Account.", 
             extra={'description' : '', 'test': '', 'device_id' : device_id})
         device_core = rest_mapper.create_resource('DeviceCore', 
             devConnectwareId=device_id, dpUdpSmEnabled='true')
@@ -259,7 +262,7 @@ def generate_id(rest_session, method="mac"):
 
 def start_iik(executable, tty=False):
     """
-    Starts an iDigi Connector session in given path with given executable name.
+    Starts an Etherios Connector session in given path with given executable name.
     """
     if tty:
         os.system('/usr/bin/script -q -f -c "%s"' % (executable))
@@ -515,11 +518,11 @@ class TestRunner(object):
                 self.log.info('Finished Test.', extra=log_extra)
                 return
 
-            self.log.info('Starting iDigi Connector.', extra=log_extra)
+            self.log.info('Starting Etherios Connector.', extra=log_extra)
 
             # Move idigi executable to a unique file name to allow us to isolate
             # the pid.
-            old_connector_path = os.path.join(src_dir, 'idigi')
+            old_connector_path = os.path.join(src_dir, 'connector')
             connector_executable = str(uuid.uuid4())
             connector_path = os.path.join(src_dir, connector_executable)
             shutil.move(old_connector_path, connector_path)
@@ -535,9 +538,9 @@ class TestRunner(object):
             try:
                 pid = commands.getoutput('pidof -s %s' % connector_path)
                 if pid == '':
-                    raise Exception(">>> [%s] idigi [%s] not running dir=[%s]" % (self.description, execution_type, src_dir))
+                    raise Exception(">>> [%s] connector [%s] not running dir=[%s]" % (self.description, execution_type, src_dir))
 
-                self.log.info('Started iDigi Connector.', extra=log_extra)
+                self.log.info('Started Etherios Connector.', extra=log_extra)
                 for test_script in test_list:
                     # skip the test if script filename starts with 'test_nodebug'
                     if self.debug_on and test_script.find('test_nodebug') == 0:
@@ -553,7 +556,7 @@ class TestRunner(object):
                             self.log.info('Executing Test Script %s.' % test_script, extra=log_extra)
                         
                             # Argument list to call nose with.  Generate a nosetest xml file in 
-                            # current directory, pass in idigi / iik connection settings.
+                            # current directory, pass in device cloud / iik connection settings.
                             arguments = ['dvt/bin/nosetests',
                                          '--with-xunit',
                                          '-s', # Don't capture STDOUT (allow everything else to print)
@@ -709,16 +712,16 @@ def generate_config_tool_jar(build_path='tools/config'):
     return (process.returncode, data)
 
 def main():
-    parser = argparse.ArgumentParser(description="iDigi Connector Test Harness",
+    parser = argparse.ArgumentParser(description="Etherios Connector Test Harness",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--username', action='store', type=str, 
-        default='iikdvt', help="iDigi Username to run the test with.")
+        default='iikdvt', help="Etherios Username to run the test with.")
     parser.add_argument('--password', action='store', type=str, 
-        default='iik1sfun', help="iDigi Password to run the test with.")
+        default='iik1sfun', help="Etherios Password to run the test with.")
     parser.add_argument('--hostname', action='store', type=str, 
         default='devdev.idigi.com', 
-        help='iDigi Server to connect devices to.')
+        help='Etherios Server to connect devices to.')
     parser.add_argument('--descriptor', action='store', type=str, 
         default='linux-x64', help='A unique descriptor to describe the test.')
     parser.add_argument('--architecture', action='store', type=str, 

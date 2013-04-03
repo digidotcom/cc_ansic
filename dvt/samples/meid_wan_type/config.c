@@ -106,12 +106,11 @@ error:
 }
 
 #define MAC_ADDR_LENGTH     6
+static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
 #error "Specify device MAC address for LAN connection"
-
-    static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     ASSERT(config_mac->bytes_required == MAC_ADDR_LENGTH);
 
@@ -127,32 +126,19 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
     #define DEVICE_ID_LENGTH    16
 
     static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
-    connector_config_pointer_data_t mac_addr;
 
-    connector_callback_status_t status;
+    device_id[8] = device_mac_addr[0];
+    device_id[9] = device_mac_addr[1];
+    device_id[10] = device_mac_addr[2];
+    device_id[11] = 0xFF;
+    device_id[12] = 0xFF;
+    device_id[13] = device_mac_addr[3];
+    device_id[14] = device_mac_addr[4];
+    device_id[15] = device_mac_addr[5];
 
-    ASSERT(config_device_id->bytes_required == sizeof device_id);
+    config_device_id->data = device_id;
 
-    /* This sample uses the MAC address to format the device ID */
-    mac_addr.bytes_required = MAC_ADDR_LENGTH;
-
-    status = app_get_mac_addr(&mac_addr);
-    if (status == connector_callback_continue)
-    {
-        device_id[8] = mac_addr.data[0];
-        device_id[9] = mac_addr.data[1];
-        device_id[10] = mac_addr.data[2];
-        device_id[11] = 0xFF;
-        device_id[12] = 0xFF;
-        device_id[13] = mac_addr.data[3];
-        device_id[14] = mac_addr.data[4];
-        device_id[15] = mac_addr.data[5];
-
-        config_device_id->data = device_id;
-
-    }
-
-    return status;
+    return connector_callback_continue;
 }
 
 #if !(defined CONNECTOR_VENDOR_ID)

@@ -29,18 +29,17 @@ device_security_data_t device_security_data = {connector_setting_devicesecurity_
 connector_callback_status_t app_device_security_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_security_data_t * device_security_ptr;
 
     void * ptr;
 
-    UNUSED_ARGUMENT(request);
     ASSERT(session_ptr != NULL);
 
     ptr = malloc(sizeof *device_security_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -55,7 +54,7 @@ done:
 connector_callback_status_t app_device_security_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_security_data_t * device_security_ptr;
 
     ASSERT(session_ptr != NULL);
@@ -87,10 +86,8 @@ connector_callback_status_t app_device_security_group_get(connector_remote_confi
 connector_callback_status_t app_device_security_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_security_data_t * device_security_ptr;
-
-    UNUSED_ARGUMENT(response);
 
     ASSERT(remote_config->element.value != NULL);
     ASSERT(session_ptr != NULL);
@@ -129,7 +126,7 @@ connector_callback_status_t app_device_security_group_set(connector_remote_confi
 connector_callback_status_t app_device_security_group_end(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_security_data_t * device_security_ptr;
 
     ASSERT(session_ptr != NULL);
@@ -148,9 +145,9 @@ connector_callback_status_t app_device_security_group_end(connector_remote_confi
     return status;
 }
 
-void app_device_security_group_cancel(void * const context)
+void app_device_security_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_security_data_t * const device_security_ptr = session_ptr->group_context;
 
     if (device_security_ptr != NULL)

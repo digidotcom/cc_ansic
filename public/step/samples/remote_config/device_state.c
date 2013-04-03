@@ -25,9 +25,7 @@ device_state_config_data_t device_state_config_data = {-10};
 connector_callback_status_t app_device_state_group_init(connector_remote_config_t * const remote_config)
 {
 
-    remote_group_session_t * const session_ptr = response->user_context;
-
-    UNUSED_ARGUMENT(request);
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     ASSERT(session_ptr != NULL);
 
@@ -39,7 +37,7 @@ connector_callback_status_t app_device_state_group_init(connector_remote_config_
 connector_callback_status_t app_device_state_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     device_state_config_data_t * device_state_ptr;
 
@@ -78,7 +76,7 @@ connector_callback_status_t app_device_state_group_set(connector_remote_config_t
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_state_config_data_t * device_state_ptr;
 
     ASSERT(session_ptr != NULL);

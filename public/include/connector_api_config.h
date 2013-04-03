@@ -68,7 +68,7 @@ typedef enum {
 */
 typedef struct {
     uint8_t * data;         /**< Application data pointer */
-    size_t bytes_required;  /**< Number of bytes required and needed on the application data pointer */
+    size_t CONST bytes_required;  /**< Number of bytes required and needed on the application data pointer */
 } connector_config_pointer_data_t;
 /**
 * @}

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -99,14 +100,12 @@ class SendDeviceRequestTestCase(ic_testcase.TestCase):
         device_response = dom.getElementsByTagName("device_request")
         
         # Validate cancel message response
-        self.log.info("Determining if \"%s\" target is cancelled." % my_target_name)
-        error = getText(device_response[0].getElementsByTagName('error')[0])
-
-        cancelled_response = "Message transmission cancelled"
-
-        self.assertEqual(error, cancelled_response,
-            "returned target (%s) is not (%s)" 
-            % (error, cancelled_response))
+        self.log.info("Determining if \"%s\" target is not handle." % my_target_name)
+        
+        status = device_response[0].getAttribute("status")
+        self.assertEqual(status, '1', 
+            "returned status (%s) is not not handled" 
+            % status)
 
 if __name__ == '__main__':
     unittest.main() 

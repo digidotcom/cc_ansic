@@ -47,7 +47,7 @@ static serial_config_data_t serial_config_data[SERIAL_COUNT] = {
 connector_callback_status_t app_serial_group_init(connector_remote_config_t * const remote_config)
 {
     void * ptr;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     serial_config_data_t * serial_ptr = NULL;
     int group_index = remote_config->group.index -1;
 
@@ -56,7 +56,7 @@ connector_callback_status_t app_serial_group_init(connector_remote_config_t * co
     ptr = malloc(sizeof *serial_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -72,7 +72,7 @@ connector_callback_status_t app_serial_group_get(connector_remote_config_t * con
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     serial_config_data_t * serial_ptr;
 
     ASSERT(session_ptr != NULL);
@@ -110,7 +110,7 @@ connector_callback_status_t app_serial_group_get(connector_remote_config_t * con
             remote_config->response.element_value->enum_value = connector_setting_serial_baud_230400;
             break;
         default:
-            response->error_id = connector_setting_serial_error_invalid_baud;
+            remote_config->error_id = connector_setting_serial_error_invalid_baud;
             remote_config->response.error_hint = SERIAL_INVALID_STORED_VALUE_HINT;
             break;
         }
@@ -128,7 +128,7 @@ connector_callback_status_t app_serial_group_get(connector_remote_config_t * con
             remote_config->response.element_value->enum_value = connector_setting_serial_parity_even;
             break;
         default:
-            response->error_id = connector_setting_serial_error_invalid_parity;
+            remote_config->error_id = connector_setting_serial_error_invalid_parity;
             remote_config->response.error_hint = SERIAL_INVALID_STORED_VALUE_HINT;
             break;
         }
@@ -154,7 +154,7 @@ connector_callback_status_t app_serial_group_set(connector_remote_config_t * con
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     serial_config_data_t * serial_ptr;
 
 
@@ -183,7 +183,8 @@ connector_callback_status_t app_serial_group_set(connector_remote_config_t * con
             serial_ptr->baud = serial_supported_baud_rates[remote_config->element.value->enum_value];
             break;
         default:
-            response->error_id = connector_setting_serial_error_invalid_baud;
+            remote_config->error_id = connector_setting_serial_error_invalid_baud;
+            remote_config->response.error_hint = NULL;
             break;
         }
         break;
@@ -201,7 +202,8 @@ connector_callback_status_t app_serial_group_set(connector_remote_config_t * con
             serial_ptr->parity = serial_supported_parity[remote_config->element.value->enum_value];
             break;
         default:
-            response->error_id = connector_setting_serial_error_invalid_parity;
+            remote_config->error_id = connector_setting_serial_error_invalid_parity;
+            remote_config->response.error_hint = NULL;
             break;
         }
         break;
@@ -226,7 +228,7 @@ connector_callback_status_t app_serial_group_set(connector_remote_config_t * con
 connector_callback_status_t app_serial_group_end(connector_remote_config_t * const remote_config)
 {
 
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     serial_config_data_t * serial_ptr;
 
     ASSERT(session_ptr != NULL);
@@ -243,12 +245,13 @@ connector_callback_status_t app_serial_group_end(connector_remote_config_t * con
     {
         free(serial_ptr);
     }
+
     return connector_callback_continue;
 }
 
-void app_serial_group_cancel(void * const context)
+void app_serial_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     if (session_ptr != NULL)
     {

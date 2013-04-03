@@ -293,7 +293,7 @@ static connector_callback_status_t app_rci_group_set(connector_remote_config_t *
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
                                                       void * const data)
 {
-    connector_callback_status_t status = connector_callback_unrecognized;
+    connector_callback_status_t status = connector_callback_continue;
 
     switch(request_id){
         case connector_request_id_remote_config_session_start:

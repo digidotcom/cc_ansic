@@ -44,10 +44,8 @@ connector_callback_status_t app_device_info_group_init(connector_remote_config_t
 {
 
     void * ptr;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     device_info_config_data_t * device_info_ptr = NULL;
-
-    UNUSED_ARGUMENT(request);
 
     ASSERT(session_ptr != NULL);
 
@@ -55,7 +53,7 @@ connector_callback_status_t app_device_info_group_init(connector_remote_config_t
 
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -70,8 +68,7 @@ done:
 connector_callback_status_t app_device_info_group_get(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
-
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     ASSERT(session_ptr != NULL);
     ASSERT(session_ptr->group_context != NULL);
@@ -116,7 +113,7 @@ connector_callback_status_t app_device_info_group_get(connector_remote_config_t 
 connector_callback_status_t app_device_info_group_set(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     device_info_config_data_t * device_info_ptr;
     char * src_ptr = NULL;
@@ -168,7 +165,7 @@ connector_callback_status_t app_device_info_group_end(connector_remote_config_t 
 {
 
     device_info_config_data_t * device_info_ptr;
-    remote_group_session_t * const session_ptr = response->user_context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     /* save the data */
 
@@ -189,9 +186,9 @@ connector_callback_status_t app_device_info_group_end(connector_remote_config_t 
     return connector_callback_continue;
 }
 
-void app_device_info_group_cancel(void * const context)
+void app_device_info_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     if (session_ptr != NULL)
     {

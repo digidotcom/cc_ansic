@@ -75,7 +75,7 @@ typedef struct {
     char const * description;   /**< An ASCII description string of the target */
     char const * filespec;      /**< Regular expression for the firmware image name for  the target */
 
-    unsigned int target_number; /**< Target number which target the firmware information is for*/
+    unsigned int CONST target_number; /**< Target number which target the firmware information is for*/
 } connector_firmware_info_t;
 
 
@@ -133,7 +133,7 @@ typedef enum {
 * is called when the device is requested for firmware download.
 */
 typedef struct {
-    unsigned int target_number;  /**< Target number which firmware target the image data is for */
+    unsigned int CONST target_number;  /**< Target number which firmware target the image data is for */
 
     char * filename;    /**< Pointer to filename of the image to be downloaded */
 
@@ -154,7 +154,7 @@ typedef struct {
 * is called when the connector receives a block of image data for firmware download.
 */
 typedef struct {
-    unsigned int target_number;  /**< Target number which firmware target the image data is for */
+    unsigned int CONST target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
         uint32_t offset;    /**< Offset value where this particular block of image data fits into the download */
@@ -180,7 +180,7 @@ typedef struct {
 * sending all image data.
 */
 typedef struct {
-    unsigned int target_number;  /**< Target number which firmware target the image data is for */
+    unsigned int CONST target_number;  /**< Target number which firmware target the image data is for */
 
     connector_firmware_download_status_t status;     /**< Status code regarding the download completion */
 
@@ -199,9 +199,9 @@ typedef struct {
 * is called when firmware download process is aborted.
 */
 typedef struct {
-    unsigned int target_number;         /**< Target number which target the firmware download is aborted */
+    unsigned int CONST target_number;         /**< Target number which target the firmware download is aborted */
 
-    connector_firmware_status_t status; /**< Abort reason or status */
+    connector_firmware_status_t CONST status; /**< Abort reason or status */
 } connector_firmware_download_abort_t;
 /**
 * @}
@@ -217,7 +217,7 @@ typedef struct {
 * is called to reset the target.
 */
 typedef struct {
-    unsigned int target_number;     /**< Target number which target the firmware to reset */
+    unsigned int CONST target_number;     /**< Target number which target the firmware to reset */
 } connector_firmware_reset_t;
 /**
 * @}

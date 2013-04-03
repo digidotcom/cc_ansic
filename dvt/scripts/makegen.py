@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # ***************************************************************************
 # Copyright (c) 2011, 2012 Digi International Inc.,
 # All rights not expressly granted are reserved.
@@ -32,6 +33,7 @@ from string import Template
 
 # Template file to use for basis of Makefile.
 TEMPLATE = os.path.join(os.path.dirname(__file__), "Makefile.template")
+LIB_TEMPLATE = os.path.join(os.path.dirname(__file__), "Makefile.library")
 
 # Samples that only link and don't require platform code.
 LINK_SAMPLES = ['compileandlinkformetrics', 'compile_and_link']
@@ -174,7 +176,11 @@ endif"""
         subs['POST_SAMPLE'] = '$(AT)python ../../../dvt/scripts/iikmapsum.py $(SAMPLE).map | tee $(basename $@).stats'
         
     if sample == 'build_library':
-        return ''
+        make_lib_template = open(LIB_TEMPLATE, 'r')
+        lib_template_data = make_lib_template.read()
+        make_lib_template.close()
+#        lib_template = Template(lib_template_data)
+        return lib_template_data
     else:
         return make_template.substitute(**subs)
 

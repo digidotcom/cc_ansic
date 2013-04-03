@@ -53,7 +53,7 @@ ${SRCS}
 ${LIBS}
 
 # Generated Sample Executable Name.
-SAMPLE = idigi
+SAMPLE = connector
 .PHONY:all
 all: $$(SAMPLE)
 

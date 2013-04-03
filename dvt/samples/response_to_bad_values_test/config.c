@@ -136,24 +136,16 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 
 //#error  "Specify device id"
 
-    APP_DEBUG("Entering app_get_device_id %zu\n", config_device_id->bytes_required);
+    static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
 
-    ASSERT(config_device_id->bytes_required == sizeof device_id);
-
-    /* This sample uses the MAC address to format the device ID */
-    mac_addr.bytes_required = MAC_ADDR_LENGTH;
-
-    /* This sample uses the MAC address to format the device ID */
-    app_get_mac_addr(&mac_addr);
-
-    device_id[8] = mac_addr.data[0];
-    device_id[9] = mac_addr.data[1];
-    device_id[10] = mac_addr.data[2];
+    device_id[8] = device_mac_addr[0];
+    device_id[9] = device_mac_addr[1];
+    device_id[10] = device_mac_addr[2];
     device_id[11] = 0xFF;
     device_id[12] = 0xFF;
-    device_id[13] = mac_addr.data[3];
-    device_id[14] = mac_addr.data[4];
-    device_id[15] = mac_addr.data[5];
+    device_id[13] = device_mac_addr[3];
+    device_id[14] = device_mac_addr[4];
+    device_id[15] = device_mac_addr[5];
 
     config_device_id->data = device_id;
 
@@ -1027,18 +1019,16 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     return status;
 }
 
+static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+
 void write_python_result_file(char *file_buffer)
 {
     FILE * fp = NULL;
 
-    connector_config_pointer_data_t device_id;
-
-    device_id.bytes_required = DEVICE_ID_LENGTH;
-    app_get_device_id(&device_id);
-
     snprintf(filename, sizeof(filename), "%02X%02X%02X%02X-%02X%02X%02X%02X-%02X%02X%02X%02X-%02X%02X%02X%02X.txt",
-             device_id.data[0], device_id.data[1], device_id.data[2], device_id.data[3], device_id.data[4], device_id.data[5], device_id.data[6], device_id.data[7],
-             device_id.data[8], device_id.data[9], device_id.data[10], device_id.data[11], device_id.data[12], device_id.data[13], device_id.data[14], device_id.data[15]);
+             device_mac_addr[0], device_mac_addr[1], device_mac_addr[2], device_mac_addr[3], device_mac_addr[4], device_mac_addr[5], device_mac_addr[6], device_mac_addr[7],
+             device_mac_addr[8], device_mac_addr[9], device_mac_addr[10], device_mac_addr[11], device_mac_addr[12], device_mac_addr[13], device_mac_addr[14], device_mac_addr[15]);
     fp = fopen(filename, "a");
 
     if (fp == NULL)

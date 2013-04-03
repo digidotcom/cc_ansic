@@ -87,9 +87,9 @@ public class FileGenerator {
 
     private final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
-    "  connector_remote_action_t action;\n" +
-    "  connector_remote_group_t group;\n" +
-    "  connector_remote_element_t element;\n" +
+    "  connector_remote_action_t CONST action;\n" +
+    "  connector_remote_group_t CONST group;\n" +
+    "  connector_remote_element_t CONST element;\n" +
     "  unsigned int error_id;\n" +
     "\n" +
     "  union {\n" +
