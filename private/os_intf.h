@@ -59,6 +59,7 @@ static connector_callback_status_t connector_callback(connector_callback_t const
     {
         case connector_callback_continue:
         case connector_callback_busy:
+        case connector_callback_error:
             break;
 
         case connector_callback_unrecognized:
@@ -68,10 +69,6 @@ static connector_callback_status_t connector_callback(connector_callback_t const
 
         case connector_callback_abort:
             connector_debug_printf("connector_callback: callback for class id = %d request id = %d returned abort\n", class_id, request_id.config_request);
-            break;
-
-        case connector_callback_error:
-            connector_debug_printf("connector_callback: callback for class id = %d request id = %d returned error\n", class_id, request_id.config_request);
             break;
 
         default:
