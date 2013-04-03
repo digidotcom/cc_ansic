@@ -37,7 +37,6 @@
 
 extern connector_handle_t connector_handle;
 extern connector_status_t connector_run_thread_status;
-extern int firmware_download_started;
 extern size_t total_malloc_size;
 
 #define STACKSIZE_HTML_OPEN_BODY "\
