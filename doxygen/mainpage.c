@@ -170,7 +170,7 @@
  * 
  * @subsection RAMRequirements Dynamic RAM Usage 
  * The following dynamic RAM usage was developed by monitoring the high-water mark during the
- * @ref connector_os_malloc @ref connector_callback_t "application-defined callback".
+ * @ref connector_request_id_os_malloc @ref connector_callback_t "application-defined callback".
  * 
  * @htmlonly
  * <table class="apitable">
@@ -383,7 +383,7 @@
  *
  * There is no expectation that you will need to port any other code, with the exception of the @ref step1 "changes" required to get your code compiled.
  *
- * For example, the Application Framework includes code to handle an @ref connector_os_system_up_time callback in os.c.  The function requires a
+ * For example, the Application Framework includes code to handle an @ref connector_request_id_os_system_up_time callback in os.c.  The function requires a
  * stable system timer at one second resolution.  In the linux platform example, the function is implemented using the POSIX standard
  * time() function:
  *

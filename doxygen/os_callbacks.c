@@ -38,7 +38,7 @@
  *   </tr>
  *   <tr>
  *     <td>request_id</td>
- *     <td>@endhtmlonly @ref connector_os_malloc @htmlonly</td>
+ *     <td>@endhtmlonly @ref connector_request_id_os_malloc @htmlonly</td>
  *   </tr>
  *   <tr>
  *     <td>request_data</td>
@@ -87,7 +87,7 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_operating_system && request_id.os_request == connector_os_malloc)
+ *     if (class_id == connector_class_operating_system && request_id.os_request == connector_request_id_os_malloc)
  *     {
  *         size_t * const size = request_data;
  *         void ** ptr = (void **)response_data;
@@ -112,7 +112,7 @@
  *
  * @see app_os_free()
  * @see app_os_malloc()
- * @see @ref connector_os_malloc
+ * @see @ref connector_request_id_os_malloc
  *
  * @htmlonly
  * <table class="apitable">
@@ -188,7 +188,7 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_os_system_up_time @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_os_system_up_time @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_data</th>
@@ -228,7 +228,7 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_operating_system && request_id.os_request == connector_os_system_up_time)
+ *     if (class_id == connector_class_operating_system && request_id.os_request == connector_request_id_os_system_up_time)
  *     {
  *         time((time_t *)response_data);
  *     }

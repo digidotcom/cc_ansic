@@ -65,7 +65,9 @@ static connector_callback_status_t app_get_ip_address(uint8_t const ** ip_addres
  */
 static connector_callback_status_t app_get_mac_addr(uint8_t const ** mac_address, size_t * const size)
 {
+	//! @cond Suppress the the Doxygen warnings
     #define MAC_ADDR_LENGTH     6
+	//! @endcond
 
     /* MAC address used in this sample */
     static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -108,7 +110,9 @@ static connector_callback_status_t app_get_mac_addr(uint8_t const ** mac_address
  */
 static connector_callback_status_t app_get_device_id(uint8_t const ** id, size_t * const size)
 {
+    /** @cond Suppress the the Doxygen warnings */
     #define DEVICE_ID_LENGTH    16
+    /* @endcond */
 
     static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
 
@@ -162,7 +166,9 @@ static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t
 {
 #error  "Specify vendor id"
 
-    #define VENDOR_ID_LENGTH    4
+/** @cond Suppress the the Doxygen warnings */
+#define VENDOR_ID_LENGTH    4
+/* @endcond */
 
     static uint8_t const device_vendor_id[VENDOR_ID_LENGTH] = {0x00, 0x00, 0x00, 0x00};
 
@@ -225,7 +231,6 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
  */
 static connector_callback_status_t app_get_server_url(char const ** url, size_t * const size)
 {
-#error "Specify iDigi Server URL"
     static char const connector_server_url[] = "my.idigi.com";
 
     /* Return pointer to device type. */
@@ -254,7 +259,6 @@ static connector_callback_status_t app_get_server_url(char const ** url, size_t 
  */
 static connector_callback_status_t app_get_connection_type(connector_connection_type_t const ** type)
 {
-#error "Specify LAN or WAN connection type"
 
     /* Return pointer to connection type */
     static connector_connection_type_t const device_connection_type = connector_lan_connection_type;
@@ -283,7 +287,6 @@ static connector_callback_status_t app_get_connection_type(connector_connection_
  */
 static connector_callback_status_t app_get_link_speed(uint32_t const ** speed, size_t * const size)
 {
-#error "Specify link speed for WAN connection type"
 
     UNUSED_ARGUMENT(speed);
     UNUSED_ARGUMENT(size);
@@ -310,7 +313,6 @@ static connector_callback_status_t app_get_link_speed(uint32_t const ** speed, s
  */
 static connector_callback_status_t app_get_phone_number(char const ** number, size_t * const size)
 {
-#error "Specify phone number dialed for WAN connection type"
     /*
      * Return pointer to phone number for WAN connection type.
      */
@@ -340,9 +342,10 @@ static connector_callback_status_t app_get_phone_number(char const ** number, si
  */
 static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const ** interval, size_t * const size)
 {
-#error "Specify server to device TX keepalive interval in seconds"
-
+/** @cond Suppress the the Doxygen warnings */
 #define    DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS    45
+/* @endcond */
+
     /* Return pointer to Tx keepalive interval in seconds */
     static uint16_t const device_tx_keepalive_interval = DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS;
 
@@ -373,9 +376,11 @@ static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const 
  */
 static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const ** interval, size_t * const size)
 {
-#error "Specify server to device RX keepalive interval in seconds"
+/** @cond Suppress the the Doxygen warnings */
 #define    DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS    45
-    /* Return pointer to Rx keepalive interval in seconds */
+/* @endcond */
+
+	/* Return pointer to Rx keepalive interval in seconds */
     static uint16_t const device_rx_keepalive_interval = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
 
     *interval = &device_rx_keepalive_interval;
@@ -404,8 +409,10 @@ static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const 
  */
 static connector_callback_status_t app_get_wait_count(uint16_t const ** count, size_t * const size)
 {
-#error "Specify the number of times that not receiving keepalive messages from server is allowed"
+/** @cond Suppress the the Doxygen warnings */
 #define    DEVICE_WAIT_COUNT    3
+/* @endcond */
+
     /*
      * Return pointer to wait count (number of times not receiving Tx keepalive
      * from server is allowed).
@@ -544,9 +551,9 @@ static connector_service_supported_status_t app_get_remote_configuration_support
  */
 static connector_callback_status_t app_get_max_message_transactions(unsigned int * const transCount)
 {
-	/**
-	 */
+/** @cond Suppress the the Doxygen warnings     */
 #define    CONNECTOR_MAX_MSG_TRANSACTIONS    1
+/* @endcond	 */
 
     *transCount = CONNECTOR_MAX_MSG_TRANSACTIONS;
 
@@ -601,9 +608,10 @@ static connector_callback_status_t app_get_device_id_method(connector_device_id_
  */
 static connector_callback_status_t app_get_imei_number(uint8_t ** const imei_number, size_t * size)
 {
+/** @cond Suppress the the Doxygen warnings      */
 #define APP_IMEI_LENGTH 8
+/* @endcond 	 */
 
-#error "Specify the IMEI number for WAN connection type if app_get_device_id_method returns connector_auto_device_id_method and app_get_device_id_method returns connector_imei_wan_type"
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -739,8 +747,6 @@ static connector_callback_status_t app_start_network_sms(connector_auto_connect_
  */
 static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const type)
 {
-#error "Specify connector_imei_wan_type for IMEI, connector_esn_wan_type for ESN, or connector_meid_wan_type for MEID WAN type"
-
     *type = connector_imei_wan_type;
     APP_DEBUG("app_get_wan_type\n");
 
@@ -770,9 +776,10 @@ static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const
  */
 static connector_callback_status_t app_get_esn(uint8_t ** const esn_number, size_t * size)
 {
+/** @cond Suppress the the Doxygen warnings      */
 #define APP_ESN_HEX_LENGTH 4
+/* @endcond  */
 
-#error "Specify the ESN number for WAN connection type if app_get_device_id_method returns connector_auto_device_id_method and app_get_device_id_method returns connector_esn_wan_type."
     /* Each nibble corresponds a decimal digit.
      */
     static char const app_esn_hex_string[] = "00000000";
@@ -834,9 +841,10 @@ static connector_callback_status_t app_get_esn(uint8_t ** const esn_number, size
  */
 static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, size_t * size)
 {
+/** @cond Suppress the the Doxygen warnings	 */
 #define APP_MEID_HEX_LENGTH 7
+/* @endcond  */
 
-#error "Specify the MEID number for WAN connection type if app_get_device_id_method returns connector_auto_device_id_method and app_get_device_id_method returns connector_meid_wan_type."
     /* Each nibble corresponds a decimal digit.
      */
     static char const app_meid_hex_string[] = "00000000000000";
@@ -898,7 +906,6 @@ static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, si
  */
 static connector_callback_status_t app_get_identity_verification(connector_identity_verification_t * const identity)
 {
-#error "Specify connector_identity_verification for simple or password identify verification form"
 
     *identity = connector_simple_identity_verification;
 
@@ -922,7 +929,6 @@ static connector_callback_status_t app_get_identity_verification(connector_ident
  */
 static connector_callback_status_t app_get_password(char const ** password, size_t * const size)
 {
-#error "Specify password for password identity verification form"
     static  char const connector_password[] = "";
 
     /* Return pointer to password. */
@@ -949,7 +955,6 @@ static connector_callback_status_t app_get_password(char const ** password, size
 */
 static connector_callback_status_t app_get_sms_service_id(char const ** const service_id, size_t * const size)
 {
-#error "Specify SMS service id. It is optional, set *service_id to NULL and *size to 0 if not used"
     static  char const sms_service_id[] = "IDGP";
 
     /* Return pointer to service_id. */
