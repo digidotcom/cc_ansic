@@ -46,17 +46,6 @@ typedef enum
 }fs_state_t;
 
 
-typedef enum
-{
-    fs_error_session_canceled,
-    fs_error_path_too_long,
-    fs_error_format,
-    fs_error_invalid_offset,
-    fs_error_invalid_hash,
-    fs_error_generic
-}fs_error_internal_t;
-
-
 typedef struct
 {
     void * user_context;
@@ -144,6 +133,16 @@ static connector_status_t fs_set_abort(connector_data_t * const connector_ptr,
     return context->status;
 }
 
+typedef enum
+{
+    fs_error_path_too_long,
+    fs_error_format,
+    fs_error_invalid_offset,
+    fs_error_invalid_hash,
+    fs_error_generic,
+    fs_error_session_canceled
+}fs_error_internal_t;
+
 static void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
 {
 
@@ -160,7 +159,7 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
         {"Request formar error",    connector_file_system_request_format_error},
         {"Invalid offset",          connector_file_system_invalid_parameter},
         {"Invalid hash algorythm",  connector_file_system_invalid_parameter},
-        {"Unspecified error",      connector_file_system_unspec_error}
+        {"Unspecified error",       connector_file_system_unspec_error}
     };
 
     switch(code)
