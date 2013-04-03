@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #***************************************************************************
 # Copyright (c) 2012 Digi International Inc.,
 # All rights not expressly granted are reserved.
@@ -22,6 +23,16 @@ def Usage():
     print 'Usage: initial_action.py <username> <password> <device_id> <target> <TCP, UDP, or SMS>\n'
    
 def PostMessage(username, password, device_id, target, data):
+#    input_file = 'dvt/cases/test_files/pattern.txt'
+    input_file = '../../cases/test_files/pattern.txt'
+
+    if data == "none":
+        f = open(input_file, 'rb')
+        content = f.read()
+        f.close()
+    else:
+        content = data
+          
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
@@ -37,10 +48,10 @@ def PostMessage(username, password, device_id, target, data):
             </requests>
         </data_service>
     </sci_request>
-    """%(device_id, target, data)
+    """%(device_id, target, content)
  
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("login.etherios.com",80)
+    webservice = httplib.HTTP("devdev.idigi.com",80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header

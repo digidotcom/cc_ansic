@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -105,9 +106,9 @@ class PutRequestDvtTestCase(ic_testcase.TestCase):
         """ Put request archive test """
         self.process_put_request(ds_archive, default_timeout, True)
 
-    def test_ds_put_request_both(self):
-        """ Put request both append and archive test """
-        self.process_put_request(ds_both, default_timeout, False)
+#    def test_ds_put_request_both(self):
+#        """ Put request both append and archive test """
+#        self.process_put_request(ds_both, default_timeout, False)
 
     def test_ds_put_request_zero_byte(self):
         """ Put request zero byte test """

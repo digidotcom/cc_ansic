@@ -330,7 +330,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
     connector_callback_status_t status = connector_callback_continue;
     device_request_handle_t * target_info = data_ptr->user_context;
 
-    if (target_info != NULL)
+    if (target_info == NULL)
     {
         APP_DEBUG("app_process_device_request_data: couldn't find the target\n");
         goto cancel;
@@ -475,6 +475,7 @@ static connector_callback_status_t app_process_device_request_response(connector
             break;
     }
 
+    if (target_info->data != NULL)
     {
         data_ptr->bytes_used = target_info->length_in_bytes - target_info->bytes_sent;
         if (data_ptr->bytes_used > data_ptr->bytes_available)
@@ -521,11 +522,11 @@ static connector_callback_status_t app_process_device_request_target(connector_d
         target_info->bytes_sent = 0;
         target_info->length_in_bytes = 0;
         data_ptr->user_context = target_info;
-        data_ptr->response_required = connector_true;
+        APP_DEBUG("process_device_request_target: receive target %s\n", data_ptr->target);
     }
     else
     {
-        APP_DEBUG("process_device_request: unknown target %s\n", data_ptr->target);
+        APP_DEBUG("process_device_request_target: unknown target %s\n", data_ptr->target);
         status = connector_callback_error;
     }
 

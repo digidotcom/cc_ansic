@@ -86,6 +86,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
     }
 
     APP_DEBUG("target = %d\n", download_info->target_number);
+    APP_DEBUG("filename = %s\n", download_info->filename);
     if (download_info->target_number > dvt_case_last)
     {
         APP_DEBUG("firmware_download_request ERROR: In progress target : %d\n", dvt_current_ptr->target);
@@ -101,7 +102,6 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
     }
 
     dvt_current_ptr->state = dvt_state_init;
-    APP_DEBUG("filename = %s\n", download_info->filename);
     dvt_current_ptr->file_size = 0;
 
     switch (download_info->target_number)
@@ -123,7 +123,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         break;
 
     case dvt_case_fw_not_allowed:
-        status = connector_firmware_status_download_not_allowed;
+        download_info->status = connector_firmware_status_download_not_allowed;
         break;
 
     case dvt_case_fw_configured_to_reject:
@@ -217,6 +217,8 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
         goto done;
     }
 
+    APP_DEBUG("Download complete: target    = %d\n", complete_response->target_number);
+
     if (dvt_current_ptr == NULL)
     {
         complete_response->status = connector_firmware_download_not_complete;
@@ -233,7 +235,6 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
         complete_response->status = connector_firmware_download_success;
     }
 
-    APP_DEBUG("Download complete: target    = %d\n",    complete_response->target_number);
 
 done:
     dvt_current_ptr = NULL;

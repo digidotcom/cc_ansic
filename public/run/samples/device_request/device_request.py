@@ -33,14 +33,14 @@ def PostMessage(username, password, device_id):
                 <device id="%s"/>
             </targets>
             <requests>
-            <device_request target_name="myTarget1">My device request data</device_request>
+            <device_request target_name="myTarget">My device request data</device_request>
             </requests>
         </data_service>
     </sci_request>
     """%(device_id)
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("login.etherios.com",80)
+    webservice = httplib.HTTP("devdev.idigi.com",80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header

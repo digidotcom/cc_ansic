@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -17,46 +18,46 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
 
     def test_ds_invalid_target(self):
         """ Verifies that the [invalid target] device request returns expected error. """
-        self.send_device_request("invalid target", True, True)
+        self.send_device_request("invalid target", True, False, True)
 
     def test_ds_cancel_request(self):
         """ Verifies that the [cancel request] device request returns expected error. """
-        self.send_device_request("cancel request", True, True)
+        self.send_device_request("cancel request", True, False, True)
 
     def test_ds_cancel_in_middle(self):
         """ Verifies that the [cancel in middle] device request returns expected error. """
-        self.send_device_request("cancel in middle", True, True)
+        self.send_device_request("cancel in middle", True, True, False)
 
     def test_ds_cancel_response(self):
         """ Verifies that the [cancel response] device request returns expected error. """
-        self.send_device_request("cancel response", True, True)
+        self.send_device_request("cancel response", True, True, False)
 
     def test_ds_busy_request(self):
         """ Verifies that the [busy request] device request returned match the expected response. """
-        self.send_device_request("busy request", True, False)
+        self.send_device_request("busy request", True, False, False)
 
     def test_ds_busy_response(self):
         """ Verifies that the [busy response] device request returned match the expected response. """
-        self.send_device_request("busy response", True, False)
+        self.send_device_request("busy response", True, False, False)
 
     def test_ds_not_handle(self):
         """ Verifies that the [not handle] device request returns expected error. """
-        self.send_device_request("not handle", True, False)
+        self.send_device_request("not handle", True, True, False)
 
     def test_ds_valid_target(self):    
         """ Verifies that the [valid target] device request returned match the expected response. """
-        self.send_device_request("valid target", True, False)
+        self.send_device_request("valid target", True, False, False)
 
     def test_ds_zero_byte_data(self):
         """ Verifies that the [zero byte data] device request returns expected error. """
-        self.send_device_request("zero byte data", False, False)
+        self.send_device_request("zero byte data", False, False, False)
 
 # must be a last test   
     def test_timeout_response_ds(self):
         """ Verifies that the [timeout response] device request returned match the expected response. """
-        self.send_device_request("timeout response", True, True)
+        self.send_device_request("timeout response", True, True, False)
 
-    def send_device_request (self, target, send_data, error_expected):
+    def send_device_request (self, target, send_data, error_expected, not_handled):
 
         input_file = 'dvt/cases/test_files/pattern.txt'
 
@@ -113,11 +114,12 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
                              % (target_name, target))
 
             # Validate status
-            self.log.info("Determining if status is success.")
             status = device_response[0].getAttribute("status")
-            if target == "not handle":
+            if not_handled:
+                self.log.info("Determining if status is not handled.")
                 self.assertEqual(status, '1', "returned error status(%s)" %status)
             else:
+                self.log.info("Determining if status is success.")
                 self.assertEqual(status, '0', "returned error status(%s)" %status)
 
                 # Validate response data

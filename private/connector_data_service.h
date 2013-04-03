@@ -191,7 +191,6 @@ static connector_status_t process_ds_receive_data(connector_data_t * const conne
     connector_status_t result;
 
     connector_data_service_receive_data_t device_request;
-
     device_request.transport = connector_transport_tcp;
     device_request.user_context = data_service->callback_context;
     device_request.buffer = data;
@@ -344,9 +343,12 @@ static connector_status_t process_data_service_device_response(connector_data_t 
                 if (request_type != data_service->request_type &&
                     data_service->request_type == connector_request_id_data_service_receive_reply_length)
                 {
-                    /* callback returns error on reply data */
+                    /* callback returns error on reply data
+                     * We need to cancel the message in messaging layer.
+                     */
                     device_request.bytes_used = 0;
                     device_request.more_data = connector_false;
+                    set_data_service_error(service_request, connector_session_error_cancel);
                 }
                 break;
             }
