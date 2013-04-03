@@ -70,23 +70,23 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     switch (class_id)
     {
     case connector_class_id_config:
-        status = app_config_handler(request_id.config_request, request_data, request_length, response_data, response_length);
-        break;
+        status = app_config_handler(request_id.config_request, data);
+         break;
 
     case connector_class_id_operating_system:
-        status = app_os_handler(request_id.os_request, request_data, request_length, response_data, response_length);
+        status = app_os_handler(request_id.os_request, data);
         break;
 
     case connector_class_id_network_tcp:
-        status = app_network_tcp_handler(request_id.network_request, request_data, request_length, response_data, response_length);
+        status = app_network_tcp_handler(request_id.network_request, data);
         break;
 
     case connector_class_id_data_service:
-        status = app_data_service_handler(request_id.data_service_request, request_data, request_length, response_data, response_length);
+        status = app_data_service_handler(request_id.data_service_request, data);
         break;
 
     case connector_class_id_firmware:
-        status = app_firmware_handler(request_id.firmware_request, request_data, request_length, response_data, response_length);
+        status = app_firmware_handler(request_id.firmware_request, data);
         break;
 
     case connector_class_id_file_system:
