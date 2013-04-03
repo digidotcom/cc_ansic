@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 
+#define CONNECTOR_CONST_PROTECTION
 #include "connector_api.h"
 #include "connector_debug.h"
 
