@@ -13,9 +13,12 @@
 #ifndef _CONNECTOR_API_H
 #define _CONNECTOR_API_H
 
-#if ! (defined CONNECTOR_CONST_PROTECTION)
+#if (defined CONNECTOR_CONST_PROTECTION)
+#define CONST
+#undef CONNECTOR_CONST_PROTECTION
+#else
 #if (defined CONST)
-#define CONNECTOR_CONST_PROTECTION CONST
+#define CONNECTOR_CONST_STORAGE CONST
 #undef CONST
 #endif
 #define CONST const
@@ -805,5 +808,11 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 /**
 * @}.
 */
+
+#undef CONST
+#if (defined CONNECTOR_CONST_STORAGE)
+#define CONST CONNECTOR_CONST_STORAGE
+#undef CONNECTOR_CONST_STORAGE
+#endif
 
 #endif /* _CONNECTOR_API_H */
