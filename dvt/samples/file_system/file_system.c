@@ -186,6 +186,8 @@ static connector_callback_status_t app_process_file_get_error(connector_file_sys
 {
     long int errnum = (long int)data->errnum;
 
+    APP_DEBUG("app_process_file_get_error\n");
+
     data->bytes_used = 0;
 
     if (errnum != 0)
@@ -458,6 +460,13 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     update_error_case(data->path);
 
 
+    if ((dirp != NULL) && (dvt_current_error_case == dvt_fs_error_ls_start))
+    {
+       closedir(dirp);
+       status = app_process_file_error(&data->errnum, EACCES);
+       goto done;
+    }
+
     if (dirp != NULL)
     {
         app_dir_data_t * dir_data = malloc (sizeof *dir_data);
@@ -480,6 +489,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     else
         status = app_process_file_error(&data->errnum, errno);
 
+done:
     return status;
 }
 
@@ -487,11 +497,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 {
     app_dir_data_t * dir_data = data->handle;
 
-    //ASSERT(dir_data != NULL);
-    if (dir_data == NULL) {
-        APP_DEBUG("closedir NULL\n");
-        return connector_callback_continue;
-    }
+    ASSERT(dir_data != NULL);
     APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
 
     closedir(dir_data->dirp);
@@ -835,7 +841,6 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
     long int const fd = (long int) data->handle;
     static time_t dvt_start_time;
     time_t dvt_current_time;
-
 
     switch (dvt_current_error_case)
     {

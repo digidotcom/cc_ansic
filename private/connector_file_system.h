@@ -35,12 +35,11 @@ typedef enum
 typedef enum
 {
     fs_state_none,
+    fs_state_stat,
     fs_state_open,
     fs_state_lseek1,
     fs_state_lseek,
-    fs_state_opendir,
     fs_state_readdir,
-    fs_state_stat,
     fs_state_stat_dir_entry,
     fs_state_closing,
     fs_state_closed
@@ -203,8 +202,8 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
          record_end(fs_error_response_header)
      };
 
-     msg_service_data_t * const service_data = service_request->need_data;
      connector_status_t status = connector_working;
+     msg_service_data_t * const service_data = service_request->need_data;
 
      size_t const header_bytes = record_bytes(fs_error_response_header);
      size_t const buffer_size  = MIN_VALUE(service_data->length_in_bytes - header_bytes, UCHAR_MAX);
@@ -212,6 +211,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
      uint8_t * fs_error_response = service_data->data_ptr;
      connector_file_system_get_error_t data;
 
+     data.buffer = fs_error_response + header_bytes;
      data.errnum = context->errnum;
      data.bytes_available = buffer_size;
      data.bytes_used = 0;
@@ -234,7 +234,6 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
              status = connector_abort;
              goto done;
          }
-
          if (data.bytes_used > buffer_size)
          {
              fs_set_abort(connector_ptr,
@@ -247,9 +246,11 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
          context->user_context = data.user_context;
      }
      message_store_u8(fs_error_response, opcode, fs_error_opcode);
-     message_store_u8(fs_error_response, error_code, data.error_status);
+     message_store_u8(fs_error_response, error_code, (uint8_t)data.error_status);
      message_store_u8(fs_error_response, error_hint_len, (uint8_t) data.bytes_used);
+
      service_data->length_in_bytes = header_bytes + data.bytes_used;
+
      MsgSetLastData(service_data->flags);
 
 done:
@@ -353,7 +354,10 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
                           &data);
 
     if (!FsOperationSuccess(status, context))
+    {
+        FsSetState(context, fs_state_closed);
         goto done;
+    }
 
    context->data.d.file_size = data.statbuf.file_size;
    context->data.d.last_modified = data.statbuf.last_modified;
@@ -481,9 +485,9 @@ static connector_status_t call_file_opendir_user(connector_data_t * const connec
                           connector_invalid_data);
         }
     }
-
     if (FsGetState(context) != fs_state_open)
         FsSetState(context, fs_state_closed);
+
 
 done:
     return status;
@@ -921,7 +925,6 @@ static connector_status_t process_get_close(connector_data_t * const connector_p
         MsgSetLastData(service_data->flags); /* finished closing file */
         goto done;
     }
-
     if (MsgIsStart(service_data->flags))
     {
         if (format_file_error_msg(connector_ptr, service_request, context) == connector_abort)
@@ -1405,7 +1408,9 @@ static connector_status_t process_file_ls_request(connector_data_t * const conne
     {
         status = call_file_stat_user(connector_ptr, service_request, context, path, context->data.d.hash_alg);
         if (!FsOperationSuccess(status, context))
+        {
             goto done;
+        }
 
         FsSetState(context, fs_state_stat);
     }
@@ -1414,9 +1419,6 @@ static connector_status_t process_file_ls_request(connector_data_t * const conne
         status = call_file_opendir_user(connector_ptr, service_request, context, path);
         if (FsGetState(context) != fs_state_open)
             goto done;
-
-        /* to read next dir entry */
-        FsSetState(context, fs_state_open);
     }
     else
     {
@@ -1560,7 +1562,7 @@ static connector_status_t process_file_ls_response(connector_data_t * const conn
             }
 
             /* to read next dir entry */
-            FsSetState(context, fs_state_opendir);
+            FsSetState(context, fs_state_open);
         }
         resp_len += format_file_ls_response(context, file_path, file_path_len, data_ptr);
         service_data->length_in_bytes = resp_len;
@@ -1596,6 +1598,7 @@ static connector_status_t allocate_file_context(connector_data_t * const connect
     context->flags = 0;
     context->state = fs_state_none;
     context->errnum = NULL;
+    context->status = connector_working;
 
     if (opcode != fs_ls_request_opcode)
     {
@@ -1624,7 +1627,9 @@ static connector_status_t file_system_request_callback(connector_data_t * const 
 
             status = allocate_file_context(connector_ptr, opcode, &context);
             if (status != connector_working)
-                goto done;
+            {
+                 goto done;
+            }
             session->service_context = context;
             context->opcode = opcode;
         }
@@ -1789,7 +1794,7 @@ static connector_status_t file_system_callback(connector_data_t * const connecto
         break;
 
     case msg_service_type_error:
-        status = file_system_error_callback(connector_ptr, service_request);
+         status = file_system_error_callback(connector_ptr, service_request);
         break;
 
     case msg_service_type_free:
