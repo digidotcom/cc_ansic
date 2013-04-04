@@ -176,7 +176,7 @@ static app_md5_ctx * app_allocate_md5_ctx(unsigned int const flags)
 
 static connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
 {
-     APP_DEBUG("Session Error %d\n", data-session_error);
+     APP_DEBUG("Session Error %d\n", data->session_error);
 
     // All application resources, used in the session, must be released in this callback
     if (data->user_context != NULL)
