@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -215,16 +216,22 @@ class MallocTestCase(ic_testcase.TestCase):
         dom = xml.dom.minidom.parseString(device_request_response)
         device_response = dom.getElementsByTagName("device_request")
         
-        # Validate cancel message response
-        self.log.info("Determining if \"%s\" target is cancelled." % my_target_name)
-        error = getText(device_response[0].getElementsByTagName('error')[0])
-
-        cancelled_response = "Message transmission cancelled"
-
-        self.assertEqual(error, cancelled_response,
+        
+        # Validate target name
+        self.log.info("Determining if the target_name is \"%s\"." % my_target_name)
+        target_name = device_response[0].getAttribute('target_name')
+        self.log.info("Target: %s " % target_name)
+        self.assertEqual(target_name, my_target_name, 
             "returned target (%s) is not (%s)" 
-            % (error, cancelled_response))
-        return "ok"
+            % (target_name, my_target_name))
+
+        # Validate status 
+        self.log.info("Determining if status is not handled.")
+        status = device_response[0].getAttribute("status")
+        self.assertEqual(status, '1', 
+            "returned status (%s) is not success status" 
+            % status)
+        return "ok"        
 
     def valid_target(self, my_target_name, data_len):
     

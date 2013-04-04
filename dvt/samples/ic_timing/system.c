@@ -38,7 +38,7 @@ connector_callback_status_t app_system_group_init(connector_remote_config_t * co
     ptr = malloc(sizeof *system_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -82,8 +82,6 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
     system_data_t * const system_ptr = session_ptr->group_context;
 
     char * src_ptr = NULL;
-
-    UNUSED_ARGUMENT(response);
 
     switch (remote_config->element.id)
     {
@@ -129,7 +127,7 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
 
 void app_system_group_cancel(connector_remote_config_cancel_t * const remote_config)
 {
-    remote_group_session_t * const session_ptr = context;
+    remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
     if (system_ptr != NULL)

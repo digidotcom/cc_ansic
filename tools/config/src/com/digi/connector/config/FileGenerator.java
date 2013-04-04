@@ -19,7 +19,7 @@ public class FileGenerator {
     private final static String INCLUDE = "#include ";
     private final static String ERROR = "error";
 
-    private final static String CONNECTOR_REMOTE_HEADER = "\"connector_api_remote.h\"\n\n";
+    private final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
     private final static String FLOAT_HEADER = "\"float.h\"\n";
 
     private final static String TYPEDEF_ENUM = "typedef enum {\n";
@@ -106,7 +106,25 @@ public class FileGenerator {
     "  connector_group_t const * groups;\n" +
     "  size_t count;\n" +
     "} connector_remote_group_table_t;\n";
-    	
+    
+    private final static String CONNECTOR_CONST_PROTECTION = "\n#if (defined CONNECTOR_CONST_PROTECTION)\n" +
+    "#define CONST\n" +
+    "#undef CONNECTOR_CONST_PROTECTION\n" +
+    "#else\n" +
+    "#if (defined CONST)\n" +
+    "#define CONNECTOR_CONST_STORAGE CONST\n" +
+    "#undef CONST\n" +
+    "#endif\n" +
+    "#define CONST const\n" +
+    "#endif\n\n";
+    
+    private final static String CONNECTOR_CONST_PROTECTION_RESTORE = "\n#undef CONST\n" +
+    "#if (defined CONNECTOR_CONST_STORAGE)\n" +
+    "#define CONST CONNECTOR_CONST_STORAGE\n" +
+    "#undef CONNECTOR_CONST_STORAGE\n" +
+    "#endif\n\n";
+
+
     private String filePath = "";
     private String generatedFile = "";
     private String headerFile = "";
@@ -209,7 +227,7 @@ public class FileGenerator {
             case GLOBAL_HEADER:
                 fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
                 fileWriter.write(String.format("%s \"connector_api.h\"\n\n", INCLUDE));
-                
+                fileWriter.write(CONNECTOR_CONST_PROTECTION);
                 fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n");
                 fileWriter.write("#define connector_request_id_remote_config_configurations    (connector_request_id_remote_config_t)-1\n\n");
 
@@ -229,7 +247,10 @@ public class FileGenerator {
                 
             case NONE:
                 fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
+                fileWriter.write(CONNECTOR_CONST_PROTECTION);
+
                 writeHeaderFile(configData);
+                
                 /*
                  * Start writing:
                  * 1. all #define for all strings from user's groups 
@@ -247,6 +268,7 @@ public class FileGenerator {
             switch (ConfigGenerator.fileTypeOption()) {
             case GLOBAL_HEADER:
                 fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE);
+                fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
                 fileWriter.write(String.format("\n#endif /* %s */\n", defineName));
                 break;
             case SOURCE:
@@ -275,6 +297,7 @@ public class FileGenerator {
                 switch (ConfigGenerator.fileTypeOption()) {
                 case NONE:
                     fileWriter.write(String.format("\n#endif /* %s */\n\n", RCI_PARSER_DATA));
+                    fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
                     fileWriter.write(String.format("\n#endif /* %s */\n", defineName));
                     break;
                 case SOURCE:
@@ -551,13 +574,11 @@ public class FileGenerator {
         switch (ConfigGenerator.fileTypeOption()) {
         case GLOBAL_HEADER:
         case NONE:
+            fileWriter.write(CONNECTOR_GLOBAL_HEADER);
             writeDefineOptionHeader(configData);
             writeOnOffBooleanEnum();
             writeElementTypeEnum();
             writeElementValueStruct();
-            String headerString = "\n\n" + INCLUDE + CONNECTOR_REMOTE_HEADER;
-
-            fileWriter.write(headerString);
             
             fileWriter.write(CONNECTOR_GROUP_ELEMENT_T);
             fileWriter.write(CONNECTOR_GROUP_T);

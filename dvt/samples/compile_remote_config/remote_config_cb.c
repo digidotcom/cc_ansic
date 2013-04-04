@@ -23,6 +23,8 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
 {
     connector_callback_status_t status = connector_callback_continue;
 
+    UNUSED_ARGUMENT(data);
+
     switch (request_id)
     {
     case connector_request_id_remote_config_session_start:

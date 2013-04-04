@@ -51,6 +51,4 @@
 
 #endif
 
-#define DS_MAX_USER 1
-
 #endif

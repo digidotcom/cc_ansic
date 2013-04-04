@@ -40,7 +40,7 @@ connector_callback_status_t app_system_group_init(connector_remote_config_t * co
     ptr = malloc(sizeof *system_ptr);
     if (ptr == NULL)
     {
-        response->error_id = connector_global_error_memory_fail;
+        remote_config->error_id = connector_global_error_memory_fail;
         goto done;
     }
 
@@ -84,8 +84,6 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
     system_data_t * const system_ptr = session_ptr->group_context;
 
     char * src_ptr = NULL;
-
-    UNUSED_ARGUMENT(response);
 
     switch (remote_config->element.id)
     {

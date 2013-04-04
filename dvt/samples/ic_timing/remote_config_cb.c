@@ -193,7 +193,7 @@ static connector_callback_status_t app_process_group_end(connector_remote_config
 static connector_callback_status_t app_process_session_cancel(connector_remote_config_cancel_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = (remote_group_session_t *)context;
+    remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
 
     APP_DEBUG("app_process_session_cancel\n");
     if (session_ptr != NULL)

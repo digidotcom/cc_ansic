@@ -260,7 +260,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const read_data)
 {
     connector_callback_status_t rc = connector_callback_continue;
-    struct timeval timeout = {1, 0};
+    struct timeval timeout = {0, 0};
     fd_set read_set;
     int ccode;
 

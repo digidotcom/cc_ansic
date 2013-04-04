@@ -29,6 +29,8 @@
 
 #include "connector_api.h"
 
+#define DS_MAX_USER 1
+
 #define TERMINATE_TEST_FILE "terminate_test.txt"
 #define HEAP_USAGE_FILE     "./dvt/heap_usage.txt"
 
@@ -42,11 +44,16 @@ extern connector_status_t connector_run_thread_status;
 extern void clear_stack_size(void);
 void write_usage_file(char const * text);
 
+#if (defined CONNECTOR_DATA_SERVICE)
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id,
                                                   void * const data);
+extern connector_status_t send_put_request(connector_handle_t handle, int index);
+#endif
+
+#if (defined CONNECTOR_FILE_SYSTEM)
 extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request_id,
                                                   void * const data);
-extern connector_status_t send_put_request(connector_handle_t handle, int index);
+#endif
 
 extern connector_status_t app_terminate_tcp_transport(connector_handle_t handle);
 

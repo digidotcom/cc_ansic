@@ -249,7 +249,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
     fd_set read_set;
     int ccode, err;
 
-    timeout.tv_sec = 1;
+    timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
     read_data->bytes_used = 0;

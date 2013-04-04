@@ -154,11 +154,17 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             connector_data_service_status_t * const error_ptr = cb_data;
             ds_record_t * const user = error_ptr->user_context;
 
-            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
-            ASSERT(user != NULL);
-            free(user);
-            put_file_active_count--;
-
+            if (user != NULL)
+            {
+                APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
+                ASSERT(user != NULL);
+                free(user);
+                put_file_active_count--;
+            }
+            else
+            {
+                APP_DEBUG("app_put_request_handler (status): NO USER CONTEXT active put file count = %d\n", put_file_active_count);
+            }
             break;
         }
 

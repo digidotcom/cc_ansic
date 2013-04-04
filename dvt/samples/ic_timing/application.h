@@ -100,7 +100,7 @@ extern void get_time(struct timespec * the_time);
 
 extern void total_elapsed_time(struct timespec * the_time, struct timespec const start, struct timespec const end);
 
-extern void send_put_request(connector_handle_t handle);
+extern connector_status_t send_put_request(connector_handle_t handle);
 
 extern int application_step(connector_handle_t handle);
 

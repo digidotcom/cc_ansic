@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import shutil
 import subprocess
@@ -50,7 +51,7 @@ def generate_rci_code(dir, device_type, firmware_version,
     args = ['java', 
                 '-jar', jar, 
                 '-path=%s' % abs_dir,
-                '-server=%s' % hostname,
+                '-url=%s' % hostname,
                 '%s:%s' % (username, password),
                 device_type, firmware_version, rci_config]
 

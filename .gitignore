@@ -34,7 +34,7 @@ dist
 
 # Generated Makefiles and Executables
 public/*/samples/*/Makefile
-public/*/samples/*/idigi
-dvt/samples/*/idigi
-dvt/samples/*/idigi.stats
+public/*/samples/*/connector
+dvt/samples/*/connector
+dvt/samples/*/connector.stats
 dvt/samples/*/Makefile

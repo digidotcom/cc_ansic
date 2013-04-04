@@ -17,7 +17,7 @@
 #include "remote_config_cb.h"
 
 typedef connector_callback_status_t(* remote_group_cb_t) (connector_remote_config_t * const remote_config);
-typedef void (* remote_group_cancel_cb_t) (void * const context);
+typedef void (* remote_group_cancel_cb_t) (connector_remote_config_cancel_t * const remote_config);
 
 typedef struct remote_group_table {
     remote_group_cb_t init_cb;
@@ -75,9 +75,9 @@ static connector_callback_status_t app_process_session_end(connector_remote_conf
 {
     APP_DEBUG("app_process_session_end\n");
 
-    if (response->user_context != NULL)
+    if (remote_config->user_context != NULL)
     {
-        free(response->user_context);
+        free(remote_config->user_context);
     }
     return connector_callback_continue;
 }
@@ -194,7 +194,7 @@ static connector_callback_status_t app_process_group_end(connector_remote_config
 static connector_callback_status_t app_process_session_cancel(connector_remote_config_cancel_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_session_t * const session_ptr = (remote_group_session_t *)context;
+    remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
 
     APP_DEBUG("app_process_session_cancel\n");
     if (session_ptr != NULL)
@@ -228,9 +228,13 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
         status = app_process_action_end(data);
         break;
     case connector_request_id_remote_config_group_start:
-    case connector_request_id_remote_config_group_end:
+        status = app_process_group_start(data);
+        break;
     case connector_request_id_remote_config_group_process:
-        status = app_process_group(request_id, data);
+        status = app_process_group_process(data);
+        break;
+    case connector_request_id_remote_config_group_end:
+        status = app_process_group_end(data);
         break;
     case connector_request_id_remote_config_session_cancel:
         status = app_process_session_cancel(data);

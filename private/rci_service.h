@@ -10,6 +10,8 @@
  * =======================================================================
  */
 #define CONNECTOR_RCI_PARSER_INTERNAL_DATA
+#define CONNECTOR_CONST_PROTECTION
+
 #include "remote_config.h"
 
 #include "rci_binary.h"

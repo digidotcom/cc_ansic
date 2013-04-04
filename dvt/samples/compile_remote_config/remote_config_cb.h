@@ -19,24 +19,18 @@ extern connector_callback_status_t app_system_session_start(connector_remote_con
 
 extern connector_callback_status_t app_system_session_end(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_action_start(connector_remote_group_request_t const * const request,
-                                                        connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_action_start(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_action_end(connector_remote_group_request_t const * const request,
-                                                      connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_action_end(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_group_init(connector_remote_group_request_t const * const request,
-                                                 connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_group_init(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_group_set(connector_remote_group_request_t const * const request,
-                                                 connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_group_set(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_group_get(connector_remote_group_request_t const * const request,
-                                                 connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_group_get(connector_remote_config_t * const remote_config);
 
-extern connector_callback_status_t app_system_group_end(connector_remote_group_request_t const * const request,
-                                                 connector_remote_group_response_t * const response);
+extern connector_callback_status_t app_system_group_end(connector_remote_config_t * const remote_config);
 
-extern void app_system_session_cancel(void * const context);
+extern void app_system_session_cancel(connector_remote_config_cancel_t * const remote_config);
 
 #endif /* REMOTE_CONFIG_CB_H_ */

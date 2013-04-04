@@ -28,6 +28,10 @@
 #include "platform.h"
 #include "application.h"
 
+#if !(defined CONNECTOR_DATA_SERVICE)
+#error "Please define CONNECTOR_DATA_SERVICE in connector_config.h to run this sample"
+#endif
+
 #define INITIAL_WAIT_COUNT      4
 
 #define DS_FILE_NAME_LEN  20
@@ -237,11 +241,11 @@ static connector_callback_status_t app_process_device_request_target(connector_d
     {
         connector_status_t ccode;
 
-        APP_DEBUG("process_device_request: terminate iik (active session = %d)\n", put_file_active_count);
+        APP_DEBUG("process_device_request_target: terminate iik (active session = %d)\n", put_file_active_count);
         ccode = app_terminate_tcp_transport(connector_handle);
         if (ccode != connector_success)
         {
-            APP_DEBUG("process_device_request: app_terminate_tcp_transport error %d\n", ccode);
+            APP_DEBUG("process_device_request_target: app_terminate_tcp_transport error %d\n", ccode);
         }
         else
         {
@@ -253,7 +257,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
     if (device_request == NULL)
     {
         /* no memeory stop IIK */
-        APP_DEBUG("process_device_request: malloc fails for device request on %s target\n", target_info->target);
+        APP_DEBUG("process_device_request_target: malloc fails for device request on %s target\n", target_info->target);
         status = connector_callback_error;
         goto done;
     }
@@ -289,7 +293,6 @@ static connector_callback_status_t app_process_device_request_target(connector_d
     {
         /* testing to return unrecognized status */
         APP_DEBUG("process_device_request: unrecognized target = %s\n", target_info->target);
-        device_request_active_count--;
         status = connector_callback_error;
         goto done;
     }
@@ -316,7 +319,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
     ASSERT(device_request != NULL);
 
     device_request->length_in_bytes += receive_data->bytes_used;
-    APP_DEBUG("process_device_request: handle %p target = \"%s\" data length = %lu total length = %lu\n",
+    APP_DEBUG("process_device_request_data: handle %p target = \"%s\" data length = %lu total length = %lu\n",
                                  (void *)device_request,
                                  device_request->target,
                                  (unsigned long int)receive_data->bytes_used,
@@ -328,6 +331,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         device_request->response_data = ds_buffer;
         device_request->length_in_bytes = (rand() % (DS_DATA_SIZE +1));
         device_request->count = DEVICE_REPONSE_COUNT;
+        APP_DEBUG("process_device_request_data: total response length = %zu\n", (device_request->length_in_bytes * device_request->count));
     }
     return status;
 }
@@ -347,9 +351,9 @@ static connector_callback_status_t app_process_device_request_response(connector
         goto error;
     }
 
-
+    if (device_request->response_data != NULL)
     {
-        size_t const bytes = (device_request->length_in_bytes < reply_data->bytes_available) ? device_request->length_in_bytes : reply_data->bytes_used;
+        size_t const bytes = (device_request->length_in_bytes < reply_data->bytes_available) ? device_request->length_in_bytes : reply_data->bytes_available;
 
         APP_DEBUG("process_device_response: handle %p total length = %lu send_byte %lu\n",
                                     (void *)device_request,
@@ -364,6 +368,7 @@ static connector_callback_status_t app_process_device_request_response(connector
         reply_data->bytes_used = bytes;
         reply_data->more_data = (device_request->length_in_bytes == 0 && device_request->count == 1) ? connector_false : connector_true;
    }
+    else goto error;
 
     if (device_request->length_in_bytes == 0)
     {

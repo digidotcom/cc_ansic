@@ -100,17 +100,6 @@ connector_status_t send_put_request(connector_handle_t handle, int index)
     char filename[DS_FILE_NAME_LEN];
     static int fileindex = 0;
 
-    if (put_file_active_count >= DS_MAX_USER)
-    {
-        status = connector_invalid_data_range;
-        goto done;
-    }
-
-    if (firmware_download_started != 0)
-    {
-        status = connector_service_busy;
-        goto done;
-    }
 
     if (terminate_flag == device_request_terminate_in_application_start &&
         put_file_active_count > 0)
@@ -131,6 +120,17 @@ connector_status_t send_put_request(connector_handle_t handle, int index)
         }
     }
 
+    if (put_file_active_count >= DS_MAX_USER)
+    {
+        status = connector_invalid_data_range;
+        goto done;
+    }
+
+    if (firmware_download_started != 0)
+    {
+        status = connector_service_busy;
+        goto done;
+    }
 
     if (first_time)
     {

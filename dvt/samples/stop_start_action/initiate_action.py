@@ -31,7 +31,8 @@ def PostMessage(username, password, device_id, target, data):
         content = f.read()
         f.close()
     else:
-        content = data
+        content = data + data
+        
           
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
@@ -50,6 +51,9 @@ def PostMessage(username, password, device_id, target, data):
     </sci_request>
     """%(device_id, target, content)
  
+    print message
+    print "content size %d" % len(content);
+
     # to what URL to send the request with a given HTTP method
     webservice = httplib.HTTP("devdev.idigi.com",80)
     webservice.putrequest("POST", "/ws/sci")
