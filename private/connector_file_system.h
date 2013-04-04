@@ -175,6 +175,8 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
         code = fs_error_generic;
         break;
     }
+    ASSERT(code < asizeof(error_data));
+
     data->error_status = error_data[code].status;
     data->bytes_used = MIN_VALUE(data->bytes_available, strlen(error_data[code].hint));
     memcpy(data->buffer, error_data[code].hint, data->bytes_used);
@@ -469,7 +471,7 @@ static connector_status_t call_file_opendir_user(connector_data_t * const connec
     if (status == connector_pending)
         goto done;
 
-    if (status == connector_working && data.errnum == NULL)
+    if (FsOperationSuccess(status, context))
     {
         if (data.handle != NULL)
         {
@@ -603,7 +605,7 @@ static connector_status_t call_file_open_user(connector_data_t * const connector
     if (status == connector_pending)
         goto done;
 
-    if (status == connector_working && data.errnum == NULL)
+    if (FsOperationSuccess(status, context))
     {
         if (data.handle != NULL)
         {

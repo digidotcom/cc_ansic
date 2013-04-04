@@ -72,18 +72,11 @@ fileRmRequest = \
 
 class FileSystemCoverageTestCase(ic_testcase.TestCase):
 
-    #monitor = None
     out_size = 0
     outData = ""
 
     def setUp(self):
         ic_testcase.TestCase.setUp(self)
-        # Optimization, reuse the DeviceConnectionMonitor to avoid creating
-        # multiple sessions over and over.
-        #if FileSystemCoverageTestCase.monitor is None:
-            #FileSystemCoverageTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
-            #FileSystemCoverageTestCase.monitor.start()
-        #self.monitor = FileSystemCoverageTestCase.monitor
 
         FileData = ""
         for i in xrange(MAX_TEST_FILE_SIZE):
@@ -93,8 +86,6 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
     
     @classmethod
     def tearDownClass(cls):
-        #if FileSystemCoverageTestCase.monitor is not None:
-        #    FileSystemCoverageTestCase.monitor.stop()
         ic_testcase.TestCase.tearDownClass()
 
     def test_fs01_open_abort(self):
@@ -104,7 +95,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
         self.verify_get_file_abort("dvt_fs_open_set_null_handle.test", dummyFsize)
         self.log.info("Test success!")
 
-    def yest_fs02_open_canceled(self):
+    def test_fs02_open_canceled(self):
         """ Tests canceled sessions in file open callback """
         self.verify_get_file_user_canceled("dvt_fs_open_unrecognized.test", dummyFsize)
         self.log.info("Test success!")
@@ -129,7 +120,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
 
     def test_fs06_strerr_get(self):
         """ Tests ignored stuff file strerr get callback """
-        #self.verify_get_file("dvt_fs_strerr_unrecognized.test", dummyFsize, expectError)
+        self.verify_get_file("dvt_fs_strerr_unrecognized.test", dummyFsize, expectError)
         self.verify_get_file("dvt_fs_strerr_zero_datalen.test", dummyFsize, expectError)
         self.log.info("Test success!")
 
@@ -152,7 +143,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
 
     def test_fs10_read_errors(self):
         """ Tests canceled sessions in file read callback """
-        #self.check_get_file_canceled("dvt_fs_read_unrecognized.test")
+        self.check_get_file_canceled("dvt_fs_read_unrecognized.test")
         self.check_get_file_canceled("dvt_fs_read_io_error2.test")
 
     def test_fs11_read_errors(self):
@@ -177,7 +168,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
         """ Tests partial write in file write callback """
         self.check_put_file_response("dvt_fs_write_part.test")
 
-    def yest_fs15_write_canceled(self):
+    def test_fs15_write_canceled(self):
         """ Tests canceled sessions in file write callback """
         self.check_put_file_canceled("dvt_fs_write_unrecognized.test")
 
@@ -201,7 +192,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
         self.check_put_file_response("dvt_fs_lseek_write_busy2.test", False, 0, noCleanup)
         self.check_put_file_response("dvt_fs_lseek_write_busy2.test", False, 1)
 
-    def yest_fs19_lseek_put_canceled(self):
+    def test_fs19_lseek_put_canceled(self):
         """ Tests canceled sessions in put lseek callback """
         self.check_put_file_canceled("dvt_fs_lseek_write_unrecognized.test", 1)
 
@@ -235,7 +226,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
         self.check_get_file_response("dvt_fs_lseek_read_busy.test", False, 1)
         self.check_get_file_response("dvt_fs_lseek_read_busy2.test", False, 1)
 
-    def yest_fs24_lseek_get_canceled(self):
+    def test_fs24_lseek_get_canceled(self):
         """ Tests canceled sessions in get lseek callback """
         self.check_get_file_canceled("dvt_fs_lseek_read_unrecognized.test", 1)
 
@@ -259,7 +250,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
         """ Tests connector_callback_busy return in file put close callback """
         self.check_put_file_response("dvt_fs_close_write_busy.test")
 
-    def yest_fs29_close_put_canceled(self):
+    def test_fs29_close_put_canceled(self):
         """ Tests canceled cession in file put close callback """
         self.check_put_file_canceled("dvt_fs_close_write_unrecognized.test")
 
@@ -282,7 +273,7 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
     
     def test_fs32_close_get_canceled(self):
         """ Tests canceled sessions in file get close callback """
-        #self.check_get_file_canceled("dvt_fs_close_read_unrecognized.test")
+        self.check_get_file_canceled("dvt_fs_close_read_unrecognized.test")
         self.check_get_file_canceled("dvt_fs_close_read_io_error.test")
         self.check_get_file_canceled("dvt_fs_close_read_io_error_no_errno.test")
 
