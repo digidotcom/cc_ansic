@@ -50,6 +50,10 @@ typedef struct
     size_t total_bytes;                 /**< OUT: total bytes in to send */
 } connector_data_service_length_t;
 
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
@@ -61,6 +65,10 @@ typedef struct
     connector_bool_t more_data;         /**< OUT: more data to send */
 } connector_data_service_send_data_t;
 
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
@@ -78,6 +86,10 @@ typedef struct
 
 } connector_data_service_status_t;
 
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
@@ -94,6 +106,10 @@ typedef struct
     char const * hint; /** IN: error hint returned from the cloud, NULL if success or hint not available */
 } connector_data_service_send_response_t;
 
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< transport method to use to send the data */
@@ -114,6 +130,10 @@ typedef struct
 } connector_request_data_service_send_t;
 
 /*** Device request callbacks, API should return error on any error ***/
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
@@ -123,6 +143,10 @@ typedef struct
     connector_bool_t response_required; /**< IN: connector_true means the cloud needs the response and will get the callbacks to collect the response */
 } connector_data_service_receive_target_t;
 
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
@@ -133,6 +157,10 @@ typedef struct
     connector_bool_t more_data;         /**< IN: connector_true means more request to follow */
 } connector_data_service_receive_data_t;
 
+/**
+ * fixme Paul -- what is this structure for?  Who uses me? What's the order oof calls?
+ *
+ */
 typedef struct
 {
     connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
