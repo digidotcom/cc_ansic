@@ -50,7 +50,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
             cb_data.user_context = session->user.context;
 
             request_id.sm_request = connector_request_id_sm_cli_response_length;
-            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+            status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
             session->in.bytes = cb_data.total_bytes;
             break;
         }
@@ -108,7 +108,7 @@ static connector_status_t sm_get_more_request_data(connector_data_t * const conn
         result = sm_map_callback_status_to_connector_status(status);
     }
 
-    session->user.context = response_data.user_context;
+    session->user.context = cb_data.user_context;
     if (result == connector_working)
     {
         session->bytes_processed += cb_data.bytes_used;
@@ -145,7 +145,7 @@ static connector_status_t sm_get_more_response_data(connector_data_t * const con
         result = sm_map_callback_status_to_connector_status(status);
     }
 
-    session->user.context = response_data.user_context;
+    session->user.context = cb_data.user_context;
     if (result == connector_working)
     {
         session->bytes_processed += cb_data.bytes_used;
@@ -263,8 +263,6 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
 {
     connector_status_t result = connector_no_resource;
     connector_sm_packet_t * const send_packet = &sm_ptr->network.send_packet;
-    size_t length_written = 0;
-    size_t response_bytes = sizeof length_written;
     connector_callback_status_t status;
     connector_network_send_t send_data;
     connector_request_id_t request_id;
@@ -444,8 +442,8 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
         if (SmIsError(session->flags))
         {
-            uint16_t const error_code = (session->error == connector_session_status_cloud_error) ? connector_sm_error_in_request : connector_sm_error_unexpected_message;
-            char * const error_text = (session->error == connector_session_status_cloud_error) ? "Request error" : "Unexpected request";
+            uint16_t const error_code = (session->error == connector_session_error_invalid_opcode) ? connector_sm_error_in_request : connector_sm_error_unexpected_message;
+            char * const error_text = (session->error == connector_session_error_invalid_opcode) ? "Request error" : "Unexpected request";
             size_t const error_text_length = strlen(error_text) + 1;
             size_t const error_code_length = sizeof error_code;
 
@@ -511,7 +509,7 @@ static connector_status_t sm_process_send_path(connector_data_t * const connecto
             break;
 
         case connector_sm_state_more_data:
-            result = SmIsClientOwned(session->flags) ? sm_get_more_request_data(connector_ptr, session) ? sm_get_more_response_data(connector_ptr, session);
+            result = SmIsClientOwned(session->flags) ? sm_get_more_request_data(connector_ptr, session) : sm_get_more_response_data(connector_ptr, session);
             break;
 
         #if (defined CONNECTOR_COMPRESSION)

@@ -305,7 +305,7 @@ typedef enum {
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_initiate_ping_request,    /**< Sends a ping request to Etherios Device Cloud. Supported only under UDP and SMS transport methods */
     #endif
-    #if (defined CONNECTOR_DATA_POINT)
+    #if (defined CONNECTOR_DATA_POINTS)
     connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Etherios Device Cloud */
     connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Etherios Device Cloud */
     #endif
@@ -365,7 +365,7 @@ typedef enum
 #include "connector_api_data_service.h"
 #endif
 
-#if (defined CONNECTOR_DATA_POINT)
+#if (defined CONNECTOR_DATA_POINTS)
 #include "connector_api_data_point.h"
 #endif
 
@@ -397,7 +397,7 @@ typedef union {
     #if (defined CONNECTOR_DATA_SERVICE)
     connector_request_id_data_service_t data_service_request;   /**< Data service request ID for data service class */
     #endif
-    #if (defined CONNECTOR_DATA_POINT)
+    #if (defined CONNECTOR_DATA_POINTS)
     connector_request_id_data_point_t data_point_request;       /**< Data service request ID for data service class */
     #endif
     #if (defined CONNECTOR_RCI_SERVICE)

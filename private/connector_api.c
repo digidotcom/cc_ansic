@@ -476,10 +476,6 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 
     if (connector_ptr->signature != connector_signature) goto done;
 
-#if !(defined CONNECTOR_TRANSPORT_TCP) && !(defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_TRANSPORT_SMS)
-#error "Error: One of the transport (TCP, UDP or SMS) must be defined in connector_config.h."
-#endif
-
     switch (request)
     {
     case connector_initiate_terminate:
@@ -489,7 +485,7 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
         COND_ELSE_GOTO(result == connector_success, done);
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+#if (defined CONNECTOR_SHORT_MESSAGE)
         result = sm_initiate_action(connector_ptr, request, request_data);
         COND_ELSE_GOTO(result == connector_success, done);
 #endif
@@ -499,12 +495,12 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
         break;
 
 #if (defined CONNECTOR_DATA_POINTS)
-    case connector_initiate_data_point:
-        result = dp_initiate_data_point(request_data);
+    case connector_initiate_data_point_single:
+        result = dp_initiate_data_point_single(request_data);
         break;
 
-    case connector_initiate_binary_point:
-        result = dp_initiate_binary_point(request_data);
+    case connector_initiate_data_point_binary:
+        result = dp_initiate_data_point_binary(request_data);
         break;
 #endif
 
@@ -514,15 +510,7 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
             result = connector_device_terminated;
             goto done;
         }
-#if 0
-        if (request != connector_initiate_transport_stop &&
-            connector_ptr->stop.state == connector_state_stop_by_initiate_action)
-        {
-            /* we are in closing all transport */
-            result = connector_service_busy;
-            goto done;
-        }
-#endif
+
         {
             connector_transport_t const * const transport = request_data;
 

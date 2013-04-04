@@ -86,7 +86,7 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     ASSERT_GOTO(result == connector_working, error);
 
     session->flags = 0;
-    session->error = connector_session_status_success;
+    session->error = connector_session_error_none;
     session->in.data = NULL;
     session->in.bytes = 0;
     session->bytes_processed = 0;
@@ -192,7 +192,7 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
         {
             if (session->user.context != NULL)
             {
-                session->error = connector_session_status_cancel;
+                session->error = connector_session_error_cancel;
                 status = sm_inform_session_complete(connector_ptr, session);
                 if (status != connector_working)
                     result = connector_abort;
@@ -251,7 +251,7 @@ static connector_status_t sm_process_pending_data(connector_data_t * const conne
 
         case connector_initiate_session_cancel:
         {
-            connector_message_status_request_t const * const request = sm_ptr->pending.data;
+            connector_sm_cancel_request_t const * const request = sm_ptr->pending.data;
 
             result = sm_cancel_session(connector_ptr, sm_ptr, request->user_context);
             break;

@@ -709,7 +709,7 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
 }
 #endif
 
-#if (defined CONNECTOR_DATA_POINT)
+#if (defined CONNECTOR_DATA_POINTS)
 static char const * app_data_point_class_to_string(connector_request_id_data_point_t const value)
 {
     char const * result = NULL;
@@ -822,7 +822,7 @@ static connector_callback_status_t app_config_error(connector_error_status_t con
         break;
 #endif
 
-#if (defined CONNECTOR_DATA_POINT)
+#if (defined CONNECTOR_DATA_POINTS)
     case connector_class_id_data_point:
         APP_DEBUG("Request: %s (%d) ", app_data_point_class_to_string(error_data->request_id.data_point_request), error_data->request_id.data_point_request);
         break;

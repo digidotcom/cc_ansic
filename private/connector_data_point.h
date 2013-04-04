@@ -31,7 +31,7 @@ typedef struct
         struct
         {
             connector_request_data_point_single_t const * dp_request;
-            connector_data_point_t  const * current_dp;
+            connector_data_point_t const * current_dp;
             size_t bytes_to_send;
             char * last_entry_ptr;
 
@@ -57,7 +57,7 @@ typedef struct
         struct
         {
             connector_request_data_point_binary_t const * bp_request;
-            uint8_t const * current_bp;
+            uint8_t * current_bp;
             size_t bytes_to_send;
         } binary;
 
@@ -99,7 +99,7 @@ error:
     return result;
 }
 
-static connector_status_t dp_initiate_data_point_binary(connector_binary_point_request_t const * const bp_ptr)
+static connector_status_t dp_initiate_data_point_binary(connector_request_data_point_binary_t const * const bp_ptr)
 {
     connector_status_t result = connector_invalid_data;
 
@@ -153,13 +153,14 @@ static connector_status_t dp_callback_status_to_status(connector_status_t const 
 }
 
 static connector_status_t dp_inform_status(connector_data_t * const connector_ptr, connector_request_id_data_point_t request,
-                                           connector_transport_t const transport, void * context, connector_session_error_t const error)
+                                           connector_transport_t const transport, void const * context, connector_session_error_t const error)
 {
+    connector_status_t result;
     connector_data_point_status_t dp_status;
 
     dp_status.transport = transport;
     dp_status.user_context = context;
-    dp_status->session_error = connector_session_error_none;
+    dp_status.session_error = connector_session_error_none;
 
     switch (error)
     {
@@ -181,7 +182,7 @@ static connector_status_t dp_inform_status(connector_data_t * const connector_pt
 
         default:
             dp_status.status = connector_data_point_status_session_error;
-            dp_status->session_error = error;
+            dp_status.session_error = error;
             break;
     }
 
@@ -190,7 +191,7 @@ static connector_status_t dp_inform_status(connector_data_t * const connector_pt
         connector_request_id_t request_id;
 
         request_id.data_point_request = request;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, cb_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &dp_status);
         result = dp_callback_status_to_status(callback_status);
     }
 
@@ -206,7 +207,7 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
     size_t const path_prefix_bytes = sizeof path_prefix - 1;
     size_t const path_bytes = strlen(path);
     size_t const extension_bytes = strlen(extension);
-    size_t const full_path_bytes = path_prefix_size + path_size + extension_size;
+    size_t const full_path_bytes = path_prefix_bytes + path_bytes + extension_bytes;
 
     if (full_path_bytes >= available_path_bytes)
     {
@@ -229,9 +230,9 @@ static connector_status_t dp_send_message(connector_data_t * const connector_ptr
 {
     connector_status_t result;
 
-    dp_info->header.path = dp_info->file_path;
-    dp_info->header.context = dp_info;
     dp_info->header.transport = transport;
+    dp_info->header.user_context = dp_info;
+    dp_info->header.path = dp_info->file_path;
     dp_info->header.response_required = response_needed;
     dp_info->header.content_type = NULL;
     dp_info->header.option = connector_data_service_send_option_overwrite;
@@ -369,7 +370,7 @@ done:
 static size_t dp_process_data(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
     connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-    connector_data_point_request_t const * const dp_request = dp_info->data.csv.dp_request;
+    connector_request_data_point_single_t const * const dp_request = dp_info->data.csv.dp_request;
     size_t bytes_processed = 0;
 
     if (dp_ptr->data.type == connector_data_type_text)
@@ -381,11 +382,12 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
     switch (dp_request->type)
     {
         case connector_data_point_type_integer:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%" SCNd32, dp_ptr->data.element.native.int_value);
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId32, dp_ptr->data.element.native.int_value);
             break;
 
         case connector_data_point_type_long:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%" SCNd64, dp_ptr->data.element.native.long_value);
+            /* bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId64, dp_ptr->data.element.native.long_value); */
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%lld", dp_ptr->data.element.native.long_value);
             break;
 
         case connector_data_point_type_string:
@@ -429,11 +431,17 @@ static size_t dp_process_time(data_point_info_t * const dp_info, char * const bu
         case connector_time_server:
             break;
 
-        case connector_time_local_epoch:
+        case connector_time_local_epoch_fractional:
             bytes_processed = connector_snprintf(buffer, bytes_available, "%u%03ud",
-                                             dp_ptr->time.value.msec_since_epoch.seconds,
-                                             dp_ptr->time.value.msec_since_epoch.milliseconds);
+                                                 dp_ptr->time.value.since_epoch_fractional.seconds,
+                                                 dp_ptr->time.value.since_epoch_fractional.milliseconds);
             break;
+
+        #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+        case connector_time_local_epoch_whole:
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%lld", dp_ptr->time.value.since_epoch_whole.milliseconds);
+            break;
+        #endif
 
         case connector_time_local_iso8601:
             bytes_processed = connector_snprintf(buffer, bytes_available, "\"%s\"", dp_ptr->time.value.iso8601_string);
@@ -498,7 +506,7 @@ static size_t dp_process_location(data_point_info_t * const dp_info, char * cons
 static size_t dp_process_type(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
     char const * const type_list[] = {"Integer", "Long", "Float", "Double", "String", "Binary"};
-    connector_data_point_request_t const * request = dp_info->data.csv.dp_request;
+    connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request;
     size_t bytes_processed = 0;
 
     ASSERT_GOTO(asizeof(type_list) > request->type, error);
@@ -510,7 +518,7 @@ error:
 
 static size_t dp_process_unit(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
-    connector_data_point_request_t const * request = dp_info->data.csv.dp_request;
+    connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request;
     size_t bytes_processed = 0;
 
     if (request->unit != NULL)
@@ -521,7 +529,7 @@ static size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
 
 static size_t dp_process_forward_to(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
-    connector_data_point_request_t const * request = dp_info->data.csv.dp_request;
+    connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request;
     size_t bytes_processed = 0;
 
     if (request->forward_to != NULL)
@@ -686,12 +694,12 @@ static connector_callback_status_t dp_handle_response_callback(connector_data_t 
     switch (dp_info->type)
     {
         case dp_content_type_binary:
-            user_data.user_context = dp_info->data.binary.bp_request.user_context;
+            user_data.user_context = dp_info->data.binary.bp_request->user_context;
             request_id.data_point_request = connector_request_id_data_point_binary_response;
             break;
 
         case dp_content_type_csv:
-            response.user_context = dp_info->data.csv.bp_request.user_context;
+            user_data.user_context = dp_info->data.csv.dp_request->user_context;
             request_id.data_point_request = connector_request_id_data_point_single_response;
             break;
     }
@@ -721,12 +729,12 @@ static connector_callback_status_t dp_handle_status_callback(connector_data_t * 
     switch (dp_info->type)
     {
         case dp_content_type_binary:
-            user_data.user_context = dp_info->data.binary.bp_request.user_context;
+            user_data.user_context = dp_info->data.binary.bp_request->user_context;
             request_id.data_point_request = connector_request_id_data_point_binary_status;
             break;
 
         case dp_content_type_csv:
-            response.user_context = dp_info->data.csv.bp_request.user_context;
+            user_data.user_context = dp_info->data.csv.dp_request->user_context;
             request_id.data_point_request = connector_request_id_data_point_single_status;
             break;
     }
@@ -745,13 +753,13 @@ error:
     return callback_status;
 }
 
-#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+#if (defined CONNECTOR_SHORT_MESSAGE)
 static connector_callback_status_t dp_handle_length_callback(connector_data_service_length_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
     data_point_info_t * const dp_info = data_ptr->user_context;
 
-    ASSERT(dp_info != NULL, error);
+    ASSERT_GOTO(dp_info != NULL, error);
     switch (dp_info->type)
     {
         case dp_content_type_binary:
@@ -800,7 +808,7 @@ static connector_callback_status_t dp_handle_callback(connector_data_t * const c
             status = dp_handle_status_callback(connector_ptr, data);
             break;
 
-        #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+        #if (defined CONNECTOR_SHORT_MESSAGE)
         case connector_request_id_data_service_send_length:
             status = dp_handle_length_callback(data);
             break;
@@ -808,7 +816,6 @@ static connector_callback_status_t dp_handle_callback(connector_data_t * const c
 
         default:
             status = connector_callback_unrecognized;
-            ASSERT_GOTO(connector_false, error);
             break;
     }
 

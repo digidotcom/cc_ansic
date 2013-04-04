@@ -214,4 +214,22 @@ typedef struct
 * @}
 */
 
+/**
+* @defgroup connector_sm_cancel_request_t Data type used to cancel device originated sessions.
+* @{
+*/
+/**
+* This data structure is used when the device initiates the cancel session request.
+*
+* @see connector_initiate_session_cancel
+*/
+typedef struct
+{
+    connector_transport_t transport;
+    void * user_context;
+} connector_sm_cancel_request_t;
+/**
+* @}
+*/
+
 #endif /* CONNECTOR_API_SHORT_MESSAGE_H */

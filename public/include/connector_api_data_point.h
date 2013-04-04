@@ -108,7 +108,7 @@ typedef struct
 * @see connector_request_data_point_single_t
 * @see connector_data_point_type_t
 */
-typedef struct
+typedef struct connector_data_point_t
 {
     struct
     {

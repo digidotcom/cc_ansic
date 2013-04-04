@@ -141,7 +141,7 @@ typedef struct connector_sm_session_t
     connector_transport_t transport;
     connector_sm_state_t sm_state;
     connector_sm_cmd_t command;
-    connector_session_status_t error;
+    connector_session_error_t error;
     unsigned long start_time;
     uint32_t request_id;
     uint32_t flags;

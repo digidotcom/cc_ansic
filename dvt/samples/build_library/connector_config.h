@@ -21,7 +21,7 @@
 #define CONNECTOR_RCI_SERVICE
 #define CONNECTOR_TRANSPORT_TCP
 
-/* #define CONNECTOR_TRANSPORT_UDP */
+#define CONNECTOR_TRANSPORT_UDP
 /* #define CONNECTOR_TRANSPORT_SMS */
 
 #define CONNECTOR_SM_MULTIPART
@@ -32,7 +32,7 @@
 #define CONNECTOR_SM_MAX_SEGMENTS   12
 #define CONNECTOR_SM_TIMEOUT        0  /* In seconds, 0: Wait forever for the complete request/response */
 
-/* #define CONNECTOR_DATA_POINTS */
+#define CONNECTOR_DATA_POINTS 
 #define FLOATING_POINT_SUPPORTED
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256

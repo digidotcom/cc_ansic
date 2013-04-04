@@ -46,7 +46,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     connector_status_t result = connector_init_error;
     connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, transport);
     connector_request_id_config_t request;
-    connector_request_id_t request_id;
     connector_callback_status_t status;
 
     ASSERT_GOTO(sm_ptr != NULL, error);
@@ -81,7 +80,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
             request_id.config_request = connector_request_id_config_sms_service_id;
-            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_config, request_id, &sm_ptr->transport.id, &sm_ptr->transport.id_length);
+            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &sm_ptr->transport.id);
             ASSERT_GOTO(status == connector_callback_continue, error);
 
             request = connector_request_id_config_network_sms;
@@ -108,7 +107,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     #if (defined CONNECTOR_SM_MAX_SESSIONS)
     sm_ptr->session.max_sessions = CONNECTOR_SM_MAX_SESSIONS;
     #else
-    sm_ptr->session.max_sessions = 1;
+    sm_ptr->session.max_sessions = 2;
     #endif
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
@@ -128,15 +127,12 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->close.stop_condition = connector_stop_immediately;
 
     {
-        connector_config_connect_status_t connect_type;
+        connector_config_connect_type_t config_connect;
 
-        size_t length = sizeof sm_ptr->transport.connect_type;
-
-        connect_type.status = connector_connect_auto;
-        request_id.config_request = request;
-        status = get_config_connect_status(connector_ptr, request_id, &connect_type);
+        status = get_config_connect_status(connector_ptr, request, &config_connect);
         ASSERT_GOTO(status == connector_callback_continue, error);
-        sm_ptr->transport.connect_type = connect_type.status;
+
+        sm_ptr->transport.connect_type = config_connect.type;
     }
 
     {
@@ -357,14 +353,16 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
     connector_status_t result = connector_open_error;
 
     {
-        size_t length = sizeof *sm_ptr->network.handle;
         connector_callback_status_t status;
+        connector_network_open_t open_data;
         connector_request_id_t request_id;
 
+        open_data.device_cloud_url = connector_ptr->device_cloud_url;
+        open_data.handle = NULL;
+
         request_id.network_request = connector_request_id_network_open;
-        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length, &sm_ptr->network.handle, &length);
-        if (status != connector_callback_continue)
-            goto error;
+        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data);
+        if (status != connector_callback_continue) goto error;
     }
 
     {
@@ -396,17 +394,16 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
 
     if (sm_ptr->network.handle != NULL)
     {
-        connector_connect_auto_type_t close_action = connector_connect_manual;
-        size_t response_length = sizeof close_action;
-        connector_close_request_t request_data;
         connector_callback_status_t callback_status;
         connector_request_id_t request_id;
+        connector_network_close_t close_data;
 
-        request_data.network_handle = sm_ptr->network.handle;
-        request_data.status = sm_ptr->close.status;
+        close_data.handle = sm_ptr->network.handle;
+        close_data.status = sm_ptr->close.status;
 
+        connector_debug_printf("sm_close_transport: status %d\n", sm_ptr->close.status);
         request_id.network_request = connector_request_id_network_close;
-        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &request_data, sizeof request_data, &close_action, &response_length);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data);
         switch (callback_status)
         {
             case connector_callback_busy:
