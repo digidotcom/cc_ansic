@@ -231,8 +231,8 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             }
 
             /* should be done now */
-            app_os_free(user);
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
+            app_os_free(user);
             put_file_active_count--;
 
             break;

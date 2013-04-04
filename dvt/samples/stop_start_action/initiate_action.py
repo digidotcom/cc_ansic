@@ -31,7 +31,7 @@ def PostMessage(username, password, device_id, target, data):
         content = f.read()
         f.close()
     else:
-        content = data + data
+        content = data
         
           
     # create HTTP basic authentication string, this consists of

@@ -73,7 +73,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
             break;
 
         case device_request_stop_idigi:
-        APP_DEBUG("device_request_action: stop %s iDigi (connector_wait_sessions_complete)\n", transport_to_string(client_device_request->transport));
+        APP_DEBUG("device_request_action: stop %s the connector (connector_wait_sessions_complete)\n", transport_to_string(client_device_request->transport));
         connector_close_status = connector_close_status_device_stopped;
         {
             connector_initiate_stop_request_t const request_data = {client_device_request->transport, connector_wait_sessions_complete, NULL};
@@ -359,7 +359,7 @@ done:
     return result;
 }
 
-static connector_callback_status_t app_process_device_request_reply_length(connector_data_service_receive_reply_length_t * const reply_data)
+static connector_callback_status_t app_process_device_request_reply_length(connector_data_service_length_t * const reply_data)
 {
     connector_callback_status_t result = connector_callback_continue;
 
@@ -470,7 +470,7 @@ static connector_callback_status_t app_process_device_request_response(connector
 
     if (device_request->length_in_bytes == 0)
     {   /* done */
-        APP_DEBUG("app_process_device_request_response: done %p\n", (void *)device_request);
+        APP_DEBUG("app_process_device_request_response: done %p (more data = %d)\n", (void *)device_request, reply_data->more_data);
         device_request_active_count--;
         app_os_free(device_request);
     }
@@ -485,23 +485,25 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
     device_request_handle_t * const device_request = status_data->user_context;
 
-    ASSERT(device_request != NULL);
-
-    switch (status_data->status)
+    if (device_request != NULL)
     {
-    case connector_data_service_status_session_error:
-        APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
-                   (void *) device_request, status_data->session_error);
-        break;
-    default:
-        APP_DEBUG("app_process_device_request_status: handle %p error %d\n",
-                    (void *)device_request, status_data->status);
-        break;
-    }
 
-    device_request_active_count--;
-    put_file_active_count[device_request->transport]--;
-    app_os_free(device_request);
+        switch (status_data->status)
+        {
+        case connector_data_service_status_session_error:
+            APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
+                       (void *) device_request, status_data->session_error);
+            break;
+        default:
+            APP_DEBUG("app_process_device_request_status: handle %p error %d\n",
+                        (void *)device_request, status_data->status);
+            break;
+        }
+
+        device_request_active_count--;
+        put_file_active_count[device_request->transport]--;
+        app_os_free(device_request);
+    }
 
     return status;
 }
@@ -556,7 +558,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
                 if (user->bytes_sent == 0)
                 {
                     app_os_get_system_time(&user->first_data_time);
-                    APP_DEBUG("app_put_request_handler: (data request) %s %p\n", user->file_path, (void *)user);
+                    APP_DEBUG("app_put_request_handler: (data request) %s %p transport %s\n", user->file_path, (void *)user, transport_to_string(user->header.transport));
                 }
 
                 user->bytes_sent += send_ptr->bytes_used;
@@ -591,9 +593,9 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             }
 
             /* should be done now */
-            free(user);
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
             put_file_active_count[user->header.transport]--;
+            app_os_free(user);
 
 
             break;
@@ -606,14 +608,14 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
             ASSERT(user != NULL);
-            free(user);
             put_file_active_count[user->header.transport]--;
+            app_os_free(user);
 
             break;
         }
         case connector_request_id_data_service_send_length:
         {
-            connector_data_service_receive_reply_length_t * const resp_ptr = cb_data;
+            connector_data_service_length_t * const resp_ptr = cb_data;
             ds_record_t * const user = resp_ptr->user_context;
 
             resp_ptr->total_bytes = user->file_length_in_bytes;

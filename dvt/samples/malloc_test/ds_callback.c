@@ -184,9 +184,9 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             }
 
             /* should be done now */
-            free(user);
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
             put_file_active_count--;
+            free(user);
 
             break;
         }
@@ -401,20 +401,23 @@ static connector_callback_status_t app_process_device_request_status(connector_d
     connector_callback_status_t status = connector_callback_continue;
     device_request_handle_t * const device_request = status_data->user_context;
 
-    switch (status_data->status)
+    if (device_request != NULL)
     {
-    case connector_data_service_status_session_error:
-        APP_DEBUG("app_process_device_request_status: session error %d\n",
-                   status_data->session_error);
-        break;
-    default:
-        APP_DEBUG("app_process_device_request_status: error %d\n",
-                    status_data->status);
-        break;
-    }
+        switch (status_data->status)
+        {
+        case connector_data_service_status_session_error:
+            APP_DEBUG("app_process_device_request_status: session error %d\n",
+                       status_data->session_error);
+            break;
+        default:
+            APP_DEBUG("app_process_device_request_status: error %d\n",
+                        status_data->status);
+            break;
+        }
 
-    device_request_active_count--;
-    free(device_request);
+        device_request_active_count--;
+        free(device_request);
+    }
 
     return status;
 }

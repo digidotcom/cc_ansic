@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -142,7 +143,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
                   <device id="%s"/>
                 </targets>
                 <requests>
-                <device_request target_name="%s">initiate action</device_request>
+                <device_request target_name="%s">TCP</device_request>
                 </requests>
               </data_service>
             </sci_request>""" % (self.device_id, target)

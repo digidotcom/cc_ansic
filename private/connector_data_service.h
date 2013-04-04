@@ -231,6 +231,7 @@ static connector_status_t process_data_service_device_request(connector_data_t *
             data_service = ptr;
             session->service_context = data_service;
             data_service->callback_context = NULL;
+            data_service->dp_request = connector_false;
             data_service->request_type = connector_request_id_data_service_receive_target;
         }
     }
@@ -377,6 +378,7 @@ static connector_status_t process_data_service_device_response(connector_data_t 
 
     if (!device_request.more_data)
     {
+        data_service->dp_request = connector_true;
         MsgSetLastData(service_data->flags);
     }
     service_data->length_in_bytes = device_request.bytes_used + header_length;
@@ -394,6 +396,10 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     msg_session_t * const session = service_request->session;
     data_service_context_t * const data_service = session->service_context;
 
+    /* Done with the request (response has been returned).
+     * So do not call the callback.
+     */
+    if (data_service->dp_request) goto done;
 
     connector_data_service_status_t device_request;
 
@@ -421,6 +427,7 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
 
     data_service->callback_context = device_request.user_context;
 
+done:
     return result;
 }
 

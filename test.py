@@ -97,12 +97,11 @@ step_sample = TestType('step_sample', 'public/step/samples/',
                        'dvt/cases/sample_tests', sample_tests)
 
 dvt_tests = {
-    'full_test'                   : (
-#                                     'test_firmware_errors.py',
-#                                     'test_device_request.py',
-                                     'test_put_request.py',),
-#                                     'test_reboot.py',
-#                                     'test_disconnect.py',),
+    'full_test'                   : ('test_firmware_errors.py',
+                                     'test_device_request.py',
+                                     'test_put_request.py',
+                                     'test_reboot.py',
+                                     'test_disconnect.py',),
 
 #    'fs_os_abort'                 : ('test_fs_os_abort.py',
 #                                     'test_debug_fs_os_abort.py',),
@@ -113,7 +112,7 @@ dvt_tests = {
     'reboot_test'                 : ('test_delay_reboot.py',
                                      'test_disconnect.py'),
     'terminate_test'              : ('test_ds_terminate.py',),
-#    'response_to_bad_values_test' : ('test_debug_bad_values.py',),
+    'response_to_bad_values_test' : ('test_debug_bad_values.py',),
     'compile_remote_config'       : (),
     'remote_config'               : ('test_brci_descriptors.py',),
     'connect_disconnect_to_device_cloud' : ('test_disconnect.py',),
