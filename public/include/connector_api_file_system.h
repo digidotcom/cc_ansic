@@ -138,8 +138,8 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    char const *  path;                     /**< File path */
-    int  oflag;                             /**< bitwise-inclusive OR of @ref connector_file_system_open_flag_t flags */
+    char const * CONST path;                /**< File path */
+    int CONST oflag;                             /**< bitwise-inclusive OR of @ref connector_file_system_open_flag_t flags */
     void * handle;                          /**< TODO: Don't check handle in private code!!!  Application defined file handle */
 
 } connector_file_system_open_t;
@@ -158,19 +158,19 @@ typedef struct
 */
 typedef struct
 {
-   void * user_context;                    		/**< Holds user context */
-   void * errnum;                          		/**< Application defined error token */
+   void * user_context;                    		    /**< Holds user context */
+   void * errnum;                          		    /**< Application defined error token */
 
-   void * handle;                          		/**< Application defined file handle */
-   connector_file_offset_t requested_offset; /**< Requested file offset */
-   connector_file_offset_t resulting_offset;	/**< Resulting file position */
+   void * CONST handle;                             /**< Application defined file handle */
+   connector_file_offset_t CONST requested_offset;  /**< Requested file offset */
+   connector_file_offset_t resulting_offset;	    /**< Resulting file position */
    enum
    {
-        connector_file_system_seek_set,    		/**<  Seek file position relative to start-of-file */
-        connector_file_system_seek_cur,    		/**<  Seek file position relative to current position */
-        connector_file_system_seek_end     		/**<  Seek file position relative to end-of-file */
+        connector_file_system_seek_set,    		    /**<  Seek file position relative to start-of-file */
+        connector_file_system_seek_cur,    		    /**<  Seek file position relative to current position */
+        connector_file_system_seek_end     		    /**<  Seek file position relative to end-of-file */
 
-   } origin;                                    /**< File seek origin */
+   } CONST origin;                                  /**< File seek origin */
 
 } connector_file_system_lseek_t;
 /**
@@ -192,9 +192,9 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    void *  handle;                         /**< Application defined file handle */
-    void const * buffer;                    /**< A pointer to data to be written to a file */
-    size_t  bytes_available;                /**< Number of bytes to write */
+    void *  CONST handle;                   /**< Application defined file handle */
+    void const * CONST buffer;              /**< A pointer to data to be written to a file */
+    size_t  CONST bytes_available;          /**< Number of bytes to write */
     size_t  bytes_used;                     /**< Number of bytes written to a file */
 
 } connector_file_system_write_t;
@@ -213,11 +213,11 @@ typedef struct
 */
 typedef struct
 {
-    void * user_context;                    	/**< Holds user context */
-    void * errnum;                          	/**< Application defined error token */
+    void * user_context;                    	    /**< Holds user context */
+    void * errnum;                          	    /**< Application defined error token */
 
-    void * handle;                          	/**< Application defined file handle */
-    connector_file_offset_t length_in_bytes; /**< File length in bytes to truncate to */
+    void * CONST handle;                          	/**< Application defined file handle */
+    connector_file_offset_t CONST length_in_bytes;  /**< File length in bytes to truncate to */
 
 } connector_file_system_truncate_t;
 /**
@@ -239,10 +239,10 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    void *  handle;                         /**< Application defined file handle */
-    void *  buffer;                         /**< A pointer to memory, where callback writes data */
-    size_t  bytes_available;                /**< Size of a memory buffer */
-    size_t  bytes_used;                     /**< Number of bytes read from a file and copied to memory buffer */
+    void * CONST handle;                    /**< Application defined file handle */
+    void * CONST buffer;                    /**< A pointer to memory, where callback writes data */
+    size_t CONST bytes_available;           /**< Size of a memory buffer */
+    size_t bytes_used;                      /**< Number of bytes read from a file and copied to memory buffer */
 
 } connector_file_system_read_t;
 /**
@@ -264,7 +264,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    void * handle;                          /**< Application defined file or directory handle */
+    void * CONST handle;                    /**< Application defined file or directory handle */
 
 } connector_file_system_close_t;
 /**
@@ -286,7 +286,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    char const * path;                      /**< Directory path */
+    char const * CONST path;                /**< Directory path */
     void * handle;                          /**< Application defined directory handle */
 
 } connector_file_system_opendir_t;
@@ -328,13 +328,13 @@ typedef enum
 */
 typedef struct
 {
-    void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    void * user_context;                                /**< Holds user context */
+    void * errnum;                                      /**< Application defined error token */
 
-    char const * path;                      /**< File path */
-    connector_file_system_hash_algorithm_t  hash_algorithm;     /**< hash algorithm */
-    void * hash_value;                /**< A pointer to memory, where callback writes hash value */
-    size_t bytes_requested;                 /**< Size of a memory buffer */
+    char const * CONST path;                             /**< File path */
+    connector_file_system_hash_algorithm_t CONST hash_algorithm;/**< hash algorithm */
+    void * CONST hash_value;                             /**< A pointer to memory, where callback writes hash value */
+    size_t CONST bytes_requested;                        /**< Size of a memory buffer */
 
 } connector_file_system_hash_t;
 /**
@@ -354,7 +354,7 @@ typedef struct
 */
 typedef struct
 {
-    uint32_t last_modified;                       /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
+    uint32_t last_modified;                     /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
     connector_file_offset_t file_size;          /**< File size in bytes */
     enum
     {
@@ -380,16 +380,16 @@ typedef struct
 */
 typedef struct
 {
-    void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    void * user_context;                        /**< Holds user context */
+    void * errnum;                              /**< Application defined error token */
 
-    char const * path;                      /**< File path */
-    connector_file_system_statbuf_t statbuf;   /**< File status data */
+    char const * CONST path;                    /**< File path */
+    connector_file_system_statbuf_t statbuf;    /**< File status data */
 
     struct
     {
-    	connector_file_system_hash_algorithm_t requested;  /**< requested hash algorithm */
-        connector_file_system_hash_algorithm_t actual;     /**< actual hash algorithm to use for the all regular files in the directory */
+    	connector_file_system_hash_algorithm_t CONST requested; /**< requested hash algorithm */
+        connector_file_system_hash_algorithm_t actual;          /**< actual hash algorithm to use for the all regular files in the directory */
     } hash_algorithm;
 
 
@@ -416,7 +416,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    char const * path;                      /**< Full path */
+    char const * CONST path;                      /**< Full path */
     connector_file_system_statbuf_t statbuf;   /**< File status data */
 
 } connector_file_system_stat_dir_entry_t;
@@ -438,9 +438,9 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    void *  handle;                         /**< Application defined directory handle */
-    char * entry_name;                      /**< A pointer to memory, where callback writes directory entry name */
-    size_t bytes_available;                 /**< Size of a memory buffer for directory entry name */
+    void * CONST handle;                    /**< Application defined directory handle */
+    char * CONST entry_name;                /**< A pointer to memory, where callback writes directory entry name */
+    size_t CONST bytes_available;           /**< Size of a memory buffer for directory entry name */
 
 } connector_file_system_readdir_t;
 /**
@@ -461,7 +461,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     void * errnum;                          /**< Application defined error token */
 
-    char const * path;                      /**< File path */
+    char const * CONST path;                /**< File path */
 
 } connector_file_system_remove_t;
 /**
@@ -481,11 +481,12 @@ typedef struct
 typedef struct
 {
     void * user_context;               /**< Holds user context*/
-    void * errnum;                     /**< Application defined error token */
+    void * CONST errnum;               /**< Application defined error token */
 
-    void  * buffer;                    /**< A pointer to memory, where callback writes error description */
-    size_t  bytes_available;                /**< Size of a error description buffer */
-    size_t  bytes_used;                     /**< Number of error descriptio bytes */
+    void  * CONST buffer;              /**< A pointer to memory, where callback writes error description */
+    size_t  CONST bytes_available;          /**< Size of a error description buffer */
+    size_t  bytes_used;                /**< Number of error descriptio bytes */
+
     enum
     {
         connector_file_system_unspec_error,                 /**< Fatal unspecified error */
@@ -513,9 +514,9 @@ typedef struct
 */
 typedef struct
 {
-    void * user_context;                    /**< Holds user context */
+    void * user_context;                            /**< Holds user context */
 
-    connector_session_error_t   session_error;  /**	TODO: Needs a describe 	*/
+    connector_session_error_t CONST session_error;  /**	TODO: Needs a describe 	*/
 
 } connector_file_system_session_error_t;
 /**

@@ -459,7 +459,6 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
         if(name_len < data->bytes_available)
         {
             memcpy(data->entry_name, result->d_name, name_len + 1);
-            data->bytes_available = name_len + 1;
         }
         else
         {

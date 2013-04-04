@@ -75,7 +75,7 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
             break;
 
         default:
-            status = connector_callback_continue;
+            status = connector_callback_error;
             *error_token = (void *) errnum;
             break;
     }
@@ -234,7 +234,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 
     if (ret == 0)
     {
-        MD5_Final (data->data_ptr, &ctx->md5);
+        MD5_Final (data->hash_value, &ctx->md5);
         goto done;
     }
 
@@ -457,7 +457,6 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
         if(name_len < data->bytes_available)
         {
             memcpy(data->entry_name, result->d_name, name_len + 1);
-            data->bytes_available = name_len + 1;
         }
         else
         {

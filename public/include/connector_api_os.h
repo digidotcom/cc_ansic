@@ -40,8 +40,8 @@ typedef enum {
 * Structure passed to connector_request_id_os_malloc callback. 
 */
 typedef struct {
-    size_t size;            /**< Number of bytes to be allocated */
-    void * ptr;             /**< Pointer to allocated memory */
+    size_t CONST size;            /**< Number of bytes to be allocated */
+    void * ptr;                   /**< Pointer to allocated memory */
 } connector_os_malloc_t;
 /**
 * @}
@@ -55,7 +55,7 @@ typedef struct {
 * Structure passed to connector_request_id_os_free callback. 
 */
 typedef struct {
-    void * ptr;             /**< Pointer to memory to free */
+    void * CONST ptr;              /**< Pointer to memory to free */
 } connector_os_free_t;
 /**
 * @}
@@ -84,7 +84,7 @@ typedef struct {
 * Structure passed to connector_request_id_os_yield callback. 
 */
 typedef struct {
-    connector_status_t status;             /**< System status used to decide how to yield */
+    connector_status_t CONST status;      /**< System status used to decide how to yield */
 } connector_os_yield_t;
 /**
 * @}
