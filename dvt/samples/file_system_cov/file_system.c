@@ -727,13 +727,11 @@ static struct
 
     { "dvt_fs_strerr_abort.test",            1, connector_request_id_file_system_get_error, return_abort},
     { "dvt_fs_strerr_bad_datalen.test",      1, connector_request_id_file_system_get_error, set_invalid_datalength},
-    { "dvt_fs_strerr_unrecognized.test",     1, connector_request_id_file_system_get_error, return_unrecognized},
     { "dvt_fs_strerr_retinvalid.test",       1, connector_request_id_file_system_get_error, return_invalid_code},
     { "dvt_fs_strerr_zero_datalen.test",     1, connector_request_id_file_system_get_error, set_zero_datalength},
     
    { "dvt_fs_strerr_put_abort/file",           1, connector_request_id_file_system_get_error, return_abort},
     { "dvt_fs_strerr_put_bad_datalen/file",     1, connector_request_id_file_system_get_error, set_invalid_datalength},
-    { "dvt_fs_strerr_put_unrecognized/file",    1, connector_request_id_file_system_get_error, return_unrecognized},
     { "dvt_fs_strerr_put_retinvalid/file",      1, connector_request_id_file_system_get_error, return_invalid_code},
     { "dvt_fs_strerr_put_zero_datalen/file",    1, connector_request_id_file_system_get_error, set_zero_datalength},
 };

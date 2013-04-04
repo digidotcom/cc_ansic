@@ -711,7 +711,6 @@ static struct
 
     { "dvt_fs_strerr_abort",            2, do_cleanup, connector_request_id_file_system_get_error, return_abort},
     { "dvt_fs_strerr_bad_datalen",      2, do_cleanup, connector_request_id_file_system_get_error, set_invalid_datalength},
-    { "dvt_fs_strerr_unrecognized",     2, do_cleanup, connector_request_id_file_system_get_error, return_unrecognized},
     { "dvt_fs_strerr_retinvalid",       2, do_cleanup, connector_request_id_file_system_get_error, return_invalid_code},
     { "dvt_fs_strerr_zero_datalen",     2, do_cleanup, connector_request_id_file_system_get_error, set_zero_datalength},
 

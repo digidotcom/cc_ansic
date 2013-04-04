@@ -120,7 +120,6 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
 
     def test_fs06_strerr_get(self):
         """ Tests ignored stuff file strerr get callback """
-        self.verify_get_file("dvt_fs_strerr_unrecognized.test", dummyFsize, expectError)
         self.verify_get_file("dvt_fs_strerr_zero_datalen.test", dummyFsize, expectError)
         self.log.info("Test success!")
 
@@ -290,7 +289,6 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
 
     def test_fs35_strerr_get(self):
         """ Tests ignored stuff file strerr put callback """
-        #self.verify_put_file("dvt_fs_strerr_put_unrecognized/file", self.outData, expectError)
         self.verify_put_file("dvt_fs_strerr_put_zero_datalen/file", self.outData, expectError)
         self.log.info("Test success!")
 

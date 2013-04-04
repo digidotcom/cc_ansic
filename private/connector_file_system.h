@@ -1214,6 +1214,10 @@ static connector_status_t process_file_put_request(connector_data_t * const conn
     }
 close_file:
     status = call_file_close_user(connector_ptr, service_request, context, connector_request_id_file_system_close);
+    if (context->status == connector_abort)
+    {
+        status = connector_abort;
+    }
 
 done:
     return status;
