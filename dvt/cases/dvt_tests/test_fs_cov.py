@@ -250,56 +250,56 @@ class FileSystemCoverageTestCase(ic_testcase.TestCase):
         """ Tests file get lseek callback """
         self.check_get_file_response("dvt_fs_lseek_read_ok.test", False, 1)
 
-    def xest_fs27_close_put_abort(self):
+    def test_fs27_close_put_abort(self):
         """ Tests abort conditions in file put close callback """
         self.check_put_file_abort("dvt_fs_close_write_abort.test")
         self.check_put_file_abort("dvt_fs_close_write_retinvalid.test")
 
-    def xest_fs28_close_put_busy(self):
+    def test_fs28_close_put_busy(self):
         """ Tests connector_callback_busy return in file put close callback """
         self.check_put_file_response("dvt_fs_close_write_busy.test")
 
-    def xest_fs29_close_put_canceled(self):
+    def yest_fs29_close_put_canceled(self):
         """ Tests canceled cession in file put close callback """
         self.check_put_file_canceled("dvt_fs_close_write_unrecognized.test")
 
-    def xest_fs29_close_put_errors(self):
+    def test_fs29_close_put_errors(self):
         """ Tests errors in file put close callback """
         self.check_put_file_response("dvt_fs_close_write_io_error.test", expectError)
         self.check_put_file_response("dvt_fs_close_write_io_error_no_errno.test", expectError)
         
  
 #---
-    def xest_fs30_close_get_abort(self):
+    def test_fs30_close_get_abort(self):
         """ Tests abort conditions in file get close callback """
         self.check_get_file_abort("dvt_fs_close_read_abort.test")
         self.check_get_file_abort("dvt_fs_close_read_retinvalid.test")
 
-    def xest_fs31_close_get_busy(self):
+    def test_fs31_close_get_busy(self):
         """ Tests connector_callback_busy return in file get close callback """
         self.check_get_file_response("dvt_fs_close_read_busy.test")
         self.check_get_small_file_response("dvt_fs_close_read_busy_twice.test")
     
-    def xest_fs32_close_get_canceled(self):
+    def test_fs32_close_get_canceled(self):
         """ Tests canceled sessions in file get close callback """
-        self.check_get_file_canceled("dvt_fs_close_read_unrecognized.test")
+        #self.check_get_file_canceled("dvt_fs_close_read_unrecognized.test")
         self.check_get_file_canceled("dvt_fs_close_read_io_error.test")
         self.check_get_file_canceled("dvt_fs_close_read_io_error_no_errno.test")
 
-    def xest_fs33_close_get_error(self):
+    def test_fs33_close_get_error(self):
         """ Tests errors returned in file get close callback """
         self.check_get_small_file_response("dvt_fs_close_read_err_small.test", expectError)
 
-    def xest_fs34_strerr_put_abort(self):
+    def test_fs34_strerr_put_abort(self):
         """ Tests abort conditions in file put strerr callback """
         self.verify_put_file_abort("dvt_fs_strerr_put_abort/file", self.outData)
         self.verify_put_file_abort("dvt_fs_strerr_put_retinvalid/file", self.outData)
         self.verify_put_file_abort("dvt_fs_strerr_put_bad_datalen/file", self.outData)
         self.log.info("Test success!")
 
-    def xest_fs35_strerr_get(self):
+    def test_fs35_strerr_get(self):
         """ Tests ignored stuff file strerr put callback """
-        self.verify_put_file("dvt_fs_strerr_put_unrecognized/file", self.outData, expectError)
+        #self.verify_put_file("dvt_fs_strerr_put_unrecognized/file", self.outData, expectError)
         self.verify_put_file("dvt_fs_strerr_put_zero_datalen/file", self.outData, expectError)
         self.log.info("Test success!")
 
