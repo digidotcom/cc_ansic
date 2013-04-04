@@ -746,7 +746,7 @@ error:
 }
 
 #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
-static connector_callback_status_t dp_handle_length_callback(connector_data_service_send_length_t * const data_ptr)
+static connector_callback_status_t dp_handle_length_callback(connector_data_service_length_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
     data_point_info_t * const dp_info = data_ptr->user_context;

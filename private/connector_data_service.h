@@ -765,14 +765,14 @@ static connector_status_t data_service_put_request_init(connector_data_t * const
 {
     connector_session_error_t result = service_request->error_value;
     msg_session_t * const session = service_request->session;
-    connector_request_data_service_send_t * send_ptr = session->service_context;
+    connector_request_data_service_send_t * send_ptr = (void *)service_request->have_data;
     data_service_context_t * ds_ptr = NULL;
 
     if (send_ptr != NULL)
     {
         void * ptr;
 
-        if (result != connector_session_error_none) goto error;
+        if ((result != connector_session_error_none) || (session == NULL)) goto error;
 
         result = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
         if (result != connector_working)

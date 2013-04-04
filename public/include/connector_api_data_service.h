@@ -48,7 +48,7 @@ typedef struct
     void * user_context;                /**< IN/OUT: context passed in connector_initiate_action */
 
     size_t total_bytes;                 /**< OUT: total bytes in to send */
-} connector_data_service_send_length_t;
+} connector_data_service_length_t;
 
 typedef struct
 {
@@ -132,14 +132,6 @@ typedef struct
     size_t bytes_used;                  /**< IN: bytes filled in the buffer */
     connector_bool_t more_data;         /**< IN: connector_true means more request to follow */
 } connector_data_service_receive_data_t;
-
-typedef struct
-{
-    connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
-    void * user_context;                /**< IN/OUT: user context passed */
-
-    size_t total_bytes;                 /**< OUT: total response data length */
-} connector_data_service_receive_reply_length_t;
 
 typedef struct
 {

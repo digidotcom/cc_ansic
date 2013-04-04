@@ -11,7 +11,7 @@
  */
 static connector_status_t sm_get_user_data_length(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
-    connector_status_t result = connector_abort;
+    connector_status_t result;
     connector_callback_status_t status;
     connector_request_id_t request_id;
 
@@ -20,43 +20,44 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
         case connector_sm_cmd_data:
         case connector_sm_cmd_no_path_data: 
         {
-            connector_data_service_msg_request_t request_data;
+            connector_data_service_length_t cb_data;
 
-            request_data.server_data = NULL;
-            request_data.service_context = (void *)session->user.context;  /* FIXME: why unconsting? */
-            request_data.message_type = connector_data_service_type_total_length;
+            cb_data.transport = session->transport;
+            cb_data.user_context = session->user.context;
 
             #if (defined CONNECTOR_DATA_POINTS)
             if (SmIsDatapoint(session->flags))
             {
-                status = dp_handle_callback(connector_ptr, &request_data, &session->in.bytes);
+                status = dp_handle_callback(connector_ptr, connector_request_id_data_service_send_length, &cb_data);
             }
             else
             #endif
             {
-                size_t response_bytes = sizeof session->in.bytes;
-
-                request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_data_service_put_request : connector_data_service_device_request;
-                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &request_data, sizeof request_data, &session->in.bytes, &response_bytes);
+                request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_length : connector_request_id_data_service_receive_reply_length;
+                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
             }
+
+            session->in.bytes = cb_data.total_bytes;
             break;
         }
 
+        #if (defined CONNECTOR_SM_CLI)
         case connector_sm_cmd_cli:
         {
-            connector_sm_cli_request_t cli_request;
-            size_t response_bytes = sizeof cli_request;
+            connector_sm_cli_response_length_t cb_data;
 
-            cli_request.user_context = session->user.context;
-            cli_request.type = connector_data_service_type_total_length;
-            cli_request.content.total_bytes_ptr = &session->in.bytes;
-            request_id.sm_request = connector_sm_cli_request;
+            cb_data.transport = session->transport;
+            cb_data.user_context = session->user.context;
 
-            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request, &response_bytes);
+            request_id.sm_request = connector_request_id_sm_cli_response_length;
+            status = connector_callback_no_request_data(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+            session->in.bytes = cb_data.total_bytes;
             break;
         }
+        #endif
 
         default:
+            result = connector_abort;
             ASSERT_GOTO(connector_false, error);
             break;
     }
@@ -72,61 +73,91 @@ error:
     return result;
 }
 
-static connector_status_t sm_get_more_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+static connector_status_t sm_get_more_request_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
+    uint8_t * dptr = session->in.data;
+    connector_data_service_send_data_t cb_data;
 
     ASSERT_GOTO(session->in.bytes > session->bytes_processed, error);
 
+    cb_data.transport = session->transport;
+    cb_data.user_context = session->user.context;
+    cb_data.buffer = &dptr[session->bytes_processed];
+    cb_data.bytes_available = session->in.bytes - session->bytes_processed;
+    cb_data.bytes_used = 0;
+    cb_data.more_data = connector_false;
+
     {
-        uint8_t * dptr = session->in.data;
-        connector_data_service_msg_request_t request_data;
-        connector_data_service_msg_response_t response_data;
-        connector_data_service_block_t user_data;
-
-        user_data.flags = 0;
-        user_data.data = &dptr[session->bytes_processed];
-        user_data.length_in_bytes = session->in.bytes - session->bytes_processed;
-        request_data.server_data = NULL;
-        request_data.service_context = (void *)session->user.context;  /* FIXME: why unconsting? */
-        response_data.user_context = request_data.service_context;
-        response_data.client_data = &user_data;
-        request_data.message_type = connector_data_service_type_need_data;
-        response_data.message_status = connector_msg_error_none;
-
-        {
-            size_t response_bytes = sizeof response_data;
-            connector_callback_status_t status;
-            connector_request_id_t request_id;
+        connector_callback_status_t status;
 
 #if (defined CONNECTOR_DATA_POINTS)
-            if (SmIsDatapoint(session->flags))
-            {
-                status = dp_handle_callback(connector_ptr, &request_data, &response_data);
-            }
-            else
-#endif
-            {
-                request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_data_service_put_request : connector_data_service_device_request;
-                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &request_data, sizeof request_data, &response_data, &response_bytes);
-            }
-
-            result = sm_map_callback_status_to_connector_status(status);
-            if (status == connector_callback_continue)
-            {
-                ASSERT_GOTO(response_data.message_status == connector_msg_error_none, error);
-                session->bytes_processed += user_data.length_in_bytes;
-                ASSERT(session->bytes_processed <= session->in.bytes);
-                if ((user_data.flags & CONNECTOR_MSG_LAST_DATA) == CONNECTOR_MSG_LAST_DATA)
-                    sm_set_payload_complete(session);
-                session->user.context = response_data.user_context;
-            }
+        if (SmIsDatapoint(session->flags))
+        {
+            status = dp_handle_callback(connector_ptr, connector_request_id_data_service_send_data, &cb_data);
         }
+        else
+#endif
+        {
+            connector_request_id_t request_id;
+
+            request_id.data_service_request = connector_request_id_data_service_send_data;
+            status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+        }
+
+        result = sm_map_callback_status_to_connector_status(status);
+    }
+
+    session->user.context = response_data.user_context;
+    if (result == connector_working)
+    {
+        session->bytes_processed += cb_data.bytes_used;
+        ASSERT(session->bytes_processed <= session->in.bytes);
+        if (!cb_data.more_data)
+            sm_set_payload_complete(session);
     }
 
 error:
     return result;
 }
+
+static connector_status_t sm_get_more_response_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+{
+    connector_status_t result = connector_abort;
+    uint8_t * dptr = session->in.data;
+    connector_data_service_receive_reply_data_t cb_data;
+
+    ASSERT_GOTO(session->in.bytes > session->bytes_processed, error);
+
+    cb_data.transport = session->transport;
+    cb_data.user_context = session->user.context;
+    cb_data.buffer = &dptr[session->bytes_processed];
+    cb_data.bytes_available = session->in.bytes - session->bytes_processed;
+    cb_data.bytes_used = 0;
+    cb_data.more_data = connector_false;
+
+    {
+        connector_callback_status_t status;
+        connector_request_id_t request_id;
+
+        request_id.data_service_request = connector_request_id_data_service_receive_reply_data;
+        status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+        result = sm_map_callback_status_to_connector_status(status);
+    }
+
+    session->user.context = response_data.user_context;
+    if (result == connector_working)
+    {
+        session->bytes_processed += cb_data.bytes_used;
+        ASSERT(session->bytes_processed <= session->in.bytes);
+        if (!cb_data.more_data)
+            sm_set_payload_complete(session);
+    }
+
+error:
+    return result;
+}
+
 
 #if (defined CONNECTOR_COMPRESSION)
 static connector_status_t sm_compress_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
@@ -235,21 +266,19 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
     size_t length_written = 0;
     size_t response_bytes = sizeof length_written;
     connector_callback_status_t status;
-    connector_write_request_t write_data;
+    connector_network_send_t send_data;
     connector_request_id_t request_id;
 
-    write_data.timeout = 0;
-    write_data.buffer = &send_packet->data[send_packet->processed_bytes];
-    write_data.length = send_packet->total_bytes - send_packet->processed_bytes;
-    write_data.network_handle = sm_ptr->network.handle;
+    send_data.buffer = &send_packet->data[send_packet->processed_bytes];
+    send_data.bytes_available = send_packet->total_bytes - send_packet->processed_bytes;
+    send_data.handle = sm_ptr->network.handle;
 
     request_id.network_request = connector_request_id_network_send;
-    status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &write_data, sizeof write_data, &length_written, &response_bytes);
+    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &send_data);
     result = sm_map_callback_status_to_connector_status(status);
     if (status != connector_callback_continue) goto error;
 
-    send_packet->processed_bytes += length_written;
-
+    send_packet->processed_bytes += send_data.bytes_used;
     if (send_packet->processed_bytes >= send_packet->total_bytes)
     {
         connector_sm_session_t * const session = send_packet->pending_session;
@@ -482,7 +511,7 @@ static connector_status_t sm_process_send_path(connector_data_t * const connecto
             break;
 
         case connector_sm_state_more_data:
-            result = sm_get_more_data(connector_ptr, session);
+            result = SmIsClientOwned(session->flags) ? sm_get_more_request_data(connector_ptr, session) ? sm_get_more_response_data(connector_ptr, session);
             break;
 
         #if (defined CONNECTOR_COMPRESSION)
