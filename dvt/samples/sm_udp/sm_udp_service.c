@@ -25,22 +25,11 @@ static int app_data_time_remaining = APP_MAX_TIMEOUT;
 connector_status_t app_send_ping(connector_handle_t handle)
 {
     connector_status_t status;
-    static connector_message_status_request_t request; /* idigi connector will hold this until send completes */
-    static unsigned long flag = 0;
+    static connector_sm_ping_request_t request; /* idigi connector will hold this until send completes */
+    static connector_bool_t response_needed = connector_true;
 
     request.transport = connector_transport_udp;
-    if ((flag & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == CONNECTOR_DATA_RESPONSE_NOT_NEEDED)
-    {
-        if (app_waiting_for_ping_complete)
-        {
-            APP_DEBUG("ERROR: No complete callback for ping.\n");
-            status = connector_exceed_timeout;
-            goto error;
-        }
-        app_waiting_for_ping_complete = 1;
-        request.user_context = &app_waiting_for_ping_complete;
-    }
-    else
+    if (response_needed)
     {
         if (app_waiting_for_ping_response)
         {
@@ -61,8 +50,20 @@ connector_status_t app_send_ping(connector_handle_t handle)
         app_waiting_for_ping_response = 1;
         request.user_context = &app_waiting_for_ping_response;
     }
+    else
+    {
+        if (app_waiting_for_ping_complete)
+        {
+            APP_DEBUG("ERROR: No complete callback for ping.\n");
+            status = connector_exceed_timeout;
+            goto error;
+        }
 
-    request.flags = flag;
+        app_waiting_for_ping_complete = 1;
+        request.user_context = &app_waiting_for_ping_complete;
+    }
+
+    request.response_required = response_needed;
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
     if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */
     {
@@ -72,7 +73,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
             app_waiting_for_ping_response = 0;
     }
     else
-        flag ^= CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
+        response_needed = response_needed ? connector_false : connector_true;
 
     APP_DEBUG("Sent ping [%d].\n", status);
 
@@ -89,16 +90,16 @@ typedef struct
 connector_status_t app_send_data(connector_handle_t handle)
 {
     connector_status_t status = connector_no_resource;
-    static connector_data_service_put_request_t header; /* idigi connector will hold this until we get a response/error callback */
+    static connector_request_data_service_send_t header; /* idigi connector will hold this until we get a response/error callback */
     static char const file_path[] = "test/sm_udp.txt";
     static char const buffer[] = "iDigi sm udp dvt for device data\n";
     static client_data_t app_data;
-    static unsigned long flag = 0;
+    static connector_bool_t response_needed = connector_true;
 
     app_data.data_ptr = buffer;
     app_data.bytes = strlen(buffer);
     header.transport = connector_transport_udp;
-    if ((flag & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == 0)
+    if (response_needed)
     {
         if (app_waiting_for_data_complete)
         {
@@ -132,18 +133,18 @@ connector_status_t app_send_data(connector_handle_t handle)
 
     header.context = &app_data; /* will be returned in all subsequent callbacks */
     header.path  = file_path;
-    header.flags = flag;
+    header.response_required = response_needed;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */
     {
-        if ((header.flags & CONNECTOR_DATA_RESPONSE_NOT_NEEDED) == CONNECTOR_DATA_RESPONSE_NOT_NEEDED)
-            app_waiting_for_data_complete = 0;
-        else
+        if (response_needed)
             app_waiting_for_data_response = 0;
+        else
+            app_waiting_for_data_complete = 0;
     }
     else
-        flag ^= CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
+        response_needed = response_needed ? connector_false : connector_true;
 
     APP_DEBUG("Status: %d, file: %s\n", status, file_path);
 
@@ -151,27 +152,59 @@ error:
     return status;
 }
 
-static connector_callback_status_t app_process_cli(connector_sm_cli_request_t * const cli_request)
+static connector_callback_status_t app_process_cli_request(connector_sm_cli_request_t * const cli_request)
 {
     connector_callback_status_t status = connector_callback_continue;
+    static char response_string[] = "Time: Day Mon DD HH:MM:SS YYYY ";
+    static client_data_t app_data;
+    time_t const cur_time = time(NULL);
 
-    ASSERT(cli_request != NULL);
+    APP_DEBUG("Executing %s.\n", cli_request->buffer);
 
-    switch (cli_request->type)
-    {
-        case connector_data_service_type_have_data:
-        {
-            static char response_string[] = "Time: Day Mon DD HH:MM:SS YYYY ";
-            static client_data_t app_data;
-            time_t const cur_time = time(NULL);
+    app_data.bytes = snprintf(response_string, sizeof response_string, "Time: %s", ctime(&cur_time));
+    app_data.data_ptr = response_string;
+    cli_request->user_context = &app_data;
 
-            APP_DEBUG("Executing %s.\n", cli_request->content.request.buffer);
+    return status;
+}
 
-            app_data.bytes = snprintf(response_string, sizeof response_string, "Time: %s", ctime(&cur_time));
-            app_data.data_ptr = response_string;
-            cli_request->user_context = &app_data;
+static connector_callback_status_t app_process_cli_request(connector_sm_cli_request_t * const cli_request)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    client_data_t const * const app_ptr = cli_request->user_context;
+            size_t * const length = cli_request->content.total_bytes_ptr;
+
+            *length = app_ptr->bytes;
             break;
         }
+
+        case connector_data_service_type_session_status:
+        {
+            APP_DEBUG("CLI session is closed, status[%d]\n", cli_request->content.status);
+            break;
+        }
+
+        default:
+            APP_DEBUG("Unexpected CLI request type: %d\n", cli_request->type);
+            status = connector_callback_abort;
+            break;
+    }
+
+    return status;
+}
+
+static connector_callback_status_t app_process_cli_request(connector_sm_cli_request_t * const cli_request)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    static char response_string[] = "Time: Day Mon DD HH:MM:SS YYYY ";
+    static client_data_t app_data;
+    time_t const cur_time = time(NULL);
+
+    APP_DEBUG("Executing %s.\n", cli_request->buffer);
+
+    app_data.bytes = snprintf(response_string, sizeof response_string, "Time: %s", ctime(&cur_time));
+    app_data.data_ptr = response_string;
+    cli_request->user_context = &app_data;
 
         case connector_data_service_type_need_data:
         {
@@ -207,6 +240,7 @@ static connector_callback_status_t app_process_cli(connector_sm_cli_request_t * 
 
     return status;
 }
+
 
 static connector_callback_status_t app_handle_put_request(connector_data_service_msg_request_t const * const put_request, connector_data_service_msg_response_t * const put_response)
 {

@@ -744,6 +744,7 @@ static char const * app_sm_class_to_string(connector_sm_request_t const value)
         enum_to_case(connector_request_id_sm_ping_response);
         enum_to_case(connector_request_id_sm_cli_request);
         enum_to_case(connector_request_id_sm_cli_response);
+        enum_to_case(connector_request_id_sm_cli_response_length);
         enum_to_case(connector_request_id_sm_cli_status);
         enum_to_case(connector_request_id_sm_more_data);
         enum_to_case(connector_request_id_sm_opaque_response);
