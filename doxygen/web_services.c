@@ -53,7 +53,7 @@
  * To learn more about iDigi Web Services, see Chapter 5 SCI (Server Command Interface) in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90002008_F.pdf">iDigi Web Services Programming Guide</a>@endhtmlonly.
  *
- * @note To access this document you will have to login to iDigi
+ * @note To access this document you will have to log on to iDigi
  *
  * @section Sample Web Services Applications
  *

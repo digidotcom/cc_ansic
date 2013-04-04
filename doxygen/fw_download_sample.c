@@ -141,7 +141,7 @@
  *
  * @subsection fw_gui Firmware Download using the iDigi Device Cloud GUI
  *
- * Login to the iDigi Device Cloud at http://login.etherios.com/ and click on your device
+ * Log on to the iDigi Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged to see your device, click the Refresh button.
  * The device's status should show as 'Connected'.

@@ -7,7 +7,7 @@
  * In this example the device connects to the iDigi Device Cloud and sends
  * basic information about the device, this is intended to verify that the
  * device can communicate with the iDigi Device Cloud and the user
- * can login and view the device configuration.
+ * can log on and view the device configuration.
  *
  *
  * @section connect_description Code Flow

@@ -473,7 +473,7 @@
  * The next several sections walk through the steps required to add your device to
  * the iDigi Device Cloud.
  *
- *  -# Navigate to http://my.idigi.com and login to the iDigi Device Cloud
+ *  -# Navigate to http://my.idigi.com and log on to the iDigi Device Cloud
  *  -# Click on the iDigi Manager Pro tab.
  *  -# Click the Add Devices button (the + button under Devices) to bring up the Add Devices dialog.
  *

@@ -128,7 +128,7 @@
  *
  * @section web_gui Viewing results from the iDigi Device Cloud
  *
- * To view the results for this sample login to the iDigi Device Cloud as described
+ * To view the results for this sample, log on to the iDigi Device Cloud as described
  * in the @ref add_your_device_to_the_cloud "Getting Started" section. 
  *
  * Once logged in click on the Data Services tab as shown below. Then select the Data
