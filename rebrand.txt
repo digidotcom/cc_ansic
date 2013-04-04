@@ -3,7 +3,7 @@
 # format:
 # search-term [ exclude-term [ exclude-term ...]
 
-digi 'digi international' digit
+digi 'digi international' digit com.digi.connector com/digi/connector
 server
 #platform
 todo

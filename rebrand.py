@@ -16,9 +16,10 @@ def add_counts(current, more):
 has_space = re.compile('\s')
 def show_counts(amount):
 	result = []
-	for text, count in amount.iteritems():
+	ordered = sorted(amount)
+	for text in ordered:
 		show = '"{}": {}' if has_space.search(text) else '{}: {}'
-		result.append(show.format(text, count))
+		result.append(show.format(text, amount[text]))
 
 	return ', '.join(result)
 	
@@ -161,8 +162,11 @@ if skipped:
 		print '{}: {}'.format(file, content)
 	print
 
-print 'Totals'
-print '------'
-print show_counts(grand)
+if len(grand) == 0:
+	print 'No terms matched'
+else:
+	print 'Totals'
+	print '------'
+	print show_counts(grand)
 
 sys.exit(0)
