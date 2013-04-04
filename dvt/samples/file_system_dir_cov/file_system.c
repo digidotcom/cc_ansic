@@ -207,7 +207,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
     if (ctx->fd < 0)
     {
         ctx->fd = open(data->path, O_RDONLY);
-        APP_DEBUG("Open %s, returned %d\n", data->path, ctx->fd);
+        APP_DEBUG("MD5 for %s, returned %d\n", data->path, ctx->fd);
 
         if (ctx->fd < 0)
         {
@@ -330,6 +330,7 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
             break;
     }
 #endif
+    APP_DEBUG("data->hash_algorithm.actual %d\n", data->hash_algorithm.actual);
 done:
     return status;
 }
@@ -697,8 +698,8 @@ static struct
     { "dvt_fs_hash_abort",             1, no_cleanup, connector_request_id_file_system_hash, return_abort},
     { "dvt_fs_hash_unrecognized",      1, no_cleanup, connector_request_id_file_system_hash, return_unrecognized},
     { "dvt_fs_hash_retinvalid",        1, no_cleanup, connector_request_id_file_system_hash, return_invalid_code},
-    { "dvt_fs_hash_io_error",          2, no_cleanup, connector_request_id_file_system_hash, set_io_error},
-    { "dvt_fs_hash_io_error_no_errno", 2, no_cleanup, connector_request_id_file_system_hash, set_io_error_no_errno},
+    { "dvt_fs_hash_io_error",          1, no_cleanup, connector_request_id_file_system_hash, set_io_error},
+    { "dvt_fs_hash_io_error_no_errno", 1, no_cleanup, connector_request_id_file_system_hash, set_io_error_no_errno},
     { "dvt_fs_hash_busy",              1, no_cleanup, connector_request_id_file_system_hash, return_busy},
 
     { "dvt_fs_hash_file_abort",             1, do_cleanup, connector_request_id_file_system_hash, return_abort},

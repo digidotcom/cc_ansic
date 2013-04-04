@@ -354,6 +354,9 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
                           connector_request_id_file_system_stat,
                           &data);
 
+    if (status == connector_pending)
+        goto done;
+
     if (!FsOperationSuccess(status, context))
     {
         FsSetState(context, fs_state_closed);
@@ -371,6 +374,7 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
 
        case connector_file_system_file_type_is_reg:
            FsSetReg(context);
+           break;
 
        default:
            context->flags = 0;
