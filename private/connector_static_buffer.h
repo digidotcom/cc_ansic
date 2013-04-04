@@ -87,7 +87,7 @@ typedef union
     data_service_context_t ds;
 #endif
 #if defined CONNECTOR_FILE_SYSTEM
-    file_system_context_t  fs;
+    fs_context_t  fs;
 #endif
 
 #if defined CONNECTOR_RCI_SERVICE
