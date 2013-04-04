@@ -1,4 +1,4 @@
-package com.digi.ic.config;
+package com.digi.connector.config;
 
 import java.io.File;
 import java.io.FileReader;

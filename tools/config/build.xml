@@ -22,7 +22,7 @@
 		<jar destfile="${build.dir}/${jar}">
 			<fileset dir="${class.dir}"/>
 			<manifest>
-				<attribute name="Main-Class" value="com.digi.ic.config.ConfigGenerator"/>
+				<attribute name="Main-Class" value="com.digi.connector.config.ConfigGenerator"/>
 				<attribute name="Implementation-Vendor" value="Digi International"/>
 				<attribute name="Implementation-Title" value="RCI Config Generator"/>
 				<attribute name="Implementation-Version" value="${version}"/>

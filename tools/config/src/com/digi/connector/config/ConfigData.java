@@ -1,4 +1,4 @@
-package com.digi.ic.config;
+package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.ArrayList;

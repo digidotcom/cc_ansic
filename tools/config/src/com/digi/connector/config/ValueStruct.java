@@ -1,4 +1,4 @@
-package com.digi.ic.config;
+package com.digi.connector.config;
 
 public class ValueStruct {
 

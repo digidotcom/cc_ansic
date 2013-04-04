@@ -1,4 +1,4 @@
-package com.digi.ic.config;
+package com.digi.connector.config;
 
 import java.io.Console;
 import java.io.File;
@@ -24,8 +24,8 @@ public class ConfigGenerator {
 
     private final static String FILE_TYPE_OPTION = "type";
 
-    private final static String SERVER_OPTION = "server";
-    private final static String SERVER_NAME = "login.etherios.com";
+    private final static String URL_OPTION = "url";
+    private final static String URL_DEFAULT = "login.etherios.com";
 
     public final static String DASH = "-";
 
@@ -35,7 +35,7 @@ public class ConfigGenerator {
     public final static String FIRMWARE_VERSION = "firmwareVersion";
     public final static String CONFIG_FILENAME = "configFileName";
 
-    private static String serverName = SERVER_NAME;
+    private static String urlName;
     private static String vendorId;
 
     private static String deviceType;
@@ -96,7 +96,7 @@ public class ConfigGenerator {
                 + DIRECTORY_OPTION
                 + "] ["
                 + DASH
-                + SERVER_OPTION
+                + URL_OPTION
                 + "] "
                 + String.format("<%s[:%s]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
@@ -108,41 +108,41 @@ public class ConfigGenerator {
         log("\tfrom the input configuration file.\n");
 
         log("Options:");
-        log(String.format("\t%-16s \t= optional option to show this menu", DASH
+        log(String.format("\t%-16s \t= show this message", DASH
                 + HELP_OPTION));
         log(String
                 .format(
-                        "\t%-16s \t= optional option to output message about what the tool is doing",
+                        "\t%-16s \t= optional output messages about what the tool is doing",
                         DASH + VERBOSE_OPTION));
         log(String
                 .format(
-                        "\t%-16s \t= optional option to exclude error description in the C file (Code size reduction)",
+                        "\t%-16s \t= optional exclusion of error descriptions in the C file (Code size reduction)",
                         DASH + NO_DESC_OPTION));
         log(String
                 .format(
-                        "\t%-16s \t= optional option for vendor ID obtained from Etherios Device Cloud registration.",
+                        "\t%-16s \t= optional vendor ID obtained from Etherios Device Cloud registration.",
                         DASH + VENDOR_OPTION + "=<vendorID>"));
         log(String
                 .format(
-                        "\t%-16s \t  If not given, tool tries to retrieve it from the Cloud",
+                        "\t%-16s \t  If not given, tool tries to retrieve it from Etherios Device Cloud",
                         ""));
 
         log(String
                 .format(
-                        "\t%-16s \t= optional option for directory path where the header file will be created.",
+                        "\t%-16s \t= optional directory path where the header file will be created.",
                         DASH + DIRECTORY_OPTION + "=<directory path>"));
         log(String
                 .format(
-"\t%-16s \t= optional option for Etherios Device Cloud. Default is %s",
-                        DASH + SERVER_OPTION + "=<server address>", SERVER_NAME));
+						"\t%-16s \t= optional Etherios Device Cloud URL. Default is %s",
+                        DASH + URL_OPTION + "=<device cloud URL>", URL_DEFAULT));
 
         log(String
                 .format(
-                        "\n\t%-16s \t= username to log in Etherios Device Cloud. If no password is given you will be prompted to enter the password",
+                        "\n\t%-16s \t= username to log in to Etherios Device Cloud. If no password is given you will be prompted to enter the password",
                         USERNAME));
         log(String
                 .format(
-                        "\t%-16s \t= optional option for password to log in Etherios Device Cloud",
+                        "\t%-16s \t= optional password to log in to Etherios Device Cloud",
                         PASSWORD));
         log(String
                 .format(
@@ -183,9 +183,8 @@ public class ConfigGenerator {
             String[] keys = option.split("=", 2);
 
             if (keys.length == 2) {
-                if (keys[0].equals(SERVER_OPTION)) {
-                    /* SERVER_OPTION */
-                    serverName = keys[1];
+                if (keys[0].equals(URL_OPTION)) {
+                    urlName = keys[1];
                 } else if (keys[0].equals(VENDOR_OPTION)) {
 
                     if (Pattern.matches("(0[xX])?\\p{XDigit}+", keys[1])) {
@@ -347,8 +346,8 @@ public class ConfigGenerator {
         return argumentLog;
     }
 
-    public static String getServerName() {
-        return serverName;
+    public static String getUrlName() {
+        return urlName;
     }
 
     public ConfigGenerator(String args[]) {
@@ -356,7 +355,7 @@ public class ConfigGenerator {
 
         argumentLog = "\"";
 
-        serverName = SERVER_NAME;
+        urlName = URL_DEFAULT;
 
         for (String arg : args) {
             if (arg.startsWith(DASH)) {

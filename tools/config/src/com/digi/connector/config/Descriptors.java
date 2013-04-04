@@ -1,4 +1,4 @@
-package com.digi.ic.config;
+package com.digi.connector.config;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class Descriptors {
         this.deviceType = deviceType;
         this.fwVersion = version;
 
-        validateServerName();
+        validateUrlName();
         this.vendorId = vendorId;
         if (vendorId == null) getVendorId();
         else {
@@ -238,7 +238,7 @@ public class Descriptors {
 
     private String sendCloudData(String target, String method, String message) {
         String response = "";
-        String cloud = "https://" + ConfigGenerator.getServerName() + target;
+        String cloud = "https://" + ConfigGenerator.getUrlName() + target;
         String credential = username + ":" + password;
         String encodedCredential = DatatypeConverter.printBase64Binary(credential.getBytes());
         HttpsURLConnection connection = null;
@@ -278,7 +278,7 @@ public class Descriptors {
             }
             catch (Exception e)
             {
-                ConfigGenerator.log("ERROR: Invalid Etherios Device Cloud\n");
+                ConfigGenerator.log("ERROR: Invalid Etherios Device Cloud URL\n");
                 System.exit(1);
             }
         }
@@ -357,8 +357,8 @@ public class Descriptors {
     }
 
 
-    private void validateServerName() {
-        ConfigGenerator.debug_log("Start validating server");
+    private void validateUrlName() {
+        ConfigGenerator.debug_log("Start validating device cloud url");
         String response = sendCloudData("/ws/UserInfo", "GET", null);
 
         if (responseCode != 0)

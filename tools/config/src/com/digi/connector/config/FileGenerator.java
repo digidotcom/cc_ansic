@@ -1,4 +1,4 @@
-package com.digi.ic.config;
+package com.digi.connector.config;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -264,7 +264,7 @@ public class FileGenerator {
                 /* Write all string length and index defines in C file */
                 writeDefineGlobalErrors(configData);
                 
-                /* write idigi remote all strings in source file */
+                /* write remote all strings in source file */
                 writeRemoteAllStrings(configData);
                 
                 writeGlobalErrorStructures(configData);
@@ -820,10 +820,10 @@ public class FileGenerator {
             }
         }
 
-        String idigiGroupString = "static ";
-        if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) idigiGroupString = "";
+        String rciGroupString = "static ";
+        if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) rciGroupString = "";
         
-        idigiGroupString += String.format("connector_remote_group_table_t const %s[] = {\n",
+        rciGroupString += String.format("connector_remote_group_table_t const %s[] = {\n",
                                                 CONNECTOR_REMOTE_GROUP_TABLE);
 
         for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
@@ -834,22 +834,22 @@ public class FileGenerator {
             groups = configData.getConfigGroup(configType);
 
             if (type.getIndex() != 0) {
-                idigiGroupString += ",\n";
+                rciGroupString += ",\n";
             }
 
-            idigiGroupString += " " + "{";
+            rciGroupString += " " + "{";
             if (!groups.isEmpty()) {
-                idigiGroupString += String.format("connector_%s_groups,\n asizeof(connector_%s_groups)\n }",
+                rciGroupString += String.format("connector_%s_groups,\n asizeof(connector_%s_groups)\n }",
                                                    configType, configType);
 
             } else {
-                idigiGroupString += "NULL,\n 0\n }";
+                rciGroupString += "NULL,\n 0\n }";
             }
 
         }
-        idigiGroupString += "\n};\n\n";
+        rciGroupString += "\n};\n\n";
 
-        fileWriter.write(idigiGroupString);
+        fileWriter.write(rciGroupString);
     }
 
     private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {

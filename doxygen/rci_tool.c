@@ -22,7 +22,7 @@
  *   <th colspan="2" class="title">Usage</th>
  * </tr>
  * <tr>
- *   <td colspan="2"> @endhtmlonly java -jar ConfigGenerator.jar [-help] [-verbose] [-nodesc] [-vendor] [-path] [-server]
+ *   <td colspan="2"> @endhtmlonly java -jar ConfigGenerator.jar [-help] [-verbose] [-nodesc] [-vendor] [-path] [-url]
  *                     \<username[:password]\> \<device_type\> \<firmware_version\> \<input_config_file\> @htmlonly
  *   </td>
  * </tr>
@@ -40,32 +40,32 @@
  * </tr>
  * <tr>
  *   <th> -help </th>
- *   <td> Optional option to show this menu </td>
+ *   <td> Show this message </td>
  * </tr>
  * <tr>
- *   <th> -verbos </th>
- *   <td> Optional option to output message about what the tool is doing </td>
+ *   <th> -verbose </th>
+ *   <td> Optional output messages about what the tool is doing </td>
  * </tr>
  * <tr>
  *   <th> -nodesc</th>
- *   <td> Optional option to exclude error description in the generated file. Error description will
- *        not be included and sent to Etherios Device Cloud when error is encountered.
+ *   <td> Optional exclusion of error descriptions in the generated file. Error descriptions will
+ *        not be included and sent to Etherios Device Cloud when an error is encountered.
  *        This is used to reduce the code size.
  *   </td>
  * </tr>
  * <tr>
  *   <th> -vendor</th>
- *   <td> Optional option for vendor ID obtained from Etherios Device Cloud registration.
+ *   <td> Optional vendor ID obtained from Etherios Device Cloud registration.
  *        If not given, tool tries to retrieve it from Etherios Device Cloud.
  *   </td>
  * </tr>
  * <tr>
  *   <th> -path</th>
- *   <td> Optional option for directory path where the generated file will be created. </td>
+ *   <td> Optional directory path where the generated file will be created. </td>
  * </tr>
  * <tr>
- *   <th> -server</th>
- *   <td> Optional options for Etherios Device Cloud URL. Default is login.etherios.com </td>
+ *   <th> -url</th>
+ *   <td> Optional Etherios Device Cloud URL. Default is login.etherios.com </td>
  * </tr>
  * <tr>
  *   <th> username </th>
@@ -73,7 +73,7 @@
  * </tr>
  * <tr>
  *   <th> password </th>
- *   <td> Optional for password to log in Etherios Device Cloud.
+ *   <td> Optional password to log in Etherios Device Cloud.
  *        If it's not specified in the command line, you will be prompted for password.
  *   </td>
  * </tr>
@@ -128,7 +128,7 @@
  * <th>name</th>
  * <td> Label (no spaces) of the error.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_global_error_ prefix enumeration value for each error.
- *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to the server.
+ *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to Etherios Device Cloud.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
@@ -212,7 +212,7 @@
  * <th>name</th>
  * <td> Label (no spaces) of the error.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_\<group_name\>_error_ prefix enumeration value for each error.
- *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to the server.
+ *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to Etherios Device Cloud.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
