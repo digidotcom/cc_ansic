@@ -763,6 +763,7 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
 
 static connector_status_t data_service_put_request_init(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
+    connector_status_t status = connector_working;
     connector_session_error_t result = service_request->error_value;
     msg_session_t * const session = service_request->session;
     connector_request_data_service_send_t * send_ptr = (void *)service_request->have_data;
@@ -774,15 +775,15 @@ static connector_status_t data_service_put_request_init(connector_data_t * const
 
         if ((result != connector_session_error_none) || (session == NULL)) goto error;
 
-        result = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
-        if (result != connector_working)
+        status = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
+        if (status != connector_working)
             goto error;
 
         ds_ptr = ptr;
     }
     else
     {
-        result = connector_invalid_data;
+        status = connector_invalid_data;
         ASSERT_GOTO(connector_false, done);
     }
 
@@ -807,7 +808,7 @@ error:
     process_send_error(connector_ptr, service_request, send_ptr->user_context);
 
 done:
-    return connector_working;
+    return status;
 }
 
 static connector_status_t data_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
