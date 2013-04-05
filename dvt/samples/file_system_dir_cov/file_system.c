@@ -698,8 +698,8 @@ static struct
     { "dvt_fs_hash_abort",             1, no_cleanup, connector_request_id_file_system_hash, return_abort},
     { "dvt_fs_hash_unrecognized",      1, no_cleanup, connector_request_id_file_system_hash, return_unrecognized},
     { "dvt_fs_hash_retinvalid",        1, no_cleanup, connector_request_id_file_system_hash, return_invalid_code},
-    { "dvt_fs_hash_io_error",          1, no_cleanup, connector_request_id_file_system_hash, set_io_error},
-    { "dvt_fs_hash_io_error_no_errno", 1, no_cleanup, connector_request_id_file_system_hash, set_io_error_no_errno},
+    { "dvt_fs_hash_io_error",          2, no_cleanup, connector_request_id_file_system_hash, set_io_error},
+    { "dvt_fs_hash_io_error_no_errno", 2, no_cleanup, connector_request_id_file_system_hash, set_io_error_no_errno},
     { "dvt_fs_hash_busy",              1, no_cleanup, connector_request_id_file_system_hash, return_busy},
 
     { "dvt_fs_hash_file_abort",             1, do_cleanup, connector_request_id_file_system_hash, return_abort},
