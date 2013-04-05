@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2011, 2012, 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -25,8 +25,8 @@
 #include "connector_config.h"
 #include "connector_debug.h"
 
-#if !defined CONNECTOR_FILE_SYSTEM 
-#error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample" 
+#if !defined CONNECTOR_FILE_SYSTEM
+#error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample"
 #endif
 
 #if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
@@ -199,7 +199,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
     int ret;
 
     if (ctx == NULL)
-    {   
+    {
         ASSERT(0);
         goto error;
     }
@@ -317,7 +317,7 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
                 if (data->user_context == NULL)
                 {
                     data->user_context = app_allocate_md5_ctx(pstat->flags);
-                    if (data->user_context == NULL) 
+                    if (data->user_context == NULL)
                     {
                         status = app_process_file_error(&data->errnum, ENOMEM);
                     }
@@ -495,7 +495,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
-    int  origin; 
+    int  origin;
 
     switch(data->origin)
     {
@@ -520,7 +520,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
         status = app_process_file_error(&data->errnum, errno);
     }
 
-    APP_DEBUG("lseek fd %ld, offset %d, origin %d returned %d\n", 
+    APP_DEBUG("lseek fd %ld, offset %d, origin %d returned %d\n",
                 fd, data->requested_offset, data->origin, data->resulting_offset);
 
     return status;

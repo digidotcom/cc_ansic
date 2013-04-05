@@ -38,7 +38,7 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
     switch (request)
     {
     case connector_request_id_status_tcp:
-        status = app_tcp_status(request_data);
+        status = app_tcp_status(data);
         break;
     case connector_request_id_status_stop_completed:
         APP_DEBUG("app_status_handler connector_request_id_status_stop_completed\n");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -75,7 +75,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
     int ccode;
 
     ccode = read(*data->handle, data->buffer, data->bytes_available);
-    if (ccode > 0) 
+    if (ccode > 0)
     {
         data->bytes_used = (size_t)ccode;
     }
@@ -117,7 +117,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
     int ccode;
 
     ccode = write(*data->handle, data->buffer, data->bytes_available);
-    if (ccode >= 0) 
+    if (ccode >= 0)
     {
         data->bytes_used = (size_t)ccode;
     }
@@ -135,7 +135,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
             app_dns_cache_invalidate(connector_class_id_network_tcp);
         }
     }
-  
+
     return status;
 }
 

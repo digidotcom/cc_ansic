@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Digi International Inc.,
+ * Copyright (c) 2012, 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -283,18 +283,20 @@ static connector_callback_status_t app_process_device_request_response(connector
     connector_callback_status_t status = connector_callback_continue;
 
     device_request_handle_t * const device_request = reply_data->user_context;
-    size_t bytes_used = 0;
-    char const * buffer;
 
     if (device_request == NULL)
     {
         static char const no_memory_text[] = "No memory";
+        char * const buffer = (char *)no_memory_text;
 
-        /* no memory from target process */
-        buffer = no_memory_text;
-        bytes_used = sizeof no_memory_text -1;
+        reply_data->bytes_used = sizeof no_memory_text -1;
+        ASSERT(reply_data->bytes_used <= reply_data->bytes_available);
+
+        memcpy(reply_data->buffer, buffer, reply_data->bytes_used);
+        goto done;
     }
-    else if (device_request->length_in_bytes == 0)
+
+    if (device_request->length_in_bytes == 0)
     {
         static char const device_request_done[] = "Device request success";
         static char const device_request_unable_to_processed[] = "Device request unsupported";
@@ -351,7 +353,7 @@ static connector_callback_status_t app_process_device_request_response(connector
         device_request_active_count--;
         free(device_request);
     }
-
+done:
     return status;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2011, 2012, 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -251,7 +251,7 @@ typedef enum {
 
 /**
 * @defgroup connector_request_id_status_t  Cloud Connector status
-* status request IDs @{ 
+* status request IDs @{
 */
 /**
 * These request IDs are used by Cloud Connector to communicate its status change to the user.

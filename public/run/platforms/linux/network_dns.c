@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -28,7 +28,7 @@
 #if defined (CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP)
 
 #define APP_DNS_CACHE_TIMEOUT   (24 * 3600)
-#define APP_MAX_HOST_NAME   64    
+#define APP_MAX_HOST_NAME   64
 
 typedef struct
 {
