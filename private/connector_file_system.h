@@ -303,12 +303,19 @@ static connector_status_t fs_call_user(connector_data_t * const connector_ptr,
 
         case connector_callback_error:
             status = connector_working;
+            /* don't overwrite previous errno */
             if (context->errnum == NULL)
             {
                 if (data->errnum  != NULL)
+                {
+                    /* user returned errno */
                     context->errnum = data->errnum;
+                }
                 else
+                {
+                    /* user returned connector_callback_error without setting errno */
                     FsSetInternalError(context, fs_error_generic);
+                }
             }
             break;
     }
@@ -359,7 +366,7 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
 
     if (!FsOperationSuccess(status, context))
     {
-        FsSetState(context, fs_state_closed);
+        FsSetState(context, fs_state_closed);   /* never opened a directory*/
         goto done;
     }
 
@@ -490,8 +497,8 @@ static connector_status_t call_file_opendir_user(connector_data_t * const connec
                           connector_invalid_data);
         }
     }
-    if (FsGetState(context) != fs_state_open)
-        FsSetState(context, fs_state_closed);
+    if (FsGetState(context) != fs_state_open)   
+        FsSetState(context, fs_state_closed);   /* never opened a directory*/
 
 
 done:
@@ -554,8 +561,11 @@ static connector_status_t call_file_close_user(connector_data_t * const connecto
                           fs_request_id,
                           &data);
 
-    if (status != connector_pending)
-        FsSetState(context, fs_state_closed);
+    if (status == connector_pending)
+        goto done;
+
+    /* done with close, no matter if success or an error */
+    FsSetState(context, fs_state_closed);
 
 done:
     return status;
@@ -626,7 +636,7 @@ static connector_status_t call_file_open_user(connector_data_t * const connector
     }
 
     if (FsGetState(context) != fs_state_open)
-        FsSetState(context, fs_state_closed);
+        FsSetState(context, fs_state_closed);   /* never opened a file */
 
 done:
     return status;
@@ -900,8 +910,6 @@ static connector_status_t process_get_close(connector_data_t * const connector_p
 
     if (FsGetState(context) < fs_state_closed)
     {
-        msg_service_data_t * const service_data = service_request->need_data;
-
         status = call_file_close_user(connector_ptr,
                                       service_request,
                                       context,
@@ -913,31 +921,38 @@ static connector_status_t process_get_close(connector_data_t * const connector_p
                 context->errnum == NULL &&
                 service_data->length_in_bytes > 0)
             {
-                /* Return final data portion and set last when closing the file completes */
+                /* Return final data portion, will set last bit later
+                   when closing the file completes in the next callback */
                 status = connector_working;
             }
-        }
-        if (FsGetState(context) < fs_state_closed)
             goto done;
+        }
     }
+
+    /* finished closing file */
     if (context->status == connector_abort)
-    {
         status = connector_abort;
+
+    /* abort condition or messaging error and session will be canceled */
+    if (status == connector_abort || service_request->service_type == msg_service_type_error)
         goto done;
-    }
+
+    /* no errors, set last bit and send out last portion of data */
     if (context->errnum == NULL)
     {
-        MsgSetLastData(service_data->flags); /* finished closing file */
+        MsgSetLastData(service_data->flags); 
         goto done;
     }
+    /* errors */ 
     if (MsgIsStart(service_data->flags))
     {
+        /* send file system-level an error response if no data was sent yet, */
         if (format_file_error_msg(connector_ptr, service_request, context) == connector_abort)
            status = connector_abort;
     }
     else
     {
-        /* not 1st response - too late to send fyle system level error code */
+        /* or cancel the session, if it's late to send a file system level error response */
         fs_set_service_error(service_request, connector_session_error_cancel);
     }
 
@@ -1213,11 +1228,17 @@ static connector_status_t process_file_put_request(connector_data_t * const conn
         }
     }
 close_file:
-    status = call_file_close_user(connector_ptr, service_request, context, connector_request_id_file_system_close);
+    status = call_file_close_user(connector_ptr, 
+                                  service_request, 
+                                  context, 
+                                  connector_request_id_file_system_close);
+    
+    if (status == connector_pending)
+        goto done;
+
+    /* finished closing file */
     if (context->status == connector_abort)
-    {
         status = connector_abort;
-    }
 
 done:
     return status;
