@@ -22,6 +22,10 @@ expectError = True
 noCleanup = False
 doTruncate = True
 
+my_test_dir = "./dvt/cases/test_files/test_dir/"
+my_test_dir1 = "./dvt/cases/test_files/test_dir"
+my_test_file = "./dvt/cases/test_files/test_dir/fs_test1.txt"
+
 noFileRequest = \
             """<sci_request version="1.0">
               <file_system>
@@ -105,92 +109,93 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
 
     def test_fs01_stat1_abort(self):
         """ Tests abort conditions in 1st stat callback """
-        self.check_ls_abort("dvt_fs_stat1_abort", "./")
-        self.check_ls_abort("dvt_fs_stat1_retinvalid", "./")
+        self.check_ls_abort("dvt_fs_stat1_abort", my_test_dir)
+        self.check_ls_abort("dvt_fs_stat1_retinvalid", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs02_stat1_canceled(self):
         """ Tests canceled session in 1st stat callback """
-        self.check_ls_user_canceled("dvt_fs_stat1_unrecognized", "./")
+        self.check_ls_user_canceled("dvt_fs_stat1_unrecognized", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs03_stat1_errors(self):
         """ Tests errors returned session in 1st stat callback """
-        self.check_ls("dvt_fs_stat1_io_error", "./", expectError)
-        self.check_ls("dvt_fs_stat1_io_error_no_errno", "./", expectError)
+        self.check_ls("dvt_fs_stat1_io_error", my_test_dir, errorExpected = True)
+        self.check_ls("dvt_fs_stat1_io_error_no_errno", my_test_dir, expectError)
         self.log.info("Test success!")
 
     def test_fs04_stat1_busy(self):
         """ Tests connector_callback_busy return in file 1st stat callback """
-        self.check_ls("dvt_fs_stat1_busy", "./public")
+        self.check_ls("dvt_fs_stat1_busy", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs05_stat1_badhash(self):
         """ Tests flags set to 0 return in file 1st stat callback """
-        self.check_ls("dvt_fs_stat1_not_regdir", "./public/run/samples/file_system", False, "md5")
-        self.check_ls("dvt_fs_stat1_not_regdir", "./public/run/samples/file_system")
-        self.check_ls("dvt_fs_stat1_badhash", "./public/run/samples/file_system", False, "any")
+        self.check_ls("dvt_fs_stat1_not_regdir", my_test_file, False, "md5")
+        self.check_ls("dvt_fs_stat1_not_regdir", my_test_file)
+        self.check_ls("dvt_fs_stat1_badhash", my_test_dir, False, "any")
         self.log.info("Test success!")
   
     def test_fs06_opendir_abort(self):
         """ Tests connector_callback_abort return in opendir callback """
-        self.check_ls_abort("dvt_fs_opendir_abort", "./")
-        self.check_ls_abort("dvt_fs_opendir_retinvalid", "./")
-        self.check_ls_abort("dvt_fs_opendir_null_handle", "./")
+        self.check_ls_abort("dvt_fs_opendir_abort", my_test_dir)
+        self.check_ls_abort("dvt_fs_opendir_retinvalid", my_test_dir)
+        self.check_ls_abort("dvt_fs_opendir_null_handle", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs07_opendir_canceled(self):
         """ Tests canceled session in opendir callback """
-        self.check_ls_user_canceled("dvt_fs_opendir_unrecognized", "./")
+        self.check_ls_user_canceled("dvt_fs_opendir_unrecognized", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs08_opendir_errors(self):
         """ Tests errors returned session in opendir callback """
-        self.check_ls("dvt_fs_opendir_io_error", "./", expectError)
-        self.check_ls("dvt_fs_opendir_io_error_no_errno", "./", expectError)
+        self.check_ls("dvt_fs_opendir_io_error", my_test_dir, expectError)
+        self.check_ls("dvt_fs_opendir_io_error_no_errno", my_test_dir, expectError)
         self.log.info("Test success!")
 
     def test_fs09_opendir_busy(self):
         """ Tests connector_callback_busy return in opendir callback """
-        self.check_ls("dvt_fs_opendir_busy", "./public")
+        self.check_ls("dvt_fs_opendir_busy", my_test_dir)
+        self.check_ls("dvt_fs_opendir_busy", my_test_dir1)
         self.log.info("Test success!")
 
 
     def test_fs10_readdir_abort(self):
         """ Tests connector_callback_abort return in readdir callback """
-        self.check_ls_abort("dvt_fs_readdir_abort", "./")
-        self.check_ls_abort("dvt_fs_readdir_abort2", "./")
-        self.check_ls_abort("dvt_fs_readdir_retinvalid", "./")
-        self.check_ls_abort("dvt_fs_readdir_bad_datalength", "./")
+        self.check_ls_abort("dvt_fs_readdir_abort", my_test_dir)
+        self.check_ls_abort("dvt_fs_readdir_abort2", my_test_dir)
+        self.check_ls_abort("dvt_fs_readdir_retinvalid", my_test_dir)
+        self.check_ls_abort("dvt_fs_readdir_bad_datalength", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs11_readdir_canceled(self):
         """ Tests canceled session in readdir callback """
-        self.check_ls_user_canceled("dvt_fs_readdir_unrecognized", "./")
+        self.check_ls_user_canceled("dvt_fs_readdir_unrecognized", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs12_readdir_errors(self):
         """ Tests errors returned session in readdir callback """
-        self.check_ls("dvt_fs_readdir_io_error", "./", expectError)
-        self.check_ls("dvt_fs_readdir_io_error_no_errno", "./", expectError)
+        self.check_ls("dvt_fs_readdir_io_error", my_test_dir, expectError)
+        self.check_ls("dvt_fs_readdir_io_error_no_errno", my_test_dir, expectError)
         self.log.info("Test success!")
 
     def test_fs13_readdir_busy(self):
         """ Tests connector_callback_busy return in readdir callback """
-        self.check_ls("dvt_fs_readdir_busy", "./public")
-        self.check_ls("dvt_fs_readdir_busy2", "./public")
+        self.check_ls("dvt_fs_readdir_busy", my_test_dir)
+        self.check_ls("dvt_fs_readdir_busy2", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs13_readdir_zerodata(self):
         """ Tests empty data return in readdir callback """
-        self.check_ls("dvt_fs_readdir_zero_datalength", "./")
+        self.check_ls("dvt_fs_readdir_zero_datalength", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs14_readdir(self):
-        """ Tests positive ls cases for './', and single files """
-        self.verify_ls("./dvt/cases/build_tests", False, "any")
-        self.verify_ls("./dvt/cases/build_tests", False, "crc32")
-        self.verify_ls("./dvt/cases/build_tests", False, "md5")
+        """ Tests positive ls cases for and single files """
+        self.verify_ls(my_test_dir, False, "any")
+        self.verify_ls(my_test_dir, False, "crc32")
+        self.verify_ls(my_test_dir, False, "md5")
         self.check_put_file_response("./dvt_fs_any.test", False, 0, noCleanup)
         self.check_put_file_response("./dvt_fs_crc32.test", False, 0, noCleanup)
         self.check_put_file_response("./dvt_fs_md5.test", False, 0, noCleanup)
@@ -207,45 +212,45 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
 
     def test_fs20_stat2_abort(self):
         """ Tests abort conditions in stat callback inside directory """
-        self.check_ls_abort("dvt_fs_stat3_abort", "./")
-        self.check_ls_abort("dvt_fs_stat3_retinvalid", "./")
+        self.check_ls_abort("dvt_fs_stat3_abort", my_test_dir)
+        self.check_ls_abort("dvt_fs_stat3_retinvalid", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs21_stat2_canceled(self):
         """ Tests canceled session in stat callback inside directory """
-        self.check_ls_user_canceled("dvt_fs_stat3_unrecognized", "./")
-        self.check_ls_user_canceled("dvt_fs_stat3_io_error", "./")
-        self.check_ls_user_canceled("dvt_fs_stat3_io_error_no_errno", "./")
+        self.check_ls_user_canceled("dvt_fs_stat3_unrecognized", my_test_dir)
+        self.check_ls_user_canceled("dvt_fs_stat3_io_error", my_test_dir)
+        self.check_ls_user_canceled("dvt_fs_stat3_io_error_no_errno", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs22_stat2_errors(self):
         """ Tests errors returned session in 1st stat callback """
-        self.check_ls("dvt_fs_stat2_io_error", "./", expectError)
-        self.check_ls("dvt_fs_stat2_io_error_no_errno", "./", expectError)
+        self.check_ls("dvt_fs_stat2_io_error", my_test_dir, expectError)
+        self.check_ls("dvt_fs_stat2_io_error_no_errno", my_test_dir, expectError)
         self.log.info("Test success!")
 
 
     def test_fs23_stat2_busy(self):
         """ Tests connector_callback_busy return in stat callback inside directory """
-        self.check_ls("dvt_fs_stat3_busy", "./")
+        self.check_ls("dvt_fs_stat3_busy", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs30_hash_abort(self):
         """ Tests connector_callback_abort return in file hash callback """
-        self.check_ls_abort("dvt_fs_hash_abort", "./", "md5")
-        self.check_ls_abort("dvt_fs_hash_retinvalid", "./", "md5")
+        self.check_ls_abort("dvt_fs_hash_abort", my_test_dir, "md5")
+        self.check_ls_abort("dvt_fs_hash_retinvalid", my_test_dir, "md5")
         self.log.info("Test success!")
 
     def test_fs31_hash_canceled(self):
         """ Tests canceled session in file hash callback """
-        self.check_ls_user_canceled("dvt_fs_hash_unrecognized", "./", "md5")
-        self.check_ls_user_canceled("dvt_fs_hash_io_error", "./", "md5")
-        self.check_ls_user_canceled("dvt_fs_hash_io_error_no_errno", "./", "md5")
+        self.check_ls_user_canceled("dvt_fs_hash_unrecognized", my_test_dir, "md5")
+        self.check_ls_user_canceled("dvt_fs_hash_io_error", my_test_dir, "md5")
+        self.check_ls_user_canceled("dvt_fs_hash_io_error_no_errno", my_test_dir, "md5")
         self.log.info("Test success!")
 
     def test_fs32_hash_busy(self):
         """ Tests connector_callback_busy return in file hash callback """
-        self.check_ls("dvt_fs_hash_busy", "./dvt/cases/build_tests", False,  "md5")
+        self.check_ls("dvt_fs_hash_busy", my_test_dir, False,  "md5")
         self.log.info("Test success!")
 
 
@@ -294,21 +299,21 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
 
     def test_fs50_closedir_abort(self):
         """ Tests abort conditions in closedir callback """
-        self.check_ls_abort("dvt_fs_closedir_abort", "./public")
-        self.check_ls_abort("dvt_fs_closedir_retinvalid", "./public")
+        self.check_ls_abort("dvt_fs_closedir_abort", my_test_dir)
+        self.check_ls_abort("dvt_fs_closedir_retinvalid", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs51_closedir_canceled(self):
         """ Tests canceled sessions in closedir callback """
-        self.check_ls_user_canceled("dvt_fs_closedir_unrecognized", "./public")
-        self.check_ls_user_canceled("dvt_fs_closedir_io_error", "./public")
-        self.check_ls_user_canceled("dvt_fs_closedir_io_error_no_errno", "./public")
+        self.check_ls_user_canceled("dvt_fs_closedir_unrecognized", my_test_dir)
+        self.check_ls_user_canceled("dvt_fs_closedir_io_error", my_test_dir)
+        self.check_ls_user_canceled("dvt_fs_closedir_io_error_no_errno", my_test_dir)
         self.log.info("Test success!")
 
 
     def test_fs51_closedir_busy(self):
         """ Tests connector_callback_busy return in closedir callback """
-        self.check_ls("dvt_fs_closedir_busy", "./public")
+        self.check_ls("dvt_fs_closedir_busy", my_test_dir)
         self.log.info("Test success!")
 
     def test_fs60_rm_abort(self):
@@ -510,7 +515,6 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
         self.verify_file_request_abort(lsRequest)
 
     def check_ls_user_canceled(self, test_name, ls_path, hashAlgo="none"):
-        ls_path = "./"
         lsRequest = filelsRequest % (self.device_id, ls_path, hashAlgo)
 
         self.log.info("test %s, ls request:\"%s\", and hash:%s" % (test_name, ls_path, hashAlgo))
@@ -557,7 +561,7 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
             errorActual = True
             errorString = "Expected success, but got error"
 
-        #self.assertTrue(errorExpected == errorActual, "%s, response[%s]" %(errorString, response))
+        self.assertTrue(errorExpected == errorActual, "%s, response[%s]" %(errorString, response))
 
     def verify_device_response_text(self, response, text, errorString):
         # validate response?
