@@ -16,8 +16,19 @@
 #include "remote_config.h"
 #include "connector_debug.h"
 
+typedef connector_callback_status_t(* remote_group_cb_t) (connector_remote_config_t * const remote_config);
+typedef void (* remote_group_cancel_cb_t) (connector_remote_config_cancel_t * const remote_config);
+
+typedef struct remote_group_table {
+    remote_group_cb_t init_cb;
+    remote_group_cb_t set_cb;
+    remote_group_cb_t get_cb;
+    remote_group_cb_t end_cb;
+    remote_group_cancel_cb_t cancel_cb;
+} remote_group_table_t;
+
 typedef struct {
-    unsigned int group_table_id;
+    remote_group_table_t * group;
     void * group_context;
 } remote_group_session_t;
 

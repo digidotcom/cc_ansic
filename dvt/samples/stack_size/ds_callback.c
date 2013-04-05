@@ -126,6 +126,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             connector_data_service_send_data_t * const send_ptr = cb_data;
             ds_record_t * const user = send_ptr->user_context;
 
+            ASSERT(user != NULL);
             {
                 send_ptr->bytes_used = user->file_length_in_bytes - user->bytes_sent;
 
@@ -158,6 +159,8 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             ds_record_t * const user = resp_ptr->user_context;
             unsigned long current_time;
 
+            ASSERT(user != NULL);
+
             app_os_get_system_time(&current_time);
             APP_DEBUG("app_put_request_handler: (response) %s %p\n", user->file_path, (void *)user);
             APP_DEBUG("app_put_request_handler: (response) time initiate = %lu\n", user->initiate_time);
@@ -183,8 +186,9 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             connector_data_service_status_t * const error_ptr = cb_data;
             ds_record_t * const user = error_ptr->user_context;
 
-            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
             ASSERT(user != NULL);
+
+            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
             free(user);
             put_file_active_count--;
 
@@ -271,9 +275,6 @@ static connector_callback_status_t app_process_device_request_target(connector_d
             ds_buffer[i] = 0x41 + (rand() % 0x3B);
         first_time = false;
     }
-    device_request->response_data = ds_buffer;
-    device_request->length_in_bytes = DS_DATA_SIZE;
-    device_request->count = DEVICE_REPONSE_COUNT;
 
 done:
     return status;
@@ -288,11 +289,18 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
     ASSERT(device_request != NULL);
 
     device_request->length_in_bytes += receive_data->bytes_used;
-    APP_DEBUG("process_device_request: handle %p target = \"%s\" data length = %lu total length = %lu\n",
+    APP_DEBUG("app_process_device_request_data: handle %p target = \"%s\" data length = %lu total length = %lu\n",
                                  (void *)device_request,
                                  device_request->target,
                                  (unsigned long int)receive_data->bytes_used,
                                  (unsigned long int)device_request->length_in_bytes);
+
+    if (!receive_data->more_data)
+    {
+        device_request->response_data = ds_buffer;
+        device_request->length_in_bytes = DS_DATA_SIZE;
+        device_request->count = DEVICE_REPONSE_COUNT;
+    }
 
     return status;
 }
@@ -358,11 +366,11 @@ static connector_callback_status_t app_process_device_request_status(connector_d
         switch (status_data->status)
         {
         case connector_data_service_status_session_error:
-            APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
+            APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
                        (void *) device_request, status_data->session_error);
             break;
         default:
-            APP_DEBUG("app_process_device_request_error: handle %p error %d\n",
+            APP_DEBUG("app_process_device_request_status: handle %p error %d\n",
                         (void *)device_request, status_data->status);
             break;
         }

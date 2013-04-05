@@ -94,6 +94,8 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
         src_ptr = system_ptr->location;
         break;
     case connector_setting_system_description:
+        APP_DEBUG("description: %s\n", remote_config->element.value->string_value);
+
         if (strcmp(remote_config->element.value->string_value, "terminate") == 0)
         {
             connector_status_t action_status;
@@ -104,7 +106,9 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
                 status = connector_callback_abort;
             }
         }
+        ASSERT(system_ptr != NULL);
         src_ptr = system_ptr->description;
+        ASSERT(src_ptr != NULL);
         break;
     default:
         ASSERT(0);
@@ -126,6 +130,8 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
     remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
+    ASSERT(session_ptr != NULL);
+    ASSERT(system_ptr != NULL);
     if (remote_config->action == connector_remote_action_set)
     {
         /* save data */

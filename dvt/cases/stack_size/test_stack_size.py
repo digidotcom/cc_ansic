@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import xpath
 import time
 import ic_testcase
@@ -120,7 +121,7 @@ class StackSizeCase(ic_testcase.TestCase):
     def test_stacksize_a_with_ds(self):
         """ Sends device request. 
         """
-        self.log.info("**** Stack Size DVT:  Device request")
+        self.log.info("**** Stack Size DVT:  test_stacksize_a_with_ds")
         self.valid_target("ds_stacksize_test", 10)
         self.valid_target("put_ds_stacksize_test", 100)
 
@@ -128,7 +129,7 @@ class StackSizeCase(ic_testcase.TestCase):
     
         """ Sends query_setting. 
         """
-        self.log.info("**** Stack Size DVT:  RCI query_setting")
+        self.log.info("**** Stack Size DVT:  test_stacksize_b_with_rci_query_setting")
         # Get the current value
 
         rci_request = (RCI_QUERY_SETTING % self.device_id);
@@ -151,7 +152,7 @@ class StackSizeCase(ic_testcase.TestCase):
     
         """ Sends set_setting. 
         """
-        self.log.info("**** Stack Size DVT:  RCI set_setting")
+        self.log.info("**** Stack Size DVT:  test_stacksize_c_with_rci_set_setting")
         # Get the current value
 
         rci_request = (RCI_SET_SETTING % self.device_id);
@@ -181,7 +182,7 @@ class StackSizeCase(ic_testcase.TestCase):
         file_data = self.get_random_word(2048);
         put_data = base64.encodestring(file_data)[:-1]
 
-        self.log.info("**** Stack Size DVT: File System")
+        self.log.info("**** Stack Size DVT: test_stacksize_d_with_fs")
         self.log.info("Sending file put and file get commands for \"%s\" to server for device id  %s." % (my_file_path, self.device_id))
 
         request = (FILE_PUT_GET_REQUEST % (self.device_id, my_file_path, put_data, my_file_path))
@@ -230,7 +231,7 @@ class StackSizeCase(ic_testcase.TestCase):
     
         """ Sends a firmware update """
     
-        self.log.info("**** Stack Size DVT: Firmware Service")
+        self.log.info("**** Stack Size DVT: test_stacksize_z_with_fw")
 
         # Send firmware target query
         self.log.info("Sending firmware target query to %s." % self.device_id)
@@ -316,7 +317,7 @@ class StackSizeCase(ic_testcase.TestCase):
         #    return
 
         device_request_response = self.send_device_request(my_target_name, data_len)
-        #self.log.info("RESPONSE: %s " % device_request_response)
+        self.log.info("RESPONSE: %s " % device_request_response)
         if device_request_response.find('error id="2108"') != -1:
             self.log.info("Service not available.")
             return "no_service"

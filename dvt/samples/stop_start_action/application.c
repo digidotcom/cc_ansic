@@ -21,8 +21,9 @@ connector_close_status_t connector_close_status;
 char connector_close_status_text[100] = "\0";
 
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
+#if (defined APP_USE_SM)
 extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
-
+#endif
 #define enum_to_case(name)  case name:  result = #name;             break
 
 static char const * close_status_to_string(connector_close_status_t const value)
@@ -131,7 +132,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         status = app_status_handler(request_id.status_request, data);
         break;
 
-#if (defined CONNECT_SHORT_MESSAGE)
+#if (defined APP_USE_SM)
     case connector_class_id_short_message:
         status = app_sm_handler(request_id.sm_request, data);
         break;

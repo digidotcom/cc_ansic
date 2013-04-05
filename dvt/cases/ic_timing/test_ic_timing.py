@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import xpath
 import time
 import ic_testcase
@@ -270,7 +271,7 @@ class TimingTestCase(ic_testcase.TestCase):
             return
     
         # Encode firmware for transmittal
-        firmware_file = 'dvt/cases/test_files/firmware.a'
+        firmware_file = 'dvt/cases/test_files/firmware.bin'
         self.log.info("Target %d %s." % (fw_target_num, firmware_file))
  
         f = open(firmware_file, 'rb')

@@ -278,7 +278,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
     else
     {
         /* testing to return unrecognized status */
-        APP_DEBUG("process_device_request: unrecognized target = %s\n", target_info->target);
+        APP_DEBUG("process_device_request_target: unrecognized target = %s\n", target_info->target);
         status = connector_callback_error;
         goto done;
     }

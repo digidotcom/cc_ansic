@@ -18,17 +18,6 @@
 #error "Must define CONNECTOR_RCI_SERVICE in connector_config.h to run this sample"
 #endif
 
-typedef connector_callback_status_t(* remote_group_cb_t) (connector_remote_config_t * const remote_config);
-typedef void (* remote_group_cancel_cb_t) (connector_remote_config_cancel_t * const remote_config);
-
-typedef struct remote_group_table {
-    remote_group_cb_t init_cb;
-    remote_group_cb_t set_cb;
-    remote_group_cb_t get_cb;
-    remote_group_cb_t end_cb;
-    remote_group_cancel_cb_t cancel_cb;
-} remote_group_table_t;
-
 
 remote_group_table_t remote_setting_table[] = {
     {app_system_group_init,
@@ -52,6 +41,7 @@ remote_group_table_t remote_state_table[] = {
 
 static connector_callback_status_t app_process_session_start(connector_remote_config_t * const remote_config)
 {
+    connector_callback_status_t status = connector_callback_continue;
     void * ptr;
     remote_group_session_t * session_ptr;
 
@@ -65,11 +55,12 @@ static connector_callback_status_t app_process_session_start(connector_remote_co
     }
 
     session_ptr = ptr;
+    session_ptr->group = NULL;
     session_ptr->group_context = NULL;
 
 done:
     remote_config->user_context = ptr;
-    return connector_callback_continue;
+    return status;
 }
 
 static connector_callback_status_t app_process_session_end(connector_remote_config_t * const remote_config)
@@ -125,7 +116,8 @@ static remote_group_table_t * get_group_table(connector_remote_group_type_t grou
 static connector_callback_status_t app_process_group_start(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_table_t * group_ptr = get_group_table(remote_config->group.type, remote_config->group.id);
+    remote_group_table_t * const group_ptr = get_group_table(remote_config->group.type, remote_config->group.id);
+    remote_group_session_t * const session_ptr = remote_config->user_context;
 
     ASSERT(group_ptr != NULL);
 
@@ -133,6 +125,7 @@ static connector_callback_status_t app_process_group_start(connector_remote_conf
     {
         status = group_ptr->init_cb(remote_config);
     }
+    session_ptr->group = group_ptr;
 
     return status;
 }
@@ -140,7 +133,8 @@ static connector_callback_status_t app_process_group_start(connector_remote_conf
 static connector_callback_status_t app_process_group_process(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_table_t * group_ptr = get_group_table(remote_config->group.type, remote_config->group.id);
+    remote_group_session_t * const session_ptr = remote_config->user_context;
+    remote_group_table_t * const group_ptr = session_ptr->group;
     remote_group_cb_t callback;
 
     ASSERT(group_ptr != NULL);
@@ -157,7 +151,8 @@ static connector_callback_status_t app_process_group_process(connector_remote_co
 static connector_callback_status_t app_process_group_end(connector_remote_config_t * const remote_config)
     {
     connector_callback_status_t status = connector_callback_continue;
-    remote_group_table_t * group_ptr = get_group_table(remote_config->group.type, remote_config->group.id);
+    remote_group_session_t * const session_ptr = remote_config->user_context;
+    remote_group_table_t * const group_ptr = session_ptr->group;
 
     ASSERT(group_ptr != NULL);
 
@@ -178,9 +173,9 @@ static connector_callback_status_t app_process_session_cancel(connector_remote_c
     if (session_ptr != NULL)
     {
         remote_group_table_t * const group_ptr = session_ptr->group_context;
-        remote_group_cancel_cb_t callback = group_ptr->cancel_cb;
 
-        callback(remote_config);
+        if (group_ptr != NULL && group_ptr->cancel_cb != NULL)
+            group_ptr->cancel_cb(remote_config);
         free(session_ptr);
     }
     return status;

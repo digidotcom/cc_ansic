@@ -14,6 +14,7 @@
 #include "platform.h"
 #include "application.h"
 
+#if (defined APP_USE_SM)
 connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data)
 {
 #if (defined APP_USE_SM)
@@ -117,3 +118,5 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
 
     return status;
 }
+#endif
+

@@ -821,17 +821,21 @@ done:
 static connector_status_t data_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_idle;
-    msg_session_t * const session = service_request->session;
-    data_service_context_t * const ds_ptr = session->service_context;
+    msg_session_t * session;
+    data_service_context_t * ds_ptr;
 
     ASSERT_GOTO(connector_ptr != NULL, done);
     ASSERT_GOTO(service_request != NULL, done);
 
-    if (service_request->service_type == msg_service_type_pending_request)
+    session = service_request->session;
+
+    if (service_request->service_type == msg_service_type_pending_request || session == NULL)
     {
         status = data_service_put_request_init(connector_ptr, service_request);
         goto done;
     }
+
+    ds_ptr = session->service_context;
 
     if (ds_ptr == NULL)
     {

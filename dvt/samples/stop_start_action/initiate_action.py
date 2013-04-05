@@ -55,7 +55,7 @@ def PostMessage(username, password, device_id, target, data):
     print "content size %d" % len(content);
 
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("devdev.idigi.com",80)
+    webservice = httplib.HTTP("test.etherios.com",80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header
