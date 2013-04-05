@@ -15,10 +15,8 @@ test_table = [
               "connector_request_id_config_connection_type,connector_invalid_data_range,connector_init failed\n",
 
               "connector_request_id_config_mac_addr,connector_invalid_data,connector_run thread terminated\n",
-              "connector_request_id_config_mac_addr,connector_invalid_data_size,connector_run thread terminated\n",
 
               "connector_request_id_config_vendor_id,connector_invalid_data_range,connector_init failed\n",
-              "connector_request_id_config_vendor_id,connector_invalid_data_size,connector_init failed\n",
 
               "connector_request_id_config_device_type,connector_invalid_data,connector_init failed\n",
               "connector_request_id_config_device_type,connector_invalid_data_size,connector_init failed\n",
@@ -40,23 +38,16 @@ test_table = [
 
               "connector_request_id_config_data_service,connector_invalid_data_range,connector_init failed\n",
 
-              "connector_request_id_config_max_transaction,connector_invalid_data_range,connector_run thread terminated\n",
-
               "connector_request_id_config_wan_type,connector_invalid_data_range,connector_init failed\n",
 
               "connector_request_id_config_imei_number,connector_invalid_data,connector_init failed\n",
-              "connector_request_id_config_imei_number,connector_invalid_data_size,connector_init failed\n",
-              
-              "connector_request_id_config_link_speed,connector_invalid_data_size,connector_init failed\n",
               
               "connector_request_id_config_phone_number,connector_invalid_data,connector_init failed\n",
               "connector_request_id_config_phone_number,connector_invalid_data_size,connector_init failed\n",
               
               "connector_request_id_config_esn,connector_invalid_data,connector_init failed\n",
-              "connector_request_id_config_esn,connector_invalid_data_size,connector_init failed\n",
               
               "connector_request_id_config_meid,connector_invalid_data,connector_init failed\n",
-              "connector_request_id_config_meid,connector_invalid_data_size,connector_init failed\n",
               
               "connector_request_id_config_password,connector_invalid_data,connector_init failed\n"
 
@@ -106,8 +97,8 @@ class ResponseToBadValuesDvtTestCase(ic_testcase.TestCase):
                         else:
                             test_case_count[index] = 1
                             test_count += 1
-                            is_found =True
-                            break
+                        is_found =True
+                        break
                     index += 1
 
                 if is_found == False:

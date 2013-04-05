@@ -25,6 +25,11 @@ static char const * close_status_to_string(connector_close_status_t const value)
         enum_to_case(connector_close_status_no_keepalive);
         enum_to_case(connector_close_status_abort);
         enum_to_case(connector_close_status_device_error);
+
+        default:
+        {
+            connector_debug_printf("Unknown close status %d\n", value);
+        }
     }
     return result;
 }

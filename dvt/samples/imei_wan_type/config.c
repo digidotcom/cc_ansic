@@ -187,7 +187,7 @@ static connector_callback_status_t app_get_connection_type(connector_config_conn
 #error "Specify LAN or WAN connection type"
 
     /* Return pointer to connection type */
-    config_connection->type = connector_connection_type_lan;
+    config_connection->type = connector_connection_type_wan;
 
     return connector_callback_continue;
 }
@@ -210,7 +210,7 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
     /*
      * Return pointer to phone number for WAN connection type.
      */
-    static char const phone_number[] ="000-000-0000";
+    static char const phone_number[] ="800-647-1234";
 
     config_phone_number->string = (char *)phone_number;
     config_phone_number->length = sizeof phone_number -1;

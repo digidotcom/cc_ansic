@@ -48,8 +48,8 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
     unsigned int    i;
     static struct in_addr  ip_addr; /* Used to store the IP address */
 
-/* Remove this //#error statement once you modify this routine to return the correct IP address */
-//#error "Specify device IP address. Set size to 4 (bytes) for IPv4 or 16 (bytes) for IPv6"
+/* Remove this #error statement once you modify this routine to return the correct IP address */
+#error "Specify device IP address. Set size to 4 (bytes) for IPv4 or 16 (bytes) for IPv6"
 
 
     APP_DEBUG("Entering app_get_ip_address\n");
@@ -117,7 +117,7 @@ static uint8_t device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00,
 
 static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
-//#error "Specify device MAC address for LAN connection"
+#error "Specify device MAC address for LAN connection"
 
     APP_DEBUG("entering app_get_mac_addr\n");
 
@@ -132,11 +132,8 @@ static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
 
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    connector_config_pointer_data_t mac_addr;
 
-//#error  "Specify device id"
-
-    static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
+#error  "Specify device id"
 
     device_id[8] = device_mac_addr[0];
     device_id[9] = device_mac_addr[1];
@@ -154,7 +151,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 
 static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
 {
-//#error  "Specify vendor id"
+#error  "Specify vendor id"
 
     static uint32_t const device_vendor_id = 0x00000000;
 
@@ -165,7 +162,7 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
 
 static connector_callback_status_t app_get_device_type(connector_config_pointer_string_t * const config_device_type)
 {
-//#error "Specify device type"
+#error "Specify device type"
     static char const device_type[] = "Linux Application";
 
     /* Return pointer to device type. */
@@ -1020,16 +1017,16 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     return status;
 }
 
-static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-
 void write_python_result_file(char *file_buffer)
 {
     FILE * fp = NULL;
+    connector_config_pointer_data_t id;
+
+    app_get_device_id(&id);
 
     snprintf(filename, sizeof(filename), "%02X%02X%02X%02X-%02X%02X%02X%02X-%02X%02X%02X%02X-%02X%02X%02X%02X.txt",
-             device_mac_addr[0], device_mac_addr[1], device_mac_addr[2], device_mac_addr[3], device_mac_addr[4], device_mac_addr[5], device_mac_addr[6], device_mac_addr[7],
-             device_mac_addr[8], device_mac_addr[9], device_mac_addr[10], device_mac_addr[11], device_mac_addr[12], device_mac_addr[13], device_mac_addr[14], device_mac_addr[15]);
+            id.data[0], id.data[1], id.data[2], id.data[3], id.data[4], id.data[5], id.data[6], id.data[7],
+            id.data[8], id.data[9], id.data[10], id.data[11], id.data[12], id.data[13], id.data[14], id.data[15]);
     fp = fopen(filename, "a");
 
     if (fp == NULL)

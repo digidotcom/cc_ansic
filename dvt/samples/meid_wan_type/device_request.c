@@ -361,9 +361,7 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
     device_request_handle_t * const device_request = status_data->user_context;
 
-    ASSERT(device_request != NULL);
-
-    if (device_reqeust != NULL)
+    if (device_request != NULL)
     {
         switch (status_data->status)
         {

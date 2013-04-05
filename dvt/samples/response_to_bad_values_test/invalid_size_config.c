@@ -50,22 +50,16 @@ connector_callback_status_t app_get_invalid_size_ip_address(connector_config_ip_
 /* MAC address used in this sample */
 static connector_callback_status_t app_get_invalid_size_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
-    static uint8_t invalid_size_mac_addr;
 
-    APP_DEBUG("entering app_get_invalid_size_mac_addr\n");
-
-    config_mac->data = &invalid_size_mac_addr;
-    config_mac->bytes_required = sizeof invalid_size_mac_addr;
+    config_mac->data = NULL;
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_get_invalid_size_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    static uint8_t invalid_size_device_id;
 
-    config_device_id->data   = &invalid_size_device_id;
-    config_device_id->bytes_required = sizeof invalid_size_device_id;
+    config_device_id->data   = NULL;
 
     return connector_callback_continue;
 }
@@ -201,12 +195,8 @@ static connector_callback_status_t app_get_invalid_size_device_id_method(connect
 
 static connector_callback_status_t app_get_invalid_size_imei_number(connector_config_pointer_data_t * const config_imei)
 {
-#define APP_INVALID_SIZE_IMEI_LENGTH   4 /* 8 is right size */
 
-    static uint8_t invalid_size_imei_number[APP_INVALID_SIZE_IMEI_LENGTH];
-
-    config_imei->data = invalid_size_imei_number;
-    config_imei->bytes_required = 0;
+    config_imei->data = NULL;
 
 
     return connector_callback_continue;
@@ -232,23 +222,16 @@ static connector_callback_status_t app_get_invalid_size_wan_type(connector_confi
 
 static connector_callback_status_t app_get_invalid_size_esn(connector_config_pointer_data_t * const config_esn)
 {
-#define APP_INVALID_SIZE_ESN_HEX_LENGTH 2
 
-    static uint8_t invalid_size_esn[APP_INVALID_SIZE_ESN_HEX_LENGTH];
-
-    config_esn->data = invalid_size_esn;
-    config_esn->bytes_required = 0;
+    config_esn->data = NULL;
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_get_invalid_size_meid(connector_config_pointer_data_t * const config_meid)
 {
-#define APP_INVALID_SIZE_MEID_HEX_LENGTH 4
-    static uint8_t invalid_size_meid[APP_INVALID_SIZE_MEID_HEX_LENGTH];
 
-    config_meid->data = invalid_size_meid;
-    config_meid->bytes_required = 0;
+    config_meid->data = NULL;
 
     return connector_callback_continue;
 }
