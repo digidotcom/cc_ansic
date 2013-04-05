@@ -518,34 +518,28 @@ done:
 }
 #endif
 
-static connector_status_t sm_pass_target_info(connector_data_t * const connector_ptr, connector_sm_session_t * const session, char * const target_ptr, size_t * bytes_processed)
+static connector_status_t sm_pass_target_info(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * const target_ptr, size_t target_bytes)
 {
+    #define SM_TARGET_MAX_LENGTH    32
     connector_status_t result = connector_working;
-    size_t const target_bytes = 0x1F & *target_ptr;
-    size_t const length_field_bytes = 1;
+    connector_callback_status_t callback_status;
+    connector_request_id_t request_id;
+    connector_data_service_receive_target_t cb_data;
+    char target_name[SM_TARGET_MAX_LENGTH];
 
+    cb_data.transport = session->transport;
+    cb_data.user_context = session->user.context;
     if (target_bytes > 0)
-    {
-        #define SM_TARGET_MAX_LENGTH    32
-        connector_callback_status_t callback_status;
-        connector_request_id_t request_id;
-        connector_data_service_receive_target_t cb_data;
-        char target_name[SM_TARGET_MAX_LENGTH];
+        memcpy(target_name, target_ptr, target_bytes);
+    target_name[target_bytes] = '\0';
+    cb_data.target = target_name;
+    cb_data.response_required = SmIsResponseNeeded(session->flags);
 
-        cb_data.transport = session->transport;
-        cb_data.user_context = session->user.context;
-        memcpy(target_name, target_ptr + length_field_bytes, target_bytes);
-        target_name[target_bytes] = '\0';
-        cb_data.target = target_name;
-        cb_data.response_required = SmIsResponseNeeded(session->flags);
+    request_id.data_service_request = connector_request_id_data_service_receive_target;
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+    result = sm_map_callback_status_to_connector_status(callback_status);
+    session->user.context = cb_data.user_context;
 
-        request_id.data_service_request = connector_request_id_data_service_receive_target;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
-        result = sm_map_callback_status_to_connector_status(callback_status);
-        session->user.context = cb_data.user_context;
-    }
-
-    *bytes_processed = target_bytes + length_field_bytes;
     return result;
 }
 
@@ -558,9 +552,12 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
     if (session->error == connector_session_error_no_service)
         goto done;
 
-    if ((session->command == connector_sm_cmd_data) && (session->bytes_processed == 0))
+    if (session->bytes_processed == 0)
     {
-        status = sm_pass_target_info(connector_ptr, session, payload, &target_length);
+        if (session->command == connector_sm_cmd_data)
+            target_length = 0x1F & *data_ptr++;
+
+        status = sm_pass_target_info(connector_ptr, session, data_ptr, target_length);
         if (status != connector_working)
             goto error;
     }

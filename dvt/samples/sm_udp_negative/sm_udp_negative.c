@@ -69,6 +69,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     static char const file_path[] = "test/sm_udp_neg.txt";
     static client_data_t app_data[CONNECTOR_SM_MAX_SESSIONS];
     static size_t test_cases = 0;
+    static connector_bool_t response_needed = connector_true;
     client_data_t * const app_ptr = &app_data[test_cases % CONNECTOR_SM_MAX_SESSIONS];
     connector_request_data_service_send_t * header_ptr = &app_ptr->header;
 
@@ -76,7 +77,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     app_ptr->bytes = strlen(buffer);
     header_ptr->transport = connector_transport_udp;
     header_ptr->option = connector_data_service_send_option_overwrite;
-    header_ptr->response_required = header_ptr->response_required ? connector_false : connector_true;
+    header_ptr->response_required = response_needed;
     header_ptr->path = (test_cases % 3) ? NULL : file_path;
     header_ptr->user_context = app_ptr; /* will be returned in all subsequent callbacks */
 
@@ -104,6 +105,7 @@ connector_status_t app_send_data(connector_handle_t handle)
             } while (status == connector_service_busy);
         }
 
+        response_needed = response_needed ? connector_false : connector_true;
         test_cases++;
     }
 

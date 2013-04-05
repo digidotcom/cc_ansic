@@ -101,17 +101,6 @@ connector_status_t app_send_data(connector_handle_t handle)
     header.transport = connector_transport_udp;
     if (response_needed)
     {
-        if (app_waiting_for_data_complete)
-        {
-            APP_DEBUG("ERROR: No complete callback for data.\n");
-            status = connector_exceed_timeout;
-            goto error;
-        }
-
-        app_waiting_for_data_complete = 1;
-    }
-    else
-    {
         if (app_waiting_for_data_response)
         {
             app_data_time_remaining--;
@@ -129,6 +118,17 @@ connector_status_t app_send_data(connector_handle_t handle)
 
         app_data_time_remaining = APP_MAX_TIMEOUT;
         app_waiting_for_data_response = 1;
+    }
+    else
+    {
+        if (app_waiting_for_data_complete)
+        {
+            APP_DEBUG("ERROR: No complete callback for data.\n");
+            status = connector_exceed_timeout;
+            goto error;
+        }
+
+        app_waiting_for_data_complete = 1;
     }
 
     header.user_context = &app_data; /* will be returned in all subsequent callbacks */
@@ -230,6 +230,8 @@ static connector_callback_status_t app_handle_put_request(connector_request_id_d
             connector_data_service_status_t * const status_ptr = cb_data;
 
             APP_DEBUG("Put request status: %d\n", status_ptr->status);
+            if (status_ptr->status == connector_data_service_status_complete)
+                app_waiting_for_data_complete = 0;
 
             break;
         }
