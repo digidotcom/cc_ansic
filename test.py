@@ -102,9 +102,6 @@ dvt_tests = {
                                      'test_put_request.py',
                                      'test_reboot.py',
                                      'test_disconnect.py',),
-
-#    'fs_os_abort'                 : ('test_fs_os_abort.py',
-#                                     'test_debug_fs_os_abort.py',),
     'file_system_cov'             : ('test_fs_cov.py',),
     'file_system_dir_cov'         : ('test_fs_dir_cov.py',),
     'file_system'                 : ('test_fs_positive.py',
