@@ -178,7 +178,7 @@ static connector_callback_status_t app_process_file_session_error(connector_file
 {
      APP_DEBUG("Session Error %d\n", data->session_error);
 
-    // All application resources, used in the session, must be released in this callback
+    /* All application resources, used in the session, must be released in this callback */
     if (data->user_context != NULL)
     {
         app_md5_ctx * ctx = data->user_context;
