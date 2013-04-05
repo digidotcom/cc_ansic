@@ -21,11 +21,8 @@
 char * sm_dvt_random_buffer = NULL;
 size_t sm_dvt_buffer_size = 0;
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void * const data);
-
-extern connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
-                                                  void * const data);
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
+extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
 
 extern connector_status_t app_send_ping(connector_handle_t handle);
 extern connector_status_t app_send_data(connector_handle_t handle);

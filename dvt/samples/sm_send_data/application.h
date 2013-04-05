@@ -30,13 +30,8 @@ typedef int app_bool_t;
 #error Please define APP_USE_SM_UDP or APP_USE_SM_SMS
 #endif
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
-
-extern connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
+extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
 
 extern connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t response_needed);
 extern connector_status_t app_send_ping(connector_handle_t handle);

@@ -20,11 +20,8 @@ char terminate_file_content[100] = "\0";
 connector_close_status_t connector_close_status;
 char connector_close_status_text[100] = "\0";
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void * const data);
-
-extern connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
-                                       void * const data);
+extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
+extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
 
 #define enum_to_case(name)  case name:  result = #name;             break
 

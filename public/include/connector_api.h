@@ -269,26 +269,6 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_sm_request_t Short message specific request IDs
-* @{
-*/
-/**
-* Short message related callbacks will use these request IDs. The class ID associated with these request ID is
-* connector_class_id_short_message and supported transport methods under this class are SMS and UDP.
-*/
-typedef enum {
-    connector_sm_cli_request,     /**< Indicates CLI request is received from Etherios Device Cloud. Also used to get the CLI response from the user */
-    connector_sm_server_to_device_config,  /**< Used when device receives a server to device config request from iDigi Device Cloud. Used only if the transport method is SMS */
-    connector_sm_device_to_server_config,  /**< Used when device receives a device to server config response from iDigi Device Cloud. Used only if the transport method is SMS */
-    connector_sm_more_data,       /**< More data is available on the server. Applicable only if UDP transport method is used.
-                                   User must use new request (can be ping) to pull the pending messages from iDigi Device Cloud. */
-    connector_sm_opaque_response    /**< iDigi Connector uses this to provide the cloud response for which there is no associated request. */
-} connector_sm_request_t;
-/**
-* @}
-*/
-
-/**
 * @defgroup connector_initiate_request_t Initiate action enumeration
 * @{
 */

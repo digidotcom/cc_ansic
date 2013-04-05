@@ -712,7 +712,7 @@ static char const * app_status_class_to_string(connector_request_id_status_t con
 }
 
 #if (defined CONNECTOR_SHORT_MESSAGE)
-static char const * app_sm_class_to_string(connector_sm_request_t const value)
+static char const * app_sm_class_to_string(connector_request_id_sm_t const value)
 {
     char const * result = NULL;
     switch (value)

@@ -42,17 +42,9 @@ typedef int app_bool_t;
 #define APP_TRANSPORT connector_transport_sms
 #endif
 
-extern connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
-
-extern connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
-
-extern connector_callback_status_t app_status_handler(connector_status_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
+extern connector_callback_status_t app_data_service_handler(connector_data_service_request_t const request, void * const data);
+extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
+extern connector_callback_status_t app_status_handler(connector_status_request_t const request, void * const data);
 
 extern connector_status_t app_send_dia_data(connector_handle_t handle);
 extern connector_status_t app_send_ping(connector_handle_t handle);

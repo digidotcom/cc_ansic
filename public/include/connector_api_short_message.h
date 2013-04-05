@@ -14,7 +14,7 @@
 #define CONNECTOR_API_SHORT_MESSAGE_H
 
 /**
-* @defgroup connector_sm_request_t Short message specific request IDs
+* @defgroup connector_request_id_sm_t Short message specific request IDs
 * @{
 */
 /**

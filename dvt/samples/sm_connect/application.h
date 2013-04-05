@@ -18,14 +18,8 @@ typedef int app_bool_t;
 
 extern app_bool_t app_ping_pending;
 
-extern connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
-
-extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length);
-
+extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request, void * const data);
 extern connector_status_t app_send_ping(connector_handle_t handle);
 
 #endif

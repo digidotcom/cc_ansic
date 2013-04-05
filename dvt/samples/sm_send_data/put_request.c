@@ -231,9 +231,7 @@ done:
     return status;
 }
 
-connector_callback_status_t app_sm_handler(connector_sm_request_t const request,
-                                       void const * const request_data, size_t const request_length,
-                                       void * response_data, size_t * const response_length)
+connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const request_data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
