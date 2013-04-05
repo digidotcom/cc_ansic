@@ -353,7 +353,7 @@ static void sm_init_network_packet(connector_sm_packet_t * const packet, void * 
 
 static connector_status_t sm_open_transport(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
-    connector_status_t result = connector_open_error;
+    connector_status_t result;
 
     {
         connector_callback_status_t status;
@@ -364,8 +364,30 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
         open_data.handle = NULL;
 
         request_id.network_request = connector_request_id_network_open;
-        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data);
-        if (status != connector_callback_continue) goto error;
+        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
+        switch (status)
+        {
+            case connector_callback_continue:
+                result = connector_working;
+                sm_ptr->network.handle = open_data.handle;
+                break;
+
+            case  connector_callback_abort:
+                result = connector_abort;
+                goto error;
+
+            case connector_callback_unrecognized:
+                result = connector_unavailable;
+                goto error;
+
+            case connector_callback_error:
+                result = connector_open_error;
+                goto error;
+
+            case connector_callback_busy:
+                result = connector_pending;
+                goto error;
+        }
     }
 
     {
@@ -406,7 +428,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
 
         connector_debug_printf("sm_close_transport: status %d\n", sm_ptr->close.status);
         request_id.network_request = connector_request_id_network_close;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data);
+        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
         switch (callback_status)
         {
             case connector_callback_busy:
