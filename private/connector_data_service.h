@@ -395,13 +395,13 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
 
     msg_session_t * const session = service_request->session;
     data_service_context_t * const data_service = session->service_context;
+    connector_data_service_status_t device_request;
+
 
     /* Done with the request (response has been returned).
      * So do not call the callback.
      */
     if (data_service->dp_request) goto done;
-
-    connector_data_service_status_t device_request;
 
     device_request.transport = connector_transport_tcp;
     device_request.user_context = data_service->callback_context;
