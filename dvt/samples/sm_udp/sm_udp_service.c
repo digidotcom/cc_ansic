@@ -252,7 +252,6 @@ static connector_callback_status_t app_handle_put_request(connector_request_id_d
     return status;
 }
 
-
 static connector_callback_status_t app_handle_device_request(connector_request_id_data_service_t const request_id, void * const cb_data)
 {
     connector_callback_status_t status = connector_callback_continue;

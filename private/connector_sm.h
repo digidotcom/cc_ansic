@@ -46,7 +46,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     connector_status_t result = connector_init_error;
     connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, transport);
     connector_request_id_config_t request;
-    connector_callback_status_t status;
 
     ASSERT_GOTO(sm_ptr != NULL, error);
     switch (transport)
@@ -79,6 +78,9 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
+        {
+            connector_callback_status_t status;
+
             request_id.config_request = connector_request_id_config_sms_service_id;
             status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &sm_ptr->transport.id);
             ASSERT_GOTO(status == connector_callback_continue, error);
@@ -92,6 +94,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                 sm_ptr->transport.ms_mtu = sm_ptr->transport.mtu - preamble_bytes;
             }
             break;
+        }
         #endif
 
         default:
@@ -129,8 +132,8 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     {
         connector_config_connect_type_t config_connect;
 
-        status = get_config_connect_status(connector_ptr, request, &config_connect);
-        ASSERT_GOTO(status == connector_callback_continue, error);
+        result = get_config_connect_status(connector_ptr, request, &config_connect);
+        ASSERT_GOTO(result == connector_working, error);
 
         sm_ptr->transport.connect_type = config_connect.type;
     }
