@@ -67,17 +67,23 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         status = app_network_tcp_handler(request_id.network_request, data);
         break;
 
+#if (defined CONNECTOR_DATA_SERVICE)
     case connector_class_id_data_service:
         status = app_data_service_handler(request_id.data_service_request, data);
         break;
+#endif
 
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
     case connector_class_id_firmware:
         status = app_firmware_handler(request_id.firmware_request, data);
         break;
+#endif
 
+#if (defined CONNECTOR_FILE_SYSTEM)
     case connector_class_id_file_system:
         status = app_file_system_handler(request_id.file_system_request, data);
         break;
+#endif
 
     case connector_class_id_status:
         status = app_status_handler(request_id.status_request, data);

@@ -19,9 +19,9 @@
 #include "platform.h"
 #include "application.h"
 
-#if !(defined CONNECTOR_FIRMWARE_SERVICE)
-#error "Please define CONNECTOR_FIRMWARE_SERVICE in connector_config.h to run this sample"
-#endif
+int firmware_download_started = 0;
+
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
 
 typedef struct {
     connector_firmware_version_t    version;
@@ -38,7 +38,6 @@ static firmware_list_t firmware_list[] = {
 };
 
 static size_t const firmware_list_count = asizeof(firmware_list);
-int firmware_download_started = 0;
 static size_t total_image_size = 0;
 
 static connector_callback_status_t app_firmware_target_count(connector_firmware_count_t * const target_info)
@@ -198,3 +197,4 @@ connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t
     return status;
 }
 
+#endif /* (defined CONNECTOR_FIRMWARE_SERVICE) */

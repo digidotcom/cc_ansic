@@ -27,9 +27,7 @@
 #include "application.h"
 
 
-#if !defined CONNECTOR_FILE_SYSTEM 
-#error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample" 
-#endif
+#if (defined CONNECTOR_FILE_SYSTEM)
 
 #if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
 #error The maximum supported CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH is 460
@@ -201,7 +199,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
     int ret;
 
     if (ctx == NULL)
-    {   
+    {
         ASSERT(0);
         goto error;
     }
@@ -319,7 +317,7 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
                 if (data->user_context == NULL)
                 {
                     data->user_context = app_allocate_md5_ctx(pstat->flags);
-                    if (data->user_context == NULL) 
+                    if (data->user_context == NULL)
                     {
                         status = app_process_file_error(&data->errnum, ENOMEM);
                     }
@@ -488,17 +486,17 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     else
     {
         int const oflag = app_convert_file_open_mode(data->oflag);
-    
+
         /* 0664 = read,write owner + read,write group + read others */
         long int const fd = open(data->path, oflag, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
-    
+
         if (fd < 0)
         {
             status = app_process_file_error(&data->errnum, errno);
         }
-    
+
         APP_DEBUG("Open %s, %d, returned %ld\n", data->path, oflag, fd);
-    
+
         data->handle = (void *) fd;
     }
 
@@ -510,7 +508,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
-    int  origin; 
+    int  origin;
 
     switch(data->origin)
     {
@@ -535,7 +533,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
         status = app_process_file_error(&data->errnum, errno);
     }
 
-    APP_DEBUG("lseek fd %ld, offset %d, origin %d returned %d\n", 
+    APP_DEBUG("lseek fd %ld, offset %d, origin %d returned %d\n",
                 fd, data->requested_offset, data->origin, data->resulting_offset);
 
     return status;
@@ -711,3 +709,4 @@ connector_callback_status_t app_file_system_handler(connector_request_id_file_sy
     return status;
 }
 
+#endif /* (defined CONNECTOR_FILE_SYSTEM) */

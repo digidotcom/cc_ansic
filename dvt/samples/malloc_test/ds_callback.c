@@ -15,9 +15,9 @@
 #include "platform.h"
 #include "application.h"
 
-#if !(defined CONNECTOR_DATA_SERVICE)
-#error "Please define CONNECTOR_DATA_SERVICE in connector_config.h to run this sample"
-#endif
+unsigned int put_file_active_count = 0;
+
+#if (defined CONNECTOR_DATA_SERVICE)
 
 #define INITIAL_WAIT_COUNT      4
 
@@ -36,7 +36,6 @@ typedef struct
     int index;
 } ds_record_t;
 
-unsigned int put_file_active_count = 0;
 static bool first_time = true;
 
 size_t put_request_size = 0;
@@ -464,3 +463,4 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
     return status;
 }
 
+#endif /* (defined CONNECTOR_DATA_SERVICE) */
