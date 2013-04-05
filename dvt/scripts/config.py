@@ -113,8 +113,8 @@ def update_connector_config_c(src_file, **device_config):
     outfile.write(line)
   outfile.close()
 
-def update_platform_h(platform_file, target_ssl_cert='public/certificates/idigi-ca-cert-public.crt'):
-  ssl_cert_text = '#define APP_SSL_CA_CERT   "../../../certificates/idigi-ca-cert-public.crt"'
+def update_platform_h(platform_file, target_ssl_cert='public/certificates/etherios-ca-cert-public.crt'):
+  ssl_cert_text = '#define APP_SSL_CA_CERT   "../../../certificates/etheriso-ca-cert-public.crt"'
   replace_text  = '#define APP_SSL_CA_CERT   "%s"' % target_ssl_cert
 
   infile = open(platform_file, 'r')
@@ -147,7 +147,7 @@ def update_config_c(cnfg_file, **device_config):
   device_id = device_config['device_type'] if device_config.has_key('device_type') else 'iC DVT'
 
   # Setup iDigi Server
-  connector_host = device_config['connector_host'] if device_config.has_key('connector_host') else 'test.idigi.com'
+  connector_host = device_config['connector_host'] if device_config.has_key('connector_host') else 'test.etherios.com'
   new_server_url  = '"' + connector_host + '"'
 
   # Setup Device Type

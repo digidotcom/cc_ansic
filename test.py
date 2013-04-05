@@ -719,7 +719,7 @@ def main():
     parser.add_argument('--password', action='store', type=str, 
         default='iik1sfun', help="Etherios Password to run the test with.")
     parser.add_argument('--hostname', action='store', type=str, 
-        default='devdev.idigi.com', 
+        default='test.etherios.com', 
         help='Etherios Server to connect devices to.')
     parser.add_argument('--descriptor', action='store', type=str, 
         default='linux-x64', help='A unique descriptor to describe the test.')
