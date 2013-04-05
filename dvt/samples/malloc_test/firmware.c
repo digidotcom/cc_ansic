@@ -19,6 +19,10 @@
 #include "platform.h"
 #include "application.h"
 
+#if !(defined CONNECTOR_FIRMWARE_SERVICE)
+#error "Please define CONNECTOR_FIRMWARE_SERVICE in connector_config.h to run this sample"
+#endif
+
 typedef struct {
     connector_firmware_version_t    version;
     char        * filespec;
