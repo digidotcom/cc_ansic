@@ -8,7 +8,7 @@ PKG_NAME=${PART_NUMBER}_${REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
 
 SAMPLES="compile_and_link
-#         connect_to_device_cloud
+         connect_to_device_cloud
          connect_on_ssl
          device_request
          firmware_download
