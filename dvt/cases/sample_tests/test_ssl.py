@@ -11,24 +11,24 @@ DISCONNECT_REQUEST = \
     </disconnect>
 </sci_request>"""
 
-good_ca_cert_src = './dvt/cases/test_files/idigi-ca-cert-public.crt'
-good_ca_cert_dst = './public/certificates/idigi-ca-cert-public.crt'
+good_ca_cert_src = './dvt/cases/test_files/etherios-ca-cert-public.crt'
+good_ca_cert_dst = './public/certificates/etherios-ca-cert-public.crt'
 bad_ca_cert_src  = './dvt/cases/test_files/intruder-ca-cert.crt'
 
 class SSLTestCase(ic_testcase.TestCase):
 
     def test_ssl_with_good_ca_cert(self):
         self.log.info("SSL connection test with valid ca certificate")
-        
+
         self.log.info("Retrieving Device type for %s." % self.device_id)
         # Send request for new device_core
-        response = self.rest_session.get_first('DeviceCore', 
+        response = self.rest_session.get_first('DeviceCore',
                     params={'condition' : "devConnectwareId='%s'" % self.device_id})
         self.assertEqual(200, response.status_code)
         new_device_core = response.resource
         # Verify that device type returned matches that in the configuration.
         self.assertEqual(new_device_core.dpDeviceType, self.device_type,
-            "Device type (%s) does not match device type in configuration (%s)." 
+            "Device type (%s) does not match device type in configuration (%s)."
             % (new_device_core.dpDeviceType, self.device_type))
 
         # Verify that device's vendor id matches that in the configuration.
@@ -80,7 +80,7 @@ class SSLTestCase(ic_testcase.TestCase):
 
             monitor.wait_for_connect(timeout)
             self.log.info("Device connected.")
-             
+
         finally:
             monitor.stop()
 
