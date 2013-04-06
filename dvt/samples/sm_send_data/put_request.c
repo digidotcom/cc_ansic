@@ -33,22 +33,21 @@ static client_data_t * app_send_data = NULL;
 #ifdef APP_USE_SM_UDP
 connector_status_t app_send_ping(connector_handle_t handle)
 {
-    static connector_message_status_request_t request; /* idigi connector will hold this until reply received or send completes */
+    static connector_sm_ping_request_t request; 
     connector_status_t status;
 
     request.transport = connector_transport_udp;
     request.user_context = &request;
-    request.flags = 0;
+    request.response_required = connector_true;
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
-    /* APP_DEBUG("Sent ping [%d].\n", status); */
 
     return status;
 }
 #endif
 
-app_bool_t app_put_request_complete(void)
+connector_bool_t app_put_request_complete(void)
 {
-    return app_send_data == NULL;
+    return (app_send_data == NULL) ? connector_true : connector_false;
 }
 
 connector_status_t app_cancel_put_request(connector_handle_t handle)
@@ -57,10 +56,9 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
 
     if (app_send_data != NULL)
     {
-       static connector_message_status_request_t request;
+        static connector_sm_cancel_request_t request;
 
        request.transport = app_transport;
-       request.flags = 0;
        request.user_context = app_send_data;
 
        APP_DEBUG("Previous data send pending, cancel it\n");
@@ -73,13 +71,12 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
     return status;
 }
 
-connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t response_needed)
+connector_status_t app_send_put_request(connector_handle_t handle, connector_bool_t response_needed)
 {
     connector_status_t status;
-    static connector_data_service_put_request_t header; /* idigi connector will hold this until we get a response/error callback */
+    static connector_request_data_service_send_t header; /* idigi connector will hold this until we get a response/error callback */
     static char const file_type[] = "text/plain";
     static char const buffer[] = "iDigi sm_send_data sample data\n";
-
 
     if (app_send_data != NULL)
     {
@@ -88,7 +85,6 @@ connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t re
     }
 
     app_send_data = malloc(sizeof *app_send_data);
-
     if (app_send_data == NULL)
     {
         status = connector_no_resource;
@@ -98,21 +94,12 @@ connector_status_t app_send_put_request(connector_handle_t handle, app_bool_t re
     app_send_data->data_ptr = buffer;
     app_send_data->bytes = strlen(buffer);
 
-    if (response_needed == app_false)
-    {
-        header.flags = CONNECTOR_DATA_RESPONSE_NOT_NEEDED;
-        header.path = "test/sm_data_noresp.txt";
-    }
-    else
-    {
-        header.flags = 0;
-        header.path = "test/sm_data.txt";
-    }
-
-
+    header.option = connector_data_service_send_option_overwrite;
+    header.response_required = response_needed;
+    header.path = response_needed ? "test/sm_data.txt" : "test/sm_data_noresp.txt";
     header.transport = app_transport;
     header.content_type = file_type;
-    header.context = app_send_data; /* will be returned in all subsequent callbacks */
+    header.user_context = app_send_data;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     APP_DEBUG("Status: %d, file: %s\n", status, header.path);
@@ -127,164 +114,154 @@ done:
     return status;
 }
 
-connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request,
-                                                  void const * const request_data, size_t const request_length,
-                                                  void * response_data, size_t * const response_length)
+connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id, void * const cb_data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_data_service_msg_request_t const * const put_request = request_data;
-    connector_data_service_msg_response_t * const put_response = response_data;
-    connector_data_service_put_request_t * const header = put_request->service_context;
-    client_data_t * const app_data_ptr = (client_data_t *)header->context;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
-    if ((put_request == NULL) || (put_response == NULL) || (header == NULL) || (app_data_ptr == NULL))
+    switch (request_id)
     {
-         APP_DEBUG("Invalid request_data [%p] or response_data[%p]\n", request_data, response_data);
-         goto done;
-    }
-
-    if (request == connector_data_service_put_request)
-    {
-        switch (put_request->message_type)
+        case connector_request_id_data_service_send_data:
         {
-        case connector_data_service_type_need_data:
-            {
-                connector_data_service_block_t * const message = put_response->client_data;
+            connector_data_service_send_data_t * send_ptr = cb_data;
+            client_data_t * const app_data = send_ptr->user_context;
 
-                if (message->length_in_bytes > app_data_ptr->bytes)
-                    message->length_in_bytes = app_data_ptr->bytes;
+            ASSERT(app_data != NULL);
+            send_ptr->bytes_used = (send_ptr->bytes_available > app_data->bytes) ? app_data->bytes : send_ptr->bytes_available;
 
-                memcpy(message->data, app_data_ptr->data_ptr, message->length_in_bytes);
-                app_data_ptr->data_ptr += message->length_in_bytes;
-                app_data_ptr->bytes -= message->length_in_bytes;
-                if (app_data_ptr->bytes == 0)
-                    message->flags = CONNECTOR_MSG_LAST_DATA;
-                put_response->message_status = connector_msg_error_none;
-            }
-            break;
+            memcpy(send_ptr->buffer, app_data->data_ptr, send_ptr->bytes_used);
+            app_data->data_ptr += send_ptr->bytes_used;
+            app_data->bytes -= send_ptr->bytes_used;
+            send_ptr->more_data = (app_data->bytes > 0) ? connector_true : connector_false;
 
-        case connector_data_service_type_have_data:
-            {
-                connector_data_service_block_t * const message = put_request->server_data;
-                ASSERT(app_data_ptr == app_send_data);
-                free(app_send_data);
-                app_send_data = NULL;
-
-                APP_DEBUG("Received %s response from server\n", ((message->flags & CONNECTOR_MSG_RESP_SUCCESS) != 0) ? "success" : "error");
-                if (message->length_in_bytes > 0)
-                {
-                    char * const data = message->data;
-
-                    data[message->length_in_bytes] = '\0';
-                    APP_DEBUG("Server response %s\n", data);
-                }
-            }
-            break;
-
-        case connector_data_service_type_error:
-            {
-                connector_data_service_block_t * const message = put_request->server_data;
-                connector_msg_error_t const * const error_value = message->data;
-                APP_DEBUG("Data service error: %d\n", *error_value);
-
-                ASSERT(app_data_ptr == app_send_data);
-                free(app_send_data);
-                app_send_data = NULL;
-            }
-            break;
-
-        case connector_data_service_type_total_length:
-            {
-                size_t * const length = response_data;
-
-                *length = app_data_ptr->bytes;
-            }
-            break;
-
-        case connector_data_service_type_session_status:
-            {
-                connector_session_status_t * const session_status = response_data;
-
-                ASSERT(app_data_ptr == app_send_data);
-                free(app_send_data);
-                app_send_data = NULL;
-                APP_DEBUG("Send data complete, status[%d]\n", *session_status);
-            }
-            break;
-
-        default:
-            APP_DEBUG("Unexpected msg type in put request: %d\n", put_request->message_type);
-            status = connector_callback_unrecognized;
             break;
         }
-    }
-    else
-    {
-        APP_DEBUG("Request not supported in this sample: %d\n", request);
-        status = connector_callback_unrecognized;
+
+        case connector_request_id_data_service_send_response:
+        {
+            connector_data_service_send_response_t * const resp_ptr = cb_data;
+            client_data_t * const app_data = resp_ptr->user_context;
+
+            APP_DEBUG("Received %s response from server\n", (resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error");
+            if (resp_ptr->hint != NULL)
+            {
+                APP_DEBUG("Server response %s\n", resp_ptr->hint);
+            }
+
+            free(app_data);
+            app_send_data = NULL;
+            break;
+        }
+
+        case connector_request_id_data_service_send_status:
+        {
+            connector_data_service_status_t * const error_ptr = cb_data;
+            client_data_t * const app_data = error_ptr->user_context;
+
+            APP_DEBUG("Data service error: %d\n", error_ptr->status);
+
+            free(app_data);
+            app_send_data = NULL;
+            break;
+        }
+
+        case connector_request_id_data_service_send_length:
+        {
+            connector_data_service_length_t * const len_ptr = cb_data;
+            client_data_t * const app_ptr = len_ptr->user_context;
+
+            len_ptr->total_bytes = app_ptr->bytes;
+            break;
+        }
+
+        default:
+            APP_DEBUG("Unexpected send data command in SM: %d\n", request_id);
+            break;
     }
 
-done:
     return status;
 }
 
-connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const request_data)
+connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(request_data);
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
     switch (request)
     {
-        case connector_sm_opaque_response:
+        case connector_request_id_sm_ping_request:
         {
-            connector_sm_opaque_response_t * const response = response_data;
+            connector_sm_ping_request_t * const ping_request = data;
 
-            APP_DEBUG("Received %zu opaque bytes on id %d\n", response->bytes, response->id);
+            APP_DEBUG("Received ping request. response %s needed\n", ping_request->response_required ? "is" : "is not");
+            break;
+        }
+
+        case connector_request_id_sm_ping_response:
+        {
+            connector_sm_ping_response_t * const ping_resp = data;
+
+            APP_DEBUG("Received ping response [%d].\n", ping_resp->status);
+            break;
+        }
+
+        case connector_request_id_sm_opaque_response:
+        {
+            connector_sm_opaque_response_t * const response = data;
+
+            APP_DEBUG("Received %zu opaque bytes on id %d\n", response->bytes_used, response->id);
+            break;
+        }
+
+        case connector_request_id_sm_more_data:
+        {
+            connector_sm_more_data_t * const more_data = data;
+
+            APP_DEBUG("More SM data is waiting on %s in Etherios Device Cloud\n", (more_data->transport == connector_transport_udp) ? "UDP" : "SMS");
             break;
         }
 
         default:
             APP_DEBUG("Request not supported in this sample: %d\n", request);
-            status = connector_callback_unrecognized;
             break;
     }
 
     return status;
+}
+
+static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
+{
+
+    switch (*status)
+    {
+    case connector_tcp_communication_started:
+        APP_DEBUG("connector_tcp_communication_started\n");
+        break;
+    case connector_tcp_keepalive_missed:
+        APP_DEBUG("connector_tcp_keepalive_missed\n");
+        break;
+    case connector_tcp_keepalive_restored:
+        APP_DEBUG("connector_tcp_keepalive_restored\n");
+        break;
+    }
+
+    return connector_callback_continue;
 }
 
 connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-
     switch (request)
     {
-        case connector_status_ping_response:
-        {
-            connector_message_status_response_t const * const status_response = data;
-
-            APP_DEBUG("Received ping response [%d].\n", status_response->status);
+        case connector_request_id_status_tcp:
+            status = app_tcp_status(data);
             break;
-        }
 
-        case connector_status_ping_request:
-        {
-            connector_status_t * const status_request = data;
-
-            APP_DEBUG("Received ping request.\n");
-            *status_request = connector_success;
+        case connector_request_id_status_stop_completed:
+            APP_DEBUG("connector_restore_keepalive\n");
             break;
-        }
 
         default:
-            APP_DEBUG("Request not supported in this sample: %d\n", request);
-            status = connector_callback_unrecognized;
+            APP_DEBUG("Status request not supported: %d\n", request);
             break;
     }
 

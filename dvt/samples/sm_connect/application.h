@@ -12,11 +12,7 @@
 #ifndef __APPLICATION_H_
 #define __APPLICATION_H_
 
-typedef int app_bool_t;
-#define app_true   1
-#define app_false  0
-
-extern app_bool_t app_ping_pending;
+extern connector_bool_t app_ping_pending;
 
 extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void * const data);
 extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request, void * const data);

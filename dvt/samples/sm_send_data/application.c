@@ -91,7 +91,7 @@ int application_run(connector_handle_t handle)
     const unsigned int sleep_sec_busy = 2;
     const unsigned int app_response_timeout = 5;
 
-    app_bool_t response_needed = app_true;
+    connector_bool_t response_needed = connector_true;
     unsigned int send_cnt = 0;
 
     for (send_cnt = 0; send_cnt < send_cnt_max; )
@@ -158,4 +158,3 @@ int application_run(connector_handle_t handle)
 done:
     return 1;
 }
-

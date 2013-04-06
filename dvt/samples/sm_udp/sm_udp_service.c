@@ -240,7 +240,7 @@ static connector_callback_status_t app_handle_put_request(connector_request_id_d
         {
             connector_data_service_length_t * const len_ptr = cb_data;
             client_data_t * const app_ptr = len_ptr->user_context;
- 
+
             len_ptr->total_bytes = app_ptr->bytes;
             break;
         }

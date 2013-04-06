@@ -31,6 +31,7 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
 #include "connector_global_config.h"
 
 static connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context);
+static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 
 #if (defined CONNECTOR_DATA_POINTS)
 #include "connector_data_point.h"
@@ -54,6 +55,54 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
 static char const connector_signature[] = CONNECTOR_SW_VERSION;
 static uint8_t connector_device_id[DEVICE_ID_LENGTH];
 static connector_bool_t connector_got_device_id = connector_false;
+
+static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
+                                                        connector_request_id_config_t const config_request_id,
+                                                        connector_config_connect_type_t * const config_connect)
+{
+    connector_status_t result = connector_working;
+
+    ASSERT(config_connect != NULL);
+    ASSERT((config_request_id == connector_request_id_config_network_tcp) ||
+           (config_request_id == connector_request_id_config_network_udp) ||
+           (config_request_id == connector_request_id_config_network_sms));
+
+    config_connect->type = connector_connect_auto;
+
+    {
+        connector_callback_status_t status;
+        connector_request_id_t request_id;
+
+        request_id.config_request = config_request_id;
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_connect);
+
+        switch (status)
+        {
+        case connector_callback_continue:
+            switch (config_connect->type)
+            {
+            case connector_connect_auto:
+            case connector_connect_manual:
+                break;
+            default:
+                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+                result = connector_abort;
+                break;
+            }
+            break;
+
+        case connector_callback_busy:
+        case connector_callback_abort:
+        case connector_callback_error:
+            result = connector_abort;
+            break;
+
+        case connector_callback_unrecognized:
+            break;
+        }
+    }
+    return result;
+}
 
 static connector_status_t get_wan_device_id(connector_data_t * const connector_ptr,
                                             uint8_t * const device_id,
