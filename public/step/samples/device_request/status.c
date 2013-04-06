@@ -31,22 +31,22 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request_id, void  * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
 
 
-    switch (request)
+    switch (request_id)
     {
     case connector_request_id_status_tcp:
         status = app_tcp_status(data);
         break;
     case connector_request_id_status_stop_completed:
-        APP_DEBUG("app_status_handler connector_request_id_status_stop_completed\n");
+        APP_DEBUG("app_status_handle: connector_request_id_status_stop_completed\n");
         break;
     default:
         /* unsupported */
-        APP_DEBUG("app_status_handler unsupported request %d\n", request);
+        APP_DEBUG("app_status_handler unsupported request %d\n", request_id);
         status = connector_callback_unrecognized;
         break;
     }

@@ -35,7 +35,6 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
 {
     connector_callback_status_t status = connector_callback_continue;
 
-
     switch (request)
     {
     case connector_request_id_status_tcp:

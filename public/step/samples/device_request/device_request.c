@@ -114,7 +114,7 @@ static connector_callback_status_t app_process_device_request_response(connector
 
     device_request_handle_t * const device_request = reply_data->user_context;
     size_t bytes_used = 0;
-    char const * buffer;
+    char const * buffer = NULL;
 
     if (device_request == NULL)
     {
@@ -150,18 +150,21 @@ static connector_callback_status_t app_process_device_request_response(connector
         }
     }
 
-    APP_DEBUG("Device response data: send response data = %.*s\n", (int)bytes_used, buffer);
+    if (buffer != NULL)
+    {
+        APP_DEBUG("Device response data: send response data = %.*s\n", (int)bytes_used, buffer);
 
-    ASSERT(reply_data->bytes_available >= bytes_used);
+        ASSERT(reply_data->bytes_available >= bytes_used);
 
-        /* let's copy the response data to service_response buffer */
-    memcpy(reply_data->buffer, buffer, bytes_used);
-    reply_data->bytes_used = bytes_used;
+            /* let's copy the response data to service_response buffer */
+        memcpy(reply_data->buffer, buffer, bytes_used);
+        reply_data->bytes_used = bytes_used;
 
-    if (!reply_data->more_data)
-    {   /* done */
-        device_request_active_count--;
-        free(device_request);
+        if (!reply_data->more_data)
+        {   /* done */
+            device_request_active_count--;
+            free(device_request);
+        }
     }
 
     return status;
@@ -180,17 +183,18 @@ static connector_callback_status_t app_process_device_request_status(connector_d
         {
         case connector_data_service_status_session_error:
             APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
-                       (void *) status_data, status_data->session_error);
+                       (void *) device_request, status_data->session_error);
             break;
         default:
             APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
-                        (void *)status_data, status_data->status);
+                        (void *)device_request, status_data->status);
             break;
         }
 
         device_request_active_count--;
         free(device_request);
     }
+
     return status;
 }
 

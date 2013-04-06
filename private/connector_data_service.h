@@ -269,6 +269,15 @@ static connector_status_t process_data_service_device_request(connector_data_t *
                 ds_device_request_length = service_data->length_in_bytes - data_length;
 
                 result = process_ds_receive_data(connector_ptr, data_service, ds_device_request, ds_device_request_length, service_data->flags);
+                switch (result)
+                {
+                    case connector_working:
+                        if (MsgIsLastData(service_data->flags))
+                            data_service->request_type = connector_request_id_data_service_receive_reply_data;
+                        break;
+                    default:
+                        break;
+                }
                 break;
             }
         case connector_request_id_data_service_receive_reply_length:
@@ -282,10 +291,6 @@ static connector_status_t process_data_service_device_request(connector_data_t *
             goto done;
     }
 
-    if ((result == connector_working) &&
-        (MsgIsLastData(service_data->flags)) &&
-        (data_service->request_type != connector_request_id_data_service_receive_reply_length))
-        data_service->request_type = connector_request_id_data_service_receive_reply_data;
 done:
     return result;
 }
@@ -333,7 +338,7 @@ static connector_status_t process_data_service_device_response(connector_data_t 
         {
             case connector_request_id_data_service_receive_reply_length:
             /* We got here because callback returns error for request data.
-             * Get the replay data.
+             * Just get the replay data.
              */
              /* fall thru */
             case connector_request_id_data_service_receive_reply_data:
@@ -398,7 +403,7 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     connector_data_service_status_t device_request;
 
 
-    /* Done with the request (response has been returned).
+    /* Done with the request dp_request == true (response has been returned).
      * So do not call the callback.
      */
     if (data_service->dp_request) goto done;
@@ -564,7 +569,7 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
 
         case connector_callback_error:
             set_data_service_error(service_request, connector_session_error_cancel);
-            status = connector_device_error;
+            status = connector_working;
             break;
 
         case connector_callback_busy:
