@@ -226,9 +226,9 @@ typedef struct connector_data_point_t
 typedef struct
 {
     connector_transport_t transport;/**< transport method to use */
-    void const * user_context;      /**< user context to be passed back in response */
+    void * user_context;      /**< user context to be passed back in response */
 
-    char const * path;              /**< data point path in the stream */
+    char * path;              /**< data point path in the stream */
     void * point;                   /**< binary data of size specified in bytes */
     size_t bytes;                   /**< size of data in bytes */
     connector_bool_t response_required;  /**< set to connector_true if response is needed */
@@ -253,9 +253,9 @@ typedef struct
 typedef struct
 {
     connector_transport_t transport;    /**< transport method to use */
-    void const * user_context;          /**< user context to be passed back in response */
+    void * user_context;          /**< user context to be passed back in response */
 
-    char const * path;                  /**< data point path in the stream */
+    char * path;                  /**< data point path in the stream */
     char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
     connector_data_point_t * point;     /**< pointer to list of data points */
@@ -282,7 +282,7 @@ typedef struct
 typedef struct
 {
     connector_transport_t transport;    /**< transport method to use */
-    void const * user_context;          /**< user context to be passed back in response */
+    void * user_context;          /**< user context to be passed back in response */
 
     enum
     {
@@ -311,7 +311,7 @@ typedef struct
 typedef struct
 {
     connector_transport_t transport;    /**< transport method to use */
-    void const * user_context;          /**< user context to be passed back in response */
+    void * user_context;          /**< user context to be passed back in response */
 
     enum
     {

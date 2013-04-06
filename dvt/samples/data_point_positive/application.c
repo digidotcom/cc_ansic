@@ -18,7 +18,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void  * const data);
+extern connector_callback_status_t app_data_point_handler(connector_request_id_data_service_t const request, void  * const data);
 extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void  * const data);
 extern connector_status_t app_send_data_point(connector_handle_t handle);
 
@@ -74,8 +74,8 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         break;
 #endif
 
-    case connector_class_id_data_service:
-        status = app_data_service_handler(request_id.data_service_request, data);
+    case connector_class_id_data_point:
+        status = app_data_point_handler(request_id.data_service_request, data);
         break;
 
     case connector_class_id_short_message:
@@ -115,6 +115,10 @@ int application_run(connector_handle_t handle)
 
             case connector_success:
                 sleep(1);
+                break;
+
+            case connector_idle:
+                APP_DEBUG("Data point test complete\n");
                 break;
 
             default:
