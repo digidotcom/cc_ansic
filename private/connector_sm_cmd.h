@@ -472,6 +472,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
         if (session->in.bytes > allowed_bytes)
             session->in.bytes = allowed_bytes;
 
+        session->bytes_processed = 0;
         result = sm_allocate_user_buffer(connector_ptr, &session->in);
         if (result != connector_working)
             goto error;
@@ -498,10 +499,10 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
     switch (result)
     {
         case connector_working:
-        session->bytes_processed += cli_response.bytes_used;
-        if (!cli_response.more_data)
-            sm_set_payload_complete(session);
-        break;
+            session->bytes_processed += cli_response.bytes_used;
+            if ((!cli_response.more_data) || (session->bytes_processed >= session->in.bytes))
+                sm_set_payload_complete(session);
+            break;
 
         case connector_device_error:
             session->error = connector_session_error_cancel;
@@ -555,11 +556,14 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
     if (session->bytes_processed == 0)
     {
         if (session->command == connector_sm_cmd_data)
-            target_length = 0x1F & *data_ptr++;
+            target_length = 0x1F & *data_ptr;
 
-        status = sm_pass_target_info(connector_ptr, session, data_ptr, target_length);
+        status = sm_pass_target_info(connector_ptr, session, data_ptr + 1, target_length);
         if (status != connector_working)
             goto error;
+
+        if (session->command == connector_sm_cmd_data)
+            target_length++;
     }
 
     data_ptr += target_length;

@@ -412,6 +412,7 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
         {
             size_t const payload_bytes = sm_bytes - sm_header.bytes;
 
+            ASSERT(sm_bytes >= sm_header.bytes);
             result = sm_update_session(connector_ptr, sm_ptr, &sm_header, payload_bytes);
         }
 

@@ -58,7 +58,7 @@ class SmUdpMultipartDvtTestCase(ic_testcase.UDPTestCase):
         self.send_sm_udp_request("command", '<command maxResponseSize="2899"> get 2899 bytes </command>', 2899)
 
     def test_sm_udp_multipart_verify_send_data(self):
-        file_path = 'FileData/~/' + self.device_id + '/test/sm_udp_mp.txt'
+        file_path = 'FileData/~/' + self.device_id + '/test/sm_udp_mp0.txt'
         verify_the_file_on_server(self, file_path, True)
 
     def send_sm_udp_request (self, test_name, command, size_to_read):
