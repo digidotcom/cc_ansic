@@ -158,7 +158,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
                 APP_DEBUG("Cloud response [%s]: %s\n", ds_info->file_path, resp_ptr->hint);
             }
 
-            ds_info->state = (resp_ptr->response != connector_data_service_send_response_success)? dvt_state_response_complete : dvt_state_request_error;
+            ds_info->state = (resp_ptr->response == connector_data_service_send_response_success)? dvt_state_response_complete : dvt_state_request_error;
             break;
         }
 
