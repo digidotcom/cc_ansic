@@ -279,7 +279,7 @@ static connector_callback_status_t app_handle_device_request(connector_request_i
         {
             connector_data_service_receive_data_t * const recv_ptr = cb_data;
 
-            if (!(test_case % 2))
+            if (!(test_case % 3))
             {
                 APP_DEBUG("SM negative -> device request -> recv_data: returning busy...\n");
                 status = connector_callback_busy;
@@ -334,6 +334,7 @@ static connector_callback_status_t app_handle_device_request(connector_request_i
     }
 
 done:
+    test_case++;
     return status;
 }
 

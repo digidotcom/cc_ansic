@@ -181,9 +181,17 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
 
                 header->cmd_status = 0;
                 header->type = sm_multipart_subsequent_segment;
-                header->crc16 = message_load_be16(segmentn, crc);
-                message_store_be16(segmentn, crc, 0);
-                header->bytes = record_end(segmentn);
+
+                if (header->isPackCmd)
+                {
+                    header->bytes = record_end(segmentn) - sizeof header->crc16;
+                }
+                else
+                {
+                    header->crc16 = message_load_be16(segmentn, crc);
+                    message_store_be16(segmentn, crc, 0);
+                    header->bytes = record_end(segmentn);
+                }
             }
             else
             {
@@ -191,9 +199,16 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
                 header->segment.count = message_load_u8(segment0, count);
                 header->cmd_status = message_load_u8(segment0, cmd_status);
 
-                header->crc16 = message_load_be16(segment0, crc);
-                message_store_be16(segment0, crc, 0);
-                header->bytes = record_end(segment0);
+                if (header->isPackCmd)
+                {
+                    header->bytes = record_end(segment0) - sizeof header->crc16;
+                }
+                else
+                {
+                    header->crc16 = message_load_be16(segment0, crc);
+                    message_store_be16(segment0, crc, 0);
+                    header->bytes = record_end(segment0);
+                }
             }
         }
         #else
@@ -206,9 +221,16 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
     else
     {
         header->cmd_status = message_load_u8(segment, cmd_status);
-        header->crc16 = message_load_be16(segment, crc);
-        message_store_be16(segment, crc, 0);
-        header->bytes = record_end(segment);
+        if (header->isPackCmd)
+        {
+            header->bytes = record_end(segment) - sizeof header->crc16;
+        }
+        else
+        {
+            header->crc16 = message_load_be16(segment, crc);
+            message_store_be16(segment, crc, 0);
+            header->bytes = record_end(segment);
+        }
     }
 
     header->isCompressed = SmIsCompressed(header->cmd_status);
@@ -251,8 +273,6 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
         if (header->isRequest)
             header->isPackCmd = connector_bool(header->command == connector_sm_cmd_pack);
     }
-    else
-        header->bytes -= sizeof header->crc16;
 
     recv_ptr->processed_bytes += header->bytes;
     result = connector_working;
@@ -260,7 +280,6 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
 error:
     return result;
 }
-
 
 static connector_status_t sm_update_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
                                             sm_header_t * const header, size_t const payload_bytes)
@@ -374,6 +393,7 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
     sm_header.isPackCmd = connector_false;
     sm_header.segment.count = 1;
     sm_header.segment.number = 0;
+    sm_header.crc16 = 0;
     do
     {
         result = sm_process_header(recv_ptr, &sm_header);
@@ -418,6 +438,13 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
 
         if (!sm_header.isPackCmd) break;
 
+        {
+            size_t const sm_header_size = 5;
+            size_t const remaining_bytes = recv_ptr->total_bytes - recv_ptr->processed_bytes;
+
+            if (remaining_bytes < sm_header_size) break;
+        }
+
         sm_bytes = LoadBE16(&recv_ptr->data[recv_ptr->processed_bytes]);
         recv_ptr->processed_bytes += sizeof(uint16_t);
 
@@ -430,6 +457,8 @@ error:
         result = connector_working;
 
     recv_ptr->total_bytes = 0;
+    recv_ptr->processed_bytes = 0;
+
     return result;
 }
 

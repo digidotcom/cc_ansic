@@ -117,7 +117,6 @@ static connector_callback_status_t app_process_device_request_target(connector_d
         device_request->status = device_request_response_status_unsupported_target;
         device_request->response_data = unexpected_target_response;
         status = connector_callback_error;
-        goto done;
     }
     else
     {
@@ -272,6 +271,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
             break;
         case connector_request_id_data_service_receive_reply_length:
             status = app_process_device_request_total_length(data);
+            break;
         default:
             APP_DEBUG("app_data_service_handler (SM): unknown request id type %d for connector_request_id_data_service\n", request_id);
             break;
