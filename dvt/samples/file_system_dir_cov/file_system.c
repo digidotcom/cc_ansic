@@ -33,6 +33,21 @@
 #error The maximum supported CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH is 460
 #endif
 
+/* 
+ * To support large files (> 2 gigabytes) please: 
+ * 1. Define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES in connector_config.h 
+ * 2. On a linux system with 32 bit architecture add define _FILE_OFFSET_BITS=64 in the 
+ *    Makefile: 
+ *          CFLAGS += -D_FILE_OFFSET_BITS=64 
+ */ 
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#define CONNECTOR_OFFSET_MAX INT64_MAX
+#define PRIoffset  PRId64
+#else
+#define CONNECTOR_OFFSET_MAX INT32_MAX
+#define PRIoffset  PRId32
+#endif
+
 
 #if defined APP_ENABLE_MD5
 #include <openssl/md5.h>
@@ -178,7 +193,7 @@ static connector_callback_status_t app_process_file_session_error(connector_file
 {
      APP_DEBUG("Session Error %d\n", data->session_error);
 
-    // All application resources, used in the session, must be released in this callback
+    /* All application resources, used in the session, must be released in this callback */
     if (data->user_context != NULL)
     {
         app_md5_ctx * ctx = data->user_context;
@@ -199,7 +214,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
     int ret;
 
     if (ctx == NULL)
-    {   
+    {
         ASSERT(0);
         goto error;
     }
@@ -207,7 +222,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
     if (ctx->fd < 0)
     {
         ctx->fd = open(data->path, O_RDONLY);
-        APP_DEBUG("MD5 for %s, returned %d\n", data->path, ctx->fd);
+        APP_DEBUG("Open %s, returned %d\n", data->path, ctx->fd);
 
         if (ctx->fd < 0)
         {
@@ -275,34 +290,52 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 }
 #endif
 
+static int app_copy_statbuf(connector_file_system_statbuf_t * const pstat, struct stat const * const statbuf)
+{
+    pstat->last_modified = (uint32_t) statbuf->st_mtime;
+    int result = 0;
+
+    if (S_ISDIR(statbuf->st_mode))
+    {
+        pstat->flags = connector_file_system_file_type_is_dir;
+    }
+    else
+    if (S_ISREG(statbuf->st_mode))
+    {
+        if (statbuf->st_size <= CONNECTOR_OFFSET_MAX)
+        {
+            pstat->flags = connector_file_system_file_type_is_reg;
+            pstat->file_size = (connector_file_offset_t) statbuf->st_size;
+        }
+        else
+        {
+            result = -1;
+            errno = EOVERFLOW;
+        }
+    }
+    return result;
+}
+
 static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
 {
     struct stat statbuf;
-    connector_file_system_statbuf_t * pstat = &data->statbuf;
+    connector_file_system_statbuf_t * const pstat = &data->statbuf;
     connector_callback_status_t status = connector_callback_continue;
 
-    int const result = stat(data->path, &statbuf);
+    int result = stat(data->path, &statbuf);
+
+    if (result == 0) 
+        result = app_copy_statbuf(pstat, &statbuf);
 
     if (result < 0)
     {
         status = app_process_file_error(&data->errnum, errno);
         APP_DEBUG("stat for %s returned %d, errno %d\n", data->path, result, errno);
+
+        if (errno == EOVERFLOW)
+            APP_DEBUG("Please define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES\n");
         goto done;
     }
-
-    APP_DEBUG("stat for %s returned %d, filesize %ld\n", data->path, result, statbuf.st_size);
-
-    pstat->file_size = statbuf.st_size;
-    pstat->last_modified = statbuf.st_mtime;
-
-    pstat->flags = connector_file_system_file_type_none;
-
-    if (S_ISDIR(statbuf.st_mode))
-       pstat->flags = connector_file_system_file_type_is_dir;
-    else
-    if (S_ISREG(statbuf.st_mode))
-       pstat->flags = connector_file_system_file_type_is_reg;
-
 
     data->hash_algorithm.actual = connector_file_system_hash_none;
 
@@ -317,7 +350,7 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
                 if (data->user_context == NULL)
                 {
                     data->user_context = app_allocate_md5_ctx(pstat->flags);
-                    if (data->user_context == NULL) 
+                    if (data->user_context == NULL)
                     {
                         status = app_process_file_error(&data->errnum, ENOMEM);
                     }
@@ -325,12 +358,12 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
             }
             break;
 
-
         default:
             break;
     }
 #endif
-    APP_DEBUG("data->hash_algorithm.actual %d\n", data->hash_algorithm.actual);
+    APP_DEBUG("stat for %s: file_size %"PRIoffset", last_modified %u\n", data->path, pstat->file_size, pstat->last_modified);
+    
 done:
     return status;
 }
@@ -339,30 +372,27 @@ done:
 static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
     struct stat statbuf;
-    connector_file_system_statbuf_t * pstat = &data->statbuf;
     connector_callback_status_t status = connector_callback_continue;
+    connector_file_system_statbuf_t * const pstat = &data->statbuf;
 
-    int const result = stat(data->path, &statbuf);
+    int result = stat(data->path, &statbuf);
+    if (result == 0)
+        result = app_copy_statbuf(pstat, &statbuf);
 
     if (result < 0)
     {
-        status = app_process_file_error(&data->errnum, errno);
+        /* don't return an error to avoid returning error back to device cloud
+           for the whole directory, since there is no way to return an error for
+           a single entry. Return zeroed status information instead.
+        */
         APP_DEBUG("stat for %s returned %d, errno %d\n", data->path, result, errno);
+
+        if (errno == EOVERFLOW)
+            APP_DEBUG("Please define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES\n");
         goto done;
     }
 
-    APP_DEBUG("stat for %s returned %d, filesize %ld\n", data->path, result, statbuf.st_size);
-
-    pstat->file_size = statbuf.st_size;
-    pstat->last_modified = statbuf.st_mtime;
-
-    pstat->flags = connector_file_system_file_type_none;
-
-    if (S_ISDIR(statbuf.st_mode))
-       pstat->flags = connector_file_system_file_type_is_dir;
-    else
-    if (S_ISREG(statbuf.st_mode))
-       pstat->flags = connector_file_system_file_type_is_reg;
+    APP_DEBUG("stat for %s: file_size %"PRIoffset", last_modified %u\n", data->path, pstat->file_size, pstat->last_modified);
 
 done:
     return status;
@@ -484,7 +514,10 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
         status = app_process_file_error(&data->errnum, errno);
     }
 
-    APP_DEBUG("Open %s, %d, returned %ld\n", data->path, oflag, fd);
+    APP_DEBUG("Open file %s, %d, returned %ld", data->path, oflag, fd);
+    if (fd < 0)
+        APP_DEBUG(", errno %d", errno);
+    APP_DEBUG("\n");
 
     data->handle = (void *) fd;
 
@@ -496,7 +529,8 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
 {
     connector_callback_status_t status = connector_callback_continue;
     long int const fd = (long int) data->handle;
-    int  origin; 
+    int  origin;
+    off_t result;
 
     switch(data->origin)
     {
@@ -514,15 +548,20 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
             break;
     }
 
-    data->resulting_offset = lseek(fd, data->requested_offset, origin);
-
-    if (data->resulting_offset < 0)
+    result = lseek(fd, data->requested_offset, origin);
+    if (result < 0)
     {
         status = app_process_file_error(&data->errnum, errno);
     }
+    data->resulting_offset = (connector_file_offset_t) result;
 
-    APP_DEBUG("lseek fd %ld, offset %d, origin %d returned %d\n", 
+    APP_DEBUG("lseek fd %ld, offset %"PRIoffset", origin %d returned %"PRIoffset,
                 fd, data->requested_offset, data->origin, data->resulting_offset);
+
+    if (result < 0) 
+        APP_DEBUG(", errno %d\n",errno);
+    else 
+        APP_DEBUG("\n");
 
     return status;
 }
@@ -536,10 +575,11 @@ static connector_callback_status_t app_process_file_ftruncate(connector_file_sys
 
     if (result < 0)
     {
+        APP_DEBUG("ftruncate fd %ld, %"PRIoffset" returned %d, errno %d\n", fd, data->length_in_bytes, result,  errno);
         status = app_process_file_error(&data->errnum, errno);
     }
-
-    APP_DEBUG("ftruncate %ld, %d returned %d\n", fd, data->length_in_bytes, result);
+    else
+        APP_DEBUG("ftruncate fd %ld, %"PRIoffset"\n", fd, data->length_in_bytes);
 
     return status;
 }
@@ -552,10 +592,11 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
 
     if (result < 0)
     {
+        APP_DEBUG("unlink file %s returned %d, errno %d\n", data->path, result, errno);
         status = app_process_file_error(&data->errnum, errno);
     }
-
-    APP_DEBUG("unlink %s returned %d\n", data->path, result);
+    else
+        APP_DEBUG("unlink file %s\n", data->path);
 
     return status;
 }
@@ -569,12 +610,12 @@ static connector_callback_status_t app_process_file_read(connector_file_system_r
 
     if (result < 0)
     {
+        APP_DEBUG("read fd %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         status = app_process_file_error(&data->errnum, errno);
-        APP_DEBUG("read %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         goto done;
     }
 
-    APP_DEBUG("read %ld, %zu, returned %d\n", fd, data->bytes_available, result);
+    APP_DEBUG("read fd %ld, %zu, returned %d\n", fd, data->bytes_available, result);
     data->bytes_used = result;
 
 done:
@@ -590,12 +631,11 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
 
     if (result < 0)
     {
+        APP_DEBUG("write fd %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         status = app_process_file_error(&data->errnum, errno);
-        APP_DEBUG("write %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         goto done;
     }
-
-    APP_DEBUG("write %ld, %zu, returned %d\n", fd, data->bytes_available, result);
+    APP_DEBUG("write fd %ld, %zu, returned %d\n", fd, data->bytes_available, result);
 
     data->bytes_used = result;
 
@@ -609,12 +649,14 @@ static connector_callback_status_t app_process_file_close(connector_file_system_
     long int const fd = (long int) data->handle;
     int const result = close(fd);
 
-    if (result < 0 && errno == EIO)
+    if (result < 0)
     {
-        status = app_process_file_error(&data->errnum, EIO);
+        APP_DEBUG("close fd %ld returned %d, errno %d\n", fd, result, errno);
+        if (errno == EIO) 
+            status = app_process_file_error(&data->errnum, EIO);
     }
-
-    APP_DEBUG("close %ld returned %d\n", fd, result);
+    else
+        APP_DEBUG("close fd %ld\n", fd);
 
     /* All application resources, used in the session, must be released in this callback */
 

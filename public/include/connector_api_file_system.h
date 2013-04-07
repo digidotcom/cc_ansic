@@ -18,16 +18,6 @@
 #ifndef _CONNECTOR_API_FILE_SYSTEM_H
 #define _CONNECTOR_API_FILE_SYSTEM_H
 
-
-/** TODO: need a reference to off_t to allow the user to override
- * Needs the number of bits as well -- does this go into
- * connector_types.h?
- *
- * TODO: This instruction needs to be documented in the Getting Started process
- *
- * TODO: Add 64 bit types to connector_types.h
- * */
-
 /**
 * @defgroup connector_request_id_file_system_t File System 
 * Request IDs @{ 
@@ -65,7 +55,6 @@ typedef int64_t connector_file_offset_t;
 typedef int32_t connector_file_offset_t;
 #endif
 
-/** TODO: map the local file system flags */
 /**
 * @defgroup connector_file_system_open_flag_t File open flags
 * @{
@@ -140,7 +129,7 @@ typedef struct
 
     char const * CONST path;                /**< File path */
     int CONST oflag;                             /**< bitwise-inclusive OR of @ref connector_file_system_open_flag_t flags */
-    void * handle;                          /**< TODO: Don't check handle in private code!!!  Application defined file handle */
+    void * handle;                          /**< Don't check handle in private code!!!  Application defined file handle */
 
 } connector_file_system_open_t;
 /**

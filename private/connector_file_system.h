@@ -144,6 +144,7 @@ typedef enum
     fs_error_invalid_offset,
     fs_error_invalid_hash,
     fs_error_generic,
+    fs_error_large_file,
     fs_error_session_canceled
 }fs_error_internal_t;
 
@@ -159,11 +160,12 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
 
     } error_data[] =
     {
-        {"Path too long",           connector_file_system_out_of_memory},
-        {"Request formar error",    connector_file_system_request_format_error},
-        {"Invalid offset",          connector_file_system_invalid_parameter},
-        {"Invalid hash algorythm",  connector_file_system_invalid_parameter},
-        {"Unspecified error",       connector_file_system_unspec_error}
+        {"Path too long",                   connector_file_system_out_of_memory},
+        {"Request formar error",            connector_file_system_request_format_error},
+        {"Invalid offset",                  connector_file_system_invalid_parameter},
+        {"Invalid hash algorythm",          connector_file_system_invalid_parameter},
+        {"Unspecified error",               connector_file_system_unspec_error},
+        {"Offset is too large or negative", connector_file_system_request_format_error}
     };
 
     switch(code)
@@ -173,6 +175,7 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
         case fs_error_invalid_offset:
         case fs_error_invalid_hash:
         case fs_error_generic:
+        case fs_error_large_file:
             break;
 
     default:
@@ -361,6 +364,10 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
     data.path = path;
     data.hash_algorithm.requested = hash_alg;
 
+    data.statbuf.file_size = 0;
+    data.statbuf.last_modified = 0;
+    data.statbuf.flags = connector_file_system_file_type_none;
+
     status = fs_call_user(connector_ptr,
                           service_request,
                           context,
@@ -434,6 +441,9 @@ static connector_status_t call_file_stat_dir_entry_user(connector_data_t * const
 
     connector_file_system_stat_dir_entry_t data;
     data.path = path;
+    data.statbuf.file_size = 0;
+    data.statbuf.last_modified = 0;
+    data.statbuf.flags = connector_file_system_file_type_none;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -834,14 +844,21 @@ static size_t parse_file_get_header(fs_context_t * const context,
     size_t  const header_len = record_bytes(fs_get_request_header) + FS_OPCODE_BYTES;
 
     size_t len = parse_file_path(context, fs_get_request, buffer_size - header_len);
+    if (len == 0)
+        goto done;
 
-    if (len != 0)
+    fs_get_request += len;
+    context->data.f.offset = message_load_be32(fs_get_request, offset);
+    if (context->data.f.offset < 0) 
     {
-        fs_get_request += len;
-        context->data.f.offset = message_load_be32(fs_get_request, offset);
-        context->data.f.data_length = message_load_be32(fs_get_request, length);
-        len += header_len;
+        FsSetInternalError(context, fs_error_large_file);
+        len = 0;
+        goto done;
     }
+    context->data.f.data_length = message_load_be32(fs_get_request, length);
+    len += header_len;
+
+done:
     return len;
 }
 
@@ -1122,15 +1139,21 @@ static size_t parse_file_put_header(fs_context_t * const context,
     size_t  const header_len = record_bytes(fs_put_request_header) + FS_OPCODE_BYTES;
 
     size_t len = parse_file_path(context, fs_put_request, buffer_size - header_len);
+    if (len == 0)
+        goto done;
 
-    if (len != 0)
+    fs_put_request += len;
+    context->flags  |= message_load_u8(fs_put_request, flags);
+    context->data.f.offset = message_load_be32(fs_put_request, offset);
+    if (context->data.f.offset < 0) 
     {
-        fs_put_request += len;
-        context->flags  |= message_load_u8(fs_put_request, flags);
-        context->data.f.offset = message_load_be32(fs_put_request, offset);
-        len   += header_len;
+        FsSetInternalError(context, fs_error_large_file);
+        len = 0;
+        goto done;
     }
+    len   += header_len;
 
+done:
     return len;
 }
 
@@ -1361,11 +1384,11 @@ static size_t format_file_ls_response(fs_context_t const * context,
     };
 
     uint8_t * fs_ls_response = data_ptr + path_len;
-    uint8_t const flags = FsIsDir(context) ? FS_IS_DIR_FLAG : 0;
+    uint8_t flags = FsIsDir(context) ? FS_IS_DIR_FLAG : 0;
     size_t result;
 
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
-    flags |= FS_IS_LARGE;
+    flags |= FS_IS_LARGE_FLAG;
 #endif
     memcpy(data_ptr, path, path_len);
 
@@ -1377,8 +1400,7 @@ static size_t format_file_ls_response(fs_context_t const * context,
     {
         fs_ls_response += record_bytes(fs_ls_response_dir);
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
-        message_store_be32(fs_ls_response, size, HIGH32(context->data.d.file_size));
-        message_store_be32(fs_ls_response, size, LOW32(context->data.d.file_size));
+        message_store_be64(fs_ls_response, size, context->data.d.file_size);
 #else
         message_store_be32(fs_ls_response, size, context->data.d.file_size);
 #endif

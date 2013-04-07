@@ -34,6 +34,14 @@
 
 #define record_bytes(name)                      field_data(name, bytes)
 
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#define message_store_be64(record, field, value) \
+do { \
+    ASSERT(field_named_data(record, field, size) == sizeof (uint64_t)); \
+    StoreBE64(record + field_named_data(record, field, offset), (value)); \
+} while (0)
+#endif
+
 #define message_store_be32(record, field, value) \
     do { \
         ASSERT(field_named_data(record, field, size) == sizeof (uint32_t)); \

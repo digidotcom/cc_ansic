@@ -29,18 +29,30 @@
 #define BYTE32_1(x32)   ((uint8_t) (((uint32_t)(x32)) >>  8))
 #define BYTE32_0(x32)   ((uint8_t)  ((uint32_t)(x32)))
 
-#if CONNECTOR_HAS_64_BIT_INTEGERS
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
 #define	LOW32(x64)      ((uint32_t) (x64))
 #define	HIGH32(x64)     ((uint32_t) (((uint64_t)(x64)) >> 32))
 
-#define BYTE32_7(x64)   ((uint8_t) (((uint64_t)(x64)) >> 56))
-#define BYTE32_6(x64)   ((uint8_t) (((uint64_t)(x64)) >> 48))
-#define BYTE32_5(x64)   ((uint8_t) (((uint64_t)(x64)) >> 40))
-#define BYTE32_4(x64)   ((uint8_t) (((uint64_t)(x64)) >> 32))
-#define BYTE32_3(x64)   ((uint8_t) (((uint64_t)(x64)) >> 24))
-#define BYTE32_2(x64)   ((uint8_t) (((uint64_t)(x64)) >> 16))
-#define BYTE32_1(x64)   ((uint8_t) (((uint64_t)(x64)) >>  8))
-#define BYTE32_0(x64)   ((uint8_t)  ((uint64_t)(x64)))
+#define BYTE64_7(x64)   ((uint8_t) (((uint64_t)(x64)) >> 56))
+#define BYTE64_6(x64)   ((uint8_t) (((uint64_t)(x64)) >> 48))
+#define BYTE64_5(x64)   ((uint8_t) (((uint64_t)(x64)) >> 40))
+#define BYTE64_4(x64)   ((uint8_t) (((uint64_t)(x64)) >> 32))
+#define BYTE64_3(x64)   ((uint8_t) (((uint64_t)(x64)) >> 24))
+#define BYTE64_2(x64)   ((uint8_t) (((uint64_t)(x64)) >> 16))
+#define BYTE64_1(x64)   ((uint8_t) (((uint64_t)(x64)) >>  8))
+#define BYTE64_0(x64)   ((uint8_t)  ((uint64_t)(x64)))
+
+static  void StoreBE64(void * const array, uint64_t const val)
+{
+    ((uint8_t *)(array))[0] = BYTE64_7(val);
+    ((uint8_t *)(array))[1] = BYTE64_6(val);
+    ((uint8_t *)(array))[2] = BYTE64_5(val);
+    ((uint8_t *)(array))[3] = BYTE64_4(val);
+    ((uint8_t *)(array))[4] = BYTE64_3(val);
+    ((uint8_t *)(array))[5] = BYTE64_2(val);
+    ((uint8_t *)(array))[6] = BYTE64_1(val);
+    ((uint8_t *)(array))[7] = BYTE64_0(val);
+}
 #endif
 
 /*
