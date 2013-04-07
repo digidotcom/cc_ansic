@@ -153,7 +153,7 @@ static connector_status_t dp_callback_status_to_status(connector_status_t const 
 }
 
 static connector_status_t dp_inform_status(connector_data_t * const connector_ptr, connector_request_id_data_point_t request,
-                                           connector_transport_t const transport, void const * context, connector_session_error_t const error)
+                                           connector_transport_t const transport, void * context, connector_session_error_t const error)
 {
     connector_status_t result;
     connector_data_point_status_t dp_status;
