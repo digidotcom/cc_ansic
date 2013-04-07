@@ -356,7 +356,7 @@ static void * get_data_point_single(dvt_dp_t * dvt_ptr)
     dp_ptr->forward_to = NULL;
 
     dp_ptr->path = get_path_name(dp_ptr->transport, dvt_ptr->data_type);
-    if (dp_ptr->path != NULL) goto error;
+    if (dp_ptr->path == NULL) goto error;
 
     if (dp_ptr->transport != connector_transport_tcp)
     {
@@ -415,7 +415,7 @@ static void * get_data_point_binary(dvt_dp_t * dvt_ptr)
     if (dp_ptr->point == NULL) goto error;
 
     dp_ptr->path = get_path_name(dp_ptr->transport, dvt_ptr->data_type);
-    if (dp_ptr->path != NULL) goto error;
+    if (dp_ptr->path == NULL) goto error;
 
     if (dp_ptr->transport != connector_transport_tcp)
     {
@@ -458,7 +458,6 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
     } while (transport != current_transport);
 
     current_transport = transport;
-        goto done;
 
     status = connector_initiate_action(handle, (dvt_ptr->request_count == connector_data_point_type_binary)? connector_initiate_data_point_binary : connector_initiate_data_point_single, dvt_ptr->dp_ptr);
     switch (status)
@@ -486,7 +485,6 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
             break;
     }
 
-done:
     return status;
 }
 
