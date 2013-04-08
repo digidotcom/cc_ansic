@@ -151,7 +151,7 @@ typedef enum
 static void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
 {
 
-    unsigned code = (int) data->errnum;
+    unsigned long int code = (unsigned long int) data->errnum;
 
     static struct
     {
