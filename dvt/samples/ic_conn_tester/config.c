@@ -21,19 +21,19 @@
 /* iDigi Connector Configuration routines */
 
 /*
- * Routine to get the IP address, you will need to modify this routine for your 
+ * Routine to get the IP address, you will need to modify this routine for your
  * platform.
  */
 static connector_callback_status_t app_get_ip_address(uint8_t ** const ip_address, size_t * const size)
 {
-	return application_get_ip_address(ip_address, size) ? 
+	return application_get_ip_address(ip_address, size) ?
             connector_callback_continue : connector_callback_abort;
 }
 
 
 static connector_callback_status_t app_get_mac_addr(uint8_t ** const addr, size_t * const size)
 {
-	return application_get_mac_addr(addr, size) ? 
+	return application_get_mac_addr(addr, size) ?
             connector_callback_continue : connector_callback_abort;
 }
 
@@ -71,7 +71,7 @@ static connector_callback_status_t app_get_device_id(uint8_t const ** id, size_t
 
 static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t * const size)
 {
-    return application_get_vendor_id(id, size) ? 
+    return application_get_vendor_id(id, size) ?
             connector_callback_continue : connector_callback_abort;
 }
 
@@ -89,7 +89,7 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
 
 static connector_callback_status_t app_get_server_url(char const ** url, size_t * const size)
 {
-    return application_get_server_url(url, size) ? 
+    return application_get_server_url(url, size) ?
             connector_callback_continue : connector_callback_abort;
 }
 
@@ -277,13 +277,6 @@ static connector_callback_status_t app_start_network_tcp(connector_connect_auto_
 }
 
 static connector_callback_status_t app_start_network_udp(connector_connect_auto_type_t * const connect_type)
-{
-    *connect_type = connector_connect_auto;
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_start_network_sms(connector_connect_auto_type_t * const connect_type)
 {
     *connect_type = connector_connect_auto;
 
@@ -645,7 +638,7 @@ char const * app_status_error_to_string(connector_status_t const value)
  * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
-static void app_config_error(connector_error_status_t const * const error_data)
+static void app_config_error(connector_config_error_status_t const * const error_data)
 {
 
     APP_DEBUG("app_config_error: Class: %s (%d) ", app_class_to_string(error_data->class_id), error_data->class_id);
@@ -809,10 +802,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
      case connector_config_network_udp:
          status = app_start_network_udp(response_data);
-         break;
-
-     case connector_config_network_sms:
-         status = app_start_network_sms(response_data);
          break;
 
      case connector_config_wan_type:

@@ -401,14 +401,6 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
     return connector_callback_continue;
 }
 
-#if !(defined CONNECTOR_NETWORK_SMS_START)
-static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
-{
-    config_connect->type = connector_connect_auto;
-    return connector_callback_continue;
-}
-#endif
-
 connector_wan_type_t connector_wan_type = connector_wan_type_imei;
 
 #if !(defined CONNECTOR_WAN_TYPE)
@@ -785,7 +777,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
  * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
-connector_callback_status_t app_config_error(connector_error_status_t const * const error_data)
+connector_callback_status_t app_config_error(connector_config_error_status_t const * const error_data)
 {
 
     connector_callback_status_t result = connector_callback_continue;
@@ -979,10 +971,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
      case connector_request_id_config_network_udp:
          status = app_start_network_udp(data);
-         break;
-
-     case connector_request_id_config_network_sms:
-         status = app_start_network_sms(data);
          break;
 
      case connector_request_id_config_imei_number:

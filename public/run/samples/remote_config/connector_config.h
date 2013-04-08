@@ -21,7 +21,6 @@
 #define CONNECTOR_RCI_SERVICE
 #define CONNECTOR_TRANSPORT_TCP
 /* #define CONNECTOR_TRANSPORT_UDP */
-/* #define CONNECTOR_TRANSPORT_SMS */
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
@@ -47,7 +46,6 @@
 #define CONNECTOR_DEVICE_ID_METHOD                      connector_device_id_method_auto
 #define CONNECTOR_NETWORK_TCP_START                     connector_connect_auto
 #define CONNECTOR_NETWORK_UDP_START                     connector_connect_auto
-#define CONNECTOR_NETWORK_SMS_START                     connector_connect_auto
 #define CONNECTOR_WAN_TYPE                              connector_wan_type_imei
 #define CONNECTOR_IDENTITY_VERIFICATION                 connector_identity_verification_simple
 

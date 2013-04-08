@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section config Configuration Callbacks
- * The Etherios Cloud Connector interfaces to the platform's configuration through the callbacks listed below.  These
+ * The iDigi connector interfaces to the platform's configuration through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  *
  *  -# @ref device_id
@@ -27,7 +27,6 @@
  *  -# @ref device_id_method
  *  -# @ref network_tcp_start
  *  -# @ref network_udp_start
- *  -# @ref network_sms_start
  *  -# @ref wan_type
  *  -# @ref imei_number
  *  -# @ref esn_number
@@ -41,19 +40,19 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_id() in config.c.
  *
- * Device IDs are a globally unique identifier for iDigi clients.  The Device ID is a
- * 16-octet value derived from the MAC address of a network interface on the client.
+ * Device IDs are a globally unique identifier for Etherios clients.  The Device ID is a
+ * 16-octet value derived from the MAC address of a network interface, IMEI, ESN or MEID on the client.
  * The mapping from MAC address to Device ID consists of inserting "FFFF" in the middle
  * of the MAC and setting all other bytes of the Device ID to 0.
  * For Example:
  * MAC Address 12:34:56:78:9A:BC, would map to a Device ID: 00000000-123456FF-FF789ABC.
- * If a client has more than one network interface, it does not matter to the iDigi Device Cloud which
+ * If a client has more than one network interface, it does not matter to Etherios Device Cloud which
  * network interface MAC is used for the basis of the Device ID.  If the MAC is read
  * directly from the network interface to generate the client's Device ID, care must be
  * taken to always use the same network interface's MAC since there is a unique mapping
  * between a device and a Device ID.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to the iDigi Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
  * @see app_get_device_id()
  *
  * @htmlonly
@@ -62,27 +61,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_device_id @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_device_id @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to 16-byte device ID. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of the device ID</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_data_t:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Callback returns the pointer which contains application's device ID</dd>
+ *              <dt><i>bytes_required</i></dt><dd>Number of bytes required in data pointer</dd>
+ *            </dl>
+ * </td>
+ *
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -101,15 +95,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void  * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_device_id)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_id)
  *     {
- *         static uint8_t my_device_id[DEVICE_ID_LENGTH];
- *         uint8_t ** response_device_id = (uint8_t **)response_data;
+ *          static uint8_t my_device_id[DEVICE_ID_LENGTH];
+ *          connector_config_pointer_data_t * const config_device_id = data;
  *
  *          // just uses the MAC address to format the device ID
  *          my_device_id[8] = my_device_mac_addr[0];
@@ -122,11 +116,12 @@
  *          my_device_id[15] = my_device_mac_addr[5];
  *
  *          // return the address of my_device_id
- *          *response_device_id   = my_device_id;
- *          *response_length = sizeof my_device_id;
+ *          ASSERT(config_device_id->bytes_required == sizeof my_device_id);
+ *          config_device_id->data   = my_device_id;
  *     }
  *     return connector_callback_continue;
  * }
+ *
  *
  * @endcode
  *
@@ -134,7 +129,7 @@
  * @section vendor_id Vendor ID
  *
  * Return vendor ID which is a unique code identifying the manufacturer of a device.
- * Vendor IDs are assigned to manufacturers by the iDigi Device Cloud.
+ * Vendor IDs are assigned to manufacturers by Etherios Device Cloud.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_vendor_id() in config.c.
@@ -142,7 +137,7 @@
  * @note If @ref CONNECTOR_VENDOR_ID configuration is defined in @ref connector_config.h, this callback
  * will not be called. See @ref connector_config_data_options
  *
- * @see @ref connector_vendor_id "Obtaining an iDigi Vendor ID"
+ * @see @ref connector_vendor_id "Obtaining an Etherios Vendor ID"
  * @see app_get_vendor_id()
  *
  * @htmlonly
@@ -151,27 +146,20 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_vendor_id @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_vendor_id @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to 4-byte vendor ID. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of the vendor ID</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_vendor_id:
+ *          <dl>
+ *              <dt><i>id</i></dt>
+ *              <dd> - Callback writes 4-byte vendor ID </dd>
+ *            </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -190,20 +178,14 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_vendor_id)
- *     {
- *         extern const uint8_t my_device_vendor_id[VENDOR_ID_LENGTH];
- *         uint8_t **id = (uint8_t **)response_data;
+ *   static uint32_t const device_vendor_id = 0xFE000000;
  *
- *         *id   = (uint8_t *)&my_device_vendor_id[0];
- *         *response_length = sizeof my_device_vendor_id;
- *     }
- *     return connector_callback_continue;
+ *   config_vendor->id  =  device_vendor_id;
+ *
+ *   return connector_callback_continue;
  * }
  *
  * @endcode
@@ -212,7 +194,7 @@
  *
  * Returns a pointer to the device type which is an iso-8859-1 encoded string.
  * This string should be chosen by the device manufacturer as a name that uniquely
- * identifies this model of device  to the server. When the server finds two devices
+ * identifies this model of device  to Etherios Device Cloud. When Etherios Device Cloud finds two devices
  * with the same device type, it can infer that they are the same product and
  * product-scoped data may be shared among all devices with this device type.
  * A device's type cannot be an empty string, nor contain only whitespace.
@@ -232,27 +214,21 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_device_type @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_device_type @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to an ASCII device type string. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the length to the device type. Maximum is 32 bytes.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_string_t:
+ *          <dl>
+ *              <dt><i>string</i></dt>
+ *              <dd> - Callback returns the pointer which contains device type</dd>
+ *              <dt><i>length</i></dt><dd>Callback returns number of bytes in the device type</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -271,27 +247,28 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void  * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_device_type)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_type)
  *     {
+ *         static char const device_type[] = "Linux Application";
+ *
+ *         connector_config_pointer_string_t * const config_type = data;
  *         // Return pointer to device type.
- *         extern const char device_type[];
- *         char ** type = (char **)response_data;
- *         *type = (char *)&device_type[0];
- *         *response_length = sizeof device_type-1;
+ *         config_device_type->string = (char *)device_type;
+ *         config_device_type->length = sizeof device_type -1;
  *     }
  *     return connector_callback_continue;
  * }
  *
  * @endcode
  *
- * @section server_url The iDigi Device Cloud Server URL
+ * @section server_url Etherios Device Cloud Server URL
  *
- * Return the iDigi Device Cloud FQDN.
+ * Return Etherios Device Cloud FQDN.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_server_url() in config.c.
@@ -307,33 +284,27 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_server_url @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_device_cloud_url @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to FQDN of the iDigi Device Cloud to be connected. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the length of the server URL. Maximum is 255 bytes..</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_string_t:
+ *          <dl>
+ *              <dt><i>string</i></dt>
+ *              <dd> - Callback returns the pointer to FQDN of Etherios Device Cloud to be connected.</dd>
+ *              <dt><i>length</i></dt><dd>Callback returns number of bytes of Etherios Device Cloud FQDN. Maximum is 64 bytes.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned server URL</td>
+ * <td>Callback successfully returned Etherios Device Cloud URL</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -351,14 +322,14 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_server_url)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_server_url)
  *     {
  *         // Return pointer to server url.
- *         static const char connector_server_url[] = "my.idigi.com";
- *         char ** url = (char **)response_data;
+ *         static  char const connector_server_url[] = "login.etherios.com";
+ *         connector_config_pointer_string_t * const config_url = data;
  *
- *         *url = (char *)&connector_server_url[0];
- *         *response_length = sizeof connector_server_url -1;
+ *         config_url->string = (char *)connector_server_url;
+ *         config_url->length = sizeof connector_server_url -1;
  *     }
  *     return connector_callback_continue;
  * }
@@ -387,11 +358,11 @@
  *    </tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_connection_type @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_connection_type @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_data</th>
@@ -402,12 +373,15 @@
  * <td> N/A.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td>Callback returns a pointer to @endhtmlonly @ref connector_lan_connection_type @htmlonly for LAN connection type or @endhtmlonly @ref connector_wan_connection_type @htmlonly for WAN connection type. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_connection_type_t:
+ *          <dl>
+ *              <dt><i>type</i></dt>
+ *              <dd> <ul><li>connector_connection_type_lan - Callback returns this for LAN connection type</li>
+ *                       <li>connector_connection_type_wan - Callback returns this for WAN conenction type</li></ul>
+ *              </dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -426,16 +400,16 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void  * const request_data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_connection_type)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_connection_type)
  *     {
- *         static connector_connection_type_t  device_connection_type = connector_lan_connection_type;
- *         connector_connection_type_t ** type = (connector_connection_type_t **)response_data;
- *         *type = &device_connection_type;
+ *         connector_config_connection_type_t * const config_connection = data;
+ *
+ *         config_connection->type = connector_connection_type_lan;
  *     }
  *     return connector_callback_continue;
  * }
@@ -457,11 +431,11 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_mac_addr @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_mac_addr @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_data</th>
@@ -472,12 +446,14 @@
  * <td> N/A.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td>Callback returns pointer to 6-byte MAC address</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td> Pointer to memory where callback writes the size of MAC address. It must be 6 bytes. </td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_data_t:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Callback returns the pointer which contains device MAC address</dd>
+ *              <dt><i>bytes_required</i></dt><dd>Number of bytes required in data pointer</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -496,20 +472,17 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * #define MAC_ADDR_LENGTH     6
+ * static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+ *
+ * static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_mac_addr)
- *     {
- *         extern uint8_t device_mac_addr[];
- *         uint8_t ** mac_addr = (uint8_t **)response_data;
+ *   ASSERT(config_mac->bytes_required == MAC_ADDR_LENGTH);
  *
- *         *mac_addr = (uint8_t *)&device_mac_addr[0];
- *         *response_length = sizeof device_mac_addr;
- *     }
- *     return connector_callback_continue;
+ *   config_mac->data = (uint8_t *)device_mac_addr;
+ *
+ *   return connector_callback_continue;
  * }
  *
  * @endcode
@@ -533,27 +506,20 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_link_speed @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_link_speed @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to 4-byte integer link speed. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of link speed. It must be 4 bytes</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_link_speed_t:
+ *          <dl>
+ *              <dt><i>speed</i></dt>
+ *              <dd> - Callback writes 4-byte integer speed of the link in bits per second. All zeros represents unknown speed.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -572,17 +538,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_link_speed)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_link_speed)
  *     {
- *         static uint32_t wan_speed = 19200;
- *         uint32_t **speed = (uint32_t **)response_data;
- *         *speed = &wan_speed;
- *         *response_length = sizeof wan_speed;
+ *         connector_config_link_speed_t * const config_link = data;
+ *         config_link->speed = 0;
  *     }
  *     return connector_callback_continue;
  * }
@@ -613,27 +577,22 @@
  * </tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_phone_number @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_phone_number @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to memory which contains the phone number dialed and any dialing prefixes </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of the phone number in bytes</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_string_t:
+ *          <dl>
+ *              <dt><i>string</i></dt>
+ *              <dd> - Callback returns pointer to memory which contains the phone number dialed, including any dialing prefixes. </dd>
+ *              <dt><i>length</i></dt>
+ *              <dd> - Callback returns number of bytes of the phone number in the string pointer.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -652,17 +611,19 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_phone_number)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_phone_number)
  *     {
- *         static char wan_phone_number[] = "0000000000";
- *         char **phone = (char **)response_data;
- *         *phonse = (char *)&wan_phone_number[0];
- *         *response_length = sizeof wan_phone_number - 1;
+ *         static char const phone_number[] ="000-000-0000";
+ *         connector_config_pointer_string_t * const config_phone_number = data;
+ *
+ *         config_phone_number->string = (char *)phone_number;
+ *         config_phone_number->length = sizeof phone_number -1;
+ *
  *     }
  *     return connector_callback_continue;
  * }
@@ -672,7 +633,7 @@
  * @section tx_keepalive TX Keepalive Interval
  *
  * Return TX keepalive interval in seconds. This tells how
- * often the iDigi Device Cloud sends keepalive messages to the device.
+ * often Etherios Device Cloud sends keepalive messages to the device.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_tx_keepalive_interval() in config.c.
@@ -693,27 +654,20 @@
  *   </tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_tx_keepalive @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_reqeust_id_config_tx_keepalive @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to 2-byte integer TX keepalive interval in seconds. It must be between 5 and 7200 seconds. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of TX keepalive. It must be 2 bytes.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_keepalive_t:
+ *          <dl>
+ *              <dt><i>interval_in_seconds</i></dt>
+ *              <dd> - Callback writes 2-byte integer TX keep alive interval in seconds. It must be between 5 and 7200 seconds.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -732,17 +686,18 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_tx_keepalive)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_tx_keepalive)
  *     {
- *         static uint16_t my_device_tx_keepalive_interval = 60;
- *         uint16_t ** interval = (uint16_t **)response_data;
- *         *interval = (uint16_t *)&my_device_tx_keepalive_interval;
- *         *response_length = sizeof my_device_tx_keepalive_interval;
+ *         #define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     90
+ *         connector_config_keepalive_t * const config_keepalive = data;
+ *
+ *         // Return Tx keepalive interval in seconds
+ *         config_keepalive->interval_in_seconds = DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS;
  *     }
  *     return connector_callback_continue;
  * }
@@ -752,7 +707,7 @@
  * @section rx_keepalive RX Keepalive Interval
  *
  * Return RX keepalive interval in seconds. This tells how
- * often Etherios Cloud Connector sends keepalive messages to the iDigi Device Cloud (device to the iDigi Device Cloud).
+ * often Etherios Cloud Connector sends keepalive messages to Etherios Device Cloud (device to Etherios Device Cloud).
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_rx_keepalive_interval() in config.c.
@@ -768,28 +723,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_rx_keepalive @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_rx_keepalive @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_keepalive_t:
+ *          <dl>
+ *              <dt><i>interval_in_seconds</i></dt>
+ *              <dd> - Callback writes 2-byte integer RX keep alive interval in seconds. It must be between 5 and 7200 seconds.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>Callback returns pointer to 2-byte integer RX keepalive interval in seconds. It must be between 5 and 7200 seconds. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of RX keepalive. It must be 2 bytes.</td>
- * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -807,17 +756,18 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_rx_keepalive)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_rx_keepalive)
  *     {
- *         static uint16_t my_device_rx_keepalive_interval = 60;
- *         uint16_t ** interval = (uint16_t **)response_data;
- *         *interval = (uint16_t *)&my_device_rx_keepalive_interval;
- *         *response_length = sizeof my_device_rx_keepalive_interval;
+ *         #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60
+ *         connector_config_keepalive_t * const config_keepalive = data;
+ *
+ *         // Return Tx keepalive interval in seconds
+ *         config_keepalive->interval_in_seconds = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
  *     }
  *     return connector_callback_continue;
  * }
@@ -843,27 +793,20 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_wait_count @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_wait_count @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns a pointer to 2-byte wait count. It must be between 2 and 63 times. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of wait count. It must be 2 bytes.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_wait_count_t:
+ *          <dl>
+ *              <dt><i>count</i></dt>
+ *              <dd> - Callback writes 2-byte wait count.It must be between 2 and 63 times.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -882,17 +825,19 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_wait_count)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_wait_count)
  *     {
- *         static uint16_t my_wait_count = 10;
- *         uint16_t ** count = (uint16_t **)response_data;
- *         *count = (uint16_t *)&my_wait_count;
- *         *response_length = sizeof my_wait_count;
+ *         #define DEVICE_WAIT_COUNT     5
+ *         connector_config_wait_count_t * const config_wait = data;
+ *
+ *          // Return wait count (number of times not receiving Tx keepalive
+ *          // from server is allowed).
+ *         config_wait->count = DEVICE_WAIT_COUNT;
  *     }
  *     return connector_callback_continue;
  * }
@@ -901,8 +846,8 @@
  *
  * @section ip_address Device IP Address
  *
- * Return a unique device IP address. The length of the IP
- * address must be either 4-octet for an IPv4 or 16-octet for an IPv6 address.
+ * Return a unique device IP address. The IP address must be either
+ * an IPv4 or IPv6 address.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_ip_address() in config.c.
@@ -915,28 +860,23 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_ip_addr @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_ip_addr @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to IP address. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td> Pointer to memory where callback writes the size of IP address.
- *     It returns 16 bytes for an IPv6 address or 4 bytes for an IPv4 address.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_ip_address_t:
+ *          <dl>
+ *              <dt><i>address</i></dt>
+ *              <dd> - Callback returns pointer to device's IP address.</dd>
+ *              <dt><i>ip_address_type</i></dt>
+ *              <dd> - <ul><li>connector_ip_address_ipv4 - Callback returns this for IPv4 address. The size of the address returned must be 4 bytes.</li>
+ *                         <li>connector_ip_address_ipv6 - Callback returns this for IPv6 address. The size of the address returned must be 16 bytes.</li></ul></dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -955,19 +895,20 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_ip_addr)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_ip_addr)
  *     {
- *         extern uint8_t my_ip_address[];
- *         uint8_t ** ip_address = (uint8_t **)response_data;
+ *         extern uint32_t device_ip_address;
  *
- *         *ip_address = (uint8_t *)&my_ip_address[0];
- *         *response_length = sizeof my_ip_address;
-  *     }
+ *         connector_config_ip_address_t * const config_ip = data;
+
+ *         config_ip->ip_address_type = connector_ip_address_ipv4;
+ *         config_ip->address = (uint8_t *)&device_ip_address;
+ *     }
  *     return connector_callback_continue;
  * }
  *
@@ -975,8 +916,8 @@
  *
  * @section error_status  Error Status Notification
  *
- * This callback is called to notify the user that Etherios Cloud Connector encountered an error. When Etherios Cloud Connector finds an
- * error, Etherios Cloud Connector will call this callback indicating the error status
+ * This callback is called to notify the user that Etherios Cloud Connector encountered an error. When Cloud Connector finds an
+ * error, Cloud Connector will call this callback indicating the error status
  *
  * @note If @ref CONNECTOR_DEBUG  is not defined in @ref connector_config.h, this callback
  * will not be called.
@@ -987,28 +928,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_error_status @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_error_status @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly @ref connector_error_status_t @htmlonly containing
- *     the class id, request id, and error status which Etherios Cloud Connector encountered error with.</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of connector_error_status_t</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_error_status_t containing
+ *     the class id, request id, and error status which Cloud Connector encountered error with.:
+ *          <dl>
+ *              <dt><i>class_id</i></dt><dd> - Class ID </dd>
+ *              <dt><i>request_id</i></dt><dd> - Request ID</dd>
+ *              <dt><i>status</i></dt><dd> - Error status</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1023,26 +958,26 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * void app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_error_status)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_error_status)
  *     {
- *         connector_error_status_t * error_data = request_data;
+ *         connector_config_error_status_t * error_data = data;
  *         printf("connector_error_status: unsupport class_id = %d request_id = %d status = %d\n",
  *                   error_data->class_id, error_data->request_id.config_request, error_data->status);
  *     }
- *     return connector_callback_continue;
+ *     return;
  * }
  *
  * @endcode
  *
  * @section firmware_support  Firmware Access Support
  *
- * Return @ref connector_service_supported_status_t status to enable or disable Firmware
- * download capability. If it's supported, callback for @ref connector_firmware_request_t
+ * Return @ref connector_config_supported_t status to enable or disable Firmware
+ * download capability. If it's supported, callback for @ref connector_request_id_firmware_t
  * must be implemented for firmware download. This callback allows application to enable
  * or disable firmware download capability during runtime.
  *
@@ -1058,28 +993,21 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_firmware_facility @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_firmware_facility @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_service_supported_status_t @htmlonly
- * status to support or not support firmware access facility</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_supported_t:
+ *          <dl>
+ *              <dt><i>supported</i></dt><dd> -
+ *                     <ul><li>connector_false - callback writes this if it doesn't support firmware download.</li>
+ *                         <li>connector_true - callback writes this if it supports firmware download.</li></ul></dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1089,7 +1017,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Etherios Clouse Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1098,14 +1026,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_firmware_facility)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_firmware_facility)
  *     {
- *         *((connector_service_supported_status_t *)response_data) = connector_service_supported;
+ *         connector_config_supported_t * const config_firmware = data;
+ *         config_firmware->supported = connector_true;
  *     }
  *     return connector_callback_continue;
  * }
@@ -1115,7 +1044,7 @@
  * @section data_service_support  Data Service Support
  *
  * Return @ref connector_service_supported_status_t status to enable or disable data service
- * capability. If it's supported, callback for @ref connector_data_service_request_t must be
+ * capability. If it's supported, callback for @ref connector_request_id_data_service_t must be
  * implemented for data service. This callback allows application to enable
  * or disable data service capability during runtime.
  *
@@ -1133,28 +1062,21 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_data_service @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_data_service @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_service_supported_status_t @htmlonly
- * status to support or not support data service</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_supported_t:
+ *          <dl>
+ *              <dt><i>supported</i></dt><dd> -
+ *                     <ul><li>connector_false - callback writes this if it doesn't support data service.</li>
+ *                         <li>connector_true - callback writes this if it supports data service.</li></ul></dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1173,14 +1095,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_data_service)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_data_service)
  *     {
- *         *((connector_service_supported_status_t *)response_data) = connector_service_supported;
+ *         connector_config_supported_t * const config_data_service = data;
+ *         config_data_service->supported = connector_true;
  *     }
  *     return connector_callback_continue;
  * }
@@ -1190,7 +1113,7 @@
  * @section file_system_support  File System Support
  *
  * Return @ref connector_service_supported_status_t status to enable or disable file system
- * capability. If it's supported, callback for @ref connector_file_system_request_t must be
+ * capability. If it's supported, callback for @ref connector_request_id_file_system_t must be
  * implemented for file system. This callback allows application to enable
  * or disable file system capability during runtime.
  *
@@ -1208,28 +1131,21 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_file_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_file_system @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_service_supported_status_t @htmlonly
- * status to support or not support file_system</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_supported_t:
+ *          <dl>
+ *              <dt><i>supported</i></dt><dd> -
+ *                     <ul><li>connector_false - callback writes this if it doesn't support file system.</li>
+ *                         <li>connector_true - callback writes this if it supports file system. </li></ul></dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1248,14 +1164,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_data_service)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_file_system)
  *     {
- *         *((connector_service_supported_status_t *)response_data) = connector_service_supported;
+ *         connector_config_supported_t * const config_file_system = data;
+ *         config_file_system->supported = connector_true;
  *     }
  *     return connector_callback_continue;
  * }
@@ -1270,7 +1187,7 @@
  * or disable remote configuration capability during runtime.
  *
  * @note If @ref CONNECTOR_RCI_SERVICE is not defined in @ref connector_config.h, this callback
- * will not be called and remote configuration is not supported. iDigi Connector does not include remote configuration.
+ * will not be called and remote configuration is not supported. Etherios Cloud Connector does not include remote configuration.
  *
  * @note If @ref CONNECTOR_REMOTE_CONFIGURATION_SUPPORT is defined in @ref connector_config.h, this callback is not needed.
  * It enables remote configuration capability. See @ref connector_config_data_options.
@@ -1283,28 +1200,21 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_remote_configuration @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_remote_configuration @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_service_supported_status_t @htmlonly
- * status to support or not support remote configuration</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_supported_t:
+ *          <dl>
+ *              <dt><i>supported</i></dt><dd> -
+ *                     <ul><li>connector_false - callback writes this if it doesn't support remote configuration.</li>
+ *                         <li>connector_true - callback writes this if it supports remote configuration.</li></ul></dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1328,7 +1238,7 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_remote_configuration)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_remote_configuration)
  *     {
  *         *((connector_service_supported_status_t *)response_data) = connector_service_supported;
  *     }
@@ -1339,8 +1249,8 @@
  *
  * @section max_msg_transactions Maximum Message Transactions
  *
- * Return maximum simultaneous transactions for data service and file system to receive message from the
- * iDigi Device Cloud. This configuration is required if @ref data_service_support or @ref file_system_support
+ * Return maximum simultaneous transactions for data service and file system to receive message from
+ * Etherios Device Cloud. This configuration is required if @ref data_service_support or @ref file_system_support
  * is enabled.
  *
  * @note If @ref CONNECTOR_MSG_MAX_TRANSACTION configuration is defined in @ref connector_config.h, this callback
@@ -1352,28 +1262,19 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_max_transaction @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_max_transaction @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to unsigned int memory where callback writes maximum transactions.
- * It must be between 1 to 255. Use 0 for unlimited transactions.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_max_transaction_t:
+ *          <dl>
+ *              <dt><i>count</i></dt><dd>Callback writes maximum simultaneous transactions. Use 0 for unlimited transactions.</dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1392,14 +1293,17 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                   connector_request_id_t const request_id
+ *                                                   void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_max_transaction)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_max_transaction)
  *     {
- *          *((unsigned int *)response_data) = CONNECTOR_MAX_MSG_TRANSACTIONS;
+ *         #define CONNECTOR_MAX_MSG_TRANSACTIONS   1
+ *         connector_config_max_transaction_t * const config_max_transaction = data;
+ *
+ *         config_max_transaction->count = CONNECTOR_MAX_MSG_TRANSACTIONS;
  *     }
  *     return connector_callback_continue;
  * }
@@ -1412,7 +1316,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_id_method() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to the iDigi Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
  * @see app_get_device_id()
  *
  * @htmlonly
@@ -1421,37 +1325,25 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_device_id_method @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_device_id_method @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes <i> <b> connector_auto_device_id_method </b> </i>or
- *      <i> <b> connector_manual_device_id_method. </b> </i> @endhtmlonly
- *                          - @ref connector_auto_device_id_method
- *                                  - For @ref connector_lan_connection_type, it generates device id from @ref mac_address callback
- *                                  - For @ref connector_wan_connection_type, it generates device id according to @ref wan_type callback.
- *                          - @ref connector_manual_device_id_method to obtain device ID from
- *                                  @ref device_id callback
- *                          .
- *  @htmlonly Note: The @endhtmlonly @ref device_id @htmlonly callback will not be called
- *  if <i> <b> connector_auto_device_id_method </b> </i> is returned.
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_device_id_method_t:
+ *          <dl>
+ *              <dt><i>method</i></dt><dd>
+ *                  <ul><li>connector_device_id_method_auto - Callback returns this telling Cloud Connector to generate
+ *                                                            the device ID from @endhtmlonly @ref mac_address callback for LAN connection type or
+ *                                                            generate the device ID according to the @ref wan_type @htmlonly for WAN connection type.</li>
+ *                      <li>connector_device_id_method_manual - Callback returns this telling Cloud Connector to retrieve
+ *                                                            the device ID from @endhtmlonly @ref connector_request_id_config_device_id @htmlonly callback.</li></ul>
+ *                  Note: the @endhtmlonly @ref device_id @htmlonly calblack will not be called if connector_device_id_method_auto is returned.
+ *          </dl>
  * </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory which contains the size of the response_data</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1469,16 +1361,16 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_config && request_id.config_request == connector_config_device_id_method)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_id_method)
  *     {
- *         connector_device_id_method_t * const device_id_method = response_data;
+ *         connector_config_device_id_method_t * const config_device = data;
  *
- *         *device_id_method = connector_auto_device_id_method;
+ *         config_device->method = connector_device_id_method_auto;
  *     }
  *     return connector_callback_continue;
  * }
@@ -1487,7 +1379,7 @@
  *
  * @section network_tcp_start  Start network TCP
  *
- * Return @ref connector_auto_connect_type_t to automatically or manually start TCP transport.
+ * Return @ref connector_auto_connect_type_t to automatic or manual start TCP transport.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_start_network_tcp() in config.c.
@@ -1504,30 +1396,23 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_network_tcp @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_network_tcp @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_auto_connect_type_t @htmlonly
- * status <ul> <li> @endhtmlonly @ref connector_auto_connect @htmlonly to automatically start TCP transport or </li>
- * <li> @endhtmlonly @ref connector_manual_connect @htmlonly to manually start TCP transport.</li></ul>
- * @endhtmlonly @note Call @ref connector_initiate_action with @ref connector_initiate_transport_start @htmlonly to start TCP transport.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_connect_type_t:
+ *          <dl>
+ *              <dt><i>type</i></dt><dd>
+ *                  <ul><li>connector_connect_auto - Callback returns this to automatic connect to Etherios Device Cloud.</li>
+ *                      <li>connector_connect_manual - Callback returns this to manual connect to Etherios Device Cloud.
+ *                                                    @endhtmlonly Note: Call @ref connector_initiate_action with
+ *                                                    @ref connector_initiate_transport_start @htmonly to start TCP transport.</li></ul>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1546,9 +1431,9 @@
  *
  * @code
  *
- * static connector_callback_status_t app_start_network_tcp(connector_auto_connect_type_t * const connect_type)
+ * static connector_callback_status_t app_start_network_tcp(connector_config_connect_type_t * const device_connect)
  * {
- *    *connect_type = connector_auto_connect;
+ *    device_connect->type = connector_connect_auto;
  *
  *    return connector_callback_continue;
  * }
@@ -1571,30 +1456,23 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_network_udp @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_network_udp @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_auto_connect_type_t @htmlonly
- * status <ul> <li> @endhtmlonly @ref connector_auto_connect @htmlonly to automatically start UDP transport or </li>
- * <li> @endhtmlonly @ref connector_manual_connect @htmlonly to manually start UDP transport.</li></ul>
- * @endhtmlonly @note Call @ref connector_initiate_action with @ref connector_initiate_transport_start @htmlonly to start UDP transport.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_connect_type_t:
+ *          <dl>
+ *              <dt><i>type</i></dt><dd>
+ *                  <ul><li>connector_connect_auto - Callback returns this to automatic establish UDP connection to Etherios Device Cloud.</li>
+ *                      <li>connector_connect_manual - Callback returns this to manual establish UDP connection to Etherios Device Cloud.
+ *                                                    @endhtmlonly Note: Call @ref connector_initiate_action with
+ *                                                    @ref connector_initiate_transport_start @htmonly to start UPD transport.</li></ul>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1613,85 +1491,19 @@
  *
  * @code
  *
- * static connector_callback_status_t app_start_network_udp(connector_auto_connect_type_t * const connect_type)
+ * static connector_callback_status_t app_start_network_udp(connector_config_connect_type_t * const device_connect)
  * {
- *    *connect_type = connector_auto_connect;
+ *    device_connect->type = connector_connect_auto;
  *
  *    return connector_callback_continue;
  * }
  *
  * @endcode
  *
- * @section network_sms_start  Start network SMS
- *
- * Return @ref connector_auto_connect_type_t to automatically or manually start SMS transport.
- *
- * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
- * and implemented in the @b Platform function app_start_network_sms() in config.c.
- *
- * @note If @ref CONNECTOR_TRANSPORT_SMS configuration is not defined in @ref connector_config.h, this callback
- * will not be called and SMS transport is not supported. Etherios Cloud Connector does not include SMS transport.
- *
- * @htmlonly
- * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr>
- * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
- * </tr>
- * <tr>
- * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_network_sms @htmlonly</td>
- * </tr>
- * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to memory where callback writes @endhtmlonly @ref connector_auto_connect_type_t @htmlonly
- * status <ul> <li> @endhtmlonly @ref connector_auto_connect @htmlonly to automatically start SMS transport or </li>
- * <li> @endhtmlonly @ref connector_manual_connect @htmlonly to manually start SMS transport.</li></ul>
- * @endhtmlonly @note Call @ref connector_initiate_action with @ref connector_initiate_transport_start @htmlonly to start SMS transport.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr>
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned the status</td>
- * </tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * Example:
- *
- * @code
- *
- * static connector_callback_status_t app_start_network_sms(connector_auto_connect_type_t * const connect_type)
- * {
- *    *connect_type = connector_auto_connect;
- *
- *    return connector_callback_continue;
- * }
- *
- * @endcode
  *
  * @section wan_type WAN Type
  *
- * Return IMEI, ESN or MEID WAN type for @ref connector_wan_connection_type returned from @ref connection_type callback.
+ * Return IMEI, ESN or MEID WAN type for @ref connector_connection_type_wan returned from @ref connection_type callback.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_wan_type() in config.c.
@@ -1699,13 +1511,13 @@
  * @note If @ref CONNECTOR_WAN_TYPE configuration is defined in @ref connector_config.h, this callback
  * will not be called. See @ref connector_config_data_options
  *
- * @note if @ref device_id_method callback returns @ref connector_manual_device_id_method or
- * @ref connection_type callback returns @ref connector_lan_connection_type,
+ * @note if @ref device_id_method callback returns @ref connector_device_id_method_manual or
+ * @ref connection_type callback returns @ref connector_connection_type_lan,
  * this callback will not be called.
  *
- * @note If it returns @ref connector_imei_wan_type, @ref imei_number callback will be called.
- * @note If it returns @ref connector_esn_wan_type, @ref esn_number callback will be called.
- * @note If it returns @ref connector_meid_wan_type, @ref meid_number callback will be called.
+ * @note If it returns @ref connector_wan_type_imei, @ref imei_number callback will be called.
+ * @note If it returns @ref connector_wan_type_esn, @ref esn_number callback will be called.
+ * @note If it returns @ref connector_wan_type_meid, @ref meid_number callback will be called.
  *
  * @see app_get_wan_type()
  *
@@ -1719,29 +1531,20 @@
  *    </tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_wan_type @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_wan_type @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>Pointer to memory where callback writes <ul> <li> @endhtmlonly @ref connector_imei_wan_type @htmlonly for
- * IMEI,</li> <li> @endhtmlonly @ref connector_esn_wan_type @htmlonly for ESN, or </li> <li>
- * @endhtmlonly @ref connector_meid_wan_type @htmlonly for MEID WAN type. </li> </ul> </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_wan_type_t:
+ *          <dl>
+ *              <dt><i>type</i></dt><dd>
+ *                  <ul><li>connector_wan_type_imei - Callback returns this for IMEI number for GSM network.</li>
+ *                      <li>connector_wan_type_esn - Callback returns this for ESN for CDMA network.</li>
+ *                      <li>connector_wan_type_meid - Callback returns this for MEID for CDMA network.</li>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1760,10 +1563,10 @@
  *
  * @code
  *
- * static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const type)
+ * static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
  * {
  *
- *     *type = connector_imei_wan_type;
+ *     config_wan->type = connector_wan_type_imei;
  *
  *     return connector_callback_continue;
  * }
@@ -1772,12 +1575,12 @@
  *
  * @section imei_number IMEI number
  * Returns IMEI number. This is called if @ref wan_type callback
- * returns @ref connector_imei_wan_type WAN type.
+ * returns @ref connector_wan_type_imei WAN type.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_imei_number() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to the iDigi Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
  * @see app_get_device_id()
  * @see @ref device_id_method for device ID Method
  * @see @ref connection_type for connection type.
@@ -1788,27 +1591,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_imei_number @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_imei_number @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns pointer to IMEI number. Each nibble corresponds a decimal digit and most upper nibble must be 0. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory which callback writes the size of the response_data in bytes. It should be 8 bytes for 14 decimal IMEI plus a check digit.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_data_t:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Callback returns the pointer which contains IMEI number including a check digit. Each nibble corresponds a
+ *                     decimal digit and most upper nibble must be 0.</dd>
+ *              <dt><i>bytes_required</i></dt><dd>Number of bytes required for the IMEI number</dd>
+ *            </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1826,44 +1624,41 @@
  *
  * @code
  *
- * static connector_callback_status_t app_get_imei_number(uint8_t ** const imei_number, size_t * size)
+ * static connector_callback_status_t app_get_imei_number(connector_config_pointer_data_t * const config_imei)
  * {
+ *     #define APP_IMEI_LENGTH 8
  *
- *  #define APP_IMEI_LENGTH 8
+ *     // Each nibble corresponds a decimal digit.
+ *     // Most upper nibble must be 0.
+ *     static char const app_imei_number_string[] = "000000-00-000000-0";
+ *     static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
+ *     int i = sizeof app_imei_number_string -1;
+ *     int index = sizeof app_imei_number -1;
  *
- *        // Each nibble corresponds a decimal digit.
- *        // Most upper nibble must be 0.
- *        //
- *        static char const app_imei_number_string[] = "000000-00-000000-0";
- *        static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
- *        int i = sizeof app_imei_number_string -1;
- *        int index = sizeof app_imei_number -1;
- *        uint8_t ** imei_number = (uint8_t **)response_data;
+ *     while (i > 0)
+ *     {
+ *         int n = 0;
  *
- *        while (i > 0)
- *        {
- *            int n = 0;
+ *         app_imei_number[index] = 0;
  *
- *            app_imei_number[index] = 0;
+ *         // loop 2 times here for 2 digits (1 bytes)
+ *         while (n < 2 && i > 0)
+ *         {
+ *             i--;
+ *             if (app_imei_number_string[i] != '-')
+ *             {
+ *                 uint8_t value;
+ *                 get_hex_digit(app_imei_number_string[i], &value);
+ *                 app_imei_number[index] += (value << ((uint8_t)n * 4));
+ *                 n++;
+ *             }
+ *         }
+ *         index--;
+ *     }
  *
- *            // loop 2 times here for 2 digits (1 bytes)
- *            while (n < 2 && i > 0)
- *            {
- *                i--;
- *                if (app_imei_number_string[i] != '-')
- *                {
- *                    ASSERT(isdigit(app_imei_number_string[i]));
- *                    app_imei_number[index] += ((app_imei_number_string[i] - '0') << (n * 4));
- *                    n++;
- *                }
- *            }
- *            index--;
- *        }
- *
- *        *imei_number = app_imei_number;
- *        *response_length = sizeof app_imei_number;
- *
- *        return connector_callback_continue;
+ *     config_imei->data = app_imei_number;
+ *     ASSERT(config_imei->bytes_required == sizeof app_imei_number);
+ *     return connector_callback_continue;
  * }
  *
  * @endcode
@@ -1875,7 +1670,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_esn_number() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to the iDigi Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
  * @see app_get_wan_type()
  * @see @ref wan_type for WAN type
  * @see @ref connection_type for connection type.
@@ -1886,27 +1681,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_esn @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_esn @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback pointer to ESN number. Each nibble corresponds a hexadeciaml digit. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory which callback writes the size of the response_data in bytes. It should be 4 bytes for 8 hexadecimal ESN.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_data_t:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Callback returns the pointer which contains ESN number. Each nibble corresponds a
+ *                     hexadecimal digit.</dd>
+ *              <dt><i>bytes_required</i></dt><dd>Number of bytes required for the ESN number</dd>
+ *            </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1924,43 +1714,43 @@
  *
  * @code
  *
- * static connector_callback_status_t app_get_esn(uint8_t ** const esn_number, size_t * size)
+ * static connector_callback_status_t app_get_esn(connector_config_pointer_data_t * const config_esn)
  * {
  * #define APP_ESN_HEX_LENGTH 4
  *
- *   // Each nibble corresponds a decimal digit.
- *   // Most upper nibble must be 0.
+ *     // Each nibble corresponds a decimal digit.
+ *     // Most upper nibble must be 0.
  *
- *   static char const app_esn_hex_string[] = "00000000";
- *   static uint8_t app_esn_hex[APP_ESN_HEX_LENGTH] = {0};
- *   int i = sizeof app_esn_hex_string -1;
- *   int index = sizeof app_esn_hex -1;
+ *     static char const app_esn_hex_string[] = "00000000";
+ *     static uint8_t app_esn_hex[APP_ESN_HEX_LENGTH] = {0};
+ *     int i = sizeof app_esn_hex_string -1;
+ *     int index = sizeof app_esn_hex -1;
  *
- *   while (i > 0)
- *   {
- *       int n = 0;
+ *     while (i > 0)
+ *     {
+ *         int n = 0;
  *
- *       app_esn_hex[index] = 0;
+ *         app_esn_hex[index] = 0;
  *
- *       // loop 2 times here for 2 digits (1 bytes)
- *       while (n < 2 && i > 0)
- *       {
- *           i--;
- *           if (app_esn_hex_string[i] != '-')
- *           {
- *               uint8_t value;
- *               get_hex_digit(app_esn_hex_string[i], &value);
- *               app_esn_hex[index] += (value << ((uint8_t)n * 4));
- *               n++;
- *           }
- *       }
- *       index--;
- *   }
+ *         // loop 2 times here for 2 digits (1 bytes)
+ *         while (n < 2 && i > 0)
+ *         {
+ *             i--;
+ *             if (app_esn_hex_string[i] != '-')
+ *             {
+ *                 uint8_t value;
+ *                 get_hex_digit(app_esn_hex_string[i], &value);
+ *                 app_esn_hex[index] += (value << ((uint8_t)n * 4));
+ *                 n++;
+ *             }
+ *         }
+ *         index--;
+ *     }
  *
- *   *esn_number = app_esn_hex;
- *   *size = sizeof app_esn_hex;
+ *     config_esn->data = app_esn_hex;
+ *     ASSERT(config_esn->bytes_required == sizeof app_esn_hex);
  *
- *   return connector_callback_continue;
+ *     return connector_callback_continue;
  * }
  *
  * @endcode
@@ -1972,7 +1762,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_meid_number() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to the iDigi Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
  * @see app_get_wan_type()
  * @see @ref wan_type for WAN type
  * @see @ref connection_type for connection type.
@@ -1983,27 +1773,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_meid @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_meid @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback pointer to IMEI number. Each nibble corresponds a hexadeciaml digit. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory which callback writes the size of the response_data in bytes. It should be 7 bytes for 14 hexadecimal MEID. Check digit is not included.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_data_t:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Callback returns the pointer which contains MEID number. Each nibble corresponds a
+ *                     hexadecimal digit.Check digit is not included.</dd>
+ *              <dt><i>bytes_required</i></dt><dd>Number of bytes required for the MEID number</dd>
+ *            </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -2021,42 +1806,43 @@
  *
  * @code
  *
- * static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, size_t * size)
+ * static connector_callback_status_t app_get_meid(connector_config_pointer_data_t * const config_meid)
  * {
  * #define APP_MEID_HEX_LENGTH 7
  *
- *    // Each nibble corresponds a decimal digit.
- *    // Most upper nibble must be 0.
+ *     // Each nibble corresponds a decimal digit.
+ *     // Most upper nibble must be 0.
  *
- *   static char const app_meid_hex_string[] = "00000000000000";
- *   static uint8_t app_meid_hex[APP_MEID_HEX_LENGTH] = {0};
- *   int i = sizeof app_meid_hex_string -1;
- *   int index = sizeof app_meid_hex -1;
+ *     static char const app_meid_hex_string[] = "00000000000000";
+ *     static uint8_t app_meid_hex[APP_MEID_HEX_LENGTH] = {0};
+ *     int i = sizeof app_meid_hex_string -1;
+ *     int index = sizeof app_meid_hex -1;
  *
- *   while (i > 0)
- *   {
- *       int n = 0;
+ *     while (i > 0)
+ *     {
+ *         int n = 0;
  *
- *       app_meid_hex[index] = 0;
+ *         app_meid_hex[index] = 0;
  *
- *       // loop 2 times here for 2 digits (1 bytes)
- *       while (n < 2 && i > 0)
- *       {
- *           i--;
- *           if (app_meid_hex_string[i] != '-')
- *           {
- *               uint8_t value;
- *               get_hex_digit(app_meid_hex_string[i], &value);
- *               app_meid_hex[index] += (value << ((uint8_t)n * 4));
- *               n++;
- *           }
- *       }
- *       index--;
+ *         // loop 2 times here for 2 digits (1 bytes)
+ *         while (n < 2 && i > 0)
+ *         {
+ *             i--;
+ *             if (app_meid_hex_string[i] != '-')
+ *             {
+ *                uint8_t value;
+ *                 get_hex_digit(app_meid_hex_string[i], &value);
+ *                 app_meid_hex[index] += (value << ((uint8_t)n * 4));
+ *                 n++;
+ *             }
+ *         }
+ *         index--;
+ *     }
  *
- *   *meid_number = app_meid_hex;
- *   *size = sizeof app_meid_hex;
+ *     config_meid->data = app_meid_hex;
+ *     ASSERT(config_meid->bytes_required == sizeof app_meid_hex);
  *
- *   return connector_callback_continue;
+ *     return connector_callback_continue;
  * }
  *
  * @endcode
@@ -2083,29 +1869,21 @@
  *    </tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_identity_verification @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_identity_verification @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>Pointer to memory where callback writes @endhtmlonly @ref connector_simple_identity_verification @htmlonly
- *     for simple identity verification form or @endhtmlonly @ref connector_password_identity_verification @htmlonly
-       for password identity verification form. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_identity_verification_t:
+ *          <dl>
+ *              <dt><i>type</i></dt>
+ *              <dd> <ul><li>connector_identity_verification_simple -  Callback returns this type for simple identity verification.</li>
+ *                       <li>connector_identity_verification_password - Callback returns this type for password identity verification.</li></ul></dd>
+ *          </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -2124,9 +1902,9 @@
  *
  * @code
  *
- *    static connector_callback_status_t app_get_identity_verification(connector_identity_verification_t * const identity)
+ *    static connector_callback_status_t app_get_identity_verification(connector_config_identity_verification_t * const identity)
  *    {
- *        *identity = connector_simple_identity_verification;
+ *        identity->type = connector_identity_verification_simple;
  *
  *        return connector_callback_continue;
  *    }
@@ -2154,27 +1932,21 @@
  *    </tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_config @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_config_password @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_password @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>Callback returns pointer to the password.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the length of the password in bytes.</td>
+ * <th>data</th>
+ * <td> Pointer to @ref connector_config_pointer_data_t:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Callback returns the pointer to the password.</dd>
+ *              <dt><i>length</i></dt><dd>The length of the password in bytes.</dd>
+ *            </dl>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -2193,15 +1965,16 @@
  *
  * @code
  *
- *    static connector_callback_status_t app_get_password(char const ** password, size_t * const size)
- *    {
- *        static  char const connector_password[] = "my_password";
+ * static connector_callback_status_t app_get_password(connector_config_pointer_string_t * const config_password)
+ * {
+ *     static  char const connector_password[] = "password";
  *
- *        *password = connector_password;
- *        *size = sizeof connector_password -1;
+ *      // Return pointer to password.
+ *     config_password->string = (char *)connector_password;
+ *     config_password->length = sizeof connector_password -1;
  *
- *        return connector_callback_continue;
- *    }
+ *     return connector_callback_continue;
+ * }
  *
  * @endcode
  *

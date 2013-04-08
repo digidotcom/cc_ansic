@@ -15,7 +15,7 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
     connector_status_t result = connector_working;
 
 #if (defined CONNECTOR_DEBUG)
-    connector_error_status_t err_status;
+    connector_config_error_status_t err_status;
     connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_error_status;

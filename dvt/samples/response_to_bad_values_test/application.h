@@ -44,7 +44,7 @@ typedef enum
     connector_connector_start
 } connector_connector_status_t;
 
-extern connector_callback_status_t app_config_error(connector_error_status_t const * const error_data);
+extern connector_callback_status_t app_config_error(connector_config_error_status_t const * const error_data);
 extern connector_callback_status_t app_invalid_size_config_handler(connector_request_id_config_t const request_id,
                                               void * const data);
 extern connector_callback_status_t app_invalid_data_config_handler(connector_request_id_config_t const request_id,

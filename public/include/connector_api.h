@@ -412,7 +412,7 @@ typedef union {
 */
 
 /**
-* @defgroup connector_error_status_t Error Status
+* @defgroup connector_config_error_status_t Error Status
 * @{
 */
 /**
@@ -421,10 +421,10 @@ typedef union {
 * @see connector_request_id_config_t
 */
 typedef struct  {
-    connector_class_id_t class_id;         /**< Class ID which Etherios Cloud Connector encounters error with */
-    connector_request_id_t request_id;     /**< Request ID which Etherios Cloud Connector encounters error with */
-    connector_status_t status;          /**< Error status */
-} connector_error_status_t;
+    connector_class_id_t CONST class_id;         /**< Class ID which Etherios Cloud Connector encounters error with */
+    connector_request_id_t CONST request_id;     /**< Request ID which Etherios Cloud Connector encounters error with */
+    connector_status_t CONST status;             /**< Error status */
+} connector_config_error_status_t;
 /**
 * @}
 */
