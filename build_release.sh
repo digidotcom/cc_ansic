@@ -8,12 +8,13 @@ PKG_NAME=${PART_NUMBER}_${REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
 
 SAMPLES="compile_and_link
-         connect_to_device_cloud
          connect_on_ssl
+         connect_to_device_cloud
          device_request
+         file_system
          firmware_download
-         send_data
          remote_config
+         send_data
          simple_remote_config"
 
 function cleanup () 
