@@ -211,7 +211,7 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
 
     if (full_path_bytes >= available_path_bytes)
     {
-        connector_debug_printf("dp_send_message [DataPoint/%s.%s]: file path bytes [%zu] exceeds the limit [%zu]\n", path, extension, full_path_bytes, available_path_bytes);
+        connector_debug_printf("dp_fill_file_path [DataPoint/%s.%s]: file path bytes [%zu] exceeds the limit [%zu]\n", path, extension, full_path_bytes, available_path_bytes);
         result = connector_invalid_data;
     }
     else
@@ -243,10 +243,11 @@ static connector_status_t dp_send_message(connector_data_t * const connector_ptr
         case connector_init_error:
         case connector_unavailable:
         case connector_service_busy:
-            result = connector_service_busy;
+            result = connector_pending;
             break;
 
         case connector_success:
+            result = connector_working;
             goto done;
 
         default:
@@ -345,7 +346,7 @@ static connector_status_t dp_process_request(connector_data_t * const connector_
         if ((data_point_single_pending != NULL) && (data_point_single_pending->transport == transport))
         {
             result = dp_process_csv(connector_ptr, data_point_single_pending);
-            if (result != connector_service_busy)
+            if (result != connector_pending)
             {
                 process_csv = connector_false;
                 data_point_single_pending = NULL;
@@ -359,7 +360,7 @@ static connector_status_t dp_process_request(connector_data_t * const connector_
     if ((data_point_binary_pending != NULL) && (data_point_binary_pending->transport == transport))
     {
         result = dp_process_binary(connector_ptr, data_point_binary_pending);
-        if (result != connector_service_busy)
+        if (result != connector_pending)
             data_point_binary_pending = NULL;
     }
 
@@ -402,7 +403,7 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
             break;
         }
 
-#if (defined FLOATING_POINT_SUPPORT)
+#if (defined FLOATING_POINT_SUPPORTED)
         case connector_data_point_type_float:
             bytes_processed = connector_snprintf(buffer, bytes_available, "%f", dp_ptr->data.element.native.float_value);
             break;
@@ -432,7 +433,7 @@ static size_t dp_process_time(data_point_info_t * const dp_info, char * const bu
             break;
 
         case connector_time_local_epoch_fractional:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%u%03ud",
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%u%03u",
                                                  dp_ptr->time.value.since_epoch_fractional.seconds,
                                                  dp_ptr->time.value.since_epoch_fractional.milliseconds);
             break;

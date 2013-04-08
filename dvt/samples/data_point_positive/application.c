@@ -99,6 +99,7 @@ int application_run(connector_handle_t handle)
 {
     connector_status_t status;
 
+    sleep(5);
     do
     {
         status = app_send_data_point(handle);

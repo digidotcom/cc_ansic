@@ -19,20 +19,18 @@ typedef struct
 {
     void * dp_ptr;
     connector_data_point_type_t data_type;
-    size_t request_count;
-    size_t response_count;
     connector_transport_t transport;
 } dvt_dp_t;
 
 static dvt_dp_t dvt_dp_info[] = {
     #if (defined CONNECTOR_TRANSPORT_TCP)
-    {NULL, connector_data_point_type_integer, 0, 0, connector_transport_tcp},
+    {NULL, connector_data_point_type_integer, connector_transport_tcp},
     #endif
     #if (defined CONNECTOR_TRANSPORT_UDP)
-    {NULL, connector_data_point_type_integer, 0, 0, connector_transport_udp},
+    {NULL, connector_data_point_type_integer, connector_transport_udp},
     #endif
     #if (defined CONNECTOR_TRANSPORT_SMS)
-    {NULL, connector_data_point_type_integer, 0, 0, connector_transport_sms}
+    {NULL, connector_data_point_type_integer, connector_transport_sms}
     #endif
 };
 
@@ -449,7 +447,7 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
         if (transport == dvt_dp_transport_count) transport = 0;
 
         if (dvt_ptr->dp_ptr == NULL)
-            dvt_ptr->dp_ptr = (dvt_ptr->request_count == connector_data_point_type_binary) ? get_data_point_binary(dvt_ptr) : get_data_point_single(dvt_ptr);
+            dvt_ptr->dp_ptr = (dvt_ptr->data_type == connector_data_point_type_binary) ? get_data_point_binary(dvt_ptr) : get_data_point_single(dvt_ptr);
 
         if (dvt_ptr->dp_ptr != NULL) break;
 
@@ -459,12 +457,13 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
 
     current_transport = transport;
 
-    status = connector_initiate_action(handle, (dvt_ptr->request_count == connector_data_point_type_binary)? connector_initiate_data_point_binary : connector_initiate_data_point_single, dvt_ptr->dp_ptr);
+    status = connector_initiate_action(handle, (dvt_ptr->data_type == connector_data_point_type_binary)? connector_initiate_data_point_binary : connector_initiate_data_point_single, dvt_ptr->dp_ptr);
+    APP_DEBUG("Data point sent, request[%d], status[%d]\n", dvt_ptr->data_type, status);
     switch (status)
     {
         case connector_success:
-            if (dvt_ptr->request_count == connector_data_point_type_binary)
-                dvt_ptr->request_count++;
+            if (dvt_ptr->data_type < connector_data_point_type_binary)
+                dvt_ptr->data_type++;
             else
                 status = connector_idle;
             dvt_ptr->dp_ptr = NULL; /* allow next data point message */
@@ -476,12 +475,15 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
             break;  /* try to send again later */
 
         default:
-            if (dvt_ptr->request_count == connector_data_point_type_binary)
-                free_dp_binary_ptr(dvt_ptr->dp_ptr);
-            else
-                free_dp_single_ptr(dvt_ptr->dp_ptr);
+            if (dvt_ptr->dp_ptr != NULL)
+            {
+                if (dvt_ptr->data_type == connector_data_point_type_binary)
+                    free_dp_binary_ptr(dvt_ptr->dp_ptr);
+                else
+                    free_dp_single_ptr(dvt_ptr->dp_ptr);
 
-            dvt_ptr->dp_ptr = NULL;
+                dvt_ptr->dp_ptr = NULL;
+            }
             break;
     }
 
