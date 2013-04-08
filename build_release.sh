@@ -113,7 +113,7 @@ zip -jvl "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${BASE_DIR}/private/Readme.txt"
 
 # Create the HTML ZIP
 echo ">> Creating the Documenation tree ${OUTPUT_DIR}/${HTML_NAME}.zip"
-cd "${BASE_DIR}/docs/html"
+cd "${BASE_DIR}/docs"
 zip -v "${OUTPUT_DIR}/${HTML_NAME}.zip" user_guide.html 
 zip -vr "${OUTPUT_DIR}/${HTML_NAME}.zip" html/ 
 cd "${WORKSPACE}"
