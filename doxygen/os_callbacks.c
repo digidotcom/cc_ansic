@@ -5,7 +5,7 @@
  * @section os_callbacks OS Callbacks
  * The iDigi connector interfaces to the platform's OS through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
- * The class id is @ref connector_class_operating_system.
+ * The class id is @ref connector_class_id_operating_system.
  *
  *  -# @ref malloc
  *  -# @ref free
@@ -34,7 +34,7 @@
  *   </tr>
  *   <tr>
  *     <td>class_id</td>
- *     <td>@endhtmlonly @ref connector_class_operating_system @htmlonly</td>
+ *     <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
  *   </tr>
  *   <tr>
  *     <td>request_id</td>
@@ -87,7 +87,7 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_operating_system && request_id.os_request == connector_request_id_os_malloc)
+ *     if (class_id == connector_class_id_operating_system && request_id.os_request == connector_request_id_os_malloc)
  *     {
  *         size_t * const size = request_data;
  *         void ** ptr = (void **)response_data;
@@ -120,7 +120,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_operating_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -160,7 +160,7 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_operating_system && request_id.os_request == connector_os_free)
+ *     if (class_id == connector_class_id_operating_system && request_id.os_request == connector_os_free)
  *     {
  *         free((void *)request_data);
  *     }
@@ -184,7 +184,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_operating_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -228,7 +228,7 @@
  *                              void * response_data, size_t * const response_length)
  * {
  *
- *     if (class_id == connector_class_operating_system && request_id.os_request == connector_request_id_os_system_up_time)
+ *     if (class_id == connector_class_id_operating_system && request_id.os_request == connector_request_id_os_system_up_time)
  *     {
  *         time((time_t *)response_data);
  *     }
@@ -252,7 +252,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_operating_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
@@ -314,7 +314,7 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_operating_system @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>

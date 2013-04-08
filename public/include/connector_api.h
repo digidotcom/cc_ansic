@@ -146,7 +146,7 @@ typedef enum {
    connector_keepalive_error,       /**< iDigi connector did not receive keepalive messages. Server may be offline. */
    connector_bad_version,           /**< Invalid firmware version number. Incorrect firmware version number used in Remote Configuration (RCI) */
    connector_device_terminated,     /**< iDigi connector was terminated by user via connector_initiate_action call.
-                                     All memory is freed and connector_init must be called to reStart Etherios Connector connector. */
+                                     All memory is freed and connector_init must be called to reStart Etherios Cloud Connector. */
    connector_service_busy,          /**< Someone else is using the same service or the device is busy. */
    connector_invalid_response,      /**< Received invalid response from the server. */
    connector_no_resource,           /**< Lack of resource */
@@ -158,7 +158,7 @@ typedef enum {
                                      iDigi connector to relinquish for other task to run. */
    connector_active,                /**< iDigi connector is processing a message and it should be called at the earliest possible time. */
    connector_abort,                 /**< iDigi connector was aborted and terminated either iDigi connector encountered fatal error or callback aborted iDigi connector.
-                                     All memory is freed and connector_init must be called to reStart Etherios Connector connector. */
+                                     All memory is freed and connector_init must be called to reStart Etherios Cloud Connector. */
    connector_device_error,          /**< Close Callback returns error. If connector_step or connector_run is called again, it will re-establish the connection. */
 
    connector_exceed_timeout,        /**< Callback exceeded timeout value before it returned. */
@@ -305,7 +305,7 @@ typedef enum {
 typedef enum  {
     connector_callback_continue,        /**< Continues with no error */
     connector_callback_busy,            /**< Callback is busy */
-    connector_callback_abort,           /**< Aborts iDigi connector. iDigi connector frees all memory. @ref connector_init must be called to reStart Etherios Connector connector. */
+    connector_callback_abort,           /**< Aborts iDigi connector. iDigi connector frees all memory. @ref connector_init must be called to reStart Etherios Cloud Connector. */
     connector_callback_unrecognized,    /**< Unsupported callback request */
     connector_callback_error            /**< Exits iDigi connector when error is encountered. iDigi connector will try reconnecting to Etherios Device Cloud
                                          if @ref connector_step or @ref connector_run is called again. */
