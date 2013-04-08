@@ -442,8 +442,8 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
         if (SmIsError(session->flags))
         {
-            uint16_t const error_code = (session->error == connector_session_error_invalid_opcode) ? connector_sm_error_in_request : connector_sm_error_unexpected_message;
-            char * const error_text = (session->error == connector_session_error_invalid_opcode) ? "Request error" : "Unexpected request";
+            uint16_t const error_code = (uint16_t)session->error;
+            char * const error_text = (session->error == connector_sm_error_in_request) ? "Request error" : "Unexpected request";
             size_t const error_text_length = strlen(error_text) + 1;
             size_t const error_code_length = sizeof error_code;
 

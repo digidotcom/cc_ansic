@@ -161,24 +161,26 @@ static connector_callback_status_t sm_inform_data_complete(connector_data_t * co
 
     status_info.transport = session->transport;
     status_info.user_context = session->user.context;
-    status_info.session_error = connector_session_error_none;
+    status_info.session_error = connector_sm_error_none;
     switch (session->error)
     {
-        case connector_session_error_cancel:
+        case connector_sm_error_cancel:
             status_info.status = connector_data_service_status_cancel;
             break;
 
-        case connector_session_error_timeout:
+        case connector_sm_error_timeout:
             status_info.status = connector_data_service_status_timeout;
             break;
 
-        case connector_session_error_no_service:
+        case connector_sm_error_complete:
             status_info.status = connector_data_service_status_complete;
             break;
 
+        case connector_sm_error_no_resource:
+            status_info.session_error = connector_session_error_memory;
+            /* no break */
         default:
             status_info.status = connector_data_service_status_session_error;
-            status_info.session_error = session->error;
             break;
     }
 
@@ -206,7 +208,7 @@ static connector_callback_status_t sm_inform_cli_complete(connector_data_t * con
 
     cb_data.transport = session->transport;
     cb_data.user_context = session->user.context;
-    cb_data.status = (session->error == connector_session_error_cancel) ? connector_sm_cli_status_cancel : connector_sm_cli_status_error;
+    cb_data.status = (session->error == connector_sm_error_cancel) ? connector_sm_cli_status_cancel : connector_sm_cli_status_error;
     request_id.sm_request = connector_request_id_sm_cli_status;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
 
@@ -227,15 +229,19 @@ static connector_callback_status_t sm_inform_ping_complete(connector_data_t * co
         cb_data.user_context = session->user.context;
         switch (session->error)
         {
-            case connector_session_error_cancel:
+            case connector_sm_error_none:
+                cb_data.status = connector_sm_ping_status_success;
+                break;
+
+            case connector_sm_error_cancel:
                 cb_data.status = connector_sm_ping_status_cancel;
                 break;
 
-            case connector_session_error_timeout:
+            case connector_sm_error_timeout:
                 cb_data.status = connector_sm_ping_status_timeout;
                 break;
 
-            case connector_session_error_no_service:
+            case connector_sm_error_complete:
                 cb_data.status = connector_sm_ping_status_complete;
                 break;
 
@@ -320,7 +326,7 @@ static connector_status_t sm_switch_path(connector_data_t * const connector_ptr,
     {
         if (SmIsClientOwned(session->flags))
         {
-            session->error = connector_session_error_no_service;
+            session->error = connector_sm_error_complete;
             result = sm_inform_session_complete(connector_ptr, session);
         }
 
@@ -381,7 +387,7 @@ static connector_status_t sm_prepare_data_request(connector_data_t * const conne
     result = sm_allocate_user_buffer(connector_ptr, &session->in);
     if (result != connector_working)
     {
-        session->error = connector_session_error_memory;
+        session->error = connector_sm_error_no_resource;
         goto error;
     }
 
@@ -410,7 +416,7 @@ static connector_status_t sm_prepare_data_response(connector_data_t * const conn
         sm_set_header_complete(session);
     }
     else
-        session->error = connector_session_error_memory;
+        session->error = connector_sm_error_no_resource;
 
     return result;
 }
@@ -505,7 +511,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
             break;
 
         case connector_device_error:
-            session->error = connector_session_error_cancel;
+            session->error = connector_sm_error_cancel;
             result = connector_working;
             break;
 
@@ -550,7 +556,7 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
     connector_status_t status = connector_working;
     size_t target_length =  0;
 
-    if (session->error == connector_session_error_no_service)
+    if (session->error == connector_sm_error_complete)
         goto done;
 
     if (session->bytes_processed == 0)
@@ -587,7 +593,7 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
 error:
     if (status == connector_device_error)
     {
-        session->error = connector_session_error_no_service;
+        session->error = connector_sm_error_complete;
         session->bytes_processed = bytes;
         status = connector_working;
     }
@@ -605,11 +611,27 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
 
     cb_data.transport = session->transport;
     cb_data.user_context = session->user.context;
-    cb_data.response = connector_data_service_send_response_success;
-    cb_data.hint = (bytes > 0) ? text : NULL;
+    if (SmIsError(session->flags))
+    {
+        switch (session->error)
+        {
+            case connector_sm_error_in_request:
+                cb_data.response = connector_data_service_send_response_bad_request;
+                break;
 
-    if (cb_data.hint != NULL)
-        text[bytes] = '\0';
+            case connector_sm_error_unavailable:
+                cb_data.response = connector_data_service_send_response_unavailable;
+                break;
+
+            default:
+                cb_data.response = connector_data_point_response_cloud_error;
+                break;
+        }
+    }
+    else
+        cb_data.response = connector_data_service_send_response_success;
+
+    cb_data.hint = (bytes > 0) ? text : NULL;
 
     #if (defined CONNECTOR_DATA_POINTS)
     if (SmIsDatapoint(session->flags))
@@ -626,6 +648,12 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
     }
  
     status = sm_map_callback_status_to_connector_status(callback_status);
+    if (SmIsError(session->flags) && (status != connector_pending))
+    {
+        session->error = connector_sm_error_none;
+        SmClearError(session->flags);
+    }
+
     return status;
 }
 
@@ -645,17 +673,14 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
 static connector_status_t sm_process_ping_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status;
-    connector_request_id_t request_id;
-    connector_sm_ping_response_t cb_data;
-    connector_callback_status_t callback_status;
+    connector_callback_status_t const callback_status = sm_inform_ping_complete(connector_ptr, session);
 
-    cb_data.transport = session->transport;
-    cb_data.user_context = session->user.context;
-    cb_data.status = connector_sm_ping_status_success;
-    request_id.sm_request = connector_request_id_sm_ping_response;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
     status = sm_map_callback_status_to_connector_status(callback_status);
-
+    if (SmIsError(session->flags) && (status != connector_pending))
+    {
+        session->error = connector_sm_error_none;
+        SmClearError(session->flags);
+    }
     return status;
 }
 
@@ -689,6 +714,7 @@ static connector_status_t sm_process_opaque_response(connector_data_t * const co
     cb_data.id = session->request_id;
     cb_data.data = payload;
     cb_data.bytes_used = bytes;
+    cb_data.error = SmIsError(session->flags);
 
     request_id.sm_request = connector_request_id_sm_opaque_response;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
@@ -725,7 +751,7 @@ static connector_status_t sm_prepare_payload(connector_data_t * const connector_
     result = prepare_fn(connector_ptr, session);
 
 unexpected:
-    if ((result == connector_working) && (session->error != connector_session_error_none) && (session->error != connector_session_error_no_service))
+    if ((result == connector_working) && (session->error != connector_sm_error_none) && (session->error != connector_sm_error_complete))
     {
         session->sm_state = connector_sm_state_error;
         SmSetError(session->flags);
@@ -802,8 +828,8 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
         session->bytes_processed += bytes;
         switch (session->error)
         {
-            case connector_session_error_none:
-            case connector_session_error_no_service:
+            case connector_sm_error_none:
+            case connector_sm_error_complete:
                 if (SmIsLastData(session->flags))
                     sm_switch_path(connector_ptr, session, next_state);
                 break;

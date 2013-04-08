@@ -190,6 +190,7 @@ typedef struct
     uint32_t id;        /**< Can be used to keep track of a multipart response */
     void * data;        /**< Pointer to opaque response */
     size_t bytes_used;  /**< Number of bytes available in the data */
+    connector_bool_t error; /**< True: error response from Etherios Device Cloud, False: success response */
 } connector_sm_opaque_response_t;
 /**
 * @}

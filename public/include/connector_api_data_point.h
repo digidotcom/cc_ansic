@@ -229,8 +229,8 @@ typedef struct
     void * user_context;      /**< user context to be passed back in response */
 
     char * path;              /**< data point path in the stream */
-    void * point;                   /**< binary data of size specified in bytes */
-    size_t bytes;                   /**< size of data in bytes */
+    void * point;             /**< binary data of size specified in bytes */
+    size_t bytes_used;        /**< size of data in bytes */
     connector_bool_t response_required;  /**< set to connector_true if response is needed */
 } connector_request_data_point_binary_t;
 /**

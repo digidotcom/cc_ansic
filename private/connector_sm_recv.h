@@ -310,9 +310,27 @@ static connector_status_t sm_update_session(connector_data_t * const connector_p
         {
             if (header->isResponseNeeded) SmSetResponseNeeded(session->flags);
         }
-        else
+        else if (header->isError)
         {
-            if (header->isError) SmSetError(session->flags);
+            uint16_t const error_value = LoadBE16(&recv_ptr->data[recv_ptr->processed_bytes]);
+
+            switch (error_value)
+            {
+                case connector_sm_error_in_request:
+                    session->error = connector_sm_error_in_request;
+                    break;
+
+                case connector_sm_error_unavailable:
+                    session->error = connector_sm_error_unavailable;
+                    break;
+
+                default:
+                    session->error = connector_sm_error_unknown;
+                    break;
+            }
+
+            SmSetError(session->flags);
+            recv_ptr->processed_bytes += sizeof error_value;
         }
 
         session->segments.count = header->segment.count;
@@ -343,7 +361,7 @@ static connector_status_t sm_update_session(connector_data_t * const connector_p
         }
         else
         {
-            connector_debug_printf("sm_process_header: duplicate segment %d, in id %d\n", header->segment.number, session->request_id);
+            connector_debug_printf("sm_update_session: duplicate segment %d, in id %d\n", header->segment.number, session->request_id);
         }
     }
     else
@@ -685,7 +703,7 @@ static connector_status_t sm_process_recv_path(connector_data_t * const connecto
                 if (current_time > (session->start_time + sm_ptr->timeout_in_seconds))
                 {
                     session->sm_state = connector_sm_state_error;
-                    session->error = connector_session_error_timeout;
+                    session->error = connector_sm_error_timeout;
                     connector_debug_printf("Sm session [%u] timeout... start time:%u, current time:%u\n", session->request_id, session->start_time, current_time);
                 }
             }

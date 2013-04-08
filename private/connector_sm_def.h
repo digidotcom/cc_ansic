@@ -72,6 +72,7 @@
 #define SmSetReboot(flag) SmBitSet((flag), SM_REBOOT)
 #define SmSetDatapoint(flag) SmBitSet((flag), SM_DATA_POINT)
 
+#define SmClearError(flag) SmBitClear((flag), SM_ERROR)
 #define SmClearResponse(flag) SmBitClear((flag), SM_RESPONSE_DATA)
 #define SmClearResponseNeeded(flag) SmBitClear((flag), SM_RESPONSE_NEEDED)
 #define SmClearLastData(flag) SmBitClear((flag), SM_LAST_DATA)
@@ -121,8 +122,13 @@ typedef enum
 {
     connector_sm_error_none,
     connector_sm_error_in_request,
-    connector_sm_error_unexpected_message
-} connector_sm_error_id;
+    connector_sm_error_unavailable,
+    connector_sm_error_unknown,
+    connector_sm_error_complete,
+    connector_sm_error_cancel,
+    connector_sm_error_timeout,
+    connector_sm_error_no_resource
+} connector_sm_error_id_t;
 
 typedef struct
 {
@@ -141,7 +147,7 @@ typedef struct connector_sm_session_t
     connector_transport_t transport;
     connector_sm_state_t sm_state;
     connector_sm_cmd_t command;
-    connector_session_error_t error;
+    connector_sm_error_id_t error;
     unsigned long start_time;
     uint32_t request_id;
     uint32_t flags;

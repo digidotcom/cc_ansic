@@ -32,6 +32,7 @@ typedef struct
         {
             connector_request_data_point_single_t const * dp_request;
             connector_data_point_t const * current_dp;
+            size_t bytes_sent;
             size_t bytes_to_send;
             char * last_entry_ptr;
 
@@ -283,6 +284,7 @@ static connector_status_t dp_process_csv(connector_data_t * const connector_ptr,
     dp_info->type = dp_content_type_csv;
     dp_info->data.csv.dp_request = dp_ptr;
     dp_info->data.csv.current_dp = dp_ptr->point;
+    dp_info->data.csv.bytes_sent = 0;
     dp_info->data.csv.bytes_to_send = 0;
     dp_info->data.csv.state = dp_state_data;
     dp_info->data.csv.first_point = connector_true;
@@ -316,7 +318,7 @@ static connector_status_t dp_process_binary(connector_data_t * const connector_p
     dp_info->type = dp_content_type_binary;
     dp_info->data.binary.bp_request = bp_ptr;
     dp_info->data.binary.current_bp = bp_ptr->point;
-    dp_info->data.binary.bytes_to_send = 0;
+    dp_info->data.binary.bytes_to_send = bp_ptr->bytes_used;
 
     result = dp_fill_file_path(dp_info, bp_ptr->path, ".bin");
     if (result != connector_working) goto error;
@@ -393,13 +395,15 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
 
         case connector_data_point_type_string:
         {
-            size_t const bytes_sent = strlen(dp_ptr->data.element.native.string_value) - dp_info->data.csv.bytes_to_send;
+            if (dp_info->data.csv.bytes_sent == 0)
+                dp_info->data.csv.bytes_to_send = strlen(dp_ptr->data.element.native.string_value);
 
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%s", &dp_ptr->data.element.native.string_value[bytes_sent]);
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%s", &dp_ptr->data.element.native.string_value[dp_info->data.csv.bytes_sent]);
             if (bytes_processed >= bytes_available)
                 bytes_processed = bytes_available - 1; /* exclude null-terminate, allowing partial data transfer only in this case */
 
             dp_info->data.csv.bytes_to_send -= bytes_processed;
+            dp_info->data.csv.bytes_sent = (dp_info->data.csv.bytes_to_send > 0) ? dp_info->data.csv.bytes_sent + bytes_processed : 0;
             break;
         }
 
@@ -506,7 +510,7 @@ static size_t dp_process_location(data_point_info_t * const dp_info, char * cons
 
 static size_t dp_process_type(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
-    char const * const type_list[] = {"Integer", "Long", "Float", "Double", "String", "Binary"};
+    char const * const type_list[] = {"INTEGER", "LONG", "FLOAT", "DOUBLE", "STRING", "BINARY"};
     connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request;
     size_t bytes_processed = 0;
 
@@ -539,6 +543,7 @@ static size_t dp_process_forward_to(data_point_info_t * const dp_info, char * co
     return bytes_processed;
 }
 
+/* NOTE: Used int for offset instead of size_t, because it can be negative */
 static int dp_update_state(data_point_info_t * const dp_info, char * const buffer)
 {
     char next_char = ',';
@@ -573,7 +578,7 @@ static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * cons
 {
     size_t bytes_copied = 0;
     char * data_ptr = payload;
-    size_t bytes_remaining = total_bytes - 1; /* for null-termination byte */
+    size_t bytes_remaining = total_bytes;
     size_t (* process_fn) (data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available) = NULL;
 
     do
@@ -674,6 +679,7 @@ static connector_callback_status_t dp_handle_data_callback(connector_data_servic
 
         case dp_content_type_csv:
             data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available);
+            /* connector_debug_printf("DP Request:\n%s\n", (char *)data_ptr->buffer); */
             data_ptr->more_data = (dp_info->data.csv.current_dp == NULL) ? connector_false : connector_true;
             break;
     }

@@ -21,6 +21,7 @@
 extern connector_callback_status_t app_data_point_handler(connector_request_id_data_service_t const request, void  * const data);
 extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t const request, void  * const data);
 extern connector_status_t app_send_data_point(connector_handle_t handle);
+extern connector_bool_t app_dp_test_running(void);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -75,7 +76,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 #endif
 
     case connector_class_id_data_point:
-        status = app_data_point_handler(request_id.data_service_request, data);
+        status = app_data_point_handler(request_id.data_point_request, data);
         break;
 
     case connector_class_id_short_message:
@@ -119,7 +120,7 @@ int application_run(connector_handle_t handle)
                 break;
 
             case connector_idle:
-                APP_DEBUG("Data point test complete\n");
+                sleep(2);
                 break;
 
             default:
@@ -127,7 +128,7 @@ int application_run(connector_handle_t handle)
                 break;
         }
 
-    } while(status == connector_success);
+    } while(app_dp_test_running());
 
     return 1;
 }
