@@ -48,12 +48,26 @@ typedef enum {
 * @}
 */
 
-
+/**
+* @defgroup connector_file_offset_t Data type used for file 
+*           offset
+*
+* @{ 
+*/
+/**
+* Data type used for file offsets in 
+* connector_file_system_lseek_t, file size in 
+* connector_file_system_statbuf_t and 
+* connector_file_system_truncate_t. 
+*/
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
 typedef int64_t connector_file_offset_t;
 #else
 typedef int32_t connector_file_offset_t;
 #endif
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_file_system_open_flag_t File open flags
@@ -339,7 +353,8 @@ typedef struct
 * File status data structure is used to return the status of a direcory or a file, specified by the path.
 * It is used in  
 * @ref connector_request_id_file_system_stat and 
-* @ref connector_request_id_file_system_stat_dir_entr callbacks.
+* @ref connector_request_id_file_system_stat_dir_entry 
+*      callbacks.
 */
 typedef struct
 {
@@ -379,7 +394,7 @@ typedef struct
     {
     	connector_file_system_hash_algorithm_t CONST requested; /**< requested hash algorithm */
         connector_file_system_hash_algorithm_t actual;          /**< actual hash algorithm to use for the all regular files in the directory */
-    } hash_algorithm;
+    } hash_algorithm;                           /**< requested and actual hash algorithm */
 
 
 } connector_file_system_stat_t;
@@ -505,7 +520,7 @@ typedef struct
 {
     void * user_context;                            /**< Holds user context */
 
-    connector_session_error_t CONST session_error;  /**	TODO: Needs a describe 	*/
+    connector_session_error_t CONST session_error;  /**< Connector session error */
 
 } connector_file_system_session_error_t;
 /**
