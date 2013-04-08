@@ -8,6 +8,8 @@ RELEASE_NOTES=9300xxxx
 HTML_ZIP=4000xxxx
 PART_NUMBER=40003007
 PKG_NAME=${PART_NUMBER}_${REVISION}
+NOTES_NAME=${RELEASE_NOTES}_${REVISION}
+HTML_NAME=${HTML_ZIP}_${REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
 
 SAMPLES="compile_and_link
@@ -32,8 +34,8 @@ function cleanup ()
     fi
     echo ">> Archiving critical files."
     cp -v "${OUTPUT_DIR}/${PKG_NAME}.tgz" "${ARCHIVE}/"
-    cp -v "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" "${ARCHIVE}/"
-    cp -v "${OUTPUT_DIR}/${HTML_ZIP}.zip" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" "${ARCHIVE}/"
 
 
     echo ">> Cleaning Up ${OUTPUT_DIR} and ${BASE_DIR}"
@@ -102,17 +104,18 @@ sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 # Generate a Makefile for each sample.
 
 # Create the tarball
-echo ">> Creating the release Tarball as ${OUTPUT_DIR}/${PKG_NAME}.tgz."
+echo ">> Creating the Tarball ${OUTPUT_DIR}/${PKG_NAME}.tgz."
 tar --exclude=idigi/public/test --exclude=idigi/public/dvt -czvf "${OUTPUT_DIR}/${PKG_NAME}.tgz" idigi/
 
 # Create the Release Notes
-echo ">> Creating the Release notes ${OUTPUT_DIR}/${RELEASE_NOTES}.zip"
-zip -jvl "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" "${BASE_DIR}/private/Readme.txt"
+echo ">> Creating the Release notes ${OUTPUT_DIR}/${NOTES_NAME}.zip"
+zip -jvl "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${BASE_DIR}/private/Readme.txt"
 
 # Create the HTML ZIP
-echo ">> Creating the Documenation tree ${OUTPUT_DIR}/${HTML_ZIP}.zip"
+echo ">> Creating the Documenation tree ${OUTPUT_DIR}/${HTML_NAME}.zip"
 cd "${BASE_DIR}/docs/html"
-zip -vr "${OUTPUT_DIR}/${HTML_ZIP}.zip" . 
+zip -v "${OUTPUT_DIR}/${HTML_NAME}.zip" user_guide.html 
+zip -vr "${OUTPUT_DIR}/${HTML_NAME}.zip" html/ 
 cd "${WORKSPACE}"
 
 # Delete the original idigi directory
@@ -152,8 +155,8 @@ if [[ "${PENDING}" == "true" ]]; then
     # If successfull push the tarball to pending, if PENDING environment variable is set to 1.
     echo ">> Copying the Tarball to Pending."
     cp -v "${OUTPUT_DIR}/${PKG_NAME}.tgz" /eng/store/pending/40000000
-    cp -v "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" /eng/store/pending/93000000
-    cp -v "${OUTPUT_DIR}/${HTML_ZIP}.zip" /eng/store/pending/40000000
+    cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" /eng/store/pending/93000000
+    cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" /eng/store/pending/40000000
 fi
 
 cleanup
