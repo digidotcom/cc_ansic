@@ -428,7 +428,7 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_got_device_id = connector_false;
                 connector_ptr->signature = NULL;
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
-                connector_debug_printf("connector_step: free iDigi connector\n");
+                connector_debug_printf("connector_step: free Etherios Cloud Connector\n");
 
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 goto done;

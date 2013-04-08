@@ -19,14 +19,14 @@
  * @section fw_overview Overview
  *
  * The firmware access facility is an optional facility for applications to update their 
- * firmware. The iDigi connector invokes the application-defined callback to query whether this 
+ * firmware. The Etherios Cloud Connector invokes the application-defined callback to query whether this 
  * firmware access facility is supported or not.  The firmware access facility uses a target 
  * number to distinguish application-dependent firmware images.  For example, a
  * stand-alone bootloader may be loaded separate from an application image, or a default file system
  * could be maintained as well.
  * Applications define an image to each target except target 0 (target 0 must be the firmware 
- * image that is running the iDigi connector). Only one firmware upgrade can be in progress at any given 
- * time. The iDigi connector will send a firmware target list to the iDigi Device Cloud to identify the number 
+ * image that is running Etherios Cloud Connector). Only one firmware upgrade can be in progress at any given 
+ * time. The Etherios Cloud Connector will send a firmware target list to the iDigi Device Cloud to identify the number 
  * of target applications and the version number of each target. 
  *
  * The firmware portion of the application-defined callback is used for the following:
@@ -36,14 +36,14 @@
  *  -# To reset firmware images.
  *
  * A typical application-defined callback sequence for downloading a firmware image would include:
- *  -# iDigi connector calls application-defined callback to return firmware information which 
+ *  -# Etherios Cloud Connector calls application-defined callback to return firmware information which 
  *     includes the firmware version number, maximum size of an image, firmware description, and file name spec.
- *  -# iDigi connector calls application-defined callback to initiate firmware download.
- *  -# iDigi connector calls application-defined callback for firmware binary data.
+ *  -# Etherios Cloud Connector calls application-defined callback to initiate firmware download.
+ *  -# Etherios Cloud Connector calls application-defined callback for firmware binary data.
  *  -# Repeat step 3 until the entire firmware image data is completed.
  *  -# calls application-defined callback to complete firmware download.
  *  -# calls application-defined callback to reset and reboot the target to begin executing the new firmware.
- *  -# iDigi connector calls application-defined callback to disconnect the current connection
+ *  -# Etherios Cloud Connector calls application-defined callback to disconnect the current connection
  *
  * Applications may choose to begin writing their downloaded image to Flash either 
  * during the Firmware Binary or Firmware Download Complete message. This is an application 
@@ -76,7 +76,7 @@
  * </tr>
  * <tr>
  * <td>request_data</td>
- * <td>Pointer to timeout value which callback must return control back to iDigi connector in seconds</td>
+ * <td>Pointer to timeout value which callback must return control back to Etherios Cloud Connector in seconds</td>
  * </tr>
  * <tr>
  * <td>request_length</td>
@@ -98,7 +98,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -161,7 +161,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -226,7 +226,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -295,7 +295,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -365,7 +365,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -392,8 +392,8 @@
  *
  * @section fw_download File Firmware Download Request
  *
- * Callback is called to start firmware download when iDigi connector receives a firmware download request message.
- * iDigi connector parses the information in the firmware download request and passes the information to the callback:
+ * Callback is called to start firmware download when Etherios Cloud Connector receives a firmware download request message.
+ * Etherios Cloud Connector parses the information in the firmware download request and passes the information to the callback:
  *  -# A target number which target the firmware is intended for.
  *  -# The name of the file to be sent. 
  *
@@ -433,7 +433,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -471,9 +471,9 @@
  *
  * @section fw_image_data Binary Image Data for Firmware Download
  *
- * Callback is called to process image data when iDigi connector receives a firmware binary block 
- * message. iDigi connector calls this callback for each block of data received from the server.
- * iDigi connector parses the information in the firmware binary block and passes the information to the callback:
+ * Callback is called to process image data when Etherios Cloud Connector receives a firmware binary block 
+ * message. Etherios Cloud Connector calls this callback for each block of data received from the server.
+ * Etherios Cloud Connector parses the information in the firmware binary block and passes the information to the callback:
  *  -# 4-octet offset that determines where the block of binary data fits into the download.
  *  -# Binary data.
  *  -# Length of the binary data. 
@@ -518,7 +518,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -546,14 +546,14 @@
  *
  * @section fw_complete Firmware Download Complete
  *
- * Callback is called when server is done sending all image data. This callback tells iDigi connector 
+ * Callback is called when server is done sending all image data. This callback tells Etherios Cloud Connector 
  * when target has been completely updated.
  * If this callback returns:
- *  -# BUSY status indicating the firmware download is still in process, iDigi connector will 
+ *  -# BUSY status indicating the firmware download is still in process, Etherios Cloud Connector will 
  * call this callback again. This usually indicates that image data is still being written onto flash.
- *  -# CONTINUE status indicating the firmware download has been successfully completed, iDigi connector will 
+ *  -# CONTINUE status indicating the firmware download has been successfully completed, Etherios Cloud Connector will 
  * send a firmware download complete response to the server.
- *  -# ABORT status, iDigi connector will send a firmware download abort message to the server, stop and exit with error status. 
+ *  -# ABORT status, Etherios Cloud Connector will send a firmware download abort message to the server, stop and exit with error status. 
  *
  * @htmlonly
  * <table class="apitable">
@@ -595,7 +595,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -632,7 +632,7 @@
  *
  * @section fw_abort Firmware Download Abort
  *
- * Called to abort firmware download when iDigi connector receives a firmware download abort message. *
+ * Called to abort firmware download when Etherios Cloud Connector receives a firmware download abort message. *
  *
  * @htmlonly
  * <table class="apitable">
@@ -670,7 +670,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -735,7 +735,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly

@@ -51,7 +51,7 @@ static connector_callback_status_t app_network_udp_close(connector_network_close
 /*
  * This routine reads a specified number of bytes from Etherios Device Cloud.  This
  * function must not block. If it encounters EAGAIN  error, return
- * connector_callback_busy and iDigi connector will ignore the read_data and read_length
+ * connector_callback_busy and Etherios Cloud Connector will ignore the read_data and read_length
  * and continue calling this function.
  */
 static connector_callback_status_t app_network_udp_receive(connector_network_receive_t * const data)
@@ -85,7 +85,7 @@ static connector_callback_status_t app_network_udp_receive(connector_network_rec
 
 /*
  * Sends data to Etherios Device Cloud, this routine must not block.  If it encounters
- * EAGAIN  error, return connector_callback_busy and iDigi connector will ignore the
+ * EAGAIN  error, return connector_callback_busy and Etherios Cloud Connector will ignore the
  * sent_length and continue calling this function.
  */
 static connector_callback_status_t app_network_udp_send(connector_network_send_t * const data)

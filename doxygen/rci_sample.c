@@ -9,7 +9,7 @@
  *
  * @section connect_description Code Flow
  *
- * The routine main() in the platform directory initializes the iDigi connector and
+ * The routine main() in the platform directory initializes Etherios Cloud Connector and
  * registers the application callback.  In the file application.c is the
  * application defined callback app_connector_callback(), this routine calls app_remote_config_handler()
  * when a remote command interface (RCI) request is received.
@@ -28,9 +28,9 @@
  *   - Connection security
  *   - Password
  *
- * @subsection config_file iDigi connector configuration file
+ * @subsection config_file Etherios Cloud Connector configuration file
  *
- * The following is the iDigi connector configuration file:
+ * The following is Etherios Cloud Connector configuration file:
  * 
  * @code
  * globalerror load_fail "Load fail"
@@ -45,7 +45,7 @@
  *     element location "Location" type string max 63
  *     error invalid_length "Invalid Length"
  *  
- * # iDigi connector password
+ * # Etherios Cloud Connector password
  * # iDigi Manager Pro uses this devicesecurity setting for password authentication
  * # Note, as with all password, password type is a write-only field
  * # To include the devicesecurity setting, change devicesecurity.c.optional 
@@ -157,7 +157,7 @@
  * <td>samples/simple_remote_config</td>
  * </tr>
  * <th>connector_api.c</th>
- * <td>Code for the iDigi connector </td>
+ * <td>Code for Etherios Cloud Connector </td>
  * <td>private</td>
  * </tr>
  * <tr>

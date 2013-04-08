@@ -22,11 +22,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 /**
- * @brief iDigi connector debug
+ * @brief Etherios Cloud Connector debug
  *
- * Debug output from the iDigi connector, Writes a formatted string to stdout, expanding the format
+ * Debug output from Etherios Cloud Connector, Writes a formatted string to stdout, expanding the format
  * tags with the value of the argument list arg.
- * iDigi connector uses this routine to display debug information when @ref CONNECTOR_DEBUG is defined.
+ * Etherios Cloud Connector uses this routine to display debug information when @ref CONNECTOR_DEBUG is defined.
  *
  * @param [in] format Tells how to format the various arguments
  * @param [out] ...   A variable argument list of expressions whose values should be printed according

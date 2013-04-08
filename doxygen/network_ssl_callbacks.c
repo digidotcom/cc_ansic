@@ -25,7 +25,7 @@
  *
  * @section ssl_connect Open
  *
- * This callback is called to establish SSL connection between the iDigi connector and the iDigi Device Cloud.
+ * This callback is called to establish SSL connection between Etherios Cloud Connector and the iDigi Device Cloud.
  * Callback is responsible to setup any socket options and SSL specific initial settings.
  * 
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -80,13 +80,13 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the server; iDigi connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly. 
+ * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly. 
  *     The callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again,
  *     if the transport is configured to start automatically</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Callback was unable to connect to the server and callback aborted iDigi connector</td>
+ *   <td>Callback was unable to connect to the server and callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -173,7 +173,7 @@
  * @section ssl_send Send
  *
  * Callback is called to send data to the iDigi Device Cloud over SSL connection. This function must not block. 
- * If it encounters EAGAIN or EWOULDBLOCK error it must return @ref connector_callback_busy and iDigi connector will 
+ * If it encounters EAGAIN or EWOULDBLOCK error it must return @ref connector_callback_busy and Etherios Cloud Connector will 
  * continue calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -220,11 +220,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td>Callback was unable to send data due to irrecoverable communications error. 
- *     iDigi connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborts iDigi connector</td>
+ * <td>Callback aborts Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -305,11 +305,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td> Callback was unable to receive data due to irrecoverable communications error. 
- *     iDigi connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborts iDigi connector</td>
+ * <td>Callback aborts Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -339,7 +339,7 @@
  *         FD_ZERO(&read_set);
  *         FD_SET(ssl_ptr->sfd, &read_set);
  *
- *         // Blocking point for iDigi connector
+ *         // Blocking point for Etherios Cloud Connector
  *         ready = select(ssl_ptr->sfd + 1, &read_set, NULL, NULL, &timeout);
  *         if (ready == 0)
  *         {

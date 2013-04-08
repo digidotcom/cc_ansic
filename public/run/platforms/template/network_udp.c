@@ -11,7 +11,7 @@
  */
 /**
  * @file
- *  @brief Rountines which implement the iDigi connector network interface for
+ *  @brief Rountines which implement Etherios Cloud Connector network interface for
  *  @ref CONNECTOR_TRANSPORT_UDP.
  */
 #include "connector_api.h"
@@ -32,9 +32,9 @@
  *
  * @retval connector_callback_continue	The routine has successfully opened a socket and resolved server's name. 
  * @retval connector_callback_busy 		The routine will be called again to complete open.
- * @retval connector_callback_error     The operation failed, iDigi connector
+ * @retval connector_callback_error     The operation failed, Etherios Cloud Connector
  *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
- * @retval connector_callback_abort     The application aborts iDigi connector.
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref open "Network API callback Open"
  */
@@ -53,7 +53,7 @@ static connector_callback_status_t app_network_udp_open(char const * const host_
  * @brief   Send data to the iDigi Device Cloud
  *
  * This routine sends data to the iDigi Device Cloud. This function must not block.
- * If it encounters EAGAIN or EWOULDBLOCK error, 0 bytes must be returned and the iDigi connector
+ * If it encounters EAGAIN or EWOULDBLOCK error, 0 bytes must be returned and Etherios Cloud Connector
  * will continue calling this function. If successful connector_callback_continue is returned.
  * If the data could not be sent connector_callback_busy is returned, otherwise connector_callback_abort is returned. 
  *  
@@ -79,7 +79,7 @@ static connector_callback_status_t app_network_udp_send(connector_write_request_
  *
  * This routine reads a specified number of bytes from the the iDigi Device Cloud.
  * This function blocks up to the timeout value specified. If no data is received
- * and the timeout has expired 0 bytes must be returned and iDigi connector will continue
+ * and the timeout has expired 0 bytes must be returned and Etherios Cloud Connector will continue
  * calling this function. 
  *  
  * @param [in] read_data  Pointer to a connector_read_request_t structure
@@ -87,7 +87,7 @@ static connector_callback_status_t app_network_udp_send(connector_write_request_
  *
  * @retval connector_callback_status_t
  *
- * @note When running in a multithreaded model this is where the iDigi connector will
+ * @note When running in a multithreaded model this is where Etherios Cloud Connector will
  * relinquish control, the user should sleep until data is received up to the
  * timeout given.
  *

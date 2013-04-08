@@ -34,7 +34,7 @@
  * @param [out] size Size of the IP address in bytes
  *
  * @retval connector_callback_continue  IP address was successfully returned
- * @retval connector_callback_abort     Could not get IP address and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get IP address and abort Etherios Cloud Connector.
  *
  * @see @ref ip_address API Configuration Callback
  */
@@ -59,7 +59,7 @@ static connector_callback_status_t app_get_ip_address(uint8_t const ** ip_addres
  * @param [out] size Size of the MAC address in bytes (6 bytes).
  *
  * @retval connector_callback_continue  MAC address was successfully returned
- * @retval connector_callback_abort     Could not get the MAC address and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the MAC address and abort Etherios Cloud Connector.
  *
  * @see @ref mac_address API Configuration Callback
  */
@@ -104,7 +104,7 @@ static connector_callback_status_t app_get_mac_addr(uint8_t const ** mac_address
  * @param [out] size Size of the device ID in bytes (16 bytes)
  *
  * @retval connector_callback_continue  Device ID was successfully returned.
- * @retval connector_callback_abort     Could not get the device ID and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the device ID and abort Etherios Cloud Connector.
  *
  * @see @ref device_id API Configuration Callback
  */
@@ -153,7 +153,7 @@ static connector_callback_status_t app_get_device_id(uint8_t const ** id, size_t
  * @param [out] size Size of the vendor ID in bytes (4 bytes)
  *
  * @retval connector_callback_continue  Vendor ID was successfully returned.
- * @retval connector_callback_abort     Could not get the vendor ID and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the vendor ID and abort Etherios Cloud Connector.
  *
  * @see @ref vendor_id API Configuration Callback
  * @see @ref connector_config_vendor_id
@@ -192,7 +192,7 @@ static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t
  * @param [out] size Size of the device type in bytes (Maximum is 63 bytes)
  *
  * @retval connector_callback_continue  Device type was successfully returned.
- * @retval connector_callback_abort     Could not get the device type and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the device type and abort Etherios Cloud Connector.
  *
  * @see @ref device_type API Configuration Callback
  * @see @ref CONNECTOR_DEVICE_TYPE
@@ -222,7 +222,7 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
  * @param [out] size Size of the server URL in bytes (Maximum is 63 bytes)
  *
  * @retval connector_callback_continue  The URL type was successfully returned.
- * @retval connector_callback_abort     Could not get the URL and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the URL and abort Etherios Cloud Connector.
  *
  * @see @ref server_url API Configuration Callback
  *
@@ -250,7 +250,7 @@ static connector_callback_status_t app_get_server_url(char const ** url, size_t 
  * @param [out] type  Pointer to memory containing the @ref connector_connection_type_t
  *
  * @retval connector_callback_continue  The connection type was successfully returned.
- * @retval connector_callback_abort     Could not get connection type and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get connection type and abort Etherios Cloud Connector.
  *
  * @see @ref connection_type API Configuration Callback
  *
@@ -278,7 +278,7 @@ static connector_callback_status_t app_get_connection_type(connector_connection_
  * @param [out] size Size of the link speed in bytes
  *
  * @retval connector_callback_continue  The link speed was successfully returned.
- * @retval connector_callback_abort     Could not get the link speed and abort iDigi connector
+ * @retval connector_callback_abort     Could not get the link speed and abort Etherios Cloud Connector
  *
  * @see @ref link_speed API Configuration Callback
  *
@@ -304,7 +304,7 @@ static connector_callback_status_t app_get_link_speed(uint32_t const ** speed, s
  * @param [out] size Size of the phone number in bytes
  *
  * @retval connector_callback_continue  The phone number was successfully returned.
- * @retval connector_callback_abort     Could not get the phone number and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the phone number and abort Etherios Cloud Connector.
  *
  * @see @ref phone_number API Configuration Callback
  *
@@ -333,7 +333,7 @@ static connector_callback_status_t app_get_phone_number(char const ** number, si
  * @param [out] size Size of memory buffer, containing the keep alive interval in bytes (this must be 2 bytes).
  *
  * @retval connector_callback_continue  The keep alive interval was successfully returned.
- * @retval connector_callback_abort     Could not get the keep alive interval and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the keep alive interval and abort Etherios Cloud Connector.
  *
  * @see @ref tx_keepalive API Configuration Callback
  *
@@ -367,7 +367,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const 
  * @param [out] size Size of memory buffer, containing the keep alive interval in bytes (this must be 2 bytes).
  *
  * @retval connector_callback_continue  The keep alive interval was successfully returned.
- * @retval connector_callback_abort     Could not get the keep alive interval and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the keep alive interval and abort Etherios Cloud Connector.
  *
  * @see @ref rx_keepalive API Configuration Callback
  *
@@ -400,7 +400,7 @@ static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const 
  * @param [out] size Size of memory buffer, containing the wait count in bytes (this must be 2 bytes).
  *
  * @retval connector_callback_continue  The wait count was successfully returned.
- * @retval connector_callback_abort     Could not get the wait count and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the wait count and abort Etherios Cloud Connector.
  *
  * @see @ref wait_count API Configuration Callback
  *
@@ -436,7 +436,7 @@ static connector_callback_status_t app_get_wait_count(uint16_t const ** count, s
  *                            connector_service_unsupported  if firmware update is not supported.
  *
  * @retval connector_callback_continue  The firmware update support was successfully returned.
- * @retval connector_callback_abort     Could not get the firmware update support and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the firmware update support and abort Etherios Cloud Connector.
  *
  * @see @ref firmware_support API Configuration Callback
  *
@@ -462,7 +462,7 @@ static connector_callback_status_t app_get_firmware_support(connector_service_su
  *                            connector_service_unsupported  if data service is not supported.
  *
  * @retval connector_callback_continue  The data service support was successfully returned.
- * @retval connector_callback_abort     Could not get the data service support and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the data service support and abort Etherios Cloud Connector.
  *
  * @see @ref data_service_support API Configuration Callback
  *
@@ -489,7 +489,7 @@ static connector_callback_status_t app_get_data_service_support(connector_servic
  *                            connector_service_unsupported  if file system is not supported.
  *
  * @retval connector_callback_continue  The file system support was successfully returned.
- * @retval connector_callback_abort     Could not get the file system support and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the file system support and abort Etherios Cloud Connector.
  *
  * @see @ref file_system_support API Configuration Callback
  *
@@ -509,7 +509,7 @@ static connector_callback_status_t app_get_file_system_support(connector_service
 /**
  * @brief   Get the remote configuration support
  *
- * This routine tells iDigi connector whether the remote configuration service is supported or not.
+ * This routine tells Etherios Cloud Connector whether the remote configuration service is supported or not.
  * If you plan on accessing device data configurations through the iDigi Device Cloud set
  * this to connector_service_supported.
  *
@@ -517,7 +517,7 @@ static connector_callback_status_t app_get_file_system_support(connector_service
  *                            connector_service_unsupported  if the remote configuration is not supported.
  *
  * @retval connector_callback_continue  The remote configuration support was successfully returned.
- * @retval connector_callback_abort     Could not get the remote configuration support and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the remote configuration support and abort Etherios Cloud Connector.
  *
  * @note @b CONNECTOR_RCI_SERVICE must be defined in connector_config.h
  * @note @b CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH is used to define maximum length of an element including the name of element in @ref connector_config.h.
@@ -542,7 +542,7 @@ static connector_service_supported_status_t app_get_remote_configuration_support
  *                           Writes 0 for unlimited transactions.
  *
  * @retval connector_callback_continue  The maximum simultaneous transactions was successfully returned.
- * @retval connector_callback_abort     Could not get the maximum simultaneous transactions and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the maximum simultaneous transactions and abort Etherios Cloud Connector.
  *
  * @see @ref max_msg_transactions API Configuration Callback
  *
@@ -572,7 +572,7 @@ static connector_callback_status_t app_get_max_message_transactions(unsigned int
  *                      @li @a @b connector_manual_device_id_method: to obtain device ID from @ref device_id callback.
  *
  * @retval connector_callback_continue  The device ID method was successfully returned.
- * @retval connector_callback_abort     Could not get the device ID method and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the device ID method and abort Etherios Cloud Connector.
  *
  * @see @ref connection_type API Callback
  *
@@ -599,7 +599,7 @@ static connector_callback_status_t app_get_device_id_method(connector_device_id_
  * @param [out] size         Size of the imei_number in bytes. It should be 8 bytes.
  *
  * @retval connector_callback_continue  The IMEI number was successfully returned.
- * @retval connector_callback_abort     Could not get the IMEI number and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the IMEI number and abort Etherios Cloud Connector.
  *
  * @see @ref device_id_method API Callback
  * @see @ref connection_type API Callback
@@ -658,7 +658,7 @@ static connector_callback_status_t app_get_imei_number(uint8_t ** const imei_num
  *                            connector_manual_connect to start TCP manually.
  *
  * @retval connector_callback_continue  TCP was successfully started automatically or manually.
- * @retval connector_callback_abort     Abort iDigi connector.
+ * @retval connector_callback_abort     Abort Etherios Cloud Connector.
  *
  * @see @ref network_tcp_start API Configuration Callback
  *
@@ -685,7 +685,7 @@ static connector_callback_status_t app_start_network_tcp(connector_auto_connect_
 *                          connector_manual_connect to start UDP manually.
 *
 * @retval connector_callback_continue  UDP configuration was successfully set to start automatically or manually.
-* @retval connector_callback_abort     Abort iDigi connector.
+* @retval connector_callback_abort     Abort Etherios Cloud Connector.
 *
 * @see @ref network_udp_start API Configuration Callback
 *
@@ -712,7 +712,7 @@ static connector_callback_status_t app_start_network_udp(connector_auto_connect_
 *                          connector_manual_connect to start SMS manually.
 *
 * @retval connector_callback_continue  SMS configuration was successfully set to start automatically or manually.
-* @retval connector_callback_abort     Abort iDigi connector.
+* @retval connector_callback_abort     Abort Etherios Cloud Connector.
 *
 * @see @ref network_sms_start API Configuration Callback
 *
@@ -738,7 +738,7 @@ static connector_callback_status_t app_start_network_sms(connector_auto_connect_
  * @param [out] type  Pointer to memory containing the @ref connector_connection_type_t
  *
  * @retval connector_callback_continue  The WAN type was successfully returned.
- * @retval connector_callback_abort     Could not get WAN type and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get WAN type and abort Etherios Cloud Connector.
  *
  * @see @ref wan_type API Configuration Callback
  *
@@ -767,7 +767,7 @@ static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const
  * @param [out] size         Size of the esn_number in bytes. It should be 4 bytes.
  *
  * @retval connector_callback_continue  The ESN number was successfully returned.
- * @retval connector_callback_abort     Could not get the ESN number and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the ESN number and abort Etherios Cloud Connector.
  *
  * @see @ref device_id_method API Callback
  * @see @ref connection_type API Callback
@@ -832,7 +832,7 @@ static connector_callback_status_t app_get_esn(uint8_t ** const esn_number, size
  * @param [out] size         Size of the esn_number in bytes. It should be 7 bytes.
  *
  * @retval connector_callback_continue  The MEID number was successfully returned.
- * @retval connector_callback_abort     Could not get the MEID number and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the MEID number and abort Etherios Cloud Connector.
  *
  * @see @ref device_id_method API Callback
  * @see @ref connection_type API Callback
@@ -899,7 +899,7 @@ static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, si
  * @param [out] identity  Pointer to memory when identity verification form will be written to.
  *
  * @retval connector_callback_continue  The identity verification form was successfully returned.
- * @retval connector_callback_abort     Could not get the identity verification form and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the identity verification form and abort Etherios Cloud Connector.
  *
  * @see @ref app_get_password API Callback
  *
@@ -922,7 +922,7 @@ static connector_callback_status_t app_get_identity_verification(connector_ident
  * @param [out] size      Length of the password in bytes.
  *
  * @retval connector_callback_continue  The password was successfully returned.
- * @retval connector_callback_abort     Could not get the password and abort iDigi connector.
+ * @retval connector_callback_abort     Could not get the password and abort Etherios Cloud Connector.
  *
  * @see @ref app_get_identity_verification API Callback
  *
@@ -950,7 +950,7 @@ static connector_callback_status_t app_get_password(char const ** password, size
 * @param [out] size        Pointer to store the service ID length in bytes.
 *
 * @retval connector_callback_continue  The service ID was successfully returned.
-* @retval connector_callback_abort     Could not get the service ID and abort iDigi connector.
+* @retval connector_callback_abort     Could not get the service ID and abort Etherios Cloud Connector.
 *
 */
 static connector_callback_status_t app_get_sms_service_id(char const ** const service_id, size_t * const size)
@@ -964,7 +964,7 @@ static connector_callback_status_t app_get_sms_service_id(char const ** const se
     return connector_callback_continue;
 }
 
-/* End of iDigi connector configuration routines */
+/* End of Etherios Cloud Connector configuration routines */
 
 #define enum_to_case(name)  case name:  result = #name;             break
 
@@ -1198,7 +1198,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
  * not call this callback to notify any error encountered.
  *
  * @retval connector_callback_continue  No Error.
- * @retval connector_callback_abort     Abort iDigi connector.
+ * @retval connector_callback_abort     Abort Etherios Cloud Connector.
  *                                  @note This function may be called again to free other pointer even if it has returned connector_callback_abort.
  *
  * @see @ref error_status API Configuration Callback

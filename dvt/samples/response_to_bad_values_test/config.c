@@ -782,7 +782,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
 }
 
 /*
- * This routine is called when a configuration error is encountered by the iDigi connector.
+ * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 connector_callback_status_t app_config_error(connector_error_status_t const * const error_data)

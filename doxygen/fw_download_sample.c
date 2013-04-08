@@ -16,7 +16,7 @@
  * @ref fw_overview1 "Firmware Download" callbacks.  These callbacks are then processed in
  * app_firmware_handler() when a firmware request callback is received.
  *
- * All interaction with the iDigi connector is through the callback in this sample; Firmware download
+ * All interaction with Etherios Cloud Connector is through the callback in this sample; Firmware download
  * is initiated fully from the iDigi Device Cloud.  The file firmware.c contains the routines which process
  * the firmware download callbacks passed to app_firmware_handler().
  *
@@ -92,7 +92,7 @@
  * </tr>
  * <tr>
  * <th>connector_api.c</th>
- * <td>Code for the iDigi connector </td>
+ * <td>Code for Etherios Cloud Connector </td>
  * <td>private</td>
  * </tr>
  * <tr>
@@ -150,7 +150,7 @@
  *
  * Then click the Firmware Update button to update your firmware, and then select 
  * the file that is your firmware image on your local machine.  The image will then
- * start to upload to your iDigi connector application.  The GUI will indicate when it's complete.
+ * start to upload to your Etherios Cloud Connector application.  The GUI will indicate when it's complete.
  *
  * @note The firmware image name must match the regular expression given to 
  * filter names, see @ref fw_namespec.

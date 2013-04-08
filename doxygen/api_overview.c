@@ -4,11 +4,11 @@
  *
  * @section api1_overview Public API Overview
  *
- * The iDigi connector API includes two major software interfaces:
- *      @li iDigi connector function calls
- *      @li iDigi connector application-defined callback
+ * The Etherios Cloud Connector API includes two major software interfaces:
+ *      @li Etherios Cloud Connector function calls
+ *      @li Etherios Cloud Connector application-defined callback
  *
- *  The functions available in the iDigi connector are listed below:
+ *  The functions available in Etherios Cloud Connector are listed below:
  *
  * @htmlonly
  * <table class="apitable">
@@ -18,19 +18,19 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly connector_init() @htmlonly</td>
- * <td>Start the iDigi connector</td>
+ * <td>Start Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly connector_step() @htmlonly</td>
- * <td>Execute the iDigi connector and return</td>
+ * <td>Execute Etherios Cloud Connector and return</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly connector_run() @htmlonly</td>
- * <td>Start the iDigi connector and do not return</td>
+ * <td>Start Etherios Cloud Connector and do not return</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly connector_initiate_action() @htmlonly</td>
- * <td>Initiate an iDigi connector operation, like starting a data transfer</td>
+ * <td>Initiate an Etherios Cloud Connector operation, like starting a data transfer</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -38,17 +38,17 @@
  *
  * @subsection initialization Initialization: connector_init()
  *
- * The function connector_init() is called once at startup to  initialize the iDigi connector.
+ * The function connector_init() is called once at startup to  initialize Etherios Cloud Connector.
  * The application-defined callback function is passed as an argument; the @ref connector_callback_t
- * "application-defined callback" is used by the iDigi connector to communicate with the application.
- * The connector_init() function must be called before all other iDigi connector APIs.
+ * "application-defined callback" is used by Etherios Cloud Connector to communicate with the application.
+ * The connector_init() function must be called before all other Etherios Cloud Connector APIs.
  *
  * @subsection single_threaded Single-threaded model: connector_step()
  *
  * The function connector_step() is called to perform a sequence of operations or events
  * and then returns control back to the caller.  This allows a caller to perform other tasks
  * within a single thread or round robin based control loop.  A caller must call
- * this API repeatedly to continue iDigi connector operations.
+ * this API repeatedly to continue Etherios Cloud Connector operations.
  *
  * The connector_step() performs the following operations:
  *  -# Establish and maintain a connection with the iDigi Device Cloud.
@@ -58,20 +58,20 @@
  * @subsection multi_threaded Multi-threaded model: connector_run()
  *
  * The function connector_run() is similar to connector_step() except it blocks and doesn't return control back to
- * caller unless the iDigi connector encounters an error. This function is typically executed as a separate thread.
- * This is the recommended method of running the iDigi connector within in a multithreaded
+ * caller unless Etherios Cloud Connector encounters an error. This function is typically executed as a separate thread.
+ * This is the recommended method of running Etherios Cloud Connector within in a multithreaded
  * environment.
  *
- * @note To relinquish control of the CPU in a multithreaded environment the iDigi connector
+ * @note To relinquish control of the CPU in a multithreaded environment Etherios Cloud Connector
  * calls the yield (@ref yield) callback.
  *
  * @subsection initiate_action Initiate an action: connector_initiate_action()
  *
- * The function connector_initiate_action() is used to indicate to the iDigi connector to perform a
+ * The function connector_initiate_action() is used to indicate to Etherios Cloud Connector to perform a
  * device-requested action.  The currently supported actions are:
  *
  *  @li Initiate a data transfer to the server, described in the data service API
- *  @li Terminate the iDigi connector
+ *  @li Terminate Etherios Cloud Connector
  *  @li Start transport (TCP, UDP or SMS)
  *  @li Stop transport (TCP, UDP, SMS or ALL) transport method
  *  @li Request iDigi Device Cloud status status (Ping)
@@ -80,14 +80,14 @@
  *
  * @subsection iik_callback Application Callback
  *
- * The iDigi connector uses a single application-defined @ref connector_callback_t "callback" function to process network events,
+ * The Etherios Cloud Connector uses a single application-defined @ref connector_callback_t "callback" function to process network events,
  * handle operating system (OS) calls, return device configuration data, and process firmware updates.
  * The callback is also used to report error status and event notification.  The application-defined
- * @ref connector_callback_t "callback" is passed into connector_init() upon startup.  When the iDigi connector needs to allocate
+ * @ref connector_callback_t "callback" is passed into connector_init() upon startup.  When Etherios Cloud Connector needs to allocate
  * memory, access the network or perform other actions the application defined callback
  * is called.
  *
- * The iDigi connector will invoke the application-defined callback to perform the following actions:
+ * The Etherios Cloud Connector will invoke the application-defined callback to perform the following actions:
  *   @li Obtain configuration information
  *   @li OS calls
  *   @li Networking calls

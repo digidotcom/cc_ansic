@@ -413,7 +413,7 @@ static connector_callback_status_t app_get_sms_service_id(char const ** const se
     return connector_callback_continue;
 }
 
-/* End of iDigi connector configuration routines */
+/* End of Etherios Cloud Connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
 #define enum_to_case(name)  case name:  result = #name;             break
@@ -642,7 +642,7 @@ char const * app_status_error_to_string(connector_status_t const value)
 
 
 /*
- * This routine is called when a configuration error is encountered by the iDigi connector.
+ * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 static void app_config_error(connector_error_status_t const * const error_data)

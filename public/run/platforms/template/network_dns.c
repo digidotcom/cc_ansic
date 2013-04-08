@@ -11,7 +11,7 @@
  */
 /**
  * @file
- *  @brief DNS routines for the iDigi connector.
+ *  @brief DNS routines for Etherios Cloud Connector.
  */
 #include "connector_api.h"
 #include "platform.h"

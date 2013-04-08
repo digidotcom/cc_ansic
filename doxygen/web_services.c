@@ -13,7 +13,7 @@
  *
  * @section SCIservices Supported SCI Operations
  *
- * The iDigi connector supports a subset of the SCI operations supported by iDigi, the
+ * The Etherios Cloud Connector supports a subset of the SCI operations supported by iDigi, the
  * supported SCI operations are listed in the table below:
  *
  * @htmlonly

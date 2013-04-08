@@ -25,37 +25,37 @@
  * @section file_system_overview Overview
  *
  * The file system facility is an optional facility for applications to access files on the device 
- * remotely from the iDigi Device Cloud. The iDigi connector invokes the application-defined callbacks  
+ * remotely from the iDigi Device Cloud. The Etherios Cloud Connector invokes the application-defined callbacks  
  * to read from a file, to write to a file, and to list files or directory entries.
  *
  * The largest allowed file to get from the device is 2MB - 1byte (2097151 bytes). 
  *
  * A typical application-defined callback sequence for reading file data by the iDigi Device Cloud would include:
- *  -# iDigi connector calls application-defined @ref file_system_open "connector_file_system_open" callback with read-only access.
- *  -# iDigi connector calls application-defined @ref file_system_read "connector_file_system_read" callback number of times, until
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "connector_file_system_open" callback with read-only access.
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_read "connector_file_system_read" callback number of times, until
  *     the requested data amount is retrieved or the end of the file is reached.
- *  -# iDigi connector calls application-defined @ref file_system_close "connector_file_system_close" callback.
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_close "connector_file_system_close" callback.
  *
  * A typical application-defined callback sequence for writing file data by the iDigi Device Cloud would include:
- *  -# iDigi connector calls application-defined @ref file_system_open "connector_file_system_open" callback with write-create access.
- *  -# iDigi connector calls application-defined @ref file_system_write "connector_file_system_write" callback number of times, untill all data,
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "connector_file_system_open" callback with write-create access.
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_write "connector_file_system_write" callback number of times, untill all data,
  *     received from the iDigi Device Cloud, is written to the file.
- *  -# iDigi connector calls application-defined @ref file_system_close "connector_file_system_close" callback.
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_close "connector_file_system_close" callback.
  *
- * In order to remove a file iDigi connector calls application-defined @ref file_system_rm "connector_file_system_rm" callback.
+ * In order to remove a file Etherios Cloud Connector calls application-defined @ref file_system_rm "connector_file_system_rm" callback.
  *
  * A typical application-defined callback sequence to get listing for a single file would be:
- *  -# iDigi connector calls application-defined @ref file_system_stat "connector_file_system_stat" callback. 
- *  -# iDigi connector calls application-defined @ref file_system_hash "connector_file_system_hash" callback, if the requested hash value is supported.
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_stat "connector_file_system_stat" callback. 
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_hash "connector_file_system_hash" callback, if the requested hash value is supported.
  *
  * A typical application-defined callback sequence to get a directory listing would be:
- *  -# iDigi connector calls application-defined @ref file_system_stat "connector_file_system_stat" callback and learns that the path is a directory.
- *  -# iDigi connector calls application-defined @ref file_system_opendir "connector_file_system_opendir" callback.
- *  -# For each directory entry iDigi connector invokes application-defined callbacks:
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_stat "connector_file_system_stat" callback and learns that the path is a directory.
+ *  -# Etherios Cloud Connector calls application-defined @ref file_system_opendir "connector_file_system_opendir" callback.
+ *  -# For each directory entry Etherios Cloud Connector invokes application-defined callbacks:
  *      -# @ref file_system_readdir "connector_file_system_readdir" callback.
  *      -# @ref file_system_stat "connector_file_system_stat" callback.
  *      -# @ref file_system_hash "connector_file_system_hash" callback, if the requested hash value is supported.
- *  -# When all directory entries are processed, iDigi connector calls application-defined @ref file_system_closedir "connector_file_system_closedir" callback.
+ *  -# When all directory entries are processed, Etherios Cloud Connector calls application-defined @ref file_system_closedir "connector_file_system_closedir" callback.
  *
  * @note See @ref file_system_support under Configuration to enable or disable file system.
  *
@@ -86,35 +86,35 @@
  * Different scenarios for the session termination are described below.
  *
  * If the session is successful:
- *  -# iDigi connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
+ *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
  *     if there is an open file or directory.
- *  -# iDigi connector sends the last response to the iDigi Device Cloud.
+ *  -# Etherios Cloud Connector sends the last response to the iDigi Device Cloud.
  *
- * The callback aborts iDigi connector:
+ * The callback aborts Etherios Cloud Connector:
  *  -# The callback returns @ref connector_callback_abort status.
- *  -# iDigi connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
+ *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
  *     if there is an open file or directory.
- *  -# iDigi connector is aborted.
+ *  -# Etherios Cloud Connector is aborted.
  *
  * The callback cancels the file system session:
  *  -# The callback returns @ref connector_callback_continue and sets error_status to @ref connector_file_user_cancel.
- *  -# iDigi connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
+ *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
  *     if there is an open file or directory.
- *  -# iDigi connector canceles the session.
+ *  -# Etherios Cloud Connector canceles the session.
  *
  * The callback encounters a file I/O error:
  *  -# The callback returns @ref connector_callback_continue and sets error status and errnum.
- *  -# iDigi connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
+ *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
  *     if there is an open file or directory.
- *  -# If iDigi connector has already sent part of file or directory data, it cancels the session. This is due to the fact 
+ *  -# If Etherios Cloud Connector has already sent part of file or directory data, it cancels the session. This is due to the fact 
  *     that it can't differentiate an error response from part of the data response.
- *  -# Otherwise iDigi connector calls @ref file_system_strerror "connector_file_system_strerror" callback and sends an error response to the iDigi Device Cloud.
+ *  -# Otherwise Etherios Cloud Connector calls @ref file_system_strerror "connector_file_system_strerror" callback and sends an error response to the iDigi Device Cloud.
  *
  * File system was notified of an error in the messaging layer:
- *  -# iDigi connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
+ *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
  *     if there is an open file or directory.
- *  -# iDigi connector calls @ref file_system_msg_error "connector_file_system_msg_error" callback.
- *  -# iDigi connector canceles the session.
+ *  -# Etherios Cloud Connector calls @ref file_system_msg_error "connector_file_system_msg_error" callback.
+ *  -# Etherios Cloud Connector canceles the session.
  *
  * @section file_system_open Open a file
  *
@@ -173,7 +173,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -296,7 +296,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -417,7 +417,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -520,7 +520,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -623,7 +623,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -711,7 +711,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -790,7 +790,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -894,7 +894,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1027,7 +1027,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1153,7 +1153,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1293,7 +1293,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1426,7 +1426,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1459,10 +1459,10 @@
  *
  * Get error description string to send to the iDigi Device Cloud.
  *
- * iDigi connector invokes this this callback if an earlier callback has encountered a file I/O eror and
+ * Etherios Cloud Connector invokes this this callback if an earlier callback has encountered a file I/O eror and
  * has set an error_status and errnum in @ref connector_file_error_data_t "connector_file_error_data_t" structure of the response.
  *
- * iDigi connector invokes this callback after calling the @ref file_system_close "connector_file_system_close" 
+ * Etherios Cloud Connector invokes this callback after calling the @ref file_system_close "connector_file_system_close" 
  * or the @ref file_system_closedir "connector_file_system_closedir" callback.
  *
  * @htmlonly
@@ -1507,7 +1507,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1537,12 +1537,12 @@
  *
  * @endcode
  *
- * @section file_system_msg_error   Inform of an iDigi connector error
+ * @section file_system_msg_error   Inform of an Etherios Cloud Connector error
  *
  * An error in a file system session might be caused by network communication problems,
  * session timeout, insufficient memory, etc.
  *
- * iDigi connector will invoke the @ref file_system_close "connector_file_system_close" 
+ * Etherios Cloud Connector will invoke the @ref file_system_close "connector_file_system_close" 
  * or the @ref file_system_closedir "connector_file_system_closedir" callback after this callback.
  *
  * @htmlonly

@@ -33,7 +33,7 @@
 /* #define CONNECTOR_NO_MALLOC */
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
-#define CONNECTOR_DEVICE_TYPE                          "iDigi connector Linux Sample"
+#define CONNECTOR_DEVICE_TYPE                          "Etherios Cloud Connector Linux Sample"
 #define CONNECTOR_CLOUD_URL                            "my.idigi.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              5
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75

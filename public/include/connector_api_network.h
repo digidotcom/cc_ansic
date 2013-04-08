@@ -93,17 +93,17 @@ typedef struct  {
 * Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
 */
 typedef enum {
-    connector_close_status_server_disconnected = 1,    /**< iDigi connector received a disconnect from the server. */
-    connector_close_status_server_redirected,          /**< iDigi connector is redirected to different server. */
-    connector_close_status_device_terminated,          /**< iDigi connector is terminated via @ref connector_initiate_action
-                                                        iDigi connector will terminate all active messages or requests and free all memory.
+    connector_close_status_server_disconnected = 1,    /**< Etherios Cloud Connector received a disconnect from the server. */
+    connector_close_status_server_redirected,          /**< Etherios Cloud Connector is redirected to different server. */
+    connector_close_status_device_terminated,          /**< Etherios Cloud Connector is terminated via @ref connector_initiate_action
+                                                        Etherios Cloud Connector will terminate all active messages or requests and free all memory.
                                                         @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_stopped,             /**< iDigi connector is stopped via @ref connector_initiate_action */
-    connector_close_status_no_keepalive,               /**< iDigi connector has not received keep alive messages from the server */
-    connector_close_status_abort,                      /**< iDigi connector is aborted either it encountered fatal error or callback aborted iDigi connector.
-                                                        iDigi connector will terminate all active messages or requests and free all memory.
+    connector_close_status_device_stopped,             /**< Etherios Cloud Connector is stopped via @ref connector_initiate_action */
+    connector_close_status_no_keepalive,               /**< Etherios Cloud Connector has not received keep alive messages from the server */
+    connector_close_status_abort,                      /**< Etherios Cloud Connector is aborted either it encountered fatal error or callback aborted Etherios Cloud Connector.
+                                                        Etherios Cloud Connector will terminate all active messages or requests and free all memory.
                                                         @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_error                /**< iDigi connector received error from callback which requires to close the connection. */
+    connector_close_status_device_error                /**< Etherios Cloud Connector received error from callback which requires to close the connection. */
 } connector_close_status_t;
 /**
 * @}

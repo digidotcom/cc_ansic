@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section os_callbacks OS Callbacks
- * The iDigi connector interfaces to the platform's OS through the callbacks listed below.  These
+ * The Etherios Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  * The class id is @ref connector_class_id_operating_system.
  *
@@ -69,7 +69,7 @@
  *   </tr>
  *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *     <td>Callback was unable to allocate memory and callback aborts iDigi connector</td>
+ *     <td>Callback was unable to allocate memory and callback aborts Etherios Cloud Connector</td>
  *   </tr>
  *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -214,7 +214,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Error occurred and callback aborted iDigi connector</td>
+ * <td>Error occurred and callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -244,7 +244,7 @@
  * and implemented in the @b Platform function app_os_yield() in os.c.
  *
  * @see app_os_yield()
- * @see @ref threading "Multi-threading and the iDigi connector Threading Model"
+ * @see @ref threading "Multi-threading and Etherios Cloud Connector Threading Model"
  *
  * @htmlonly
  * <table class="apitable">
@@ -260,7 +260,7 @@
  * </tr>
  * <tr>
  * <th>request_data</th>
- * <td>Status of iDigi connector <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
+ * <td>Status of Etherios Cloud Connector <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
  *                                    <li> @endhtmlonly @ref connector_working @htmlonly </li>
  *                                    <li> @endhtmlonly @ref connector_pending @htmlonly </li>
  *                                    <li> @endhtmlonly @ref connector_active @htmlonly </li> </ul></td>

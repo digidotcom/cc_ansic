@@ -4,7 +4,7 @@
  * @htmlinclude nav.html
  *
  * @section net Network Callbacks
- * The iDigi connector interfaces to the platform's network interface through the callbacks listed below.  These
+ * The Etherios Cloud Connector interfaces to the platform's network interface through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  *
  *  -# @ref open
@@ -16,7 +16,7 @@
  * @section open Open Callback
  *
  * This callback is called to start a network transport to communicate with the iDigi Device Cloud. For
- * @ref connector_class_network_tcp transport it establishes a connection between iDigi connector and the iDigi Device Cloud.
+ * @ref connector_class_network_tcp transport it establishes a connection between Etherios Cloud Connector and the iDigi Device Cloud.
  * The callback is responsible to setup any socket options.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -86,13 +86,13 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the server; iDigi connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly. 
+ * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly. 
  *     The callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again,
  *     if the transport is configured to start automatically</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -103,7 +103,7 @@
  * Callback is called to send data to the iDigi Device Cloud. This function must not block.
  * Number of bytes actually sent could be less than the requested number. If the callback could not 
  * send any data because it encountered EAGAIN or EWOULDBLOCK error, it must return @ref connector_callback_busy
- * and iDigi connector would continue calling this function.
+ * and Etherios Cloud Connector would continue calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function:
@@ -161,11 +161,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td>Callback was unable to send data due to irrecoverable communications error. 
- *     iDigi connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -177,7 +177,7 @@
  * Device Cloud.  This function must not block. 
  * Number of bytes actually received could be less than the requested number. If there was no data pending and the callback
  * has encountered EAGAIN or EWOULDBLOCK error, it must return @ref connector_callback_busy
- * and iDigi connector would continue calling this function.
+ * and Etherios Cloud Connector would continue calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function:
@@ -187,7 +187,7 @@
  *   <li> @ref app_network_sms_receive() in network_sms.c</li>
  * </ul>
  *
- * @note In the multithreaded model (connector_run()) this is the point where the iDigi connector
+ * @note In the multithreaded model (connector_run()) this is the point where Etherios Cloud Connector
  * will relinquish control of the CPU.
  *
  * @htmlonly
@@ -237,11 +237,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td> Callback was unable to receive data due to irrecoverable communications error. 
- *     iDigi connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -300,7 +300,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully closed the connection. iDigi connector will restart the transport if @endhtmlonly @ref connector_auto_connect @htmlonly 
+ * <td>Callback successfully closed the connection. Etherios Cloud Connector will restart the transport if @endhtmlonly @ref connector_auto_connect @htmlonly 
  *     is returned in response_data </td>
  * </tr>
  * <tr>
@@ -310,7 +310,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted iDigi connector</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly

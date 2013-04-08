@@ -44,7 +44,7 @@ typedef enum {
     connector_request_id_config_network_tcp,       /**< Requesting callback to return whether connection over TCP need to start now. */
     connector_request_id_config_network_udp,       /**< Requesting callback to return whether connection over UDP need to start now. */
     connector_request_id_config_network_sms,       /**< Requesting callback to return whether connection over SMS need to start now. */
-    connector_request_id_config_wan_type,          /**< Requesting callback to return WAN type used. It tells iDigi connector whether it's GSM IMEI, CDMA ESN or CDMA MEID. */
+    connector_request_id_config_wan_type,          /**< Requesting callback to return WAN type used. It tells Etherios Cloud Connector whether it's GSM IMEI, CDMA ESN or CDMA MEID. */
     connector_request_id_config_esn,               /**< Requesting callback to return CDMA ESN (Electronic Serial Number) */
     connector_request_id_config_meid,              /**< Requesting callback to return CDMA MEID (Mobile Equipment Identifier) */
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
@@ -242,11 +242,11 @@ typedef struct {
  * @see @ref device_id
  */
 typedef enum {
-    connector_device_id_method_auto,         /**< Callback returns this type telling iDigi connector to
+    connector_device_id_method_auto,         /**< Callback returns this type telling Etherios Cloud Connector to
                                                  generate the device ID from MAC address (See @ref connector_config_mac_addr callback)
                                                  for LAN connection type or genearte the device ID according to the @ref wan_type.
-                                                 @note iDigi connector will not call @ref connector_config_device_id callback. */
-    connector_device_id_method_manual       /**< Callback returns this type telling iDigi connector to retrieve device ID from @ref connector_config_device_id callback */
+                                                 @note Etherios Cloud Connector will not call @ref connector_config_device_id callback. */
+    connector_device_id_method_manual       /**< Callback returns this type telling Etherios Cloud Connector to retrieve device ID from @ref connector_config_device_id callback */
 } connector_device_id_method_t;
 /**
 * @}
@@ -357,11 +357,11 @@ typedef struct {
  * @see @ref connector_config_identity_verification_t
  */
 typedef enum {
-    connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. iDigi connector just transmits the
+    connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. Etherios Cloud Connector just transmits the
                                                      device ID and Etherios Device Cloud URL. */
-    connector_identity_verification_password        /**< Callback returns this form for password identity verification. iDigi connector exchanges a pre-shared
+    connector_identity_verification_password        /**< Callback returns this form for password identity verification. Etherios Cloud Connector exchanges a pre-shared
                                                      secret password with Etherios Device Cloud. The password must match the password set in Etherios Device Cloud.
-                                                     @note iDigi connector will call @ref connector_request_id_config_password callback for the password. */
+                                                     @note Etherios Cloud Connector will call @ref connector_request_id_config_password callback for the password. */
 } connector_identity_verification_t;
 /**
 * @}

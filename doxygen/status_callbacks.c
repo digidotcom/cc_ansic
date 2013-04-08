@@ -6,7 +6,7 @@
  *
  * The status callbacks APIs are used to send and receive status messages to and from the iDigi Device Cloud and to notify
  * application when TCP communication is established, keep alive message is not received from the iDigi Device Cloud, keep alive
- * message is restored and received from the iDigi Device Cloud, and iDigi connector stops running.
+ * message is restored and received from the iDigi Device Cloud, and Etherios Cloud Connector stops running.
  *
  * The following requests under @ref connector_class_id_status are listed below:
  *
@@ -24,7 +24,7 @@
  * a keep-alive message was not received, or keep-alive message was received and recovered.
  *
  * @li @ref status_stop_completed
- * - This callback is called to notify the application that the iDigi connector has stopped a transport running.
+ * - This callback is called to notify the application that Etherios Cloud Connector has stopped a transport running.
  *
  * @section cloud_status Cloud status request
  *
@@ -137,7 +137,7 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -204,7 +204,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -252,7 +252,7 @@
  *        <dt><b>connector_tcp_communication_started</b> </dt>
  *        <dd> - TCP communication has been established. User and application is able to start message and data transfer. </dd>
  *        <dt><b>connector_tcp_keepalive_missed</b>
- *        <dd> - iDigi connector has not received a keep alive message from the iDigi Device Cloud within the time specifed in @endhtmlonly @ref connector_config_tx_keepalive or @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS @htmlonly </dd>
+ *        <dd> - Etherios Cloud Connector has not received a keep alive message from the iDigi Device Cloud within the time specifed in @endhtmlonly @ref connector_config_tx_keepalive or @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS @htmlonly </dd>
  *        <dt><b>connector_tcp_keepalive_restored</b>
  *        <dd> - Digi connector has received and recovered missed keep alive message from the iDigi Device Cloud. </dd>
  *        </dl></td>
@@ -277,14 +277,14 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
  * @section status_stop_completed Stop Completion
  *
- * This callback is called when iDigi connector has stopped running. It's invoked from connector_initiate_action() call on @ref connector_initiate_transport_stop.
+ * This callback is called when Etherios Cloud Connector has stopped running. It's invoked from connector_initiate_action() call on @ref connector_initiate_transport_stop.
  * When connector_initiate_action() is called, this calblack will be called after the specified transport has stopped running.
  *
  * @htmlonly
@@ -338,7 +338,7 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>

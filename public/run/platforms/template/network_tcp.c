@@ -11,7 +11,7 @@
  */
 /**
  * @file
- *  @brief Rountines which implement the iDigi connector network interface for
+ *  @brief Rountines which implement Etherios Cloud Connector network interface for
  *  @ref CONNECTOR_TRANSPORT_TCP.
  */
 #include "connector_api.h"
@@ -33,9 +33,9 @@
  *
  * @retval connector_callback_continue	The routine has successfully established connection.
  * @retval connector_callback_busy 		The routine will be called again to complete connection.
- * @retval connector_callback_error     The connection can't be established, iDigi connector
+ * @retval connector_callback_error     The connection can't be established, Etherios Cloud Connector
  *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
- * @retval connector_callback_abort     The application aborts iDigi connector.
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref open "Network API callback Open"
  */
@@ -61,9 +61,9 @@ static connector_callback_status_t app_network_tcp_open(char const * const host_
  * @retval connector_callback_continue	The routine has successfully sent up to requested number of data bytes.
  * @retval connector_callback_busy 		The routine has encountered EAGAIN or EWOULDBLOCK error and could not send 
  *                                  any data. It will be called again to send data.
- * @retval connector_callback_error     An irrecoverable error has occured,  iDigi connector will call 
+ * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call 
  *                                  @ref app_network_tcp_close. 
- * @retval connector_callback_abort     The application aborts iDigi connector.
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref send "Network API callback Send"
  */
@@ -89,9 +89,9 @@ static connector_callback_status_t app_network_tcp_send(connector_write_request_
  * @retval connector_callback_continue	The routine has received some data.
  * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or 
  *                                  EWOULDBLOCK error. It will be called again to receive data.
- * @retval connector_callback_error     An irrecoverable error has occured,  iDigi connector will call 
+ * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call 
  *                                  @ref app_network_tcp_close. 
- * @retval connector_callback_abort     The application aborts iDigi connector.
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref receive "Network API callback Receive"
  */
@@ -116,9 +116,9 @@ static connector_callback_status_t app_network_tcp_receive(connector_read_reques
  *
  * @retval connector_callback_continue	The callback has successfully closed the connection.
  * @retval connector_callback_busy 		The network device is busy, the routine will be called again to complete close.
- * @retval connector_callback_error     An error has occured, iDigi connector will exit @ref connector_run "connector_run()" or 
+ * @retval connector_callback_error     An error has occured, Etherios Cloud Connector will exit @ref connector_run "connector_run()" or 
  *                                  @ref connector_step "connector_step()".
- * @retval connector_callback_abort     The application aborts iDigi connector.
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref close "Network API callback Close"
  */

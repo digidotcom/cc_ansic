@@ -77,14 +77,14 @@
  *   status = connector_initiate_action(handle, connector_initiate_send_data, &header);
  * @endcode
  *
- * This example will invoke the iDigi connector to initiate a data transfer to the iDigi Device
+ * This example will invoke Etherios Cloud Connector to initiate a data transfer to the iDigi Device
  * Cloud.  The result of this operation creates a file testfile.txt in the testdir directory
  * on the iDigi Device Cloud.  Once the iDigi Device Cloud is ready to receive data
  * from the device the application callback is called requesting data.
  *
  * @subsection get_data Put Request Callback
  *
- * After calling connector_initiate_action(), iDigi connector will make @ref connector_data_service_put_request "Put Request"
+ * After calling connector_initiate_action(), Etherios Cloud Connector will make @ref connector_data_service_put_request "Put Request"
  * @ref connector_callback_t "callbacks" to retrieve the application data. These callbacks will continue 
  * until the transfer is complete or an error is encountered. @ref CONNECTOR_MSG_LAST_DATA flag in the client_data 
  * field indicates the last chunk of data.
@@ -180,7 +180,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts iDigi connector</td>
+ * <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -359,7 +359,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -639,7 +639,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts iDigi connector</td>
+ * <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -655,8 +655,8 @@
  * @endcode
  *
  * @section zlib Optional Data Compression Support
- * iDigi connector has an optional Data Compression switch that reduces the amount of network traffic.  This option requires applications
- * to link with the zlib library and add the zlib header file (zlib.h) to the iDigi connector include path.
+ * Etherios Cloud Connector has an optional Data Compression switch that reduces the amount of network traffic.  This option requires applications
+ * to link with the zlib library and add the zlib header file (zlib.h) to Etherios Cloud Connector include path.
  *
  * @note Enabling this option greatly increases the application code size and memory required to execute.
  *

@@ -11,7 +11,7 @@
  */
  /**
   * @file
-  *  @brief iDigi connector configuration options
+  *  @brief Etherios Cloud Connector configuration options
   *
   */
 #ifndef __CONNECTOR_CONFIG_H_
@@ -22,7 +22,7 @@
 * @defgroup connector_config_options iDigi Connector Configuration Options
 * @{
 *
-* @brief Defines the major blocks of functionality used in the iDigi connector
+* @brief Defines the major blocks of functionality used in Etherios Cloud Connector
 */
 
 /**
@@ -33,7 +33,7 @@
 #define CONNECTOR_LITTLE_ENDIAN
 
 /**
- * When defined, iDigi connector private library includes debug support.  iDigi connector state
+ * When defined, Etherios Cloud Connector private library includes debug support.  Etherios Cloud Connector state
  * and debug data will be displayed using the @ref connector_debug_printf. See @ref debug_routine
  * for its implementation. Macro error testing is compiled and implemented using the
  * @ref ASSERT macro.
@@ -56,7 +56,7 @@
 #define CONNECTOR_DEBUG
 
 /**
- * When defined, iDigi connector private library includes the @ref firmware_download
+ * When defined, Etherios Cloud Connector private library includes the @ref firmware_download
  * "Firmware Download Service".
  *
  * To disable the @ref firmware_download "Firmware Download Service" feature, comment
@@ -76,7 +76,7 @@
 #define CONNECTOR_FIRMWARE_SERVICE
 
 /**
- * When defined, the iDigi connector includes the @ref zlib "compression" support used with the
+ * When defined, Etherios Cloud Connector includes the @ref zlib "compression" support used with the
  * @ref data_service.
  *
  * By default, compression support is disabled.  To enable Optional Data Compression Support,
@@ -105,7 +105,7 @@
 #define CONNECTOR_COMPRESSION
 
 /**
- * If defined, iDigi connector includes the @ref data_service.
+ * If defined, Etherios Cloud Connector includes the @ref data_service.
  * To disable the @ref data_service feature, comment this line out in connector_config.h:
  *
  * @code
@@ -124,7 +124,7 @@
 #define CONNECTOR_DATA_SERVICE
 
 /**
- * If defined, iDigi connector includes the @ref file_system.
+ * If defined, Etherios Cloud Connector includes the @ref file_system.
  * To enable the @ref file_system feature, uncomment this line in connector_config.h:
  *
  * @code
@@ -143,7 +143,7 @@
 #define CONNECTOR_FILE_SYSTEM
 
 /**
- * If defined, iDigi connector includes the @ref rci_service.
+ * If defined, Etherios Cloud Connector includes the @ref rci_service.
  * To disable the @ref rci_service feature, comment this line out in connector_config.h:
  *
  * @code
@@ -165,7 +165,7 @@
 
 /**
  * This is used to define the maximum content length in bytes of an element's value for the @ref rci_service,
- * iDigi connector includes the @ref rci_service that allows user remote configuration, control, and information
+ * Etherios Cloud Connector includes the @ref rci_service that allows user remote configuration, control, and information
  * exchange between a device and the iDigi Device Cloud.
  * See @ref CONNECTOR_RCI_SERVICE to enable or disable the service.
  *
@@ -200,7 +200,7 @@
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
 /**
- * When defined, iDigi connector private library does not use dynamic memory allocations,
+ * When defined, Etherios Cloud Connector private library does not use dynamic memory allocations,
  * static memory buffers are used instead. This eliminates the possibility of memory fragmentation.
  *
  * When no dynamic RAM option is used, @ref CONNECTOR_MSG_MAX_TRANSACTION must be defined and it should be
@@ -222,7 +222,7 @@
 #define CONNECTOR_NO_MALLOC
 
 /**
- * If defined, iDigi connector includes the TCP transport.
+ * If defined, Etherios Cloud Connector includes the TCP transport.
  * To disable this feature, comment this line out in connector_config.h:
  *
  * @code
@@ -240,7 +240,7 @@
 #define CONNECTOR_TRANSPORT_TCP
 
 /**
-* If defined, iDigi connector includes the UDP transport.
+* If defined, Etherios Cloud Connector includes the UDP transport.
 * To disable this feature, comment this line out in connector_config.h:
 *
 * @code
@@ -258,7 +258,7 @@
 #define CONNECTOR_TRANSPORT_UDP
 
 /**
-* If defined, iDigi connector includes the SMS transport.
+* If defined, Etherios Cloud Connector includes the SMS transport.
 * To disable this feature, comment this line out in connector_config.h:
 *
 * @code
@@ -291,7 +291,7 @@
  *  is uncompiled and the hard-coded values are used instead:
  *
  * @code
- *     #define CONNECTOR_DEVICE_TYPE                          "iDigi connector Linux Sample"
+ *     #define CONNECTOR_DEVICE_TYPE                          "Etherios Cloud Connector Linux Sample"
  *     #define CONNECTOR_CLOUD_URL                            "my.idigi.com"
  *     #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              75
  *     #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
@@ -309,7 +309,7 @@
  *     #define CONNECTOR_IDENTITY_VERIFICATION                connector_simple_identity_verification
  * @endcode
  *
- * This option is useful for reducing the iDigi connector code space for those applications that are sensitive to memory usage.  The following
+ * This option is useful for reducing Etherios Cloud Connector code space for those applications that are sensitive to memory usage.  The following
  * table describes the each define and the callback cross reference:
  *
  * @htmlonly
@@ -414,7 +414,7 @@
  * @see @ref connector_config_device_type
  * @see @ref app_get_device_type
  */
-#define CONNECTOR_DEVICE_TYPE                             "iDigi connector Linux Sample"
+#define CONNECTOR_DEVICE_TYPE                             "Etherios Cloud Connector Linux Sample"
 
 /**
  * When defined, this string hardcode for the @ref server_url instead of the application framework

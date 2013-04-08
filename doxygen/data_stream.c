@@ -33,7 +33,7 @@
  *
  * @section connect_description Code Flow
  *
- * The routine main() in the platform directory initializes the iDigi connector and
+ * The routine main() in the platform directory initializes Etherios Cloud Connector and
  * registers the application-defined callback. In the file application.c is the
  * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
  * when a data service request is received.
@@ -87,7 +87,7 @@
  * </tr>
  * <tr>
  *   <th>connector_api.c</th>
- *   <td>Code for the iDigi connector </td>
+ *   <td>Code for Etherios Cloud Connector </td>
  *   <td>private</td>
  * </tr>
  * <tr>

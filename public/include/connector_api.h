@@ -25,7 +25,7 @@
 #endif
 
 /**
- * Current version of the iDigi connector that application is using or built for.
+ * Current version of the Etherios Cloud Connector that application is using or built for.
  *
  * Note current version number denotes:  1.1.0.0
  *                                       | | | |
@@ -135,36 +135,36 @@ typedef enum {
  * @{
  */
  /**
- * Status returned by iDigi connector API calls.
+ * Status returned by Etherios Cloud Connector API calls.
  */
 typedef enum {
    connector_success,               /**< No error. */
-   connector_init_error,            /**< iDigi connector was not initialized. */
+   connector_init_error,            /**< Etherios Cloud Connector was not initialized. */
    connector_invalid_data_size,     /**< Callback returned configuration with invalid size. */
    connector_invalid_data_range,    /**< Callback returned configuration that is out of range. */
    connector_invalid_data,          /**< Callback returned invalid data. Callback returned a NULL data. */
-   connector_keepalive_error,       /**< iDigi connector did not receive keepalive messages. Server may be offline. */
+   connector_keepalive_error,       /**< Etherios Cloud Connector did not receive keepalive messages. Server may be offline. */
    connector_bad_version,           /**< Invalid firmware version number. Incorrect firmware version number used in Remote Configuration (RCI) */
-   connector_device_terminated,     /**< iDigi connector was terminated by user via connector_initiate_action call.
+   connector_device_terminated,     /**< Etherios Cloud Connector was terminated by user via connector_initiate_action call.
                                      All memory is freed and connector_init must be called to reStart Etherios Cloud Connector. */
    connector_service_busy,          /**< Someone else is using the same service or the device is busy. */
    connector_invalid_response,      /**< Received invalid response from the server. */
    connector_no_resource,           /**< Lack of resource */
    connector_unavailable,           /**< Not available to perform the specified action. */
-   connector_idle,                  /**< iDigi connector is idling. iDigi connector has no message to process.
+   connector_idle,                  /**< Etherios Cloud Connector is idling. Etherios Cloud Connector has no message to process.
                                      Other task should be processed. */
-   connector_working,               /**< iDigi connector has processed a message and should be called at the earliest possible time. */
-   connector_pending,               /**< iDigi connector is waiting to process a message or a callback to complete. This allows
-                                     iDigi connector to relinquish for other task to run. */
-   connector_active,                /**< iDigi connector is processing a message and it should be called at the earliest possible time. */
-   connector_abort,                 /**< iDigi connector was aborted and terminated either iDigi connector encountered fatal error or callback aborted iDigi connector.
+   connector_working,               /**< Etherios Cloud Connector has processed a message and should be called at the earliest possible time. */
+   connector_pending,               /**< Etherios Cloud Connector is waiting to process a message or a callback to complete. This allows
+                                     Etherios Cloud Connector to relinquish for other task to run. */
+   connector_active,                /**< Etherios Cloud Connector is processing a message and it should be called at the earliest possible time. */
+   connector_abort,                 /**< Etherios Cloud Connector was aborted and terminated either Etherios Cloud Connector encountered fatal error or callback aborted Etherios Cloud Connector.
                                      All memory is freed and connector_init must be called to reStart Etherios Cloud Connector. */
    connector_device_error,          /**< Close Callback returns error. If connector_step or connector_run is called again, it will re-establish the connection. */
 
    connector_exceed_timeout,        /**< Callback exceeded timeout value before it returned. */
-   connector_invalid_payload_packet, /**< iDigi connector received invalid payload message. */
+   connector_invalid_payload_packet, /**< Etherios Cloud Connector received invalid payload message. */
    connector_open_error             /**< Open callback was not successfully opened and returned @ref connector_callback_error.
-                                     iDigi connector must be called again to continue running. It will reconnect if
+                                     Etherios Cloud Connector must be called again to continue running. It will reconnect if
                                      it's initially setup to connect automatically. */
 } connector_status_t;
 /**
@@ -240,9 +240,9 @@ typedef enum
 * These status values are used for an event notification.
 */
 typedef enum {
-    connector_tcp_communication_started,      /**< iDigi connector has established connection with Etherios Device Cloud and starts communicating. */
-    connector_tcp_keepalive_missed,           /**< iDigi connector didn't receive a keep alive message within the specified keep alive interval @ref tx_keepalive. */
-    connector_tcp_keepalive_restored          /**< iDigi connector received a keep alive message after a keep alive message was not received.
+    connector_tcp_communication_started,      /**< Etherios Cloud Connector has established connection with Etherios Device Cloud and starts communicating. */
+    connector_tcp_keepalive_missed,           /**< Etherios Cloud Connector didn't receive a keep alive message within the specified keep alive interval @ref tx_keepalive. */
+    connector_tcp_keepalive_restored          /**< Etherios Cloud Connector received a keep alive message after a keep alive message was not received.
                                          This is called after the callback has been previously notified with connector_miss_keepalive status. */
 } connector_tcp_status_t;
 /**
@@ -258,10 +258,10 @@ typedef enum {
 * The class ID associated with these request ID is connector_class_id_status.
 */
 typedef enum {
-    connector_request_id_status_tcp,            /**< Used in a callback for iDigi connector TCP status. The callback is called to notify the application that
+    connector_request_id_status_tcp,            /**< Used in a callback for Etherios Cloud Connector TCP status. The callback is called to notify the application that
                                                     TCP connection has been established, a keep-alive message was not received, or keep-alive message was received and restored.
                                                     @see connector_tcp_status_t */
-    connector_request_id_status_stop_completed  /**< Used in a callback when the iDigi connector has stopped a transport running via @ref connector_initiate_action call with @ref connector_initiate_transport_stop. */
+    connector_request_id_status_stop_completed  /**< Used in a callback when the Etherios Cloud Connector has stopped a transport running via @ref connector_initiate_action call with @ref connector_initiate_transport_stop. */
 
 } connector_request_id_status_t;
 /**
@@ -276,7 +276,7 @@ typedef enum {
 * Request IDs used in connector_initiate_action()
 */
 typedef enum {
-    connector_initiate_terminate,       /**< Terminates and stops iDigi connector from running. */
+    connector_initiate_terminate,       /**< Terminates and stops Etherios Cloud Connector from running. */
     #if (defined CONNECTOR_DATA_SERVICE)
     connector_initiate_send_data,       /**< Initiates the action to send data to the Etherios device cloud, the data will be stored in a file on Etherios device cloud. */
     #endif
@@ -300,14 +300,14 @@ typedef enum {
 * @{
 */
 /**
-* Return status from iDigi connector callback
+* Return status from Etherios Cloud Connector callback
 */
 typedef enum  {
     connector_callback_continue,        /**< Continues with no error */
     connector_callback_busy,            /**< Callback is busy */
-    connector_callback_abort,           /**< Aborts iDigi connector. iDigi connector frees all memory. @ref connector_init must be called to reStart Etherios Cloud Connector. */
+    connector_callback_abort,           /**< Aborts Etherios Cloud Connector. Etherios Cloud Connector frees all memory. @ref connector_init must be called to reStart Etherios Cloud Connector. */
     connector_callback_unrecognized,    /**< Unsupported callback request */
-    connector_callback_error            /**< Exits iDigi connector when error is encountered. iDigi connector will try reconnecting to Etherios Device Cloud
+    connector_callback_error            /**< Exits Etherios Cloud Connector when error is encountered. Etherios Cloud Connector will try reconnecting to Etherios Device Cloud
                                          if @ref connector_step or @ref connector_run is called again. */
 } connector_callback_status_t;
 /**
@@ -402,7 +402,7 @@ typedef union {
 */
 /**
 *
-* iDigi connector Handle type that is used throughout iDigi connector APIs, this is used by the application
+* Etherios Cloud Connector Handle type that is used throughout Etherios Cloud Connector APIs, this is used by the application
 * to store context information about a connections, for example this could
 * be used to store a file descriptor or a pointer to a structure.
 */
@@ -417,12 +417,12 @@ typedef union {
 */
 /**
 * Error status structure for @ref connector_request_id_config_error_status callback which
-* is called when iDigi connector encounters an error.
+* is called when Etherios Cloud Connector encounters an error.
 * @see connector_request_id_config_t
 */
 typedef struct  {
-    connector_class_id_t class_id;         /**< Class ID which iDigi connector encounters error with */
-    connector_request_id_t request_id;     /**< Request ID which iDigi connector encounters error with */
+    connector_class_id_t class_id;         /**< Class ID which Etherios Cloud Connector encounters error with */
+    connector_request_id_t request_id;     /**< Request ID which Etherios Cloud Connector encounters error with */
     connector_status_t status;          /**< Error status */
 } connector_error_status_t;
 /**
@@ -434,19 +434,19 @@ typedef struct  {
 * @{
 */
 /**
-* This is used to tell how iDigi connector handles all active sessions before stopping.
+* This is used to tell how Etherios Cloud Connector handles all active sessions before stopping.
 *
 */
 typedef enum {
-    connector_stop_immediately,             /**< Cancel all active sessions and stop the transport of iDigi connector immediately */
-    connector_wait_sessions_complete         /**< Stop the transport of iDigi connector after all active sessions complete */
+    connector_stop_immediately,             /**< Cancel all active sessions and stop the transport of Etherios Cloud Connector immediately */
+    connector_wait_sessions_complete         /**< Stop the transport of Etherios Cloud Connector after all active sessions complete */
 } connector_stop_condition_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_initiate_stop_request_t Data type used to stop a transport of iDigi connector
+* @defgroup connector_initiate_stop_request_t Data type used to stop a transport of Etherios Cloud Connector
 * @{
 */
 /**
@@ -466,7 +466,7 @@ typedef struct
                                              - @ref connector_stop_immediately
                                              - @ref connector_wait_sessions_complete */
 
-    void * user_context;                /**< User's defined context that will be passed to @ref connector_request_id_status_stop_completed after the transport of  iDigi connector has stopped running. */
+    void * user_context;                /**< User's defined context that will be passed to @ref connector_request_id_status_stop_completed after the transport of  Etherios Cloud Connector has stopped running. */
 
 } connector_initiate_stop_request_t;
 /**
@@ -513,22 +513,22 @@ typedef connector_callback_status_t (* connector_callback_t) (connector_class_id
 */
 
  /**
- * @defgroup connector_init Initialize the iDigi connector.
+ * @defgroup connector_init Initialize the Etherios Cloud Connector.
  *@{
  * @b Include: connector_api.h
  */
 /**
- * @brief This API is called initially at startup to allocate and initialize the iDigi connector.
+ * @brief This API is called initially at startup to allocate and initialize the Etherios Cloud Connector.
  *
  * This function takes the @ref iik_callback "application-defined callback" function pointer as
- * it's only argument.  This callback is used by the iDigi connector to communicate with the
- * application environment.  This function must be called prior to other iDigi connector APIs,
+ * it's only argument.  This callback is used by the Etherios Cloud Connector to communicate with the
+ * application environment.  This function must be called prior to other Etherios Cloud Connector APIs,
  * like connector_step(), connector_run(), and connector_initiate_action().
  *
  * @param [in] callback  Callback function that is used to
- *        interface between the application and the iDigi connector.
+ *        interface between the application and the Etherios Cloud Connector.
  *
- * @retval NULL   		An error occurred and the iDigi connector was unable to initialize.
+ * @retval NULL   		An error occurred and the Etherios Cloud Connector was unable to initialize.
  * @retval "Not NULL"	Success.  A Handle was returned for subsequent iDigi Connector calls.
  *
  * Example Usage:
@@ -567,9 +567,9 @@ connector_handle_t connector_init(connector_callback_t const callback);
  *
  * @param [in] handle  Handle returned from connector_init
  *
- * @retval connector_init_error             The iDigi connector was not properly initialized.  The application requires a
+ * @retval connector_init_error             The Etherios Cloud Connector was not properly initialized.  The application requires a
  * 										call to connector_init() prior to calling this function.
- * @retval connector_abort                  iDigi connector was aborted by callback function.
+ * @retval connector_abort                  Etherios Cloud Connector was aborted by callback function.
  * @retval connector_invalid_data_size      An @ref iik_callback "application callback" returned an invalid response_length.
  *   									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
@@ -578,22 +578,22 @@ connector_handle_t connector_init(connector_callback_t const callback);
  *  									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
- * @retval connector_invalid_payload_packet iDigi connector received invalid payload message.
- * @retval connector_keepalive_error        iDigi connector did not receive keep alive messages. Server may be offline.
+ * @retval connector_invalid_payload_packet Etherios Cloud Connector received invalid payload message.
+ * @retval connector_keepalive_error        Etherios Cloud Connector did not receive keep alive messages. Server may be offline.
  * @retval connector_server_overload        Server overload.
  * @retval connector_bad_version            Server rejected version number.
  * @retval connector_exceed_timeout         Callback exceeded timeout value before it returned.
- * @retval connector_unsupported_security   iDigi connector received a packet with unsupported security.
+ * @retval connector_unsupported_security   Etherios Cloud Connector received a packet with unsupported security.
  * @retval connector_invalid_data           An @ref iik_callback "application callback" returned unexpected NULL response_data.
  *  									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
- * @retval connector_device_terminated      iDigi connector was terminated by user via connector_initiate_action() call.
- * @retval connector_server_redirect        iDigi connector was stopped when redirecting to a new server.
- * @retval connector_idle                   iDigi connector is idling. iDigi connector has no message to process and relinquishes other task execution.
- * @retval connector_working                iDigi connector is processing a message and should be called at the earliest possible time.
- * @retval connector_pending                iDigi connector is busy or waiting to process a message and relinquishes other task execution
- * @retval connector_active                 iDigi connector is busy or waiting to process a message and should be called
+ * @retval connector_device_terminated      Etherios Cloud Connector was terminated by user via connector_initiate_action() call.
+ * @retval connector_server_redirect        Etherios Cloud Connector was stopped when redirecting to a new server.
+ * @retval connector_idle                   Etherios Cloud Connector is idling. Etherios Cloud Connector has no message to process and relinquishes other task execution.
+ * @retval connector_working                Etherios Cloud Connector is processing a message and should be called at the earliest possible time.
+ * @retval connector_pending                Etherios Cloud Connector is busy or waiting to process a message and relinquishes other task execution
+ * @retval connector_active                 Etherios Cloud Connector is busy or waiting to process a message and should be called
  *                                      at the earliest possible time
  *
  *
@@ -638,9 +638,9 @@ connector_status_t connector_step(connector_handle_t const handle);
  *
  * @param [in] handle  					Handle returned from connector_init() call.
  *
- * @retval connector_init_error             The iDigi connector was not properly initialized.  The application requires a
+ * @retval connector_init_error             The Etherios Cloud Connector was not properly initialized.  The application requires a
  * 										call to connector_init() prior to calling this function.
- * @retval connector_abort                  iDigi connector was aborted by callback function.
+ * @retval connector_abort                  Etherios Cloud Connector was aborted by callback function.
  * @retval connector_invalid_data_size      An @ref iik_callback "application callback" returned an invalid response_length.
  *   									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
@@ -649,21 +649,21 @@ connector_status_t connector_step(connector_handle_t const handle);
  *  									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
- * @retval connector_keepalive_error        iDigi connector did not receive keep alive messages. Server may be offline.
+ * @retval connector_keepalive_error        Etherios Cloud Connector did not receive keep alive messages. Server may be offline.
  * @retval connector_server_overload        Server overload.
  * @retval connector_bad_version            Server rejected version number.
  * @retval connector_exceed_timeout         Callback exceeded timeout value before it returned.
- * @retval connector_unsupported_security   iDigi connector received a packet with unsupported security.
+ * @retval connector_unsupported_security   Etherios Cloud Connector received a packet with unsupported security.
  * @retval connector_invalid_data           An @ref iik_callback "application callback" returned unexpected NULL response_data.
  *  									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
- * @retval connector_server_disconnected    Server disconnected iDigi connector.
+ * @retval connector_server_disconnected    Server disconnected Etherios Cloud Connector.
  * @retval connector_device_error           Close Callback returns
  *                                      error. If connector_step or connector_run is called again, it
  *                                      will re-establish the connection.
- * @retval connector_device_terminated      iDigi connector was terminated by user via connector_initiate_action call.
- * @retval connector_server_redirect        iDigi connector was stopped when redirecting to a new server.
+ * @retval connector_device_terminated      Etherios Cloud Connector was terminated by user via connector_initiate_action call.
+ * @retval connector_server_redirect        Etherios Cloud Connector was stopped when redirecting to a new server.
 *
  * Example Usage:
  * @code
@@ -703,7 +703,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Terminates and stops the iDigi Connector from running.  This call closes all open network
  *                          Handles and frees all allocated memory.
  *                          If the application is using connector_step(), the next call to connector_step() terminates
- *                          the iDigi connector.  If a blocking call to connector_run() is still pending, this call
+ *                          the Etherios Cloud Connector.  If a blocking call to connector_run() is still pending, this call
  *                          will eventually terminate that call.  Once the iDigi Connector is terminated, the
  *                          iDigi Connector must restart by calling connector_init().
  *
@@ -765,11 +765,11 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Pointer to connector_message_status_request_t
  *
 * @retval connector_success              No error
- * @retval connector_init_error           iDigi connector was not initialized or not connected to Etherios Device Cloud.
- * @retval connector_abort                Callback aborted iDigi connector.
+ * @retval connector_init_error           Etherios Cloud Connector was not initialized or not connected to Etherios Device Cloud.
+ * @retval connector_abort                Callback aborted Etherios Cloud Connector.
  * @retval connector_invalid_data         Invalid parameter
  * @retval connector_no_resource          Insufficient memory
- * @retval connector_service_busy         iDigi connector is busy
+ * @retval connector_service_busy         Etherios Cloud Connector is busy
  *
  * Example Usage:
  * @code

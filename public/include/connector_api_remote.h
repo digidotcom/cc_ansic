@@ -42,7 +42,7 @@ typedef enum {
 
 
 /**
- * @defgroup connector_remote_action_t iDigi connector remote configuration action types
+ * @defgroup connector_remote_action_t Etherios Cloud Connector remote configuration action types
  * @{
  */
 /**
@@ -57,7 +57,7 @@ typedef enum {
  */
 
 /**
- * @defgroup connector_remote_group_type_t iDigi connector remote configuration types
+ * @defgroup connector_remote_group_type_t Etherios Cloud Connector remote configuration types
  * @{
  */
 /**
@@ -74,7 +74,7 @@ typedef enum {
 
 
 /**
-* @defgroup connector_element_access_t iDigi connector remote configuration access types
+* @defgroup connector_element_access_t Etherios Cloud Connector remote configuration access types
 * @{
 */
 /**

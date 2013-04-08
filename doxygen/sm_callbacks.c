@@ -82,7 +82,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -150,7 +150,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -226,7 +226,7 @@
  *
  * @subsection device_config_response Callback with device config response
  *
- * After calling connector_initiate_action(), the iDigi connector will prepare and send the device config request
+ * After calling connector_initiate_action(), Etherios Cloud Connector will prepare and send the device config request
  * to iDigi Device Cloud asynchronously.  Upon receiving the response, it makes @ref connector_sm_device_to_server_config
  * "Device config response" @ref connector_callback_t "callback" to pass the response to the application. Application is free to
  * release the allocated resources at this point.
@@ -283,7 +283,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts iDigi connector</td>
+ * <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -357,7 +357,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -424,7 +424,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -494,7 +494,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -562,7 +562,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts the iDigi connector</td>
+ *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>

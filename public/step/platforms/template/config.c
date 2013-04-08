@@ -92,7 +92,7 @@ static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t
 static connector_callback_status_t app_get_device_type(char const ** type, size_t * const size)
 {
 #error "Specify device type"
-    static char const device_type[] = "iDigi connector Linux Sample";
+    static char const device_type[] = "Etherios Cloud Connector Linux Sample";
 
     /* Return pointer to device type. */
     *type = device_type;

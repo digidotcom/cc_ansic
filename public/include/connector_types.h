@@ -12,7 +12,7 @@
 
 /**
  * @file
- *  @brief Types required by the iDigi connector
+ *  @brief Types required by Etherios Cloud Connector
  *
  */
 
@@ -26,7 +26,7 @@
 #include <stddef.h>
 
 /**
- * The iDigi connector uses this function to produce output string according to the format.
+ * The Etherios Cloud Connector uses this function to produce output string according to the format.
  * This function behaves exactly as snprintf except that the variable argument list is passed
  * as a va_list instead of a succession of arguments.
  *
@@ -246,7 +246,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 * @{
 */
 /**
- * Used to reference a network session and is passed into iDigi connector API calls. This
+ * Used to reference a network session and is passed into Etherios Cloud Connector API calls. This
  * type is defined as an int and is used by the application to keep track of and identify sessions.
  * Application may define this to different type for its own network reference in connector_type.h
  */

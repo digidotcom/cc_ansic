@@ -42,14 +42,14 @@
  *
  * @section language Language Support
  *
- * The iDigi connector software provided is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99)
+ * The Etherios Cloud Connector software provided is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99)
  * compliant.  (Note the @ref CONNECTOR_RCI_SERVICE "Remote Configuration" feature requires ANSI C99.)   The
  * sample platforms provided use standard ANSI C calls which are available in most operating systems.
  * If you are running on a Linux i486 based platform and using the GNU toolchain the Linux platform
  * and samples can be run without any major modifications.
  *
  * @section requirements Platform Memory Requirements
- * The iDigi connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
+ * The Etherios Cloud Connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
  * and program stack.  
  *     
  * @subsection CodespaceRequirements Code Space Estimates 
@@ -62,7 +62,7 @@
  * @htmlonly
  * <table class="apitable">
  * <tr>
- * <th class="title">iDigi connector Service Options and Configuration Methodology</th>
+ * <th class="title">Etherios Cloud Connector Service Options and Configuration Methodology</th>
  * <th class="title">Text</th>
  * <th class="title">rodata</th>
  * <th class="title">data</th>
@@ -230,12 +230,12 @@
  * </table>
  * @endhtmlonly
  *   
- * This includes all code from within the private iDigi connector library, but none of the code implemented in the @ref connector_callback_t 
+ * This includes all code from within the private Etherios Cloud Connector library, but none of the code implemented in the @ref connector_callback_t 
  * "application-defined callback".  These metrics should be treated as typical.  It is recommended that the actual program stack size 
  * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client, 
  * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
  * 
- * @section features iDigi connector Features
+ * @section features Etherios Cloud Connector Features
  *     @li Send data to and from a device through the iDigi Device Cloud
  *     @li Update firmware on the device
  *     @li View and configure the device configurations
@@ -249,29 +249,29 @@
  *
  * @ref web_services "iDigi Web Services" requests are sent from a remote application to
  * the iDigi Device Cloud, which then directly communicates to the device.  This
- * allows for bidirectional machine to machine communication.  Each iDigi connector sample includes
+ * allows for bidirectional machine to machine communication.  Each Etherios Cloud Connector sample includes
  * a Python application demonstrating how to communicate to a device using the
  * @ref web_services "iDigi Web Services".
  *
  * @section threading Threading Model
  *
- * The iDigi connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.    
- * In environments that include preemptive threading, the iDigi connector can be implemented as a separate stand-alone thread
+ * The Etherios Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.    
+ * In environments that include preemptive threading, Etherios Cloud Connector can be implemented as a separate stand-alone thread
  * by calling connector_run().  This is a blocking call that only returns due to a major system failure.
  *    
- * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, the iDigi connector can 
+ * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, Etherios Cloud Connector can 
  * be implemented using the non-blocking connector_step() call within the round robin control loop.  
  * 
  * Note in a cooperative, non-preemptive multithreaded environment, either connector_run() or connector_step() can used, based on 
- * system determinism and the potential for a non-cooperative thread to exceed the iDigi connector's system timing.  
+ * system determinism and the potential for a non-cooperative thread to exceed Etherios Cloud Connector's system timing.  
  * 
- * @note You should decide before proceeding how you intend to call the iDigi connector (within a round robin control loop or running 
+ * @note You should decide before proceeding how you intend to call Etherios Cloud Connector (within a round robin control loop or running 
  * as a separate thread).  In a limited services OS with no real time threading, you should use the connector_step() routine.  
  * Otherwise you should use the connector_run() routine.
  *
  * @section code_organization Source Code Organization
- * The iDigi connector source code is divided into two partitions, a private partition and a public Application Framework.  The private partition
- * includes the sources that implement the @ref api_overview "iDigi connector public API".  The public Application Framework includes a
+ * The Etherios Cloud Connector source code is divided into two partitions, a private partition and a public Application Framework.  The private partition
+ * includes the sources that implement the @ref api_overview "Etherios Cloud Connector public API".  The public Application Framework includes a
  * set of sample applications used for demonstration purposes.
  *
  * @note For forward compatibility the private partition should be treated as a black box and never changed or referenced directly.  It's recommended
@@ -293,13 +293,13 @@
  * </tr>
  * <tr>
  *   <td>private</td>
- *   <td>iDigi connector Library Code<br></br>
- *   This directory contains all the private and internal files used to build the iDigi connector library.
+ *   <td>Etherios Cloud Connector Library Code<br></br>
+ *   This directory contains all the private and internal files used to build Etherios Cloud Connector library.
  *   <b>You should never modify, directly call, debug, or reference any file from this directory</b>.</td>
  * </tr>
  * <tr>
  *   <td>public/include</td>
- *   <td> @endhtmlonly  @ref api_overview "iDigi connector Public API" @htmlonly <br></br>
+ *   <td> @endhtmlonly  @ref api_overview "Etherios Cloud Connector Public API" @htmlonly <br></br>
  *   Contains the four public headers: @endhtmlonly @ref connector_api.h, @ref connector_types.h, @ref connector_debug.h, and @ref connector_remote.h @htmlonly.
  *   The @endhtmlonly @ref api_overview "iDigi Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
  *   required for application development.  All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
@@ -314,23 +314,23 @@
  * </tr>
  * <tr>
  *   <td>public/run</td>
- *   <td>Platforms and samples for running the iDigi connector as a separate thread <br></br>
+ *   <td>Platforms and samples for running Etherios Cloud Connector as a separate thread <br></br>
  *   This directory contains platforms and samples that use @endhtmlonly connector_run() @htmlonly which runs
- *   the iDigi connector as a separate thread in a multitasking environment.</td>
+ *   Etherios Cloud Connector as a separate thread in a multitasking environment.</td>
  * </tr>
  * <tr>
  *   <td>public/run/platforms</td>
- *   <td>Platform files for running the iDigi connector as a separate thread<br></br>
- *   Platform dependent files that interface between the iDigi connector library (private) and the sample applications.
+ *   <td>Platform files for running Etherios Cloud Connector as a separate thread<br></br>
+ *   Platform dependent files that interface between Etherios Cloud Connector library (private) and the sample applications.
  *   These files include @endhtmlonly @ref network_tcp.c, file_system.c, @ref os.c, @ref config.c, and main.c. @htmlonly
  *   The Getting Started Procedure walks you through the process of porting and setting these platform files.</td>
  * </tr>
  * <tr>
  *   <td>public/run/samples</td>
- *   <td>Samples for the iDigi connector<br></br>
- *   Samples on how to use the iDigi connector, the compile_and_link sample is used to verify
+ *   <td>Samples for Etherios Cloud Connector<br></br>
+ *   Samples on how to use Etherios Cloud Connector, the compile_and_link sample is used to verify
  *   that your new environment is able to build. There is a sample for each major
- *   feature in the iDigi connector, there is documentation in this guide for each sample.</td>
+ *   feature in Etherios Cloud Connector, there is documentation in this guide for each sample.</td>
  * </tr>
  * <tr>
  *   <td>public/step</td>
@@ -341,21 +341,21 @@
  * @endhtmlonly
  *
  * @subsection AppStructure Source Code Hierarchy
- * The iDigi connector is split into two separate partitions, a private partition and a public Application Framework.
+ * The Etherios Cloud Connector is split into two separate partitions, a private partition and a public Application Framework.
  *
- * The private partition (iDigi connector Library) includes source code that implements the @ref api_overview "iDigi connector public API", plus all the internal code used to implement the
+ * The private partition (Etherios Cloud Connector Library) includes source code that implements the @ref api_overview "Etherios Cloud Connector public API", plus all the internal code used to implement the
  * iDigi Device Cloud protocol.  For forward compatibility this private partition should be treated as a black box and never changed or referenced directly.
  *
  * The public Application Framework partition is further divided in two: a Platform and Sample section.  The Platform section is related to system
  * specific porting dependencies (i.e., fleshing out @ref os_callbacks "operating system" calls, @ref network_callbacks "networking", @ref config_callbacks "system configuration").  The Sample section contains an application
- * structure to cleanly interface between the Platform section and the iDigi connector private partition.
+ * structure to cleanly interface between the Platform section and Etherios Cloud Connector private partition.
  *
  * For instance, in a linux run thread model, the main() routine starts two threads: connector_run_thread() and application_run_thread() in main.c.  This file is
- * located in the Platform section since it relies on threads (an operating system dependency).  The connector_run_thread() directly calls the @ref api_overview "iDigi connector API"
+ * located in the Platform section since it relies on threads (an operating system dependency).  The connector_run_thread() directly calls the @ref api_overview "Etherios Cloud Connector API"
  * connector_run(), and the application_run_thread() calls application_run().  The application_run() function has no system dependencies and contains
- * iDigi connector specific functions, therefore, it resides within the Sample section.
+ * Etherios Cloud Connector specific functions, therefore, it resides within the Sample section.
  *
- * In the diagram below, the iDigi connector Library is shown encapsulated within the dotted line on top (in the Private Source Code Area).  The
+ * In the diagram below, Etherios Cloud Connector Library is shown encapsulated within the dotted line on top (in the Private Source Code Area).  The
  * bottom is the Platform section, where the bottom left side shows main() calling connector_init() and spawning the two threads.   Also
  * shown is the application_run_thread() calling application_run() in the Sample section.  The Sample section is encapsulated within the
  * dotted line on the center-right.
@@ -364,18 +364,18 @@
  *
  * Based on the particular sample, application_run() could either make calls to connector_initiate_action(), or could just return and complete.
  *
- * The diagram further shows the iDigi connector Library making callbacks into the Sample section.  The @ref connector_callback_t "application callback function", initially passed
- * to the iDigi connector library via the connector_init() call, will pass the callback request to the appropriate handler, which will either be in the Platform section for
+ * The diagram further shows Etherios Cloud Connector Library making callbacks into the Sample section.  The @ref connector_callback_t "application callback function", initially passed
+ * to Etherios Cloud Connector library via the connector_init() call, will pass the callback request to the appropriate handler, which will either be in the Platform section for
  * @ref os_callbacks "operating system", @ref network_callbacks "networking", or @ref config_callbacks "configuration" callbacks; or remain locally
  * handled (in the Sample section) for the Data Service callbacks.
  *
  * @subsection PortingFocus Porting Guidelines
- * The iDigi connector @ref getting_started process includes pulling the iDigi connector into your local build environment, getting the private partition
+ * The Etherios Cloud Connector @ref getting_started process includes pulling Etherios Cloud Connector into your local build environment, getting the private partition
  * compiled and linked (using the @ref step3 "compile_and_link" sample) and then your @ref step5 "platform ported".  Once your platform
  * is ported, you will verify and confirm your port using the @ref step7 "connect_to_idigi" sample.
  *
  * When porting, it is strongly recommended that you maintain the structure of the public Application Framework.  Once porting, compilation and testing
- * are complete, the you can dismantle this framework and incorporate the iDigi connector into your environment as you see fit.
+ * are complete, the you can dismantle this framework and incorporate Etherios Cloud Connector into your environment as you see fit.
  *
  * When reusing the Application Framework, the largest effort will be updating the lowest layer of the Platform code.  Specifically, the
  * static @ref os_routines "operating system" functions located in os.c, the @ref network_routines "networking" functions in network_tcp.c and
