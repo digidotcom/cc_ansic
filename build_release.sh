@@ -30,8 +30,11 @@ function cleanup ()
         echo ">> Creating Archive Directory."
         mkdir -p "${ARCHIVE}"
     fi
-    echo ">> Archiving tgz file."
+    echo ">> Archiving critical files."
     cp -v "${OUTPUT_DIR}/${PKG_NAME}.tgz" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${HTML_ZIP}.zip" "${ARCHIVE}/"
+
 
     echo ">> Cleaning Up ${OUTPUT_DIR} and ${BASE_DIR}"
     rm -r "${OUTPUT_DIR}"
