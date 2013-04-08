@@ -3,6 +3,9 @@ rc=0
 rca=0
 BASE_DIR=$WORKSPACE/idigi
 OUTPUT_DIR=$WORKSPACE/output
+GETTING_STARTED_GUIDE=90001345
+RELEASE_NOTES=9300xxxx
+HTML_ZIP=4000xxxx
 PART_NUMBER=40003007
 PKG_NAME=${PART_NUMBER}_${REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
@@ -67,8 +70,8 @@ cp -rf docs "${BASE_DIR}"
 rm -rf "${BASE_DIR}/public/run/platforms/freescale"
 
 # Get the name of the getting starting guides and see which one is newer
-released_file=$(find /eng/store/released/90000000 -name 90002142*.pdf)
-pending_file=$(find /eng/store/pending/90000000 -name 90002142*.pdf)
+released_file=$(find /eng/store/released/90000000 -name ${GETTING_STARTED_GUIDE}*.pdf)
+pending_file=$(find /eng/store/pending/90000000 -name ${GETTING_STARTED_GUIDE}*.pdf)
 
 if [ $released_file < $pending_file ]
     then
@@ -98,6 +101,16 @@ sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 # Create the tarball
 echo ">> Creating the release Tarball as ${OUTPUT_DIR}/${PKG_NAME}.tgz."
 tar --exclude=idigi/public/test --exclude=idigi/public/dvt -czvf "${OUTPUT_DIR}/${PKG_NAME}.tgz" idigi/
+
+# Create the Release Notes
+echo ">> Creating the Release notes ${OUTPUT_DIR}/${RELEASE_NOTES}.zip"
+zip -jvl "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" "${BASE_DIR}/private/Readme.txt"
+
+# Create the HTML ZIP
+echo ">> Creating the Documenation tree ${OUTPUT_DIR}/${HTML_ZIP}.zip"
+cd "${BASE_DIR}/docs/html"
+zip -vr "${OUTPUT_DIR}/${HTML_ZIP}.zip" . 
+cd "${BASE_DIR}"
 
 # Delete the original idigi directory
 echo ">> Removing base dir ${BASE_DIR}."
@@ -136,6 +149,8 @@ if [[ "${PENDING}" == "true" ]]; then
     # If successfull push the tarball to pending, if PENDING environment variable is set to 1.
     echo ">> Copying the Tarball to Pending."
     cp -v "${OUTPUT_DIR}/${PKG_NAME}.tgz" /eng/store/pending/40000000
+    cp -v "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" /eng/store/pending/93000000
+    cp -v "${OUTPUT_DIR}/${HTML_ZIP}.zip" /eng/store/pending/40000000
 fi
 
 cleanup
