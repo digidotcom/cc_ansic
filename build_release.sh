@@ -110,7 +110,7 @@ zip -jvl "${OUTPUT_DIR}/${RELEASE_NOTES}.zip" "${BASE_DIR}/private/Readme.txt"
 echo ">> Creating the Documenation tree ${OUTPUT_DIR}/${HTML_ZIP}.zip"
 cd "${BASE_DIR}/docs/html"
 zip -vr "${OUTPUT_DIR}/${HTML_ZIP}.zip" . 
-cd "${BASE_DIR}"
+cd "${WORKSPACE}"
 
 # Delete the original idigi directory
 echo ">> Removing base dir ${BASE_DIR}."
