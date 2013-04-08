@@ -624,7 +624,7 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
                 break;
 
             default:
-                cb_data.response = connector_data_point_response_cloud_error;
+                cb_data.response = connector_data_service_send_response_cloud_error;
                 break;
         }
     }
