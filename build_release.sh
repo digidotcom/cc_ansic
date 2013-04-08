@@ -120,7 +120,7 @@ for sample in $SAMPLES
 do
   echo ">> Building $sample"
   cd $sample
-  make clean all
+  make clean; make all
   rc=$?
   if [[ ${rc} != 0 ]]; then
     echo "++ Failed to build $sample, exiting."
