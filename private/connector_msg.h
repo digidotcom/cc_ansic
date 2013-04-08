@@ -1954,10 +1954,6 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
         msg_ptr->capabilities[msg_capability_client].compression_supported = connector_true;
         #endif
 
-        #if (CONNECTOR_VERSION < CONNECTOR_VERSION_1100)
-        #define CONNECTOR_MSG_MAX_TRANSACTION   1
-        #endif
-
         #if (defined CONNECTOR_MSG_MAX_TRANSACTION)
         config_max_transaction.count = CONNECTOR_MSG_MAX_TRANSACTION;
         #else
