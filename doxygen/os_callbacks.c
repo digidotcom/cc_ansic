@@ -12,6 +12,7 @@
  *  -# @ref uptime
  *  -# @ref yield
  *  -# @ref reboot
+ * <br /><br /> 
  *
  * @section malloc malloc
  * Callback is used to dynamically allocate memory.
@@ -21,7 +22,7 @@
  *
  * @see app_os_malloc()
  * @see app_os_free()
- * @see @ref connector_os_free
+ * @see @ref connector_request_id_os_free
  *
  * @htmlonly
  * <table class="apitable">
@@ -33,28 +34,21 @@
  *     <th class="subtitle">Description</th>
  *   </tr>
  *   <tr>
- *     <td>class_id</td>
+ *     <th>class_id</th>
  *     <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
  *   </tr>
  *   <tr>
- *     <td>request_id</td>
+ *     <th>request_id</th>
  *     <td>@endhtmlonly @ref connector_request_id_os_malloc @htmlonly</td>
  *   </tr>
  *   <tr>
- *     <td>request_data</td>
- *     <td>Pointer to number of bytes to be allocated </td>
- *   </tr>
- *   <tr>
- *     <td>request_length</td>
- *     <td> The size of *request_data which is sizeof size_t.</td>
- *   </tr>
- *   <tr>
- *     <td>response_data</td>
- *     <td> Returns a pointer to memory for allocated address </td>
- *   </tr>
- *   <tr>
- *     <td>response_length</td>
- *     <td>N/A</td>
+ *     <th>data</th>
+ *     <td>Pointer to data structure of @endhtmlonly @ref connector_os_malloc_t "connector_os_malloc_t" @htmlonly type. Data fields:
+ *          <ul>
+ *          <li><b><i>size</i></b> - [IN] Number of bytes to allocate</li>
+ *          <li><b><i>ptr</i></b> - [OUT] Returned pointer to the beginning of the allocated memory block</li>
+ *          </ul>
+ *      </td> 
  *   </tr>
  *   <tr>
  *     <th colspan="2" class="title">Return Values</th>
@@ -68,40 +62,42 @@
  *     <td>Callback successfully allocated memory</td>
  *   </tr>
  *   <tr>
- *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *     <td>Callback was unable to allocate memory and callback aborts Etherios Cloud Connector</td>
- *   </tr>
- *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
  *     <td>Memory is not available at this time and needs to be called back again</td>
  *   </tr>
+ *   <tr>
+ *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ *     <td>Callback aborts Etherios Cloud Connector</td>
+ *   </tr>
  * </table>
  * @endhtmlonly
- *
+ * <br />
+ * 
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+ *                                            void * const data)
  * {
- *
- *     if (class_id == connector_class_id_operating_system && request_id.os_request == connector_request_id_os_malloc)
+ *     connector_callback_status_t status = connector_callback_continue;
+ * 
+ *     if (class_id == connector_class_id_operating_system &&
+ *         request_id.os_request == connector_request_id_os_malloc)
  *     {
- *         size_t * const size = request_data;
- *         void ** ptr = (void **)response_data;
- *
- *         *ptr = malloc(*size);
- *         if (*ptr == NULL)
+ *         connector_os_malloc_t * p = data;
+ * 
+ *         p->ptr = malloc(p->size);
+ * 
+ *         if (p->ptr == NULL)
  *         {
  *             return connector_callback_abort;
  *         }
  *     }
- *     return connector_callback_continue;
+ *     return status;
  * }
- *
  * @endcode
+ * <br /> 
  *
  * @section free free
  *
@@ -127,47 +123,50 @@
  * <td>@endhtmlonly @ref connector_os_free @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer address to be freed </td>
+ *     <th>data</th>
+ *     <td>Pointer to data structure of @endhtmlonly @ref connector_os_free_t "connector_os_free_t" @htmlonly type. Data fields:
+ *        <ul>
+ *          <li><b><i>ptr</i></b> - [IN] A pointer to the memory block to free </li>
+ *        </ul>
+ *      </td> 
  * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A </td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> N/A </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr>
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <th>None</th>
- * <td>None</td>
- * </tr>
+ *   <tr>
+ *     <th colspan="2" class="title">Return Values</th>
+ *   </tr>
+ *   <tr>
+ *     <th class="subtitle">Values</th>
+ *     <th class="subtitle">Description</th>
+ *   </tr>
+ *   <tr>
+ *     <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ *     <td>Callback successfully allocated memory</td>
+ *   </tr>
+ *   <tr>
+ *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ *     <td>Callback aborts Etherios Cloud Connector</td>
+ *   </tr>
  * </table>
  * @endhtmlonly
- *
+ * <br />
+ * 
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+ *                                            void * const data)
  * {
- *
- *     if (class_id == connector_class_id_operating_system && request_id.os_request == connector_os_free)
+ *     if (class_id == connector_class_id_operating_system &&
+ *         request_id.os_request == connector_request_id_os_free)
  *     {
- *         free((void *)request_data);
+ *         connector_os_free_t * p = data;
+ * 
+ *         free(p->ptr);
  *     }
  *     return connector_callback_continue;
  * }
- *
  * @endcode
+ * <br />
  *
  * @section uptime System Uptime
  * This callback is called to return system up time in seconds. It is the time
@@ -190,21 +189,12 @@
  * <th>request_id</th>
  * <td>@endhtmlonly @ref connector_request_id_os_system_up_time @htmlonly</td>
  * </tr>
- * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to unsigned long integer memory where callback writes the system up time to (in seconds) </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td> N/A</td>
+ *     <th>data</th>
+ *     <td>Pointer to data structure of @endhtmlonly @ref connector_os_system_up_time_t "connector_os_system_up_time_t" @htmlonly type. Data fields:
+ *        <ul>
+ *          <li><b><i>sys_uptime</i></b> - [OUT] Returned system up time in seconds </li>
+ *        </ul>
+ *      </td> 
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -218,24 +208,29 @@
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br />
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+ *                                            void * const data)
  * {
  *
- *     if (class_id == connector_class_id_operating_system && request_id.os_request == connector_request_id_os_system_up_time)
+ *     if (class_id == connector_class_id_operating_system &&
+ *         request_id.os_request == connector_request_id_os_system_up_time)
  *     {
- *         time((time_t *)response_data);
+ *          connector_os_system_up_time_t * p = data;
+ *          time_t sys_uptime;
+ * 
+ *          time(&sys_uptime);
+ *          p->sys_uptime = (unsigned long) sys_uptime;
  *     }
  *     return connector_callback_continue;
  * }
- *
  * @endcode
+ * <br />
  *
  * @section yield Yield
  * This callback is called to relinquish control in the @ref threading "multi-threaded" connector_run() model.
@@ -256,52 +251,55 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_os_yield @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_os_yield @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Status of Etherios Cloud Connector <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
- *                                    <li> @endhtmlonly @ref connector_working @htmlonly </li>
- *                                    <li> @endhtmlonly @ref connector_pending @htmlonly </li>
- *                                    <li> @endhtmlonly @ref connector_active @htmlonly </li> </ul></td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td>Size of @endhtmlonly @ref connector_status_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> N/A</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td> N/A</td>
+ *  <th>data</th>
+ *  <td>Pointer to data structure of @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly type
+ *      with one data field <b><i>status</i></b> - status of Etherios Cloud Connector:
+ *      <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
+ *           <li> @endhtmlonly @ref connector_working @htmlonly </li>
+ *           <li> @endhtmlonly @ref connector_pending @htmlonly </li>
+ *           <li> @endhtmlonly @ref connector_active @htmlonly </li>
+ *      </ul>
+ *  </td> 
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
- * <th>None</th>
- * <td>None</td>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Callback successfully returned the system time</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Error occurred and callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
- *
+ * <br />
+ * 
  * Example:
  *
  * @code
  *
- *  connector_callback_status_t app_os_yield(connector_status_t const * const status)
- *   {
- *       if (*status == connector_idle)
- *       {
- *           unsigned int const timeout_in_microseconds =  1000000;
- *           usleep(timeout_in_microseconds);
- *       }
+ * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+ *                                            void * const data)
+ * {
+ *     if (class_id == connector_class_id_operating_system &&
+ *         request_id.os_request == connector_request_id_os_yield)
+ *     {
+ *          connector_os_yield_t * p = data;
  *
- *       return connector_callback_continue;
- *   }
- *
+ *          if (p->status == connector_idle)
+ *          {
+ *              unsigned int const timeout_in_microseconds =  1000000;
+ *              usleep(timeout_in_microseconds);
+ *          }
+ *     }
+ *     return connector_callback_continue;
+ * }
  * @endcode
+ * <br /> 
  *
  * @section reboot Reboot
  *
@@ -318,23 +316,11 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_os_reboot @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_os_reboot @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
+ * <th>data</th>
  * <td> N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> N/A </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -344,17 +330,22 @@
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br />
  *
  * Example:
  *
  * @code
  *
- *   static connector_callback_status_t app_os_reboot(void)
- *   {
- *
+ * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+ *                                            void * const data)
+ * {
+ *     if (class_id == connector_class_id_operating_system &&
+ *         request_id.os_request == connector_request_id_os_reboot)
+ *     {
  *       APP_DEBUG("Reboot from server\n");
- *       return connector_callback_continue;
- *   }
+ *     }
+ *     return connector_callback_continue;
+ * } 
  *
  * @endcode
  *
