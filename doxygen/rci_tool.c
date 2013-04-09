@@ -6,7 +6,7 @@
  *
  * The remote configuration tool is used to generate device configuration header file and upload
  * device configuration information to Etherios Device Cloud. It allows user to define all device configuration
- * data and information that can be accessed through Etherios Device Cloud using Etherios connector.
+ * data and information that can be accessed through Etherios Device Cloud using Etherios Cloud Connector.
  * User must include the generated header file and provide callback functions to handle all
  * device configuration in an application.
  *
@@ -32,7 +32,7 @@
  * <tr>
  *   <td colspan="2">It generates and uploads configuration information (descriptors) to Etherios Device
  *       Cloud and it also generates ANSI C header files (remote_config.h) from the input
- *       Etherios connector configuration file.  This header file must be included  in the application.
+ *       Etherios Cloud Connector configuration file.  This header file must be included  in the application.
  *   </td>
  * </tr>
  * <tr>
@@ -65,7 +65,7 @@
  * </tr>
  * <tr>
  *   <th> -url</th>
- *   <td> Optional Etherios Device Cloud URL. Default is login.etherios.com </td>
+ *   <td> Optional for the Etherios Device Cloud URL. Default is login.etherios.com </td>
  * </tr>
  * <tr>
  *   <th> username </th>
@@ -94,6 +94,13 @@
  *
  * @a @b username, @a @b password,@a @b vendor_id, @a @b device_type, and @a @b firmware_version are used for accessing Etherios
  * Device Cloud account and uploading the device configuration information (descriptors) for your device.
+ *
+ * Example:
+ *
+ * @code
+ *     java -jar ConfigGenerator.jar username:password "Linux Application" 1.0.0.0 config.rci
+ * @endcode
+ *
  *
  * @section rci_tool_file   Input Configuration File
  *
@@ -348,8 +355,8 @@
  *       <p>Note: min and max keywords will throw an error.</p> </td>
  * </tr><tr>
  * <th>boolean</th>
- * <td>true or false. Application-defined callback should use <i> <b> connector_boolean_true </b> </i> value for
- *     true or <i> <b> connector_boolean_false </b> </i> value for false.
+ * <td>true or false. Application-defined callback should use <i> <b> connector_true </b> </i> value for
+ *     true or <i> <b> connector_false </b> </i> value for false.
  *     <p>Note: min and max keywords will throw an error.</p> </td>
  * </tr> <tr>
  * <th>ipv4</th>
@@ -408,7 +415,7 @@
  * <td> Label (no spaces) of the enum value.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_\<group_name\>_\<element_name\>_
  *         prefix enumeration value for each values.
- *         Etherios connector and the application-defined callback use this enumeration value to set and retrieve the value of an element.
+ *         Etherios Cloud Connector and the application-defined callback use this enumeration value to set and retrieve the value of an element.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
@@ -451,9 +458,8 @@
  * <tr>
  * <th>value</th>
  * <td> Minimum value or length in bytes.
- *     <p> Etherios connector will have this range check included.
- *         The user can do additional checks, as well. Need to determine a list of
- *         built-in errors that Etherios connector or user can use.</p> </td>
+ *     <p> Etherios Device Cloud will validate this range check.
+ *         The user can do additional checks, as well.</p> </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -476,9 +482,8 @@
  * <tr>
  * <th>value</th>
  * <td> Maximum value or length in bytes.
- *     <p> Etherios connector will have this range check included.
- *         The user can do additional checks, as well. Need to determine a list of
- *         built-in errors that Etherios connector or user can use.</p> </td>
+ *     <p> Etherios Device Cloud will validate this range check.
+ *         The user can do additional checks, as well.</p> </td>
  * </tr>
  * </table>
  * @endhtmlonly
