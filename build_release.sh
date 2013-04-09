@@ -89,7 +89,7 @@ elif [ -n "${released_file}" ]
     cp -f "${released_file}" "${BASE_DIR}/GettingStarted.pdf"
 else
     echo ">> Cannot find ${GETTING_STARTED_GUIDE}*.pdf"
-    exit(1)
+    exit 1
 fi
 
 # Replace the version number in Readme.txt to match the Tag used to build
