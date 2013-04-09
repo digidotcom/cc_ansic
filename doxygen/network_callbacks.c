@@ -15,8 +15,14 @@
  *
  * @section open Open Callback
  *
- * This callback is called to start a network transport to communicate with the iDigi Device Cloud. For
- * @ref connector_class_network_tcp transport it establishes a connection between Etherios Cloud Connector and the iDigi Device Cloud.
+ * This callback is called to start a network transport to communicate with Etherios Device Cloud. For
+ * @ref connector_class_id_network_tcp transport it establishes a connection between Etherios Cloud Connector
+ * and Etherios Device Cloud.
+ * 
+ * The @ref connector_class_id_network_udp transport does not stablish a connection, but it can resolve
+ * a domain name and open a communication socket in this callback. UDP does not guarantee reliable data
+ * delivery.
+ * 
  * The callback is responsible to setup any socket options.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -24,14 +30,12 @@
  * <ul>
  *   <li> @ref app_network_tcp_open() in network_tcp.c</li>
  *   <li> @ref app_network_udp_open() in network_udp.c</li>
- *   <li> @ref app_network_sms_open() in network_sms.c</li>
  * </ul>
- * <br />
  *
  * @see @ref network_tcp_start "Start TCP transport automatically or manually"
  * @see @ref network_udp_start "Start UDP transport automatically or manually"
- * @see @ref network_sms_start "Start SMS transport automatically or manually"
- *
+ * <br /><br />
+ * 
  * @htmlonly
  * <table class="apitable">
  * <tr> <th colspan="2" class="title">Arguments</th> </tr>
@@ -40,40 +44,33 @@
  * <th>class_id</th>
  * <td> 
  *    <ul>
- *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly - Establishes a connection and guarantees reliable data delivery on 
+ *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly - Uses 
  *         <ul>
  *           <li>@endhtmlonly @ref CONNECTOR_PORT @htmlonly for non-secure port number.</li>
  *           <li>@endhtmlonly @ref CONNECTOR_SSL_PORT @htmlonly for secure port number.</li>
  *         </ul>
- *       </li> 
- *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly - Does not guarantee reliable data delivery on
+ *       </li>
+ *       <br />
+ *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly - Uses
  *         <ul>
  *           <li>@endhtmlonly @ref CONNECTOR_UDP_PORT @htmlonly for non-secure port number.</li>
  *         </ul>
- *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly - Does not guarantee reliable data delivery.</li>
  *    </ul>
  * </td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_open @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_open @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to the iDigi Device Cloud server URL.</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Length of the iDigi Device Cloud server URL.</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Callback returns the pointer to  @endhtmlonly @ref connector_network_handle_t @htmlonly which is used throughout network callbacks. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>Pointer to memory where callback writes the size of connector_network_handle_t</td>
- * </tr>
+ * <th>data</th>
+ * <td>Pointer to callback data of @endhtmlonly @ref connector_network_open_t "connector_network_open_t" @htmlonly type,
+ *     containing:
+ *        <ul>
+ *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to the Etherios Device Cloud URL </li>
+ *          <li><b><i>handle</i></b> - [OUT] Returned @endhtmlonly @ref connector_network_handle_t "network handle" @htmlonly which is used throughout network callbacks </li>
+ *        </ul>
+ * </td> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -86,9 +83,11 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly. 
- *     The callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again,
- *     if the transport is configured to start automatically</td>
+ * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
+ *     <br /><br />
+ *     If the transport is configured to start automatically 
+ *     the callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again.
+ * </td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -100,18 +99,19 @@
  *
  * @section send Send Callback
  *
- * Callback is called to send data to the iDigi Device Cloud. This function must not block.
- * Number of bytes actually sent could be less than the requested number. If the callback could not 
- * send any data because it encountered EAGAIN or EWOULDBLOCK error, it must return @ref connector_callback_busy
- * and Etherios Cloud Connector would continue calling this function.
+ * Callback is called to send data to Etherios Device Cloud. This function must not block.
+ * Number of bytes actually sent could be less than the requested number. 
+ * 
+ * If the callback could not send any data because it encountered EAGAIN or EWOULDBLOCK error,
+ * it must return @ref connector_callback_busy and Etherios Cloud Connector would continue
+ * calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function:
  * <ul>
  *   <li> @ref app_network_tcp_send() in network_tcp.c</li>
  *   <li> @ref app_network_udp_send() in network_udp.c</li>
- *   <li> @ref app_network_sms_send() in network_sms.c</li>
- * </ul>
+  * </ul>
  * <br /> 
  *
  * @htmlonly
@@ -122,32 +122,27 @@
  * <th>class_id</th>
  * <td> 
  *    <ul>
- *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly</li> 
+ *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</li> 
  *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
- *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul> 
  * </td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_send @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_send @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly connector_write_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly connector_write_request_t. @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to size_t type memory where callback writes number of bytes sent to the iDigi Device Cloud. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
- * </tr>
+ * <th>data</th> 
+ * <td>Pointer to callback data of @endhtmlonly @ref connector_network_send_t "connector_network_send_t" @htmlonly type,
+ *     containing:
+ *        <ul>
+ *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
+ *          <li><b><i>buffer</i></b> - [In] Pointer to data to send </li>
+ *          <li><b><i>bytes_available</i></b> - [In] Number of bytes to send </li>
+ *          <li><b><i>bytes_used</i></b> - [OUT] Number of bytes sent </li>
+ *        </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -173,10 +168,11 @@
  *
  * @section receive Receive Callback
  *
- * Callback is called to receive a specified number of bytes of data from the iDigi
- * Device Cloud.  This function must not block. 
- * Number of bytes actually received could be less than the requested number. If there was no data pending and the callback
- * has encountered EAGAIN or EWOULDBLOCK error, it must return @ref connector_callback_busy
+ * Callback is called to receive a specified number of bytes of data from Etherios
+ * Device Cloud.  This function must not block.
+ 
+ * Number of bytes actually received could be less than the size of the buffer number. If there was no data pending
+ * and the callback has encountered EAGAIN or EWOULDBLOCK error, it must return @ref connector_callback_busy
  * and Etherios Cloud Connector would continue calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -184,11 +180,11 @@
  * <ul>
  *   <li> @ref app_network_tcp_receive() in network_tcp.c</li>
  *   <li> @ref app_network_udp_receive() in network_udp.c</li>
- *   <li> @ref app_network_sms_receive() in network_sms.c</li>
  * </ul>
  *
  * @note In the multithreaded model (connector_run()) this is the point where Etherios Cloud Connector
  * will relinquish control of the CPU.
+ * <br /><br />
  *
  * @htmlonly
  * <table class="apitable">
@@ -198,31 +194,26 @@
  * <th>class_id</th>
  * <td> 
  *    <ul>
- *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly</li> 
+ *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</li> 
  *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
- *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul> 
  * </td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_receive @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_receive @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly connector_read_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly connector_read_request_t. @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to size_t type memory where callback writes number of bytes received from the iDigi Device Cloud. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th> 
+ * <td>Pointer to callback data of @endhtmlonly @ref connector_network_receive_t "connector_network_receive_t" @htmlonly type,
+ *     containing:
+ *        <ul>
+ *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
+ *          <li><b><i>buffer</i></b> - Pointer to memory where callback writes received data </li>
+ *          <li><b><i>bytes_available</i></b> - [In] Size of memory buffer </li>
+ *          <li><b><i>bytes_used</i></b> - [OUT] Number of bytes received </li>
+ *        </ul>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -256,7 +247,6 @@
  * <ul>
  *   <li> @ref app_network_tcp_close() in network_tcp.c</li>
  *   <li> @ref app_network_udp_close() in network_udp.c</li>
- *   <li> @ref app_network_sms_close() in network_sms.c</li>
  * </ul>
  * <br /> 
  *
@@ -268,40 +258,32 @@
  * <th>class_id</th>
  * <td> 
  *    <ul>
- *       <li>@endhtmlonly @ref connector_class_network_tcp @htmlonly</li> 
+ *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</li> 
  *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
- *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul> 
  * </td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_close @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_close @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly connector_close_request_t,@htmlonly in which @endhtmlonly @ref connector_close_status_t "status" @htmlonly 
- *     field provides reason for close</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly connector_close_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>Pointer to @endhtmlonly @ref connector_auto_connect_type_t "connector_auto_connect_type_t"@htmlonly memory where callback 
- *     writes action on transport close.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td> Size of @endhtmlonly @ref connector_auto_connect_type_t "connector_auto_connect_type_t"@htmlonly</td>
+ * <th>data</th> 
+ * <td>Pointer to callback data of @endhtmlonly @ref connector_network_close_t "connector_network_close_t" @htmlonly type,
+ *     containing:
+ *        <ul>
+ *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
+ *          <li><b><i>status</i></b> -  [IN] @endhtmlonly @ref connector_close_status_t "Reason for closing the network handle" @htmlonly </li>
+ *          <li><b><i>reconnect</i></b> - [OUT] The callback must set it to @endhtmlonly @ref connector_true @htmlonly to restart the transport or 
+ *                                              to @endhtmlonly @ref connector_false @htmlonly to avoid restarting the transport</li> 
+ *        </ul>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully closed the connection. Etherios Cloud Connector will restart the transport if @endhtmlonly @ref connector_auto_connect @htmlonly 
- *     is returned in response_data </td>
+ * <td>Callback successfully closed the connection </td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>

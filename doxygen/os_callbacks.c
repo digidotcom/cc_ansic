@@ -43,7 +43,8 @@
  *   </tr>
  *   <tr>
  *     <th>data</th>
- *     <td>Pointer to data structure of @endhtmlonly @ref connector_os_malloc_t "connector_os_malloc_t" @htmlonly type. Data fields:
+ *     <td>Pointer to callback data of @endhtmlonly @ref connector_os_malloc_t "connector_os_malloc_t" @htmlonly type,
+ *         containing:
  *          <ul>
  *          <li><b><i>size</i></b> - [IN] Number of bytes to allocate</li>
  *          <li><b><i>ptr</i></b> - [OUT] Returned pointer to the beginning of the allocated memory block</li>
@@ -124,7 +125,8 @@
  * </tr>
  * <tr>
  *     <th>data</th>
- *     <td>Pointer to data structure of @endhtmlonly @ref connector_os_free_t "connector_os_free_t" @htmlonly type. Data fields:
+ *     <td>Pointer to callback data of @endhtmlonly @ref connector_os_free_t "connector_os_free_t" @htmlonly type,
+ *         containing:
  *        <ul>
  *          <li><b><i>ptr</i></b> - [IN] A pointer to the memory block to free </li>
  *        </ul>
@@ -190,7 +192,8 @@
  * <td>@endhtmlonly @ref connector_request_id_os_system_up_time @htmlonly</td>
  * </tr>
  *     <th>data</th>
- *     <td>Pointer to data structure of @endhtmlonly @ref connector_os_system_up_time_t "connector_os_system_up_time_t" @htmlonly type. Data fields:
+ *     <td>Pointer to callback data of @endhtmlonly @ref connector_os_system_up_time_t "connector_os_system_up_time_t" @htmlonly type,
+ *         containing:
  *        <ul>
  *          <li><b><i>sys_uptime</i></b> - [OUT] Returned system up time in seconds </li>
  *        </ul>
@@ -234,7 +237,7 @@
  *
  * @section yield Yield
  * This callback is called to relinquish control in the @ref threading "multi-threaded" connector_run() model.
- *
+ * 
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_os_yield() in os.c.
  *
@@ -255,8 +258,9 @@
  * </tr>
  * <tr>
  *  <th>data</th>
- *  <td>Pointer to data structure of @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly type
- *      with one data field <b><i>status</i></b> - status of Etherios Cloud Connector:
+ *  <td>Pointer to callback data of @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly type,
+ *      containing @endhtmlonly @ref connector_status_t "Status of Etherios Cloud Connector"@htmlonly.
+ *      Values applied to this callback are: 
  *      <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
  *           <li> @endhtmlonly @ref connector_working @htmlonly </li>
  *           <li> @endhtmlonly @ref connector_pending @htmlonly </li>
