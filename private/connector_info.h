@@ -12,6 +12,6 @@
 #ifndef CONNECTOR_INFO_H_
 #define CONNECTOR_INFO_H_
 
-#define CONNECTOR_SW_VERSION "1.3.0.0"
+#define CONNECTOR_SW_VERSION "2.0.0.0"
 
 #endif /* CONNECTOR_INFO_H_ */
