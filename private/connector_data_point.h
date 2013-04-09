@@ -560,8 +560,11 @@ static int dp_update_state(data_point_info_t * const dp_info, char * const buffe
 
     dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
 
-    next_char = (dp_info->data.csv.current_dp != NULL) ? '\n' : '\0';
-    *dp_info->data.csv.last_entry_ptr = next_char;
+    if (dp_info->data.csv.current_dp != NULL)
+        *dp_info->data.csv.last_entry_ptr = '\n';
+    else
+        bytes_offset = 0;
+
     bytes_offset -= (buffer - dp_info->data.csv.last_entry_ptr); /* cleanup empty data */
     dp_info->data.csv.state = dp_state_data;
     goto done;
@@ -679,7 +682,7 @@ static connector_callback_status_t dp_handle_data_callback(connector_data_servic
 
         case dp_content_type_csv:
             data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available);
-            connector_debug_printf("DP Request:\n%s\n", (char *)data_ptr->buffer);
+            /* connector_debug_printf("DP Request:\n%s\n", (char *)data_ptr->buffer); */
             data_ptr->more_data = (dp_info->data.csv.current_dp == NULL) ? connector_false : connector_true;
             break;
     }
