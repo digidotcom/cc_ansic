@@ -203,9 +203,9 @@ typedef struct {
 typedef struct {
     uint8_t * address;        /**< Device's IP address */
     enum {
-        connector_ip_address_ipv4,  /*!< IPv4 address */
-        connector_ip_address_ipv6   /*!< IPv6 address */
-    } ip_address_type;              /*!< Device IP Address Type */
+        connector_ip_address_ipv4,  /**< IPv4 address */
+        connector_ip_address_ipv6   /**< IPv6 address */
+    } ip_address_type;              /**< Device IP Address Type */
 } connector_config_ip_address_t;
 /**
 * @}
