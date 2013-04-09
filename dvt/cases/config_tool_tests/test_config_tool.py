@@ -1,7 +1,7 @@
 import config_tool_validator
 
-from com.digi.ic.config import Parser
-from com.digi.ic.config import ConfigData
+from com.digi.connector.config import Parser
+from com.digi.connector.config import ConfigData
 from java.io import IOException
 
 import os
@@ -18,7 +18,7 @@ def process_and_verify(test):
         config_data = ConfigData()
 
         if test.error is not None:
-            assert_raises_regexp(IOException, test.error, 
+            assert_raises_regexp(IOException, test.error,
                 Parser.processFile, config_file.name, config_data)
         else:
             try:
