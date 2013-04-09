@@ -130,7 +130,8 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
         else
         {
             *ptr = data.ptr;
-         #if (DEBUG == true)
+         #if (defined DEBUG)
+            /* On only when we are debugging */
             memset(*ptr, 0, length);
          #endif
         }
@@ -213,7 +214,7 @@ static connector_status_t yield_process(connector_data_t * const connector_ptr, 
 
     {
         connector_request_id_t request_id;
-        connector_os_yield_t data; 
+        connector_os_yield_t data;
         connector_callback_status_t callback_status;
 
         request_id.os_request = connector_request_id_os_yield;
