@@ -1,5 +1,5 @@
                       Release Notes for 40003007_E
-                        iDigi Connector vVERSION
+                     Etherios Cloud Connector v_CONNECTOR_SW_VERSION_
                              _RELEASE_DATE_ 
 
 ENHANCEMENTS

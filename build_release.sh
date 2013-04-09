@@ -1,7 +1,8 @@
 #!/bin/bash
 rc=0
 rca=0
-BASE_DIR=$WORKSPACE/idigi
+PRODUCT_NAME=connector
+BASE_DIR=$WORKSPACE/$PRODUCT_NAME
 OUTPUT_DIR=$WORKSPACE/output
 GETTING_STARTED_GUIDE=90001345
 RELEASE_NOTES=9300xxxx
@@ -66,7 +67,7 @@ mkdir -p docs/html
 cp -rf doxygen/html/* docs/html
 cp doxygen/user_guide.html docs/
 
-# Create an idigi subdirectory which will be the root of the tarball.
+# Create a "${PRODUCT_NAME}" subdirectory which will be the root of the tarball.
 echo ">> Creating ${BASE_DIR} and copying public and private directories to it."
 mkdir -p "${BASE_DIR}"
 cp -rf private "${BASE_DIR}"
@@ -75,8 +76,8 @@ cp -rf docs "${BASE_DIR}"
 rm -rf "${BASE_DIR}/public/run/platforms/freescale"
 
 # Get the name of the getting starting guides and see which one is newer
-released_file=$(find /eng/store/released/90000000 -name ${GETTING_STARTED_GUIDE}*.pdf)
-pending_file=$(find /eng/store/pending/90000000 -name ${GETTING_STARTED_GUIDE}*.pdf)
+released_file=$(find /eng/store/released/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
+pending_file=$(find /eng/store/pending/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
 
 if [ $released_file < $pending_file ]
     then
@@ -91,7 +92,8 @@ fi
 if [ $TAG != "" ]
   then
     echo ">> Setting Version to ${TAG} in ${BASE_DIR}/private/Readme.txt"
-    sed -i 's/iDigi Connector v\S*/iDigi Connector v'"$TAG"'/g' "${BASE_DIR}/private/Readme.txt"
+#    sed -i 's/iDigi Connector v\S*/iDigi Connector v'"$TAG"'/g' "${BASE_DIR}/private/Readme.txt"
+    sed -i 's/ v_CONNECTOR_SW_VERSION_/ v'"$TAG"'/g' "${BASE_DIR}/private/Readme.txt"
     echo ">> Setting Version to ${TAG} in ${BASE_DIR}/private/connector_info.h"
     sed -i 's/#define CONNECTOR_SW_VERSION \S*/#define CONNECTOR_SW_VERSION "'"$TAG"'"/g' "${BASE_DIR}/private/connector_info.h"
 fi
@@ -105,7 +107,7 @@ sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 
 # Create the tarball
 echo ">> Creating the Tarball ${OUTPUT_DIR}/${PKG_NAME}.tgz."
-tar --exclude=idigi/public/test --exclude=idigi/public/dvt -czvf "${OUTPUT_DIR}/${PKG_NAME}.tgz" idigi/
+tar --exclude="${PRODUCT_NAME}"/public/test --exclude="${PRODUCT_NAME}"/public/dvt -czvf "${OUTPUT_DIR}/${PKG_NAME}.tgz" "${PRODUCT_NAME}"/
 
 # Create the Release Notes
 echo ">> Creating the Release notes ${OUTPUT_DIR}/${NOTES_NAME}.zip"
@@ -118,7 +120,7 @@ zip -v "${OUTPUT_DIR}/${HTML_NAME}.zip" user_guide.html
 zip -vr "${OUTPUT_DIR}/${HTML_NAME}.zip" html/ 
 cd "${WORKSPACE}"
 
-# Delete the original idigi directory
+# Delete the original directory
 echo ">> Removing base dir ${BASE_DIR}."
 rm -rf "${BASE_DIR}"
 
