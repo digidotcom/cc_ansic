@@ -317,9 +317,9 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
  *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_server_url)
@@ -365,14 +365,6 @@
  * <td>@endhtmlonly @ref connector_request_id_config_connection_type @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A </td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
  * <th>data</th>
  * <td> Pointer to @endhtmlonly connector_config_connection_type_t @htmlonly:
  *          <dl>
@@ -402,7 +394,7 @@
  *
  * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
  *                                                    connector_request_id_t const request_id
- *                                                    void  * const request_data)
+ *                                                    void  * const data)
  * {
  *
  *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_connection_type)
@@ -438,15 +430,7 @@
  * <td>@endhtmlonly @ref connector_request_id_config_mac_addr @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> N/A.</td>
- * </tr>
- * <tr>
- * <th>data</th>
+* <th>data</th>
  * <td> Pointer to @endhtmlonly connector_config_pointer_data_t @htmlonly:
  *          <dl>
  *              <dt><i>data</i></dt>
@@ -1233,14 +1217,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void const * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_remote_configuration)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_remote_configuration)
  *     {
- *         *((connector_service_supported_status_t *)response_data) = connector_service_supported;
+ *         connector_config_supported_t * const config_rci = data;
+ *         config_rci->supported = connector_true;
  *     }
  *     return connector_callback_continue;
  * }
