@@ -350,6 +350,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
 #endif
 
         COND_ELSE_GOTO(status == connector_working, done);
+		memset(handle, 0x00, sizeof *connector_handle); /* Init structure, all pointers to NULL */
         connector_handle = handle;
     }
 
