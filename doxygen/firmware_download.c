@@ -6,10 +6,7 @@
  *
  *  -# @ref fw_overview
  *  -# @ref fw_num_targets
- *  -# @ref fw_version_number
- *  -# @ref fw_code_size
- *  -# @ref fw_description
- *  -# @ref fw_namespec
+ *  -# @ref fw_info
  *  -# @ref fw_download
  *  -# @ref fw_image_data
  *  -# @ref fw_complete
@@ -18,16 +15,16 @@
  *
  * @section fw_overview Overview
  *
- * The firmware access facility is an optional facility for applications to update their 
- * firmware. The Etherios Cloud Connector invokes the application-defined callback to query whether this 
- * firmware access facility is supported or not.  The firmware access facility uses a target 
+ * The firmware access facility is an optional facility for applications to update their
+ * firmware. Etherios Cloud Connector invokes the application-defined callback to query whether this
+ * firmware access facility is supported or not.  The firmware access facility uses a target
  * number to distinguish application-dependent firmware images.  For example, a
  * stand-alone bootloader may be loaded separate from an application image, or a default file system
  * could be maintained as well.
- * Applications define an image to each target except target 0 (target 0 must be the firmware 
- * image that is running Etherios Cloud Connector). Only one firmware upgrade can be in progress at any given 
- * time. The Etherios Cloud Connector will send a firmware target list to the iDigi Device Cloud to identify the number 
- * of target applications and the version number of each target. 
+ * Applications define an image to each target except target 0 (target 0 must be the firmware
+ * image that is running Etherios Cloud Connector). Only one firmware upgrade can be in progress at any given
+ * time. Etherios Cloud Connector will send a firmware target list to Etherios Device Cloud to identify the number
+ * of target applications and the version number of each target.
  *
  * The firmware portion of the application-defined callback is used for the following:
  *  -# To obtain the number of firmware downloadable images.
@@ -36,7 +33,7 @@
  *  -# To reset firmware images.
  *
  * A typical application-defined callback sequence for downloading a firmware image would include:
- *  -# Etherios Cloud Connector calls application-defined callback to return firmware information which 
+ *  -# Etherios Cloud Connector calls application-defined callback to return firmware information which
  *     includes the firmware version number, maximum size of an image, firmware description, and file name spec.
  *  -# Etherios Cloud Connector calls application-defined callback to initiate firmware download.
  *  -# Etherios Cloud Connector calls application-defined callback for firmware binary data.
@@ -45,52 +42,43 @@
  *  -# calls application-defined callback to reset and reboot the target to begin executing the new firmware.
  *  -# Etherios Cloud Connector calls application-defined callback to disconnect the current connection
  *
- * Applications may choose to begin writing their downloaded image to Flash either 
- * during the Firmware Binary or Firmware Download Complete message. This is an application 
- * level decision with clear tradeoffs (memory needs versus power loss protection). 
+ * Applications may choose to begin writing their downloaded image to Flash either
+ * during the Firmware Binary or Firmware Download Complete message. This is an application
+ * level decision with clear tradeoffs (memory needs versus power loss protection).
  * If you write to Flash while the Firmware Binary data is being received, you could lose communication
  * or power at some later time.  If protection is built in (i.e., back up images) this would not be
- * problem. If protections are not built in, applications might choose to place the entire 
- * image contents into RAM before writing to Flash. Back up image protection would still 
- * protect against power loss after your write occurred, but the communication loss or corruption 
+ * problem. If protections are not built in, applications might choose to place the entire
+ * image contents into RAM before writing to Flash. Back up image protection would still
+ * protect against power loss after your write occurred, but the communication loss or corruption
  * could be avoided by having a checksum test before starting your Flash write.
  *
  * @note See @ref firmware_support under Configuration to enable or
  * disable firmware download.
- * 
+ *
  * @section fw_num_targets Number of Firmware Targets
  *
  * Return the number of targets for firmware download.
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_target_count @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_target_count @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to timeout value which callback must return control back to Etherios Cloud Connector in seconds</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_count_t @htmlonly:
+ *     <dl><dt>count</dt><dd>Callback writes number of supported targets.</dd></dl>
+ * </td>
  * </tr>
  * <tr>
- * <td>request_length</td>
- * <td>Size of unsigned timeout value</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Pointer to 2-byte integer memory where callback writes the number of supported targets</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+* <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
@@ -107,57 +95,67 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_target_count)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_target_count)
  *     {
+ *          connector_firmware_count_t * const config_firmware = data;
  *          // return total number of firmware update targets
- *          *((uint16_t *)response_data) = firmware_list_count;
+ *          config_firmware->count = firmware_list_count;
  *     }
  *     return connector_callback_continue;
  * }
  * @endcode
  *
- * @section fw_version_number Version Number of Firmware Target
+ * @section fw_info Firmware Information of Firmware Target
  *
- * Return the version number of the target.
+ * Return the firmware information of the target.
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_version @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_info @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_config_t @htmlonly</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_info_t @htmlonly:
+ *     <dl><dt>verion</dt>
+ *         <dd> Callback writes the version number of the target:
+ *             <ul><li><b>major</b> - Major version number.</li>
+ *                 <li><b>minor</b> - Minor version number.</li>
+ *                 <li><b>revision</b> - Revision number.</li>
+ *                 <li><b>build</b> - Build number.</li></ul>
+ *         </dd>
+ *
+ *         <dt>description</dt><dd>Callback writes an ASCII description string of the target.</dd>
+ *         <dt>filespec</dt>
+ *         <dd>Callback writes a regular expression for the firmare image name of the target.
+ *             No file name spec can be returned if only a single target (target 0) is supported.
+ *             If an application wants to match the file name "image.bin", it must return "image\.bin" for
+ *             regular expression. Regular expressions are case sensitive. If file names for the given
+ *             target are to be case insensitive, it must be specified as case insensitive in a regular
+ *             expression such as: "[iI][mM][aA][gG][eE]\.[bB][iI][nN]".
+ *             Note: The maximum length of the firmware description and file name spec combined is 127 bytes.</dd>
+ *
+ *         <dt>target_number</dt><dd>Contains the target number which target the information is requested.</dd>
+ *     </dl>
+ * </td>
  * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Pointer to 4-byte integer memory where callback writes version number</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned version number</td>
+ * <td>Callback successfully returned firmware information</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -170,221 +168,20 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_version)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_info)
  *     {
- *          connector_fw_config_t * config = (connector_fw_config_t *)request_data;
- *          uint32_t * version = (uint32_t *)response_data;
- *          // return the target version number
- *          *version = firmware_list[config->target].version;
- *     }
- *     return connector_callback_continue;
- * }
- * @endcode
- *
- * @section fw_code_size Code Size of Firmware Target
- *
- * Return the code size that is currently stored for the target.
- *
- * @htmlonly
- * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
- * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_code_size @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Pointer to 4-byte integer memory where callback writes code size. If size is unknown, returns 0xFFFFFFFF.</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned image size</td>
- * </tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * Example:
- *
- * @code
- *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
- * {
- *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_code_size)
- *     {
- *          connector_fw_config_t * config = (connector_fw_config_t *)request_data;
- *          // Return the target code size
- *          uint32_t * code_size = (uint32_t *)response_data;
- *          *code_size = firmware_list[config->target].code_size;
- *     }
- *     return connector_callback_continue;
- * }
- * @endcode
- *
- * @section  fw_description Description of Firmware Target
- *
- * Return the description of the target.
- *
- * @htmlonly
- * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
- * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_description @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Return pointer to address of an ASCII description string</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>Pointer to memory where callback writes the length of the description string. The total length of description and name spec must not exceed 127 bytes.</td>
- * </tr>
- * <tr>
- *   <th colspan="2" class="title">Return Values</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned description</td>
- * </tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * Example:
- *
- * @code
- *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
- * {
- *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_description)
- *     {
- *          // return pointer to firmware target description
- *          char ** description = (char **)response_data;
- *          *description = firmware_list[config->target].description;
- *          *response_length = strlen(firmware_list[config->target].description);
- *     }
- *     return connector_callback_continue;
- * }
- * @endcode
- *
- * @section fw_namespec File Name Spec of Firmware Target
- *
- * Return the file name spec as a regular expression.  No file name spec can be returned
- * if only a single target (target 0) is supported.  If an application wants to match the 
- * file name "image.bin", it must return "image\.bin" for regular expression. Regular 
- * expressions are case sensitive. If file names for the given target are to be case insensitive,
- * it must be specified as case insensitive in a regular expression such as: "[iI][mM][aA][gG][eE]\.[bB][iI][nN]".
- * The maximum length of the firmware description and file name spec combined is 127 bytes.
- *
- * @htmlonly
- * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
- * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_name_spec @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Return pointer to address of regular expression string</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>Pointer to memory where callback writes the length of the description string. The total length of description and name spec must not exceed 127 bytes.</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned file name spec</td>
- * </tr>
- * <tr>
- * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * Example:
- *
- * @code
- *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
- * {
- *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_name_spec)
- *     {
- *           // return pointer to firmware target description
- *          char ** name_spec = (char **)response_data;
- *          *name_spec = firmware_list[config->target].name_spec;
- *          *response_length = strlen(firmware_list[config->target].name_spec);
+ *          connector_firmware_info_t * config = data;
+ *          config->version.major = firmware_list[config->target].version.major;
+ *          config->version.minor = firmware_list[config->target].version.minor;
+ *          config->version.revision = firmware_list[config->target].version.revision;
+ *          config->version.build = firmware_list[config->target].version.build;
+ *          config->description = firmware_list[config->target].description;
+ *          config->filespec = firmware_list[config->target].filespec;
  *     }
  *     return connector_callback_continue;
  * }
@@ -393,43 +190,36 @@
  * @section fw_download File Firmware Download Request
  *
  * Callback is called to start firmware download when Etherios Cloud Connector receives a firmware download request message.
- * Etherios Cloud Connector parses the information in the firmware download request and passes the information to the callback:
+ * Cloud Connector parses the information in the firmware download request and passes the information to the callback:
  *  -# A target number which target the firmware is intended for.
- *  -# The name of the file to be sent. 
+ *  -# The name of the file to be sent.
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_download_request @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_download_start @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_download_request_t @htmlonly</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_download_start_t @htmlonly
+ *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware is intended for.</dd>
+ *         <dt>filename</dt><dd>Contain a pointer to file name to be downloaded.</dd>
+ *         <dt>status</dt><dd>Callback writes  @endhtmlonly @ref connector_firmware_status_t @htmlonly status when error is encountered</dd>
+ *     </dl>
+ * </td>
  * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_download_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Pointer to memory where callback writes the @endhtmlonly @ref connector_fw_status_t @htmlonly to</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully set appropriate status in response_data</td>
+ * <td>Callback successfully set appropriate status</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -442,28 +232,27 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_download_request)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_download_start)
  *     {
- *          connector_fw_download_request_t  * const download_info = request_data;
- *          connector_fw_status_t * download_status = response_data;
+ *          connector_firmware_download_start_t  * const firmware_download = data;
+ *
  *          if (firmware_download_started)
  *          {   // already started
- *              *download_status = connector_fw_device_error;
+ *              firmware_download->status = connector_firmware_status_download_denied;
  *              return connector_callback_continue;
  *          }
  *
- *          APP_DEBUG("target = %d\n",         download_info->target);
+ *          APP_DEBUG("target = %d\n",         download_info->target_number);
  *          APP_DEBUG("filename = %s\n",       download_info->filename);
  *          // initialize & prepare for firmware update
  *          total_image_size = 0;
  *          firmware_download_started = 1;
- *          *download_status = connector_fw_success;
- *     }
+  *     }
  *     return connector_callback_continue;
  * }
  * @endcode
@@ -471,46 +260,41 @@
  *
  * @section fw_image_data Binary Image Data for Firmware Download
  *
- * Callback is called to process image data when Etherios Cloud Connector receives a firmware binary block 
- * message. Etherios Cloud Connector calls this callback for each block of data received from the server.
- * Etherios Cloud Connector parses the information in the firmware binary block and passes the information to the callback:
+ * Callback is called to process image data when Etherios Cloud Connector receives a firmware binary block
+ * message. Etherios Cloud Connector calls this callback for each block of data received from Etherios Device Cloud.
+ * Cloud Connector parses the information in the firmware binary block and passes the information to the callback:
  *  -# 4-octet offset that determines where the block of binary data fits into the download.
  *  -# Binary data.
- *  -# Length of the binary data. 
+ *  -# Length of the binary data.
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_binary_block @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_download_data @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_image_data_t @htmlonly</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_download_start_t @htmlonly
+ *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware data is intended for.</dd>
+ *         <dt>offset</dt><dd>Contain an offset value where this data block of image fits into the download.</dd>
+ *         <dt>data</dt><dd>Contain a pointer to downloaded image data.</dd>
+ *         <dt>bytes_used</dt><dd>Contain number of bytes of the image data.</dd>
+ *         <dt>status</dt><dd>Callback writes  @endhtmlonly @ref connector_firmware_status_t @htmlonly status when error is encountered.</dd>
+ *     </dl>
+ * </td>
  * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_image_data_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Pointer to memory where callback writes the @endhtmlonly @ref connector_fw_status_t @htmlonly to</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully set appropriate status in response_data</td>
+ * <td>Callback successfully returns appropriate status</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -527,18 +311,17 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, c
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_binary_block)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_download_data)
  *     {
- *          connector_fw_image_data_t * const image_data = request_data;
- *          connector_fw_status_t * data_status = response_data;
+ *          connector_firmware_download_data_t * const image_data = data;
  *
- *          fwStoreImage(image_data->target, image_data->data, image_data->length, image_data->offset);
- *          *data_status = connector_fw_success;
+ *          fwStoreImage(image_data->target_number, image_data->data, image_data->bytes_used, image_data->offset);
+ *          image_data->status = connector_fw_success;
  *     }
  *     return connector_callback_continue;
  * }
@@ -546,44 +329,36 @@
  *
  * @section fw_complete Firmware Download Complete
  *
- * Callback is called when server is done sending all image data. This callback tells Etherios Cloud Connector 
+ * Callback is called when Etherios Device Cloud is done sending all image data. This callback tells Etherios Cloud Connector
  * when target has been completely updated.
  * If this callback returns:
- *  -# BUSY status indicating the firmware download is still in process, Etherios Cloud Connector will 
+ *  -# BUSY status indicating the firmware download is still in process, Etherios Cloud Connector will
  * call this callback again. This usually indicates that image data is still being written onto flash.
- *  -# CONTINUE status indicating the firmware download has been successfully completed, Etherios Cloud Connector will 
- * send a firmware download complete response to the server.
- *  -# ABORT status, Etherios Cloud Connector will send a firmware download abort message to the server, stop and exit with error status. 
+ *  -# CONTINUE status indicating the firmware download has been successfully completed, Etherios Cloud Connector will
+ * send a firmware download complete response to Etherios Device Cloud.
+ *  -# ABORT status, Etherios Cloud Connector will send a firmware download abort message to Etherios Device Cloud, stop and exit with error status.
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_download_complete @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_download_complete @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_download_complete_request_t @htmlonly</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_download_start_t @htmlonly
+ *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware download is completed.</dd>
+ *         <dt>status</dt><dd>Callback writes  @endhtmlonly @ref connector_firmware_download_status_t @htmlonly status.</dd>
+ *     </dl>
+ * </td>
  * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_download_complete_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>Pointer to memory where callback writes the @endhtmlonly connector_fw_download_complete_response_t @htmlonly to</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
@@ -604,26 +379,17 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_download_complete)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_download_complete)
  *     {
- *         connector_fw_download_complete_request_t * const complete_request = request_data;
- *         connector_fw_download_complete_response_t * complete_response = response_data;
+ *         connector_firmware_download_complete_t * const firmware_complete = data;
  *
- *         if (complete_request->code_size != total_image_size)
- *         {
- *             complete_response->status = connector_fw_download_not_complete;
- *         }
- *         else
- *         {
- *            complete_response->status = connector_fw_download_success;
- *         }
- *
- *         fwCloseImage(complete_request->target, complete_response->status);
+ *         firmware_complete->status = connector_fw_download_success;
+ *         fwCloseImage(firmware_complete->target_number, firmware_complete->status);
  *         firmware_download_started = 0;
  *     }
  *     return connector_callback_continue;
@@ -636,37 +402,29 @@
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_download_abort @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_download_abort @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_download_abort_t @htmlonly</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_download_abort_t @htmlonly
+ *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware download is aborted.</dd>
+ *         <dt>status</dt><dd>Contains the abort reason or status. See @endhtmlonly @ref connector_firmware_status_t @htmlonly.</dd>
+ *     </dl>
+ * </td>
  * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_download_abort_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback acknowledged that server aborted download process</td>
+ * <td>Callback acknowledged that the download process is aborted</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -679,15 +437,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == digi_firmware_abort)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_abort)
  *     {
- *         connector_fw_download_abort_t * const abort_data = request_data;
- *         fwCloseImage(abort_data->target, abort_data->status);
+ *         connector_firmware_download_abort_t * const abort_data = data;
+ *         fwCloseImage(abort_data->target_number, abort_data->status);
  *         firmware_download_started = 0;
  *     }
  *     return connector_callback_continue;
@@ -696,42 +454,33 @@
  *
  * @section fw_reset Firmware Target Reset
  *
- * Callback is called when server resets target. The callback should not return if 
- * it's resetting itself. It may return and continue. However, server may disconnect the device. 
+ * Callback is called when Etherios Device Cloud resets target. The callback should not return if
+ * it's resetting itself. It may return and continue. However, Etherios Device Cloud may disconnect the device.
  *
  * @htmlonly
  * <table class="apitable">
- * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>class_id</td>
- * <td>@endhtmlonly @ref connector_class_firmware @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_firmware @htmlonly</td>
  * </tr>
  * <tr>
  * <td>request_id</td>
- * <td>@endhtmlonly @ref connector_firmware_target_reset @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_firmware_target_reset @htmlonly</td>
  * </tr>
  * <tr>
- * <td>request_data</td>
- * <td>Pointer to @endhtmlonly connector_fw_config_t @htmlonly</td>
+ * <td>data</td>
+ * <td>Pointer to @endhtmlonly connector_firmware_reset_t @htmlonly:
+ *     <dl><dt>target_number</dt><dd>Contains the target number which target to reset.</dd>
+ *     </dl>
+ * </td>
  * </tr>
- * <tr>
- * <td>request_length</td>
- * <td>Size of @endhtmlonly connector_fw_config_t @htmlonly</td>
- * </tr>
- * <tr>
- * <td>response_data</td>
- * <td>N/A</td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>N/A</td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback acknowledged that server reset the target</td>
+ * <td>Callback acknowledged that Etherios Device Cloud reset the target</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -744,15 +493,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_firmware && request_id.firmware_request == connector_firmware_target_reset)
+ *     if (class_id == connector_class_id_firmware && request_id.firmware_request == connector_request_id_firmware_target_reset)
  *     {
- *         connector_fw_config_t * config = (connector_fw_config_t *)request_data;
- *         fwResetImage(config->target);
+ *         connector_firmware_reset_t * download_firmware = data;
+ *         fwResetImage(download_firmware->target_number);
  *     }
  *     return connector_callback_continue;
  * }
