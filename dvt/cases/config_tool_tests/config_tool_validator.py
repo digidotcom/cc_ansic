@@ -471,7 +471,7 @@ group setting device_info  "Device info"
     element syspwd "System password" type password access  read_write  max  64 
     error invalid_length "invalid length" 
 
-group state debug_info "Debug info on iDigi connector thread"
+group state debug_info "Debug info on Etherios Cloud connector thread"
     element version "Version" type string access  read_only 
     element stacktop "Stack begin" type 0x_hex32 access  read_only 
     element stacksize "Stack size" type hex32 access  read_only 
@@ -479,7 +479,7 @@ group state debug_info "Debug info on iDigi connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only 
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in the iDigi Device Cloud.
+# Must setup the following group in order for GPS shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
@@ -520,7 +520,7 @@ group setting device_info  "Device info"
     element syspwd "System password" type password access  read_write  max  64 
     error invalid_length "invalid length" 
 
-group state debug_info "Debug info on iDigi connector thread"
+group state debug_info "Debug info on Etherios Cloud Connector thread"
     element version "Version" type string access  read_only 
     element stacktop "Stack begin" type 0x_hex32 access  read_only 
     element stacksize "Stack size" type hex32 access  read_only 
@@ -528,7 +528,7 @@ group state debug_info "Debug info on iDigi connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only 
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in the iDigi Device Cloud.
+# Must setup the following group in order for GPS shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
@@ -569,7 +569,7 @@ group setting device_info  "Device info"
     element syspwd "System password" type password access  read_write  max  64 
     error invalid_length "invalid length" 
 
-group state debug_info "Debug info on iDigi connector thread"
+group state debug_info "Debug info on Etherios Cloud Connector thread"
     element version "Version" type string access  read_only 
     element stacktop "Stack begin" type 0x_hex32 access  read_only 
     element stacksize "Stack size" type hex32 access  read_only 
@@ -577,7 +577,7 @@ group state debug_info "Debug info on iDigi connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only 
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in the iDigi Device Cloud.
+# Must setup the following group in order for GPS shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
@@ -615,7 +615,7 @@ group setting device_info  "Device info"
     element syspwd "System password" type password access  read_write  max  64 
     error invalid_length "invalid length" 
 
-group state debug_info "Debug info on iDigi connector thread"
+group state debug_info "Debug info on Etherios Cloud connector thread"
     element version "Version" type string access  read_only 
     element stacktop "Stack begin" type 0x_hex32 access  read_only 
     element stacksize "Stack size" type hex32 access  read_only 
@@ -623,7 +623,7 @@ group state debug_info "Debug info on iDigi connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only 
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in the iDigi Device Cloud.
+# Must setup the following group in order for GPS shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
