@@ -264,7 +264,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
 
         if (!(rand() % 3))
         {
-            static char dp_description[] = "iC DVT data point";
+            static char dp_description[] = "CC DVT data point";
 
             point->description = dp_description;
         }
