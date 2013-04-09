@@ -97,10 +97,10 @@ typedef struct {
 /**
 * Application String Pointer Configuration for the following callbacks:
 *
-*   -# connector_request_id_config_device_type
-*   -# connector_request_id_config_device_cloud_url
-*   -# connector_request_id_config_phone_number
-*   -# connector_request_id_config_password
+*   -# @ref connector_request_id_config_device_type
+*   -# @ref connector_request_id_config_device_cloud_url
+*   -# @ref connector_request_id_config_phone_number
+*   -# @ref connector_request_id_config_password
 */
 typedef struct {
     char * string;  /**< Application string pointer */
@@ -203,9 +203,9 @@ typedef struct {
 typedef struct {
     uint8_t * address;        /**< Device's IP address */
     enum {
-        connector_ip_address_ipv4,  /**< IPv4 address TODO: bytes count example  ??*/
-        connector_ip_address_ipv6   /**< IPv6 address */
-    } ip_address_type;
+        connector_ip_address_ipv4,  /*!< IPv4 address */
+        connector_ip_address_ipv6   /*!< IPv6 address */
+    } ip_address_type;              /*!< Device IP Address Type */
 } connector_config_ip_address_t;
 /**
 * @}
