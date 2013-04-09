@@ -5,10 +5,10 @@ PRODUCT_NAME=connector
 BASE_DIR=$WORKSPACE/$PRODUCT_NAME
 OUTPUT_DIR=$WORKSPACE/output
 GETTING_STARTED_GUIDE=90001345
-RELEASE_NOTES=9300xxxx
-HTML_ZIP=4000xxxx
-PART_NUMBER=40003007
-PKG_NAME=${PART_NUMBER}_${REVISION}
+RELEASE_NOTES=93000761
+HTML_ZIP=40002854
+TARBALL_NUMBER=40002853
+TARBALL_NAME=${TARBALL_NUMBER}_${REVISION}
 NOTES_NAME=${RELEASE_NOTES}_${REVISION}
 HTML_NAME=${HTML_ZIP}_${REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
@@ -34,7 +34,7 @@ function cleanup ()
         mkdir -p "${ARCHIVE}"
     fi
     echo ">> Archiving critical files."
-    cp -v "${OUTPUT_DIR}/${PKG_NAME}.tgz" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" "${ARCHIVE}/"
     cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${ARCHIVE}/"
     cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" "${ARCHIVE}/"
 
@@ -91,8 +91,8 @@ fi
 # Replace the version number in Readme.txt to match the Tag used to build
 if [ $TAG != "" ]
   then
-    echo ">> Setting Version to ${TAG} in ${BASE_DIR}/private/Readme.txt"
-#    sed -i 's/iDigi Connector v\S*/iDigi Connector v'"$TAG"'/g' "${BASE_DIR}/private/Readme.txt"
+    echo ">> Setting Release notes header to ${NOTES_NAME} v${TAG} in ${BASE_DIR}/private/Readme.txt"
+    sed -i 's/ _RELEASE_NOTES_PARTNO_/ '"$NOTES_NAME"'/g' "${BASE_DIR}/private/Readme.txt"
     sed -i 's/ v_CONNECTOR_SW_VERSION_/ v'"$TAG"'/g' "${BASE_DIR}/private/Readme.txt"
     echo ">> Setting Version to ${TAG} in ${BASE_DIR}/private/connector_info.h"
     sed -i 's/#define CONNECTOR_SW_VERSION \S*/#define CONNECTOR_SW_VERSION "'"$TAG"'"/g' "${BASE_DIR}/private/connector_info.h"
@@ -106,8 +106,8 @@ sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 # Generate a Makefile for each sample.
 
 # Create the tarball
-echo ">> Creating the Tarball ${OUTPUT_DIR}/${PKG_NAME}.tgz."
-tar --exclude="${PRODUCT_NAME}"/public/test --exclude="${PRODUCT_NAME}"/public/dvt -czvf "${OUTPUT_DIR}/${PKG_NAME}.tgz" "${PRODUCT_NAME}"/
+echo ">> Creating the Tarball ${OUTPUT_DIR}/${TARBALL_NAME}.tgz."
+tar --exclude="${PRODUCT_NAME}"/public/test --exclude="${PRODUCT_NAME}"/public/dvt -czvf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" "${PRODUCT_NAME}"/
 
 # Create the Release Notes
 echo ">> Creating the Release notes ${OUTPUT_DIR}/${NOTES_NAME}.zip"
@@ -125,8 +125,8 @@ echo ">> Removing base dir ${BASE_DIR}."
 rm -rf "${BASE_DIR}"
 
 # Uncompress the tarball we just created and run our tests
-echo ">> Uncompressing ${OUTPUT_DIR}/${PKG_NAME}.tgz."
-tar -xf "${OUTPUT_DIR}/${PKG_NAME}.tgz"
+echo ">> Uncompressing ${OUTPUT_DIR}/${TARBALL_NAME}.tgz."
+tar -xf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz"
 
 cd "${BASE_DIR}"
 python ../dvt/scripts/replace_str.py public/run/platforms/linux/config.c '#error' '//#error'
@@ -156,7 +156,7 @@ cd ../../../../
 if [[ "${PENDING}" == "true" ]]; then
     # If successfull push the tarball to pending, if PENDING environment variable is set to 1.
     echo ">> Copying the Tarball to Pending."
-    cp -v "${OUTPUT_DIR}/${PKG_NAME}.tgz" /eng/store/pending/40000000
+    cp -v "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" /eng/store/pending/40000000
     cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" /eng/store/pending/93000000
     cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" /eng/store/pending/40000000
 fi

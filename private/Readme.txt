@@ -1,4 +1,4 @@
-                      Release Notes for 40003007_E
+                      Release Notes for _RELEASE_NOTES_PARTNO_
                      Etherios Cloud Connector v_CONNECTOR_SW_VERSION_
                              _RELEASE_DATE_ 
 
