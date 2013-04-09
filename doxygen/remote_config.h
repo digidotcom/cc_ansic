@@ -197,13 +197,13 @@ typedef struct {
 */
 /**
 * Remote configuration structure used in the following callbacks:
-* -# connector_request_id_remote_config_session_start
-* -# connector_request_id_remote_config_action_start
-* -# connector_request_id_remote_config_group_start
-* -# connector_request_id_remote_config_group_process
-* -# connector_request_id_remote_config_group_end
-* -# connector_request_id_remote_config_action_end
-* -# connector_request_id_remote_config_session_end
+* -# @ref connector_request_id_remote_config_session_start
+* -# @ref connector_request_id_remote_config_action_start
+* -# @ref connector_request_id_remote_config_group_start
+* -# @ref connector_request_id_remote_config_group_process
+* -# @ref connector_request_id_remote_config_group_end
+* -# @ref connector_request_id_remote_config_action_end
+* -# @ref connector_request_id_remote_config_session_end
 *
 */
 typedef struct {
@@ -221,8 +221,8 @@ typedef struct {
                                         to Etherios connector Device Cloud if error is encountered.
                                         Note: this string cannot be altered until next callback call.
                                       */
-      connector_element_value_t * element_value; /**< Pointer to memory where callback write the element value */
-  } response;                        /* Callback writes error hint or element value */   
+      connector_element_value_t * element_value; /**< Pointer to memory where callback writes the element value */
+  } response;                        /**< Callback writes error hint or element value */
 } connector_remote_config_t;
 /**
 * @}

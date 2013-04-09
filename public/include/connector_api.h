@@ -67,6 +67,7 @@
 
 
 #define asizeof(array)  (sizeof array/sizeof array[0])
+
 /**
  * @defgroup connector_bool_t Connector Boolean Type
  * @{
@@ -79,6 +80,9 @@ typedef enum {
     connector_false,    /**< False */
     connector_true      /**< True */
 } connector_bool_t;
+/**
+* @}
+*/
 
 #include "connector_api_config.h"
 #include "connector_api_network.h"
@@ -191,7 +195,7 @@ typedef enum {
     connector_class_id_network_sms,      /**< SMS Network Class ID */
     connector_class_id_status,           /**< Class ID for all status */
     connector_class_id_short_message,    /**< Short message specific class ID */
-    connector_class_id_data_point
+    connector_class_id_data_point        /**< Data point class ID */
 } connector_class_id_t;
 /**
 * @}

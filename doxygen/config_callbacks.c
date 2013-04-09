@@ -73,7 +73,7 @@
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains application's device ID</dd>
- *              <dt><i>bytes_required</i></dt><dd>Contains 16 bytes which is required for the application's device ID in the data pointer</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Contains 16 bytes which is required for the application's device ID in the data pointer</dd>
  *            </dl>
  * </td>
  *
@@ -154,7 +154,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @endhtmlonly connector_config_vendor_id @htmlonly:
+ * <td> Pointer to @endhtmlonly connector_config_vendor_id_t @htmlonly:
  *          <dl>
  *              <dt><i>id</i></dt>
  *              <dd> - Callback writes 4-byte vendor ID </dd>
@@ -226,7 +226,7 @@
  *          <dl>
  *              <dt><i>string</i></dt>
  *              <dd> - Callback returns the pointer which contains device type</dd>
- *              <dt><i>length</i></dt><dd>Callback returns number of bytes in the device type</dd>
+ *              <dt><i>length</i></dt><dd> - Callback returns number of bytes in the device type</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -296,7 +296,7 @@
  *          <dl>
  *              <dt><i>string</i></dt>
  *              <dd> - Callback returns the pointer to FQDN of Etherios Device Cloud to be connected.</dd>
- *              <dt><i>length</i></dt><dd>Callback returns number of bytes of Etherios Device Cloud FQDN. Maximum is 64 bytes.</dd>
+ *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Etherios Device Cloud FQDN. Maximum is 64 bytes.</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -369,8 +369,8 @@
  * <td> Pointer to @endhtmlonly connector_config_connection_type_t @htmlonly:
  *          <dl>
  *              <dt><i>type</i></dt>
- *              <dd> <ul><li>connector_connection_type_lan - Callback returns this for LAN connection type</li>
- *                       <li>connector_connection_type_wan - Callback returns this for WAN conenction type</li></ul>
+ *              <dd> <ul><li> @endhtmlonly @ref connector_connection_type_lan @htmlonly - Callback returns this for LAN connection type</li>
+ *                       <li> @endhtmlonly @ref connector_connection_type_wan @htmlonly - Callback returns this for WAN conenction type</li></ul>
  *              </dd>
  *          </dl>
  * </td>
@@ -435,7 +435,7 @@
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains device's MAC address</dd>
- *              <dt><i>bytes_required</i></dt><dd>Contains 6 bytes which is required for the device's MAC address in the data pointer</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Contains 6 bytes which is required for the device's MAC address in the data pointer</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -857,8 +857,8 @@
  *              <dt><i>address</i></dt>
  *              <dd> - Callback returns pointer to device's IP address.</dd>
  *              <dt><i>ip_address_type</i></dt>
- *              <dd> - <ul><li>@endhtmlonly connector_ip_address_ipv4 @htmlonly - Callback returns this for IPv4 address. The size of the address returned must be 4 bytes.</li>
- *                         <li>@endhtmlonly connector_ip_address_ipv6 @htmlonly - Callback returns this for IPv6 address. The size of the address returned must be 16 bytes.</li></ul></dd>
+ *              <dd> - <ul><li>@endhtmlonly @ref connector_ip_address_ipv4 @htmlonly - Callback returns this for IPv4 address. The size of the address returned must be 4 bytes.</li>
+ *                         <li>@endhtmlonly @ref connector_ip_address_ipv6 @htmlonly - Callback returns this for IPv6 address. The size of the address returned must be 16 bytes.</li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
@@ -921,7 +921,7 @@
  * <tr>
  * <th>data</th>
  * <td> Pointer to @endhtmlonly connector_config_error_status_t @htmlonly containing
- *     the class id, request id, and error status which Cloud Connector encountered error with.:
+ *     the class id, request id, and error status which Cloud Connector encountered error with:
  *          <dl>
  *              <dt><i>class_id</i></dt><dd> - Class ID </dd>
  *              <dt><i>request_id</i></dt><dd> - Request ID</dd>
@@ -988,8 +988,8 @@
  * <td> Pointer to @endhtmlonly connector_config_supported_t @htmlonly:
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
- *                     <ul><li>@endhtmlonly connector_false @htmlonly - callback writes this if it doesn't support firmware download.</li>
- *                         <li>@endhtmlonly connector_true @htmlonly - callback writes this if it supports firmware download.</li></ul></dd>
+ *                     <ul><li>@endhtmlonly @ref connector_false @htmlonly - callback writes this if it doesn't support firmware download.</li>
+ *                         <li>@endhtmlonly @ref connector_true @htmlonly - callback writes this if it supports firmware download.</li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
@@ -1057,8 +1057,8 @@
  * <td> Pointer to @endhtmlonly connector_config_supported_t @htmlonly:
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
- *                     <ul><li>@endhtmlonly connector_false @htmlonly - callback writes this if it doesn't support data service.</li>
- *                         <li>@endhtmlonly connector_true @htmlonly - callback writes this if it supports data service.</li></ul></dd>
+ *                     <ul><li>@endhtmlonly @ref connector_false @htmlonly - callback writes this if it doesn't support data service.</li>
+ *                         <li>@endhtmlonly @ref connector_true @htmlonly - callback writes this if it supports data service.</li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
@@ -1126,8 +1126,8 @@
  * <td> Pointer to @endhtmlonly connector_config_supported_t @htmlonly:
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
- *                     <ul><li>@endhtmlonly connector_false @htmlonly - callback writes this if it doesn't support file system.</li>
- *                         <li>@endhtmlonly connector_true @htmlonly - callback writes this if it supports file system. </li></ul></dd>
+ *                     <ul><li>@endhtmlonly @ref connector_false @htmlonly - callback writes this if it doesn't support file system.</li>
+ *                         <li>@endhtmlonly @ref connector_true @htmlonly - callback writes this if it supports file system. </li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
@@ -1195,8 +1195,8 @@
  * <td> Pointer to @endhtmlonly connector_config_supported_t @htmlonly:
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
- *                     <ul><li>@endhtmlonly connector_false @htmlonly - callback writes this if it doesn't support remote configuration.</li>
- *                         <li>@endhtmlonly connector_true @htmlonly - callback writes this if it supports remote configuration.</li></ul></dd>
+ *                     <ul><li>@endhtmlonly @ref connector_false @htmlonly - callback writes this if it doesn't support remote configuration.</li>
+ *                         <li>@endhtmlonly @ref connector_true @htmlonly - callback writes this if it supports remote configuration.</li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
@@ -1321,10 +1321,10 @@
  * <td> Pointer to @endhtmlonly connector_config_device_id_method_t @htmlonly:
  *          <dl>
  *              <dt><i>method</i></dt><dd>
- *                  <ul><li>@endhtmlonly connector_device_id_method_auto @htmlonly - Callback returns this telling Cloud Connector to generate
+ *                  <ul><li>@endhtmlonly @ref connector_device_id_method_auto @htmlonly - Callback returns this telling Cloud Connector to generate
  *                                                            the device ID from @endhtmlonly @ref mac_address callback for LAN connection type or
  *                                                            generate the device ID according to the @ref wan_type @htmlonly for WAN connection type.</li>
- *                      <li>@endhtmlonly connector_device_id_method_manual @htmlonly - Callback returns this telling Cloud Connector to retrieve
+ *                      <li>@endhtmlonly @ref connector_device_id_method_manual @htmlonly - Callback returns this telling Cloud Connector to retrieve
  *                                                            the device ID from @endhtmlonly @ref connector_request_id_config_device_id @htmlonly callback.</li></ul>
  *                  Note: the @endhtmlonly @ref device_id @htmlonly calblack will not be called if connector_device_id_method_auto is returned.
  *          </dl>
@@ -1391,15 +1391,15 @@
  * <th>data</th>
  * <td> Pointer to @endhtmlonly connector_config_connect_type_t @htmlonly:
  *          <dl>
- *              <dt><i>type</i></dt><dd>
- *                  <ul><li>@endhtmlonly connector_connect_auto @htmlonly - Callback returns this to automatic connect to Etherios Device Cloud.</li>
- *                      <li>@endhtmlonly connector_connect_manual @htmlonly - Callback returns this to manual connect to Etherios Device Cloud.
- *                                                    @endhtmlonly Note: Call @ref connector_initiate_action with
- *                                                    @ref connector_initiate_transport_start @htmonly to start TCP transport.</li></ul>
+ *              <dt><i>type</i></dt>
+ *              <dd>
+ *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic connect to Etherios Device Cloud.</li>
+ *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual connect to Etherios Device Cloud.
+ *                          @endhtmlonly Note: Call @ref connector_initiate_action with @ref connector_initiate_transport_start @htmlonly to start TCP transport.</li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
@@ -1452,10 +1452,10 @@
  * <td> Pointer to @endhtmlonly connector_config_connect_type_t @htmlonly:
  *          <dl>
  *              <dt><i>type</i></dt><dd>
- *                  <ul><li>@endhtmlonly connector_connect_auto @htmlonly - Callback returns this to automatic establish UDP connection to Etherios Device Cloud.</li>
- *                      <li>@endhtmlonly connector_connect_manual @htmlonly - Callback returns this to manual establish UDP connection to Etherios Device Cloud.
- *                                                    @endhtmlonly Note: Call @ref connector_initiate_action with
- *                                                    @ref connector_initiate_transport_start @htmonly to start UPD transport.</li></ul>
+ *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic establish UDP connection to Etherios Device Cloud.</li>
+ *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual establish UDP connection to Etherios Device Cloud.
+ *                          @endhtmlonly Note: Call @ref connector_initiate_action with
+ *                                                  @ref connector_initiate_transport_start @htmlonly to start UPD transport.</li></ul>
  *          </dl>
  * </td>
  * </tr>
@@ -1527,9 +1527,9 @@
  * <td> Pointer to @endhtmlonly connector_config_wan_type_t @htmlonly:
  *          <dl>
  *              <dt><i>type</i></dt><dd>
- *                  <ul><li>@endhtmlonly connector_wan_type_imei @htmlonly - Callback returns this for IMEI number for GSM network.</li>
- *                      <li>@endhtmlonly connector_wan_type_esn @htmlonly - Callback returns this for ESN for CDMA network.</li>
- *                      <li>@endhtmlonly connector_wan_type_meid @htmlonly - Callback returns this for MEID for CDMA network.</li>
+ *                  <ul><li>@endhtmlonly @ref connector_wan_type_imei @htmlonly - Callback returns this for IMEI number for GSM network.</li>
+ *                      <li>@endhtmlonly @ref connector_wan_type_esn @htmlonly - Callback returns this for ESN for CDMA network.</li>
+ *                      <li>@endhtmlonly @ref connector_wan_type_meid @htmlonly - Callback returns this for MEID for CDMA network.</li>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -1589,7 +1589,7 @@
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains IMEI number including a check digit. Each nibble corresponds a
  *                     decimal digit and most upper nibble must be 0.</dd>
- *              <dt><i>bytes_required</i></dt><dd>Contains 8 bytes which is required for the IMEI number in the data pointer</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Contains 8 bytes which is required for the IMEI number in the data pointer</dd>
  *            </dl>
  * </td>
  * </tr>
@@ -1679,7 +1679,7 @@
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains ESN number. Each nibble corresponds a
  *                     hexadecimal digit.</dd>
- *              <dt><i>bytes_required</i></dt><dd>Contains 4 bytes which is required for the ESN number in the data pointer</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Contains 4 bytes which is required for the ESN number in the data pointer</dd>
  *            </dl>
  * </td>
  * </tr>
@@ -1771,7 +1771,7 @@
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains MEID number. Each nibble corresponds a
  *                     hexadecimal digit.Check digit is not included.</dd>
- *              <dt><i>bytes_required</i></dt><dd>Contains 7 bytes which is required for the MEID number in the data pointer</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Contains 7 bytes which is required for the MEID number in the data pointer</dd>
  *            </dl>
  * </td>
  * </tr>
@@ -1865,8 +1865,8 @@
  * <td> Pointer to @endhtmlonly connector_config_identity_verification_t @htmlonly:
  *          <dl>
  *              <dt><i>type</i></dt>
- *              <dd> <ul><li>@endhtmlonly connector_identity_verification_simple @htmlonly -  Callback returns this type for simple identity verification.</li>
- *                       <li>@endhtmlonly connector_identity_verification_password @htmlonly - Callback returns this type for password identity verification.</li></ul></dd>
+ *              <dd> <ul><li>@endhtmlonly @ref connector_identity_verification_simple @htmlonly -  Callback returns this type for simple identity verification.</li>
+ *                       <li>@endhtmlonly @ref connector_identity_verification_password @htmlonly - Callback returns this type for password identity verification.</li></ul></dd>
  *          </dl>
  * </td>
  * </tr>
@@ -1929,7 +1929,7 @@
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer to the password.</dd>
- *              <dt><i>length</i></dt><dd>The length of the password in bytes.</dd>
+ *              <dt><i>length</i></dt><dd> - Callback writes the length of the password in bytes.</dd>
  *            </dl>
  * </td>
  * </tr>

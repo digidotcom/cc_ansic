@@ -24,7 +24,7 @@ typedef enum {
     connector_request_id_config_device_id,         /**< Requesting callback to return a unique device id which is used to identify the device.*/
     connector_request_id_config_vendor_id,         /**< Requesting callback to return a unique vendor id identifying the manufacturer of a device. */
     connector_request_id_config_device_type,       /**< Requesting callback to return device type that identifies the type of the device  */
-    connector_request_id_config_device_cloud_url,  /**< Requesting callback to return Etherios Device Cloud URL which will be connected to */
+    connector_request_id_config_device_cloud_url,  /**< Requesting callback to return the Etherios Device Cloud URL which will be connected to */
     connector_request_id_config_connection_type,   /**< Requesting callback to return LAN or WAN connection type */
     connector_request_id_config_mac_addr,          /**< Requesting callback to return device's MAC addresss */
     connector_request_id_config_link_speed,        /**< Requesting callback to return link speed for WAN connection type */
@@ -192,6 +192,22 @@ typedef struct {
 * @}
 */
 
+/**
+* @defgroup connector_config_ip_address_type_t IP Address Configuration Types
+* @{
+*/
+/**
+* Device IP address types
+*
+* @see connector_config_ip_address_t
+*/
+typedef enum {
+    connector_ip_address_ipv4,  /**< IPv4 address type */
+    connector_ip_address_ipv6   /**< IPv6 address type */
+} connector_config_ip_address_type_t;
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_config_ip_addr_t Device IP Address Configuration
@@ -202,10 +218,7 @@ typedef struct {
 */
 typedef struct {
     uint8_t * address;        /**< Device's IP address */
-    enum {
-        connector_ip_address_ipv4,  /**< IPv4 address */
-        connector_ip_address_ipv6   /**< IPv6 address */
-    } ip_address_type;              /**< Device IP Address Type */
+    connector_config_ip_address_type_t ip_address_type; /**< IPv4 or IPv6 device IP address type */
 } connector_config_ip_address_t;
 /**
 * @}
@@ -358,7 +371,7 @@ typedef struct {
  */
 typedef enum {
     connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. Etherios Cloud Connector just transmits the
-                                                     device ID and Etherios Device Cloud URL. */
+                                                     device ID and the Etherios Device Cloud URL. */
     connector_identity_verification_password        /**< Callback returns this form for password identity verification. Etherios Cloud Connector exchanges a pre-shared
                                                      secret password with Etherios Device Cloud. The password must match the password set in Etherios Device Cloud.
                                                      @note Etherios Cloud Connector will call @ref connector_request_id_config_password callback for the password. */
