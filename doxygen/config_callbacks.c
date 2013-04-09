@@ -69,7 +69,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_data_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_data_t: @htmlonly
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains application's device ID</dd>
@@ -154,7 +154,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_vendor_id:
+ * <td> Pointer to @endhtmlonly @ref connector_config_vendor_id: @htmlonly
  *          <dl>
  *              <dt><i>id</i></dt>
  *              <dd> - Callback writes 4-byte vendor ID </dd>
@@ -222,7 +222,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_string_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_string_t: @htmlonly
  *          <dl>
  *              <dt><i>string</i></dt>
  *              <dd> - Callback returns the pointer which contains device type</dd>
@@ -292,7 +292,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_string_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_string_t: @htmlonly
  *          <dl>
  *              <dt><i>string</i></dt>
  *              <dd> - Callback returns the pointer to FQDN of Etherios Device Cloud to be connected.</dd>
@@ -374,7 +374,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_connection_type_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_connection_type_t: @htmlonly
  *          <dl>
  *              <dt><i>type</i></dt>
  *              <dd> <ul><li>connector_connection_type_lan - Callback returns this for LAN connection type</li>
@@ -447,7 +447,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_data_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_data_t: @htmlonly
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains device MAC address</dd>
@@ -514,7 +514,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_link_speed_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_link_speed_t: @htmlonly
  *          <dl>
  *              <dt><i>speed</i></dt>
  *              <dd> - Callback writes 4-byte integer speed of the link in bits per second. All zeros represents unknown speed.</dd>
@@ -585,7 +585,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_string_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_string_t: @htmlonly
  *          <dl>
  *              <dt><i>string</i></dt>
  *              <dd> - Callback returns pointer to memory which contains the phone number dialed, including any dialing prefixes. </dd>
@@ -662,7 +662,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_keepalive_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_keepalive_t: @htmlonly
  *          <dl>
  *              <dt><i>interval_in_seconds</i></dt>
  *              <dd> - Callback writes 2-byte integer TX keep alive interval in seconds. It must be between 5 and 7200 seconds.</dd>
@@ -731,7 +731,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_keepalive_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_keepalive_t: @htmlonly
  *          <dl>
  *              <dt><i>interval_in_seconds</i></dt>
  *              <dd> - Callback writes 2-byte integer RX keep alive interval in seconds. It must be between 5 and 7200 seconds.</dd>
@@ -801,7 +801,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_wait_count_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_wait_count_t: @htmlonly
  *          <dl>
  *              <dt><i>count</i></dt>
  *              <dd> - Callback writes 2-byte wait count.It must be between 2 and 63 times.</dd>
@@ -936,7 +936,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_error_status_t containing
+ * <td> Pointer to @endhtmlonly @ref connector_config_error_status_t @htmlonly containing
  *     the class id, request id, and error status which Cloud Connector encountered error with.:
  *          <dl>
  *              <dt><i>class_id</i></dt><dd> - Class ID </dd>
@@ -1001,7 +1001,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_supported_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_supported_t: @htmlonly
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
  *                     <ul><li>connector_false - callback writes this if it doesn't support firmware download.</li>
@@ -1070,7 +1070,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_supported_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_supported_t: @htmlonly
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
  *                     <ul><li>connector_false - callback writes this if it doesn't support data service.</li>
@@ -1139,7 +1139,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_supported_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_supported_t: @htmlonly
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
  *                     <ul><li>connector_false - callback writes this if it doesn't support file system.</li>
@@ -1208,7 +1208,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_supported_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_supported_t: @htmlonly
  *          <dl>
  *              <dt><i>supported</i></dt><dd> -
  *                     <ul><li>connector_false - callback writes this if it doesn't support remote configuration.</li>
@@ -1270,7 +1270,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_max_transaction_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_max_transaction_t: @htmlonly
  *          <dl>
  *              <dt><i>count</i></dt><dd>Callback writes maximum simultaneous transactions. Use 0 for unlimited transactions.</dd>
  *          </dl>
@@ -1333,7 +1333,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_device_id_method_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_device_id_method_t: @htmlonly
  *          <dl>
  *              <dt><i>method</i></dt><dd>
  *                  <ul><li>connector_device_id_method_auto - Callback returns this telling Cloud Connector to generate
@@ -1404,7 +1404,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_connect_type_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_connect_type_t: @htmlonly
  *          <dl>
  *              <dt><i>type</i></dt><dd>
  *                  <ul><li>connector_connect_auto - Callback returns this to automatic connect to Etherios Device Cloud.</li>
@@ -1464,7 +1464,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_connect_type_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_connect_type_t: @htmlonly
  *          <dl>
  *              <dt><i>type</i></dt><dd>
  *                  <ul><li>connector_connect_auto - Callback returns this to automatic establish UDP connection to Etherios Device Cloud.</li>
@@ -1539,7 +1539,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_wan_type_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_wan_type_t: @htmlonly
  *          <dl>
  *              <dt><i>type</i></dt><dd>
  *                  <ul><li>connector_wan_type_imei - Callback returns this for IMEI number for GSM network.</li>
@@ -1599,7 +1599,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_data_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_data_t: @htmlonly
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains IMEI number including a check digit. Each nibble corresponds a
@@ -1689,7 +1689,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_data_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_data_t: @htmlonly
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains ESN number. Each nibble corresponds a
@@ -1781,7 +1781,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_data_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_data_t: @htmlonly
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains MEID number. Each nibble corresponds a
@@ -1877,7 +1877,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_identity_verification_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_identity_verification_t: @htmlonly
  *          <dl>
  *              <dt><i>type</i></dt>
  *              <dd> <ul><li>connector_identity_verification_simple -  Callback returns this type for simple identity verification.</li>
@@ -1940,7 +1940,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> Pointer to @ref connector_config_pointer_data_t:
+ * <td> Pointer to @endhtmlonly @ref connector_config_pointer_data_t: @htmlonly
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer to the password.</dd>
