@@ -79,13 +79,15 @@ rm -rf "${BASE_DIR}/public/run/platforms/freescale"
 released_file=$(find /eng/store/released/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
 pending_file=$(find /eng/store/pending/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
 
-if [ $released_file < $pending_file ]
-    then
-        echo ">> Pulling Getting Started Guide from ${pending_file}"
-        cp "${pending_file}" "${BASE_DIR}/GettingStarted.pdf"
-    else
-        echo ">> Pulling Getting Started Guide from ${released_file}"
-        cp "${released_file}" "${BASE_DIR}/GettingStarted.pdf"
+if [ -f $pending_file ]; then
+    echo ">> Pulling Getting Started Guide from ${pending_file}"
+    cp "${pending_file}" "${BASE_DIR}/GettingStarted.pdf"
+elif [ -f $released_file ]; then
+    echo ">> Pulling Getting Started Guide from ${released_file}"
+    cp "${released_file}" "${BASE_DIR}/GettingStarted.pdf"
+else
+    echo ">> Cannot find ${GETTING_STARTED_GUIDE}*.pdf"
+    exit(1)
 fi
 
 # Replace the version number in Readme.txt to match the Tag used to build
