@@ -128,6 +128,7 @@ static connector_callback_status_t app_os_reboot(void)
     reboot(LINUX_REBOOT_CMD_RESTART);
     return connector_callback_continue;
 }
+
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
                                            void * const data)
 {
