@@ -259,7 +259,7 @@ typedef enum {
 * @{
 */
 /**
-* TCP status structure is used for @ref connector_request_id_status_tcp callback. See @ref connector_tcp_status.
+* TCP status structure is used for @ref connector_request_id_status_tcp callback. See @ref status_tcp.
 *
 * This is used for an event notification.
 */

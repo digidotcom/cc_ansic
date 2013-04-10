@@ -243,31 +243,23 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_status_tcp @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_status_tcp @htmlonly</td>
  * </tr>
  * <tr>
- *   <td>request_data</td>
- *   <td> Pointer to one of the following @endhtmlonly @ref connector_tcp_status_t @htmlonly status:
- *        <dl>
- *        <dt><b>connector_tcp_communication_started</b> </dt>
- *        <dd> - TCP communication has been established. User and application is able to start message and data transfer. </dd>
- *        <dt><b>connector_tcp_keepalive_missed</b>
- *        <dd> - Etherios Cloud Connector has not received a keep alive message from the iDigi Device Cloud within the time specifed in @endhtmlonly @ref connector_config_tx_keepalive or @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS @htmlonly </dd>
- *        <dt><b>connector_tcp_keepalive_restored</b>
- *        <dd> - Digi connector has received and recovered missed keep alive message from the iDigi Device Cloud. </dd>
+ *   <td>data</td>
+ *   <td> Pointer to @endhtmlonly @ref connector_status_tcp_event_t @htmlonly:
+ *        <dl> <dt>status</dt>
+ *             <dd><dl>
+ *             <dt><b>connector_tcp_communication_started</b> </dt>
+ *             <dd> - TCP communication has been established. User and application is able to start message and data transfer. </dd>
+ *             <dt><b>connector_tcp_keepalive_missed</b>
+ *             <dd> - Etherios Cloud Connector has not received a keep alive message from Etherios Device Cloud
+ *                    within the time specifed in @endhtmlonly @ref connector_request_id_config_tx_keepalive callback or
+ *                    @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS. See @ref tx_keepalive @htmlonly </dd>
+ *             <dt><b>connector_tcp_keepalive_restored</b>
+ *             <dd> - Digi connector has received and recovered missed keep alive message from Etherios Device Cloud. </dd>
+ *             </dl></dd>
  *        </dl></td>
- * </tr>
- * <tr>
- *   <td>request_length</td>
- *   <td> [IN] Size of @endhtmlonly @ref connector_tcp_status_t @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td>[OUT] NULL </td>
- * </tr>
- * <tr>
- *   <td>response_length</td>
- *   <td>[OUT] N/A </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -301,7 +293,7 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_status_stop_completed @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_status_stop_completed @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>request_data</td>
@@ -317,18 +309,6 @@
  *        </li>
  *        <li><b><i>user_context</i></b> User's context from @endhtmlonly connector_initiate_action() @htmlonly call.</li>
  *        </ul></td>
- * </tr>
- * <tr>
- *   <td>request_length</td>
- *   <td> [IN] Size of @endhtmlonly connector_initiate_stop_request_t @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td>[OUT] NULL </td>
- * </tr>
- * <tr>
- *   <td>response_length</td>
- *   <td>[OUT] N/A </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
