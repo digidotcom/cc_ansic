@@ -40,22 +40,20 @@ connector_callback_status_t app_get_interface_ip_address(uint8_t ** ip_address, 
 static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
+    int * const fd = data->handle;
 
     app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_server_redirected);
 
     data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
 
-    if (close(*data->handle) < 0)
+    if (close(*fd) < 0)
     {
-        APP_DEBUG("network_tcp_close: close() failed, fd %d, errno %d\n", *data->handle, errno);
+        APP_DEBUG("network_tcp_close: close() failed, fd %d, errno %d\n", *fd, errno);
     }
     else
-        APP_DEBUG("network_tcp_close: fd %d\n", *data->handle);
+        APP_DEBUG("network_tcp_close: fd %d\n", *fd);
 
-    {
-        int * user_fd = (int *)data->handle;
-        *user_fd = -1;
-    }
+    *fd = -1;
 
     return status;
 }
@@ -70,9 +68,9 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    int ccode;
+    int * const fd = data->handle;
 
-    ccode = read(*data->handle, data->buffer, data->bytes_available);
+    int ccode = read(*fd, data->buffer, data->bytes_available);
     if (ccode > 0)
     {
         data->bytes_used = (size_t)ccode;
@@ -112,9 +110,9 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    int ccode;
+    int * const fd = data->handle;
 
-    ccode = write(*data->handle, data->buffer, data->bytes_available);
+    int ccode = write(*fd, data->buffer, data->bytes_available);
     if (ccode >= 0)
     {
         data->bytes_used = (size_t)ccode;

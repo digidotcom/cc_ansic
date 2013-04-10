@@ -241,16 +241,22 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 #endif
 
+#if __STDC_VERSION__ >= 199901L
+#define PRIsize "zu"
+#else
+#define PRIsize "u"
+#endif
+
 /**
 * @defgroup connector_network_handle_t Network Handle
 * @{
 */
 /**
  * Used to reference a network session and is passed into Etherios Cloud Connector API calls. This
- * type is defined as an int and is used by the application to keep track of and identify sessions.
- * Application may define this to different type for its own network reference in connector_type.h
+ * type is defined as void * and is used by the application to 
+ * keep track of and identify sessions.
  */
-typedef int connector_network_handle_t;
+typedef void * connector_network_handle_t;
 /**
 * @}
 */

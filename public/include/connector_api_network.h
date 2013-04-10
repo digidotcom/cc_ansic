@@ -43,7 +43,7 @@ typedef enum {
 */
 typedef struct  {
     char const * CONST device_cloud_url;    /**< Pointer to Etherios Device Cloud URL  */
-    connector_network_handle_t * handle;    /**< Application defined network handle associated with the connection */
+    connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
 /**
 * @}
@@ -58,7 +58,7 @@ typedef struct  {
 * Send data structure for @ref connector_request_id_network_send callback which is called to send data to Etherios Device Cloud.
 */
 typedef struct  {
-    connector_network_handle_t * CONST handle;  /**< Pointer to network handle associated with a connection through the connector_network_open callback */
+    connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
     void const * CONST buffer;                 	/**< Pointer to data to be sent */
     size_t CONST bytes_available;               /**< Number of bytes to send in the buffer */
     size_t bytes_used;                          /**< Number of bytes sent */
@@ -76,7 +76,7 @@ typedef struct  {
 * a specified number of bytes data from Etherios Device Cloud.
 */
 typedef struct  {
-    connector_network_handle_t * CONST handle;  /**< Pointer to network handle associated with a connection through the connector_network_open callback */
+    connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
     void * CONST buffer;                        /**< Pointer to memory where callback writes received data to */
     size_t CONST bytes_available;               /**< Number of bytes available in the buffer */
     size_t bytes_used;                          /**< Number of bytes received and copied to the buffer */
@@ -117,7 +117,7 @@ typedef enum {
 * Close request structure for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
 */
 typedef struct  {
-    connector_network_handle_t * CONST handle;  /**< Pointer to network handle associated with a connection through the connector_network_open callback */
+    connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
     connector_close_status_t  CONST status;     /**< Reason for closing the network handle */
 
     connector_bool_t  reconnect;                /**< connector_true - reconnect, connector_false - don't reconnect */
