@@ -17,6 +17,9 @@
 #include <stddef.h>
 
 #define CONNECTOR_CONST_PROTECTION
+
+/*	WARNING: connector_api.h must be the first connector_* header file
+ * to guarantee CONNECTOR_VERSION is properly applied to all files */
 #include "connector_api.h"
 #include "connector_debug.h"
 
