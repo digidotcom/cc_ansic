@@ -116,7 +116,7 @@ int application_run(connector_handle_t handle)
                 break;
 
             default:
-                APP_DEBUG("Failed to send data point:%zu, status:%d\n", points_sent, status);
+                APP_DEBUG("Failed to send data point:%" PRIsize ", status:%d\n", points_sent, status);
                 goto done;
         }
 

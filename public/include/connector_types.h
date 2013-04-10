@@ -241,6 +241,12 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 #endif
 
+#if __STDC_VERSION__ >= 199901L
+#define PRIsize "zu"
+#else
+#define PRIsize "u"
+#endif
+
 /**
 * @defgroup connector_network_handle_t Network Handle
 * @{

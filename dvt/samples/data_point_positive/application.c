@@ -99,8 +99,12 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 int application_run(connector_handle_t handle)
 {
     connector_status_t status;
+    unsigned int const seed = (unsigned int)time(NULL);
 
     sleep(5);
+    APP_DEBUG("Data point positive DVT using seed %u\n", seed);
+    srand(seed);
+
     do
     {
         status = app_send_data_point(handle);

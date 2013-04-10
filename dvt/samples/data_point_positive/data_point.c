@@ -174,7 +174,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
 
             case connector_data_point_type_string:
             {
-                static char * value[APP_MAX_POINTS] = {"Hello World!", "", "?", "\"Hi\"", "\nLine Feed\n", "Line\twith\ttabs"};
+                static char * value[APP_MAX_POINTS] = {"Hello World!", "c,o,m,m,a", "Line\nFeed", "Line\twith\ttabs", "\"Hi\"", ""};
 
                 point->data.type = connector_data_type_native;
                 point->data.element.native.string_value = value[test_case];
@@ -201,6 +201,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     point->time.value.since_epoch_fractional.milliseconds = current_time.tv_usec/1000;
                     break;
 
+                #if (defined ISO8601_ISSUE_RESOLVED)
                 case connector_time_local_iso8601:
                 {
                     #define MAX_ISO_8601_BYTES  20
@@ -208,12 +209,13 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     struct tm * const tmval = localtime(&current_time.tv_sec);
 
                     ASSERT(tmval != NULL);
-                    snprintf(value[type][test_case-1], sizeof value[type][test_case-1], "%04d-%02d-%02d %02d:%02d:%02d",
+                    snprintf(value[type][test_case-1], sizeof value[type][test_case-1], "%04d-%02d-%02dT%02d:%02d:%02dZ",
                              tmval->tm_year+1900, tmval->tm_mon+1, tmval->tm_mday, tmval->tm_hour, tmval->tm_min, tmval->tm_sec);
                     point->time.value.iso8601_string = value[type][test_case-1];
                     point->time.source = connector_time_local_iso8601;
                     break;
                 }
+                #endif
 
                 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
                 case connector_time_local_epoch_whole:
