@@ -10,8 +10,6 @@
  * =======================================================================
  */
 
-#include <stdio.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -30,7 +28,7 @@
 static connector_callback_status_t app_network_udp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_network_handle_t * const fd = data->handle;
+    int * const fd = data->handle;
 
     data->reconnect = app_connector_reconnect(connector_class_id_network_udp, data->status);
 
@@ -39,10 +37,7 @@ static connector_callback_status_t app_network_udp_close(connector_network_close
         APP_DEBUG("network_tcp_close: close() failed, errno %d\n", errno);
     }
 
-    {
-        int * user_fd = (int *)fd;
-        *user_fd = -1;
-    }
+    *fd = -1;
 
     return status;
 }
@@ -57,9 +52,9 @@ static connector_callback_status_t app_network_udp_close(connector_network_close
 static connector_callback_status_t app_network_udp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    int ccode;
+    int * const fd = data->handle;
 
-        ccode = read(*data->handle, data->buffer, data->bytes_available);
+    int ccode = read(*fd, data->buffer, data->bytes_available);
 
     if (ccode < 0)
     {
@@ -91,8 +86,9 @@ static connector_callback_status_t app_network_udp_receive(connector_network_rec
 static connector_callback_status_t app_network_udp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
+    int * const fd = data->handle;
 
-    int bytes_sent = write(*data->handle, data->buffer, data->bytes_available);
+    int bytes_sent = write(*fd, data->buffer, data->bytes_available);
     if (bytes_sent < 0)
     {
         int const err = errno;

@@ -199,7 +199,9 @@ done:
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const write_data)
 {
     connector_callback_status_t rc = connector_callback_continue;
-    int ccode = write(*write_data->handle, (char *)write_data->buffer, write_data->bytes_available);
+    int * const fd = write_data->handle;
+
+    int ccode = write(*fd, (char *)write_data->buffer, write_data->bytes_available);
 
     if (ccode < 0)
     {
@@ -215,7 +217,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
             APP_DEBUG("network_send: send() failed, errno %d\n", err);
 
             do {
-                ccode = read(*write_data->handle, buffer, sizeof buffer);
+                ccode = read(*fd, buffer, sizeof buffer);
 
                 if (ccode == 0)
                 {
@@ -250,6 +252,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
 {
     connector_callback_status_t rc = connector_callback_continue;
     struct timeval timeout = {0, 0};
+    int * const fd = read_data->handle;
     int ccode;
 
     read_data->bytes_used = 0;
@@ -283,10 +286,10 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
     {
         fd_set read_set;
         FD_ZERO(&read_set);
-        FD_SET(*read_data->handle, &read_set);
+        FD_SET(*fd, &read_set);
 
         /* Blocking point for iDigi Connector */
-        ccode = select(*read_data->handle+1, &read_set, NULL, NULL, &timeout);
+        ccode = select(*fd + 1, &read_set, NULL, NULL, &timeout);
         if (ccode < 0)
         {
             APP_DEBUG("app_network_receive: select returned %d\n", ccode);
@@ -300,7 +303,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
         }
     }
 
-    ccode = read(*read_data->handle, read_data->buffer, read_data->bytes_available);
+    ccode = read(*fd, read_data->buffer, read_data->bytes_available);
 
     if (ccode == 0)
     {
@@ -333,33 +336,14 @@ done:
 static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const close_data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_network_handle_t * const fd = close_data->handle;
-
-#if 0
-    struct linger ling_opt;
-    ling_opt.l_onoff = 1;
-    ling_opt.l_linger = 1;
-
-    if (setsockopt(*fd, SOL_SOCKET, SO_LINGER, &ling_opt, sizeof(ling_opt) ) < 0)
-    {
-        APP_DEBUG("network_tcp_close: setsockopt fails: ");
-        if (errno == EAGAIN)
-        {
-            status = connector_callback_busy;
-            goto done;
-        }
-    }
-#endif
+    int * const fd = close_data->handle;
 
     if (close(*fd) < 0)
     {
         APP_DEBUG("network_tcp_close: close() failed, errno %d\n", errno);
     }
 
-    {
-        int * user_fd = (int *)fd;
-        *user_fd = -1;
-    }
+    *fd = -1;
 
     close_data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, close_data->status);
 

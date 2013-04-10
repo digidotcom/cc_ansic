@@ -200,6 +200,7 @@ done:
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const write_data)
 {
     connector_callback_status_t rc = connector_callback_continue;
+    int * const fd = write_data->handle;
     int ccode;
 
     if ((dvt_fw_complete_called) && (write_data->bytes_available > 2))
@@ -223,7 +224,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
         }
     }
 
-    ccode = send(*write_data->handle, write_data->buffer,write_data->bytes_available, 0);
+    ccode = send(*fd, write_data->buffer,write_data->bytes_available, 0);
     if (ccode < 0)
     {
         int err = errno;
@@ -249,16 +250,18 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
     fd_set read_set;
     int ccode, err;
 
+    int * const fd = read_data->handle;
+
     timeout.tv_sec = 0;
     timeout.tv_usec = 0;
 
     read_data->bytes_used = 0;
 
     FD_ZERO(&read_set);
-    FD_SET(*read_data->handle, &read_set);
+    FD_SET(*fd, &read_set);
 
     /* Blocking point for iDigi Connector */
-    ccode = select(*read_data->handle+1, &read_set, NULL, NULL, &timeout);
+    ccode = select(*fd + 1, &read_set, NULL, NULL, &timeout);
     if (ccode < 0)
     {
         APP_DEBUG("app_network_receive: select returned %d\n", ccode);
@@ -270,7 +273,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
         rc = connector_callback_busy;
         goto done;
     }
-    ccode = recv(*read_data->handle, read_data->buffer, read_data->bytes_available, 0);
+    ccode = recv(*fd, read_data->buffer, read_data->bytes_available, 0);
 
     if (ccode == 0)
     {
@@ -304,7 +307,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
             if (mt_type == MT_TYPE_KEEP_ALIVE)
             {
                 APP_DEBUG("Discarding tx keepalive receive packet\n");
-                ccode = recv(*read_data->handle, buffer, read_data->bytes_available, 0);
+                ccode = recv(*fd, buffer, read_data->bytes_available, 0);
                 goto done;
             }
         }
@@ -319,31 +322,15 @@ done:
 static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const close_data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_network_handle_t * const fd = close_data->handle;
-#if 0
-    struct linger ling_opt;
-    ling_opt.l_onoff = 1;
-    ling_opt.l_linger = 1;
+    int * const fd = close_data->handle;
 
-    if (setsockopt(*fd, SOL_SOCKET, SO_LINGER, &ling_opt, sizeof(ling_opt) ) < 0)
-    {
-        APP_DEBUG("network_tcp_close: setsockopt fails\n");
-        if (errno == EAGAIN)
-        {
-            status = connector_callback_busy;
-            goto done;
-        }
-    }
-#endif
     if (close(*fd) < 0)
     {
         APP_DEBUG("network_tcp_close: close() failed, errno %d\n", errno);
     }
 
-    {
-        int * user_fd = (int *)fd;
-        *user_fd = -1;
-    }
+    *fd = -1;
+
     if (close_data->status == connector_close_status_no_keepalive)
     {
         start_put_request = 1;

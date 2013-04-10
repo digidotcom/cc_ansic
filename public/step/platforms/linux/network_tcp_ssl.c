@@ -280,7 +280,7 @@ error:
 }
 
 static connector_callback_status_t app_tcp_connect(in_addr_t const ip_addr,
-                                               connector_network_handle_t ** network_handle)
+                                                   connector_network_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_error;
     static app_ssl_t ssl_info = {0};
@@ -322,7 +322,7 @@ static connector_callback_status_t app_tcp_connect(in_addr_t const ip_addr,
     }
 
     APP_DEBUG("network_connect: connected\n");
-    *network_handle = (connector_network_handle_t *)&ssl_info;
+    data->handle = &ssl_info;
     status = connector_callback_continue;
     goto done;
 
@@ -340,7 +340,7 @@ done:
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
+    app_ssl_t * const ssl_ptr = data->handle;
     int bytes_sent = 0;
 
     bytes_sent = SSL_write(ssl_ptr->ssl, data->buffer, data->bytes_available);
@@ -362,7 +362,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
+    app_ssl_t * const ssl_ptr = data->handle;
     int bytes_read = 0;
 
     if (SSL_pending(ssl_ptr->ssl) == 0)
@@ -417,7 +417,7 @@ done:
 static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_ssl_t * const ssl_ptr = (app_ssl_t *)data->handle;
+    app_ssl_t * const ssl_ptr = data->handle;
 
     /* send close notify to peer */
     if (SSL_shutdown(ssl_ptr->ssl) == 0)
@@ -443,7 +443,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         goto done;
     }
 
-    status = app_tcp_connect(ip_addr, &data->handle);
+    status = app_tcp_connect(ip_addr, data);
 
     if (status == connector_callback_continue)
         APP_DEBUG("network_tcp_open: connected to %s\n", data->device_cloud_url);
