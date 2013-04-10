@@ -17,6 +17,8 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
     connector_bool_t type;
     UNUSED_ARGUMENT(class_id);
 
+    UNUSED_ARGUMENT(class_id);
+
     switch (status)
     {
            /* if either the server or our application cuts the connection, don't reconnect */

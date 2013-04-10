@@ -25,9 +25,9 @@ extern void app_free_data_points(void * points);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
-    UNUSED_ARGUMENT(class_id);
-
     connector_bool_t type;
+
+    UNUSED_ARGUMENT(class_id);
 
     switch (status)
     {
