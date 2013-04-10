@@ -482,7 +482,7 @@ static connector_status_t connector_facility_cc_init(connector_data_t * const co
 
         result = add_facility_data(connector_ptr, facility_index, E_MSG_FAC_CC_NUM, &ptr, sizeof *cc_ptr);
 
-        if (result == connector_working || ptr == NULL)
+        if (result != connector_working || ptr == NULL)
         {
             goto done;
         }
