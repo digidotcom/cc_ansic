@@ -421,19 +421,27 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
     return status;
 }
 
-static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
+static connector_callback_status_t app_tcp_status(connector_status_tcp_event_t const * const tcp_event)
 {
+    /* We don't want to see first missed and restored keepalive debug printf.
+     * Keepalive sometimes missed and restored almost at the same time.
+     */
+    static size_t keepalive_missed_count = 0;
 
-    switch (*status)
+    switch (tcp_event->status)
     {
     case connector_tcp_communication_started:
         APP_DEBUG("connector_tcp_communication_started\n");
         break;
     case connector_tcp_keepalive_missed:
-        APP_DEBUG("connector_tcp_keepalive_missed\n");
+        if (keepalive_missed_count > 0)
+            APP_DEBUG("connector_tcp_keepalive_missed\n");
+        keepalive_missed_count++;
         break;
     case connector_tcp_keepalive_restored:
-        APP_DEBUG("connector_tcp_keepalive_restored\n");
+        keepalive_missed_count--;
+        if (keepalive_missed_count > 0)
+            APP_DEBUG("connector_tcp_keepalive_restored\n");
         break;
     }
 

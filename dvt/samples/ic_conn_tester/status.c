@@ -14,9 +14,9 @@
 
 unsigned long miss_ka_time;
 
-static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
+static connector_callback_status_t app_tcp_status(connector_status_tcp_event_t const * const tcp_event)
 {
-    switch (*status)
+    switch (tcp_event->status)
     {
     case connector_tcp_communication_started:
         APP_PRINTF("connector_start_communicating\n");

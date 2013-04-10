@@ -239,9 +239,10 @@ typedef enum
 * @{
 */
 /**
-* TCP Status values passed to the application's callback for @ref connector_tcp_status.
+* TCP Status values
 *
 * These status values are used for an event notification.
+* @see connector_status_tcp_status_t
 */
 typedef enum {
     connector_tcp_communication_started,      /**< Etherios Cloud Connector has established connection with Etherios Device Cloud and starts communicating. */
@@ -252,6 +253,23 @@ typedef enum {
 /**
 * @}
 */
+
+/**
+* @defgroup connector_status_tcp_event_t TCP Status Structure
+* @{
+*/
+/**
+* TCP status structure is used for @ref connector_request_id_status_tcp callback. See @ref connector_tcp_status.
+*
+* This is used for an event notification.
+*/
+typedef struct {
+    connector_tcp_status_t CONST status;
+} connector_status_tcp_event_t;
+/**
+* @}
+*/
+
 
 /**
 * @defgroup connector_request_id_status_t  Cloud Connector status
