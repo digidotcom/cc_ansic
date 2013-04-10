@@ -218,8 +218,8 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
     else
     {
         strncpy(dp_info->file_path, path_prefix, path_prefix_bytes);
-        strncat(&dp_info->file_path[path_prefix_bytes], path, path_bytes);
-        strncat(&dp_info->file_path[path_prefix_bytes + path_bytes], extension, extension_bytes);
+        strncpy(&dp_info->file_path[path_prefix_bytes], path, path_bytes);
+        strncpy(&dp_info->file_path[path_prefix_bytes + path_bytes], extension, extension_bytes);
         result = connector_working;
     }
 
@@ -395,15 +395,24 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
 
         case connector_data_point_type_string:
         {
+            size_t const quotes_size = sizeof "\"\"" - 1;
+
+            if (bytes_available <= quotes_size)
+                break;
+
             if (dp_info->data.csv.bytes_sent == 0)
                 dp_info->data.csv.bytes_to_send = strlen(dp_ptr->data.element.native.string_value);
 
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%s", &dp_ptr->data.element.native.string_value[dp_info->data.csv.bytes_sent]);
+            bytes_processed = connector_snprintf(buffer, bytes_available, "\"%s\"", &dp_ptr->data.element.native.string_value[dp_info->data.csv.bytes_sent]);
             if (bytes_processed >= bytes_available)
                 bytes_processed = bytes_available - 1; /* exclude null-terminate, allowing partial data transfer only in this case */
 
-            dp_info->data.csv.bytes_to_send -= bytes_processed;
-            dp_info->data.csv.bytes_sent = (dp_info->data.csv.bytes_to_send > 0) ? dp_info->data.csv.bytes_sent + bytes_processed : 0;
+            {
+                size_t const bytes_copied = bytes_processed - quotes_size;
+
+                dp_info->data.csv.bytes_to_send -= bytes_copied;
+                dp_info->data.csv.bytes_sent = (dp_info->data.csv.bytes_to_send > 0) ? dp_info->data.csv.bytes_sent + bytes_copied : 0;
+            }
             break;
         }
 
@@ -527,7 +536,7 @@ static size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
     size_t bytes_processed = 0;
 
     if (request->unit != NULL)
-        bytes_processed = connector_snprintf(buffer, bytes_available, "%s", request->unit);
+        bytes_processed = connector_snprintf(buffer, bytes_available, "\"%s\"", request->unit);
 
     return bytes_processed;
 }
@@ -682,7 +691,7 @@ static connector_callback_status_t dp_handle_data_callback(connector_data_servic
 
         case dp_content_type_csv:
             data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available);
-            /* connector_debug_printf("DP Request:\n%s\n", (char *)data_ptr->buffer); */
+            connector_debug_printf("DP Request:\n%.*s\n", data_ptr->bytes_used, (char *)data_ptr->buffer);
             data_ptr->more_data = (dp_info->data.csv.current_dp == NULL) ? connector_false : connector_true;
             break;
     }

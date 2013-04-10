@@ -29,31 +29,32 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
     va_start(args, format);
 
-    #if __STDC_VERSION__ >= 199901L
+#if __STDC_VERSION__ >= 199901L
     result = vsnprintf(str, size, format, args);
-    #else
+#else
+    /*************************************************************************
+     * NOTE: Decided to have 64 bytes here considering following assumption  *
+     * 1. In the worst case, only one format specifier will be used.         *
+     * 2. Maximum of 48 bytes are used to represent a single precision value *
+     *************************************************************************/
+    #define SAFE_BUFFER_BYTES 64
+
+    if (size >= SAFE_BUFFER_BYTES)
     {
-        #define SAFE_BUFFER_BYTES 64;
-        size_t const max_format_bytes = 12;
-
-        CONFIRM(strlen(format) < max_format_bytes);
-        if (size >= SAFE_BUFFER_BYTES)
-        {
-            result = vsprintf(str, format, args);
-        }
-        else
-        {
-            char local_buffer[SAFE_BUFFER_BYTES];
-            size_t const bytes_needed = vsprintf(local_buffer, format, args);
-
-            result = (bytes_needed < size) ? bytes_needed : size - 1;
-            memcopy(str, local_buffer, result);
-            str[result] = '\0';
-            result = bytes_needed;
-        }
-        #undef SAFE_BUFFER_BYTES
+        result = vsprintf(str, format, args);
     }
-    #endif
+    else
+    {
+        char local_buffer[SAFE_BUFFER_BYTES];
+        size_t const bytes_needed = vsprintf(local_buffer, format, args);
+
+        result = (bytes_needed < size) ? bytes_needed : size - 1;
+        memcpy(str, local_buffer, result);
+        str[result] = '\0';
+        result = bytes_needed;
+    }
+    #undef SAFE_BUFFER_BYTES
+#endif
     va_end(args);
 
     return result;
