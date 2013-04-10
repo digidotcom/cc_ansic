@@ -39,7 +39,7 @@
  * 2. On a linux system with 32 bit architecture add define _FILE_OFFSET_BITS=64 in the 
  *    Makefile: 
  *          CFLAGS += -D_FILE_OFFSET_BITS=64 
- */
+ */ 
 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
 #define CONNECTOR_OFFSET_MAX INT64_MAX
 #define PRIoffset  PRId64
@@ -291,8 +291,8 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 
 static int app_copy_statbuf(connector_file_system_statbuf_t * const pstat, struct stat const * const statbuf)
 {
-    pstat->last_modified = (uint32_t) statbuf->st_mtime;
     int result = 0;
+    pstat->last_modified = (uint32_t) statbuf->st_mtime;
 
     if (S_ISDIR(statbuf->st_mode))
     {

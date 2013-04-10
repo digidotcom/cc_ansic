@@ -291,8 +291,8 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 
 static int app_copy_statbuf(connector_file_system_statbuf_t * const pstat, struct stat const * const statbuf)
 {
-    pstat->last_modified = (uint32_t) statbuf->st_mtime;
     int result = 0;
+    pstat->last_modified = (uint32_t) statbuf->st_mtime;
 
     if (S_ISDIR(statbuf->st_mode))
     {
