@@ -89,7 +89,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
 
             static char ds_complete_text[sizeof user->file_path + sizeof (SIZE_TEXT MACRO_TO_STRING(SIZE_MAX)) + 1];
 
-            sprintf(ds_complete_text, "%s %s%zu", user->file_path, SIZE_TEXT, user->file_length_in_bytes);
+            sprintf(ds_complete_text, "%s %s%" PRIsize "", user->file_path, SIZE_TEXT, user->file_length_in_bytes);
 
             open_timing_table("Initiate put file: ", ds_complete_text);
         }

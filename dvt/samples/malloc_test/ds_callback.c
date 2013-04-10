@@ -75,7 +75,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
     status = connector_initiate_action(handle, connector_initiate_send_data, &user->header);
     if (status == connector_success)
     {
-        APP_DEBUG("send_file: %p %s length %zu\n", (void *)user, user->file_path, user->file_length_in_bytes);
+        APP_DEBUG("send_file: %p %s length %" PRIsize "\n", (void *)user, user->file_path, user->file_length_in_bytes);
         put_file_active_count++;
     }
     else
@@ -317,7 +317,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         device_request->response_data = ds_buffer;
         device_request->length_in_bytes = (rand() % (DS_DATA_SIZE +1));
         device_request->count = DEVICE_REPONSE_COUNT;
-        APP_DEBUG("process_device_request_data: total response length = %zu\n", (device_request->length_in_bytes * device_request->count));
+        APP_DEBUG("process_device_request_data: total response length = %" PRIsize "\n", (device_request->length_in_bytes * device_request->count));
     }
     return status;
 }

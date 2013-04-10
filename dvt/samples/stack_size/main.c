@@ -56,8 +56,8 @@ static void * PrintThreadStackInit(size_t * StackSize, size_t * GuardSize)
 #ifdef THREAD_STACK_SIZE_DEBUG
     APP_DEBUG ("-------------------------------------\n");
     APP_DEBUG ("Thread Stack top:        %p\n", StackTop);
-    APP_DEBUG ("Thread Stack size:       %zu bytes\n", *StackSize);
-    APP_DEBUG ("Thread Stack guard size: %zu bytes\n", *GuardSize);
+    APP_DEBUG ("Thread Stack size:       %" PRIsize " bytes\n", *StackSize);
+    APP_DEBUG ("Thread Stack guard size: %" PRIsize " bytes\n", *GuardSize);
     APP_DEBUG ("Thread Min Stack size:   %d bytes\n", PTHREAD_STACK_MIN);
     APP_DEBUG ("Thread Stack bottom:     %p\n", StackBottom);
     APP_DEBUG ("-------------------------------------\n");
@@ -229,7 +229,7 @@ static void write_stack_info_file(size_t const stack_size)
 #if defined CONNECTOR_DEVICE_ID_METHOD
     fprintf(file_fd, STACK_SIZE_HTML_OPTION_LIST, "CONNECTOR_DEVICE_ID_METHOD");
 #endif
-    fprintf(file_fd, STACKSIZE_HTML_TABLE_ROW("%zu"),"Maximum stack size in bytes", stack_size);
+    fprintf(file_fd, STACKSIZE_HTML_TABLE_ROW("%" PRIsize ""),"Maximum stack size in bytes", stack_size);
 
     fprintf(file_fd, STACK_SIZE_HTML_OPTION_LIST_CLOSE);
 
@@ -285,7 +285,7 @@ void * connector_run_thread(void * arg)
         *ptr = STACK_INIT_VALUE;
     }
 
-    APP_DEBUG("connector_run_thread starts %d Stack = %p to %p (size = %zu)\n", getpid(), stack_top, stack_bottom, stack_size);
+    APP_DEBUG("connector_run_thread starts %d Stack = %p to %p (size = %" PRIsize ")\n", getpid(), stack_top, stack_bottom, stack_size);
 
     connector_run_thread_status = connector_success;
 
@@ -294,7 +294,7 @@ void * connector_run_thread(void * arg)
 
     PrintSummaryStack();
     write_stack_info_file(stack_size_used);
-    APP_DEBUG("stack size between connector_run and callback = %zu\n", stack_size_used);
+    APP_DEBUG("stack size between connector_run and callback = %" PRIsize "\n", stack_size_used);
 
     connector_run_thread_status = connector_device_terminated;
 
@@ -394,14 +394,14 @@ int main (void)
         if (total_malloc_size != 0)
         {
             /* terminate iik so it will not reconnect to iDigi */
-            APP_DEBUG("total malloc memory = %zu after all threads are canceled\n", total_malloc_size);
+            APP_DEBUG("total malloc memory = %" PRIsize " after all threads are canceled\n", total_malloc_size);
             if (connector_run_thread_status == connector_device_terminated)
             {
                 APP_DEBUG("Error: connector_run has been terminated by connector_initiate_terminate but total malloc memory is not 0 after all threads are canceled\n");
                 if (file_fd != NULL)
                 {
                     fprintf(file_fd, "<h1>Memory Leak</h1>\n");
-                    fprintf(file_fd, "<p>Total active malloc memory after connector_run is terminated = %zu</p>\n", total_malloc_size);
+                    fprintf(file_fd, "<p>Total active malloc memory after connector_run is terminated = %" PRIsize "</p>\n", total_malloc_size);
                 }
             }
         }

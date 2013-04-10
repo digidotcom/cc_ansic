@@ -855,7 +855,7 @@ static connector_callback_status_t app_process_file_read(connector_file_system_r
 
     int const result = read(fd, data->buffer, data->bytes_available);
 
-    APP_DEBUG("read %ld, %zu, returned %d\n", fd, data->bytes_available, result);
+    APP_DEBUG("read %ld, %" PRIsize ", returned %d\n", fd, data->bytes_available, result);
 
     if (result < 0)
     {
@@ -934,7 +934,7 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
     int const result = write(fd, data->buffer, data->bytes_available);
 
 
-    APP_DEBUG("write %ld, %zu, returned %d\n", fd, data->bytes_available, result);
+    APP_DEBUG("write %ld, %" PRIsize ", returned %d\n", fd, data->bytes_available, result);
 
     if (result < 0)
     {

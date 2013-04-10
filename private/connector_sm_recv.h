@@ -419,7 +419,7 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
 
         if ((sm_header.segment.count > sm_ptr->session.max_segments) || (sm_header.segment.number >= sm_ptr->session.max_segments))
         {
-            connector_debug_printf("sm_process_packet: Exceeded maximum segments [%zu/%zu]!\n", sm_header.segment.count, sm_ptr->session.max_segments);
+            connector_debug_printf("sm_process_packet: Exceeded maximum segments [%" PRIsize "/%" PRIsize "]!\n", sm_header.segment.count, sm_ptr->session.max_segments);
             goto error;
         }
 

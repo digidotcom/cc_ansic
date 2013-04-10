@@ -131,7 +131,7 @@ int application_run(connector_handle_t handle)
     }
     else
     {
-        APP_DEBUG("Read %zu bytes\n", sm_dvt_buffer_size);
+        APP_DEBUG("Read %" PRIsize " bytes\n", sm_dvt_buffer_size);
     }
     fclose(fp);
     fp = NULL;

@@ -331,7 +331,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         }
         else
         {
-            APP_DEBUG("app_process_device_request_data: invalid data  %zu \"%.*s\"\n", receive_data->bytes_used, (int)receive_data->bytes_used, transport);
+            APP_DEBUG("app_process_device_request_data: invalid data  %" PRIsize " \"%.*s\"\n", receive_data->bytes_used, (int)receive_data->bytes_used, transport);
             device_request->target = device_request_invalid_data;
             result = connector_callback_error;
         }

@@ -69,7 +69,7 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     {
         if (print_once)
         {
-            connector_debug_printf("Active %s sessions reached the limit %zu\n", client_originated ? "client" : "cloud", active_sessions);
+            connector_debug_printf("Active %s sessions reached the limit %" PRIsize "\n", client_originated ? "client" : "cloud", active_sessions);
             print_once = connector_false;
         }
 

@@ -221,7 +221,7 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
     }
     else
     {
-        connector_debug_printf("dp_fill_file_path [DataPoint/%s.%s]: file path bytes [%zu] exceeds the limit [%zu]\n", path, extension, full_path_bytes, available_path_bytes);
+        connector_debug_printf("dp_fill_file_path [DataPoint/%s.%s]: file path bytes [%" PRIsize "] exceeds the limit [%" PRIsize "]\n", path, extension, full_path_bytes, available_path_bytes);
         result = connector_invalid_data;
     }
 

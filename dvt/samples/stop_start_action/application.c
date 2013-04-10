@@ -198,7 +198,7 @@ void write_transport_error_file(connector_handle_t handle)
             else
             {
                 /* assume it's done sending */
-                APP_DEBUG("write_transport_error_file: sent %s (%s) size %zu \n", TRANSPORT_ERROR_FILE, transport_to_string(transport), file_length);
+                APP_DEBUG("write_transport_error_file: sent %s (%s) size %" PRIsize " \n", TRANSPORT_ERROR_FILE, transport_to_string(transport), file_length);
                 break;
             }
         } while (status != connector_device_terminated);
@@ -294,7 +294,7 @@ int application_run(connector_handle_t handle)
 #endif
 
 
-    APP_DEBUG("application_run: terminate_flag = %d file_length = %zu\n", terminate_flag, file_length);
+    APP_DEBUG("application_run: terminate_flag = %d file_length = %" PRIsize "\n", terminate_flag, file_length);
 
      while (file_length > 0)
      {

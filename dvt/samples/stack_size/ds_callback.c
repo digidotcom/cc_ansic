@@ -73,7 +73,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
     status = connector_initiate_action(handle, connector_initiate_send_data, &user->header);
     if (status == connector_success)
     {
-        APP_DEBUG("send_file: %p %s length %zu\n", (void *)user, user->file_path, user->file_length_in_bytes);
+        APP_DEBUG("send_file: %p %s length %" PRIsize "\n", (void *)user, user->file_path, user->file_length_in_bytes);
         put_file_active_count++;
     }
     else

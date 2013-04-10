@@ -127,7 +127,7 @@ int application_run(connector_handle_t handle)
     }
     else
     {
-        APP_DEBUG("Read %zu bytes\n", ds_info->file_size);
+        APP_DEBUG("Read %" PRIsize " bytes\n", ds_info->file_size);
     }
     fclose(fp);
     fp = NULL;

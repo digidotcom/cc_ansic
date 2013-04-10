@@ -55,8 +55,8 @@ void * PrintThreadStackInit(size_t * StackSize, size_t * GuardSize)
 #ifdef THREAD_STACK_SIZE_DEBUG
     APP_DEBUG ("-------------------------------------\n");
     APP_DEBUG ("Thread Stack top:        %p\n", StackTop);
-    APP_DEBUG ("Thread Stack size:       %zu bytes\n", *StackSize);
-    APP_DEBUG ("Thread Stack guard size: %zu bytes\n", *GuardSize);
+    APP_DEBUG ("Thread Stack size:       %" PRIsize " bytes\n", *StackSize);
+    APP_DEBUG ("Thread Stack guard size: %" PRIsize " bytes\n", *GuardSize);
     APP_DEBUG ("Thread Min Stack size:   %d bytes\n", PTHREAD_STACK_MIN);
     APP_DEBUG ("Thread Stack bottom:     %p\n", StackBottom);
     APP_DEBUG ("-------------------------------------\n");
@@ -135,14 +135,14 @@ void * connector_run_thread(void * arg)
         *ptr = STACK_INIT_VALUE;
     }
 
-    APP_DEBUG("connector_run_thread starts %d Stack = %p to %p (size = %zu)\n", getpid(), stack_top, stack_bottom, stack_size);
+    APP_DEBUG("connector_run_thread starts %d Stack = %p to %p (size = %" PRIsize ")\n", getpid(), stack_top, stack_bottom, stack_size);
 
     connector_run_thread_status = connector_run((connector_handle_t)arg);
 
     APP_DEBUG("connector_run thread exits %d\n", connector_run_thread_status);
 
     PrintSummaryStack();
-    APP_DEBUG("stack size between connector_run and callback = %zu\n", stack_size_used);
+    APP_DEBUG("stack size between connector_run and callback = %" PRIsize "\n", stack_size_used);
     APP_DEBUG("\nconnector_run_thread:\n");
     PrintThreadStackInit(&stack_size, &threadGuardSize);
 
@@ -274,7 +274,7 @@ void write_usage_file(char const * text)
 #ifdef CONNECTOR_DEBUG
     fprintf(fp, "DEBUG, ");
 #endif
-    fprintf(fp, "\n%s: heap used %zu\n\n", text, total_max_malloc_size);
+    fprintf(fp, "\n%s: heap used %" PRIsize "\n\n", text, total_max_malloc_size);
 
     fclose(fp);
 
@@ -308,7 +308,7 @@ int main (void)
         if (total_malloc_size != 0)
         {
             /* terminate iik so it will not reconnect to iDigi */
-            APP_DEBUG("total malloc memory = %zu after all threads are canceled\n", total_malloc_size);
+            APP_DEBUG("total malloc memory = %" PRIsize " after all threads are canceled\n", total_malloc_size);
             if (connector_run_thread_status == connector_device_terminated)
             {
                 APP_DEBUG("Error: connector_run has been terminated by connector_initiate_terminate but total malloc memory is not 0 after all threads are canceled\n");
@@ -319,7 +319,7 @@ int main (void)
             }
             rc = -1;
         }
-        APP_DEBUG("Allocated memory size = %zu\n", total_max_malloc_size);
+        APP_DEBUG("Allocated memory size = %" PRIsize "\n", total_max_malloc_size);
         write_usage_file("main");
             /* continue and reconnect iDigi so python test will not fail */
     }

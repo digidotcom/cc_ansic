@@ -211,7 +211,7 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
         /* no break; */
     default:
         image_data->status = connector_firmware_status_success;
-        /* APP_DEBUG("target = %d, offset = 0x%04X, length = %zu total length = %zu\n", image_data->target_number, image_data->image.offset,
+        /* APP_DEBUG("target = %d, offset = 0x%04X, length = %" PRIsize " total length = %" PRIsize "\n", image_data->target_number, image_data->image.offset,
                                                                                      image_data->image.bytes_used, dvt_current_ptr->file_size);
          */
         goto done;

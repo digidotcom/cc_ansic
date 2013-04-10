@@ -563,11 +563,11 @@ static connector_callback_status_t app_process_file_read(connector_file_request_
     if (result < 0)
     {
         status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("read %ld, %zu, returned %d, errno %d\n", fd, response_data->size_in_bytes, result, errno);
+        APP_DEBUG("read %ld, %" PRIsize ", returned %d, errno %d\n", fd, response_data->size_in_bytes, result, errno);
         goto done;
     }
 
-    APP_DEBUG("read %ld, %zu, returned %d\n", fd, response_data->size_in_bytes, result);
+    APP_DEBUG("read %ld, %" PRIsize ", returned %d\n", fd, response_data->size_in_bytes, result);
     response_data->size_in_bytes = result;
 
 done:
@@ -585,11 +585,11 @@ static connector_callback_status_t app_process_file_write(connector_file_write_r
     if (result < 0)
     {
         status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("write %ld, %zu, returned %d, errno %d\n", fd, request_data->size_in_bytes, result, errno);
+        APP_DEBUG("write %ld, %" PRIsize ", returned %d, errno %d\n", fd, request_data->size_in_bytes, result, errno);
         goto done;
     }
 
-    APP_DEBUG("write %ld, %zu, returned %d\n", fd, request_data->size_in_bytes, result);
+    APP_DEBUG("write %ld, %" PRIsize ", returned %d\n", fd, request_data->size_in_bytes, result);
 
     response_data->size_in_bytes = result;
 

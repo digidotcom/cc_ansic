@@ -246,7 +246,7 @@ static connector_callback_status_t app_process_file_read(connector_file_request_
     int const result = read(fd, response_data->data_ptr, response_data->size_in_bytes);
     int errnum = getErrno(); // In NET+OS APP_DEBUG clears errno
 
-    APP_DEBUG("read %ld, %zu, returned %d\n", fd, response_data->size_in_bytes, result);
+    APP_DEBUG("read %ld, %" PRIsize ", returned %d\n", fd, response_data->size_in_bytes, result);
 
     if (result < 0)
     {
@@ -270,7 +270,7 @@ static connector_callback_status_t app_process_file_write(connector_file_write_r
     int const result = write(fd, request_data->data_ptr, request_data->size_in_bytes);
     int errnum = getErrno(); // In NET+OS APP_DEBUG clears errno
 
-    APP_DEBUG("write %ld, %zu, returned %d\n", fd, request_data->size_in_bytes, result);
+    APP_DEBUG("write %ld, %" PRIsize ", returned %d\n", fd, request_data->size_in_bytes, result);
 
     if (result < 0)
     {

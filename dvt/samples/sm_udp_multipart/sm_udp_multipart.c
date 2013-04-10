@@ -118,7 +118,7 @@ static connector_callback_status_t app_process_cli_response(connector_sm_cli_res
         memcpy(cli_response->buffer, &app_ptr->data_ptr[app_ptr->bytes_sent], cli_response->bytes_used);
         app_ptr->bytes_sent += cli_response->bytes_used;
         cli_response->more_data = (app_ptr->bytes_sent < app_ptr->total_bytes) ? connector_true : connector_false;
-        APP_DEBUG("Sending CLI response [%zu bytes]\n", cli_response->bytes_used);
+        APP_DEBUG("Sending CLI response [%" PRIsize " bytes]\n", cli_response->bytes_used);
     }
 
 done:
@@ -263,7 +263,7 @@ static connector_callback_status_t app_handle_device_request(connector_request_i
                 app_ptr->bytes_sent = 0;
             break;
 
-            APP_DEBUG("Received %zu request bytes, on SM multipart\n", recv_ptr->bytes_used);
+            APP_DEBUG("Received %" PRIsize " request bytes, on SM multipart\n", recv_ptr->bytes_used);
             break;
         }
 
@@ -278,7 +278,7 @@ static connector_callback_status_t app_handle_device_request(connector_request_i
             app_ptr->bytes_sent += reply_ptr->bytes_used;
             reply_ptr->more_data = (app_ptr->bytes_sent < app_ptr->total_bytes) ? connector_true : connector_false;
 
-            APP_DEBUG("Sending %zu response bytes, on SM multipart\n", reply_ptr->bytes_used);
+            APP_DEBUG("Sending %" PRIsize " response bytes, on SM multipart\n", reply_ptr->bytes_used);
             break;
         }
 
@@ -401,7 +401,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             connector_sm_opaque_response_t * const response = data;
             static size_t test_case = 0;
 
-            APP_DEBUG("Received %zu opaque bytes on id %d\n", response->bytes_used, response->id);
+            APP_DEBUG("Received %" PRIsize " opaque bytes on id %d\n", response->bytes_used, response->id);
             switch (test_case)
             {
                 case 0:

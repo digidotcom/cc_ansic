@@ -46,8 +46,8 @@ void * PrintThreadStackInit(size_t * StackSize, size_t * GuardSize)
 
     APP_DEBUG ("-------------------------------------\n");
     APP_DEBUG ("Thread Stack top:        %p\n", StackTop);
-    APP_DEBUG ("Thread Stack size:       %zu bytes\n", *StackSize);
-    APP_DEBUG ("Thread Stack guard size: %zu bytes\n", *GuardSize);
+    APP_DEBUG ("Thread Stack size:       %" PRIsize " bytes\n", *StackSize);
+    APP_DEBUG ("Thread Stack guard size: %" PRIsize " bytes\n", *GuardSize);
     APP_DEBUG ("Thread Min Stack size:   %d bytes\n", PTHREAD_STACK_MIN);
     APP_DEBUG ("Thread Stack bottom:     %p\n", StackBottom);
     APP_DEBUG ("-------------------------------------\n");
@@ -147,7 +147,7 @@ void * connector_run_thread(void * arg)
         *ptr = STACK_INIT_VALUE;
     }
 
-    APP_DEBUG("connector_run_thread starts %d Stack = %p to %p (size = %zu)\n", getpid(), stack_top, stack_bottom, stack_size);
+    APP_DEBUG("connector_run_thread starts %d Stack = %p to %p (size = %" PRIsize ")\n", getpid(), stack_top, stack_bottom, stack_size);
 
     /* Call check_stack_size() at beginning of the thread.
      * Also call it in deeply nested functions */
@@ -159,7 +159,7 @@ void * connector_run_thread(void * arg)
     APP_DEBUG("connector_run thread exits %d\n", status);
 
     PrintSummaryStack();
-    APP_DEBUG("connector_run - callback: stack size = %zu\n", stack_size_used);
+    APP_DEBUG("connector_run - callback: stack size = %" PRIsize "\n", stack_size_used);
     APP_DEBUG("\nconnector_run_thread:\n");
     PrintThreadStackInit(&stack_size, &threadGuardSize);
     pthread_exit(arg);

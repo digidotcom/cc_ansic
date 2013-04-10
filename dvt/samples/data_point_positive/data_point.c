@@ -96,7 +96,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
 
     if (point == NULL)
     {
-        APP_DEBUG("get_stream_points: Failed to malloc data_points [%zu bytes]\n", bytes_needed);
+        APP_DEBUG("get_stream_points: Failed to malloc data_points [%" PRIsize " bytes]\n", bytes_needed);
         goto error;
     }
 
@@ -322,7 +322,7 @@ static char * get_path_name(connector_transport_t const transport, connector_dat
 
     if (path_name == NULL)
     {
-        APP_DEBUG("get_path_name: Failed to malloc path_name [%zu]\n", path_max_size);
+        APP_DEBUG("get_path_name: Failed to malloc path_name [%" PRIsize "]\n", path_max_size);
         goto error;
     }
 
@@ -395,7 +395,7 @@ static void * get_binary_point(size_t * bytes)
     }
     else
     {
-        APP_DEBUG("get_binary_point: Failed to malloc binary point %zu bytes\n", rand_bytes);
+        APP_DEBUG("get_binary_point: Failed to malloc binary point %" PRIsize " bytes\n", rand_bytes);
     }
 
     return data_ptr;
@@ -639,7 +639,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
             connector_sm_opaque_response_t * const response = data;
 
-            APP_DEBUG("Received %zu opaque bytes on id %d\n", response->bytes_used, response->id);
+            APP_DEBUG("Received %" PRIsize " opaque bytes on id %d\n", response->bytes_used, response->id);
             break;
         }
 

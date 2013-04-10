@@ -110,7 +110,7 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
     APP_DEBUG("offset = 0x%04X\n", image_data->image.offset);
     APP_DEBUG("data = %p\n", image_data->image.data);
     total_image_size += image_data->image.bytes_used;
-    APP_DEBUG("length = %zu (total = %zu)\n", image_data->image.bytes_used, total_image_size);
+    APP_DEBUG("length = %" PRIsize " (total = %" PRIsize ")\n", image_data->image.bytes_used, total_image_size);
 
 done:
     return status;

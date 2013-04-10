@@ -33,7 +33,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
 //            ds_record_t const * const app_ptr = request_data;
 
             *length = DS_DATA_SIZE; // app_ptr->file_length_in_bytes;
-            APP_DEBUG("app_sm_handle: connector_sm_total_length %zu\n", *length);
+            APP_DEBUG("app_sm_handle: connector_sm_total_length %" PRIsize "\n", *length);
             break;
         }
 
@@ -78,7 +78,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
             connector_sm_opaque_response_t * const response = response_data;
 
-            APP_DEBUG("Received %zu opaque bytes on id %d\n", response->bytes, response->id);
+            APP_DEBUG("Received %" PRIsize " opaque bytes on id %d\n", response->bytes, response->id);
             break;
         }
 #if (defined CONNECTOR_SM_CLI)

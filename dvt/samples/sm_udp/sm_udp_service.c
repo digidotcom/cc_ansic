@@ -401,7 +401,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
             connector_sm_opaque_response_t * const response = data;
 
-            APP_DEBUG("Received %zu opaque bytes on id %d\n", response->bytes_used, response->id);
+            APP_DEBUG("Received %" PRIsize " opaque bytes on id %d\n", response->bytes_used, response->id);
             break;
         }
 

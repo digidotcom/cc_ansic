@@ -23,7 +23,7 @@ connector_status_t send_put_request(connector_handle_t handle, dvt_ds_t * const 
 
     ds_info->bytes_sent = 0;
     header = &ds_info->header;
-    APP_DEBUG("Sending %s of length %zu\n", ds_info->file_path, (ds_info->test_case != dvt_case_put_request_ds_zero) ? ds_info->file_size : 0);
+    APP_DEBUG("Sending %s of length %" PRIsize "\n", ds_info->file_path, (ds_info->test_case != dvt_case_put_request_ds_zero) ? ds_info->file_size : 0);
     switch (ds_info->test_case)
     {
     case dvt_case_put_request_ds_append:
@@ -240,7 +240,7 @@ static void start_put_request(device_request_handle_t * target_info, uint8_t con
 
     if (path_bytes >= sizeof ds_info->file_path)
     {
-        APP_DEBUG("start_put_request: unexpected data length %zu\n", path_bytes);
+        APP_DEBUG("start_put_request: unexpected data length %" PRIsize "\n", path_bytes);
         goto done;
     }
 

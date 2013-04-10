@@ -97,7 +97,7 @@ static connector_callback_status_t app_firmware_image_data(connector_fw_image_da
     APP_DEBUG("offset = 0x%04X\n", image_data->offset);
     APP_DEBUG("data = %p\n", image_data->data);
     total_image_size += image_data->length;
-    APP_DEBUG("length = %zu (total = %zu)\n", image_data->length, total_image_size);
+    APP_DEBUG("length = %" PRIsize " (total = %" PRIsize ")\n", image_data->length, total_image_size);
 
     if (is_fw_image)
     {
@@ -143,7 +143,7 @@ static connector_callback_status_t app_firmware_download_complete(connector_fw_d
 
     if (complete_request->code_size != total_image_size)
     {
-        APP_DEBUG("app_firmware_download_complete: actual image size (%u) != the code size received (%zu)\n",
+        APP_DEBUG("app_firmware_download_complete: actual image size (%u) != the code size received (%" PRIsize ")\n",
                       complete_request->code_size, total_image_size);
         complete_response->status = connector_fw_download_not_complete;
     }
