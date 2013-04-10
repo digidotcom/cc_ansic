@@ -719,7 +719,7 @@ static connector_callback_status_t dp_handle_response_callback(connector_data_t 
     user_data.hint = data_ptr->hint;
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
-    if (callback_status == connector_pending) goto error;
+    if (callback_status == connector_callback_busy) goto error;
 
     if (free_data_buffer(connector_ptr, named_buffer_id(data_point_block), dp_info) != connector_working)
         callback_status = connector_callback_abort;
@@ -754,7 +754,7 @@ static connector_callback_status_t dp_handle_status_callback(connector_data_t * 
     user_data.session_error = data_ptr->session_error;
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
-    if (callback_status == connector_pending) goto error;
+    if (callback_status == connector_callback_busy) goto error;
 
     if (free_data_buffer(connector_ptr, named_buffer_id(data_point_block), dp_info) != connector_working)
         callback_status = connector_callback_abort;

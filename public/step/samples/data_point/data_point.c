@@ -40,7 +40,7 @@ void * app_allocate_data_points(size_t const points_count)
             dp_ptr->type = connector_data_point_type_integer;
 
             {
-                static char path_name[] = "step_sample";
+                static char path_name[] = "cpu_usage_step";
                 static char unit_value[] = "%";
 
                 dp_ptr->path = path_name;
@@ -99,40 +99,34 @@ static connector_bool_t get_cpu_stat(stat_cpu_t * const stat)
 static int app_get_cpu_usage(void)
 {
     int cpu_usage;
-    static stat_cpu_t stat1;
+    static stat_cpu_t last_stat;
+    stat_cpu_t current_stat;
 
+    if (get_cpu_stat(&current_stat))
     {
         static connector_bool_t first_time = connector_true;
 
         if (first_time)
         {
-            if (!get_cpu_stat(&stat1))
-                goto error;
-
             first_time = connector_false;
+            cpu_usage = 0;
         }
-    }
-
-    {
-        stat_cpu_t stat2;
-
-        if (get_cpu_stat(&stat2))
+        else
         {
-            int const user_time = (int)(stat2.user - stat1.user);
-            int const nice_time = (int)(stat2.nice - stat1.nice);
-            int const system_time = (int)(stat2.system - stat1.system);
-            int const iowait_time = (int)(stat2.iowait - stat1.iowait);
-            int const idle_time = (int)(stat2.idle - stat1.idle);
+            int const user_time = (int)(current_stat.user - last_stat.user);
+            int const nice_time = (int)(current_stat.nice - last_stat.nice);
+            int const system_time = (int)(current_stat.system - last_stat.system);
+            int const iowait_time = (int)(current_stat.iowait - last_stat.iowait);
+            int const idle_time = (int)(current_stat.idle - last_stat.idle);
             int const active_time = user_time + nice_time + system_time + iowait_time;
             int const total_time = active_time + idle_time;
 
             cpu_usage = (total_time > 0) ? (active_time * 100)/total_time : 0;
-            stat1 = stat2; /* use memcpy on the platform where this doesn't work */
-            goto done;
         }
-    }
 
-error:
+        last_stat = current_stat; /* use memcpy on the platform where this doesn't work */
+    }
+    else
     {
         static connector_bool_t first_time = connector_true;
 
@@ -145,7 +139,6 @@ error:
         cpu_usage = rand() % 100;
     }
 
-done:
     return cpu_usage;
 }
 
