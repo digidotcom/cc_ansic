@@ -60,6 +60,28 @@ KNOWN ISSUES
     
 BUG FIXES
 
+    v1.2.2
+     
+        Corrected ARM misalignment warnings, which cause compilation errors
+        due to -Werror.  The casting was between byte and word pointers, 
+        which verified safe in the original code.  A cast to void * was used 
+        to avoid the warning.  [IC4C-49] 
+
+    v1.2.1
+     
+        Corrected boundary condition defect related to RCI responses that are of
+        size N*497 bytes, where N is an integer.  [44612] 
+
+        Corrected rendering of XML entity characters contained in RCI 
+        configuration pages.  [45364, 45365]
+         
+        Corrected iDigi Manager Pro problems when RCI configuration input files  
+        used a '0xhex' type or the keyword 'unit'.  The corrected type value 
+        is now '0x_hex32' and the corrected keyword is now 'units'.  [44959]
+        
+        Corrected intermittent problem with idigi_file_system_close callback on 
+        the Linux platform when app_process_file_close() returns busy.  [44755] 
+
     v1.2
      
         Corrected all platforms to include handling for unrecognized iDigi 
