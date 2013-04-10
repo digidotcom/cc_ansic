@@ -15,6 +15,7 @@ typedef enum
     dvt_case_fw_invalid_offset,
     dvt_case_fw_invalid_data,
     dvt_case_fw_hardware_error,
+    dvt_case_fw_test_file,
     dvt_case_last
 } dvt_cases_t;
 

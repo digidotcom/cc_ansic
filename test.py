@@ -1,11 +1,11 @@
 # ***************************************************************************
 # Copyright (c) 2011, 2012 Digi International Inc.,
 # All rights not expressly granted are reserved.
-# 
+#
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
-# 
+#
 # Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
 #
 # ***************************************************************************
@@ -90,13 +90,14 @@ sample_tests = {
     'file_system'       : ('test_file_system.py',),
     'remote_config'     : ('test_binary_rci.py',),
 }
-run_sample  = TestType('run_sample', 'public/run/samples/', 
+run_sample  = TestType('run_sample', 'public/run/samples/',
                        'dvt/cases/sample_tests', sample_tests)
-step_sample = TestType('step_sample', 'public/step/samples/', 
+step_sample = TestType('step_sample', 'public/step/samples/',
                        'dvt/cases/sample_tests', sample_tests)
 
 dvt_tests = {
     'full_test'                   : ('test_firmware_errors.py',
+                                     'test_firmware_validation.py',
                                      'test_device_request.py',
                                      'test_put_request.py',
                                      'test_reboot.py',
@@ -134,24 +135,24 @@ dvt_test    = TestType('dvt_test', 'dvt/samples/', 'dvt/cases/dvt_tests',
 keepalive_tests = {
     'keep_alive_test'             : ('test_keep_alive.py',),
 }
-keepalive_test = TestType('keepalive_test', 'dvt/samples/', 
+keepalive_test = TestType('keepalive_test', 'dvt/samples/',
                           'dvt/cases/keep_alive', keepalive_tests)
 
 admin_tests = {
     'full_test'                   : ('test_redirect.py',
                                      'test_nodebug_redirect.py',)
 }
-admin_test  = TestType('admin_test',  'dvt/samples', 
+admin_test  = TestType('admin_test',  'dvt/samples',
                        'dvt/cases/admin_tests', admin_tests)
 
-malloc_tests = {'malloc_test'     : ('test_malloc.py',) 
+malloc_tests = {'malloc_test'     : ('test_malloc.py',)
 }
-malloc_test  = TestType('malloc_test',  'dvt/samples', 
+malloc_test  = TestType('malloc_test',  'dvt/samples',
                        'dvt/cases/malloc_tests', malloc_tests)
 
-timing_tests = {'ic_timing'     : ('test_ic_timing.py',) 
+timing_tests = {'ic_timing'     : ('test_ic_timing.py',)
 }
-timing_test  = TestType('ic_timing',  'dvt/samples', 
+timing_test  = TestType('ic_timing',  'dvt/samples',
                        'dvt/cases/ic_timing', timing_tests)
 
 stacksize_tests = {'stack_size'     : ('test_stack_size.py',
@@ -160,25 +161,25 @@ stacksize_tests = {'stack_size'     : ('test_stack_size.py',
                                        'test_stack_size_fw.py',
                                        'test_stack_size_fs.py',)
 }
-stacksize_test  = TestType('stack_size',  'dvt/samples', 
+stacksize_test  = TestType('stack_size',  'dvt/samples',
                        'dvt/cases/stack_size', stacksize_tests)
 
 # Dictionary mapping Test Type name to it's instance.
 TESTS = dict((test.name,test) for test in [run_sample, step_sample,
-                                           malloc_test,  
-                                           dvt_test, admin_test, 
+                                           malloc_test,
+                                           dvt_test, admin_test,
                                            keepalive_test, timing_test,
                                            stacksize_test])
 SAMPLE_TESTS = dict((test.name,test) for test in [run_sample, step_sample])
 
 DVT_TESTS = dict((test.name,test) for test in [malloc_test,
-                                           dvt_test, admin_test, 
+                                           dvt_test, admin_test,
                                            keepalive_test, timing_test,
                                            stacksize_test])
 
 def generate_id(rest_session, method="mac"):
     """
-    Generate a Pseudo Random Device Id (low probability of duplication) and 
+    Generate a Pseudo Random Device Id (low probability of duplication) and
     provision device to account.
     """
 
@@ -240,9 +241,9 @@ def generate_id(rest_session, method="mac"):
             generated_id["meid"] = meid_id
 
 
-        TestRunner.log.info("Generated Device ID and adding to Etherios Account.", 
+        TestRunner.log.info("Generated Device ID and adding to Etherios Account.",
             extra={'description' : '', 'test': '', 'device_id' : device_id})
-        device_core = rest_mapper.create_resource('DeviceCore', 
+        device_core = rest_mapper.create_resource('DeviceCore',
             devConnectwareId=device_id, dpUdpSmEnabled='true')
         response = rest_session.post(device_core)
         if response.status_code == 201:
@@ -251,7 +252,7 @@ def generate_id(rest_session, method="mac"):
         else:
             TestRunner.log.info("Error Creating Device. %s" % response.content,
                 extra={'description' : '', 'test' : '', 'device_id' : device_id})
-    
+
     # If here, we couldn't provision a device, raise Exception.
     raise Exception("Failed to Provision a Device.")
 
@@ -270,20 +271,20 @@ def unique_device_type():
 class TestRunner(object):
     log = None
 
-    def __init__(self, hostname, username, password, description, base_dir, 
-        debug_on=False, cflags='', replace_list=[], update_config_header=False, 
+    def __init__(self, hostname, username, password, description, base_dir,
+        debug_on=False, cflags='', replace_list=[], update_config_header=False,
         tty=False, gcov=False, test_type=None, test_name=None,
         config_tool_jar='ConfigGenerator.jar', keystore=None):
 
         self.hostname     = hostname
         self.username     = username
         self.password     = password
-        self.rest_session = rest_session(hostname, 
+        self.rest_session = rest_session(hostname,
                                 auth=(username, password), verify=False)
 
         self.description          = description
         self.base_dir             = base_dir
-        self.debug_on             = debug_on 
+        self.debug_on             = debug_on
         self.cflags               = cflags
         self.replace_list         = replace_list
         self.update_config_header = update_config_header
@@ -335,14 +336,14 @@ class TestRunner(object):
 
     def run_tests(self):
 
-        test_modes = ([('CONNECTOR_FILE_SYSTEM', 'CONNECTOR_NO_FILE_SYSTEM'), 
+        test_modes = ([('CONNECTOR_FILE_SYSTEM', 'CONNECTOR_NO_FILE_SYSTEM'),
                        ('CONNECTOR_FIRMWARE_SERVICE', 'CONNECTOR_NO_FIRMWARE_SERVICE')],
-                      [('CONNECTOR_FILE_SYSTEM', 'CONNECTOR_NO_FILE_SYSTEM'), 
+                      [('CONNECTOR_FILE_SYSTEM', 'CONNECTOR_NO_FILE_SYSTEM'),
                        ('CONNECTOR_FIRMWARE_SERVICE', 'CONNECTOR_NO_FIRMWARE_SERVICE'),
                        ('DS_MAX_USER 1', 'DS_MAX_USER 0')],
-                      [('CONNECTOR_DATA_SERVICE', 'CONNECTOR_NO_DATA_SERVICE'), 
+                      [('CONNECTOR_DATA_SERVICE', 'CONNECTOR_NO_DATA_SERVICE'),
                        ('CONNECTOR_FILE_SYSTEM', 'CONNECTOR_NO_FILE_SYSTEM')],
-                      [('CONNECTOR_DATA_SERVICE', 'CONNECTOR_NO_DATA_SERVICE'), 
+                      [('CONNECTOR_DATA_SERVICE', 'CONNECTOR_NO_DATA_SERVICE'),
                        ('CONNECTOR_FIRMWARE_SERVICE', 'CONNECTOR_NO_FIRMWARE_SERVICE')])
 
         tests = TESTS
@@ -380,19 +381,19 @@ class TestRunner(object):
                     sample = test_type.name.find('sample') != -1
                     more_modes = test_type.name.find('malloc') != -1
 
-                    self.run_test(test_set, test_list[test_set], test, 
-                                    os.path.join(test_type.src_dir, test_set), 
+                    self.run_test(test_set, test_list[test_set], test,
+                                    os.path.join(test_type.src_dir, test_set),
                                     test_type.script_dir, self.replace_list,
                                     sample=sample)
                     if more_modes:
                         for test_mode in test_modes:
                             new_replace_list = self.replace_list + test_mode
-                            self.run_test(test_set, test_list[test_set], test, 
-                                            os.path.join(test_type.src_dir, test_set), 
+                            self.run_test(test_set, test_list[test_set], test,
+                                            os.path.join(test_type.src_dir, test_set),
                                             test_type.script_dir, new_replace_list,
                                             sample=sample)
 
-    def run_test(self, test, test_list, execution_type, base_src_dir, 
+    def run_test(self, test, test_list, execution_type, base_src_dir,
         base_script_dir, replace_list=[], sample=False):
         device_config = self.device_config.copy()
         device_config['device_type'] = unique_device_type()
@@ -447,9 +448,9 @@ class TestRunner(object):
                 f.close()
                 setup_platform(src_dir, **device_config)
             except IOError:
-                setup_platform(os.path.join(sandbox_dir, 
+                setup_platform(os.path.join(sandbox_dir,
                     SAMPLE_PLATFORM_RUN_DIR), **device_config)
-                setup_platform(os.path.join(sandbox_dir, 
+                setup_platform(os.path.join(sandbox_dir,
                     SAMPLE_PLATFORM_STEP_DIR), **device_config)
 
             config.update_platform_h(os.path.join(SAMPLE_PLATFORM_STEP_DIR, "platform.h"))
@@ -457,18 +458,18 @@ class TestRunner(object):
 
             if self.update_config_header:
                 config.update_config_header(connector_config, **device_config)
-     
+
             if self.gcov is True and test != 'compile_and_link':
                 self.cflags += GCOV_FLAGS
                 # Resolve the main.c file.  If it exists inthe src_dir assume
-                # that is what is used, otherwise autoresolve to 
+                # that is what is used, otherwise autoresolve to
                 # ../../platforms/linux/main.c
                 main = None
                 local_main = os.path.join(src_dir, "main.c")
                 if os.path.isfile(local_main):
                     main = local_main
                 else:
-                    platform_main = os.path.join(src_dir, 
+                    platform_main = os.path.join(src_dir,
                         "../../platforms/linux/main.c")
                     if os.path.isfile(platform_main):
                         main = platform_main
@@ -508,7 +509,7 @@ class TestRunner(object):
             # If False is returned, Fail this build
             if rc == False:
                 raise Exception("Failed to Build from %s." % src_dir)
-        
+
             if test == 'compile_and_link':
                 self.log.info('Finished Test.', extra=log_extra)
                 return
@@ -549,8 +550,8 @@ class TestRunner(object):
                             os.unlink(filename1)
                         else:
                             self.log.info('Executing Test Script %s.' % test_script, extra=log_extra)
-                        
-                            # Argument list to call nose with.  Generate a nosetest xml file in 
+
+                            # Argument list to call nose with.  Generate a nosetest xml file in
                             # current directory, pass in device cloud / iik connection settings.
                             arguments = ['dvt/bin/nosetests',
                                          '--with-xunit',
@@ -563,13 +564,13 @@ class TestRunner(object):
                                          '--ic-deviceid=%s' % device_id,
                                          '--ic-devicetype=%s' % device_config['device_type'],
                                          '--ic-vendorid=%s' % device_config['vendor_id']]
-                        
+
                             test_to_run = os.path.join(test_dir, test_script)
                             nose.run(defaultTest=[test_to_run], argv=arguments)
                             self.log.info('Finished Test Script %s.' % test_script, extra=log_extra)
             finally:
                 # For now, don't Delete the Device after we're done with it, we do this before
-                # killing the process because IDIGI-614 could cause a DB 
+                # killing the process because IDIGI-614 could cause a DB
                 # deadlock.
                 # self.log.info("Deleting Device %s." % device_location, extra=log_extra)
                 # try:
@@ -586,7 +587,7 @@ class TestRunner(object):
                     if sample:
                         # Otherwise, explicitly filter private
                         inclusion = '-e ".*%s/private.*"' % sandbox_dir
-                    cwd = os.getcwd()   
+                    cwd = os.getcwd()
                     cmd = 'cd %s; %s/dvt/scripts/gcovr %s --root %s -d --xml %s > "%s/%s_%s_%s_%s_coverage.xml"' % (src_dir, sandbox_dir, sandbox_dir, sandbox_dir, inclusion, cwd, self.description, execution_type, test, test_script)
                     self.log.info("Executing gcovr: %s" % cmd, extra=log_extra)
                     os.system(cmd)
@@ -658,16 +659,16 @@ def build_template(description, cflags):
     test_dir = BASE_SCRIPT_DIR+'template_tests'
 
     log.info('[%s] Executing [%s].' % (description, test_script))
-    
-    # Argument list to call nose with.  Generate a nosetest xml file in 
+
+    # Argument list to call nose with.  Generate a nosetest xml file in
     # current directory, pass in idigi / iik connection settings.
     arguments = ['dvt/bin/nosetests',
                  '-s',
-                 '--with-xunit', 
+                 '--with-xunit',
                  '--xunit-file=%s_%s.nxml' % (description, test_script),
                  '--with-build',
                  '--build_cflags=%s' % (cflags)]
-    
+
     test_to_run = os.path.join(test_dir, test_script)
     nose.run(defaultTest=[test_to_run], argv=arguments)
     log.info('[%s] Finished [%s].' % (description, test_script))
@@ -678,25 +679,25 @@ def build_library(description, cflags, config_tool_jar):
     test_dir = BASE_SCRIPT_DIR+'template_tests'
 
     log.info('[%s] Executing [%s].' % (description, test_script))
-    
-    # Argument list to call nose with.  Generate a nosetest xml file in 
+
+    # Argument list to call nose with.  Generate a nosetest xml file in
     # current directory, pass in idigi / iik connection settings.
     arguments = ['dvt/bin/nosetests',
                  '-s',
-                 '--with-xunit', 
+                 '--with-xunit',
                  '--xunit-file=%s_%s.nxml' % (description, test_script),
                  '--with-build',
                  '--build_config_tool_jar=%s' % config_tool_jar,
                  '--build_cflags=%s' % (cflags)]
-    
+
     test_to_run = os.path.join(test_dir, test_script)
     nose.run(defaultTest=[test_to_run], argv=arguments)
     log.info('[%s] Finished [%s].' % (description, test_script))
 
 def generate_config_tool_jar(build_path='tools/config'):
     log.info('Generating Config Tool')
-    process = subprocess.Popen(['ant', 
-            '-f', '%s/build.xml' % build_path], 
+    process = subprocess.Popen(['ant',
+            '-f', '%s/build.xml' % build_path],
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     data = process.communicate()[0]
@@ -710,23 +711,23 @@ def main():
     parser = argparse.ArgumentParser(description="Etherios Connector Test Harness",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--username', action='store', type=str, 
+    parser.add_argument('--username', action='store', type=str,
         default='iikdvt', help="Etherios Username to run the test with.")
-    parser.add_argument('--password', action='store', type=str, 
+    parser.add_argument('--password', action='store', type=str,
         default='iik1sfun', help="Etherios Password to run the test with.")
-    parser.add_argument('--hostname', action='store', type=str, 
-        default='test.etherios.com', 
+    parser.add_argument('--hostname', action='store', type=str,
+        default='test.etherios.com',
         help='Etherios Server to connect devices to.')
-    parser.add_argument('--descriptor', action='store', type=str, 
+    parser.add_argument('--descriptor', action='store', type=str,
         default='linux-x64', help='A unique descriptor to describe the test.')
-    parser.add_argument('--architecture', action='store', type=str, 
+    parser.add_argument('--architecture', action='store', type=str,
         default='x64', help='Architecture to run test with (x64 or i386).')
     parser.add_argument('--test_name', action='store', type=str, default=None,
         help='Optional test name to execute. Default executes all.')
     parser.add_argument('--test_type', action='store', type=str, default=None)
-    parser.add_argument('--configuration', action='store', type=str, 
-        default='default', choices=['default', 'nodebug', 'compression', 
-                                    'debug', 'config_header', 'template', 
+    parser.add_argument('--configuration', action='store', type=str,
+        default='default', choices=['default', 'nodebug', 'compression',
+                                    'debug', 'config_header', 'template',
                                     'all', 'library' ],
         help='Configuration to run against.  Default executes all.')
     parser.add_argument('--tty', action='store_true',dest='tty', default=False,
@@ -791,7 +792,7 @@ def main():
             replace_list.append(('/* #define CONNECTOR_DEBUG */', '#define CONNECTOR_DEBUG'))
         if configuration == 'config_header':
             update_config_header = True
-                                         
+
         if configuration == 'template':
             log.info("============ Template platform =============")
             build_template(args.descriptor, cflags)
@@ -801,9 +802,9 @@ def main():
         else:
             log.info("============ %s =============" % configuration)
             runner = TestRunner(args.hostname, args.username, args.password,
-                description, base_dir, debug_on, cflags, 
+                description, base_dir, debug_on, cflags,
                 replace_list=replace_list, tty=args.tty,
-                test_name=args.test_name, test_type=args.test_type, 
+                test_name=args.test_name, test_type=args.test_type,
                 config_tool_jar = config_tool_jar, keystore= keystore,
                 gcov=args.gcov, update_config_header=update_config_header)
             runner.run_tests()

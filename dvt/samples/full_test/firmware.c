@@ -33,10 +33,13 @@ static dvt_data_t dvt_data_list[dvt_case_last] =
     {dvt_case_fw_device_error,          {0x1F,00,00,00}, dvt_state_init, "Device Error",     ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
     {dvt_case_fw_invalid_offset,        {0x20,00,00,00}, dvt_state_init, "Invalid Offset",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
     {dvt_case_fw_invalid_data,          {0x21,00,00,00}, dvt_state_init, "Invalid Data",     ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
-    {dvt_case_fw_hardware_error,        {0x22,00,00,00}, dvt_state_init, "Hardware Error",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE}
+    {dvt_case_fw_hardware_error,        {0x22,00,00,00}, dvt_state_init, "Hardware Error",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
+    {dvt_case_fw_test_file,             {0x01,00,00,00}, dvt_state_init, "No Error",   ".*\\.[Bb][Ii][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE}
 };
 
 static dvt_data_t * dvt_current_ptr = NULL;
+
+FILE * test_file = NULL;
 
 static connector_callback_status_t app_firmware_target_count(connector_firmware_count_t * const target_info)
 {
@@ -134,6 +137,14 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         download_info->status = connector_firmware_status_encountered_error;
         break;
 
+    case dvt_case_fw_test_file:
+        if (test_file == NULL)
+        {
+            test_file = fopen(dvt_current_ptr->file_name,"w+");
+            ASSERT(test_file != NULL);
+            dvt_current_ptr->state = dvt_state_fw_download_progress;
+            break;
+        }
     default:
         dvt_current_ptr->state = dvt_state_fw_download_progress;
         download_info->status = connector_firmware_status_success;
@@ -170,8 +181,6 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
         goto error;
     }
 
-    APP_DEBUG("target = %d, offset = 0x%04X, length = %zu\n", image_data->target_number, image_data->image.offset, image_data->image.bytes_used);
-
     switch (image_data->target_number)
     {
     case dvt_case_fw_user_abort:
@@ -193,9 +202,18 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
     case dvt_case_fw_hardware_error:
         image_data->status = connector_firmware_status_hardware_error;
         break;
+    case dvt_case_fw_test_file:
+        if (test_file == NULL) goto error;
 
+        fseek(test_file, image_data->image.offset, SEEK_SET); /* Absolute offset */
+        fwrite(image_data->image.data, image_data->image.bytes_used, 1, test_file);
+        dvt_current_ptr->file_size += image_data->image.bytes_used;
+        /* no break; */
     default:
         image_data->status = connector_firmware_status_success;
+        /* APP_DEBUG("target = %d, offset = 0x%04X, length = %zu total length = %zu\n", image_data->target_number, image_data->image.offset,
+                                                                                     image_data->image.bytes_used, dvt_current_ptr->file_size);
+         */
         goto done;
     }
 
@@ -235,6 +253,11 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
         complete_response->status = connector_firmware_download_success;
     }
 
+    if (test_file != NULL)
+    {
+        fclose(test_file);
+        test_file = NULL;
+    }
 
 done:
     dvt_current_ptr = NULL;
@@ -254,6 +277,12 @@ static connector_callback_status_t app_firmware_download_abort(connector_firmwar
 
     }
 
+    if (test_file != NULL)
+    {
+        fclose(test_file);
+        test_file = NULL;
+    }
+
     dvt_current_ptr = NULL;
     return status;
 }
@@ -265,9 +294,6 @@ static connector_callback_status_t app_firmware_reset(connector_firmware_reset_t
     UNUSED_ARGUMENT(reset_data);
     /* Server requests firmware reboot */
     APP_DEBUG("firmware_reset\n");
-
-    if (dvt_current_ptr->state == dvt_state_fw_download_complete)
-        dvt_current_ptr->state = dvt_state_reset_called;
 
     return status;
 }
