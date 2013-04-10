@@ -74,8 +74,8 @@ typedef enum {
                                                 This is a pull-down menu shown in the Etherios Device Cloud. */
     connector_element_type_on_off = 11,            /**< "on" or "off" value. An applciation's callback should use
                                                  connector_on value for "on"  or connector_off value for "off". See @ref connector_on_off_t*/
-    connector_element_type_boolean,             /**< true or false value. An application's callback should use  connector_boolean_true
-                                                value for true  or connector_boolean_false value for false. See @ref connector_boolean_t */
+    connector_element_type_boolean,             /**< true or false value. An application's callback should use connector_true
+                                                value for true  or connector_false value for false. See @ref connector_bool_t */
 
     connector_element_type_ipv4,                /**< Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in the Etherios Device Cloud */
     connector_element_type_fqdnv4,              /**< This type accepts either ipv4 or DNS name. */
@@ -144,7 +144,7 @@ typedef union {
 
     connector_on_off_t  on_off_value;       /**< @ref connector_on for on or @ref connector_off for Off value for @ref connector_element_type_on_off value type */
 
-    connector_boo_t boolean_value;      /**< @ref connector_boolean_true for true or @ref connector_boolean_false for false value for @ref connector_element_type_boolean value type */
+    connector_bool_t boolean_value;      /**< @ref connector_true for true or @ref connector_false for false value for @ref connector_element_type_boolean value type */
 
 } connector_element_value_t;
 /**

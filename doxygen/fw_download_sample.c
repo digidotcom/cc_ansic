@@ -4,8 +4,8 @@
  *
  * @section fw_download_sample_overview Overview
  *
- * This sample demonstrates how to download firmware to your device using the 
- * @ref fw_overview1 "firmware download API".  This is a generic sample which 
+ * This sample demonstrates how to download firmware to your device using the
+ * @ref fw_overview1 "firmware download API".  This is a generic sample which
  * does not update the firmware on the device but demonstrates how to use this
  * API.
  *
@@ -17,40 +17,40 @@
  * app_firmware_handler() when a firmware request callback is received.
  *
  * All interaction with Etherios Cloud Connector is through the callback in this sample; Firmware download
- * is initiated fully from the iDigi Device Cloud.  The file firmware.c contains the routines which process
+ * is initiated fully from Etherios Device Cloud.  The file firmware.c contains the routines which process
  * the firmware download callbacks passed to app_firmware_handler().
  *
  * This sample defines all supported image files with .a and .bin file extensions.
- * The file extension is only validated when updating firmware from the iDigi Device Cloud.
+ * The file extension is only validated when updating firmware from Etherios Device Cloud.
  *
  * @code
  * // list of all supported firmware target info
  * static firmware_list_t firmware_list[] = {
- *   // version     code_size     name_spec            description
- *   {  0x01000000, -1, ".*\\.a",            "Library Image"}, // any .a image
- *   {  0x00000100, -1, ".*\\.[bB][iI][nN]", "Binary Image" }  // any .bin image
+ *   // version        name_spec            description
+ *   {  {1, 0, 0, 0}, ".*\\.[bB][iI][nN]", "Binary Image" }  // any .bin image
+ *   {  {0, 0, 0, 0}, ".*\\.a",            "Library Image"}, // any .a image
  * };
  * @endcode
  *
- * The routine firmware_download_request() is called when the download is first
- * initiated.  It receives information about the download and retuns @ref connector_fw_success
+ * The routine app_firmware_download_request() is called when the download is first
+ * initiated.  It receives information about the download and retuns @ref connector_firmware_status_success
  * status indicating that is ready to accept the FW download.
  *
- * The firmware_image_data() routine is repeatedly called with the image data
- * until the download is complete, the routine firmware_download_complete()
+ * The app_firmware_image_data() routine is repeatedly called with the image data
+ * until the download is complete, the routine app_firmware_download_complete()
  * is called when the download is complete.  At this point the FW can verify
  * that the downloaded image is valid.
  *
- * When firmware_download_complete() returns @ref connector_fw_download_success status,
- * it indicates the firmware image has been updated. The iDigi Device Cloud will reset the unit,
- * the routine firmware_reset() is called for resetting.
- * 
- * The routine firmware_download_abort() is called when the iDigi Device Cloud encounters error.
- * 
+ * When app_firmware_download_complete() returns @ref connector_firmware_download_success status,
+ * it indicates the firmware image has been updated. Etherios Device Cloud will reset the unit,
+ * the routine app_firmware_reset() is called for resetting.
+ *
+ * The routine app_firmware_download_abort() is called when Etherios Device Cloud encounters error.
+ *
  * @section connect_build Building
  *
- * To build this example on a Linux system, go to the public/run/samples/device_request
- * directory and type: @htmlonly"<I>make clean all</I>"@endhtmlonly.
+ * To build this example on a Linux system, go to the public/run/samples/firmware_download
+ * directory and type: @htmlonly"<I>make clean; make all</I>"@endhtmlonly.
  * If you are not using Linux you will need to update your environment with
  * the information below and then build the image for your platform.
  *
@@ -87,7 +87,7 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td> iDigi Connector options</td>
+ *   <td> Etherios Cloud Connector options</td>
  *   <td>samples/firmware_download</td>
  * </tr>
  * <tr>
@@ -125,38 +125,33 @@
  * @li public/include
  * @li run/platforms/@a my_platform
  *
- * @subsection defines Defines
- *
- * The following defines are used in this sample:
- *
- * @li -DCONNECTOR_VERSION=0x1020000UL
  *
  * @section running Running
  *
- * Once successfully built, run the executable, in Linux type ./idigi to run the
+ * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * Firmware downloads can be initiated by the iDigi Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
+ * Firmware downloads can be initiated by Etherios Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
  * or by issuing a @ref services "SCI update_firmware operation".
  *
- * @subsection fw_gui Firmware Download using the iDigi Device Cloud GUI
+ * @subsection fw_gui Firmware Download using Etherios Device Cloud GUI
  *
- * Log on to the iDigi Device Cloud at http://login.etherios.com/ and click on your device
+ * Log on to Etherios Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged to see your device, click the Refresh button.
  * The device's status should show as 'Connected'.
  *
  * @image html cloud_device_refresh.png
  *
- * Then click the Firmware Update button to update your firmware, and then select 
+ * Then click the Firmware Update button to update your firmware, and then select
  * the file that is your firmware image on your local machine.  The image will then
  * start to upload to your Etherios Cloud Connector application.  The GUI will indicate when it's complete.
  *
- * @note The firmware image name must match the regular expression given to 
- * filter names, see @ref fw_namespec.
+ * @note The firmware image name must match the regular expression given to
+ * filter names, see @ref fw_info.
  *
  * @image html cloud_firmware_download.png
- * 
+ *
  * The results in this application are displayed in the output console of the
  * application.  Since this is only a sample the fiwmware is not updated on the
  * device.  The application prints out the target, code size and checksum of the
@@ -166,9 +161,9 @@
  *
  * This sample provides two simple python scripts to update firmware image and query
  * a list of firmware target information using
- * @htmlonly <a href="web_services.html">iDigi Web Services.</a> @endhtmlonly
- * It sends a request to my.idigi.com.
- * 
+ * @htmlonly <a href="web_services.html">Etherios Device Cloud Web Services.</a> @endhtmlonly
+ * It sends a request to login.etherios.com.
+ *
  * update_firmware.py opens and sends "image.a" to the device.
  *
  *

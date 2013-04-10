@@ -819,7 +819,7 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_remote_config_session_end @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_session_end @htmlonly</td>
  * </tr>
  * <tr>
  * <th>data</th>

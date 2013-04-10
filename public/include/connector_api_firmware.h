@@ -133,11 +133,11 @@ typedef enum {
 * is called when the device is requested for firmware download.
 */
 typedef struct {
-    unsigned int CONST target_number;  /**< Target number which firmware target the image data is for */
+    unsigned int CONST target_number;   /**< Target number which firmware target the image data is for */
 
-    char * filename;    /**< Pointer to filename of the image to be downloaded */
+    char * filename;                    /**< Pointer to filename of the image to be downloaded */
 
-    connector_firmware_status_t status; /** Callback writes error status if error is encountered */
+    connector_firmware_status_t status; /**< Callback writes error status if error is encountered */
 
 } connector_firmware_download_start_t;
 /**
@@ -157,12 +157,12 @@ typedef struct {
     unsigned int CONST target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
-        uint32_t offset;    /**< Offset value where this particular block of image data fits into the download */
-        uint8_t const * data;     /**< Pointer binary image data */
-        size_t bytes_used;  /**< Length of binary image data in bytes */
-    } image;                /**< Contains the firmware image data */
+        uint32_t offset;        /**< Offset value where this particular block of image data fits into the download */
+        uint8_t const * data;   /**< Pointer binary image data */
+        size_t bytes_used;      /**< Length of binary image data in bytes */
+    } image;                    /**< Contains the firmware image data */
 
-    connector_firmware_status_t status; /** Callback writes error status if error is encountered */
+    connector_firmware_status_t status; /**< Callback writes error status if error is encountered */
 
 } connector_firmware_download_data_t;
 /**
