@@ -130,10 +130,6 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
         else
         {
             *ptr = data.ptr;
-         #if (defined DEBUG)
-            /* On only when we are debugging */
-            memset(*ptr, 0, length);
-         #endif
         }
         break;
 
