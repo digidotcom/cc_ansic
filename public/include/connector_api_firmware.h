@@ -115,9 +115,11 @@ typedef enum {
 * Firmware Update Complete status codes are used in @see connector_firmware_download_complete callback.
 */
 typedef enum {
-   connector_firmware_download_success,               /**< Callback returns this for firmware download finished successfully and calculated checksum matched the checksum sent in the callback */
-   connector_firmware_download_checksum_mismatch,     /**< Callback returns this for download completed successfully, but the calculated checksum did not match the checksum sent in the callback */
-   connector_firmware_download_not_complete           /**< Callback did not complete download successfully */
+   connector_firmware_download_success,           /**< Callback returns this for firmware download finished successfully
+                                                       and calculated checksum matched the checksum sent in the callback */
+   connector_firmware_download_checksum_mismatch, /**< Callback returns this for download completed successfully, but
+                                                       the calculated checksum did not match the checksum sent in the callback */
+   connector_firmware_download_not_complete       /**< Callback did not complete download successfully */
 } connector_firmware_download_status_t;
 /**
 * @}
@@ -135,7 +137,7 @@ typedef enum {
 typedef struct {
     unsigned int CONST target_number;   /**< Target number which firmware target the image data is for */
 
-    char * filename;                    /**< Pointer to filename of the image to be downloaded */
+    char CONST * filename;              /**< Pointer to filename of the image to be downloaded */
 
     connector_firmware_status_t status; /**< Callback writes error status if error is encountered */
 
@@ -157,10 +159,10 @@ typedef struct {
     unsigned int CONST target_number;  /**< Target number which firmware target the image data is for */
 
     struct {
-        uint32_t offset;        /**< Offset value where this particular block of image data fits into the download */
-        uint8_t const * data;   /**< Pointer binary image data */
-        size_t bytes_used;      /**< Length of binary image data in bytes */
-    } image;                    /**< Contains the firmware image data */
+        uint32_t CONST offset;    /**< Offset value where this particular block of image data fits into the download */
+        uint8_t const * data;     /**< Pointer binary image data */
+        size_t CONST bytes_used;  /**< Length of binary image data in bytes */
+    } image;
 
     connector_firmware_status_t status; /**< Callback writes error status if error is encountered */
 

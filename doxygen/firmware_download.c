@@ -281,7 +281,7 @@
  * </tr>
  * <tr>
  * <td>data</td>
- * <td>Pointer to @endhtmlonly connector_firmware_download_start_t @htmlonly
+ * <td>Pointer to @endhtmlonly connector_firmware_download_data_t @htmlonly
  *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware data is intended for.</dd>
  *         <dt>offset</dt><dd>Contain an offset value where this data block of image fits into the download.</dd>
  *         <dt>data</dt><dd>Contain a pointer to downloaded image data.</dd>
@@ -352,7 +352,7 @@
  * </tr>
  * <tr>
  * <td>data</td>
- * <td>Pointer to @endhtmlonly connector_firmware_download_start_t @htmlonly
+ * <td>Pointer to @endhtmlonly connector_firmware_download_complete_t @htmlonly
  *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware download is completed.</dd>
  *         <dt>status</dt><dd>Callback writes  @endhtmlonly @ref connector_firmware_download_status_t @htmlonly status.</dd>
  *     </dl>
