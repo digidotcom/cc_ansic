@@ -111,7 +111,7 @@ echo ">> Setting Release Date to Today (${today}) in ${BASE_DIR}/private/Readme.
 sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 
 # Replace the version number in connector_api.h
-python ../dvt/scripts/update_hex_version.py public/include/connector_api.h "${TAG}"
+python ../dvt/scripts/update_hex_version.py "${BASE_DIR}"/public/include/connector_api.h "${TAG}"
 
 # Generate a Makefile for each sample.
 
