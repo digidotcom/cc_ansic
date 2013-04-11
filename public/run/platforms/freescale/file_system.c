@@ -216,9 +216,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 		result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_FIND_NEXT_FILE, search_data);
 	}
 	
-	if (result != MFS_NO_ERROR) {
-		APP_DEBUG("No more directory entries\n");
-	} else {
+	if (result == MFS_NO_ERROR) {
 		MFS_GET_LFN_STRUCT long_filename_struct;
 		
 		long_filename_struct.PATHNAME = search_data->NAME;
@@ -229,6 +227,8 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 			/* It's not a long filename */	
 			memcpy(data->entry_name, search_data->NAME, strlen(search_data->NAME) + 1);
 		}
+	} else {
+		APP_DEBUG("No more directory entries\n");
 	}
 	
     return status;
@@ -311,19 +311,19 @@ static char const * app_convert_file_open_mode(int const oflag)
     if ((oflag & (CONNECTOR_FILE_O_WRONLY | CONNECTOR_FILE_O_RDWR)) == 0) {
         return "r";
     } else if (oflag & CONNECTOR_FILE_O_WRONLY) {
-    	return "w"; /* Open a new file in “write-only” mode; overwrite an existing file. */
+    	return "w"; /* Open a new file in "write-only" mode; overwrite an existing file. */
     } else if (oflag & CONNECTOR_FILE_O_RDWR) {
-    	return "r+"; /* Open an existing file in “read-write” mode. */
+    	return "r+"; /* Open an existing file in "read-write" mode. */
     } else if (oflag & CONNECTOR_FILE_O_APPEND) {
-    	return "a+"; /* Open a file at EOF in “read-write” mode; create the file if it does not exist. */
+    	return "a+"; /* Open a file at EOF in "read-write" mode; create the file if it does not exist. */
     } else if (oflag & CONNECTOR_FILE_O_CREAT) {
-    	return "n+"; /* Open a new file in “read-write” mode; do nothing if the file already exists. */
+    	return "n+"; /* Open a new file in "read-write" mode; do nothing if the file already exists. */
     } else if (oflag & CONNECTOR_FILE_O_TRUNC) {
-    	return "w+"; /* Open a new file in “read-write” mode; overwrite an existing file. */
+    	return "w+"; /* Open a new file in "read-write" mode; overwrite an existing file. */
     } else if (oflag & CONNECTOR_FILE_O_RDONLY) {
-    	return "r"; /* Open an existing file in “read-only” mode. */
+    	return "r"; /* Open an existing file in "read-only" mode. */
     } else {
-    	return "r"; /* Open an existing file in “read-only” mode. */
+    	return "r"; /* Open an existing file in "read-only" mode. */
     }
 }
 

@@ -3,7 +3,7 @@ REM This script links all necessary files from iC to create the directory for iC
 REM As the files are linked, all changes WILL AFFECT THE GIT REPOSITORY DIRECTLY
 cls
 SET EC_LIB_DIR=C:\Etherios_CC
-SET CW_WORKSPACE=C:\ecc_cw_project_
+SET CW_WORKSPACE=C:\ecc_cw_project
 SET IAR_WORKSPACE=C:\ecc_iar_project
 REM BASE_DIR must point to the repository's root directory
 SET BASE_DIR=..\..\..
@@ -29,10 +29,13 @@ MKDIR "%EC_LIB_DIR%\platform\mqx"
 MKDIR "%CW_WORKSPACE%"
 MKDIR "%CW_WORKSPACE%\etherios_app"
 MKDIR "%CW_WORKSPACE%\etherios_app\Sources"
+MKDIR "%CW_WORKSPACE%\etherios_app\Sources\fs_devices"
 
 MKDIR "%IAR_WORKSPACE%"
 MKDIR "%IAR_WORKSPACE%\etherios_app"
 MKDIR "%IAR_WORKSPACE%\etherios_app\Sources"
+MKDIR "%IAR_WORKSPACE%\etherios_app\Sources\fs_devices"
+
 
 REM Link the library
 REM echo Linking "%BASE_DIR%\private\*.*" into "%EC_LIB_DIR%\private\"
@@ -74,6 +77,14 @@ for %%F in ("%BASE_DIR%\kits\common\include\*.h") do (
 	mklink /H "%EC_LIB_DIR%\include\%%~nxF" "%%F"
 )
 
+mklink /H "%EC_LIB_DIR%\platform\mqx\config.rci" "%BASE_DIR%\public\run\samples\simple_remote_config\config.rci"
+mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config.h" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config.h"
+mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config_cb.c" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config_cb.c"
+mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config_cb.h" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config_cb.h"
+mklink /H "%EC_LIB_DIR%\platform\mqx\system.c" "%BASE_DIR%\public\run\samples\simple_remote_config\system.c"
+mklink /H "%EC_LIB_DIR%\platform\mqx\gps_stats.c" "%BASE_DIR%\public\run\samples\simple_remote_config\gps_stats.c"
+
+
 REM Link the template application in CodeWarrior workspace.
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\*.*") do (
 	mklink /H "%CW_WORKSPACE%\etherios_app\%%~nxF" "%%F"
@@ -81,9 +92,14 @@ for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\*.*")
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\Sources\*.*") do (
 	mklink /H "%CW_WORKSPACE%\etherios_app\Sources\%%~nxF" "%%F"
 )
+
 mklink /H "%CW_WORKSPACE%\etherios_app\Sources\main.c" "%BASE_DIR%\public\run\platforms\freescale\main.c"
 mklink /H "%CW_WORKSPACE%\etherios_app\Sources\main.h" "%BASE_DIR%\public\run\platforms\freescale\main.h"
 mklink /H "%CW_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\kinetis\mqx\samples\send_data\application.c"
+
+for %%F in ("%BASE_DIR%\kits\kinetis\mqx\source\fs_devices\*.*") do (
+	mklink /H "%CW_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"
+)
 
 REM Link the template application in IAR workspace.
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\iar\etherios_app\*.*") do (
@@ -96,12 +112,9 @@ mklink /H "%IAR_WORKSPACE%\etherios_app\Sources\main.c" "%BASE_DIR%\public\run\p
 mklink /H "%IAR_WORKSPACE%\etherios_app\Sources\main.h" "%BASE_DIR%\public\run\platforms\freescale\main.h"
 mklink /H "%IAR_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\kinetis\mqx\samples\send_data\application.c"
 
-mklink /H "%EC_LIB_DIR%\platform\mqx\config.rci" "%BASE_DIR%\public\run\samples\simple_remote_config\config.rci"
-mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config.h" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config.h"
-mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config_cb.c" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config_cb.c"
-mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config_cb.h" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config_cb.h"
-mklink /H "%EC_LIB_DIR%\platform\mqx\system.c" "%BASE_DIR%\public\run\samples\simple_remote_config\system.c"
-mklink /H "%EC_LIB_DIR%\platform\mqx\gps_stats.c" "%BASE_DIR%\public\run\samples\simple_remote_config\gps_stats.c"
+for %%F in ("%BASE_DIR%\kits\kinetis\mqx\source\fs_devices\*.*") do (
+	mklink /H "%IAR_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"
+)
 
 :end
 pause

@@ -30,3 +30,7 @@
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS             75
 #define CONNECTOR_WAIT_COUNT                          5
 #define IPCFG_default_enet_device				  0
+
+#define CONNECTOR_FILE_SYSTEM
+#define FILE_SYSTEM_SDCARD
+#define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256

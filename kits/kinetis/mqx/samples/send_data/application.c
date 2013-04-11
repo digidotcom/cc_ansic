@@ -52,7 +52,7 @@ int application_start(void)
     do
     {
         #define WAIT_FOR_10_MSEC    10
-        static connector_data_t ecc_data = {0};
+        static connector_dataservice_data_t ecc_data = {0};
         static boolean display_push_msg = TRUE;
         static unsigned char count = 0;
         static char buffer[] = "iDigi Device application data. Count xxxx.\n";

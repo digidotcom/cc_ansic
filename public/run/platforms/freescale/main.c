@@ -22,9 +22,12 @@ TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
    {MAIN_TASK, Main_task, 2048, 9, "main", MQX_AUTO_START_TASK},
-   {CONNECTOR_TASK, connector_thread, 4096 * 5, 10, "iDigi_connector", 0},
-#if (defined CONNECTOR_FIRMWARE_SERVICE)
-    {CONNECTOR_FLASH_TASK, connector_flash_task, 4096, 10, "iDigi_flash", 0},
+   {CONNECTOR_TASK, connector_thread, CONNECTOR_THREAD_STACK_SIZE, 10, "Cloud Connector", 0},
+#ifdef FILE_SYSTEM_SDCARD
+   {SDCARD_TASK, sdcard_task,  2048, 11, "SDcard Task", MQX_AUTO_START_TASK},
+#endif
+#ifdef FILE_SYSTEM_USB
+   {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
 #endif
    {0,           0,           0,     0,   0,      0,                 }
 };
@@ -97,9 +100,11 @@ static uint_32 network_start(void)
     APP_DEBUG("\nDNS Address     : %d.%d.%d.%d\n",IPBYTES(ipcfg_get_dns_ip(ENET_DEVICE,0)));
     result = RTCS_OK;
     
+#ifdef USE_SSL
     if (SNTP_oneshot(IPADDR(64,90,182,55), 20000) != RTCS_OK) {
     	printf("SNTP_oneshot failed!\n");
     }
+#endif
     
 error:
     return result;
