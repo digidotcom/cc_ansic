@@ -10,17 +10,17 @@ group setting system "System"
     element location "Location" type string max 63
     error invalid_length "Invalid Length"
  
-# iDigi password
-# iDigi Manager Pro uses this devicesecurity setting for password authentication
+# Etherios Device Cloud Password
+# Etherios Deivce Manager uses this devicesecurity setting for password authentication
 # Note, as with all password, password type is a write-only field
 # To include the devicesecurity setting, change devicesecurity.c.optional 
 # to devicesecurity.c and update remote_setting_table in remote_config_cb.c 
 # with all callback functions in devicesecurity.c. 
-# group setting devicesecurity "iDigi device security"
-#    element identityVerificationForm "Connection security" type enum
-#        value simple "No connection security"
-#        value password "Connection is password authenticated"
-#    element password "iDigi device connection password" type password max 133
+group setting devicesecurity "iDigi device security"
+   element identityVerificationForm "Connection security" type enum
+       value simple "No connection security"
+       value password "Connection is password authenticated"
+   element password "iDigi device connection password" type password max 133
 
 # Device location
 # State configuration for GPS

@@ -13,7 +13,7 @@
 typedef struct
 {
     #if (defined CONNECTOR_TRANSPORT_TCP)
-    #define DP_FILE_PATH_SIZE   32
+    #define DP_FILE_PATH_SIZE   64
     #else
     #define DP_FILE_PATH_SIZE   32
     #endif
