@@ -55,7 +55,7 @@ static connector_callback_status_t app_get_ip_address(uint8_t const ** ip_addres
  * This routine assigns a pointer to the MAC address of the device in *mac_address along
  * with the size.
  *
- * @param [out] mac_address  Pointer to memory containing IP address
+ * @param [out] mac_address  Pointer to memory containing the device's MAC address
  * @param [out] size Size of the MAC address in bytes (6 bytes).
  *
  * @retval connector_callback_continue  MAC address was successfully returned
