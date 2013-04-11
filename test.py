@@ -71,6 +71,7 @@ ESN_NUMBER_PROTOTYPE = "%s"
 MEID_NUMBER_PROTOTYPE = "%s%s%s"
 
 GCOV_FLAGS = " -g -pg -fprofile-arcs -ftest-coverage"
+BASE_FLAGS = " -DRUNNIG_FROM_BASE "
 
 class TestType(object):
 
@@ -282,6 +283,9 @@ class TestRunner(object):
         self.rest_session = rest_session(hostname,
                                 auth=(username, password), verify=False)
 
+        if test_name == 'connect_on_ssl':
+            cflags += BASE_FLAGS
+
         self.description          = description
         self.base_dir             = base_dir
         self.debug_on             = debug_on
@@ -312,7 +316,7 @@ class TestRunner(object):
             'device_imei'     : None,
             'device_esn'      : None,
             'device_meid'     : None,
-            'connector_host'      : self.hostname,
+            'connector_host'  : self.hostname,
             'tx_keepalive'    : 45,
             'rx_keepalive'    : 45,
             'wait_count'      : 3,

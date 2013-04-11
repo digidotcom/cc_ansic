@@ -60,7 +60,10 @@ extern connector_bool_t app_connector_reconnect(connector_class_id_t const class
 extern connector_callback_status_t app_status_handler(connector_request_id_status_t const request,
                                                       void * const data);
 
-#define APP_SSL_CA_CERT   "public/certificates/etherios-ca-cert-public.crt"
-/* #define APP_SSL_CA_CERT   "../../../../public/certificates/etherios-ca-cert-public.crt" */
+#if (defined RUNNIG_FROM_BASE)
+#define APP_SSL_CA_CERT   "./public/certificates/etherios-ca-cert-public.crt"
+#else
+#define APP_SSL_CA_CERT   "../../../../public/certificates/etherios-ca-cert-public.crt"
+#endif
 
 #endif /* _PLATFORM_H */
