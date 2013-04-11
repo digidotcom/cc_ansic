@@ -25,8 +25,6 @@
 #include "platform.h"
 #include <errno.h>
 
-
-
 #ifdef CONNECTOR_FILE_SYSTEM
 
 #if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
@@ -49,6 +47,25 @@
 #define APP_MIN_VALUE(a,b) (((a)<(b))?(a):(b))
 #endif
 
+
+static connector_callback_status_t app_process_file_error(void ** const error_token, long int const errnum)
+{
+    connector_callback_status_t status;
+
+    switch(errnum)
+    {
+        case EAGAIN:
+            status = connector_callback_busy;
+            break;
+
+        default:
+            status = connector_callback_error;
+            *error_token = (void *) errnum;
+            break;
+    }
+    return status;
+}
+
 static uint_32 mfs_date_to_epoch(MFS_DATE_TIME_PARAM_PTR date)
 {
 	TIME_STRUCT epoch;
@@ -68,40 +85,6 @@ static uint_32 mfs_date_to_epoch(MFS_DATE_TIME_PARAM_PTR date)
 		return ~0; /* Error ocurred, probably invalid date*/
 	}
 }
-
-#if 0
-static connector_callback_status_t app_process_file_strerror(connector_file_data_response_t * response_data)
-{
-    size_t strerr_size = 0;
-
-    connector_file_error_data_t * error_data = response_data->error;
-    long int errnum = (long int)error_data->errnum;
-
-    if (errnum != 0)
-    {
-        char * err_str = strerror(errnum);
-        char * ptr = response_data->data_ptr;
-
-        strerr_size = APP_MIN_VALUE(strlen(err_str), response_data->size_in_bytes);
-        memcpy(ptr, err_str, strerr_size);
-    }
-
-    response_data->size_in_bytes = strerr_size;
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_process_file_msg_error(connector_file_error_request_t const * const request_data,
-                                                          connector_file_response_t * const response_data)
-{
-    UNUSED_ARGUMENT(request_data);
-    UNUSED_ARGUMENT(response_data);
-    APP_DEBUG("Message Error %d\n", request_data->message_status);
-
-    // All application resources, used in the session, must be released in this callback
-    return connector_callback_continue;
-}
-#endif
 
 static connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
 {
@@ -130,18 +113,8 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
     
     result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_GET_FILE_ATTR, &attributes_param);
     if (result < 0) {
-		APP_DEBUG("SP:%s:%s:%d:ERROR:IO_IOCTL_GET_FILE_ATTR: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
 		goto done;
     }
-
-    APP_DEBUG ("SP: Attributes of %s: %s%s%s%s%s%s\n",
-    		full_path,
-			(attributes & MFS_ATTR_READ_ONLY) ? "R/O ":"",
-			(attributes & MFS_ATTR_HIDDEN_FILE) ? "HID ":"",
-			(attributes & MFS_ATTR_SYSTEM_FILE) ? "SYS ":"",
-			(attributes & MFS_ATTR_VOLUME_NAME) ? "VOL ":"",
-			(attributes & MFS_ATTR_DIR_NAME) ? "DIR ":"",
-			(attributes & MFS_ATTR_ARCHIVE) ? "ARC ":"");
 
     if (attributes & (MFS_ATTR_DIR_NAME) || attributes == 0) {
     	file_stat->flags = connector_file_system_file_type_is_dir;
@@ -152,8 +125,7 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
 
     	file = _io_fopen(full_path, "r");
 		if (file == NULL) {
-			//status = app_process_file_error(response_data->error, errno);
-			APP_DEBUG("SP:%s:%s:%d:ERROR:failed to open \"%s\"\n", __FILE__, __FUNCTION__, __LINE__, full_path);
+			status = app_process_file_error(data->errnum, ENOENT);
 		}
 		file_stat->file_size = file->SIZE;
 		file_stat->flags = connector_file_system_file_type_is_reg;
@@ -167,7 +139,6 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
 			
 			result = _io_ioctl(file, IO_IOCTL_GET_DATE_TIME, (uint_32 *) &file_date);
 			if (result < 0) {
-				APP_DEBUG("SP:%s:%s:%d:ERROR:IO_IOCTL_GET_DATE_TIME: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
 				goto done;
 			}
 			
@@ -175,9 +146,9 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
 		}
 		_io_fclose(file);
     } else {
-    	file_stat->flags = 0;
+    	file_stat->flags = connector_file_system_file_type_none;
 		file_stat->file_size = 0;
-		file_stat->last_modified = 0; /* Directories don't have this field */
+		file_stat->last_modified = 0;
     }
 	data->hash_algorithm.actual = connector_file_system_hash_none;
 done:
@@ -186,71 +157,17 @@ done:
 
 static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
-    connector_file_system_statbuf_t *file_stat = &data->statbuf;
-    connector_callback_status_t status = connector_callback_continue;
-	MFS_FILE_ATTR_PARAM attributes_param;
-	uchar attributes = 0;
-    _mqx_int result;
-    char full_path[50] = {0};
-    APP_DEBUG("SP:%s\n", __FUNCTION__);
-    strcpy(full_path, filesystem_info->FS_NAME);
-    strcat(full_path, data->path);
-    
-    attributes_param.PATHNAME = full_path;
-    attributes_param.ATTRIBUTE_PTR = &attributes;
-    
-    result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_GET_FILE_ATTR, &attributes_param);
-    if (result < 0) {
-		APP_DEBUG("SP:%s:%s:%d:ERROR:IO_IOCTL_GET_FILE_ATTR: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
-		goto done;
-    }
-
-    APP_DEBUG ("SP: Attributes of %s: %s%s%s%s%s%s\n",
-    		full_path,
-			(attributes & MFS_ATTR_READ_ONLY) ? "R/O ":"",
-			(attributes & MFS_ATTR_HIDDEN_FILE) ? "HID ":"",
-			(attributes & MFS_ATTR_SYSTEM_FILE) ? "SYS ":"",
-			(attributes & MFS_ATTR_VOLUME_NAME) ? "VOL ":"",
-			(attributes & MFS_ATTR_DIR_NAME) ? "DIR ":"",
-			(attributes & MFS_ATTR_ARCHIVE) ? "ARC ":"");
-
-    if (attributes & (MFS_ATTR_DIR_NAME) || attributes == 0) {
-    	file_stat->flags = connector_file_system_file_type_is_dir;
-    	file_stat->file_size = 0;
-    	file_stat->last_modified = 0; /* Directories don't have this field */
-    } else if (attributes & MFS_ATTR_ARCHIVE) {
-        MQX_FILE_PTR file;
-
-    	file = _io_fopen(full_path, "r");
-		if (file == NULL) {
-			//status = app_process_file_error(response_data->error, errno);
-			APP_DEBUG("SP:%s:%s:%d:ERROR:failed to open \"%s\"\n", __FILE__, __FUNCTION__, __LINE__, full_path);
-		}
-		file_stat->file_size = file->SIZE;
-		file_stat->flags = connector_file_system_file_type_is_reg;
-		{
-			uint_16 date, time;
-			uint32_t epoch_time = 0;
-			MFS_DATE_TIME_PARAM file_date;
-			
-			file_date.DATE_PTR = &date;
-			file_date.TIME_PTR = &time;
-			
-			result = _io_ioctl(file, IO_IOCTL_GET_DATE_TIME, (uint_32 *) &file_date);
-			if (result < 0) {
-				APP_DEBUG("SP:%s:%s:%d:ERROR:IO_IOCTL_GET_DATE_TIME: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
-				goto done;
-			}
-			
-			file_stat->last_modified = mfs_date_to_epoch(&file_date);
-		}
-		_io_fclose(file);
-    } else {
-    	file_stat->flags = 0;
-		file_stat->file_size = 0;
-		file_stat->last_modified = 0; /* Directories don't have this field */
-    }
-done:
+	connector_file_system_stat_t dirdata = {0};
+	connector_callback_status_t status;
+	char **dirdata_path = (char **)&dirdata.path; /* This is used to init dirdata's const member path */
+	
+	*dirdata_path = (char *)data->path; /* I know, this is cheating... */
+	dirdata.errnum = data->errnum;
+	dirdata.user_context = data->user_context;
+	
+	status = app_process_file_stat(&dirdata);
+	memcpy(&data->statbuf, &dirdata.statbuf, sizeof dirdata.statbuf);
+	
     return status;
 }
 
@@ -262,26 +179,23 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     _mqx_int result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_CHANGE_CURRENT_DIR, (uint_32 *)data->path);
 
     if (result < 0) {
-    	//status = app_process_file_error(response_data->error, errno);
-		APP_DEBUG("SP:%s:%s:%d:ERROR:IO_IOCTL_CHANGE_CURRENT_DIR: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+    	status = app_process_file_error(data->errnum, errno);
     } else {
     	MFS_SEARCH_PARAM *search_param = _mem_alloc(sizeof(MFS_SEARCH_PARAM));
     	MFS_SEARCH_DATA *search_data = _mem_alloc(sizeof(MFS_SEARCH_DATA));
     	
     	if (search_param == NULL) {
-    		APP_DEBUG("SP:%s:%s:%d:ERROR:failed to allocate memmory for MFS_SEARCH_PARAM\n", __FILE__, __FUNCTION__, __LINE__);
+    		APP_DEBUG("app_process_file_opendir: failed to allocate memmory for MFS_SEARCH_PARAM\n", __FILE__, __FUNCTION__, __LINE__);
     		goto done;
     	} else if (search_data == NULL) {
-    		APP_DEBUG("SP:%s:%s:%d:ERROR:failed to allocate memmory for MFS_SEARCH_DATA\n", __FILE__, __FUNCTION__, __LINE__);
+    		APP_DEBUG("app_process_file_opendir: failed to allocate memmory for MFS_SEARCH_DATA\n", __FILE__, __FUNCTION__, __LINE__);
     		goto done;
     	}
     	search_param->ATTRIBUTE = MFS_SEARCH_ANY;
     	search_param->WILDCARD = "*";
     	search_param->SEARCH_DATA_PTR = search_data;
-    	APP_DEBUG("SP:%s:search_param -> %p\n", __FUNCTION__, search_param);
     	data->user_context = CONNECTOR_FS_FIRST_SEARCH;
     	data->handle = search_param;
-		APP_DEBUG("SP:%s:%s:%d: Opened %s\n", __FILE__, __FUNCTION__, __LINE__, data->path);
     }
 
 done:
@@ -296,7 +210,6 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 	MFS_SEARCH_DATA *search_data = search_param->SEARCH_DATA_PTR;
 	
 	if (data->user_context == CONNECTOR_FS_FIRST_SEARCH) {
-		APP_DEBUG("SP:%s:search_param -> %p\n", __FUNCTION__, search_param);
 		result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_FIND_FIRST_FILE, (uint_32_ptr)search_param);
 		data->user_context = CONNECTOR_FS_NEXT_SEARCH;
 	} else {
@@ -305,9 +218,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 	
 	if (result != MFS_NO_ERROR) {
 		APP_DEBUG("No more directory entries\n");
-		//data->size_in_bytes = 0;
 	} else {
-		size_t name_length;
 		MFS_GET_LFN_STRUCT long_filename_struct;
 		
 		long_filename_struct.PATHNAME = search_data->NAME;
@@ -318,10 +229,6 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 			/* It's not a long filename */	
 			memcpy(data->entry_name, search_data->NAME, strlen(search_data->NAME) + 1);
 		}
-
-		name_length = strlen(data->entry_name) + 1;
-		//data->bytes_available = name_length;
-		APP_DEBUG("SP:%s:%s:%d: read entry  %s\n", __FILE__, __FUNCTION__, __LINE__, data->entry_name);
 	}
 	
     return status;
@@ -329,22 +236,21 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 
 static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
+    connector_callback_status_t status = connector_callback_continue;
     MFS_SEARCH_PARAM *search_param = data->handle;
 	MFS_SEARCH_DATA *search_data = search_param->SEARCH_DATA_PTR;
 	_mqx_int result;
 
-	result = _mem_free(search_param);
-	if (result < 0) {
-		//status = app_process_file_error(response_data->error, errno);
-		APP_DEBUG("SP:%s:%s:%d:ERROR:_io_fclose: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
-	}
 	result = _mem_free(search_data);
 	if (result < 0) {
-		//status = app_process_file_error(response_data->error, errno);
-		APP_DEBUG("SP:%s:%s:%d:ERROR:_io_fclose: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+		status = app_process_file_error(data->errnum, errno);
 	}
-	APP_DEBUG("SP:%s:%s:%d: Closed\n", __FILE__, __FUNCTION__, __LINE__);
-    return connector_callback_continue;
+	result = _mem_free(search_param);
+	if (result < 0) {
+		status = app_process_file_error(data->errnum, errno);
+	}
+    
+	return status;
 }
 
 
@@ -400,23 +306,24 @@ static connector_callback_status_t app_process_file_get_error(connector_file_sys
     return connector_callback_continue;
 }
 
-
 static char const * app_convert_file_open_mode(int const oflag)
-{ /* TODO, check this */
+{
     if ((oflag & (CONNECTOR_FILE_O_WRONLY | CONNECTOR_FILE_O_RDWR)) == 0) {
         return "r";
     } else if (oflag & CONNECTOR_FILE_O_WRONLY) {
-    	return"w";
+    	return "w"; /* Open a new file in “write-only” mode; overwrite an existing file. */
     } else if (oflag & CONNECTOR_FILE_O_RDWR) {
-    	return "r+";
+    	return "r+"; /* Open an existing file in “read-write” mode. */
     } else if (oflag & CONNECTOR_FILE_O_APPEND) {
-    	return "a";
+    	return "a+"; /* Open a file at EOF in “read-write” mode; create the file if it does not exist. */
     } else if (oflag & CONNECTOR_FILE_O_CREAT) {
-    	return "a+";
+    	return "n+"; /* Open a new file in “read-write” mode; do nothing if the file already exists. */
     } else if (oflag & CONNECTOR_FILE_O_TRUNC) {
-    	return "w+";
+    	return "w+"; /* Open a new file in “read-write” mode; overwrite an existing file. */
+    } else if (oflag & CONNECTOR_FILE_O_RDONLY) {
+    	return "r"; /* Open an existing file in “read-only” mode. */
     } else {
-    	return "r";
+    	return "r"; /* Open an existing file in “read-only” mode. */
     }
 }
 
@@ -435,8 +342,8 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     		
     if (fd == NULL)
     {
-        //status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:_io_fopen returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
+		status = app_process_file_error(data->errnum, ENOENT);
+        APP_DEBUG("app_process_file_open: _io_fopen returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
     }
 
     APP_DEBUG("Open %s, %s, returned %ld\n", data->path, oflag, fd);
@@ -445,32 +352,6 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     data->user_context = NULL;
     
     return status;
-}
-
-static int app_convert_lseek_origin(int const origin)
-{
-#if 1//(CONNECTOR_SEEK_SET == SEEK_SET) && (CONNECTOR_SEEK_CUR == SEEK_CUR) && (CONNECTOR_SEEK_END == SEEK_END)
-
-    return origin;
-#else
-    int result;
-
-    switch(origin)
-    {
-    case CONNECTOR_SEEK_SET:
-        result = SEEK_SET;
-        break;
-    case CONNECTOR_SEEK_END:
-        result = SEEK_END;
-        break;
-    case CONNECTOR_SEEK_CUR:
-    default:
-        result = SEEK_CUR;
-        break;
-    }
-
-    return result;
-#endif
 }
 
 static connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
@@ -499,8 +380,8 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
     offset = fseek(fd, data->requested_offset, origin);
     if (offset < 0)
     {
-        //status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:fseek returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
+		status = app_process_file_error(data->errnum, errno);
+        APP_DEBUG("app_process_file_lseek error: fseek returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
     }
 	data->resulting_offset = (connector_file_offset_t) offset;
 
@@ -516,21 +397,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
 
 static connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
 {
-#if SP
-    connector_callback_status_t status = connector_callback_continue;
-    MQX_FILE_PTR fd = data->handle;
-    _mqx_int result = ftruncate(fd, data->length);
-
-    if (result < 0)
-    {
-        //status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:truncate returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
-    }
-    APP_DEBUG("ftruncate %ld, %ld returned %d\n", fd, data->length, result);
-
-    return status;
-#endif
-    APP_DEBUG("SP:%s:%s:%d:ERROR:app_process_file_ftruncate not implemented yet!!\n", __FILE__, __FUNCTION__, __LINE__);
+    APP_DEBUG("%s:%s:%d:ERROR:app_process_file_ftruncate not implemented yet!!\n", __FILE__, __FUNCTION__, __LINE__);
     return connector_callback_continue;
 }
 
@@ -551,7 +418,8 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     /* Read attributes to determine if it is a regular file or a subdirectory */
     result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_GET_FILE_ATTR, &attributes_param);
     if (result != MFS_NO_ERROR) {
-		APP_DEBUG("SP:%s:%s:%d:ERROR:IO_IOCTL_GET_FILE_ATTR: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+		APP_DEBUG("app_process_file_remove failed: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+		status = app_process_file_error(data->errnum, errno);
 		goto done;
     }
 
@@ -560,22 +428,19 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     } else if (attributes & MFS_ATTR_DIR_NAME) {
     	result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_REMOVE_SUBDIR, (void *)data->path);
     } else {
-    	/* TODO, set errors properly */
-    	APP_DEBUG("SP:%s:%s:%d: Permision denied %s\n", __FILE__, __FUNCTION__, __LINE__, full_path);
-    	//data->error->error_status = connector_file_permision_denied;
+        APP_DEBUG("%s is not a file or directory\n", data->path, result, errno);
+		status = app_process_file_error(data->errnum, EINVAL);
     	goto done;
     }
     
     if (result != MFS_NO_ERROR)
     {
-        //status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:_io_ioctl %s returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, attributes & MFS_ATTR_ARCHIVE ? "IO_IOCTL_DELETE_FILE" : "IO_IOCTL_REMOVE_SUBDIR", result);
+		status = app_process_file_error(data->errnum, errno);
         goto done;
     }    
 
 
 done:
-    APP_DEBUG("unlink %s returned %d\n", data->path, result);
     return status;
 }
 
@@ -588,8 +453,7 @@ static connector_callback_status_t app_process_file_read(connector_file_system_r
 
     if (result < 0)
     {
-        //status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:_io_read returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+		status = app_process_file_error(data->errnum, errno);
         APP_DEBUG("read %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         goto done;
     }
@@ -610,8 +474,7 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
     
     if (result < 0)
     {
-     //  status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:_io_write returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+		status = app_process_file_error(data->errnum, errno);
         APP_DEBUG("write %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         goto done;
     }
@@ -632,13 +495,12 @@ static connector_callback_status_t app_process_file_close(connector_file_system_
 
     if (result < 0 && errno == EIO)
     {
-        //status = app_process_file_error(response_data->error, EIO);
-        APP_DEBUG("SP:%s:%s:%d:ERROR:_io_fclose returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
+		status = app_process_file_error(data->errnum, errno);
     }
 
     APP_DEBUG("close %ld returned %d\n", fd, result);
 
-    // All application resources, used in the session, must be released in this callback
+    /* All application resources, used in the session, must be released in this callback */
 
     return status;
 }
@@ -648,18 +510,7 @@ static connector_callback_status_t app_process_file_session_error(connector_file
      APP_DEBUG("Session Error %d\n", data->session_error);
 
     /* All application resources, used in the session, must be released in this callback */
-#if 0
-     if (data->user_context != NULL)
-    {
-        app_md5_ctx * ctx = data->user_context;
-
-        if (ctx->fd >= 0)
-            close(ctx->fd);
-
-        free(data->user_context);
-        data->user_context = NULL;
-    }
-#endif
+    data->user_context = NULL;
     return connector_callback_continue;
 }
 
