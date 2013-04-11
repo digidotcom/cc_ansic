@@ -1,0 +1,24 @@
+
+import fileinput, re, string, sys
+from optparse import OptionParser
+
+if __name__ == '__main__':
+  parser = OptionParser(usage = "usage: %prog file_name src_str dst_str")
+  (options, args) = parser.parse_args()
+
+  infile = open(args[0], "r")
+  text = infile.read()
+  infile.close()
+
+  myStrVer=str.split(args[1], '.')
+  if len(myStrVer) == 4:
+     # only come here if there is a 4 tuple tag
+     myHexVer = "0x%02x%02x%02x%02xUL" % (int(myStrVer[0]), int(myStrVer[1]), int(myStrVer[2]), int(myStrVer[3]))
+     myReplacement = "#define CONNECTOR_VERSION    " + myHexVer
+     mySearchPattern = '#define\s+CONNECTOR_VERSION\s+0x\w+UL'
+
+     newtext = re.sub(mySearchPattern, myReplacement, text, 1) 
+
+     outfile = open(args[1], "w")
+     outfile.write(newtext)
+     outfile.close()
