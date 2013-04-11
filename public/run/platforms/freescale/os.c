@@ -18,11 +18,11 @@
 int connector_malloc_failures = 0;
 unsigned long start_system_up_time = 0;
 
-connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
+static connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
 
-    *ptr = _mem_alloc(size);
+    *ptr = _mem_alloc_zero(size);
     if (*ptr != NULL)
     {
         status = connector_callback_continue;
@@ -36,8 +36,10 @@ connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
     return status;
 }
 
-connector_callback_status_t app_os_free(void * const ptr)
+static connector_callback_status_t app_os_free(void * const ptr)
 {
+    connector_callback_status_t status = connector_callback_abort;
+
     ASSERT(ptr != NULL);
     if (ptr != NULL)
     {
@@ -47,9 +49,12 @@ connector_callback_status_t app_os_free(void * const ptr)
         {
             APP_DEBUG("os_free: _mem_free failed [%d]\n");
         }
+        else 
+        {
+        	status = connector_callback_continue;
+        }
     }
-
-    return connector_callback_continue;
+    return status;
 }
 
 connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
@@ -59,63 +64,63 @@ connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
     _time_get(&curtime);
     if (start_system_up_time == 0)
         start_system_up_time = curtime.SECONDS;
- 
+
     /* Up time in seconds */
     *uptime = curtime.SECONDS - start_system_up_time;
 
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_os_yield(connector_status_t const * const status)
+static connector_callback_status_t app_os_yield(void)
 {
-    if (*status == connector_idle)
-    {
-        unsigned int const timeout_in_microseconds =  1000000;
-        usleep(timeout_in_microseconds);
-    }
-    gStatus = *status;
+    _sched_yield();
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_os_reboot(void)
+connector_callback_status_t app_os_reboot(void)
 {
-
-    APP_DEBUG("Reboot from server\n");
-    /* should not return from rebooting the system */
-    return connector_callback_continue;
+	APP_DEBUG("Reboot request from iDigi!\n");
+	ecc_software_reset();
+	return connector_callback_continue;
 }
 
 
-connector_callback_status_t app_os_handler(connector_os_request_t const request,
-                                        void const * const request_data, size_t const request_length,
-                                        void * const response_data, size_t * const response_length)
+connector_callback_status_t app_os_handler(connector_request_id_os_t const request, void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
     switch (request)
     {
-    case connector_os_malloc:
-        status = app_os_malloc(*((size_t *)request_data), response_data);
+    case connector_request_id_os_malloc:
+        {
+            connector_os_malloc_t * p = data;
+            status = app_os_malloc(p->size, &p->ptr);
+        }
         break;
 
-    case connector_os_free:
-        app_os_free((void * const)request_data);
-        status = connector_callback_continue;
+    case connector_request_id_os_free:
+        {
+            connector_os_free_t * p = data;
+            status = app_os_free(p->ptr);
+        }
         break;
 
-    case connector_os_system_up_time:
-        status = app_os_get_system_time(response_data);
+    case connector_request_id_os_system_up_time:
+        {
+            connector_os_system_up_time_t * p = data;
+            status = app_os_get_system_time(&p->sys_uptime);
+        }
         break;
 
-    case connector_os_yield:
-        status = app_os_yield(request_data);
+    case connector_request_id_os_yield:
+        {
+            connector_os_yield_t * p = data;
+            status = app_os_yield();
+        }
         break;
 
-    case connector_os_reboot:
+    case connector_request_id_os_reboot:
         status = app_os_reboot();
         break;
 
@@ -127,7 +132,3 @@ connector_callback_status_t app_os_handler(connector_os_request_t const request,
 
     return status;
 }
-
-
-
-
