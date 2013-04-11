@@ -8,6 +8,7 @@ import fileinput
 import random
 import base64
 import tempfile
+import shutil
 
 from base64 import b64encode, b64decode, encodestring
 
@@ -136,7 +137,7 @@ class MallocTestCase(ic_testcase.TestCase):
     
         """ Sends file get command. 
         """
-        my_dir = tempfile.mkdtemp()
+        my_dir = tempfile.mkdtemp(suffix='_malloc')
         my_file_path  = my_dir + '/' + my_test_file
         my_ls_path   = my_dir
 
@@ -152,6 +153,7 @@ class MallocTestCase(ic_testcase.TestCase):
         #self.log.info("%s" % file_get_response)
         if file_get_response.content.find('error id="2107"') != -1:
             self.log.info("Service not available.")
+            shutil.rmtree(my_dir)
             return
         
         # Parse request response 
@@ -186,7 +188,7 @@ class MallocTestCase(ic_testcase.TestCase):
         self.log.info("Sending file rm command for \"%s\" to server for device id  %s." % (my_file_path, self.device_id))
         file_rm_response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
 
-        os.removedirs(my_dir)
+        shutil.rmtree(my_dir)
 
 
     def test_malloc_ds(self):
