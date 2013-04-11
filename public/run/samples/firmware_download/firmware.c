@@ -90,8 +90,8 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
     }
 
     APP_DEBUG("target = %d\n", image_data->target_number);
-    APP_DEBUG("offset = 0x%04X\n", image_data->image.offset);
-    APP_DEBUG("data = %p\n", image_data->image.data);
+    APP_DEBUG("offset = 0x%08X\n", image_data->image.offset);
+    APP_DEBUG("data = 0x%08X ...\n", (uint32_t)(*(uint32_t *)image_data->image.data));
     total_image_size += image_data->image.bytes_used;
     APP_DEBUG("length = %" PRIsize " (total = %" PRIsize ")\n", image_data->image.bytes_used, total_image_size);
 
