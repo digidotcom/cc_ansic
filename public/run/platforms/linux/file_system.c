@@ -11,8 +11,8 @@
  */
 
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <string.h> 
+#include <stdlib.h> 
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -32,6 +32,8 @@
 #if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
 #error The maximum supported CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH is 460
 #endif
+
+/* #define APP_PRINT_LAST_MODIFIED */
 
 /* 
  * To support large files (> 2 gigabytes) please: 
@@ -297,14 +299,18 @@ static int app_copy_statbuf(connector_file_system_statbuf_t * const pstat, struc
     if (S_ISDIR(statbuf->st_mode))
     {
         pstat->flags = connector_file_system_file_type_is_dir;
+        APP_DEBUG(" directory");
     }
     else
-    if (S_ISREG(statbuf->st_mode))
     {
-        if (statbuf->st_size <= CONNECTOR_OFFSET_MAX)
+        if (S_ISREG(statbuf->st_mode))
         {
             pstat->flags = connector_file_system_file_type_is_reg;
+        }
+        if (statbuf->st_size <= CONNECTOR_OFFSET_MAX)
+        {
             pstat->file_size = (connector_file_offset_t) statbuf->st_size;
+            APP_DEBUG(" size %" PRIoffset, pstat->file_size);
         }
         else
         {
@@ -312,6 +318,19 @@ static int app_copy_statbuf(connector_file_system_statbuf_t * const pstat, struc
             errno = EOVERFLOW;
         }
     }
+#ifdef APP_PRINT_LAST_MODIFIED
+    {
+#include <time.h>
+        char timbuf[sizeof "mon-dd-yyyy hh:mm:ss"];
+        time_t t = statbuf->st_mtime;
+        struct tm lt;
+
+        localtime_r(&t, &lt);
+        
+        strftime(timbuf, sizeof(timbuf), "%b-%d-%Y %H:%M:%S", &lt);
+        APP_DEBUG(", modified %s", timbuf);
+    }    
+#endif
     return result;
 }
 
@@ -324,7 +343,11 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
     int result = stat(data->path, &statbuf);
 
     if (result == 0) 
+    {
+        APP_DEBUG("stat for %s:", data->path);
         result = app_copy_statbuf(pstat, &statbuf);
+        APP_DEBUG("\n");
+    }
 
     if (result < 0)
     {
@@ -361,8 +384,7 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
             break;
     }
 #endif
-    APP_DEBUG("stat for %s: file_size %"PRIoffset", last_modified %u\n", data->path, pstat->file_size, pstat->last_modified);
-    
+
 done:
     return status;
 }
@@ -376,7 +398,11 @@ static connector_callback_status_t app_process_file_stat_dir_entry(connector_fil
 
     int result = stat(data->path, &statbuf);
     if (result == 0)
+    {
+        APP_DEBUG("stat for %s:", data->path);
         result = app_copy_statbuf(pstat, &statbuf);
+        APP_DEBUG("\n");
+    }
 
     if (result < 0)
     {
@@ -390,8 +416,6 @@ static connector_callback_status_t app_process_file_stat_dir_entry(connector_fil
             APP_DEBUG("Please define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES\n");
         goto done;
     }
-
-    APP_DEBUG("stat for %s: file_size %"PRIoffset", last_modified %u\n", data->path, pstat->file_size, pstat->last_modified);
 
 done:
     return status;
@@ -415,7 +439,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
             data->handle = dir_data;
 
             dir_data->dirp = dirp;
-            APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
+            APP_DEBUG("opendir for %s: %p\n", data->path, (void *) dirp);
         }
         else
         {
@@ -474,7 +498,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
     /* finished with the directory */
     if (result == NULL)
     {
-        APP_DEBUG("No more directory entries %d\n", rc);
+        APP_DEBUG("readdir_r: No more entries %d\n", rc);
         goto done;
     }
 
@@ -482,7 +506,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
     {
         size_t const name_len = strlen(result->d_name);
 
-        APP_DEBUG("readdir_r returned directory entry name %s\n", result->d_name);
+        APP_DEBUG("readdir_r %s\n", result->d_name);
 
         if(name_len < data->bytes_available)
         {
@@ -490,7 +514,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
         }
         else
         {
-            APP_DEBUG("directory entry name too long\n");
+            APP_DEBUG("readdir_r: entry name too long\n");
             status = app_process_file_error(&data->errnum, ENAMETOOLONG);
         }
     }
@@ -554,7 +578,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
     }
     data->resulting_offset = (connector_file_offset_t) result;
 
-    APP_DEBUG("lseek fd %ld, offset %"PRIoffset", origin %d returned %"PRIoffset,
+    APP_DEBUG("lseek fd %ld, offset %" PRIoffset ", origin %d returned %" PRIoffset,
                 fd, data->requested_offset, data->origin, data->resulting_offset);
 
     if (result < 0) 
@@ -574,11 +598,11 @@ static connector_callback_status_t app_process_file_ftruncate(connector_file_sys
 
     if (result < 0)
     {
-        APP_DEBUG("ftruncate fd %ld, %"PRIoffset" returned %d, errno %d\n", fd, data->length_in_bytes, result,  errno);
+        APP_DEBUG("ftruncate fd %ld, %" PRIoffset " returned %d, errno %d\n", fd, data->length_in_bytes, result,  errno);
         status = app_process_file_error(&data->errnum, errno);
     }
     else
-        APP_DEBUG("ftruncate fd %ld, %"PRIoffset"\n", fd, data->length_in_bytes);
+        APP_DEBUG("ftruncate fd %ld, %" PRIoffset "\n", fd, data->length_in_bytes);
 
     return status;
 }
