@@ -33,7 +33,7 @@ static client_data_t * app_send_data = NULL;
 #ifdef APP_USE_SM_UDP
 connector_status_t app_send_ping(connector_handle_t handle)
 {
-    static connector_sm_ping_request_t request;
+    static connector_sm_send_ping_request_t request;
     connector_status_t status;
 
     request.transport = connector_transport_udp;
@@ -189,7 +189,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
     {
         case connector_request_id_sm_ping_request:
         {
-            connector_sm_ping_request_t * const ping_request = data;
+            connector_sm_receive_ping_request_t * const ping_request = data;
 
             APP_DEBUG("Received ping request. response %s needed\n", ping_request->response_required ? "is" : "is not");
             break;

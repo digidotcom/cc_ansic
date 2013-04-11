@@ -14,6 +14,46 @@
 #define CONNECTOR_API_SHORT_MESSAGE_H
 
 /**
+* @defgroup connector_sm_send_ping_request_t Data type used to send ping request.
+* @{
+*/
+/**
+* This data structure is used when the device initiates the ping request to Etherios Device Cloud. The context will be returned
+* when Device Connector receives the ping response.
+*
+* @see connector_request_id_sm_ping_response
+*/
+typedef struct
+{
+    connector_transport_t transport;    /**< transport method to use */
+    void * user_context;                /**< user context, will be returned in response callback */
+
+    connector_bool_t response_required; /**< set to connector_true if response is needed */
+} connector_sm_send_ping_request_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_sm_cancel_request_t  To cancel short message session.
+* @{
+*/
+/**
+* This data structure is used when the device initiates the cancel session request. This data
+* structure is used in connector_initiate_action() with action ID connector_initiate_session_cancel.
+*
+* @see connector_initiate_session_cancel
+*/
+typedef struct
+{
+    connector_transport_t transport; /**< transport method to use */
+    void * user_context;             /**< user context */
+} connector_sm_cancel_request_t;
+/**
+* @}
+*/
+
+/**
 * @defgroup connector_request_id_sm_t Short message specific request IDs
 * @{
 */
@@ -23,44 +63,44 @@
 */
 typedef enum
 {
-    connector_request_id_sm_ping_request,   /**< used when Cloud Connector receives ping request from Etherios Device Cloud */
-    connector_request_id_sm_ping_response,  /**< used when Cloud Connector receives ping response from Etherios Device Cloud */
-    connector_request_id_sm_cli_request,    /**< used when Cloud Connector receives CLI request from Etherios Device Cloud */
+    connector_request_id_sm_ping_request,   /**< used when Etherios Cloud Connector receives ping request from Etherios Device Cloud */
+    connector_request_id_sm_ping_response,  /**< used when Cloud Connector receives ping response from Device Cloud */
+    connector_request_id_sm_cli_request,    /**< used when Cloud Connector receives CLI request from Device Cloud */
     connector_request_id_sm_cli_response,   /**< used to get the CLI response */
-    connector_request_id_sm_cli_response_length,  /**< called to get total CLI response length */
+    connector_request_id_sm_cli_response_length,/**< called to get total CLI response length */
     connector_request_id_sm_cli_status,     /**< called when error occurs in CLI session */
-    connector_request_id_sm_more_data,      /**< indicates pending messages are available on Etherios Device Cloud,
-                                                 User need to use new request (can be ping) to pull the pending messages from iDigi Device Cloud. */
+    connector_request_id_sm_more_data,      /**< indicates pending messages are available on Device Cloud,
+                                                User need to use new request (can be ping) to pull the pending messages from Device Cloud. */
     connector_request_id_sm_opaque_response /**< Cloud Connector will use this to provide Etherios Device Cloud response for which
-                                                 there is no associated request */
+                                                there is no associated request */
 } connector_request_id_sm_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_sm_ping_request_t Data type used in ping request.
+* @defgroup connector_sm_receive_ping_request_t Data type used receive ping request.
 * @{
 */
 /**
-* This data structure is used when the device initiates the ping request or when the callback is called with the
-* connector_request_id_sm_ping_request. In the latter case, a ping request is received from Etherios Device Cloud, and
-* user context will not be used. Returning error from the callback will result in error response to Etherios Device Cloud.
+* This data structure is used when the the callback is called with the connector_request_id_sm_ping_request.
+* A ping request is received from Etherios Device Cloud and returning connector_callback_continue from the
+* callback will result in success response to Device Cloud.
 *
 * @see connector_request_id_sm_ping_request
 */
 typedef struct
 {
-    connector_transport_t transport;
-    void * user_context;
-    connector_bool_t response_required;
-} connector_sm_ping_request_t;
+    connector_transport_t CONST transport;      /**< transport method on which ping request is received */
+    connector_bool_t CONST response_required;   /**< connector_true if Device Cloud wants response, no action is
+                                                     needed by user. This is information purpose only */
+} connector_sm_receive_ping_request_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_sm_ping_response_t Data type used in incoming ping response.
+* @defgroup connector_sm_ping_response_t Data type used to pass ping response.
 * @{
 */
 /**
@@ -71,17 +111,17 @@ typedef struct
 */
 typedef struct
 {
-    connector_transport_t transport;
-    void * user_context;
+    connector_transport_t CONST transport; /**< transport method used */
+    void * user_context;    /**< user context passed in ping request connector_initiate_action call */
 
     enum
     {
-        connector_sm_ping_status_success,
-        connector_sm_ping_status_complete,
-        connector_sm_ping_status_cancel,
-        connector_sm_ping_status_timeout,
-        connector_sm_ping_status_error
-    } status;
+        connector_sm_ping_status_success,   /**< success response received from Device Cloud */
+        connector_sm_ping_status_complete,  /**< session completed successfully, response is not requested */
+        connector_sm_ping_status_cancel,    /**< session cancelled by the user */
+        connector_sm_ping_status_timeout,   /**< timed out waiting for a response from Device Cloud */
+        connector_sm_ping_status_error      /**< internal error in Cloud Connector */
+    } CONST status;  /**< response/status returned from Device Cloud/Cloud Connector */
 
 } connector_sm_ping_response_t;
 /**
@@ -94,56 +134,71 @@ typedef struct
 */
 /**
 * This data structure is used when the callback is called to pass the CLI request received from
-* Etherios Device Cloud.
+* Etherios Device Cloud. The request ID associated with this structure is connector_request_id_sm_cli_request.
 *
 * @see connector_request_id_sm_cli_request
 *
 */
 typedef struct
 {
-    connector_transport_t transport;
-    void * user_context;        /**< User context, will be NULL when request is called, so that user can update this. */
+    connector_transport_t CONST transport;  /**< transport method on which CLI is received */
+    void * user_context;                    /**< user context */
 
-    char const * buffer;        /**< Buffer pointer to write the CLI response to */
-    size_t bytes_used;          /**< It carries the sizeof CLI command */
-    connector_bool_t response_required;
+    char const * CONST buffer;              /**< buffer contains CLI request */
+    size_t CONST bytes_used;                /**< bytes filled in the buffer */
+    connector_bool_t CONST response_required; /**< connector_true means response is needed by Device Cloud */
 } connector_sm_cli_request_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_sm_cli_response_t Data type used for CLI response
+* @defgroup connector_sm_cli_response_t Data type used to get CLI response
 * @{
 */
 /**
-* This data structure is used when the callback is called to get the response.
+* This data structure is used when the callback is called to get the CLI response to Device Cloud.
+* The associated request ID for this data structure is connector_request_id_sm_cli_response.
 *
 * @see connector_request_id_sm_cli_response
 *
 */
 typedef struct
 {
-    connector_transport_t transport;
-    void * user_context;        /**< the user context passed during CLI request callback */
+    connector_transport_t CONST transport;  /**< transport method used */
+    void * user_context;                    /**< the user context passed during CLI request callback */
 
-    char * buffer;              /**< buffer pointer to write the CLI response to */
-    size_t bytes_available;     /**< total bytes available in buffer */
-    size_t bytes_used;          /**< bytes filled */
-    connector_bool_t more_data; /**< more response data to send */
+    char * CONST buffer;                    /**< buffer pointer to write the CLI response to */
+    size_t CONST bytes_available;           /**< total bytes available in buffer */
+    size_t bytes_used;                      /**< bytes filled */
+    connector_bool_t more_data;             /**< more CLI response chunk to send */
 } connector_sm_cli_response_t;
 /**
 * @}
 */
 
+/**
+* @defgroup connector_sm_cli_response_t Data type used to get CLI response
+* @{
+*/
+/**
+* This data structure is used when the callback is called to get the CLI response length.
+* The associated request ID for this data structure is connector_request_id_sm_cli_response_length.
+* This callback will be called just before calling connector_request_id_sm_cli_response.
+*
+* @see connector_request_id_sm_cli_response_length
+*
+*/
 typedef struct
 {
-    connector_transport_t transport;    /**< IN: transport method from where the callback is originated */
-    void * user_context;                /**< IN/OUT: context passed in connector_initiate_action */
+    connector_transport_t CONST transport; /**< transport method used */
+    void * user_context;                   /**< user context */
 
-    size_t total_bytes;                 /**< OUT: total bytes in to send */
+    size_t total_bytes;                 /**< total CLI response bytes in to send */
 } connector_sm_cli_response_length_t;
-
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_sm_cli_status_t Data type used to pass CLI status.
@@ -151,21 +206,22 @@ typedef struct
 */
 /**
 * This data structure is used when the callback is called to indicate the
-* termination of CLI session.
+* termination of CLI session. The associated request ID for this data structure is
+* connector_request_id_sm_cli_status.
 *
-* @see connector_request_id_sm_cli_response
+* @see connector_request_id_sm_cli_status
 *
 */
 typedef struct
 {
-    connector_transport_t transport;
-    void * user_context;        /**< the user context passed during CLI request callback */
+    connector_transport_t CONST transport;  /**< transport method used */
+    void * user_context;                    /**< user context */
 
     enum
     {
-        connector_sm_cli_status_cancel,
-        connector_sm_cli_status_error
-    } status;
+        connector_sm_cli_status_cancel, /**< cancelled by the user */
+        connector_sm_cli_status_error   /**< error occured while preparing the response */
+    } CONST status; /**< CLI session termination reason */
 
 } connector_sm_cli_status_t;
 /**
@@ -173,62 +229,44 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_opaque_response_t Data type used to deliver the opaque response from the Cloud
+* @defgroup connector_sm_opaque_response_t  Opaque response from Device Cloud
 * @{
 */
 /**
 * This data structure is used when the callback is called to pass Etherios Device Cloud response for which the
-* associated request is not present. It may be cancelled by the user or by Cloud Connector after after
-* sending the request.
+* associated request is not present. It may be cancelled by the user or by Cloud Connector after sending the request.
+* The request ID associated with this data staructure is connector_request_id_sm_opaque_response.
 *
 * @see connector_request_id_sm_opaque_response
 *
 */
 typedef struct
 {
-    connector_transport_t transport;
-    uint32_t id;        /**< Can be used to keep track of a multipart response */
-    void * data;        /**< Pointer to opaque response */
-    size_t bytes_used;  /**< Number of bytes available in the data */
-    connector_bool_t error; /**< True: error response from Etherios Device Cloud, False: success response */
+    connector_transport_t CONST transport;  /**< transport method on which opaque response is received */
+    uint32_t CONST id;                      /**< can be used to keep track of a multipart response */
+    void const * CONST data;                /**< pointer to opaque response */
+    size_t CONST bytes_used;                /**< number of bytes available in the data */
+    connector_bool_t CONST error;           /**< connector_true means error response is received from Etherios Device Cloud */
 } connector_sm_opaque_response_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_sm_more_data_t Data type used to indicate pending data.
+* @defgroup connector_sm_more_data_t  Indicates pending data in Etherios Device Cloud.
 * @{
 */
 /**
 * This data structure is used when the callback is called with the connector_request_id_more_data.
-* This indicates that more messages are pending in Etherios Device Cloud for the device. User need
+* This indicates that more messages are pending in Device Cloud for the device. User need
 * to send request (can be ping) to retreive pending messages.
 *
 * @see connector_request_id_more_data
 */
 typedef struct
 {
-    connector_transport_t transport;
+    connector_transport_t CONST transport; /**< transport method on which pending data can be received */
 } connector_sm_more_data_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_sm_cancel_request_t Data type used to cancel device originated sessions.
-* @{
-*/
-/**
-* This data structure is used when the device initiates the cancel session request.
-*
-* @see connector_initiate_session_cancel
-*/
-typedef struct
-{
-    connector_transport_t transport;
-    void * user_context;
-} connector_sm_cancel_request_t;
 /**
 * @}
 */

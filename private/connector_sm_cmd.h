@@ -21,7 +21,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
     {
         case connector_initiate_ping_request:
         {
-            connector_sm_ping_request_t const * const request = sm_ptr->pending.data;
+            connector_sm_send_ping_request_t const * const request = sm_ptr->pending.data;
 
             session->user.context = request->user_context;
             session->user.header = NULL;
@@ -688,17 +688,15 @@ static connector_status_t sm_process_ping_reqest(connector_data_t * const connec
 {
     connector_status_t status;
     connector_request_id_t request_id;
-    connector_sm_ping_request_t cb_data;
+    connector_sm_receive_ping_request_t cb_data;
     connector_callback_status_t callback_status;
 
     cb_data.transport = session->transport;
-    cb_data.user_context = NULL;
     cb_data.response_required = SmIsResponseNeeded(session->flags);
 
     request_id.sm_request = connector_request_id_sm_ping_request;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
     status = sm_map_callback_status_to_connector_status(callback_status);
-    session->user.context = cb_data.user_context;
 
     return status;
 }
