@@ -93,10 +93,9 @@ connector_callback_status_t app_os_free(void const * const ptr)
     return connector_callback_continue;
 }
 
-time_t start_system_up_time;
-
 connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
 {
+    static time_t start_system_up_time;
 	time_t present_time;
 
     time(&present_time);
@@ -129,6 +128,7 @@ static connector_callback_status_t app_os_reboot(void)
     reboot(LINUX_REBOOT_CMD_RESTART);
     return connector_callback_continue;
 }
+
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
                                            void * const data)
 {

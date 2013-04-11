@@ -57,7 +57,9 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  *                  the allocated memory
  *
  * @retval connector_callback_continue  Memory was allocated.
- *
+ *  
+ * @retval connector_callback_busy      Memory was temporarily 
+ *          unavailable. 
  * @retval connector_callback_abort     Memory was not allocated and abort Etherios Cloud Connector.
  *
  * @see os_free

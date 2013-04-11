@@ -93,10 +93,9 @@ connector_callback_status_t app_os_free(void const * const ptr)
     return connector_callback_continue;
 }
 
-time_t start_system_up_time;
-
 connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
 {
+    static time_t start_system_up_time;
 	time_t present_time;
 
     time(&present_time);
