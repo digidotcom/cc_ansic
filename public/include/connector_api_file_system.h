@@ -63,7 +63,7 @@ typedef enum {
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
 typedef int64_t connector_file_offset_t;
 #else
-typedef int32_t connector_file_offset_t;
+typedef size_t connector_file_offset_t;
 #endif
 /**
 * @}

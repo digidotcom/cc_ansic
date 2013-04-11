@@ -45,7 +45,9 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
     #define CONNECTOR_HAVE_STDINT_HEADER
   #endif
 #else
-  #include <stdio.h>
+	#if !defined IAR
+	#include <stdio.h>
+	#endif
 #endif
 
 #if defined CONNECTOR_HAVE_STDINT_HEADER

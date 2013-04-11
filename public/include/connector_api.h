@@ -32,7 +32,9 @@
  *                                       v v v v
  *                                    0x01010000UL
  */
+#if !defined(CONNECTOR_VERSION)
 #define CONNECTOR_VERSION   0x02000099UL
+#endif
 
 #include "connector_config.h"
 
