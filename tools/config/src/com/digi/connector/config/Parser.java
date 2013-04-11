@@ -205,6 +205,7 @@ public class Parser {
                     .lastIndexOf("\""));
 
             if (description.length() > MAX_DESCRIPTION_LENGTH) {
+                ConfigGenerator.log(description);
                 throw new Exception("desciption > maximum length "
                         + MAX_DESCRIPTION_LENGTH);
             }
