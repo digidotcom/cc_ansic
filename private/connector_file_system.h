@@ -515,6 +515,18 @@ done:
     return status;
 }
 
+/* This function is a custom implementation of GNU/Linux's non-standard strnlen() */
+static int strnlen_(char const * const string, int maxlen)
+{
+	volatile const char *e;
+	int n;
+	
+	for (e = string, n = 0; *e && n < maxlen; e++, n++)
+	;
+	
+	return n;
+}
+
 static connector_status_t call_file_readdir_user(connector_data_t * const connector_ptr,
                                                  msg_service_request_t * const service_request,
                                                  fs_context_t * const context,
@@ -537,7 +549,7 @@ static connector_status_t call_file_readdir_user(connector_data_t * const connec
     if (!FsOperationSuccess(status, context))
         goto done;
 
-    if (path[strnlen(path, buffer_size)] != '\0')
+    if (path[strnlen_(path, buffer_size)] != '\0')
     {
         /* no NUL-character within buffer */
         status =  fs_set_abort(connector_ptr,
@@ -801,7 +813,7 @@ static size_t parse_file_path(fs_context_t * const context,
                               size_t const buffer_size)
 {
     char const * const path = path_ptr;
-    size_t path_len = strnlen(path, buffer_size);
+    size_t path_len = strnlen_(path, buffer_size);
 
     if (path_len == 0)
     {
