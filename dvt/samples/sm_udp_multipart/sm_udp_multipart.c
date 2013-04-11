@@ -42,7 +42,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
 
 connector_status_t app_send_data(connector_handle_t handle)
 {
-    static size_t test_cases = 0;
+    static int test_cases = 0;
     static client_data_t app_data[CONNECTOR_SM_MAX_SESSIONS];
     static connector_bool_t response_needed = connector_true;
     connector_status_t status = connector_no_resource;

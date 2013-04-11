@@ -286,7 +286,7 @@ static connector_callback_status_t app_handle_device_request(connector_request_i
                 goto done;
             }
 
-            APP_DEBUG("Data: \"%.*s\".\n", recv_ptr->bytes_used, (char *)recv_ptr->buffer);
+            APP_DEBUG("Data: \"%.*s\".\n", (int)recv_ptr->bytes_used, (char *)recv_ptr->buffer);
             break;
         }
 
