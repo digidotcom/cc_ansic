@@ -110,6 +110,9 @@ today=`date +"%B %d, %Y"`
 echo ">> Setting Release Date to Today (${today}) in ${BASE_DIR}/private/Readme.txt"
 sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 
+# Replace the version number in connector_api.h
+python ../dvt/scripts/update_hex_version.py public/include/connector_api.h "${TAG}"
+
 # Generate a Makefile for each sample.
 
 # Create the tarball
@@ -138,7 +141,6 @@ tar -xf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz"
 cd "${BASE_DIR}"
 python ../dvt/scripts/replace_str.py public/run/platforms/linux/config.c '#error' '//#error'
 python ../dvt/scripts/replace_str.py public/run/samples/compile_and_link/Makefile 'c99' 'c89'
-python ../dvt/scripts/update_hex_version.py public/include/connector_api.h "${TAG}"
 
 # Build all the IIK samples and platforms
 
