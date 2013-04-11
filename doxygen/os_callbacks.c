@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section os_callbacks OS Callbacks
- * The Etherios Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
+ * Etherios Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  * The class id is @ref connector_class_id_operating_system.
  *
@@ -43,8 +43,7 @@
  *   </tr>
  *   <tr>
  *     <th>data</th>
- *     <td>Pointer to callback data of @endhtmlonly @ref connector_os_malloc_t "connector_os_malloc_t" @htmlonly type,
- *         containing:
+ *     <td>Pointer to @endhtmlonly @ref connector_os_malloc_t "connector_os_malloc_t" @htmlonly structure
  *          <ul>
  *          <li><b><i>size</i></b> - [IN] Number of bytes to allocate</li>
  *          <li><b><i>ptr</i></b> - [OUT] Returned pointer to the beginning of the allocated memory block</li>
@@ -64,7 +63,7 @@
  *   </tr>
  *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
- *     <td>Memory is not available at this time and needs to be called back again</td>
+ *     <td>Memory is not available at this time, the callback needs to be called again</td>
  *   </tr>
  *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -78,22 +77,14 @@
  *
  * @code
  *
- * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
- *                                            void * const data)
+ * connector_callback_status_t os_malloc(connector_os_malloc_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  * 
- *     if (class_id == connector_class_id_operating_system &&
- *         request_id.os_request == connector_request_id_os_malloc)
+ *     data->ptr = malloc(data->size);
+ *     if (data->ptr == NULL)
  *     {
- *         connector_os_malloc_t * p = data;
- * 
- *         p->ptr = malloc(p->size);
- * 
- *         if (p->ptr == NULL)
- *         {
- *             return connector_callback_abort;
- *         }
+ *         status = connector_callback_abort;
  *     }
  *     return status;
  * }
@@ -125,8 +116,7 @@
  * </tr>
  * <tr>
  *     <th>data</th>
- *     <td>Pointer to callback data of @endhtmlonly @ref connector_os_free_t "connector_os_free_t" @htmlonly type,
- *         containing:
+ *     <td>Pointer to @endhtmlonly @ref connector_os_free_t "connector_os_free_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>ptr</i></b> - [IN] A pointer to the memory block to free </li>
  *        </ul>
@@ -155,16 +145,10 @@
  *
  * @code
  *
- * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
- *                                            void * const data)
+ * connector_callback_status_t os_free(connector_os_free_t * const data)
  * {
- *     if (class_id == connector_class_id_operating_system &&
- *         request_id.os_request == connector_request_id_os_free)
- *     {
- *         connector_os_free_t * p = data;
+ *     free(data->ptr);
  * 
- *         free(p->ptr);
- *     }
  *     return connector_callback_continue;
  * }
  * @endcode
@@ -192,8 +176,7 @@
  * <td>@endhtmlonly @ref connector_request_id_os_system_up_time @htmlonly</td>
  * </tr>
  *     <th>data</th>
- *     <td>Pointer to callback data of @endhtmlonly @ref connector_os_system_up_time_t "connector_os_system_up_time_t" @htmlonly type,
- *         containing:
+ *     <td>Pointer to @endhtmlonly @ref connector_os_system_up_time_t "connector_os_system_up_time_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>sys_uptime</i></b> - [OUT] Returned system up time in seconds </li>
  *        </ul>
@@ -217,19 +200,13 @@
  *
  * @code
  *
- * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
- *                                            void * const data)
+ * connector_callback_status_t os_get_system_time(connector_os_system_up_time_t * const data)
  * {
- *
- *     if (class_id == connector_class_id_operating_system &&
- *         request_id.os_request == connector_request_id_os_system_up_time)
- *     {
- *          connector_os_system_up_time_t * p = data;
- *          time_t sys_uptime;
+ *      time_t sys_uptime;
  * 
- *          time(&sys_uptime);
- *          p->sys_uptime = (unsigned long) sys_uptime;
- *     }
+ *      time(&sys_uptime);
+ *      data->sys_uptime = (unsigned long) sys_uptime;
+ *
  *     return connector_callback_continue;
  * }
  * @endcode
@@ -258,9 +235,11 @@
  * </tr>
  * <tr>
  *  <th>data</th>
- *  <td>Pointer to callback data of @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly type,
- *      containing @endhtmlonly @ref connector_status_t "Status of Etherios Cloud Connector"@htmlonly.
- *      Values applied to this callback are: 
+ *  <td>Pointer to @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly structure,
+ *  containing 
+ *  @endhtmlonly @ref connector_status_t "status of Etherios Cloud Connector".@htmlonly
+ *   <br /><br />   Values applied to this callback are:
+ *   </ul>
  *      <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
  *           <li> @endhtmlonly @ref connector_working @htmlonly </li>
  *           <li> @endhtmlonly @ref connector_pending @htmlonly </li>
@@ -286,20 +265,15 @@
  *
  * @code
  *
- * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
- *                                            void * const data)
+ * connector_callback_status_t os_yield(connector_os_yield_t * const data)
  * {
- *     if (class_id == connector_class_id_operating_system &&
- *         request_id.os_request == connector_request_id_os_yield)
- *     {
- *          connector_os_yield_t * p = data;
  *
- *          if (p->status == connector_idle)
- *          {
- *              unsigned int const timeout_in_microseconds =  1000000;
- *              usleep(timeout_in_microseconds);
- *          }
- *     }
+ *      if (data->status == connector_idle)
+ *      {
+ *          unsigned int const timeout_in_microseconds =  1000000;
+ *          usleep(timeout_in_microseconds);
+ *      }
+ *     
  *     return connector_callback_continue;
  * }
  * @endcode
@@ -307,7 +281,7 @@
  *
  * @section reboot Reboot
  *
- * Callback is called when the iDigi Device Cloud requests that the device reboots.
+ * Callback is called when Etherios Device Cloud requests that the device reboots.
  * The device should reboot and this callback should not return.
  *
  * @htmlonly
@@ -340,14 +314,10 @@
  *
  * @code
  *
- * connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
- *                                            void * const data)
+ * connector_callback_status_t os_reboot(void)
  * {
- *     if (class_id == connector_class_id_operating_system &&
- *         request_id.os_request == connector_request_id_os_reboot)
- *     {
- *       APP_DEBUG("Reboot from server\n");
- *     }
+ *      APP_DEBUG("Reboot from Etherios Device Cloud\n");
+ *     
  *     return connector_callback_continue;
  * } 
  *

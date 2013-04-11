@@ -64,8 +64,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td>Pointer to callback data of @endhtmlonly @ref connector_network_open_t "connector_network_open_t" @htmlonly type,
- *     containing:
+ * <td> Pointer to @endhtmlonly @ref connector_network_open_t "connector_network_open_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to the Etherios Device Cloud URL </li>
  *          <li><b><i>handle</i></b> - [OUT] Returned @endhtmlonly @ref connector_network_handle_t "network handle" @htmlonly which is used throughout network callbacks </li>
@@ -133,8 +132,7 @@
  * </tr>
  * <tr>
  * <th>data</th> 
- * <td>Pointer to callback data of @endhtmlonly @ref connector_network_send_t "connector_network_send_t" @htmlonly type,
- *     containing:
+ * <td>Pointer to @endhtmlonly @ref connector_network_send_t "connector_network_send_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
  *          <li><b><i>buffer</i></b> - [In] Pointer to data to send </li>
@@ -205,8 +203,7 @@
  * </tr>
  * <tr>
  * <th>data</th> 
- * <td>Pointer to callback data of @endhtmlonly @ref connector_network_receive_t "connector_network_receive_t" @htmlonly type,
- *     containing:
+ * <td>Pointer to @endhtmlonly @ref connector_network_receive_t "connector_network_receive_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
  *          <li><b><i>buffer</i></b> - Pointer to memory where callback writes received data </li>
@@ -269,8 +266,7 @@
  * </tr>
  * <tr>
  * <th>data</th> 
- * <td>Pointer to callback data of @endhtmlonly @ref connector_network_close_t "connector_network_close_t" @htmlonly type,
- *     containing:
+ * <td>Pointer to @endhtmlonly @ref connector_network_close_t "connector_network_close_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
  *          <li><b><i>status</i></b> -  [IN] @endhtmlonly @ref connector_close_status_t "Reason for closing the network handle" @htmlonly </li>
