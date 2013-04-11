@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import with_statement
 from string import Template
 
@@ -51,7 +52,7 @@ ELEMENT_ENUM_MISSING_VALUE='.*Missing <value>!'
 ELEMENT_ENUM_MISSING_TYPE='.*Missing type enum on element:'
 ELEMENT_NO_UNIT='.*Missing or bad units description'
 ######ELEMENT_MAX_GREATER_MAX_CONTNET#########
-# Currently doesn't seem possible to enforce this in the 
+# Currently doesn't seem possible to enforce this in the
 # ConfigGenerator. Could be possible in the future???
 # Setting to no error in the mean time.
 # The issue is that #RCI_MAXIMUM_CONTENT_LENGTH is
@@ -73,7 +74,7 @@ ELEMENT_BAD_UNIT=ELEMENT_NO_UNIT
 
 #List of dictionaries for globalerror test cases.
 #'text' is what to substitute in the Template.
-#'error' is the expected error string returned from the 
+#'error' is the expected error string returned from the
 #    exception thrown by ConfigGenerator.jar
 #'description' is used to uniquely identify the test case
 #    which is used to run the unit test as well as help to
@@ -100,7 +101,7 @@ globalerrorTests=[{'text':'globalerror load_fail "Unable to load configuration"'
 
 #List of dictionaries for group test cases.
 #'text' is what to substitute in the Template.
-#'error' is the expected error string returned from the 
+#'error' is the expected error string returned from the
 #    exception thrown by ConfigGenerator.jar
 #'description' is used to uniquely identify the test case
 #    which is used to run the unit test as well as help to
@@ -166,7 +167,7 @@ groupTests=[{'text':'group setting serial 2 "Serial Port"',
 
 #List of dictionaries for error test cases.
 #'text' is what to substitute in the Template.
-#'error' is the expected error string returned from the 
+#'error' is the expected error string returned from the
 #    exception thrown by ConfigGenerator.jar
 #'description' is used to uniquely identify the test case
 #    which is used to run the unit test as well as help to
@@ -193,7 +194,7 @@ errorTests=[{'text':'error invalid_bits "invalid data bits rate"',
 
 #List of dictionaries of all the different element types
 #'type' is the element type
-#'min' is the minimum value possible. 
+#'min' is the minimum value possible.
 #'max' is the maximum value possible
 #    SHOULD BE LESS THAN RCI_MAX_CONTENT_LENGTH.
 #NOTE: Some types throw errors if min/max is used.
@@ -230,7 +231,7 @@ elementTypes=[{'type':'string',
 
 #Returns a list of dictionaries for element test cases.
 #'text' is what to substitute in the Template.
-#'error' is the expected error string returned from the 
+#'error' is the expected error string returned from the
 #    exception thrown by ConfigGenerator.jar
 #'description' is used to uniquely identify the test case
 #    which is used to run the unit test as well as help to
@@ -397,13 +398,13 @@ def getElementTests():
             #to does not support min/max!
                 if 'no_error_all_options_used' in desc:
                     #This case is to test all valid options.
-                    #Since min/max isn't supported we'll 
+                    #Since min/max isn't supported we'll
                     #remove it so the test passes
                     mm_pass = ''
                 else:
                     #We should get this error before all others!
                     error = ELEMENT_MIN_MAX_NOT_SUPPORTED
-                    
+
             #If the type should error on negative value, change the error!
             if t in neg_error and 'negative_min' in desc:
                 error = ELEMENT_NEGATIVE_MIN
@@ -449,14 +450,14 @@ group setting serial 2 "Serial Port" "Port 1 is used for printf"
         value 38400
         value 57600
         value 115200
-        value 230400  
-    element parity "Parity" type enum access  read_write 
+        value 230400
+    element parity "Parity" type enum access  read_write
         value none
         value odd
         value even
-    element databits "Data bits" type uint32 access  read_write  min  5 max  8 
-    element xbreak "Tx Break" type on_off access  read_write 
-    element txbytes "Tx bytes" type uint32 access  read_only 
+    element databits "Data bits" type uint32 access  read_write  min  5 max  8
+    element xbreak "Tx Break" type on_off access  read_write
+    element txbytes "Tx bytes" type uint32 access  read_only
     error invalid_baud "Invalid baud rate "
     error invalid_databits "Invalid data bits"
     error invalid_parity  " Invalid parity"
@@ -464,19 +465,19 @@ group setting serial 2 "Serial Port" "Port 1 is used for printf"
     error invalid_databits_parity "Invalid combination of data bits and parity"
 
 group setting device_info  "Device info"
-    element product "Product" type string access  read_write  min  1 max  64 
-    element model "Model" type string access  read_write  min  0 max  32 
-    element company "Company" type string access  read_write 
-    element desc "Description" type multiline_string access  read_write 
-    element syspwd "System password" type password access  read_write  max  64 
-    error invalid_length "invalid length" 
+    element product "Product" type string access  read_write  min  1 max  64
+    element model "Model" type string access  read_write  min  0 max  32
+    element company "Company" type string access  read_write
+    element desc "Description" type multiline_string access  read_write
+    element syspwd "System password" type password access  read_write  max  64
+    error invalid_length "invalid length"
 
-group state debug_info "Debug info on Etherios Cloud connector thread"
-    element version "Version" type string access  read_only 
-    element stacktop "Stack begin" type 0x_hex32 access  read_only 
-    element stacksize "Stack size" type hex32 access  read_only 
-    element stackbottom "Stack end" type 0x_hex32 access  read_only 
-    element usedmem "Allocated memory used" type uint32 access  read_only 
+group state debug_info "Debug info on Cloud Connector thread"
+    element version "Version" type string access  read_only
+    element stacktop "Stack begin" type 0x_hex32 access  read_only
+    element stacksize "Stack size" type hex32 access  read_only
+    element stackbottom "Stack end" type 0x_hex32 access  read_only
+    element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
 # Must setup the following group in order for GPS shown in Etherios Device Cloud.
@@ -498,14 +499,14 @@ ${test}
         value 38400
         value 57600
         value 115200
-        value 230400  
-    element parity "Parity" type enum access  read_write 
+        value 230400
+    element parity "Parity" type enum access  read_write
         value none
         value odd
         value even
-    element databits "Data bits" type uint32 access  read_write  min  5 max  8 
-    element xbreak "Tx Break" type on_off access  read_write 
-    element txbytes "Tx bytes" type uint32 access  read_only 
+    element databits "Data bits" type uint32 access  read_write  min  5 max  8
+    element xbreak "Tx Break" type on_off access  read_write
+    element txbytes "Tx bytes" type uint32 access  read_only
     error invalid_baud "Invalid baud rate "
     error invalid_databits "Invalid data bits"
     error invalid_parity  " Invalid parity"
@@ -513,19 +514,19 @@ ${test}
     error invalid_databits_parity "Invalid combination of data bits and parity"
 
 group setting device_info  "Device info"
-    element product "Product" type string access  read_write  min  1 max  64 
-    element model "Model" type string access  read_write  min  0 max  32 
-    element company "Company" type string access  read_write 
-    element desc "Description" type multiline_string access  read_write 
-    element syspwd "System password" type password access  read_write  max  64 
-    error invalid_length "invalid length" 
+    element product "Product" type string access  read_write  min  1 max  64
+    element model "Model" type string access  read_write  min  0 max  32
+    element company "Company" type string access  read_write
+    element desc "Description" type multiline_string access  read_write
+    element syspwd "System password" type password access  read_write  max  64
+    error invalid_length "invalid length"
 
 group state debug_info "Debug info on Etherios Cloud Connector thread"
-    element version "Version" type string access  read_only 
-    element stacktop "Stack begin" type 0x_hex32 access  read_only 
-    element stacksize "Stack size" type hex32 access  read_only 
-    element stackbottom "Stack end" type 0x_hex32 access  read_only 
-    element usedmem "Allocated memory used" type uint32 access  read_only 
+    element version "Version" type string access  read_only
+    element stacktop "Stack begin" type 0x_hex32 access  read_only
+    element stacksize "Stack size" type hex32 access  read_only
+    element stackbottom "Stack end" type 0x_hex32 access  read_only
+    element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
 # Must setup the following group in order for GPS shown in Etherios Device Cloud.
@@ -547,14 +548,14 @@ group setting serial 2 "Serial Port" "Port 1 is used for printf"
         value 38400
         value 57600
         value 115200
-        value 230400  
-    element parity "Parity" type enum access  read_write 
+        value 230400
+    element parity "Parity" type enum access  read_write
         value none
         value odd
         value even
-    element databits "Data bits" type uint32 access  read_write  min  5 max  8 
-    element xbreak "Tx Break" type on_off access  read_write 
-    element txbytes "Tx bytes" type uint32 access  read_only 
+    element databits "Data bits" type uint32 access  read_write  min  5 max  8
+    element xbreak "Tx Break" type on_off access  read_write
+    element txbytes "Tx bytes" type uint32 access  read_only
     ${test}
     error invalid_databits "Invalid data bits"
     error invalid_parity  " Invalid parity"
@@ -562,19 +563,19 @@ group setting serial 2 "Serial Port" "Port 1 is used for printf"
     error invalid_databits_parity "Invalid combination of data bits and parity"
 
 group setting device_info  "Device info"
-    element product "Product" type string access  read_write  min  1 max  64 
-    element model "Model" type string access  read_write  min  0 max  32 
-    element company "Company" type string access  read_write 
-    element desc "Description" type multiline_string access  read_write 
-    element syspwd "System password" type password access  read_write  max  64 
-    error invalid_length "invalid length" 
+    element product "Product" type string access  read_write  min  1 max  64
+    element model "Model" type string access  read_write  min  0 max  32
+    element company "Company" type string access  read_write
+    element desc "Description" type multiline_string access  read_write
+    element syspwd "System password" type password access  read_write  max  64
+    error invalid_length "invalid length"
 
 group state debug_info "Debug info on Etherios Cloud Connector thread"
-    element version "Version" type string access  read_only 
-    element stacktop "Stack begin" type 0x_hex32 access  read_only 
-    element stacksize "Stack size" type hex32 access  read_only 
-    element stackbottom "Stack end" type 0x_hex32 access  read_only 
-    element usedmem "Allocated memory used" type uint32 access  read_only 
+    element version "Version" type string access  read_only
+    element stacktop "Stack begin" type 0x_hex32 access  read_only
+    element stacksize "Stack size" type hex32 access  read_only
+    element stackbottom "Stack end" type 0x_hex32 access  read_only
+    element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
 # Must setup the following group in order for GPS shown in Etherios Device Cloud.
@@ -596,11 +597,11 @@ group setting serial 2 "Serial Port" "Port 1 is used for printf"
         value 38400
         value 57600
         value 115200
-        value 230400  
+        value 230400
     ${test}
-    element databits "Data bits" type uint32 access  read_write  min  5 max  8 
-    element xbreak "Tx Break" type on_off access  read_write 
-    element txbytes "Tx bytes" type uint32 access  read_only 
+    element databits "Data bits" type uint32 access  read_write  min  5 max  8
+    element xbreak "Tx Break" type on_off access  read_write
+    element txbytes "Tx bytes" type uint32 access  read_only
     error invalid_baud "Invalid baud rate "
     error invalid_databits "Invalid data bits"
     error invalid_parity  " Invalid parity"
@@ -608,19 +609,19 @@ group setting serial 2 "Serial Port" "Port 1 is used for printf"
     error invalid_databits_parity "Invalid combination of data bits and parity"
 
 group setting device_info  "Device info"
-    element product "Product" type string access  read_write  min  1 max  64 
-    element model "Model" type string access  read_write  min  0 max  32 
-    element company "Company" type string access  read_write 
-    element desc "Description" type multiline_string access  read_write 
-    element syspwd "System password" type password access  read_write  max  64 
-    error invalid_length "invalid length" 
+    element product "Product" type string access  read_write  min  1 max  64
+    element model "Model" type string access  read_write  min  0 max  32
+    element company "Company" type string access  read_write
+    element desc "Description" type multiline_string access  read_write
+    element syspwd "System password" type password access  read_write  max  64
+    error invalid_length "invalid length"
 
 group state debug_info "Debug info on Etherios Cloud connector thread"
-    element version "Version" type string access  read_only 
-    element stacktop "Stack begin" type 0x_hex32 access  read_only 
-    element stacksize "Stack size" type hex32 access  read_only 
-    element stackbottom "Stack end" type 0x_hex32 access  read_only 
-    element usedmem "Allocated memory used" type uint32 access  read_only 
+    element version "Version" type string access  read_only
+    element stacktop "Stack begin" type 0x_hex32 access  read_only
+    element stacksize "Stack size" type hex32 access  read_only
+    element stackbottom "Stack end" type 0x_hex32 access  read_only
+    element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
 # Must setup the following group in order for GPS shown in Etherios Device Cloud.
@@ -655,7 +656,7 @@ def get_list(list=TEST_LIST):
     for keyword in list:
          templt=keyword['template']
          for tc in keyword['tests']:
-            case = TestCase('%s'%templt.substitute(test='%s'%tc['text']), 
+            case = TestCase('%s'%templt.substitute(test='%s'%tc['text']),
                 tc['error'], tc['description'])
             testD={'text':'%s'%templt.substitute(test='%s'%tc['text']),
                     'error':tc['error'],
