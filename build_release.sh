@@ -74,6 +74,9 @@ cp -rf private "${BASE_DIR}"
 cp -rf public "${BASE_DIR}"
 cp -rf docs "${BASE_DIR}"
 rm -rf "${BASE_DIR}/public/run/platforms/freescale"
+rm -rf "${BASE_DIR}/public/run/platforms/template"
+rm -rf "${BASE_DIR}/public/step/platforms/template"
+rm -rf "${BASE_DIR}/public/step/platforms/windows"
 
 # Get the name of the getting starting guides and see which one is newer
 released_file=$(find /eng/store/released/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
