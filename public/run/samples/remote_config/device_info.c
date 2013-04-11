@@ -33,8 +33,9 @@ typedef struct {
     size_t desc_length;
 } device_info_config_data_t;
 
-device_info_config_data_t device_info_config_data = {"Etherios Connector Product\0", "\0", "Digi International Inc.\0", "Etherios Connector Demo on Linux\n"
-        "with firmware upgrade, and remote configuration supports\0", 102};
+device_info_config_data_t device_info_config_data = {"Etherios Connector Product\0", "\0", "Digi International Inc.\0",
+        "Etherios Connector Demo on Linux\nwith firmware upgrade, and remote configuration supports\0",
+        102};
 
 void print_device_info_desc(void)
 {
@@ -86,8 +87,13 @@ connector_callback_status_t app_device_info_group_get(connector_remote_config_t 
     {
         device_info_config_data_t * const device_info_ptr = session_ptr->group_context;
 
-        char * config_data[] = {NULL, device_info_ptr->product, device_info_ptr->model,
-                                device_info_ptr->company, device_info_ptr->desc};
+        char * config_data[connector_setting_device_info_COUNT];
+
+        config_data[connector_setting_device_info_version] = NULL;
+        config_data[connector_setting_device_info_product] = device_info_ptr->product;
+        config_data[connector_setting_device_info_model] = device_info_ptr->model;
+        config_data[connector_setting_device_info_company] = device_info_ptr->company;
+        config_data[connector_setting_device_info_desc] = device_info_ptr->desc;
 
         ASSERT(asizeof(config_data) == connector_setting_device_info_COUNT);
 

@@ -62,7 +62,7 @@ connector_callback_status_t app_device_time_group_get(connector_remote_config_t 
 
         ASSERT(remote_config->element.type == connector_element_type_datetime);
 
-//        the_time = localtime(&device_time_ptr->current_time.time);
+/*        the_time = localtime(&device_time_ptr->current_time.time); */
         the_time = gmtime(&device_time_ptr->current_time.time);
 
         if (the_time == NULL)
@@ -187,7 +187,9 @@ connector_callback_status_t app_device_time_group_set(connector_remote_config_t 
 
             {
                 int t;
-                char timebuf[len+1];
+                char timebuf[32];
+
+                ASSERT(len < sizeof timebuf);
 
                 memcpy(timebuf, ptr, len);
                 timebuf[len] = '\0';

@@ -204,7 +204,11 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * c
     case connector_setting_ethernet_subnet:
     case connector_setting_ethernet_gateway:
     {
-        char * config_data[] = {ethernet_ptr->ip_address, ethernet_ptr->subnet, ethernet_ptr->gateway};
+        char * config_data[3];
+
+        config_data[0] = ethernet_ptr->ip_address;
+        config_data[1] = ethernet_ptr->subnet;
+        config_data[2] = ethernet_ptr->gateway;
 
         ASSERT(remote_config->element.type == connector_element_type_ipv4);
         remote_config->response.element_value->string_value = config_data[remote_config->element.id];
@@ -261,11 +265,16 @@ connector_callback_status_t app_ethernet_group_set(connector_remote_config_t * c
         struct {
             char * data;
             size_t max_length;
-        } config_data[] = {
-                {ethernet_ptr->ip_address, sizeof ethernet_ptr->ip_address},
-                {ethernet_ptr->subnet, sizeof ethernet_ptr->subnet},
-                {ethernet_ptr->gateway, sizeof ethernet_ptr->gateway}
-        };
+        } config_data[3];
+
+        config_data[0].data = ethernet_ptr->ip_address;
+        config_data[0].max_length = sizeof ethernet_ptr->ip_address;
+
+        config_data[1].data = ethernet_ptr->subnet;
+        config_data[1].max_length = sizeof ethernet_ptr->subnet;
+
+        config_data[2].data = ethernet_ptr->gateway;
+        config_data[2].max_length = sizeof ethernet_ptr->gateway;
 
         ASSERT(remote_config->element.type == connector_element_type_ipv4);
 
