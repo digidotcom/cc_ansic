@@ -183,7 +183,7 @@ static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t
  *
  * This routine returns a pointer to the device type which is an iso-8859-1 encoded string.
  * This string should be chosen by the device manufacture as a name that uniquely
- * identifies this model of device  to the server. When the server finds two devices
+ * identifies this model of device  to Etherios Device Cloud. When Device Cloud finds two devices
  * with the same device type, it can infer that they are the same product and
  * product scoped data may be shared among all devices with this device type.
  * A device's type cannot be an empty string, nor contain only whitespace.
@@ -213,23 +213,23 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
 }
 
 /**
- * @brief   Get the iDigi server URL
+ * @brief   Get the Etherios Device Cloud URL
  *
  * This routine assigns a pointer to the ASCII null-terminated string of the iDigi
  * Device Cloud FQDN, this is typically developer.idig.com.
  *
  * @param [out] url  Pointer to memory containing the URL
- * @param [out] size Size of the server URL in bytes (Maximum is 63 bytes)
+ * @param [out] size Size of Etherios Device Cloud URL in bytes (Maximum is 63 bytes)
  *
  * @retval connector_callback_continue  The URL type was successfully returned.
  * @retval connector_callback_abort     Could not get the URL and abort Etherios Cloud Connector.
  *
- * @see @ref server_url API Configuration Callback
+ * @see @ref device_cloud_url API Configuration Callback
  *
  * @note This routine is not needed if you define @b CONNECTOR_CLOUD_URL configuration in @ref connector_config.h.
  * See @ref connector_config_data_options
  */
-static connector_callback_status_t app_get_server_url(char const ** url, size_t * const size)
+static connector_callback_status_t app_get_device_cloud_url(char const ** url, size_t * const size)
 {
     static char const connector_server_url[] = "my.idigi.com";
 
@@ -415,7 +415,7 @@ static connector_callback_status_t app_get_wait_count(uint16_t const ** count, s
 
     /*
      * Return pointer to wait count (number of times not receiving Tx keepalive
-     * from server is allowed).
+     * from Etherios Device Cloud is allowed).
      */
     static uint16_t const device_wait_count = DEVICE_WAIT_COUNT;
 
@@ -993,35 +993,34 @@ static char const * app_config_class_to_string(connector_config_request_t const 
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_config_device_id);
-        enum_to_case(connector_config_vendor_id);
-        enum_to_case(connector_config_device_type);
-        enum_to_case(connector_config_server_url);
-        enum_to_case(connector_config_connection_type);
-        enum_to_case(connector_config_mac_addr);
-        enum_to_case(connector_config_link_speed);
-        enum_to_case(connector_config_phone_number);
-        enum_to_case(connector_config_tx_keepalive);
-        enum_to_case(connector_config_rx_keepalive);
-        enum_to_case(connector_config_wait_count);
-        enum_to_case(connector_config_ip_addr);
-        enum_to_case(connector_config_error_status);
-        enum_to_case(connector_config_firmware_facility);
-        enum_to_case(connector_config_data_service);
-        enum_to_case(connector_config_file_system);
-        enum_to_case(connector_config_remote_configuration);
-        enum_to_case(connector_config_max_transaction);
-        enum_to_case(connector_config_device_id_method);
-        enum_to_case(connector_config_imei_number);
-        enum_to_case(connector_config_network_tcp);
-        enum_to_case(connector_config_network_udp);
-        enum_to_case(connector_config_network_sms);
-        enum_to_case(connector_config_wan_type);
-        enum_to_case(connector_config_esn);
-        enum_to_case(connector_config_meid);
-        enum_to_case(connector_config_identity_verification);
-        enum_to_case(connector_config_password);
-        enum_to_case(connector_config_sms_service_id);
+        enum_to_case(connector_request_id_config_device_id);
+        enum_to_case(connector_request_id_config_vendor_id);
+        enum_to_case(connector_request_id_config_device_type);
+        enum_to_case(connector_request_id_config_device_cloud_url);
+        enum_to_case(connector_request_id_config_connection_type);
+        enum_to_case(connector_request_id_config_mac_addr);
+        enum_to_case(connector_request_id_config_link_speed);
+        enum_to_case(connector_request_id_config_phone_number);
+        enum_to_case(connector_request_id_config_tx_keepalive);
+        enum_to_case(connector_request_id_config_rx_keepalive);
+        enum_to_case(connector_request_id_config_wait_count);
+        enum_to_case(connector_request_id_config_ip_addr);
+        enum_to_case(connector_request_id_config_error_status);
+        enum_to_case(connector_request_id_config_firmware_facility);
+        enum_to_case(connector_request_id_config_data_service);
+        enum_to_case(connector_request_id_config_file_system);
+        enum_to_case(connector_request_id_config_remote_configuration);
+        enum_to_case(connector_request_id_config_max_transaction);
+        enum_to_case(connector_request_id_config_device_id_method);
+        enum_to_case(connector_request_id_config_imei_number);
+        enum_to_case(connector_request_id_config_network_tcp);
+        enum_to_case(connector_request_id_config_network_udp);
+        enum_to_case(connector_request_id_config_network_sms);
+        enum_to_case(connector_request_id_config_wan_type);
+        enum_to_case(connector_request_id_config_esn);
+        enum_to_case(connector_request_id_request_id_config_meid);
+        enum_to_case(connector_request_id_config_identity_verification);
+        enum_to_case(connector_request_id_config_password);
     }
     return result;
 }
@@ -1031,10 +1030,10 @@ static char const * app_network_class_to_string(connector_network_request_t cons
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_network_open);
-        enum_to_case(connector_network_send);
-        enum_to_case(connector_network_receive);
-        enum_to_case(connector_network_close);
+        enum_to_case(connector_request_id_network_open);
+        enum_to_case(connector_request_id_network_send);
+        enum_to_case(connector_request_id_network_receive);
+        enum_to_case(connector_request_id_network_close);
     }
     return result;
 }
@@ -1044,11 +1043,11 @@ static char const * app_os_class_to_string(connector_os_request_t const value)
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_os_malloc);
-        enum_to_case(connector_os_free);
-        enum_to_case(connector_os_system_up_time);
-        enum_to_case(connector_os_yield);
-        enum_to_case(connector_os_reboot);
+        enum_to_case(connector_request_id_os_malloc);
+        enum_to_case(connector_request_id_os_free);
+        enum_to_case(connector_request_id_os_system_up_time);
+        enum_to_case(connector_request_id_os_yield);
+        enum_to_case(connector_request_id_os_reboot);
     }
     return result;
 }
@@ -1058,16 +1057,13 @@ static char const * app_firmware_class_to_string(connector_firmware_request_t co
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_firmware_target_count);
-        enum_to_case(connector_firmware_version);
-        enum_to_case(connector_firmware_code_size);
-        enum_to_case(connector_firmware_description);
-        enum_to_case(connector_firmware_name_spec);
-        enum_to_case(connector_firmware_download_request);
-        enum_to_case(connector_firmware_binary_block);
-        enum_to_case(connector_firmware_download_complete);
-        enum_to_case(connector_firmware_download_abort);
-        enum_to_case(connector_firmware_target_reset);
+        enum_to_case(connector_request_id_firmware_target_count);
+        enum_to_case(connector_request_id_firmware_info);
+        enum_to_case(connector_request_id_firmware_download_start);
+        enum_to_case(connector_request_id_firmware_download_data);
+        enum_to_case(connector_request_id_firmware_download_complete);
+        enum_to_case(connector_request_id_firmware_download_abort);
+        enum_to_case(connector_request_id_firmware_target_reset);
     }
     return result;
 }
@@ -1077,14 +1073,14 @@ static char const * app_remote_config_class_to_string(connector_remote_config_re
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_remote_config_session_start);
-        enum_to_case(connector_remote_config_action_start);
-        enum_to_case(connector_remote_config_group_start);
-        enum_to_case(connector_remote_config_group_process);
-        enum_to_case(connector_remote_config_group_end);
-        enum_to_case(connector_remote_config_action_end);
-        enum_to_case(connector_remote_config_session_end);
-        enum_to_case(connector_remote_config_session_cancel);
+        enum_to_case(connector_request_id_remote_config_session_start);
+        enum_to_case(connector_request_id_remote_config_action_start);
+        enum_to_case(connector_request_id_remote_config_group_start);
+        enum_to_case(connector_request_id_remote_config_group_process);
+        enum_to_case(connector_request_id_remote_config_group_end);
+        enum_to_case(connector_request_id_remote_config_action_end);
+        enum_to_case(connector_request_id_remote_config_session_end);
+        enum_to_case(connector_request_id_remote_config_session_cancel);
     }
     return result;
 }
@@ -1094,20 +1090,20 @@ static char const * app_file_system_class_to_string(connector_file_system_reques
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_file_system_open);
-        enum_to_case(connector_file_system_read);
-        enum_to_case(connector_file_system_write);
-        enum_to_case(connector_file_system_lseek);
-        enum_to_case(connector_file_system_ftruncate);
-        enum_to_case(connector_file_system_close);
-        enum_to_case(connector_file_system_rm);
-        enum_to_case(connector_file_system_stat);
-        enum_to_case(connector_file_system_opendir);
-        enum_to_case(connector_file_system_readdir);
-        enum_to_case(connector_file_system_closedir);
-        enum_to_case(connector_file_system_strerror);
-        enum_to_case(connector_file_system_msg_error);
-        enum_to_case(connector_file_system_hash);
+        enum_to_case(connector_request_id_file_system_open);
+        enum_to_case(connector_request_id_file_system_read);
+        enum_to_case(connector_request_id_file_system_write);
+        enum_to_case(connector_request_id_file_system_lseek);
+        enum_to_case(connector_request_id_file_system_ftruncate);
+        enum_to_case(connector_request_id_file_system_close);
+        enum_to_case(connector_request_id_file_system_rm);
+        enum_to_case(connector_request_id_file_system_stat);
+        enum_to_case(connector_request_id_file_system_opendir);
+        enum_to_case(connector_request_id_file_system_readdir);
+        enum_to_case(connector_request_id_file_system_closedir);
+        enum_to_case(connector_request_id_file_system_strerror);
+        enum_to_case(connector_request_id_file_system_msg_error);
+        enum_to_case(connector_request_id_file_system_hash);
     }
     return result;
 }
@@ -1129,8 +1125,15 @@ static char const * app_status_class_to_string(connector_status_request_t const 
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_request_id_status_tcp);
-        enum_to_case(connector_request_id_status_stop_completed);
+        enum_to_case(connector_request_id_data_service_send_length);
+        enum_to_case(connector_request_id_data_service_send_data);
+        enum_to_case(connector_request_id_data_service_send_status);
+        enum_to_case(connector_request_id_data_service_send_response);
+        enum_to_case(connector_request_id_data_service_receive_target);
+        enum_to_case(connector_request_id_data_service_receive_data);
+        enum_to_case(connector_request_id_data_service_receive_status);
+        enum_to_case(connector_request_id_data_service_receive_reply_length);
+        enum_to_case(connector_request_id_data_service_receive_reply_data);
     }
     return result;
 }
@@ -1267,83 +1270,83 @@ connector_callback_status_t app_config_handler(connector_config_request_t const 
 
     switch (request)
     {
-    case connector_config_device_id:
+    case connector_request_id_config_device_id:
         status = app_get_device_id(response_data, response_length);
         break;
 
-    case connector_config_vendor_id:
+    case connector_request_id_config_vendor_id:
         status = app_get_vendor_id(response_data, response_length);
         break;
 
-    case connector_config_device_type:
+    case connector_request_id_config_device_type:
         status = app_get_device_type(response_data, response_length);
         break;
 
-    case connector_config_server_url:
+    case connector_request_id_config_device_cloud_url:
         status = app_get_server_url(response_data, response_length);
         break;
 
-    case connector_config_connection_type:
+    case connector_request_id_config_connection_type:
         status = app_get_connection_type(response_data);
         break;
 
-    case connector_config_mac_addr:
+    case connector_request_id_config_mac_addr:
         status = app_get_mac_addr(response_data, response_length);
         break;
 
-    case connector_config_link_speed:
+    case connector_request_id_config_link_speed:
         status = app_get_link_speed(response_data, response_length);
         break;
 
-    case connector_config_phone_number:
+    case connector_request_id_config_phone_number:
         status = app_get_phone_number(response_data, response_length);
        break;
 
-    case connector_config_tx_keepalive:
+    case connector_request_id_config_tx_keepalive:
         status = app_get_tx_keepalive_interval(response_data, response_length);
         break;
 
-    case connector_config_rx_keepalive:
+    case connector_request_id_config_rx_keepalive:
         status = app_get_rx_keepalive_interval(response_data, response_length);
         break;
 
-    case connector_config_wait_count:
+    case connector_request_id_config_wait_count:
         status = app_get_wait_count(response_data, response_length);
         break;
 
-    case connector_config_ip_addr:
+    case connector_request_id_config_ip_addr:
         status = app_get_ip_address(response_data, response_length);
         break;
 
-    case connector_config_error_status:
+    case connector_request_id_config_error_status:
         status = app_config_error(request_data);
         break;
 
-    case connector_config_firmware_facility:
+    case connector_request_id_config_firmware_facility:
         status = app_get_firmware_support(response_data);
         break;
 
-    case connector_config_data_service:
+    case connector_request_id_config_data_service:
         status = app_get_data_service_support(response_data);
         break;
 
-    case connector_config_max_transaction:
+    case connector_request_id_config_max_transaction:
         status = app_get_max_message_transactions(response_data);
         break;
 
-    case connector_config_remote_configuration:
+    case connector_request_id_request_id_config_remote_configuration:
         status = app_get_remote_configuration_support(response_data);
         break;
 
-    case connector_config_file_system:
+    case connector_request_id_config_file_system:
         status = app_get_file_system_support(response_data);
         break;
 
-    case connector_config_device_id_method:
+    case connector_request_id_config_device_id_method:
         status = app_get_device_id_method(response_data);
         break;
 
-     case connector_config_imei_number:
+     case connector_request_id_config_imei_number:
          status = app_get_imei_number(response_data, response_length);
          break;
 
@@ -1351,36 +1354,28 @@ connector_callback_status_t app_config_handler(connector_config_request_t const 
          status = app_start_network_tcp(response_data);
          break;
 
-     case connector_config_network_udp:
+     case connector_request_id_config_network_udp:
          status = app_start_network_udp(response_data);
          break;
 
-     case connector_config_network_sms:
-         status = app_start_network_sms(response_data);
-         break;
-
-     case connector_config_wan_type:
+     case connector_request_id_config_wan_type:
          status = app_get_wan_type(response_data);
          break;
 
-     case connector_config_esn:
+     case connector_request_id_config_esn:
          status = app_get_esn(response_data, response_length);
          break;
 
-     case connector_config_meid:
+     case connector_request_id_config_meid:
          status = app_get_meid(response_data, response_length);
          break;
 
-     case connector_config_identity_verification:
+     case connector_request_id_config_identity_verification:
          status = app_get_identity_verification(response_data);
          break;
 
      case connector_config_password:
          status = app_get_password(response_data, response_length);
-         break;
-
-     case connector_config_sms_service_id:
-         status = app_get_sms_service_id(response_data, response_length);
          break;
 
     default:
