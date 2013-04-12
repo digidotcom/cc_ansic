@@ -10,7 +10,7 @@
  * User must define all device configurations that are accessed by Etherios Device Cloud and run the @ref rci_tool
  * to generate a source and header files for remote configuration support.
  *
- * The Etherios Cloud Connector invokes the application-defined callbacks to configure and retrieve information from the device.
+ * Etherios Cloud Connector invokes the application-defined callbacks to configure and retrieve information from the device.
  *
  *  -# @ref rci_cancel
  *  -# @ref rci_session_start

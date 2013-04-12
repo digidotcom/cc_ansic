@@ -4,9 +4,9 @@
  *
  * @section device_request_overview Overview
  *
- * This sample demonstrates how to process data sent from the iDigi Device Cloud.
+ * This sample demonstrates how to process data sent from Etherios Device Cloud.
  * Using the @ref data_service_overview "data service api" this application prints
- * out the data sent from the iDigi Device Cloud.
+ * out the data sent from Etherios Device Cloud.
  *
  * @section connect_description Code Flow
  *
@@ -17,18 +17,18 @@
  *
  * A User can use the included python script to send a device request to the device.
  *
- * When the iDigi Device Cloud sends a device request to the device, app_data_service_handler() is called
- * with @ref connector_data_service_type_have_data message type to process the data. This callback
- * is continually called with this message type until the last chunk of data is processed. This 
+ * When Etherios Device Cloud sends a device request to the device, app_data_service_handler() is called
+ * with @ref connector_request_id_data_service_receive_target request message type to process the data. This callback
+ * is continually called with this message type until the last chunk of data is processed. This
  * sample examines the given target and prints out the device request data. It cancels
- * the device request if the target name is not "myTarget". 
+ * the device request if the target name is not "myTarget".
  *
  * After the callback is called with @ref connector_data_service_type_have_data message type for the last chunk of data,
  * the callback is called with @ref connector_data_service_type_need_data message type to send response
- * data back to the iDigi Device Cloud. This sample sends and prints out the request and response data.
+ * data back to Etherios Device Cloud. This sample sends and prints out the request and response data.
  *
  * When the callback is called with @ref connector_data_service_type_error message type it indicates
- * an error is encountered and needs to cancel the device request. In this example it cancels 
+ * an error is encountered and needs to cancel the device request. In this example it cancels
  * the request by freeing any memory used.
  *
  * @section connect_build Building
@@ -66,7 +66,7 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td>The iDigi Connector options</td>
+ *   <td>Etherios Cloud Connector options</td>
  *   <td>samples/device_request</td>
  * </tr>
  * <tr>
@@ -104,16 +104,10 @@
  * @li public/include
  * @li run/platforms/linux (substitute with your platform)
  *
- * @subsection defines Defines
- *
- * The following defines are used in this sample:
- *
- * @li -DCONNECTOR_VERSION=0x1020000UL
- *
  * @section python_script Python script to send device request
  *
- * This sample provides a simple python script to send a data service device request to my.idigi.com
- * using @htmlonly <a href="web_services.html">iDigi Web Services.</a> @endhtmlonly
+ * This sample provides a simple python script to send a data service device request to login.etherios.com
+ * using @htmlonly <a href="web_services.html">Etherios Device Cloud Web Services.</a> @endhtmlonly
  * To run the python script for this sample:
  *
  * @code
