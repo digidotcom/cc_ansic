@@ -12,7 +12,7 @@
 # get_file.py
 # Get a file from Etherios Device Cloud storage
 # -------------------------------------------------
-# Usage: get_file.py <username> <password> <device_id>
+# Usage: get_file.py <username> <password> <device_id> [<cloud_url>]
 # -------------------------------------------------
 
 import httplib
@@ -21,7 +21,7 @@ import sys
 import re
 
 def Usage():
-    print 'Usage: get_file.py <username> <password> <device_id>\n'
+    print 'Usage: get_file.py <username> <password> <device_id> [<cloud_url>]\n'
 
 def GetMessage(username, password, device_id):
     # create HTTP basic authentication string, this consists of
@@ -32,7 +32,7 @@ def GetMessage(username, password, device_id):
     path = """/ws/FileData/~/%s/test/test.txt"""%(device_id)
 
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("login.etherios.com",80)
+    webservice = httplib.HTTP(cloud_url,80)
     webservice.putrequest("GET", path)
 
     # add the authorization string into the HTTP header
@@ -55,12 +55,17 @@ def GetMessage(username, password, device_id):
     webservice.close()
 
 
-def main(argv):
-    #process arguments
-    count = len(argv);
-    if count != 3:
-        Usage()
-    else:
+    def main(argv):
+        #process arguments
+        count = len(argv);
+        if (count < 3) or (count > 4):
+            Usage()
+        else:
+            if count > 3:
+                cloud_url = argv[3]
+            else:
+                cloud_url = "login.etherios.com"
+
         if len(argv[2]) == len("12345678-12345678"):
             device_id = "00000000-00000000-" + argv[2]
         else:
@@ -69,7 +74,7 @@ def main(argv):
         if re.match( "([0-9A-Fa-f]{8}-){3}[0-9A-Fa-f]{8}", device_id) == None:
             print 'Error: Invalid device id [%s]' %argv[2]
         else:
-            GetMessage(argv[0], argv[1], device_id)
+            GetMessage(argv[0], argv[1], device_id, cloud_url)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

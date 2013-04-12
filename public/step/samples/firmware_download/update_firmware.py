@@ -13,7 +13,7 @@
 # Send an image file to do firmware upgrade using update_firmware SCI operation.
 # It updates firmware target = 0 with image file name "image.a"
 # -------------------------------------------------
-# Usage: update_firmware.py <username> <password> <device_id>
+# Usage: update_firmware.py <username> <password> <device_id> [<cloud_url>]
 # -------------------------------------------------
 image_file = "image.a" # image filename
 
@@ -22,10 +22,10 @@ import base64
 import sys
 
 def Usage():
-    print 'Usage: update_firmware.py <username> <password> <device_id>'
+    print 'Usage: update_firmware.py <username> <password> <device_id> [<cloud_url>]'
     print '       It opens \"image.a\" file and sends firmware update to device on target 0\n'  
    
-def PostMessage(username, password, device_id):
+def PostMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
@@ -79,11 +79,14 @@ def PostMessage(username, password, device_id):
 def main(argv):
     #process arguments
     count = len(argv);
-    if count != 3:
+    if (count < 3) or (count > 4):
         Usage()
     else:
-        PostMessage(argv[0], argv[1], argv[2])
-
+        if count > 3:
+            cloud_url = argv[3]
+        else:
+            cloud_url = "login.etherios.com"
+        PostMessage(argv[0], argv[1], argv[2], cloud_url)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

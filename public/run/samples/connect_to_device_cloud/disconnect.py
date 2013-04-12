@@ -12,7 +12,7 @@
 # disconnect.py
 # Send disconnect SCI operation to disconnect Etherios Device Cloud.
 # -------------------------------------------------
-# Usage: disconnect.py <username> <password> <device_id>
+# Usage: disconnect.py <username> <password> <device_id> [<cloud_url>]
 # -------------------------------------------------
 
 import httplib
@@ -20,9 +20,9 @@ import base64
 import sys
 
 def Usage():
-    print 'Usage: disconnect.py <username> <password> <device_id>\n'
+    print 'Usage: disconnect.py <username> <password> <device_id> [<cloud_url>]\n'
    
-def PostMessage(username, password, device_id):
+def PostMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
@@ -65,10 +65,14 @@ def PostMessage(username, password, device_id):
 def main(argv):
     #process arguments
     count = len(argv);
-    if count != 3:
+    if (count < 3) or (count > 4):
         Usage()
     else:
-        PostMessage(argv[0], argv[1], argv[2])
+        if count > 3:
+            cloud_url = argv[3]
+        else:
+            cloud_url = "login.etherios.com"
+        PostMessage(argv[0], argv[1], argv[2], cloud_url)
 
 
 if __name__ == "__main__":
