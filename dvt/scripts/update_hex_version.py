@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
      newtext = re.sub(mySearchPattern, myReplacement, text, 1) 
 
-     print ">> Writing " + myReplacement " instead of " + mySearchPattern + " to " + args[0] 
+     print ">> Writing " + myReplacement + " instead of " + mySearchPattern + " to " + args[0] 
      outfile = open(args[0], "w")
      outfile.write(newtext)
      outfile.close()
