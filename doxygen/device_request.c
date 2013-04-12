@@ -18,16 +18,17 @@
  * A User can use the included python script to send a device request to the device.
  *
  * When Etherios Device Cloud sends a device request to the device, app_data_service_handler() is called
- * with @ref connector_request_id_data_service_receive_target request message type to process the data. This callback
- * is continually called with this message type until the last chunk of data is processed. This
- * sample examines the given target and prints out the device request data. It cancels
- * the device request if the target name is not "myTarget".
+ * with @ref connector_request_id_data_service_receive_target to process the target of the request, and
+ * @ref connector_request_id_data_service_receive_data to process the data. This callback
+ * is continually called with this @ref connector_request_id_data_service_receive_data callback until
+ * the last chunk of data is processed. This sample examines the given target and prints out the device request data.
+ * It sends an error message if the target name is not "myTarget".
  *
- * After the callback is called with @ref connector_data_service_type_have_data message type for the last chunk of data,
- * the callback is called with @ref connector_data_service_type_need_data message type to send response
+ * After the @ref connector_request_id_data_service_receive_data callback is called for the last chunk of data,
+ * @ref connector_request_id_data_service_receive_reply_data callback is called to send response
  * data back to Etherios Device Cloud. This sample sends and prints out the request and response data.
  *
- * When the callback is called with @ref connector_data_service_type_error message type it indicates
+ * When @ref connector_request_id_data_service_receive_status callback is called it indicates
  * an error is encountered and needs to cancel the device request. In this example it cancels
  * the request by freeing any memory used.
  *
@@ -141,3 +142,4 @@
  *
  * @htmlinclude terminate.html
  */
+
