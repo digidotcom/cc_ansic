@@ -75,7 +75,7 @@
  *
  * @endcode
  *
- * When the Etherios Device Cloud sends a RCI request to the device, app_remote_config_handler() is called with the following request ID:
+ * When Etherios Device Cloud sends a RCI request to the device, app_remote_config_handler() is called with the following request ID:
  * -# @ref connector_request_id_remote_config_session_start
  * -# @ref connector_request_id_remote_config_action_start
  * -# @ref connector_request_id_remote_config_group_start
