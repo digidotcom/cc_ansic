@@ -87,7 +87,7 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_server_url(char const ** url, size_t * const size)
+static connector_callback_status_t get_config_device_cloud_url(char const ** url, size_t * const size)
 {
     return application_get_server_url(url, size) ?
             connector_callback_continue : connector_callback_abort;
@@ -720,7 +720,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         break;
 
     case connector_config_server_url:
-        status = app_get_server_url(response_data, response_length);
+        status = get_config_device_cloud_url(response_data, response_length);
         break;
 
     case connector_config_connection_type:

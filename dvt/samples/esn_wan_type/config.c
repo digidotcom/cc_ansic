@@ -169,7 +169,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #endif
 
 #if !(defined CONNECTOR_CLOUD_URL)
-static connector_callback_status_t app_get_server_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
 #error "Specify Etherios Device Cloud URL"
     static  char const connector_server_url[] = "login.etherios.com";
@@ -883,7 +883,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
 #if !(defined CONNECTOR_CLOUD_URL)
     case connector_request_id_config_device_cloud_url:
-        status = app_get_server_url(data);
+        status = get_config_device_cloud_url(data);
         break;
 #endif
 

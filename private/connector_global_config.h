@@ -87,7 +87,7 @@ done:
 }
 
 #if !(defined CONNECTOR_CLOUD_URL)
-static connector_status_t get_config_server_url(connector_data_t * const connector_ptr)
+static connector_status_t get_config_device_cloud_url(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;

@@ -102,7 +102,6 @@ error:
 }
 
 #define MAC_ADDR_LENGTH     6
-
 static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
@@ -164,10 +163,10 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #endif
 
 #if !(defined CONNECTOR_CLOUD_URL)
-static connector_callback_status_t app_get_server_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
     static  char const connector_server_url[] = "login.etherios.com";
-    /* Return pointer to device type. */
+
     config_url->string = (char *)connector_server_url;
     config_url->length = sizeof connector_server_url -1;
 
@@ -178,6 +177,7 @@ static connector_callback_status_t app_get_server_url(connector_config_pointer_s
 #if !(defined CONNECTOR_CONNECTION_TYPE)
 static connector_callback_status_t app_get_connection_type(connector_config_connection_type_t * const config_connection)
 {
+
     /* Return pointer to connection type */
     config_connection->type = connector_connection_type_lan;
 
@@ -210,10 +210,11 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
 #endif
 
 #if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)
-/* Keep alives are from the prospective of the server */
-/* This keep alive is sent from the server to the device */
+/* Keep alives are from the prospective of Device Cloud */
+/* This keep alive is sent from Device Cloud to the device */
 static connector_callback_status_t app_get_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
+
 #define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     90
     /* Return Tx keepalive interval in seconds */
     config_keepalive->interval_in_seconds = DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS;
@@ -378,6 +379,7 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
 #if !(defined CONNECTOR_WAN_TYPE)
 static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
 {
+
     config_wan->type = connector_wan_type_imei;
 
     return connector_callback_continue;
@@ -465,6 +467,7 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
 static connector_callback_status_t app_get_identity_verification(connector_config_identity_verification_t * const config_identity)
 {
+
     config_identity->type = connector_identity_verification_simple;
 
     return connector_callback_continue;
@@ -840,7 +843,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
 #if !(defined CONNECTOR_CLOUD_URL)
     case connector_request_id_config_device_cloud_url:
-        status = app_get_server_url(data);
+        status = get_config_device_cloud_url(data);
         break;
 #endif
 

@@ -29,8 +29,8 @@ typedef enum {
     connector_request_id_config_mac_addr,          /**< Requesting callback to return device's MAC addresss */
     connector_request_id_config_link_speed,        /**< Requesting callback to return link speed for WAN connection type */
     connector_request_id_config_phone_number,      /**< Requesting callback to return phone number dialed for WAN connection type */
-    connector_request_id_config_tx_keepalive,      /**< Requesting callback to return server's Tx keep alive interval in seconds */
-    connector_request_id_config_rx_keepalive,      /**< Requesting callback to return server's Rx keep alive interval in seconds */
+    connector_request_id_config_tx_keepalive,      /**< Requesting callback to return Etherios Device Cloud's Tx keep alive interval in seconds */
+    connector_request_id_config_rx_keepalive,      /**< Requesting callback to return Etherios Device Cloud's Rx keep alive interval in seconds */
     connector_request_id_config_wait_count,        /**< Requesting callback to return the number of intervals of not receiving a keep alive message after which a connection should be considered lost. */
     connector_request_id_config_ip_addr,           /**< Requesting callback to return device's IP address */
     connector_request_id_config_error_status,      /**< Error status notification which tells callback that error is encountered. */
@@ -113,7 +113,7 @@ typedef struct {
 *   -# @ref connector_request_id_config_password
 *
 * @see @ref device_type
-* @see @ref server_url
+* @see @ref device_cloud_url
 * @see @ref phone_number
 * @see @ref password
 *

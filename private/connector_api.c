@@ -371,7 +371,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
         connector_handle->device_cloud_url_length = sizeof connector_device_cloud_url -1;
     }
 #else
-    status = get_config_server_url(connector_handle);
+    status = get_config_device_cloud_url(connector_handle);
     COND_ELSE_GOTO(status == connector_working, error);
 #endif
 #endif /* (defined CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP) */
