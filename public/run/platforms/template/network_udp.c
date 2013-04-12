@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -18,18 +18,24 @@
 #include "platform.h"
 
 /**
- * @brief   Open a network socket to communicate the iDigi Device Cloud
+ * @brief   Open a network socket to communicate Etherios Device
+ *          Cloud
  *
  * This routine opens a UDP socket and attempts to to resolve the name for 
- * the iDigi Device Cloud server. It sets the resolved peer address using
- * UDP connect().
+ * Etherios Device Cloud. It sets the resolved peer 
+ * address using UDP connect(). 
  *  
- * @param [in] host_name  FQDN of iDigi Device Cloud server
- * @param [in] length  Number of bytes in the host_name
- * @param [out] network_handle This is filled in with the value of a handle which
- * is passed to subsequent networking calls. The @ref connector_network_handle_t "connector_network_handle_t"
- * is defined in public\include\connector_types.h.
- *
+ * @param data @ref connector_network_open_t 
+ *  <ul>
+ *   <li><b><i>device_cloud_url</i></b> - FQDN of Etherios
+ *   Device Cloud </li>
+ *   <li><b><i>handle</i></b> - This is filled in with the value
+ *   of a network handle, passed to subsequent networking calls,
+ *   @ref connector_network_handle_t "connector_network_handle_t" 
+ *      is defined in public\include\connector_types.h.
+ *  </li>
+ * </ul> 
+ *  
  * @retval connector_callback_continue	The routine has successfully opened a socket and resolved server's name. 
  * @retval connector_callback_busy 		The routine will be called again to complete open.
  * @retval connector_callback_error     The operation failed, Etherios Cloud Connector
@@ -38,95 +44,122 @@
  *
  * @see @ref open "Network API callback Open"
  */
-static connector_callback_status_t app_network_udp_open(char const * const host_name, size_t const length, connector_network_handle_t ** network_handle)
+connector_callback_status_t app_network_udp_open(connector_network_open_t * const data)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
-    UNUSED_ARGUMENT(host_name);
-    UNUSED_ARGUMENT(length);
-    UNUSED_ARGUMENT(network_handle);
+    UNUSED_ARGUMENT(data);
 
     return rc;
 }
 
 /**
- * @brief   Send data to the iDigi Device Cloud
+ * @brief   Send data to Etherios Device Cloud
  *
- * This routine sends data to the iDigi Device Cloud. This function must not block.
- * If it encounters EAGAIN or EWOULDBLOCK error, 0 bytes must be returned and Etherios Cloud Connector
- * will continue calling this function. If successful connector_callback_continue is returned.
- * If the data could not be sent connector_callback_busy is returned, otherwise connector_callback_abort is returned. 
+ * This routine sends data to Etherios Device Cloud. This 
+ * function must not block. If it encounters EAGAIN or
+ * EWOULDBLOCK error, 0 bytes must be returned and Etherios 
+ * Cloud Connector will continue calling this function. If 
+ * successful connector_callback_continue is returned. If the 
+ * data could not be sent connector_callback_busy is returned, 
+ * otherwise connector_callback_abort is returned. 
  *  
- * @param [in] write_data  Pointer to a connector_write_request_t structure
- * @param [out] sent_length Filled in with the number of bytes sent.
- *
- * @retval connector_callback_status_t
+ * @param data @ref connector_network_send_t 
+ *  <ul>
+ *   <li><b><i>handle</i></b> - Network handle </li>
+ *   <li><b><i>buffer</i></b> - Pointer to data to send
+ *   </li>
+ *   <li><b><i>bytes_available</i></b> - Number of bytes to send
+ *  </li>
+ *   <li><b><i>bytes_used</i></b> - Number of bytes sent
+ *   </li>
+ * </ul> 
+ *  
+ * @retval connector_callback_continue	The routine has sent 
+ *         some data.
+ * @retval connector_callback_busy 		No data was sent, the 
+ *                                  routine has encountered
+ *                                  EAGAIN or EWOULDBLOCK error.
+ *                                  It will be called again to
+ *                                  send data.
+ * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call 
+ *                                  @ref app_network_udp_close. 
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref send API Network Callback
  */
-static connector_callback_status_t app_network_udp_send(connector_write_request_t const * const write_data, size_t * const sent_length)
+connector_callback_status_t app_network_udp_send(connector_network_send_t * const data)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
-    UNUSED_ARGUMENT(write_data);
-    UNUSED_ARGUMENT(sent_length);
+    UNUSED_ARGUMENT(data);
 
     return rc;
 }
 
 /**
- * @brief   Receive data from the iDigi Device Cloud
+ * @brief   Receive data from Etherios Device Cloud
  *
- * This routine reads a specified number of bytes from the the iDigi Device Cloud.
- * This function blocks up to the timeout value specified. If no data is received
- * and the timeout has expired 0 bytes must be returned and Etherios Cloud Connector will continue
- * calling this function. 
+ * This routine receives data from Etherios Device Cloud. This
+ * function must not block. 
  *  
- * @param [in] read_data  Pointer to a connector_read_request_t structure
- * @param [out] read_length Filled in with the number of bytes received.
- *
- * @retval connector_callback_status_t
- *
- * @note When running in a multithreaded model this is where Etherios Cloud Connector will
- * relinquish control, the user should sleep until data is received up to the
- * timeout given.
+ * @param data @ref connector_network_receive_t 
+ *  <ul>
+ *   <li><b><i>handle</i></b> - Network handle </li>
+ *   <li><b><i>buffer</i></b> - Buffer to place received data
+ *   </li>
+ *   <li><b><i>bytes_available</i></b> - Buffer size in bytes
+ *  </li>
+ *   <li><b><i>bytes_used</i></b> - Number of bytes received
+ *   </li>
+ * </ul> 
+ *  
+ * @retval connector_callback_continue	The routine has received some data.
+ * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or 
+ *                                  EWOULDBLOCK error. It will be called again to receive data.
+ * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call 
+ *                                  @ref app_network_udp_close. 
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref receive API Network Callback
  */
-static connector_callback_status_t app_network_udp_receive(connector_read_request_t const * const read_data, size_t * const read_length)
+connector_callback_status_t app_network_udp_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
-    UNUSED_ARGUMENT(read_data);
-    UNUSED_ARGUMENT(read_length);
+    UNUSED_ARGUMENT(data);
+
     return rc;
 }
 
 /**
- * @brief   Close the network socket to the iDigi Device Cloud
+ * @brief   Close the network socket to Etherios Device Cloud
  *
  * This callback requests an application to close it's network handle.
+ *  
+ * @param data @ref connector_network_close_t 
+ *  <ul>
+ *   <li><b><i>handle</i></b> - Network handle </li>
+ *   <li><b><i>reconnect</i></b> - Set to connector_true to
+ *   restart the transport without exiting connector_run(). Set
+ *   to connector_false otherwise.
+ *   </li>
+ * </ul> 
  *
- * @param [in] 	close_data 		Pointer to a connector_close_request_t structure, which contains the network handle and reason of closing
- * @param [out] is_to_reconnect	Instructs the iDigi Connector what to do after close completes.  When set to connector_auto_connect,
- * 								the iDigi Connector will restart the UDP transport without exiting connector_run() or connector_step().  When
- * 								set to connector_manual_connect, connector_run() or connector_step() will terminate.
+ * @retval connector_callback_continue	The callback has successfully closed the connection.
+ * @retval connector_callback_busy 		The network device is busy, the routine will be called again to complete close.
+ * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
- * @retval connector_callback_continue	The callback has successfully closed the network device.
- * @retval connector_callback_busy 		The network device is busy and cannot be closed.
- *
- * @see connector_callback_status_t
+ * @see @ref connector_callback_status_t
  * @see @ref close API Network Callback
  */
-static connector_callback_status_t app_network_udp_close(connector_close_request_t const * const close_data, connector_auto_connect_type_t * const is_to_reconnect)
+connector_callback_status_t app_network_udp_close(connector_network_close_t * const data)
 {
-    connector_callback_status_t status = connector_callback_continue;
+    connector_callback_status_t rc = connector_callback_continue;
 
-    UNUSED_ARGUMENT(close_data);
-    UNUSED_ARGUMENT(is_to_reconnect);
+    UNUSED_ARGUMENT(data);
 
-
-    return status;
+    return rc;
 }
 
 
@@ -139,35 +172,31 @@ static connector_callback_status_t app_network_udp_close(connector_close_request
 /*
  *  Callback routine to handle all networking related calls.
  */
-connector_callback_status_t app_network_udp_handler(connector_network_request_t const request,
-                                            void const * const request_data, size_t const request_length,
-                                            void * response_data, size_t * const response_length)
+connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request_id,
+                                                    void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-
-    switch (request)
+    switch (request_id)
     {
-    case connector_network_open:
-        status = app_network_udp_open(request_data, request_length, response_data);
-        *response_length = sizeof(connector_network_handle_t);
+    case connector_request_id_network_open:
+        status = app_network_udp_open(data);
         break;
 
-    case connector_network_send:
-        status = app_network_udp_send(request_data, response_data);
+    case connector_request_id_network_send:
+        status = app_network_udp_send(data);
         break;
 
-    case connector_network_receive:
-        status = app_network_udp_receive(request_data, response_data);
+    case connector_request_id_network_receive:
+        status = app_network_udp_receive(data);
         break;
 
-    case connector_network_close:
-        status = app_network_udp_close(request_data, response_data);
+    case connector_request_id_network_close:
+        status = app_network_udp_close(data);
         break;
 
     default:
-        APP_DEBUG("app_network_udp_handler: unrecognized callback request [%d]\n", request);
+        APP_DEBUG("app_network_udp_handler: unrecognized callback request_id [%d]\n", request_id);
         status = connector_callback_unrecognized;
         break;
 
@@ -175,7 +204,6 @@ connector_callback_status_t app_network_udp_handler(connector_network_request_t 
 
     return status;
 }
-
 
 /**
  * @endcond

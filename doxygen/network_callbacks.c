@@ -179,10 +179,7 @@
  *   <li> @ref app_network_tcp_receive() in network_tcp.c</li>
  *   <li> @ref app_network_udp_receive() in network_udp.c</li>
  * </ul>
- *
- * @note In the multithreaded model (connector_run()) this is the point where Etherios Cloud Connector
- * will relinquish control of the CPU.
- * <br /><br />
+ * <br />
  *
  * @htmlonly
  * <table class="apitable">

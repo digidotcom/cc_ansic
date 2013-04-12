@@ -29,9 +29,9 @@
  * @param data @ref connector_network_open_t 
  *  <ul>
  *   <li><b><i>device_cloud_url</i></b> - FQDN of Etherios
- *   Device Cloud server to connect to. </li>
+ *   Device Cloud connect to. </li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
- *   of a handle, passed to subsequent networking calls,
+ *   of a network handle, passed to subsequent networking calls,
  *   @ref connector_network_handle_t "connector_network_handle_t" 
  *      is defined in public\include\connector_types.h.
  *  </li>
@@ -90,15 +90,15 @@ connector_callback_status_t app_network_tcp_send(connector_network_send_t * cons
 /**
  * @brief   Receive data from Etherios Device Cloud
  *
- * This routine reads a specified number of bytes from Etherios 
- * Device Cloud. This function must not block. 
+ * This routine receives data from Etherios Device Cloud. This
+ * function must not block. 
  *  
  * @param data @ref connector_network_receive_t 
  *  <ul>
  *   <li><b><i>handle</i></b> - Network handle </li>
- *   <li><b><i>buffer</i></b> - Nuffer to write received data
+ *   <li><b><i>buffer</i></b> - Buffer to place received data
  *   </li>
- *   <li><b><i>bytes_available</i></b> - Nuffer size in bytes
+ *   <li><b><i>bytes_available</i></b> - Buffer size in bytes
  *  </li>
  *   <li><b><i>bytes_used</i></b> - Number of bytes received
  *   </li>
@@ -132,14 +132,13 @@ connector_callback_status_t app_network_tcp_receive(connector_network_receive_t 
  *  <ul>
  *   <li><b><i>handle</i></b> - Network handle </li>
  *   <li><b><i>reconnect</i></b> - Set to connector_true to
- *   reconnect after close, connector_false otherwise.
+ *   reconnect, without exiting connector_run(). Set
+ *   to connector_false otherwise.
  *   </li>
  * </ul> 
  *
  * @retval connector_callback_continue	The callback has successfully closed the connection.
  * @retval connector_callback_busy 		The network device is busy, the routine will be called again to complete close.
- * @retval connector_callback_error     An error has occured, Etherios Cloud Connector will exit @ref connector_run "connector_run()" or 
- *                                  @ref connector_step "connector_step()".
  * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref close "Network API callback Close"
