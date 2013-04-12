@@ -225,7 +225,7 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
 
         if (status == connector_success)
         {
-            #define ECC_SEND_TIMEOUT_IN_MSEC 1//90000
+            #define ECC_SEND_TIMEOUT_IN_MSEC 90000
             result = ecc_get_event(ECC_SEND_DATA_EVENT, send_info->data_ptr.event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
         	send_info->data_ptr.error = connector_error_success;
             result = send_info->data_ptr.error;
