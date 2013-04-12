@@ -352,7 +352,7 @@ typedef enum
 {
     connector_transport_tcp, /**< Use TCP. @ref CONNECTOR_TRANSPORT_TCP must be enabled. */
     connector_transport_udp, /**< Use UDP. @ref CONNECTOR_TRANSPORT_UDP must be enabled. */
-    connector_transport_sms, /**< Use SMS. @ref CONNECTOR_TRANSPORT_SMS must be enabled. */
+    connector_transport_sms, /**< Reserved for now */
     connector_transport_all  /**< All transports. */
 } connector_transport_t;
 /**
@@ -746,7 +746,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Stops the specified transport:
  *                              - @ref connector_transport_tcp - TCP transport
  *                              - @ref connector_transport_udp - UDP transport
- *                              - @ref connector_transport_sms - SMS transport
+ *                              - @ref connector_transport_sms - Reserved
  *                              - @ref connector_transport_all - all transports.
  *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *

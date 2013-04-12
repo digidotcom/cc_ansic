@@ -72,8 +72,8 @@ typedef enum
 */
 typedef struct
 {
-    uint32_t seconds;
-    uint32_t milliseconds;
+    uint32_t seconds;       /**< seconds since epoch */
+    uint32_t milliseconds;  /**< milliseconds portion of epoch time */
 } connector_time_epoch_fractional_t;
 /**
 * @}
@@ -229,7 +229,7 @@ typedef struct
     connector_transport_t transport;/**< transport method to use */
     void * user_context;            /**< user context to be passed back in response */
 
-    char * path;                    /**< data stream path name. On the cloud the stream name will be <device ID>/<path> */
+    char * path;                    /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     void * point;                   /**< binary data of size specified in bytes_used */
     size_t bytes_used;              /**< number of bytes in the point buffer */
     connector_bool_t response_required;  /**< set to connector_true if response is needed */
@@ -258,7 +258,7 @@ typedef struct
     connector_transport_t transport;    /**< transport method to use */
     void * user_context;                /**< user context to be passed back in response */
 
-    char * path;                        /**< data stream path name. On the cloud the stream name will be <device ID>/<path> */
+    char * path;                        /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
     connector_data_point_t * point;     /**< pointer to list of data points */
@@ -295,8 +295,11 @@ typedef struct
         connector_data_point_response_cloud_error   /**< Device Cloud encountered error while handling the request */
     } CONST response; /**< Device Cloud response code */
 
-    char const * CONST hint; /** error hint returned from Device Cloud, NULL if success or hint not available */
+    char const * CONST hint;                /**< error hint returned from Device Cloud, NULL if success or hint not available */
 } connector_data_point_response_t;
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_data_point_status_t Carries data point session status.
@@ -328,6 +331,9 @@ typedef struct
     connector_session_error_t CONST session_error; /**< lower communication layer error code */
 
 } connector_data_point_status_t;
+/**
+* @}
+*/
 
 #endif /* _CONNECTOR_API_DATA_POINT_H */
 

@@ -109,7 +109,7 @@ typedef struct
     connector_transport_t CONST transport;  /**< transport method from where the callback is originated */
     void * user_context;                    /**< user context passed */
 
-    uint8_t * CONST buffer;                 /** to be filled with data to send */
+    uint8_t * CONST buffer;                 /**< to be filled with data to send */
     size_t CONST bytes_available;           /**< available bytes in buffer */
     size_t bytes_used;                      /**< bytes filled */
     connector_bool_t more_data;             /**< set to connector_true if more data to send */
@@ -170,7 +170,7 @@ typedef struct
         connector_data_service_send_response_cloud_error    /**< Device Cloud encountered error while handling the request */
     } CONST response;     /**< Device Cloud response code for send data */
 
-    char const * CONST hint; /** error hint returned from Device Cloud, NULL if success or hint is not provided */
+    char const * CONST hint;    /**< error hint returned from Device Cloud, NULL if success or hint is not provided */
 } connector_data_service_send_response_t;
 /**
 * @}
