@@ -48,6 +48,18 @@
  * If you are running on a Linux i486 based platform and using the GNU toolchain the Linux platform
  * and samples can be run without any major modifications.
  *
+ * @note
+ * Compilers that are not strictly ANSI C 89 or C99 compliant will most likely generate compilation
+ * errors.  In that case, we recommend careful evaluation of each error and appropriate adjustments be
+ * made within the public include area.  Etherios Cloud Connector was designed for portability.  This would
+ * be the ideal place to make updates.
+ *
+ * @note
+ * Some ANSI C89 compilers include elements of ANSI C99.  In particular, those
+ * ANSI C89 compilers that also include stdint.h, which is apart of ANSI C99, will
+ * result in compilation failures.  These compilation failures can be resolved
+ * by defining CONNECTOR_HAVE_STDINT_HEADER in your make or build system.
+ *
  * @section requirements Platform Memory Requirements
  * The Etherios Cloud Connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
  * and program stack.  
