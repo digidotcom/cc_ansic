@@ -162,7 +162,7 @@ typedef struct {
         uint32_t CONST offset;    /**< Offset value where this particular block of image data fits into the download */
         uint8_t const * data;     /**< Pointer binary image data */
         size_t CONST bytes_used;  /**< Length of binary image data in bytes */
-    } image;
+    } image;                      /**< Image data */
 
     connector_firmware_status_t status; /**< Callback writes error status if error is encountered */
 

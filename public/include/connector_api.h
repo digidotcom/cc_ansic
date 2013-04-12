@@ -264,7 +264,7 @@ typedef enum {
 * This is used for an event notification.
 */
 typedef struct {
-    connector_tcp_status_t CONST status;
+    connector_tcp_status_t CONST status; /**< TCP status */
 } connector_status_tcp_event_t;
 /**
 * @}
@@ -744,7 +744,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *
  *                      @li @b connector_initiate_transport_stop:
  *                          Stops the specified transport:
- *                              - @ref connector_transport_tcp - TCP transport,
+ *                              - @ref connector_transport_tcp - TCP transport
  *                              - @ref connector_transport_udp - UDP transport
  *                              - @ref connector_transport_sms - SMS transport
  *                              - @ref connector_transport_all - all transports.

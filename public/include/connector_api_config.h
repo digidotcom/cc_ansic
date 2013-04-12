@@ -65,9 +65,16 @@ typedef enum {
 *   -# @ref connector_request_id_config_imei_number
 *   -# @ref connector_request_id_config_esn
 *   -# @ref connector_request_id_config_meid
+*
+* @see @ref device_id
+* @see @ref mac_address
+* @see @ref imei_number
+* @see @ref esn_number
+* @see @ref meid_number
+*
 */
 typedef struct {
-    uint8_t * data;         /**< Application data pointer */
+    uint8_t * data;               /**< Application data pointer */
     size_t CONST bytes_required;  /**< Number of bytes required and needed on the application data pointer */
 } connector_config_pointer_data_t;
 /**
@@ -81,6 +88,9 @@ typedef struct {
 */
 /**
 * Vendor ID configuration for @ref connector_request_id_config_vendor_id callback
+*
+* @see @ref vendor_id
+*
 */
 typedef struct {
     uint32_t id;    /**< Vendor ID */
@@ -101,6 +111,12 @@ typedef struct {
 *   -# @ref connector_request_id_config_device_cloud_url
 *   -# @ref connector_request_id_config_phone_number
 *   -# @ref connector_request_id_config_password
+*
+* @see @ref device_type
+* @see @ref server_url
+* @see @ref phone_number
+* @see @ref password
+*
 */
 typedef struct {
     char * string;  /**< Application string pointer */
@@ -117,7 +133,7 @@ typedef struct {
 /**
 * Connection type configuration of the device
 *
-* @see connector_config_connection_type_t callback
+* @see connector_config_connection_type_t
 */
 typedef enum {
    connector_connection_type_lan,   /**< LAN connection type for Ethernet or WiFi */
@@ -133,6 +149,9 @@ typedef enum {
 */
 /**
 * Device connection type configuration for @ref connector_request_id_config_connection_type callback
+*
+* @see @ref connection_type
+*
 */
 typedef struct {
     connector_connection_type_t type; /**< Device connection type */
@@ -149,7 +168,8 @@ typedef struct {
 /**
 * Device link speed configuration for WAN connection type for @ref connector_request_id_config_link_speed callback
 *
-* @see connector_request_id_config_connection_type
+* @see @ref link_speed
+* @see @ref connection_type
 */
 typedef struct {
     uint32_t speed;        /**< Device link speed  */
@@ -167,6 +187,10 @@ typedef struct {
 * Keep-alive interval configuration used for the following callbacks:
 *   -# @ref connector_request_id_config_tx_keepalive
 *   -# @ref connector_request_id_config_rx_keepalive
+*
+* @see @ref tx_keepalive
+* @see @ref rx_keepalive
+*
 */
 typedef struct {
     uint16_t interval_in_seconds;       /**< Device keep-alive interval */
@@ -183,7 +207,8 @@ typedef struct {
 /**
 * Device wait count configuration for @ref connector_request_id_config_wait_count callback
 *
-* @see connector_request_id_config_tx_keepalive
+* @see @ref wait_count
+* @see @ref tx_keepalive
 */
 typedef struct {
     uint16_t count;       /**< wait count */
@@ -215,6 +240,8 @@ typedef enum {
 */
 /**
 * Device IP Address Configuration for @ref connector_request_id_config_ip_addr callback
+*
+* @see @ref ip_address
 */
 typedef struct {
     uint8_t * address;        /**< Device's IP address */
@@ -234,6 +261,12 @@ typedef struct {
 *   -# @ref connector_request_id_config_firmware_facility
 *   -# @ref connector_request_id_config_data_service
 *   -# @ref connector_request_id_config_file_system
+*
+* @see @ref firmware_support
+* @see @ref data_service_support
+* @see @ref file_system_support
+* @see @ref rci_support
+*
 */
 typedef struct {
     connector_bool_t supported; /**< Application service supported status */
@@ -252,14 +285,15 @@ typedef struct {
  * Device ID method type which is used in the applciation's callback telling
  * the connector how to obtain a device ID.
  *
- * @see @ref device_id
+ * @see connector_config_device_id_method_t
  */
 typedef enum {
     connector_device_id_method_auto,         /**< Callback returns this type telling Etherios Cloud Connector to
-                                                 generate the device ID from MAC address (See @ref connector_config_mac_addr callback)
+                                                 generate the device ID from MAC address (See @ref mac_address callback)
                                                  for LAN connection type or genearte the device ID according to the @ref wan_type.
-                                                 @note Etherios Cloud Connector will not call @ref connector_config_device_id callback. */
-    connector_device_id_method_manual       /**< Callback returns this type telling Etherios Cloud Connector to retrieve device ID from @ref connector_config_device_id callback */
+                                                 @note Etherios Cloud Connector will not call @ref device_id callback. */
+    connector_device_id_method_manual       /**< Callback returns this type telling Etherios Cloud Connector to retrieve device ID from
+                                                  @ref device_id callback */
 } connector_device_id_method_t;
 /**
 * @}
@@ -272,7 +306,9 @@ typedef enum {
 */
 /**
  * Device ID method configuration returned by the application's callback for @ref connector_request_id_config_device_id_method callback.
- */
+ *
+ * @see @ref device_id_method
+*/
 typedef struct {
     connector_device_id_method_t method;    /**< Device ID method */
 } connector_config_device_id_method_t;
@@ -286,9 +322,9 @@ typedef struct {
 * @{
 */
 /**
-* Network connection action used to tell the connector to automat?? or manually make connection.
+* Network connection action used to tell Ehterios Cloud Connector to automatic or manual connect.
 *
-* @see @ref connector_network_close
+* @see connector_config_connect_type_t
 */
 typedef enum {
 
@@ -308,8 +344,10 @@ typedef enum {
 * Connection action which is used to to tell the connector to make connection to
 * Etherios Device Cloud automatically or manually. It's used for the following callbacks:
 *   -# @ref connector_request_id_config_network_tcp
-*   -# @ref connector_request_id_config_network_upd
-*   -# @ref connector_request_id_config_network_sms
+*   -# @ref connector_request_id_config_network_udp
+*
+* @see @ref network_tcp_start
+* @see @ref network_udp_start
 */
 typedef struct {
     connector_connect_auto_type_t type;   /**< Connection action */
@@ -326,7 +364,7 @@ typedef struct {
 /**
  * Device WAN connection type which tells the connector the device WAN type for the device WAN ID.
  *
- * @ref connector_config_wan_type_t
+ * @see connector_config_wan_type_t
  */
 typedef enum {
     connector_wan_type_imei,    /**< IMEI number for GSM network */
@@ -367,7 +405,7 @@ typedef struct {
 /**
  * Identify verification tells the connector to use simple or password identity verification for TCP connection.
  *
- * @see @ref connector_config_identity_verification_t
+ * @see connector_config_identity_verification_t
  */
 typedef enum {
     connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. Etherios Cloud Connector just transmits the
@@ -389,9 +427,9 @@ typedef enum {
 * Identify verification configuration for @ref connector_request_id_config_identity_verification callback.
 * It tells the connector to use simple or password identity verification for TCP connection.
 *
-* @see identity_verification
-* @see password
-* @see connector_request_id_config_password
+* @see @ref identity_verification
+* @see @ref password
+* @see @ref connector_request_id_config_password
 **/
 typedef struct {
     connector_identity_verification_t type;   /**< Identity verification type */

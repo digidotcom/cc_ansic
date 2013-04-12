@@ -41,24 +41,6 @@ typedef enum {
  * Remote configuration element value types
  */
 typedef enum {
-    connector_element_type_string = 1,
-    connector_element_type_multiline_string,
-    connector_element_type_password,
-    connector_element_type_int32,
-    connector_element_type_uint32,
-    connector_element_type_hex32,
-    connector_element_type_0x_hex32,
-    connector_element_type_float,
-    connector_element_type_enum,
-    connector_element_type_on_off = 11,
-    connector_element_type_boolean,
-    connector_element_type_ipv4,
-    connector_element_type_fqdnv4,
-    connector_element_type_fqdnv6,
-    connector_element_type_datetime = 22
-} connector_element_value_type_t;
-
-typedef enum {
     connector_element_type_string = 1,          /**< Single line string */
     connector_element_type_multiline_string,    /**< This type is used for a string that may be more
                                                than one line. A "text area" is shown in Etherios Device
