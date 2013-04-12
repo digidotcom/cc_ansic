@@ -95,40 +95,42 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
     return connector_callback_continue;
 }
 
-
-static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
+/*
+ * This function fills all "statbuf" members, path must be Nul-terminated
+ */
+static size_t get_statbuf(char const * const path, connector_file_system_statbuf_t * statbuf)
 {
-    connector_file_system_statbuf_t *file_stat = &data->statbuf;
-    connector_callback_status_t status = connector_callback_continue;
 	MFS_FILE_ATTR_PARAM attributes_param;
 	uchar attributes = 0;
-    _mqx_int result;
     char full_path[50] = {0};
-    
+	size_t retval = 0;
+
     strcpy(full_path, filesystem_info->FS_NAME);
-    strcat(full_path, data->path);
+    strcat(full_path, path);
     
     attributes_param.PATHNAME = full_path;
     attributes_param.ATTRIBUTE_PTR = &attributes;
     
-    result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_GET_FILE_ATTR, &attributes_param);
-    if (result < 0) {
+    retval = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_GET_FILE_ATTR, &attributes_param);
+    if (retval < 0) {
 		goto done;
     }
 
     if (attributes & (MFS_ATTR_DIR_NAME) || attributes == 0) {
-    	file_stat->flags = connector_file_system_file_type_is_dir;
-    	file_stat->file_size = 0;
-    	file_stat->last_modified = 0; /* Directories don't have this field */
+    	statbuf->flags = connector_file_system_file_type_is_dir;
+    	statbuf->file_size = 0;
+    	statbuf->last_modified = 0; /* Directories don't have this field */
     } else if (attributes & MFS_ATTR_ARCHIVE) {
         MQX_FILE_PTR file;
 
     	file = _io_fopen(full_path, "r");
 		if (file == NULL) {
-			status = app_process_file_error(data->errnum, ENOENT);
+			APP_DEBUG("get_statbuf: _io_fopen(%s, \"r\") failed!", full_path);
+			retval = errno;
+			goto done;
 		}
-		file_stat->file_size = file->SIZE;
-		file_stat->flags = connector_file_system_file_type_is_reg;
+		statbuf->file_size = file->SIZE;
+		statbuf->flags = connector_file_system_file_type_is_reg;
 		{
 			uint_16 date, time;
 			uint32_t epoch_time = 0;
@@ -137,18 +139,34 @@ static connector_callback_status_t app_process_file_stat(connector_file_system_s
 			file_date.DATE_PTR = &date;
 			file_date.TIME_PTR = &time;
 			
-			result = _io_ioctl(file, IO_IOCTL_GET_DATE_TIME, (uint_32 *) &file_date);
-			if (result < 0) {
+			retval = _io_ioctl(file, IO_IOCTL_GET_DATE_TIME, (uint_32 *) &file_date);
+			if (retval < 0) {
 				goto done;
 			}
 			
-			file_stat->last_modified = mfs_date_to_epoch(&file_date);
+			statbuf->last_modified = mfs_date_to_epoch(&file_date);
 		}
 		_io_fclose(file);
     } else {
-    	file_stat->flags = connector_file_system_file_type_none;
-		file_stat->file_size = 0;
-		file_stat->last_modified = 0;
+    	statbuf->flags = connector_file_system_file_type_none;
+		statbuf->file_size = 0;
+		statbuf->last_modified = 0;
+    }
+
+done:
+	return retval;
+}
+
+static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    size_t result;
+
+    result = get_statbuf(data->path, &data->statbuf);
+    if (result < 0)
+    {
+    	APP_DEBUG("app_process_file_stat: get_statbuf returned %d\n", result);
+    	goto done;
     }
 	data->hash_algorithm.actual = connector_file_system_hash_none;
 done:
@@ -157,17 +175,17 @@ done:
 
 static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
-	connector_file_system_stat_t dirdata = {0};
-	connector_callback_status_t status;
-	char **dirdata_path = (char **)&dirdata.path; /* This is used to init dirdata's const member path */
-	
-	*dirdata_path = (char *)data->path; /* I know, this is cheating... */
-	dirdata.errnum = data->errnum;
-	dirdata.user_context = data->user_context;
-	
-	status = app_process_file_stat(&dirdata);
-	memcpy(&data->statbuf, &dirdata.statbuf, sizeof dirdata.statbuf);
-	
+    connector_callback_status_t status = connector_callback_continue;
+	uchar attributes = 0;
+    size_t result;
+
+    result = get_statbuf(data->path, &data->statbuf);
+    if (result < 0)
+    {
+    	APP_DEBUG("app_process_file_stat: get_statbuf returned %d\n", result);
+    	goto done;
+    }
+done:
     return status;
 }
 
@@ -228,7 +246,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
 			memcpy(data->entry_name, search_data->NAME, strlen(search_data->NAME) + 1);
 		}
 	} else {
-		APP_DEBUG("No more directory entries\n");
+		/* No more directory entries */
 	}
 	
     return status;
