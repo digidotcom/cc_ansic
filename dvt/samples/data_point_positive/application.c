@@ -101,7 +101,6 @@ int application_run(connector_handle_t handle)
     connector_status_t status;
     unsigned int const seed = (unsigned int)time(NULL);
 
-    sleep(5);
     APP_DEBUG("Data point positive DVT using seed %u\n", seed);
     srand(seed);
 

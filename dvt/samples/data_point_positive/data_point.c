@@ -201,21 +201,19 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     point->time.value.since_epoch_fractional.milliseconds = current_time.tv_usec/1000;
                     break;
 
-                #if (defined ISO8601_ISSUE_RESOLVED)
                 case connector_time_local_iso8601:
                 {
-                    #define MAX_ISO_8601_BYTES  20
+                    #define MAX_ISO_8601_BYTES  24
                     static char value[connector_data_point_type_binary][APP_MAX_POINTS][MAX_ISO_8601_BYTES];
                     struct tm * const tmval = localtime(&current_time.tv_sec);
 
                     ASSERT(tmval != NULL);
-                    snprintf(value[type][test_case-1], sizeof value[type][test_case-1], "%04d-%02d-%02dT%02d:%02d:%02dZ",
+                    snprintf(value[type][test_case], sizeof value[type][test_case], "%04d-%02d-%02dT%02d:%02d:%02d",
                              tmval->tm_year+1900, tmval->tm_mon+1, tmval->tm_mday, tmval->tm_hour, tmval->tm_min, tmval->tm_sec);
                     point->time.value.iso8601_string = value[type][test_case-1];
                     point->time.source = connector_time_local_iso8601;
                     break;
                 }
-                #endif
 
                 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
                 case connector_time_local_epoch_whole:

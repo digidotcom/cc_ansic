@@ -216,7 +216,6 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
         strncpy(&dp_info->file_path[path_prefix_bytes], path, path_bytes);
         strncpy(&dp_info->file_path[path_prefix_bytes + path_bytes], extension, extension_bytes);
         dp_info->file_path[full_path_bytes] = '\0';
-        connector_debug_printf("Dp Path: %s\n", dp_info->file_path);
         result = connector_working;
     }
     else
@@ -719,7 +718,6 @@ static connector_callback_status_t dp_handle_data_callback(connector_data_servic
 
         case dp_content_type_csv:
             data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available);
-            connector_debug_printf("DP Request:\n%.*s\n", data_ptr->bytes_used, (char *)data_ptr->buffer);
             data_ptr->more_data = (dp_info->data.csv.current_dp == NULL) ? connector_false : connector_true;
             break;
     }
