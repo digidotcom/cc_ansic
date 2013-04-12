@@ -19,7 +19,7 @@
 
 
 /**
-* @defgroup connector_config_options iDigi Connector Configuration Options
+* @defgroup connector_config_options Etherios Cloud Connector Configuration Options
 * @{
 *
 * @brief Defines the major blocks of functionality used in Etherios Cloud Connector
@@ -166,7 +166,7 @@
 /**
  * This is used to define the maximum content length in bytes of an element's value for the @ref rci_service,
  * Etherios Cloud Connector includes the @ref rci_service that allows user remote configuration, control, and information
- * exchange between a device and the iDigi Device Cloud.
+ * exchange between a device and Etherios Device Cloud.
  * See @ref CONNECTOR_RCI_SERVICE to enable or disable the service.
  *
  * @code
@@ -258,24 +258,6 @@
 #define CONNECTOR_TRANSPORT_UDP
 
 /**
-* If defined, Etherios Cloud Connector includes the SMS transport.
-* To disable this feature, comment this line out in connector_config.h:
-*
-* @code
-* #define CONNECTOR_TRANSPORT_SMS
-* @endcode
-*
-* To this:
-* @code
-* // #define CONNECTOR_TRANSPORT_SMS
-* @endcode
-*
-* @see @ref network_sms_start
-* @see @ref app_start_network_sms()
-*/
-#define CONNECTOR_TRANSPORT_SMS
-
-/**
  * @}*/
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
@@ -292,21 +274,21 @@
  *
  * @code
  *     #define CONNECTOR_DEVICE_TYPE                          "Etherios Cloud Connector Linux Sample"
- *     #define CONNECTOR_CLOUD_URL                            "my.idigi.com"
+ *     #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
  *     #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              75
  *     #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
  *     #define CONNECTOR_WAIT_COUNT                           10
  *     #define CONNECTOR_VENDOR_ID                            0x00000000
  *     #define CONNECTOR_MSG_MAX_TRANSACTION                  1
- *     #define CONNECTOR_CONNECTION_TYPE                      connector_lan_connection_type
+ *     #define CONNECTOR_CONNECTION_TYPE                      connector_connection_type_lan
  *     #define CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND    0
  *     #define CONNECTOR_WAN_PHONE_NUMBER_DIALED              "0123456789"
  *     #define CONNECTOR_FIRMWARE_SUPPORT
  *     #define CONNECTOR_DATA_SERVICE_SUPPORT
  *     #define CONNECTOR_FILE_SYSTEM_SUPPORT
- *     #define CONNECTOR_NETWORK_TCP_START                    connector_auto_connect
- *     #define CONNECTOR_WAN_TYPE                             connector_imei_wan_type
- *     #define CONNECTOR_IDENTITY_VERIFICATION                connector_simple_identity_verification
+ *     #define CONNECTOR_NETWORK_TCP_START                    connector_connect_auto
+ *     #define CONNECTOR_WAN_TYPE                             connector_wan_type_imei
+ *     #define CONNECTOR_IDENTITY_VERIFICATION                connector_identity_verification_simple
  * @endcode
  *
  * This option is useful for reducing Etherios Cloud Connector code space for those applications that are sensitive to memory usage.  The following
@@ -325,7 +307,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_CLOUD_URL @htmlonly </td>
- * <td>The iDigi Device Cloud FQDN.
+ * <td>Etherios Device Cloud FQDN.
  * See @endhtmlonly @ref server_url @htmlonly</td>
  * </tr>
  * <tr>
@@ -346,7 +328,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_VENDOR_ID @htmlonly </td>
- * <td>Vendor ID from iDigi Account.
+ * <td>Vendor ID from Etherios Device Cloud Account.
  * See @endhtmlonly @ref vendor_id @htmlonly</td>
  * </tr>
  * <tr>
@@ -356,8 +338,8 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_CONNECTION_TYPE @htmlonly </td>
- * <td> @endhtmlonly @ref connector_lan_connection_type @htmlonly for LAN connection or
- * @endhtmlonly @ref connector_wan_connection_type @htmlonly WAN connection.
+ * <td> @endhtmlonly @ref connector_connection_type_lan @htmlonly for LAN connection or
+ * @endhtmlonly @ref connector_connection_type_wan @htmlonly WAN connection.
  * See @endhtmlonly @ref connection_type @htmlonly</td>
  * </tr>
  * <tr>
@@ -387,9 +369,9 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_WAN_TYPE @htmlonly </td>
- * <td> @endhtmlonly @ref connector_imei_wan_type @htmlonly for @ref connector_imen_wan_type for IMEI ,
- * @ref connector_esn_wan_type for ESN  or @ref connector_meid_wan_type for MEID
- * WAN type. See @endhtmlonly @ref wan_type @htmlonly</td>
+ * <td> @endhtmlonly @ref connector_wan_type_imei  for IMEI ,
+ * @ref connector_wan_type_esn for ESN  or @ref connector_wan_type_meid for MEID
+ * WAN type. See @ref wan_type @htmlonly</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_IDENTITY_VERIFICATION @htmlonly </td>
@@ -406,136 +388,125 @@
  */
 /**
  * When defined, this string is hardcode for the @ref device_type instead of the application framework
- * function @ref app_get_device_type (called via the @ref connector_config_device_type @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_device_type (called via the @ref connector_request_id_config_device_type @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_device_type when CONNECTOR_DEVICE_TYPE is defined.
  *
  * @see @ref device_type
- * @see @ref connector_config_device_type
  * @see @ref app_get_device_type
  */
 #define CONNECTOR_DEVICE_TYPE                             "Etherios Cloud Connector Linux Sample"
 
 /**
  * When defined, this string hardcode for the @ref server_url instead of the application framework
- * function @ref app_get_server_url (called via the @ref connector_config_server_url @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_server_url (called via the @ref connector_request_id_config_device_cloud_url @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_server_url when CONNECTOR_CLOUD_URL is defined.
  *
  * @see @ref server_url
- * @see @ref connector_config_server_url
  * @see @ref app_get_server_url()
  */
-#define CONNECTOR_CLOUD_URL                               "my.idigi.com"
+#define CONNECTOR_CLOUD_URL                               "login.etherios.com"
 
 /**
  * When defined, this string hardcode for the @ref tx_keepalive instead of the application framework
- * function @ref  app_get_tx_keepalive_interval() (called via the @ref connector_config_tx_keepalive @ref connector_callback_t "callback" in config.c).
+ * function @ref  app_get_tx_keepalive_interval() (called via the @ref connector_request_id_config_tx_keepalive @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref  app_get_tx_keepalive_interval() when CONNECTOR_TX_KEEPALIVE_IN_SECONDS is defined.
  *
  * @see @ref tx_keepalive
- * @see @ref connector_config_tx_keepalive
  * @see @ref  app_get_tx_keepalive_interval()
  */
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS                 75
 
 /**
  * When defined, this string hardcode for the @ref rx_keepalive instead of the application framework
- * function @ref app_get_rx_keepalive_interval() (called via the @ref connector_config_rx_keepalive @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_rx_keepalive_interval() (called via the @ref connector_request_id_config_rx_keepalive @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_rx_keepalive_interval() when CONNECTOR_RX_KEEPALIVE_IN_SECONDS is defined.
  *
  * @see @ref rx_keepalive
- * @see @ref connector_config_rx_keepalive
  * @see @ref app_get_rx_keepalive_interval()
  */
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS                 75
 
 /**
  * When defined, this string hardcode for the @ref wait_count instead of the application framework
- * function @ref app_get_wait_count() (called via the @ref connector_config_wait_count @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_wait_count() (called via the @ref connector_request_id_config_wait_count @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_wait_count() when CONNECTOR_RX_KEEPALIVE_IN_SECONDS is defined.
  *
  * @see @ref wait_count
- * @see @ref connector_config_wait_count
  * @see @ref app_get_wait_count()
  */
 #define CONNECTOR_WAIT_COUNT                              10
 
 /**
  * When defined, this 4 byte value is hardcode for the @ref vendor_id instead of the application framework
- * function @ref app_get_vendor_id() (called via the @ref connector_config_vendor_id @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_vendor_id() (called via the @ref connector_request_id_config_vendor_id @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_wait_count() when CONNECTOR_RX_KEEPALIVE_IN_SECONDS is defined.
  *
  * @see @ref vendor_id
- * @see @ref connector_config_vendor_id
  * @see @ref app_get_vendor_id()
- * @see @ref connector_vendor_id "Obtaining an iDigi Vendor ID"
+ * @see @ref connector_vendor_id "Obtaining an Etherios Device Cloud Vendor ID"
  */
 #define CONNECTOR_VENDOR_ID                            0x00000000
 
 /**
  * When defined, this string hardcode for the @ref max_msg_transactions instead of the application framework
- * function @ref app_get_max_message_transactions() (called via the @ref connector_config_max_transaction @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_max_message_transactions() (called via the @ref connector_request_id_config_max_transaction @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_max_message_transactions() when CONNECTOR_MSG_MAX_TRANSACTION is defined.
  *
  * @see @ref max_msg_transactions
- * @see @ref connector_config_max_transaction
  * @see @ref app_get_max_message_transactions()
  */
 #define CONNECTOR_MSG_MAX_TRANSACTION                  1
 
 /**
  * When defined, this string hardcode for the @ref connection_type instead of the application framework
- * function @ref app_get_connection_type() (called via the @ref connector_config_connection_type @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_connection_type() (called via the @ref connector_request_id_config_connection_type @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_connection_type() when CONNECTOR_CONNECTION_TYPE is defined.  The
- * values for this define are limited to @ref connector_lan_connection_type or @ref connector_wan_connection_type.
+ * values for this define are limited to @ref connector_connection_type_lan or @ref connector_connection_type_wan.
  *
  * @see @ref connection_type
- * @see @ref connector_config_connection_type
  * @see @ref app_get_connection_type()
  * @see @ref connector_connection_type_t
  */
-#define CONNECTOR_CONNECTION_TYPE                      connector_lan_connection_type
+#define CONNECTOR_CONNECTION_TYPE                      connector_connection_type_lan
 
 /**
  * When defined, this string hardcode for the @ref link_speed instead of the application framework
- * function @ref app_get_link_speed() (called via the @ref connector_config_link_speed @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_link_speed() (called via the @ref connector_request_id_config_link_speed @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_link_speed() when CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND is defined.
  *
  * @see @ref link_speed
- * @see @ref connector_config_link_speed
  * @see @ref app_get_link_speed()
  */
 #define CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND    0
 
 /**
  * When defined, this string hardcode for the @ref phone_number instead of the application framework
- * function @ref app_get_phone_number() (called via the @ref connector_config_phone_number @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_phone_number() (called via the @ref connector_request_id_config_phone_number @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_phone_number() when CONNECTOR_WAN_PHONE_NUMBER_DIALED is defined.
  *
  * @see @ref phone_number
- * @see @ref connector_config_phone_number
  * @see @ref app_get_phone_number()
  */
 #define CONNECTOR_WAN_PHONE_NUMBER_DIALED              "0123456789"
 
 /**
  * When defined, this string hardcode for the @ref firmware_support instead of the application framework
- * function @ref app_get_firmware_support() (called via the @ref connector_config_firmware_facility @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_firmware_support() (called via the @ref connector_request_id_config_firmware_facility @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_firmware_support() when CONNECTOR_FIRMWARE_SUPPORT is defined.
  * @note This define is only used when @ref CONNECTOR_FIRMWARE_SERVICE is defined in @ref connector_config.h.
  *
  * @see @ref firmware_support
- * @see @ref connector_config_firmware_facility
  * @see @ref app_get_firmware_support()
  * @see @ref CONNECTOR_FIRMWARE_SERVICE
  */
@@ -543,13 +514,12 @@
 
 /**
  * When defined, this string hardcode for the @ref data_service_support instead of the application framework
- * function @ref app_get_data_service_support() (called via the @ref connector_config_data_service @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_data_service_support() (called via the @ref connector_request_id_config_data_service @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_data_service_support() when CONNECTOR_DATA_SERVICE_SUPPORT is defined.
  * @note This define is only used when @ref CONNECTOR_DATA_SERVICE is defined in @ref connector_config.h.
  *
  * @see @ref data_service_support
- * @see @ref connector_config_data_service
  * @see @ref app_get_data_service_support()
  * @see @ref CONNECTOR_DATA_SERVICE
  */
@@ -557,13 +527,12 @@
 
 /**
  * When defined, this string hardcode for the @ref file_system_support instead of the application framework
- * function @ref app_get_file_system_support() (called via the @ref connector_config_file_system @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_file_system_support() (called via the @ref connector_request_id_config_file_system @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_file_system_support() when CONNECTOR_FILE_SYSTEM_SUPPORT is defined.
  * @note This define is only used when @ref CONNECTOR_FILE_SYSTEM is defined in @ref connector_config.h.
  *
  * @see @ref file_system_support
- * @see @ref connector_config_file_system
  * @see @ref app_get_file_system_support()
  * @see @ref CONNECTOR_FILE_SYSTEM
  */
@@ -572,12 +541,12 @@
 
 /**
  * When defined, this string hardcode for the remote_configuration_support instead of the application framework
- * function @ref app_get_remote_configuration_support() (called via the @ref connector_config_remote_configuration @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_remote_configuration_support() (called via the @ref connector_request_id_config_remote_configuration @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_remote_configuration_support() when CONNECTOR_REMOTE_CONFIGURATION_SUPPORT is defined.
  * @note This define is only used when @ref CONNECTOR_RCI_SERVICE is defined a non-zero in @ref connector_config.h.
  *
- * @see @ref connector_config_remote_configuration
+ * @see @ref rci_support
  * @see @ref app_get_remote_configuration_support()
  * @see @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH
  */
@@ -585,86 +554,76 @@
 
 /**
  * When defined, this string hardcode for the @ref device_id_method instead of the application framework
- * function @ref app_get_device_id_method() (called via the @ref connector_config_device_id_method @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_device_id_method() (called via the @ref connector_request_id_config_device_id_method @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_device_id_method() when CONNECTOR_DEVICE_ID_METHOD is defined.  The
- * values for this define are limited to @ref connector_auto_device_id_method or @ref connector_manual_device_id_method.
+ * values for this define are limited to @ref connector_device_id_method_auto or @ref connector_device_id_method_manual.
  *
  * @see @ref device_id_method
- * @see @ref connector_config_device_id_method
  * @see @ref app_get_device_id_method()
  * @see @ref connector_device_id_method_t
  */
-#define CONNECTOR_DEVICE_ID_METHOD connector_auto_device_id_method
+#define CONNECTOR_DEVICE_ID_METHOD connector_device_id_method_auto
 
 /**
  * When defined, this string hardcode for the @ref network_tcp_start instead of the application framework
- * function @ref app_start_network_tcp() (called via the @ref connector_config_network_tcp @ref connector_callback_t "callback" in config.c).
+ * function @ref app_start_network_tcp() (called via the @ref connector_request_id_config_network_tcp @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_start_network_tcp() when CONNECTOR_NETWORK_TCP_START is defined. The
- * values for this define are limited to @ref connector_auto_connect or @ref connector_manual_connect.
+ * values for this define are limited to @ref connector_connect_auto or @ref connector_connect_manual.
  * @note This define is only used when @ref CONNECTOR_TRANSPORT_TCP is defined in @ref connector_config.h.
  *
- * @see @ref connector_auto_connect_type_t
+ * @see @ref network_tcp_start
+ * @see @ref connector_connect_auto_type_t
  * @see @ref app_start_network_tcp()
  * @see @ref CONNECTOR_TRANSPORT_TCP
  */
-#define CONNECTOR_NETWORK_TCP_START                 connector_auto_connect
+#define CONNECTOR_NETWORK_TCP_START                 connector_connect_auto
 
 /**
  * When defined, this string hardcode for the @ref network_udp_start instead of the application framework
- * function @ref app_start_network_udp() (called via the @ref connector_config_network_udp @ref connector_callback_t "callback" in config.c).
+ * function @ref app_start_network_udp() (called via the @ref connector_request_id_config_network_tcp @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_start_network_udp() when CONNECTOR_NETWORK_UDP_START is defined. The
- * values for this define are limited to @ref connector_auto_connect or @ref connector_manual_connect.
+ * values for this define are limited to @ref connector_connect_auto or @ref connector_connect_manual.
  * @note This define is only used when @ref CONNECTOR_TRANSPORT_UDP is defined in @ref connector_config.h.
  *
- * @see @ref connector_auto_connect_type_t
+ * @see @ref network_udp_start
+ * @see @ref connector_connect_auto_type_t
  * @see @ref app_start_network_udp()
  * @see @ref CONNECTOR_TRANSPORT_UDP
  */
-#define CONNECTOR_NETWORK_UDP_START                 connector_auto_connect
+#define CONNECTOR_NETWORK_UDP_START                 connector_connect_auto
 
-
-/**
- * When defined, this string hardcode for the @ref network_tcp_start instead of the application framework
- * function @ref app_start_network_sms() (called via the @ref connector_config_network_sms @ref connector_callback_t "callback" in config.c).
- *
- * @note There is no need to implement or port @ref app_start_network_sms() when CONNECTOR_NETWORK_SMS_START is defined. The
- * values for this define are limited to @ref connector_auto_connect or @ref connector_manual_connect.
- * @note This define is only used when @ref CONNECTOR_TRANSPORT_SMS is defined in @ref connector_config.h.
- *
- * @see @ref connector_auto_connect_type_t
- * @see @ref app_start_network_sms()
- * @see @ref CONNECTOR_TRANSPORT_SMS
- */
-#define CONNECTOR_NETWORK_SMS_START                 connector_auto_connect
 
 /**
  * When defined, this string hardcode for the @ref wan_type instead of the application framework
- * function @ref app_get_wan_type() (called via the @ref wan_type @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_wan_type() (called via the @ref connector_request_id_config_wan_type @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_wan_type() when CONNECTOR_WAN_TYPE is defined.  The
- * values for this define are limited to @ref connector_imei_wan_type, @ref connector_esn_wan_type or @ref connector_meid_wan_type.
- * @note This define is only used when @ref device_id_method is connector_auto_device_id_method and
- * @ref connection_type is @ref connector_wan_connection_type.
+ * values for this define are limited to @ref connector_wan_type_imei, @ref connector_wan_type_esn or @ref connector_wan_type_meid.
+ * @note This define is only used when @ref device_id_method is connector_device_id_method_auto and
+ * @ref connection_type is @ref connector_connection_type_wan.
  *
+ * @see @ref wan_type
  * @see @ref CONNECTOR_CONNECTION_TYPE
  * @see @ref CONNECTOR_DEVICE_ID_METHOD
  * @see @ref app_get_wan_type()
  */
-#define CONNECTOR_WAN_TYPE                              connector_imei_wan_type
+#define CONNECTOR_WAN_TYPE                              connector_wan_type_imei
 
 /**
  * When defined, this string hardcode for the @ref identity_verification instead of the application framework
- * function @ref app_get_identity_verification() (called via the @ref connector_config_identity_verification @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_identity_verification() (called via the @ref connector_request_id_config_identity_verification @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_identity_verification() when CONNECTOR_IDENTITY_VERIFICATION is defined.  The
- * values for this define are limited to @ref connector_simple_identity_verification, or @ref connector_password_identity_verification.
+ * values for this define are limited to @ref connector_identity_verification_simple, or @ref connector_identity_verification_password.
  *
+ * @see @ref identity_verification
  * @see @ref app_get_identity_verification()
+ * @see @ref connector_identity_verification_t
  */
-#define CONNECTOR_IDENTITY_VERIFICATION                 connector_simple_identity_verification
+#define CONNECTOR_IDENTITY_VERIFICATION                 connector_identity_verification_simple
 
 #endif
 
