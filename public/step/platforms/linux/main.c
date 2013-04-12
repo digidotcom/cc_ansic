@@ -19,7 +19,7 @@ int main (void)
     int status=EXIT_FAILURE;
     connector_handle_t connector_handle;
 
-    APP_DEBUG("main: Starting iDigi\n");
+    APP_DEBUG("main: Starting Connector\n");
     connector_handle = connector_init(app_connector_callback);
     if (connector_handle == NULL)
     {

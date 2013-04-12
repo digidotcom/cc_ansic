@@ -86,8 +86,8 @@ typedef struct  {
 */
 
 /**
-* @defgroup connector_close_status_t iDigi Connection Close Status Values
-* @{
+* @defgroup connector_close_status_t Close 
+* Status Values for the connection @{ 
 */
 /**
 * Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.

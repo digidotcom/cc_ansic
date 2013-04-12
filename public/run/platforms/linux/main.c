@@ -75,7 +75,7 @@ int main (void)
 
         pthread_join(connector_thread, NULL);
         pthread_join(application_thread, NULL);
-        APP_DEBUG("iDigi terminated\n");
+        APP_DEBUG("Connector terminated\n");
     }
     else
     {

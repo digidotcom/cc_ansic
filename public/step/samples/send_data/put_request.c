@@ -26,10 +26,10 @@ typedef struct
 connector_status_t app_send_put_request(connector_handle_t handle)
 {
     connector_status_t status = connector_no_resource;
-    static connector_request_data_service_send_t header; /* idigi connector will hold this until we get a response/error callback */
+    static connector_request_data_service_send_t header; /* Connector will hold this until we get a response/error callback */
     static char const file_path[] = "test/test.txt";
     static char const file_type[] = "text/plain";
-    static char const buffer[] = "iDigi data service sample\n";
+    static char const buffer[] = "Connector data service sample\n";
     client_data_t * const app_data = malloc(sizeof *app_data);
 
     if (app_data == NULL)

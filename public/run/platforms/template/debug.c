@@ -11,7 +11,7 @@
  */
  /**
   * @file
-  *  @brief Debug routine for the iDigi Connector.
+  *  @brief Debug routine for the Etherios Cloud Connector.
   *
   */
 

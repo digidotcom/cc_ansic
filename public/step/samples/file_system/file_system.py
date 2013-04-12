@@ -18,7 +18,7 @@ import httplib
 import base64
 import sys
 
-expected_content = "iDigi file system sample\n"
+expected_content = "Connector file system sample\n"
 
 test_file = "test_file.txt"
 get_path  = test_file
