@@ -1,5 +1,5 @@
 
-import fileinput, re, string, sys
+import fileinput, re, string, sys, os
 from optparse import OptionParser
 
 if __name__ == '__main__':
@@ -19,6 +19,7 @@ if __name__ == '__main__':
 
      newtext = re.sub(mySearchPattern, myReplacement, text, 1) 
 
-     outfile = open(args[1], "w")
+     print ">> Writing " + myReplacement " instead of " + mySearchPattern + " to " + args[0] 
+     outfile = open(args[0], "w")
      outfile.write(newtext)
      outfile.close()
