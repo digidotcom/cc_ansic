@@ -62,7 +62,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
     case connector_class_id_firmware:
-        status = app_firmware_handler(request_id.firmware_request, request_data, request_length, response_data, response_length);
+        status = app_firmware_handler(request_id.data_service_request, data);
         break;
 #endif
 

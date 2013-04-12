@@ -14,10 +14,6 @@
 #include "os_support.h"
 #include "connector_config.h"
 
-#if !BSPCFG_ENABLE_FLASHX && (defined CONNECTOR_FIRMWARE_SERVICE)
-#error This application requires BSPCFG_ENABLE_FLASHX defined non-zero in user_config.h. Please recompile BSP with this option.
-#endif
-
 TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
