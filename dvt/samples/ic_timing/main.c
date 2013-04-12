@@ -266,7 +266,7 @@ int main (void)
     }
 
 
-    APP_DEBUG("main: Starting iDigi\n");
+    APP_DEBUG("main: Starting Etherios Cloud Connector\n");
     get_time(&start_time);
 
     connector_handle = connector_init(app_connector_callback);
@@ -287,7 +287,7 @@ int main (void)
         fprintf(file_fd, TIMING_TABLE_HTML_OPEN_TABLE);
 
         {
-            /* Need to subtract callback's time from idigi API time */
+            /* Need to subtract callback's time from calblack time */
             struct timespec elapsed_time = {0};
 
             total_elapsed_time(&elapsed_time, callback_time, connector_time);
@@ -315,7 +315,7 @@ int main (void)
     for (;;)
     {
         /*
-         * Example of using connector_step(), we run a portion of the iDigi Connector then run
+         * Example of using connector_step(), we run a portion of the Cloud Connector then run
          * a portion of the users application.
          */
         connector_time.tv_sec = 0;

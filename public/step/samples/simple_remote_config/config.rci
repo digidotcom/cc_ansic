@@ -2,8 +2,8 @@ globalerror load_fail "Load fail"
 globalerror save_fail "Save fail"
 globalerror memory_fail "Insufficient memory"
 
-# Device info that shows up in iDigi device summary
-# iDigi Manager Pro queries this system setting to display the information in root folder
+# Device info that shows up in Etherios Device Cloud device summary
+# Etherios Device Cloud queries this system setting to display the information in root folder
 group setting system "System"
     element description "Description" type string max 63
     element contact "Contact" type string max 63
@@ -16,15 +16,15 @@ group setting system "System"
 # To include the devicesecurity setting, change devicesecurity.c.optional 
 # to devicesecurity.c and update remote_setting_table in remote_config_cb.c 
 # with all callback functions in devicesecurity.c. 
-group setting devicesecurity "iDigi device security"
+group setting devicesecurity "Device Cloud device security"
    element identityVerificationForm "Connection security" type enum
        value simple "No connection security"
        value password "Connection is password authenticated"
-   element password "iDigi device connection password" type password max 133
+   element password "Device connection password" type password max 133
 
 # Device location
 # State configuration for GPS
-# Must setup the following group for Latitude and Longitude to be shown in iDigi Manager Pro.
+# Must setup the following group for Latitude and Longitude to be shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type string access read_only
     element longitude "Longitude" type string access read_only

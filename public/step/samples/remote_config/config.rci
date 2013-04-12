@@ -53,21 +53,21 @@ group setting device_info  "Device info"
     element company "Company" type string access  read_write  max 63
     element desc "Description" type multiline_string access  read_write max 127 
 
-# Device info that shows up in iDigi device summary
-# iDigi Manager Pro queries this system setting to display the information in root folder
+# Device info that shows up in Etherios Device Cloud device summary
+# Etherios Device Cloud queries this system setting to display the information in root folder
 group setting system "System"
     element description "Description" type string max 63
     element contact "Contact" type string max 63
     element location "Location" type string max 63
 
 # EDP password
-# iDigi Manager Pro uses this devicesecurity setting for password authentication
+# Etherios Device Cloud uses this devicesecurity setting for password authentication
 # Note, as with all password, password type is a write-only field
-group setting devicesecurity "iDigi device security"
+group setting devicesecurity "Device Cloud device security"
     element identityVerificationForm "Connection security" type enum
         value simple "No connection security"
         value password "Connection is password authenticated"
-    element password "iDigi device connection password" type password max 133 access write_only
+    element password "Device connection password" type password max 133 access write_only
 
 group state device_state  "Device State"
     element system_up_time "System Up time" type uint32 access read_only units "seconds"
@@ -76,7 +76,7 @@ group state device_state  "Device State"
 
 # Device location
 # State configuration for GPS
-# Must setup the following group for Latitude and Longitude to be shown in iDigi Manager Pro.
+# Must setup the following group for Latitude and Longitude to be shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type string access read_only
     element longitude "Longitude" type string access read_only

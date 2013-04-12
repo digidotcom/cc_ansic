@@ -196,7 +196,7 @@ static connector_callback_status_t app_firmware_reset(connector_firmware_reset_t
 
     if (put_file_active_count > 0)
     {
-        /* let's terminate iDigi Connector and free all memory used in iDigi Connector.
+        /* let's terminate Cloud Connector and free all memory used in Cloud Connector.
          *
          */
         connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);

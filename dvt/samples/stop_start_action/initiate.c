@@ -51,8 +51,8 @@ int initiate_run(connector_handle_t handle)
     {
         switch (initiate_action.target)
         {
-            case device_request_app_stop_idigi:
-                APP_DEBUG("Initiate_run: Stop  %s iDigi immediately (active put request = %d)\n", transport_to_string(request_data.transport), put_file_active_count[initiate_action.transport]);
+            case device_request_app_stop_connector:
+                APP_DEBUG("Initiate_run: Stop  %s connector immediately (active put request = %d)\n", transport_to_string(request_data.transport), put_file_active_count[initiate_action.transport]);
                 connector_close_status = connector_close_status_device_stopped;
                 request_data.transport = initiate_action.transport;
                 stop_transport_count[request_data.transport]++;  /* counter which is used to ensure the status_complete callback is called */
@@ -65,14 +65,14 @@ int initiate_run(connector_handle_t handle)
                     else
                     {
 #if (TRANSPORT_COUNT == 1)
-                        initiate_action.target = device_request_app_start_idigi;
+                        initiate_action.target = device_request_app_start_connector;
 #else
-                        initiate_action.target = (initiate_action.transport == connector_transport_all) ? device_request_app_start_idigi : device_request_not_support;
+                        initiate_action.target = (initiate_action.transport == connector_transport_all) ? device_request_app_start_connector : device_request_not_support;
 #endif
                     }
                     break;
                 }
-            case device_request_app_start_idigi:
+            case device_request_app_start_connector:
                 sleep(1);
                 APP_DEBUG("Initiate_run: Start Etherios Connector %s\n", transport_to_string(initiate_action.transport));
 
@@ -113,19 +113,19 @@ int initiate_run(connector_handle_t handle)
                 initiate_action.target = device_request_not_support;
                 break;
 
-            case device_request_stop_idigi:
+            case device_request_stop_connector:
             case device_request_stop_all_transports:
 #if (TRANSPORT_COUNT == 1)
                 APP_DEBUG("Initiate_run: Let reStart Etherios Connector\n");
-                initiate_action.target = device_request_app_start_idigi;
+                initiate_action.target = device_request_app_start_connector;
 #else
                 APP_DEBUG("initiate_run: transport %s\n", transport_to_string(initiate_action.transport));
-                initiate_action.target = (initiate_action.transport == connector_transport_all) ? device_request_app_start_idigi : device_request_not_support;
+                initiate_action.target = (initiate_action.transport == connector_transport_all) ? device_request_app_start_connector : device_request_not_support;
 #endif
                 break;
 
-            case device_request_stop_terminate_idigi:
-                APP_DEBUG("Initiate_run: Terminate iDigi\n");
+            case device_request_stop_terminate_connector:
+                APP_DEBUG("Initiate_run: Terminate connector\n");
                 connector_close_status = connector_close_status_device_terminated;
                 {
                     connector_status_t const status = connector_initiate_action(handle, connector_initiate_terminate, NULL);

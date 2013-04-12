@@ -407,7 +407,7 @@ done:
 
 connector_status_t app_send_ping(connector_handle_t handle)
 {
-    static connector_message_status_request_t ping_request; /* idigi connector will hold this until reply received or send completes */
+    static connector_message_status_request_t ping_request; /* Cloud connector will hold this until reply received or send completes */
     connector_status_t status;
 
     ping_request.transport = connector_transport_udp;

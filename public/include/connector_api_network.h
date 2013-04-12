@@ -20,9 +20,9 @@
 */
 /**
 * Network Request ID passed to the application's callback for network interface.
-* The class id for this connector_request_id_network_t is 
-* connector_class_id_network_tcp, 
-* connector_class_id_network_udp. 
+* The class id for this connector_request_id_network_t is
+* connector_class_id_network_tcp,
+* connector_class_id_network_udp.
 */
 typedef enum {
     connector_request_id_network_open,     /**< Requesting callback to set up and make connection to Etherios Device Cloud */
@@ -86,8 +86,8 @@ typedef struct  {
 */
 
 /**
-* @defgroup connector_close_status_t Close 
-* Status Values for the connection @{ 
+* @defgroup connector_close_status_t Connection Close Status Values
+* @{
 */
 /**
 * Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.

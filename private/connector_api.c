@@ -488,7 +488,7 @@ error:
         (connector_ptr->stop.state != connector_state_terminate_by_initiate_action) &&
         (connector_ptr->stop.state != connector_state_abort_by_callback))
     {
-        /* let's abort idigi */
+        /* let's abort Cloud Connector */
         abort_connector(connector_ptr);
     }
     /* wait until SMS/UDP/TCP are in terminated state */

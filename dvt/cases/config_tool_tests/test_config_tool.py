@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import config_tool_validator
 
 from com.digi.connector.config import Parser
@@ -24,6 +25,7 @@ def process_and_verify(test):
             try:
                 Parser.processFile(config_file.name, config_data)
             except IOException, e:
+
                 assert_equal(1, 2, e)
     finally:
         os.remove(config_file.name)

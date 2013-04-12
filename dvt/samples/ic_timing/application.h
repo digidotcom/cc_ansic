@@ -29,17 +29,17 @@
 <html>\n\
   <head>\n\
     <meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"/>\n\
-    <title>iDigi Connector API Timing</title>\n\
+    <title>Etherios Cloud Connector API Timing</title>\n\
   </head>\n\
   <body>\n\
  \n\
-    <h1>iDigi Connector API Timing</h1>\n\
-    <p>It uses clock_gettime() to obtain the iDigi Connector API execution time.\n\
+    <h1>Etherios Cloud Connector  API Timing</h1>\n\
+    <p>It uses clock_gettime() to obtain the Etherios Cloud Connector  API execution time.\n\
        It calculates the amount of time that API takes. It excludes the time spent in the callbacks.</p>\n\
     <p>The following tables show the API call index and its timing.\n\
        <ul><li>API call index = Sequence order/index of calling the API. Note that it only displays the time only if \
 the difference between the time and the prevous time is greater than 1000 nsec</li>\n\
-           <li>Timing = Amount of time that it takes to execute the iDigi Connector API in nanoseconds</li></ul></p>\n\
+           <li>Timing = Amount of time that it takes to execute the Etherios Cloud Connector  API in nanoseconds</li></ul></p>\n\
     "
 #define TIMING_TABLE_HTML_TABLE_TITLE   "    <hr><p><h2>%s</h2></p>\n"
 

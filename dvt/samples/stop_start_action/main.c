@@ -262,7 +262,7 @@ int main (void)
         {
             connector_transport_t transport;
 
-            /* terminate iik so it will not reconnect to iDigi */
+            /* terminate Cloud Connector so it will not reconnect to Device Cloud */
             APP_DEBUG("total malloc memory = %" PRIsize " after all threads are canceled\n", total_malloc_size);
             if (connector_run_thread_status == connector_device_terminated)
             {
@@ -283,7 +283,7 @@ int main (void)
             strcpy(terminate_file_content, connector_close_status_text);
             connector_close_status_text[0] ='\0';
         }
-        /* continue and reconnect iDigi so python test will not fail */
+        /* continue and reconnect Device Cloud so python test will not fail */
         sleep(2);
 
         connector_run_thread_status = connector_success;

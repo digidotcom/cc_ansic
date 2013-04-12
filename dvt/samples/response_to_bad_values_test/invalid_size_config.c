@@ -24,7 +24,7 @@
 #include "platform.h"
 #include "application.h"
 
-/* iDigi Connector Configuration routines */
+/* Cloud Connector Configuration routines */
 
 #define MAX_INTERFACES      128
 #define DEVICE_ID_LENGTH    16
@@ -85,7 +85,7 @@ static connector_callback_status_t app_get_invalid_size_device_type(connector_co
 
 static connector_callback_status_t app_get_invalid_size_server_url(connector_config_pointer_string_t * const config_url)
 {
-//#error "Specify iDigi Server URL"
+//#error "Specify Etherios Device Cloud URL"
 
     static char  invalid_size_server_url;
 
@@ -258,7 +258,7 @@ static connector_callback_status_t app_get_invalid_size_password(connector_confi
 }
 
 
-/* End of iDigi Connector configuration routines */
+/* End of Cloud Connector configuration routines */
 
 
 /*

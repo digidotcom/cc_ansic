@@ -21,7 +21,7 @@ connector_bool_t app_ping_pending = connector_false;
 connector_status_t app_send_ping(connector_handle_t handle)
 {
     connector_status_t status;
-    static connector_sm_send_ping_request_t request; /* idigi connector will hold this until reply received or send completes */
+    static connector_sm_send_ping_request_t request; /* Cloud connector will hold this until reply received or send completes */
 
     if (app_ping_pending)
     {

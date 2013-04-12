@@ -37,7 +37,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             StopStartInitiateActionDvtTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
             StopStartInitiateActionDvtTestCase.monitor.start()
         self.monitor = StopStartInitiateActionDvtTestCase.monitor
-    
+
     def test_abort_stop_callback(self):
         """ Initiate [abort_stop_callback] device request. """
 
@@ -54,9 +54,9 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
 
         # Create path to file for push.
         file_push_location = filedata + self.device_id + '/' + TERMINATE_TEST_FILE
-    
+
         # get and verify correct content is pushed.
-        get_and_verify(self, self.push_client, self.device_id, 
+        get_and_verify(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
@@ -79,7 +79,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.log.info("Sending device request for \"%s\" target_name to server for device id  %s." % (target, self.device_id))
 
         # Send device request
-        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname, 
+        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname,
                             data=my_target_device_request).content
 
         self.log.info("Got Response: %s" % device_request_response)
@@ -90,7 +90,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             self.log.info("Response for \"%s\" target: %s" % (target, device_request_response))
 
         if wait_for_response:
-            # Parse request response 
+            # Parse request response
             self.log.info("Got Response: %s" % device_request_response)
             dom = xml.dom.minidom.parseString(device_request_response)
             device_response = dom.getElementsByTagName("device_request")
@@ -101,8 +101,8 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             # Validate target name
             self.log.info("Determining if the target_name is \"%s\"." %target)
             target_name = device_response[0].getAttribute('target_name')
-            self.assertEqual(target_name, target, 
-                             "returned target (%s) is not (%s)" 
+            self.assertEqual(target_name, target,
+                             "returned target (%s) is not (%s)"
                              % (target_name, target))
 
             # Validate status
@@ -112,7 +112,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
 
         if wait_for_disconnect:
             print "wait for disconnect = %d" % wait_for_disconnect
-            self.log.info("Waiting for iDigi to disconnect device.")
+            self.log.info("Waiting for Device Cloud to disconnect device.")
             self.monitor.wait_for_disconnect(30)
             self.log.info("Device disconnected.")
 
@@ -120,5 +120,5 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             self.monitor.wait_for_connect(30)
             self.log.info("Device connected.")
 
-if __name__ == '__main__': 
-    unittest.main() 
+if __name__ == '__main__':
+    unittest.main()

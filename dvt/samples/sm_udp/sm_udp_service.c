@@ -25,7 +25,7 @@ static int app_data_time_remaining = APP_MAX_TIMEOUT;
 connector_status_t app_send_ping(connector_handle_t handle)
 {
     connector_status_t status;
-    static connector_sm_send_ping_request_t request; /* idigi connector will hold this until send completes */
+    static connector_sm_send_ping_request_t request; /* Cloud connector will hold this until send completes */
     static connector_bool_t response_needed = connector_true;
 
     request.transport = connector_transport_udp;
@@ -90,7 +90,7 @@ typedef struct
 connector_status_t app_send_data(connector_handle_t handle)
 {
     connector_status_t status = connector_no_resource;
-    static connector_request_data_service_send_t header; /* idigi connector will hold this until we get a response/error callback */
+    static connector_request_data_service_send_t header; /* Cloud connector will hold this until we get a response/error callback */
     static char const file_path[] = "test/sm_udp.txt";
     static char const buffer[] = "iDigi sm udp dvt for device data\n";
     static client_data_t app_data;

@@ -307,7 +307,7 @@ int main (void)
 
         if (total_malloc_size != 0)
         {
-            /* terminate iik so it will not reconnect to iDigi */
+            /* terminate Cloud Connector so it will not reconnect to Device Cloud */
             APP_DEBUG("total malloc memory = %" PRIsize " after all threads are canceled\n", total_malloc_size);
             if (connector_run_thread_status == connector_device_terminated)
             {
@@ -321,7 +321,7 @@ int main (void)
         }
         APP_DEBUG("Allocated memory size = %" PRIsize "\n", total_max_malloc_size);
         write_usage_file("main");
-            /* continue and reconnect iDigi so python test will not fail */
+            /* continue and reconnect Device Cloud so python test will not fail */
     }
 
 done:

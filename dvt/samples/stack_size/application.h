@@ -29,11 +29,11 @@ extern size_t total_malloc_size;
 <html>\n\
   <head>\n\
     <meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"/>\n\
-    <title>iDigi Connector API Timing</title>\n\
+    <title>Etherios Cloud Connector API Timing</title>\n\
   </head>\n\
   <body>\n\
  \n\
-    <h2>iDigi Connector Stack Size</h2>\n\
+    <h2>Etherios Cloud Connector Stack Size</h2>\n\
     <p>It calculates the maximum stack size used in connector_run() excluding callback's stack size usage.</p>\n\
     "
 #define STACKSIZE_HTML_TABLE   "\

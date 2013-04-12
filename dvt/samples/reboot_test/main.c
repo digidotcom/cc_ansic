@@ -216,7 +216,7 @@ int main (void)
         pthread_join(connector_thread, NULL);
         pthread_join(application_thread, NULL);
 
-        APP_DEBUG("iDigi terminated\n");
+        APP_DEBUG("Etherios Cloud Connector terminated\n");
     }
     else
     {

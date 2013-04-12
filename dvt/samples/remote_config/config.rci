@@ -59,7 +59,7 @@ group state debug_info "Debug info on IC thread"
     element stacksize "Stack size" type hex32 access  read_only 
    
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in iDigi Cloud.
+# Must setup the following group in order for GPS shown in Etherios Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only
@@ -84,19 +84,19 @@ group setting state_test "State Test"
     element test14 "Test 14" type 0x_hex32 min 0x2 max 0xF access read_write
     element test15 "Test 15" type string max 1400 access read_write
    
-# iDigi Manager Pro queries this system setting to display the information in root folder
+# Etherios Device Cloud queries this system setting to display the information in root folder
 group setting system "System"
     element description "Description" type string max 63
     element contact "Contact" type string max 63
     element location "Location" type string max 63
     error invalid_length "Invalid Length"
    
-# iDigi Manager Pro uses this devicesecurity setting for password authentication
-group setting devicesecurity "iDigi device security"
+# Etherios Device Cloud uses this devicesecurity setting for password authentication
+group setting devicesecurity "Device Cloud device security"
     element identityVerificationForm "Connection security" type enum
         value simple "No connection security"
         value password "Connection is password authenticated"
-    element password "iDigi device connection password" type password max 134
+    element password "Device connection password" type password max 134
 
 group state device_state  "Device State"
     element system_up_time "System Up time" type uint32 access read_only units "seconds"

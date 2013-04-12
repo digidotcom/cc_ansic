@@ -260,7 +260,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
     FD_ZERO(&read_set);
     FD_SET(*fd, &read_set);
 
-    /* Blocking point for iDigi Connector */
+    /* Blocking point for Cloud Connector */
     ccode = select(*fd + 1, &read_set, NULL, NULL, &timeout);
     if (ccode < 0)
     {

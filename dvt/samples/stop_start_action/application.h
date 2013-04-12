@@ -43,15 +43,15 @@
 typedef enum {
     device_request_not_support,
     device_request_invalid_data,
-    device_request_stop_idigi,
-    device_request_start_idigi,
-    device_request_stop_terminate_idigi,
-    device_request_app_stop_idigi,
-    device_request_app_start_idigi,
+    device_request_stop_connector,
+    device_request_start_connector,
+    device_request_stop_terminate_connector,
+    device_request_app_stop_connector,
+    device_request_app_start_connector,
     device_request_stop_all_transports,
     device_request_abort_device_request,
     device_request_abort_stop_callback,
-    device_request_terminate_idigi
+    device_request_terminate_connector
 } device_request_target_t;
 
 

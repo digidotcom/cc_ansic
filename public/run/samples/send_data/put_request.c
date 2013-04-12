@@ -26,7 +26,7 @@ typedef struct
 connector_status_t app_send_put_request(connector_handle_t handle)
 {
     connector_status_t status = connector_no_resource;
-    static connector_request_data_service_send_t header; /* Connector will hold this until we get a response/error callback */
+    static connector_request_data_service_send_t header; /* Cloud connector will hold this until we get a response/error callback */
     static char const file_path[] = "test/test.txt";
     static char const file_type[] = "text/plain";
     static char const buffer[] = "Connector data service sample\n";

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import ic_testcase
 import datetime
@@ -40,7 +41,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
 
         delete_file(self, TRANSPORT_ERROR_FILE)
 
-    
+
     @classmethod
     def tearDownClass(cls):
         if StopStartInitiateActionDvtTestCase.monitor is not None:
@@ -48,10 +49,10 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         ic_testcase.TestCase.tearDownClass()
 
     def test_app_a_start_initiate(self):
-        """ Initiate [application_start_idigi] device request. """
+        """ Initiate [application_start_connector] device request. """
 
-        self.tcp_device_request("application_start_idigi", "TCP", False)
-        self.tcp_device_request("application_start_idigi", "UDP", False)
+        self.tcp_device_request("application_start_connector", "TCP", False)
+        self.tcp_device_request("application_start_connector", "UDP", False)
         if device_is_connected(self) == False:
             self.wait_for_connect()
         self.log.info("TCP connected")
@@ -59,14 +60,14 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         ping_response = self.udp_ping();
         self.assertEqual(ping_response, None, "Error in ping: %s" %ping_response)
 
-            
+
     def test_app_b_stop_initiate(self):
         """ Initiate [application_stop_idigi] device request. """
-        self.tcp_device_request("application_stop_idigi", "TCP", False)
+        self.tcp_device_request("application_stop_connector", "TCP", False)
         self.log.info("Waiting for iDigi to disconnect device.")
         self.wait_for_disconnect()
 
-        self.udp_device_request("application_start_idigi", "TCP", True)
+        self.udp_device_request("application_start_connector", "TCP", True)
         self.log.info("Waiting for iDigi to connect device.")
         self.wait_for_connect()
 
@@ -77,11 +78,11 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.wait_for_connect()
 
     def test_stop_d_initiate(self):
-        """ Initiate [stop_idigi] device request. """
+        """ Initiate [stop_connector] device request. """
         self.tcp_device_request("stop_idigi", "TCP", False)
         self.wait_for_disconnect()
 
-        self.udp_device_request("application_start_idigi", "TCP", True)
+        self.udp_device_request("application_start_connector", "TCP", True)
         self.wait_for_connect()
 
     def test_stop_e_terminate(self):
@@ -91,7 +92,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         # the reboot result.
         delete_file(self, TERMINATE_TEST_FILE)
 
-        self.tcp_device_request("stop_terminate_idigi", "TCP", False)
+        self.tcp_device_request("stop_terminate_connector", "TCP", False)
 
         self.wait_for_disconnect()
 
@@ -107,20 +108,20 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         # if the file doesn't exist. It will return the content
         # of the file.
 
-        get_and_verify(self, self.push_client, self.device_id, 
+        get_and_verify(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         self.log.info("Monitor again %s" %file_push_location)
         # get and verify correct content is pushed.
-        content = monitor_and_return(self, self.push_client, self.device_id, 
+        content = monitor_and_return(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         if content is not None:
             self.log.info("**********************************")
             self.log.info("2nd Monitor Subscription was expected to return None but it returned %s" % content)
-            self.assertEqual(content, None, 
+            self.assertEqual(content, None,
                              "Expected None but it is (%s)" % content)
 
     def test_stop_f_transport_file(self):
@@ -138,20 +139,20 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         # if the file doesn't exist. It will return the content
         # of the file.
 
-        get_and_verify(self, self.push_client, self.device_id, 
+        get_and_verify(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         self.log.info("Monitor again %s" %file_push_location)
         # get and verify correct content is pushed.
-        content = monitor_and_return(self, self.push_client, self.device_id, 
+        content = monitor_and_return(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         if content is not None:
             self.log.info("**********************************")
             self.log.info("2nd Monitor Subscription was expected to return None but it returned %s" % content)
-            self.assertEqual(content, None, 
+            self.assertEqual(content, None,
                              "Expected None but it is (%s)" % content)
 
     def udp_ping(self):
@@ -171,7 +172,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.log.info("Message: %s" % message)
 
         # Send device request
-        response = self.session.post('http://%s/ws/sci' % self.hostname, 
+        response = self.session.post('http://%s/ws/sci' % self.hostname,
                             data=message).content
 
         ping_result = None
@@ -184,7 +185,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.log.info("Response: %s" % ping_response)
         if len(ping_response) > 0:
             ping_result = ping_response
-        else:        
+        else:
             self.log.info("Ping success")
 
         return ping_result
@@ -214,7 +215,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.log.info("Message: %s" % message)
 
         # Send device request
-        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname, 
+        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname,
                             data=message).content
 
         self.log.info("Got Response: %s" % device_request_response)
@@ -222,7 +223,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         device_response = dom.getElementsByTagName("user_msg")
 
         if wait_for_response:
-            # Parse request response 
+            # Parse request response
 
             if len(device_response) == 0:
                 self.fail("Unexpected response from device: %s" % device_request_response)
@@ -230,8 +231,8 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             # Validate target name
 #            self.log.info("Determining if the target_name is \"%s\"." %target)
 #            target_name = device_response[0].getAttribute('target_name')
-#            self.assertEqual(target_name, target, 
-#                             "returned target (%s) is not (%s)" 
+#            self.assertEqual(target_name, target,
+#                             "returned target (%s) is not (%s)"
 #                             % (target_name, target))
 
             # Validate status
@@ -266,7 +267,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.log.info("Message: %s" % my_target_device_request)
 
         # Send device request
-        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname, 
+        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname,
                             data=my_target_device_request).content
 
         self.log.info("Got Response: %s" % device_request_response)
@@ -277,7 +278,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             self.log.info("Response for \"%s\" target: %s" % (target, device_request_response))
 
         if wait_for_response:
-            # Parse request response 
+            # Parse request response
 
             if len(device_response) == 0:
                 self.fail("Unexpected response from device: %s" % device_request_response)
@@ -285,8 +286,8 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             # Validate target name
             self.log.info("Determining if the target_name is \"%s\"." %target)
             target_name = device_response[0].getAttribute('target_name')
-            self.assertEqual(target_name, target, 
-                             "returned target (%s) is not (%s)" 
+            self.assertEqual(target_name, target,
+                             "returned target (%s) is not (%s)"
                              % (target_name, target))
 
             # Validate status
@@ -304,5 +305,5 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             self.monitor.wait_for_connect(60)
             self.log.info("Device connected.")
 
-if __name__ == '__main__': 
-    unittest.main() 
+if __name__ == '__main__':
+    unittest.main()

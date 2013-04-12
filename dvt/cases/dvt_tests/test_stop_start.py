@@ -38,7 +38,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             StopStartInitiateActionDvtTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
             StopStartInitiateActionDvtTestCase.monitor.start()
         self.monitor = StopStartInitiateActionDvtTestCase.monitor
-    
+
     @classmethod
     def tearDownClass(cls):
         if StopStartInitiateActionDvtTestCase.monitor is not None:
@@ -46,29 +46,29 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         ic_testcase.TestCase.tearDownClass()
 
     def test_a_app_start_initiate(self):
-        """ Initiate [application_start_idigi] device request. """
-        self.send_device_request("application_start_idigi", False, False)
+        """ Initiate [application_start_connector] device request. """
+        self.send_device_request("application_start_connector", False, False)
 
     def test_b_app_stop_initiate(self):
-        """ Initiate [application_stop_idigi] device request. """
-        self.send_device_request("application_stop_idigi", False, True)
+        """ Initiate [application_stop_connector] device request. """
+        self.send_device_request("application_stop_connector", False, True)
 
     def test_c_stop_all_initiate(self):
         """ Initiate [stop_all_transports] device request. """
         self.send_device_request("stop_all_transports", False, True)
 
     def test_d_stop_initiate(self):
-        """ Initiate [stop_idigi] device request. """
-        self.send_device_request("stop_idigi", False, True)
+        """ Initiate [stop_connector] device request. """
+        self.send_device_request("stop_connector", False, True)
 
     def test_e_stop_terminate(self):
-        """ Initiate [Stop iDigi + terminate] device request. """
+        """ Initiate [Stop Connector + terminate] device request. """
 
         # delete the file that sample is going to send for
         # the reboot result.
         delete_file(self, TERMINATE_TEST_FILE)
 
-        self.send_device_request("stop_terminate_idigi", False, True)
+        self.send_device_request("stop_terminate_connector", False, True)
 
         # Wait for terminate result file.
         # Create content that are expected from the reboot result file.
@@ -84,22 +84,22 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         # if the file doesn't exist. It will return the content
         # of the file.
 
-        get_and_verify(self, self.push_client, self.device_id, 
+        get_and_verify(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         self.log.info("Monitor again %s" %file_push_location)
         # get and verify correct content is pushed.
-        content = monitor_and_return(self, self.push_client, self.device_id, 
+        content = monitor_and_return(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         if content is not None:
             self.log.info("**********************************")
             self.log.info("2nd Monitor Subscription was expected to return None but it returned %s" % content)
-            self.assertEqual(content, None, 
+            self.assertEqual(content, None,
                              "Expected None but it is (%s)" % content)
-                    
+
 
     def test_f_stop_transport_file(self):
         """ Check transport error file. """
@@ -117,22 +117,22 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         # if the file doesn't exist. It will return the content
         # of the file.
 
-        get_and_verify(self, self.push_client, self.device_id, 
+        get_and_verify(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         self.log.info("Monitor again %s" %file_push_location)
         # get and verify correct content is pushed.
-        content = monitor_and_return(self, self.push_client, self.device_id, 
+        content = monitor_and_return(self, self.push_client, self.device_id,
                        file_push_location, expected_content)
 #                       trigger_function=send_data)
 
         if content is not None:
             self.log.info("**********************************")
             self.log.info("2nd Monitor Subscription was expected to return None but it returned %s" % content)
-            self.assertEqual(content, None, 
+            self.assertEqual(content, None,
                              "Expected None but it is (%s)" % content)
-                    
+
 
     def send_device_request(self, target, wait_for_response, wait_for_disconnect):
 
@@ -152,7 +152,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
         self.log.info("Sending device request for \"%s\" target_name to server for device id  %s." % (target, self.device_id))
 
         # Send device request
-        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname, 
+        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname,
                             data=my_target_device_request).content
 
         self.log.info("Got Response: %s" % device_request_response)
@@ -163,7 +163,7 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             self.log.info("Response for \"%s\" target: %s" % (target, device_request_response))
 
         if wait_for_response:
-            # Parse request response 
+            # Parse request response
 
             if len(device_response) == 0:
                 self.fail("Unexpected response from device: %s" % device_request_response)
@@ -171,8 +171,8 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             # Validate target name
             self.log.info("Determining if the target_name is \"%s\"." %target)
             target_name = device_response[0].getAttribute('target_name')
-            self.assertEqual(target_name, target, 
-                             "returned target (%s) is not (%s)" 
+            self.assertEqual(target_name, target,
+                             "returned target (%s) is not (%s)"
                              % (target_name, target))
 
             # Validate status
@@ -190,5 +190,5 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             self.monitor.wait_for_connect(60)
             self.log.info("Device connected.")
 
-if __name__ == '__main__': 
-    unittest.main() 
+if __name__ == '__main__':
+    unittest.main()

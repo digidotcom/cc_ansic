@@ -450,7 +450,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
     connector_status_t status = connector_idle;
     connector_firmware_data_t * fw_ptr;
 
-    /* Add firmware access facility to iDigi
+    /* Add firmware access facility to Device Cloud
      *
      * Make sure firmware access facility is not already created. If firmware
      * access facility is already created, we probably reconnect to server

@@ -29,7 +29,7 @@ extern size_t sm_dvt_buffer_size;
 connector_status_t app_send_ping(connector_handle_t handle)
 {
     connector_status_t status;
-    static connector_sm_send_ping_request_t request; /* idigi connector will hold this until send completes */
+    static connector_sm_send_ping_request_t request; /* Cloud connector will hold this until send completes */
 
     request.transport = connector_transport_udp;
     request.user_context = NULL;

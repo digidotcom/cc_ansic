@@ -36,15 +36,15 @@ static char const * device_request_to_string(device_request_target_t const value
     {
         enum_to_case(device_request_not_support);
         enum_to_case(device_request_invalid_data);
-        enum_to_case(device_request_stop_idigi);
-        enum_to_case(device_request_start_idigi);
-        enum_to_case(device_request_stop_terminate_idigi);
-        enum_to_case(device_request_app_stop_idigi);
-        enum_to_case(device_request_app_start_idigi);
+        enum_to_case(device_request_stop_connector);
+        enum_to_case(device_request_start_connector);
+        enum_to_case(device_request_stop_terminate_connector);
+        enum_to_case(device_request_app_stop_connector);
+        enum_to_case(device_request_app_start_connector);
         enum_to_case(device_request_stop_all_transports);
         enum_to_case(device_request_abort_device_request);
         enum_to_case(device_request_abort_stop_callback);
-        enum_to_case(device_request_terminate_idigi);
+        enum_to_case(device_request_terminate_connector);
     }
     return result;
 }
@@ -72,7 +72,7 @@ static connector_status_t device_request_action(device_request_handle_t * const 
         case device_request_not_support:
             break;
 
-        case device_request_stop_idigi:
+        case device_request_stop_connector:
         APP_DEBUG("device_request_action: stop %s the connector (connector_wait_sessions_complete)\n", transport_to_string(client_device_request->transport));
         connector_close_status = connector_close_status_device_stopped;
         {
@@ -88,8 +88,8 @@ static connector_status_t device_request_action(device_request_handle_t * const 
 
             break;
         }
-        case device_request_start_idigi:
-        APP_DEBUG("device_request_action: start %s iDigi\n", transport_to_string(client_device_request->transport));
+        case device_request_start_connector:
+        APP_DEBUG("device_request_action: start %s connector\n", transport_to_string(client_device_request->transport));
         {
             status = connector_initiate_action(connector_handle, connector_initiate_transport_start, &client_device_request->transport);
             if (status != connector_success)
@@ -100,8 +100,8 @@ static connector_status_t device_request_action(device_request_handle_t * const 
 
             break;
         }
-        case device_request_stop_terminate_idigi:
-        APP_DEBUG("device_request_action: stop %s iDigi immediately and terminate\n", transport_to_string(client_device_request->transport));
+        case device_request_stop_terminate_connector:
+        APP_DEBUG("device_request_action: stop %s connector immediately and terminate\n", transport_to_string(client_device_request->transport));
         connector_close_status = connector_close_status_device_stopped;
         {
             connector_initiate_stop_request_t const request_data = {client_device_request->transport, connector_stop_immediately, NULL};
@@ -115,16 +115,16 @@ static connector_status_t device_request_action(device_request_handle_t * const 
             }
             break;
         }
-        case device_request_app_stop_idigi:
-            APP_DEBUG("device_request_action: application stop %s idigi\n", transport_to_string(client_device_request->transport));
+        case device_request_app_stop_connector:
+            APP_DEBUG("device_request_action: application stop %s connector\n", transport_to_string(client_device_request->transport));
             break;
 
-        case device_request_app_start_idigi:
-            APP_DEBUG("device_request_action: application start %s idigi\n", transport_to_string(client_device_request->transport));
+        case device_request_app_start_connector:
+            APP_DEBUG("device_request_action: application start %s connector\n", transport_to_string(client_device_request->transport));
             break;
 
         case device_request_stop_all_transports:
-            APP_DEBUG("device_request_action: stop All iDigi transport\n");
+            APP_DEBUG("device_request_action: stop All connector transport\n");
             connector_close_status = connector_close_status_device_stopped;
             {
                 connector_initiate_stop_request_t const request_data = {connector_transport_all, connector_wait_sessions_complete, NULL};
@@ -159,8 +159,8 @@ static connector_status_t device_request_action(device_request_handle_t * const 
         case device_request_abort_device_request:
             break;
 
-        case device_request_terminate_idigi:
-        APP_DEBUG("device_request_action: stop iDigi immediately and terminate\n");
+        case device_request_terminate_connector:
+        APP_DEBUG("device_request_action: stop connector immediately and terminate\n");
         connector_close_status = connector_close_status_device_terminated;
         {
             status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
@@ -193,15 +193,15 @@ static size_t const device_request_max_response_length = (sizeof device_request_
 static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_info)
 {
     /* supported target name */
-    static char const stop_target[] = "stop_idigi";
-    static char const start_target[] = "start_idigi";
-    static char const stop_terminate_target[] = "stop_terminate_idigi";
-    static char const app_stop_target[] = "application_stop_idigi";
-    static char const app_start_target[] = "application_start_idigi";
+    static char const stop_target[] = "stop_connector";
+    static char const start_target[] = "start_connector";
+    static char const stop_terminate_target[] = "stop_terminate_connector";
+    static char const app_stop_target[] = "application_stop_connector";
+    static char const app_start_target[] = "application_start_connector";
     static char const stop_all_transports_target[] = "stop_all_transports";
     static char const abort_device_request[] = "abort_device_request";
     static char const abort_stop_callback[] = "abort_stop_callback";
-    static char const terminate_idigi[] = "terminate_idigi";
+    static char const terminate_connector[] = "terminate_connector";
 
     connector_callback_status_t result = connector_callback_continue;
     device_request_target_t target_type = device_request_not_support;
@@ -215,23 +215,23 @@ static connector_callback_status_t app_process_device_request_target(connector_d
 
         if (strcmp(target_info->target, stop_target) == 0)
         {
-            target_type = device_request_stop_idigi;
+            target_type = device_request_stop_connector;
         }
         else if (strcmp(target_info->target, start_target) == 0)
         {
-            target_type = device_request_start_idigi;
+            target_type = device_request_start_connector;
         }
         else if (strcmp(target_info->target, stop_terminate_target) == 0)
         {
-            target_type = device_request_stop_terminate_idigi;
+            target_type = device_request_stop_terminate_connector;
         }
         else if (strcmp(target_info->target, app_stop_target) == 0)
         {
-            target_type = device_request_app_stop_idigi;
+            target_type = device_request_app_stop_connector;
         }
         else if (strcmp(target_info->target, app_start_target) == 0)
         {
-            target_type = device_request_app_start_idigi;
+            target_type = device_request_app_start_connector;
         }
         else if (strcmp(target_info->target, stop_all_transports_target) == 0)
         {
@@ -260,9 +260,9 @@ static connector_callback_status_t app_process_device_request_target(connector_d
         {
             target_type = device_request_abort_stop_callback;
         }
-        else if (strcmp(target_info->target, terminate_idigi) == 0)
+        else if (strcmp(target_info->target, terminate_connector) == 0)
         {
-            target_type = device_request_terminate_idigi;
+            target_type = device_request_terminate_connector;
         }
 
         /* 1st chunk of device request so let's allocate memory for it

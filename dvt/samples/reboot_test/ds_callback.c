@@ -43,7 +43,7 @@ static connector_status_t send_file(connector_handle_t handle, int index, char *
         ptr = malloc(sizeof *user);
         if (ptr == NULL)
         {
-            /* no memeory stop iDigi Connector */
+            /* no memeory stop Cloud Connector */
             APP_DEBUG("send_put_request: malloc fails\n");
             status = connector_no_resource;
             goto done;

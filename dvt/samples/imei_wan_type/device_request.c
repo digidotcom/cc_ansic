@@ -56,7 +56,7 @@ connector_status_t send_file(connector_handle_t handle, int index, char * const 
         connector_callback_status_t const is_ok = app_os_malloc(sizeof *user, &ptr);
         if (is_ok != connector_callback_continue|| ptr == NULL)
         {
-            /* no memeory stop iDigi Connector */
+            /* no memeory stop Cloud Connector */
             APP_DEBUG("send_put_request: malloc fails\n");
             status = connector_no_resource;
             goto done;

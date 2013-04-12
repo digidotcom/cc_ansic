@@ -136,7 +136,7 @@ int main (void)
             snprintf(python_file_buffer, sizeof(python_file_buffer), "connector_run thread terminated\n");
             write_python_result_file(python_file_buffer);
 
-            APP_DEBUG("iDigi terminated\n");
+            APP_DEBUG("Etherios Cloud Connector terminated\n");
 
 
         }

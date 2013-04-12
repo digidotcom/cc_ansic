@@ -24,7 +24,7 @@
 #include "platform.h"
 #include "application.h"
 
-/* iDigi Connector Configuration routines */
+/* Cloud Connector Configuration routines */
 
 #define MAX_INTERFACES      128
 #define DEVICE_ID_LENGTH    16
@@ -520,7 +520,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
-/* End of iDigi Connector configuration routines */
+/* End of Cloud Connector configuration routines */
 
 #if (defined CONNECTOR_DEBUG)
 
