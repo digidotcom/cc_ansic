@@ -114,7 +114,7 @@ def update_connector_config_c(src_file, **device_config):
   outfile.close()
 
 def update_platform_h(platform_file, target_ssl_cert='public/certificates/etherios-ca-cert-public.crt'):
-  ssl_cert_text = '#define APP_SSL_CA_CERT   "../../../certificates/etheriso-ca-cert-public.crt"'
+  ssl_cert_text = '#define APP_SSL_CA_CERT   "../../../certificates/etherios-ca-cert-public.crt"'
   replace_text  = '#define APP_SSL_CA_CERT   "%s"' % target_ssl_cert
 
   infile = open(platform_file, 'r')
