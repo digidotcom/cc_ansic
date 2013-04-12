@@ -241,7 +241,7 @@
  * If you are not using Linux you will need to update your environment with
  * the information below and then build the image for your platform.
  *
- * @note To build this example for Linux with MD5 checksums, type
+ * @note To build this example for Linux with MD5 checksums,
  * type: @htmlonly"<I>make APP_ENABLE_MD5=true clean all</I>"@endhtmlonly.
  *
  * @subsection source_files Source Files
