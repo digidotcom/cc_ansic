@@ -9,7 +9,7 @@
  *  -# @ref device_id
  *  -# @ref vendor_id
  *  -# @ref device_type
- *  -# @ref server_url
+ *  -# @ref device_cloud_url
  *  -# @ref connection_type
  *  -# @ref mac_address
  *  -# @ref link_speed
@@ -266,17 +266,17 @@
  *
  * @endcode
  *
- * @section server_url Etherios Device Cloud Server URL
+ * @section device_cloud_url Etherios Device Cloud Server URL
  *
  * Return Etherios Device Cloud FQDN.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
- * and implemented in the @b Platform function app_get_server_url() in config.c.
+ * and implemented in the @b Platform function app_get_device_cloud_url() in config.c.
  *
  * @note If @ref CONNECTOR_CLOUD_URL configuration is defined in @ref connector_config.h, this callback
  * will not be called. See @ref connector_config_data_options
  *
- * @see app_get_server_url()
+ * @see app_get_device_cloud_url()
  *
  * @htmlonly
  * <table class="apitable">

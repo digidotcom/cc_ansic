@@ -277,7 +277,7 @@
  *  @li app_get_device_id()
  *  @li app_get_vendor_id()
  *  @li app_get_device_type()
- *  @li app_get_server_url()
+ *  @li app_get_device_cloud_url()
  *  @li app_get_connection_type()
  *  @li app_get_link_speed()
  *  @li app_get_phone_number()
@@ -451,7 +451,7 @@
  * When an error occurs, since APP_DEBUG is defined as printf in your platform.h file, critical errors are
  * displayed via the @ref connector_config_error_status callback.  Below is an example with an output showing an error
  * related to the @ref connector_config_server_url callback.  By searching through your application code, you can
- * easily trace this callback to the app_get_server_url() porting function:
+ * easily trace this callback to the app_get_device_cloud_url() porting function:
  *
  * @code
  *  >./idigi
@@ -466,7 +466,7 @@
  *  >
  * @endcode
  *
- * Given this output, a thorough code review of the app_get_server_url() function should reveal a porting defect.
+ * Given this output, a thorough code review of the app_get_device_cloud_url() function should reveal a porting defect.
  *
  * @subsection add_your_device_to_the_cloud Add your Device to the iDigi Device Cloud
  *
