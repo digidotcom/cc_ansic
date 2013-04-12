@@ -14,7 +14,7 @@
  * is defined in the application.c file. The app_connector_callback() callback calls app_file_system_handler(), 
  * defined in the file_system.c file in the platform directory, when a file system request is received. 
  *
- * All file system requests are initiated by the iDigi Device Cloud. 
+ * All file system requests are initiated by Etherios Device Cloud. 
  * 
  * The app_file_system_handler() routine calls the following routines to perform different file I/O operations: 
  *
@@ -84,8 +84,8 @@
  * This sample provides a simple python script file_system.py to write, read, and list a file, 
  * using @htmlonly <a href="web_services.html">iDigi Web Services</a> @endhtmlonly.
  *
- * It sends a request to my.idigi.com. The file "test_file.txt" is created in the current directory 
- * on the device with the file data "iDigi file system sample\n".
+ * It sends a request to login.etherios.com. The file "test_file.txt" is created in the current directory 
+ * on the device with the file data "Connector file system sample\n".
  *
  * To run the python script in the sample, type: 
  *
@@ -97,7 +97,7 @@
  *
  * @code
  *
- *  expected_content = "iDigi file system sample\n"
+ *  expected_content = "Connector file system sample\n"
  *  put_data = base64.encodestring(expected_content)[:-1]
  *   
  *  # file system message to send to server
@@ -136,7 +136,7 @@
  * @section fs_sample_get_file The get_file command
  *
  * The get_file command initiates a file system session, which reads a file and sends file data 
- * to the iDigi Device Cloud. Etherios Cloud Connector will invoke the following application callbacks: 
+ * to Etherios Device Cloud. Etherios Cloud Connector will invoke the following application callbacks: 
  *
  *  -# @ref file_system_open "app_process_file_open()" is called with the "test_file.txt" path and
  *          @ref CONNECTOR_O_RDONLY oflag

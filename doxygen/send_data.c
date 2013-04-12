@@ -16,10 +16,10 @@
  * when a data service request is received.
  *
  * The routine application_run() (or application_step()) which is called after initialization calls the routine
- * app_send_put_request() to initiate the data transfer to the iDigi Device Cloud.  This routine
+ * app_send_put_request() to initiate the data transfer to Etherios Device Cloud.  This routine
  * initiates the data transfer by calling connector_initiate_action(); once the server is 
  * ready to receive data the app_data_service_handler() routine is called. The callback then returns
- * the string "Welcome to iDigi data service sample!\n" back to the iDigi Device Cloud.  This data is @b copied
+ * the string "Welcome to iDigi data service sample!\n" back to Etherios Device Cloud.  This data is @b copied
  * @b into @b the @b callback's @b buffer, the flags @ref CONNECTOR_MSG_LAST_DATA and @ref CONNECTOR_MSG_FIRST_DATA
  * indicate this is the only message in this data transfer.  By modifying these flags
  * you could modify this sample to send large amounts of data back to the server.
@@ -109,9 +109,9 @@
  *
  * @li -DCONNECTOR_VERSION=0x1020000UL
  *
- * @section web_gui Viewing results from the iDigi Device Cloud
+ * @section web_gui Viewing results from Etherios Device Cloud
  *
- * To view the results for this sample log on to the iDigi Device Cloud as described
+ * To view the results for this sample log on to Etherios Device Cloud as described
  * in the @ref add_your_device_to_the_cloud "Getting Started" section. 
  *
  * Once logged in click on the Data Services tab as shown
@@ -130,7 +130,7 @@
  *
  * @image html cloud_data_services_refresh.png
  *
- * @section python_script Python script to retrieve a file from the iDigi Device Cloud storage
+ * @section python_script Python script to retrieve a file from Etherios Device Cloud storage
  *
  * This sample provides a simple python script to retrive the test.txt file from my.idigi.com
  * after a device has sent test.txt into the server.

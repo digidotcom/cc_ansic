@@ -5,7 +5,7 @@
  * @section table_of_contents_porting Getting Started
  *
  * The Getting Started process will walk you through the steps necessary to get Etherios Cloud Connector integrated into your
- * development environment and running applications which connect to the iDigi Device Cloud.
+ * development environment and running applications which connect to Etherios Device Cloud.
  *
  * These steps include:
  *
@@ -168,32 +168,32 @@
  * @note Do not execute the compile_and_link sample, as this only verifies that the build environment
  * is set up correctly. The application will exit on a failed ASSERT when run.
  *
- * @section step4 Step 4: Setup your iDigi Device Cloud Account
+ * @section step4 Step 4: Setup your Etherios Device Cloud Account
  *
- * @subsection connector_account Create an iDigi Device Cloud Account
- * Before getting started you will need to create a new iDigi Device Cloud account and obtain a unique iDigi Device Cloud Vendor ID (which is
+ * @subsection connector_account Create an Etherios Device Cloud Account
+ * Before getting started you will need to create a new Etherios Device Cloud account and obtain a unique Etherios Device Cloud Vendor ID (which is
  * a unique identifier for your company).
  *
  * Later in this process, when you get the connect_to_idigi sample @ref good_results_output "running successfully", you will be @ref add_your_device_to_the_cloud "instructed to register"
- * your Device ID with the iDigi Device Cloud.
+ * your Device ID with Etherios Device Cloud.
  *
  * To create an account, navigate to
  * https://my.idigi.com/user_registration.do and follow the instructions to create and register your
- * iDigi Device Cloud account.
+ * Etherios Device Cloud account.
  *
- * @note If you have already created and registered an iDigi Device Cloud Account, navigate here
+ * @note If you have already created and registered an Etherios Device Cloud Account, navigate here
  * https://my.idigi.com/ and follow the instructions in the next step.
  *
  * @image html cloud_registration.png
  *
- * @subsection connector_login Login to the iDigi Device Cloud
+ * @subsection connector_login Login to Etherios Device Cloud
  * 1. Login with the user credentials you created in section @ref connector_account
  *
  * @image html cloud_login.png
  *
- * @subsection connector_vendor_id Obtain an iDigi Device Cloud Vendor ID
- * 2. If you are a first time iDigi Device Cloud developer, you will need to obtain an iDigi Device Cloud Vendor ID.  To
- * obtain an iDigi Device Cloud Vendor ID, select the Register for new vendor id button on the bottom of
+ * @subsection connector_vendor_id Obtain an Etherios Device Cloud Vendor ID
+ * 2. If you are a first time Etherios Device Cloud developer, you will need to obtain an Etherios Device Cloud Vendor ID.  To
+ * obtain an Etherios Device Cloud Vendor ID, select the Register for new vendor id button on the bottom of
  * the @b My @b Account section under @b Administration tab after successfully logging into https://my.idigi.com/.
  *
  * @image html cloud_vendor_id.png
@@ -206,7 +206,7 @@
  * @section step5 Step 5: Porting your platform for the connect_to_idigi sample
  *
  * The @b connect_to_idigi sample validates the most fundamental Etherios Cloud Connector porting aspects.  If you can successfully connect and stay
- * connected to the iDigi Device Cloud, all other Etherios Cloud Connector functions (like @ref put_request "sending data" or @ref firmware_download "firmware download")
+ * connected to Etherios Device Cloud, all other Etherios Cloud Connector functions (like @ref put_request "sending data" or @ref firmware_download "firmware download")
  * should work without failure.
  *
  * Go into the platforms directory and select a platform which is similar to your platform.  If
@@ -247,7 +247,7 @@
  * for your platform and implement the configuration routines.
  * All configuration routines are passed in a pointer to a pointer, along with a pointer to the size.
  * The address of the configuration item is stored in the pointer passed in, and the size is assigned to the pointer to the size variable.
- * For example, app_get_vendor_id() is the routine used to retrieve the iDigi Device Cloud account Vendor ID
+ * For example, app_get_vendor_id() is the routine used to retrieve the Etherios Device Cloud account Vendor ID
  * and is shown below.
  * @code
  * static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t * const size)
@@ -468,12 +468,12 @@
  *
  * Given this output, a thorough code review of the app_get_device_cloud_url() function should reveal a porting defect.
  *
- * @subsection add_your_device_to_the_cloud Add your Device to the iDigi Device Cloud
+ * @subsection add_your_device_to_the_cloud Add your Device to Etherios Device Cloud
  *
  * The next several sections walk through the steps required to add your device to
- * the iDigi Device Cloud.
+ * Etherios Device Cloud.
  *
- *  -# Navigate to http://my.idigi.com and log on to the iDigi Device Cloud
+ *  -# Navigate to http://my.idigi.com and log on to Etherios Device Cloud
  *  -# Click on the iDigi Manager Pro tab.
  *  -# Click the Add Devices button (the + button under Devices) to bring up the Add Devices dialog.
  *
@@ -491,19 +491,19 @@
  *
  * @image html cloud_add_device_enter_device_id.png
  *
- * Click the OK button to add your device to the iDigi Device Cloud.
+ * Click the OK button to add your device to Etherios Device Cloud.
  *
  * @image html cloud_add_device_click_ok.png
  *
- * @subsection view_result_on_cloud Viewing Results on the iDigi Device Cloud
+ * @subsection view_result_on_cloud Viewing Results on Etherios Device Cloud
  *
- * Click the Refresh button. The device will reconnect to the iDigi Device Cloud.
+ * Click the Refresh button. The device will reconnect to Etherios Device Cloud.
  * If successful your device Status will show connected.  You can now communicate
- * with your device over the iDigi Device Cloud.  The next step
+ * with your device over Etherios Device Cloud.  The next step
  * is to integrate in one of the samples to add in more functionality to your
  * application.
  *
- * @note If you cannot connect to the iDigi Device Cloud, the most likely problem
+ * @note If you cannot connect to Etherios Device Cloud, the most likely problem
  * is in the iDigi Connector Configuration, review the configuration routines in config.c;
  * The device ID and vendor ID must be valid to connect.
  *
@@ -511,7 +511,7 @@
  *
  * @section step9 Step 9: Next Steps
  *
- * Now that you have a basic sample up and running with the iDigi Device Cloud, you
+ * Now that you have a basic sample up and running with Etherios Device Cloud, you
  * can port in more functionality to your application.  We first suggest
  * reading the @ref api1_overview "API" section of the documentation and then
  * select a sample which has the functionality you need.

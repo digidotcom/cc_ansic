@@ -4,19 +4,19 @@
  *
  * @section status_callbacks_overview Status callbacks Overview
  *
- * The status callbacks APIs are used to send and receive status messages to and from the iDigi Device Cloud and to notify
- * application when TCP communication is established, keep alive message is not received from the iDigi Device Cloud, keep alive
- * message is restored and received from the iDigi Device Cloud, and Etherios Cloud Connector stops running.
+ * The status callbacks APIs are used to send and receive status messages to and from Etherios Device Cloud and to notify
+ * application when TCP communication is established, keep alive message is not received from Etherios Device Cloud, keep alive
+ * message is restored and received from Etherios Device Cloud, and Etherios Cloud Connector stops running.
  *
  * The following requests under @ref connector_class_id_status are listed below:
  *
  * @li @ref cloud_status
- * - A device originated request to get the iDigi Device Cloud status. If the transport layer is UDP,
- * then this ping message can be used to trigger the delivery of pending/queued messages on the iDigi Device Cloud. This
+ * - A device originated request to get Etherios Device Cloud status. If the transport layer is UDP,
+ * then this ping message can be used to trigger the delivery of pending/queued messages on Etherios Device Cloud. This
  * feature is only supported in UDP and SMS transport methods.
  *
  * @li @ref device_status
- * - This request is originated by the iDigi Device Cloud to get the device status. This
+ * - This request is originated by Etherios Device Cloud to get the device status. This
  * feature is only supported in UDP and SMS transport methods.
  *
  * @li @ref status_tcp
@@ -30,7 +30,7 @@
  *
  * @subsection initiate_ping Initiate the ping/cloud status request
  *
- * The application initiates the Ping/status request to the iDigi Device Cloud by calling connector_initiate_action()
+ * The application initiates the Ping/status request to Etherios Device Cloud by calling connector_initiate_action()
  * with @ref connector_initiate_ping_request request and @ref connector_message_status_request_t "status request"
  * as request_data.
  *
@@ -57,7 +57,7 @@
  *   <td>request_data</td>
  *   <td> Pointer to @endhtmlonly connector_message_status_request_t @htmlonly structure, where member:
  *        <ul>
- *        <li><b><i>transport</i></b> is the communication method used to send the ping to the iDigi Device Cloud</li>
+ *        <li><b><i>transport</i></b> is the communication method used to send the ping to Etherios Device Cloud</li>
  *        <li><b><i>flags</i></b> is set to @endhtmlonly @ref CONNECTOR_DATA_RESPONSE_NOT_NEEDED @htmlonly if no response is needed</li>
  *        <li><b><i>user_context</i></b> is the application context which will be returned in the response</li>
  *        </ul></td>
@@ -81,7 +81,7 @@
  * @subsection ping_response Callback with ping_status response
  *
  * After calling connector_initiate_action(), the iDigi Connector will prepare and send the ping request
- * to iDigi Device Cloud asynchronously.  Upon receiving the response, it makes @ref connector_status_ping_response "Status response"
+ * to Etherios Device Cloud asynchronously.  Upon receiving the response, it makes @ref connector_status_ping_response "Status response"
  * @ref connector_callback_t "callback" to pass the response to the application. Application is free to release the allocated
  * resources at this point.
  *
@@ -154,7 +154,7 @@
  *
  * @section device_status Device status request
  *
- * The device status request is initiated by the iDigi Device Cloud. The user will receive an application
+ * The device status request is initiated by Etherios Device Cloud. The user will receive an application
  * callback (@ref connector_status_ping_request) when a device status request is received by the iDigi Connector.
  *
  * The response_data field will carry the pointer to @ref connector_status_t "status". Set the status to connector_success
@@ -213,7 +213,7 @@
  * </table>
  * @endhtmlonly
  *
- * A user uses the SCI web service to send a device status request to the iDigi Device Cloud,
+ * A user uses the SCI web service to send a device status request to Etherios Device Cloud,
  * which in turn sends it to the device. An example of an application callback for a device
  * status request is shown below:
  *

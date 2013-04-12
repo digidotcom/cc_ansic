@@ -4,9 +4,9 @@
  *
  * @section data_stream_overview Overview
  *
- * This sample demonstrates how to send streaming data from a device to the iDigi Device Cloud.
+ * This sample demonstrates how to send streaming data from a device to Etherios Device Cloud.
  * Using the @ref data_service_overview "data service api" this application sends periodic
- * data points in xml format. The iDigi Device Cloud (with Data Stream enabled) on the
+ * data points in xml format. The Etherios Device Cloud (with Data Stream enabled) on the
  * otherhand collects these data and the data shows up under Data Streams page inside the Data
  * Service tab.
  *
@@ -39,7 +39,7 @@
  * when a data service request is received.
  *
  * The routine application_run() (or application_step()) periodically calls app_send_put_request()
- * to initiate the data transfer to the iDigi Device Cloud. This routine formats a data point and
+ * to initiate the data transfer to Etherios Device Cloud. This routine formats a data point and
  * initiates the data transfer by calling connector_initiate_action(); once the server is
  * ready to receive data the app_data_service_handler() callback is called. This callback copies
  * the formatted data into its buffer and sets the flags @ref CONNECTOR_MSG_LAST_DATA and @ref CONNECTOR_MSG_FIRST_DATA
@@ -126,9 +126,9 @@
  *
  * @li -DCONNECTOR_VERSION=0x1020000UL
  *
- * @section web_gui Viewing results from the iDigi Device Cloud
+ * @section web_gui Viewing results from Etherios Device Cloud
  *
- * To view the results for this sample, log on to the iDigi Device Cloud as described
+ * To view the results for this sample, log on to Etherios Device Cloud as described
  * in the @ref add_your_device_to_the_cloud "Getting Started" section. 
  *
  * Once logged in click on the Data Services tab as shown below. Then select the Data

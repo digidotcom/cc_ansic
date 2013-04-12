@@ -25,21 +25,21 @@
  * @section file_system_overview Overview
  *
  * The file system facility is an optional facility for applications to access files on the device 
- * remotely from the iDigi Device Cloud. The Etherios Cloud Connector invokes the application-defined callbacks  
+ * remotely from Etherios Device Cloud. The Etherios Cloud Connector invokes the application-defined callbacks  
  * to read from a file, to write to a file, and to list files or directory entries.
  *
  * The largest allowed file to get from the device is 2MB - 1byte (2097151 bytes). 
  *
- * A typical application-defined callback sequence for reading file data by the iDigi Device Cloud would include:
+ * A typical application-defined callback sequence for reading file data by Etherios Device Cloud would include:
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "connector_file_system_open" callback with read-only access.
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_read "connector_file_system_read" callback number of times, until
  *     the requested data amount is retrieved or the end of the file is reached.
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_close "connector_file_system_close" callback.
  *
- * A typical application-defined callback sequence for writing file data by the iDigi Device Cloud would include:
+ * A typical application-defined callback sequence for writing file data by Etherios Device Cloud would include:
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "connector_file_system_open" callback with write-create access.
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_write "connector_file_system_write" callback number of times, untill all data,
- *     received from the iDigi Device Cloud, is written to the file.
+ *     received from Etherios Device Cloud, is written to the file.
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_close "connector_file_system_close" callback.
  *
  * In order to remove a file Etherios Cloud Connector calls application-defined @ref file_system_rm "connector_file_system_rm" callback.
@@ -78,17 +78,17 @@
  * The callback should use:
  * @li @ref connector_file_noerror status - in case of successful file operation.
  * @li @ref connector_file_user_cancel status - to cancel the session. 
- * @li Any other error status - to send the File System error message to the iDigi Device Cloud.
+ * @li Any other error status - to send the File System error message to Etherios Device Cloud.
  *
  * The callback can set errnum to the system errno value. It will be used later in the @ref file_system_strerror "connector_file_system_strerror" callback
- * to send the error string to the iDigi Device Cloud. 
+ * to send the error string to Etherios Device Cloud. 
  *
  * Different scenarios for the session termination are described below.
  *
  * If the session is successful:
  *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
  *     if there is an open file or directory.
- *  -# Etherios Cloud Connector sends the last response to the iDigi Device Cloud.
+ *  -# Etherios Cloud Connector sends the last response to Etherios Device Cloud.
  *
  * The callback aborts Etherios Cloud Connector:
  *  -# The callback returns @ref connector_callback_abort status.
@@ -108,7 +108,7 @@
  *     if there is an open file or directory.
  *  -# If Etherios Cloud Connector has already sent part of file or directory data, it cancels the session. This is due to the fact 
  *     that it can't differentiate an error response from part of the data response.
- *  -# Otherwise Etherios Cloud Connector calls @ref file_system_strerror "connector_file_system_strerror" callback and sends an error response to the iDigi Device Cloud.
+ *  -# Otherwise Etherios Cloud Connector calls @ref file_system_strerror "connector_file_system_strerror" callback and sends an error response to Etherios Device Cloud.
  *
  * File system was notified of an error in the messaging layer:
  *  -# Etherios Cloud Connector calls @ref file_system_close "connector_file_system_close" or @ref file_system_closedir "connector_file_system_closedir" callback, 
@@ -1457,7 +1457,7 @@
  *
  * @section file_system_strerror    Get error description
  *
- * Get error description string to send to the iDigi Device Cloud.
+ * Get error description string to send to Etherios Device Cloud.
  *
  * Etherios Cloud Connector invokes this this callback if an earlier callback has encountered a file I/O eror and
  * has set an error_status and errnum in @ref connector_file_error_data_t "connector_file_error_data_t" structure of the response.

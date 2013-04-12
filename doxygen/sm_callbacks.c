@@ -4,24 +4,24 @@
  *
  * @section sm_callbacks_overview SM callbacks Overview
  *
- * The SM callbacks APIs are used to send and receive short messages to and from the iDigi Device Cloud.
+ * The SM callbacks APIs are used to send and receive short messages to and from Etherios Device Cloud.
  * The SM transfers are either communicated over SMS or over UDP transport methods. The following requests
  * under @ref connector_class_id_short_message are listed below:
  * 
  * @li @ref cli_request : Carries the CLI command from the iDigi device cloud. The CLI can be initiated either
- * from iDigi connect manager or from a web service client connected to the iDigi Device Cloud.
- * @li @ref server_to_device_config : This is iDigi Device Cloud originated message. The Cloud will use this
+ * from iDigi connect manager or from a web service client connected to Etherios Device Cloud.
+ * @li @ref server_to_device_config : This is Etherios Device Cloud originated message. The Cloud will use this
  * message to inform the device about the changes in its phone number and/or service ID. This feature is only
  * supported in SMS transport method.
  * @li @ref device_to_server_config : This is device originated message. The device will use this message to
- * communicate its configuration to the iDigi Device Cloud. This feature is only supported in SMS transport
+ * communicate its configuration to Etherios Device Cloud. This feature is only supported in SMS transport
  * method.
- * @li @ref more_data : This callback indicates that there are more data pending on the iDigi Device Cloud
+ * @li @ref more_data : This callback indicates that there are more data pending on Etherios Device Cloud
  * for this device.
  * @li @ref session_complete : This callback is called for a device originated request where the response needed
  * flag is not set or when user cancels the session or when the session encounters any internal error.
  * @li @ref opaque_response : This callback is called when a valid response is received from the
- * iDigi Device Cloud,but no matching request is available in iDigi Connector.
+ * Etherios Device Cloud,but no matching request is available in iDigi Connector.
  *
  * @section cli_request CLI Request
  *
@@ -159,7 +159,7 @@
  * </table>
  * @endhtmlonly
  *
- * A user uses the SCI web service to send a CLI command to the iDigi Device Cloud, which
+ * A user uses the SCI web service to send a CLI command to Etherios Device Cloud, which
  * in turn sends it to the device. An example of an application callback for a CLI command
  * is shown below:
  *
@@ -171,7 +171,7 @@
  *
  * @subsection initiate_device_config Initiate the device to server config request
  *
- * The application initiates the device to server config request to the iDigi Device Cloud by
+ * The application initiates the device to server config request to Etherios Device Cloud by
  * calling connector_initiate_action() with @ref connector_initiate_config_message request and
  * @ref connector_device_to_server_config_t "configuration" as request_data. This message is
  * supported only under SMS transport method.
@@ -221,13 +221,13 @@
  * @endcode
  *
  * This example will invoke the iDigi Connector to send device to server config request to the
- * iDigi Device Cloud. If the response needed is set, the application callback is called with
+ * Etherios Device Cloud. If the response needed is set, the application callback is called with
  * the server response or error in case the iDigi Connector fails to send the request.
  *
  * @subsection device_config_response Callback with device config response
  *
  * After calling connector_initiate_action(), Etherios Cloud Connector will prepare and send the device config request
- * to iDigi Device Cloud asynchronously.  Upon receiving the response, it makes @ref connector_sm_device_to_server_config
+ * to Etherios Device Cloud asynchronously.  Upon receiving the response, it makes @ref connector_sm_device_to_server_config
  * "Device config response" @ref connector_callback_t "callback" to pass the response to the application. Application is free to
  * release the allocated resources at this point.
  *
@@ -301,7 +301,7 @@
  *
  * @section server_to_device_config Server to device config request
  *
- * The server to device config request is initiated by the iDigi Device Cloud. The user will receive
+ * The server to device config request is initiated by Etherios Device Cloud. The user will receive
  * an application callback (@ref connector_sm_server_to_device_config) when a server to device
  * config request is received by the iDigi Connector.
  *
@@ -329,8 +329,8 @@
  *   <td>request_data</td>
  *   <td>[IN/OUT] Pointer to @endhtmlonly connector_server_to_device_config_t @htmlonly structure, where member:
  *        <ul>
- *        <li><b><i>phone_number</i></b> A null-terminated string, holds the iDigi Device Cloud phone number</li>
- *        <li><b><i>service_id</i></b> A null-terminated string, holds the iDigi Device Cloud service ID</li>
+ *        <li><b><i>phone_number</i></b> A null-terminated string, holds the Etherios Device Cloud phone number</li>
+ *        <li><b><i>service_id</i></b> A null-terminated string, holds Etherios Device Cloud service ID</li>
  *        </ul></td>
  * </tr>
  * <tr>
@@ -366,7 +366,7 @@
  * </table>
  * @endhtmlonly
  *
- * A user uses the SCI web service to send a server to device config request to the iDigi Device Cloud,
+ * A user uses the SCI web service to send a server to device config request to Etherios Device Cloud,
  * which in turn sends it to the device. An example of an application callback for a server to device
  * config request is shown below:
  *
@@ -377,7 +377,7 @@
  * @section more_data More pending data
  *
  * The iDigi Connector calls this callback to indicate the application that there are pending messages
- * on the iDigi Device Cloud. Application can send any messages (ping if no data to send) to retreive
+ * on Etherios Device Cloud. Application can send any messages (ping if no data to send) to retreive
  * the queued messages. Both request_data and response_data are empty in this callback.
  *
  * @htmlonly
@@ -505,7 +505,7 @@
  *
  * @section opaque_response Cloud response for deleted request.
  *
- * When the iDigi Device Cloud sends a response for a request, which is deletd by the user either due to timeout
+ * When Etherios Device Cloud sends a response for a request, which is deletd by the user either due to timeout
  * or by issuing the cancel, the iDigi Connector will call the application with callback (@ref connector_sm_opaque_response).
  *
  * The response_data of this callback will point to @ref connector_sm_opaque_response_t "opaque response".

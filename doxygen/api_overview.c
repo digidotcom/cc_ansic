@@ -51,9 +51,9 @@
  * this API repeatedly to continue Etherios Cloud Connector operations.
  *
  * The connector_step() performs the following operations:
- *  -# Establish and maintain a connection with the iDigi Device Cloud.
- *  -# Wait for incoming messages from the iDigi Device Cloud.
- *  -# Send outstanding messages to the iDigi Device Cloud.
+ *  -# Establish and maintain a connection with Etherios Device Cloud.
+ *  -# Wait for incoming messages from Etherios Device Cloud.
+ *  -# Send outstanding messages to Etherios Device Cloud.
  *
  * @subsection multi_threaded Multi-threaded model: connector_run()
  *
@@ -74,8 +74,8 @@
  *  @li Terminate Etherios Cloud Connector
  *  @li Start transport (TCP, UDP or SMS)
  *  @li Stop transport (TCP, UDP, SMS or ALL) transport method
- *  @li Request iDigi Device Cloud status status (Ping)
- *  @li Send dia message to the iDigi Device Cloud
+ *  @li Request Etherios Device Cloud status (Ping)
+ *  @li Send dia message to Etherios Device Cloud
  *  @li Send device to cloud config message
  *
  * @subsection iik_callback Application Callback
@@ -93,7 +93,7 @@
  *   @li Networking calls
  *   @li Firmware download
  *   @li Handle a device request
- *   @li Request more data when sending data to the iDigi Device Cloud
+ *   @li Request more data when sending data to Etherios Device Cloud
  *   @li Access file system
  *   @li Access device configurations
  *   @li Short message calls

@@ -23,16 +23,16 @@
  * @section intro Introduction
  *
  * The iDigi Connector is a software development package used to
- * communicate and exchange information between a device and the iDigi Device Cloud. 
+ * communicate and exchange information between a device and Etherios Device Cloud. 
  * iDigi Connector supports application to device data interaction (messaging),
  * application & device data storage, and remote management of devices. Devices
- * are associated with the iDigi Device Cloud through the Internet or other wide
+ * are associated with Etherios Device Cloud through the Internet or other wide
  * area network connections, which allows for communication between the device, the
- * iDigi Device Cloud, and customer applications. An important part of this communication
- * is the transfer of data from a device to the iDigi Device Cloud.
- * The iDigi Device Cloud is based upon a cloud computing model that provides on-demand scalability so
- * you can rest assured that when you need additional computing and storage, the iDigi Device Cloud will
- * scale to meet your needs. The iDigi Device Cloud is designed using a high-availability
+ * Etherios Device Cloud, and customer applications. An important part of this communication
+ * is the transfer of data from a device to Etherios Device Cloud.
+ * The Etherios Device Cloud is based upon a cloud computing model that provides on-demand scalability so
+ * you can rest assured that when you need additional computing and storage, Etherios Device Cloud will
+ * scale to meet your needs. The Etherios Device Cloud is designed using a high-availability
  * architecture, with redundancy and failover characteristics in mind.
  * Using iDigi Connector, customers can now easily develop cloud connected devices and
  * applications that quickly scale from dozens to hundreds, thousands or even
@@ -248,7 +248,7 @@
  * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
  * 
  * @section features Etherios Cloud Connector Features
- *     @li Send data to and from a device through the iDigi Device Cloud
+ *     @li Send data to and from a device through Etherios Device Cloud
  *     @li Update firmware on the device
  *     @li View and configure the device configurations
  *     @li Access a device's File System
@@ -256,11 +256,11 @@
  *
  * @section communicating Communicating with your device
  * To manage your device you can use the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
- * interface by logging into your @ref step4 "iDigi Device Cloud account".  Alternatively, you can communicate with
+ * interface by logging into your @ref step4 "Etherios Device Cloud account".  Alternatively, you can communicate with
  * your device programmatically by using @ref web_services "iDigi Web Services".
  *
  * @ref web_services "iDigi Web Services" requests are sent from a remote application to
- * the iDigi Device Cloud, which then directly communicates to the device.  This
+ * Etherios Device Cloud, which then directly communicates to the device.  This
  * allows for bidirectional machine to machine communication.  Each Etherios Cloud Connector sample includes
  * a Python application demonstrating how to communicate to a device using the
  * @ref web_services "iDigi Web Services".
@@ -356,7 +356,7 @@
  * The Etherios Cloud Connector is split into two separate partitions, a private partition and a public Application Framework.
  *
  * The private partition (Etherios Cloud Connector Library) includes source code that implements the @ref api_overview "Etherios Cloud Connector public API", plus all the internal code used to implement the
- * iDigi Device Cloud protocol.  For forward compatibility this private partition should be treated as a black box and never changed or referenced directly.
+ * Etherios Device Cloud protocol.  For forward compatibility this private partition should be treated as a black box and never changed or referenced directly.
  *
  * The public Application Framework partition is further divided in two: a Platform and Sample section.  The Platform section is related to system
  * specific porting dependencies (i.e., fleshing out @ref os_callbacks "operating system" calls, @ref network_callbacks "networking", @ref config_callbacks "system configuration").  The Sample section contains an application

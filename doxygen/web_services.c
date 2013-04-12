@@ -4,9 +4,9 @@
  *
  * @section services iDigi Web Services
  *
- * Applications can communicate to devices through the iDigi Device Cloud using iDigi Web Service
- * requests, which are sent to the iDigi Device Cloud using the Server Command Interface (SCI).
- * The diagram below shows how a Web Services Client can send an SCI command to the iDigi Device Cloud.
+ * Applications can communicate to devices through Etherios Device Cloud using iDigi Web Service
+ * requests, which are sent to Etherios Device Cloud using the Server Command Interface (SCI).
+ * The diagram below shows how a Web Services Client can send an SCI command to Etherios Device Cloud.
  * In this example, the web services call will address Device ID 00409dFFFF010202:
  *
  * @image html WebServices.jpg
@@ -58,7 +58,7 @@
  * @section Sample Web Services Applications
  *
  * Most sample Applications have associated web services client code that demonstrates how
- * a web services client can interact with the iDigi Device Cloud.  These samples are written using
+ * a web services client can interact with Etherios Device Cloud.  These samples are written using
  * Python.
  *
  * @htmlinclude terminate.html

@@ -205,7 +205,7 @@
  *    {
  *        switch (put_request->message_type)
  *        {
- *        case connector_data_service_type_need_data: // iDigi Device Cloud requesting data
+ *        case connector_data_service_type_need_data: // Etherios Device Cloud requesting data
  *            {
  *                connector_data_service_block_t * const message = put_response->client_data;
  *                char const buffer[] = "iDigi data service sample\n";

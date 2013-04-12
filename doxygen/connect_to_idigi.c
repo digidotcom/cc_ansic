@@ -1,12 +1,12 @@
-/*! @page connect_to_idigi Connect To the iDigi Device Cloud
+/*! @page connect_to_idigi Connect To Etherios Device Cloud
  *
  * @htmlinclude nav.html
  *
  * @section connect_overview Overview
  *
- * In this example the device connects to the iDigi Device Cloud and sends
+ * In this example the device connects to Etherios Device Cloud and sends
  * basic information about the device, this is intended to verify that the
- * device can communicate with the iDigi Device Cloud and the user
+ * device can communicate with Etherios Device Cloud and the user
  * can log on and view the device configuration.
  *
  *
