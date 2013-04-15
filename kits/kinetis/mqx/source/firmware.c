@@ -30,7 +30,7 @@ static firmware_list_t firmware_list[] = {
     {{0,0,1,0}, ".*\\.a",            "Library Image"}   /* any *.a files */
 };
 
-static int firmware_download_started = 0;
+int firmware_download_started = 0;
 static size_t total_image_size = 0;
 
 static connector_callback_status_t app_firmware_target_count(connector_firmware_count_t * const target_info)

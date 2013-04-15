@@ -14,18 +14,17 @@
 #include "os_support.h"
 #include "idigi_config.h"
 
-#if !BSPCFG_ENABLE_FLASHX && (defined IDIGI_FIRMWARE_SERVICE)
-#error This application requires BSPCFG_ENABLE_FLASHX defined non-zero in user_config.h. Please recompile BSP with this option.
+#if !BSPCFG_ENABLE_FLASHX && (defined CONNECTOR_FIRMWARE_SERVICE)
+//#error This application requires BSPCFG_ENABLE_FLASHX defined non-zero in user_config.h. Please recompile BSP with this option.
 #endif
+
+int idigi_connect_to_idigi_failures = 0, idigi_connect_to_idigi_successes = 0, idigi_malloc_failures = 0, idigi_network_send_failures = 0, idigi_network_receive_failures = 0;
 
 TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
    {MAIN_TASK, Main_task, 5120, 9, "main", MQX_AUTO_START_TASK},
-   {IDIGI_CONNECTOR_TASK, idigi_connector_thread, 5120, 9, "iDigi_connector", 0},
-#if (defined IDIGI_FIRMWARE_SERVICE)
-   {IDIGI_FLASH_TASK,     idigi_flash_task,     2048,   8, "idigi_flash",     0,},
-#endif
+   {IDIGI_CONNECTOR_TASK, connector_thread, 5120, 9, "iDigi_connector", 0},
    {ADC_TASK,             ADC_Task,             1024,  10, "ADC",             0,},
    {ACCEL_TASK,           Accel_Task,           1024,  10, "Accelerometer",   0,},
    {IDIGI_LED_TASK,       idigi_led_task,       1024,  10, "idigi_led",       0,},
@@ -41,7 +40,7 @@ TASK_TEMPLATE_STRUCT MQX_template_list[] =
 
 static uint_32 network_start(void)
 {
-    _enet_address * mac_addr = NULL;
+    uint8_t * mac_addr = NULL;
     IPCFG_IP_ADDRESS_DATA ip_data;
     uint_32 result = RTCS_create();
 
@@ -52,19 +51,22 @@ static uint_32 network_start(void)
     }
 
     {
-        size_t size;
-
-        if (app_get_mac_addr((uint8_t const ** const)&mac_addr, &size) != idigi_callback_continue)
-        {
-            APP_DEBUG("Failed to get device MAC address");
-            goto error;
-        }
-
-        APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
-                  (*mac_addr)[0], (*mac_addr)[1], (*mac_addr)[2], (*mac_addr)[3], (*mac_addr)[4], (*mac_addr)[5]);
+		#define MAC_ADDR_LENGTH	6
+		size_t size;
+		connector_config_pointer_data_t config_data = {NULL, MAC_ADDR_LENGTH};
+		
+		if (app_get_mac_addr(&config_data) != connector_callback_continue)
+		{
+			APP_DEBUG("Failed to get device MAC address");
+			goto error;
+		}
+		
+		mac_addr = config_data.data;
+		APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
+			  (mac_addr)[0], (mac_addr)[1], (mac_addr)[2], (mac_addr)[3], (mac_addr)[4], (mac_addr)[5]);
     }
 
-    result = ipcfg_init_device (ENET_DEVICE, *mac_addr);
+    result = ipcfg_init_device (ENET_DEVICE, mac_addr);
     if (result != RTCS_OK)
     {
         APP_DEBUG("Failed to initialize Ethernet device, error = %X", result);

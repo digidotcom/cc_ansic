@@ -210,6 +210,8 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
     send_info->header.path = path;
     send_info->header.content_type = content_type;
     send_info->header.user_context = &send_info->data_ptr;
+    send_info->header.transport = connector_transport_tcp;
+    send_info->header.response_required = connector_false;
 
     if ((device_data->flags & CONNECTOR_FLAG_APPEND_DATA) == CONNECTOR_FLAG_APPEND_DATA)
     {
@@ -218,6 +220,8 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
     else if ((device_data->flags & CONNECTOR_FLAG_ARCHIVE_DATA) == CONNECTOR_FLAG_ARCHIVE_DATA)
     {
     	send_info->header.option = connector_data_service_send_option_archive;
+    } else {
+    	send_info->header.option = connector_data_service_send_option_overwrite;
     }
 
     {

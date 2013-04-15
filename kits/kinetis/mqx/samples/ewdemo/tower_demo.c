@@ -13,11 +13,11 @@
 #include <lwevent.h>
 #include "tower_demo.h"
 #include "main.h"
-#include "idigi_api.h"
-#include "idigi_def.h"
+#include "connector_api.h"
+#include "connector_def.h"
 #include "platform.h"
-#include "idigi_connector.h"
-#include "idigi_config.h"
+#include "connector.h"
+#include "connector_config.h"
 
 #ifndef APP_DEBUG
 #define APP_DEBUG   log_printf
@@ -96,39 +96,40 @@ uchar *vendor_id_buffer[64];
  *      idigi_invalid_data      -- Indicates bad parameters
  *      idigi_invalid_response  -- Indicates error response from iDigi cloud
  */
-idigi_status_t idigi_initiate_put_request(char const * const path, char const * const data, char const * const content_type,
+connector_status_t idigi_initiate_put_request(char const * const path, char const * const data, char const * const content_type,
 		                                  size_t const length_in_bytes, unsigned int const flags) 
 {
-    idigi_connector_error_t ret;
+    connector_error_t ret;
     int status=-1;
     static int first_time = 1, failed = 0;
     size_t size;
-    idigi_callback_status_t result;
+    connector_callback_status_t result;
     
     do
     {
-        static idigi_connector_data_t ic_data = {0};
+        static connector_dataservice_data_t ic_data = {0};
 
         ic_data.data_ptr = (char *)data;
         ic_data.length_in_bytes = length_in_bytes;
         ic_data.flags = flags;
-        ret = idigi_send_data(path, &ic_data, content_type);
-        if (ret == idigi_connector_init_error)
+        ic_data.more_data = connector_false;
+        ret = connector_send_data(path, &ic_data, content_type);
+        if (ret == connector_error_init_error)
         {
-            #define WAIT_FOR_A_SECOND  1
-            app_os_sleep(WAIT_FOR_A_SECOND);
+            #define WAIT_FOR_A_SECOND  1000
+            _time_delay(WAIT_FOR_A_SECOND);
             APP_DEBUG("idigi_send_data failed [idigi_connector_init_error]\n");
             failed = 1;
         }
 
-    } while (ret == idigi_connector_init_error);
+    } while (ret == connector_error_init_error);
     
     if (first_time == 1)
     {
     	first_time = 0;
         APP_DEBUG("Initial EDP handshake complete\n");
         
-#if !defined(IDIGI_VENDOR_ID)     
+#if !defined(CONNECTOR_VENDOR_ID)     
         if (app_config_handler(idigi_config_vendor_id, 0, 0, &vendor_id_buffer, &size))
         {
             APP_DEBUG("idigi_initiate_put_request failed getting device id\n");
@@ -138,10 +139,10 @@ idigi_status_t idigi_initiate_put_request(char const * const path, char const * 
             APP_DEBUG("Vendor ID: [%s]\n", vendor_id_buffer);         	
         }
 #else
-        APP_DEBUG("Vendor ID: [0x0%x]\n", IDIGI_VENDOR_ID);
+        APP_DEBUG("Vendor ID: [0x0%x]\n", CONNECTOR_VENDOR_ID);
 #endif
         
-        if (app_config_handler(idigi_config_device_id, 0, 0, &device_id_buffer, &size))
+        if (app_config_handler(connector_request_id_config_device_id, &device_id_buffer))
         {
             APP_DEBUG("idigi_initiate_put_request failed getting device id\n");
         }
@@ -155,7 +156,7 @@ idigi_status_t idigi_initiate_put_request(char const * const path, char const * 
         }
     }
 
-    if (ret != idigi_connector_success)
+    if (ret != connector_error_success)
     {
         APP_DEBUG("idigi_send_data failed [%d]\n", ret);
         failed = 1;
@@ -178,13 +179,13 @@ error:
 /*
  * Adds a string to the syslog buffer to be sent to iDigi
  */
-idigi_status_t add_to_syslog_buffer(char *syslog_string) 
+connector_status_t add_to_syslog_buffer(char *syslog_string) 
 {
 	int size;
 	
 	size = strlen(syslog_string);
 	if (size > BUFFER_SIZE)
-		return idigi_invalid_data_size;
+		return connector_invalid_data_size;
 
     snprintf((char *)&syslog_put_request_buffer[data_size_in_put_request_buffer],
     		  BUFFER_SIZE - data_size_in_put_request_buffer,
@@ -192,13 +193,13 @@ idigi_status_t add_to_syslog_buffer(char *syslog_string)
     
     data_size_in_put_request_buffer += strlen(syslog_string);
        
-    return idigi_success;
+    return connector_success;
 }
 
 void initialize_k60_tower_demo(void)
 {
     unsigned short reset_count;
-    idigi_status_t rc;
+    connector_status_t rc;
 
 #ifndef TWR_K53N512
 	disable_flash_cache();
@@ -308,7 +309,7 @@ void idigi_utility_task2(unsigned long initial_data)
 void idigi_button_task(unsigned long initial_data)
 {
     static unsigned int sw1_state = 1;
-    idigi_status_t rc;
+    connector_status_t rc;
     
 	while (1)
 	{
@@ -462,7 +463,7 @@ void idigi_button_task(unsigned long initial_data)
     	        // Wait 5 seconds for syslog to be sent
     	        _time_delay(5000);
     	
-    	        ic_watchdog_reset();
+    	        ecc_watchdog_reset();
             }
         }
     
@@ -478,7 +479,7 @@ void idigi_button_task(unsigned long initial_data)
 void idigi_touch_pad_task(unsigned long initial_data)
 {
     char key;    
-    idigi_status_t rc;
+    connector_status_t rc;
     
     while (1)
     {       
@@ -591,13 +592,13 @@ void idigi_led_task(unsigned long initial_data)
     }	
 }
 
-size_t device_response_callback(char const * const target, idigi_connector_data_t * const response_data)
+size_t device_response_callback(char const * const target, connector_dataservice_data_t * const response_data)
 {
     /* static char rsp_string[] = "iDigi Connector device response!\n"; */
     size_t len;
     size_t bytes_to_copy;
 
-    if (response_data->error != idigi_connector_success)
+    if (response_data->error != connector_error_success)
     {
         APP_DEBUG("device_response_callback: error [%d]\n", response_data->error);
         goto error;
@@ -636,8 +637,8 @@ size_t device_response_callback(char const * const target, idigi_connector_data_
         memcpy(response_data->data_ptr, unknown_target_error_response_data, bytes_to_copy);
     }
 
-    response_data->flags = IDIGI_FLAG_LAST_DATA;
-
+    response_data->flags = CONNECTOR_FLAG_LAST_DATA;
+    response_data->more_data = connector_false;
 #ifdef DEBUG_DEVICE_REQUEST
     APP_DEBUG("device_response_callback: target [%s], data- %s\n", target, response_data->data_ptr);
 #endif
@@ -646,13 +647,14 @@ error:
     return bytes_to_copy;
 }
 
-idigi_app_error_t device_request_callback(char const * const target, idigi_connector_data_t * const request_data)
+connector_app_error_t device_request_callback(char const * const target, connector_dataservice_data_t * const request_data)
 {
 	size_t bytes_to_send;
 	
-    idigi_app_error_t status=idigi_app_success;
-    idigi_status_t rc;
+    connector_app_error_t status = connector_app_success;
+    connector_status_t rc;
     char *data = (char *)request_data->data_ptr;
+   
     data[request_data->length_in_bytes] = 0; // Nul Terminate
 
 	valid_leds_request = 0;
@@ -745,10 +747,10 @@ void idigi_app_run_task(unsigned long initial_data)
     MQX_TICK_STRUCT tickstart, ticknow;
     static int first_time = 1;
     int a2d_failure_check = 0;
-    idigi_connector_error_t ret;
+    connector_error_t ret;
 
-    ret = idigi_register_device_request_callbacks(device_request_callback, device_response_callback, NULL, NULL);
-    if (ret != idigi_connector_success)
+    ret = connector_register_device_request_callbacks(device_request_callback, device_response_callback, NULL, NULL);
+    if (ret != connector_error_success)
     {
         APP_DEBUG("idigi_register_device_request_callbacks failed [%d]\n", ret);
     }
@@ -758,7 +760,7 @@ void idigi_app_run_task(unsigned long initial_data)
     while (1)
     {
         int_32  elapsed;
-        idigi_status_t status;
+        connector_status_t status;
 		unsigned long seconds_since_reset;
    	
     	if (ad_sample_available && firmware_download_started == 0)
@@ -833,7 +835,7 @@ void idigi_app_run_task(unsigned long initial_data)
         	        APP_DEBUG("idigi_app_run_task: sending first put to iDigi server\n");
     	    		first_time = 0;               	
                 	strncpy(put_temp_buffer, "slow", sizeof(put_temp_buffer));
-	        	    status = idigi_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
+	        	    status = idigi_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
 	        	    if (status)
 	        	        APP_DEBUG("idigi_app_run_task: error sending first put to iDigi server\n");
 		        	else
@@ -899,7 +901,7 @@ void idigi_app_run_task(unsigned long initial_data)
     	    	/* Send a syslog if data is in syslog buffer */
     	    	if (data_size_in_put_request_buffer)
     	    	{
-    	        	status = idigi_initiate_put_request(syslog_file_path, syslog_put_request_buffer, "text/plain", data_size_in_put_request_buffer, IDIGI_DATA_PUT_APPEND);
+    	        	status = idigi_initiate_put_request(syslog_file_path, syslog_put_request_buffer, "text/plain", data_size_in_put_request_buffer, CONNECTOR_FLAG_APPEND_DATA);
     	        	
     	        	if (status)
     	        	    APP_DEBUG("idigi_app_run_task: error putting to syslog path\n");

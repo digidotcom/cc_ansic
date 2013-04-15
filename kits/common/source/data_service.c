@@ -60,7 +60,14 @@ static connector_callback_status_t app_process_device_request_target(connector_d
 
 		target_data->user_context = device_request;
 		target_str_size = strlen(target_data->target) + 1;
-		device_request->target = malloc(target_str_size);
+		device_request->target = ecc_malloc(target_str_size);
+		if (device_request->target == NULL)
+		{
+			/* no memeory so cancel this request */
+			APP_DEBUG("app_process_device_request: malloc fails for device_request->target \"%s\" target\n", target_data->target);
+			status = connector_callback_error;
+			goto done;
+		}
 		memcpy(device_request->target, target_data->target, target_str_size);
     }
 
@@ -223,7 +230,7 @@ static connector_callback_status_t process_send_data_response(connector_data_ser
     connector_error_t error_code;
 
     error_code = (resp_ptr->response == connector_data_service_send_response_success) ? connector_success : connector_unavailable;
-    APP_DEBUG("Received %s response from server\n", (resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error");
+    /*APP_DEBUG("Received %s response from server\n", (resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error");*/
 
     send_data_completed(app_dptr, error_code);
     return connector_callback_continue;

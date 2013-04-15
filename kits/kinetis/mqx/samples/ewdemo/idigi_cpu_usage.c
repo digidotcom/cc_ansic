@@ -12,9 +12,9 @@
 #include "mqx.h"
 #include "mqx_prv.h"
 #include <errno.h>
-#include <idigi_types.h>
-#include "idigi_api.h"
-#include "idigi_def.h"
+#include <connector_types.h>
+#include "connector_api.h"
+#include "connector_def.h"
 #include <platform.h>
 
 extern unsigned long cpu_usage_baseline;
@@ -39,16 +39,16 @@ void init_cpu_usage(void)
 
 	for (i = 0; i < 5; i ++)
 	{
-	    kernel_data->IDLE_LOOP1 = 0;
-	    kernel_data->IDLE_LOOP2 = 0;
-	    kernel_data->IDLE_LOOP3 = 0;
-	    kernel_data->IDLE_LOOP4 = 0;
+	    kernel_data->IDLE_LOOP.IDLE_LOOP1 = 0;
+	    kernel_data->IDLE_LOOP.IDLE_LOOP2 = 0;
+	    kernel_data->IDLE_LOOP.IDLE_LOOP3 = 0;
+	    kernel_data->IDLE_LOOP.IDLE_LOOP4 = 0;
 	  
-	    initial_loop1 = kernel_data->IDLE_LOOP1;
+	    initial_loop1 = kernel_data->IDLE_LOOP.IDLE_LOOP1;
 	  
 	    _time_delay(1000);
 	  
-	    elapsed_loop1 = kernel_data->IDLE_LOOP1 - initial_loop1;
+	    elapsed_loop1 = kernel_data->IDLE_LOOP.IDLE_LOOP1 - initial_loop1;
 	    total_loop1 += elapsed_loop1;
 	}
 	
@@ -83,25 +83,25 @@ void idigi_cpu_usage(unsigned long initial_data)
     	
     	_time_delay(5000);
     	
-	    kernel_data->IDLE_LOOP1 = 0;
-  	    kernel_data->IDLE_LOOP2 = 0;
-   	    kernel_data->IDLE_LOOP3 = 0;
-   	    kernel_data->IDLE_LOOP4 = 0;
+	    kernel_data->IDLE_LOOP.IDLE_LOOP1 = 0;
+  	    kernel_data->IDLE_LOOP.IDLE_LOOP2 = 0;
+   	    kernel_data->IDLE_LOOP.IDLE_LOOP3 = 0;
+   	    kernel_data->IDLE_LOOP.IDLE_LOOP4 = 0;
     	  
-   	    initial_loop1 = kernel_data->IDLE_LOOP1;
+   	    initial_loop1 = kernel_data->IDLE_LOOP.IDLE_LOOP1;
     	  
    	    _time_delay(1000);
    	    	    
-   	    if (initial_loop1 > kernel_data->IDLE_LOOP1)
+   	    if (initial_loop1 > kernel_data->IDLE_LOOP.IDLE_LOOP1)
    	    {
-   	    	elapsed_loop1 = 0xffff - initial_loop1 + kernel_data->IDLE_LOOP1 + 1;
+   	    	elapsed_loop1 = 0xffff - initial_loop1 + kernel_data->IDLE_LOOP.IDLE_LOOP1 + 1;
 #ifdef DEBUG_CPU_USAGE
    	   	    APP_DEBUG("idigi_cpu_usage: initial_loop1 [%x] kernel_data->IDLE_LOOP1 [%x]elapsed_loop1 [%x]\n", initial_loop1, kernel_data->IDLE_LOOP1, elapsed_loop1);
 #endif
    	    }
    	    else
    	    {
-   	        elapsed_loop1 = kernel_data->IDLE_LOOP1 - initial_loop1;
+   	        elapsed_loop1 = kernel_data->IDLE_LOOP.IDLE_LOOP1 - initial_loop1;
    	    }
 
    	    // Ignore reading if elapsed time > cpu_usage_baseline
