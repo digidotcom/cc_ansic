@@ -642,7 +642,7 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_reqeust_id_config_tx_keepalive @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_config_tx_keepalive @htmlonly</td>
  * </tr>
  * <tr>
  * <th>data</th>
@@ -1027,8 +1027,8 @@
  *
  * @section data_service_support  Data Service Support
  *
- * Return @ref connector_service_supported_status_t status to enable or disable data service
- * capability. If it's supported, callback for @ref connector_request_id_data_service_t must be
+ * Enable or disable data service capability. If it's supported, callback
+ * for @ref connector_request_id_config_data_service must be
  * implemented for data service. This callback allows application to enable
  * or disable data service capability during runtime.
  *
@@ -1096,8 +1096,8 @@
  *
  * @section file_system_support  File System Support
  *
- * Return @ref connector_service_supported_status_t status to enable or disable file system
- * capability. If it's supported, callback for @ref connector_request_id_file_system_t must be
+ * Enable or disable file system capability. If it's supported, callback for
+ * @ref connector_request_id_config_file_system must be
  * implemented for file system. This callback allows application to enable
  * or disable file system capability during runtime.
  *
@@ -1165,8 +1165,8 @@
  *
  * @section rci_support  Remote Configuration Support
  *
- * Return @ref connector_service_supported_status_t status to enable or disable remote configuration
- * capability. If it's supported, callback for @ref connector_remote_config_request_t must be
+ * Enable or disable remote configuration capability. If it's supported, callback for
+ * @ref connector_request_id_config_remote_configuration must be
  * implemented for remote configuration. This callback allows application to enable
  * or disable remote configuration capability during runtime.
  *
@@ -1177,6 +1177,8 @@
  * It enables remote configuration capability. See @ref connector_config_data_options.
  *
  * @note The @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH must be set to the maximum content length in bytes of an element's value in @ref connector_config.h.
+ *
+ * @note Define @ref CONNECTOR_COMPRESSION in @ref connector_config.h for compression transfer.
  *
  * @htmlonly
  * <table class="apitable">
@@ -1364,7 +1366,7 @@
  *
  * @section network_tcp_start  Start network TCP
  *
- * Return @ref connector_auto_connect_type_t to automatic or manual start TCP transport.
+ * Return @ref connector_config_connect_type_t to automatic or manual start TCP transport.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_start_network_tcp() in config.c.
@@ -1427,7 +1429,7 @@
  *
  * @section network_udp_start  Start network UDP
  *
- * Return @ref connector_auto_connect_type_t to automatically or manually start UDP transport.
+ * Return @ref connector_config_connect_type_t to automatically or manually start UDP transport.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_start_network_udp() in config.c.
@@ -1649,8 +1651,9 @@
  * @endcode
  *
  * @section esn_number ESN number
+ *
  * Returns ESN number. This is called if @ref wan_type callback
- * returns @ref connector_esn_wan_type WAN type.
+ * returns @ref connector_wan_type_esn WAN type.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_esn_number() in config.c.
@@ -1742,7 +1745,7 @@
  *
  * @section meid_number MEID number
  * Returns MEID number. This is called if @ref wan_type callback
- * returns @ref connector_meid_wan_type WAN type.
+ * returns @ref connector_wan_type_meid WAN type.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_meid_number() in config.c.
