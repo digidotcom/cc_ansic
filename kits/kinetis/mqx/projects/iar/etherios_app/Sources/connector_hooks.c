@@ -5,7 +5,7 @@
  * 
  */
 
-#include "idigi_config.h"
+#include "connector_config.h"
 #include "platform.h"
-#include <idigi_api.h>
+#include <connector_api.h>
 

@@ -2,22 +2,83 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>193229374</fileChecksum>
+  <fileChecksum>2567181897</fileChecksum>
   <configuration>
     <name>twrk53 Int Flash Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_lwgpio_provider.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_tss_provider.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\usb_bsp.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_host_khci.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_host_ehci.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_dev_khci.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_dev_ehci.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\message.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\partition.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\log.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\klog.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcscfg.h</file>
+      <file>$PROJ_DIR$\Sources\main.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2s.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2s_ki2s.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\qpit.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\Generated_Code\PE_LDD.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2s_audio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\lwmem.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\timer_qpit.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\timer_lpt.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\tchres.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\iodebug.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_time.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_math.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lwgpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp_rev.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_debug.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_api.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os.c</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_hooks.o</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_remote.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\gps_stats.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\data_service.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_connector.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\file_system.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\firmware.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\include\idigi_connector.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs\mfs.a</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\debug.c</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\intflash.icf</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\select.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp.a</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\List\ic4mqx_1.3.map</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_hooks.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\system.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_api.pbi</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp.a</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Exe\device_request_mqx_4.0.srec</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\application.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\network.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os_support.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Exe\ic4mqx_1.3.out</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\firmware.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\file_system.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\gps_stats.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\system.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\debug.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_connector.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_api.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_connector.pbi</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\file_system.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os_support.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\nvic.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\MK53DZ10.h</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\network.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\firmware.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\config.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\data_service.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcs25x.h</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\application.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\main.o</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\debug.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_supp.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\mqx_ioc.h</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\config.pbi</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\kinetis_mpu.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\small_ram_config.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\lwsem.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\queue.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_cpu.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcslog.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcs_in.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\dhcp.h</file>
@@ -26,123 +87,6 @@
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\usb_dcd.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\usb_dcd_kn.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\crc_kn.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2s.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2s_ki2s.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2s_audio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\iodebug.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\tchres.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\timer_lpt.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\timer_qpit.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\qpit.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\lwmem.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\Generated_Code\PE_LDD.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_time.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_math.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lwgpio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp_rev.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\twrk53n512.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\cm_kinetis.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp_cm.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\cm.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\init_lpm.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lpm_kinetis.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lpm.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\fio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\io.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\io_rev.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\errno.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\os_intf.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_ds.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_edp_util.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_edp.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_edp_def.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\system.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_cc.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\bele.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_open.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_def.h</file>
-      <file>$PROJ_DIR$\Sources\application.c</file>
-      <file>$PROJ_DIR$\Sources\main.c</file>
-      <file>$PROJ_DIR$\Sources\idigi_hooks.c</file>
-      <file>$PROJ_DIR$\Sources\main.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\ioctl.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\serial.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_mem.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\btnled.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\serl_kuart.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lwgpio_kgpio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2c_ki2c.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2c.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\spi_dspi.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\spi.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_client.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_provider.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_info.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_close.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_msg.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_recv.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\limits.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_send.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\assert.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\time.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\inttypes.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\config.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\include\data_service.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\network.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\include\os_support.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_null.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os_support.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\remote_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_types.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psptypes.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\remote_config_cb.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\ipcfg.h</file>
-      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
-      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\enet.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\user_config.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\pcb.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\layer.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\chk_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\debug.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\ei_packet.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_api.c</file>
-      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stddef.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_gpio_kgpio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\esdhc.h</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\gps_stats.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_uids.h</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\data_service.pbi</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_gpio.h</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\sdcard.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\sdcard_spi.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\sdcard_esdhc.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\adc_mk53.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\adc.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\lwevent.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\adc_kadc.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\kinetis_fcan.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\flashx.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\flash_ftfl.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\flash_mk53.h</file>
@@ -164,301 +108,141 @@
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\mqx_cnfg.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\macnet_mk53.h</file>
       <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\platform.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os.c</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_hooks.o</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_remote.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_debug.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_api.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_connector.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\gps_stats.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\data_service.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\file_system.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\firmware.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\debug.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\include\idigi_connector.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs\mfs.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\intflash.icf</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\select.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp.a</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\List\ic4mqx_1.3.map</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_hooks.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp.a</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Exe\device_request_mqx_4.0.srec</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\system.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_api.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\application.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\network.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os_support.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Exe\ic4mqx_1.3.out</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\file_system.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\firmware.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\gps_stats.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\system.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\debug.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_connector.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_connector.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\idigi_api.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\file_system.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os_support.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\MK53DZ10.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\nvic.h</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\network.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\firmware.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcs25x.h</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\application.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\config.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\data_service.o</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\main.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\mqx_ioc.h</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\config.pbi</file>
-      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\debug.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_supp.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\kinetis_mpu.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\small_ram_config.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\lwsem.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\queue.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psp_cpu.h</file>
       <file>$PROJ_DIR$\Sources\idigi_config.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\kinetis.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\twrk53n512.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\cm_kinetis.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\bsp_cm.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\cm.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\init_lpm.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lpm_kinetis.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lpm.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\fio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\io.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\io_rev.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\errno.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_edp_util.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_edp_def.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\os_intf.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_ds.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\system.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_edp.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_open.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_cc.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\bele.h</file>
+      <file>$PROJ_DIR$\Sources\idigi_hooks.c</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\ioctl.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_def.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\serial.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_mem.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\btnled.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\serl_kuart.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\lwgpio_kgpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2c_ki2c.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\i2c.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\spi_dspi.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\spi.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_client.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_provider.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_close.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_info.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_recv.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_msg.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\limits.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_tcp_send.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\assert.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\time.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\inttypes.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\config.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\include\data_service.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\network.c</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_null.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os_support.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\include\os_support.h</file>
+      <file>$PROJ_DIR$\Sources\application.c</file>
+      <file>$PROJ_DIR$\Sources\main.c</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_gpio_kgpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\esdhc.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\sdcard.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\sdcard_spi.h</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\gps_stats.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_uids.h</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\data_service.pbi</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\io_gpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\sdcard_esdhc.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\adc_mk53.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\adc.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\lwevent.h</file>
+      <file>$PROJ_DIR$\twrk53 Int Flash Debug\Obj\os.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\adc_kadc.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\kinetis_fcan.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_lwgpio_provider.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\hmi_tss_provider.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\message.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\log.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\usb_bsp.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\partition.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_dev_ehci.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_dev_khci.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_host_ehci.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\if_host_khci.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\klog.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcscfg.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_types.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\psptypes.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\remote_config.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\ipcfg.h</file>
+      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\remote_config_cb.h</file>
+      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\bsp\enet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\user_config.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\psp\pcb.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\layer.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\chk_config.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\debug.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\ei_packet.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_api.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stddef.h</file>
     </outputs>
-    <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 174 185</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\system.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 179</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 189</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 88 118 77 76 57 48 111 87 120 82 214 162 98 105 90 84 86 121 78 89 157 100 97 160 161</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 88 118 77 76 57 48 111 87 120 82 214 162 98 105 90 84 86 121 78 89 157 100 97 160 161</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Sources\application.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 181</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 201</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 157 162 98 82 84 86 121 89 88 169</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 157 162 98 82 84 86 121 89 88 169</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Sources\main.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 176</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 204</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 63 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 157 162 98 82 84 86 121 89 88 94 169 214</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 63 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 157 162 98 82 84 86 121 89 88 94 169 214</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Sources\idigi_hooks.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 175</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 159</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 214 157 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 214 157 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\config.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 206</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 202</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 99 101 104 108 150 145 152 153 200 154 155 107 210 143 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 162 98 82 84 86 121 89 88 157 56 214</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 99 101 104 108 150 145 152 153 200 154 155 107 210 143 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 162 98 82 84 86 121 89 88 157 56 214</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\network.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 182</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 198</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 172 46 162 98 82 84 86 121 89 88 157 161 214 94 169</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 172 46 162 98 82 84 86 121 89 88 157 161 214 94 169</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os_support.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 184</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 195</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 82 118 77 76 57 48 111 87 120 63 154 155 107 210 143 99 146 147 148 149 47 208 205 144 212 211 213 215 196 78 197 209 151 105 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 94 169 98 84 86 121 89 162 88 157</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 82 118 77 76 57 48 111 87 120 63 154 155 107 210 143 99 146 147 148 149 47 208 205 144 212 211 213 215 196 78 197 209 151 105 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 94 169 98 84 86 121 89 162 88 157</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_api.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 180</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 193</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 121 118 77 76 57 48 111 87 120 214 162 98 82 105 90 84 86 78 89 88 161 79 59 53 115 113 56 49 114 52 51 85 83 58 80 55 81 50 112</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 121 118 77 76 57 48 111 87 120 214 162 98 82 105 90 84 86 78 89 88 161 79 59 53 115 113 56 49 114 52 51 85 83 58 80 55 81 50 112</file>
-        </tool>
-      </inputs>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 183</file>
+          <name>ICCARM</name>
+          <file> 176</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 128</file>
+          <name>BICOMP</name>
+          <file> 42</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 162 98 82 84 86 121 89 88 157 161 214</file>
-        </tool>
-        <tool>
           <name>ICCARM</name>
-          <file> 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 162 98 82 84 86 121 89 88 157 161 214</file>
+          <file> 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 18 191 145 149 151 215 154 153 101 17 102</file>
         </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_connector.c</name>
-      <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 191</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 192</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88 157 169 94 92 214 161</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88 157 169 94 92 214 161</file>
+          <file> 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 18 191 145 149 151 215 154 153 101 17 102</file>
         </tool>
       </inputs>
     </file>
@@ -466,22 +250,22 @@
       <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\gps_stats.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 188</file>
+          <name>ICCARM</name>
+          <file> 168</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 124</file>
+          <name>BICOMP</name>
+          <file> 47</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 214 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88 157 100 97 160 161</file>
+          <name>ICCARM</name>
+          <file> 102 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153 101 196 193 21 17</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 214 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88 157 100 97 160 161</file>
+          <name>BICOMP</name>
+          <file> 102 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153 101 196 193 21 17</file>
         </tool>
       </inputs>
     </file>
@@ -489,22 +273,45 @@
       <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\data_service.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 126</file>
+          <name>ICCARM</name>
+          <file> 60</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 203</file>
+          <name>BICOMP</name>
+          <file> 170</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88 157 94 169 92 161 214</file>
+          <name>ICCARM</name>
+          <file> 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153 101 161 27 157 17 102</file>
         </tool>
         <tool>
+          <name>BICOMP</name>
+          <file> 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153 101 161 27 157 17 102</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\idigi_connector.c</name>
+      <outputs>
+        <tool>
           <name>ICCARM</name>
-          <file> 162 98 82 118 77 76 57 48 111 87 120 105 90 84 86 121 78 89 88 157 94 169 92 161 214</file>
+          <file> 50</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 52</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153 101 27 161 157 102 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153 101 27 161 157 102 17</file>
         </tool>
       </inputs>
     </file>
@@ -512,22 +319,22 @@
       <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\file_system.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 186</file>
+          <name>ICCARM</name>
+          <file> 53</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 194</file>
+          <name>BICOMP</name>
+          <file> 46</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 105 118 77 76 57 48 111 87 120 90 82 46 162 98 84 86 121 78 89 88 157 214 161</file>
+          <name>ICCARM</name>
+          <file> 199 207 142 141 123 116 205 152 214 155 145 114 18 191 149 151 215 143 154 153 101 102 17</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 105 118 77 76 57 48 111 87 120 90 82 46 162 98 84 86 121 78 89 88 157 214 161</file>
+          <name>BICOMP</name>
+          <file> 199 207 142 141 123 116 205 152 214 155 145 114 18 191 149 151 215 143 154 153 101 102 17</file>
         </tool>
       </inputs>
     </file>
@@ -535,22 +342,22 @@
       <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\firmware.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 187</file>
+          <name>ICCARM</name>
+          <file> 58</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 199</file>
+          <name>BICOMP</name>
+          <file> 45</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 63 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 162 98 82 84 86 121 89 88 157 214</file>
+          <name>ICCARM</name>
+          <file> 0 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 18 191 145 149 151 215 154 153 101 102</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 63 154 155 107 210 143 99 146 147 148 149 47 118 208 205 144 212 211 213 215 196 78 77 76 57 48 111 87 197 209 151 105 120 90 28 30 31 32 33 29 35 36 37 38 39 40 41 42 43 119 44 45 64 65 68 73 72 71 70 66 95 104 108 150 156 69 34 127 122 123 129 130 131 132 133 134 135 136 137 138 139 140 141 142 17 18 19 20 21 22 23 24 25 26 27 125 67 74 75 0 1 2 3 4 5 6 145 152 153 200 7 8 9 10 11 12 13 14 101 162 98 82 84 86 121 89 88 157 214</file>
+          <name>BICOMP</name>
+          <file> 0 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 18 191 145 149 151 215 154 153 101 102</file>
         </tool>
       </inputs>
     </file>
@@ -558,22 +365,22 @@
       <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\debug.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 190</file>
+          <name>ICCARM</name>
+          <file> 64</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 207</file>
+          <name>BICOMP</name>
+          <file> 49</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 214 110 118 77 76 57 48 111 87 120 109 82 119</file>
+          <name>ICCARM</name>
+          <file> 102 204 207 142 141 123 116 205 152 214 203 145 213</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 214 110 118 77 76 57 48 111 87 120 109 82 119</file>
+          <name>BICOMP</name>
+          <file> 102 204 207 142 141 123 116 205 152 214 203 145 213</file>
         </tool>
       </inputs>
     </file>
@@ -582,19 +389,212 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 174</file>
+          <file> 33</file>
         </tool>
         <tool>
           <name>OBJCOPY</name>
-          <file> 178</file>
+          <file> 39</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 171 201 202 203 207 194 199 124 193 192 159 204 198 128 195 189 173 177 15 170 16 102 117 106 103</file>
+          <file> 30 62 59 60 64 53 58 168 51 50 20 63 57 176 54 48 32 38 76 28 77 195 206 200 197</file>
         </tool>
       </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\system.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 48</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 36</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 153 207 142 141 123 116 205 152 214 145 102 18 191 199 155 149 151 215 143 154 101 196 193 21 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 153 207 142 141 123 116 205 152 214 145 102 18 191 199 155 149 151 215 143 154 101 196 193 21 17</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\idigi_hooks.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 34</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 102 101 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 102 101 18 191 145 207 142 141 123 116 205 152 214 199 155 149 151 215 143 154 153</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\config.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 59</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 67</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 192 194 198 202 94 89 96 97 61 98 99 201 69 87 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 181 184 182 189 190 73 74 75 18 191 145 149 151 215 154 153 101 126 102</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 192 194 198 202 94 89 96 97 61 98 99 201 69 87 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 181 184 182 189 190 73 74 75 18 191 145 149 151 215 154 153 101 126 102</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\network.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 41</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 31 114 18 191 145 149 151 215 154 153 101 17 102 161 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 31 114 18 191 145 149 151 215 154 153 101 17 102 161 27</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\platform\mqx\os_support.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 54</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 43</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 145 207 142 141 123 116 205 152 214 0 98 99 201 69 87 192 90 91 92 93 115 65 66 88 71 70 72 103 56 143 55 68 95 199 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 161 27 191 149 151 215 154 18 153 101</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 145 207 142 141 123 116 205 152 214 0 98 99 201 69 87 192 90 91 92 93 115 65 66 88 71 70 72 103 56 143 55 68 95 199 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 161 27 191 149 151 215 154 18 153 101</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\application.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 62</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 40</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 101 18 191 145 149 151 215 154 153 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 101 18 191 145 149 151 215 154 153 27</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 63</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 101 18 191 145 149 151 215 154 153 161 27 102</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0 98 99 201 69 87 192 90 91 92 93 115 207 65 66 88 71 70 72 103 56 143 142 141 123 116 205 152 55 68 95 199 214 155 6 11 12 13 14 4 16 104 105 106 107 108 109 110 111 213 112 113 128 130 133 138 137 136 135 131 159 198 202 94 100 134 15 171 164 165 166 167 172 173 174 175 177 178 81 82 83 84 85 86 78 79 80 1 2 5 10 9 8 7 3 169 132 139 140 179 180 183 188 187 186 185 89 96 97 61 181 184 182 189 190 73 74 75 194 101 18 191 145 149 151 215 154 153 161 27 102</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios Cloud Connector\private\idigi_api.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 51</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 37</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 215 207 142 141 123 116 205 152 214 102 18 191 145 199 155 149 151 143 154 153 17 146 129 118 211 209 126 119 210 122 117 150 147 124 144 125 148 120 208</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 215 207 142 141 123 116 205 152 214 102 18 191 145 199 155 149 151 143 154 153 17 146 129 118 211 209 126 119 210 122 117 150 147 124 144 125 148 120 208</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 33 44</file>
+        </tool>
+      </outputs>
     </file>
     <forcedrebuild>
       <name>[MULTI_TOOL]</name>
@@ -618,158 +618,27 @@
   <configuration>
     <name>twrk60n512 Int Flash Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_msg.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_def.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\errno.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\dhcp.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\system.o</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\os_support.o</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\firmware.o</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\network.o</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\debug.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\mqx_cnfg.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\gps_stats.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\select.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\mqx\source\psp\cortex_m\core\M4\boot.S</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.rci</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\include\firmware_mqx.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\include\data_service.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\include\idigi_connector.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\include\flash_mqx.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\include\os_support.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_point.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_service.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_firmware.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_file_system.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_network.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_os.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_remote.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_short_message.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_types.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_debug.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\idigi_connector.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\platform.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\bele.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_cmd.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\chk_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_api.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_cc.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_data_point.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_data_service.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_def.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp_def.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp_util.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_file_system.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_firmware.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_global_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_info.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_recv.h</file>
-      <file>$PROJ_DIR$\Sources\application.c</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_send.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_session.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_utils.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_static_buffer.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_close.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_config.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_open.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_recv.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_send.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\debug.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\ei_packet.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\layer.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\os_intf.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_buffer.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_callback.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_debug.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_element.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_error.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_group.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_input.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_output.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_string.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_support.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_traverse.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_util.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_fwstub.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_service.h</file>
-      <file>$PROJ_DIR$\..\..\Etherios_CC\private\Readme.txt</file>
-      <file>$PROJ_DIR$\Sources\main.c</file>
-      <file>$PROJ_DIR$\Sources\idigi_hooks.c</file>
-      <file>$PROJ_DIR$\Sources\connector_config.h</file>
       <file>$PROJ_DIR$\Sources\main.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\limits.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\assert.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\time.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\inttypes.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
-      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-      <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
-      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
-      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-      <file>$TOOLKIT_DIR$\inc\c\stddef.h</file>
-      <file>$PROJ_DIR$\Sources\idigi_config.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\debug.pbi</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\os.o</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\firmware.pbi</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\main.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\user_config.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\config.pbi</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\idigi_hooks.o</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\application.o</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\spi_dspi.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lpm.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lpm_kinetis.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\serial.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\spi.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\fio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\serl_kuart.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\ioctl.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\io_rev.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\io.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\i2s_audio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\i2c.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\i2c_ki2c.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_mem.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_null.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\macnet_mk60.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lwgpio_kgpio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lwgpio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_gpio.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_gpio_kgpio.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\connector.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\connector.pbi</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\sdcard_task.h</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\usb_classes.c</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\usb_classes.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs.a</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\USB_File.c</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\USB_File.h</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\USB_Task.c</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\USB_Task.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\bsp.a</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcs.a</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\usbh.a</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\intflash.icf</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp.a</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\List\ic4mqx_1.3.map</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs_rev.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs_cnfg.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\part_mgr.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\esdhc.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\sdcard.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\sdcard_spi.h</file>
@@ -799,20 +668,16 @@
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\mqx_macros.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\queue.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\lwsem.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\include\firmware_mqx.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\include\connector.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\include\data_service.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\MK60DZ10.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\List\ic4mqx_1.3.map</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\intflash.icf</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\usbh.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcs.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp.a</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\bsp.a</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\connector_api.o</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\system.pbi</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\connector_api.pbi</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\kinetis.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp_cpu.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\iodebug.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\kinetis.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\tchres.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\timer_lpt.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\timer_qpit.h</file>
@@ -830,34 +695,190 @@
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Exe\ic4mqx_1.3.out</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Exe\device_request_mqx_4.0.srec</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\os.pbi</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\idigi_hooks.pbi</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\etherios_app.pbd</file>
+      <file>$PROJ_DIR$\..\..\Git projects\cc_ansic\kits\kinetis\mqx\projects\iar\etherios_app\Sources\connector_config.h</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\MFS_USB.h</file>
+      <file>$PROJ_DIR$\Sources\fs_devices\sdcard_task.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\include\flash_mqx.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\gps_stats.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\select.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\debug.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\firmware.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\os.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\main.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\application.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\user_config.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\config.pbi</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\spi_dspi.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lpm.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lpm_kinetis.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\serial.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\spi.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\fio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\serl_kuart.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\ioctl.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\io_rev.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\io.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\i2s_audio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\i2c.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\i2c_ki2c.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_mem.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_null.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\macnet_mk60.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lwgpio_kgpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\lwgpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_gpio.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\io_gpio_kgpio.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\include\os_support.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.rci</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_config.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_point.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_service.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_firmware.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_file_system.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_network.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_os.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_remote.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_short_message.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_types.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_debug.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\usb_classes.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\sdcard_task.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\sdcard_task.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\usb_classes.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\USB_File.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\USB_Task.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\USB_Task.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\USB_File.pbi</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\file_system.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network_ssl.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\etherios-ca-cert-public.crt.c</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\network_ssl.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\etherios-ca-cert-public.crt.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\file_system.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\etherios-ca-cert-public.crt.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\file_system.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\network_ssl.pbi</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\os_support.pbi</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\init_lpm.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\idigi_connector.pbi</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\cm_kinetis.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\bsp.h</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\main.pbi</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\etherios_app.pbd</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\idigi_connector.pbi</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\init_lpm.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\cm_kinetis.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\cm.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp_time.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\bsp_cm.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\twrk60n512.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\bsp_rev.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\psp_math.h</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\network.pbi</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\gps_stats.pbi</file>
-      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\idigi_connector.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\mqx_cpudef.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\hmi_tss_provider.h</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\data_service.pbi</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\comp.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\mqx_cpudef.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\usb_bsp.h</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\config.o</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\mqx.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\hmi_tss_provider.h</file>
-      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\usb_bsp.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\if_host_khci.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\if_host_ehci.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\if_dev_khci.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\errno.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\limits.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\assert.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\time.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\inttypes.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_config.h</file>
+      <file>$PROJ_DIR$\Sources\application.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_open.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_recv.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_send.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\debug.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\ei_packet.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\layer.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\os_intf.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_buffer.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_callback.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_debug.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_element.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_error.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_group.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_input.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_output.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_string.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_support.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_traverse.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_util.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_fwstub.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\rci_service.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\Readme.txt</file>
+      <file>$PROJ_DIR$\Sources\main.c</file>
+      <file>$PROJ_DIR$\..\..\Git projects\cc_ansic\kits\kinetis\mqx\projects\iar\etherios_app\Sources\connector_hooks.c</file>
+      <file>$PROJ_DIR$\Sources\connector_config.h</file>
+      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stddef.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\platform.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\bele.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_close.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\chk_config.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_api.c</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_cc.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_data_point.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_data_service.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_def.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp_def.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp_util.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_file_system.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_firmware.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_global_config.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_info.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_msg.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_cmd.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_def.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_recv.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_send.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_session.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_utils.h</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\private\connector_static_buffer.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\bsp\if_dev_ehci.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\nvic.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\kinetis_mpu.h</file>
@@ -877,338 +898,84 @@
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcscfg.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcslog.h</file>
       <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcs_in.h</file>
-      <file>$PROJ_DIR$\..\..\Git projects\cc_ansic\kits\kinetis\mqx\projects\iar\etherios_app\Sources\connector_hooks.c</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\connector_hooks.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\system.o</file>
       <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\connector_hooks.pbi</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\network.o</file>
+      <file>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\idigi_connector.c</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\os_support.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\dhcp.h</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\firmware.o</file>
+      <file>$PROJ_DIR$\twrk60n512 Int Flash Debug\Obj\debug.o</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\psp\mqx_cnfg.h</file>
+      <file>$PROJ_DIR$\..\..\Freescale\Freescale_MQX_4_0\mqx\source\psp\cortex_m\core\M4\boot.S</file>
     </outputs>
     <file>
-      <name>[ROOT_NODE]</name>
+      <name>$PROJ_DIR$\Sources\fs_devices\usb_classes.c</name>
       <outputs>
-        <tool>
-          <name>ILINK</name>
-          <file> 209 182</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 129</file>
-        </tool>
         <tool>
           <name>ICCARM</name>
-          <file> 233</file>
+          <file> 138</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 135</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 206 248 208 207 205 247 249 251 250 234 13 128 175 174 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 252 253 254 255 256 257 258 7 24 34 104 105 106 122 109 25 30 31 46 51</file>
-        </tool>
-        <tool>
           <name>ICCARM</name>
-          <file> 206 248 208 207 205 247 249 251 250 234 13 128 175 174 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 252 253 254 255 256 257 258 7 24 99 34 104 105 106 122 109 25 30 27 31 46 51</file>
+          <file> 219</file>
         </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 230</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 204</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 31 22 20 19 27 35</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 99 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 27 31 22 20 19 35</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 124</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 12</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 116 119 102 101 6 5 117 107 121 115 104 120</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 99 104 119 102 101 6 5 117 107 121 120</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 126</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 10</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 100 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 46 24 34 104 105 106 122 109 25 30 31</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 100 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 99 46 24 34 104 105 106 122 109 25 30 27 31</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 228</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 14</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 31 46 49 47 32 35</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 99 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 27 31 46 49 47 32 35</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\idigi_connector.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 216</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 229</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 31 22 20 19 27 35</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 99 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 27 31 22 20 19 35</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 227</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 11</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 15 3 24 34 104 105 106 122 109 25 30 31 46 35 22 20</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 15 3 24 99 34 104 105 106 122 109 25 30 27 31 46 35 22 20</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 211</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 125</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 24 34 104 105 106 122 109 25 30 31 46 35</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 24 99 34 104 105 106 122 109 25 30 27 31 46 35</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 214</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 9</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 104 119 102 101 6 5 117 107 121 100 234 13 128 175 174 206 173 172 232 231 4 176 177 178 179 180 193 192 181 103 241 242 243 113 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 22 20 34 105 106 122 109 46 24 25 30 31</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 104 119 102 101 6 5 117 107 121 100 234 13 128 175 174 206 173 172 232 231 4 176 177 178 179 180 193 192 181 103 241 242 243 113 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 22 20 34 105 106 122 109 99 46 24 25 30 27 31</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 190</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 8</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 108 119 102 101 6 5 117 107 121 104 24 34 113 110 105 106 122 103 109 25 30 31 46 49 47 32 35</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 108 119 102 101 6 5 117 107 121 104 99 24 34 113 110 105 106 122 103 109 25 30 27 31 46 49 47 32 35</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_api.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 191</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 189</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 122 119 102 101 6 5 117 107 121 24 34 104 113 110 105 106 103 109 25 30 31 35 65 58 60 78 53 51 80 77 64 59 61 73 76 75 74 72 55 79</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 122 119 102 101 6 5 117 107 121 24 99 34 104 113 110 105 106 103 109 25 30 27 31 35 65 58 60 78 53 51 80 77 64 59 61 73 76 75 74 72 55 1 57 79</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Sources\application.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 246</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 131</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 46 24 34 104 105 106 122 109 25 30 31 20</file>
-        </tool>
-        <tool>
-          <name>ICCARM</name>
-          <file> 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 46 24 99 34 104 105 106 122 109 25 30 27 31 20</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Sources\main.c</name>
-      <outputs>
         <tool>
           <name>BICOMP</name>
           <file> 219</file>
         </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\fs_devices\USB_File.c</name>
+      <outputs>
         <tool>
           <name>ICCARM</name>
-          <file> 127</file>
+          <file> 139</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 142</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 100 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 46 24 34 104 105 106 122 109 25 30 31 22 20</file>
+          <name>ICCARM</name>
+          <file> 219</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 100 234 13 128 175 174 206 173 172 232 231 4 119 176 177 178 179 180 193 192 181 103 102 101 6 5 117 107 241 242 243 113 121 110 245 218 220 222 226 244 225 224 217 223 221 215 134 133 137 120 141 140 139 135 138 136 132 143 144 145 146 208 207 205 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 142 194 195 196 197 198 199 200 201 202 203 235 236 237 238 239 240 247 249 251 250 252 253 254 255 256 257 258 7 248 46 24 99 34 104 105 106 122 109 25 30 27 31 22 20</file>
+          <name>BICOMP</name>
+          <file> 219</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\Sources\idigi_hooks.c</name>
+      <name>$PROJ_DIR$\Sources\fs_devices\USB_Task.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 212</file>
+          <name>ICCARM</name>
+          <file> 140</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 130</file>
+          <name>BICOMP</name>
+          <file> 141</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 123 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 31</file>
+          <name>ICCARM</name>
+          <file> 219</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 99 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 27 31</file>
+          <name>BICOMP</name>
+          <file> 219</file>
         </tool>
       </inputs>
     </file>
@@ -1217,17 +984,358 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 182</file>
+          <file> 16</file>
         </tool>
         <tool>
           <name>OBJCOPY</name>
-          <file> 210</file>
+          <file> 75</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 184 131 233 189 204 12 10 14 229 130 127 11 125 9 8 187 188 186 183 185 111 118 114 112</file>
+          <file> 14 139 140 87 173 1 54 280 69 288 149 150 287 86 283 146 85 285 137 138 15 11 12 6 13 220 227 223 221</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\fs_devices\sdcard_task.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 137</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 136</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 20 17 18 19 3</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 20 17 18 19 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 173</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 89</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 71 269 73 72 70 268 270 272 271 174 289 88 44 43 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 273 274 275 276 277 278 279 286 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 237</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 71 269 73 72 70 268 270 272 271 174 289 88 44 43 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 273 274 275 276 277 278 279 286 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 237</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 69</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 170</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 113 219 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120 232 110 51 52 124</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 113 219 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120 232 110 51 52 124</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 288</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 83</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219 225 228 183 182 181 180 226 188 230 224 185 229</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219 225 228 183 182 181 180 226 188 230 224 185 229</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 287</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 84</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120 232 124</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120 232 124</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 167</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 116 118 120 232 235 234 124</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 116 118 120 232 235 234 124</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 1</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 2</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219 232 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120 110 51 52 124</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219 232 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120 110 51 52 124</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 283</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 166</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 82 178 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 124 110 51</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 82 178 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 124 110 51</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 85</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 76</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 124</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 124</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 285</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 152</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 185 228 183 182 181 180 226 188 230 0 174 289 88 44 43 71 42 41 168 171 179 45 46 47 48 49 57 59 53 184 262 263 264 222 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 110 51 123 186 187 231 190 219 232 113 114 119 117 116 118 120</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 185 228 183 182 181 180 226 188 230 0 174 289 88 44 43 71 42 41 168 171 179 45 46 47 48 49 57 59 53 184 262 263 264 222 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 110 51 123 186 187 231 190 219 232 113 114 119 117 116 118 120</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\file_system.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 150</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 148</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219 3 20 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 17 18 232 113 123 185 186 187 231 190 114 119 117 116 118 120 178</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219 3 20 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 17 18 232 113 123 185 186 187 231 190 114 119 117 116 118 120 178</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network_ssl.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 146</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 151</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 82 178 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 124 110 51</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 82 178 113 219 123 185 186 187 231 190 114 119 117 116 118 120 232 124 110 51</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\etherios-ca-cert-public.crt.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 149</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 147</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 219</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 219</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\application.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 87</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 267</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 232 113 219 123 185 186 187 231 190 114 119 117 116 118 120 51</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 232 113 219 123 185 186 187 231 190 114 119 117 116 118 120 51</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 86</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 160</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 0 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 232 113 219 123 185 186 187 231 190 114 119 117 116 118 120 110 51</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 0 174 289 88 44 43 71 42 41 168 171 179 228 45 46 47 48 49 57 59 53 184 183 182 181 180 226 188 262 263 264 222 230 191 266 153 161 159 165 265 164 163 157 162 158 156 92 91 95 229 99 98 97 93 96 94 90 101 102 103 104 73 72 70 105 106 107 108 109 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 100 58 60 61 62 63 64 65 66 67 68 169 172 175 176 177 261 268 270 272 271 273 274 275 276 277 278 279 286 269 232 113 219 123 185 186 187 231 190 114 119 117 116 118 120 110 51</file>
         </tool>
       </inputs>
     </file>
@@ -1235,24 +1343,104 @@
       <name>$PROJ_DIR$\..\..\Git projects\cc_ansic\kits\kinetis\mqx\projects\iar\etherios_app\Sources\connector_hooks.c</name>
       <outputs>
         <tool>
-          <name>BICOMP</name>
-          <file> 261</file>
+          <name>ICCARM</name>
+          <file> 280</file>
         </tool>
         <tool>
-          <name>ICCARM</name>
-          <file> 260</file>
+          <name>BICOMP</name>
+          <file> 282</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
+          <name>ICCARM</name>
+          <file> 77 232 113 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 120</file>
+        </tool>
+        <tool>
           <name>BICOMP</name>
-          <file> 123 46 24 34 104 119 102 101 6 5 117 107 121 113 110 105 106 122 103 109 25 30 31</file>
+          <file> 77 232 113 219 123 185 228 183 182 181 180 226 188 230 222 191 186 187 231 184 190 114 119 117 116 118 120</file>
         </tool>
       </inputs>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 55</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 189 228 183 182 181 180 226 188 230 185 219 113 123 222 191 186 187 231 184 190 114 119 116 118 120 232 235 234 124</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 189 228 183 182 181 180 226 188 230 185 219 113 123 222 191 186 187 231 184 190 114 119 116 118 120 232 235 234 124</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_api.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 54</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 56</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 231 228 183 182 181 180 226 188 230 113 219 123 185 222 191 186 187 184 190 114 119 117 116 118 120 124 251 244 246 198 239 237 200 197 250 245 247 192 196 195 194 238 241 252 243 248 249 199</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 231 228 183 182 181 180 226 188 230 113 219 123 185 222 191 186 187 184 190 114 119 117 116 118 120 124 251 244 246 198 239 237 200 197 250 245 247 192 196 195 194 238 241 252 243 248 249 199</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\idigi_connector.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 155</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 74 16</file>
+        </tool>
+      </outputs>
+    </file>
     <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>ILINK</tool>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
+      <tool>ICCARM</tool>
+    </forcedrebuild>
+    <forcedrebuild>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
+      <tool>ICCARM</tool>
+    </forcedrebuild>
+    <forcedrebuild>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
+      <tool>ICCARM</tool>
+    </forcedrebuild>
+    <forcedrebuild>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
+      <tool>ICCARM</tool>
+    </forcedrebuild>
+    <forcedrebuild>
+      <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
+      <tool>ICCARM</tool>
     </forcedrebuild>
   </configuration>
   <configuration>

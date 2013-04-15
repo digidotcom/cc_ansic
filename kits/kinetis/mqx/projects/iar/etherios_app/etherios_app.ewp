@@ -164,9 +164,9 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>IDIGI_CONNECTOR_VERSION=0x01030000UL</state>
+          <state>CONNECTOR_VERSION=0x01030000UL</state>
           <state>BOOTLOADER_ENABLED=0</state>
-          <state>IDIGI_TRANSPORT_TCP</state>
+          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
         </option>
         <option>
@@ -309,6 +309,7 @@
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
           <state>$PROJ_DIR$\Sources</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1108,9 +1109,9 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>IDIGI_CONNECTOR_VERSION=0x01030000UL</state>
+          <state>CONNECTOR_VERSION=0x01030000UL</state>
           <state>BOOTLOADER_ENABLED=0</state>
-          <state>IDIGI_TRANSPORT_TCP</state>
+          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
         </option>
         <option>
@@ -2052,9 +2053,9 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>IDIGI_CONNECTOR_VERSION=0x01030000UL</state>
+          <state>CONNECTOR_VERSION=0x01030000UL</state>
           <state>BOOTLOADER_ENABLED=0</state>
-          <state>IDIGI_TRANSPORT_TCP</state>
+          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
         </option>
         <option>
@@ -2996,9 +2997,9 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>IDIGI_CONNECTOR_VERSION=0x01030000UL</state>
+          <state>CONNECTOR_VERSION=0x01030000UL</state>
           <state>BOOTLOADER_ENABLED=0</state>
-          <state>IDIGI_TRANSPORT_TCP</state>
+          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
         </option>
         <option>
@@ -3940,9 +3941,9 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>IDIGI_CONNECTOR_VERSION=0x01030000UL</state>
+          <state>CONNECTOR_VERSION=0x01030000UL</state>
           <state>BOOTLOADER_ENABLED=0</state>
-          <state>IDIGI_TRANSPORT_TCP</state>
+          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
         </option>
         <option>
@@ -4884,9 +4885,9 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>IDIGI_CONNECTOR_VERSION=0x01030000UL</state>
+          <state>CONNECTOR_VERSION=0x01030000UL</state>
           <state>BOOTLOADER_ENABLED=0</state>
-          <state>IDIGI_TRANSPORT_TCP</state>
+          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
         </option>
         <option>
@@ -5673,6 +5674,9 @@
       <group>
         <name>include</name>
         <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\data_service.h</name>
         </file>
         <file>
@@ -5682,125 +5686,137 @@
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\flash_mqx.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\idigi_connector.h</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\os_support.h</name>
         </file>
       </group>
       <group>
         <name>platform</name>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.rci</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_config.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_point.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_service.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_file_system.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_firmware.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_network.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_os.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_remote.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_short_message.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_debug.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_types.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
-          <excluded>
-            <configuration>twrk60n512 Int Flash Debug</configuration>
-            <configuration>twrk60n512 Int Flash Release</configuration>
-            <configuration>twrk53 Int Flash Debug</configuration>
-            <configuration>twrk53 Int Flash Release</configuration>
-            <configuration>twrk70f120m Int Flash Debug</configuration>
-            <configuration>twrk70f120m Int Flash Release</configuration>
-          </excluded>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
-          <excluded>
-            <configuration>twrk60n512 Int Flash Debug</configuration>
-            <configuration>twrk60n512 Int Flash Release</configuration>
-            <configuration>twrk53 Int Flash Debug</configuration>
-            <configuration>twrk53 Int Flash Release</configuration>
-            <configuration>twrk70f120m Int Flash Debug</configuration>
-            <configuration>twrk70f120m Int Flash Release</configuration>
-          </excluded>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\idigi_connector.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\platform.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
-          <excluded>
-            <configuration>twrk60n512 Int Flash Debug</configuration>
-            <configuration>twrk60n512 Int Flash Release</configuration>
-            <configuration>twrk53 Int Flash Debug</configuration>
-            <configuration>twrk53 Int Flash Release</configuration>
-            <configuration>twrk70f120m Int Flash Debug</configuration>
-            <configuration>twrk70f120m Int Flash Release</configuration>
-          </excluded>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
-        </file>
+        <group>
+          <name>mqx</name>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_config.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_point.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_service.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_file_system.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_firmware.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_network.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_os.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_remote.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_short_message.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_debug.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_types.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\etherios-ca-cert-public.crt.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\file_system.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk60n512 Int Flash Release</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk70f120m Int Flash Debug</configuration>
+              <configuration>twrk70f120m Int Flash Release</configuration>
+            </excluded>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk60n512 Int Flash Release</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk70f120m Int Flash Debug</configuration>
+              <configuration>twrk70f120m Int Flash Release</configuration>
+            </excluded>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+            </excluded>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network_ssl.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\platform.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk60n512 Int Flash Release</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk70f120m Int Flash Debug</configuration>
+              <configuration>twrk70f120m Int Flash Release</configuration>
+            </excluded>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+            </excluded>
+          </file>
+        </group>
       </group>
       <group>
         <name>private</name>
@@ -5949,6 +5965,36 @@
           <name>$PROJ_DIR$\..\..\Etherios_CC\private\Readme.txt</name>
         </file>
       </group>
+    </group>
+    <group>
+      <name>fs_devices</name>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\MFS_USB.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\sdcard_task.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\sdcard_task.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\usb_classes.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\usb_classes.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\USB_File.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\USB_File.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\USB_Task.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Sources\fs_devices\USB_Task.h</name>
+      </file>
     </group>
     <file>
       <name>$PROJ_DIR$\Sources\application.c</name>

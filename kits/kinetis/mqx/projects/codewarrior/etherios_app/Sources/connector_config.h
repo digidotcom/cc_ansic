@@ -12,9 +12,8 @@
 
 /* General category */
 #define CONNECTOR_MAC_ADDRESS                         {0x00, 0x04, 0x9F, 0x01, 0xA0, 0x60}
-#define CONNECTOR_DEVICE_TYPE                         "myDeviceType"
-#define CONNECTOR_VENDOR_ID                           0x04000035 // 0x0300006F com 0x04000035 co.uk
-#define FLASH_PART_0_VER                         	  0x00010000
+#define CONNECTOR_DEVICE_TYPE                         "TWRK60N512"
+#define CONNECTOR_VENDOR_ID                           0x01000009 // 0x0300006F com 0x04000035 co.uk 0x01000009 test.
 
 /* Network category */
 #define CONNECTOR_CONNECTION_TYPE                     connector_connection_type_lan
@@ -25,7 +24,7 @@
 #define CONNECTOR_NO_COMPRESSION
 
 /* Advanced category */
-#define CONNECTOR_CLOUD_URL                           "my.idigi.co.uk"
+#define CONNECTOR_CLOUD_URL                           "test.etherios.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS             75
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS             75
 #define CONNECTOR_WAIT_COUNT                          5
@@ -35,4 +34,6 @@
 #define FILE_SYSTEM_SDCARD
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
-#define CONNECTOR_FIRMWARE_SERVICE
+//#define CONNECTOR_FIRMWARE_SERVICE
+#define CONNECTOR_RCI_SERVICE
+#define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 	256
