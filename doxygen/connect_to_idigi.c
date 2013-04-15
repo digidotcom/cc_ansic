@@ -1,4 +1,4 @@
-/*! @page connect_to_idigi Connect To Etherios Device Cloud
+/*! @page connect_to_device_cloud Connect To Etherios Device Cloud
  *
  * @htmlinclude nav.html
  *
