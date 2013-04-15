@@ -4,8 +4,8 @@
  *
  * @section table_of_contents_porting Getting Started
  *
- * The Getting Started process will walk you through the steps necessary to get Etherios Cloud Connector integrated into your
- * development environment and running applications which connect to Etherios Device Cloud.
+ * The Getting Started process will walk you through the steps necessary to get Etherios Cloud Connector integrated
+ * into your development environment and running applications that include a Device Cloud connection.
  *
  * These steps include:
  *
@@ -17,7 +17,9 @@
  *              -# @ref add_files
  *              -# @ref add_path
  *              -# @ref build_sample
- *              -# Ref resolving_compilation_issues
+ *              -# @ref resolving_compilation_issues
+ *                  -# @ref errors_due_to_C89_and_stdint
+ *                  -# @ref warnings_due_to_padding
  *          -# @ref step4
  *              -# @ref connector_login
  *              -# @ref connector_vendor_id
@@ -37,7 +39,7 @@
  *              -# @ref view_result_on_cloud
  *          -# @ref step9
  *
- * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_idigi", will be used to confirm your compilation tool chain
+ * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_device_cloud", will be used to confirm your compilation tool chain
  * and integration, respectively.  When complete, your device will be connected to Etherios Device Cloud and displayed
  * in the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
@@ -96,7 +98,8 @@
  *
  * Open the file connector_config.h in the sample directory to configure processor endianess.
  *
- * The Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian, comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
+ * The Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian,
+ * comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
  *
  * @section step3 Step 3: Build the compile_and_link sample
  *
@@ -121,8 +124,9 @@
  * where appropriate.
  *
  * @subsection add_files Add the source files to your build system
- * The following is a list of files required to build.  There is a sample
- * linux Makefile provided (public/run/samples/compile_and_link/Makefile) which you
+ * In this sample, there is only one include path and two C files needed to build the sample.
+ *
+ * There is a sample linux Makefile provided (public/run/samples/compile_and_link/Makefile) which you
  * can use as a reference.  Add the following files to your make/build system.
  *
  * @htmlonly
@@ -146,32 +150,64 @@
  * @endhtmlonly
  *
  * @subsection add_path Add the include paths
+ *
  * The following is a list of include paths to add to your system:
  *
  * @li public/include
  *
- * @subsection add_define Add the defines
- *
- * The following define is required, and used to indicate that the version of
- * Etherios Cloud Connector is 1.2
- *
- * @li CONNECTOR_VERSION=0x1020000UL
- *
- * @subsection build_sample Build the sample
+ * @subsection build_sample Build the compile_and_link sample
  *
  * Now that you have the build environment setup, verify the Cloud Connector compilation and link.
  * If using the Makefile provided, type @htmlonly"<I>make clean all</I>"@endhtmlonly in
- * the compile_and_link directory, otherwise perform a build in your environment.
+ * the compile_and_link directory, otherwise perform a build according to your environment's
+ * guidelines.
  *
- * @note See the @ref language for compilation tool requirements.
+ * @subsection resolving_compilation_issues Addressing compile_and_link compilation problems
+
+ * The Linux makefiles that come with the package include very strict warnings and error checking.
+ * This is done to expose as many issues as possible before executing the code.   In addition,
+ * their is a clear guideline for @ref language "C Compiler language support".
  *
- * @subsection resolving_compilation_issues Addressing compilation problems
+ * If you are experiencing problems building the Etherios Cloud Connector software, first double
+ * check the steps listed in the prior instructions.
  *
- * If you are experiencing problems building the Etherios Cloud Connector software, first double check
- * the steps listed in the prior instructions.
+ * @subsection errors_due_to_C89_and_stdint Errors due to to "alignment boundary structure padding"
+ * Some ANSI C89 compilers include elements of ANSI C99, in particular, stdint.h which is apart of ANSI C99.
+ * For these compilers, the compilation will result in errors.
  *
- * There is only one include path and two C files required to build this sample.
+ * @code
+ * In file included from ../../../include/connector_api.h:66,
+ *                  from ../../platforms/linux/config.c:20:
+ * ../../../include/connector_types.h:83: error: conflicting types for uint32_t
+ * /usr/include/stdint.h:52: note: previous declaration of uint32_t was here
+ * make: *** [../../platforms/linux/config.o] Error 1
+ * @endcode
  *
+ * These compilation errors can be resolved by defining CONNECTOR_HAVE_STDINT_HEADER in your make or
+ * build system.
+ *
+ * @subsection warnings_due_to_padding Warnings due to "alignment boundary structure padding"
+ * The Linux makefiles that come with the package include very strict warnings and error checking.
+ * Many processors, like ARM, have strict guidelines for word boundaries.  For these processors,
+ * padding is required at the end of structure to prevent mis-aligned structures in array processing.
+ *
+ * @code
+ * In file included from ../../../../private/connector_def.h:140,
+ *                  from ../../../../private/connector_api.c:27:
+ * ../../../../private/connector_edp_def.h:129: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:167: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:204: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:211: warning: padding struct size to alignment boundary
+ * In file included from ../../../../private/connector_def.h:144,
+ *                  from ../../../../private/connector_api.c:27:
+ * ../../../../private/connector_sm_def.h:174: warning: padding struct size to alignment boundary
+ * In file included from ../../../../private/connector_edp.h:23,
+ *                  from ../../../../private/connector_api.c:44:
+ * @endcode
+ *
+ * These warnings are perfectly safe.  However, you should review all warnings to confirm their safety.
+ *
+ * @note
  *
  * Once the build is successful you can proceed to the next step.
  *
@@ -184,7 +220,7 @@
  * Before getting started you will need to create a new Etherios Device Cloud account and obtain a unique Etherios Device Cloud Vendor ID (which is
  * a unique identifier for your company).
  *
- * Later in this process, when you get the connect_to_idigi sample @ref good_results_output "running successfully", you will be @ref add_your_device_to_the_cloud "instructed to register"
+ * Later in this process, when you get the connect_to_device_cloud sample @ref good_results_output "running successfully", you will be @ref add_your_device_to_the_cloud "instructed to register"
  * your Device ID with Etherios Device Cloud.
  *
  * To create an account, navigate to
@@ -213,9 +249,9 @@
  *
  * @note If you already have a vendor ID, it will be displayed instead of the button.
  *
- * @section step5 Step 5: Porting your platform for the connect_to_idigi sample
+ * @section step5 Step 5: Porting your platform for the connect_to_device_cloud sample
  *
- * The @b connect_to_idigi sample validates the most fundamental Etherios Cloud Connector porting aspects.  If you can successfully connect and stay
+ * The @b connect_to_device_cloud sample validates the most fundamental Etherios Cloud Connector porting aspects.  If you can successfully connect and stay
  * connected to Etherios Device Cloud, all other Etherios Cloud Connector functions (like @ref put_request "sending data" or @ref firmware_download "firmware download")
  * should work without failure.
  *
@@ -353,7 +389,7 @@
  *
  * @subsection add_c_files Add the source files to your build system
  *
- * To build the connect_to_idigi sample you will need to add the files shown below
+ * To build the connect_to_device_cloud sample you will need to add the files shown below
  * to your build environment.
  *
  * @htmlonly
@@ -372,7 +408,7 @@
  * <td>application.c</td>
  * <td>Contains the code which runs the sample and main callback that calls
  * callbacks in os.c, network_tcp.c, and config.c</td>
- * <td>public/run/samples/connect_to_idigi</td>
+ * <td>public/run/samples/connect_to_device_cloud</td>
  * </tr>
  * <tr>
  * <td>os.c</td>
@@ -405,20 +441,20 @@
  * @li public/include
  * @li run/platforms/@a my_platform
  *
- * @section step7 Step 7: Build the connect_to_idigi sample
+ * @section step7 Step 7: Build the connect_to_device_cloud sample
  * Next, build the sample.  If you are running on Linux you can simply type: @htmlonly"<I>make clean all</I>"@endhtmlonly
- * in the public/run/samples/connect_to_idigi, if you are not using Linux then
+ * in the public/run/samples/connect_to_device_cloud, if you are not using Linux then
  * you will have to build for your environment.
  *
- * @section step8 Step 8: Run the connect_to_idigi sample
+ * @section step8 Step 8: Run the connect_to_device_cloud sample
  * The name of the executable generated by the Linux Makefile is called idigi.
  * In Linux, type ./idigi from a console to execute the program.
  *
 * @note By default @ref CONNECTOR_DEBUG is defined in connector_config.h, which prints helpful Etherios Cloud Connector Library debug
  * messages to the standard output.
  *
- * @subsection good_results_output Example output from a successful run of connect_to_idigi
- * Below is the standard output shown for a successful @ref step7 "connect_to_idigi" run:
+ * @subsection good_results_output Example output from a successful run of connect_to_device_cloud
+ * Below is the standard output shown for a successful @ref step7 "connect_to_device_cloud" run:
  *
  * @code
  *  >./idigi

@@ -5,25 +5,48 @@
  * @section data_service_overview Data Service Overview
  *
  * The Data Service API is used to send data to and from Etherios Device Cloud.  Data service transfers
- * are either initiated from Etherios Device Cloud or the device itself. The following requests under
- * @ref connector_class_id_data_service are listed below:
+ * are either initiated from Etherios Device Cloud (@ref device_request) or the device itself (@ref send_data).
  *
- * @li @ref put_request : Data transfers initiated by the device and used to
- * write files on to Etherios Device Cloud.  Etherios Device Cloud may send a status response back
- * indicating the transfer was successful.
- * @li @ref device_request : Transfers initiated from a web services client connected to Etherios Device Cloud
- * to the device.  This transfer is used to send data to the device and the device may send a response back.
- * @li @ref data_point_request : These are device originated messages to send data points to Etherios Device Cloud.
- * The provided path name will be used as the stream ID and the stream can be accessed by Etherios Device Manager.
+ * @li @ref send_data : Data transfers initiated by the device and used to write files on to Etherios Device Cloud.
+ * Device Cloud may send a response back to the device indicating the transfer status.
+ * @li @ref device_request : Transfers initiated from a web services client connected to Etherios Device Cloud which
+ * hosts the device. This transfer is used to send data to the device and the device may send a response back.
  *
  * @note See @ref data_service_support under Configuration to disable the data service.
  *
- * @section put_request Put Request
+ * @section send_data Send data to Device Cloud
  *
- * @subsection initiate_send Initiate Sending Data
+ * This is one way the device can send data to Etherios Device Cloud. The other method is using @ref data_points.
+ * It is the device originated transaction, starts when the connector_initiate_action() is called with request ID
+ * @ref connector_initiate_send_data.
  *
- * The application initiates the Put Request to Etherios Device Cloud by calling connector_initiate_action()
- * with @ref connector_initiate_send_data request and @ref connector_data_service_put_request_t request_data.
+ * Etherios Cloud Connector invokes the application-defined callback to get the actual data to send and to pass
+ * Device Cloud response.
+ *      -# @ref initiate_send_data
+ *      -# @ref send_data_length_callback
+ *      -# @ref send_data_callback
+ *      -# @ref send_data_response_callback
+ *      -# @ref send_data_status_callback
+ *
+ * Once the @ref initiate_send_data is called the callbacks will be called in following sequence:
+ *      -# Etherios Cloud Connector calls application-defined callback @ref send_data_callback to get the user data (chunk of data).
+ *      -# Etherios Cloud Connector calls application-defined callback @ref send_data_response_callback to pass Device Cloud response.
+ *      -# Etherios Cloud Connector calls application-defined callback @ref send_data_status_callback to inform session complete if
+ *         the response is not requested or error occurs while sending the data.
+ *
+ * For a non-tcp transport session, before making the very first call to get the user data, Etherios Cloud
+ * Connector will call the @ref send_data_length_callback to get the total length of the response data.
+ *
+ * Etherios Cloud Connector calls @ref send_data_callback repeatedly to get all data.
+ *
+ * @note See @ref data_service_support under Configuration to enable the data service.
+ * @note See @ref CONNECTOR_TRANSPORT_TCP and @ref network_tcp_start to enable and start TCP.
+ * @note See @ref CONNECTOR_TRANSPORT_UDP and @ref network_udp_start to enable and start UDP.
+ *
+ * @subsection initiate_send_data Initiate Sending Data
+ *
+ * The application initiates the send data to Etherios Device Cloud by calling connector_initiate_action()
+ * with @ref connector_initiate_send_data request and @ref connector_request_data_service_send_t request_data.
  *
  * The connector_initiate_action() is called with the following arguments:
  *
@@ -46,17 +69,15 @@
  * </tr>
  * <tr>
  *   <td>request_data</td>
- *   <td> Pointer to @endhtmlonly connector_data_service_put_request_t @htmlonly structure, where member:
+ *   <td> Pointer to @endhtmlonly connector_request_data_service_send_t @htmlonly structure, where member:
  *        <ul>
- *        <li><b><i>path</i></b> is Etherios Device Cloud file path containing the data</li>
- *        <li><b><i>content_type</i></b> is "text/plain", "text/xml", "application/json", etc</li>
- *        <li><b><i>flags</i></b> are the @endhtmlonly @ref put_flags @htmlonly</li>
- *        <li><b><i>context</i></b> is the application session context</li>
+ *        <li><b><i>transport</i></b>, a method to use to send data </li>
+ *        <li><b><i>user_context</i></b>, is the user owned context pointer </li>
+ *        <li><b><i>path</i></b> is Etherios Device Cloud file path containing the data (shouldn't be stack variable) </li>
+ *        <li><b><i>content_type</i></b> is "text/plain", "text/xml", "application/json", etc (shouldn't be stack variable) </li>
+ *        <li><b><i>option</i></b>, is to inform Device Connector on what to do with the data </li>
+ *        <li><b><i>response_required</i></b>, set to connector_true is the response is needed </li>
  *        </ul></td>
- * </tr>
- * <tr>
- *   <td>response_data </td>
- *   <td> NULL </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -64,14 +85,16 @@
  *
  * An example of initiating a device transfer is shown below:
  * @code
- *   static connector_data_service_put_request_t header;
+ *   static connector_request_data_service_send_t header;
  *   static char file_path[] = "testdir/testfile.txt";
  *   static char file_type[] = "text/plain";
  *
- *   header.flags = CONNECTOR_DATA_PUT_APPEND;
+ *   header.transport = connector_transport_tcp;
  *   header.path  = file_path;
  *   header.content_type = file_type;
- *   header.context = &header;
+ *   header.response_required = connector_true;
+ *   header.option = connector_data_service_send_option_append;
+ *   header.context = file_path;
  *
  *   // Begin a file transfer to Etherios Device Cloud
  *   status = connector_initiate_action(handle, connector_initiate_send_data, &header);
@@ -82,28 +105,16 @@
  * on Etherios Device Cloud.  Once Etherios Device Cloud is ready to receive data
  * from the device the application callback is called requesting data.
  *
- * @subsection get_data Put Request Callback
+ * Note: The header, file_path and file_type above are not stack variables. Either you can use a heap or a memory (global or static)
+ * variable to hold these values. You can release themwhen you get a @ref  connector_request_id_data_service_send_response "response"
+ * or @ref connector_request_id_data_service_send_status "status" callback. The value passed as the user_context will be returned
+ * in every callback for this session. User is free to update this at any point during the session.
  *
- * After calling connector_initiate_action(), Etherios Cloud Connector will make @ref connector_data_service_put_request "Put Request"
- * @ref connector_callback_t "callbacks" to retrieve the application data. These callbacks will continue
- * until the transfer is complete or an error is encountered. @ref CONNECTOR_MSG_LAST_DATA flag in the client_data
- * field indicates the last chunk of data.
+ * @subsection send_data_length_callback Get total length callback
  *
- * For a non-tcp transport session, before making the very first @ref connector_data_service_put_request "Put Request"
- * callback, Etherios Connector will call the @ref total_length "total length" callback to get the total
+ * For a non-tcp transport session, before making the very first @ref connector_request_id_data_service_send_data "Send Data"
+ * callback, Cloud Connector will call the @ref connector_request_id_data_service_send_length "total length" callback to get the total
  * length of the send buffer.
- *
- * The data to the server (@ref connector_data_service_type_need_data message type) is sent in the
- * connector_data_service_msg_response_t field.
- *
- * The response from the server (@ref connector_data_service_type_have_data message type) is received in the
- * connector_data_service_msg_request_t field. Typically the response consists of
- * the success or error status code and text of the data service session.
- *
- * A callback with @ref connector_data_service_type_error message type is received when message processing error occurs.
- * This aborts the data service session.
- *
- * The @ref connector_data_service_put_request "Put Request"  @ref connector_callback_t "callback" is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -119,58 +130,17 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_data_service_put_request @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_data_service_send_length @htmlonly</td>
  * </tr>
  * <tr>
- *   <td>request_data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_data_service_msg_request_t @htmlonly structure:<br></br>
- *     <b><i>service_context</i></b> set to the request_data argument from the @endhtmlonly connector_initiate_action() @htmlonly
- *     @endhtmlonly @ref connector_initiate_send_data @htmlonly call<br></br>
- *     <b><i>message_type</i></b> can be set to one of the following:
- *       <ul>
- *       <li> @endhtmlonly @ref connector_data_service_type_need_data @htmlonly: request to send more data to the server.</li>
- *       <li> @endhtmlonly @ref connector_data_service_type_have_data @htmlonly: response from the server.</li>
- *       <li> @endhtmlonly @ref connector_data_service_type_error @htmlonly: message processing error.</li>
- *       </ul>
- *
- *     <b><i>server_data</i></b> is based on <i>message_type</i> setting:
- *       <ul>
- *       <li> For <i>message_type</i> set to @endhtmlonly @ref connector_data_service_type_need_data @htmlonly: server_data not used.</li>
- *       <li> For <i>message_type</i> set to @endhtmlonly @ref connector_data_service_type_have_data @htmlonly: server_data points to a @endhtmlonly connector_data_service_block_t @htmlonly structure where:
- *           <ul>
- *           <li> <b><i>data</i></b> might contain response from the server.</li>
- *           <li> <b><i>length_in_bytes</i></b> is the size of response from the server.</li>
- *           <li> <b><i>flags</i></b> is @endhtmlonly @ref data_service_flags @htmlonly: success or error code from the server.</li>
- *           </ul></li>
- *       <li> For <i>message_type</i> set to @endhtmlonly @ref connector_data_service_type_error @htmlonly: server_data points to a @endhtmlonly connector_data_service_block_t @htmlonly structure:
- *           <ul>
- *           <li>where <b><i>data</i></b> contains the message processing error code of @endhtmlonly @ref connector_msg_error_t @htmlonly type.</li>
- *           </ul></li>
- *       </ul>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_data_service_length_t @htmlonly structure:<br></br>
+ *     <ul>
+ *       <li><b><i>transport</i></b>, a method chosen to send data </li>
+ *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
+ *       <li><b><i>total_bytes</i></b>, the total size of the user data to send in bytes </li>
+ *     </ul>
  *   </td>
- * </tr>
- * <tr>
- *   <td>request_length</td>
- *   <td> [IN] Size of @endhtmlonly connector_data_service_msg_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>[OUT] pointer to @endhtmlonly connector_data_service_msg_response_t @htmlonly structure where:
- *   <ul>
- *   <li><b><i>user_context</i></b> is not used.</li>
- *   <li><b><i>message_status</i></b> is the status of @endhtmlonly @ref connector_msg_error_t @htmlonly type to send to the server on return.</li>
- *   <li><b><i>client_data</i></b> points to a @endhtmlonly connector_data_service_block_t @htmlonly structure where:
- *      <ul>
- *      <li><b><i>data</i></b> points to a copy of the data sent to the server.</li>
- *      <li><b><i>length_in_bytes</i></b> is the size of data buffer on input, actual data size on output.</li>
- *      <li><b><i>@endhtmlonly @ref data_service_flags "flags" @htmlonly</i></b> used to mark the @endhtmlonly @ref CONNECTOR_MSG_FIRST_DATA "first" @htmlonly @endhtmlonly or @ref CONNECTOR_MSG_LAST_DATA "last" @htmlonly chunk of data.</li>
- *      </ul></li>
- *    </ul>
- * </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>[OUT] Size of @endhtmlonly connector_data_service_msg_response_t @htmlonly</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -189,76 +159,169 @@
  * </table>
  * @endhtmlonly
  *
- * An example of an application callback for a put request is shown below:
+ * @subsection send_data_callback Send data callback
  *
- * @code
- * connector_callback_status_t app_data_service_callback(connector_class_id_t const class_id, connector_request_id_t const request_d,
- *                                                  void const * request_data, size_t const request_length,
- *                                                  void * response_data, size_t * const response_length)
- * {
- *    connector_callback_status_t status = connector_callback_continue;
- *    connector_data_service_msg_request_t const * const put_request = request_data;
- *    connector_data_service_msg_response_t * const put_response = response_data;
+ * After calling connector_initiate_action(), Etherios Cloud Connector will make @ref connector_request_id_data_service_send_data "Send Data"
+ * @ref connector_callback_t "callbacks" to retrieve the application data. These callbacks will continue
+ * until the user sets more_data flag to connector_false or an error is encountered.
  *
+ * The @ref connector_request_id_data_service_send_data "Send Data" @ref connector_callback_t "callback" is called with the following information:
  *
- *     if (class_id == connector_class_id_data_service && request_id.data_service_request == connector_data_service_device_request)
- *    {
- *        switch (put_request->message_type)
- *        {
- *        case connector_data_service_type_need_data: // Etherios Device Cloud requesting data
- *            {
- *                connector_data_service_block_t * const message = put_response->client_data;
- *                char const buffer[] = "iDigi data service sample\n";
- *                size_t const bytes = strlen(buffer);
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>class_id</td>
+ *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_id</td>
+ *   <td>@endhtmlonly @ref connector_request_id_data_service_send_data @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_data_service_send_data_t @htmlonly structure:<br></br>
+ *     <ul>
+ *       <li><b><i>transport</i></b>, a method chosen to send data </li>
+ *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
+ *       <li><b><i>buffer</i></b> pointer to store user data </li>
+ *       <li><b><i>bytes_available</i></b>, the maximum number of bytes the user can copy to the buffer </li>
+ *       <li><b><i>bytes_used</i></b>, the number of bytes filled, cannot be more than the bytes_available </li>
+ *       <li><b><i>more_data</i></b>, set to connector_true if more data to send, the callback will be called again in that case </li>
+ *     </ul>
+ *   </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Continue</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Aborts Etherios Cloud Connector</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
+ * <td>Busy and needs to be called back again</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
  *
- *                if (message->length_in_bytes > bytes)
- *                    message->length_in_bytes = bytes;
+ * @subsection send_data_response_callback Send data response callback
  *
- *                memcpy(message->data, buffer, message->length_in_bytes);
- *                message->flags = CONNECTOR_MSG_LAST_DATA | CONNECTOR_MSG_FIRST_DATA;
- *                put_response->message_status = connector_msg_error_none;
- *            }
- *            break;
+ * Etherios Cloud Connector will make @ref connector_request_id_data_service_send_response "response"
+ * @ref connector_callback_t "callback" to pass Etherios Device Cloud response to the send data request.
+ * User can free their user_context and any other reserved data as soon as they receive this callback.
  *
- *        case connector_data_service_type_have_data: // Response from Etherios Device Cloud
- *            {
- *                connector_data_service_block_t * const message = put_request->server_data;
+ * The @ref connector_request_id_data_service_send_response "response" @ref connector_callback_t "callback"
+ * is called with the following information:
  *
- *                APP_DEBUG("Received %s response from server\n",
- *                          ((message->flags & CONNECTOR_MSG_RESP_SUCCESS) != 0) ? "success" : "error");
- *                if (message->length_in_bytes > 0)
- *                {
- *                    char * const data = message->data;
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>class_id</td>
+ *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_id</td>
+ *   <td>@endhtmlonly @ref connector_request_id_data_service_send_response @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_data_service_send_response_t @htmlonly structure:<br></br>
+ *     <ul>
+ *       <li><b><i>transport</i></b>, a method chosen to send data </li>
+ *       <li><b><i>user_context</i></b>, holds the user owned context pointer </li>
+ *       <li><b><i>response</i></b> response code returned from Device Cloud </li>
+ *       <li><b><i>hint</i></b>, incase of error, Device Connector will return a cause for failure </li>
+ *     </ul>
+ *   </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Continue</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Aborts Etherios Cloud Connector</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
+ * <td>Busy and needs to be called back again</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
  *
- *                    data[message->length_in_bytes] = '\0';
- *                    APP_DEBUG("Server response %s\n", data);
- *                }
- *            }
- *            break;
+ * @subsection send_data_status_callback Send data status callback
  *
- *        case connector_data_service_type_error: // Etherios Device Cloud sent back an error
- *            {
- *                connector_data_service_block_t * const message = put_request->server_data;
- *                connector_msg_error_t const * const error_value = message->data;
+ * Etherios Cloud Connector will make @ref connector_request_id_data_service_send_status "status"
+ * @ref connector_callback_t "callback" to pass the reason for session complete. User will receive this
+ * callback when Device Connector response is not requested or in case of any errors. The error from
+ * the application level is returned via @ref connector_request_id_data_service_send_response "response".
+ * User can free their user_context and any other reserved data as soon as they receive this callback.
  *
- *                APP_DEBUG("Data service error: %d\n", *error_value);
- *            }
- *            break;
+ * The @ref connector_request_id_data_service_send_status "status" @ref connector_callback_t "callback"
+ * is called with the following information:
  *
- *        default:
- *            APP_DEBUG("Unexpected command: %d\n", request);
- *            break;
- *        }
- *    }
- *    else
- *    {
- *        APP_DEBUG("Request not supported in this sample: %d\n", request);
- *    }
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>class_id</td>
+ *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_id</td>
+ *   <td>@endhtmlonly @ref connector_request_id_data_service_send_status @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_data_service_status_t @htmlonly structure:<br></br>
+ *     <ul>
+ *       <li><b><i>transport</i></b>, a method chosen to send data </li>
+ *       <li><b><i>user_context</i></b>, holds the user owned context pointer </li>
+ *       <li><b><i>status</i></b> reason to end the session, returned from Device Connector </li>
+ *       <li><b><i>session_error</i></b>, this field will carry the session error code
+ *                 when the status is set to connector_data_service_status_session_error </li>
+ *     </ul>
+ *   </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Continue</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Aborts Etherios Cloud Connector</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
+ * <td>Busy and needs to be called back again</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
  *
- * done:
- *    return status;
- * }
- * @endcode
  *
  * @section device_request Device Request
  *
@@ -594,146 +657,6 @@
  * in turn sends it to the device. An example of an application callback for a device
  * request is show below:
  *
- *
- * @section data_point_request Data point request
- *
- * @subsection initiate_data_point Initiate the data point request
- *
- * The application initiates the Data point request to Etherios Device Cloud by calling connector_initiate_action()
- * with @ref connector_initiate_data_point request and @ref connector_message_dp_request_t "data point request" as request_data.
- *
- * The connector_initiate_action() is called with the following arguments:
- *
- * @htmlonly
- * <table class="apitable">
- * <tr>
- *   <th colspan="2" class="title">Arguments</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Name</th>
- *   <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <td>handle</td>
- *   <td>@endhtmlonly @ref connector_handle_t @htmlonly returned from the @endhtmlonly connector_init() @htmlonly function.</td>
- * </tr>
- * <tr>
- *   <td>request</td>
- *   <td>@endhtmlonly @ref connector_initiate_data_point @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>request_data</td>
- *   <td> Pointer to @endhtmlonly connector_message_dp_request_t @htmlonly structure, where member:
- *      <ul>
- *        <li><b><i>transport</i></b> is the communication method used to send the data point to Etherios Device Cloud</li>
- *        <li><b><i>flags</i></b> is set to @endhtmlonly @ref CONNECTOR_DATA_RESPONSE_NOT_NEEDED @htmlonly if no response is needed</li>
- *        <li><b><i>user_context</i></b> is the application context which will be returned in the response</li>
- *        <li><b><i>channels</i></b> pointer to first @endhtmlonly connector_message_dia_channel_t @htmlonly structure where:
- *        <ul>
- *          <li><b><i>name</i></b> points to dia channel name, a null-terminated string.</li>
- *          <li><b><i>data</i></b> points to dia data buffer.</li>
- *          <li><b><i>bytes</i></b> size of data buffer in bytes.</li>
- *          <li><b><i>unit</i></b> a null-terminated string, carries the unit (e.g. "mph\0").</li>
- *          <li><b><i>type</i></b> @endhtmlonly @ref connector_dia_data_type_t "data type" @htmlonly</li>
- *          <li><b><i>content_type</i></b> @endhtmlonly @ref connector_dia_content_type_t "content type" @htmlonly</li>
- *          <li><b><i>time</i></b> is a time structure where:
- *          <ul>
- *            <li><b><i>source</i></b> local time or server time.</li>
- *            <li><b><i>value</i></b> ISO 8601 string for TCP transport and epoch time for non-TCP transport.</li>
- *          </ul></li>
- *        </ul></li>
- *      </ul></td>
- * </tr>
- * <tr>
- *   <td>response_data </td>
- *   <td> NULL </td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- *
- * An example of initiating a data point request is shown below:
- * @code
- * //TBD: The data point request code goes here.
- * @endcode
- *
- * This example will invoke Etherios Connector to initiate a data point request to Etherios Device
- * Cloud. If the response needed is set (on non-TCP method), the application callback is called
- * with the cloud response or error in case Etherios Connector fails to send the request.
- *
- * @subsection dp_response Callback with data point response
- *
- * After calling connector_initiate_action(), Etherios Connector will prepare and send data point request
- * to Etherios Device Cloud asynchronously. Upon receiving the response, it makes
- * @ref connector_data_service_dp_response "data point response" callback to pass the response to the application.
- * Application is free to release the allocated resources at this point.
- *
- * The response from the server is received in the @ref connector_message_status_response_t "status" as request_data.
- * Typically the response consists of the success or error status code and an optional text message in case of error.
- *
- * The @ref connector_data_service_dp_response "data point response" @ref connector_callback_t "callback" is called with the
- * following information:
- *
- * @htmlonly
- * <table class="apitable">
- * <tr>
- *   <th colspan="2" class="title">Arguments</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_id_data_service @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_data_service_dp_response @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>request_data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_message_status_response_t @htmlonly structure:
- *      <ul>
- *        <li><b><i>user_context</i></b> is the user context passed in the @endhtmlonly connector_initiate_action() @htmlonly
- *              with @endhtmlonly @ref connector_initiate_data_point @htmlonly call</li>
- *        <li><b><i>status</i></b> @endhtmlonly @ref connector_session_status_t @htmlonly returned from Etherios device cloud
- *               or any error while preparing/sending data point request</li>
- *        <li><b><i>error_text</i></b> an optional error reason string</li>
- *      </ul>
- *   </td>
- * </tr>
- * <tr>
- *   <td>request_length</td>
- *   <td> [IN] Size of @endhtmlonly connector_message_status_response_t @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td>[OUT] NULL </td></tr>
- * <tr>
- *   <td>response_length</td>
- *   <td>[OUT] 0 </td> </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr>
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
- * <tr>
- * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Continue</td>
- * </tr>
- * <tr>
- * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Etherios Cloud Connector</td>
- * </tr>
- * <tr>
- * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
- * <td>Busy and needs to be called back again</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * An example of an application callback for a data point is shown below:
- *
- * @code
- * // TBD: The sample data point callback code goes here.
- * @endcode
  *
  * @section zlib Optional Data Compression Support
  * Etherios Cloud Connector has an optional Data Compression switch that reduces the amount of network traffic.  This option requires applications

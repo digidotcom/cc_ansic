@@ -398,7 +398,7 @@
  * @subsection PortingFocus Porting Guidelines
  * The Etherios Cloud Connector @ref getting_started process includes pulling Etherios Cloud Connector into your local build environment, getting the private partition
  * compiled and linked (using the @ref step3 "compile_and_link" sample) and then your @ref step5 "platform ported".  Once your platform
- * is ported, you will verify and confirm your port using the @ref step7 "connect_to_idigi" sample.
+ * is ported, you will verify and confirm your port using the @ref step7 "connect_to_device_cloud" sample.
  *
  * When porting, it is strongly recommended that you maintain the structure of the public Application Framework.  Once porting, compilation and testing
  * are complete, the you can dismantle this framework and incorporate Etherios Cloud Connector into your environment as you see fit.
@@ -440,7 +440,7 @@
  * functions, your porting effort is complete.
  *
  * @subsection DebugTips How to debug your Port
- * After porting and compiling, you will run the @ref step7 "connect_to_idigi" sample.  We recommend that you carefully
+ * After porting and compiling, you will run the @ref step7 "connect_to_device_cloud" sample.  We recommend that you carefully
  * observe the standard output from the application.  In particular, the @ref error_status callback will display error
  * data when porting errors are detected in the callbacks.
  *
