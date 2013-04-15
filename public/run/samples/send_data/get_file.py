@@ -12,7 +12,7 @@
 # get_file.py
 # Get a file from Etherios Device Cloud storage
 # -------------------------------------------------
-# Usage: get_file.py <username> <password> <device_id> [<cloud_url>]
+# Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
 
 import httplib
