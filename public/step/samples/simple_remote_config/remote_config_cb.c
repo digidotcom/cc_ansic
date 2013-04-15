@@ -26,6 +26,14 @@ remote_group_table_t remote_setting_table[] = {
      app_system_group_end,
      app_system_group_cancel
     },
+/* These are device security callbacks in devicesecurity.c
+*    {app_device_security_group_init,
+*     app_device_security_group_set,
+*     app_device_security_group_get,
+*     app_device_security_group_end,
+*     app_device_security_group_cancel
+*    }
+*/
 };
 
 
@@ -109,6 +117,8 @@ static remote_group_table_t * get_group_table(connector_remote_group_type_t grou
             group_ptr = &remote_state_table[group_index];
         }
         break;
+    default:
+        APP_DEBUG("get_group_table: group not found. type = %d index = %d\n", group_type, group_index);
     }
 
     return group_ptr;
