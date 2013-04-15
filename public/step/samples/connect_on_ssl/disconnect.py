@@ -1,5 +1,5 @@
 # ***************************************************************************
-# Copyright (c) 2011, 2012 Digi International Inc.,
+# Copyright (c) 2012, 2013 Digi International Inc.,
 # All rights not expressly granted are reserved.
 # 
 # This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,7 +12,7 @@
 # disconnect.py
 # Send disconnect SCI operation to disconnect Etherios Device Cloud.
 # -------------------------------------------------
-# Usage: disconnect.py <username> <password> <device_id> [<cloud_url>]
+# Usage: disconnect.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
 
 import httplib
@@ -20,8 +20,29 @@ import base64
 import sys
 
 def Usage():
-    print 'Usage: disconnect.py <username> <password> <device_id> [<cloud_url>]\n'
-   
+    print 'Usage: disconnect.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
+    print '    Causes a device to momentarily disconnect from Device Cloud.'
+    print '    where:' 
+    print '        <Username> is the Device Cloud for Etherios account Username to which your device is'
+    print '                   connected.'
+    print '        <Password> is the account password'
+    print '        <Device ID> is the device to disconnect.' 
+    print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
+    print '                   login.etherios.com.' 
+    print '' 
+    print '    Note:'
+    print '        <Device ID> format can either be:'
+    print '            Long: 00000000-00000000-00049DFF-FFAABBCC.' 
+    print '            or short: 00049DFF-FFAABBCC\n'
+    print '    Example Usage:' 
+    print '        python ./disconnect.py myaccount mypassword 00049DFF-FFAABBCC'
+    print '            Momentarily disconnects 00000000-00000000-00049DFF-FFAABBCC (in user account'
+    print '            myaccount) from login.etherios.com.\n'
+    print '        python ./disconnect.py myukaccount myukpassword 00049DFF-FFAABBCC login.etherios.co.uk'
+    print '            Momentarily disconnects 00000000-00000000-00049DFF-FFAABBCC (in user account'
+    print '            myukaccount) from login.etherios.co.uk.\n'
+
+
 def PostMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
@@ -54,10 +75,9 @@ def PostMessage(username, password, device_id, cloud_url):
     
     # print the output to standard out
     if statuscode == 200:
-        print '\nResponse:'
-        print response_body
+        print '%s successfully disconnected from %s' %(device_id, cloud_url)
     else:
-        print '\nError: %d %s' %(statuscode, statusmessage)
+        print '\nERROR: %d %s\n' %(statuscode, statusmessage)
         print response_body
         
     webservice.close()
@@ -72,8 +92,7 @@ def main(argv):
             cloud_url = argv[3]
         else:
             cloud_url = "login.etherios.com"
-        PostMessage(argv[0], argv[1], argv[2], cloud_url))
-
+        PostMessage(argv[0], argv[1], argv[2], cloud_url)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
