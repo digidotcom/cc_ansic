@@ -23,7 +23,7 @@ import re
 def Usage():
     print 'Usage: get_file.py <username> <password> <device_id> [<cloud_url>]\n'
 
-def GetMessage(username, password, device_id):
+def GetMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]

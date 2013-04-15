@@ -38,7 +38,7 @@ def PostMessage(username, password, device_id, cloud_url):
     """%(device_id)
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP("login.etherios.com",80)
+    webservice = httplib.HTTP(cloud_url,80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header
