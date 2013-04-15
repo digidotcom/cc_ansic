@@ -132,13 +132,13 @@
  *
  * @section python_script Python script to retrieve a file from Etherios Device Cloud storage
  *
- * This sample provides a simple python script to retrive the test.txt file from my.idigi.com
- * after a device has sent test.txt into the server.
+ * This sample provides a basic python script to retrieve the test.txt file from login.etherios.com
+ * after a device has sent it to the Device Cloud.
  *
- * Run the python script in the sample. 
+ * Run the python script in the sample:
  *
  * @code
- * python get_file.py <username> <password> <device_id>
+ * python ./get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
  * @endcode
  *
  * The script prints the content of test.txt.
