@@ -39,13 +39,13 @@
  *              -# @ref view_result_on_cloud
  *          -# @ref step9
  *
- * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_idigi", will be used to confirm your compilation tool chain
+ * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_device_cloud", will be used to confirm your compilation tool chain
  * and integration, respectively.  When complete, your device will be connected to Etherios Device Cloud and displayed
  * in the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
  * @section step1 Step 1: Determine if your compiler is C89 or C99 compliant
  *
- * The Etherios Cloud Connector is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99) compliant.  If
+ * Etherios Cloud Connector is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99) compliant.  If
  * your compiler is ANSI C89 or C99 compliant and you are running on a 32-bit processor you can skip
  * to the next section.  (Note the @ref CONNECTOR_RCI_SERVICE "Remote Configuration" feature requires
  * ANSI C99.)
@@ -98,7 +98,7 @@
  *
  * Open the file connector_config.h in the sample directory to configure processor endianess.
  *
- * The Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian, comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
+ * Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian, comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
  *
  * @section step3 Step 3: Build the compile_and_link sample
  *
@@ -169,7 +169,7 @@
  *
  * @subsection resolving_compilation_issues Addressing compilation problems
  *
- * If you are experiencing problems building the Etherios Cloud Connector software, first double check
+ * If you are experiencing problems building Etherios Cloud Connector software, first double check
  * the steps listed in the prior instructions.
  *
  * There is only one include path and two C files required to build this sample.
@@ -186,15 +186,15 @@
  * Before getting started you will need to create a new Etherios Device Cloud account and obtain a unique Etherios Device Cloud Vendor ID (which is
  * a unique identifier for your company).
  *
- * Later in this process, when you get the connect_to_idigi sample @ref good_results_output "running successfully", you will be @ref add_your_device_to_the_cloud "instructed to register"
+ * Later in this process, when you get the connect_to_device_cloud sample @ref good_results_output "running successfully", you will be @ref add_your_device_to_the_cloud "instructed to register"
  * your Device ID with Etherios Device Cloud.
  *
  * To create an account, navigate to
- * https://my.idigi.com/user_registration.do and follow the instructions to create and register your
+ * https://myaccount.digi.com/ and follow the instructions to create and register your
  * Etherios Device Cloud account.
  *
  * @note If you have already created and registered an Etherios Device Cloud Account, navigate here
- * https://my.idigi.com/ and follow the instructions in the next step.
+ * https://login.etherios.com/ and follow the instructions in the next step.
  *
  * @image html cloud_registration.png
  *
@@ -206,7 +206,7 @@
  * @subsection connector_vendor_id Obtain an Etherios Device Cloud Vendor ID
  * 2. If you are a first time Etherios Device Cloud developer, you will need to obtain an Etherios Device Cloud Vendor ID.  To
  * obtain an Etherios Device Cloud Vendor ID, select the Register for new vendor id button on the bottom of
- * the @b My @b Account section under @b Administration tab after successfully logging into https://my.idigi.com/.
+ * the @b My @b Account section under @b Administration tab after successfully logging into https://login.etherios.com/.
  *
  * @image html cloud_vendor_id.png
  *
@@ -215,9 +215,9 @@
  *
  * @note If you already have a vendor ID, it will be displayed instead of the button.
  *
- * @section step5 Step 5: Porting your platform for the connect_to_idigi sample
+ * @section step5 Step 5: Porting your platform for the connect_to_device_cloud sample
  *
- * The @b connect_to_idigi sample validates the most fundamental Etherios Cloud Connector porting aspects.  If you can successfully connect and stay
+ * The @b connect_to_device_cloud sample validates the most fundamental Etherios Cloud Connector porting aspects.  If you can successfully connect and stay
  * connected to Etherios Device Cloud, all other Etherios Cloud Connector functions (like @ref put_request "sending data" or @ref firmware_download "firmware download")
  * should work without failure.
  *
@@ -355,7 +355,7 @@
  *
  * @subsection add_c_files Add the source files to your build system
  *
- * To build the connect_to_idigi sample you will need to add the files shown below
+ * To build the connect_to_device_cloud sample you will need to add the files shown below
  * to your build environment.
  *
  * @htmlonly
@@ -374,7 +374,7 @@
  * <td>application.c</td>
  * <td>Contains the code which runs the sample and main callback that calls
  * callbacks in os.c, network_tcp.c, and config.c</td>
- * <td>public/run/samples/connect_to_idigi</td>
+ * <td>public/run/samples/connect_to_device_cloud</td>
  * </tr>
  * <tr>
  * <td>os.c</td>
@@ -407,55 +407,53 @@
  * @li public/include
  * @li run/platforms/@a my_platform
  *
- * @section step7 Step 7: Build the connect_to_idigi sample
+ * @section step7 Step 7: Build the connect_to_device_cloud sample
  * Next, build the sample.  If you are running on Linux you can simply type: @htmlonly"<I>make clean all</I>"@endhtmlonly
- * in the public/run/samples/connect_to_idigi, if you are not using Linux then
+ * in the public/run/samples/connect_to_device_cloud, if you are not using Linux then
  * you will have to build for your environment.
  *
- * @section step8 Step 8: Run the connect_to_idigi sample
- * The name of the executable generated by the Linux Makefile is called idigi.
- * In Linux, type ./idigi from a console to execute the program.
+ * @section step8 Step 8: Run the connect_to_device_cloud sample
+ * The name of the executable generated by the Linux Makefile is called connector.
+ * In Linux, type ./connector from a console to execute the program.
  *
 * @note By default @ref CONNECTOR_DEBUG is defined in connector_config.h, which prints helpful Etherios Cloud Connector Library debug
  * messages to the standard output.
  *
- * @subsection good_results_output Example output from a successful run of connect_to_idigi
- * Below is the standard output shown for a successful @ref step7 "connect_to_idigi" run:
+ * @subsection good_results_output Example output from a successful run of connect_to_device_cloud
+ * Below is the standard output shown for a successful @ref step7 "connect_to_device_cloud" run:
  *
  * @code
- *  >./idigi
- * Start iDigi
- * iDigi Connector v1.2.0.0
- * vendor id: 0x1000001
- * connector_run thread starts
+ * >./connector
+ * Start Etherios Connector
+ * Etherios Connector v2.0.0.0
+ * Device ID  =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
  * application_run thread starts
  * application_run thread exits 0
- * dns_resolve_name: ip address = [50.56.41.153]
- * network_connect: connected to [my.idigi.com] server
- * communication layer: Send MT Version
- * communication layer: receive Mt version
- * communication layer: send keepalive params
- * communication layer: Rx keepalive parameter = 60
- * communication layer: Tx keepalive parameter = 90
- * communication layer: Wait Count parameter = 5
- * initialization layer: send protocol version
- * initialization layer: receive protocol version
- * Security layer: send security form
- * get_connection_type: connection type = 0
- * get_mac_addr: MAC address =  78 E7 D1 84 47 82
- * security layer: send device ID =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
- * security layer: send server url = my.idigi.com
- * discovery layer: send vendor id =  01 00 00 01
- * discovery layer: send device type = Linux Application
+ * connector_run thread starts
+ * dns_resolve_name: ip address = [108.166.22.160]
+ * app_tcp_connect: fd 3
+ * app_network_tcp_open: connected to login.etherios.com
+ * Send MT Version
+ * Receive Mt version
+ * Send keepalive params
+ * Rx keepalive parameter = 60
+ * Tx keepalive parameter = 90
+ * Wait Count parameter = 5
+ * Send protocol version
+ * Receive protocol version
+ * Send identity verification
+ * Send server url = login.etherios.com
+ * Send vendor id = 0x01000001
+ * Send device type = Linux Application
  * Connection Control: send redirect_report
  * Connection Control: send connection report
  * get_ip_address: Looking for current device IP address: found [2] entries
  * get_ip_address: 1: Interface name [lo]  IP Address [127.0.0.1]
- * get_ip_address: 2: Interface name [eth1]        IP Address [10.52.18.75]
- * get_ip_addr: Device IP address =  0A 34 12 4B
- * get_connection_type: connection type = 0
- * get_mac_addr: MAC address =  78 E7 D1 84 47 82
- * discovery layer: send complete
+ * get_ip_address: 2: Interface name [eth3]        IP Address [10.52.18.89]
+ * Send device IP address =  0A 34 12 59
+ * Sending MAC address =  78 E7 D1 84 47 82
+ * Send complete
+ * connector_tcp_communication_started
  * @endcode
  *
  * @subsection bad_results_output Locating helpful error info in Etherios Cloud Connector standard output
@@ -466,16 +464,13 @@
  * easily trace this callback to the app_get_device_cloud_url() porting function:
  *
  * @code
- *  >./idigi
- *  Start iDigi
- *  initialize_facilities: callback supports  13 facility
- *  initialize_facilities: callback supports  14 facility
- *  connector_run thread starts
- *  application_run thread exits 0
- *  connector_run thread starts
- *  connector_error_status: Config - connector_config_server_url (3)  status = connector_invalid_data_range (4)
- *  connector_run thread exits 4
- *  >
+ * >./connector
+ * Start Etherios Connector
+ * Etherios Connector v2.0.0.0
+ * Device ID  =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
+ * app_config_error: Class: connector_class_id_config (0) Request: connector_request_id_config_device_cloud_url (3) Error status: connector_invalid_data_size (2)
+ * Unable to initialize the connector
+ * >
  * @endcode
  *
  * Given this output, a thorough code review of the app_get_device_cloud_url() function should reveal a porting defect.
@@ -485,8 +480,8 @@
  * The next several sections walk through the steps required to add your device to
  * Etherios Device Cloud.
  *
- *  -# Navigate to http://my.idigi.com and log on to Etherios Device Cloud
- *  -# Click on the iDigi Manager Pro tab.
+ *  -# Navigate to http://login.etherios.com and log on to Etherios Device Cloud
+ *  -# Click on Device Manager tab.
  *  -# Click the Add Devices button (the + button under Devices) to bring up the Add Devices dialog.
  *
  * @image html cloud_add_device_button.png
