@@ -17,7 +17,9 @@
  *              -# @ref add_files
  *              -# @ref add_path
  *              -# @ref build_sample
- *              -# Ref resolving_compilation_issues
+ *              -# @ref resolving_compilation_issues
+ *                  -# @ref errors_due_to_C89_and_stdint
+ *                  -# @ref warnings_due_to_padding
  *          -# @ref step4
  *              -# @ref connector_login
  *              -# @ref connector_vendor_id
@@ -96,7 +98,8 @@
  *
  * Open the file connector_config.h in the sample directory to configure processor endianess.
  *
- * The Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian, comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
+ * The Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian,
+ * comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
  *
  * @section step3 Step 3: Build the compile_and_link sample
  *
@@ -121,8 +124,9 @@
  * where appropriate.
  *
  * @subsection add_files Add the source files to your build system
- * The following is a list of files required to build.  There is a sample
- * linux Makefile provided (public/run/samples/compile_and_link/Makefile) which you
+ * In this sample, there is only one include path and two C files needed to build the sample.
+ *
+ * There is a sample linux Makefile provided (public/run/samples/compile_and_link/Makefile) which you
  * can use as a reference.  Add the following files to your make/build system.
  *
  * @htmlonly
@@ -146,32 +150,64 @@
  * @endhtmlonly
  *
  * @subsection add_path Add the include paths
+ *
  * The following is a list of include paths to add to your system:
  *
  * @li public/include
  *
- * @subsection add_define Add the defines
- *
- * The following define is required, and used to indicate that the version of
- * Etherios Cloud Connector is 1.2
- *
- * @li CONNECTOR_VERSION=0x1020000UL
- *
- * @subsection build_sample Build the sample
+ * @subsection build_sample Build the compile_and_link sample
  *
  * Now that you have the build environment setup, verify the Cloud Connector compilation and link.
  * If using the Makefile provided, type @htmlonly"<I>make clean all</I>"@endhtmlonly in
- * the compile_and_link directory, otherwise perform a build in your environment.
+ * the compile_and_link directory, otherwise perform a build according to your environment's
+ * guidelines.
  *
- * @note See the @ref language for compilation tool requirements.
+ * @subsection resolving_compilation_issues Addressing compile_and_link compilation problems
+
+ * The Linux makefiles that come with the package include very strict warnings and error checking.
+ * This is done to expose as many issues as possible before executing the code.   In addition,
+ * their is a clear guideline for @ref language "C Compiler language support".
  *
- * @subsection resolving_compilation_issues Addressing compilation problems
+ * If you are experiencing problems building the Etherios Cloud Connector software, first double
+ * check the steps listed in the prior instructions.
  *
- * If you are experiencing problems building the Etherios Cloud Connector software, first double check
- * the steps listed in the prior instructions.
+ * @subsection errors_due_to_C89_and_stdint Errors due to to "alignment boundary structure padding"
+ * Some ANSI C89 compilers include elements of ANSI C99, in particular, stdint.h which is apart of ANSI C99.
+ * For these compilers, the compilation will result in errors.
  *
- * There is only one include path and two C files required to build this sample.
+ * @code
+ * In file included from ../../../include/connector_api.h:66,
+ *                  from ../../platforms/linux/config.c:20:
+ * ../../../include/connector_types.h:83: error: conflicting types for uint32_t
+ * /usr/include/stdint.h:52: note: previous declaration of uint32_t was here
+ * make: *** [../../platforms/linux/config.o] Error 1
+ * @endcode
  *
+ * These compilation errors can be resolved by defining CONNECTOR_HAVE_STDINT_HEADER in your make or
+ * build system.
+ *
+ * @subsection warnings_due_to_padding Warnings due to "alignment boundary structure padding"
+ * The Linux makefiles that come with the package include very strict warnings and error checking.
+ * Many processors, like ARM, have strict guidelines for word boundaries.  For these processors,
+ * padding is required at the end of structure to prevent mis-aligned structures in array processing.
+ *
+ * @code
+ * In file included from ../../../../private/connector_def.h:140,
+ *                  from ../../../../private/connector_api.c:27:
+ * ../../../../private/connector_edp_def.h:129: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:167: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:204: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:211: warning: padding struct size to alignment boundary
+ * In file included from ../../../../private/connector_def.h:144,
+ *                  from ../../../../private/connector_api.c:27:
+ * ../../../../private/connector_sm_def.h:174: warning: padding struct size to alignment boundary
+ * In file included from ../../../../private/connector_edp.h:23,
+ *                  from ../../../../private/connector_api.c:44:
+ * @endcode
+ *
+ * These warnings are perfectly safe.  However, you should review all warnings to confirm their safety.
+ *
+ * @note
  *
  * Once the build is successful you can proceed to the next step.
  *
