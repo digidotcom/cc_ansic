@@ -22,6 +22,7 @@
  *  -# @ref file_system_hash
  *  -# @ref file_system_get_error
  *  -# @ref file_system_session_error
+ * <br /><br />
  *
  * @section file_system_overview Overview
  *
@@ -59,6 +60,7 @@
  *  -# When all directory entries are processed, Etherios Cloud Connector calls application-defined @ref file_system_closedir "close a directory" callback.
  *
  * @note See @ref file_system_support under Configuration to enable or disable file system.
+ * <br /><br />
  *
  * @section file_system_context Session Context
  *
@@ -68,6 +70,7 @@
  * All application session memory must be released in the last callback of the session, typically 
  * @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callbacks.
  * This callback will be invoked if the file or directory was opened successfully, even if the session had an error.
+ * <br /><br />
  *
  * @section file_system_term Session Termination and Error Processing
  * 
@@ -89,7 +92,7 @@
  *     if there is an open file or directory.
  *  -# Etherios Cloud Connector is aborted.
  *
- * The callback encounters a file I/O error:
+ * The callback encounters a error while performing the requested operation:
  *  -# The callback returns @ref connector_callback_error and <b><i>errnum</i></b>.
  *  -# Etherios Cloud Connector calls @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callback, 
  *     if there is an open file or directory.
@@ -102,6 +105,7 @@
  *  -# Etherios Cloud Connector calls @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callback, 
  *     if there is an open file or directory.
  *  -# Etherios Cloud Connector canceles the session.
+ * <br /><br />
  *
  * @section file_system_open Open a file
  *
@@ -120,42 +124,40 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_open @htmlonly</td>
  * </tr>
  * <tr>
- *   <td>request_data</td>
- *   <td> [IN] pointer to @endhtmlonly @ref connector_file_open_request_t "connector_file_open_request_t" @htmlonly structure where:
+ * <th>user_context</th>
+ * <td> Application-owned pointer.</td>
+ * </tr>
+ * <tr>
+ * <th>errnum</th>
+ * <td> Callback sets this application-defined error token in case of I/O error to be used later in
+ *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
+ * </tr>  
+ * <tr>
+ *   <th>data</th>
+ *   <td> pointer to @endhtmlonly @ref connector_file_system_open_t "connector_file_system_open_t" @htmlonly structure where:
  *     <ul>
- *       <li><b><i>path</i></b> is the file path to a null-terminated string (with maximum string length of @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly).</li>
- *       <li><b><i>oflag</i></b> is the bitwise-inclusive OR of @endhtmlonly @ref file_open_flag_t @htmlonly.</li>
+ *       <li><b><i>path</i></b> [IN] is the file path to a null-terminated string (with maximum string length of @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
+ *       <br />
+ *       <li><b><i>oflag</i></b> [IN] is the bitwise-inclusive OR of @endhtmlonly @ref connector_file_system_open_flag_t @htmlonly.</li>
+ *       <br />
+ *       <li><b><i>handle</i></b> [OUT] Application defined file handle.</li>
  *     </ul>
  *   </td>
- * </tr>
- * <tr>
- *   <td>request_length</td>
- *   <td> [IN] Size of @endhtmlonly @ref connector_file_open_request_t "connector_file_open_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td> [OUT] pointer to @endhtmlonly @ref connector_file_open_response_t "connector_file_open_response_t" @htmlonly structure:
- *     <ul>
- *       <li><b><i>user_context</i></b> - Application-owned pointer.</li>
- *       <li><b><i>error</i></b> - Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                  used in case of file I/O error.</li>
- *       <li><b><i>handle</i></b> - Application defined file handle.</li>
- *     </ul>
- *   </td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_open_response_t "connector_file_open_response_t" @htmlonly structure</td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>File opened successfully or error has occured</td>
+ * <td>File opened successfully</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
  * <td>Busy. The callback will be repeated
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
  * </td>
  * </tr>
  * <tr>
@@ -164,71 +166,53 @@
  * </tr>
  * </table>
  * @endhtmlonly
- *
+ * <br />
+ * 
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_open(connector_file_open_request_t const * const request_data, 
- *                                               connector_file_open_response_t * const response_data)
+ * connector_callback_status_t app_process_file_open(connector_file_open_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *    int oflag = 0; 
  *    long int fd;
  *
- *    if (request_data->oflag & CONNECTOR_O_RDONLY) oflag |= O_RDONLY;
- *    if (request_data->oflag & CONNECTOR_O_WRONLY) oflag |= O_WRONLY;
- *    if (request_data->oflag & CONNECTOR_O_RDWR)   oflag |= O_RDWR;
- *    if (request_data->oflag & CONNECTOR_O_APPEND) oflag |= O_APPEND;
- *    if (request_data->oflag & CONNECTOR_O_CREAT)  oflag |= O_CREAT;
- *    if (request_data->oflag & CONNECTOR_O_TRUNC)  oflag |= O_TRUNC;
+ *    if (data->oflag & CONNECTOR_FILE_O_RDONLY) oflag |= O_RDONLY;
+ *    if (data->oflag & CONNECTOR_FILE_O_WRONLY) oflag |= O_WRONLY;
+ *    if (data->oflag & CONNECTOR_FILE_O_RDWR)   oflag |= O_RDWR;
+ *    if (data->oflag & CONNECTOR_FILE_O_APPEND) oflag |= O_APPEND;
+ *    if (data->oflag & CONNECTOR_FILE_O_CREAT)  oflag |= O_CREAT;
+ *    if (data->oflag & CONNECTOR_FILE_O_TRUNC)  oflag |= O_TRUNC;
  *
  *    // 0664 = read,write owner + read,write group + read others
- *    fd = open(request_data->path, oflag, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH); 
+ *    fd = open(data->path, oflag, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH); 
  *
- *    if (fd < 0)
+ *    if (fd >= 0)
  *    {
- *        connector_file_error_data_t * error_data = response_data->error;
- *
- *        long int errnum = errno;
- *        error_data->errnum = (void *) errnum;
- *        
- *        switch (errnum)
+ *          data->handle = (void *) fd;
+ *    }
+ *    else 
+ *    {
+ *        if (errno == EAGAIN)
  *        {
- *            case EACCES:
- *            case EPERM:
- *                error_data->error_status = connector_file_permision_denied;
- *                break;
- *            case ENOMEM:
- *                error_data->error_status = connector_file_out_of_memory;
- *                break;
- *            case ENOENT:
- *            case EISDIR:
- *            case EBADF:
- *                error_data->error_status = connector_file_path_not_found;
- *                break;
- *            case EINVAL:
- *                error_data->error_status = connector_file_invalid_parameter;
- *                break;
- *            case EAGAIN:
- *                status = connector_callback_busy;
- *                break;
- *            case ENOSPC:
- *            error_data->error_status = connector_file_insufficient_storage_space;
- *                break;
- *            default:
- *                error_data->error_status = connector_file_unspec_error;
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              error_data->errnum = (void *) errno;
+ *              status = connector_callback_error;
  *        }
  *    }
- *    response_data->handle = (void *) fd;
  *
  *    return status;
  * }
  * @endcode
- *
+ * <br />
+ * 
  * @section file_system_lseek   Seek file position
  *
- * Set the file offset for an open file.
+ * Set the offset for an open file.
  *
  * @htmlonly
  * <table class="apitable">
@@ -243,42 +227,43 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_lseek @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_lseek_request_t "connector_file_lseek_request_t" @htmlonly structure:
- *   <ul>
- *   <li><b><i>handle</i></b> - File handle.</li>
- *   <li><b><i>offset</i></b> - Offset in bytes relative to origin.</li>
- *   <li><b><i>origin</i></b> - CONNECTOR_SEEK_CUR, CONNECTOR_SEEK_SET, or CONNECTOR_SEEK_END, see
- *                             @endhtmlonly @ref connector_file_seek_origin_t @htmlonly</li>
- *   </ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_lseek_request_t "connector_file_lseek_request_t" @htmlonly structure</td>
+ * <th>user_context</th>
+ * <td> Application-owned pointer.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_lseek_response_t "connector_file_lseek_response_t" @htmlonly structure:
+ * <th>errnum</th>
+ * <td> Callback sets this application-defined error token in case of I/O error to be used later in
+ *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
+ * </tr>  
+ * <tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_lseek_t "connector_file_system_lseek_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly 
- *                                   structure, used in case of file I/O error.</li>
- *   <li><b><i>offset</i></b> - [OUT] Resulting file offset.</li>
+ *   <li><b><i>handle</i></b> - [IN] File handle</li>
+ *   <br />
+ *   <li><b><i>origin</i></b> - [IN] connector_file_system_seek_cur, connector_file_system_seek_set,
+ *                                   or connector_file_system_seek_end
+ *                              </li>
+ *   <br />
+ *   <li><b><i>requested_offset</i></b> - [IN] Requested file offset</li>
+ *   <br />
+ *   <li><b><i>resulting_offset</i></b> - [OUT] Resulting file offset</li>
  *   </ul>
  * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_lseek_response_t "connector_file_lseek_response_t" @htmlonly structure</td>
- * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>File offset set successfully or error has occured</td>
+ * <td>File offset set successfully</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
  * <td>Busy. The callback will be repeated
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
  * </td>
  * </tr>
  * <tr>
@@ -287,66 +272,47 @@
  * </tr>
  * </table>
  * @endhtmlonly 
+ * <br />
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_lseek(connector_file_lseek_request_t const * const request_data, 
- *                                                connector_file_lseek_response_t * const response_data)
+ * connector_callback_status_t app_process_file_lseek(connector_file_lseek_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *    int origin;
- *    long int offset;
+ *    off_t offset;
  *
- *    switch (request_data->origin)
+ *    switch (data->origin)
  *    {
- *        case CONNECTOR_SEEK_SET:
+ *        case connector_file_system_seek_set:
  *           origin = SEEK_SET;
  *           break;
- *        case CONNECTOR_SEEK_END:
+ *        case connector_file_system_seek_end:
  *           origin = SEEK_END;
  *           break;
- *        case CONNECTOR_SEEK_CUR:
+ *        case connector_file_system_seek_cur:
  *        default:
  *           origin = SEEK_CUR;
  *           break;
  *    }
  *
- *    offset = lseek((long int) request_data->handle, request_data->offset, origin);
+ *    offset = lseek((long int) data->handle, data->requested_offset, origin);
  *
- *    response_data->offset = offset;
+ *    data->resulting_offset = (connector_file_offset_t) offset;
  *
  *    if (offset < 0)
  *    {
- *        connector_file_error_data_t * error_data = response_data->error;
+ *        error_data->errnum = (void *) errno;
+ *        status = connector_callback_error;
  *
- *        long int errnum = errno;
- *        error_data->errnum = (void *) errnum;
- *        
- *        switch (errnum)
- *        {
- *            case EBADF:
- *                error_data->error_status = connector_file_path_not_found;
- *                break;
- *            case EINVAL:
- *                error_data->error_status = connector_file_invalid_parameter;
- *                break;
- *            case ENOSPC:
- *            case EFBIG:
- *                error_data->error_status = connector_file_insufficient_storage_space;
- *                break;
- *            case EAGAIN:
- *                status = connector_callback_busy;
- *                break;
- *            default:
- *                error_data->error_status = connector_file_unspec_error;
- *        }
  *    }
  *    return status;
  * }
  *
  * @endcode
+ * <br />
  *
  * @section file_system_read    Read file data
  *
