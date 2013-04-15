@@ -766,7 +766,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_wait_count() in config.c.
  *
- * @note If @ref CONNECTOR_WAIT_COUNT configuration is defined in @ref connector_config.h,
+ * @note If @ref CONNECTOR_WAIT_COUNT configuration is defined in connector_config.h,
  * this callback will not be called.  See @ref connector_config_data_options
  *
  * @see app_get_wait_count()
@@ -903,7 +903,7 @@
  * This callback is called to notify the user that Etherios Cloud Connector encountered an error. When Cloud Connector finds an
  * error, Cloud Connector will call this callback indicating the error status
  *
- * @note If @ref CONNECTOR_DEBUG  is not defined in @ref connector_config.h, this callback
+ * @note If @ref CONNECTOR_DEBUG  is not defined in connector_config.h, this callback
  * will not be called.
  *
  * @htmlonly

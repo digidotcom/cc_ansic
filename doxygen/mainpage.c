@@ -8,8 +8,8 @@
  *          -# @ref language
  *          -# @ref requirements
  *              -# @ref CodespaceRequirements
- *              -# @ref RAMRequirements 
- *              -# @ref StackRequirements 
+ *              -# @ref RAMRequirements
+ *              -# @ref StackRequirements
  *          -# @ref features
  *          -# @ref communicating
  *          -# @ref threading
@@ -23,7 +23,7 @@
  * @section intro Introduction
  *
  * The iDigi Connector is a software development package used to
- * communicate and exchange information between a device and Etherios Device Cloud. 
+ * communicate and exchange information between a device and Etherios Device Cloud.
  * iDigi Connector supports application to device data interaction (messaging),
  * application & device data storage, and remote management of devices. Devices
  * are associated with Etherios Device Cloud through the Internet or other wide
@@ -38,7 +38,7 @@
  * applications that quickly scale from dozens to hundreds, thousands or even
  * millions of endpoints.
  *
- * @image html cloud.jpg 
+ * @image html cloud.jpg
  *
  * @section language Language Support
  *
@@ -62,15 +62,15 @@
  *
  * @section requirements Platform Memory Requirements
  * The Etherios Cloud Connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
- * and program stack.  
- *     
- * @subsection CodespaceRequirements Code Space Estimates 
+ * and program stack.
+ *
+ * @subsection CodespaceRequirements Code Space Estimates
  * The following Flash/Code space data was generated using Kubuntu 10.04 and gcc v4.4.3 for 32-bit i486 architecture
  * using the @ref step3 "compile_and_link" or @ref rci_sample "simple_remote_config" sample applications.
  *
  * The build was optimized for size (-Os) with @ref CONNECTOR_COMPRESSION disabled in all cases.
  * The metrics exclude any code space required for application layer calls.  This information should be treated as a typical use case.
- * 
+ *
  * @htmlonly
  * <table class="apitable">
  * <tr>
@@ -176,14 +176,14 @@
  *
  * References to Text, rodata, data, and bss refer to program instructions, constant-read-only data, initialized global and
  * static variables, and uninitialized zero-ed data, respectively.  References to the @ref connector_config_data_options refers to
- * the code reduction defines in connector_config.h: @ref CONNECTOR_DEVICE_TYPE, @ref CONNECTOR_CLOUD_URL, @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS, 
- * @ref CONNECTOR_RX_KEEPALIVE_IN_SECONDS, @ref CONNECTOR_WAIT_COUNT, @ref CONNECTOR_VENDOR_ID, @ref CONNECTOR_MSG_MAX_TRANSACTION, @ref CONNECTOR_CONNECTION_TYPE, 
+ * the code reduction defines in connector_config.h: @ref CONNECTOR_DEVICE_TYPE, @ref CONNECTOR_CLOUD_URL, @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS,
+ * @ref CONNECTOR_RX_KEEPALIVE_IN_SECONDS, @ref CONNECTOR_WAIT_COUNT, @ref CONNECTOR_VENDOR_ID, @ref CONNECTOR_MSG_MAX_TRANSACTION, @ref CONNECTOR_CONNECTION_TYPE,
  * @ref CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND, @ref CONNECTOR_WAN_PHONE_NUMBER_DIALED, @ref CONNECTOR_FIRMWARE_SUPPORT, and @ref CONNECTOR_DATA_SERVICE_SUPPORT.
- * 
- * @subsection RAMRequirements Dynamic RAM Usage 
+ *
+ * @subsection RAMRequirements Dynamic RAM Usage
  * The following dynamic RAM usage was developed by monitoring the high-water mark during the
  * @ref connector_request_id_os_malloc @ref connector_callback_t "application-defined callback".
- * 
+ *
  * @htmlonly
  * <table class="apitable">
  * <tr>
@@ -222,8 +222,8 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection StackRequirements Program Stack Usage 
- * The following program stack usage was observed using gcc 4.2.0 compiled for a 32-bit ARM9 TDMI architecture.  
+ * @subsection StackRequirements Program Stack Usage
+ * The following program stack usage was observed using gcc 4.2.0 compiled for a 32-bit ARM9 TDMI architecture.
  *
  * @htmlonly
  * <table class="apitable">
@@ -241,12 +241,12 @@
  * </tr>
  * </table>
  * @endhtmlonly
- *   
- * This includes all code from within the private Etherios Cloud Connector library, but none of the code implemented in the @ref connector_callback_t 
- * "application-defined callback".  These metrics should be treated as typical.  It is recommended that the actual program stack size 
- * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client, 
+ *
+ * This includes all code from within the private Etherios Cloud Connector library, but none of the code implemented in the @ref connector_callback_t
+ * "application-defined callback".  These metrics should be treated as typical.  It is recommended that the actual program stack size
+ * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client,
  * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
- * 
+ *
  * @section features Etherios Cloud Connector Features
  *     @li Send data to and from a device through Etherios Device Cloud
  *     @li Update firmware on the device
@@ -267,18 +267,18 @@
  *
  * @section threading Threading Model
  *
- * The Etherios Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.    
+ * The Etherios Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.
  * In environments that include preemptive threading, Etherios Cloud Connector can be implemented as a separate stand-alone thread
  * by calling connector_run().  This is a blocking call that only returns due to a major system failure.
- *    
- * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, Etherios Cloud Connector can 
- * be implemented using the non-blocking connector_step() call within the round robin control loop.  
- * 
- * Note in a cooperative, non-preemptive multithreaded environment, either connector_run() or connector_step() can used, based on 
- * system determinism and the potential for a non-cooperative thread to exceed Etherios Cloud Connector's system timing.  
- * 
- * @note You should decide before proceeding how you intend to call Etherios Cloud Connector (within a round robin control loop or running 
- * as a separate thread).  In a limited services OS with no real time threading, you should use the connector_step() routine.  
+ *
+ * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, Etherios Cloud Connector can
+ * be implemented using the non-blocking connector_step() call within the round robin control loop.
+ *
+ * Note in a cooperative, non-preemptive multithreaded environment, either connector_run() or connector_step() can used, based on
+ * system determinism and the potential for a non-cooperative thread to exceed Etherios Cloud Connector's system timing.
+ *
+ * @note You should decide before proceeding how you intend to call Etherios Cloud Connector (within a round robin control loop or running
+ * as a separate thread).  In a limited services OS with no real time threading, you should use the connector_step() routine.
  * Otherwise you should use the connector_run() routine.
  *
  * @section code_organization Source Code Organization
@@ -312,14 +312,28 @@
  * <tr>
  *   <td>public/include</td>
  *   <td> @endhtmlonly  @ref api_overview "Etherios Cloud Connector Public API" @htmlonly <br></br>
- *   Contains the four public headers: @endhtmlonly @ref connector_api.h, @ref connector_types.h, @ref connector_debug.h, and @ref connector_remote.h @htmlonly.
- *   The @endhtmlonly @ref api_overview "iDigi Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
+ *   Contains the twelve public headers:
+ *      <ol><li>@endhtmlonly  @ref connector_api.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_config.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_data_point.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_data_service.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_file_system.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_firmware.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_network.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_os.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_remote.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_api_short_message.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_debug.h @htmlonly</li>
+ *          <li>@endhtmlonly  @ref connector_types.h @htmlonly</li></ol>
+
+ *
+ *   <p>The @endhtmlonly @ref api_overview "iDigi Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
  *   required for application development.  All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
  *   might require updating to match your platform's characteristics (i.e., data size and supported compiler data types).
  *
  *   Public header @endhtmlonly @ref connector_debug.h @htmlonly contains the prototype for @endhtmlonly @ref connector_debug_printf() @htmlonly which is a required
  *   porting implementation function when @endhtmlonly @ref CONNECTOR_DEBUG @htmlonly is defined.  Also contains appropriate definitions for the macro ASSERT(),
- *   which is used within the private folder.
+ *   which is used within the private folder.</p>
  *
  *   <br></br>
  *   Note the header file @endhtmlonly @ref connector_config.h @htmlonly has now been moved into the samples directories. </td>
@@ -427,12 +441,12 @@
  *
  * @subsection DebugTips How to debug your Port
  * After porting and compiling, you will run the @ref step7 "connect_to_idigi" sample.  We recommend that you carefully
- * observe the standard output from the application.  In particular, the @ref connector_config_error_status callback will display error
+ * observe the standard output from the application.  In particular, the @ref error_status callback will display error
  * data when porting errors are detected in the callbacks.
  *
  * Examples of @ref good_results_output "successful" and @ref bad_results_output "erroneous" output streams are available.
  *
- * @section the_getting_started_process Getting Started 
+ * @section the_getting_started_process Getting Started
  * To get started, follow along the steps of the @ref getting_started process.
  *
  * @htmlinclude terminate.html

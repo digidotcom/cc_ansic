@@ -92,11 +92,11 @@ typedef enum {
 #endif
 
  /**
- * @defgroup connector_port_numbers Etherious Device Cloud Port 
- * Numbers @{ 
+ * @defgroup connector_port_numbers Etherious Device Cloud Port
+ * Numbers @{
  */
 /**
- * Port number to connect to Etherious Device Cloud 
+ * Port number to connect to Etherious Device Cloud
  *
  * This port number is for connector_network_open callback to make
  * a connection to Etherious Device Cloud.
@@ -345,8 +345,8 @@ typedef enum  {
 * @{
 */
 /**
-* Etherios Cloud Connector will use the specified transport 
-* method when sending a request to Etherios Device Cloud. 
+* Etherios Cloud Connector will use the specified transport
+* method when sending a request to Etherios Device Cloud.
 */
 typedef enum
 {
@@ -501,14 +501,14 @@ typedef struct
  * @{
  * @b Include: connector_api.h
  *
- * @brief   This is Etherios Cloud Connector Application 
+ * @brief   This is Etherios Cloud Connector Application
  *          defined callback.
  *
  * An application must define this function and pass this to Connector during the
  * connector_init() call.  This callback is used to pass configuration data and exchange system
- * services with the Connector state machine.  The callback 
- * return value is then used to guide Connector how to 
- * proceed after completion of the application callback. 
+ * services with the Connector state machine.  The callback
+ * return value is then used to guide Connector how to
+ * proceed after completion of the application callback.
  *
  */
  /**
@@ -788,7 +788,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_session_cancel:
  *                          Pointer to connector_message_status_request_t
  *
-* @retval connector_success              No error
+ * @retval connector_success              No error
  * @retval connector_init_error           Etherios Cloud Connector was not initialized or not connected to Etherios Device Cloud.
  * @retval connector_abort                Callback aborted Etherios Cloud Connector.
  * @retval connector_invalid_data         Invalid parameter

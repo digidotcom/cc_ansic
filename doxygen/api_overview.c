@@ -106,7 +106,7 @@
  *
  * Each callback is passed in a Class ID which is defined by the enumerated type
  * @ref connector_class_id_t.  For each Class ID there is a set of Request ID's, for example the
- * @ref connector_class_operating_system the corresponding Request ID's are defined
+ * @ref connector_class_id_operating_system the corresponding Request ID's are defined
  * by the enum @ref connector_os_request_t.
  *
  * The parameters for the application-defined callback: request_data, request_length,
