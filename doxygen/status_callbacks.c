@@ -247,16 +247,16 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td> Pointer to @endhtmlonly @ref connector_status_tcp_event_t @htmlonly:
+ *   <td> Pointer to @endhtmlonly connector_status_tcp_event_t @htmlonly:
  *        <dl> <dt>status</dt>
  *             <dd><dl>
- *             <dt><b>connector_tcp_communication_started</b> </dt>
+ *             <dt><b>@endhtmlonly @ref connector_tcp_communication_started @htmlonly </b> </dt>
  *             <dd> - TCP communication has been established. User and application is able to start message and data transfer. </dd>
- *             <dt><b>connector_tcp_keepalive_missed</b>
+ *             <dt><b>@endhtmlonly @ref connector_tcp_keepalive_missed @htmlonly </b>
  *             <dd> - Etherios Cloud Connector has not received a keep alive message from Etherios Device Cloud
  *                    within the time specifed in @endhtmlonly @ref connector_request_id_config_tx_keepalive callback or
  *                    @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS. See @ref tx_keepalive @htmlonly </dd>
- *             <dt><b>connector_tcp_keepalive_restored</b>
+ *             <dt><b>@endhtmlonly @ref connector_tcp_keepalive_restored @htmlonly </b>
  *             <dd> - Digi connector has received and recovered missed keep alive message from Etherios Device Cloud. </dd>
  *             </dl></dd>
  *        </dl></td>
