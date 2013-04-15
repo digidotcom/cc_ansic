@@ -1,5 +1,5 @@
 # ***************************************************************************
-# Copyright (c) 2012 Digi International Inc.,
+# Copyright (c) 2012, 2013 Digi International Inc.,
 # All rights not expressly granted are reserved.
 # 
 # This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,7 +12,7 @@
 # get_file.py
 # Get a file from Etherios Device Cloud storage
 # -------------------------------------------------
-# Usage: get_file.py <username> <password> <device_id> [<cloud_url>]
+# Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
 
 import httplib
@@ -21,7 +21,27 @@ import sys
 import re
 
 def Usage():
-    print 'Usage: get_file.py <username> <password> <device_id> [<cloud_url>]\n'
+    print ''
+    print 'Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]\n'
+    print '    This script pulls test/test.txt from a user account and displays the files contents.'
+    print '    Where' 
+    print '        <Username> is the Device Cloud for Etherios account Username to which your device is connected.'
+    print '        <Password> is the account password'
+    print '        <Device ID> is the device\'s ID.' 
+    print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is login.etherios.com.' 
+    print '' 
+    print '    Note:'
+    print '        <Device ID> format can either be:'
+    print '            Long: 00000000-00000000-00049DFF-FFAABBCC.' 
+    print '            or short: 00049DFF-FFAABBCC\n'
+    print '    Example Usage:' 
+    print '        python ./get_file.py myaccount mypassword 00049DFF-FFAABBCC\n'
+    print '            This pulls test/test.txt from user account myaccount for device'
+    print '            00000000-00000000-00049DFF-FFAABBCC on login.etherios.com.\n'
+    print '        python ./get_file.py myukaccount myukpassword 00049DFF-FFAABBCC login.etherios.co.uk\n'
+    print '            This pulls test/test.txt from user account myukaccount for device'
+    print '            00000000-00000000-00049DFF-FFAABBCC on login.etherios.co.uk.\n'
+    print '' 
 
 def GetMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
@@ -55,16 +75,16 @@ def GetMessage(username, password, device_id, cloud_url):
     webservice.close()
 
 
-    def main(argv):
-        #process arguments
-        count = len(argv);
-        if (count < 3) or (count > 4):
-            Usage()
+def main(argv):
+    #process arguments
+    count = len(argv);
+    if (count < 3) or (count > 4):
+        Usage()
+    else:
+        if count > 3:
+            cloud_url = argv[3]
         else:
-            if count > 3:
-                cloud_url = argv[3]
-            else:
-                cloud_url = "login.etherios.com"
+            cloud_url = "login.etherios.com"
 
         if len(argv[2]) == len("12345678-12345678"):
             device_id = "00000000-00000000-" + argv[2]
