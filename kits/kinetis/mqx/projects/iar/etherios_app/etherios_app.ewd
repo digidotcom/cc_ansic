@@ -49,7 +49,7 @@
         </option>
         <option>
           <name>RunToEnable</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>RunToName</name>
@@ -77,11 +77,11 @@
         </option>
         <option>
           <name>OCDownloadVerifyAll</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCProductVersion</name>
-          <state>5.50.0.51907</state>
+          <state>6.50.2.4581</state>
         </option>
         <option>
           <name>OCDynDriverList</name>
@@ -869,7 +869,7 @@
         </option>
         <option>
           <name>CCPEMicroJtagSpeed</name>
-          <state>1000</state>
+          <state>5000</state>
         </option>
         <option>
           <name>CCJPEMicroShowSettings</name>

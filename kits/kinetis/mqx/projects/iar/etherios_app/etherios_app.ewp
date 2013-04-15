@@ -5775,7 +5775,7 @@
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
             </excluded>
           </file>
           <file>
@@ -5799,7 +5799,6 @@
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
               <configuration>twrk60n512 Int Flash Release</configuration>
               <configuration>twrk53 Int Flash Debug</configuration>
               <configuration>twrk53 Int Flash Release</configuration>
@@ -5813,7 +5812,7 @@
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
             </excluded>
           </file>
         </group>

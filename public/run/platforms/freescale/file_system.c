@@ -54,7 +54,7 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
 
     switch(errnum)
     {
-        case EAGAIN:
+        case MQX_EAGAIN:
             status = connector_callback_busy;
             break;
 
@@ -288,31 +288,31 @@ static connector_callback_status_t app_process_file_get_error(connector_file_sys
 
     switch(errnum)
     {
-        case EACCES:
-        case EPERM:
-        case EROFS:
+        case MQX_EACCES:
+        case MQX_EPERM:
+        case MQX_EROFS:
             data->error_status = connector_file_system_permision_denied;
             break;
 
-        case ENOMEM:
-        case ENAMETOOLONG:
+        case MQX_ENOMEM:
+        case MQX_ENAMETOOLONG:
             data->error_status = connector_file_system_out_of_memory;
             break;
 
-        case ENOENT:
-        case ENODEV:
-        case EBADF:
+        case MQX_ENOENT:
+        case MQX_ENODEV:
+        case MQX_EBADF:
             data->error_status = connector_file_system_path_not_found;
             break;
 
-        case EINVAL:
-        case ENOSYS:
-        case ENOTDIR:
-        case EISDIR:
+        case MQX_EINVAL:
+        case MQX_ENOSYS:
+        case MQX_ENOTDIR:
+        case MQX_EISDIR:
             data->error_status = connector_file_system_invalid_parameter;
             break;
 
-        case ENOSPC:
+        case MQX_ENOSPC:
             data->error_status = connector_file_system_insufficient_storage_space;
             break;
 
@@ -360,7 +360,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     		
     if (fd == NULL)
     {
-		status = app_process_file_error(data->errnum, ENOENT);
+		status = app_process_file_error(data->errnum, MQX_ENOENT);
         APP_DEBUG("app_process_file_open: _io_fopen returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
     }
 
@@ -447,7 +447,7 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     	result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_REMOVE_SUBDIR, (void *)data->path);
     } else {
         APP_DEBUG("%s is not a file or directory\n", data->path, result, errno);
-		status = app_process_file_error(data->errnum, EINVAL);
+		status = app_process_file_error(data->errnum, MQX_EINVAL);
     	goto done;
     }
     
@@ -511,7 +511,7 @@ static connector_callback_status_t app_process_file_close(connector_file_system_
     MQX_FILE_PTR fd = data->handle;
     int result = _io_fclose(fd);
 
-    if (result < 0 && errno == EIO)
+    if (result < 0 && errno == MQX_EIO)
     {
 		status = app_process_file_error(data->errnum, errno);
     }
