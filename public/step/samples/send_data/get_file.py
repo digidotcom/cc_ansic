@@ -21,9 +21,8 @@ import sys
 import re
 
 def Usage():
-    print ''
-    print 'Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]\n'
-    print '    This script pulls test/test.txt from a user account and displays the files contents.'
+    print 'Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
+    print '    Pulls test/test.txt from a user account and displays the file\'s contents.'
     print '    Where' 
     print '        <Username> is the Device Cloud for Etherios account Username to which your device is connected.'
     print '        <Password> is the account password'
@@ -35,13 +34,12 @@ def Usage():
     print '            Long: 00000000-00000000-00049DFF-FFAABBCC.' 
     print '            or short: 00049DFF-FFAABBCC\n'
     print '    Example Usage:' 
-    print '        python ./get_file.py myaccount mypassword 00049DFF-FFAABBCC\n'
-    print '            This pulls test/test.txt from user account myaccount for device'
+    print '        python ./get_file.py myaccount mypassword 00049DFF-FFAABBCC'
+    print '            Pulls test/test.txt from user account myaccount for device'
     print '            00000000-00000000-00049DFF-FFAABBCC on login.etherios.com.\n'
-    print '        python ./get_file.py myukaccount myukpassword 00049DFF-FFAABBCC login.etherios.co.uk\n'
-    print '            This pulls test/test.txt from user account myukaccount for device'
+    print '        python ./get_file.py myukaccount myukpassword 00049DFF-FFAABBCC login.etherios.co.uk'
+    print '            Pulls test/test.txt from user account myukaccount for device'
     print '            00000000-00000000-00049DFF-FFAABBCC on login.etherios.co.uk.\n'
-    print '' 
 
 def GetMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
