@@ -144,7 +144,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
  * @retval connector_callback_abort     Could not get the vendor ID and abort Etherios Cloud Connector.
  *
  * @see @ref vendor_id API Configuration Callback
- * @see @ref connector_config_vendor_id
+ * @see @ref connector_vendor_id
  *
  * @note This routine is not needed if you define @b CONNECTOR_VENDOR_ID configuration in @ref connector_config.h.
  * See @ref connector_config_data_options
@@ -207,7 +207,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
  * @note This routine is not needed if you define @b CONNECTOR_CLOUD_URL configuration in @ref connector_config.h.
  * See @ref connector_config_data_options
  */
-static connector_callback_status_t get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t app_get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
     static  char const connector_server_url[] = "login.etherios.com";
 
@@ -249,7 +249,6 @@ static connector_callback_status_t app_get_connection_type(connector_config_conn
  * Cloud Connector will not request link speed configuration.
  *
  * @param [out] config_link Pointer to connector_config_link_speed_t where callback writes 4-byte link speed.
- * @param [out] size Size of the link speed in bytes
  *
  * @retval connector_callback_continue  The link speed was successfully returned.
  * @retval connector_callback_abort     Could not get the link speed and abort Etherios Cloud Connector
@@ -318,7 +317,10 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
 static connector_callback_status_t app_get_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
 
+/** @cond Suppress the the Doxygen warnings      */
 #define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     90
+/** @endcond */
+
     /* Return Tx keepalive interval in seconds */
     config_keepalive->interval_in_seconds = DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS;
 
@@ -345,7 +347,10 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
  */
 static connector_callback_status_t app_get_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
+/** @cond Suppress the the Doxygen warnings      */
 #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60
+/** @endcond */
+
     /* Return Rx keepalive interval in seconds */
     config_keepalive->interval_in_seconds = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
 
@@ -371,7 +376,9 @@ static connector_callback_status_t app_get_rx_keepalive_interval(connector_confi
  */
 static connector_callback_status_t app_get_wait_count(connector_config_wait_count_t * const config_wait)
 {
+/** @cond Suppress the the Doxygen warnings      */
 #define DEVICE_WAIT_COUNT     5
+/** @endcond */
     /*
      * Return wait count (number of times not receiving Tx keepalive
      * from server is allowed).
@@ -493,7 +500,7 @@ static connector_callback_status_t app_get_remote_configuration_support(connecto
  * This routine tells Cloud Connector the maximum simultaneous transactions for data service, file system, and
  * remote_config to receive messages from  Device Cloud.
  *
- * @param [out] transCount  Pointer to connector_config_max_transaction_t where callback writes the maximum simultaneous transaction.
+ * @param [out] config_max_transaction  Pointer to connector_config_max_transaction_t where callback writes the maximum simultaneous transaction.
  *                           Writes 0 for unlimited transactions.
  *
  * @retval connector_callback_continue  The maximum simultaneous transactions was successfully returned.
@@ -747,7 +754,7 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
  * @ref connector_wan_type_meid.
  *
  *
- * @param [out] meid_number  Pointer to connector_config_pointer_data_t where callback returns pointer which
+ * @param [out] config_meid  Pointer to connector_config_pointer_data_t where callback returns pointer which
  *                           contains 14 MEID hexadecimal. check digit is not included.
  *                           Each nibble corresponds a hexadecimal or decimal digit.
  *
@@ -813,7 +820,7 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
  * @note If password identity verification form is used, @ref app_get_password will be called to obtain
  * the password.
  *
- * @param [out] identity  Pointer to connector_config_identity_verification_t where callback writes the identity verification form.
+ * @param [out] config_identity  Pointer to connector_config_identity_verification_t where callback writes the identity verification form.
  *
  * @retval connector_callback_continue  The identity verification form was successfully returned.
  * @retval connector_callback_abort     Could not get the identity verification form and abort Etherios Cloud Connector.

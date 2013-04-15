@@ -49,17 +49,27 @@ typedef enum {
 typedef struct {
     uint8_t count;             /**< Callback writes number of targets supported */
 } connector_firmware_count_t;
-
 /**
 * @}
 */
 
+/**
+* @defgroup connector_firmware_version_t Firmware Version n
+* @{
+*/
+/**
+* Firmware version structure for @ref connector_request_id_firmware_info callback to return
+* the firmware version about the specific target.
+*/
 typedef struct {
     uint8_t major;      /**< Major number */
     uint8_t minor;      /**< Minor number */
     uint8_t revision;   /**< revision number */
     uint8_t build;      /**< build number */
 } connector_firmware_version_t;
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_firmware_info_t Firmware Information
@@ -77,7 +87,9 @@ typedef struct {
 
     unsigned int CONST target_number; /**< Target number which target the firmware information is for*/
 } connector_firmware_info_t;
-
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_firmware_status_t Firmware Status Codes
@@ -224,5 +236,5 @@ typedef struct {
 /**
 * @}
 */
-
 #endif /* CONNECTOR_API_FIRMWARE_H */
+
