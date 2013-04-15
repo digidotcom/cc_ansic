@@ -42,27 +42,20 @@
  * </tr>
  * <tr>
  *   <th>class_id</th>
- *   <td>@endhtmlonly @ref connector_class_network_tcp @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</td>
  * </tr>
  * <tr>
  *   <th>request_id</th>
- *   <td>@endhtmlonly @ref connector_network_open @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_network_open @htmlonly</td>
  * </tr>
  * <tr>
- *   <th>request_data</th>
- *   <td>Pointer to server URL that callback will make connection to on @endhtmlonly @ref CONNECTOR_SSL_PORT @htmlonly for secure communication </td>
- * </tr>
- * <tr>
- *   <th>request_length</th>
- *   <td> Length of the server URL.</td>
- * </tr>
- * <tr>
- *   <th>response_data</th>
- *   <td> Callback returns the pointer to  @endhtmlonly @ref connector_network_handle_t @htmlonly which is used throughout network socket callback calls. </td>
- * </tr>
- * <tr>
- *   <th>response_length</th>
- *   <td>Pointer to memory where callback writes the size of connector_network_handle_t</td>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_network_open_t "connector_network_open_t" @htmlonly structure
+ *        <ul>
+ *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to cloud URL that callback will make connection to on @endhtmlonly @ref CONNECTOR_SSL_PORT @htmlonly for secure communication </li>
+ *          <li><b><i>handle</i></b> - [OUT] Returned @endhtmlonly @ref connector_network_handle_t "network handle" @htmlonly which is used throughout network callbacks </li>
+ *        </ul>
+ * </td>
  * </tr>
  * <tr>
  *   <th colspan="2" class="title">Return Values</th>
@@ -80,9 +73,11 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly. 
- *     The callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again,
- *     if the transport is configured to start automatically</td>
+ * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
+ *     <br /><br />
+ *     If the transport is configured to start automatically 
+ *     the callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again.
+ * </td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -105,12 +100,10 @@
  *    SSL * ssl;
  * } app_ssl_t;
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
  * {
  *
- *     // resolve address
+ *     // resolve address for data->device_cloud_url
  *     // create socket fd, set socket option for keep alive and no delay
  *     // connect to CONNECTOR_SSL_PORT on Etherios Device Cloud
  *
@@ -185,28 +178,23 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_network_tcp @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_send @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_send @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly connector_write_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly connector_write_request_t. @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to size_t type memory where callback writes number of bytes sent to Etherios Device Cloud. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
- * </tr>
+ * <th>data</th> 
+ * <td>Pointer to @endhtmlonly @ref connector_network_send_t "connector_network_send_t" @htmlonly structure
+ *        <ul>
+ *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
+ *          <li><b><i>buffer</i></b> - [In] Pointer to data to send </li>
+ *          <li><b><i>bytes_available</i></b> - [In] Number of bytes to send </li>
+ *          <li><b><i>bytes_used</i></b> - [OUT] Number of bytes sent </li>
+ *        </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -233,13 +221,11 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
- *     app_ssl_t * const ssl_ptr = (app_ssl_t *)write_data->network_handle;
- *     int const bytes_sent = SSL_write(ssl_ptr->ssl, write_data->buffer, write_data->length);
+ *     app_ssl_t * const ssl_ptr = data->handle;
+ *     int const bytes_sent = SSL_write(ssl_ptr->ssl, data->buffer, data->bytes_available);
  *
  *     if (bytes_sent <= 0)
  *     {
@@ -247,8 +233,9 @@
  *         APP_DEBUG("SSL_write failed %d\n", bytes_sent);
  *         status = connector_callback_error;
  *     }
- *
- *     *sent_length = bytes_sent;
+ * 
+ *     data->bytes_used = (size_t) bytes_sent;
+ * 
  *     return status;
  * }
  * @endcode
@@ -270,27 +257,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_network_tcp @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_receive @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_receive @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly connector_read_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly connector_read_request_t. @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> Pointer to size_t type memory where callback writes number of bytes received from Etherios Device Cloud. </td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td>N/A</td>
+ * <th>data</th> 
+ * <td>Pointer to @endhtmlonly @ref connector_network_receive_t "connector_network_receive_t" @htmlonly structure
+ *        <ul>
+ *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
+ *          <li><b><i>buffer</i></b> - Pointer to memory where callback places received data </li>
+ *          <li><b><i>bytes_available</i></b> - [In] Size of memory buffer </li>
+ *          <li><b><i>bytes_used</i></b> - [OUT] Number of bytes received </li>
+ *        </ul>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -318,15 +300,12 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ *  static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
- *     app_ssl_t * const ssl_ptr = (app_ssl_t *)read_data->network_handle;
+ *     app_ssl_t * const ssl_ptr = data->handle;
  *     int bytes_read = 0;
  *
- *     *read_length = 0;
  *     if (SSL_pending(ssl_ptr->ssl) == 0)
  *     {
  *         int ready;
@@ -354,15 +333,15 @@
  *         }
  *     }
  *
- *     bytes_read = SSL_read(ssl_ptr->ssl, read_data->buffer, )read_data->length);
+ *     bytes_read = SSL_read(ssl_ptr->ssl, data->buffer, data->bytes_available);
  *     if (bytes_read <= 0)
  *     {
  *         // EOF on input: the connection was closed.
  *         APP_DEBUG("SSL_read failed %d\n", bytes_read);
  *         status = connector_callback_error;
  *     }
- *
- *     *read_length = (size_t)bytes_read;
+ * 
+ *     data->bytes_used = (size_t)bytes_read;
  *
  * done:
  *     return status;
@@ -384,29 +363,22 @@
  * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>class_id</th>
- * <td>@endhtmlonly @ref connector_class_network_tcp @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</td>
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_network_close @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_network_close @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td>Pointer to @endhtmlonly connector_close_request_t,@htmlonly in which @endhtmlonly @ref connector_close_status_t "status" @htmlonly 
- *     field provides reason for close</td>
- * </tr>
- * <tr>
- * <th>request_length</th>
- * <td> Size of @endhtmlonly connector_close_request_t @htmlonly</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td>Pointer to @endhtmlonly @ref connector_auto_connect_type_t "connector_auto_connect_type_t"@htmlonly memory where callback 
- *     writes action on transport close.</td>
- * </tr>
- * <tr>
- * <th>response_length</th>
- * <td> Size of @endhtmlonly @ref connector_auto_connect_type_t "connector_auto_connect_type_t"@htmlonly</td>
+ * <th>data</th> 
+ * <td>Pointer to @endhtmlonly @ref connector_network_close_t "connector_network_close_t" @htmlonly structure
+ *        <ul>
+ *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
+ *          <li><b><i>status</i></b> -  [IN] @endhtmlonly @ref connector_close_status_t "Reason for closing the network handle" @htmlonly </li>
+ *          <li><b><i>reconnect</i></b> - [OUT] The callback must set it to @endhtmlonly @ref connector_true @htmlonly to restart the transport or 
+ *                                              to @endhtmlonly @ref connector_false @htmlonly to avoid restarting the transport</li> 
+ *        </ul>
+ * </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -429,14 +401,11 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id, connector_request_id_t const request_id
- *                              void * const request_data, size_t const request_length,
- *                              void * response_data, size_t * const response_length)
+ * static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
  * {
  *
  *     connector_callback_status_t status = connector_callback_continue;
- *     app_ssl_t * const ssl_ptr = (app_ssl_t *)handle;
- *     connector_auto_connect_type_t * const is_to_reconnect = (connector_auto_connect_type_t *) response_data;
+ *     app_ssl_t * const ssl_ptr = data->handle;
  *
  *     // send close notify to peer
  *     if (SSL_shutdown(ssl_ptr->ssl) == 0) 
@@ -459,7 +428,7 @@
  *         close(ssl_ptr->sfd);
  *         ssl_ptr->sfd = -1;
  *     }
- *     *is_to_reconnect = connector_auto_connect;
+ *     data->reconnect = connector_true;
  *     return status;
  * }
  *
