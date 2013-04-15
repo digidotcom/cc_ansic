@@ -1,4 +1,4 @@
- /*! @mainpage iDigi Connector
+ /*! @mainpage Etherios Cloud Connector
  *
  * @htmlinclude nav.html
  *
@@ -22,9 +22,9 @@
  *
  * @section intro Introduction
  *
- * The iDigi Connector is a software development package used to
+ * Etherios Cloud Connector is a software development package used to
  * communicate and exchange information between a device and Etherios Device Cloud.
- * iDigi Connector supports application to device data interaction (messaging),
+ * Cloud Connector supports application to device data interaction (messaging),
  * application & device data storage, and remote management of devices. Devices
  * are associated with Etherios Device Cloud through the Internet or other wide
  * area network connections, which allows for communication between the device, the
@@ -34,7 +34,7 @@
  * you can rest assured that when you need additional computing and storage, Etherios Device Cloud will
  * scale to meet your needs. The Etherios Device Cloud is designed using a high-availability
  * architecture, with redundancy and failover characteristics in mind.
- * Using iDigi Connector, customers can now easily develop cloud connected devices and
+ * Using Cloud Connector, customers can now easily develop cloud connected devices and
  * applications that quickly scale from dozens to hundreds, thousands or even
  * millions of endpoints.
  *
@@ -193,7 +193,7 @@
  * <th class="title">Notes</th>
  * </tr>
  * <tr>
- * <td>iDigi Connector base usage</td>
+ * <td>Etherios Cloud Connector base usage</td>
  * <td>2436</td>
  * <td>2436</td>
  * <td>Memory usage for internal state machines, infrastructure and communication buffers.
@@ -257,17 +257,17 @@
  * @section communicating Communicating with your device
  * To manage your device you can use the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
  * interface by logging into your @ref step4 "Etherios Device Cloud account".  Alternatively, you can communicate with
- * your device programmatically by using @ref web_services "iDigi Web Services".
+ * your device programmatically by using @ref web_services "Device Cloud Web Services".
  *
- * @ref web_services "iDigi Web Services" requests are sent from a remote application to
- * Etherios Device Cloud, which then directly communicates to the device.  This
+ * @ref web_services "Device Cloud Web Services" requests are sent from a remote application to
+ * Device Cloud, which then directly communicates to the device.  This
  * allows for bidirectional machine to machine communication.  Each Etherios Cloud Connector sample includes
  * a Python application demonstrating how to communicate to a device using the
- * @ref web_services "iDigi Web Services".
+ * @ref web_services "Device Cloud Web Services".
  *
  * @section threading Threading Model
  *
- * The Etherios Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.
+ * Etherios Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.
  * In environments that include preemptive threading, Etherios Cloud Connector can be implemented as a separate stand-alone thread
  * by calling connector_run().  This is a blocking call that only returns due to a major system failure.
  *
@@ -288,11 +288,11 @@
  *
  * @note For forward compatibility the private partition should be treated as a black box and never changed or referenced directly.  It's recommended
  * after completing the @ref getting_started process that this private partition be converted into a library.   Note the term
- * "iDigi Connector library" is used synonymously for the "iDigi Connector private partition".
+ * "Etherios Cloud Connector library" is used synonymously for the "Cloud Connector private partition".
  *
  * @subsection DirectoryStructure Directory Structure
  *
- * When uncompressed the directory structure below will be created in the idigi directory.
+ * When uncompressed the directory structure below will be created/.
  * The public directory is divided into a step and run branch to easily distinguish the different thread modeling
  * requirements.
  *
@@ -327,7 +327,7 @@
  *          <li>@endhtmlonly  @ref connector_types.h @htmlonly</li></ol>
 
  *
- *   <p>The @endhtmlonly @ref api_overview "iDigi Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
+ *   <p>The @endhtmlonly @ref api_overview "Etherios Cloud Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
  *   required for application development.  All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
  *   might require updating to match your platform's characteristics (i.e., data size and supported compiler data types).
  *
