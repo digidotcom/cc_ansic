@@ -126,6 +126,7 @@ typedef struct connector_data_t
     void * data_ptr;               /**< Pointer to application/cloud data */
     size_t length_in_bytes;        /**< Number of bytes filled in (@ref idigi_device_request_callback_t "request"), number of bytes available to fill (@ref idigi_device_response_callback_t "response") or the number of bytes available to @ref idigi_send_data "send" */
     unsigned int flags;            /**< One of the values listed below: @see CONNECTOR_FLAG_OVERWRITE_DATA @see CONNECTOR_FLAG_ARCHIVE_DATA @see CONNECTOR_FLAG_APPEND_DATA @see CONNECTOR_FLAG_LAST_DATA */
+    int more_data;				   /**< casted to an connector_bool_t, used in device request. */
     void * app_context;            /**< Pointer to hold application specific context, passed into subsequent calls. */
     connector_error_t error; /**< Error encountered, the application has to check this value before handling the data. */
 } connector_dataservice_data_t;

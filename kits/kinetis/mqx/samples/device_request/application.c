@@ -15,12 +15,12 @@
 #include <lwevent.h>
 #include <io_gpio.h>
 #include "platform.h"
-#include "idigi_connector.h"
+#include "connector.h"
 
 static LWGPIO_STRUCT led1;
 static LWGPIO_STRUCT led2;
 
-static void idigi_status(idigi_connector_error_t const status, char const * const status_message)
+static void connector_status(connector_error_t const status, char const * const status_message)
 {
     APP_DEBUG("idigi_status: status update %d [%s]\n", status, status_message);
 }
@@ -52,12 +52,12 @@ static LWGPIO_STRUCT * get_led_pin(char const * const ledString)
     return led;
 }
 
-static idigi_app_error_t device_request_callback(char const * const target, idigi_connector_data_t * const request_data)
+static connector_app_error_t device_request_callback(char const * const target, connector_dataservice_data_t * const request_data)
 {
-    idigi_app_error_t status = idigi_app_invalid_parameter;
+    connector_app_error_t status = connector_app_invalid_parameter;
     LWGPIO_STRUCT * const led = get_led_pin(target);
 
-    if (request_data->error != idigi_connector_success)
+    if (request_data->error != connector_success)
     {
         APP_DEBUG("devcie_request_callback: target [%s], error [%d]\n", target, request_data->error);
         goto error;
@@ -70,22 +70,27 @@ static idigi_app_error_t device_request_callback(char const * const target, idig
 
         APP_DEBUG("Turning %s %s\n", state ? "ON" : "OFF", target);
         set_led_state(led, state);
+        status = connector_app_success;
+    }
+    else
+    {
+    	status = connector_app_unknown_target;
     }
     
-    status = idigi_app_success;
+    
 
 error:
     return status;
 }
 
-static size_t device_response_callback(char const * const target, idigi_connector_data_t * const response_data)
+static size_t device_response_callback(char const * const target, connector_dataservice_data_t * const response_data)
 {
     LWGPIO_STRUCT * const led = get_led_pin(target);
     char const * const status = (led != NULL) ? "Success" : "Failed";
     size_t bytes_to_copy = strlen(status);
 
     memcpy(response_data->data_ptr, status, bytes_to_copy);
-    response_data->flags = IDIGI_FLAG_LAST_DATA;
+    response_data->more_data = connector_false;
 
     APP_DEBUG("%s action is %s\n", target, status);
 
@@ -96,8 +101,8 @@ error:
 
 int application_start(void)
 {
-    idigi_connector_data_t ic_data;
-    idigi_connector_error_t ret;
+    connector_dataservice_data_t ic_data;
+    connector_error_t ret;
     int status=-1;
 
     /* Initialize LED's */
@@ -107,19 +112,19 @@ int application_start(void)
     if (lwgpio_init(&led2, BSP_LED2, LWGPIO_DIR_OUTPUT, LWGPIO_VALUE_NOCHANGE) == TRUE)
         lwgpio_set_functionality(&led2, BSP_LED2_MUX_GPIO);
 
-    APP_DEBUG("application_start: calling idigi_connector_start\n");
-    ret = idigi_connector_start(idigi_status);
-    if (ret != idigi_connector_success)
+    APP_DEBUG("application_start: calling connector_start\n");
+    ret = connector_start(connector_status);
+    if (ret != connector_success)
     {
-        APP_DEBUG("idigi_connector_start failed [%d]\n", ret);
+        APP_DEBUG("connector_start failed [%d]\n", ret);
         goto error;
     }
 
-    APP_DEBUG("application_start: calling idigi_register_device_request_callbacks\n");
-    ret = idigi_register_device_request_callbacks(device_request_callback, device_response_callback);
-    if (ret != idigi_connector_success)
+    APP_DEBUG("application_start: calling connector_register_device_request_callbacks\n");
+    ret = connector_register_device_request_callbacks(device_request_callback, device_response_callback, NULL, NULL);
+    if (ret != connector_success)
     {
-        APP_DEBUG("idigi_register_device_request_callbacks failed [%d]\n", ret);
+        APP_DEBUG("connector_register_device_request_callbacks failed [%d]\n", ret);
         goto error;
     }
 
