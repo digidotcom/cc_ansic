@@ -203,7 +203,7 @@
  * <td>Pointer to @endhtmlonly @ref connector_network_receive_t "connector_network_receive_t" @htmlonly structure
  *        <ul>
  *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
- *          <li><b><i>buffer</i></b> - Pointer to memory where callback writes received data </li>
+ *          <li><b><i>buffer</i></b> - Pointer to memory where callback places received data </li>
  *          <li><b><i>bytes_available</i></b> - [In] Size of memory buffer </li>
  *          <li><b><i>bytes_used</i></b> - [OUT] Number of bytes received </li>
  *        </ul>
