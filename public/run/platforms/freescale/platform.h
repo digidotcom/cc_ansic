@@ -23,7 +23,9 @@
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request, void * const data);
 connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request_id, void * const data);
 connector_callback_status_t app_config_handler(connector_request_id_config_t const request_id, void * const data);
-
+#if defined (CONNECTOR_RCI_SERVICE)
+connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
+#endif
 int application_run(connector_handle_t handle);
 extern connector_callback_status_t app_get_vendor_id(uint8_t const ** const id, size_t * const size);
 extern connector_callback_status_t app_get_device_type(char const ** const type, size_t * const size);
