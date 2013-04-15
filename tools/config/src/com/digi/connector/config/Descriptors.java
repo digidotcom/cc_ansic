@@ -94,6 +94,7 @@ public class Descriptors {
         String response = sendCloudData(target.replace(" ", "%20"), "DELETE", null);
         if (responseCode != 0)
         {
+            ConfigGenerator.debug_log("Response from " + ConfigGenerator.getUrlName());
             switch (responseCode)
             {
             case 401:
@@ -279,6 +280,7 @@ public class Descriptors {
             catch (Exception e)
             {
                 ConfigGenerator.log("ERROR: Invalid Etherios Device Cloud URL\n");
+                ConfigGenerator.debug_log("Invalid URL: " + ConfigGenerator.getUrlName());
                 System.exit(1);
             }
         }
@@ -305,6 +307,7 @@ public class Descriptors {
             }
 
         } else {
+            ConfigGenerator.debug_log("Response from " + ConfigGenerator.getUrlName());
             switch (responseCode) {
             case 401:
                 ConfigGenerator.log("Unauthorized: verify username and password are valid\n");
@@ -363,6 +366,7 @@ public class Descriptors {
 
         if (responseCode != 0)
         {
+            ConfigGenerator.debug_log("Response from " + ConfigGenerator.getUrlName());
             switch (responseCode)
             {
                 case 401:
@@ -411,6 +415,7 @@ public class Descriptors {
         String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
         if (responseCode != 0)
         {
+            ConfigGenerator.debug_log("Response from " + ConfigGenerator.getUrlName());
             switch (responseCode)
             {
                 case 401:
