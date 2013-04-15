@@ -21,9 +21,19 @@ import sys
 import re
 
 def Usage():
-    print 'Usage: get_file.py <username> <password> <device_id> [<cloud_url>]\n'
+    print '\n\n'
+    print 'Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]\n'
+    print '    Where' 
+    print '        <Username> is the Device Cloud for Etherios account Username to which your device is connected'
+    print '        <password> is the Username password'
+    print '        <device_id> is the device\'s ID.' 
+    print '        [<cloud_url> is the device\'s ID.' 
+    print '\n\n' 
+    print '    Note the device_id format can either be:'
+    print '        short: 00049DFF-FFAABBCC'
+    print '        or long: 00000000-00000000-00049DFF-FFAABBCC.' 
 
-def GetMessage(username, password, device_id):
+def GetMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
@@ -55,16 +65,16 @@ def GetMessage(username, password, device_id):
     webservice.close()
 
 
-    def main(argv):
-        #process arguments
-        count = len(argv);
-        if (count < 3) or (count > 4):
-            Usage()
+def main(argv):
+    #process arguments
+    count = len(argv);
+    if (count < 3) or (count > 4):
+        Usage()
+    else:
+        if count > 3:
+            cloud_url = argv[3]
         else:
-            if count > 3:
-                cloud_url = argv[3]
-            else:
-                cloud_url = "login.etherios.com"
+            cloud_url = "login.etherios.com"
 
         if len(argv[2]) == len("12345678-12345678"):
             device_id = "00000000-00000000-" + argv[2]
