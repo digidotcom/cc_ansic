@@ -21,17 +21,27 @@ import sys
 import re
 
 def Usage():
-    print '\n\n'
+    print ''
     print 'Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]\n'
+    print '    This script pulls test/test.txt from a user account and displays the files contents.'
     print '    Where' 
-    print '        <Username> is the Device Cloud for Etherios account Username to which your device is connected'
-    print '        <password> is the Username password'
-    print '        <device_id> is the device\'s ID.' 
-    print '        [<cloud_url> is the device\'s ID.' 
-    print '\n\n' 
-    print '    Note the device_id format can either be:'
-    print '        short: 00049DFF-FFAABBCC'
-    print '        or long: 00000000-00000000-00049DFF-FFAABBCC.' 
+    print '        <Username> is the Device Cloud for Etherios account Username to which your device is connected.'
+    print '        <Password> is the account password'
+    print '        <Device ID> is the device\'s ID.' 
+    print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is login.etherios.com.' 
+    print '' 
+    print '    Note:'
+    print '        <Device ID> format can either be:'
+    print '            Long: 00000000-00000000-00049DFF-FFAABBCC.' 
+    print '            or short: 00049DFF-FFAABBCC\n'
+    print '    Example Usage:' 
+    print '        python ./get_file.py myaccount mypassword 00049DFF-FFAABBCC\n'
+    print '            This pulls test/test.txt from user account myaccount for device'
+    print '            00000000-00000000-00049DFF-FFAABBCC on login.etherios.com.\n'
+    print '        python ./get_file.py myukaccount myukpassword 00049DFF-FFAABBCC login.etherios.co.uk\n'
+    print '            This pulls test/test.txt from user account myukaccount for device'
+    print '            00000000-00000000-00049DFF-FFAABBCC on login.etherios.co.uk.\n'
+    print '' 
 
 def GetMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
