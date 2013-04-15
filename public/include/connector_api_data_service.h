@@ -89,7 +89,7 @@ typedef struct
     connector_transport_t CONST transport;   /**< transport method from where the callback is originated */
     void * user_context;                     /**< context passed in connector_initiate_action */
 
-    size_t total_bytes;                      /**< total bytes in to send */
+    size_t total_bytes;                      /**< total number of bytes in send data */
 } connector_data_service_length_t;
 /**
 * @}
