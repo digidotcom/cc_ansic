@@ -17,6 +17,7 @@
  *              -# @ref add_files
  *              -# @ref add_path
  *              -# @ref build_sample
+ *              -# Ref resolving_compilation_issues
  *          -# @ref step4
  *              -# @ref connector_login
  *              -# @ref connector_vendor_id
@@ -158,12 +159,21 @@
  *
  * @subsection build_sample Build the sample
  *
- * Now that you have the build environment setup, verify the compilation and link.  If
- * you using the Makefile provided, type @htmlonly"<I>make clean all</I>"@endhtmlonly in
- * the compile_and_link directory, otherwise perform a build ni your environment.
- * If you are experiencing a build problem, double check the steps listed above.  There
- * is only one include path and two C files required to build this sample. Once the build
- * is successful you can proceed to the next step.
+ * Now that you have the build environment setup, verify the Cloud Connector compilation and link.
+ * If using the Makefile provided, type @htmlonly"<I>make clean all</I>"@endhtmlonly in
+ * the compile_and_link directory, otherwise perform a build in your environment.
+ *
+ * @note See the @ref language for compilation tool requirements.
+ *
+ * @subsection resolving_compilation_issues Addressing compilation problems
+ *
+ * If you are experiencing problems building the Etherios Cloud Connector software, first double check
+ * the steps listed in the prior instructions.
+ *
+ * There is only one include path and two C files required to build this sample.
+ *
+ *
+ * Once the build is successful you can proceed to the next step.
  *
  * @note Do not execute the compile_and_link sample, as this only verifies that the build environment
  * is set up correctly. The application will exit on a failed ASSERT when run.

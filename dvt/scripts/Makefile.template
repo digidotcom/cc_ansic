@@ -72,4 +72,4 @@ $$(SAMPLE): $$(OBJS)
 
 .PHONY: clean
 clean:
-	-rm -f $$(SAMPLE) $$(OBJS) $$(DEPS)
+	-rm -f $$(SAMPLE) $$(OBJS) $$(DEPS) $$(SAMPLE).map
