@@ -12,7 +12,7 @@
  *  -# @ref uptime
  *  -# @ref yield
  *  -# @ref reboot
- * <br /><br /> 
+ * <br /><br />
  *
  * @section malloc malloc
  * Callback is used to dynamically allocate memory.
@@ -48,7 +48,7 @@
  *          <li><b><i>size</i></b> - [IN] Number of bytes to allocate</li>
  *          <li><b><i>ptr</i></b> - [OUT] Returned pointer to the beginning of the allocated memory block</li>
  *          </ul>
- *      </td> 
+ *      </td>
  *   </tr>
  *   <tr>
  *     <th colspan="2" class="title">Return Values</th>
@@ -72,7 +72,7 @@
  * </table>
  * @endhtmlonly
  * <br />
- * 
+ *
  * Example:
  *
  * @code
@@ -80,7 +80,7 @@
  * connector_callback_status_t os_malloc(connector_os_malloc_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
- * 
+ *
  *     data->ptr = malloc(data->size);
  *     if (data->ptr == NULL)
  *     {
@@ -89,7 +89,7 @@
  *     return status;
  * }
  * @endcode
- * <br /> 
+ * <br />
  *
  * @section free free
  *
@@ -112,7 +112,7 @@
  * </tr>
  * <tr>
  * <th>request_id</th>
- * <td>@endhtmlonly @ref connector_os_free @htmlonly</td>
+ * <td>@endhtmlonly @ref connector_request_id_os_free @htmlonly</td>
  * </tr>
  * <tr>
  *     <th>data</th>
@@ -120,7 +120,7 @@
  *        <ul>
  *          <li><b><i>ptr</i></b> - [IN] A pointer to the memory block to free </li>
  *        </ul>
- *      </td> 
+ *      </td>
  * </tr>
  *   <tr>
  *     <th colspan="2" class="title">Return Values</th>
@@ -140,7 +140,7 @@
  * </table>
  * @endhtmlonly
  * <br />
- * 
+ *
  * Example:
  *
  * @code
@@ -148,7 +148,7 @@
  * connector_callback_status_t os_free(connector_os_free_t * const data)
  * {
  *     free(data->ptr);
- * 
+ *
  *     return connector_callback_continue;
  * }
  * @endcode
@@ -180,7 +180,7 @@
  *        <ul>
  *          <li><b><i>sys_uptime</i></b> - [OUT] Returned system up time in seconds </li>
  *        </ul>
- *      </td> 
+ *      </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -203,7 +203,7 @@
  * connector_callback_status_t os_get_system_time(connector_os_system_up_time_t * const data)
  * {
  *      time_t sys_uptime;
- * 
+ *
  *      time(&sys_uptime);
  *      data->sys_uptime = (unsigned long) sys_uptime;
  *
@@ -214,7 +214,7 @@
  *
  * @section yield Yield
  * This callback is called to relinquish control in the @ref threading "multi-threaded" connector_run() model.
- * 
+ *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_os_yield() in os.c.
  *
@@ -236,7 +236,7 @@
  * <tr>
  *  <th>data</th>
  *  <td>Pointer to @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly structure,
- *  containing 
+ *  containing
  *  @endhtmlonly @ref connector_status_t "status of Etherios Cloud Connector".@htmlonly
  *   <br /><br />   Values applied to this callback are:
  *   </ul>
@@ -245,7 +245,7 @@
  *           <li> @endhtmlonly @ref connector_pending @htmlonly </li>
  *           <li> @endhtmlonly @ref connector_active @htmlonly </li>
  *      </ul>
- *  </td> 
+ *  </td>
  * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
@@ -260,7 +260,7 @@
  * </table>
  * @endhtmlonly
  * <br />
- * 
+ *
  * Example:
  *
  * @code
@@ -273,11 +273,11 @@
  *          unsigned int const timeout_in_microseconds =  1000000;
  *          usleep(timeout_in_microseconds);
  *      }
- *     
+ *
  *     return connector_callback_continue;
  * }
  * @endcode
- * <br /> 
+ * <br />
  *
  * @section reboot Reboot
  *
@@ -317,9 +317,9 @@
  * connector_callback_status_t os_reboot(void)
  * {
  *      APP_DEBUG("Reboot from Etherios Device Cloud\n");
- *     
+ *
  *     return connector_callback_continue;
- * } 
+ * }
  *
  * @endcode
  *

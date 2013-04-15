@@ -157,7 +157,6 @@ static connector_callback_status_t app_get_device_id(uint8_t const ** id, size_t
  *
  * @see @ref vendor_id API Configuration Callback
  * @see @ref connector_config_vendor_id
- * @see @ref connector_vendor_id "Obtaining an iDigi Vendor ID"
  *
  * @note This routine is not needed if you define @b CONNECTOR_VENDOR_ID configuration in @ref connector_config.h.
  * See @ref connector_config_data_options
@@ -243,8 +242,8 @@ static connector_callback_status_t app_get_device_cloud_url(char const ** url, s
 /**
  * @brief   Get the connection type
  *
- * This routine specifies the connection type as @ref connector_lan_connection_type or
- * @ref connector_wan_connection_type. Fill in the type parameter with the address of the
+ * This routine specifies the connection type as @ref connector_connection_type_lan or
+ * @ref connector_connection_type_wan. Fill in the type parameter with the address of the
  * connector_connection_type_t.
  *
  * @param [out] type  Pointer to memory containing the @ref connector_connection_type_t
@@ -563,10 +562,10 @@ static connector_callback_status_t app_get_max_message_transactions(unsigned int
 /**
  * @brief   Get device id method
  *
- * This routine tells iDigi Connector how to obtain a device ID.
+ * This routine tells Cloud Connector how to obtain a device ID.
  *
  * @param [out] method  Pointer memory where callback writes:
- *                      @li @a @b digi_auto_device_id_method: to generate device ID from
+ *                      @li @a @b digi_device_id_method: to generate device ID from
  *                             - @ref mac_address callback for @ref connector_lan_connection_type connection type or
  *                             - @ref imei_number callback for @ref connector_wan_connection_type connection type.
  *                      @li @a @b connector_manual_device_id_method: to obtain device ID from @ref device_id callback.
@@ -965,7 +964,10 @@ static connector_callback_status_t app_get_sms_service_id(char const ** const se
 }
 
 /* End of Etherios Cloud Connector configuration routines */
-
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 #define enum_to_case(name)  case name:  result = #name;             break
 
 static char const * app_class_to_string(connector_class_id_t const value)
@@ -987,7 +989,14 @@ static char const * app_class_to_string(connector_class_id_t const value)
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_config_class_to_string(connector_config_request_t const value)
 {
     char const * result = NULL;
@@ -1024,7 +1033,14 @@ static char const * app_config_class_to_string(connector_config_request_t const 
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_network_class_to_string(connector_network_request_t const value)
 {
     char const * result = NULL;
@@ -1037,7 +1053,14 @@ static char const * app_network_class_to_string(connector_network_request_t cons
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_os_class_to_string(connector_os_request_t const value)
 {
     char const * result = NULL;
@@ -1051,7 +1074,14 @@ static char const * app_os_class_to_string(connector_os_request_t const value)
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_firmware_class_to_string(connector_firmware_request_t const value)
 {
     char const * result = NULL;
@@ -1067,7 +1097,14 @@ static char const * app_firmware_class_to_string(connector_firmware_request_t co
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_remote_config_class_to_string(connector_remote_config_request_t const value)
 {
     char const * result = NULL;
@@ -1084,7 +1121,14 @@ static char const * app_remote_config_class_to_string(connector_remote_config_re
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_file_system_class_to_string(connector_file_system_request_t const value)
 {
     char const * result = NULL;
@@ -1107,7 +1151,14 @@ static char const * app_file_system_class_to_string(connector_file_system_reques
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_data_service_class_to_string(connector_data_service_request_t const value)
 {
     char const * result = NULL;
@@ -1119,7 +1170,14 @@ static char const * app_data_service_class_to_string(connector_data_service_requ
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_status_class_to_string(connector_status_request_t const value)
 {
     char const * result = NULL;
@@ -1137,7 +1195,14 @@ static char const * app_status_class_to_string(connector_status_request_t const 
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 #if (defined CONNECTOR_SHORT_MESSAGE)
 static char const * app_sm_class_to_string(connector_request_id_sm_t const value)
 {
@@ -1156,7 +1221,14 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
     return result;
 }
 #endif
+/**
+ * @endcond
+ */
 
+/**
+ * @cond Doxygen_Supress
+ *
+ */
 static char const * app_status_error_to_string(connector_status_t const value)
 {
     char const * result = NULL;
@@ -1188,6 +1260,9 @@ static char const * app_status_error_to_string(connector_status_t const value)
     }
     return result;
 }
+/**
+ * @endcond
+ */
 
 /**
  * @brief   Error status notification
