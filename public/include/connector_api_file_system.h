@@ -151,6 +151,26 @@ typedef struct
 */
 
 /**
+* @defgroup connector_file_system_seek_origin_t File seek 
+* origin
+* @{ 
+*/
+/**
+* Data type used for seek origin in  
+* connector_request_id_file_system_lseek callback. 
+*/
+typedef  enum
+{
+     connector_file_system_seek_set,    		    /**<  Seek file position relative to start-of-file */
+     connector_file_system_seek_cur,    		    /**<  Seek file position relative to current position */
+     connector_file_system_seek_end     		    /**<  Seek file position relative to end-of-file */
+
+} connector_file_system_seek_origin_t;                
+/**
+* @}
+*/
+
+/**
 * @defgroup connector_file_system_lseek_t Data type used 
 * for file system lseek callback 
 * @{ 
@@ -166,14 +186,9 @@ typedef struct
 
    void * CONST handle;                             /**< Application defined file handle */
    connector_file_offset_t CONST requested_offset;  /**< Requested file offset */
-   connector_file_offset_t resulting_offset;	    /**< Resulting file position */
-   enum
-   {
-        connector_file_system_seek_set,    		    /**<  Seek file position relative to start-of-file */
-        connector_file_system_seek_cur,    		    /**<  Seek file position relative to current position */
-        connector_file_system_seek_end     		    /**<  Seek file position relative to end-of-file */
+   connector_file_offset_t resulting_offset;        /**< Resulting file position */
 
-   } CONST origin;                                  /**< File seek origin */
+   connector_file_system_seek_origin_t CONST origin;    /**< File seek origin */
 
 } connector_file_system_lseek_t;
 /**

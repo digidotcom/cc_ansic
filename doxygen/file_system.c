@@ -172,7 +172,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_process_file_open(connector_file_open_t * const data) 
+ * connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *    int oflag = 0; 
@@ -200,7 +200,7 @@
  *        }
  *        else
  *        {
- *              error_data->errnum = (void *) errno;
+ *              data->errnum = (void *) errno;
  *              status = connector_callback_error;
  *        }
  *    }
@@ -241,15 +241,17 @@
  *   <ul>
  *   <li><b><i>handle</i></b> - [IN] File handle</li>
  *   <br />
- *   <li><b><i>origin</i></b> - [IN] connector_file_system_seek_cur, connector_file_system_seek_set,
- *                                   or connector_file_system_seek_end
+ *   <li><b><i>origin</i></b> - [IN] @endhtmlonly @ref connector_file_system_seek_cur, @htmlonly
+ *                                   @endhtmlonly @ref connector_file_system_seek_set, @htmlonly
+ *                                   or @endhtmlonly @ref connector_file_system_seek_end @htmlonly
  *                              </li>
  *   <br />
  *   <li><b><i>requested_offset</i></b> - [IN] Requested file offset</li>
  *   <br />
  *   <li><b><i>resulting_offset</i></b> - [OUT] Resulting file offset</li>
  *   </ul>
- * </td></tr>
+ * </td>
+ * </tr>
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
@@ -278,7 +280,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_process_file_lseek(connector_file_lseek_t * const data) 
+ * connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *    int origin;
@@ -304,9 +306,15 @@
  *
  *    if (offset < 0)
  *    {
- *        error_data->errnum = (void *) errno;
- *        status = connector_callback_error;
- *
+ *        if (errno == EAGAIN)
+ *        {
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
+ *        }
  *    }
  *    return status;
  * }
@@ -331,37 +339,33 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_read @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure:
- *  <ul>
- *   <li><b><i>handle</i></b> - File handle.</li>
- *   </ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure</td>
+ * <th>user_context</th>
+ * <td> Application-owned pointer.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure:
+ * <th>errnum</th>
+ * <td> Callback sets this application-defined error token in case of I/O error to be used later in
+ *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
+ * </tr>  
+ * <tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_read_t "connector_file_system_read_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                   used in case of file I/O error.</li>
- *   <li><b><i>data_ptr</i></b> - Pointer to memory where the callback writes data.</li>
- *   <li><b><i>size_in_bytes</i></b> - [IN] Size of the memory buffer. [OUT] Number of bytes
- *                                    retrieved from the file and written to the memory buffer.</li>
+ *   <li><b><i>handle</i></b> - [IN] File handle</li>
+ *   <br />
+ *   <li><b><i>buffer</i></b> - Pointer to memory buffer where the callback places data retrieved from the file</li>
+ *   <br />
+ *   <li><b><i>bytes_available</i></b> - [IN] Size of the memory buffer</li>
+ *   <br />
+ *   <li><b><i>bytes_used</i></b> - [OUT] Number of bytes retrieved from the file and placed in the memory buffer</li>
  *   </ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure</td>
- * </tr>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Reading from a file succeded or error has occured</td>
+ * <td>Reading from a file succeded</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -369,53 +373,49 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
- * @endhtmlonly 
+ * @endhtmlonly
+ * <br /> 
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_read(connector_file_request_t const * const request_data, 
- *                                               connector_file_data_response_t * const response_data)
+ * connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  * 
- *    int result = read((long int) request_data->handle, response_data->data_ptr, response_data->size_in_bytes);
+ *    int result = read((long int) data->handle, data->buffer, data->bytes_available);
  *
  *    if (result >= 0)
  *    {
- *        response_data->size_in_bytes = result;
+ *        data->bytes_used = result;
  *    }
  *    else
  *    {
- *        connector_file_error_data_t * error_data = response_data->error;
- *
- *        long int errnum = errno;
- *        error_data->errnum = (void *) errnum;
- *            
- *        switch (errnum)
+ *        if (errno == EAGAIN)
  *        {
- *            case EBADF:
- *                error_data->error_status = connector_file_path_not_found;
- *                break;
- *            case EINVAL:
- *                error_data->error_status = connector_file_invalid_parameter;
- *                break;
- *            case EAGAIN:
- *                status = connector_callback_busy;
- *                break;
- *            default:
- *                error_data->error_status = connector_file_unspec_error;
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
  *        }
  *    }
  *    return status;
  * } 
  *
  * @endcode
+ * <br />  
  *
  * @section file_system_write   Write file data
  *
@@ -434,37 +434,33 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_write @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_write_request_t "connector_file_write_request_t" @htmlonly structure:
- *   <ul>
- *   <li><b><i>handle</i></b> - File handle.</li>
- *   <li><b><i>data_ptr</i></b> - Pointer to data to write to the file.</li>
- *   <li><b><i>size_in_bytes</i></b> - Number of data bytes to write to the file.</li>
- *   </ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_write_request_t "connector_file_write_request_t" @htmlonly structure</td>
+ * <th>user_context</th>
+ * <td> Application-owned pointer.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_write_response_t "connector_file_write_response_t" @htmlonly structure:
- *   <ul>
- *   <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                             used in case of file I/O error.</li>
- *   <li><b><i>size_in_bytes</i></b> - [OUT] Number of bytes actually written to the file.</li>
- *   </ul>
- * </td></tr>
+ * <th>errnum</th>
+ * <td> Callback sets this application-defined error token in case of I/O error to be used later in
+ *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
+ * </tr>  
  * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_write_response_t "connector_file_error_data_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_write_t "connector_file_system_write_t" @htmlonly structure where:
+ *   <ul>
+ *   <li><b><i>handle</i></b> - [IN] File handle</li>
+ *   <br />
+ *   <li><b><i>buffer</i></b> - [IN] Pointer to data to write to the file</li>
+ *   <br />
+ *   <li><b><i>bytes_available</i></b> - [IN] Number of data bytes to to write to the file</li>
+ *   <br />
+ *   <li><b><i>bytes_used</i></b> - [OUT] Number of data bytes actually written to the file</li>
+ *   </ul>
+ * </td>
+ * </tr>  
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Writing to a file succeded or error has occured</td>
+ * <td>Writing to a file succeded</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -472,54 +468,49 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
+ * <br />  
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_write(connector_file_write_request_t const * const request_data, 
- *                                                connector_file_write_response_t * const response_data)
+ * connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  * 
- *    int result = write((long int) request_data->handle, request_data->data_ptr, request_data->size_in_bytes);
+ *    int result = write((long int) data->handle, data->buffer, data->bytes_available);
  * 
  *    if (result >= 0)
  *    {
- *        response_data->size_in_bytes = result;
+ *        data->bytes_used = result;
  *    }
  *    else
- *    if (result < 0)
  *    {
- *        connector_file_error_data_t * error_data = response_data->error;
- *
- *        long int errnum = errno;
- *        error_data->errnum = (void *) errnum;
- *            
- *        switch (errnum)
+ *        if (errno == EAGAIN)
  *        {
- *            case EBADF:
- *                error_data->error_status = connector_file_path_not_found;
- *                break;
- *            case EINVAL:
- *                error_data->error_status = connector_file_invalid_parameter;
- *                break;
- *            case EAGAIN:
- *                status = connector_callback_busy;
- *                break;
- *            default:
- *                error_data->error_status = connector_file_unspec_error;
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
  *        }
  *    }
  *    return status;
  * } 
  *
  * @endcode
+ * <br />  
  *
  * @section file_system_truncate   Truncate a file
  *
@@ -539,35 +530,29 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_ftruncate @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_ftruncate_request_t "connector_file_ftruncate_request_t" @htmlonly structure:
- *   <ul>
- *   <li><b><i>handle</i></b> - File handle.</li>
- *   <li><b><i>length</i></b> - Length in bytes to truncate a file to.</li>
- *   </ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_ftruncate_request_t "connector_file_ftruncate_request_t" @htmlonly structure</td>
+ * <th>user_context</th>
+ * <td> Application-owned pointer.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure:
- *   <ul>
- *   <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                   used in case of file I/O error.</li>
- *   </ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure</td>
+ * <th>errnum</th>
+ * <td> Callback sets this application-defined error token in case of I/O error to be used later in
+ *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
  * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_truncate_t "connector_file_system_truncate_t" @htmlonly structure where:
+ *   <ul>
+ *   <li><b><i>handle</i></b> - [IN] File handle</li>
+ *   <br />
+ *   <li><b><i>length_in_bytes</i></b> - [IN] Length in bytes to truncate a file to</li>
+ *   </ul>
+ * </td>
+ * </tr>  
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>File truncated successfully or error has occured</td>
+ * <td>File truncated successfully</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -575,48 +560,46 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
+ * <br />
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_ftruncate(connector_file_ftruncate_request_t const * const request_data, 
- *                                                     connector_file_response_t * const response_data)
+ * connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data) 
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  * 
- *    int result = ftruncate((long int) request_data->handle, request_data->length);
+ *    int result = ftruncate((long int) data->handle, data->length_in_bytes);
  * 
  *    if (result < 0)
  *    {
- *        connector_file_error_data_t * error_data = response_data->error;
- *
- *        long int errnum = errno;
- *        error_data->errnum = (void *) errnum;
- *            
- *        switch (errnum)
+ *        if (errno == EAGAIN)
  *        {
- *            case EBADF:
- *            case EINVAL:
- *            case EFBIG:
- *                error_data->error_status = connector_file_invalid_parameter;
- *                break;
- *            case EAGAIN:
- *                status = connector_callback_busy;
- *                break;
- *            default:
- *                error_data->error_status = connector_file_unspec_error;
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
  *        }
  *    }
+ *
  *    return status;
  * } 
  *
  * @endcode
+ * <br /> 
  *
  * @section file_system_close   Close a file
  *
@@ -636,62 +619,67 @@
  * <td>request_id</td>
  * <td>@endhtmlonly @ref connector_request_id_file_system_close @htmlonly</td>
  * </tr>
- * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure:
- *   <ul><li><b><i>handle</i></b> - File handle.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure</td>
+ * <th>user_context</th>
+ * <td> Application-owned pointer.</td>
  * </tr>
  * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                   used in case of file I/O error.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure</td>
+ * <th>errnum</th>
+ * <td> Callback sets this application-defined error token in case of I/O error to be used later in
+ *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
  * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_close_t "connector_file_system_close_t" @htmlonly structure where:
+ *   <ul>
+ *   <li><b><i>handle</i></b> - [IN] File handle</li>
+ *   </ul>
+ * </td>
+ * </tr>  
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>File closed successfully or error has occured</td>
+ * <td>File closed successfully</td>
  * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
+ * <td>Busy. The callback will be repeated
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
+ * <br />
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_close(connector_file_request_t const * const request_data, 
- *                                                connector_file_response_t * const response_data)
+ * connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data) 
  * {
- *
- *     int result = close((long int) request_data->handle);
+ *     connector_callback_status_t status = connector_callback_continue;
+ * 
+ *     int result = close((long int) data->handle);
  *
  *     if (result < 0 && errno == EIO)
  *     {
- *         connector_file_error_data_t * error_data = response_data->error;
-
- *         error_data->errnum = (void *) EIO;
- *         error_data->error_status = connector_file_unspec_error;
+ *        data->errnum = (void *) errno;
+ *        status = connector_callback_error;
  *     }
- *
- *     // All session resources must be released in this callback
- *     return connector_callback_continue;
+ * 
+ *     return status;
  *  } 
  *
  * @endcode
+ * <br /> 
  *
  * @section file_system_remove      Remove a file
  *
