@@ -4,10 +4,11 @@
  *
  * @section table_of_contents_porting Getting Started
  *
- * The Getting Started process will walk you through the steps necessary to get Cloud Connector for Etherios integrated into your
- * development environment and running applications which connect to Etherios Device Cloud.
+ * The Getting Started process will walk you through the steps necessary to get Cloud
+ * Connector for Etherios integrated into your software development environment and running
+ * applications that include a Device Cloud connection to Device Cloud for Etherios.
  *
- * These steps include:
+ * These Getting Started Process includes the following steps:
  *
  *          -# @ref step1
  *              -# @ref i_have_C89_and_64bit
@@ -48,29 +49,28 @@
  *
  * @section step1 Step 1: Do you have a C89 or C99 compliant compiler?
  *
- * Cloud Connector for Etherios is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99) compliant.  If
- * your compiler is ANSI C89 or C99 compliant and you are running on a 32-bit processor you can skip
+ * The Cloud Connector software is ANSI X3.159-1989 (ANSI C89) or ISO/IEC 9899:1999 (ANSI C99) compliant.
+ * If your compiler is ANSI C89 or C99 compliant and you are running on a 32-bit processor you can skip
  * to @ref step2 "Step 2".
  *
  * @subsection i_have_C89_and_64bit Are you trying to compile C89 on a 64-bit machine?
  *
- * If your target is a 64-bit machine and your compiler is ANSI C89, this configuration will not
- * work.  You will either have to find a C99 compiler or you will have to correct compilation warnings
- * that result from your build.
+ * If your target is a 64-bit machine and your compiler is ANSI C89, this configuration is not
+ * supported.  You will either have to find a ANSI C99 compiler for your target or you will have
+ * to correct compilation warnings or errors that result.
  *
- * @note This combination should be rare, given a great majority of 64-bit machines were built
- * after the 1999.  We expect a 64-bit target to have access to ANSI C99.
+ * @note This combination should be rare, given most 64-bit processors were unavailable
+ * prior to 1999.  We expect a 64-bit target to have access to ANSI C99.
  *
- * @subsection non_compliant_adjustments Non compliant compilers
+ * @subsection non_compliant_adjustments What to do about non ANSI C89 or C99 compliant compilers
  *
  * Updates and adjustments will be necessary to properly compile the Cloud Connector software with
- * your compiler and tools.  Complete the follow the steps:
+ * your compiler and tools.  To begin these updates, complete the following steps:
  *
  * @subsection data_type_format_etc Updates to connector_types.h
  *
- * You will have to review (and edit) @ref connector_types.h "public/include/connector_types.h" to
- * adjust the standard ANSI data types uint8_t, uint16_t, uint32_t, standard minimum and maximum values
- * and standard format specifiers.
+ * You will have to review (and edit) @ref connector_types.h "public/include/connector_types.h"
+ * to update the standard ANSI data types, minimums, maximum, and standard format specifiers.
  *
  * -# Data types:
  *  @li @ref uint8_t

@@ -9,13 +9,13 @@
  *
  * @section rci_sample_location Source Code Location
  *
- * - For the connector_run() version:
- *     -- @htmlonly<I>/connector/public/run/samples/simple_remote_config</I>@endhtmlonly
+ *      - For the connector_run() version:
+ *           - @htmlonly<I>/connector/public/run/samples/simple_remote_config</I>@endhtmlonly
  *
- * - For the connector_step() version:
- *      -- @htmlonly<I>/connector/public/step/samples/simple_remote_config</I>@endhtmlonly
+ *      - For the connector_step() version:
+ *          - @htmlonly<I>/connector/public/step/samples/simple_remote_config</I>@endhtmlonly
  *
- * @note Check @ref threading "here" for more information on using the connector_run()
+ * @note Check @ref threading "here for more information" on using the connector_run()
  * versus connector_step() model.
  *
  * @section connect_description Code Flow
