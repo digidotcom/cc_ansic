@@ -68,7 +68,7 @@ SENSOR_DATA CurrentSensor;
 /*
  * Task for reading the MMA7660 accelerometer data
  */
-void Accel_Task(uint_32 data)
+void accel_Task(uint_32 data)
 {
   printf("Starting Accelerometer Task\n");
 

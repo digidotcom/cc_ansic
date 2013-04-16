@@ -37,8 +37,8 @@ static char touch_pad_file_path[] = "leds.dat";
 static char sysinfo_file_path[] = "sysinfo.txt";
 static char syslog_file_path[] = "syslog.txt";
 
-char idigi_led_override[8] = "False";
-char idigi_watchdog_caused_reset[8] = "False";
+char connector_led_override[8] = "False";
+char connector_watchdog_caused_reset[8] = "False";
 
 uint_8 ad_average_dec, ad_average_int; 
 int failures_to_detect_GPIO_TO_A2D_connections;
@@ -82,21 +82,21 @@ uchar *device_id_buffer[64];
 uchar *vendor_id_buffer[64];
 
 /*
- *  This function will initiate a put request to the iDigi cloud.
+ *  This function will initiate a put request to the Etherios Cloud.
  *
  *  Parameters:
- *      path            -- NUL terminated file path where user wants to store the data on the iDigi cloud.
- *      data            -- Data to write to file on iDigi cloud.
+ *      path            -- NUL terminated file path where user wants to store the data on the Etherios Cloud.
+ *      data            -- Data to write to file on Etherios Cloud.
  *      content_type    -- NUL terminated content type (text/plain, text/xml, application/json, etc.
  *      length_in_bytes -- Data length in put_request
  *      flags           -- Indicates whether server should archive and/or append.
  *
  *  Return Value:
- *      idigi_success
- *      idigi_invalid_data      -- Indicates bad parameters
- *      idigi_invalid_response  -- Indicates error response from iDigi cloud
+ *      connector_success
+ *      connector_invalid_data      -- Indicates bad parameters
+ *      connector_invalid_response  -- Indicates error response from Etherios Cloud
  */
-connector_status_t idigi_initiate_put_request(char const * const path, char const * const data, char const * const content_type,
+connector_status_t connector_initiate_put_request(char const * const path, char const * const data, char const * const content_type,
 		                                  size_t const length_in_bytes, unsigned int const flags) 
 {
     connector_error_t ret;
@@ -118,7 +118,7 @@ connector_status_t idigi_initiate_put_request(char const * const path, char cons
         {
             #define WAIT_FOR_A_SECOND  1000
             _time_delay(WAIT_FOR_A_SECOND);
-            APP_DEBUG("idigi_send_data failed [idigi_connector_init_error]\n");
+            APP_DEBUG("connector_send_data failed [connector_error_init_error]\n");
             failed = 1;
         }
 
@@ -130,9 +130,9 @@ connector_status_t idigi_initiate_put_request(char const * const path, char cons
         APP_DEBUG("Initial EDP handshake complete\n");
         
 #if !defined(CONNECTOR_VENDOR_ID)     
-        if (app_config_handler(idigi_config_vendor_id, 0, 0, &vendor_id_buffer, &size))
+        if (app_config_handler(connector_request_id_config_vendor_id, &vendor_id_buffer))
         {
-            APP_DEBUG("idigi_initiate_put_request failed getting device id\n");
+            APP_DEBUG("connector_initiate_put_request failed getting device id\n");
         }
         else
         {           
@@ -144,7 +144,7 @@ connector_status_t idigi_initiate_put_request(char const * const path, char cons
         
         if (app_config_handler(connector_request_id_config_device_id, &device_id_buffer))
         {
-            APP_DEBUG("idigi_initiate_put_request failed getting device id\n");
+            APP_DEBUG("connector_initiate_put_request failed getting device id\n");
         }
         else
         {
@@ -158,7 +158,7 @@ connector_status_t idigi_initiate_put_request(char const * const path, char cons
 
     if (ret != connector_error_success)
     {
-        APP_DEBUG("idigi_send_data failed [%d]\n", ret);
+        APP_DEBUG("connector_send_data failed [%d]\n", ret);
         failed = 1;
         goto error;
     }
@@ -166,7 +166,7 @@ connector_status_t idigi_initiate_put_request(char const * const path, char cons
     if (failed == 1)
     {
 	    failed = 0;
-        APP_DEBUG("idigi_send_data completed successfully\n");
+        APP_DEBUG("connector_send_data completed successfully\n");
     }
     
     status = 0;
@@ -177,7 +177,7 @@ error:
 }
 
 /*
- * Adds a string to the syslog buffer to be sent to iDigi
+ * Adds a string to the syslog buffer to be sent to the Device Cloud
  */
 connector_status_t add_to_syslog_buffer(char *syslog_string) 
 {
@@ -219,28 +219,28 @@ void initialize_k60_tower_demo(void)
     InitializeIO();
 
 	/* Create Acceletometer Task to read accelerometer data */
-	_task_create(0,ACCEL_TASK,0);
+	_task_create(0, ACCEL_TASK, 0);
 
 	/* Create ADC Task to read POT and Temp Sensor */
-	_task_create(0,ADC_TASK,0);
+	_task_create(0, ADC_TASK, 0);
 
 	/* Create LED Task to display current state of the LEDs */
-	_task_create(0,IDIGI_LED_TASK,0);
+	_task_create(0, CONNECTOR_LED_TASK, 0);
 	
 	/* Create Touch Task to change the state of the LEDs */
-	_task_create(0,IDIGI_TOUCH_TASK,0);
+	_task_create(0, CONNECTOR_TOUCH_TASK, 0);
 	
 	/* Create Push Button Task to check the the state of the Push Buttons */
-	_task_create(0,IDIGI_BUTTON_TASK,0);
+	_task_create(0, CONNECTOR_BUTTON_TASK, 0);
 
 	/* Create Device Request Task */
-	_task_create(0,IDIGI_APP_TASK,0);
+	_task_create(0, CONNECTOR_APP_TASK, 0);
 	
 	/* Create GPIO Task */
-	_task_create(0,IDIGI_GPIO_TASK,0);
+	_task_create(0, CONNECTOR_GPIO_TASK, 0);
 	
 	/* Create CPU usage Task */
-	_task_create(0,IDIGI_CPU_USAGE_TASK,0);
+	_task_create(0, CONNECTOR_CPU_USAGE_TASK, 0);
 
     // Check if the last reset was a watchdog reset by reading the WDOG_RSTCNT register
     reset_count = WDOG_RSTCNT;
@@ -248,7 +248,7 @@ void initialize_k60_tower_demo(void)
     {
 	    APP_DEBUG("initialize_k60_tower_demo: last reset was a watchdog reset\n");
 
-	    snprintf(idigi_watchdog_caused_reset, sizeof(idigi_watchdog_caused_reset), "True");
+	    snprintf(connector_watchdog_caused_reset, sizeof(connector_watchdog_caused_reset), "True");
 	    
 	    // Add syslog entry for reset
         rc = add_to_syslog_buffer("Reset was a watchdog reset\n");
@@ -263,7 +263,7 @@ void initialize_k60_tower_demo(void)
     {
 	    APP_DEBUG("initialize_k60_tower_demo: last reset was a normal reset\n");
 	    
-	    snprintf(idigi_watchdog_caused_reset, sizeof(idigi_watchdog_caused_reset), "False");
+	    snprintf(connector_watchdog_caused_reset, sizeof(connector_watchdog_caused_reset), "False");
 	    
 	    // Add syslog entry for reset
         rc = add_to_syslog_buffer("Reset was a normal reset\n");
@@ -281,11 +281,11 @@ void initialize_k60_tower_demo(void)
 /*
  * Temporary task to cause CPU usage to go up.
  */
-void idigi_utility_task1(unsigned long initial_data)
+void connector_utility_task1(unsigned long initial_data)
 {
     while (1)
     {
-    	APP_DEBUG("idigi_utility_task1: is running\n");
+    	APP_DEBUG("connector_utility_task1: is running\n");
         _time_delay(1);    	
     }
 }
@@ -293,11 +293,11 @@ void idigi_utility_task1(unsigned long initial_data)
 /*
  * Temporary task to cause CPU usage to go up.
  */
-void idigi_utility_task2(unsigned long initial_data)
+void connector_utility_task2(unsigned long initial_data)
 {
     while (1)
     {
-    	APP_DEBUG("idigi_utility_task2: is running\n");
+    	APP_DEBUG("connector_utility_task2: is running\n");
         _time_delay(1);   	
     }
 }
@@ -306,7 +306,7 @@ void idigi_utility_task2(unsigned long initial_data)
  * Read the push buttons to determine if the utility threads
  * should be started.
  */
-void idigi_button_task(unsigned long initial_data)
+void connector_button_task(unsigned long initial_data)
 {
     static unsigned int sw1_state = 1;
     connector_status_t rc;
@@ -326,12 +326,12 @@ void idigi_button_task(unsigned long initial_data)
     		    /* Debounce */
     	        while (GetInput(btn1) || GetInput(btn2));
     	    
-        	    APP_DEBUG("idigi_button_task: sw1 and sw2 are pressed to calibrate the accelerometer\n");
+        	    APP_DEBUG("connector_button_task: sw1 and sw2 are pressed to calibrate the accelerometer\n");
     	    
     	        // Add syslog entry
     	        rc = add_to_syslog_buffer("sw1 and sw2 are pressed, calibrating the accelerometer\n");
     	        if (rc)
-    		        APP_DEBUG("idigi_button_task: error adding to syslog buffer\n");
+    		        APP_DEBUG("connector_button_task: error adding to syslog buffer\n");
     	    
           	    calibrate();
     	    }
@@ -355,44 +355,44 @@ void idigi_button_task(unsigned long initial_data)
     	        switch (sw1_state)
     	        {        	        
     	            case 1:
-    	                APP_DEBUG("idigi_button_task: sw1 is pressed, creating 1st utility thread\n");
+    	                APP_DEBUG("connector_button_task: sw1 is pressed, creating 1st utility thread\n");
                     
                         sw1_state = 2;   	        
                         /* Create the first utility Task */
-        	            taskid1 = _task_create(0,IDIGI_UTILITY_1, 0);
+        	            taskid1 = _task_create(0, CONNECTOR_UTILITY_1, 0);
         	            task_startups ++;
           	    
             	        // Add syslog entry
             	        rc = add_to_syslog_buffer("sw1 is pressed, creating 1st utility thread\n");
             	        if (rc)
-            		        APP_DEBUG("idigi_button_task: error adding to syslog buffer\n");               
+            		        APP_DEBUG("connector_button_task: error adding to syslog buffer\n");               
                         break;
     	            case 2:
-    	                APP_DEBUG("idigi_button_task: sw1 is pressed, creating 2nd utility thread\n");
+    	                APP_DEBUG("connector_button_task: sw1 is pressed, creating 2nd utility thread\n");
                     
                         sw1_state = 3;    	            
     	                /* Create the second utility Task */
-            	        taskid2 = _task_create(0,IDIGI_UTILITY_2, 0);
+            	        taskid2 = _task_create(0, CONNECTOR_UTILITY_2, 0);
         	            task_startups ++;
 
             	        // Add syslog entry
             	        rc = add_to_syslog_buffer("sw1 is pressed, creating 2nd utility thread\n");
             	        if (rc)
-            		        APP_DEBUG("idigi_button_task: error adding to syslog buffer\n");               
+            		        APP_DEBUG("connector_button_task: error adding to syslog buffer\n");               
                         break;
     	            case 3:
-    	                APP_DEBUG("idigi_button_task: sw1 is pressed, kill the two utility threads\n");
+    	                APP_DEBUG("connector_button_task: sw1 is pressed, kill the two utility threads\n");
     	        	                    
                         status = _task_destroy(taskid1);
            
                         if (status == MQX_OK)
                         {
                     	    task_terminations ++;
-                	        APP_DEBUG("idigi_button_task: Utility task 1 is destroyed\n");
+                	        APP_DEBUG("connector_button_task: Utility task 1 is destroyed\n");
                         }
                         else
                         {               	
-                	        APP_DEBUG("idigi_button_task: _task_destroy(taskid1) failed [%d]\n", status);
+                	        APP_DEBUG("connector_button_task: _task_destroy(taskid1) failed [%d]\n", status);
                         }
                     
                         status = _task_destroy(taskid2);
@@ -400,11 +400,11 @@ void idigi_button_task(unsigned long initial_data)
                         if (status == MQX_OK)
                         {
                     	    task_terminations ++;
-                	        APP_DEBUG("idigi_button_task: Utility task 2 is destroyed\n");
+                	        APP_DEBUG("connector_button_task: Utility task 2 is destroyed\n");
                         }
                         else
                         {
-                	        APP_DEBUG("idigi_button_task: _task_destroy(taskid2) failed [%d]\n", status);
+                	        APP_DEBUG("connector_button_task: _task_destroy(taskid2) failed [%d]\n", status);
                         }
                     
                         sw1_state = 1;
@@ -412,14 +412,14 @@ void idigi_button_task(unsigned long initial_data)
             	        // Add syslog entry
             	        rc = add_to_syslog_buffer("sw1 is pressed, kill the two utility threads\n");
             	        if (rc)
-            		        APP_DEBUG("idigi_button_taskn: error adding to syslog buffer\n");                
+            		        APP_DEBUG("connector_button_task: error adding to syslog buffer\n");                
                         break;       	    
     	        }
     	    
 #if 0
   	            td_ptr = (TD_STRUCT_PTR)_task_get_td( taskid1 );
   	        
-  	            APP_DEBUG("idigi_button_task: taskid1 state {%x]\n", td_ptr->STATE);
+  	            APP_DEBUG("connector_button_task: taskid1 state {%x]\n", td_ptr->STATE);
 #endif
     	    }
         }
@@ -434,12 +434,12 @@ void idigi_button_task(unsigned long initial_data)
     		    /* Debounce */
     	        while (GetInput(btn1) || GetInput(btn2));
     	    
-        	    APP_DEBUG("idigi_button_task: sw1 and sw2 are pressed to calibrate the accelerometer\n");
+        	    APP_DEBUG("connector_button_task: sw1 and sw2 are pressed to calibrate the accelerometer\n");
     	    
     	        // Add syslog entry
     	        rc = add_to_syslog_buffer("sw1 and sw2 are pressed, calibrating the accelerometer\n");
     	        if (rc)
-    		        APP_DEBUG("idigi_button_task: error adding to syslog buffer\n");
+    		        APP_DEBUG("connector_button_task: error adding to syslog buffer\n");
     	    
         	    calibrate();
     	    }
@@ -453,12 +453,12 @@ void idigi_button_task(unsigned long initial_data)
 	             *     At button press, invoke a reset event
 	             */
     	
-    	        APP_DEBUG("idigi_button_task: sw2 is pressed to invoke reset\n");
+    	        APP_DEBUG("connector_button_task: sw2 is pressed to invoke reset\n");
    	    
     	        // Add syslog entry
     	        rc = add_to_syslog_buffer("sw2 was pressed to invoke reset\n");
     	        if (rc)
-    		        APP_DEBUG("idigi_button_task: error adding to syslog buffer\n");
+    		        APP_DEBUG("connector_button_task: error adding to syslog buffer\n");
     	        
     	        // Wait 5 seconds for syslog to be sent
     	        _time_delay(5000);
@@ -476,7 +476,7 @@ void idigi_button_task(unsigned long initial_data)
  * Read the touch pads to determine if the Led blink
  * should be slow, fast or none.
  */
-void idigi_touch_pad_task(unsigned long initial_data)
+void connector_touch_pad_task(unsigned long initial_data)
 {
     char key;    
     connector_status_t rc;
@@ -508,14 +508,14 @@ void idigi_touch_pad_task(unsigned long initial_data)
         {
     	    led_blinkrate = 1; // slow
     	    put_led_state = 1;    	    
-        	APP_DEBUG("idigi_touch_pad_task: slow button pressed\n");
+        	APP_DEBUG("connector_touch_pad_task: slow button pressed\n");
     	    
-        	snprintf(idigi_led_override, sizeof(idigi_led_override), "True");
+        	snprintf(connector_led_override, sizeof(connector_led_override), "True");
         	
     	    // Add syslog entry
             rc = add_to_syslog_buffer("slow touch pad button pressed\n");
             if (rc)
-    		    APP_DEBUG("idigi_touch_pad_task: error adding to syslog buffer\n");
+    		    APP_DEBUG("connector_touch_pad_task: error adding to syslog buffer\n");
         }
 #ifndef TWR_K53N512
         else if (key == 2)
@@ -525,27 +525,27 @@ void idigi_touch_pad_task(unsigned long initial_data)
         {
     	    led_blinkrate = 2; // Fast
     	    put_led_state = 1;
-    	    APP_DEBUG("idigi_touch_pad_task: fast button pressed\n");
+    	    APP_DEBUG("connector_touch_pad_task: fast button pressed\n");
 
-    	    snprintf(idigi_led_override, sizeof(idigi_led_override), "True");
+    	    snprintf(connector_led_override, sizeof(connector_led_override), "True");
     	    
     	    // Add syslog entry
             rc = add_to_syslog_buffer("fast touch pad button pressed\n");
             if (rc)
-    		    APP_DEBUG("idigi_touch_pad_task: error adding to syslog buffer\n");
+    		    APP_DEBUG("connector_touch_pad_task: error adding to syslog buffer\n");
         }
         else if (key == 3)
         {
      	    led_blinkrate = 0; // None
     	    put_led_state = 1;
-    	    APP_DEBUG("idigi_touch_pad_task: stop button pressed\n");
+    	    APP_DEBUG("connector_touch_pad_task: stop button pressed\n");
 
-    	    snprintf(idigi_led_override, sizeof(idigi_led_override), "True");
+    	    snprintf(connector_led_override, sizeof(connector_led_override), "True");
     	    
     	    // Add syslog entry
             rc = add_to_syslog_buffer("stop touch pad button pressed\n");
             if (rc)
-    		    APP_DEBUG("idigi_touch_pad_task: error adding to syslog buffer\n");
+    		    APP_DEBUG("connector_touch_pad_task: error adding to syslog buffer\n");
         }
     }
 }
@@ -553,7 +553,7 @@ void idigi_touch_pad_task(unsigned long initial_data)
 /*
  * Blink the Led's fast, slow or not at all
  */
-void idigi_led_task(unsigned long initial_data)
+void connector_led_task(unsigned long initial_data)
 {
     while (1)
     {
@@ -594,7 +594,6 @@ void idigi_led_task(unsigned long initial_data)
 
 size_t device_response_callback(char const * const target, connector_dataservice_data_t * const response_data)
 {
-    /* static char rsp_string[] = "iDigi Connector device response!\n"; */
     size_t len;
     size_t bytes_to_copy;
 
@@ -678,37 +677,37 @@ connector_app_error_t device_request_callback(char const * const target, connect
 	    {
 	    	valid_leds_request = 1;
 #ifdef DEBUG_DEVICE_REQUEST
-		    APP_DEBUG("idigi_handle_device_request: setting LED blink to fast\n");
+		    APP_DEBUG("device_request_callback: setting LED blink to fast\n");
 #endif
 		    led_blinkrate = 2;
     	    put_led_state = 1;
-    	    snprintf(idigi_led_override, sizeof(idigi_led_override), "False");
+    	    snprintf(connector_led_override, sizeof(connector_led_override), "False");
 	    }
 	    else if (strcmp(data, "slow") == 0)
 	    {
 	    	valid_leds_request = 1;
 #ifdef DEBUG_DEVICE_REQUEST		    
-	    	APP_DEBUG("idigi_handle_device_request: setting LED blink to slow\n");
+	    	APP_DEBUG("device_request_callback: setting LED blink to slow\n");
 #endif
 	    	led_blinkrate = 1;
     	    put_led_state = 1;
-    	    snprintf(idigi_led_override, sizeof(idigi_led_override), "False");
+    	    snprintf(connector_led_override, sizeof(connector_led_override), "False");
 	    }
 	    else if (strcmp(data, "stop") == 0)
 	    {
 	    	valid_leds_request = 1;
 #ifdef DEBUG_DEVICE_REQUEST
-	    	APP_DEBUG("idigi_handle_device_request: setting LED blink to stop\n");
+	    	APP_DEBUG("device_request_callback: setting LED blink to stop\n");
 #endif
 	    	led_blinkrate = 0;
     	    put_led_state = 1;
-    	    snprintf(idigi_led_override, sizeof(idigi_led_override), "False");
+    	    snprintf(connector_led_override, sizeof(connector_led_override), "False");
 	    }
 	    else
 	    {
 	    	invalid_leds_request = 1;
 	    	sprintf(leds_callback_error_response_data, "invalid LEDS setting [%s]", data);
-	    	APP_DEBUG("idigi_handle_LEDS_device_request: invalid LEDS setting [%s]\n", data);
+	    	APP_DEBUG("device_request_callback: invalid LEDS setting [%s]\n", data);
 	    }
 	}
 	else if (strcmp(target, device_request_GPIO_target) == 0)
@@ -719,20 +718,20 @@ connector_app_error_t device_request_callback(char const * const target, connect
         {
         	invalid_gpio_request = 1;
 	    	sprintf(gpio_callback_error_response_data, "invalid GPIO setting [%d]", pulse_generator_rate);
-	    	APP_DEBUG("idigi_handle_GPIO_device_request: invalid GPIO setting [%d]\n", pulse_generator_rate);
+	    	APP_DEBUG("device_request_callback: invalid GPIO setting [%d]\n", pulse_generator_rate);
             pulse_generator_rate = cur_pulse_generator_rate;
         }
         else
         {
         	valid_gpio_request = 1;
 #ifdef DEBUG_DEVICE_REQUEST
-        	APP_DEBUG("idigi_handle_GPIO_device_request: valid GPIO setting [%d]\n", pulse_generator_rate);
+        	APP_DEBUG("device_request_callback: valid GPIO setting [%d]\n", pulse_generator_rate);
 #endif
         }
 	}
 	else
 	{
-		APP_DEBUG("idigi_handle_device_request: unknown target [%s]\n", target);
+		APP_DEBUG("device_request_callback: unknown target [%s]\n", target);
 	}
 
     return status;
@@ -742,7 +741,7 @@ extern int firmware_download_started;
 extern float num_ad_samples, ad_running_total, ad_running_average;
 extern int ad_sample_available;
 
-void idigi_app_run_task(unsigned long initial_data)
+void connector_app_run_task(unsigned long initial_data)
 {
     MQX_TICK_STRUCT tickstart, ticknow;
     static int first_time = 1;
@@ -752,7 +751,7 @@ void idigi_app_run_task(unsigned long initial_data)
     ret = connector_register_device_request_callbacks(device_request_callback, device_response_callback, NULL, NULL);
     if (ret != connector_error_success)
     {
-        APP_DEBUG("idigi_register_device_request_callbacks failed [%d]\n", ret);
+        APP_DEBUG("connector_register_device_request_callbacks failed [%d]\n", ret);
     }
    
     _time_get_elapsed_ticks(&tickstart);
@@ -785,10 +784,10 @@ void idigi_app_run_task(unsigned long initial_data)
        	        /* Send the a2d sample */
                 snprintf(put_temp_buffer, BUFFER_SIZE, FREESCALE_DEMO_CONTROL_AD_FILE_FORMAT, ad_average_int, ad_average_dec);
 
-            	status = idigi_initiate_put_request(ad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
+            	status = connector_initiate_put_request(ad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
 	        	
 	        	if (status)
-	        	    APP_DEBUG("idigi_app_run_task: error putting to ad_file_path\n");
+	        	    APP_DEBUG("connector_app_run_task: error putting to ad_file_path\n");
 	        	else
 	        		goto done;
     	    }
@@ -805,7 +804,7 @@ void idigi_app_run_task(unsigned long initial_data)
             _time_get_elapsed_ticks(&ticknow);
             elapsed = _time_diff_ticks_int32 (&ticknow, &tickstart, NULL);
         	
-            /* Send a put to the iDigi server every 1 second */
+            /* Send a put to the Device Cloud server every 1 second */
             if (elapsed > 200)
             {  
                 _time_get_elapsed_ticks(&tickstart);
@@ -832,12 +831,12 @@ void idigi_app_run_task(unsigned long initial_data)
     	    	/* Send the initial led state to synchronize with app */
     	    	if (first_time == 1)
     	    	{
-        	        APP_DEBUG("idigi_app_run_task: sending first put to iDigi server\n");
+        	        APP_DEBUG("connector_app_run_task: sending first put to Etherios Cloud\n");
     	    		first_time = 0;               	
                 	strncpy(put_temp_buffer, "slow", sizeof(put_temp_buffer));
-	        	    status = idigi_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
+	        	    status = connector_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
 	        	    if (status)
-	        	        APP_DEBUG("idigi_app_run_task: error sending first put to iDigi server\n");
+	        	        APP_DEBUG("connector_app_run_task: error sending first put to Etherios Cloud\n");
 		        	else
 		        		goto done;
     	    	}
@@ -850,30 +849,30 @@ void idigi_app_run_task(unsigned long initial_data)
     	    		{
     	    		    case 0:      	        	
          	        	    strncpy(put_temp_buffer, "stop", sizeof(put_temp_buffer));
-        	        	    status = idigi_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
+        	        	    status = connector_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
         	        	    if (status)
-        	        	        APP_DEBUG("idigi_touch_pad_task: error putting to touch pad path\n");
+        	        	        APP_DEBUG("connector_touch_pad_task: error putting to touch pad path\n");
         		        	else
         		        		goto done;
         	        	    break;
     	    		    case 1:      	        	
          	        	    strncpy(put_temp_buffer, "slow", sizeof(put_temp_buffer));
-        	        	    status = idigi_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
+        	        	    status = connector_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
         	        	    if (status)
-        	        	        APP_DEBUG("idigi_touch_pad_task: error putting to touch pad path\n");
+        	        	        APP_DEBUG("connector_touch_pad_task: error putting to touch pad path\n");
         		        	else
         		        		goto done;
         	        	    break;
     	    		    case 2:      	        	
          	        	    strncpy(put_temp_buffer, "fast", sizeof(put_temp_buffer));
-        	        	    status = idigi_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
+        	        	    status = connector_initiate_put_request(touch_pad_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);        	        	
         	        	    if (status)
-        	        	        APP_DEBUG("idigi_touch_pad_task: error putting to touch pad path\n");
+        	        	        APP_DEBUG("connector_touch_pad_task: error putting to touch pad path\n");
         		        	else
         		        		goto done;
         	        	    break;
     	    		    default:
-        	        	    APP_DEBUG("idigi_touch_pad_task: unrecognized blinkrate\n");
+        	        	    APP_DEBUG("connector_touch_pad_task: unrecognized blink rate\n");
         	        	    break;	
     	    		}
     	    	}
@@ -890,10 +889,10 @@ void idigi_app_run_task(unsigned long initial_data)
                     snprintf(put_temp_buffer, BUFFER_SIZE, FREESCALE_DEMO_CONTROL_ACCEL_FILE_FORMAT, 
                     		 cur_accel_data[0], cur_accel_data[1], cur_accel_data[2]);
 
-    	        	status = idigi_initiate_put_request(accel_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
+    	        	status = connector_initiate_put_request(accel_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
     	        	
     	        	if (status)
-    	        	    APP_DEBUG("idigi_app_run_task: error putting to accel path\n");
+    	        	    APP_DEBUG("connector_app_run_task: error putting to accel path\n");
     	        	else
     	        		goto done;   	    		
             	}
@@ -901,10 +900,10 @@ void idigi_app_run_task(unsigned long initial_data)
     	    	/* Send a syslog if data is in syslog buffer */
     	    	if (data_size_in_put_request_buffer)
     	    	{
-    	        	status = idigi_initiate_put_request(syslog_file_path, syslog_put_request_buffer, "text/plain", data_size_in_put_request_buffer, CONNECTOR_FLAG_APPEND_DATA);
+    	        	status = connector_initiate_put_request(syslog_file_path, syslog_put_request_buffer, "text/plain", data_size_in_put_request_buffer, CONNECTOR_FLAG_APPEND_DATA);
     	        	
     	        	if (status)
-    	        	    APP_DEBUG("idigi_app_run_task: error putting to syslog path\n");
+    	        	    APP_DEBUG("connector_app_run_task: error putting to syslog path\n");
     	        	else
     	        	{
         	        	data_size_in_put_request_buffer = 0;
@@ -934,10 +933,10 @@ void idigi_app_run_task(unsigned long initial_data)
         	    	    cur_pot_data_int = Sensor.pot_int;
         	    	    cur_pot_data_dec = Sensor.pot_dec;
 
-    	        	    status = idigi_initiate_put_request(pot_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
+    	        	    status = connector_initiate_put_request(pot_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
     	        	
     	        	    if (status)
-    	        	        APP_DEBUG("idigi_app_run_task: error putting to pot path\n");
+    	        	        APP_DEBUG("connector_app_run_task: error putting to pot path\n");
     		        	else
     		        		goto done;
     	    	    }
@@ -969,21 +968,20 @@ void idigi_app_run_task(unsigned long initial_data)
 #else
                 "Uptime: days [%d] hr [%d] min [%d] sec [%d]\n\nCPU Usage: [%d percent]\n\n"
 #endif                    		
-                "Tasks: startups [%d] terminations [%d]\n\nNetwork Connect Successes: [%d]\n\nLED Override: [%s]\n\nFailures: Detect GPIO to A/D converter [%d] "
-                "Malloc [%d] Network Receive [%d] Network Send [%d] Network Connect [%d]\n\nWatchdog caused reset: [%s]\n",
+                "Tasks: startups [%d] terminations [%d]\n\nLED Override: [%s]\n\nFailures: Detect GPIO to A/D converter [%d] "
+                "\n\nWatchdog caused reset: [%s]\n",
                 _mqx_version, _mqx_date, days, hours, minutes, seconds, cpu_usage,
 #ifdef DEBUG_CPU_USAGE                    	      
                 elapsed_loop1, NUM_RUNNING_TASKS + task_startups, task_terminations,
 #else
-                NUM_RUNNING_TASKS + task_startups, task_terminations, idigi_connect_to_idigi_successes, idigi_led_override, 
+                NUM_RUNNING_TASKS + task_startups, task_terminations, connector_led_override, 
 #endif                    	      
-                failures_to_detect_GPIO_TO_A2D_connections, idigi_malloc_failures,
-                idigi_network_receive_failures, idigi_network_send_failures, idigi_connect_to_idigi_failures, idigi_watchdog_caused_reset);
+                failures_to_detect_GPIO_TO_A2D_connections, connector_watchdog_caused_reset);
 
-	        	status = idigi_initiate_put_request(sysinfo_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
+	        	status = connector_initiate_put_request(sysinfo_file_path, put_temp_buffer, "text/plain", strlen(put_temp_buffer), 0);
 	        	
         	    if (status)
-        	        APP_DEBUG("idigi_app_run_task: error putting to sysinfo_file_path\n");
+        	        APP_DEBUG("connector_app_run_task: error putting to sysinfo_file_path\n");
 	        	else
 	        		goto done;
             }    		

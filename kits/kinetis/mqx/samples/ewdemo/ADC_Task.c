@@ -70,7 +70,7 @@ void ADC_sample_pulse_gen(void)
  * Pulse the GPIO line at the "pulse_generator_rate"
  * to create a pulse generator signal.
  */
-void idigi_gpio_pulse_task(unsigned long initial_data)
+void connector_gpio_pulse_task(unsigned long initial_data)
 {    
     /* Initialize LED's */
     if (TRUE == lwgpio_init(&pulse_gen_gpio, PULSE_GEN_GPIO, LWGPIO_DIR_OUTPUT, LWGPIO_VALUE_NOCHANGE))    {
@@ -134,7 +134,7 @@ void idigi_gpio_pulse_task(unsigned long initial_data)
    *
    * Task then waits 500ms before sampling values again
    */
-void ADC_Task()
+void adc_Task()
 {
   float vpulse_gen;
   float pot;

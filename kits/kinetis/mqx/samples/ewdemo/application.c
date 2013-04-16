@@ -18,7 +18,7 @@
 
 static void connector_status(connector_error_t const status, char const * const status_message)
 {
-    APP_DEBUG("idigi_status: status update %d [%s]\n", status, status_message);
+    APP_DEBUG("connector_status: status update %d [%s]\n", status, status_message);
 }
 
 int application_start(void)
@@ -27,11 +27,11 @@ int application_start(void)
     connector_error_t ret;
     int status=-1;
 
-    APP_DEBUG("application_start: calling idigi_connector_start\n");
+    APP_DEBUG("application_start: calling connector_start\n");
     ret = connector_start(connector_status);
     if (ret != connector_error_success)
     {
-    	APP_DEBUG("idigi_connector_start failed [%d]\n", ret);
+    	APP_DEBUG("connector_start failed [%d]\n", ret);
         goto error;
     }
 	

@@ -70,7 +70,7 @@ void init_cpu_usage(void)
 #endif
 }
 
-void idigi_cpu_usage(unsigned long initial_data)
+void connector_cpu_usage(unsigned long initial_data)
 {
 	volatile KERNEL_DATA_STRUCT _PTR_ kernel_data;
 	int i;
@@ -96,7 +96,7 @@ void idigi_cpu_usage(unsigned long initial_data)
    	    {
    	    	elapsed_loop1 = 0xffff - initial_loop1 + kernel_data->IDLE_LOOP.IDLE_LOOP1 + 1;
 #ifdef DEBUG_CPU_USAGE
-   	   	    APP_DEBUG("idigi_cpu_usage: initial_loop1 [%x] kernel_data->IDLE_LOOP1 [%x]elapsed_loop1 [%x]\n", initial_loop1, kernel_data->IDLE_LOOP1, elapsed_loop1);
+   	   	    APP_DEBUG("connector_cpu_usage: initial_loop1 [%x] kernel_data->IDLE_LOOP1 [%x]elapsed_loop1 [%x]\n", initial_loop1, kernel_data->IDLE_LOOP1, elapsed_loop1);
 #endif
    	    }
    	    else
@@ -120,7 +120,7 @@ void idigi_cpu_usage(unsigned long initial_data)
    	    }
 
 #ifdef DEBUG_CPU_USAGE
-   	    APP_DEBUG("idigi_cpu_usage: cpu_usage_baseline [%x] elapsed_loop1 [%x] cpu_usage [%x]\n", cpu_usage_baseline, elapsed_loop1, cpu_usage);
+   	    APP_DEBUG("connector_cpu_usage: cpu_usage_baseline [%x] elapsed_loop1 [%x] cpu_usage [%x]\n", cpu_usage_baseline, elapsed_loop1, cpu_usage);
 #endif
     }
 }

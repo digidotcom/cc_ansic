@@ -17,9 +17,6 @@
 #include <lwevent.h>
 #include "DemoIO.h"
 
-extern int idigi_malloc_failures, idigi_network_receive_failures, idigi_network_send_failures;
-extern int idigi_connect_to_idigi_successes, idigi_connect_to_idigi_failures;
-
 #define PUT_REQUEST_BUFFER_SIZE 512
 #define DEVICE_REQUEST_BUFFER_SIZE 512
 

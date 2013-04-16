@@ -12,29 +12,27 @@
 #include "main.h"
 #include "platform.h"
 #include "os_support.h"
-#include "idigi_config.h"
+#include "connector_config.h"
 
 #if !BSPCFG_ENABLE_FLASHX && (defined CONNECTOR_FIRMWARE_SERVICE)
 //#error This application requires BSPCFG_ENABLE_FLASHX defined non-zero in user_config.h. Please recompile BSP with this option.
 #endif
 
-int idigi_connect_to_idigi_failures = 0, idigi_connect_to_idigi_successes = 0, idigi_malloc_failures = 0, idigi_network_send_failures = 0, idigi_network_receive_failures = 0;
-
 TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
-   {MAIN_TASK, Main_task, 5120, 9, "main", MQX_AUTO_START_TASK},
-   {IDIGI_CONNECTOR_TASK, connector_thread, 5120, 9, "iDigi_connector", 0},
-   {ADC_TASK,             ADC_Task,             1024,  10, "ADC",             0,},
-   {ACCEL_TASK,           Accel_Task,           1024,  10, "Accelerometer",   0,},
-   {IDIGI_LED_TASK,       idigi_led_task,       1024,  10, "idigi_led",       0,},
-   {IDIGI_TOUCH_TASK,     idigi_touch_pad_task, 1024,  10, "idigi_touch",     0,},
-   {IDIGI_BUTTON_TASK,    idigi_button_task,    2048,  10, "idigi_button",    0},
-   {IDIGI_UTILITY_1,      idigi_utility_task1,  1024,  10, "idigi_utility1",  0,},
-   {IDIGI_UTILITY_2,      idigi_utility_task2,  1024,  10, "idigi_utility2",  0 },
-   {IDIGI_APP_TASK,       idigi_app_run_task,   3072,   9, "idigi_app_run",   0,},
-   {IDIGI_GPIO_TASK,      idigi_gpio_pulse_task,1500,  10, "idigi_gpio",      0 },
-   {IDIGI_CPU_USAGE_TASK, idigi_cpu_usage,      1024,  10, "idigi_cpu",       0 },
+   {MAIN_TASK, main_task, 5120, 9, "main", MQX_AUTO_START_TASK},
+   {CONNECTOR_TASK, connector_thread, 5120, 9, "Etherios_connector", 0},
+   {ADC_TASK,             	  adc_Task,             1024,  10, "ADC",             0,},
+   {ACCEL_TASK,           	  accel_Task,           1024,  10, "Accelerometer",   0,},
+   {CONNECTOR_LED_TASK,       connector_led_task,       1024,  10, "connector_led",       0,},
+   {CONNECTOR_TOUCH_TASK,     connector_touch_pad_task, 1024,  10, "connector_touch",     0,},
+   {CONNECTOR_BUTTON_TASK,    connector_button_task,    2048,  10, "connector_button",    0},
+   {CONNECTOR_UTILITY_1,      connector_utility_task1,  1024,  10, "connector_utility1",  0,},
+   {CONNECTOR_UTILITY_2,      connector_utility_task2,  1024,  10, "connector_utility2",  0 },
+   {CONNECTOR_APP_TASK,       connector_app_run_task,   3072,   9, "connector_app_run",   0,},
+   {CONNECTOR_GPIO_TASK,      connector_gpio_pulse_task,1500,  10, "connector_gpio",      0 },
+   {CONNECTOR_CPU_USAGE_TASK, connector_cpu_usage,      1024,  10, "connector_cpu",       0 },
    {0,                    0,                     0,    0,   0,      0,         }
 };
 
@@ -52,18 +50,18 @@ static uint_32 network_start(void)
 
     {
 		#define MAC_ADDR_LENGTH	6
-		size_t size;
-		connector_config_pointer_data_t config_data = {NULL, MAC_ADDR_LENGTH};
-		
-		if (app_get_mac_addr(&config_data) != connector_callback_continue)
-		{
-			APP_DEBUG("Failed to get device MAC address");
-			goto error;
-		}
-		
-		mac_addr = config_data.data;
-		APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
-			  (mac_addr)[0], (mac_addr)[1], (mac_addr)[2], (mac_addr)[3], (mac_addr)[4], (mac_addr)[5]);
+        size_t size;
+        connector_config_pointer_data_t config_data = {NULL, MAC_ADDR_LENGTH};
+        
+        if (app_get_mac_addr(&config_data) != connector_callback_continue)
+        {
+            APP_DEBUG("Failed to get device MAC address");
+            goto error;
+        }
+
+        mac_addr = config_data.data;
+        APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
+                  (mac_addr)[0], (mac_addr)[1], (mac_addr)[2], (mac_addr)[3], (mac_addr)[4], (mac_addr)[5]);
     }
 
     result = ipcfg_init_device (ENET_DEVICE, mac_addr);
@@ -77,12 +75,12 @@ static uint_32 network_start(void)
     while(!ipcfg_get_link_active(ENET_DEVICE)) {};
     APP_DEBUG("Cable connected\n");
 
-#if (defined IDIGI_USE_STATIC_IP)
-    ip_data.ip = IDIGI_DEVICE_IPADDR;
-    ip_data.mask = IDIGI_DEVICE_IPMASK;
-    ip_data.gateway = IDIGI_DEVICE_GATEWAY;
+#if (defined CONNECTOR_USE_STATIC_IP)
+    ip_data.ip = CONNECTOR_DEVICE_IPADDR;
+    ip_data.mask = CONNECTOR_DEVICE_IPMASK;
+    ip_data.gateway = CONNECTOR_DEVICE_GATEWAY;
 
-    ipcfg_add_dns_ip(ENET_DEVICE, IDIGI_DNS_SERVER_IPADDR);
+    ipcfg_add_dns_ip(ENET_DEVICE, CONNECTOR_DNS_SERVER_IPADDR);
     APP_DEBUG("Setting static IP address ... ");
     result = ipcfg_bind_staticip (ENET_DEVICE, &ip_data);
 #else
@@ -105,20 +103,27 @@ static uint_32 network_start(void)
     APP_DEBUG("\nGateway Address : %d.%d.%d.%d\n",IPBYTES(ip_data.gateway));
     APP_DEBUG("\nDNS Address     : %d.%d.%d.%d\n",IPBYTES(ipcfg_get_dns_ip(ENET_DEVICE,0)));
     result = RTCS_OK;
-
+    
+#ifdef USE_SSL
+    if (SNTP_oneshot(IPADDR(64,90,182,55), 20000) != RTCS_OK) {
+    	printf("SNTP_oneshot failed!\n");
+    }
+#endif
+    
 error:
     return result;
 }
+
 
 /*TASK*-----------------------------------------------------
 * 
 * Task Name    : Main_task
 * Comments     :
-*    This starts iDigi Connector
+*    This starts Etherios Cloud Connector
 *
 *END*-----------------------------------------------------*/
 
-void Main_task(uint_32 initial_data)
+void main_task(uint_32 initial_data)
 {
     uint_32 const result = network_start();
 
