@@ -60,7 +60,7 @@ void TSI_Init(void)
 
   /* Init TSI interrupts */
   _int_install_isr(INT_TSI0, TSI_isr, NULL);
-  //_cortex_int_init(INT_TSI0, 4, TRUE);
+  _bsp_int_init(INT_TSI0, 4, 0, TRUE);
   /***********************/
 
 }
