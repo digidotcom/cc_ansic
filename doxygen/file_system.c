@@ -30,7 +30,7 @@
  * remotely from Etherios Device Cloud. The Etherios Cloud Connector invokes the application-defined callbacks  
  * to read from a file, to write to a file, and to list files or directory entries.
  *
- * The largest allowed file to get from the device is 2MB - 1byte (2097151 bytes). 
+ * The largest file allowed by Device Cloud to get from the device is 2MB - 1byte (2097151 bytes). 
  *
  * A typical application-defined callback sequence for reading file data by Etherios Device Cloud would include:
  *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "file open" callback with read-only access.
@@ -124,23 +124,19 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_open @htmlonly</td>
  * </tr>
  * <tr>
- * <th>user_context</th>
- * <td> Application-owned pointer.</td>
- * </tr>
- * <tr>
- * <th>errnum</th>
- * <td> Callback sets this application-defined error token in case of I/O error to be used later in
- *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
- * </tr>  
- * <tr>
  *   <th>data</th>
  *   <td> pointer to @endhtmlonly @ref connector_file_system_open_t "connector_file_system_open_t" @htmlonly structure where:
  *     <ul>
- *       <li><b><i>path</i></b> [IN] is the file path to a null-terminated string (with maximum string length of @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
+ *       <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *       <br /> 
+ *       <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <br /> 
+ *       <li><b><i>path</i></b> - [IN] is the file path to a null-terminated string (with maximum string length of @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
  *       <br />
- *       <li><b><i>oflag</i></b> [IN] is the bitwise-inclusive OR of @endhtmlonly @ref connector_file_system_open_flag_t @htmlonly.</li>
+ *       <li><b><i>oflag</i></b> - [IN] is the bitwise-inclusive OR of @endhtmlonly @ref connector_file_open_flags "file open flags" @htmlonly</li>
  *       <br />
- *       <li><b><i>handle</i></b> [OUT] Application defined file handle.</li>
+ *       <li><b><i>handle</i></b> - [OUT] Application defined file handle</li>
  *     </ul>
  *   </td>
  * </tr>
@@ -227,28 +223,24 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_lseek @htmlonly</td>
  * </tr>
  * <tr>
- * <th>user_context</th>
- * <td> Application-owned pointer.</td>
- * </tr>
- * <tr>
- * <th>errnum</th>
- * <td> Callback sets this application-defined error token in case of I/O error to be used later in
- *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
- * </tr>  
- * <tr>
  * <th>data</th>
  * <td> pointer to @endhtmlonly @ref connector_file_system_lseek_t "connector_file_system_lseek_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>handle</i></b> - [IN] File handle</li>
- *   <br />
- *   <li><b><i>origin</i></b> - [IN] @endhtmlonly @ref connector_file_system_seek_cur, @htmlonly
+ *       <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *       <br /> 
+ *       <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <br /> 
+ *       <li><b><i>handle</i></b> - [IN] File handle</li>
+ *       <br />
+ *       <li><b><i>origin</i></b> - [IN] @endhtmlonly @ref connector_file_system_seek_cur, @htmlonly
  *                                   @endhtmlonly @ref connector_file_system_seek_set, @htmlonly
  *                                   or @endhtmlonly @ref connector_file_system_seek_end @htmlonly
  *                              </li>
- *   <br />
- *   <li><b><i>requested_offset</i></b> - [IN] Requested file offset</li>
- *   <br />
- *   <li><b><i>resulting_offset</i></b> - [OUT] Resulting file offset</li>
+ *       <br />
+ *       <li><b><i>requested_offset</i></b> - [IN] Requested file offset</li>
+ *       <br />
+ *       <li><b><i>resulting_offset</i></b> - [OUT] Resulting file offset</li>
  *   </ul>
  * </td>
  * </tr>
@@ -339,25 +331,21 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_read @htmlonly</td>
  * </tr>
  * <tr>
- * <th>user_context</th>
- * <td> Application-owned pointer.</td>
- * </tr>
- * <tr>
- * <th>errnum</th>
- * <td> Callback sets this application-defined error token in case of I/O error to be used later in
- *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
- * </tr>  
- * <tr>
  * <th>data</th>
  * <td> pointer to @endhtmlonly @ref connector_file_system_read_t "connector_file_system_read_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>handle</i></b> - [IN] File handle</li>
- *   <br />
- *   <li><b><i>buffer</i></b> - Pointer to memory buffer where the callback places data retrieved from the file</li>
- *   <br />
- *   <li><b><i>bytes_available</i></b> - [IN] Size of the memory buffer</li>
- *   <br />
- *   <li><b><i>bytes_used</i></b> - [OUT] Number of bytes retrieved from the file and placed in the memory buffer</li>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>handle</i></b> - [IN] File handle</li>
+ *      <br />
+ *      <li><b><i>buffer</i></b> - Pointer to memory buffer where the callback places data retrieved from the file</li>
+ *      <br />
+ *      <li><b><i>bytes_available</i></b> - [IN] Size of the memory buffer</li>
+ *      <br />
+ *      <li><b><i>bytes_used</i></b> - [OUT] Number of bytes retrieved from the file and placed in the memory buffer</li>
  *   </ul>
  * </td>
  * </tr> 
@@ -434,25 +422,21 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_write @htmlonly</td>
  * </tr>
  * <tr>
- * <th>user_context</th>
- * <td> Application-owned pointer.</td>
- * </tr>
- * <tr>
- * <th>errnum</th>
- * <td> Callback sets this application-defined error token in case of I/O error to be used later in
- *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
- * </tr>  
- * <tr>
  * <th>data</th>
  * <td> pointer to @endhtmlonly @ref connector_file_system_write_t "connector_file_system_write_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>handle</i></b> - [IN] File handle</li>
- *   <br />
- *   <li><b><i>buffer</i></b> - [IN] Pointer to data to write to the file</li>
- *   <br />
- *   <li><b><i>bytes_available</i></b> - [IN] Number of data bytes to to write to the file</li>
- *   <br />
- *   <li><b><i>bytes_used</i></b> - [OUT] Number of data bytes actually written to the file</li>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>handle</i></b> - [IN] File handle</li>
+ *      <br />
+ *      <li><b><i>buffer</i></b> - [IN] Pointer to data to write to the file</li>
+ *      <br />
+ *      <li><b><i>bytes_available</i></b> - [IN] Number of data bytes to to write to the file</li>
+ *      <br />
+ *      <li><b><i>bytes_used</i></b> - [OUT] Number of data bytes actually written to the file</li>
  *   </ul>
  * </td>
  * </tr>  
@@ -530,21 +514,17 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_ftruncate @htmlonly</td>
  * </tr>
  * <tr>
- * <th>user_context</th>
- * <td> Application-owned pointer.</td>
- * </tr>
- * <tr>
- * <th>errnum</th>
- * <td> Callback sets this application-defined error token in case of I/O error to be used later in
- *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
- * </tr>
- * <tr>
  * <th>data</th>
  * <td> pointer to @endhtmlonly @ref connector_file_system_truncate_t "connector_file_system_truncate_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>handle</i></b> - [IN] File handle</li>
- *   <br />
- *   <li><b><i>length_in_bytes</i></b> - [IN] Length in bytes to truncate a file to</li>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>handle</i></b> - [IN] File handle</li>
+ *      <br />
+ *      <li><b><i>length_in_bytes</i></b> - [IN] Length in bytes to truncate a file to</li>
  *   </ul>
  * </td>
  * </tr>  
@@ -618,20 +598,16 @@
  * <tr>
  * <td>request_id</td>
  * <td>@endhtmlonly @ref connector_request_id_file_system_close @htmlonly</td>
- * </tr>
- * <th>user_context</th>
- * <td> Application-owned pointer.</td>
- * </tr>
- * <tr>
- * <th>errnum</th>
- * <td> Callback sets this application-defined error token in case of I/O error to be used later in
- *      @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback </td>
- * </tr>
  * <tr>
  * <th>data</th>
  * <td> pointer to @endhtmlonly @ref connector_file_system_close_t "connector_file_system_close_t" @htmlonly structure where:
  *   <ul>
- *   <li><b><i>handle</i></b> - [IN] File handle</li>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>handle</i></b> - [IN] File handle</li>
  *   </ul>
  * </td>
  * </tr>  
@@ -698,31 +674,24 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_remove @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_path_request_t "connector_file_path_request_t" @htmlonly structure:
- *   <ul><li><b><i>path</i></b> - File path is a null-terminated string.
- *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_path_request_t "connector_file_path_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                   used in case of file I/O error.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_remove_t "connector_file_system_remove_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *   <li><b><i>path</i></b> - [IN] File path is a null-terminated string.
+ *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly.</li>
+ *   </ul>
+ * </td>
+ * </tr>   
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>File removed successfully or error has occured</td>
+ * <td>File removed successfully</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -730,59 +699,47 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br /> 
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_rm(connector_file_path_request_t const * const request_data, 
- *                                             connector_file_response_t * const response_data)
+ * connector_callback_status_t app_process_file_remove(connector_file_system_remove_t * const data)
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *
  *     // Posix function to remove a file
- *     int result = unlink(request_data->path);
+ *     int result = unlink(data->path);
  *
- *     if (result < 0)
- *     {
- *          connector_file_error_data_t * error_data = response_data->error;
+ *    if (result < 0)
+ *    {
+ *        if (errno == EAGAIN)
+ *        {
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
+ *        }
+ *    }
  *
- *          long int errnum = errno;
- *          error_data->errnum = (void *) errnum;
- *
- *          switch (errnum)
- *          {
- *              case EACCES:
- *              case EPERM:
- *                  error_data->error_status = connector_file_permision_denied;
- *                  break;
- *              case ENOMEM:
- *                  error_data->error_status = connector_file_out_of_memory;
- *                  break;
- *              case ENOENT:
- *              case EBADF:
- *                  error_data->error_status = connector_file_path_not_found;
- *                  break;
- *              case EINVAL:
- *              case EISDIR:
- *                  error_data->error_status = connector_file_invalid_parameter;
- *                  break;
- *              case EAGAIN:
- *                  status = connector_callback_busy;
- *                  break;
- *              default:
- *                  error_data->error_status = connector_file_unspec_error;
- *          }
- *     }
- *     return status;
- *  } 
+ *    return status;
+ * } 
  *
  * @endcode
+ * <br /> 
  *
  * @section file_system_opendir     Open a directory
  *
@@ -801,32 +758,26 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_opendir @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_path_request_t "connector_file_path_request_t" @htmlonly structure:
- *   <ul><li><b><i>path</i></b> - File path is a null-terminated string.
- *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_path_request_t "connector_file_path_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [OUT] pointer to @endhtmlonly @ref connector_file_open_response_t "connector_file_open_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                                            used in case of an error.</li>
- *   <li><b><i>handle</i></b> - Application defined directory handle.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_open_response_t "connector_file_open_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_opendir_t "connector_file_system_opendir_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
+ *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
+ *      <br />
+ *      <li><b><i>handle</i></b> - [OUT] Application defined directory handle</li></ul>
+ *   </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Directory opened successfully or error has occured</td>
+ * <td>Directory opened successfully</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -834,11 +785,17 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br />
  * 
  * Example:
  *
@@ -851,16 +808,14 @@
  * 
  * } app_dir_data_t;
  *
- * connector_callback_status_t app_process_file_opendir(connector_file_path_request_t const * const request_data,
- *                                                  connector_file_open_response_t * const response_data)
+ * connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_t * const data)
  * {
  * 
  *     connector_callback_status_t status = connector_callback_continue;
- *     connector_file_error_data_t * error_data = response_data->error;
  *     DIR * dirp;
  * 
  *     errno = 0;
- *     dirp = opendir(request_data->path);
+ *     dirp = opendir(data->path);
  * 
  *     if (dirp != NULL)
  *     {
@@ -869,55 +824,41 @@
  *
  *         if (dir_data != NULL)
  *         {
- *             response_data->handle = dir_data;
+ *             data->handle = dir_data;
  *             dir_data->dirp = dirp;
  *         }
  *         else
  *         {
- *             error_data->error_status = connector_file_out_of_memory;
- *             error_data->errnum = (void *) ENOMEM; 
  *             closedir(dirp);
+ *             data->errnum = (void *) ENOMEM;
+ *             status = connector_callback_error; 
  *         }
  *     }
  *     else
  *     {
- *         long int errnum = errno;
- *         error_data->errnum = (void *) errnum;
- *
- *         switch (errnum)
- *         {
- *             case EACCES:
- *                  error_data->error_status = connector_file_permision_denied;
- *                  break;
- *              case ENOMEM:
- *                  error_data->error_status = connector_file_out_of_memory;
- *                  break;
- *              case ENOENT:
- *              case ENOTDIR:
- *                  error_data->error_status = connector_file_path_not_found;
- *                  break;
- *              case EINVAL:
- *                  error_data->error_status = connector_file_invalid_parameter;
- *                  break;
- *              case EAGAIN:
- *                  status = connector_callback_busy;
- *                  break;
- *              default:
- *                  error_data->error_status = connector_file_unspec_error;
- *         }
+ *        if (errno == EAGAIN)
+ *        {
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
+ *        }
  *     }
  *     return status;
  * }
  *
  * @endcode
- *
+ * <br />
+ * 
  * @section file_system_readdir     Read next directory entry
  *
  * The callbacks reads the next directory entry for the directory handle,
- * returned in the @ref file_system_opendir "connector_request_id_file_system_opendir" callback. 
+ * returned in the @ref file_system_opendir "open a directory" callback. 
  *
- * The callback writes the directory entry name to memory at the data_ptr address. When no more 
- * directory entries exist, the callback sets size_in_bytes to 0.
+ * The callback writes the directory entry name at the entry_name pointer. When no more 
+ * directory entries exist, the callback writes an empty string "".
  *
  * @htmlonly
  * <table class="apitable">
@@ -932,34 +873,26 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_readdir @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure:
- *   <ul><li><b><i>handle</i></b> - Directory handle.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                          used in case of an error.</li>
- *   <li><b><i>data_ptr</i></b> - Pointer to memory where the callback writes the directory entry name,
- *                               a null-terminated string.</li>
- *   <li><b><i>size_in_bytes</i></b> - [IN] Size of the memory buffer. [OUT] Length of the ditectory entry name,
- *                                      including ending '\0'. 0 if no more directory entries exist.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_readdir_t "connector_file_system_readdir_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>handle</i></b> - [IN] Directory handle</li>
+ *      <br /> 
+ *      <li><b><i>entry_name</i></b> - [OUT] Pointer to memory where the callback writes the directory entry name,
+ *                                      a null-terminated string.</li> 
+ *   </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Next directory entry returned, no more directory entries exist, or an error has occured</td>
+ * <td>Next directory entry returned or no more directory entries exist</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -967,11 +900,17 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br />
  * 
  * Example:
  *
@@ -985,12 +924,10 @@
  * } app_dir_data_t;
  *
  *
- * connector_callback_status_t app_process_file_readdir(connector_file_request_t const * const request_data,
- *                                                  connector_file_data_response_t * const response_data)
+ * connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
- *     app_dir_data_t * dir_data = request_data->handle;
- *     connector_file_error_data_t * error_data = response_data->error;
+ *     app_dir_data_t * dir_data = data->handle;
  *     struct dirent  * result;
  *     int rc;
  * 
@@ -1001,55 +938,46 @@
  *     if (rc != 0)
  *     {
  *         // error
- *         error_data->errnum = (void *) rc;
- *
- *         switch (rc)
- *         {
- *              case ENOENT:
- *              case EBADF:
- *                 error_data->error_status = connector_file_path_not_found;
- *                 break;
- *              case EAGAIN:
- *                 status = connector_callback_busy;
- *                 break;
- *              case EOVERFLOW:
- *              default:
- *                 error_data->error_status = connector_file_unspec_error;
- *         }
+ *        if (rc == EAGAIN)
+ *        {
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) rc;
+ *              status = connector_callback_error;
+ *        }
  *     }
  *     else
  *     if (result == NULL)
  *     {
  *         // finished with the directory
- *         response_data->size_in_bytes = 0;
+ *         data->entry_name[0] = '\0';
  *     }
  *     else
  *     {
  *         // valid entry
  *         size_t name_len = strlen(result->d_name);
- *         size_t buffer_size = response_data->size_in_bytes;
  * 
- *         if(name_len < buffer_size)
+ *         if(name_len < data->bytes_available)
  *         {
- *             memcpy(response_data->data_ptr, result->d_name, name_len + 1);
- *             response_data->size_in_bytes = name_len;
+ *             memcpy(data->entry_name, result->d_name, name_len + 1);
  *         }
  *         else
  *         {
- *             connector_file_error_data_t * error_data = response_data->error;
- * 
- *             error_data->error_status = connector_file_out_of_memory;
- *             error_data->errnum = (void *) ENAMETOOLONG;
+ *             data->errnum = (void *) ENAMETOOLONG;
+ *             status = connector_callback_error;
  *         }
  *     }
  *     return status;
  * }
  *
  * @endcode
- *
+ * <br />
+ 
  * @section file_system_closedir    Close a directory
  *
- * Close a directory for the directory handle, returned in the @ref file_system_opendir "connector_request_id_file_system_opendir"
+ * Close a directory for the directory handle, returned in the @ref file_system_opendir "open a directory"
  * callback.
  *
  * @note This callback must release all resources, used during the file system session.
@@ -1067,38 +995,41 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_closedir @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure:
- *   <ul><li><b><i>handle</i></b> - Directory handle.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_request_t "connector_file_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                      used in case of an error.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_close_t "connector_file_system_close_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>handle</i></b> - [IN] Directory handle</li>
+ *   </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Directory closed successfully or error has occured</td>
+ * <td>Directory closed successfully</td>
  * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
+ * <td>Busy. The callback will be repeated
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
- * 
+ * <br />
  * Example:
  *
  * @code
@@ -1111,10 +1042,9 @@
  * } app_dir_data_t;
  *
  *
- * connector_callback_status_t app_process_file_closedir(connector_file_request_t const * const request_data,
- *                                                   connector_file_response_t * const response_data)
+ * connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
  * {
- *     app_dir_data_t * dir_data = request_data->handle;
+ *     app_dir_data_t * dir_data = data->handle;
  *
  *     closedir(dir_data->dirp);
  *     free(dir_data);
@@ -1124,55 +1054,57 @@
  * }
  * 
  * @endcode
+ * <br /> 
  *
  * @section file_system_stat        Get file status
  *
- * Get file status for the named file path.
+ * Get file status for the named file path, received in a request from Device Cloud.
+ * <br /><br /> 
  *
- * When called for a file, the callback returns the following information in the @ref connector_file_stat_t "connector_file_stat_t"
- * structure of the response:
+ * When called for a file, the callback returns the following information: 
  * @li File size
  * @li Last modified time
- * @li The @ref CONNECTOR_FILE_IS_REG flag set, if the path represents a regular file.
- * @li Hash algorithm of @ref connector_file_hash_algorithm_t "connector_file_hash_algorithm_t" type to be used for this file in a future
- * @ref file_system_hash "connector_request_id_file_system_hash" callback.
+ * @li The @ref connector_file_system_file_type_is_reg flag set, if the path represents a regular file.
+ * @li @ref connector_file_system_hash_algorithm_t "Hash algorithm" to be used for this file in a future
+ * @ref file_system_hash "get file hash value" callback.
  *
- * When called for a directory, the callback returns the following information in the @ref connector_file_stat_t "connector_file_stat_t"
- * structure of the response:
+ * When called for a directory, the callback returns the following information: 
  * @li Last modified time
- * @li The @ref CONNECTOR_FILE_IS_DIR flag set.
- * @li Hash algorithm of @ref connector_file_hash_algorithm_t "connector_file_hash_algorithm_t" type to be used for each regular file in this directory
- * in a separate @ref file_system_hash "connector_request_id_file_system_hash" callback. 
+ * @li The @ref connector_file_system_file_type_is_dir flag set.
+ * @li @ref connector_file_system_hash_algorithm_t "Hash algorithm" to be used for each regular file in this directory
+ * in a separate @ref file_system_hash "get file hash value" callback. 
+ * <br /><br />
  *
  * Hash values support is optional.
  *
- * The following table shows the valid response for a suggested hash algorithm:
+ * The following table shows the valid response for a requested hash algorithm:
  *
  * @htmlonly
  * <table class="apitable">
  * <tr>
- * <th class="title">Suggested hash algorithm</th>
+ * <th class="title">Requested hash algorithm</th>
  * <th class="title">Actual hash algorithm</th>
  * </tr>
  * <tr>
- * <th> @endhtmlonly @ref connector_file_hash_best @htmlonly</th>
- * <td> @endhtmlonly @ref connector_file_hash_md5 @htmlonly, @endhtmlonly @ref connector_file_hash_crc32 @htmlonly,
- *                                           or @endhtmlonly @ref connector_file_hash_none @htmlonly </td>
+ * <th> @endhtmlonly @ref connector_file_system_hash_best @htmlonly</th>
+ * <td> @endhtmlonly @ref connector_file_system_hash_md5, @ref connector_file_system_hash_crc32,
+ *                                           or @ref connector_file_system_hash_none @htmlonly </td>
  * </tr>
  * <tr>
- * <th> @endhtmlonly @ref connector_file_hash_md5 @htmlonly</th>
- * <td> @endhtmlonly @ref connector_file_hash_md5 @htmlonly or @endhtmlonly @ref connector_file_hash_none @htmlonly</td>
+ * <th> @endhtmlonly @ref connector_file_system_hash_md5 @htmlonly</th>
+ * <td> @endhtmlonly @ref connector_file_system_hash_md5 or @ref connector_file_system_hash_none @htmlonly</td>
  * </tr>
  * <tr>
- * <th> @endhtmlonly @ref connector_file_hash_crc32 @htmlonly</th>
- * <td> @endhtmlonly @ref connector_file_hash_crc32 @htmlonly or @endhtmlonly @ref connector_file_hash_none @htmlonly</td>
+ * <th> @endhtmlonly @ref connector_file_system_hash_crc32 @htmlonly</th>
+ * <td> @endhtmlonly @ref connector_file_system_hash_crc32 or @ref connector_file_system_hash_none @htmlonly</td>
  * </tr>
  * <tr>
- * <th> @endhtmlonly @ref connector_file_hash_none @htmlonly</th>
- * <td> @endhtmlonly @ref connector_file_hash_none @htmlonly</td>
+ * <th> @endhtmlonly @ref connector_file_system_hash_none @htmlonly</th>
+ * <td> @endhtmlonly @ref connector_file_system_hash_none @htmlonly</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br /><br />
  *
  * Callback arguments:
  *
@@ -1189,119 +1121,214 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_stat @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_stat_request_t "connector_file_stat_request_t" @htmlonly structure:
- *   <ul><li><b><i>path</i></b> - File path is a null-terminated string.
- *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly.</li>
- *   <li><b><i>hash_alg</i></b> - Suggested hash algorithm of @endhtmlonly @ref connector_file_hash_algorithm_t "connector_file_hash_algorithm_t" 
- *                                @htmlonly type.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_stat_request_t "connector_file_stat_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_stat_response_t "connector_file_stat_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                  used in case of file error.</li>
- *   <li><b><i>statbuf</i></b> - [OUT] @endhtmlonly @ref connector_file_stat_t "connector_file_stat_t" @htmlonly structure where
- *                            the callback writes file status data.
- *
- *      <ul>
- *      <li><b><i>last_modified</i></b> Last modified time (seconds since 1970). If not supported, use 0.</li>
- *      <li><b><i>file_size</i></b> File size in bytes.</li>
- *      <li><b><i>flags</i></b> Non-zero if the file is a regular file or a directory, see @endhtmlonly @ref file_stat_flag_t @htmlonly.</li>
- *      <li><b><i>hash_alg</i></b> Actual hash algorithm: @endhtmlonly @ref connector_file_hash_crc32 @htmlonly,
- *                  @endhtmlonly @ref connector_file_hash_md5 @htmlonly, or @endhtmlonly @ref connector_file_hash_none @htmlonly.</li>
- *      </ul></li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_stat_response_t "connector_file_stat_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_stat_t "connector_file_system_stat_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
+ *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
+ *      <br /> 
+ *      <li><b><i>statbuf</i></b> - [OUT] @endhtmlonly @ref connector_file_system_statbuf_t "Status data" @htmlonly</li>
+ *      <br />
+ *      <li><b><i>hash_algorithm.requested</i></b> - [IN] @endhtmlonly @ref connector_file_system_hash_algorithm_t
+ *                                                       "Requested hash algorithm" @htmlonly</li>
+ *      <br /> 
+ *      <li><b><i>hash_algorithm.actual</i></b> - [OUT] @endhtmlonly @ref connector_file_system_hash_algorithm_t
+ *                                                     "Actual hash algorithm" @htmlonly</li>
+ *   </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Status information returned or error has occured</td>
+ * <td>Status information returned</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
  * <td>Busy. The callback will be repeated
  * </td>
  * </tr>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br />
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_stat(connector_file_stat_request_t const * const request_data, 
- *                                               connector_file_stat_response_t * const response_data)
+ * connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
  * {
  *     struct stat statbuf;
- *     connector_file_stat_t * pstat = &response_data->statbuf;
  *     connector_callback_status_t status = connector_callback_continue;
  * 
- *     int result = stat(request_data->path, &statbuf);
+ *     int result = stat(data->path, &statbuf);
  * 
  *     if (result == 0)
  *     {
- *         pstat->flags         = 0;
- *         pstat->file_size     = statbuf.st_size;
- *         pstat->last_modified = statbuf.st_mtime;
- *         pstat->hash_alg      = connector_file_hash_none;
+ *         data->statbuf.flags         = connector_file_system_file_type_none;
+ *         data->statbuf.last_modified = (uint32_t) statbuf.st_mtime;
  * 
  *         if (S_ISDIR(statbuf.st_mode))
- *            pstat->flags |= CONNECTOR_FILE_IS_DIR;
+ *            data->statbuf.flags = connector_file_system_file_type_is_dir;
  *         else
  *         if (S_ISREG(statbuf.st_mode))
- *            pstat->flags |= CONNECTOR_FILE_IS_REG;
+ *         {
+ *            data->statbuf.flags = connector_file_system_file_type_is_reg;
+ *            data->statbuf.file_size     = (connector_file_offset_t) statbuf.st_size;
+ *         }
+ *
+ *         data->hash_algorithm.actual  = connector_file_system_hash_none;
  *     }
  *     else
  *     {
- *         connector_file_error_data_t * error_data = response_data->error;
- *         long int errnum = errno;
- *         error_data->errnum = (void *) errnum;
- *
- *         switch (errnum)
- *         {
- *          case EACCES:
- *              error_data->error_status = connector_file_permision_denied;
- *               break;
- *           case ENAMETOOLONG:
- *               error_data->error_status = connector_file_out_of_memory;
- *               break;
- *           case ENOENT:
- *               error_data->error_status = connector_file_path_not_found;
- *               break;
- *           case ENOTDIR:
- *           case EBADF:
- *           case EINVAL:
- *               error_data->error_status = connector_file_invalid_parameter;
- *               break;
- *           case EAGAIN:
- *               status = connector_callback_busy;
- *               break;
- *           default:
- *               error_data->error_status = connector_file_unspec_error;
- *         }
- *    }
- *    return status;
+ *        if (errno == EAGAIN)
+ *        {
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
+ *        }
+ *     }
+ *     return status;
  * }
  *
  * @endcode
+ * <br />
+ *
+ * @section file_system_stat_dir_entry  Get directory entry status
+ *
+ * Get status for the directory entry.
+ * <br /><br />
+ *
+ * When called for a file, the callback returns the following information:
+ * @li File size
+ * @li Last modified time
+ * @li The @ref connector_file_system_file_type_is_reg flag set, if the path represents a regular file.
+ *
+ * When called for a directory, the callback returns the following information: 
+ * @li Last modified time
+ * @li The @ref connector_file_system_file_type_is_dir flag set.
+ * <br /><br />
+ *
+ * Callback arguments:
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr> 
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>class_id</td>
+ * <td>@endhtmlonly @ref connector_class_id_file_system @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <td>request_id</td>
+ * <td>@endhtmlonly @ref connector_request_id_file_system_stat @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_stat_dir_entry_t "connector_file_system_stat_dir_entry_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
+ *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
+ *      <br /> 
+ *      <li><b><i>statbuf</i></b> - [OUT] @endhtmlonly @ref connector_file_system_statbuf_t "Status data" @htmlonly</li>
+ *   </ul>
+ * </td>
+ * </tr> 
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Status information returned</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
+ * <td>Busy. The callback will be repeated
+ * </td>
+ * </tr>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ * <br />
+ *
+ * Example:
+ *
+ * @code
+ *
+ * connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
+ * {
+ *     struct stat statbuf;
+ *     connector_callback_status_t status = connector_callback_continue;
+ * 
+ *     int result = stat(data->path, &statbuf);
+ * 
+ *     if (result == 0)
+ *     {
+ *         data->statbuf.flags         = connector_file_system_file_type_none;
+ *         data->statbuf.last_modified = (uint32_t) statbuf.st_mtime;
+ * 
+ *         if (S_ISDIR(statbuf.st_mode))
+ *            data->statbuf.flags = connector_file_system_file_type_is_dir;
+ *         else
+ *         if (S_ISREG(statbuf.st_mode))
+ *         {
+ *            data->statbuf.flags = connector_file_system_file_type_is_reg;
+ *            data->statbuf.file_size     = (connector_file_offset_t) statbuf.st_size;
+ *         }
+ *     }
+ *     else
+ *     {
+ *        if (errno == EAGAIN)
+ *        {
+ *              status = connector_callback_busy;
+ *        }
+ *        else
+ *        {
+ *              data->errnum = (void *) errno;
+ *              status = connector_callback_error;
+ *        }
+ *     }
+ *     return status;
+ * }
+ *
+ * @endcode
+ * <br />
  *
  * @section file_system_hash        Get file hash value
  * 
  * Get a file hash value for the specified path.
+ * <br /><br />
  *
  * Supported hash algorithms are md5 and crc32.
  *
@@ -1310,10 +1337,11 @@
  * @ref connector_callback_busy. The callback will be repeated until it completes hash
  * calculations and returns @ref connector_callback_continue.
  *
- * If @ref file_system_hash "connector_request_id_file_system_hash" callback for a directory entry has a problem reading a file
- * and sets an error status, the session will terminate without sending any data for other
- * directory entries. In order to avoid this the callback may elect to return a zero
- * hash value and a non-error status.
+ * If this callback has a problem reading a file, when called for a directory entry,
+ * returns @ref connector_callback_error, the session will terminate without
+ * sending any data for other directory entries. It's recommended to return @ref connector_callback_continue
+ * to avoid this problem (the hash value will be zero).
+ * <br /><br />
  *
  * @htmlonly
  * <table class="apitable">
@@ -1328,37 +1356,32 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_hash @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_stat_request_t "connector_file_stat_request_t" @htmlonly structure:
- *   <ul><li><b><i>path</i></b> - File path is a null-terminated string.
- *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly.</li>
- *   <li><b><i>hash_alg</i></b> - Hash algorithm @endhtmlonly @ref connector_file_hash_md5 @htmlonly
- *                               or @endhtmlonly @ref connector_file_hash_crc32 @htmlonly.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_stat_request_t "connector_file_stat_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer.</li>
- *   <li><b><i>error</i></b> - [OUT] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure,
- *                                  used in case of file error.</li>
- *   <li><b><i>data_ptr</i></b> - Pointer to  memory, where the callback writes the hash value.</li>
- *   <li><b><i>size_in_bytes</i></b> - [IN] Size of memory buffer for hash value: 16 bytes for md5,
- *                                4 bytes for crc32.</li></ul>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_hash_t "connector_file_system_hash_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
+ *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *      <br /> 
+ *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
+ *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
+ *      <br /> 
+ *      <li><b><i>hash_algorithm</i></b> - [IN] @endhtmlonly @ref connector_file_system_hash_md5 or
+ *                                              @ref connector_file_system_hash_crc32 @htmlonly</li>
+ *      <br /> 
+ *      <li><b><i>hash_value</i></b> - buffer where the callback writes the hash value</li>
+ *      <br /> 
+ *      <li><b><i>bytes_requested</i></b> - [IN] size of hash value in bytes, 16 bytes for md5,
+ *                                          4 bytes for crc32.</li>
+ *   </ul>
  * </td>
- * </tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure</td>
- * </tr>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Status information returned or error has occured</td>
+ * <td>Hash value returned</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -1366,45 +1389,52 @@
  * </td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
+ * <td>An error has occured
+ * </td>
+ * </tr> 
+ * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
  * <td>Callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ * <br />
  *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_hash(connector_file_stat_request_t const * const request_data, 
- *                                               connector_file_data_response_t * const response_data)
+ * connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  *
- *     switch (request_data->hash_alg)
+ *     switch (data->hash_algorithm)
  *     {
  *          case connector_file_hash_crc32:
- *              status = app_calc_crc32(request_data->path, response_data);
+ *              status = app_calc_crc32(data->path, data->hash_value);
  *              break;
  *
  *          case connector_file_hash_md5:
- *              status = app_calc_md5(request_data->path, response_data);
+ *              status = app_calc_md5(data->path, data->hash_value);
  *              break;
  *     }
  *     return status;
  * }
  *
  * @endcode
+ * <br /> 
  *
  * @section file_system_get_error    Get error description
  *
- * Get error description string to send to Etherios Device Cloud.
+ * Get an error status code and an error description string to send to Etherios Device Cloud.
+ * <br /><br />  
  *
- * Etherios Cloud Connector invokes this this callback if an earlier callback has encountered a file I/O eror and
- * has set an error_status and errnum in @ref connector_file_error_data_t "connector_file_error_data_t" structure of the response.
+ * Etherios Cloud Connector invokes this this callback if an earlier callback has returned
+ * @ref connector_callback_error.
  *
- * Etherios Cloud Connector invokes this callback after calling the @ref file_system_close "connector_request_id_file_system_close" 
- * or the @ref file_system_closedir "connector_request_id_file_system_closedir" callback.
+ * Etherios Cloud Connector invokes this callback after calling the @ref file_system_close "close a file" 
+ * or the @ref file_system_closedir "close a directory" callback.
  *
  * @htmlonly
  * <table class="apitable">
@@ -1419,32 +1449,29 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_get_error @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th> <td> NULL </td>
- * </tr>
- * <tr>
- * <td>request_length</td> <td> 0 </td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN/OUT] pointer to @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - NULL.</li>
- *   <li><b><i>error</i></b> [IN] Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure.
- *      <ul><li><b><i>- error_status</i></b> [IN] Error status of @endhtmlonly @ref connector_file_error_status_t "connector_file_error_status_t" @htmlonly type.</li>
- *      <li><b><i>- errnum</i></b> [IN] Used as an input for an error description string.</li></ul></li>
- *   <li><b><i>data_ptr</i></b> Pointer to memory where the callback writes an error description.
- *                               The error description is not a null-terminated string.</li>
- *   <li><b><i>size_in_bytes</i></b> [IN] Size of the memory buffer.<br></br>
- *                                   [OUT] Length of the error description string.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_data_response_t "connector_file_data_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_get_error_t "connector_file_system_get_error_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>errnum</i></b> - [IN] Application-defined error token set in a previous callback</li>
+ *      <br />
+ *      <li><b><i>error_status</i></b> - [OUT] @endhtmlonly @ref connector_file_system_error_t "Error status code" @htmlonly</li>
+ *      <br />
+ *      <li><b><i>buffer</i></b> - Pointer to memory buffer where the callback writes an error description.
+ *                                 The error description is not a null-terminated string </li>
+ *      <br /> 
+ *      <li><b><i>bytes_available</i></b> - [IN] Size of memory buffer in bytes</li>
+ *      <br /> 
+ *      <li><b><i>bytes_used</i></b> - [OUT] Number of description bytes written to the buffer</li>
+ *   </ul>
+ * </td>
+ * </tr> 
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Continue</td>
+ * <td>Returned error status and description</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -1452,31 +1479,64 @@
  * </tr>
  * </table>
  * @endhtmlonly
- * 
+ * <br />
+ *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_strerror(connector_file_response_t * const response_data)
+ * connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
  * {
- *    size_t strerr_size = 0;
- * 
- *    connector_file_error_data_t * error_data = response_data->error;
- *    long int errnum = (long int) error_data->errnum;
- * 
- *    char * err_str = strerror(errnum);
- *    char * ptr = response_data->data_ptr;
+ *   long int errnum = (long int) data->errnum;
  *
- *    strerr_size = strnlen(err_str, response_data->size_in_bytes);
- *    memcpy(ptr, err_str, strerr_size);
- *    ptr[strerr_size - 1] = '\0';
- * 
- *    response_data->size_in_bytes = strerr_size;
+ *   if (errnum != NULL)
+ *   {
+ *       char * err_str = strerror(errnum);
  *
- *    return connector_callback_continue;
+ *       data->bytes_used = APP_MIN_VALUE(strlen(err_str), data->bytes_available);
+ *       memcpy(data->buffer, err_str, data->bytes_used);
+ *   }
+ *
+ *   switch(errnum)
+ *   {
+ *       case EACCES:
+ *       case EPERM:
+ *       case EROFS:
+ *           data->error_status = connector_file_system_permision_denied;
+ *           break;
+ *
+ *       case ENOMEM:
+ *       case ENAMETOOLONG:
+ *           data->error_status = connector_file_system_out_of_memory;
+ *           break;
+ *
+ *       case ENOENT:
+ *       case ENODEV:
+ *       case EBADF:
+ *           data->error_status = connector_file_system_path_not_found;
+ *           break;
+ *
+ *       case EINVAL:
+ *       case ENOSYS:
+ *       case ENOTDIR:
+ *       case EISDIR:
+ *           data->error_status = connector_file_system_invalid_parameter;
+ *           break;
+ *
+ *       case ENOSPC:
+ *           data->error_status = connector_file_system_insufficient_storage_space;
+ *           break;
+ *
+ *       default:
+ *           data->error_status = connector_file_system_unspec_error;
+ *           break;
+ *   }
+ *
+ *   return connector_callback_continue;
  * }
  *
  * @endcode
+ * <br /> 
  *
  * @section file_system_session_error   Inform of an Etherios Cloud Connector error
  *

@@ -20,7 +20,8 @@
 
 /**
 * @defgroup connector_request_id_file_system_t File System 
-* Request IDs @{ 
+* Request IDs 
+* @{ 
 */
 /**
 * File System Request Id passed to the application's callback to use file system.
@@ -49,8 +50,8 @@ typedef enum {
 */
 
 /**
-* @defgroup connector_file_offset_t Data type used for file 
-*           offset
+* @defgroup connector_file_offset_t 
+* Data type used for file offset
 *
 * @{ 
 */
@@ -70,8 +71,8 @@ typedef int32_t connector_file_offset_t;
 */
 
 /**
-* @defgroup connector_file_system_open_flag_t File open flags
-* @{
+* @defgroup connector_file_open_flags
+* File open flags @{ 
 */
 /**
  * Open file for reading only.
@@ -128,9 +129,8 @@ typedef int32_t connector_file_offset_t;
  
  
 /**
-* @defgroup connector_file_system_open_t Data type used 
-* for file system open callback 
-* @{ 
+* @defgroup connector_file_system_open_t 
+* Data type used for file system open callback @{ 
 */
 /**
 * Data structure used in connector_request_id_file_system_open 
@@ -151,15 +151,14 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_seek_origin_t File seek 
-* origin
-* @{ 
+* @defgroup connector_file_system_seek_origin_t File seek origin 
+* @{
 */
 /**
 * Data type used for seek origin in  
 * connector_request_id_file_system_lseek callback. 
 */
-typedef  enum
+typedef enum
 {
      connector_file_system_seek_set,    		    /**<  Seek file position relative to start-of-file */
      connector_file_system_seek_cur,    		    /**<  Seek file position relative to current position */
@@ -171,9 +170,8 @@ typedef  enum
 */
 
 /**
-* @defgroup connector_file_system_lseek_t Data type used 
-* for file system lseek callback 
-* @{ 
+* @defgroup connector_file_system_lseek_t 
+* Data type used for file system lseek callback @{ 
 */
 /**
 * Data structure used in  
@@ -197,9 +195,8 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_write_t Data type used 
-* for file system write callback 
-* @{ 
+* @defgroup connector_file_system_write_t 
+* Data type used for file system write callback @{ 
 */
 /**
 * Data structure used in  
@@ -221,9 +218,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_truncate_t Data type used 
-* for file system truncate callback 
-* @{ 
+* @defgroup connector_file_system_truncate_t 
+* Data type used for file system truncate callback @{ 
 */
 /**
 * Data structure used in  
@@ -244,9 +240,8 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_read_t Data type used 
-* for file system read callback 
-* @{ 
+* @defgroup connector_file_system_read_t 
+* Data type used for file system read callback @{ 
 */
 /**
 * Data structure used in  
@@ -269,9 +264,8 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_close_t Data type used 
-* for file system close callback 
-* @{ 
+* @defgroup connector_file_system_close_t 
+* Data type used for file system close callback @{ 
 */
 /**
 * Data structure used in  
@@ -291,9 +285,8 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_opendir_t Data type used 
-* for file system opendir callback 
-* @{ 
+* @defgroup connector_file_system_opendir_t 
+* Data type used for file system opendir callback @{ 
 */
 /**
 * Data structure used in  
@@ -314,9 +307,8 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_hash_algorithm_t File system 
-* hash algorithm 
-* @{ 
+* @defgroup connector_file_system_hash_algorithm_t 
+* File system hash algorithm @{ 
 */
 /**
 * Hash algorithm gives different options for hash values returned in the file lisings.
@@ -336,9 +328,8 @@ typedef enum
 */
 
 /**
-* @defgroup connector_file_system_hash_t Data type used 
-* for file system hash callback 
-* @{ 
+* @defgroup connector_file_system_hash_t 
+* Data type used for file system hash callback @{ 
 */
 /**
 * Data structure used in  
@@ -359,6 +350,27 @@ typedef struct
 * @}
 */
 
+/**
+* @defgroup connector_file_system_file_type_t 
+* File system file type @{ 
+*/
+/**
+* Used in @ref connector_file_system_statbuf_t 
+* "file status data" structure.
+*
+* @see @ref connector_request_id_file_system_stat
+* @see @ref connector_request_id_file_system_stat_dir_entry
+*/
+typedef enum
+{
+    connector_file_system_file_type_none,   /**< Is not a regular file or directory. */
+    connector_file_system_file_type_is_dir, /**< Is a directory. */
+    connector_file_system_file_type_is_reg  /**< Is a regular file. */
+
+} connector_file_system_file_type_t;
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_file_system_statbuf_t File status data
@@ -375,12 +387,7 @@ typedef struct
 {
     uint32_t last_modified;                     /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
     connector_file_offset_t file_size;          /**< File size in bytes */
-    enum
-    {
-        connector_file_system_file_type_none,   /**< Is not a regular file or directory. */
-        connector_file_system_file_type_is_dir, /**< Is a directory. */
-        connector_file_system_file_type_is_reg  /**< Is a regular file. */
-    } flags;                                    /**< Directory, regular, or neither */
+    connector_file_system_file_type_t flags;    /**< Directory, regular, or neither */
 
 } connector_file_system_statbuf_t;
 /**
@@ -410,7 +417,6 @@ typedef struct
     	connector_file_system_hash_algorithm_t CONST requested; /**< requested hash algorithm */
         connector_file_system_hash_algorithm_t actual;          /**< actual hash algorithm to use for the all regular files in the directory */
     } hash_algorithm;                           /**< requested and actual hash algorithm */
-
 
 } connector_file_system_stat_t;
 /**
@@ -488,6 +494,31 @@ typedef struct
 */
 
 /**
+* @defgroup connector_file_system_error_t 
+* File system error status sent to Etherios Device Cloud @{ 
+                                                        */
+/**
+* Used in @ref connector_file_system_get_error_t 
+* "get file error description" structure.
+*
+* @see @ref connector_request_id_file_get_error
+*/
+typedef enum
+{
+    connector_file_system_unspec_error,                 /**< Fatal unspecified error */
+    connector_file_system_path_not_found,               /**< Path not found */
+    connector_file_system_insufficient_storage_space,   /**< Insufficient storage space */
+    connector_file_system_request_format_error,         /**< Request format error */
+    connector_file_system_invalid_parameter,            /**< Invalid parameter */
+    connector_file_system_out_of_memory,                /**< Out of memory */
+    connector_file_system_permision_denied              /**< Permision denied */
+
+} connector_file_system_error_t;                                         
+/**
+* @}
+*/
+
+/**
 * @defgroup connector_file_system_get_error_t Data type 
 * used for file system ret error data callback @{ 
 */
@@ -503,19 +534,10 @@ typedef struct
     void * CONST errnum;               /**< Application defined error token */
 
     void  * CONST buffer;              /**< A pointer to memory, where callback writes error description */
-    size_t  CONST bytes_available;          /**< Size of a error description buffer */
+    size_t  CONST bytes_available;     /**< Size of a error description buffer */
     size_t  bytes_used;                /**< Number of error descriptio bytes */
 
-    enum
-    {
-        connector_file_system_unspec_error,                 /**< Fatal unspecified error */
-        connector_file_system_path_not_found,               /**< Path not found */
-        connector_file_system_insufficient_storage_space,   /**< Insufficient storage space */
-        connector_file_system_request_format_error,         /**< Request format error */
-        connector_file_system_invalid_parameter,            /**< Invalid parameter */
-        connector_file_system_out_of_memory,                /**< Out of memory */
-        connector_file_system_permision_denied              /**< Permision denied */
-    } error_status;                                         /**< Error status */
+    connector_file_system_error_t error_status; /**< Error status */
 
 } connector_file_system_get_error_t;
 /**
