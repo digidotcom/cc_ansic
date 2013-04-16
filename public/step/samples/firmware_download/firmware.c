@@ -89,11 +89,22 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
         goto done;
     }
 
-    APP_DEBUG("target = %d\n", image_data->target_number);
-    APP_DEBUG("offset = 0x%04X\n", image_data->image.offset);
-    APP_DEBUG("data = %p\n", image_data->image.data);
-    total_image_size += image_data->image.bytes_used;
-    APP_DEBUG("length = %" PRIsize " (total = %" PRIsize ")\n", image_data->image.bytes_used, total_image_size);
+    {
+        size_t i;
+
+        APP_DEBUG("target = %d\n", image_data->target_number);
+        APP_DEBUG("offset = 0x%08X\n", image_data->image.offset);
+
+        APP_DEBUG("data = ");
+        for (i=0; i < image_data->image.bytes_used && i < sizeof(uint32_t); i++)
+        {
+            APP_DEBUG("0x%02X ", image_data->image.data[i]);
+        }
+        APP_DEBUG("...\n");
+
+        total_image_size += image_data->image.bytes_used;
+        APP_DEBUG("length = %" PRIsize " (total = %" PRIsize ")\n", image_data->image.bytes_used, total_image_size);
+    }
 
 done:
     return status;
@@ -183,3 +194,4 @@ connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t
 
     return status;
 }
+
