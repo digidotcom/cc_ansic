@@ -7,6 +7,17 @@
  * This sample demonstrates how to retreive and set device configurations using @ref rci_service "remote configuration callbacks".
  * This is a simple sample which does not write on the device but demonstrates the remote configuration callback.
  *
+ * @section rci_sample_location Source Code Location
+ *
+ * - For the connector_run() version:
+ *     -- @htmlonly<I>./connector/public/run/samples/simple_remote_config</I>@endhtmlonly
+ *
+ * - For the connector_step() version:
+ *      -- @htmlonly<I>./connector/public/step/samples/simple_remote_config</I>@endhtmlonly
+ *
+ * @note Check @ref threading "here" for more information on using the connector_run()
+ * versus connector_step() model.
+ *
  * @section connect_description Code Flow
  *
  * The routine main() in the platform directory initializes Etherios Cloud Connector and
