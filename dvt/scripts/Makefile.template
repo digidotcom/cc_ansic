@@ -55,7 +55,7 @@ ${LIBS}
 # Generated Sample Executable Name.
 SAMPLE = connector
 .PHONY:all
-all: clean $$(SAMPLE)
+all: clean build
 
 .PHONY:build
 build: $$(SAMPLE)
