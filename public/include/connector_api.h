@@ -750,7 +750,8 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref connector_transport_udp - UDP transport
  *                              - @ref connector_transport_sms - Reserved
  *                              - @ref connector_transport_all - all transports.
- *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
+ *                              - @b Note: This @b connector_initiate_transport_stop triggers @ref connector_request_id_status_stop_completed callback.
+ *                                @b See @ref status_stop_completed callback.
  *
  *                      @li @b connector_initiate_ping_request:
  *                          Sends status message to the Etherios Device Cloud.  Supported only under
@@ -774,9 +775,9 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_send_data:
  *                          Pointer to connector_data_service_put_request_t.
  *                      @li @b connector_initiate_transport_start:
- *                          Pointer to @ref connector_transport_t "connector_transport_t"
+ *                          Pointer to @ref connector_transport_t
  *                      @li @b connector_initiate_transport_stop:
- *                          Pointer to @ref connector_initiate_stop_request_t "connector_initiate_stop_request_t"
+ *                          Pointer to connector_initiate_stop_request_t
  *                      @li @b connector_initiate_ping_request:
  *                          Pointer to connector_message_status_request_t
  *                      @li @b connector_initiate_data_point_binary:
