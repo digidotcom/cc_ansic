@@ -1,19 +1,19 @@
-/*! @page rci_sample Remote Configuration Simple Sample
+/*! @page rci_advance_sample Remote Configuration Sample
  *
  * @htmlinclude nav.html
  *
- * @section rci_sample_overview Overview
+ * @section rci_advance_sample_overview Overview
  *
  * This sample demonstrates how to retreive and set device configurations using @ref rci_service "remote configuration callbacks".
  * This is a simple sample which does not write on the device but demonstrates the remote configuration callback.
  *
- * @section rci_sample_location Source Code Location
+* @section rci_sample_location Source Code Location
  *
  * - For the connector_run() version:
- *     -- @htmlonly<I>/connector/public/run/samples/simple_remote_config</I>@endhtmlonly
+ *     -- @htmlonly<I>./connector/public/run/samples/remote_config</I>@endhtmlonly
  *
  * - For the connector_step() version:
- *      -- @htmlonly<I>/connector/public/step/samples/simple_remote_config</I>@endhtmlonly
+ *      -- @htmlonly<I>./connector/public/step/samples/remote_config</I>@endhtmlonly
  *
  * @note Check @ref threading "here" for more information on using the connector_run()
  * versus connector_step() model.
@@ -28,16 +28,40 @@
  * A User can use the included python script to send a device request to the device.
  *
  * This sample defines a configuration group with the following confgiruations:
+ * - Serial
+ *   - Baud rate
+ *   - Parity
+ *   - Databits
+ *   - xbreak
+ *   - TX Bytes
+ * - Ethernet
+ *   - IP Address
+ *   - Subnet mask
+ *   - Gateway
+ *   - DHCP
+ *   - DNS
+ *   - Duplex
+ * - Device Time
+ *   - Current time
+ * - Device Info
+ *   - Version
+ *   - Product
+ *   - Model
+ *   - Company
+ *   - Description
  * - System
  *   - Description
  *   - Contact
  *   - Location
+ * - Device security
+ *   - Connection security
+ *   - Password
+ * - Device State
+ *   - System up time
+ *   - Signed value
  * - GPS
  *   - Latitude
  *   - Longitude
- * - Device security (optional)
- *   - Connection security
- *   - Password
  *
  * @subsection config_file Etherios Cloud Connector configuration file
  *
@@ -48,24 +72,77 @@
  * globalerror save_fail "Save fail"
  * globalerror memory_fail "Insufficient memory"
  *
- * # Device info that shows up in Etherios Device Cloud under Device Manger
- * # Device Manager queries this system setting to display the information in root folder
+ * group setting serial 2 "Serial Port" "Port 1 is used for printf"
+ *     element baud "Baud rate" type enum access read_write
+ *         value 2400
+ *         value 4800
+ *         value 9600
+ *         value 19200
+ *         value 38400
+ *         value 57600
+ *         value 115200
+ *         value 230400
+ *     element parity "Parity" type enum access  read_write
+ *         value none
+ *         value odd
+ *         value even
+ *     element databits "Data bits" type uint32 access  read_write  min  5 max  8
+ *     element xbreak "Tx Break" type on_off access  read_write
+ *     element txbytes "Tx bytes" type uint32 access  read_only
+ *     error invalid_baud "Invalid baud rate "
+ *     error invalid_databits "Invalid data bits"
+ *     error invalid_parity  " Invalid parity"
+ *     error invalid_xbreak "Invalid xbreak setting"
+ *     error invalid_databits_parity "Invalid combination of data bits and parity"
+ *
+ * group setting ethernet "Ethernet interface"
+ *     element ip "IP Address" type ipv4
+ *     element subnet "Subnet" type ipv4
+ *     element gateway "Gateway" type ipv4
+ *     element dhcp "DHCP" type boolean
+ *     element dns "DNS" type fqdnv4 max 127
+ *     element duplex "Duplex" type enum
+ *         value auto  "Automatic"
+ *         value half  "Half"
+ *         value full  "Full"
+ *     error invalid_duplex "Invalid ethernet duplex setting"
+ *     error invalid_ip "Invalid IP address"
+ *     error invalid_subnet "Invalid subnet mask"
+ *     error invalid_gateway "Invalid gateway address"
+ *     error invalid_dns "Invalid DNS address"
+ *
+ *
+ * group setting device_time  "Device Time"
+ *     element curtime "Current time" type datetime access  read_write
+ *     error invalid_time "Invalid time"
+ *
+ * group setting device_info  "Device info"
+ *     element version "Version" type 0x_hex32 access  read_only
+ *     element product "Product" type string access  read_write  min  1 max  63
+ *     element model "Model" type string access  read_write  min  0 max  31
+ *     element company "Company" type string access  read_write  max 63
+ *     element desc "Description" type multiline_string access  read_write max 127
+ *
+ * # Device info that shows up in Etherios Device Cloud device summary
+ * # Etherios Device Cloud queries this system setting to display the information in root folder
  * group setting system "System"
  *     element description "Description" type string max 63
  *     element contact "Contact" type string max 63
  *     element location "Location" type string max 63
- *     error invalid_length "Invalid Length"
  *
- * # Etherios Device Cloud password
+ * # EDP password
  * # Etherios Device Cloud uses this devicesecurity setting for password authentication
  * # Note, as with all password, password type is a write-only field
- * # To include the devicesecurity setting, change devicesecurity.c.optional
- * # to devicesecurity.c
- * # group setting devicesecurity "Device Cloud device security"
- * #    element identityVerificationForm "Connection security" type enum
- * #        value simple "No connection security"
- * #        value password "Connection is password authenticated"
- * #    element password "Device connection password" type password max 133
+ * group setting devicesecurity "Device Cloud device security"
+ *     element identityVerificationForm "Connection security" type enum
+ *         value simple "No connection security"
+ *         value password "Connection is password authenticated"
+ *     element password "Device connection password" type password max 133 access write_only
+ *
+ * group state device_state  "Device State"
+ *     element system_up_time "System Up time" type uint32 access read_only units "seconds"
+ *     element signed_integer "Signed integer" type int32 min -100 max 100
+ *     error invalid_integer "Invalid integer value"
  *
  * # Device location
  * # State configuration for GPS
@@ -74,10 +151,6 @@
  *     element latitude "Latitude" type string access read_only
  *     element longitude "Longitude" type string access read_only
  * @endcode
- *
- *
- * Note that the device security is not included. Remove the comment tags in configuration file to include it and
- * change the devicesecurity.c.optional to devicesecurity.c. Add this devicesecurity.c to the Makefile.
  *
  * Run @ref rci_tool to generate remote_config.h:
  * @code
@@ -105,7 +178,7 @@
  *
  * @section connect_build Building
  *
- * To build this example on a Linux system, go to the public/run/samples/simple_remote_config
+ * To build this example on a Linux system, go to the public/run/samples/remote_config
  * directory and type: @htmlonly"<I>make clean all</I>"@endhtmlonly.
  * If you are not using Linux you will need to update your environment with
  * the information below and then build the image for your platform.
@@ -124,53 +197,81 @@
  * <tr>
  * <th>config.rci</th>
  * <td>Remote Configuration file</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
  * <th>application.c</th>
  * <td>Contains application_run() and the application defined callback</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
  * <th>remote_config.h</th>
  * <td>Remote configuration definitions generated by the @endhmtlonly @ref rci_tool @htmlonly </td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
  * <th>remote_config_cb.c</th>
  * <td>Routines used to remote configuration callback</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
  * <th>remote_config_cb.h</th>
  * <td>Header for remote configuration callback</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
+ * </tr>
+ * <tr>
+ * <th>device_info.c</th>
+ * <td>Device info remote configuration callback</td>
+ * <td>samples/remote_config</td>
+ * </tr>
+ * <tr>
+ * <th>devicesecurity.c</th>
+ * <td>Device security remote configuration callback (optional)</td>
+ * <td>samples/remote_config</td>
+ * </tr>
+ * <tr>
+ * <th>device_state.c</th>
+ * <td>Device state remote configuration callback</td>
+ * <td>samples/remote_config</td>
+ * </tr>
+ * <tr>
+ * <th>device_time.c</th>
+ * <td>Device time remote configuration callback</td>
+ * <td>samples/remote_config</td>
+ * </tr>
+ * <tr>
+ * <th>ethernet.c</th>
+ * <td>Ethernet remote configuration callback</td>
+ * <td>samples/remote_config</td>
+ * </tr>
+ * <tr>
+ * <th>firmware.c</th>
+ * <td>Firmware calls</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
  * <th>gps_stats.c</th>
  * <td>GPS remote configuration callback</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
- * <th>system.c</th>
- * <td>System remote configuration callback</td>
- * <td>samples/simple_remote_config</td>
+ * <th>serial.c</th>
+ * <td>Serial remote configuration callback</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
  * <th>status.c</th>
  * <td>Status calls</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <tr>
- * <th>devicesecurity.c.optional</th>
- * <td>Device security remote configuration callback (optional)</td>
- * <td>samples/simple_remote_config</td>
+ * <th>system.c</th>
+ * <td>System remote configuration callback</td>
+ * <td>samples/remote_config</td>
  * </tr>
- * <tr>
- * <tr>
  * <th>connector_config.h</th>
  * <td>Etherios Cloud Connector options</td>
- * <td>samples/simple_remote_config</td>
+ * <td>samples/remote_config</td>
  * </tr>
  * <th>connector_api.c</th>
  * <td>Code for Etherios Cloud Connector </td>
@@ -215,7 +316,7 @@
  * Log on to @htmlonly <a href="http://login.etherios.com/">Etherios Device Cloud</a>@endhtmlonly
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged, go to Device Manager tab and click the Refresh button.
- * The device's status should show as 'Connected'.
+ * The device's status should show a 'green' light indicating the device is connected.
  *
  * @image html cloud_rci_connected.png
  *
@@ -226,11 +327,11 @@
  * Click the System item under the Configuration link. Click the Save button
  * after updating the configurations.
  *
- * @image html cloud_configuration_save.png
+ * @image html cloud_rci_advance_save.png
  *
  * Go back to Home page and click the Refresh button, it will show the new configuration data.
  *
- * @image html cloud_home_refresh.png
+ * @image html cloud_rci_advance_home.png
  *
  * @htmlinclude terminate.html
  *
