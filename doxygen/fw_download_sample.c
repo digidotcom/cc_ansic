@@ -9,6 +9,17 @@
  * does not update the firmware on the device but demonstrates how to use this
  * API.
  *
+ * @section firmware_download_location Source Code Location
+ *
+ *      - For the connector_run() version:
+ *           - @htmlonly<I>/connector/public/run/samples/firmware_download</I>@endhtmlonly
+ *
+ *      - For the connector_step() version:
+ *          - @htmlonly<I>/connector/public/step/samples/firmware_download</I>@endhtmlonly
+ *
+ * @note Check @ref threading "here for more information" on using the connector_run()
+ * versus connector_step() model.
+ *
  * @section connect_description Code Flow
  *
  * The @ref AppStructure "Public Application Framework" @b Sample section file application.c contains
@@ -50,7 +61,7 @@
  * @section connect_build Building
  *
  * To build this example on a Linux system, go to the public/run/samples/firmware_download
- * directory and type: @htmlonly"<I>make clean; make all</I>"@endhtmlonly.
+ * directory and type: @htmlonly"<I>make clean all</I>"@endhtmlonly.
  * If you are not using Linux you will need to update your environment with
  * the information below and then build the image for your platform.
  *
@@ -73,6 +84,11 @@
  * <tr>
  * <th>firmware.c</th>
  * <td>Routines used to process the FW download requests</td>
+ * <td>samples/firmware_download</td>
+ * </tr>
+ * <tr>
+ * <th>status.c</th>
+ * <td>Status calls</td>
  * <td>samples/firmware_download</td>
  * </tr>
  * <tr>

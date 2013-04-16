@@ -31,6 +31,17 @@
  * To learn more about iDigi Data Streams, see Chapter 12 iDigi Data Streams in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90001150_H.pdf">iDigi User's Guide</a>@endhtmlonly.
  *
+ * @section data_stream_location Source Code Location
+ *
+ *      - For the connector_run() version:
+ *           - @htmlonly<I>/connector/public/run/samples/data_stream</I>@endhtmlonly
+ *
+ *      - For the connector_step() version:
+ *          - @htmlonly<I>/connector/public/step/samples/data_stream</I>@endhtmlonly
+ *
+ * @note Check @ref threading "here for more information" on using the connector_run()
+ * versus connector_step() model.
+ *
  * @section connect_description Code Flow
  *
  * The routine main() in the platform directory initializes Etherios Cloud Connector and
@@ -120,20 +131,14 @@
  * @li public/include
  * @li run/platforms/linux (substitute with your platform)
  *
- * @subsection Defines
- *
- * The following defines are used in this sample:
- *
- * @li -DCONNECTOR_VERSION=0x1020000UL
- *
  * @section web_gui Viewing results from Etherios Device Cloud
  *
  * To view the results for this sample, log on to Etherios Device Cloud as described
- * in the @ref add_your_device_to_the_cloud "Getting Started" section. 
+ * in the @ref add_your_device_to_the_cloud "Getting Started" section.
  *
  * Once logged in click on the Data Services tab as shown below. Then select the Data
  * Streams tab. This should show your channel (senser0/noise_level). Select the channel to
- * see the Data Stream charts and raw data. 
+ * see the Data Stream charts and raw data.
  *
  * @image html cloud_data_stream_selection.png
  *

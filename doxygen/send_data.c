@@ -7,7 +7,18 @@
  * This sample demonstrates how to send data from a device to Device Cloud, using the
  * @ref data_service_overview "data service api" this application writes data to a file
  * on Device Cloud.
- * 
+ *
+ * @section send_data_location Source Code Location
+ *
+ *      - For the connector_run() version:
+ *           - @htmlonly<I>/connector/public/run/samples/send_data</I>@endhtmlonly
+ *
+ *      - For the connector_step() version:
+ *          - @htmlonly<I>/connector/public/step/samples/send_data</I>@endhtmlonly
+ *
+ * @note Check @ref threading "here for more information" on using the connector_run()
+ * versus connector_step() model.
+ *
  * @section connect_description Code Flow
  *
  * The routine main() in the platform directory initializes Cloud Connector and registers the
@@ -18,7 +29,7 @@
  * The routine application_run() (or application_step()) which is called after initialization calls the routine
  * app_send_put_request() to initiate the data transfer to Device Cloud. This routine initiates the data transfer
  * by calling connector_initiate_action(); once the server is ready to receive data the app_data_service_handler()
- * routine is called. The callback then returns the string "Welcome to iDigi data service sample!\n" back to
+ * routine is called. The callback then returns the string "Connector data service sample!\n" back to
  * Device Cloud. This data is @b copied @b into @b the @b callback's @b buffer, by setting more_data to
  * connector_false indicates the only message in this data transfer. If you set more_data to connector_true then
  * the callback is called again to get the next chunk of data, this can be repeated to transfer larger data.
@@ -56,6 +67,11 @@
  *   <td>samples/send_data</td>
  * </tr>
  * <tr>
+ *   <th>status.c</th>
+ *   <td>Status calls</td>
+ *   <td>samples/send_data</td>
+ * </tr>
+ * <tr>
  *   <th>get_file.py</th>
  *   <td>Python script to retrieve a file</td>
  *   <td>samples/send_data</td>
@@ -86,7 +102,7 @@
  *   <td>platforms/<i>my_platform</i></td>
  * </tr>
  * <tr>
- *   <th>main.o</th>
+ *   <th>main.c</th>
  *   <td>Starting point of program, dependent on build environment</td>
  *   <td>platforms/<i>my_platform</i></td>
  * </tr>
@@ -105,7 +121,7 @@
  * @section web_gui Viewing results from Etherios Device Cloud
  *
  * To view the results for this sample log on to Device Cloud as described
- * in the @ref add_your_device_to_the_cloud "Getting Started" section. 
+ * in the @ref add_your_device_to_the_cloud "Getting Started" section.
  *
  * Once logged in click on the Data Services tab as shown below. Double click to the device folder.
  *

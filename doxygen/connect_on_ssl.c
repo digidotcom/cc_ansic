@@ -7,13 +7,24 @@
  * This sample demonstrates how one can connect to Etherios Device Cloud securely. The sample includes
  * network_tcp_ssl.c, instead of network_tcp.c, to provide network specific user callbacks. That means
  * any application can run on ssl by including network_tcp_ssl.c.
- * 
+ *
+ * @section connect_on_ssl_location Source Code Location
+ *
+ *      - For the connector_run() version:
+ *           - @htmlonly<I>/connector/public/run/samples/connect_on_ssl</I>@endhtmlonly
+ *
+ *      - For the connector_step() version:
+ *          - @htmlonly<I>/connector/public/step/samples/connect_on_ssl</I>@endhtmlonly
+ *
+ * @note Check @ref threading "here for more information" on using the connector_run()
+ * versus connector_step() model.
+ *
  * @section ssl_connect_description Code Flow
  *
  * -# The main(), defined in main.c, calls application_start()
  * -# The application_start(), defined in application.c, registers app_connector_callback()
  * -# The app_connector_callback(), defined in application.c, calls app_network_tcp_handler() for all network related iDigi Connector requests
- * -# The app_network_tcp_handler(), defined in network_tcp_ssl.c, calls subsequent openssl functions to communicate 
+ * -# The app_network_tcp_handler(), defined in network_tcp_ssl.c, calls subsequent openssl functions to communicate
  *    with Etherios Device Cloud over SSL
  *
  * @section connect_build Building
@@ -37,6 +48,11 @@
  * <tr>
  *   <td>application.c</td>
  *   <td>Contains application_run() and the application callback</td>
+ *   <td>samples/connect_on_ssl</td>
+ * </tr>
+ * <tr>
+ *   <td>status.c</td>
+ *   <td>Status calls</td>
  *   <td>samples/connect_on_ssl</td>
  * </tr>
  * <tr>
@@ -74,11 +90,6 @@
  * @li public/include
  * @li run/platforms/linux (substitute with your platform)
  *
- * @subsection Defines
- *
- * The following defines are used in this sample:
- *
- * @li -DCONNECTOR_VERSION=0x1020000UL
  *
  * <b> How to get CA certificate: </b>
  *

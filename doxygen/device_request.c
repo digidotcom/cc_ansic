@@ -8,6 +8,17 @@
  * Using the @ref data_service_overview "data service api" this application prints
  * out the data sent from Etherios Device Cloud.
  *
+ * @section device_request_location Source Code Location
+ *
+ *      - For the connector_run() version:
+ *           - @htmlonly<I>/connector/public/run/samples/device_request</I>@endhtmlonly
+ *
+ *      - For the connector_step() version:
+ *          - @htmlonly<I>/connector/public/step/samples/device_request</I>@endhtmlonly
+ *
+ * @note Check @ref threading "here for more information" on using the connector_run()
+ * versus connector_step() model.
+ *
  * @section connect_description Code Flow
  *
  * The routine main() in the platform directory initializes Etherios Cloud Connector and
@@ -58,6 +69,11 @@
  * <tr>
  * <th>device_request.c</th>
  * <td>Rountines used to process the data service device requests</td>
+ * <td>samples/device_request</td>
+ * </tr>
+ * <tr>
+ * <th>status.c</th>
+ * <td>Status calls</td>
  * <td>samples/device_request</td>
  * </tr>
  * <tr>
