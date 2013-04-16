@@ -74,7 +74,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
 #if (defined CONNECTOR_RCI_SERVICE)
     case connector_class_id_remote_config:
-        status = app_remote_config_handler(request_id.file_system_request, data);
+        status = app_remote_config_handler(request_id.remote_config_request, data);
         break;
 #endif
 
