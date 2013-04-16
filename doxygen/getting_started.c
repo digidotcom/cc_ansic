@@ -10,7 +10,10 @@
  * These steps include:
  *
  *          -# @ref step1
- *              -# @ref debug_routine
+ *              -# @ref i_have_C89_and_64bit
+ *              -# @ref non_compliant_adjustments
+ *                  -# @ref data_type_format_etc
+ *                  -# @ref debug_routine
  *          -# @ref step2
  *          -# @ref step3
  *              -# @ref connector_initialization
@@ -43,16 +46,31 @@
  * and integration, respectively.  When complete, your device will be connected to Etherios Device Cloud and displayed
  * in the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
- * @section step1 Step 1: Determine if your compiler is C89 or C99 compliant
+ * @section step1 Step 1: Do you have a C89 or C99 compliant compiler?
  *
  * Etherios Cloud Connector is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99) compliant.  If
  * your compiler is ANSI C89 or C99 compliant and you are running on a 32-bit processor you can skip
- * to the next section.  (Note the @ref CONNECTOR_RCI_SERVICE "Remote Configuration" feature requires
- * ANSI C99.)
+ * to @ref step2 "Step 2".
  *
- * If your compiler is not ANSI C89 or C99 compliant, you will have to review (and edit) public/include/connector_types.h
- * to adjust the data types @ref uint8_t, @ref uint16_t, @ref uint32_t, minimum and maxinum values
- * and format specifiers.
+ * @subsection i_have_C89_and_64bit Are you trying to compile C89 on a 64-bit machine?
+ *
+ * If your target is a 64-bit machine and your compiler is ANSI C89, this configuration will not
+ * work.  You will either have to find a C99 compiler or you will have to correct compilation warnings
+ * that result from your build.
+ *
+ * @note This combination should be rare, given a great majority of 64-bit machines were built
+ * after the 1999.  We expect a 64-bit target to have access to ANSI C99.
+ *
+ * @subsection non_compliant_adjustments Non compliant compilers
+ *
+ * Updates and adjustments will be necessary to properly compile the Cloud Connector software with
+ * your compiler and tools.  Complete the follow the steps:
+ *
+ * @subsection data_type_format_etc Updates to connector_types.h
+ *
+ * You will have to review (and edit) @ref connector_types.h "public/include/connector_types.h" to
+ * adjust the standard ANSI data types uint8_t, uint16_t, uint32_t, standard minimum and maximum values
+ * and standard format specifiers.
  *
  * -# Data types:
  *  @li @ref uint8_t
@@ -98,7 +116,8 @@
  *
  * Open the file connector_config.h in the sample directory to configure processor endianess.
  *
- * Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian, comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
+ * The Etherios Cloud Connector defaults to little endian.  To reconfigure for big endian,
+ * comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
  *
  * @section step3 Step 3: Build the compile_and_link sample
  *
@@ -152,28 +171,68 @@
  *
  * @li public/include
  *
- * @subsection add_define Add the defines
- *
- * The following define is required, and used to indicate that the version of
- * Etherios Cloud Connector is 1.2
- *
- * @li CONNECTOR_VERSION=0x1020000UL
- *
  * @subsection build_sample Build the sample
  *
  * Now that you have the build environment setup, verify the Cloud Connector compilation and link.
  * If using the Makefile provided, type @htmlonly"<I>make clean all</I>"@endhtmlonly in
- * the compile_and_link directory, otherwise perform a build in your environment.
+ * the compile_and_link directory, otherwise perform a build according to your environment's
+ * guidelines.
  *
  * @note See the @ref language for compilation tool requirements.
  *
  * @subsection resolving_compilation_issues Addressing compilation problems
  *
+ * The Linux makefiles included in the contain very strict warnings and error checking.
+ * This is done to expose as many issues as possible before executing code.   In addition,
+ * their is a clear guideline for @ref language "C Compiler language support".
+ *
  * If you are experiencing problems building Etherios Cloud Connector software, first double check
  * the steps listed in the prior instructions.
  *
- * There is only one include path and two C files required to build this sample.
+ * @subsection errors_due_to_C89_and_stdint C89 stdint.h compilation errors
  *
+ * Some ANSI C89 compilers include elements that were eventually released in ANSI C99, in particular,
+ * stdint.h.  For these hybrid compilers, the compilation phase will result in errors:
+ *
+ * @code
+ * In file included from ../../../include/connector_api.h:66,
+ *                  from ../../platforms/linux/config.c:20:
+ * ../../../include/connector_types.h:83: error: conflicting types for uint32_t
+ * /usr/include/stdint.h:52: note: previous declaration of uint32_t was here
+ * make: *** [../../platforms/linux/config.o] Error 1
+ * @endcode
+  *
+ * These compilation errors can be resolved by defining  @ref CONNECTOR_HAVE_STDINT_HEADER
+ * in your make or build system.
+ *
+ * @note When updating your makefile, since it's not a dependency, you must perform a
+ * @htmlonly"<I>make clean all</I>"@endhtmlonly when rebuilding your application.
+ *
+ * @subsection warnings_due_to_padding Warnings due to "alignment boundary structure padding"
+ *
+ * The Linux makefiles that come with the package include very strict warnings and error checking.
+ * Many processors, like ARM, have strict guidelines for word boundaries.  For these processors,
+ * padding is required at the end of structure to prevent mis-aligned structures in array processing.
+ *
+ * @code
+ * In file included from ../../../../private/connector_def.h:140,
+ *                  from ../../../../private/connector_api.c:27:
+ * ../../../../private/connector_edp_def.h:129: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:167: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:204: warning: padding struct size to alignment boundary
+ * ../../../../private/connector_edp_def.h:211: warning: padding struct size to alignment boundary
+ * In file included from ../../../../private/connector_def.h:144,
+ *                  from ../../../../private/connector_api.c:27:
+ * ../../../../private/connector_sm_def.h:174: warning: padding struct size to alignment boundary
+ * In file included from ../../../../private/connector_edp.h:23,
+ *                  from ../../../../private/connector_api.c:44:
+ * @endcode
+ *
+ * These warnings are perfectly safe.  The structures have extended to allow word alignment.
+ * In general, you must review all warnings to confirm their safety.
+ *
+ * If you are experiencing problems building Etherios Cloud Connector software, first double check
+ * the steps listed in the prior instructions.
  *
  * Once the build is successful you can proceed to the next step.
  *

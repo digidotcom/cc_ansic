@@ -627,6 +627,23 @@
 
 #endif
 
+
+/**
+ * When defined, the Cloud Connector compilation will expect the ANSI C99 stdint.h header file,
+ * even though we're setup for an ANSI C89 environment.
+ *
+ * This define should get added to your makefile:
+ *
+ * @code
+ * CFLAGS +=-std=c89 -DCONNECTOR_HAVE_STDINT_HEADER
+ * @endcode
+ *
+ * @see @ref errors_due_to_C89_and_stdint
+ * @see @ref resolving_compilation_issues
+ *
+ */
+#define CONNECTOR_HAVE_STDINT_HEADER
+
 /**
 * @}
 */
