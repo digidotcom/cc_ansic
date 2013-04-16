@@ -361,7 +361,7 @@ public class Descriptors {
 
 
     private void validateUrlName() {
-        ConfigGenerator.debug_log("Start validating device cloud url");
+        ConfigGenerator.debug_log("Start validating device cloud url " + ConfigGenerator.getUrlName());
         String response = sendCloudData("/ws/UserInfo", "GET", null);
 
         if (responseCode != 0)
