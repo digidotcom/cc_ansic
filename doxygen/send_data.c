@@ -4,25 +4,24 @@
  *
  * @section send_data_overview Overview
  *
- * This sample demonstrates how to send data from a device to the iDigi Server.
- * Using the @ref data_service_overview "data service api" this application writes data to a file on the
- * idigi server.
+ * This sample demonstrates how to send data from a device to Device Cloud, using the
+ * @ref data_service_overview "data service api" this application writes data to a file
+ * on Device Cloud.
  * 
  * @section connect_description Code Flow
  *
- * The routine main() in the platform directory initializes Etherios Cloud Connector and
- * registers the application-defined callback.  In the file application.c is the
- * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
- * when a data service request is received.
+ * The routine main() in the platform directory initializes Cloud Connector and registers the
+ * application-defined callback. In the file application.c is the application-defined callback
+ * app_connector_callback(), this routine calls app_data_service_handler() when a data service
+ * request is received.
  *
  * The routine application_run() (or application_step()) which is called after initialization calls the routine
- * app_send_put_request() to initiate the data transfer to Etherios Device Cloud.  This routine
- * initiates the data transfer by calling connector_initiate_action(); once the server is 
- * ready to receive data the app_data_service_handler() routine is called. The callback then returns
- * the string "Welcome to iDigi data service sample!\n" back to Etherios Device Cloud.  This data is @b copied
- * @b into @b the @b callback's @b buffer, by setting more_data to connector_false indicates the only
- * message in this data transfer. If you set more_data to connector_true then the callback is called again
- * to get next chunk of data, this can be repeated to transfer larger data.
+ * app_send_put_request() to initiate the data transfer to Device Cloud. This routine initiates the data transfer
+ * by calling connector_initiate_action(); once the server is ready to receive data the app_data_service_handler()
+ * routine is called. The callback then returns the string "Welcome to iDigi data service sample!\n" back to
+ * Device Cloud. This data is @b copied @b into @b the @b callback's @b buffer, by setting more_data to
+ * connector_false indicates the only message in this data transfer. If you set more_data to connector_true then
+ * the callback is called again to get the next chunk of data, this can be repeated to transfer larger data.
  *
  * If app_data_service_handler() is called with @ref connector_request_id_data_service_send_response then this
  * indicates a response from the server, @ref connector_request_id_data_service_send_status would indicate
@@ -63,12 +62,12 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td> iDigi Connector options</td>
+ *   <td>Cloud Connector options</td>
  *   <td>samples/send_data</td>
  * </tr>
  * <tr>
  *   <th>connector_api.c</th>
- *   <td>Code for Etherios Cloud Connector </td>
+ *   <td>Cloud Connector source</td>
  *   <td>private</td>
  * </tr>
  * <tr>
@@ -103,17 +102,12 @@
  *
  * @subsection Defines
  *
- * The following defines are used in this sample:
- *
- * @li -DCONNECTOR_VERSION=0x1020000UL
- *
  * @section web_gui Viewing results from Etherios Device Cloud
  *
- * To view the results for this sample log on to Etherios Device Cloud as described
+ * To view the results for this sample log on to Device Cloud as described
  * in the @ref add_your_device_to_the_cloud "Getting Started" section. 
  *
- * Once logged in click on the Data Services tab as shown
- * below. Double click to the device folder.
+ * Once logged in click on the Data Services tab as shown below. Double click to the device folder.
  *
  * @image html cloud_data_services_file.png
  *
@@ -122,16 +116,15 @@
  *
  * @image html cloud_data_services_folder.png
  *
- * The file is then listed as shown (below). You can click on a 
- * file to view its contents, you will see the file test.txt in the test directory
+ * The file is then listed as shown (below). You can click on the file to view its contents, you will see the file test.txt in the test directory
  * after you run this sample.
  *
  * @image html cloud_data_services_refresh.png
  *
- * @section python_script Python script to retrieve a file from Etherios Device Cloud storage
+ * @section python_script Python script to retrieve a file from Device Cloud storage
  *
  * This sample provides a basic python script to retrieve the test.txt file from login.etherios.com
- * after a device has sent it to the Device Cloud.
+ * after a device has sent it to Device Cloud.
  *
  * Run the python script in the sample:
  *
