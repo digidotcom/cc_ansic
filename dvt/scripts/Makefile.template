@@ -55,7 +55,10 @@ ${LIBS}
 # Generated Sample Executable Name.
 SAMPLE = connector
 .PHONY:all
-all: $$(SAMPLE)
+all: clean $$(SAMPLE)
+
+.PHONY:build
+build: $$(SAMPLE)
 
 # Linking Flags.
 LDFLAGS += $$(DFLAGS) -Wl,-Map,$$(SAMPLE).map,--sort-common
