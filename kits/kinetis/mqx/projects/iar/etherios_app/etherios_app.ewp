@@ -168,6 +168,8 @@
           <state>BOOTLOADER_ENABLED=0</state>
           <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>USE_SSL</state>
+          <state>NO_FILESYSTEM</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -310,6 +312,7 @@
           <state>C:\Etherios_CC\private</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
+          <state>C:\Users\spastor\Desktop\cyassl-2.5.0</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -767,6 +770,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\usbh.a</state>
+          <state>C:\Users\spastor\Desktop\cyassl-2.5.0\mqx-iar\twrk60n512_Debug\Exe\cyassl-2.5.0.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
