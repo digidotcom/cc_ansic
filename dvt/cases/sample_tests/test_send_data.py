@@ -36,10 +36,10 @@ class SendDataTestCase(ic_testcase.TestCase):
             self.fail('Failed to Get Device Contents.  Reason: %s' % e)
         
         # Verify file's contents
-        expected_content = 'iDigi data service sample\n'
+        expected_content = 'Connector data service sample\n'
         if file_content != expected_content:
             # This is a small hack for backwards compability with old send_data sample.
-            if not file_content.startswith('iDigi data service sample'):
+            if not file_content.startswith('Connector data service sample'):
                 self.fail("Received content: %s does not match expected: %s" % (file_content, expected_content))
 
     def tearDown(self):
