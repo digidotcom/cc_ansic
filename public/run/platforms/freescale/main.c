@@ -96,9 +96,17 @@ static uint_32 network_start(void)
     APP_DEBUG("\nDNS Address     : %d.%d.%d.%d\n",IPBYTES(ipcfg_get_dns_ip(ENET_DEVICE,0)));
     result = RTCS_OK;
     
-#ifdef USE_SSL
-    if (SNTP_oneshot(IPADDR(64,90,182,55), 20000) != RTCS_OK) {
+
+#if (defined USE_SSL)
+    if (SNTP_oneshot(IPADDR(84,77,40,132), 3000) != RTCS_OK) {
     	printf("SNTP_oneshot failed!\n");
+    	printf("Setting time to 1/1/2013\n");
+		{
+			TIME_STRUCT time;
+			time.SECONDS =  1356998400; /* 01/01/2013 00:00:00 */
+			time.MILLISECONDS = 0;
+			_time_set(&time);
+		}
     }
 #endif
     

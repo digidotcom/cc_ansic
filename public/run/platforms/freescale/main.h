@@ -8,6 +8,7 @@
 #include <sh_rtcs.h>
 #endif
 #include <ipcfg.h>
+#include <connector_config.h>
 
 #define MAIN_TASK 				1
 #define CONNECTOR_TASK 			2
