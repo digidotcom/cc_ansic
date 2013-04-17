@@ -155,11 +155,11 @@
  * Log on to Etherios Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged to see your device, click the Refresh button.
- * The device's status should show as 'Connected'.
+ * The device's status should indicate as 'Connected'. Select the device for firmware update
  *
- * @image html cloud_device_refresh.png
+ * @image html cloud_device_connected.png
  *
- * Then click the Firmware Update button to update your firmware, and then select
+ * Then select Update Firmware to update your firmware under the More button, and then select
  * the file that is your firmware image on your local machine.  The image will then
  * start to upload to your Etherios Cloud Connector application.  The GUI will indicate when it's complete.
  *

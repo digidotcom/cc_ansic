@@ -217,7 +217,7 @@
  * Once you are logged, go to Device Manager tab and click the Refresh button.
  * The device's status should show as 'Connected'.
  *
- * @image html cloud_rci_connected.png
+ * @image html cloud_device_connected.png
  *
  * Then double click the device. Click the Refresh button to update the configurations.
  *
