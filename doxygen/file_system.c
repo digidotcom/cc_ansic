@@ -5,6 +5,7 @@
  * @section file_system_overview1 File System
  *
  *  -# @ref file_system_overview
+ *  -# @ref file_system_large_files 
  *  -# @ref file_system_context
  *  -# @ref file_system_term
  *  -# @ref file_system_open
@@ -31,8 +32,6 @@
  * application-defined callbacks to read from a file, to write to a file, and to list files or
  * directory entries.
  *
- * The largest file allowed by Device Cloud to get from the device is 2MB - 1byte (2097151 bytes). 
- *
  * A typical application-defined callback sequence for reading file data by Device Cloud would be:
  *  -# Cloud Connector calls the callback to @ref file_system_open "open a file" with read-only access.
  *  -# Cloud Connector calls the callback to @ref file_system_read "read file data" number of times, until
@@ -42,7 +41,7 @@
  * A typical application-defined callback sequence for writing file data by Device Cloud would be:
  *  -# Cloud Connector calls the callback to @ref file_system_open "open a file" with write-create access.
  *  -# Cloud Connector calls the callback to @ref file_system_write "write file data" number of times, untill all data,
- *     received from Etherios Device Cloud, is written to the file.
+ *     received from Device Cloud, is written to the file.
  *  -# Cloud Connector calls the callback to @ref file_system_close "close the file".
  *
  * Cloud Connector calls the callback to @ref file_system_remove "remove a file".
@@ -65,6 +64,21 @@
  *
  * @note See @ref file_system_support under Configuration to enable or disable file system.
  * <br /><br />
+ *
+ * @section file_system_large_files Large File Support
+ *
+ * The file system has following limitations for file sizes and data transfer sizes:
+ *
+ * -# The size of data in one get_file request from Device Cloud by Etherios is limited to 2MB - 1byte (2097151 bytes).
+ *    <br /><br />
+ * -# Offset for setting file position and truncating a file is limited to 2 gigabytes.
+ *    <br /><br />
+ * -# File sizes sent back to Device Cloud in listing requests are limited to 2 gigabytes by default. 
+ *    To enable support of file sizes larger than 2 gigabytes in file or directory listings:
+ *      <br /><br />
+ *      -# Define @ref CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES in connector_config.h
+ *      <br /><br />
+ *      -# On linux platform add: <b>CFLAGS += -D_FILE_OFFSET_BITS=64</b> to Makefile.
  *
  * @section file_system_context Session Context
  *
@@ -89,7 +103,7 @@
  * If the session is successful:
  *  -# Etherios Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
- *  -# Cloud Connector sends the last portion of response data to Etherios Device Cloud.
+ *  -# Cloud Connector sends the last portion of response data to Device Cloud.
  *
  * The callback aborts Cloud Connector:
  *  -# The callback returns @ref connector_callback_abort status.
@@ -103,7 +117,7 @@
  *     if there is an open file or directory.
  *  -# If Cloud Connector has already sent part of file or directory data, it cancels the session. This is done due to the fact 
  *     that Device Cloud can't differentiate an error response from part of the data response.
- *  -# Otherwise Cloud Connector calls the callback to @ref file_system_get_error "get error status and description" and sends an error response to Etherios Device Cloud.
+ *  -# Otherwise Cloud Connector calls the callback to @ref file_system_get_error "get error status and description" and sends an error response to Device Cloud.
  *
  * File system was notified of a session error:
  *  -# Cloud Connector calls the callback to inform of @ref file_system_session_error "session error".
@@ -112,7 +126,7 @@
  *  -# Etherios Cloud Connector canceles the session.
  * <br /><br />
  *
- * @section file_system_open Open a file
+ * @section file_system_open Open a File
  *
  * Open a file for the specified path. 
  *
@@ -211,7 +225,7 @@
  * @endcode
  * <br />
  * 
- * @section file_system_lseek   Seek file position
+ * @section file_system_lseek   Seek File Position
  *
  * Set the offset for an open file.
  *
@@ -319,7 +333,7 @@
  * @endcode
  * <br />
  *
- * @section file_system_read    Read file data
+ * @section file_system_read    Read File Data
  *
  * Read data from an open file.
  *
@@ -410,7 +424,7 @@
  * @endcode
  * <br />  
  *
- * @section file_system_write   Write file data
+ * @section file_system_write   Write File Data
  *
  * Write data to an open file.
  *
@@ -501,7 +515,7 @@
  * @endcode
  * <br />  
  *
- * @section file_system_truncate   Truncate a file
+ * @section file_system_truncate   Truncate a File
  *
  *
  * Truncate an open file to a specified length.
@@ -586,7 +600,7 @@
  * @endcode
  * <br /> 
  *
- * @section file_system_close   Close a file
+ * @section file_system_close   Close a File
  *
  * Close an open file.
  *
@@ -662,7 +676,7 @@
  * @endcode
  * <br /> 
  *
- * @section file_system_remove      Remove a file
+ * @section file_system_remove      Remove a File
  *
  * Remove a file for the specified path. 
  *
@@ -746,7 +760,7 @@
  * @endcode
  * <br /> 
  *
- * @section file_system_opendir     Open a directory
+ * @section file_system_opendir     Open a Directory
  *
  * Open a directory for the spesified path.
  *
@@ -857,7 +871,7 @@
  * @endcode
  * <br />
  * 
- * @section file_system_readdir     Read next directory entry
+ * @section file_system_readdir     Read Next Directory Entry
  *
  * The callbacks reads the next directory entry for the directory handle,
  * returned in the @ref file_system_opendir "open a directory" callback. 
@@ -980,7 +994,7 @@
  * @endcode
  * <br />
  
- * @section file_system_closedir    Close a directory
+ * @section file_system_closedir    Close a Directory
  *
  * Close a directory for the directory handle, returned in the @ref file_system_opendir "open a directory"
  * callback.
@@ -1061,7 +1075,7 @@
  * @endcode
  * <br /> 
  *
- * @section file_system_stat        Get file status
+ * @section file_system_stat        Get File Status
  *
  * Get file status for the named file path, received in a request from Device Cloud.
  * <br /><br /> 
@@ -1217,7 +1231,7 @@
  * @endcode
  * <br />
  *
- * @section file_system_stat_dir_entry  Get directory entry status
+ * @section file_system_stat_dir_entry  Get Directory Entry Status
  *
  * Get status for the directory entry.
  * <br /><br />
@@ -1335,7 +1349,7 @@
  * @endcode
  * <br />
  *
- * @section file_system_hash        Get file hash value
+ * @section file_system_hash        Get File Hash Value
  * 
  * Get a file hash value for the specified path.
  * <br /><br />
@@ -1435,15 +1449,15 @@
  * @endcode
  * <br /> 
  *
- * @section file_system_get_error    Get error description
+ * @section file_system_get_error    Get Error Description
  *
- * Get an error status code and an error description string to send to Etherios Device Cloud.
+ * Get an error status code and an error description string to send to Device Cloud by Etherios.
  * <br /><br />  
  *
  * Etherios Cloud Connector invokes this this callback if an earlier callback has returned
  * @ref connector_callback_error.
  *
- * Etherios Cloud Connector invokes this callback after calling the @ref file_system_close "close a file" 
+ * Cloud Connector invokes this callback after calling the @ref file_system_close "close a file" 
  * or the @ref file_system_closedir "close a directory" callback.
  *
  * @htmlonly
@@ -1548,13 +1562,13 @@
  * @endcode
  * <br /> 
  *
- * @section file_system_session_error   Inform of an Etherios Cloud Connector error
+ * @section file_system_session_error   Inform of a Session Error
  *
  * An error in a file system session might be caused by network communication problems,
  * session timeout, insufficient memory, etc.
  *
- * Etherios Cloud Connector will invoke the @ref file_system_close "connector_request_id_file_system_close" 
- * or the @ref file_system_closedir "connector_request_id_file_system_closedir" callback after this callback.
+ * Etherios Cloud Connector will invoke a callback to @ref file_system_close "close a file" 
+ * or the @ref file_system_closedir "close a directory" after this callback.
  *
  * @htmlonly
  * <table class="apitable">
@@ -1569,43 +1583,36 @@
  * <td>@endhtmlonly @ref connector_request_id_file_system_session_error @htmlonly</td>
  * </tr>
  * <tr>
- * <th>request_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_error_request_t "connector_file_error_request_t" @htmlonly structure:
- *   <ul><li><b><i>message_status</i></b> - @endhtmlonly @ref connector_msg_error_t @htmlonly.</li></ul>
- * </td></tr>
- * <tr>
- * <td>request_length</td>
- * <td> [IN] Size of @endhtmlonly @ref connector_file_error_request_t "connector_file_error_request_t" @htmlonly structure</td>
- * </tr>
- * <tr>
- * <th>response_data</th>
- * <td> [IN] pointer to @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure:
- *   <ul><li><b><i>user_context</i></b> - Set by a user in an earlier callback.</li>
- *   <li><b><i>error</i></b> - Pointer to a @endhtmlonly @ref connector_file_error_data_t "connector_file_error_data_t" @htmlonly structure.</li></ul>
- * </td></tr>
- * <tr>
- * <td>response_length</td>
- * <td>[OUT] Size of @endhtmlonly @ref connector_file_response_t "connector_file_response_t" @htmlonly structure</td>
- * </tr>
+ * <th>data</th>
+ * <td> pointer to @endhtmlonly @ref connector_file_system_session_error_t "connector_file_system_session_error_t" @htmlonly structure where:
+ *   <ul>
+ *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
+ *      <br /> 
+ *      <li><b><i>session_error</i></b> - [IN] @endhtmlonly @ref connector_session_error_t "session error code" @htmlonly</li> 
+ *   </ul>
+ * </td>
+ * </tr>  
  * <tr> <th colspan="2" class="title">Return Values</th> </tr> 
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
  * <td>Continue</td>
  * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback aborted Etherios Cloud Connector</td>
+ * </tr>
  * </table>
  * @endhtmlonly
- * 
+ * <br />
+ *
  * Example:
  *
  * @code
  *
- * connector_callback_status_t app_process_file_msg_error(connector_file_error_request_t const * const request_data, 
- *                                                    connector_file_response_t * response_data)
+ * connector_callback_status_t app_process_file_msg_error(connector_file_system_session_error_t * const data) 
  * {
- *     UNUSED_ARGUMENT(response_data);
- *
- *     APP_DEBUG("Message Error %d\n", request_data->message_status);
+ *     APP_DEBUG("Message Error %d\n", data->session_error);
  *
  *    // All session resources must be released in this callback
  *    return connector_callback_continue;

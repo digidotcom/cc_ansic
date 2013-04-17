@@ -195,7 +195,7 @@
  * @endcode
  *
  * @see @ref CONNECTOR_FILE_SYSTEM
- * @see connector_file_system_readdir callback
+ * @see @ref file_system_readdir "Read a directory" callback
  */
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
@@ -256,6 +256,23 @@
 * @see @ref app_start_network_udp()
 */
 #define CONNECTOR_TRANSPORT_UDP
+
+/**
+ * This is used to enable support for file sizes larger than 2
+ * gigabyte in file system listing requests. On linux platform 
+ * the following must be added to Makefile: 
+ *  
+ * CFLAGS += D_FILE_OFFSET_BITS=64 
+ *
+ * @code
+ * #define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES
+ * @endcode
+ *
+ * @see @ref file_system_stat callback 
+ * @see @ref file_system_stat_dir_entry callback  
+ * @see @ref CONNECTOR_FILE_SYSTEM 
+ */
+#define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES
 
 /**
  * @}*/
