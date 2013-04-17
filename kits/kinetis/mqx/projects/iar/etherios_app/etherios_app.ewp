@@ -168,8 +168,6 @@
           <state>BOOTLOADER_ENABLED=0</state>
           <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
-          <state>USE_SSL</state>
-          <state>NO_FILESYSTEM</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -310,9 +308,9 @@
           <state>C:\Etherios_CC\include</state>
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
-          <state>C:\Users\spastor\Desktop\cyassl-2.5.0</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -770,7 +768,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\usbh.a</state>
-          <state>C:\Users\spastor\Desktop\cyassl-2.5.0\mqx-iar\twrk60n512_Debug\Exe\cyassl-2.5.0.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk60n512\cyassl.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -1257,8 +1255,9 @@
           <state>C:\Etherios_CC\include</state>
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
-          <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1716,6 +1715,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\usbh.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk60n512\cyassl.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -2201,7 +2201,9 @@
           <state>C:\Etherios_CC\include</state>
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2659,6 +2661,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\usbh.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk53n512\cyassl.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -3145,8 +3148,9 @@
           <state>C:\Etherios_CC\include</state>
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
-          <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -3402,8 +3406,14 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\mfs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
-          <state>$PROJ_DIR$\..</state>
+          <state>C:\Etherios_CC\include</state>
+          <state>C:\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
+          <state>$PROJ_DIR$\Sources</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>AExtraOptionsCheckV2</name>
@@ -3604,6 +3614,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\usbh.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk53n512\cyassl.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -4085,11 +4096,13 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\mfs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\device</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\shell</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\shell</state>
           <state>C:\Etherios_CC\include</state>
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -4547,6 +4560,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\usbh.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk70f120m\cyassl.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -5021,20 +5035,21 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\psp</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp\Generated_Code</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\device</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\bsp</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\psp</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\bsp\Generated_Code</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\rtcs</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\mfs</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\host</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\shell</state>
           <state>C:\Etherios_CC\include</state>
           <state>C:\Etherios_CC\platform\mqx</state>
           <state>C:\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
-          <state>$PROJ_DIR$\..</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -5492,6 +5507,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs\rtcs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs\mfs.a</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\usbh.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk70f120m\cyassl.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -5778,9 +5794,6 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
-            <excluded>
-              <configuration>twrk53 Int Flash Debug</configuration>
-            </excluded>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
@@ -5803,10 +5816,6 @@
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
               <configuration>twrk70f120m Int Flash Release</configuration>
             </excluded>
           </file>
@@ -5815,9 +5824,6 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
-            <excluded>
-              <configuration>twrk53 Int Flash Debug</configuration>
-            </excluded>
           </file>
         </group>
       </group>
