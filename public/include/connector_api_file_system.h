@@ -19,14 +19,14 @@
 #define _CONNECTOR_API_FILE_SYSTEM_H
 
 /**
-* @defgroup connector_request_id_file_system_t File System 
-* Request IDs 
-* @{ 
+* @defgroup connector_request_id_file_system_t File System
+* Request IDs
+* @{
 */
 /**
 * File System Request Id passed to the application's callback to use file system.
-* The class id for this connector_request_id_file_system_t is 
-* connector_class_id_file_system. 
+* The class id for this connector_request_id_file_system_t is
+* connector_class_id_file_system.
 */
 typedef enum {
     connector_request_id_file_system_open,             /**< inform callback to open a file */
@@ -49,17 +49,19 @@ typedef enum {
 * @}
 */
 
+
+*           offset
+
 /**
-* @defgroup connector_file_offset_t 
-* Data type used for file offset
-*
-* @{ 
+* @defgroup connector_file_offset_t  File Offset
+*           Data type used for file offset
+* @{
 */
 /**
-* Data type used for file offsets in 
-* connector_file_system_lseek_t, file size in 
-* connector_file_system_statbuf_t and 
-* connector_file_system_truncate_t. 
+* Data type used for file offsets in
+* connector_file_system_lseek_t, file size in
+* connector_file_system_statbuf_t and
+* connector_file_system_truncate_t.
 */
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
 typedef int64_t connector_file_offset_t;
@@ -71,8 +73,8 @@ typedef int32_t connector_file_offset_t;
 */
 
 /**
-* @defgroup connector_file_open_flags
-* File open flags @{ 
+* @defgroup connector_file_open_flags File Open Flags
+* Flags used in file system open callback @{ 
 */
 /**
  * Open file for reading only.
@@ -126,15 +128,15 @@ typedef int32_t connector_file_offset_t;
 /**
 * @}
 */
- 
- 
+
+
 /**
-* @defgroup connector_file_system_open_t 
-* Data type used for file system open callback @{ 
+* @defgroup connector_file_system_open_t File Open Data
+* Data type used for file system open callback @{
 */
 /**
-* Data structure used in connector_request_id_file_system_open 
-* callback. 
+* Data structure used in connector_request_id_file_system_open
+* callback.
 */
 typedef struct
 {
@@ -142,7 +144,7 @@ typedef struct
     void * errnum;                          /**< Application defined error token */
 
     char const * CONST path;                /**< File path */
-    int CONST oflag;                        /**< bitwise-inclusive OR of @ref connector_file_system_open_flag_t flags */
+    int CONST oflag;                        /**< bitwise-inclusive OR of @ref connector_file_open_flags flags */
     void * handle;                          /**< Application defined file handle */
 
 } connector_file_system_open_t;
@@ -151,12 +153,12 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_seek_origin_t File seek origin 
-* @{
+* @defgroup connector_file_system_seek_origin_t File Seek Origin 
+* File Seek Origin used in file system lseek callback @{ 
 */
 /**
-* Data type used for seek origin in  
-* connector_request_id_file_system_lseek callback. 
+* Data type used for seek origin in
+* connector_request_id_file_system_lseek callback.
 */
 typedef enum
 {
@@ -164,18 +166,18 @@ typedef enum
      connector_file_system_seek_cur,    		    /**<  Seek file position relative to current position */
      connector_file_system_seek_end     		    /**<  Seek file position relative to end-of-file */
 
-} connector_file_system_seek_origin_t;                
+} connector_file_system_seek_origin_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_lseek_t 
-* Data type used for file system lseek callback @{ 
+* @defgroup connector_file_system_lseek_t File Seek Data
+* Data type used for file system lseek callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_lseek callback. 
+* Data structure used in
+* connector_request_id_file_system_lseek callback.
 */
 typedef struct
 {
@@ -195,12 +197,12 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_write_t 
-* Data type used for file system write callback @{ 
+* @defgroup connector_file_system_write_t File Write Data
+* Data type used for file system write callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_write callback. 
+* Data structure used in
+* connector_request_id_file_system_write callback.
 */
 typedef struct
 {
@@ -218,12 +220,12 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_truncate_t 
-* Data type used for file system truncate callback @{ 
+* @defgroup connector_file_system_truncate_t File Truncate Data
+* Data type used for file system ftruncate callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_ftruncate callback. 
+* Data structure used in
+* connector_request_id_file_system_ftruncate callback.
 */
 typedef struct
 {
@@ -240,12 +242,12 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_read_t 
-* Data type used for file system read callback @{ 
+* @defgroup connector_file_system_read_t File Read Data
+* Data type used for file system read callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_read callback. 
+* Data structure used in
+* connector_request_id_file_system_read callback.
 */
 typedef struct
 {
@@ -264,12 +266,12 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_close_t 
-* Data type used for file system close callback @{ 
+* @defgroup connector_file_system_close_t File Close Data
+* Data type used for file system close callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_close callback. 
+* Data structure used in
+* connector_request_id_file_system_close callback.
 */
 typedef struct
 {
@@ -285,12 +287,12 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_opendir_t 
-* Data type used for file system opendir callback @{ 
+* @defgroup connector_file_system_opendir_t Open Directory Data
+* Data type used for file system opendir callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_opendir callback. 
+* Data structure used in
+* connector_request_id_file_system_opendir callback.
 */
 typedef struct
 {
@@ -305,10 +307,9 @@ typedef struct
 * @}
 */
 
-
 /**
-* @defgroup connector_file_system_hash_algorithm_t 
-* File system hash algorithm @{ 
+* @defgroup connector_file_system_hash_algorithm_t Hash Algorithm
+* File system hash algorithm @{
 */
 /**
 * Hash algorithm gives different options for hash values returned in the file lisings.
@@ -328,12 +329,12 @@ typedef enum
 */
 
 /**
-* @defgroup connector_file_system_hash_t 
-* Data type used for file system hash callback @{ 
+* @defgroup connector_file_system_hash_t Get Hash Data
+* Data type used for file system hash callback @{
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_hash callback. 
+* Data structure used in
+* connector_request_id_file_system_hash callback.
 */
 typedef struct
 {
@@ -351,11 +352,11 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_file_type_t 
-* File system file type @{ 
+* @defgroup connector_file_system_file_type_t File Type Flags
+* File system file type flags @{
 */
 /**
-* Used in @ref connector_file_system_statbuf_t 
+* Used in @ref connector_file_system_statbuf_t
 * "file status data" structure.
 *
 * @see @ref connector_request_id_file_system_stat
@@ -373,14 +374,15 @@ typedef enum
 */
 
 /**
-* @defgroup connector_file_system_statbuf_t File status data
+* @defgroup connector_file_system_statbuf_t File Status Buffer 
+* Data type used to return file statu 
 * @{
 */
 /**
 * File status data structure is used to return the status of a direcory or a file, specified by the path.
-* It is used in  
-* @ref connector_request_id_file_system_stat and 
-* @ref connector_request_id_file_system_stat_dir_entry 
+* It is used in
+* @ref connector_request_id_file_system_stat and
+* @ref connector_request_id_file_system_stat_dir_entry
 *      callbacks.
 */
 typedef struct
@@ -395,14 +397,14 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_stat_t Data type used 
-* for file system status callback @{ 
+* @defgroup connector_file_system_stat_t File Status Data
+* Data type used for file system status callback @{ 
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_stat callback, used 
-* to get status for a path received from Etherios Device Cloud 
-* for ls request. 
+* Data structure used in
+* connector_request_id_file_system_stat callback, used
+* to get status for a path received from Etherios Device Cloud
+* for ls request.
 */
 typedef struct
 {
@@ -425,16 +427,16 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_stat_dir_entry_t Data 
-* type used for file system directory entry status callback 
+* @defgroup connector_file_system_stat_dir_entry_t Entry Status 
+* Data type used for file system directory entry status callback
 * @{ 
 */
 /**
-* Data structure used in  
-* connector_request_id_file_system_stat_dir_entry callback, 
-* used to get status for for each directory entry in 
+* Data structure used in
+* connector_request_id_file_system_stat_dir_entry callback,
+* used to get status for for each directory entry in
 * the directory path, received from Etherios Device Cloud for ls
-* request. 
+* request.
 */
 typedef struct
 {
@@ -451,11 +453,11 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_readdir_t Data type used 
-* for file system readdir callback @{ 
+* @defgroup connector_file_system_readdir_t Readdir Data
+* Data type used for file system readdir callback @{ 
 */
 /**
-* Data structure used in  
+* Data structure used in
 * connector_request_id_file_system_readdir callback
 */
 typedef struct
@@ -474,12 +476,12 @@ typedef struct
 
 
 /**
-* @defgroup connector_file_system_remove_t Data type used 
-* for file system remove callback @{ 
+* @defgroup connector_file_system_remove_t File Remove Data
+* Data type used for file system remove callback @{ 
 */
 /**
-* Data structure used in connector_request_id_file_system_remove 
-* callback 
+* Data structure used in connector_request_id_file_system_remove
+* callback
 */
 typedef struct
 {
@@ -494,14 +496,14 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_error_t 
-* File system error status sent to Etherios Device Cloud @{ 
+* @defgroup connector_file_system_error_t File Error Status
+* File system error status code sent to Etherios Device Cloud @{
                                                         */
 /**
-* Used in @ref connector_file_system_get_error_t 
+* Used in @ref connector_file_system_get_error_t
 * "get file error description" structure.
 *
-* @see @ref connector_request_id_file_get_error
+* @see @ref connector_request_id_file_system_get_error
 */
 typedef enum
 {
@@ -511,22 +513,22 @@ typedef enum
     connector_file_system_request_format_error,         /**< Request format error */
     connector_file_system_invalid_parameter,            /**< Invalid parameter */
     connector_file_system_out_of_memory,                /**< Out of memory */
-    connector_file_system_permision_denied              /**< Permision denied */
+    connector_file_system_permision_denied              /**< Permission denied */
 
-} connector_file_system_error_t;                                         
+} connector_file_system_error_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_file_system_get_error_t Data type 
-* used for file system ret error data callback @{ 
+* @defgroup connector_file_system_get_error_t File Error Data
+* Data type used for file system ret error data callback @{ 
 */
 /**
-* Data structure used in 
-* connector_request_id_file_system_get_error callback, to get 
-* error status and description for a previously recorder error 
-* token. 
+* Data structure used in
+* connector_request_id_file_system_get_error callback, to get
+* error status and description for a previously recorder error
+* token.
 */
 typedef struct
 {
@@ -545,13 +547,12 @@ typedef struct
 */
 
 /**
-* @defgroup connector_file_system_session_error_t Data type 
-* used for file system session error callback 
-* @{ 
+* @defgroup connector_file_system_session_error_t Session Error
+* Data type used for file system session error callback @{ 
 */
 /**
-* Data structure used in 
-* connector_request_id_file_system_session_error callback 
+* Data structure used in
+* connector_request_id_file_system_session_error callback
 */
 typedef struct
 {

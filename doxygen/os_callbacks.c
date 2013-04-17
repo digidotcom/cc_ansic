@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section os_callbacks OS Callbacks
- * Etherios Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
+ * The Etherios Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  * The class id is @ref connector_class_id_operating_system.
  *

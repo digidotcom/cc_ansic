@@ -244,6 +244,9 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 #if __STDC_VERSION__ >= 199901L
 #define PRIsize "zu"
 #else
+   /**
+    *  Print format specifier for size_t.
+    */
 #define PRIsize "u"
 #endif
 

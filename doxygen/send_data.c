@@ -11,10 +11,10 @@
  * @section send_data_location Source Code Location
  *
  *      - For the connector_run() version:
- *           - @htmlonly<I>/connector/public/run/samples/send_data</I>@endhtmlonly
+ *           - @a /connector/public/run/samples/send_data
  *
  *      - For the connector_step() version:
- *          - @htmlonly<I>/connector/public/step/samples/send_data</I>@endhtmlonly
+ *           - @a /connector/public/step/samples/send_data
  *
  * @note Check @ref threading "here for more information" on using the connector_run()
  * versus connector_step() model.

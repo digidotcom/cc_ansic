@@ -11,6 +11,7 @@
  * device configuration in an application.
  *
  * -# @ref rci_tool_usage
+ * -# @ref rci_tool_location
  * -# @ref rci_tool_file
  * -# @ref rci_tool_example
  *
@@ -23,7 +24,7 @@
  * </tr>
  * <tr>
  *   <td colspan="2"> @endhtmlonly java -jar ConfigGenerator.jar [-help] [-verbose] [-nodesc] [-vendor] [-path] [-url]
- *                     \<username[:password]\> \<device_type\> \<firmware_version\> \<input_config_file\> @htmlonly
+ *                     \<"username"[:"password"]\> \<device_type\> \<firmware_version\> \<input_config_file\> @htmlonly
  *   </td>
  * </tr>
  * <tr>
@@ -100,6 +101,10 @@
  * @code
  *     java -jar ConfigGenerator.jar username:password "Linux Application" 1.0.0.0 config.rci
  * @endcode
+ *
+ * @section rci_tool_location Location
+ *
+ *      - The ConfigGenerator.jar locates in @a @b /connector/tools directory.
  *
  *
  * @section rci_tool_file   Input Configuration File
