@@ -47,11 +47,11 @@
  * and integration, respectively.  When complete, your device will be connected to Etherios Device Cloud and displayed
  * in the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
- * @section step1 Step 1: Do you have a C89 or C99 compliant compiler?
+ * @section step1 Step 1: Do you have an ANSI C89 or C99 compliant compiler?
  *
- * The Cloud Connector software is ANSI X3.159-1989 (ANSI C89) or ISO/IEC 9899:1999 (ANSI C99) compliant.
- * If your compiler is ANSI C89 or C99 compliant and you are running on a 32-bit processor you can skip
- * to @ref step2 "Step 2".
+ * The Etherios Cloud Connector software is ANSI X3.159-1989 (ANSI C89) or ISO/IEC
+ * 9899:1999 (ANSI C99) compliant.  If your compiler is ANSI C89 or C99 compliant and you
+ * are running on a 32-bit processor you can skip to @ref step2 "Step 2".
  *
  * @subsection i_have_C89_and_64bit Are you trying to compile C89 on a 64-bit machine?
  *
@@ -94,7 +94,7 @@
  *  @li @ref PRIu32
  *  @li @ref PRIx32
  *
- * Note by default these are defined for a 32-bit machine.
+ * @note These are defined for ANSI C99 or typedefed/defined for ANSI C89.
  *
  * @subsection debug_routine Implement the debug routine and macro
  *
