@@ -50,8 +50,6 @@ typedef enum {
 */
 
 
-*           offset
-
 /**
 * @defgroup connector_file_offset_t  File Offset
 *           Data type used for file offset
