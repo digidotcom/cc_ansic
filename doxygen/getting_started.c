@@ -55,17 +55,19 @@
  *
  * @subsection i_have_C89_and_64bit Are you trying to compile C89 on a 64-bit machine?
  *
- * If your target is a 64-bit machine and your compiler is ANSI C89, this configuration is not
- * supported.  You will either have to find a ANSI C99 compiler for your target or you will have
- * to correct compilation warnings or errors that result.
+ * If your target is a 64-bit machine and your compiler is ANSI C89, this configuration @htmlonly<B>is not
+ * supported!</B>@endhtmlonly
+ *
+ * You will either have to find a ANSI C99 compiler for your target or you will have
+ * to make updates and adjustments as outlined in the following steps.
  *
  * @note This combination should be rare, given most 64-bit processors were unavailable
- * prior to 1999.  We expect a 64-bit target to have access to ANSI C99.
+ * prior to 1999.  We expect 64-bit targets to have ANSI C99 support.
  *
  * @subsection non_compliant_adjustments What to do about non ANSI C89 or C99 compliant compilers
  *
  * Updates and adjustments will be necessary to properly compile the Cloud Connector software with
- * your compiler and tools.  To begin these updates, complete the following steps:
+ * your compiler and tool chain.  To begin these updates, complete the following steps:
  *
  * @subsection data_type_format_etc Updates to connector_types.h
  *
