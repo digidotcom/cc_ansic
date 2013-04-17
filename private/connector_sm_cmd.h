@@ -821,22 +821,39 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
             break;
     }
 
-    if (result == connector_working)
+    switch (result)
     {
-        session->bytes_processed += bytes;
-        switch (session->error)
-        {
-            case connector_sm_error_none:
-            case connector_sm_error_complete:
-                if (SmIsLastData(session->flags))
-                    sm_switch_path(connector_ptr, session, next_state);
-                break;
+        case connector_working:
+            session->bytes_processed += bytes;
+            switch (session->error)
+            {
+                case connector_sm_error_none:
+                case connector_sm_error_complete:
+                    if (SmIsLastData(session->flags))
+                        sm_switch_path(connector_ptr, session, next_state);
+                    break;
 
-            default:
-                session->sm_state = connector_sm_state_error;
-                SmSetError(session->flags);
-                break;
-        }
+                default:
+                    session->sm_state = connector_sm_state_error;
+                    SmSetError(session->flags);
+                    break;
+            }
+            break;
+
+        case connector_pending:
+            break;
+
+        case connector_device_error:
+            session->error = connector_sm_error_cancel;
+            session->sm_state = connector_sm_state_error;
+            SmSetError(session->flags);
+            result = connector_working;
+            break;
+
+        default:
+            session->sm_state = connector_sm_state_error;
+            SmSetError(session->flags);
+            break;
     }
 
     return result;

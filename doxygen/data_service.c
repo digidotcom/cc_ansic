@@ -76,7 +76,7 @@
  *        <li><b><i>path</i></b> is Etherios Device Cloud file path containing the data (shouldn't be stack variable) </li>
  *        <li><b><i>content_type</i></b> is "text/plain", "text/xml", "application/json", etc (shouldn't be stack variable) </li>
  *        <li><b><i>option</i></b>, is to inform Device Connector on what to do with the data </li>
- *        <li><b><i>response_required</i></b>, set to connector_true is the response is needed </li>
+ *        <li><b><i>response_required</i></b>, set to connector_true if the response is needed </li>
  *        </ul></td>
  * </tr>
  * </table>
@@ -105,8 +105,8 @@
  * on Etherios Device Cloud.  Once Etherios Device Cloud is ready to receive data
  * from the device the application callback is called requesting data.
  *
- * Note: The header, file_path and file_type above are not stack variables. Either you can use a heap or a memory (global or static)
- * variable to hold these values. You can release themwhen you get a @ref  connector_request_id_data_service_send_response "response"
+ * @note: The header, file_path and file_type above are not stack variables. Either you can use a heap or a memory (global or static)
+ * variable to hold these values. You can release them when you get a @ref connector_request_id_data_service_send_response "response"
  * or @ref connector_request_id_data_service_send_status "status" callback. The value passed as the user_context will be returned
  * in every callback for this session. User is free to update this at any point during the session.
  *
@@ -150,7 +150,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Etherios Cloud Connector</td>
+ * <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -204,7 +204,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Etherios Cloud Connector</td>
+ * <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -257,7 +257,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Etherios Cloud Connector</td>
+ * <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -313,7 +313,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Etherios Cloud Connector</td>
+ * <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -402,7 +402,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -465,7 +465,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -529,7 +529,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>ds_receive_status
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -584,7 +584,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -644,7 +644,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
