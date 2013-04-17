@@ -379,7 +379,7 @@ static connector_status_t sm_update_session(connector_data_t * const connector_p
         session->segments.processed++;
     }
 
-    if (session->segments.processed == session->segments.count)
+    if (session->segments.processed >= session->segments.count)
     {
         session->bytes_processed = 0;
         session->segments.processed = 0;

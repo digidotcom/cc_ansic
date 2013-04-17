@@ -297,21 +297,26 @@ typedef enum {
 /**
 * Request IDs used in connector_initiate_action()
 */
-typedef enum {
-    connector_initiate_terminate,       /**< Terminates and stops Etherios Cloud Connector from running. */
+typedef enum
+{
+    connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
+    connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
+
     #if (defined CONNECTOR_DATA_SERVICE)
     connector_initiate_send_data,       /**< Initiates the action to send data to the Etherios device cloud, the data will be stored in a file on Etherios device cloud. */
     #endif
-    connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
-    connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
+
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_initiate_ping_request,    /**< Sends a ping request to Etherios Device Cloud. Supported only under UDP and SMS transport methods */
+    connector_initiate_session_cancel,  /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods */
     #endif
+
     #if (defined CONNECTOR_DATA_POINTS)
     connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Etherios Device Cloud */
     connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Etherios Device Cloud */
     #endif
-    connector_initiate_session_cancel   /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods */
+
+    connector_initiate_terminate        /**< Terminates and stops Etherios Cloud Connector from running. */
 } connector_initiate_request_t;
 /**
 * @}
@@ -750,8 +755,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref connector_transport_udp - UDP transport
  *                              - @ref connector_transport_sms - Reserved
  *                              - @ref connector_transport_all - all transports.
- *                              - @b Note: This @b connector_initiate_transport_stop triggers @ref connector_request_id_status_stop_completed callback.
- *                                @b See @ref status_stop_completed callback.
+ *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *
  *                      @li @b connector_initiate_ping_request:
  *                          Sends status message to the Etherios Device Cloud.  Supported only under
@@ -775,9 +779,9 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_send_data:
  *                          Pointer to connector_data_service_put_request_t.
  *                      @li @b connector_initiate_transport_start:
- *                          Pointer to @ref connector_transport_t
+ *                          Pointer to @ref connector_transport_t "connector_transport_t"
  *                      @li @b connector_initiate_transport_stop:
- *                          Pointer to connector_initiate_stop_request_t
+ *                          Pointer to @ref connector_initiate_stop_request_t "connector_initiate_stop_request_t"
  *                      @li @b connector_initiate_ping_request:
  *                          Pointer to connector_message_status_request_t
  *                      @li @b connector_initiate_data_point_binary:

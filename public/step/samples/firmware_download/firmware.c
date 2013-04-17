@@ -90,13 +90,15 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
     }
 
     {
+        size_t const max_bytes_to_print = 4;
+        size_t const bytes_to_print = (image_data->image.bytes_used > max_bytes_to_print) ? max_bytes_to_print : image_data->image.bytes_used;
         size_t i;
 
         APP_DEBUG("target = %d\n", image_data->target_number);
-        APP_DEBUG("offset = 0x%08X\n", image_data->image.offset);
+        APP_DEBUG("offset = 0x%" PRIx32 "\n", image_data->image.offset);
 
         APP_DEBUG("data = ");
-        for (i=0; i < image_data->image.bytes_used && i < sizeof(uint32_t); i++)
+        for (i=0; i < bytes_to_print; i++)
         {
             APP_DEBUG("0x%02X ", image_data->image.data[i]);
         }

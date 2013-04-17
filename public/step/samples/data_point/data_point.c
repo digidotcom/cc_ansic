@@ -227,7 +227,12 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
             }
 
             app_dp_waiting_for_response = connector_false;
-            APP_DEBUG("Received data point response [%d] for %s: %s\n", resp_ptr->response, dp_ptr->path, (resp_ptr->hint != NULL) ? resp_ptr->hint : "[null]");
+            APP_DEBUG("Received data point response [%d] for %s\n", resp_ptr->response, dp_ptr->path);
+            if (resp_ptr->hint != NULL)
+            {
+                APP_DEBUG("Hint: %s\n", resp_ptr->hint);
+            }
+
             break;
         }
 

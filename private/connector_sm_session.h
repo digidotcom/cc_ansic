@@ -92,6 +92,8 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     session->bytes_processed = 0;
     session->user.header = NULL;
     session->user.context = NULL;
+    session->segments.processed = 0;
+    session->segments.count = 0;
 
     if (sm_ptr->network.class_id == connector_class_id_network_sms)
     {

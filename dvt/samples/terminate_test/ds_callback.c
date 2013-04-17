@@ -314,6 +314,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
 {
     connector_callback_status_t status = connector_callback_continue;
 
+    UNUSED_ARGUMENT(receive_data);
     ASSERT(receive_data->user_context != NULL);
 
     /* don't care any data in the request */
