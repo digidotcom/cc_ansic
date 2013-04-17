@@ -375,7 +375,7 @@
  * @note For information on using hard coded values instead of these configuration callbacks,
  *       which helps to reduce Cloud Connector code space,  see @ref connector_config_data_options
  *
- * @subsection application_start iDigi Connector Initialization
+ * @subsection application_start Etherios Cloud Connector Initialization
  *
  * As in the @ref step3 "compile_and_link" sample, you must make a call to connector_init().  However, in
  * this sample, you will execute the code, making all the networking, configuration, and operating
@@ -546,25 +546,25 @@
  *
  *  -# Navigate to http://login.etherios.com and log on to Etherios Device Cloud
  *  -# Click on Device Manager tab.
- *  -# Click the Add Devices button (the + button under Devices) to bring up the Add Devices dialog.
- *
- * @image html cloud_add_device_button.png
- *
- * Within the Add Devices dialog click the Add Manually>> button.
- *
- * @image html cloud_add_device_manually.png
- *
- * Select Device ID: from the drop-down menu.
- *
- * @image html cloud_add_device_select_device_id.png
- *
- * Enter the Device ID for your device then click the Add button.
- *
- * @image html cloud_add_device_enter_device_id.png
- *
- * Click the OK button to add your device to Etherios Device Cloud.
- *
- * @image html cloud_add_device_click_ok.png
+ *  -# Click the Add Devices button to bring up the Add Devices dialog.
+ * \n
+ * \n  @image html cloud_add_device_button.png
+ * \n
+ *  -#  Within the Add Devices dialog click the Add Manually>> button.
+ * \n
+ * \n  @image html cloud_add_device_manually.png
+ * \n
+ *  -# Select Device ID: from the drop-down menu.
+ * \n
+ * \n @image html cloud_add_device_select_device_id.png
+ * \n
+ *  -# Enter the Device ID for your device then click the Add button.
+ * \n
+ * \n @image html cloud_add_device_enter_device_id.png
+ * \n
+ *  -# Click the OK button to add your device to Etherios Device Cloud.
+ * \n
+ * \n @image html cloud_add_device_click_ok.png
  *
  * @subsection view_result_on_cloud Viewing Results on Etherios Device Cloud
  *
@@ -575,7 +575,7 @@
  * application.
  *
  * @note If you cannot connect to Etherios Device Cloud, the most likely problem
- * is in the iDigi Connector Configuration, review the configuration routines in config.c;
+ * is in the Etherios Cloud Connector Configuration, review the configuration routines in config.c;
  * The device ID and vendor ID must be valid to connect.
  *
  * @image html cloud_device_connected.png
