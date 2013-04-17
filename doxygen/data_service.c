@@ -94,7 +94,7 @@
  *   header.content_type = file_type;
  *   header.response_required = connector_true;
  *   header.option = connector_data_service_send_option_append;
- *   header.context = file_path;
+ *   header.user_context = file_path;
  *
  *   // Begin a file transfer to Etherios Device Cloud
  *   status = connector_initiate_action(handle, connector_initiate_send_data, &header);

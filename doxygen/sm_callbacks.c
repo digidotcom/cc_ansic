@@ -73,7 +73,7 @@
  *
  *   request.transport = connector_transport_udp;
  *   header.response_required = connector_true;
- *   header.context = &request;
+ *   header.user_context = &request;
  *
  *   // Send ping to Device Cloud
  *   status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
