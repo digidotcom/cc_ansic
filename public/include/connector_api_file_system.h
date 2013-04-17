@@ -144,7 +144,7 @@ typedef struct
     void * errnum;                          /**< Application defined error token */
 
     char const * CONST path;                /**< File path */
-    int CONST oflag;                        /**< bitwise-inclusive OR of @ref connector_file_system_open_flag_t flags */
+    int CONST oflag;                        /**< bitwise-inclusive OR of @ref connector_file_open_flags flags */
     void * handle;                          /**< Application defined file handle */
 
 } connector_file_system_open_t;
