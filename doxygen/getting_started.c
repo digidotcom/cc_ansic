@@ -4,8 +4,8 @@
  *
  * @section table_of_contents_porting Getting Started
  *
- * The Getting Started process will walk you through the steps necessary to get Cloud
- * Connector for Etherios integrated into your software development environment and running
+ * The Getting Started process will walk you through the steps necessary to get Etherios
+ * Cloud Connector integrated into your software development environment and running
  * applications that include a Device Cloud connection to Device Cloud for Etherios.
  *
  * These Getting Started Process includes the following steps:
@@ -98,14 +98,14 @@
  *
  * @subsection debug_routine Implement the debug routine and macro
  *
- * Open the file debug.c and implement the @ref connector_debug_printf. For the linux platform
- * the file is located at public/run/platforms/linux/debug.c.  Click on the routine
- * to see a description, then modify to operate with your platform. Cloud Connector for Etherios calls
- * this routine to display any debug information when @ref CONNECTOR_DEBUG is defined
- * connector_config.h.
+ * Open the file debug.c and implement the @ref connector_debug_printf.  For the linux
+ * platform the file is located at public/run/platforms/linux/debug.c.  Click on the
+ * routine to see a description, then modify to operate with your platform.  Etherios
+ * Cloud Connector calls this routine to display debug information when
+ * @ref CONNECTOR_DEBUG is defined connector_config.h.
  *
- * The file public/include/connector_debug.h implements the a macros listed below, which
- * are used to debug Cloud Connector for Etherios.
+ * The file public/include/connector_debug.h implements the macros listed below, which
+ * are also used to debug the Cloud Connector port.
  *
  *  @li @ref ASSERT
  *
@@ -118,8 +118,8 @@
  *
  * Open the file connector_config.h in the sample directory to configure processor endianess.
  *
- * The Cloud Connector for Etherios defaults to little endian.  To reconfigure for big endian,
- * comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
+ * The Etherios Cloud Connector default is little endian.  To reconfigure for big endian,
+ * support comment out the @ref CONNECTOR_LITTLE_ENDIAN define.
  *
  * @section step3 Step 3: Build the compile_and_link sample
  *
@@ -128,12 +128,15 @@
  * You need to add the source files and include paths to your build system listed
  * below.
  *
- * @subsection connector_initialization Cloud Connector for Etherios Initialization
+ * @subsection connector_initialization Etherios Cloud Connector Initialization
  *
- * The routine connector_init() is called to initialize Cloud Connector for Etherios, currently this is
- * called from the routine main() in main.c; you will need to call connector_init()
- * at the initialization point for your application with an application callback.
- * For the compile_and_link sample you can call connector_init() as:
+ * The routine connector_init() is called to initialize Etherios Cloud Connector,
+ * currently this is called from the routine main() in main.c; you will need to call
+ * connector_init() at the initialization point for your application with an
+ * application callback.
+ *
+ * For the compile_and_link sample, since this sample tests compilation and link and
+ * not intended for execution, you can call connector_init() as:
  *
  * @code
  * // Call connector_init() with a NULL callback to confirm your build environment only
@@ -157,7 +160,7 @@
  * </tr>
  * <tr>
  * <td>connector_api.c</td>
- * <td>Contains the code for Cloud Connector for Etherios</td>
+ * <td>Contains the Etherios Cloud Connector code</td>
  * <td>private</td>
  * </tr>
  * <tr>
@@ -188,8 +191,8 @@
  * This is done to expose as many issues as possible before executing code.   In addition,
  * their is a clear guideline for @ref language "C Compiler language support".
  *
- * If you are experiencing problems building Cloud Connector for Etherios software, first double check
- * the steps listed in the prior instructions.
+ * If you are experiencing problems building Etherios Cloud Connector software, first
+ * double check the steps listed in the prior instructions.
  *
  * @subsection errors_due_to_C89_and_stdint C89 stdint.h compilation errors
  *
@@ -233,9 +236,6 @@
  * These warnings are perfectly safe.  The structures have extended to allow word alignment.
  * In general, you must review all warnings to confirm their safety.
  *
- * If you are experiencing problems building Cloud Connector for Etherios software, first double check
- * the steps listed in the prior instructions.
- *
  * Once the build is successful you can proceed to the next step.
  *
  * @note Do not execute the compile_and_link sample, as this only verifies that the build environment
@@ -278,9 +278,9 @@
  *
  * @section step5 Step 5: Porting your platform for the connect_to_device_cloud sample
  *
- * The @b connect_to_device_cloud sample validates the most fundamental Cloud Connector for Etherios
- * porting needs.  If you can successfully maintain a connection, all other Cloud Connector functions
- * (like @ref put_request "sending data" or @ref firmware_download "firmware download")
+ * The @b connect_to_device_cloud sample validates the most fundamental Etherios Cloud Connector
+ * porting aspects.  If you can successfully maintain a Device Cloud connection, all other
+ * Cloud Connector functions (like @ref send_data "sending data" or @ref firmware_download "firmware download")
  * should work flawlessly.
  *
  * Go into the platforms directory and select a platform which is similar to your platform.  If
@@ -341,8 +341,8 @@
  * @note The required routines contain the @htmlonly #error @endhtmlonly preprocessor directive
  * which must be removed before compiling.
  *
- * @note The memory assigned to configuration items must be @b statically @b allocated and is accessed by Cloud Connector for Etherios
- * after the routine returns.
+ * @note The memory assigned to configuration items must be @b statically @b allocated
+ * and is accessed by Etherios Cloud Connector after the routine returns.
  *
  * The following is a list of configuration routines which need to be implemented for
  * your platform, please review each routine:
@@ -373,7 +373,7 @@
  *  @li app_config_error()
  *
  * @note For information on using hard coded values instead of these configuration callbacks,
- *       which helps to reduce Cloud Connector for Etherios code space,  see @ref connector_config_data_options
+ *       which helps to reduce Cloud Connector code space,  see @ref connector_config_data_options
  *
  * @subsection application_start iDigi Connector Initialization
  *
@@ -384,7 +384,7 @@
  * The connector_init() call, must now include a proper callback:
  *
  * @code
- * // Initialize Cloud Connector for Etherios with the application callback
+ * // Initialize Cloud Connector with the application callback
  * connector_handle = connector_init(app_connector_callback);
  * @endcode
  *
@@ -402,7 +402,7 @@
  *
  *     APP_DEBUG("connector_run thread starts\n");
  *
- *     // Run Cloud Connector for Etherios, this will only return on an Cloud Connector for Etherios abort
+ *     // Run Cloud Connector, this will only return on a Cloud Connector abort
  *     status = connector_run(arg);
  *
  *     APP_DEBUG("connector_run thread exits %d\n", status);
@@ -411,7 +411,8 @@
  * }
  * @endcode
  *
- * @note The connector_init() call must successfully complete prior to any other Cloud Connector for Etherios call (i.e., connector_run(), connector_step()).
+ * @note The connector_init() call must successfully complete prior to any other
+ * Etherios Cloud Connector call (i.e., connector_run(), connector_step()).
  *
  * @section step6 Step 6: Setup your build environment
  *
@@ -429,7 +430,7 @@
  * </tr>
  * <tr>
  * <td>connector_api.c</td>
- * <td>Contains the code for Cloud Connector for Etherios</td>
+ * <td>Contains the Etherios Cloud Connector code</td>
  * <td>private</td>
  * </tr>
  * <tr>
@@ -478,16 +479,16 @@
  * The name of the executable generated by the Linux Makefile is called connector.
  * In Linux, type ./connector from a console to execute the program.
  *
-* @note By default @ref CONNECTOR_DEBUG is defined in connector_config.h, which prints helpful Cloud Connector for Etherios Library debug
- * messages to the standard output.
+* @note By default @ref CONNECTOR_DEBUG is defined in connector_config.h, which prints
+* helpful Etherios Cloud Connector debug messages to the standard output.
  *
  * @subsection good_results_output Example output from a successful run of connect_to_device_cloud
  * Below is the standard output shown for a successful @ref step7 "connect_to_device_cloud" run:
  *
  * @code
  * >./connector
- * Start Etherios Connector
- * Etherios Connector v2.0.0.0
+ * Start Etherios Cloud Connector for Embedded
+ * Cloud Connector v2.0.0.0
  * Device ID  =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
  * application_run thread starts
  * application_run thread exits 0
@@ -518,17 +519,18 @@
  * connector_tcp_communication_started
  * @endcode
  *
- * @subsection bad_results_output Locating helpful error info in Cloud Connector for Etherios standard output
+ * @subsection bad_results_output Locating helpful error info in Etherios Cloud Connector standard output
  *
- * When an error occurs, since APP_DEBUG is defined as printf in your platform.h file, critical errors are
- * displayed via the @ref connector_config_error_status callback.  Below is an example with an output showing an error
- * related to the @ref connector_config_server_url callback.  By searching through your application code, you can
- * easily trace this callback to the app_get_device_cloud_url() porting function:
+ * When an error occurs, since APP_DEBUG is defined as printf in your platform.h file, critical errors
+ * are displayed via the @ref connector_request_id_config_error_status callback.  Below is an example
+ * with an output showing an error related to the @ref connector_request_id_config_device_cloud_url
+ * callback.  By searching through your application code, you can easily trace this callback to the
+ * app_get_device_cloud_url() porting function:
  *
  * @code
  * >./connector
- * Start Etherios Connector
- * Etherios Connector v2.0.0.0
+ * Start Etherios Cloud Connector for Embedded
+ * Cloud Connector v2.0.0.0
  * Device ID  =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
  * app_config_error: Class: connector_class_id_config (0) Request: connector_request_id_config_device_cloud_url (3) Error status: connector_invalid_data_size (2)
  * Unable to initialize the connector
