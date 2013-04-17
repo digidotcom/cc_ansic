@@ -11,10 +11,10 @@
  * @section connect_on_ssl_location Source Code Location
  *
  *      - For the connector_run() version:
- *           - @htmlonly<I>/connector/public/run/samples/connect_on_ssl</I>@endhtmlonly
+ *           - @a /connector/public/run/samples/connect_on_ssl
  *
  *      - For the connector_step() version:
- *          - @htmlonly<I>/connector/public/step/samples/connect_on_ssl</I>@endhtmlonly
+ *           - @a /connector/public/step/samples/connect_on_ssl
  *
  * @note Check @ref threading "here for more information" on using the connector_run()
  * versus connector_step() model.
@@ -23,7 +23,7 @@
  *
  * -# The main(), defined in main.c, calls application_start()
  * -# The application_start(), defined in application.c, registers app_connector_callback()
- * -# The app_connector_callback(), defined in application.c, calls app_network_tcp_handler() for all network related iDigi Connector requests
+ * -# The app_connector_callback(), defined in application.c, calls app_network_tcp_handler() for all network related Etherios Cloud Connector requests
  * -# The app_network_tcp_handler(), defined in network_tcp_ssl.c, calls subsequent openssl functions to communicate
  *    with Etherios Device Cloud over SSL
  *
