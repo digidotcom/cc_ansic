@@ -95,7 +95,7 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
         size_t i;
 
         APP_DEBUG("target = %d\n", image_data->target_number);
-        APP_DEBUG("offset = 0x%04" PRIx32 "\n", image_data->image.offset);
+        APP_DEBUG("offset = 0x%" PRIx32 "\n", image_data->image.offset);
 
         APP_DEBUG("data = ");
         for (i=0; i < bytes_to_print; i++)
