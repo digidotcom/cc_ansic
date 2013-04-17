@@ -778,7 +778,7 @@ def main():
     configurations = []
     if args.configuration == 'all':
         configurations = ['default', 'nodebug', 'compression', 'debug',
-                            'config_header', 'template', 'library']
+                            'config_header', 'library']
     else:
         configurations = [args.configuration]
 
