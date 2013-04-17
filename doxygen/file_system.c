@@ -27,37 +27,41 @@
  * @section file_system_overview Overview
  *
  * The file system facility is an optional facility for applications to access files on the device 
- * remotely from Etherios Device Cloud. The Etherios Cloud Connector invokes the application-defined callbacks  
- * to read from a file, to write to a file, and to list files or directory entries.
+ * remotely from Device Cloud by Etherios. The Etherios Cloud Connector invokes sequences of
+ * application-defined callbacks to read from a file, to write to a file, and to list files or
+ * directory entries.
  *
  * The largest file allowed by Device Cloud to get from the device is 2MB - 1byte (2097151 bytes). 
  *
- * A typical application-defined callback sequence for reading file data by Etherios Device Cloud would include:
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "file open" callback with read-only access.
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_read "file read" callback number of times, until
+ * A typical application-defined callback sequence for reading file data by Device Cloud would be:
+ *  -# Cloud Connector calls the callback to @ref file_system_open "open a file" with read-only access.
+ *  -# Cloud Connector calls the callback to @ref file_system_read "read file data" number of times, until
  *     the requested data amount is retrieved or the end of the file is reached.
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_close "file close" callback.
+ *  -# Cloud Connector calls the callback to @ref file_system_close "close the file".
  *
- * A typical application-defined callback sequence for writing file data by Etherios Device Cloud would include:
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_open "file open" callback with write-create access.
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_write "file write" callback number of times, untill all data,
+ * A typical application-defined callback sequence for writing file data by Device Cloud would be:
+ *  -# Cloud Connector calls the callback to @ref file_system_open "open a file" with write-create access.
+ *  -# Cloud Connector calls the callback to @ref file_system_write "write file data" number of times, untill all data,
  *     received from Etherios Device Cloud, is written to the file.
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_close "file close" callback.
+ *  -# Cloud Connector calls the callback to @ref file_system_close "close the file".
  *
- * In order to remove a file Etherios Cloud Connector calls application-defined @ref file_system_remove "file remove" callback.
+ * Cloud Connector calls the callback to @ref file_system_remove "remove a file".
  *
  * A typical application-defined callback sequence to get listing for a single file would be:
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_stat "get status" callback. 
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_hash "get file hash value" callback, if the requested hash value is supported.
+ *  -# Cloud Connector calls the callback to @ref file_system_stat "get file status". This callback also requests
+ *     support for a @ref connector_file_system_hash_algorithm_t "hash algorithm".
+ *  -# Cloud Connector calls the callback to @ref file_system_hash "get file hash value",
+ *      if the requested hash algorithm is supported.
  *
  * A typical application-defined callback sequence to get a directory listing would be:
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_stat "get status" callback and learns that the path is a directory.
- *  -# Etherios Cloud Connector calls application-defined @ref file_system_opendir "open a directory" callback.
- *  -# For each directory entry Etherios Cloud Connector invokes application-defined callbacks:
- *      -# @ref file_system_readdir "read a directory entry" callback.
- *      -# @ref file_system_stat "get status for a directory entry" callback.
- *      -# @ref file_system_hash "get file hash value" callback, if the requested hash value is supported.
- *  -# When all directory entries are processed, Etherios Cloud Connector calls application-defined @ref file_system_closedir "close a directory" callback.
+ *  -# Cloud Connector calls the callback to @ref file_system_stat "get status" and learns that the path is a directory.
+ *  -# Cloud Connector calls the callback to @ref file_system_opendir "open a directory".
+ *  -# For each directory entry Cloud Connector invokes the callbacks to:
+ *      -# @ref file_system_readdir "read a directory entry".
+ *      -# @ref file_system_stat "get status for a directory entry".
+ *      -# @ref file_system_hash "get file hash value", if the requested hash value is supported and
+ *              the directory entry is a regular file.
+ *  -# When all directory entries are processed, Cloud Connector calls the callback to @ref file_system_closedir "close a directory".
  *
  * @note See @ref file_system_support under Configuration to enable or disable file system.
  * <br /><br />
@@ -68,41 +72,42 @@
  * the application to identify the session and store session data between callbacks. 
  *
  * All application session memory must be released in the last callback of the session, typically 
- * @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callbacks.
- * This callback will be invoked if the file or directory was opened successfully, even if the session had an error.
+ * the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory".
+ * This callback will be invoked if the file or directory was opened successfully, even if the fyle system
+ * session had an error.
  * <br /><br />
  *
  * @section file_system_term Session Termination and Error Processing
  * 
  * Data structures for all file system callbacks have the <b><i>void * errnum</i></b> field. If a callback encounters an error
  * it should set <b><i>errnum</i></b> to some user defined error token, for example <i>errno</i>, and return @ref connector_callback_error.
- * The errnum will be later used in @ref file_system_get_error "get error description" callback
- * to translate this user defined error token to an error status and error description to to send to Etherios Device Cloud. 
+ * The <b><i>errnum</i></b> will be later used in the callback to @ref file_system_get_error "get error status and description", which
+ * translates <b><i>errnum</i></b> to error status and error description to be send to Device Cloud by Etherios. 
  * 
  * Different scenarios for the session termination are described below.
  *
  * If the session is successful:
- *  -# Etherios Cloud Connector calls @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callback, 
+ *  -# Etherios Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
- *  -# Etherios Cloud Connector sends the last response to Etherios Device Cloud.
+ *  -# Cloud Connector sends the last portion of response data to Etherios Device Cloud.
  *
- * The callback aborts Etherios Cloud Connector:
+ * The callback aborts Cloud Connector:
  *  -# The callback returns @ref connector_callback_abort status.
- *  -# Etherios Cloud Connector calls @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callback, 
+ *  -# Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
  *  -# Etherios Cloud Connector is aborted.
  *
- * The callback encounters a error while performing the requested operation:
- *  -# The callback returns @ref connector_callback_error and <b><i>errnum</i></b>.
- *  -# Etherios Cloud Connector calls @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callback, 
+ * The callback encounters an error while performing the requested operation:
+ *  -# The callback sets <b><i>errnum</i></b> in the data structure returns @ref connector_callback_error.
+ *  -# Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
- *  -# If Etherios Cloud Connector has already sent part of file or directory data, it cancels the session. This is due to the fact 
- *     that it can't differentiate an error response from part of the data response.
- *  -# Otherwise Etherios Cloud Connector calls @ref file_system_get_error "get error description" callback and sends an error response to Etherios Device Cloud.
+ *  -# If Cloud Connector has already sent part of file or directory data, it cancels the session. This is done due to the fact 
+ *     that Device Cloud can't differentiate an error response from part of the data response.
+ *  -# Otherwise Cloud Connector calls the callback to @ref file_system_get_error "get error status and description" and sends an error response to Etherios Device Cloud.
  *
  * File system was notified of a session error:
- *  -# Etherios Cloud Connector calls @ref file_system_msg_error "session error" callback.
- *  -# Etherios Cloud Connector calls @ref file_system_close "close a file" or @ref file_system_closedir "close a directory" callback, 
+ *  -# Cloud Connector calls the callback to inform of @ref file_system_session_error "session error".
+ *  -# Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
  *  -# Etherios Cloud Connector canceles the session.
  * <br /><br />
@@ -129,8 +134,8 @@
  *     <ul>
  *       <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *       <br /> 
- *       <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *       <br /> 
  *       <li><b><i>path</i></b> - [IN] is the file path to a null-terminated string (with maximum string length of @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
  *       <br />
@@ -228,9 +233,9 @@
  *   <ul>
  *       <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *       <br /> 
- *       <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
- *       <br /> 
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
+ *       <br />                           
  *       <li><b><i>handle</i></b> - [IN] File handle</li>
  *       <br />
  *       <li><b><i>origin</i></b> - [IN] @endhtmlonly @ref connector_file_system_seek_cur, @htmlonly
@@ -336,8 +341,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>handle</i></b> - [IN] File handle</li>
  *      <br />
@@ -427,8 +432,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>handle</i></b> - [IN] File handle</li>
  *      <br />
@@ -519,8 +524,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>handle</i></b> - [IN] File handle</li>
  *      <br />
@@ -604,8 +609,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>handle</i></b> - [IN] File handle</li>
  *   </ul>
@@ -679,10 +684,10 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
- *   <li><b><i>path</i></b> - [IN] File path is a null-terminated string.
+ *      <li><b><i>path</i></b> - [IN] File path is a null-terminated string.
  *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly.</li>
  *   </ul>
  * </td>
@@ -763,8 +768,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
  *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
@@ -878,8 +883,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>handle</i></b> - [IN] Directory handle</li>
  *      <br /> 
@@ -1000,8 +1005,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>handle</i></b> - [IN] Directory handle</li>
  *   </ul>
@@ -1066,13 +1071,13 @@
  * @li Last modified time
  * @li The @ref connector_file_system_file_type_is_reg flag set, if the path represents a regular file.
  * @li @ref connector_file_system_hash_algorithm_t "Hash algorithm" to be used for this file in a future
- * @ref file_system_hash "get file hash value" callback.
+ * callback to @ref file_system_hash "get file hash value".
  *
  * When called for a directory, the callback returns the following information: 
  * @li Last modified time
  * @li The @ref connector_file_system_file_type_is_dir flag set.
  * @li @ref connector_file_system_hash_algorithm_t "Hash algorithm" to be used for each regular file in this directory
- * in a separate @ref file_system_hash "get file hash value" callback. 
+ * in a separate callback to @ref file_system_hash "get file hash value". 
  * <br /><br />
  *
  * Hash values support is optional.
@@ -1126,8 +1131,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
  *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
@@ -1225,6 +1230,11 @@
  * When called for a directory, the callback returns the following information: 
  * @li Last modified time
  * @li The @ref connector_file_system_file_type_is_dir flag set.
+ *
+ * If due to an error getting a file status this callback returns 
+ * @ref connector_callback_error, the file system session will terminate without
+ * sending any data for other directory entries. It's recommended to return @ref connector_callback_continue
+ * to avoid this problem (the status data will be zeroed).
  * <br /><br />
  *
  * Callback arguments:
@@ -1247,8 +1257,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
  *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
@@ -1337,8 +1347,8 @@
  * @ref connector_callback_busy. The callback will be repeated until it completes hash
  * calculations and returns @ref connector_callback_continue.
  *
- * If this callback has a problem reading a file, when called for a directory entry,
- * returns @ref connector_callback_error, the session will terminate without
+ * If due to an error reading a file, when called for a directory entry, this callback
+ * returns @ref connector_callback_error, the file system session will terminate without
  * sending any data for other directory entries. It's recommended to return @ref connector_callback_continue
  * to avoid this problem (the hash value will be zero).
  * <br /><br />
@@ -1361,8 +1371,8 @@
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
- *      <li><b><i>errnum</i></b> - [OUT] Callback sets this application-defined error token in case of I/O error to be used later in
- *                  @endhtmlonly @ref file_system_get_error "get error description" @htmlonly callback</li>
+ *       <li><b><i>errnum</i></b> - [OUT] Application-defined error token, set by the callback in case of an error.
+ *                                        It will be used later in a callback to @endhtmlonly @ref file_system_get_error "get error description" @htmlonly</li> 
  *      <br /> 
  *      <li><b><i>path</i></b> - [IN] Path is a null-terminated string.
  *                          See @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly</li>
