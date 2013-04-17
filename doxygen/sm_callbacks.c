@@ -19,7 +19,7 @@
  *
  * @note See @ref CONNECTOR_TRANSPORT_UDP and @ref network_udp_start to enable and start UDP.
  *
- * @section ping_request Ping Device Cloud or Cloud Connector
+ * @section ping_request  Ping request
  *
  * The device can send ping request to Device Cloud at any time to let Device Cloud know that Cloud Connector
  * is ready to receive any pending messages. Similarly Device Cloud user can ping their devices using a ping
@@ -30,7 +30,7 @@
  *      -# @ref ping_response_callback
  *      -# @ref ping_request_callback
  *
- * @subsection initiate_ping  To send ping request to Device Cloud
+ * @subsection initiate_ping  Ping Device Cloud
  *
  * The application initiates the ping request to Device Cloud by calling connector_initiate_action()
  * with @ref connector_initiate_ping_request request and @ref connector_sm_send_ping_request_t request_data.
@@ -56,7 +56,7 @@
  * </tr>
  * <tr>
  *   <td>request_data</td>
- *   <td> Pointer to @endhtmlonly connector_sm_send_ping_request_t @htmlonly structure, where member:
+ *   <td>Pointer to @endhtmlonly connector_sm_send_ping_request_t @htmlonly structure, where member:
  *        <ul>
  *        <li><b><i>transport</i></b>, a method to use to send data (CONNECTOR_TRANSPORT_UDP only at this point) </li>
  *        <li><b><i>user_context</i></b>, is the user owned context pointer, can be used to identify the response </li>
@@ -86,7 +86,7 @@
  * variable to hold this value. You can release them when you get a @ref  ping_response_callback "response" callback.
  * The value passed as the user_context will be returned in the response.
  *
- * @subsection ping_response_callback  A ping response from Device Cloud
+ * @subsection ping_response_callback  Ping response callback
  *
  * This callback is called with @ref connector_request_id_sm_ping_response "ping response" @ref connector_callback_t "callback".
  *
@@ -112,7 +112,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_ping_response_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_ping_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method chosen to send ping </li>
  *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
@@ -133,7 +133,7 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection ping_request_callback A ping request from Device Cloud
+ * @subsection ping_request_callback  Ping request callback
  *
  * Etherios Cloud Connector will make @ref connector_request_id_sm_ping_request "Ping Request"
  * @ref connector_callback_t "callback" to inform the application that ping is received. This callback
@@ -161,7 +161,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which ping is received </li>
  *       <li><b><i>response_required</i></b>, it will be set to connector_true if Device Cloud wants response from Cloud Connector </li>
@@ -185,7 +185,7 @@
  * </table>
  * @endhtmlonly
  *
- * @section cli_request  CLI request from Device Cloud
+ * @section cli_request  CLI request
  *
  * The CLI request sent to the device from Device Cloud will use this callbacks to carry out the requests.
  * The CLI callbacks will come in following order, the status callback can come in any order after
@@ -222,7 +222,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_cli_request_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_cli_request_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
  *       <li><b><i>user_context</i></b>, user provided context </li>
@@ -253,7 +253,7 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection cli_response_length_callback  Get total response length
+ * @subsection cli_response_length_callback  Response length callback
  *
  * Etherios Cloud Connector will make @ref connector_request_id_sm_cli_response_length "response length"
  * @ref connector_callback_t "callback" to get the total CLI response length in bytes. This callback will
@@ -280,7 +280,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_cli_response_length_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_cli_response_length_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
  *       <li><b><i>user_context</i></b>, user provided context </li>
@@ -332,7 +332,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_cli_response_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_cli_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
  *       <li><b><i>user_context</i></b>, user provided context </li>
@@ -360,7 +360,7 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection cli_status_callback  Error in CLI session
+ * @subsection cli_status_callback  CLI session error callback
  *
  * This callback is called with @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
  * to indicate the reason for unusual CLI session end.
@@ -386,7 +386,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_cli_status_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_cli_status_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which CLI request is received </li>
  *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
@@ -407,7 +407,7 @@
  * </table>
  * @endhtmlonly
  *
- * @section pending_data More data is pending on Device Cloud
+ * @section pending_data  Pending data callback
  *
  * Etherios Cloud Connector will make @ref connector_request_id_sm_more_data "pending data"
  * @ref connector_callback_t "callback" to indicate the application that there are pending messages
@@ -435,7 +435,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the pending data can be retreived </li>
  *     </ul>
@@ -458,7 +458,7 @@
  * </table>
  * @endhtmlonly
  *
- * @section opaque_response More data is pending on Device Cloud
+ * @section opaque_response  Opaque response callback
  *
  * Etherios Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
  * @ref connector_callback_t "callback" to indicate the application that it received a response from
@@ -487,7 +487,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_sm_opaque_response_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_sm_opaque_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the response is received </li>
  *       <li><b><i>id</i></b>, request ID associated with the response </li>
@@ -514,7 +514,7 @@
  * </table>
  * @endhtmlonly
  *
- * @section cancel_session  To cancel a device originated session
+ * @section cancel_session  Cancel request
  *
  * The application initiates the cancel session request to Cloud Connector by calling connector_initiate_action()
  * with @ref connector_initiate_session_cancel request and @ref connector_sm_cancel_request_t request_data.
@@ -540,7 +540,7 @@
  * </tr>
  * <tr>
  *   <td>request_data</td>
- *   <td> Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
+ *   <td>Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
  *      <ul>
  *         <li><b><i>transport</i></b>, a method to use to send data </li>
  *         <li><b><i>user_context</i></b>, the last user context used on this session </li>

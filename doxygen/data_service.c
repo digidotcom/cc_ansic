@@ -5,16 +5,16 @@
  * @section data_service_overview Data Service Overview
  *
  * The Data Service API is used to send data to and from Etherios Device Cloud.  Data service transfers
- * are either initiated from Etherios Device Cloud (@ref device_request) or the device itself (@ref send_data).
+ * are either initiated from Etherios Device Cloud (@ref device_request) or the device itself (@ref send_data_request).
  *
- * @li @ref send_data : Data transfers initiated by the device and used to write files on to Etherios Device Cloud.
+ * @li @ref send_data_request : Data transfers initiated by the device and used to write files on to Etherios Device Cloud.
  * Device Cloud may send a response back to the device indicating the transfer status.
  * @li @ref device_request : Transfers initiated from a web services client connected to Etherios Device Cloud which
  * hosts the device. This transfer is used to send data to the device and the device may send a response back.
  *
  * @note See @ref data_service_support under Configuration to disable the data service.
  *
- * @section send_data Send data to Device Cloud
+ * @section send_data_request Send data
  *
  * This is one way the device can send data to Etherios Device Cloud. The other method is using @ref data_points.
  * It is the device originated transaction, starts when the connector_initiate_action() is called with request ID
@@ -43,7 +43,7 @@
  * @note See @ref CONNECTOR_TRANSPORT_TCP and @ref network_tcp_start to enable and start TCP.
  * @note See @ref CONNECTOR_TRANSPORT_UDP and @ref network_udp_start to enable and start UDP.
  *
- * @subsection initiate_send_data Initiate Sending Data
+ * @subsection initiate_send_data Initiate Send Data
  *
  * The application initiates the send data to Etherios Device Cloud by calling connector_initiate_action()
  * with @ref connector_initiate_send_data request and @ref connector_request_data_service_send_t request_data.
@@ -69,7 +69,7 @@
  * </tr>
  * <tr>
  *   <td>request_data</td>
- *   <td> Pointer to @endhtmlonly connector_request_data_service_send_t @htmlonly structure, where member:
+ *   <td>Pointer to @endhtmlonly connector_request_data_service_send_t @htmlonly structure, where member:
  *        <ul>
  *        <li><b><i>transport</i></b>, a method to use to send data </li>
  *        <li><b><i>user_context</i></b>, is the user owned context pointer </li>
@@ -134,7 +134,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_data_service_length_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_data_service_length_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method chosen to send data </li>
  *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
@@ -185,7 +185,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_data_service_send_data_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_data_service_send_data_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method chosen to send data </li>
  *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
@@ -240,7 +240,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_data_service_send_response_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_data_service_send_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method chosen to send data </li>
  *       <li><b><i>user_context</i></b>, holds the user owned context pointer </li>
@@ -295,7 +295,7 @@
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_data_service_status_t @htmlonly structure:<br></br>
+ *   <td>Pointer to @endhtmlonly connector_data_service_status_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method chosen to send data </li>
  *       <li><b><i>user_context</i></b>, holds the user owned context pointer </li>
