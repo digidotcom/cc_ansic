@@ -12,10 +12,10 @@
  * or ping response from Device Cloud.
  * @li @ref cli_request : Explains how the callback are called to handle the CLI command from Device Cloud.
  * The CLI can be initiated either from Device Cloud Manager or from a web service client connected to Device Cloud.
- * @li @ref more_data : This callback indicates that there are more data pending on Device Cloud for this device.
+ * @li @ref pending_data : This callback indicates that there are more data pending on Device Cloud for this device.
  * @li @ref opaque_response : This callback is called when a valid response is received from Device Cloud, but no
  * matching request is available in Cloud Connector.
- * @li @ref cancel_request : This section explains how to cancel a pending short message session.
+ * @li @ref cancel_session : This section explains how to cancel a pending short message session.
  *
  * @note See @ref CONNECTOR_TRANSPORT_UDP and @ref network_udp_start to enable and start UDP.
  *
@@ -90,8 +90,8 @@
  *
  * This callback is called with @ref connector_request_id_sm_ping_response "ping response" @ref connector_callback_t "callback".
  *
- * If the response is requested then the callback with @ref connector_sm_ping_status_success indicates a success response
- * from Device Cloud. When the response is not requested, a callback with @ref connector_sm_ping_status_complete
+ * If the response is requested then the callback with connector_sm_ping_status_success indicates a success response
+ * from Device Cloud. When the response is not requested, a callback with connector_sm_ping_status_complete
  * indicates the ping is sent successfully.
  *
  * @htmlonly
@@ -171,12 +171,16 @@
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Continue</td>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ *   <td>Continue</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Cloud Connector</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
+ * </tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_callback_error @htmlonly</th>
+ *   <td>Application encountered error.</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -235,12 +239,16 @@
  * <td>Continue</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Cloud Connector</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
- * <td>Busy and needs to be called back again</td>
+ *   <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
+ *   <td>Busy and needs to be called back again</td>
+ * </tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_callback_error @htmlonly</th>
+ *   <td>Application encountered error.</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -283,16 +291,16 @@
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Continue</td>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ *   <td>Continue</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Cloud Connector</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
- * <td>Busy and needs to be called back again</td>
+ *   <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
+ *   <td>Busy and needs to be called back again</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -338,25 +346,27 @@
  * <tr> <th colspan="2" class="title">Return Values</th> </tr>
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Continue</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Aborts Cloud Connector</td>
+ *   <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
+ *   <td>Busy and needs to be called back again</td>
  * </tr>
  * <tr>
- * <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
- * <td>Busy and needs to be called back again</td>
+ *   <th>@endhtmlonly @ref connector_callback_error @htmlonly</th>
+ *   <td>Application encountered error.</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
- * @section more_data More pending data
+ * @subsection cli_status_callback  Error in CLI session
  *
- * The iDigi Connector calls this callback to indicate the application that there are pending messages
- * on Etherios Device Cloud. Application can send any messages (ping if no data to send) to retreive
- * the queued messages. Both request_data and response_data are empty in this callback.
+ * This callback is called with @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
+ * to indicate the reason for unusual CLI session end.
+ * 
+ * The @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
+ * is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -372,54 +382,40 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_sm_more_data @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_sm_cli_status @htmlonly</td>
  * </tr>
  * <tr>
- *   <td>request_data</td>
- *   <td> [IN] NULL </td>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_sm_cli_status_t @htmlonly structure:<br></br>
+ *     <ul>
+ *       <li><b><i>transport</i></b>, a method on which CLI request is received </li>
+ *       <li><b><i>user_context</i></b>, is the user owned context pointer </li>
+ *       <li><b><i>status</i></b>, reason code for the end of CLI session </li>
+ *     </ul>
+ *   </td>
  * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
- *   <td>request_length</td>
- *   <td> [IN] 0 </td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td> [OUT] NULL </td>
- * </tr>
- * <tr>
- *   <td>response_length</td>
- *   <td>[OUT] 0 </td>
- * </tr>
- * <tr>
- *   <th colspan="2" class="title">Return Values</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
  *   <td>Continue</td>
  * </tr>
  * <tr>
- *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
- * @code
- *  // TBD: The sample code for more_data callback goes here.
- * @endcode
+ * @section pending_data More data is pending on Device Cloud
  *
- * @section session_complete Session complete callback
+ * Etherios Cloud Connector will make @ref connector_request_id_sm_more_data "pending data"
+ * @ref connector_callback_t "callback" to indicate the application that there are pending messages
+ * on Device Cloud. Application can send any messages (ping if no data to send) to retreive
+ * the queued messages.
  *
- * The iDigi Connector will use this callback to indicate the application when:
- *
- *   @li The requested send operation is complete for a session where response is not requested.
- *   @li Internal error occurs in a session.
- *   @li User requested session cancel completes.
- *
- * The application is free to release all the allocated resources at this time.
+ * The @ref connector_request_id_sm_more_data "pending data" @ref connector_callback_t "callback"
+ * is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -435,58 +431,43 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_sm_session_complete @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_sm_more_data @htmlonly</td>
  * </tr>
  * <tr>
- *   <td>request_data</td>
- *   <td>[IN] pointer to @endhtmlonly connector_message_status_response_t @htmlonly structure: <br></br>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:<br></br>
  *     <ul>
- *       <li><b><i>user_context</i></b> the user context passed to the @endhtmlonly connector_initiate_action() @htmlonly call </li>
- *       <li><b><i>status</i></b> @endhtmlonly @ref connector_session_status_t @htmlonly indicates the session status when this
- *                 call is made. </li>
- *       <li><b><i>error_text</i></b> an optional error reason string</li>
+ *       <li><b><i>transport</i></b>, a method on which the pending data can be retreived </li>
  *     </ul>
  *   </td>
  * </tr>
  * <tr>
- *   <td>request_length</td>
- *   <td> [IN] Size of @endhtmlonly @ref connector_message_status_response_t "status" @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td> [OUT] NULL </td>
- * </tr>
- * <tr>
- *   <td>response_length</td>
- *   <td>[OUT] 0 </td>
- * </tr>
- * <tr>
  *   <th colspan="2" class="title">Return Values</th>
  * </tr>
  * <tr>
  *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
  * </tr>
  * <tr>
- *   <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
  *   <td>Continue</td>
  * </tr>
  * <tr>
- *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
  *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
- * @code
- *  // TBD: The sample code for session_complete callback goes here.
- * @endcode
+ * @section opaque_response More data is pending on Device Cloud
  *
- * @section opaque_response Cloud response for deleted request.
+ * Etherios Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
+ * @ref connector_callback_t "callback" to indicate the application that it received a response from
+ * Device Cloud for which no associated request is available. The reason for this is the session is
+ * terminated either because of the timeout specified in @ref CONNECTOR_SM_TIMEOUT or it is cancelled
+ * by the user.
  *
- * When Etherios Device Cloud sends a response for a request, which is deletd by the user either due to timeout
- * or by issuing the cancel, the iDigi Connector will call the application with callback (@ref connector_sm_opaque_response).
- *
- * The response_data of this callback will point to @ref connector_sm_opaque_response_t "opaque response".
+ * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
+ * is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -502,31 +483,19 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_sm_opaque_response @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_sm_opaque_response @htmlonly</td>
  * </tr>
  * <tr>
- *   <td>request_data</td>
- *   <td> [IN] NULL </td>
- * </tr>
- * <tr>
- *   <td>request_length</td>
- *   <td> [IN] 0 </td>
- * </tr>
- * <tr>
- *   <td>response_data</td>
- *   <td>[IN/OUT] Pointer to @endhtmlonly connector_sm_opaque_response_t @htmlonly structure, where member:
- *      <ul>
- *        <li><b><i>id</i></b> an identifier to keep track of multi-part message</li>
- *        <li><b><i>data</i></b> pointer to a buffer which contains opaque data </li>
- *        <li><b><i>bytes</i></b> number of bytes in data buffer </li>
- *        <li><b><i>flags</i></b> can be used to identify the last part (if CONNECTOR_MSG_LAST_DATA is set) </li>
- *        <li><b><i>status</i></b> response status, application can use this to discard the subsequent parts by returning an error </li>
- *      </ul>
+ *   <td>data</td>
+ *   <td>[IN] pointer to @endhtmlonly connector_sm_opaque_response_t @htmlonly structure:<br></br>
+ *     <ul>
+ *       <li><b><i>transport</i></b>, a method on which the response is received </li>
+ *       <li><b><i>id</i></b>, request ID associated with the response </li>
+ *       <li><b><i>data</i></b>, received payload </li>
+ *       <li><b><i>bytes_used</i></b>, number of bytes filled in the data </li>
+ *       <li><b><i>error</i></b>, will be set to connector_true if this is an error response </li>
+ *     </ul>
  *   </td>
- * </tr>
- * <tr>
- *   <td>response_length</td>
- *   <td>[OUT] Size of connector_sm_opaque_response_t </td>
  * </tr>
  * <tr>
  *   <th colspan="2" class="title">Return Values</th>
@@ -535,16 +504,48 @@
  *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
  * </tr>
  * <tr>
- *   <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
  *   <td>Continue</td>
  * </tr>
  * <tr>
- *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
  *   <td>Aborts Etherios Cloud Connector</td>
  * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * @section cancel_session  To cancel a device originated session
+ *
+ * The application initiates the cancel session request to Cloud Connector by calling connector_initiate_action()
+ * with @ref connector_initiate_session_cancel request and @ref connector_sm_cancel_request_t request_data.
+ *
+ * The connector_initiate_action() is called with the following arguments:
+ *
+ * @htmlonly
+ * <table class="apitable">
  * <tr>
- *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
- *   <td>Busy and needs to be called back again</td>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th>
+ *   <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>handle</td>
+ *   <td>@endhtmlonly @ref connector_handle_t @htmlonly returned from the @endhtmlonly connector_init() @htmlonly function.</td>
+ * </tr>
+ * <tr>
+ *   <td>request</td>
+ *   <td>@endhtmlonly @ref connector_initiate_session_cancel @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_data</td>
+ *   <td> Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
+ *      <ul>
+ *         <li><b><i>transport</i></b>, a method to use to send data </li>
+ *         <li><b><i>user_context</i></b>, the last user context used on this session </li>
+ *      </ul>
+ *   </td>
  * </tr>
  * </table>
  * @endhtmlonly
