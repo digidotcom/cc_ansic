@@ -52,12 +52,18 @@ typedef struct
 #define APP_MIN_VALUE(a,b) (((a)<(b))?(a):(b))
 #endif
 
+/**
+* ! @cond Doxygen_Suppress
+*/
 typedef struct
 {
     DIR * dirp;
     struct dirent dir_entry;
 
 } app_dir_data_t;
+/**
+* ! @endcond
+*/
 
 
 static connector_callback_status_t app_process_file_error(connector_file_error_data_t * const error_data, long int const errnum)

@@ -486,7 +486,6 @@ typedef struct
     connector_transport_t transport;        /**< Transport will be stopped:
                                             - @ref connector_transport_tcp
                                             - @ref connector_transport_udp
-                                            - @ref connector_transport_sms
                                             - @ref connector_transport_all */
 
     connector_stop_condition_t condition;   /**< Condition to stop the transport:
@@ -746,20 +745,20 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                           on the server.
  *
  *                      @li @b connector_initiate_transport_start:
- *                          Starts the specified (@ref connector_transport_tcp, @ref connector_transport_udp or
- *                          @ref connector_transport_sms) transport method.
+ *                          Starts the specified (@ref connector_transport_tcp
+ *                          or @ref connector_transport_udp) transport method.
  *
  *                      @li @b connector_initiate_transport_stop:
- *                          Stops the specified transport:
+ *                          Stops the Cloud Connector transport mechanism.  Note this call
+ *                          triggers a @ref connector_request_id_status_stop_completed callback.
+ *                          Transports include:
  *                              - @ref connector_transport_tcp - TCP transport
  *                              - @ref connector_transport_udp - UDP transport
- *                              - @ref connector_transport_sms - Reserved
  *                              - @ref connector_transport_all - all transports.
- *                              - @ref @b Note: This triggers @ref connector_request_id_status_stop_completed callback. @b See @ref status_stop_completed callback.
  *
  *                      @li @b connector_initiate_ping_request:
- *                          Sends status message to the Etherios Device Cloud.  Supported only under
- *                          @ref connector_transport_udp and @ref connector_transport_sms transport methods.
+ *                          Sends status message to the Etherios Device Cloud.  Supported for
+ *                          @ref connector_transport_udp transport method only.
  *
  *                      @li @b connector_initiate_data_point_binary:
  *                          Initiates the action to send a binary data point to Etherios Device Cloud.
