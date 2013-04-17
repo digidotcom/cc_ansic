@@ -11,10 +11,10 @@
  * @section device_request_location Source Code Location
  *
  *      - For the connector_run() version:
- *           - @htmlonly<I>/connector/public/run/samples/device_request</I>@endhtmlonly
+ *           - @a /connector/public/run/samples/device_request
  *
  *      - For the connector_step() version:
- *          - @htmlonly<I>/connector/public/step/samples/device_request</I>@endhtmlonly
+ *          - @a /connector/public/step/samples/device_request
  *
  * @note Check @ref threading "here for more information" on using the connector_run()
  * versus connector_step() model.

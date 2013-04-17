@@ -34,10 +34,10 @@
  * @section data_stream_location Source Code Location
  *
  *      - For the connector_run() version:
- *           - @htmlonly<I>/connector/public/run/samples/data_stream</I>@endhtmlonly
+ *           - @a /connector/public/run/samples/data_stream
  *
  *      - For the connector_step() version:
- *          - @htmlonly<I>/connector/public/step/samples/data_stream</I>@endhtmlonly
+ *           - @a /connector/public/step/samples/data_stream
  *
  * @note Check @ref threading "here for more information" on using the connector_run()
  * versus connector_step() model.

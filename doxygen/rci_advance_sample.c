@@ -10,10 +10,10 @@
 * @section rci_sample_location Source Code Location
  *
  *      - For the connector_run() version:
- *           - @htmlonly<I>/connector/public/run/samples/remote_config</I>@endhtmlonly
+ *           - @a /connector/public/run/samples/remote_config
  *
  *      - For the connector_step() version:
- *          - @htmlonly<I>/connector/public/step/samples/remote_config</I>@endhtmlonly
+ *           - @a /connector/public/step/samples/remote_config
  *
  * @note Check @ref threading "here for more information" on using the connector_run()
  * versus connector_step() model.
@@ -318,7 +318,7 @@
  * Once you are logged, go to Device Manager tab and click the Refresh button.
  * The device's status should show a 'green' light indicating the device is connected.
  *
- * @image html cloud_rci_connected.png
+ * @image html cloud_device_connected.png
  *
  * Then double click the device. Click the Refresh button to update the configurations.
  *

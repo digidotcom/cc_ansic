@@ -207,7 +207,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
  * @note This routine is not needed if you define @b CONNECTOR_CLOUD_URL configuration in @ref connector_config.h.
  * See @ref connector_config_data_options
  */
-static connector_callback_status_t app_get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
     static  char const connector_server_url[] = "login.etherios.com";
 
@@ -1302,7 +1302,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         break;
 
     case connector_request_id_config_device_cloud_url:
-        status = get_config_device_cloud_url(data);
+        status = app_get_device_cloud_url(data);
         break;
 
     case connector_request_id_config_connection_type:
