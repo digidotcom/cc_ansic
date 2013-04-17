@@ -399,12 +399,12 @@
 
 /**
  * When defined, this string hardcode for the @ref device_cloud_url instead of the application framework
- * function @ref app_get_config_device_cloud_url (called via the @ref connector_request_id_config_device_cloud_url @ref connector_callback_t "callback" in config.c).
+ * function @ref app_get_device_cloud_url (called via the @ref connector_request_id_config_device_cloud_url @ref connector_callback_t "callback" in config.c).
  *
- * @note There is no need to implement or port @ref app_get_config_device_cloud_url when CONNECTOR_CLOUD_URL is defined.
+ * @note There is no need to implement or port @ref app_get_device_cloud_url when CONNECTOR_CLOUD_URL is defined.
  *
  * @see @ref device_cloud_url
- * @see @ref app_get_config_device_cloud_url()
+ * @see @ref app_get_device_cloud_url()
  */
 #define CONNECTOR_CLOUD_URL                               "login.etherios.com"
 
