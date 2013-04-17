@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section config Configuration Callbacks
- * Etherios Cloud Connector interfaces to the platform's configuration through the callbacks listed below.  These
+ * The Etherios Cloud Connector interfaces to the platform's configuration through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  *
  *  -# @ref device_id
