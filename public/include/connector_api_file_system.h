@@ -503,7 +503,7 @@ typedef struct
 * Used in @ref connector_file_system_get_error_t
 * "get file error description" structure.
 *
-* @see @ref connector_request_id_file_get_error
+* @see @ref connector_request_id_file_system_get_error
 */
 typedef enum
 {
@@ -513,7 +513,7 @@ typedef enum
     connector_file_system_request_format_error,         /**< Request format error */
     connector_file_system_invalid_parameter,            /**< Invalid parameter */
     connector_file_system_out_of_memory,                /**< Out of memory */
-    connector_file_system_permision_denied              /**< Permision denied */
+    connector_file_system_permision_denied              /**< Permission denied */
 
 } connector_file_system_error_t;
 /**
