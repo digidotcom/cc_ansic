@@ -324,17 +324,15 @@
  * For example, app_get_vendor_id() is the routine used to retrieve the Etherios Device Cloud account Vendor ID
  * and is shown below.
  * @code
- * static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t * const size)
+ * static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
  * {
  * #error  "Specify vendor id"
- *     #define VENDOR_ID_LENGTH    4
  *
- *    static uint8_t const device_vendor_id[VENDOR_ID_LENGTH] = {0x00, 0x00, 0x00, 0x00};
+ *     static uint32_t const device_vendor_id = 0x00000000;
  *
- *    *id   =  device_vendor_id;
- *    *size = sizeof device_vendor_id;
+ *     config_vendor->id  =  device_vendor_id;
  *
- *    return connector_callback_continue;
+ *     return connector_callback_continue;
  * }
  * @endcode
  *
