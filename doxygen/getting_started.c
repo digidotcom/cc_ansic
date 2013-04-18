@@ -299,7 +299,7 @@
  *  @li app_os_free()
  *  @li app_os_get_system_time()
  *  @li app_os_reboot()
- *  @li app_os_status()
+ *  @li app_os_yield()
  *
  * @subsection network_routines Network Routines
  * Open the file network_tcp.c and implement the network interface routines.
