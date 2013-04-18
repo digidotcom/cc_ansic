@@ -21,7 +21,7 @@
  * As far as the top level calls are concerned there is no change between the SSL and non-SSL connection.
  *
  * The CA certificate is stored in public/certificates/ directory. A define APP_SSL_CA_CERT can be found
- * in platform.h. By default it is set to "../../../certificates/idigi-ca-cert-public.crt".
+ * in platform.h. By default it is set to "../../../certificates/connector-ca-cert-public.crt".
  *
  * @section ssl_connect Open
  *
@@ -242,8 +242,8 @@
  *
  * @section ssl_receive Receive
  *
- * Callback is called to receive a specified number of bytes of data from the iDigi Device
- * Cloud.  This function must not block.
+ * Callback is called to receive a specified number of bytes of data from the Device
+ * Cloud by Etherios.  This function must not block.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_network_tcp_receive() in network_tcp_ssl.c.
