@@ -43,8 +43,7 @@
  * @section language Language Support
  *
  * The Etherios Cloud Connector software provided is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99)
- * compliant.  (Note the @ref CONNECTOR_RCI_SERVICE "Remote Configuration" feature requires ANSI C99.)   The
- * sample platforms provided use standard ANSI C calls which are available in most operating systems.
+ * compliant. The sample platforms provided use standard ANSI C calls which are available in most operating systems.
  * If you are running on a Linux i486 based platform and using the GNU toolchain the Linux platform
  * and samples can be run without any major modifications.
  *
