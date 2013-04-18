@@ -54,25 +54,20 @@ ${LIBS}
 
 # Generated Sample Executable Name.
 SAMPLE = connector
-.PHONY:all
-all: clean build
 
-.PHONY:build
-build: $$(SAMPLE)
+# since each of the samples shares private and platform files, do a clean each time we make
+.PHONY:all
+all: clean $$(SAMPLE)
 
 # Linking Flags.
 LDFLAGS += $$(DFLAGS) -Wl,-Map,$$(SAMPLE).map,--sort-common
 
 OBJS = $$(SRCS:.c=.o)
-DEPS = $$(OBJS:.o=.d)
-
--include $$(DEPS)
 
 $$(SAMPLE): $$(OBJS)
 	$$(CC) $$(LDFLAGS) $$^ $$(LIBS) -o $$@
 	${POST_SAMPLE}
 
-
 .PHONY: clean
 clean:
-	-rm -f $$(SAMPLE) $$(OBJS) $$(DEPS) $$(SAMPLE).map
+	-rm -f $$(SAMPLE) $$(OBJS) $$(SAMPLE).map
