@@ -5,9 +5,9 @@
  * @section file_system_overview1 File System
  *
  *  -# @ref file_system_overview
- *  -# @ref file_system_large_files 
  *  -# @ref file_system_context
  *  -# @ref file_system_term
+ *  -# @ref file_system_large_files 
  *  -# @ref file_system_open
  *  -# @ref file_system_lseek
  *  -# @ref file_system_read
@@ -65,21 +65,6 @@
  * @note See @ref file_system_support under Configuration to enable or disable file system.
  * <br /><br />
  *
- * @section file_system_large_files Large File Support
- *
- * The file system has following limitations for file sizes and data transfer sizes:
- *
- * -# The size of data in one get_file request from Device Cloud by Etherios is limited to 2MB - 1byte (2097151 bytes).
- *    <br /><br />
- * -# Offset for setting file position and truncating a file is limited to 2 gigabytes.
- *    <br /><br />
- * -# File sizes sent back to Device Cloud in listing requests are limited to 2 gigabytes by default. 
- *    To enable support of file sizes larger than 2 gigabytes in file or directory listings:
- *      <br /><br />
- *      -# Define @ref CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES in connector_config.h
- *      <br /><br />
- *      -# On linux platform add: <b>CFLAGS += -D_FILE_OFFSET_BITS=64</b> to Makefile.
- *
  * @section file_system_context Session Context
  *
  * Data structures for all file system callbacks have the <b><i>user_context</i></b> field. This field is provided to 
@@ -125,6 +110,22 @@
  *     if there is an open file or directory.
  *  -# Etherios Cloud Connector canceles the session.
  * <br /><br />
+ *
+ * @section file_system_large_files Large File Support
+ *
+ * The file system has following limitations for file sizes and data transfer sizes:
+ *
+ * -# The size of data in one get_file request from Device Cloud by Etherios is limited to 2MB - 1byte (2097151 bytes).
+ *    <br /><br />
+ * -# Offset for setting file position and truncating a file is limited to 2 gigabytes.
+ *    <br /><br />
+ * -# File sizes sent back to Device Cloud in listing requests are limited to 2 gigabytes by default. 
+ *    To enable support of file sizes larger than 2 gigabytes in file or directory listings:
+ *      <br /><br />
+ *      -# Define @ref CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES in connector_config.h
+ *      <br /><br />
+ *      -# On linux platform add: <b>CFLAGS += -D_FILE_OFFSET_BITS=64</b> to Makefile.
+ *
  *
  * @section file_system_open Open a File
  *

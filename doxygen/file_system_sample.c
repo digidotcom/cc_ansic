@@ -41,49 +41,49 @@
  * <th class="title">Request Id</th>
  * </tr>
  * <tr>
- * <th>app_process_file_open()</th><td>@endhtmlonly @ref file_system_open @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_open @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_open()@htmlonly</th><td>@endhtmlonly @ref file_system_open @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_open @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_lseek()</th><td>@endhtmlonly @ref file_system_lseek @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_lseek @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_lseek()@htmlonly</th><td>@endhtmlonly @ref file_system_lseek @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_lseek @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_read()</th><td>@endhtmlonly @ref file_system_read @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_read @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_read()@htmlonly</th><td>@endhtmlonly @ref file_system_read @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_read @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_write()</th><td>@endhtmlonly @ref file_system_write @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_write @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_write()@htmlonly</th><td>@endhtmlonly @ref file_system_write @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_write @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_ftruncate()</th><td>@endhtmlonly @ref file_system_truncate @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_ftruncate @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_ftruncate()@htmlonly</th><td>@endhtmlonly @ref file_system_truncate @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_ftruncate @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_close()</th><td>@endhtmlonly @ref file_system_close @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_close @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_close()@htmlonly</th><td>@endhtmlonly @ref file_system_close @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_close @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_remove()</th><td>@endhtmlonly @ref file_system_remove @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_remove @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_remove()@htmlonly</th><td>@endhtmlonly @ref file_system_remove @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_remove @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_opendir()</th><td>@endhtmlonly @ref file_system_opendir @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_opendir @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_opendir()@htmlonly</th><td>@endhtmlonly @ref file_system_opendir @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_opendir @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_readdir()</th><td>@endhtmlonly @ref file_system_readdir @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_readdir @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_readdir()@htmlonly</th><td>@endhtmlonly @ref file_system_readdir @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_readdir @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_closedir()</th><td>@endhtmlonly @ref file_system_closedir @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_closedir @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_closedir()@htmlonly</th><td>@endhtmlonly @ref file_system_closedir @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_closedir @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_stat()</th><td>@endhtmlonly @ref file_system_stat @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_stat @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_stat()@htmlonly</th><td>@endhtmlonly @ref file_system_stat @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_stat @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_stat_dir_entry()</th><td>@endhtmlonly @ref file_system_stat_dir_entry @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_stat_dir_entry @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_stat_dir_entry()@htmlonly</th><td>@endhtmlonly @ref file_system_stat_dir_entry @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_stat_dir_entry @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_hash()</th><td>@endhtmlonly @ref file_system_hash @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_hash @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_hash()@htmlonly</th><td>@endhtmlonly @ref file_system_hash @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_hash @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_get_error()</th><td>@endhtmlonly @ref file_system_get_error @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_get_error @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_get_error()@htmlonly</th><td>@endhtmlonly @ref file_system_get_error @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_get_error @htmlonly</td>
  * </tr>
  * <tr>
- * <th>app_process_file_session_error()</th><td>@endhtmlonly @ref file_system_session_error @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_session_error @htmlonly</td>
+ * <th>@endhtmlonly @ref app_process_file_session_error()@htmlonly</th><td>@endhtmlonly @ref file_system_session_error @htmlonly</td><td>@endhtmlonly @ref connector_request_id_file_system_session_error @htmlonly</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -102,7 +102,7 @@
  * @section fs_sample_python_script Python script to write, read, and list a file
  *
  * This sample provides a simple python script file_system.py to write, read, and list a file,
- * using @htmlonly <a href="web_services.html">iDigi Web Services</a> @endhtmlonly.
+ * using @htmlonly <a href="web_services.html">Device Cloud Web Services</a> @endhtmlonly.
  *
  * It sends a request to login.etherios.com. The file "test_file.txt" is created in the current directory
  * on the device with the file data "Connector file system sample\n".
