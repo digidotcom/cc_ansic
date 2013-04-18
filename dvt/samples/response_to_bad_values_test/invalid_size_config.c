@@ -85,8 +85,6 @@ static connector_callback_status_t app_get_invalid_size_device_type(connector_co
 
 static connector_callback_status_t app_get_invalid_size_server_url(connector_config_pointer_string_t * const config_url)
 {
-//#error "Specify Etherios Device Cloud URL"
-
     static char  invalid_size_server_url;
 
     /* Return pointer to device type. */
