@@ -2445,7 +2445,7 @@
         </option>
         <option>
           <name>OverrideDefFlashBoard</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCImagesOffset1</name>
@@ -4697,7 +4697,7 @@
         </option>
         <option>
           <name>UseFlashLoader</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CLowLevel</name>
@@ -4745,7 +4745,7 @@
         </option>
         <option>
           <name>OverrideDefFlashBoard</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OCImagesOffset1</name>
