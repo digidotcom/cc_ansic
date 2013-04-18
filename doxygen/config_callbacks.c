@@ -40,19 +40,19 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_id() in config.c.
  *
- * Device IDs are a globally unique identifier for Etherios clients.  The Device ID is a
+ * Device IDs are a globally unique identifier for Device Cloud clients.  The Device ID is a
  * 16-octet value derived from the MAC address of a network interface, IMEI, ESN or MEID on the client.
  * The mapping from MAC address to Device ID consists of inserting "FFFF" in the middle
  * of the MAC and setting all other bytes of the Device ID to 0.
  * For Example:
  * MAC Address 12:34:56:78:9A:BC, would map to a Device ID: 00000000-123456FF-FF789ABC.
- * If a client has more than one network interface, it does not matter to Etherios Device Cloud which
+ * If a client has more than one network interface, it does not matter to Device Cloud which
  * network interface MAC is used for the basis of the Device ID.  If the MAC is read
  * directly from the network interface to generate the client's Device ID, care must be
  * taken to always use the same network interface's MAC since there is a unique mapping
  * between a device and a Device ID.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_device_id()
  *
  * @htmlonly
@@ -129,7 +129,7 @@
  * @section vendor_id Vendor ID
  *
  * Return vendor ID which is a unique code identifying the manufacturer of a device.
- * Vendor IDs are assigned to manufacturers by Etherios Device Cloud.
+ * Vendor IDs are assigned to manufacturers by Device Cloud.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_vendor_id() in config.c.
@@ -137,7 +137,7 @@
  * @note If @ref CONNECTOR_VENDOR_ID configuration is defined in @ref connector_config.h, this callback
  * will not be called. See @ref connector_config_data_options
  *
- * @see @ref connector_vendor_id "Obtaining an Etherios Vendor ID"
+ * @see @ref connector_vendor_id "Obtaining an Device Cloud Vendor ID"
  * @see app_get_vendor_id()
  *
  * @htmlonly
@@ -194,7 +194,7 @@
  *
  * Returns a pointer to the device type which is an iso-8859-1 encoded string.
  * This string should be chosen by the device manufacturer as a name that uniquely
- * identifies this model of device  to Etherios Device Cloud. When Etherios Device Cloud finds two devices
+ * identifies this model of device  to Device Cloud. When Device Cloud finds two devices
  * with the same device type, it can infer that they are the same product and
  * product-scoped data may be shared among all devices with this device type.
  * A device's type cannot be an empty string, nor contain only whitespace.
@@ -266,9 +266,9 @@
  *
  * @endcode
  *
- * @section device_cloud_url Etherios Device Cloud Server URL
+ * @section device_cloud_url Device Cloud Server URL
  *
- * Return Etherios Device Cloud FQDN.
+ * Return Device Cloud FQDN.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_cloud_url() in config.c.
@@ -295,8 +295,8 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
  *          <dl>
  *              <dt><i>string</i></dt>
- *              <dd> - Callback returns the pointer to FQDN of Etherios Device Cloud to be connected.</dd>
- *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Etherios Device Cloud FQDN. Maximum is 64 bytes.</dd>
+ *              <dd> - Callback returns the pointer to FQDN of Device Cloud to be connected.</dd>
+ *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud FQDN. Maximum is 64 bytes.</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -304,7 +304,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned Etherios Device Cloud URL</td>
+ * <td>Callback successfully returned Device Cloud URL</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
@@ -617,7 +617,7 @@
  * @section tx_keepalive TX Keepalive Interval
  *
  * Return TX keepalive interval in seconds. This tells how
- * often Etherios Device Cloud sends keepalive messages to the device.
+ * often Device Cloud sends keepalive messages to the device.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_tx_keepalive_interval() in config.c.
@@ -691,7 +691,7 @@
  * @section rx_keepalive RX Keepalive Interval
  *
  * Return RX keepalive interval in seconds. This tells how
- * often Etherios Cloud Connector sends keepalive messages to Etherios Device Cloud (device to Etherios Device Cloud).
+ * often Etherios Cloud Connector sends keepalive messages to Device Cloud (device to Device Cloud).
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_rx_keepalive_interval() in config.c.
@@ -1237,7 +1237,7 @@
  * @section max_msg_transactions Maximum Message Transactions
  *
  * Return maximum simultaneous transactions for data service and file system to receive message from
- * Etherios Device Cloud. This configuration is required if @ref data_service_support or @ref file_system_support
+ * Device Cloud. This configuration is required if @ref data_service_support or @ref file_system_support
  * is enabled.
  *
  * @note If @ref CONNECTOR_MSG_MAX_TRANSACTION configuration is defined in @ref connector_config.h, this callback
@@ -1303,7 +1303,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_id_method() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_device_id()
  *
  * @htmlonly
@@ -1395,8 +1395,8 @@
  *          <dl>
  *              <dt><i>type</i></dt>
  *              <dd>
- *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic connect to Etherios Device Cloud.</li>
- *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual connect to Etherios Device Cloud.
+ *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic connect to Device Cloud.</li>
+ *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual connect to Device Cloud.
  *                          @endhtmlonly Note: Call @ref connector_initiate_action with @ref connector_initiate_transport_start @htmlonly to start TCP transport.</li></ul></dd>
  *          </dl>
  * </td>
@@ -1454,8 +1454,8 @@
  * <td> Pointer to @endhtmlonly connector_config_connect_type_t @htmlonly:
  *          <dl>
  *              <dt><i>type</i></dt><dd>
- *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic establish UDP connection to Etherios Device Cloud.</li>
- *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual establish UDP connection to Etherios Device Cloud.
+ *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic establish UDP connection to Device Cloud.</li>
+ *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual establish UDP connection to Device Cloud.
  *                          @endhtmlonly Note: Call @ref connector_initiate_action with
  *                                                  @ref connector_initiate_transport_start @htmlonly to start UPD transport.</li></ul>
  *          </dl>
@@ -1567,7 +1567,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_imei_number() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_device_id()
  * @see @ref device_id_method for device ID Method
  * @see @ref connection_type for connection type.
@@ -1658,7 +1658,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_esn_number() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_wan_type()
  * @see @ref wan_type for WAN type
  * @see @ref connection_type for connection type.
@@ -1750,7 +1750,7 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_meid_number() in config.c.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to Etherios Device Cloud"
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_wan_type()
  * @see @ref wan_type for WAN type
  * @see @ref connection_type for connection type.
