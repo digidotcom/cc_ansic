@@ -195,25 +195,14 @@ def make(path):
 
     # Generate Makefile for all samples assuming in base ic directory.
     if path == 'all':
-        run_dir = os.path.abspath(os.path.join('.', 'public/run/samples'))
-        step_dir = os.path.abspath(os.path.join('.', 'public/step/samples'))
-        dvt_dir = os.path.abspath(os.path.join('.', 'dvt/samples'))
+		def add_samples(dir):
+			full = os.path.abspath(dir)
+			for path in filter(os.path.isdir, map(lambda name: os.path.join(full, name), os.listdir(full))):
+				directories.append(path)
 
-        for d in os.listdir(run_dir):
-            run_d = os.path.join(run_dir, d)
-            step_d = os.path.join(step_dir, d)
-
-            if os.path.isdir(step_d):
-                directories.append(step_d)
-            if os.path.isdir(run_d):
-                directories.append(run_d)
-
-        for d in os.listdir(dvt_dir):
-            sample_dir = os.path.join(dvt_dir, d)
-
-            if os.path.isdir(sample_dir):
-                directories.append(sample_dir)
-
+		add_samples('public/run/samples')
+		add_samples('public/step/samples')
+		add_samples('dvt/samples')
     else:
         directories.append(os.path.abspath(path))
 
@@ -238,4 +227,3 @@ if __name__ == "__main__":
         
     args = parser.parse_args()
     make(args.sample_directory)
-    

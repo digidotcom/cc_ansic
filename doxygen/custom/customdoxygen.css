@@ -23,18 +23,21 @@ h1 {
 
 .title {
 	font-size: 150%;
+        color: #0404B4;
 	font-weight: bold;
 	margin: 10px 2px;
 }
 
 h2 {
-	font-size: 120%;
-    border-bottom: 1px dotted #666666;
+	font-size: 130%;
+        color: #0404B4;
+       border-bottom: 1px solid #0404B4;
 }
 
 h3 {
-	font-size: 100%;
-}
+	font-size: 120%;
+       border-bottom: 1px dotted black;
+ }
 
 dt {
 	font-weight: bold;

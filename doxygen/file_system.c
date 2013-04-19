@@ -5,9 +5,9 @@
  * @section file_system_overview1 File System
  *
  *  -# @ref file_system_overview
- *  -# @ref file_system_large_files 
  *  -# @ref file_system_context
  *  -# @ref file_system_term
+ *  -# @ref file_system_large_files 
  *  -# @ref file_system_open
  *  -# @ref file_system_lseek
  *  -# @ref file_system_read
@@ -65,21 +65,6 @@
  * @note See @ref file_system_support under Configuration to enable or disable file system.
  * <br /><br />
  *
- * @section file_system_large_files Large File Support
- *
- * The file system has following limitations for file sizes and data transfer sizes:
- *
- * -# The size of data in one get_file request from Device Cloud by Etherios is limited to 2MB - 1byte (2097151 bytes).
- *    <br /><br />
- * -# Offset for setting file position and truncating a file is limited to 2 gigabytes.
- *    <br /><br />
- * -# File sizes sent back to Device Cloud in listing requests are limited to 2 gigabytes by default. 
- *    To enable support of file sizes larger than 2 gigabytes in file or directory listings:
- *      <br /><br />
- *      -# Define @ref CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES in connector_config.h
- *      <br /><br />
- *      -# On linux platform add: <b>CFLAGS += -D_FILE_OFFSET_BITS=64</b> to Makefile.
- *
  * @section file_system_context Session Context
  *
  * Data structures for all file system callbacks have the <b><i>user_context</i></b> field. This field is provided to 
@@ -126,9 +111,28 @@
  *  -# Etherios Cloud Connector canceles the session.
  * <br /><br />
  *
+ * @section file_system_large_files Large File Support
+ *
+ * The file system has following limitations for file sizes and data transfer sizes:
+ *
+ * -# The size of data in one get_file request from Device Cloud by Etherios is limited to 2MB - 1byte (2097151 bytes).
+ *    <br /><br />
+ * -# Offset for setting file position and truncating a file is limited to 2 gigabytes.
+ *    <br /><br />
+ * -# File sizes sent back to Device Cloud in listing requests are limited to 2 gigabytes by default. 
+ *    To enable support of file sizes larger than 2 gigabytes in file or directory listings:
+ *      <br /><br />
+ *      -# Define @ref CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES in connector_config.h
+ *      <br /><br />
+ *      -# On linux platform add: <b>CFLAGS += -D_FILE_OFFSET_BITS=64</b> to Makefile.
+ * <br /><br />
+ *
  * @section file_system_open Open a File
  *
- * Open a file for the specified path. 
+ * This callback opens a file for the specified path.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_open() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -227,7 +231,10 @@
  * 
  * @section file_system_lseek   Seek File Position
  *
- * Set the offset for an open file.
+ * This callback sets the offset for an open file.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_lseek() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -335,7 +342,10 @@
  *
  * @section file_system_read    Read File Data
  *
- * Read data from an open file.
+ * This callback reads data from an open file.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_read() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -426,7 +436,10 @@
  *
  * @section file_system_write   Write File Data
  *
- * Write data to an open file.
+ * This callback writes data to an open file.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_write() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -517,8 +530,10 @@
  *
  * @section file_system_truncate   Truncate a File
  *
+ * This callback truncates an open file to a specified length.
  *
- * Truncate an open file to a specified length.
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_ftruncate() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -602,7 +617,10 @@
  *
  * @section file_system_close   Close a File
  *
- * Close an open file.
+ * This callback closes an open file.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_close() in file_system.c
  *
  * @note This callback must release all resources, used during the file system session.
  *
@@ -678,7 +696,10 @@
  *
  * @section file_system_remove      Remove a File
  *
- * Remove a file for the specified path. 
+ * This callback removes a file for the specified path.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_remove() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -762,7 +783,10 @@
  *
  * @section file_system_opendir     Open a Directory
  *
- * Open a directory for the spesified path.
+ * This callback opens a directory for the spesified path.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_opendir() in file_system.c
  *
  * @htmlonly
  * <table class="apitable">
@@ -873,11 +897,15 @@
  * 
  * @section file_system_readdir     Read Next Directory Entry
  *
- * The callbacks reads the next directory entry for the directory handle,
+ * The callback reads the next directory entry for the directory handle,
  * returned in the @ref file_system_opendir "open a directory" callback. 
  *
  * The callback writes the directory entry name at the entry_name pointer. When no more 
  * directory entries exist, the callback writes an empty string "".
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_readdir() in file_system.c
+ * <br /><br /> 
  *
  * @htmlonly
  * <table class="apitable">
@@ -996,8 +1024,11 @@
  
  * @section file_system_closedir    Close a Directory
  *
- * Close a directory for the directory handle, returned in the @ref file_system_opendir "open a directory"
- * callback.
+ * This callback closes a directory for the directory handle, returned in
+ * the @ref file_system_opendir "open a directory" callback.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_closedir() in file_system.c
  *
  * @note This callback must release all resources, used during the file system session.
  *
@@ -1077,8 +1108,7 @@
  *
  * @section file_system_stat        Get File Status
  *
- * Get file status for the named file path, received in a request from Device Cloud.
- * <br /><br /> 
+ * This callback gets file status for the named file path, received in a request from Device Cloud.
  *
  * When called for a file, the callback returns the following information: 
  * @li File size
@@ -1092,7 +1122,6 @@
  * @li The @ref connector_file_system_file_type_is_dir flag set.
  * @li @ref connector_file_system_hash_algorithm_t "Hash algorithm" to be used for each regular file in this directory
  * in a separate callback to @ref file_system_hash "get file hash value". 
- * <br /><br />
  *
  * Hash values support is optional.
  *
@@ -1123,7 +1152,11 @@
  * </tr>
  * </table>
  * @endhtmlonly
- * <br /><br />
+ * <br />
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_stat() in file_system.c
+ * <br /><br /> 
  *
  * Callback arguments:
  *
@@ -1233,8 +1266,7 @@
  *
  * @section file_system_stat_dir_entry  Get Directory Entry Status
  *
- * Get status for the directory entry.
- * <br /><br />
+ * This callback gets status for the directory entry.
  *
  * When called for a file, the callback returns the following information:
  * @li File size
@@ -1249,6 +1281,9 @@
  * @ref connector_callback_error, the file system session will terminate without
  * sending any data for other directory entries. It's recommended to return @ref connector_callback_continue
  * to avoid this problem (the status data will be zeroed).
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_stat_dir_entry() in file_system.c
  * <br /><br />
  *
  * Callback arguments:
@@ -1351,8 +1386,7 @@
  *
  * @section file_system_hash        Get File Hash Value
  * 
- * Get a file hash value for the specified path.
- * <br /><br />
+ * This callback gets a file hash value for the specified path.
  *
  * Supported hash algorithms are md5 and crc32.
  *
@@ -1365,6 +1399,9 @@
  * returns @ref connector_callback_error, the file system session will terminate without
  * sending any data for other directory entries. It's recommended to return @ref connector_callback_continue
  * to avoid this problem (the hash value will be zero).
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_hash() in file_system.c
  * <br /><br />
  *
  * @htmlonly
@@ -1451,14 +1488,18 @@
  *
  * @section file_system_get_error    Get Error Description
  *
- * Get an error status code and an error description string to send to Device Cloud by Etherios.
- * <br /><br />  
+ * This callback gets an error status code and an error description
+ * string to send to Device Cloud by Etherios.
  *
  * Etherios Cloud Connector invokes this this callback if an earlier callback has returned
  * @ref connector_callback_error.
  *
  * Cloud Connector invokes this callback after calling the @ref file_system_close "close a file" 
  * or the @ref file_system_closedir "close a directory" callback.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_get_error() in file_system.c
+ * <br /><br />  
  *
  * @htmlonly
  * <table class="apitable">
@@ -1564,11 +1605,15 @@
  *
  * @section file_system_session_error   Inform of a Session Error
  *
- * An error in a file system session might be caused by network communication problems,
- * session timeout, insufficient memory, etc.
+ * This callback gets an error in file_system_session, which
+ * might be caused by network communication problems, session timeout, insufficient memory, etc.
  *
  * Etherios Cloud Connector will invoke a callback to @ref file_system_close "close a file" 
  * or the @ref file_system_closedir "close a directory" after this callback.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_process_file_session_error() in file_system.c
+ *  <br /><br />
  *
  * @htmlonly
  * <table class="apitable">
@@ -1610,7 +1655,7 @@
  *
  * @code
  *
- * connector_callback_status_t app_process_file_msg_error(connector_file_system_session_error_t * const data) 
+ * connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data) 
  * {
  *     APP_DEBUG("Message Error %d\n", data->session_error);
  *

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+#
 # ***************************************************************************
 # Copyright (c) 2012 Digi International Inc.,
 # All rights not expressly granted are reserved.

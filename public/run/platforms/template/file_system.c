@@ -10,689 +10,493 @@
  * =======================================================================
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <errno.h>
+/**
+ * @file
+ *  @brief Rountines which implement the Etherios Cloud
+ *         Connector file system
+ *  
+ *  @ref CONNECTOR_FILE_SYSTEM.
+ */
+
 #include "connector_api.h"
 #include "platform.h"
-#include "connector_config.h"
-#include "connector_debug.h"
-
-#if !defined CONNECTOR_FILE_SYSTEM 
-#error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample" 
-#endif
-
-#if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
-#error The maximum supported CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH is 460
-#endif
-
-#if defined APP_ENABLE_MD5
-#include <openssl/md5.h>
-
-#define APP_MD5_BUFFER_SIZE 1024
-
-typedef struct
-{
-    MD5_CTX md5;
-    char buf[APP_MD5_BUFFER_SIZE];
-    unsigned int flags;
-    int fd;
-
-} app_md5_ctx;
-#endif
-
-#ifndef APP_MIN_VALUE
-#define APP_MIN_VALUE(a,b) (((a)<(b))?(a):(b))
-#endif
 
 /**
-* ! @cond Doxygen_Suppress
-*/
-typedef struct
+ * @brief   Open a File
+ *
+ * This routine opens a file for the specified path
+ *
+ * @param data  Pointer to a connector_file_system_open_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	File opened successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data)
 {
-    DIR * dirp;
-    struct dirent dir_entry;
+    connector_callback_status_t rc = connector_callback_continue;
 
-} app_dir_data_t;
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
 /**
-* ! @endcond
-*/
+ * @brief   Seek File Position
+ *
+ * This routine sets the offset for an open file.
+ *
+ * @param data  Pointer to a connector_file_system_lseek_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	Offset set successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
 
 
-static connector_callback_status_t app_process_file_error(connector_file_error_data_t * const error_data, long int const errnum)
+/**
+ * @brief   Read File Data
+ *
+ * This routine reads data from a file to be sent to Device 
+ * Cloud by Etherios. 
+ *
+ * @param data  Pointer to a connector_file_system_read_t data 
+ *              structure
+ *
+ * @retval connector_callback_continue	Number of data bytes
+ *                                  was read successfully or
+ *                                  end-of-file.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Write File Data
+ *
+ * This routine writes data received from Device Cloud by 
+ * Etherios to a file. 
+ *
+ * @param data  Pointer to a connector_file_system_write_t 
+ *
+ * @retval connector_callback_continue	Number of data bytes was  
+ *                                  written successfully
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Truncate an Open File.
+ *
+ * This routine truncates an open file to a specified length. 
+ *
+ * @param data  Pointer to a connector_file_system_truncate_t 
+ *
+ * @retval connector_callback_continue	File truncated successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
+
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Close a File.
+ *
+ * This routine closes a file. 
+ *
+ * @param data  Pointer to a connector_file_system_truncate_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	File truncated successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Remove a File.
+ *
+ * This routine removes a file for the specified path
+ *
+ * @param data  Pointer to a connector_file_system_remove_t data 
+ *              structure
+ *
+ * @retval connector_callback_continue	File removed successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_remove(connector_file_system_remove_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Get File Status
+ *
+ * This routine gets status for the specified path
+ *
+ * @param data  Pointer to a connector_file_system_stat_t data 
+ *              structure
+ *
+ * @retval connector_callback_continue	Operation was successful.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Get Directory Entry Status
+ *
+ * This routine gets status for the specified directory entry 
+ * path 
+ *
+ * @param data  Pointer to a 
+ *              connector_file_system_stat_dir_entry_t data structure 
+ *
+ * @retval connector_callback_continue	Operation was successful.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Open a Directory
+ *
+ * This routine opens a directory for the specified path
+ *
+ * @param data  Pointer to a connector_file_system_opendir_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	Directory opened 
+ *                                  successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Read Next Directory Entry
+ *
+ * This routine reads next directory entry
+ *
+ * @param data  Pointer to a connector_file_system_readdir_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	Next entry 
+ *                                  retrieved or no more
+ *                                  entries.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Close a Directory
+ *
+ * This routine opens a directory for the specified path
+ *
+ * @param data  Pointer to a connector_file_system_closedir_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	Directory closed
+ *                                  successfully.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_closedir(connector_file_system_closedir_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Get File Hash Value
+ *
+ * This routine returns hash value for the specified path and 
+ * hash algorythm
+ *
+ * @param data  Pointer to a connector_file_system_hash_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	Hash value returned.
+ * @retval connector_callback_busy 		Busy. The routine will be 
+ *                                  called again.
+ * @retval connector_callback_error     An error has occured,
+ *                                  Application-defined error
+ *                                  code is returned in errnum.
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Get Error Status and Description
+ *
+ * This routine returns error status and description for errnum 
+ * returned in a previous callback 
+ *
+ * @param data  Pointer to a connector_file_system_get_error_t 
+ *              data structure
+ *
+ * @retval connector_callback_continue	Success 
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+/**
+ * @brief   Inform of a Session Error
+ *
+ * This routine informs of a file system session error, 
+ * whichn might be caused by network communication problems,
+ * session timeout, insufficient memory, etc. 
+ *
+ * @param data  Pointer to a 
+ *              connector_file_system_session_error_t
+ *              data structure
+ *
+ * @retval connector_callback_continue	Continue 
+ * @retval connector_callback_abort     The application aborts 
+ *                                  Etherious Cloud connector.
+ */
+connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
+{
+    connector_callback_status_t rc = connector_callback_continue;
+
+    UNUSED_ARGUMENT(data);
+
+    return rc;
+}
+
+
+/**
+ * @cond DEV
+ */
+
+connector_callback_status_t app_file_system_handler(connector_request_id_file_system_t const request,
+                                                    void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-
-    error_data->errnum = (void *) errnum;
-
-    switch(errnum)
-    {
-        case EACCES:
-        case EPERM:
-        case EROFS:
-            error_data->error_status = connector_file_permision_denied;
-            break;
-
-        case ENOMEM:
-        case ENAMETOOLONG:
-            error_data->error_status = connector_file_out_of_memory;
-            break;
-
-        case ENOENT:
-        case ENODEV:
-        case EBADF:
-            error_data->error_status = connector_file_path_not_found;
-            break;
-
-        case EINVAL:
-        case ENOSYS:
-        case ENOTDIR:
-        case EISDIR:
-            error_data->error_status = connector_file_invalid_parameter;
-            break;
-
-#if EAGAIN != EWOULDBLOCK
-        case EWOULDBLOCK:
-#endif
-        case EAGAIN:
-            status = connector_callback_busy;
-            break;
-
-        case ENOSPC:
-            error_data->error_status = connector_file_insufficient_storage_space;
-            break;
-
-        default:
-            error_data->error_status = connector_file_unspec_error;
-            break;
-    }
-    return status;
-}
-
-static int app_convert_file_open_mode(int const oflag)
-{
-#if (CONNECTOR_O_RDONLY == O_RDONLY) && (CONNECTOR_O_WRONLY == O_WRONLY) && (CONNECTOR_O_RDWR == O_RDWR) && \
-    (CONNECTOR_O_CREAT == O_CREAT)   && (CONNECTOR_O_APPEND == O_APPEND) && (CONNECTOR_O_TRUNC == O_TRUNC)
-
-    return oflag;
-#else
-    int result = 0;
-
-    if (oflag & CONNECTOR_O_WRONLY) result |= O_WRONLY;
-    if (oflag & CONNECTOR_O_RDWR)   result |= O_RDWR;
-    if (oflag & CONNECTOR_O_APPEND) result |= O_APPEND;
-    if (oflag & CONNECTOR_O_CREAT)  result |= O_CREAT;
-    if (oflag & CONNECTOR_O_TRUNC)  result |= O_TRUNC;
-
-    if ((oflag & (CONNECTOR_O_WRONLY | CONNECTOR_O_RDWR)) == 0)
-        result |= O_RDONLY;
-
-    return result;
-#endif
-}
-
-static int app_convert_lseek_origin(int const origin)
-{
-#if (CONNECTOR_SEEK_SET == SEEK_SET) && (CONNECTOR_SEEK_CUR == SEEK_CUR) && (CONNECTOR_SEEK_END == SEEK_END)
-
-    return origin;
-#else
-    int result;
-
-    switch(origin)
-    {
-    case CONNECTOR_SEEK_SET:
-        result = SEEK_SET;
-        break;
-    case CONNECTOR_SEEK_END:
-        result = SEEK_END;
-        break;
-    case CONNECTOR_SEEK_CUR:
-    default:
-        result = SEEK_CUR;
-        break;
-    }
-
-    return result;
-#endif
-}
-
-static connector_callback_status_t app_process_file_strerror(connector_file_data_response_t * response_data)
-{
-    size_t strerr_size = 0;
-
-    connector_file_error_data_t * error_data = response_data->error;
-    long int errnum = (long int)error_data->errnum;
-
-    if (errnum != 0)
-    {
-        char * err_str = strerror(errnum);
-        char * ptr = response_data->data_ptr;
-
-        strerr_size = APP_MIN_VALUE(strlen(err_str), response_data->size_in_bytes);
-        memcpy(ptr, err_str, strerr_size);
-    }
-
-    response_data->size_in_bytes = strerr_size;
-
-    return connector_callback_continue;
-}
-
-
-#if defined APP_ENABLE_MD5
-static app_md5_ctx * app_allocate_md5_ctx(unsigned int const flags, connector_file_error_data_t * const error_data)
-{
-    app_md5_ctx * ctx = malloc(sizeof *ctx);
-
-    if (ctx != NULL)
-    {
-        ctx->flags = flags;
-        ctx->fd    = -1;
-    }
-    else
-    {
-        app_process_file_error(error_data, ENOMEM);
-        APP_DEBUG("app_allocate_md5_ctx: malloc fails\n");
-    }
-    return ctx;
-}
-
-static connector_callback_status_t app_process_file_msg_error(connector_file_error_request_t const * const request_data,
-                                                          connector_file_response_t * const response_data)
-{
-    UNUSED_ARGUMENT(request_data);
-    APP_DEBUG("Message Error %d\n", request_data->message_status);
-
-    // All application resources, used in the session, must be released in this callback
-    if (response_data->user_context != NULL)
-    {
-        app_md5_ctx * ctx = response_data->user_context;
-
-        if (ctx->fd >= 0)
-            close(ctx->fd);
-
-        free(response_data->user_context);
-        response_data->user_context = NULL;
-    }
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_process_file_hash(connector_file_path_request_t const * const request_data,
-                                                     connector_file_data_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    app_md5_ctx * ctx = response_data->user_context;
-    int ret;
-
-    if (ctx == NULL)
-    {   
-        ASSERT(0);
-        goto error;
-    }
-
-    if (ctx->fd < 0)
-    {
-        ctx->fd = open(request_data->path, O_RDONLY);
-        APP_DEBUG("Open %s, returned %d\n", request_data->path, ctx->fd);
-
-        if (ctx->fd < 0)
-        {
-            ASSERT(0);
-            goto error;
-        }
-
-        MD5_Init(&ctx->md5);
-    }
-
-    while ((ret = read (ctx->fd, ctx->buf, sizeof ctx->buf)) > 0)
-    {
-        MD5_Update(&ctx->md5, ctx->buf, ret);
-    }
-    if (ret == -1 && errno == EAGAIN)
-    {
-        status = connector_callback_busy;
-        goto done;
-    }
-
-    APP_DEBUG("Close %d\n", ctx->fd);
-    close (ctx->fd);
-    ctx->fd = -1;
-
-    if (ret == 0)
-    {
-        MD5_Final (response_data->data_ptr, &ctx->md5);
-        goto done;
-    }
-
-error:
-    memset(response_data->data_ptr, 0, response_data->size_in_bytes);
-
-done:
-    if (ctx != NULL && status == connector_callback_continue)
-    {
-        // free md5 context here,  if ls was issued a single file
-        if ((ctx->flags & CONNECTOR_FILE_IS_DIR) == 0)
-        {
-            free(response_data->user_context);
-            response_data->user_context = NULL;
-        }
-    }
-    return status;
-}
-#else
-
-static connector_callback_status_t app_process_file_msg_error(connector_file_error_request_t const * const request_data,
-                                                          connector_file_response_t * const response_data)
-{
-    UNUSED_ARGUMENT(request_data);
-    UNUSED_ARGUMENT(response_data);
-    APP_DEBUG("Message Error %d\n", request_data->message_status);
-
-    // All application resources, used in the session, must be released in this callback
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_process_file_hash(connector_file_path_request_t const * const request_data,
-                                                     connector_file_data_response_t * const response_data)
-{
-    UNUSED_ARGUMENT(request_data);
-
-    // app_process_file_hash() should not be called if APP_ENABLE_MD5 is not defined
-    ASSERT(0);
-
-    memset(response_data->data_ptr, 0, response_data->size_in_bytes);
-    return connector_callback_continue;
-}
-#endif
-
-static connector_callback_status_t app_process_file_stat(connector_file_stat_request_t const * const request_data,
-                                                     connector_file_stat_response_t * const response_data)
-{
-    struct stat statbuf;
-    connector_file_stat_t * pstat = &response_data->statbuf;
-    connector_callback_status_t status = connector_callback_continue;
-
-    int const result = stat(request_data->path, &statbuf);
-
-    if (result < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("stat for %s returned %d, errno %d\n", request_data->path, result, errno);
-        goto done;
-    }
-
-    APP_DEBUG("stat for %s returned %d, filesize %ld\n", request_data->path, result, statbuf.st_size);
-
-    pstat->flags = 0;
-    pstat->file_size = statbuf.st_size;
-    pstat->last_modified = statbuf.st_mtime;
-    pstat->hash_alg = connector_file_hash_none;
-
-    if (S_ISDIR(statbuf.st_mode))
-       pstat->flags |= CONNECTOR_FILE_IS_DIR;
-    else
-    if (S_ISREG(statbuf.st_mode))
-       pstat->flags |= CONNECTOR_FILE_IS_REG;
-
-#if defined APP_ENABLE_MD5
-    /*
-     * If ls was issued for a directory
-     * - app_process_file_stat() is called with the requested hash algorithm once for this directory.
-     * - app_process_file_stat() is called with connector_file_hash_none for each directory entry.
-     */
-    switch (request_data->hash_alg)
-    {
-        case connector_file_hash_best:
-        case connector_file_hash_md5:
-            if (pstat->flags != 0)
-            {
-                pstat->hash_alg = connector_file_hash_md5;
-                if (response_data->user_context == NULL)
-                    response_data->user_context = app_allocate_md5_ctx(pstat->flags, response_data->error);
-            }
-            break;
-
-
-        default:
-            break;
-    }
-#endif
-done:
-    return status;
-}
-
-static connector_callback_status_t app_process_file_opendir(connector_file_path_request_t const * const request_data,
-                                                        connector_file_open_response_t * const response_data)
-{
-
-    connector_callback_status_t status = connector_callback_continue;
-    DIR * dirp;
-
-    errno = 0;
-    dirp = opendir(request_data->path);
-
-    if (dirp != NULL)
-    {
-        app_dir_data_t * dir_data = malloc (sizeof *dir_data);
-
-        if (dir_data != NULL)
-        {
-            response_data->handle = dir_data;
-
-            dir_data->dirp = dirp;
-            APP_DEBUG("opendir for %s returned %p\n", request_data->path, (void *) dirp);
-        }
-        else
-        {
-            APP_DEBUG("app_process_file_opendir: malloc fails %s\n", request_data->path);
-            status = app_process_file_error(response_data->error, ENOMEM);
-            closedir(dirp);
-        }
-    }
-    else
-        status = app_process_file_error(response_data->error, errno);
-
-    return status;
-}
-
-static connector_callback_status_t app_process_file_closedir(connector_file_request_t const * const request_data,
-                                                         connector_file_response_t * const response_data)
-{
-    app_dir_data_t * dir_data = request_data->handle;
-
-    ASSERT(dir_data != NULL);
-    APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
-
-    closedir(dir_data->dirp);
-    free(dir_data);
-
-    // All application resources, used in the session, must be released in this callback
-
-#if defined APP_ENABLE_MD5
-    if (response_data->user_context != NULL)
-    {
-        // free md5 context here, if ls was issued a directory
-        free(response_data->user_context);
-        response_data->user_context = NULL;
-    }
-#else
-    UNUSED_ARGUMENT(response_data);
-#endif
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_process_file_readdir(connector_file_request_t const * const request_data,
-                                                        connector_file_data_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    app_dir_data_t * dir_data = request_data->handle;
-    struct dirent  * result = NULL;
-
-    // Read next directory entry
-    int rc = readdir_r(dir_data->dirp, &dir_data->dir_entry, &result);
-
-    // error
-    if (rc != 0)
-    {
-        status = app_process_file_error(response_data->error, rc);
-        APP_DEBUG("readdir_r returned %d\n", rc);
-        goto done;
-    }
-
-    // finished with the directory
-    if (result == NULL)
-    {
-        APP_DEBUG("No more directory entries %d\n", rc);
-        response_data->size_in_bytes = 0;
-        goto done;
-    }
-
-    // read valid entry
-    {
-        size_t const name_len = strlen(result->d_name);
-
-        APP_DEBUG("readdir_r returned directory entry name %s\n", result->d_name);
-
-        if(name_len < response_data->size_in_bytes)
-        {
-            memcpy(response_data->data_ptr, result->d_name, name_len + 1);
-            response_data->size_in_bytes = name_len + 1;
-        }
-        else
-        {
-            ASSERT(0);
-            APP_DEBUG("directory entry name too long\n");
-            status = app_process_file_error(response_data->error, ENAMETOOLONG);
-        }
-    }
-
-done:
-    return status;
-}
-
-
-static connector_callback_status_t app_process_file_open(connector_file_open_request_t const * const request_data,
-                                                     connector_file_open_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    int const oflag = app_convert_file_open_mode(request_data->oflag);
-
-    // 0664 = read,write owner + read,write group + read others
-    long int const fd = open(request_data->path, oflag, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH);
-
-    if (fd < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-    }
-
-    APP_DEBUG("Open %s, %d, returned %ld\n", request_data->path, oflag, fd);
-
-    response_data->handle = (void *) fd;
-    response_data->user_context = NULL;
-
-    return status;
-}
-
-
-static connector_callback_status_t app_process_file_lseek(connector_file_lseek_request_t const * const request_data,
-                                                      connector_file_lseek_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    int const origin = app_convert_lseek_origin(request_data->origin);
-    long int const fd = (long int) request_data->handle;
-
-    long int const offset = lseek(fd, request_data->offset, origin);
-
-    response_data->offset = offset;
-
-    if (offset < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-    }
-
-    APP_DEBUG("lseek fd %ld, offset %ld, origin %d returned %ld\n", 
-                fd, request_data->offset, request_data->origin, offset);
-
-    return status;
-}
-
-static connector_callback_status_t app_process_file_ftruncate(connector_file_ftruncate_request_t const * const request_data,
-                                                          connector_file_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) request_data->handle;
-
-    int const result = ftruncate(fd, request_data->length);
-
-    if (result < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-    }
-
-    APP_DEBUG("ftruncate %ld, %ld returned %d\n", fd, request_data->length, result);
-
-    return status;
-}
-
-static connector_callback_status_t app_process_file_rm(connector_file_path_request_t const * const request_data,
-                                                   connector_file_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-
-    int const result = unlink(request_data->path);
-
-    if (result < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-    }
-
-    APP_DEBUG("unlink %s returned %d\n", request_data->path, result);
-
-    return status;
-}
-
-static connector_callback_status_t app_process_file_read(connector_file_request_t const * const request_data,
-                                                     connector_file_data_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) request_data->handle;
-
-    int const result = read(fd, response_data->data_ptr, response_data->size_in_bytes);
-
-    if (result < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("read %ld, %" PRIsize ", returned %d, errno %d\n", fd, response_data->size_in_bytes, result, errno);
-        goto done;
-    }
-
-    APP_DEBUG("read %ld, %" PRIsize ", returned %d\n", fd, response_data->size_in_bytes, result);
-    response_data->size_in_bytes = result;
-
-done:
-    return status;
-}
-
-static connector_callback_status_t app_process_file_write(connector_file_write_request_t const * const request_data,
-                                                      connector_file_write_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) request_data->handle;
-
-    int const result = write(fd, request_data->data_ptr, request_data->size_in_bytes);
-
-    if (result < 0)
-    {
-        status = app_process_file_error(response_data->error, errno);
-        APP_DEBUG("write %ld, %" PRIsize ", returned %d, errno %d\n", fd, request_data->size_in_bytes, result, errno);
-        goto done;
-    }
-
-    APP_DEBUG("write %ld, %" PRIsize ", returned %d\n", fd, request_data->size_in_bytes, result);
-
-    response_data->size_in_bytes = result;
-
-done:
-    return status;
-}
-
-static connector_callback_status_t app_process_file_close(connector_file_request_t const * const request_data,
-                                                      connector_file_response_t * const response_data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) request_data->handle;
-    int const result = close(fd);
-
-    if (result < 0 && errno == EIO)
-    {
-        status = app_process_file_error(response_data->error, EIO);
-    }
-
-    APP_DEBUG("close %ld returned %d\n", fd, result);
-
-    // All application resources, used in the session, must be released in this callback
-
-    return status;
-}
-
-connector_callback_status_t app_file_system_handler(connector_file_system_request_t const request,
-                                                void const * const request_data, size_t const request_length,
-                                                void * const response_data, size_t * const response_length)
-{
-    connector_callback_status_t status = connector_callback_continue;
-
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
 
     switch (request)
     {
-        case connector_file_system_open:
-            status = app_process_file_open(request_data, response_data);
+        case connector_request_id_file_system_open:
+            status = app_process_file_open(data);
             break;
 
-        case connector_file_system_read:
-            status = app_process_file_read(request_data, response_data);
+        case connector_request_id_file_system_read:
+            status = app_process_file_read(data);
             break;
 
-        case connector_file_system_write:
-            status = app_process_file_write(request_data, response_data);
+        case connector_request_id_file_system_write:
+            status = app_process_file_write(data);
             break;
 
-        case connector_file_system_lseek:
-            status = app_process_file_lseek(request_data, response_data);
+        case connector_request_id_file_system_lseek:
+            status = app_process_file_lseek(data);
             break;
 
-        case connector_file_system_close:
-            status = app_process_file_close(request_data, response_data);
+        case connector_request_id_file_system_close:
+            status = app_process_file_close(data);
             break;
 
-        case connector_file_system_ftruncate:
-            status = app_process_file_ftruncate(request_data, response_data);
+        case connector_request_id_file_system_ftruncate:
+            status = app_process_file_ftruncate(data);
             break;
 
-        case connector_file_system_rm:
-            status = app_process_file_rm(request_data, response_data);
+        case connector_request_id_file_system_remove:
+            status = app_process_file_remove(data);
             break;
 
-        case connector_file_system_stat:
-            status = app_process_file_stat(request_data, response_data);
+        case connector_request_id_file_system_stat:
+            status = app_process_file_stat(data);
             break;
 
-        case connector_file_system_opendir:
-            status = app_process_file_opendir(request_data, response_data);
+        case connector_request_id_file_system_stat_dir_entry:
+            status = app_process_file_stat_dir_entry(data);
             break;
 
-        case connector_file_system_readdir:
-            status = app_process_file_readdir(request_data, response_data);
+        case connector_request_id_file_system_opendir:
+            status = app_process_file_opendir(data);
             break;
 
-        case connector_file_system_closedir:
-            status = app_process_file_closedir(request_data, response_data);
+        case connector_request_id_file_system_readdir:
+            status = app_process_file_readdir(data);
             break;
 
-        case connector_file_system_strerror:
-            status = app_process_file_strerror(response_data);
+        case connector_request_id_file_system_closedir:
+            status = app_process_file_closedir(data);
             break;
 
-        case connector_file_system_hash:
-            status = app_process_file_hash(request_data, response_data);
+        case connector_request_id_file_system_get_error:
+            status = app_process_file_get_error(data);
             break;
 
-        case connector_file_system_msg_error:
-            status = app_process_file_msg_error(request_data, response_data);
+        case connector_request_id_file_system_hash:
+            status = app_process_file_hash(data);
+            break;
+
+        case connector_request_id_file_system_session_error:
+            status = app_process_file_session_error(data);
             break;
 
         default:
+            status = connector_callback_unrecognized;
             APP_DEBUG("Unsupported file system request %d\n", request);
     }
 
     return status;
 }
+
+/**
+ * @endcond
+ */
 
