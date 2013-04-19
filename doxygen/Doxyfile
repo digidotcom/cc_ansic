@@ -647,7 +647,8 @@ INPUT                  = ./mainpage.c \
                          ./network_callbacks.c \
                          ./network_ssl_callbacks.c \
                          ./connect_on_ssl.c \
-                         ./data_stream.c \
+                         ./data_point.c \
+                         ./data_point_sample.c \
                          ./config_callbacks.c \
                          ./web_services.c \
                          ./data_service.c \

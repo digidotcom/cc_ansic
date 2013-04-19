@@ -16,7 +16,7 @@
  *
  * @section send_data_request Send data
  *
- * This is one way the device can send data to Etherios Device Cloud. The other method is using @ref data_points.
+ * This is one way the device can send data to Etherios Device Cloud. The other method is using @ref data_point.
  * It is the device originated transaction, starts when the connector_initiate_action() is called with request ID
  * @ref connector_initiate_send_data.
  *

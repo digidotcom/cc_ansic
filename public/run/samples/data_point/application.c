@@ -106,9 +106,14 @@ int application_run(connector_handle_t handle)
             case connector_init_error:
             case connector_service_busy:
             case connector_unavailable:
+            {
+                int const point_delay_in_seconds = 4;
+
                 if (++busy_count > points_per_message) goto done;
                 APP_DEBUG(".");
+                sleep(point_delay_in_seconds);
                 break;
+            }
 
             case connector_success:
                 points_sent++;

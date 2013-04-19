@@ -124,6 +124,25 @@
 #define CONNECTOR_DATA_SERVICE
 
 /**
+* If defined, Etherios Cloud Connector includes the @ref data_point.
+* To disable the @ref data_point feature, comment this line out in connector_config.h:
+*
+* @code
+* #define CONNECTOR_DATA_POINTS
+* @endcode
+*
+* To this:
+* @code
+* //#define CONNECTOR_DATA_POINTS
+* @endcode
+*
+* @see @ref data_point
+* @see @ref zlib
+* @see @ref CONNECTOR_COMPRESSION
+*/
+#define CONNECTOR_DATA_POINTS
+
+/**
  * If defined, Etherios Cloud Connector includes the @ref file_system.
  * To enable the @ref file_system feature, uncomment this line in connector_config.h:
  *
@@ -177,6 +196,24 @@
  */
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 
+/**
+* If defined, Etherios Cloud Connector includes the @ref cli_request.
+* To disable the @ref cli_request feature, comment this line out in connector_config.h:
+*
+* @code
+* #define CONNECTOR_SM_CLI
+* @endcode
+*
+* To this:
+* @code
+* //#define CONNECTOR_SM_CLI
+* @endcode
+*
+* @see @ref sm_callbacks
+* @see @ref zlib
+* @see @ref CONNECTOR_COMPRESSION
+*/
+#define CONNECTOR_SM_CLI
 
 /**
  * This is used to define the maximum length in bytes of the full file path on the device, supported by the @ref file_system.
@@ -643,6 +680,37 @@
 #define CONNECTOR_IDENTITY_VERIFICATION                 connector_identity_verification_simple
 
 #endif
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
+* maximum short message session at a time. If not set, Cloud Connector will use the default of 2. 
+*
+* @see @ref sm_callbacks
+* @see @ref CONNECTOR_TRANSPORT_UDP
+*/
+#define CONNECTOR_SM_MAX_SESSIONS                  4
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
+* maximum short message segments used per session. If not set, Cloud Connector will use the default of 1.
+* User need to increase this value if they are planning to use short message to send larger data.
+*
+* @see @ref sm_callbacks
+* @see @ref CONNECTOR_TRANSPORT_UDP
+*/
+#define CONNECTOR_SM_MAX_SEGMENTS                  4
+
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
+* session timeout in seconds to this value. If not set, Cloud Connector will use the default of
+* no timeout (0). Cloud Connector will wait for Device Cloud response (complete response) until
+* this period. 
+*
+* @see @ref sm_callbacks
+* @see @ref CONNECTOR_TRANSPORT_UDP
+*/
+#define CONNECTOR_SM_TIMEOUT                    30
 
 
 /**
