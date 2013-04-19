@@ -9,8 +9,8 @@
  * on the otherhand collects these data and the data shows up under Data Streams page inside the Data
  * Service tab.
  *
- * To learn more about iDigi Data Streams, see Chapter 12 iDigi Data Streams in the
- * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90001150_H.pdf">iDigi User's Guide</a>@endhtmlonly.
+ * To learn more about Device Cloud Data Streams, see Chapter 12 Device Cloud Data Streams in the
+ * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90001150_H.pdf">Device Cloud User's Guide</a>@endhtmlonly.
  *
  * @section data_point_location Source Code Location
  *
@@ -71,7 +71,7 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td>iDigi Connector options</td>
+ *   <td>Etherios Cloud Connector options</td>
  *   <td>samples/data_point</td>
  * </tr>
  * <tr>

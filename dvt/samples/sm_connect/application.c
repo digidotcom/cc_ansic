@@ -110,9 +110,7 @@ int application_run(connector_handle_t handle)
                 break;
 
         case connector_success:
-                sleep(2);
-                if (!app_ping_pending)
-                    sleep(ping_interval_in_seconds - 2);
+                sleep(ping_interval_in_seconds);
                 break;
 
             default:

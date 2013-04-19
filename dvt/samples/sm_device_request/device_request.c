@@ -298,9 +298,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
             connector_sm_ping_response_t * const ping_resp = data;
 
-            if (ping_resp->status == connector_sm_ping_status_success)
-                app_ping_pending = connector_false;
-
+            app_ping_pending = connector_false;
             APP_DEBUG("Received ping response [%d].\n", ping_resp->status);
             break;
         }
