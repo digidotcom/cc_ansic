@@ -65,7 +65,7 @@ class StackSizeTestCase(ic_testcase.TestCase):
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
-            assert_true(error is found, "Got error response")
+            self.assertTrue(error is found, "Got error response")
 
     def test_stacksize_with_rci_set_setting(self):
     
@@ -88,7 +88,7 @@ class StackSizeTestCase(ic_testcase.TestCase):
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
-            assert_true(error is found, "Got error response")
+            self.assertTrue(error is found, "Got error response")
 
         monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
 
