@@ -28,7 +28,8 @@
  *       -# Duplicates possible
  *       -# Data integrity not guaranteed
  *
- * The SM protocol supports the following commands: Reboot, Status Request (similar to a ping),
+ * The SM protocol supports a PING mechanism between from Etherios Cloud Connector to
+ * Device Cloud, as well as Device Cloud to Cloud Connector.  In addition,  to  initiaited to and from the the following commands: Reboot, Status Request (similar to a ping),
  * and Data transfer.
  *
  * The SM protocol defines a set of encodings and supported commands and the expected behavior
