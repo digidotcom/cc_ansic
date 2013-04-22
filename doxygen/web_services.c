@@ -28,7 +28,7 @@
  * </tr>
  * <tr>
  * <td>disconnect</td>
- * <td>Sends a request to the device to disconnect from the server</td>
+ * <td>Sends a request to the device to disconnect from Device Cloud</td>
  * </tr>
  * <tr>
  * <td>query_firmware_targets</td>

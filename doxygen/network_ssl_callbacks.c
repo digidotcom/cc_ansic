@@ -147,14 +147,14 @@
  *
  *        if (cloud_sert == NULL)
  *        {
- *            APP_DEBUG("No server certificate is provided\n");
+ *            APP_DEBUG("No certificate is provided by Device Cloud\n");
  *            goto done;
  *        }
  *
  *        ret = SSL_get_verify_result(ssl);
  *        if (ret !=  X509_V_OK)
  *        {
- *            APP_DEBUG("Server certificate is invalid [%d]\n", ret);
+ *            APP_DEBUG("Device Cloud certificate is invalid [%d]\n", ret);
  *           goto done;
  *        }
  *    }

@@ -70,7 +70,7 @@
  * The function connector_initiate_action() is used to indicate to Etherios Cloud Connector to perform a
  * device-requested action.  The currently supported actions are:
  *
- *  @li Initiate a data transfer to the server, described in the data service API
+ *  @li Initiate a data transfer to Device Cloud by Etherios, described in the data service API
  *  @li Terminate Etherios Cloud Connector
  *  @li Start transport (TCP, UDP or SMS)
  *  @li Stop transport (TCP, UDP, SMS or ALL) transport method

@@ -266,7 +266,7 @@
  *
  * @endcode
  *
- * @section device_cloud_url Device Cloud Server URL
+ * @section device_cloud_url Device Cloud URL
  *
  * Return Device Cloud FQDN.
  *
@@ -308,7 +308,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get server URL and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get Device Cloud URL and callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -324,12 +324,12 @@
  *
  *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_cloud_url)
  *     {
- *         // Return pointer to server url.
- *         static  char const connector_server_url[] = "login.etherios.com";
+ *         // Return pointer to Device Cloud url.
+ *         static  char const device_cloud_url[] = "login.etherios.com";
  *         connector_config_pointer_string_t * const config_url = data;
  *
- *         config_url->string = (char *)connector_server_url;
- *         config_url->length = sizeof connector_server_url -1;
+ *         config_url->string = (char *)device_cloud_url;
+ *         config_url->length = sizeof device_cloud_url -1;
  *     }
  *     return connector_callback_continue;
  * }
@@ -820,7 +820,7 @@
  *         connector_config_wait_count_t * const config_wait = data;
  *
  *          // Return wait count (number of times not receiving Tx keepalive
- *          // from server is allowed).
+ *          // from Device Cloud is allowed).
  *         config_wait->count = DEVICE_WAIT_COUNT;
  *     }
  *     return connector_callback_continue;

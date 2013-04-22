@@ -28,14 +28,14 @@
  *
  * The routine application_run() (or application_step()) which is called after initialization calls the routine
  * app_send_put_request() to initiate the data transfer to Device Cloud. This routine initiates the data transfer
- * by calling connector_initiate_action(); once the server is ready to receive data the app_data_service_handler()
+ * by calling connector_initiate_action(); once Device Cloud is ready to receive data the app_data_service_handler()
  * routine is called. The callback then returns the string "Connector data service sample!\n" back to
  * Device Cloud. This data is @b copied @b into @b the @b callback's @b buffer, by setting more_data to
  * connector_false indicates the only message in this data transfer. If you set more_data to connector_true then
  * the callback is called again to get the next chunk of data, this can be repeated to transfer larger data.
  *
  * If app_data_service_handler() is called with @ref connector_request_id_data_service_send_response then this
- * indicates a response from the server, @ref connector_request_id_data_service_send_status would indicate
+ * indicates a response from Device Cloud, @ref connector_request_id_data_service_send_status would indicate
  * the session is completed without Device Cloud response.
  *
  * @section connect_build Building

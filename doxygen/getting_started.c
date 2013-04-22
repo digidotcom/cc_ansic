@@ -504,7 +504,7 @@
  * Send protocol version
  * Receive protocol version
  * Send identity verification
- * Send server url = login.etherios.com
+ * Send Device Cloud url = login.etherios.com
  * Send vendor id = 0x01000001
  * Send device type = Linux Application
  * Connection Control: send redirect_report
