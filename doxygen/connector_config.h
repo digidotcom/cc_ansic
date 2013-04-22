@@ -216,6 +216,32 @@
 #define CONNECTOR_SM_CLI
 
 /**
+* If defined, Etherios Cloud Connector includes the ability to receive multiple short messages in
+* one packet. If there are more messages pending in Device Cloud then user will be notified with
+* @ref pending_data. To retreive pending mesages, user has to send a request (can be @ref ping_request)
+* to Device Cloud. If there is no @ref pending_data callback then that means no pending messages at this
+* point. This mecahnism is very helpfull for battary operated devices, where they can go back to sleep
+* as soon as they get the response without any @ref pending_data.
+* To disable the this functionality, comment this line out in connector_config.h:
+*
+* @code
+* #define CONNECTOR_SM_BATTERY
+* @endcode
+*
+* To this:
+* @code
+* //#define CONNECTOR_SM_BATTERY
+* @endcode
+*
+* @see @ref sm_callbacks
+* @see @ref pending_data
+* @see @ref zlib
+* @see @ref CONNECTOR_COMPRESSION
+*/
+#define CONNECTOR_SM_BATTERY
+
+
+/**
  * This is used to define the maximum length in bytes of the full file path on the device, supported by the @ref file_system.
  * This length includes an ending null-character.
  *

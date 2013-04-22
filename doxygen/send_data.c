@@ -125,8 +125,6 @@
  *
  * Once logged in click on the Data Services tab as shown below. Double click to the device folder.
  *
- * @image html cloud_data_services_file.png
- *
  * This sample creates a file test.txt in the test directory.  Double click on the test folder to
  * open the test directory.
  *

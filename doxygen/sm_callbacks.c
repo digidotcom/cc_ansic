@@ -92,7 +92,8 @@
  *
  * If the response is requested then the callback with connector_sm_ping_status_success indicates a success response
  * from Device Cloud. When the response is not requested, a callback with connector_sm_ping_status_complete
- * indicates the ping is sent successfully.
+ * indicates the ping is sent successfully. If the session is @ref cancel_session "cancelled" by the user then the callback
+ * will be called with connector_sm_ping_status_cancel.
  *
  * @htmlonly
  * <table class="apitable">
@@ -256,8 +257,10 @@
  * @subsection cli_response_length_callback  Response length callback
  *
  * Etherios Cloud Connector will make @ref connector_request_id_sm_cli_response_length "response length"
- * @ref connector_callback_t "callback" to get the total CLI response length in bytes. This callback will
- * be made only if the response is requested by Device Cloud.
+ * @ref connector_callback_t "callback" to get the total/maximum predicted CLI response length in bytes. This
+ * callback will be made only if the response is requested by Device Cloud. Cloud Connector will allocate
+ * the required resources based on the length specified here. Actual bytes used during
+ * @ref cli_response_callback "response callback" can be anything, but must be less than this number.
  *
  * The @ref connector_request_id_sm_cli_response_length "response length" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -309,7 +312,9 @@
  *
  * Etherios Cloud Connector will make @ref connector_request_id_sm_cli_response "CLI response"
  * @ref connector_callback_t "callback" to get the CLI response to send to Device Cloud. This
- * callback will be made only if the response is requested by Device Cloud.
+ * callback will be made only if the response is requested by Device Cloud. The filled bytes
+ * must not exceed the available bytes. The available bytes is based on the @ref cli_response_length_callback
+ * "total length".
  *
  * The @ref connector_request_id_sm_cli_response "CLI response" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -363,7 +368,8 @@
  * @subsection cli_status_callback  CLI session error callback
  *
  * This callback is called with @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
- * to indicate the reason for unusual CLI session end.
+ * to indicate the reason for unusual CLI session end. User may get this call when @ref connector_initiate_stop_request_t
+ * "stop transport" is called while preparing the response or if Cloud Connector fails to allocate the required resources.
  * 
  * The @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -414,6 +420,8 @@
  * on Device Cloud. Application can send any messages (ping if no data to send) to retreive
  * the queued messages.
  *
+ * @note This callback may be called only if @ref CONNECTOR_SM_BATTERY is defined.
+ *
  * The @ref connector_request_id_sm_more_data "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
  *
@@ -463,8 +471,8 @@
  * Etherios Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
  * @ref connector_callback_t "callback" to indicate the application that it received a response from
  * Device Cloud for which no associated request is available. The reason for this is the session is
- * terminated either because of the timeout specified in @ref CONNECTOR_SM_TIMEOUT or it is cancelled
- * by the user.
+ * terminated either because of the timeout specified in @ref CONNECTOR_SM_TIMEOUT or it is
+ * @ref cancel_session "cancelled" by the user.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:

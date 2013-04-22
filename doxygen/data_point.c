@@ -160,7 +160,6 @@
  * </table>
  * @endhtmlonly
  *
- * @image html cloud_data_stream_selection.png
  *
  * @subsection binary_point_status  Binary data point status
  *
@@ -341,8 +340,6 @@
  * </tr>
  * </table>
  * @endhtmlonly
- *
- * @image html cloud_data_stream_selection.png
  *
  * @subsection single_stream_point_status  Single stream data point status
  *

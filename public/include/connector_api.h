@@ -754,18 +754,15 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                              - @ref connector_transport_udp - UDP transport
  *                              - @ref connector_transport_all - all transports.
  *
- *                      @li @b connector_initiate_ping_request:
- *                          Sends status message to the Etherios Device Cloud.  Supported for
- *                          @ref connector_transport_udp transport method only.
- *
  *                      @li @b connector_initiate_data_point_binary:
  *                          Initiates the action to send a binary data point to Etherios Device Cloud.
  *
  *                      @li @b connector_initiate_data_point_single:
  *                          Initiates the action to send data points which are belongs to a single stream on Etherios Device Cloud.
  *
- *                      @li @b connector_initiate_config_message:
- *                          Sends configuration info to Etherios Device Cloud. Supported only under SMS transport method.
+ *                      @li @b connector_initiate_ping_request:
+ *                          Sends status message to the Etherios Device Cloud.  Supported for
+ *                          @ref connector_transport_udp transport method only.
  *
  *                      @li @b connector_initiate_session_cancel:
  *                          Initiates the action to cancel the timedout session.
@@ -774,21 +771,19 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_terminate:
  *                          Should be NULL.
  *                      @li @b connector_initiate_send_data:
- *                          Pointer to connector_data_service_put_request_t.
+ *                          Pointer to @ref connector_request_data_service_send_t "connector_request_data_service_send_t".
  *                      @li @b connector_initiate_transport_start:
  *                          Pointer to @ref connector_transport_t "connector_transport_t"
  *                      @li @b connector_initiate_transport_stop:
  *                          Pointer to @ref connector_initiate_stop_request_t "connector_initiate_stop_request_t"
- *                      @li @b connector_initiate_ping_request:
- *                          Pointer to connector_message_status_request_t
  *                      @li @b connector_initiate_data_point_binary:
- *                          Pointer to connector_request_data_point_binary_t
+ *                          Pointer to @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t"
  *                      @li @b connector_initiate_data_point_single:
- *                          Pointer to connector_request_data_point_single_t
- *                      @li @b connector_initiate_config_message:
- *                          Pointer to connector_device_to_server_config_t
+ *                          Pointer to @ref connector_request_data_point_single_t "connector_request_data_point_single_t"
+ *                      @li @b connector_initiate_ping_request:
+ *                          Pointer to @ref connector_sm_send_ping_request_t "connector_sm_send_ping_request_t"
  *                      @li @b connector_initiate_session_cancel:
- *                          Pointer to connector_message_status_request_t
+ *                          Pointer to @ref connector_sm_cancel_request_t "connector_sm_cancel_request_t"
  *
  * @retval connector_success              No error
  * @retval connector_init_error           Etherios Cloud Connector was not initialized or not connected to Etherios Device Cloud.
@@ -799,7 +794,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *
  * Example Usage:
  * @code
- *     connector_data_service_put_request_t  file_info;
+ *     static connector_request_data_service_send_t  file_info;
  *     :
  *     status = connector_initiate_action(handle, connector_initiate_send_data, &file_info);
  *     :
