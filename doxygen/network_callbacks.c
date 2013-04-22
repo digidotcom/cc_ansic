@@ -82,7 +82,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
+ * <td>Callback was unable to connect to the Device Cloud; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
  *     <br /><br />
  *     If the transport is configured to start automatically
  *     the callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again.
@@ -145,7 +145,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully sent data to server</td>
+ * <td>Callback successfully sent data to Device Cloud</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>

@@ -73,7 +73,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the server; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
+ * <td>Callback was unable to connect to the Device Cloud; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
  *     <br /><br />
  *     If the transport is configured to start automatically 
  *     the callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again.
@@ -81,7 +81,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Callback was unable to connect to the server and callback aborted Etherios Cloud Connector</td>
+ *   <td>Callback was unable to connect to the Device Cloud and callback aborted Etherios Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -143,9 +143,9 @@
  *    }
  *
  *    {
- *        X509 * const server_cert = SSL_get_peer_certificate(ssl);
+ *        X509 * const cloud_sert = SSL_get_peer_certificate(ssl);
  *
- *        if (server_cert == NULL)
+ *        if (cloud_sert == NULL)
  *        {
  *            APP_DEBUG("No server certificate is provided\n");
  *            goto done;
@@ -199,7 +199,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully sent some data to server</td>
+ * <td>Callback successfully sent some data to Device Cloud</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
