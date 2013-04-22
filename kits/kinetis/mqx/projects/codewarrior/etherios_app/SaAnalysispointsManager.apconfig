@@ -1,6 +1,6 @@
 <Analysispoints>
 	<Name>AnalysispointsManager</Name>
-	<ProjectPath>C:/ecc_cw_project_/etherios_app/SaAnalysispointsManager.apconfig</ProjectPath>
+	<ProjectPath>C:/Etherios4Kinetis/ecc_cw_project/etherios_app/SaAnalysispointsManager.apconfig</ProjectPath>
 	<MaxNumberOfCores>1</MaxNumberOfCores>
 	<Comments>Analysispoints Manager</Comments>
 	<IgnoreAll>false</IgnoreAll>

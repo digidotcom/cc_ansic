@@ -2,9 +2,10 @@
 REM This script links all necessary files from iC to create the directory for iC4FSL
 REM As the files are linked, all changes WILL AFFECT THE GIT REPOSITORY DIRECTLY
 cls
-SET EC_LIB_DIR=C:\Etherios_CC
-SET CW_WORKSPACE=C:\ecc_cw_project
-SET IAR_WORKSPACE=C:\ecc_iar_project
+SET ROOT_DIR=C:\Etherios4Kinetis
+SET EC_LIB_DIR=%ROOT_DIR%\Etherios_CC
+SET CW_WORKSPACE=%ROOT_DIR%\ecc_cw_project
+SET IAR_WORKSPACE=%ROOT_DIR%\ecc_iar_project
 REM BASE_DIR must point to the repository's root directory
 SET BASE_DIR=..\..\..
 
@@ -20,6 +21,8 @@ RMDIR /S /Q "%EC_LIB_DIR%"
 RMDIR /S /Q "%CW_WORKSPACE%"
 RMDIR /S /Q "%IAR_WORKSPACE%"
 
+MKDIR %ROOT_DIR%
+MKDIR %ROOT_DIR%\utils
 MKDIR "%EC_LIB_DIR%"
 MKDIR "%EC_LIB_DIR%\private"
 MKDIR "%EC_LIB_DIR%\include"
@@ -115,6 +118,8 @@ mklink /H "%IAR_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\source\fs_devices\*.*") do (
 	mklink /H "%IAR_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"
 )
+
+mklink /H "%ROOT_DIR%\utils\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"
 
 :end
 pause
