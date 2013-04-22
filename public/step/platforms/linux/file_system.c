@@ -285,8 +285,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 
     /* app_process_file_hash() should not be called if APP_ENABLE_MD5 is not defined */
     ASSERT(0);
-
-    memset(data->hash_value, 0, data->bytes_requested);
+    UNUSED_ARGUMENT(data);
     return connector_callback_continue;
 }
 #endif
@@ -303,12 +302,12 @@ static int app_copy_statbuf(connector_file_system_statbuf_t * const pstat, struc
     }
     else
     {
-        if (S_ISREG(statbuf->st_mode))
-        {
-            pstat->flags = connector_file_system_file_type_is_reg;
-        }
         if (statbuf->st_size <= CONNECTOR_OFFSET_MAX)
         {
+            if (S_ISREG(statbuf->st_mode))
+            {
+                pstat->flags = connector_file_system_file_type_is_reg;
+            }
             pstat->file_size = (connector_file_offset_t) statbuf->st_size;
             APP_DEBUG(" size %" PRIoffset, pstat->file_size);
         }

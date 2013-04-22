@@ -606,9 +606,6 @@ static connector_status_t call_file_hash_user(connector_data_t * const connector
     connector_file_system_hash_t data;
 
     data.bytes_requested = file_hash_size(context->data.d.hash_alg);
-
-    memset(hash_ptr, 0, data.bytes_requested);
-
     data.path = path;
     data.hash_algorithm = context->data.d.hash_alg;
     data.hash_value = hash_ptr;
@@ -1570,6 +1567,8 @@ static connector_status_t process_file_ls_response(connector_data_t * const conn
                 /* read next dir entry */
                 size_t len = header_len + hash_len + context->data.d.path_len;
                 size_t path_max = 0;
+
+                context->flags = 0;
                 /* minimum of bytes left for the entry name in output buffer and context->data.d.path buffer */
                 if (len < buffer_size)
                     path_max = MIN_VALUE((buffer_size - len), (CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH - context->data.d.path_len));
@@ -1618,13 +1617,19 @@ static connector_status_t process_file_ls_response(connector_data_t * const conn
             {
                 uint8_t * const hash_ptr = data_ptr + file_path_len + header_len;
 
-                status = call_file_hash_user(connector_ptr, service_request, context, file_path, hash_ptr);
-                if (status == connector_pending)
-                    goto done;
-
-                if (!FsOperationSuccess(status, context))
-                    goto close_dir;
-
+                if (FsIsReg(context))
+                {
+                    status = call_file_hash_user(connector_ptr, service_request, context, file_path, hash_ptr);
+                    if (status == connector_pending)
+                        goto done;
+    
+                    if (!FsOperationSuccess(status, context))
+                        goto close_dir;
+                }
+                else
+                {
+                    memset(hash_ptr, 0, hash_len);
+                }
                 resp_len += hash_len;
             }
 
