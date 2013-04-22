@@ -14,24 +14,23 @@
 #include "os_support.h"
 #include "connector_config.h"
 
-#if !BSPCFG_ENABLE_FLASHX && (defined CONNECTOR_FIRMWARE_SERVICE)
-#error This application requires BSPCFG_ENABLE_FLASHX defined non-zero in user_config.h. Please recompile BSP with this option.
-#endif
-
 TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
    {MAIN_TASK, Main_task, 2048, 9, "main", MQX_AUTO_START_TASK},
-   {CONNECTOR_CONNECTOR_TASK, connector_connector_thread, 4096, 10, "iDigi_connector", 0},
-#if (defined CONNECTOR_FIRMWARE_SERVICE)
-    {CONNECTOR_FLASH_TASK, connector_flash_task, 4096, 10, "iDigi_flash", 0},
+   {CONNECTOR_TASK, connector_thread, CONNECTOR_THREAD_STACK_SIZE, 10, "Cloud Connector", 0},
+#ifdef FILE_SYSTEM_SDCARD
+   {SDCARD_TASK, sdcard_task,  2048, 11, "SDcard Task", MQX_AUTO_START_TASK},
+#endif
+#ifdef FILE_SYSTEM_USB
+   {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
 #endif
    {0,           0,           0,     0,   0,      0,                 }
 };
 
 static uint_32 network_start(void)
 {
-    _enet_address * mac_addr = NULL;
+    uint8_t * mac_addr = NULL;
     IPCFG_IP_ADDRESS_DATA ip_data;
     uint_32 result = RTCS_create();
 
@@ -42,19 +41,22 @@ static uint_32 network_start(void)
     }
 
     {
+		#define MAC_ADDR_LENGTH	6
         size_t size;
-
-        if (app_get_mac_addr((uint8_t const ** const)&mac_addr, &size) != connector_callback_continue)
+        connector_config_pointer_data_t config_data = {NULL, MAC_ADDR_LENGTH};
+        
+        if (app_get_mac_addr(&config_data) != connector_callback_continue)
         {
             APP_DEBUG("Failed to get device MAC address");
             goto error;
         }
 
+        mac_addr = config_data.data;
         APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
-                  (*mac_addr)[0], (*mac_addr)[1], (*mac_addr)[2], (*mac_addr)[3], (*mac_addr)[4], (*mac_addr)[5]);
+                  (mac_addr)[0], (mac_addr)[1], (mac_addr)[2], (mac_addr)[3], (mac_addr)[4], (mac_addr)[5]);
     }
 
-    result = ipcfg_init_device (ENET_DEVICE, *mac_addr);
+    result = ipcfg_init_device (ENET_DEVICE, mac_addr);
     if (result != RTCS_OK)
     {
         APP_DEBUG("Failed to initialize Ethernet device, error = %X", result);
@@ -93,7 +95,21 @@ static uint_32 network_start(void)
     APP_DEBUG("\nGateway Address : %d.%d.%d.%d\n",IPBYTES(ip_data.gateway));
     APP_DEBUG("\nDNS Address     : %d.%d.%d.%d\n",IPBYTES(ipcfg_get_dns_ip(ENET_DEVICE,0)));
     result = RTCS_OK;
+    
 
+#if (defined USE_SSL)
+    if (SNTP_oneshot(IPADDR(84,77,40,132), 3000) != RTCS_OK) {
+    	printf("SNTP_oneshot failed!\n");
+    	printf("Setting time to 1/1/2013\n");
+		{
+			TIME_STRUCT time;
+			time.SECONDS =  1356998400; /* 01/01/2013 00:00:00 */
+			time.MILLISECONDS = 0;
+			_time_set(&time);
+		}
+    }
+#endif
+    
 error:
     return result;
 }

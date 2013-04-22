@@ -14,10 +14,7 @@
 #include "platform.h"
 #include "remote_config_cb.h"
 
-#if !defined CONNECTOR_RCI_SERVICE
-#error "Must define CONNECTOR_RCI_SERVICE in connector_config.h to run this sample"
-#endif
-
+#ifdef CONNECTOR_RCI_SERVICE
 
 remote_group_table_t remote_setting_table[] = {
     {app_system_group_init,
@@ -237,4 +234,4 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
 
     return status;
 }
-
+#endif /* CONNECTOR_RCI_SERVICE */

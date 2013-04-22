@@ -1,0 +1,6 @@
+Sources/main.h
+Sources/main.c
+Sources/usb_classes.h
+Sources/usb_classes.c
+.settings/com.freescale.core.ide.newprojectwizard.prefs
+ReferencedRSESystems.xml
