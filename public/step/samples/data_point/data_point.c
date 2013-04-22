@@ -14,6 +14,8 @@
 #include "connector_api.h"
 #include "platform.h"
 
+static connector_bool_t data_points_valid = connector_false;
+
 void * app_allocate_data_points(size_t const points_count)
 {
     connector_request_data_point_single_t * dp_ptr = malloc(sizeof *dp_ptr);
@@ -46,6 +48,8 @@ void * app_allocate_data_points(size_t const points_count)
                 dp_ptr->path = path_name;
                 dp_ptr->unit = unit_value;
             }
+
+            data_points_valid = connector_true;
         }
         else
         {
@@ -66,6 +70,8 @@ void app_free_data_points(connector_request_data_point_single_t * dp_ptr)
 
         free(dp_ptr);
     }
+
+    data_points_valid = connector_false;
 }
 
 typedef struct
@@ -211,6 +217,12 @@ done:
 connector_callback_status_t app_data_point_handler(connector_request_id_data_point_t const request_id, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
+
+    if (!data_points_valid)
+    {
+        APP_DEBUG("Error: Response received [%d], but application timed out\n", request_id);
+        goto error;
+    }
 
     switch (request_id)
     {
