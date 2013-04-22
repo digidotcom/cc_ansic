@@ -23,7 +23,7 @@ vpath $$(CONNECTOR_DIR)/%.c${PLATFORM_VPATH}
 # CFLAG Definition
 CFLAGS += $$(DFLAGS)
 # Enable Compiler Warnings
-CFLAGS += -Winit-self -Wbad-function-cast -Wpointer-arith -Wlogical-op
+CFLAGS += -Winit-self -Wbad-function-cast -Wpointer-arith
 CFLAGS += -Wmissing-parameter-type -Wstrict-prototypes -Wformat-security
 CFLAGS += -Wformat-y2k -Wold-style-definition -Wcast-align -Wformat-nonliteral
 CFLAGS += -Wpadded -Wredundant-decls -Wvariadic-macros
