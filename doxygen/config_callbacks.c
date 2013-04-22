@@ -322,7 +322,7 @@
  *                                                    void * const data)
  * {
  *
- *     if (class_id == connector_class_id_config && request_id.config_request == connector_config_server_url)
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_cloud_url)
  *     {
  *         // Return pointer to server url.
  *         static  char const connector_server_url[] = "login.etherios.com";
