@@ -140,10 +140,10 @@ int _app_write_default_flash_params(void)
     
     _app_setup_flash_params_address_for_writing();
     
-    /* Get iDigi Default MAC Address */
+    /* Get default MAC Address */
     memcpy(&fapp_params_default_config.fnet_params.mac[0], (char *)default_device_mac_addr, sizeof default_device_mac_addr);
 
-    /* Get other iDigi params */
+    /* Get other params */
     
     len = write(flash_file, (unsigned long *)&fapp_params_default_config, sizeof(struct fapp_params_flash));
     if (len != sizeof(struct fapp_params_flash))
@@ -191,9 +191,9 @@ void Flash_NVRAM_set_mac_address(_enet_address address)
         	
     if (memcmp((char *)&fnet_params->fnet_params.mac[0], (char *)address, sizeof (_enet_address)) != 0)
     {
-        APP_DEBUG("Flash_NVRAM_set_bootloaders_parameters: writing iDigi Mac address to NVRAM\n");
+        APP_DEBUG("Flash_NVRAM_set_bootloaders_parameters: writing Mac address to NVRAM\n");
         
-        /* Get iDigi Default MAC Address */
+        /* Get default MAC Address */
         memcpy(&fapp_params_current_config.fnet_params.mac[0], (char *)address, sizeof (_enet_address));
         
         _app_erase_flash_params();

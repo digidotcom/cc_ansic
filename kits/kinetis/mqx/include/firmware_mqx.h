@@ -133,6 +133,6 @@ FNET_COMP_PACKED_END
 /************************************************************************
 *     Function Prototypes
 *************************************************************************/
-int idigi_rx_handler_srec (unsigned char* data, unsigned long data_size);
+int rx_handler_srec (unsigned char* data, unsigned long data_size);
 
 #endif

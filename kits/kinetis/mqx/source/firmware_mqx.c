@@ -15,6 +15,7 @@
 #include "firmware_mqx.h"
 #include "main.h"
 
+#if defined CONNECTOR_FIRMWARE_SERVICE
 extern int FlashWriteInProgress;
 extern char *download_buffer;
 extern uint_32 image_data_length;
@@ -39,7 +40,7 @@ struct fapp_tftp_rx_handler_srec srec;
 
 MQX_FILE_PTR   flash_file;
 
-void idigi_flash_task(unsigned long initial_data)
+void flash_task(unsigned long initial_data)
 {
     int result, i = 0;
 
@@ -95,7 +96,7 @@ void idigi_flash_task(unsigned long initial_data)
     {        
     	if (FlashWriteInProgress)
     	{
-            idigi_rx_handler_srec((unsigned char*)download_buffer, (uint_32)image_data_length);
+            rx_handler_srec((unsigned char*)download_buffer, (uint_32)image_data_length);
             FlashWriteInProgress = 0;
     	}
        
@@ -108,7 +109,7 @@ void idigi_flash_task(unsigned long initial_data)
 *
 * DESCRIPTION: 
 ************************************************************************/
-int idigi_rx_handler_srec (unsigned char* data, unsigned long n)
+int rx_handler_srec (unsigned char* data, unsigned long n)
 {
 	int result = FNET_OK, result2;
     unsigned short result1;
@@ -258,12 +259,4 @@ int idigi_rx_handler_srec (unsigned char* data, unsigned long n)
     
     return result;
 }
-
-
-
-
-
-
-
-
-
+#endif /* defined CONNECTOR_FIRMWARE_SERVICE */
