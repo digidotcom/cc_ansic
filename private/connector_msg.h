@@ -321,7 +321,7 @@ static void msg_set_error(msg_session_t * const session, connector_session_error
 
     if (client_request_error && MsgIsStart(dblock->status_flag))
     {
-        /* no need to send an error. just delete since nothing has been sent to server */
+        /* no need to send an error. just delete since nothing has been sent to Device Cloud */
         session->current_state = msg_state_delete;
         goto done;
     }
@@ -331,7 +331,7 @@ static void msg_set_error(msg_session_t * const session, connector_session_error
 
     if (client_response_error && MsgIsStart(dblock->status_flag))
     {
-        /* canceling server request since no response data has been sent yet */
+        /* canceling Device Cloud request since no response data has been sent yet */
         MsgSetRequest(session->error_flag);
         goto done;
     }

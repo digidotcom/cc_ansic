@@ -243,7 +243,7 @@ static connector_status_t connector_reboot(connector_data_t * const connector_pt
     connector_class_id_t class_id = connector_class_id_operating_system;
     request_id.os_request = connector_request_id_os_reboot;
 
-    /* server reboots us */
+    /* Device Cloud reboots us */
 
     status = connector_callback(connector_ptr->callback, class_id, request_id, NULL);
     switch (status)

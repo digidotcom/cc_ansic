@@ -56,7 +56,7 @@ static connector_status_t tcp_initiate_send_packet(connector_data_t * const conn
      *
     */
 
-    /* total bytes to be sent to server (packet data length + the edp header length) */
+    /* total bytes to be sent to Device Cloud (packet data length + the edp header length) */
     connector_ptr->edp_data.send_packet.total_length = length + PACKET_EDP_HEADER_SIZE;
     connector_ptr->edp_data.send_packet.ptr = edp_header;
 
@@ -177,7 +177,7 @@ static uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, u
     uint8_t * ptr = NULL;
     size_t length = 0;
 
-    /* Return a pointer to caller to setup data to be sent to server.
+    /* Return a pointer to caller to setup data to be sent to Device Cloud.
      * Must call tcp_release_packet_buffer() to release the buffer (pass
      * tcp_release_packet_buffer as complete_callback to tcp_initiate_send_packet()
      * or tcp_initiate_send_facility_packet().

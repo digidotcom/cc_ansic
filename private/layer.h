@@ -115,7 +115,7 @@ static connector_status_t layer_discovery_facility(connector_data_t * const conn
     connector_status_t result = connector_idle;
     connector_facility_t * fac_ptr;
 
-    /* invoke any facility that needs to send any message to server
+    /* invoke any facility that needs to send any message to Device Cloud
      * during initialization phase at discovery layer.
      */
     fac_ptr = (connector_ptr->edp_data.facilities.current == NULL)? connector_ptr->edp_data.facilities.list: connector_ptr->edp_data.facilities.current;

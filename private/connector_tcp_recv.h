@@ -48,7 +48,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     connector_callback_status_t status;
     connector_request_id_t request_id;
 
-    /* Call callback to receive data from server */
+    /* Call callback to receive data from Device Cloud */
     request_id.network_request = connector_request_id_network_receive;
 
     {
@@ -197,10 +197,10 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
      * version response message varieties. These messages are sent by
      * servers that do not support MTv2. Since the client doesn't support
      * both MTv1 and MTv2 concurrently, an MTv2 client must terminate its
-     * MT connection if it finds the server to be incompatible insofar as
+     * MT connection if it finds the Device Cloud to be incompatible insofar as
      * the MT version is concerned.
      *
-     * We only accept messages of the expected types from the server. Any
+     * We only accept messages of the expected types from the Device Cloud. Any
      * message other than an expected type is handled as an error, and an
      * error is returned to the caller. This must be done since any unknown
      * message type cannot be correctly parsed for length and discarded from
@@ -430,9 +430,9 @@ enum {
 
 
     /* Facility layer is the layer that the Connector has fully established
-     * communication with server. It keeps waiting messages from server
+     * communication with Device Cloud. It keeps waiting messages from Device Cloud
      * and passes it to the appropriate facility:
-     * 1. waits message from server
+     * 1. waits message from Device Cloud
      * 2. parses message and passes it to the facility
      * 3. invokes facility to process message.
      */
