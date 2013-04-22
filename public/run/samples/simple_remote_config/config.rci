@@ -16,11 +16,13 @@ group setting system "System"
 # To include the devicesecurity setting, change devicesecurity.c.optional 
 # to devicesecurity.c and uncomment out the device_security functions in
 # remote_setting_table in remote_config_cb.c and in remote_config_cb.h.
-# group setting devicesecurity "Device Cloud device security"
-#   element identityVerificationForm "Connection security" type enum
-#       value simple "No connection security"
-#       value password "Connection is password authenticated"
-#   element password "Device connection password" type password max 133
+# Rerun ConfigGenerator.jar tool to regenerate remote_config.h.
+# Then, rebuild the application.
+#group setting devicesecurity "Device Cloud device security"
+#  element identityVerificationForm "Connection security" type enum
+#      value simple "No connection security"
+#      value password "Connection is password authenticated"
+#  element password "Device connection password" type password max 133
 
 # Device location
 # State configuration for GPS

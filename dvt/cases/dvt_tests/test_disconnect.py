@@ -1,7 +1,7 @@
 import time
 import ic_testcase
 
-from ..utils import DeviceConnectionMonitor
+from ..utils import DeviceConnectionMonitor, device_is_connected
 
 
 
@@ -27,6 +27,11 @@ class DisconnectTestCase(ic_testcase.TestCase):
 
         try:
             monitor.start()
+            if device_is_connected(self) == False:
+                self.log.info("Waiting for device connected before starting the test")
+                monitor.wait_for_connect(30)
+            
+            self.log.info("Device is connected. Start testing.")
             self.log.info("Sending Connection Control Disconnect to %s." % self.device_id)
 
             # Create disconnect request
