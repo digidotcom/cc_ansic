@@ -41,6 +41,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             response_needed = request->response_required;
             session->sm_state = connector_sm_state_get_total_length;
             #if (defined CONNECTOR_DATA_POINTS)
+            if (request->path != NULL)
             {
                 char const dp_prefix[] = "DataPoint/";
                 size_t const dp_prefix_bytes = sizeof dp_prefix - 1;
@@ -161,7 +162,7 @@ static connector_callback_status_t sm_inform_data_complete(connector_data_t * co
 
     status_info.transport = session->transport;
     status_info.user_context = session->user.context;
-    status_info.session_error = connector_sm_error_none;
+    status_info.session_error = connector_session_error_none;
     switch (session->error)
     {
         case connector_sm_error_cancel:
