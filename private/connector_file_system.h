@@ -1586,7 +1586,7 @@ static connector_status_t process_file_ls_response(connector_data_t * const conn
                     service_data->length_in_bytes = resp_len;
                     goto close_dir;
                 }
-                /* Don't send "." in any directory and ".." in "/" directory up to the server */
+                /* Don't send "." in any directory and ".." in "/" directory up to Device Cloud */
                 if ((memcmp(file_path, ".", 2) != 0) &&
                     (memcmp(context->data.d.path, "/..", 3) != 0))
                 {

@@ -512,7 +512,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                 #if (defined CONNECTOR_TRANSPORT_SMS)
                 case connector_class_id_network_sms:
                     result = sm_decode_segment(connector_ptr, recv_ptr);
-                    if(result != connector_working) goto done; /* not iDigi packet? */
+                    if(result != connector_working) goto done; /* not Device Cloud packet? */
                     result = sm_verify_sms_preamble(sm_ptr);
                     break;
                 #endif
@@ -528,7 +528,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                     break;
             }
 
-            if(result != connector_working) goto done; /* not iDigi packet? */
+            if(result != connector_working) goto done; /* not Device Cloud packet? */
                 result = sm_process_packet(connector_ptr, sm_ptr);
             break;
 
