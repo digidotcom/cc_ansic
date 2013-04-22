@@ -1,8 +1,10 @@
 import sys
-import os.path
 import magic
 import re
+from os import listdir
+from os.path import join, isdir, samefile
 from collections import defaultdict
+from argparse import ArgumentParser, REMAINDER
 
 def leave(text):
 	sys.stderr.write(text + '\n')
@@ -77,15 +79,18 @@ def scan_file(file):
 		add_counts(grand, total)
 		print
 		
-def scan_dir(dir):
+def scan_dir(dir, exclude):
 	subdirs = []
 	files = []
-	for partial in sorted(os.listdir(dir)):
+	for partial in sorted(listdir(dir)):
 		if partial == '.git' or partial == pattern_file:
 			continue
 
-		path = os.path.join(dir, partial)
-		if os.path.isdir(path):
+		path = join(dir, partial)
+		if exclude(path):
+			continue
+			
+		if isdir(path):
 			subdirs.append(path)
 		else:
 			files.append(path)
@@ -93,7 +98,7 @@ def scan_dir(dir):
 	for file in files:
 		scan_file(file)
 	for dir in subdirs:
-		scan_dir(dir)
+		scan_dir(dir, exclude)
 
 pattern_file = 'rebrand.txt'
 pattern = {}
@@ -140,20 +145,45 @@ def read_patterns():
 		print search, exclude
 		
 		pattern[search] = exclude
+	
+parser = ArgumentParser(description='Locates rebranding terms.')
+parser.add_argument('-x', '--exclude', action='append', metavar='PATH', help='directory or file to exclude (may be used multiple times)')
+parser.add_argument('path', nargs='?', default='.', help='directory or file to scan')
+parser.add_argument('remaining', nargs=REMAINDER)
+args = parser.parse_args()
 
+if args.remaining:
+	print 'too many arguments'
+	parser.print_help()
+	sys.exit(1)
+
+def exclude_path(paths):
+	def exclude(check):
+		for path in paths:
+			if samefile(check, path):
+				return True
+		return False
+		
+	def never(path):
+		return False
+
+	return exclude if paths else never
+
+exclude = exclude_path(args.exclude)
+		
+if exclude(args.path):
+	print 'nothing to do'
+	sys.exit(0)
+	
 print 'Search Terms'
 print '------------'
 read_patterns()
 print
 
-if len(sys.argv) == 1:
-	path = '.'
+if isdir(args.path):
+	scan_dir(args.path, exclude)
 else:
-	path = sys.argv[1]
-if os.path.isdir(path):
-	scan_dir(path)
-else:
-	scan_file(path)
+	scan_file(args.path)
 
 if skipped:
 	print 'Skipped'
