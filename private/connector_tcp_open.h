@@ -138,7 +138,7 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
                     connector_debug_printf("receive_edp_version: bad version\n");
                     break;
                 case E_MSG_MT2_TYPE_SERVER_OVERLOAD:
-                    connector_debug_printf("receive_edp_version: Server responded with overload msg\n");
+                    connector_debug_printf("receive_edp_version: Device Cloud responded with overload msg\n");
                     break;
                 /* Unexpected/unknown MTv2 message types... */
                 default:
@@ -146,7 +146,7 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
             }
             /* mt version error. let's notify user.
              *
-             * ignore error status callback return value since server
+             * ignore error status callback return value since Device Cloud
              * will close the connection.
              */
             result = connector_abort;
@@ -273,13 +273,13 @@ static connector_status_t receive_protocol_version(connector_data_t * const conn
         {
             uint8_t * const response_code = GET_PACKET_DATA_POINTER(edp_header, PACKET_EDP_HEADER_SIZE);
             /* Parse the version response (0 = version response ok).
-             * If the protocol version number was not acceptable to the server,
+             * If the protocol version number was not acceptable to Device Cloud,
              * tell the application.
              */
             if (*response_code != initialization_version_response_acceptable)
             {
                 edp_set_close_status(connector_ptr, connector_close_status_abort);
-                connector_debug_printf("receive_procotol_version:version is not accepted by the server\n");
+                connector_debug_printf("receive_procotol_version:version is not accepted by Device Cloud\n");
                 edp_set_active_state(connector_ptr, connector_transport_close);
             }
         }
@@ -440,7 +440,7 @@ static connector_status_t send_server_url(connector_data_t * const connector_ptr
 
     edp_server_url = start_ptr;
 
-    connector_debug_printf("Send server url = %.*s\n", (int)connector_ptr->edp_data.config.server_url_length, connector_ptr->edp_data.config.server_url);
+    connector_debug_printf("Send Device Cloud url = %.*s\n", (int)connector_ptr->edp_data.config.server_url_length, connector_ptr->edp_data.config.server_url);
 
     message_store_u8(edp_server_url, opcode, SECURITY_OPER_URL);
 

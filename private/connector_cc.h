@@ -324,7 +324,7 @@ enum cc_redirect {
     /* Redirect to new destination:
      * The connector will close connection and connect to new destination. If connect
      * to new destination fails, this function will returns SUCCESS to try
-     * connecting to the original server.
+     * connecting to the original destination.
      */
 
     /*
@@ -356,7 +356,7 @@ enum cc_redirect {
     redirect += record_bytes(redirect);
     cc_ptr->redirect = redirect;
 
-    /* save original server url that we connected before */
+    /* save original Device Cloud url that we connected before */
     memcpy(cc_ptr->origin_url, connector_ptr->edp_data.config.server_url, connector_ptr->edp_data.config.server_url_length);
     cc_ptr->origin_url_length = connector_ptr->edp_data.config.server_url_length;
 
@@ -375,7 +375,7 @@ static connector_status_t cc_process(connector_data_t * const connector_ptr, voi
 
     UNUSED_PARAMETER(receive_timeout);
 
-    /* process incoming message from server for Connection Control facility */
+    /* process incoming message from Device Cloud for Connection Control facility */
     if (packet != NULL)
     {
         uint8_t opcode;
@@ -469,7 +469,7 @@ static connector_status_t connector_facility_cc_init(connector_data_t * const co
     /* Add Connection control facility
      *
      * Make sure connection control is not already created. If Connection
-     * control facility is already created, we probably reconnect to server
+     * control facility is already created, we probably reconnect to Device Cloud
      * so just need to reset to initial state.
      *
      */

@@ -453,7 +453,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
     /* Add firmware access facility to Device Cloud
      *
      * Make sure firmware access facility is not already created. If firmware
-     * access facility is already created, we probably reconnect to server
+     * access facility is already created, we probably reconnect to Device Cloud
      * so just need to reset to initial state.
      *
      */
