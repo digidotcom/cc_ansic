@@ -182,7 +182,6 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
         code = fs_error_generic;
         break;
     }
-    ASSERT(code >= 0);
     ASSERT(code < asizeof(error_data));
 
     data->error_status = error_data[code].status;
