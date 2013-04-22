@@ -18,7 +18,7 @@ def show_counts(amount):
 	result = []
 	ordered = sorted(amount)
 	for text in ordered:
-		show = '"{}": {}' if has_space.search(text) else '{}: {}'
+		show = '"{0}": {1}' if has_space.search(text) else '{0}: {1}'
 		result.append(show.format(text, amount[text]))
 
 	return ', '.join(result)
@@ -71,7 +71,7 @@ def scan_file(file):
 			print show_counts(instance)
 			
 		for num, line, amount in result:
-			print '{}: {}'.format(num, line.rstrip('\r\n'))
+			print '{0}: {1}'.format(num, line.rstrip('\r\n'))
 			print show_counts(amount)
 			
 		add_counts(grand, total)
@@ -117,7 +117,7 @@ def read_patterns():
 				text = line
 				remaining = ''
 			if len(text) == 0:
-				leave('error parsing line number {} of pattern file'.format(num))
+				leave('error parsing line number {0} of pattern file'.format(num))
 			return text, remaining
 				
 		search, remaining = parse_pattern(line, num)
@@ -159,7 +159,7 @@ if skipped:
 	print 'Skipped'
 	print '-------'
 	for file, content in skipped.iteritems():
-		print '{}: {}'.format(file, content)
+		print '{0}: {1}'.format(file, content)
 	print
 
 if len(grand) == 0:
