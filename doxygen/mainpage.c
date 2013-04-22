@@ -22,17 +22,17 @@
  *
  * @section intro Introduction
  *
- * Etherios Cloud Connector is a software development package used to
- * communicate and exchange information between a device and Etherios Device Cloud.
+ * Cloud Connector is a software development package used to enable a device to
+ * exchange information with Device Cloud.
  * Cloud Connector supports application to device data interaction (messaging),
- * application & device data storage, and remote management of devices. Devices
- * are associated with Etherios Device Cloud through the Internet or other wide
- * area network connections, which allows for communication between the device, the
- * Etherios Device Cloud, and customer applications. An important part of this communication
- * is the transfer of data from a device to Etherios Device Cloud.
- * The Etherios Device Cloud is based upon a cloud computing model that provides on-demand scalability so
- * you can rest assured that when you need additional computing and storage, Etherios Device Cloud will
- * scale to meet your needs. The Etherios Device Cloud is designed using a high-availability
+ * application and device data storage, and remote management of devices. Devices
+ * are associated with Device Cloud through the Internet or other wide
+ * area network connections, which allows for communication between the device and
+ * customer applications, via Device Cloud.  An important part of this communication
+ * is the transfer of data from a device to Device Cloud.
+ * Device Cloud is based on a cloud computing model that provides on-demand scalability so
+ * you can rest assured that when you need additional computing and storage, Device Cloud will
+ * scale to meet your needs.  Device Cloud is designed using a high-availability
  * architecture, with redundancy and failover characteristics in mind.
  * Using Cloud Connector, customers can now easily develop cloud connected devices and
  * applications that quickly scale from dozens to hundreds, thousands or even
@@ -42,7 +42,7 @@
  *
  * @section language Language Support
  *
- * The Etherios Cloud Connector software provided is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99)
+ * The Cloud Connector software provided is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99)
  * compliant. The sample platforms provided use standard ANSI C calls which are available in most operating systems.
  * If you are running on a Linux i486 based platform and using the GNU toolchain the Linux platform
  * and samples can be run without any major modifications.
@@ -50,7 +50,7 @@
  * @note
  * Compilers that are not strictly ANSI C 89 or C99 compliant will most likely generate compilation
  * errors.  In that case, we recommend careful evaluation of each error and appropriate adjustments be
- * made within the public include area.  Etherios Cloud Connector was designed for portability.  This would
+ * made within the public include area.  Cloud Connector was designed for portability.  This would
  * be the ideal place to make updates.
  *
  * @note
@@ -60,7 +60,7 @@
  * by defining CONNECTOR_HAVE_STDINT_HEADER in your make or build system.
  *
  * @section requirements Platform Memory Requirements
- * The Etherios Cloud Connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
+ * Cloud Connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
  * and program stack.
  *
  * @subsection CodespaceRequirements Code Space Estimates
@@ -73,7 +73,7 @@
  * @htmlonly
  * <table class="apitable">
  * <tr>
- * <th class="title">Etherios Cloud Connector Service Options and Configuration Methodology</th>
+ * <th class="title">Cloud Connector Service Options and Configuration Methodology</th>
  * <th class="title">Text</th>
  * <th class="title">rodata</th>
  * <th class="title">data</th>
@@ -192,7 +192,7 @@
  * <th class="title">Notes</th>
  * </tr>
  * <tr>
- * <td>Etherios Cloud Connector base usage</td>
+ * <td>Cloud Connector base usage</td>
  * <td>2436</td>
  * <td>2436</td>
  * <td>Memory usage for internal state machines, infrastructure and communication buffers.
@@ -241,13 +241,13 @@
  * </table>
  * @endhtmlonly
  *
- * This includes all code from within the private Etherios Cloud Connector library, but none of the code implemented in the @ref connector_callback_t
+ * This includes all code from within the private Cloud Connector library, but none of the code implemented in the @ref connector_callback_t
  * "application-defined callback".  These metrics should be treated as typical.  It is recommended that the actual program stack size
  * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client,
  * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
  *
- * @section features Etherios Cloud Connector Features
- *     @li Send data to and from a device through Etherios Device Cloud
+ * @section features Cloud Connector Features
+ *     @li Send data to and from a device through Device Cloud
  *     @li Update firmware on the device
  *     @li View and configure the device configurations
  *     @li Access a device's File System
@@ -255,39 +255,39 @@
  *
  * @section communicating Communicating with your device
  * To manage your device you can use the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
- * interface by logging into your @ref step4 "Etherios Device Cloud account".  Alternatively, you can communicate with
+ * interface by logging into your @ref step4 "Device Cloud account".  Alternatively, you can communicate with
  * your device programmatically by using @ref web_services "Device Cloud Web Services".
  *
  * @ref web_services "Device Cloud Web Services" requests are sent from a remote application to
  * Device Cloud, which then directly communicates to the device.  This
- * allows for bidirectional machine to machine communication.  Each Etherios Cloud Connector sample includes
+ * allows for bidirectional machine to machine communication.  Each Cloud Connector sample includes
  * a Python application demonstrating how to communicate to a device using the
  * @ref web_services "Device Cloud Web Services".
  *
  * @section threading Threading Model
  *
- * Etherios Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.
- * In environments that include preemptive threading, Etherios Cloud Connector can be implemented as a separate stand-alone thread
+ * Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.
+ * In environments that include preemptive threading, Cloud Connector can be implemented as a separate stand-alone thread
  * by calling connector_run().  This is a blocking call that only returns due to a major system failure.
  *
- * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, Etherios Cloud Connector can
+ * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, Cloud Connector can
  * be implemented using the non-blocking connector_step() call within the round robin control loop.
  *
  * Note in a cooperative, non-preemptive multithreaded environment, either connector_run() or connector_step() can used, based on
- * system determinism and the potential for a non-cooperative thread to exceed Etherios Cloud Connector's system timing.
+ * system determinism and the potential for a non-cooperative thread to exceed Cloud Connector's system timing.
  *
- * @note You should decide before proceeding how you intend to call Etherios Cloud Connector (within a round robin control loop or running
+ * @note You should decide before proceeding how you intend to call Cloud Connector (within a round robin control loop or running
  * as a separate thread).  In a limited services OS with no real time threading, you should use the connector_step() routine.
  * Otherwise you should use the connector_run() routine.
  *
  * @section code_organization Source Code Organization
- * The Etherios Cloud Connector source code is divided into two partitions, a private partition and a public Application Framework.  The private partition
- * includes the sources that implement the @ref api_overview "Etherios Cloud Connector public API".  The public Application Framework includes a
+ * The Cloud Connector source code is divided into two partitions, a private partition and a public Application Framework.  The private partition
+ * includes the sources that implement the @ref api_overview "Cloud Connector public API".  The public Application Framework includes a
  * set of sample applications used for demonstration purposes.
  *
  * @note For forward compatibility the private partition should be treated as a black box and never changed or referenced directly.  It's recommended
  * after completing the @ref getting_started process that this private partition be converted into a library.   Note the term
- * "Etherios Cloud Connector library" is used synonymously for the "Cloud Connector private partition".
+ * "Cloud Connector library" is used synonymously for the "Cloud Connector private partition".
  *
  * @subsection DirectoryStructure Directory Structure
  *
@@ -304,13 +304,13 @@
  * </tr>
  * <tr>
  *   <td>private</td>
- *   <td>Etherios Cloud Connector Library Code<br></br>
- *   This directory contains all the private and internal files used to build Etherios Cloud Connector library.
+ *   <td>Cloud Connector Library Code<br></br>
+ *   This directory contains all the private and internal files used to build Cloud Connector library.
  *   <b>You should never modify, directly call, debug, or reference any file from this directory</b>.</td>
  * </tr>
  * <tr>
  *   <td>public/include</td>
- *   <td> @endhtmlonly  @ref api_overview "Etherios Cloud Connector Public API" @htmlonly <br></br>
+ *   <td> @endhtmlonly  @ref api_overview "Cloud Connector Public API" @htmlonly <br></br>
  *   Contains the twelve public headers:
  *      <ol><li>@endhtmlonly  @ref connector_api.h @htmlonly</li>
  *          <li>@endhtmlonly  @ref connector_api_config.h @htmlonly</li>
@@ -326,7 +326,7 @@
  *          <li>@endhtmlonly  @ref connector_types.h @htmlonly</li></ol>
 
  *
- *   <p>The @endhtmlonly @ref api_overview "Etherios Cloud Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
+ *   <p>The @endhtmlonly @ref api_overview "Cloud Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
  *   required for application development.  All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
  *   might require updating to match your platform's characteristics (i.e., data size and supported compiler data types).
  *
@@ -339,23 +339,23 @@
  * </tr>
  * <tr>
  *   <td>public/run</td>
- *   <td>Platforms and samples for running Etherios Cloud Connector as a separate thread <br></br>
+ *   <td>Platforms and samples for running Cloud Connector as a separate thread <br></br>
  *   This directory contains platforms and samples that use @endhtmlonly connector_run() @htmlonly which runs
- *   Etherios Cloud Connector as a separate thread in a multitasking environment.</td>
+ *   Cloud Connector as a separate thread in a multitasking environment.</td>
  * </tr>
  * <tr>
  *   <td>public/run/platforms</td>
- *   <td>Platform files for running Etherios Cloud Connector as a separate thread<br></br>
- *   Platform dependent files that interface between Etherios Cloud Connector library (private) and the sample applications.
+ *   <td>Platform files for running Cloud Connector as a separate thread<br></br>
+ *   Platform dependent files that interface between Cloud Connector library (private) and the sample applications.
  *   These files include @endhtmlonly @ref network_tcp.c, file_system.c, @ref os.c, @ref config.c, and main.c. @htmlonly
  *   The Getting Started Procedure walks you through the process of porting and setting these platform files.</td>
  * </tr>
  * <tr>
  *   <td>public/run/samples</td>
- *   <td>Samples for Etherios Cloud Connector<br></br>
- *   Samples on how to use Etherios Cloud Connector, the compile_and_link sample is used to verify
+ *   <td>Samples for Cloud Connector<br></br>
+ *   Samples on how to use Cloud Connector, the compile_and_link sample is used to verify
  *   that your new environment is able to build. There is a sample for each major
- *   feature in Etherios Cloud Connector, there is documentation in this guide for each sample.</td>
+ *   feature in Cloud Connector, there is documentation in this guide for each sample.</td>
  * </tr>
  * <tr>
  *   <td>public/step</td>
@@ -366,21 +366,21 @@
  * @endhtmlonly
  *
  * @subsection AppStructure Source Code Hierarchy
- * The Etherios Cloud Connector is split into two separate partitions, a private partition and a public Application Framework.
+ * Cloud Connector is split into two separate partitions, a private partition and a public Application Framework.
  *
- * The private partition (Etherios Cloud Connector Library) includes source code that implements the @ref api_overview "Etherios Cloud Connector public API", plus all the internal code used to implement the
- * Etherios Device Cloud protocol.  For forward compatibility this private partition should be treated as a black box and never changed or referenced directly.
+ * The private partition (Cloud Connector Library) includes source code that implements the @ref api_overview "Cloud Connector public API", plus all the internal code used to implement the
+ * Device Cloud protocol.  For forward compatibility this private partition should be treated as a black box and never changed or referenced directly.
  *
  * The public Application Framework partition is further divided in two: a Platform and Sample section.  The Platform section is related to system
  * specific porting dependencies (i.e., fleshing out @ref os_callbacks "operating system" calls, @ref network_callbacks "networking", @ref config_callbacks "system configuration").  The Sample section contains an application
- * structure to cleanly interface between the Platform section and Etherios Cloud Connector private partition.
+ * structure to cleanly interface between the Platform section and Cloud Connector private partition.
  *
  * For instance, in a linux run thread model, the main() routine starts two threads: connector_run_thread() and application_run_thread() in main.c.  This file is
- * located in the Platform section since it relies on threads (an operating system dependency).  The connector_run_thread() directly calls the @ref api_overview "Etherios Cloud Connector API"
+ * located in the Platform section since it relies on threads (an operating system dependency).  The connector_run_thread() directly calls the @ref api_overview "Cloud Connector API"
  * connector_run(), and the application_run_thread() calls application_run().  The application_run() function has no system dependencies and contains
- * Etherios Cloud Connector specific functions, therefore, it resides within the Sample section.
+ * Cloud Connector specific functions, therefore, it resides within the Sample section.
  *
- * In the diagram below, Etherios Cloud Connector Library is shown encapsulated within the dotted line on top (in the Private Source Code Area).  The
+ * In the diagram below, Cloud Connector Library is shown encapsulated within the dotted line on top (in the Private Source Code Area).  The
  * bottom is the Platform section, where the bottom left side shows main() calling connector_init() and spawning the two threads.   Also
  * shown is the application_run_thread() calling application_run() in the Sample section.  The Sample section is encapsulated within the
  * dotted line on the center-right.
@@ -389,18 +389,18 @@
  *
  * Based on the particular sample, application_run() could either make calls to connector_initiate_action(), or could just return and complete.
  *
- * The diagram further shows Etherios Cloud Connector Library making callbacks into the Sample section.  The @ref connector_callback_t "application callback function", initially passed
- * to Etherios Cloud Connector library via the connector_init() call, will pass the callback request to the appropriate handler, which will either be in the Platform section for
+ * The diagram further shows Cloud Connector Library making callbacks into the Sample section.  The @ref connector_callback_t "application callback function", initially passed
+ * to Cloud Connector library via the connector_init() call, will pass the callback request to the appropriate handler, which will either be in the Platform section for
  * @ref os_callbacks "operating system", @ref network_callbacks "networking", or @ref config_callbacks "configuration" callbacks; or remain locally
  * handled (in the Sample section) for the Data Service callbacks.
  *
  * @subsection PortingFocus Porting Guidelines
- * The Etherios Cloud Connector @ref getting_started process includes pulling Etherios Cloud Connector into your local build environment, getting the private partition
+ * The Cloud Connector @ref getting_started process includes pulling Cloud Connector into your local build environment, getting the private partition
  * compiled and linked (using the @ref step3 "compile_and_link" sample) and then your @ref step5 "platform ported".  Once your platform
  * is ported, you will verify and confirm your port using the @ref step7 "connect_to_device_cloud" sample.
  *
  * When porting, it is strongly recommended that you maintain the structure of the public Application Framework.  Once porting, compilation and testing
- * are complete, the you can dismantle this framework and incorporate Etherios Cloud Connector into your environment as you see fit.
+ * are complete, the you can dismantle this framework and incorporate Cloud Connector into your environment as you see fit.
  *
  * When reusing the Application Framework, the largest effort will be updating the lowest layer of the Platform code.  Specifically, the
  * static @ref os_routines "operating system" functions located in os.c, the @ref network_routines "networking" functions in network_tcp.c and
