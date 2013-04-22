@@ -38,7 +38,7 @@ extern uint_32 image_data_length;
 
 struct fapp_tftp_rx_handler_srec srec;
 
-MQX_FILE_PTR   flash_file;
+extern MQX_FILE_PTR   flash_file;
 
 void flash_task(unsigned long initial_data)
 {

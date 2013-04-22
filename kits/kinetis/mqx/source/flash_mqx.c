@@ -24,6 +24,7 @@
 #define CONNECTOR_DEFAULT_MAC_ADDRESS	{0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
 
 struct fapp_params_flash fapp_params_current_config;
+MQX_FILE_PTR   flash_file;
 
 struct fapp_params_flash fapp_params_default_config =      
 {
