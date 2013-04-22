@@ -151,12 +151,12 @@ typedef enum
 static void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
 {
 
-    unsigned long int code = (unsigned long int) data->errnum;
+    fs_error_internal_t code = (fs_error_internal_t) data->errnum;
 
     static struct
     {
         char const * hint;
-        uint8_t status;
+        connector_file_system_error_t status;
 
     } error_data[] =
     {
@@ -182,6 +182,7 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
         code = fs_error_generic;
         break;
     }
+    ASSERT(code >= 0);
     ASSERT(code < asizeof(error_data));
 
     data->error_status = error_data[code].status;
@@ -219,6 +220,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
      uint8_t * fs_error_response = service_data->data_ptr;
      connector_file_system_get_error_t data;
 
+     data.user_context = context->user_context;
      data.buffer = fs_error_response + header_bytes;
      data.errnum = context->errnum;
      data.bytes_available = buffer_size;
@@ -232,8 +234,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
      {
          connector_request_id_t request_id;
          request_id.file_system_request = connector_request_id_file_system_get_error;
-         data.user_context = context->user_context;
-
+         
          status = connector_callback(connector_ptr->callback,
                                      connector_class_id_file_system,
                                      request_id,
@@ -395,6 +396,7 @@ static connector_status_t call_file_stat_user(connector_data_t * const connector
 
        default:
            context->flags = 0;
+           break;
    }
 
    switch(hash_alg)
@@ -465,9 +467,11 @@ static connector_status_t call_file_stat_dir_entry_user(connector_data_t * const
 
        case connector_file_system_file_type_is_reg:
            FsSetReg(context);
+           break;
 
        default:
            context->flags = 0;
+           break;
    }
 
 done:
@@ -668,7 +672,7 @@ static connector_status_t call_file_lseek_user(connector_data_t * const connecto
                                                msg_service_request_t * const service_request,
                                                fs_context_t * const context,
                                                connector_file_offset_t const  offset_in,
-                                               int  const origin,
+                                               connector_file_system_seek_origin_t  const origin,
                                                connector_file_offset_t * const offset_out)
 {
     connector_file_system_lseek_t data;
