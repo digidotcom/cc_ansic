@@ -283,7 +283,7 @@ done:
 	return retval;
 }
 
-static connector_callback_status_t app_tcp_connect(_ip_address const ip_addr, connector_network_handle_t ** network_handle)
+static connector_callback_status_t app_tcp_connect(_ip_address const ip_addr, connector_network_open_t * open_data)
 {
     connector_callback_status_t status = connector_callback_error;
     static app_ssl_t ssl_info = {0};
@@ -320,7 +320,7 @@ static connector_callback_status_t app_tcp_connect(_ip_address const ip_addr, co
     }
 
     APP_DEBUG("network_connect: connected\n");
-    *network_handle = (connector_network_handle_t *)&ssl_info;
+    open_data->handle = (connector_network_handle_t *)&ssl_info;
     status = connector_callback_continue;
     goto done;
 
@@ -457,7 +457,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         goto done;
     }
 
-    status = app_tcp_connect(server_ip_addr, &data->handle);
+    status = app_tcp_connect(server_ip_addr, data);
 
     if (status == connector_callback_continue)
         APP_DEBUG("network_tcp_open: connected to %s\n", data->device_cloud_url);

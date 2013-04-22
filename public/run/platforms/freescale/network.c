@@ -197,7 +197,7 @@ static connector_callback_status_t app_is_tcp_connect_complete(int const fd)
 static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_abort;
-    static int socket_fd = RTCS_SOCKET_ERROR;
+    static _mqx_int socket_fd = RTCS_SOCKET_ERROR;
 
     data->handle = &socket_fd;
     if (socket_fd == RTCS_SOCKET_ERROR)
@@ -267,11 +267,12 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
     connector_callback_status_t status = connector_callback_continue;
     size_t bytes_sent;
     int rtcs_error;
+    _mqx_int_ptr fd = data->handle;
 
-    bytes_sent = send(*data->handle, (char _PTR_)data->buffer, data->bytes_available, 0);
+    bytes_sent = send(*fd, (char _PTR_)data->buffer, data->bytes_available, 0);
     if (bytes_sent == RTCS_ERROR)
     {
-    	rtcs_error = RTCS_geterror(*data->handle);
+    	rtcs_error = RTCS_geterror(*fd);
     	if (rtcs_error == MQX_EAGAIN) 
     	{
     		status = connector_callback_busy;
@@ -280,8 +281,8 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
     		
         status = connector_callback_abort;
         APP_DEBUG("network_send: send() failed RTCS error [%lx]\n", rtcs_error);
-        shutdown(*data->handle, FLAG_ABORT_CONNECTION);
-        *data->handle = RTCS_SOCKET_ERROR;
+        shutdown(*fd, FLAG_ABORT_CONNECTION);
+        *fd = RTCS_SOCKET_ERROR;
     }
     else
     {
@@ -306,14 +307,15 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
 {
     connector_callback_status_t status = connector_callback_continue;
     int_32 bytes_read;
-    
+    _mqx_int_ptr fd = data->handle;
+
     data->bytes_used = 0;
-    bytes_read = recv(*data->handle, (char *)data->buffer, (int)data->bytes_available, 0);
+    bytes_read = recv(*fd, (char *)data->buffer, (int)data->bytes_available, 0);
     if (bytes_read == RTCS_ERROR)
     {
-        APP_DEBUG("network_receive: Error, recv() failed RTCS error [%lx]\n", RTCS_geterror(*data->handle));
-        shutdown(*data->handle, FLAG_ABORT_CONNECTION);
-        *data->handle = RTCS_SOCKET_ERROR;
+        APP_DEBUG("network_receive: Error, recv() failed RTCS error [%lx]\n", RTCS_geterror(*fd));
+        shutdown(*fd, FLAG_ABORT_CONNECTION);
+        *fd = RTCS_SOCKET_ERROR;
         status = connector_callback_abort;
     }
     else
@@ -336,9 +338,9 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
 static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    connector_network_handle_t * const fd = data->handle;
 	uint_32 result;
-	
+    _mqx_int_ptr fd = data->handle;
+
 	ASSERT(*fd == socket_fd);
 
 	/* Note: this does a graceful close - like linger */
