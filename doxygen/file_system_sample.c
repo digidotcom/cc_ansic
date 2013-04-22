@@ -120,7 +120,7 @@
  *  expected_content = "Connector file system sample\n"
  *  put_data = base64.encodestring(expected_content)[:-1]
  *
- *  # file system message to send to server
+ *  # file system message to send to Device Cloud
  *  message = """<sci_request version="1.0">
  *      <file_system>
  *          <targets>
