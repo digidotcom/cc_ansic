@@ -131,7 +131,7 @@ error:
     return result;
 }
 
-static connector_status_t dp_callback_status_to_status(connector_status_t const callback_status)
+static connector_status_t dp_callback_status_to_status(connector_callback_status_t const callback_status)
 {
     connector_status_t status;
 
@@ -730,7 +730,7 @@ error:
 
 static connector_callback_status_t dp_handle_response_callback(connector_data_t * const connector_ptr, connector_data_service_send_response_t * const data_ptr)
 {
-    connector_callback_status_t callback_status = connector_abort;
+    connector_callback_status_t callback_status = connector_callback_abort;
     data_point_info_t * const dp_info = data_ptr->user_context;
     connector_request_id_t request_id;
     connector_data_point_response_t user_data;
@@ -750,8 +750,25 @@ static connector_callback_status_t dp_handle_response_callback(connector_data_t 
     }
 
     user_data.transport = data_ptr->transport;
-    user_data.response = data_ptr->response;
     user_data.hint = data_ptr->hint;
+    switch (data_ptr->response)
+    {
+        case connector_data_service_send_response_success:
+            user_data.response = connector_data_point_response_success;
+            break;
+
+        case connector_data_service_send_response_bad_request:
+            user_data.response = connector_data_point_response_bad_request;
+            break;
+
+        case connector_data_service_send_response_unavailable:
+            user_data.response = connector_data_point_response_unavailable;
+            break;
+
+        case connector_data_service_send_response_cloud_error:
+            user_data.response = connector_data_point_response_cloud_error;
+            break;
+    }
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
     if (callback_status == connector_callback_busy) goto error;
@@ -765,7 +782,7 @@ error:
 
 static connector_callback_status_t dp_handle_status_callback(connector_data_t * const connector_ptr, connector_data_service_status_t * const data_ptr)
 {
-    connector_callback_status_t callback_status = connector_abort;
+    connector_callback_status_t callback_status = connector_callback_abort;
     data_point_info_t * const dp_info = data_ptr->user_context;
     connector_request_id_t request_id;
     connector_data_point_status_t user_data;
@@ -785,8 +802,29 @@ static connector_callback_status_t dp_handle_status_callback(connector_data_t * 
     }
 
     user_data.transport = data_ptr->transport;
-    user_data.status = data_ptr->status;
     user_data.session_error = data_ptr->session_error;
+    switch (data_ptr->status)
+    {
+        case connector_data_service_status_complete:
+            user_data.status = connector_data_point_status_complete;
+            break;
+
+        case connector_data_service_status_cancel:
+            user_data.status = connector_data_point_status_cancel;
+            break;
+
+        case connector_data_service_status_timeout:
+            user_data.status = connector_data_point_status_timeout;
+            break;
+
+        case connector_data_service_status_session_error:
+            user_data.status = connector_data_point_status_session_error;
+            break;
+
+        default:
+            user_data.status = connector_data_point_status_session_error;
+            break;
+    }
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
     if (callback_status == connector_callback_busy) goto error;

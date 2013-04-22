@@ -508,6 +508,7 @@ static connector_status_t msg_delete_session(connector_data_t * const connector_
 
     ASSERT_GOTO(msg_ptr != NULL, error);
     ASSERT_GOTO(session != NULL, error);
+    ASSERT_GOTO((session->in_dblock != NULL) || (session->out_dblock != NULL), error);
 
     if (msg_ptr->session_locked) goto error;
     msg_ptr->session_locked = connector_true;

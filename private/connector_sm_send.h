@@ -48,6 +48,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
 
             cb_data.transport = session->transport;
             cb_data.user_context = session->user.context;
+            cb_data.total_bytes = 0;
 
             request_id.sm_request = connector_request_id_sm_cli_response_length;
             status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
@@ -270,6 +271,7 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
     send_data.buffer = &send_packet->data[send_packet->processed_bytes];
     send_data.bytes_available = send_packet->total_bytes - send_packet->processed_bytes;
     send_data.handle = sm_ptr->network.handle;
+    send_data.bytes_used = 0;
 
     request_id.network_request = connector_request_id_network_send;
     status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &send_data);

@@ -116,6 +116,7 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
 
     send_data.buffer = buffer;
     send_data.bytes_available = *length;
+    send_data.bytes_used = 0;
     send_data.handle = connector_ptr->edp_data.network_handle;
 
     request_id.network_request = connector_request_id_network_send;

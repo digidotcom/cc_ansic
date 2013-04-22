@@ -49,8 +49,6 @@ typedef struct {
     uint8_t report_code;
 } connector_cc_data_t;
 
-static connector_status_t get_mac_addr(connector_data_t * const connector_ptr);
-
 static void cc_init(connector_cc_data_t * const cc_ptr)
 {
     cc_ptr->state = cc_state_redirect_report;

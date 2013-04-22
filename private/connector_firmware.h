@@ -435,6 +435,7 @@ done:
 
 static connector_status_t process_fw_download_request(connector_firmware_data_t * const fw_ptr, uint8_t * fw_download_request, uint16_t const length)
 {
+#define FW_STRING_ID_ITEMS  2
 
 /* Firmware download request message format:
  *  -----------------------------------------------------------
@@ -503,17 +504,15 @@ enum fw_download_response {
     {
         char * string_id_ptr = (char *)fw_download_request;
         unsigned int i;
-        char * string_id_items[2];
 
         string_id_ptr += record_bytes(fw_download_request);
 
         /* parse firmware ID String for label and filename spec
          * separated by 0x0a.
          */
-        for (i=0; i < asizeof(string_id_items); i++)
+        for (i=0; i < FW_STRING_ID_ITEMS; i++)
         {
             char * end_ptr;
-            string_id_items[i]= string_id_ptr;
 
             end_ptr = strchr(string_id_ptr, '\n');
             if (end_ptr != NULL) *end_ptr = '\0';

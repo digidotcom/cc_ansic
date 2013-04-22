@@ -122,7 +122,6 @@ static connector_status_t add_facility_data(connector_data_t * const connector_p
 
     *fac_ptr = NULL;
     status = malloc_data_buffer(connector_ptr, size + facility_size, get_facility_buffer_id(facility_num), &ptr);
-    memset(ptr, 0x00, size + facility_size);
     if (status == connector_working)
     {
         /* add facility to the facility list */

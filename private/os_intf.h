@@ -88,6 +88,8 @@ static connector_status_t get_system_time(connector_data_t * const connector_ptr
     connector_request_id_t request_id;
     connector_os_system_up_time_t data;
 
+    *uptime = 0;
+
     /* Call callback to get system up time in second */
     request_id.os_request = connector_request_id_os_system_up_time;
     status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data);
