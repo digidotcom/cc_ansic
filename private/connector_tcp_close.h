@@ -52,6 +52,7 @@ static connector_status_t tcp_close_server(connector_data_t * const connector_pt
 
         close_data.handle = connector_ptr->edp_data.network_handle;
         close_data.status = edp_get_close_status(connector_ptr);
+        close_data.reconnect = connector_true;
 
         connector_debug_printf("tcp_close_server: status = %s\n", close_status_to_string(close_data.status));
         request_id.network_request = connector_request_id_network_close;
