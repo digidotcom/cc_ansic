@@ -194,7 +194,7 @@ static connector_callback_status_t app_handle_put_request(connector_request_id_d
 
                     if (timeout_count++ > CONNECTOR_SM_MAX_SESSIONS)
                     {
-                        APP_DEBUG("SM Put request timeout error. No response from the server!");
+                        APP_DEBUG("SM Put request timeout error. No response from Device Cloud!");
                         status = connector_callback_abort;
                     }
                     break;
@@ -361,7 +361,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
 
                     if (timeout_count++ > CONNECTOR_SM_MAX_SESSIONS)
                     {
-                        APP_DEBUG("Ping request timeout error. No response from the server!\n");
+                        APP_DEBUG("Ping request timeout error. No response from Device Cloud!\n");
                         status = connector_callback_abort;
                     }
                     break;

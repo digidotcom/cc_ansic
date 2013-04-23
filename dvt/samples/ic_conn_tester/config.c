@@ -39,8 +39,6 @@ static connector_callback_status_t app_get_mac_addr(uint8_t ** const addr, size_
 
 static connector_callback_status_t app_get_device_id(uint8_t const ** id, size_t * const size)
 {
-//#error  "Specify device id"
-
     #define DEVICE_ID_LENGTH    16
 
     static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
@@ -77,7 +75,6 @@ static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t
 
 static connector_callback_status_t app_get_device_type(char const ** type, size_t * const size)
 {
-//#error "Specify device type"
     static char const device_type[] = "iDigi Connector Diagnostics";
 
     /* Return pointer to device type. */
@@ -89,13 +86,12 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
 
 static connector_callback_status_t get_config_device_cloud_url(char const ** url, size_t * const size)
 {
-    return application_get_server_url(url, size) ?
+    return application_get_cloud_url(url, size) ?
             connector_callback_continue : connector_callback_abort;
 }
 
 static connector_callback_status_t app_get_connection_type(connector_connection_type_t const ** type)
 {
-//#error "Specify LAN or WAN connection type"
 
     /* Return pointer to connection type */
     static connector_connection_type_t const device_connection_type = connector_connection_type_lan;
@@ -109,7 +105,6 @@ static connector_callback_status_t app_get_connection_type(connector_connection_
 
 static connector_callback_status_t app_get_link_speed(uint32_t const ** speed, size_t * const size)
 {
-//#error "Specify link speed for WAN connection type"
     UNUSED_ARGUMENT(speed);
     UNUSED_ARGUMENT(size);
 
@@ -118,7 +113,6 @@ static connector_callback_status_t app_get_link_speed(uint32_t const ** speed, s
 
 static connector_callback_status_t app_get_phone_number(char const ** number, size_t * const size)
 {
-//#error "Specify phone number dialed for WAN connection type"
     /*
      * Return pointer to phone number for WAN connection type.
      */
@@ -128,11 +122,10 @@ static connector_callback_status_t app_get_phone_number(char const ** number, si
     return connector_callback_continue;
 }
 
-/* Keep alives are from the prospective of the server */
-/* This keep alive is sent from the server to the device */
+/* Keep alives are from the prospective of Device Cloud */
+/* This keep alive is sent from Device Cloud to the device */
 static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const ** interval, size_t * const size)
 {
-//#error "Specify server to device TX keepalive interval in seconds"
 
 #define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     18
     /* Return pointer to Tx keepalive interval in seconds */
@@ -145,10 +138,9 @@ static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const 
 }
 
 
-/* This keep alive is sent from the device to the server  */
+/* This keep alive is sent from the device to Device Cloud  */
 static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const ** interval, size_t * const size)
 {
-//#error "Specify server to device RX keepalive interval in seconds"
 #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     12
     /* Return pointer to Rx keepalive interval in seconds */
     static uint16_t const device_rx_keepalive_interval = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
@@ -161,11 +153,9 @@ static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const 
 
 static connector_callback_status_t app_get_wait_count(uint16_t const ** count, size_t * const size)
 {
-//#error "Specify the number of times that not receiving keepalive messages from server is allowed"
-//#define DEVICE_WAIT_COUNT     3
     /*
      * Return pointer to wait count (number of times not receiving Tx keepalive
-     * from server is allowed).
+     * from Device Cloud is allowed).
      */
     static uint16_t const device_wait_count = DEVICE_WAIT_COUNT;
 
@@ -234,7 +224,6 @@ static connector_callback_status_t app_get_imei_number(uint8_t ** const imei_num
 {
 #define APP_IMEI_LENGTH 8
 
-//#error "Specify the IMEI number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_imei"
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -285,7 +274,6 @@ static connector_callback_status_t app_start_network_udp(connector_connect_auto_
 
 static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const type)
 {
-//#error "Specify connector_wan_type_imei for IMEI, connector_wan_type_esn for ESN, or connector_wan_type_meid for MEID WAN type"
 
     *type = connector_wan_type_imei;
 
@@ -298,7 +286,6 @@ static connector_callback_status_t app_get_esn(uint8_t ** const esn_number, size
 #define APP_ESN_HEX_LENGTH 4
 #define APP_ESN_HEX_STRING_LENGTH 8
 
-//#error "Specify the ESN number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_esn."
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -338,7 +325,6 @@ static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, si
 #define APP_MEID_HEX_LENGTH 8
 #define APP_MEID_HEX_STRING_LENGTH 15
 
-//#error "Specify the MEID number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_meid."
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -375,7 +361,6 @@ static connector_callback_status_t app_get_meid(uint8_t ** const meid_number, si
 
 static connector_callback_status_t app_get_identity_verification(connector_identity_verification_t * const identity)
 {
-//#error "Specify connector_identity_verification for simple or password identify verification form"
 
     *identity = connector_identity_verification_simple;
 
@@ -384,7 +369,6 @@ static connector_callback_status_t app_get_identity_verification(connector_ident
 
 static connector_callback_status_t app_get_password(char const ** password, size_t * const size)
 {
-//#error "Specify password for password identity verification form"
     static  char const connector_password[] = "";
 
     /* Return pointer to password. */
@@ -396,7 +380,6 @@ static connector_callback_status_t app_get_password(char const ** password, size
 
 static connector_callback_status_t app_get_sms_service_id(char const ** const service_id, size_t * const size)
 {
-//#error "Specify SMS service id. It is optional, set *service_id to NULL and *size to 0 if not used"
     static  char const sms_service_id[] = "IDGP";
 
     /* Return pointer to service_id. */
@@ -439,7 +422,7 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_config_device_id);
         enum_to_case(connector_config_vendor_id);
         enum_to_case(connector_config_device_type);
-        enum_to_case(connector_config_server_url);
+        enum_to_case(connector_config_cloud_url);
         enum_to_case(connector_config_connection_type);
         enum_to_case(connector_config_mac_addr);
         enum_to_case(connector_config_link_speed);
@@ -719,7 +702,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         status = app_get_device_type(response_data, response_length);
         break;
 
-    case connector_config_server_url:
+    case connector_config_cloud_url:
         status = get_config_device_cloud_url(response_data, response_length);
         break;
 

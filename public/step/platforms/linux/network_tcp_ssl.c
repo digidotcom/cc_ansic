@@ -425,7 +425,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
 
     app_free_ssl_info(ssl_ptr);
 
-    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_server_redirected);
+    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_cloud_redirected);
 
     data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
     return status;

@@ -175,7 +175,7 @@ static connector_callback_status_t app_firmware_download_abort(connector_firmwar
 {
     connector_callback_status_t   status = connector_callback_continue;
 
-    /* Server is aborting firmware update */
+    /* Device Cloud is aborting firmware update */
     APP_DEBUG("app_firmware_download_abort: target = %d, status = %d\n", abort_data->target_number, abort_data->status);
     firmware_download_started = 0;
 

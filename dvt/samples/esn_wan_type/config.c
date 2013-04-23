@@ -37,9 +37,6 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
     struct ifconf   conf;
     static struct in_addr  ip_addr; /* Used to store the IP address */
 
-/* Remove this #error statement once you modify this routine to return the correct IP address */
-#error "Specify device IP address. Set size to 4 (bytes) for IPv4 or 16 (bytes) for IPv6"
-
     if (buf == NULL)
     {
         APP_DEBUG("get_ip_address malloc failed\n");
@@ -121,7 +118,6 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-#error  "Specify device id"
 
     #define DEVICE_ID_LENGTH    16
 
@@ -157,7 +153,6 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
 #if !(defined CONNECTOR_DEVICE_TYPE)
 static connector_callback_status_t app_get_device_type(connector_config_pointer_string_t * const config_device_type)
 {
-#error "Specify device type"
     static char const device_type[] = "Linux Application";
 
     /* Return pointer to device type. */
@@ -171,11 +166,10 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #if !(defined CONNECTOR_CLOUD_URL)
 static connector_callback_status_t get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-#error "Specify Etherios Device Cloud URL"
-    static  char const connector_server_url[] = "login.etherios.com";
+    static  char const connector_cloud_url[] = "login.etherios.com";
     /* Return pointer to device type. */
-    config_url->string = (char *)connector_server_url;
-    config_url->length = sizeof connector_server_url -1;
+    config_url->string = (char *)connector_cloud_url;
+    config_url->length = sizeof connector_cloud_url -1;
 
     return connector_callback_continue;
 }
@@ -184,7 +178,6 @@ static connector_callback_status_t get_config_device_cloud_url(connector_config_
 #if !(defined CONNECTOR_CONNECTION_TYPE)
 static connector_callback_status_t app_get_connection_type(connector_config_connection_type_t * const config_connection)
 {
-#error "Specify LAN or WAN connection type"
 
     /* Return pointer to connection type */
     config_connection->type = connector_connection_type_wan;
@@ -196,7 +189,6 @@ static connector_callback_status_t app_get_connection_type(connector_config_conn
 #if !(defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
 static connector_callback_status_t app_get_link_speed(connector_config_link_speed_t * const config_link)
 {
-#error "Specify link speed for WAN connection type"
     config_link->speed = 0;
 
     return connector_callback_continue;
@@ -206,7 +198,6 @@ static connector_callback_status_t app_get_link_speed(connector_config_link_spee
 #if !(defined CONNECTOR_WAN_PHONE_NUMBER_DIALED)
 static connector_callback_status_t app_get_phone_number(connector_config_pointer_string_t * const config_phone_number)
 {
-#error "Specify phone number dialed for WAN connection type"
     /*
      * Return pointer to phone number for WAN connection type.
      */
@@ -220,11 +211,10 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
 #endif
 
 #if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)
-/* Keep alives are from the prospective of the server */
-/* This keep alive is sent from the server to the device */
+/* Keep alives are from the prospective of Device Cloud */
+/* This keep alive is sent from Device Cloud to the device */
 static connector_callback_status_t app_get_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-#error "Specify server to device TX keepalive interval in seconds"
 
 #define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     90
     /* Return Tx keepalive interval in seconds */
@@ -235,10 +225,9 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
 #endif
 
 #if !(defined CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
-/* This keep alive is sent from the device to the server  */
+/* This keep alive is sent from the device to Device Cloud  */
 static connector_callback_status_t app_get_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-#error "Specify server to device RX keepalive interval in seconds"
 #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60
     /* Return Rx keepalive interval in seconds */
     config_keepalive->interval_in_seconds = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
@@ -250,11 +239,10 @@ static connector_callback_status_t app_get_rx_keepalive_interval(connector_confi
 #if !(defined CONNECTOR_WAIT_COUNT)
 static connector_callback_status_t app_get_wait_count(connector_config_wait_count_t * const config_wait)
 {
-#error "Specify the number of times that not receiving keepalive messages from server is allowed"
 #define DEVICE_WAIT_COUNT     5
     /*
      * Return wait count (number of times not receiving Tx keepalive
-     * from server is allowed).
+     * from Device Cloud is allowed).
      */
     config_wait->count = DEVICE_WAIT_COUNT;
 
@@ -343,7 +331,6 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
 {
 #define APP_IMEI_LENGTH 8
 
-#error "Specify the IMEI number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_imei"
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -401,7 +388,6 @@ connector_wan_type_t wan_type = CONNECTOR_WAN_TYPE;
 #if !(defined CONNECTOR_WAN_TYPE)
 static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
 {
-#error "Specify connector_wan_type_imei for IMEI, connector_wan_type_esn for ESN, or connector_wan_type_meid for MEID WAN type"
 
     config_wan->type = wan_type;
 
@@ -413,7 +399,6 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
 {
 #define APP_ESN_HEX_LENGTH 4
 
-#error "Specify the ESN number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_esn."
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -454,7 +439,6 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
 {
 #define APP_MEID_HEX_LENGTH 7
 
-#error "Specify the MEID number for WAN connection type if app_get_device_id_method returns connector_device_id_method_auto and app_get_device_id_method returns connector_wan_type_meid."
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
@@ -494,7 +478,6 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
 static connector_callback_status_t app_get_identity_verification(connector_config_identity_verification_t * const config_identity)
 {
-#error "Specify connector_identity_verification for simple or password identify verification form"
 
     config_identity->type = connector_identity_verification_simple;
 
@@ -504,7 +487,6 @@ static connector_callback_status_t app_get_identity_verification(connector_confi
 
 static connector_callback_status_t app_get_password(connector_config_pointer_string_t * const config_password)
 {
-#error "Specify password for password identity verification form"
     static  char const connector_password[] = "";
 
     /* Return pointer to password. */
@@ -516,7 +498,6 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
 
 static connector_callback_status_t app_get_sms_service_id(connector_config_pointer_string_t * const config_service_id)
 {
-#error "Specify SMS service id. It is optional, set *service_id to NULL and *size to 0 if not used"
     static  char const sms_service_id[] = "IDGP";
 
     /* Return pointer to service_id. */

@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static connector_status_t connect_server(connector_data_t * const connector_ptr, char const * server_url)
+static connector_status_t connect_to_cloud(connector_data_t * const connector_ptr, char const * cloud_url)
 {
     connector_status_t result = connector_working;
 
@@ -19,7 +19,7 @@ static connector_status_t connect_server(connector_data_t * const connector_ptr,
 
     connector_request_id_t request_id;
 
-    open_data.device_cloud_url = server_url;
+    open_data.device_cloud_url = cloud_url;
     open_data.handle = NULL;
 
     request_id.network_request = connector_request_id_network_open;
@@ -85,7 +85,7 @@ enum edp_version {
 
 static connector_status_t receive_edp_version(connector_data_t * const connector_ptr)
 {
-#define SERVER_OVERLOAD_RESPONSE    0x02
+#define CLOUD_OVERLOAD_RESPONSE    0x02
 
     connector_status_t result;
     uint8_t * ptr;
@@ -127,8 +127,8 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
             {
                 /* Expected MTv2 message types... */
                 case E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP:
-                    if (response_code == SERVER_OVERLOAD_RESPONSE) {
-                        connector_debug_printf("receive_edp_version: MTv2 legacy Server responded with overload msg\n");
+                    if (response_code == CLOUD_OVERLOAD_RESPONSE) {
+                        connector_debug_printf("receive_edp_version: MTv2 legacy Cloud responded with overload msg\n");
                     }
                     else {
                         connector_debug_printf("receive_edp_version: MTv2 legacy bad version\n");
@@ -137,7 +137,7 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
                 case E_MSG_MT2_TYPE_VERSION_BAD:
                     connector_debug_printf("receive_edp_version: bad version\n");
                     break;
-                case E_MSG_MT2_TYPE_SERVER_OVERLOAD:
+                case E_MSG_MT2_TYPE_CLOUD_OVERLOAD:
                     connector_debug_printf("receive_edp_version: Device Cloud responded with overload msg\n");
                     break;
                 /* Unexpected/unknown MTv2 message types... */
@@ -404,7 +404,7 @@ done:
     return result;
 }
 
-static connector_status_t send_server_url(connector_data_t * const connector_ptr)
+static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_URL            0x86U
 
@@ -416,16 +416,16 @@ static connector_status_t send_server_url(connector_data_t * const connector_ptr
      * |   EDP Header  | URL opcode | URL length | URL  |
      *  ------------------------------------------------
     */
-    enum edp_server_url {
-        field_define(edp_server_url, opcode, uint8_t),
-        field_define(edp_server_url, url_length, uint16_t),
-        record_end(edp_server_url)
+    enum edp_cloud_url {
+        field_define(edp_cloud_url, opcode, uint8_t),
+        field_define(edp_cloud_url, url_length, uint16_t),
+        record_end(edp_cloud_url)
     };
     connector_status_t result;
     uint8_t * edp_header;
 
-    char * server_url = connector_ptr->edp_data.config.server_url;
-    uint8_t * edp_server_url;
+    char * cloud_url = connector_ptr->edp_data.config.cloud_url;
+    uint8_t * edp_cloud_url;
     uint8_t * start_ptr;
 
     static char const url_prefix[] = URL_PREFIX;
@@ -438,30 +438,30 @@ static connector_status_t send_server_url(connector_data_t * const connector_ptr
         goto done;
     }
 
-    edp_server_url = start_ptr;
+    edp_cloud_url = start_ptr;
 
-    connector_debug_printf("Send Device Cloud url = %.*s\n", (int)connector_ptr->edp_data.config.server_url_length, connector_ptr->edp_data.config.server_url);
+    connector_debug_printf("Send Device Cloud url = %.*s\n", (int)connector_ptr->edp_data.config.cloud_url_length, connector_ptr->edp_data.config.cloud_url);
 
-    message_store_u8(edp_server_url, opcode, SECURITY_OPER_URL);
+    message_store_u8(edp_cloud_url, opcode, SECURITY_OPER_URL);
 
     {
-        size_t const len = connector_ptr->edp_data.config.server_url_length + prefix_length;
+        size_t const len = connector_ptr->edp_data.config.cloud_url_length + prefix_length;
 		uint16_t const len16 = (uint16_t) len;
 
 		ASSERT(len <= UINT16_MAX);
-        message_store_be16(edp_server_url, url_length, len16);
+        message_store_be16(edp_cloud_url, url_length, len16);
     }
 
-    edp_server_url += record_bytes(edp_server_url);
-    memcpy(edp_server_url, url_prefix, prefix_length);
-    edp_server_url += prefix_length;
+    edp_cloud_url += record_bytes(edp_cloud_url);
+    memcpy(edp_cloud_url, url_prefix, prefix_length);
+    edp_cloud_url += prefix_length;
 
-    memcpy(edp_server_url, server_url, connector_ptr->edp_data.config.server_url_length);
-    edp_server_url += connector_ptr->edp_data.config.server_url_length;
+    memcpy(edp_cloud_url, cloud_url, connector_ptr->edp_data.config.cloud_url_length);
+    edp_cloud_url += connector_ptr->edp_data.config.cloud_url_length;
 
     {
-        size_t const length = (size_t)(edp_server_url-start_ptr);
-        ASSERT(edp_server_url > start_ptr);
+        size_t const length = (size_t)(edp_cloud_url-start_ptr);
+        ASSERT(edp_cloud_url > start_ptr);
 
         result = tcp_initiate_send_packet(connector_ptr, edp_header, length,
                                 E_MSG_MT2_TYPE_PAYLOAD,
@@ -696,7 +696,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
 
     switch (edp_get_edp_state(connector_ptr))
     {
-    case edp_communication_connect_server:
+    case edp_communication_connect_to_cloud:
         if (connector_ptr->edp_data.keepalive.last_tx_received_time != 0)
         {
             if (connector_ptr->edp_data.keepalive.last_rx_sent_time == 0)
@@ -717,7 +717,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
             connector_ptr->edp_data.keepalive.last_tx_received_time = 0;
         }
-        result = connect_server(connector_ptr, connector_ptr->edp_data.config.server_url);
+        result = connect_to_cloud(connector_ptr, connector_ptr->edp_data.config.cloud_url);
 
         if (result == connector_working)
         {
@@ -794,7 +794,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             }
             break;
         case edp_security_send_device_cloud_url:
-            result = send_server_url(connector_ptr);
+            result = send_cloud_url(connector_ptr);
             if (result == connector_working)
             {
 #if (defined CONNECTOR_IDENTITY_VERIFICATION)
@@ -893,7 +893,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
 done:
     if (result != connector_idle && result != connector_pending && result != connector_working)
     {
-        if (edp_get_edp_state(connector_ptr) != edp_communication_connect_server)
+        if (edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud)
         {
            /* set the close state and make it goes to close connection state */
             edp_set_close_status(connector_ptr, connector_close_status_abort);

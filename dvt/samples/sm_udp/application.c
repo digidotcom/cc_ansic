@@ -32,7 +32,7 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
 
     switch (status)
     {
-           /* if either the server or our application cuts the connection, don't reconnect */
+           /* if either Device Cloud or our application cuts the connection, don't reconnect */
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:

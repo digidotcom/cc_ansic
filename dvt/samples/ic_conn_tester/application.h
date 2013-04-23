@@ -44,7 +44,7 @@ extern void app_inc_stats(app_stats_id_t const id);
 extern bool application_get_ip_address(uint8_t ** const ip_address, size_t * const size);
 extern bool application_get_mac_addr(uint8_t ** const addr, size_t * const size);
 extern bool application_get_vendor_id(uint8_t const ** id, size_t * const size);
-extern bool application_get_server_url(char const ** url, size_t * const size);
+extern bool application_get_cloud_url(char const ** url, size_t * const size);
 
 extern bool application_init(int argc, char **argv);
 extern void application_cleanup(void);

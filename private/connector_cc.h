@@ -16,7 +16,7 @@
 #define FAC_CC_CONNECTION_REPORT    0x05
 #define FAC_CC_REBOOT               0x06
 
-#define CC_REDIRECT_SERVER_COUNT    2
+#define CC_REDIRECT_URL_COUNT    2
 
 typedef enum {
     cc_not_redirect,
@@ -39,7 +39,7 @@ enum {
 
 
 typedef struct {
-    char    origin_url[SERVER_URL_LENGTH];
+    char    origin_url[CLOUD_URL_LENGTH];
     size_t  origin_url_length;
 
     uint8_t * redirect;
@@ -346,9 +346,9 @@ enum cc_redirect {
         goto done;
     }
 
-    if (cc_ptr->redirect_count > CC_REDIRECT_SERVER_COUNT)
+    if (cc_ptr->redirect_count > CC_REDIRECT_URL_COUNT)
     {
-        cc_ptr->redirect_count = CC_REDIRECT_SERVER_COUNT;
+        cc_ptr->redirect_count = CC_REDIRECT_URL_COUNT;
     }
 
 
@@ -357,8 +357,8 @@ enum cc_redirect {
     cc_ptr->redirect = redirect;
 
     /* save original Device Cloud url that we connected before */
-    memcpy(cc_ptr->origin_url, connector_ptr->edp_data.config.server_url, connector_ptr->edp_data.config.server_url_length);
-    cc_ptr->origin_url_length = connector_ptr->edp_data.config.server_url_length;
+    memcpy(cc_ptr->origin_url, connector_ptr->edp_data.config.cloud_url, connector_ptr->edp_data.config.cloud_url_length);
+    cc_ptr->origin_url_length = connector_ptr->edp_data.config.cloud_url_length;
 
     /* Close the connection before parsing new destination url */
     edp_set_active_state(connector_ptr, connector_transport_redirect);
@@ -392,7 +392,7 @@ static connector_status_t cc_process(connector_data_t * const connector_ptr, voi
         case FAC_CC_DISCONNECT:
         {
 
-            edp_set_close_status(connector_ptr, connector_close_status_server_disconnected);
+            edp_set_close_status(connector_ptr, connector_close_status_cloud_disconnected);
             edp_set_active_state(connector_ptr, connector_transport_close);
             result = connector_working;
             break;
@@ -507,9 +507,9 @@ static connector_status_t edp_redirect_process(connector_data_t * const connecto
     case cc_state_close:
 
         /* set the reason for closing */
-        edp_set_close_status(connector_ptr, connector_close_status_server_redirected);
+        edp_set_close_status(connector_ptr, connector_close_status_cloud_redirected);
 
-        result = tcp_close_server(connector_ptr);
+        result = tcp_close_cloud(connector_ptr);
         if (result == connector_working)
         {
             if (edp_get_active_state(connector_ptr) == connector_transport_idle)
@@ -539,8 +539,8 @@ static connector_status_t edp_redirect_process(connector_data_t * const connecto
             };
 
             uint8_t * redirect = cc_ptr->redirect;
-            char const * server_url;
-            uint16_t server_url_length;
+            char const * cloud_url;
+            uint16_t cloud_url_length;
 
             uint16_t const url_length = message_load_be16(redirect, url_length);
             redirect += record_bytes(redirect_url_length);
@@ -548,23 +548,23 @@ static connector_status_t edp_redirect_process(connector_data_t * const connecto
             {
                 size_t const prefix_len = sizeof URL_PREFIX -1;
 
-                server_url = (char const *)redirect;
-                server_url_length = url_length;
+                cloud_url = (char const *)redirect;
+                cloud_url_length = url_length;
 
-                if (memcmp(server_url, URL_PREFIX, prefix_len) == 0)
+                if (memcmp(cloud_url, URL_PREFIX, prefix_len) == 0)
                 {
-                    server_url += prefix_len;
-                    server_url_length -= (uint16_t) prefix_len;
+                    cloud_url += prefix_len;
+                    cloud_url_length -= (uint16_t) prefix_len;
                 }
 
-                ASSERT(server_url_length < sizeof connector_ptr->edp_data.config.server_url);
-                ASSERT(server_url_length != 0);
+                ASSERT(cloud_url_length < sizeof connector_ptr->edp_data.config.cloud_url);
+                ASSERT(cloud_url_length != 0);
 
-                memcpy(connector_ptr->edp_data.config.server_url, server_url, server_url_length);
-                connector_ptr->edp_data.config.server_url_length = server_url_length;
-                connector_ptr->edp_data.config.server_url[server_url_length] = 0x0;
+                memcpy(connector_ptr->edp_data.config.cloud_url, cloud_url, cloud_url_length);
+                connector_ptr->edp_data.config.cloud_url_length = cloud_url_length;
+                connector_ptr->edp_data.config.cloud_url[cloud_url_length] = 0x0;
 
-                result = connect_server(connector_ptr, connector_ptr->edp_data.config.server_url);
+                result = connect_to_cloud(connector_ptr, connector_ptr->edp_data.config.cloud_url);
             }
 
             if (result == connector_working)

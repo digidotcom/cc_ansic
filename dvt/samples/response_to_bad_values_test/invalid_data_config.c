@@ -77,7 +77,7 @@ static connector_callback_status_t app_get_invalid_data_device_type(connector_co
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_invalid_data_server_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t app_get_invalid_data_cloud_url(connector_config_pointer_string_t * const config_url)
 {
 
     config_url->string = NULL;
@@ -115,8 +115,8 @@ static connector_callback_status_t app_get_invalid_data_phone_number(connector_c
     return connector_callback_continue;
 }
 
-/* Keep alives are from the prospective of the server */
-/* This keep alive is sent from the server to the device */
+/* Keep alives are from the prospective of Device Cloud */
+/* This keep alive is sent from Device Cloud to the device */
 static connector_callback_status_t app_get_invalid_data_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
     config_keepalive->interval_in_seconds = 0;
@@ -124,7 +124,7 @@ static connector_callback_status_t app_get_invalid_data_tx_keepalive_interval(co
     return connector_callback_continue;
 }
 
-/* This keep alive is sent from the device to the server  */
+/* This keep alive is sent from the device to Device Cloud  */
 static connector_callback_status_t app_get_invalid_data_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
     config_keepalive->interval_in_seconds = 0;
@@ -269,7 +269,7 @@ connector_callback_status_t app_invalid_data_config_handler(connector_request_id
         break;
 
     case connector_request_id_config_device_cloud_url:
-         status = app_get_invalid_data_server_url(data);
+         status = app_get_invalid_data_cloud_url(data);
         break;
 
     case connector_request_id_config_connection_type:

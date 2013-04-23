@@ -165,10 +165,10 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #if !(defined CONNECTOR_CLOUD_URL)
 static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static  char const connector_server_url[] = "login.etherios.com";
+    static  char const connector_cloud_url[] = "login.etherios.com";
 
-    config_url->string = (char *)connector_server_url;
-    config_url->length = sizeof connector_server_url -1;
+    config_url->string = (char *)connector_cloud_url;
+    config_url->length = sizeof connector_cloud_url -1;
 
     return connector_callback_continue;
 }
@@ -224,7 +224,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
 #endif
 
 #if !(defined CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
-/* This keep alive is sent from the device to the server  */
+/* This keep alive is sent from the device to the cloud  */
 static connector_callback_status_t app_get_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
 #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60
@@ -241,7 +241,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
 #define DEVICE_WAIT_COUNT     5
     /*
      * Return wait count (number of times not receiving Tx keepalive
-     * from server is allowed).
+     * from Device Cloud is allowed).
      */
     config_wait->count = DEVICE_WAIT_COUNT;
 

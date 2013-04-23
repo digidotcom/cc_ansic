@@ -31,8 +31,8 @@ static char const * close_status_to_string(connector_close_status_t const value)
     char const * result = NULL;
     switch (value)
     {
-        enum_to_case(connector_close_status_server_disconnected);
-        enum_to_case(connector_close_status_server_redirected);
+        enum_to_case(connector_close_status_cloud_disconnected);
+        enum_to_case(connector_close_status_cloud_redirected);
         enum_to_case(connector_close_status_device_terminated);
         enum_to_case(connector_close_status_device_stopped);
         enum_to_case(connector_close_status_no_keepalive);
@@ -73,7 +73,7 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
 
     switch (status)
     {
-           /* if either the server or our application cuts the connection, don't reconnect */
+           /* if either Device Cloud or our application cuts the connection, don't reconnect */
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:

@@ -46,7 +46,7 @@
 #define E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP  0x0001U /* C <- S */
 #define E_MSG_MT2_TYPE_VERSION_OK           0x0010U /* C <- S */
 #define E_MSG_MT2_TYPE_VERSION_BAD          0x0011U /* C <- S */
-#define E_MSG_MT2_TYPE_SERVER_OVERLOAD      0x0012U /* C <- S */
+#define E_MSG_MT2_TYPE_CLOUD_OVERLOAD       0x0012U /* C <- S */
 #define E_MSG_MT2_TYPE_KA_RX_INTERVAL       0x0020U /* C -> S */
 #define E_MSG_MT2_TYPE_KA_TX_INTERVAL       0x0021U /* C -> S */
 #define E_MSG_MT2_TYPE_KA_WAIT              0x0022U /* C -> S */
@@ -80,7 +80,7 @@
 
 /* IRL EDP States */
 typedef enum {
-    edp_communication_connect_server,
+    edp_communication_connect_to_cloud,
     edp_communication_send_version,
     edp_communication_receive_version_response,
     edp_communication_send_keepalive,
@@ -143,8 +143,8 @@ typedef struct connector_edp_data {
         uint8_t * ip_addr;
         size_t ip_addr_length;
 
-        char server_url[SERVER_URL_LENGTH];
-        size_t server_url_length;
+        char cloud_url[CLOUD_URL_LENGTH];
+        size_t cloud_url_length;
 
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
         connector_identity_verification_t identity_verification;

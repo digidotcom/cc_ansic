@@ -93,13 +93,13 @@ typedef struct  {
 * Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
 */
 typedef enum {
-    connector_close_status_server_disconnected = 1,    /**< Etherios Cloud Connector received a disconnect from the server. */
-    connector_close_status_server_redirected,          /**< Etherios Cloud Connector is redirected to different server. */
+    connector_close_status_cloud_disconnected = 1,    /**< Etherios Cloud Connector received a disconnect from Device Cloud. */
+    connector_close_status_cloud_redirected,          /**< Etherios Cloud Connector is redirected to different Device Cloud. */
     connector_close_status_device_terminated,          /**< Etherios Cloud Connector is terminated via @ref connector_initiate_action
                                                         Etherios Cloud Connector will terminate all active messages or requests and free all memory.
                                                         @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
     connector_close_status_device_stopped,             /**< Etherios Cloud Connector is stopped via @ref connector_initiate_action */
-    connector_close_status_no_keepalive,               /**< Etherios Cloud Connector has not received keep alive messages from the server */
+    connector_close_status_no_keepalive,               /**< Etherios Cloud Connector has not received keep alive messages from Device Cloud */
     connector_close_status_abort,                      /**< Etherios Cloud Connector is aborted either it encountered fatal error or callback aborted Etherios Cloud Connector.
                                                         Etherios Cloud Connector will terminate all active messages or requests and free all memory.
                                                         @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */

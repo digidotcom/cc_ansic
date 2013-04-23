@@ -92,30 +92,30 @@ static connector_status_t get_config_device_cloud_url(connector_data_t * const c
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
-    connector_config_pointer_string_t   server_url;
+    connector_config_pointer_string_t   cloud_url;
     connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_device_cloud_url;
 
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &server_url);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_url);
     switch (callback_status)
     {
     case connector_callback_continue:
         /* coverity[uninit_use] */
-        if ((server_url.length == 0) || (server_url.length > SERVER_URL_LENGTH-1))
+        if ((cloud_url.length == 0) || (cloud_url.length > CLOUD_URL_LENGTH-1))
         {
             result =  connector_invalid_data_size;
         }
         /* coverity[uninit_use] */
-        else if (server_url.string == NULL)
+        else if (cloud_url.string == NULL)
         {
             result = connector_invalid_data;
         }
         else
         {
-            connector_ptr->device_cloud_url_length = server_url.length;
-            connector_ptr->device_cloud_url = server_url.string;
+            connector_ptr->device_cloud_url_length = cloud_url.length;
+            connector_ptr->device_cloud_url = cloud_url.string;
         }
         break;
 

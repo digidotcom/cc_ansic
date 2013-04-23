@@ -332,7 +332,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
 
 #if (defined CONNECTOR_DATA_SERVICE)
     case connector_initiate_send_data:
-        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_server) goto done;
+        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud) goto done;
 
         switch (edp_get_active_state(connector_ptr))
         {

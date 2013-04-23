@@ -92,10 +92,10 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
             connector_data_service_send_response_t * const resp_ptr = cb_data;
             client_data_t * const app_data = resp_ptr->user_context;
 
-            APP_DEBUG("Received %s response from server\n", (resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error");
+            APP_DEBUG("Received %s response from Device Cloud\n", (resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error");
             if (resp_ptr->hint != NULL)
             {
-                APP_DEBUG("Server response %s\n", resp_ptr->hint);
+                APP_DEBUG("Device Cloud response %s\n", resp_ptr->hint);
             }
 
             free(app_data);

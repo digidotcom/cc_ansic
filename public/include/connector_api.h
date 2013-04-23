@@ -145,12 +145,12 @@ typedef enum {
    connector_invalid_data_size,     /**< Callback returned configuration with invalid size. */
    connector_invalid_data_range,    /**< Callback returned configuration that is out of range. */
    connector_invalid_data,          /**< Callback returned invalid data. Callback returned a NULL data. */
-   connector_keepalive_error,       /**< Cloud Connector did not receive keepalive messages. Server may be offline. */
+   connector_keepalive_error,       /**< Cloud Connector did not receive keepalive messages. Device Cloud may be offline. */
    connector_bad_version,           /**< Invalid firmware version number. Incorrect firmware version number used in Remote Configuration (RCI) */
    connector_device_terminated,     /**< Cloud Connector was terminated by user via connector_initiate_action call.
                                      All memory is freed and connector_init must be called to reStart Cloud Connector. */
    connector_service_busy,          /**< Someone else is using the same service or the device is busy. */
-   connector_invalid_response,      /**< Received invalid response from the server. */
+   connector_invalid_response,      /**< Received invalid response from Device Cloud. */
    connector_no_resource,           /**< Lack of resource */
    connector_unavailable,           /**< Not available to perform the specified action. */
    connector_idle,                  /**< Cloud Connector is idling. Cloud Connector has no message to process.
@@ -605,9 +605,8 @@ connector_handle_t connector_init(connector_callback_t const callback);
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_invalid_payload_packet Cloud Connector received invalid payload message.
- * @retval connector_keepalive_error        Cloud Connector did not receive keep alive messages. Server may be offline.
- * @retval connector_server_overload        Server overload.
- * @retval connector_bad_version            Server rejected version number.
+ * @retval connector_keepalive_error        Cloud Connector did not receive keep alive messages. Device Cloud may be offline.
+ * @retval connector_bad_version            Device Cloud rejected version number.
  * @retval connector_exceed_timeout         Callback exceeded timeout value before it returned.
  * @retval connector_unsupported_security   Cloud Connector received a packet with unsupported security.
  * @retval connector_invalid_data           An @ref iik_callback "application callback" returned unexpected NULL response_data.
@@ -615,7 +614,6 @@ connector_handle_t connector_init(connector_callback_t const callback);
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_device_terminated      Cloud Connector was terminated by user via connector_initiate_action() call.
- * @retval connector_server_redirect        Cloud Connector was stopped when redirecting to a new server.
  * @retval connector_idle                   Cloud Connector is idling. Cloud Connector has no message to process and relinquishes other task execution.
  * @retval connector_working                Cloud Connector is processing a message and should be called at the earliest possible time.
  * @retval connector_pending                Cloud Connector is busy or waiting to process a message and relinquishes other task execution
@@ -675,22 +673,19 @@ connector_status_t connector_step(connector_handle_t const handle);
  *  									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
- * @retval connector_keepalive_error        Cloud Connector did not receive keep alive messages. Server may be offline.
- * @retval connector_server_overload        Server overload.
- * @retval connector_bad_version            Server rejected version number.
+ * @retval connector_keepalive_error        Cloud Connector did not receive keep alive messages. Device Cloud may be offline.
+ * @retval connector_bad_version            Device Cloud rejected version number.
  * @retval connector_exceed_timeout         Callback exceeded timeout value before it returned.
  * @retval connector_unsupported_security   Cloud Connector received a packet with unsupported security.
  * @retval connector_invalid_data           An @ref iik_callback "application callback" returned unexpected NULL response_data.
  *  									This is an application callback defect and should be corrected.  To locate the
  *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
  * 										debugging, see the section on @ref debug_routine "how to implement debug support".
- * @retval connector_server_disconnected    Server disconnected Cloud Connector.
  * @retval connector_device_error           Close Callback returns
  *                                      error. If connector_step or connector_run is called again, it
  *                                      will re-establish the connection.
  * @retval connector_device_terminated      Cloud Connector was terminated by user via connector_initiate_action call.
- * @retval connector_server_redirect        Cloud Connector was stopped when redirecting to a new server.
-*
+ *
  * Example Usage:
  * @code
  *     connector_status_t status;
@@ -740,7 +735,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                           this method. The actual data is
  *                           transferred through callbacks. The
  *                           data is stored in a specified file
- *                           on the server.
+ *                           on Device Cloud.
  *
  *                      @li @b connector_initiate_transport_start:
  *                          Starts the specified (@ref connector_transport_tcp

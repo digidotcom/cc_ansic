@@ -187,7 +187,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
 
     *packet = NULL;
 
-    ASSERT_GOTO(edp_get_edp_state(connector_ptr) != edp_communication_connect_server, done);
+    ASSERT_GOTO(edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud, done);
 
     /*
      * Read the MT message type.
@@ -195,7 +195,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
      * For MT version 2, there are numerous message types. Some of these
      * messages require special handling, in that they may be legacy EDP
      * version response message varieties. These messages are sent by
-     * servers that do not support MTv2. Since the client doesn't support
+     * device cloud that does not support MTv2. Since the client doesn't support
      * both MTv1 and MTv2 concurrently, an MTv2 client must terminate its
      * MT connection if it finds the Device Cloud to be incompatible insofar as
      * the MT version is concerned.
@@ -309,7 +309,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                     break;
                 case E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP:
                 case E_MSG_MT2_TYPE_VERSION_BAD:
-                case E_MSG_MT2_TYPE_SERVER_OVERLOAD:
+                case E_MSG_MT2_TYPE_CLOUD_OVERLOAD:
                     connector_debug_printf("tcp_receive_packet: unsupported or unexpected error type 0x%x\n", (unsigned) type_val);
                     edp_set_close_status(connector_ptr, connector_close_status_abort);
                     result = connector_abort;
@@ -345,7 +345,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                  * messages to which this applies here are:
                  *    E_MSG_MT2_TYPE_VERSION_OK
                  *    E_MSG_MT2_TYPE_VERSION_BAD
-                 *    E_MSG_MT2_TYPE_SERVER_OVERLOAD
+                 *    E_MSG_MT2_TYPE_CLOUD_OVERLOAD
                  *    E_MSG_MT2_TYPE_KA_KEEPALIVE
                  */
                 if (packet_length != 0)

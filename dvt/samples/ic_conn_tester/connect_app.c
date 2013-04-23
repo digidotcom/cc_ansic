@@ -28,11 +28,11 @@ typedef struct
 {
     int adapter_index;
     struct in_addr my_ip_addr;
-    struct in_addr server_ip_addr;
+    struct in_addr cloud_ip_addr;
     uint8_t my_mac_addr[CONNECTOR_MAC_ADDR_LENGTH];
     uint8_t vendor_id[CONNECTOR_VENDOR_ID_LENGTH];
-    char * server_url;
-   
+    char * cloud_url;
+
 } app_config_t;
 static app_config_t app_config;
 
@@ -181,7 +181,7 @@ static bool parse_mac_address(char * mac, uint8_t addr[])
         unsigned long val2 = strtoul(++ptr, &ptr, 16);
         if ((val1 | val2) == 0)
             goto error;
-        
+
         StoreBE24(addr, val1);
         StoreBE24(&addr[3], val2);
         result = true;
@@ -220,7 +220,7 @@ static bool parse_vendor_id(char const * vendor_str, uint8_t vendor_id[])
     bool result = false;
     uint32_t val = 0;
     size_t len = strlen(vendor_str);
-   
+
     if (len <= 2 && len > (2 * CONNECTOR_VENDOR_ID_LENGTH + 2))
       goto error;
 
@@ -236,11 +236,11 @@ static bool parse_vendor_id(char const * vendor_str, uint8_t vendor_id[])
     }
     val = (uint32_t) strtoul(vendor_str, (char **) NULL, 16);
     StoreBE32(vendor_id, val);
-    
+
     if (val == 0)
         goto error;
 
-    result = true;    
+    result = true;
 error:
     return result;
 }
@@ -253,10 +253,10 @@ static void print_device_config(app_config_t * const config)
 {
     uint8_t *ptr;
     APP_DEBUG("\nUsing device configuration:\n");
-    APP_DEBUG("iDigi Device Cloud Server URL: %s\n", config->server_url);
+    APP_DEBUG("iDigi Device Cloud URL: %s\n", config->cloud_url);
 
     ptr = config->vendor_id;
-    APP_DEBUG("Vendor ID:   0x%.2x%.2x%.2x%.2x\n",ptr[0], ptr[1], ptr[2], ptr[3]); 
+    APP_DEBUG("Vendor ID:   0x%.2x%.2x%.2x%.2x\n",ptr[0], ptr[1], ptr[2], ptr[3]);
 
     ptr = config->my_mac_addr;
     APP_DEBUG("MAC address: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
@@ -271,12 +271,12 @@ static bool ping_connector_server(app_config_t * const config)
     bool result = false;
     unsigned long server_ip_addr;
 
-    APP_DEBUG("Resolving IP address for %s...\n", config->server_url);
+    APP_DEBUG("Resolving IP address for %s...\n", config->cloud_url);
 
-    if (app_dns_resolve_name(config->server_url, &server_ip_addr) < 0)
+    if (app_dns_resolve_name(config->cloud_url, &server_ip_addr) < 0)
     {
        app_inc_stats(dns_error_id);
-       APP_ALT_PRINTF("Could not resolve DNS name for %s\n", config->server_url);
+       APP_ALT_PRINTF("Could not resolve DNS name for %s\n", config->cloud_url);
        goto done;
     }
 
@@ -290,7 +290,7 @@ static bool ping_connector_server(app_config_t * const config)
 
     if (!result)
     {
-        APP_PRINTF("Ping request timed out for %s\n",config->server_url );
+        APP_PRINTF("Ping request timed out for %s\n",config->cloud_url );
         app_inc_stats(ping_failed_id);
     }
 done:
@@ -303,7 +303,7 @@ static bool connect_to_idigi(app_config_t * const config)
     struct sockaddr_in sin, name;
     SOCKET fd = socket(AF_INET, SOCK_STREAM, 0);
 
-    APP_DEBUG("Connecting to %s\n", config->server_url);
+    APP_DEBUG("Connecting to %s\n", config->cloud_url);
 
     if (fd == INVALID_SOCKET)
     {
@@ -312,7 +312,7 @@ static bool connect_to_idigi(app_config_t * const config)
     }
 
     memset((char *)&sin, 0, sizeof(sin));
-    sin.sin_addr = config->server_ip_addr;
+    sin.sin_addr = config->cloud_ip_addr;
     sin.sin_port   = htons(CONNECTOR_PORT);
     sin.sin_family = AF_INET;
     result = connect(fd, (struct sockaddr *)&sin, sizeof(sin));
@@ -321,7 +321,7 @@ static bool connect_to_idigi(app_config_t * const config)
 		int const error = WSAGetLastError();
         if (error != WSAEWOULDBLOCK)
         {
-            APP_PRINTF("connect_to_idigi: connect() failed for server %s, error %d \n", config->server_url, error);
+            APP_PRINTF("connect_to_idigi: connect() failed for Device Cloud %s, error %d \n", config->cloud_url, error);
             goto done;
         }
     }
@@ -360,7 +360,7 @@ static void print_adapter_name(PIP_ADAPTER_ADDRESSES aa, int aa_index)
 
 static int is_ipv4_addr(PIP_ADAPTER_UNICAST_ADDRESS ua)
 {
-	return  (ua->Address.lpSockaddr->sa_family == AF_INET) ? 1 : 0; 
+	return  (ua->Address.lpSockaddr->sa_family == AF_INET) ? 1 : 0;
 }
 
 static void print_ipv4_addr(PIP_ADAPTER_UNICAST_ADDRESS ua)
@@ -373,7 +373,7 @@ static void print_ipv4_addr(PIP_ADAPTER_UNICAST_ADDRESS ua)
 
 		memset(buf, 0, BUFSIZ);
 		getnameinfo(ua->Address.lpSockaddr, ua->Address.iSockaddrLength, buf, sizeof(buf), NULL, 0,NI_NUMERICHOST);
-		APP_DEBUG("%s\n", buf);	
+		APP_DEBUG("%s\n", buf);
 	}
 }
 
@@ -382,7 +382,7 @@ static void print_physical_addr(PIP_ADAPTER_ADDRESSES aa)
 	DWORD i;
 
 	APP_DEBUG("\tPhysical address: ");
-	for (i = 0; i < aa->PhysicalAddressLength; i++) 
+	for (i = 0; i < aa->PhysicalAddressLength; i++)
 	{
 		if (i == (aa->PhysicalAddressLength - 1))
 			APP_DEBUG("%.2X\n",
@@ -403,7 +403,7 @@ static int print_adapter_addresses(void)
 
     APP_DEBUG("Device Network Adapters:\n\n");
 	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, NULL, &size);
-	if (rv != ERROR_BUFFER_OVERFLOW) 
+	if (rv != ERROR_BUFFER_OVERFLOW)
 	{
         APP_PRINTF("GetAdaptersAddresses() failed...");
 		goto done;
@@ -411,13 +411,13 @@ static int print_adapter_addresses(void)
 	adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
 
 	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
-	if (rv != ERROR_SUCCESS) 
+	if (rv != ERROR_SUCCESS)
 	{
 		APP_PRINTF("GetAdaptersAddresses() failed...");
 		goto done;
 	}
 
-	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) 
+	for (aa = adapter_addresses; aa != NULL; aa = aa->Next)
 	{
 		if (aa->PhysicalAddressLength == CONNECTOR_MAC_ADDR_LENGTH)
 		{
@@ -430,16 +430,16 @@ static int print_adapter_addresses(void)
 				PIP_ADAPTER_UNICAST_ADDRESS ua;
 				int ipv4_cnt = 0;
 
-				for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) 
+				for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next)
 				{
 					ipv4_cnt += is_ipv4_addr(ua);
 				}
-				
+
 				if (ipv4_cnt > 0)
 				{
 					aa_ipv4_cnt++;
 
-					for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) 
+					for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next)
 					{
 						print_ipv4_addr(ua);
 					}
@@ -466,7 +466,7 @@ static bool get_adapter_address(int const aa_index, struct in_addr * const ip_ad
     ip_address->s_addr = 0;
 
 	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, NULL, &size);
-	if (rv != ERROR_BUFFER_OVERFLOW) 
+	if (rv != ERROR_BUFFER_OVERFLOW)
 	{
 		APP_PRINTF("GetAdaptersAddresses() failed...");
 		goto done;
@@ -474,31 +474,31 @@ static bool get_adapter_address(int const aa_index, struct in_addr * const ip_ad
 	adapter_addresses = (PIP_ADAPTER_ADDRESSES)malloc(size);
 
 	rv = GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_PREFIX, NULL, adapter_addresses, &size);
-	if (rv != ERROR_SUCCESS) 
+	if (rv != ERROR_SUCCESS)
 	{
 		APP_PRINTF("GetAdaptersAddresses() failed...");
 		goto done;
 	}
 
-	for (aa = adapter_addresses; aa != NULL; aa = aa->Next) 
+	for (aa = adapter_addresses; aa != NULL; aa = aa->Next)
 	{
 		if (aa->PhysicalAddressLength == CONNECTOR_MAC_ADDR_LENGTH)
 		{
 			if (++aa_cnt == aa_index)
 			{
-				if (aa->FirstUnicastAddress != NULL) 
+				if (aa->FirstUnicastAddress != NULL)
 				{
 					PIP_ADAPTER_UNICAST_ADDRESS ua;
 					int ipv4_cnt = 0;
 
-					for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) 
+					for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next)
 					{
 						ipv4_cnt += is_ipv4_addr(ua);
 					}
-					
+
 					if (ipv4_cnt > 0)
 					{
-						for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next) 
+						for (ua = aa->FirstUnicastAddress; ua != NULL; ua = ua->Next)
 						{
 							if (ua->Address.lpSockaddr->sa_family == AF_INET)
 							{
@@ -539,7 +539,7 @@ static bool parse_cmd_line(int argc, char **argv, app_config_t * const config)
     char * url_str = NULL;
     char * mac_str = NULL;
     char * adapter_str = NULL;
-    
+
 
     for (i = 1; i < num_args; i++)
     {
@@ -567,7 +567,7 @@ static bool parse_cmd_line(int argc, char **argv, app_config_t * const config)
         print_adapter_addresses();
 
         APP_PRINTF("Usage  : %s <iDigi Device Cloud Server URL> <Vendor ID> [<MAC Address>]\n\n", APP_NAME);
-        APP_PRINTF("<iDigi Device Cloud Server URL> -  login.etherios.com or my.idigi.co.uk\n\n"); 
+        APP_PRINTF("<iDigi Device Cloud Server URL> -  login.etherios.com or my.idigi.co.uk\n\n");
         APP_PRINTF("<Vendor ID>   - Unique code identifying the manufacturer of a device,\n");
         APP_PRINTF("                presented as hexidecimal number, for example 0x0300000a\n\n");
         APP_PRINTF("<MAC Address> - MAC address of the device, used to identify the device to Etherios Device Cloud,\n");
@@ -579,14 +579,14 @@ static bool parse_cmd_line(int argc, char **argv, app_config_t * const config)
     APP_PRINTF("Please wait one minute to complete\n\n");
 
     {
-        size_t server_url_size = strlen(url_str) + 1;
-        config->server_url = malloc(server_url_size);
-        if (config->server_url == NULL)
+        size_t cloud_url_size = strlen(url_str) + 1;
+        config->cloud_url = malloc(cloud_url_size);
+        if (config->cloud_url == NULL)
         {
             APP_PRINTF("Could not allocate mamory\n");
             goto done;
         }
-        memcpy(config->server_url, url_str, server_url_size);
+        memcpy(config->cloud_url, url_str, cloud_url_size);
     }
     if (!parse_vendor_id(vendor_str, config->vendor_id))
     {
@@ -622,7 +622,7 @@ static bool parse_cmd_line(int argc, char **argv, app_config_t * const config)
             goto done;
         }
     }
-                
+
     result = true;
 
 done:
@@ -660,18 +660,18 @@ bool application_get_vendor_id(uint8_t const ** id, size_t * const size)
     return true;
 }
 
-bool application_get_server_url(char const ** url, size_t * const size)
+bool application_get_cloud_url(char const ** url, size_t * const size)
 {
-    *url = app_config.server_url;
-    *size = strlen(app_config.server_url);
- 
+    *url = app_config.cloud_url;
+    *size = strlen(app_config.cloud_url);
+
     return true;
 }
 
 void application_cleanup(void)
 {
-    if (app_config.server_url != NULL)
-        free(app_config.server_url);
+    if (app_config.cloud_url != NULL)
+        free(app_config.cloud_url);
 }
 
 bool application_init(int argc, char **argv)
@@ -686,7 +686,7 @@ bool application_init(int argc, char **argv)
         goto done;
     app_show_progress();
     APP_DEBUG("\n");
- 
+
     if (!connect_to_idigi(&app_config))
         goto done;
 
@@ -702,22 +702,22 @@ void print_test_result(int result)
 {
     if (result == 0)
     {
-        APP_PRINTF("\nSuccessfully connected to %s:%d\n\n", app_config.server_url, CONNECTOR_PORT);
+        APP_PRINTF("\nSuccessfully connected to %s:%d\n\n", app_config.cloud_url, CONNECTOR_PORT);
         if (app_stats.open_conn_fail_cnt > 0)
             APP_DEBUG("Failed to establish connection %u times\n",app_stats.open_conn_fail_cnt);
-        APP_DEBUG("Connection closed by the server %u times\n", app_stats.closed_conn_cnt);
+        APP_DEBUG("Connection closed by Device Cloud %u times\n", app_stats.closed_conn_cnt);
         APP_DEBUG("Missed keepalive %u times\n",app_stats.missed_ka_cnt);
     }
     else
     {
-        APP_PRINTF("\nFailed to connect to %s:%d\n\n", app_config.server_url, CONNECTOR_PORT);
+        APP_PRINTF("\nFailed to connect to %s:%d\n\n", app_config.cloud_url, CONNECTOR_PORT);
         if (app_stats.open_conn_fail_cnt > 0)
         {
             APP_PRINTF("Failed to establish connection %u times\n",app_stats.open_conn_fail_cnt);
             if (app_stats.dns_error_cnt > 0)
-                APP_PRINTF("Could not resolve DNS for %s\n", app_config.server_url);
+                APP_PRINTF("Could not resolve DNS for %s\n", app_config.cloud_url);
         }
-        APP_PRINTF("Connection closed by the server %u times\n", app_stats.closed_conn_cnt);
+        APP_PRINTF("Connection closed by Device Cloud %u times\n", app_stats.closed_conn_cnt);
 #ifdef CONNECTOR_DEBUG
         if (app_stats.closed_conn_cnt > 0)
         {

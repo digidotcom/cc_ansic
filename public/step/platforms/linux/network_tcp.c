@@ -42,7 +42,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
     connector_callback_status_t status = connector_callback_continue;
     int * const fd = data->handle;
 
-    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_server_redirected);
+    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_cloud_redirected);
 
     data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
 

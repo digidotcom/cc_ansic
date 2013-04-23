@@ -173,7 +173,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             if (resp_ptr->hint != NULL)
             {
-                APP_DEBUG("app_put_request_handler: server response %s\n", resp_ptr->hint);
+                APP_DEBUG("app_put_request_handler: Device Cloud response %s\n", resp_ptr->hint);
             }
 
             /* should be done now */

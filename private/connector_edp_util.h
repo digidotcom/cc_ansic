@@ -33,7 +33,7 @@
 
 static void edp_reset_initial_data(connector_data_t * const connector_ptr)
 {
-    edp_set_edp_state(connector_ptr, edp_communication_connect_server);
+    edp_set_edp_state(connector_ptr, edp_communication_connect_to_cloud);
 
     connector_ptr->edp_data.facilities.current = NULL;
     connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
@@ -190,8 +190,8 @@ static connector_status_t notify_status(connector_callback_t const callback, con
 
 static void edp_get_device_cloud(connector_data_t * const connector_ptr)
 {
-    memcpy(connector_ptr->edp_data.config.server_url, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length);
-    connector_ptr->edp_data.config.server_url[connector_ptr->device_cloud_url_length] = 0x0;
-    connector_ptr->edp_data.config.server_url_length = connector_ptr->device_cloud_url_length;
+    memcpy(connector_ptr->edp_data.config.cloud_url, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length);
+    connector_ptr->edp_data.config.cloud_url[connector_ptr->device_cloud_url_length] = 0x0;
+    connector_ptr->edp_data.config.cloud_url_length = connector_ptr->device_cloud_url_length;
 }
 

@@ -21,22 +21,22 @@
  * @brief   Open a network socket to communicate Etherios Device
  *          Cloud
  *
- * This routine opens a UDP socket and attempts to to resolve the name for 
- * Etherios Device Cloud. It sets the resolved peer 
- * address using UDP connect(). 
- *  
- * @param data @ref connector_network_open_t 
+ * This routine opens a UDP socket and attempts to to resolve the name for
+ * Etherios Device Cloud. It sets the resolved peer
+ * address using UDP connect().
+ *
+ * @param data @ref connector_network_open_t
  *  <ul>
  *   <li><b><i>device_cloud_url</i></b> - FQDN of Etherios
  *   Device Cloud </li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,
- *   @ref connector_network_handle_t "connector_network_handle_t" 
+ *   @ref connector_network_handle_t "connector_network_handle_t"
  *      is defined in public\include\connector_types.h.
  *  </li>
- * </ul> 
- *  
- * @retval connector_callback_continue	The routine has successfully opened a socket and resolved server's name. 
+ * </ul>
+ *
+ * @retval connector_callback_continue	The routine has successfully opened a socket and resolved Device Cloud's name.
  * @retval connector_callback_busy 		The routine will be called again to complete open.
  * @retval connector_callback_error     The operation failed, Etherios Cloud Connector
  *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
@@ -56,15 +56,15 @@ connector_callback_status_t app_network_udp_open(connector_network_open_t * cons
 /**
  * @brief   Send data to Etherios Device Cloud
  *
- * This routine sends data to Etherios Device Cloud. This 
+ * This routine sends data to Etherios Device Cloud. This
  * function must not block. If it encounters EAGAIN or
- * EWOULDBLOCK error, 0 bytes must be returned and Etherios 
- * Cloud Connector will continue calling this function. If 
- * successful connector_callback_continue is returned. If the 
- * data could not be sent connector_callback_busy is returned, 
- * otherwise connector_callback_abort is returned. 
- *  
- * @param data @ref connector_network_send_t 
+ * EWOULDBLOCK error, 0 bytes must be returned and Etherios
+ * Cloud Connector will continue calling this function. If
+ * successful connector_callback_continue is returned. If the
+ * data could not be sent connector_callback_busy is returned,
+ * otherwise connector_callback_abort is returned.
+ *
+ * @param data @ref connector_network_send_t
  *  <ul>
  *   <li><b><i>handle</i></b> - Network handle </li>
  *   <li><b><i>buffer</i></b> - Pointer to data to send
@@ -73,17 +73,17 @@ connector_callback_status_t app_network_udp_open(connector_network_open_t * cons
  *  </li>
  *   <li><b><i>bytes_used</i></b> - Number of bytes sent
  *   </li>
- * </ul> 
- *  
- * @retval connector_callback_continue	The routine has sent 
+ * </ul>
+ *
+ * @retval connector_callback_continue	The routine has sent
  *         some data.
- * @retval connector_callback_busy 		No data was sent, the 
+ * @retval connector_callback_busy 		No data was sent, the
  *                                  routine has encountered
  *                                  EAGAIN or EWOULDBLOCK error.
  *                                  It will be called again to
  *                                  send data.
- * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call 
- *                                  @ref app_network_udp_close. 
+ * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call
+ *                                  @ref app_network_udp_close.
  * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref send API Network Callback
@@ -101,9 +101,9 @@ connector_callback_status_t app_network_udp_send(connector_network_send_t * cons
  * @brief   Receive data from Etherios Device Cloud
  *
  * This routine receives data from Etherios Device Cloud. This
- * function must not block. 
- *  
- * @param data @ref connector_network_receive_t 
+ * function must not block.
+ *
+ * @param data @ref connector_network_receive_t
  *  <ul>
  *   <li><b><i>handle</i></b> - Network handle </li>
  *   <li><b><i>buffer</i></b> - Buffer to place received data
@@ -112,13 +112,13 @@ connector_callback_status_t app_network_udp_send(connector_network_send_t * cons
  *  </li>
  *   <li><b><i>bytes_used</i></b> - Number of bytes received
  *   </li>
- * </ul> 
- *  
+ * </ul>
+ *
  * @retval connector_callback_continue	The routine has received some data.
- * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or 
+ * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or
  *                                  EWOULDBLOCK error. It will be called again to receive data.
- * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call 
- *                                  @ref app_network_udp_close. 
+ * @retval connector_callback_error     An irrecoverable error has occured,  Etherios Cloud Connector will call
+ *                                  @ref app_network_udp_close.
  * @retval connector_callback_abort     The application aborts Etherios Cloud Connector.
  *
  * @see @ref receive API Network Callback
@@ -136,15 +136,15 @@ connector_callback_status_t app_network_udp_receive(connector_network_receive_t 
  * @brief   Close the network socket to Etherios Device Cloud
  *
  * This callback requests an application to close it's network handle.
- *  
- * @param data @ref connector_network_close_t 
+ *
+ * @param data @ref connector_network_close_t
  *  <ul>
  *   <li><b><i>handle</i></b> - Network handle </li>
  *   <li><b><i>reconnect</i></b> - Set to connector_true to
  *   restart the transport without exiting connector_run(). Set
  *   to connector_false otherwise.
  *   </li>
- * </ul> 
+ * </ul>
  *
  * @retval connector_callback_continue	The callback has successfully closed the connection.
  * @retval connector_callback_busy 		The network device is busy, the routine will be called again to complete close.

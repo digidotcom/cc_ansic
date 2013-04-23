@@ -83,12 +83,12 @@ static connector_callback_status_t app_get_invalid_size_device_type(connector_co
 }
 
 
-static connector_callback_status_t app_get_invalid_size_server_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t app_get_invalid_size_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static char  invalid_size_server_url;
+    static char  invalid_size_cloud_url;
 
     /* Return pointer to device type. */
-    config_url->string = &invalid_size_server_url;
+    config_url->string = &invalid_size_cloud_url;
     config_url->length = 0;
 
     return connector_callback_continue;
@@ -294,8 +294,8 @@ connector_callback_status_t app_invalid_size_config_handler(connector_request_id
         break;
 
     case connector_request_id_config_device_cloud_url:
-        APP_DEBUG("app_config_handler:connector_config_server_url\n");
-        status = app_get_invalid_size_server_url(data);
+        APP_DEBUG("app_config_handler:connector_config_cloud_url\n");
+        status = app_get_invalid_size_cloud_url(data);
         break;
 
     case connector_request_id_config_connection_type:

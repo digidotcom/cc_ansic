@@ -172,7 +172,7 @@ static unsigned int debug_count = 0;
 
 static uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, uint16_t const facility, uint8_t ** data_ptr, size_t * data_length)
 {
-#define MIN_EDP_MESSAGE_SIZE    (PACKET_EDP_HEADER_SIZE +SERVER_URL_LENGTH)
+#define MIN_EDP_MESSAGE_SIZE    (PACKET_EDP_HEADER_SIZE +CLOUD_URL_LENGTH)
     uint8_t * packet = NULL;
     uint8_t * ptr = NULL;
     size_t length = 0;
