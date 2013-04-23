@@ -487,7 +487,7 @@
  *
  * @code
  * >./connector
- * Start Etherios Cloud Connector for Embedded
+ * Start Cloud Connector for Embedded
  * Cloud Connector v2.0.0.0
  * Device ID  =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
  * application_run thread starts
@@ -529,7 +529,7 @@
  *
  * @code
  * >./connector
- * Start Etherios Cloud Connector for Embedded
+ * Start Cloud Connector for Embedded
  * Cloud Connector v2.0.0.0
  * Device ID  =  00 00 00 00 00 00 00 00 78 E7 D1 FF FF 84 47 82
  * app_config_error: Class: connector_class_id_config (0) Request: connector_request_id_config_device_cloud_url (3) Error status: connector_invalid_data_size (2)
