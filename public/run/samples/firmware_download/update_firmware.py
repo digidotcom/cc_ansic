@@ -15,7 +15,7 @@
 # Send an image file to do firmware upgrade using update_firmware SCI operation.
 # It updates firmware target = 0 with image file name "image.a"
 # -------------------------------------------------
-# Usage: update_firmware.py <username> <password> <device_id> [<cloud_url>]
+# Usage: query_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
 image_file = "image.a" # image filename
 
@@ -24,9 +24,31 @@ import base64
 import sys
 
 def Usage():
-    print 'Usage: update_firmware.py <username> <password> <device_id> [<cloud_url>]'
-    print '       It opens \"image.a\" file and sends firmware update to device on target 0\n'  
-   
+    print 'Usage: update_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
+    print '    Performs a firwmare download operation to target 0 on <Device ID> using a local'
+    print '    file \"image.a\".'
+    print '    where:' 
+    print '        <Username> is the Device Cloud for Etherios account Username to which your device is'
+    print '                   connected.'
+    print '        <Password> is the account password'
+    print '        <Device ID> is the device to download.' 
+    print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
+    print '                   login.etherios.com.' 
+    print '' 
+    print '    Note:'
+    print '        The file \"image.a\" must be created locally.\n'
+    print '        <Device ID> format can either be:'
+    print '            Long: 00000000-00000000-00049DFF-FFAABBCC.' 
+    print '            or short: 00049DFF-FFAABBCC\n'
+    print '    Example Usage:' 
+    print '        python ./update_firmware.py myaccount mypassword 00049DFF-FFAABBCC'
+    print '            Performs a firmware download of \"image.a\" to 00000000-00000000-00049DFF-FFAABBCC '
+    print '            (in user account myaccount) through login.etherios.com.\n'
+    print '        python ./update_firmware.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
+    print '            Performs a firmware download of \"image.a\" to 00000000-00000000-00049DFF-FFAABBCC '
+    print '            (in user account myaccount) through login.etherios.co.uk.\n'
+
+
 def PostMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
@@ -36,14 +58,16 @@ def PostMessage(username, password, device_id, cloud_url):
     try: 
         fileHandle = open(image_file, 'r')
     except IOError:
-        print '\nError: cannot open', image_file
-        Usage();
+        print 'Usage: update_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
+        print '    Uses a local \"image.a\" to firmware download to device_id on target 0.\n'
+        print '    ERROR: cannot open \"image.a\".\n'
+        print '    File not found\n'
         return -1
         
 
     # build firmware download message sent to server
     message = """<sci_request version="1.0">
-        <update_firmware firmware_target="0" filename="%s">
+        <update_firmware firmware_target="1" filename="%s">
             <targets>
                 <device id="%s"/>
             </targets>
