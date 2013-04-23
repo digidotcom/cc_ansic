@@ -251,11 +251,11 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_DEBUG @htmlonly disabled</td>
- * <td>1723</td>
+ * <td>1107</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_DEBUG @htmlonly enabled</td>
- * <td>2091</td>
+ * <td>1043</td>
  * </tr>
  * </table>
  * @endhtmlonly
