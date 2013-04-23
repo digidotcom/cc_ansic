@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section os_callbacks OS Callbacks
- * The Etherios Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
+ * Cloud Connector interfaces to the platform's OS through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  * The class id is @ref connector_class_id_operating_system.
  *
@@ -67,7 +67,7 @@
  *   </tr>
  *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *     <td>Callback aborts Etherios Cloud Connector</td>
+ *     <td>Callback aborts Cloud Connector</td>
  *   </tr>
  * </table>
  * @endhtmlonly
@@ -135,7 +135,7 @@
  *   </tr>
  *   <tr>
  *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *     <td>Callback aborts Etherios Cloud Connector</td>
+ *     <td>Callback aborts Cloud Connector</td>
  *   </tr>
  * </table>
  * @endhtmlonly
@@ -190,7 +190,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Error occurred and callback aborted Etherios Cloud Connector</td>
+ * <td>Error occurred and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -219,7 +219,7 @@
  * and implemented in the @b Platform function app_os_yield() in os.c.
  *
  * @see app_os_yield()
- * @see @ref threading "Multi-threading and Etherios Cloud Connector Threading Model"
+ * @see @ref threading "Multi-threading and the Cloud Connector Threading Model"
  *
  * @htmlonly
  * <table class="apitable">
@@ -237,7 +237,7 @@
  *  <th>data</th>
  *  <td>Pointer to @endhtmlonly @ref connector_os_yield_t "connector_os_yield_t" @htmlonly structure,
  *  containing
- *  @endhtmlonly @ref connector_status_t "status of Etherios Cloud Connector".@htmlonly
+ *  @endhtmlonly @ref connector_status_t "status of Cloud Connector".@htmlonly
  *   <br /><br />   Values applied to this callback are:
  *   </ul>
  *      <ul> <li> @endhtmlonly @ref connector_idle @htmlonly </li>
@@ -255,7 +255,7 @@
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- * <td>Error occurred and callback aborted Etherios Cloud Connector</td>
+ * <td>Error occurred and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -281,7 +281,7 @@
  *
  * @section reboot Reboot
  *
- * Callback is called when Etherios Device Cloud requests that the device reboots.
+ * Callback is called when Device Cloud requests that the device reboots.
  * The device should reboot and this callback should not return.
  *
  * @htmlonly
@@ -316,7 +316,7 @@
  *
  * connector_callback_status_t os_reboot(void)
  * {
- *      APP_DEBUG("Reboot from Etherios Device Cloud\n");
+ *      APP_DEBUG("Reboot from Device Cloud\n");
  *
  *     return connector_callback_continue;
  * }

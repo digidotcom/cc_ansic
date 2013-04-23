@@ -4,7 +4,7 @@
  *
  * @section sm_callbacks_overview Short Message (SM) callbacks Overview
  *
- * The SM callback APIs are used to send and receive short messages to and from Device Cloud by Etherios.
+ * The SM callback APIs are used to send and receive short messages to and from Device Cloud.
  * The SM transfers are communicated over UDP transport method. The following requests under
  * @ref connector_class_id_short_message are listed below:
  *
@@ -136,7 +136,7 @@
  *
  * @subsection ping_request_callback  Ping request callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_sm_ping_request "Ping Request"
+ * Cloud Connector will make @ref connector_request_id_sm_ping_request "Ping Request"
  * @ref connector_callback_t "callback" to inform the application that ping is received. This callback
  * is just for the information purpose only. No action is needed from the application, unless it wants to
  * abort the connection.
@@ -199,7 +199,7 @@
  *
  * @subsection cli_request_callback  CLI request callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_sm_cli_request "CLI request"
+ * Cloud Connector will make @ref connector_request_id_sm_cli_request "CLI request"
  * @ref connector_callback_t "callback" to pass received CLI command from Device Cloud.
  *
  * The @ref connector_request_id_sm_cli_request "CLI request" @ref connector_callback_t "callback"
@@ -256,7 +256,7 @@
  *
  * @subsection cli_response_length_callback  Response length callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_sm_cli_response_length "response length"
+ * Cloud Connector will make @ref connector_request_id_sm_cli_response_length "response length"
  * @ref connector_callback_t "callback" to get the total/maximum predicted CLI response length in bytes. This
  * callback will be made only if the response is requested by Device Cloud. Cloud Connector will allocate
  * the required resources based on the length specified here. Actual bytes used during
@@ -310,7 +310,7 @@
  *
  * @subsection cli_response_callback  CLI response callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_sm_cli_response "CLI response"
+ * Cloud Connector will make @ref connector_request_id_sm_cli_response "CLI response"
  * @ref connector_callback_t "callback" to get the CLI response to send to Device Cloud. This
  * callback will be made only if the response is requested by Device Cloud. The filled bytes
  * must not exceed the available bytes. The available bytes is based on the @ref cli_response_length_callback
@@ -415,7 +415,7 @@
  *
  * @section pending_data  Pending data callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_sm_more_data "pending data"
+ * Cloud Connector will make @ref connector_request_id_sm_more_data "pending data"
  * @ref connector_callback_t "callback" to indicate the application that there are pending messages
  * on Device Cloud. Application can send any messages (ping if no data to send) to retreive
  * the queued messages.
@@ -461,14 +461,14 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
  * @section opaque_response  Opaque response callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
+ * Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
  * @ref connector_callback_t "callback" to indicate the application that it received a response from
  * Device Cloud for which no associated request is available. The reason for this is the session is
  * terminated either because of the timeout specified in @ref CONNECTOR_SM_TIMEOUT or it is
@@ -517,7 +517,7 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly

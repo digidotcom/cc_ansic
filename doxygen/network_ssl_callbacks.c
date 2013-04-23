@@ -5,7 +5,7 @@
  *
  * @section net_ssl Network Callbacks
  * From the top level these callbacks are analogous to the @ref network_callbacks. Internally they provide
- * interface to securely connect to Etherios Device Cloud on SSL. Any application can make use of these APIs to
+ * interface to securely connect to Device Cloud on SSL. Any application can make use of these APIs to
  * obtain secure connection just by including network_tcp_ssl.c instead of network_tcp.c. The sample application
  * @ref connect_on_ssl is created to demonstrate how easy to enable SSL connections. Like @ref network_callbacks,
  * the SSL network interface module will provide the following callback APIs 
@@ -15,7 +15,7 @@
  *  -# @ref ssl_receive
  *  -# @ref ssl_close
  * 
- * The SSL network callback APIs use openssl functions to communicate with Etherios Device Cloud over SSL connection.
+ * The SSL network callback APIs use openssl functions to communicate with Device Cloud over SSL connection.
  * These APIs can be found in network_tcp_ssl.c under platforms/<i>my_platform</i> to demonstrate how one can
  * write the network layer callback APIs to connect, send, receive and close the SSL connection.
  * As far as the top level calls are concerned there is no change between the SSL and non-SSL connection.
@@ -25,7 +25,7 @@
  *
  * @section ssl_connect Open
  *
- * This callback is called to establish SSL connection between Etherios Cloud Connector and Etherios Device Cloud.
+ * This callback is called to establish SSL connection between Cloud Connector and Device Cloud.
  * Callback is responsible to setup any socket options and SSL specific initial settings.
  * 
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -73,7 +73,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the Device Cloud; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
+ * <td>Callback was unable to connect to the Device Cloud; Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
  *     <br /><br />
  *     If the transport is configured to start automatically 
  *     the callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again.
@@ -81,7 +81,7 @@
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- *   <td>Callback was unable to connect to the Device Cloud and callback aborted Etherios Cloud Connector</td>
+ *   <td>Callback was unable to connect to the Device Cloud and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -105,7 +105,7 @@
  *
  *     // resolve address for data->device_cloud_url
  *     // create socket fd, set socket option for keep alive and no delay
- *     // connect to CONNECTOR_SSL_PORT on Etherios Device Cloud
+ *     // connect to CONNECTOR_SSL_PORT on Device Cloud
  *
  *    SSL_library_init();
  *    OpenSSL_add_all_algorithms();
@@ -165,8 +165,8 @@
  *
  * @section ssl_send Send
  *
- * Callback is called to send data to Etherios Device Cloud over SSL connection. This function must not block. 
- * If it encounters EAGAIN or EWOULDBLOCK error it must return @ref connector_callback_busy and Etherios Cloud Connector will 
+ * Callback is called to send data to Device Cloud over SSL connection. This function must not block.
+ * If it encounters EAGAIN or EWOULDBLOCK error it must return @ref connector_callback_busy and Cloud Connector will
  * continue calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -208,11 +208,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td>Callback was unable to send data due to irrecoverable communications error. 
- *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborts Etherios Cloud Connector</td>
+ * <td>Callback aborts Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -243,7 +243,7 @@
  * @section ssl_receive Receive
  *
  * Callback is called to receive a specified number of bytes of data from the Device
- * Cloud by Etherios.  This function must not block.
+ * Cloud.  This function must not block.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_network_tcp_receive() in network_tcp_ssl.c.
@@ -287,11 +287,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td> Callback was unable to receive data due to irrecoverable communications error. 
- *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborts Etherios Cloud Connector</td>
+ * <td>Callback aborts Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -318,7 +318,7 @@
  *         FD_ZERO(&read_set);
  *         FD_SET(ssl_ptr->sfd, &read_set);
  *
- *         // Blocking point for Etherios Cloud Connector
+ *         // Blocking point for Cloud Connector
  *         ready = select(ssl_ptr->sfd + 1, &read_set, NULL, NULL, &timeout);
  *         if (ready == 0)
  *         {
@@ -351,7 +351,7 @@
  *
  * @section ssl_close Close
  *
- * Callback is called to close a connection between a device and Etherios Device Cloud. This API
+ * Callback is called to close a connection between a device and Device Cloud. This API
  * should release all the SSL based allocation.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"

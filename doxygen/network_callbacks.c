@@ -4,7 +4,7 @@
  * @htmlinclude nav.html
  *
  * @section net Network Callbacks
- * The Etherios Cloud Connector interfaces to the platform's network interface through the callbacks listed below.  These
+ * Cloud Connector interfaces to the platform's network interface through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  *
  *  -# @ref open
@@ -15,9 +15,9 @@
  *
  * @section open Open
  *
- * This callback is called to start a network transport to communicate with Etherios Device Cloud. For
- * @ref connector_class_id_network_tcp transport it establishes a connection between Etherios Cloud Connector
- * and Etherios Device Cloud.
+ * This callback is called to start a network transport to communicate with Device Cloud. For
+ * @ref connector_class_id_network_tcp transport it establishes a connection between Cloud Connector
+ * and Device Cloud.
  *
  * The @ref connector_class_id_network_udp transport does not stablish a connection, but it can resolve
  * a domain name and open a communication socket in this callback. UDP does not guarantee reliable data
@@ -66,7 +66,7 @@
  * <th>data</th>
  * <td> Pointer to @endhtmlonly @ref connector_network_open_t "connector_network_open_t" @htmlonly structure
  *        <ul>
- *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to the Etherios Device Cloud URL </li>
+ *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to the Device Cloud URL </li>
  *          <li><b><i>handle</i></b> - [OUT] Returned @endhtmlonly @ref connector_network_handle_t "network handle" @htmlonly which is used throughout network callbacks </li>
  *        </ul>
  * </td>
@@ -82,7 +82,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>Callback was unable to connect to the Device Cloud; Etherios Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
+ * <td>Callback was unable to connect to the Device Cloud; Cloud Connector will exit @endhtmlonly @ref connector_run "connector_run()"@htmlonly.
  *     <br /><br />
  *     If the transport is configured to start automatically
  *     the callback will be retried when @endhtmlonly @ref connector_run "connector_run()" @htmlonly is called again.
@@ -90,7 +90,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -98,11 +98,11 @@
  *
  * @section send Send
  *
- * Callback is called to send data to Etherios Device Cloud. This function must not block.
+ * Callback is called to send data to Device Cloud. This function must not block.
  * Number of bytes actually sent could be less than the requested number.
  *
  * If the callback could not send any data because it encountered EAGAIN or EWOULDBLOCK error,
- * it must return @ref connector_callback_busy and Etherios Cloud Connector would continue
+ * it must return @ref connector_callback_busy and Cloud Connector would continue
  * calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -154,11 +154,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td>Callback was unable to send data due to irrecoverable communications error.
- *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -166,12 +166,12 @@
  *
  * @section receive Receive
  *
- * Callback is called to receive a specified number of bytes of data from Etherios
+ * Callback called to receive a specified number of data bytes from
  * Device Cloud.  This function must not block.
 
  * Number of bytes actually received could be less than the size of the buffer number. If there was no data pending
  * and the callback has encountered EAGAIN or EWOULDBLOCK error, it must return @ref connector_callback_busy
- * and Etherios Cloud Connector would continue calling this function.
+ * and Cloud Connector would continue calling this function.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function:
@@ -222,11 +222,11 @@
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  * <td> Callback was unable to receive data due to irrecoverable communications error.
- *     Etherios Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
+ *     Cloud Connector will @endhtmlonly @ref close "close" @htmlonly the network handle</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -285,7 +285,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly

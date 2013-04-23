@@ -4,9 +4,9 @@
  *
  * @section status_callbacks_overview Status callbacks Overview
  *
- * The status callbacks APIs are used to send and receive status messages to and from Etherios Device Cloud and to notify
- * application when TCP communication is established, keep alive message is not received from Etherios Device Cloud, keep alive
- * message is restored and received from Etherios Device Cloud, and Etherios Cloud Connector stops running.
+ * The status callbacks APIs are used to send and receive status messages to and from Device Cloud and to notify
+ * application when TCP communication is established, keep alive message is not received from Device Cloud, keep alive
+ * message is restored and received from Device Cloud, and Cloud Connector stops running.
  *
  * The following requests under @ref connector_class_id_status are listed below:
  *
@@ -15,7 +15,7 @@
  * a keep-alive message was not received, or keep-alive message was received and recovered.
  *
  * @li @ref status_stop_completed
- * - This callback is called to notify the application that Etherios Cloud Connector has stopped a transport running.
+ * - This callback is called to notify the application that Cloud Connector has stopped a transport running.
  *
  * @section status_tcp TCP Status
  *
@@ -46,11 +46,11 @@
  *             <dt><b>@endhtmlonly @ref connector_tcp_communication_started @htmlonly </b> </dt>
  *             <dd> - TCP communication has been established. User and application is able to start message and data transfer. </dd>
  *             <dt><b>@endhtmlonly @ref connector_tcp_keepalive_missed @htmlonly </b>
- *             <dd> - Etherios Cloud Connector has not received a keep alive message from Etherios Device Cloud
+ *             <dd> - Cloud Connector has not received a keep alive message from Device Cloud
  *                    within the time specifed in @endhtmlonly @ref connector_request_id_config_tx_keepalive callback or
  *                    @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS. See @ref tx_keepalive @htmlonly </dd>
  *             <dt><b>@endhtmlonly @ref connector_tcp_keepalive_restored @htmlonly </b>
- *             <dd> - Digi connector has received and recovered missed keep alive message from Etherios Device Cloud. </dd>
+ *             <dd> - Cloud Connector has received and recovered missed keep alive message from Device Cloud. </dd>
  *             </dl></dd>
  *        </dl></td>
  * </tr>
@@ -62,14 +62,14 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
  * @section status_stop_completed Stop Completion
  *
- * This callback is called when Etherios Cloud Connector has stopped running. It's invoked from connector_initiate_action() call on @ref connector_initiate_transport_stop.
+ * This callback is called when Cloud Connector has stopped running. It's invoked from connector_initiate_action() call on @ref connector_initiate_transport_stop.
  * When connector_initiate_action() is called, this calblack will be called after the specified transport has stopped running.
  *
  * @htmlonly
@@ -111,7 +111,7 @@
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts Etherios Cloud Connector</td>
+ *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *   <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>

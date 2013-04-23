@@ -20,7 +20,7 @@
  *
  * @section connect_description Code Flow
  *
- * The routine main() in the platform directory initializes Etherios Cloud Connector and
+ * The routine main() in the platform directory initializes Cloud Connector and
  * registers the application callback.  In the file application.c is the
  * application defined callback app_connector_callback(), this routine calls app_remote_config_handler()
  * when a remote command interface (RCI) request is received.
@@ -39,16 +39,16 @@
  *   - Connection security
  *   - Password
  *
- * @subsection config_file Etherios Cloud Connector configuration file
+ * @subsection config_file Cloud Connector configuration file
  *
- * The following is Etherios Cloud Connector configuration file:
+ * The following is Cloud Connector configuration file:
  *
  * @code
  * globalerror load_fail "Load fail"
  * globalerror save_fail "Save fail"
  * globalerror memory_fail "Insufficient memory"
  *
- * # Device info that shows up in Etherios Device Cloud under Device Manger
+ * # Device info that shows up in Device Cloud under Device Manger
  * # Device Manager queries this system setting to display the information in root folder
  * group setting system "System"
  *     element description "Description" type string max 63
@@ -56,8 +56,8 @@
  *     element location "Location" type string max 63
  *     error invalid_length "Invalid Length"
  *
- * # Etherios Device Cloud password
- * # Etherios Device Cloud uses this devicesecurity setting for password authentication
+ * # Device Cloud password
+ * # Device Cloud uses this devicesecurity setting for password authentication
  * # Note, as with all password, password type is a write-only field
  * # To include the devicesecurity setting, change devicesecurity.c.optional
  * # to devicesecurity.c
@@ -69,7 +69,7 @@
  *
  * # Device location
  * # State configuration for GPS
- * # Must setup the following group for Latitude and Longitude to be shown in Etherios Device Cloud.
+ * # Must setup the following group for Latitude and Longitude to be shown in Device Cloud.
  * group state gps_stats "GPS"
  *     element latitude "Latitude" type string access read_only
  *     element longitude "Longitude" type string access read_only
@@ -86,7 +86,7 @@
  *
  * @endcode
  *
- * When Etherios Device Cloud sends a RCI request to the device, app_remote_config_handler() is called with the following request ID:
+ * When Device Cloud sends a RCI request to the device, app_remote_config_handler() is called with the following request ID:
  * -# @ref connector_request_id_remote_config_session_start
  * -# @ref connector_request_id_remote_config_action_start
  * -# @ref connector_request_id_remote_config_group_start
@@ -169,11 +169,11 @@
  * <tr>
  * <tr>
  * <th>connector_config.h</th>
- * <td>Etherios Cloud Connector options</td>
+ * <td>Cloud Connector options</td>
  * <td>samples/simple_remote_config</td>
  * </tr>
  * <th>connector_api.c</th>
- * <td>Code for Etherios Cloud Connector </td>
+ * <td>Code for Cloud Connector </td>
  * <td>private</td>
  * </tr>
  * <tr>
@@ -212,7 +212,7 @@
  * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * Log on to @htmlonly <a href="http://login.etherios.com/">Etherios Device Cloud</a>@endhtmlonly
+ * Log on to @htmlonly <a href="http://login.etherios.com/">Device Cloud</a>@endhtmlonly
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged, go to Device Manager tab and click the Refresh button.
  * The device's status should show as 'Connected'.

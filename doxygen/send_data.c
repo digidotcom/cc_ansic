@@ -118,7 +118,7 @@
  *
  * @subsection Defines
  *
- * @section web_gui Viewing results from Etherios Device Cloud
+ * @section web_gui Viewing results from Device Cloud
  *
  * To view the results for this sample log on to Device Cloud as described
  * in the @ref add_your_device_to_the_cloud "Getting Started" section.

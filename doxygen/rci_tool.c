@@ -5,8 +5,8 @@
  * @section rci_tool_overview Overview
  *
  * The remote configuration tool is used to generate device configuration header file and upload
- * device configuration information to Etherios Device Cloud. It allows user to define all device configuration
- * data and information that can be accessed through Etherios Device Cloud using Etherios Cloud Connector.
+ * device configuration information to Device Cloud. It allows user to define all device configuration
+ * data and information that can be accessed through Device Cloud using Cloud Connector.
  * User must include the generated header file and provide callback functions to handle all
  * device configuration in an application.
  *
@@ -31,9 +31,9 @@
  *   <th colspan="2" class="title">Description</th>
  * </tr>
  * <tr>
- *   <td colspan="2">It generates and uploads configuration information (descriptors) to Etherios Device
+ *   <td colspan="2">It generates and uploads configuration information (descriptors) to Device
  *       Cloud and it also generates ANSI C header files (remote_config.h) from the input
- *       Etherios Cloud Connector configuration file.  This header file must be included  in the application.
+ *       Cloud Connector configuration file.  This header file must be included  in the application.
  *   </td>
  * </tr>
  * <tr>
@@ -50,14 +50,14 @@
  * <tr>
  *   <th> -nodesc</th>
  *   <td> Optional exclusion of error descriptions in the generated file. Error descriptions will
- *        not be included and sent to Etherios Device Cloud when an error is encountered.
+ *        not be included and sent to Device Cloud when an error is encountered.
  *        This is used to reduce the code size.
  *   </td>
  * </tr>
  * <tr>
  *   <th> -vendor</th>
- *   <td> Optional vendor ID obtained from Etherios Device Cloud registration.
- *        If not given, tool tries to retrieve it from Etherios Device Cloud.
+ *   <td> Optional vendor ID obtained from Device Cloud registration.
+ *        If not given, tool tries to retrieve it from Device Cloud.
  *   </td>
  * </tr>
  * <tr>
@@ -66,15 +66,15 @@
  * </tr>
  * <tr>
  *   <th> -url</th>
- *   <td> Optional for the Etherios Device Cloud URL. Default is login.etherios.com </td>
+ *   <td> Optional for the Device Cloud URL. Default is login.etherios.com </td>
  * </tr>
  * <tr>
  *   <th> username </th>
- *   <td> Username to log in Etherios Device Cloud.  </td>
+ *   <td> Username to log in Device Cloud.  </td>
  * </tr>
  * <tr>
  *   <th> password </th>
- *   <td> Optional password to log in Etherios Device Cloud.
+ *   <td> Optional password to log in Device Cloud.
  *        If it's not specified in the command line, you will be prompted for password.
  *   </td>
  * </tr>
@@ -93,7 +93,7 @@
  * </table>
  * @endhtmlonly
  *
- * @a @b username, @a @b password,@a @b vendor_id, @a @b device_type, and @a @b firmware_version are used for accessing Etherios
+ * @a @b username, @a @b password,@a @b vendor_id, @a @b device_type, and @a @b firmware_version are used for accessing
  * Device Cloud account and uploading the device configuration information (descriptors) for your device.
  *
  * Example:
@@ -109,7 +109,7 @@
  *
  * @section rci_tool_file   Input Configuration File
  *
- * User must define all device configuration data and system information that is accessed through Etherios Device Cloud and run the
+ * User must define all device configuration data and system information that is accessed through Device Cloud and run the
  * tool to generate remote_config.h file. User must include this remote_config.h header file and
  * provide callbacks to handle all device configuration data and system information.
  *
@@ -127,7 +127,7 @@
  * -# @ref comment
  *
  * @subsection globalerror  globalerror keyword
- * A @a @b globalerror is used to define the text in Etherios Device Cloud when
+ * A @a @b globalerror is used to define the text in Device Cloud when
  * an error condition occurs. @a @b Globalerrors define errors common to all configurations.
  *
  * @htmlonly
@@ -140,13 +140,13 @@
  * <th>name</th>
  * <td> Label (no spaces) of the error.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_global_error_ prefix enumeration value for each error.
- *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to Etherios Device Cloud.
+ *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to Device Cloud.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
  * <th>description</th>
  * <td> Error string message with quotes (e.g. "Unable to write to NVRam").
- *     This description is sent to Etherios Device Cloud along with the enumeration value. </td>
+ *     This description is sent to Device Cloud along with the enumeration value. </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -183,7 +183,7 @@
  * <th>name</th>
  * <td> Label (no spaces) of the group.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<type\>_ prefix enumeration value to identify
- *          the group. Etherios connector passes this enumeration value to the application-defined callback for accessing the group.
+ *          the group. Cloud Connector passes this enumeration value to the application-defined callback for accessing the group.
  *         @htmlonly
  *     </p> </td>
  * </tr><tr>
@@ -212,7 +212,7 @@
  * @endcode
  *
  * @subsection error  error keyword
- * An @a @b error is used to define the text in Etherios Device Cloud when an error
+ * An @a @b error is used to define the text in Device Cloud when an error
  * condition occurs. It is used to specify an error for individual group.
  *
  * @htmlonly
@@ -224,13 +224,13 @@
  * <th>name</th>
  * <td> Label (no spaces) of the error.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_\<group_name\>_error_ prefix enumeration value for each error.
- *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to Etherios Device Cloud.
+ *         This error enumeration value will be used by the application-defined callback to return an error which is sent along to Device Cloud.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
  * <th>description</th>
  * <td> Error string message with quotes (e.g. "Invalid data bits rate").
- *     This description is sent to Etherios Device Cloud along with the enumeration value. </td>
+ *     This description is sent to Device Cloud along with the enumeration value. </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -266,7 +266,7 @@
  *   <th>name</th>
  *   <td> Label (no spaces) of the element.
  *         @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_ prefix enumeration value
- *         to identify the element. Etherios connector passes this enumeration value to the application-defined
+ *         to identify the element. Cloud Connector passes this enumeration value to the application-defined
  *         callback for accessing the element. @htmlonly
  *   </td>
  * </tr>
@@ -314,7 +314,7 @@
  * @subsection type type keyword
  * The @a @b type is used to indicate the value type of an element's value named in the
  * @ref element. The type indicates to the descriptor user what restrictions to
- * place on a value and how to interpret a value received from Etherios connector.
+ * place on a value and how to interpret a value received from Cloud Connector.
  *
  * @htmlonly
  * <table class="apitable">
@@ -327,11 +327,11 @@
  * </tr> <tr>
  * <th>multiline_string</th>
  * <td>This type is used for a null-terminated string that may be more than one line. A "text area" is shown
- *     in Etherios Device Cloud that allows a user to form multiple lines by pressing enter. </td>
+ *     in Device Cloud that allows a user to form multiple lines by pressing enter. </td>
  * </tr><tr>
  * <th>password</th>
  * <td>This Password type is same as string type except it's shown "*"when a user types in
- *     characters in Etherios Device Cloud. </td>
+ *     characters in Device Cloud. </td>
  * </tr> <tr>
  * <th>int32</th>
  * <td>32-bit signed integer value. </td>
@@ -343,20 +343,20 @@
  * <td> 32-bit unsigned hexadecimal </td>
  * </tr><tr>
  * <th>0x_hex32</th>
- * <td>32-bit unsigned hexadecimal with 0x prefix shown in Etherios Device Cloud. </td>
+ * <td>32-bit unsigned hexadecimal with 0x prefix shown in Device Cloud. </td>
  * </tr> <tr>
  * <th>float</th>
  * <td>Floating value. float.h is included in the generated header file. </td>
  * </tr><tr>
  * <th>enum</th>
  * <td> enum is used to define a set of allowed values for an element. This is a
- * pull-down menu shown in Etherios Device Cloud. See @endhtmlonly @ref value @htmlonly to define set
+ * pull-down menu shown in Device Cloud. See @endhtmlonly @ref value @htmlonly to define set
  * of enum values for the element. <p> Note: min and max keywords will throw an error.</p></td>
  * </tr><tr>
  * <th>on_off</th>
  * <td> "on" or "off " value. Application-defined callback should use <i> <b> connector_on </b> </i> value
  *       for "on"  or <i> <b> connector_off </b> </i> value for "off". This type is shown as
- *       radio buttons in Etherios Device Cloud.
+ *       radio buttons in Device Cloud.
  *       <p>Note: min and max keywords will throw an error.</p> </td>
  * </tr><tr>
  * <th>boolean</th>
@@ -365,7 +365,7 @@
  *     <p>Note: min and max keywords will throw an error.</p> </td>
  * </tr> <tr>
  * <th>ipv4</th>
- * <td>Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in Etherios Device Cloud
+ * <td>Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in Device Cloud
  *     <p>Note: min and max keywords will throw an error.</p></td>
  * </tr><tr>
  * <th>fqdnv4</th>
@@ -420,7 +420,7 @@
  * <td> Label (no spaces) of the enum value.
  *     <p> @endhtmlonly The tool creates  @a @b \<name\> with @a @b connector_\<group_type\>_\<group_name\>_\<element_name\>_
  *         prefix enumeration value for each values.
- *         Etherios Cloud Connector and the application-defined callback use this enumeration value to set and retrieve the value of an element.
+ *         Cloud Connector and the application-defined callback use this enumeration value to set and retrieve the value of an element.
  *         @htmlonly
  *     </p> </td>
  * </tr> <tr>
@@ -463,7 +463,7 @@
  * <tr>
  * <th>value</th>
  * <td> Minimum value or length in bytes.
- *     <p> Etherios Device Cloud will validate this range check.
+ *     <p> Device Cloud will validate this range check.
  *         The user can do additional checks, as well.</p> </td>
  * </tr>
  * </table>
@@ -487,7 +487,7 @@
  * <tr>
  * <th>value</th>
  * <td> Maximum value or length in bytes.
- *     <p> Etherios Device Cloud will validate this range check.
+ *     <p> Device Cloud will validate this range check.
  *         The user can do additional checks, as well.</p> </td>
  * </tr>
  * </table>
@@ -502,7 +502,7 @@
  *
  * @subsection access access keyword
  * The @a @b access is used to define accessibility of an element named in the element
- * keyword. Default is read_write. This tells Etherios connector and Etherios Device Cloud that an element
+ * keyword. Default is read_write. This tells Cloud Connector and Device Cloud that an element
  * is settable or unsettable. It's grayed out if read_only is specified.
  *
  * @htmlonly
@@ -531,7 +531,7 @@
  * @endcode
  *
  * @subsection units  units keyword
- * The @a @b units is used to define the displayable text in Etherios Device Cloud. It's used as
+ * The @a @b units is used to define the displayed text in Device Cloud. It's used as
  * the units for the element.
  *
  * @htmlonly
@@ -542,7 +542,7 @@
  * <tr>
  * <th>description</th>
  * <td> Units string with quotes (e.g. "seconds").
- *     This description is shown in Etherios Device Cloud. </td>
+ *     This description is shown in Device Cloud. </td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -564,7 +564,7 @@
  * @code
  *
  *      # State configuration for GPS
- *      # Must setup the following group in order for GPS shown in Etherios Device Cloud.
+ *      # Must setup the following group in order for GPS shown in Device Cloud.
  *
  * @endcode
  *
@@ -606,7 +606,7 @@
  *     element syspwd "System password" type password access  read_write  max  64
  *     error invalid_length "invalid length"
  *
- * group state debug_info "Debug info on Etherios connector thread"
+ * group state debug_info "Debug info on Cloud Connector thread"
  *     element version "Version" type string access  read_only
  *     element stacktop "Stack begin" type 0x_hex32 access  read_only
  *     element stacksize "Stack size" type hex32 access  read_only
@@ -614,7 +614,7 @@
  *     element usedmem "Allocated memory used" type uint32 access  read_only
  *
  * # State configuration for GPS
- * # Must setup the following group in order for GPS shown in Etherios Device Cloud.
+ * # Must setup the following group in order for GPS shown in Device Cloud.
  * group state gps_stats "GPS"
  *     element latitude "Latitude" type float access read_only
  *     element longitude "Longitude" type float access read_only
