@@ -385,7 +385,7 @@ typedef enum
 */
 typedef struct
 {
-    uint32_t last_modified;                     /**< TODO: ASK to consider, decide on time_t, uint32! .  Last modified time for the entry (seconds since 1970). If not supported, use 0 */
+    uint32_t last_modified;                     /**< Last modified time for the entry (seconds since 1970). If not supported, use 0 */
     connector_file_offset_t file_size;          /**< File size in bytes */
     connector_file_system_file_type_t flags;    /**< Directory, regular, or neither */
 
