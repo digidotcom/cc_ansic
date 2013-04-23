@@ -550,7 +550,7 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
                             {
                                 case connector_working:
                                 case connector_pending:
-                                    sm_ptr->session.current = session->next; /* TODO: affects send session */
+                                    sm_ptr->session.current = session->next;
                                     goto done;
 
                                 case connector_idle:
@@ -587,7 +587,7 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
                         {
                             case connector_working:
                             case connector_pending:
-                                sm_ptr->session.current = session->next; /* TODO: affects recv session */
+                                sm_ptr->session.current = session->next;
                                 goto done;
 
                             case connector_idle:

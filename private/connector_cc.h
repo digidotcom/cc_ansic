@@ -64,7 +64,7 @@ enum cc_redirect_report {
     field_define(redirect_report, opcode, uint8_t),
     field_define(redirect_report, code, uint8_t),
     field_define(redirect_report, message_length, uint8_t),
-    /* TODO: fix this enum if message_length > 0. For now, message length is always 0 */
+    /* TODO: Need to fix this enum if message_length > 0. For now, cloud always send message length =  0 */
     field_define(redirect_report, url_length, uint16_t),
     record_end(redirect_report)
 };

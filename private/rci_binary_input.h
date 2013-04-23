@@ -273,7 +273,7 @@ static connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
                 break;
             case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
-                /* TODO: Tool doesn't support name and enum attribute */
+                /* Tool doesn't support name and enum attribute */
                 connector_debug_printf("decode_attribute: unsupported attribute type\n");
                 rci->status = rci_status_internal_error;
                 ASSERT(connector_false);
@@ -394,7 +394,7 @@ static void process_command_attribute(rci_t * const rci)
 
     if (decode_attribute(rci, &index))
     {
-        /* TODO: We don't support command attribute; so just ignore it. */
+        /* We don't support command attribute; so just ignore it. */
         set_rci_input_state(rci, rci_input_state_group_id);
 
         set_rci_traverse_state(rci, rci_traverse_state_command_id);
@@ -437,7 +437,6 @@ static void process_group_id(rci_t * const rci)
                     state_call(rci, rci_parser_state_traverse);
                     break;
                 case connector_remote_action_set:
-                    /* TODO: check this case */
                     connector_debug_printf("process_group_id: got set command with no group id specified\n");
                     rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_group_hint, rci_output_state_group_id);
                     break;
@@ -531,7 +530,6 @@ static void process_field_id(rci_t * const rci)
                         state_call(rci, rci_parser_state_traverse);
                         break;
                     case connector_remote_action_set:
-                        /* TODO: check this case */
                         connector_debug_printf("process_field_id: got set command with no field id specified\n");
                         rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_element_hint, rci_output_state_field_id);
                         break;
@@ -571,7 +569,6 @@ static void process_field_id(rci_t * const rci)
     }
 
 
-    /* TODO: make sure the value is correct */
     set_element_id(rci, id);
 
     if (!have_element_id(rci))

@@ -16,7 +16,7 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 from ..utils import getText
-from ..utils import DeviceConnectionMonitor
+from ..utils import DeviceConnectionMonitor, device_is_connected
 
 my_test_file = "my_test_file.txt"
 fw_target_num = 0
@@ -76,6 +76,11 @@ class StackSizeTestCase(ic_testcase.TestCase):
 
         try:
             monitor.start()
+            if device_is_connected(self) == False:
+                self.log.info("Waiting for device to connect before start testing")
+                monitor.wait_for_connect(30)
+            self.log.info("Device is connected. Start testing")
+            
             # Send update request
             request = (FIRMWARE_DATA_REQUEST % (fw_target_num, self.device_id, data_value))
 

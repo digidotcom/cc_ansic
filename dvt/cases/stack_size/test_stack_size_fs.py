@@ -17,7 +17,7 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 from ..utils import getText
-from ..utils import DeviceConnectionMonitor
+from ..utils import DeviceConnectionMonitor, device_is_connected
 
 TERMINATE_TEST_FILE = "terminate.file"
 my_test_file = "my_test_file.txt"
@@ -160,6 +160,11 @@ class StackSizeTestCase(ic_testcase.TestCase):
 
         try:
             monitor.start()
+            if device_is_connected(self) == False:
+                self.log.info("Waiting for device to connect before start testing")
+                monitor.wait_for_connect(30)
+            self.log.info("Device is connected. Start testing")
+            
             request = (FILE_PUT_GET_REQUEST % (self.device_id, "terminate.test", put_data, my_file_path))
             # Send device request
             file_get_response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content

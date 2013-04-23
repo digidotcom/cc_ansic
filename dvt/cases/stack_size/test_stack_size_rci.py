@@ -16,7 +16,7 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 from ..utils import getText
-from ..utils import DeviceConnectionMonitor
+from ..utils import DeviceConnectionMonitor, device_is_connected
 
 RCI_QUERY_SETTING = \
 """<sci_request version="1.0"> 
@@ -94,6 +94,11 @@ class StackSizeTestCase(ic_testcase.TestCase):
 
         try:
             monitor.start()
+            if device_is_connected(self) == False:
+                self.log.info("Waiting for device to connect before start testing")
+                monitor.wait_for_connect(30)
+            self.log.info("Device is connected. Start testing")
+
             rci_request = (RCI_SET_SETTING % (self.device_id, "terminate"));
 
             # Send RCI request

@@ -1077,7 +1077,6 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
     {
         connector_firmware_count_t firmware_data;
 
-        /* TODO: Change count to uint8_t in future release */
         result = get_fw_config(fw_ptr, connector_request_id_firmware_target_count, &firmware_data);
         if (result == connector_working)
         {

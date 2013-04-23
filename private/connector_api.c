@@ -212,7 +212,6 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
                 break;
 
                 case connector_connection_type_wan:
-                    /* TODO: get wan type */
                     result = get_config_wan_type(connector_ptr);
                     COND_ELSE_GOTO(result == connector_working, error);
 
@@ -338,9 +337,9 @@ connector_handle_t connector_init(connector_callback_t const callback)
     connector_status_t status;
 
 #if (defined CONNECTOR_SW_DESCRIPTION)
-    connector_debug_printf("Etherios Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
+    connector_debug_printf("Etherios Cloud Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
 #else
-    connector_debug_printf("Etherios Connector v%s\n", CONNECTOR_SW_VERSION);
+    connector_debug_printf("Etherios Cloud Connector v%s\n", CONNECTOR_SW_VERSION);
 #endif
 
     {

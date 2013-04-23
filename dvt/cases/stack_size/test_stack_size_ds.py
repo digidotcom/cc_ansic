@@ -16,7 +16,7 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 from ..utils import getText
-from ..utils import DeviceConnectionMonitor
+from ..utils import DeviceConnectionMonitor, device_is_connected
 
 TARGET_DEVICE_REQUEST = \
 """<sci_request version="1.0">
@@ -78,11 +78,17 @@ class StackSizeTestCase(ic_testcase.TestCase):
 
         try:
             monitor.start()
+            
+            if device_is_connected(self) == False:
+                self.log.info("Waiting for device to connect before start testing")
+                monitor.wait_for_connect(30)
+            self.log.info("Device is connected. Start testing")
+            
             # Send device request to request terminate the sample
             device_request_response = self.send_device_request('request_terminate', 0)
             self.log.info("RESPONSE %s" %device_request_response)
 
-            self.log.info("Waiting for iDigi to disconnect device.")
+            self.log.info("Waiting for cloud to disconnect device.")
             monitor.wait_for_disconnect(30)
             self.log.info("Device disconnected.")
 
