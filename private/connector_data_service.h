@@ -659,7 +659,7 @@ static connector_status_t process_send_response(connector_data_t * const connect
         ds_data_success,
         ds_data_bad_request,
         ds_data_service_unavailable,
-        ds_data_server_error
+        ds_data_cloud_error
     };
 
     msg_service_data_t * const service_data = service_request->have_data;
@@ -688,7 +688,7 @@ static connector_status_t process_send_response(connector_data_t * const connect
         user_data.response = connector_data_service_send_response_unavailable;
         break;
 
-    case ds_data_server_error:
+    case ds_data_cloud_error:
         user_data.response = connector_data_service_send_response_cloud_error;
         break;
 

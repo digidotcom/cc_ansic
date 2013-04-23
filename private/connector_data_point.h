@@ -469,7 +469,7 @@ static size_t dp_process_time(data_point_info_t * const dp_info, char * const bu
 
     switch (dp_ptr->time.source)
     {
-        case connector_time_server:
+        case connector_time_cloud:
             break;
 
         case connector_time_local_epoch_fractional:

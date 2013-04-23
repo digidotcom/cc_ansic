@@ -141,7 +141,7 @@ typedef struct connector_data_point_t
     {
         enum
         {
-            connector_time_server,                  /**< The time is ignored and Device Cloud time is used instead. */
+            connector_time_cloud,                  /**< The time is ignored and Device Cloud time is used instead. */
             connector_time_local_epoch_fractional,  /**< The time value is specified in Epoch sec/msec format. */
 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
             connector_time_local_epoch_whole,       /**< The time value is specified in Epoch milliseconds 64-bit format. */
