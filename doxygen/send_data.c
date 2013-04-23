@@ -130,10 +130,8 @@
  *
  * @image html cloud_data_services_folder.png
  *
- * The file is then listed as shown (below). You can click on the file to view its contents, you will see the file test.txt in the test directory
- * after you run this sample.
- *
- * @image html cloud_data_services_refresh.png
+ * The file is then listed as shown (below). You can click on the file to view its contents, you will
+ * see the file test.txt in the test directory after you run this sample.
  *
  * @section python_script Python script to retrieve a file from Device Cloud storage
  *
