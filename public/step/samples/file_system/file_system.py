@@ -14,7 +14,7 @@
 # file_system.py
 # Send SCI file_system to server. 
 # -------------------------------------------------
-# Usage: file_system.py <username> <password> <device_id> [<cloud_url>]
+# Usage: file_system.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
 import httplib
 import base64
@@ -28,7 +28,28 @@ put_path  = test_file
 ls_path   = test_file
 
 def Usage():
-    print 'Usage: file_system.py <username> <password> <device_id> [<cloud_url>]\n'
+    print 'Usage: file_system.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
+    print '    Puts file \"test_file.txt\" in the <Device ID> file system and'
+    print '    then gets the file back.'
+    print '    where:' 
+    print '        <Username> is the Device Cloud for Etherios account Username to which your device is'
+    print '                   connected.'
+    print '        <Password> is the account password'
+    print '        <Device ID> is the device to query.' 
+    print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
+    print '                   login.etherios.com.' 
+    print '' 
+    print '    Note:'
+    print '        <Device ID> format can either be:'
+    print '            Long: 00000000-00000000-00049DFF-FFAABBCC.'
+    print '            or short: 00049DFF-FFAABBCC\n'
+    print '    Example Usage:' 
+    print '        python ./file_system.py myaccount mypassword 00049DFF-FFAABBCC'
+    print '            Transfers file \"test_file.txt\" with 00000000-00000000-00049DFF-FFAABBCC '
+    print '            (in user account myaccount) through login.etherios.com.\n'
+    print '        python ./file_system.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
+    print '            Transfers file \"test_file.txt\" with 00000000-00000000-00049DFF-FFAABBCC '
+    print '            (in user account myaccount) through login.etherios.co.uk.\n'
    
 def PostMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
@@ -98,6 +119,7 @@ def main(argv):
         else:
             cloud_url = "login.etherios.com"
         PostMessage(argv[0], argv[1], argv[2], cloud_url)
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
