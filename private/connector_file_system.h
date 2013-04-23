@@ -194,79 +194,83 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
                                                 msg_service_request_t * const service_request,
                                                 fs_context_t * const context)
 {
-     /* 1st message so let's parse message-start packet:
-      *
-      * File System Get request format:
-      *  ------------------------------------------------------
-      * |   0    |     +1     |  +1               |    +N      |
-      *  ------------------------------------------------------
-      * | Opcode | Error code | Error Hint Length | Error hint |
-      *  ------------------------------------------------------
-      *
-      */
-     enum  {
-         field_define(fs_error_response, opcode,         uint8_t),
-         field_define(fs_error_response, error_code,     uint8_t),
-         field_define(fs_error_response, error_hint_len, uint8_t),
-         record_end(fs_error_response_header)
-     };
+    connector_status_t status = connector_working;
 
-     connector_status_t status = connector_working;
-     msg_service_data_t * const service_data = service_request->need_data;
-
-     size_t const header_bytes = record_bytes(fs_error_response_header);
-     size_t const buffer_size  = MIN_VALUE(service_data->length_in_bytes - header_bytes, UCHAR_MAX);
-
-     uint8_t * fs_error_response = service_data->data_ptr;
-     connector_file_system_get_error_t data;
-
-     data.buffer = fs_error_response + header_bytes;
-     data.errnum = context->errnum;
-     data.bytes_available = buffer_size;
-     data.bytes_used = 0;
-
-     if (FsHasInternalError(context))
-     {
-         fs_get_internal_error_data(&data);
-     }
-     else
-     {
-         connector_request_id_t request_id;
-         data.user_context = context->user_context;
-         request_id.file_system_request = connector_request_id_file_system_get_error;
-         
-         status = connector_callback(connector_ptr->callback,
-                                     connector_class_id_file_system,
-                                     request_id,
-                                     &data) == connector_callback_continue ? 
-                        connector_working : connector_abort;
-
-         context->user_context = data.user_context;
-
-         if (status == connector_abort)
-             goto done;
-
-         if (data.bytes_used > buffer_size)
+    if (service_request->service_type != msg_service_type_error) 
+    {
+         /* 1st message so let's parse message-start packet:
+          *
+          * File System Get request format:
+          *  ------------------------------------------------------
+          * |   0    |     +1     |  +1               |    +N      |
+          *  ------------------------------------------------------
+          * | Opcode | Error code | Error Hint Length | Error hint |
+          *  ------------------------------------------------------
+          *
+          */
+         enum  {
+             field_define(fs_error_response, opcode,         uint8_t),
+             field_define(fs_error_response, error_code,     uint8_t),
+             field_define(fs_error_response, error_hint_len, uint8_t),
+             record_end(fs_error_response_header)
+         };
+    
+         msg_service_data_t * const service_data = service_request->need_data;
+    
+         size_t const header_bytes = record_bytes(fs_error_response_header);
+         size_t const buffer_size  = MIN_VALUE(service_data->length_in_bytes - header_bytes, UCHAR_MAX);
+    
+         uint8_t * fs_error_response = service_data->data_ptr;
+         connector_file_system_get_error_t data;
+    
+         data.buffer = fs_error_response + header_bytes;
+         data.errnum = context->errnum;
+         data.bytes_available = buffer_size;
+         data.bytes_used = 0;
+    
+         if (FsHasInternalError(context))
          {
-             fs_set_abort(connector_ptr,
-                          context,
-                          connector_request_id_file_system_get_error,
-                          connector_invalid_data_size);
-             status = connector_abort;
-             goto done;
+             fs_get_internal_error_data(&data);
          }
-     }
-     message_store_u8(fs_error_response, opcode, fs_error_opcode);
-     /* coverity[uninit_use] */
-     message_store_u8(fs_error_response, error_code, (uint8_t)data.error_status);
-     message_store_u8(fs_error_response, error_hint_len, (uint8_t) data.bytes_used);
-
-     service_data->length_in_bytes = header_bytes + data.bytes_used;
-
-     MsgSetLastData(service_data->flags);
+         else
+         {
+             connector_request_id_t request_id;
+             data.user_context = context->user_context;
+             request_id.file_system_request = connector_request_id_file_system_get_error;
+             
+             status = connector_callback(connector_ptr->callback,
+                                         connector_class_id_file_system,
+                                         request_id,
+                                         &data) == connector_callback_continue ? 
+                            connector_working : connector_abort;
+    
+             context->user_context = data.user_context;
+    
+             if (status == connector_abort)
+                 goto done;
+    
+             if (data.bytes_used > buffer_size)
+             {
+                 fs_set_abort(connector_ptr,
+                              context,
+                              connector_request_id_file_system_get_error,
+                              connector_invalid_data_size);
+                 status = connector_abort;
+                 goto done;
+             }
+         }
+         message_store_u8(fs_error_response, opcode, fs_error_opcode);
+         /* coverity[uninit_use] */
+         message_store_u8(fs_error_response, error_code, (uint8_t)data.error_status);
+         message_store_u8(fs_error_response, error_hint_len, (uint8_t) data.bytes_used);
+    
+         service_data->length_in_bytes = header_bytes + data.bytes_used;
+    
+         MsgSetLastData(service_data->flags);
+    }
 
 done:
-      return status;
+    return status;
 }
 
 static connector_status_t fs_call_user(connector_data_t * const connector_ptr,
