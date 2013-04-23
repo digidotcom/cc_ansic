@@ -27,7 +27,7 @@ CFLAGS += -Winit-self -Wbad-function-cast -Wpointer-arith
 CFLAGS += -Wmissing-parameter-type -Wstrict-prototypes -Wformat-security
 CFLAGS += -Wformat-y2k -Wold-style-definition -Wcast-align -Wformat-nonliteral
 CFLAGS += -Wpadded -Wredundant-decls -Wvariadic-macros
-CFLAGS += -MMD -Wall -Werror -Wextra -pedantic
+CFLAGS += -Wall -Werror -Wextra -pedantic
 CFLAGS += -Wno-error=padded -Wno-error=format-nonliteral -Wno-unused-function -Wno-missing-field-initializers
 # Use ANSIC 99
 CFLAGS +=-std=c99
