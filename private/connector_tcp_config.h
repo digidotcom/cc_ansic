@@ -73,6 +73,7 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
             /* coverity[uninit_use] */
             if (device_type.string == NULL)
                 result = connector_invalid_data;
+            /* coverity[uninit_use] */
             else if ((device_type.length == 0) || (device_type.length > DEVICE_TYPE_LENGTH))
                 result = connector_invalid_data_size;
             else
@@ -238,6 +239,7 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
                 result = connector_invalid_data;
                 goto error;
             }
+            /* coverity[uninit_use] */
             if ((config_ip.ip_address_type != connector_ip_address_ipv6) && (config_ip.ip_address_type != connector_ip_address_ipv4))
             {
                 result =  connector_invalid_data_size;
@@ -354,6 +356,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
             }
             else
             {
+                /* coverity[uninit_use] */
                 connector_ptr->edp_data.config.password_length = config_password.length;
                 connector_ptr->edp_data.config.password = config_password.string;
 

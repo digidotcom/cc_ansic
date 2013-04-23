@@ -102,6 +102,7 @@ static connector_status_t get_config_device_cloud_url(connector_data_t * const c
     switch (callback_status)
     {
     case connector_callback_continue:
+        /* coverity[uninit_use] */
         if ((server_url.length == 0) || (server_url.length > SERVER_URL_LENGTH-1))
         {
             result =  connector_invalid_data_size;
@@ -280,6 +281,7 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
             {
                 result = connector_invalid_data;
             }
+            /* coverity[uninit_use] */
             else if (phone_number.length == 0)
             {
                 result = connector_invalid_data_size;
