@@ -37,10 +37,10 @@ def Usage():
     print '            Long: 00000000-00000000-00049DFF-FFAABBCC.' 
     print '            or short: 00049DFF-FFAABBCC\n'
     print '    Example Usage:' 
-    print '        python ./update_firmware.py myaccount mypassword 00049DFF-FFAABBCC'
+    print '        python ./query_firmware.py myaccount mypassword 00049DFF-FFAABBCC'
     print '            Queries the firwmare version numbers of 00000000-00000000-00049DFF-FFAABBCC '
     print '            (in user account myaccount) through login.etherios.com.\n'
-    print '        python ./update_firmware.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
+    print '        python ./query_firmware.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
     print '            Queries the firwmare version numbers of 00000000-00000000-00049DFF-FFAABBCC '
     print '            (in user account myaccount) through login.etherios.co.uk.\n'
    
