@@ -61,6 +61,7 @@ static connector_status_t get_config_device_id(connector_data_t * const connecto
     case connector_callback_continue:
         if (device_id.bytes_required != DEVICE_ID_LENGTH)
             result = connector_invalid_data_size;
+        /* coverity[uninit_use] */
         else if (device_id.data == NULL)
             result = connector_invalid_data;
         else
@@ -105,6 +106,7 @@ static connector_status_t get_config_device_cloud_url(connector_data_t * const c
         {
             result =  connector_invalid_data_size;
         }
+        /* coverity[uninit_use] */
         else if (server_url.string == NULL)
         {
             result = connector_invalid_data;
@@ -153,6 +155,7 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
     {
     case connector_callback_continue:
 
+        /* coverity[uninit_use] */
         switch (config_connection.type)
         {
         case connector_connection_type_lan:
@@ -202,6 +205,7 @@ static connector_status_t get_config_mac_addr(connector_data_t * const connector
         case connector_callback_continue:
             if (mac_addr.bytes_required != MAC_ADDR_LENGTH)
                 result = connector_invalid_data_size;
+            /* coverity[uninit_use] */
             else if (mac_addr.data == NULL)
                 result = connector_invalid_data;
             else
@@ -241,6 +245,7 @@ static connector_status_t get_config_link_speed(connector_data_t * const connect
     switch (callback_status)
     {
     case connector_callback_continue:
+        /* coverity[uninit_use] */
         connector_ptr->link_speed = config_link.speed;
         break;
     case connector_callback_busy:
@@ -270,6 +275,7 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
         switch (callback_status)
         {
         case connector_callback_continue:
+            /* coverity[uninit_use] */
             if (phone_number.string == NULL)
             {
                 result = connector_invalid_data;
@@ -321,6 +327,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
     switch (callback_status)
     {
     case connector_callback_continue:
+        /* coverity[uninit_use] */
         switch (device_id.method)
         {
         case connector_device_id_method_manual:
@@ -414,6 +421,7 @@ static connector_status_t get_config_wan_id(connector_data_t * const connector_p
     switch (callback_status)
     {
     case connector_callback_continue:
+        /* coverity[uninit_use] */
         if (request_data.data == NULL)
         {
             result = connector_invalid_data;
@@ -466,6 +474,7 @@ static connector_status_t get_config_wan_type(connector_data_t * const connector
     switch (callback_status)
     {
     case connector_callback_continue:
+        /* coverity[uninit_use] */
         switch (config_wan.type)
         {
         case connector_wan_type_imei:
