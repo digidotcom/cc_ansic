@@ -3,7 +3,7 @@
  * @htmlinclude nav.html
  *
  * @section config Configuration Callbacks
- * The Etherios Cloud Connector interfaces to the platform's configuration through the callbacks listed below.  These
+ * Cloud Connector interfaces to the platform's configuration through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  *
  *  -# @ref device_id
@@ -86,7 +86,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get device ID and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get device ID and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -169,7 +169,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get vendor ID and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get vendor ID and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -238,7 +238,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get device type and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get device type and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -308,7 +308,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get Device Cloud URL and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get Device Cloud URL and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -383,7 +383,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get connection type and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get connection type and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -447,7 +447,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get MAC address and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get MAC address and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -474,7 +474,7 @@
  * @section link_speed Link Speed
  *
  * Return link speed for a WAN connection type. If connection
- * type is LAN, Etherios Cloud Connector will not request link speed configuration..
+ * type is LAN, Cloud Connector will not request link speed configuration..
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_link_speed() in config.c.
@@ -513,7 +513,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get link speed and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get link speed and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -541,7 +541,7 @@
  *
  * Return the phone number dialed for a WAN connection type.
  * The phone number is a variable length, non null-terminated string.
- * If connection type is LAN, Etherios Cloud Connector will not request phone number
+ * If connection type is LAN, Cloud Connector will not request phone number
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_phone_number() in config.c.
@@ -586,7 +586,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get phone number and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get phone number and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -661,7 +661,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get TX keepalive interval and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get TX keepalive interval and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -691,7 +691,7 @@
  * @section rx_keepalive RX Keepalive Interval
  *
  * Return RX keepalive interval in seconds. This tells how
- * often Etherios Cloud Connector sends keepalive messages to Device Cloud (device to Device Cloud).
+ * often Cloud Connector sends keepalive messages to Device Cloud (device to Device Cloud).
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_rx_keepalive_interval() in config.c.
@@ -731,7 +731,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get RX keepalive interval and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get RX keepalive interval and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -800,7 +800,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get wait count and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get wait count and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -870,7 +870,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get IP address and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get IP address and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -900,7 +900,7 @@
  *
  * @section error_status  Error Status Notification
  *
- * This callback is called to notify the user that Etherios Cloud Connector encountered an error. When Cloud Connector finds an
+ * This callback is called to notify the user that Cloud Connector encountered an error. When Cloud Connector finds an
  * error, Cloud Connector will call this callback indicating the error status
  *
  * @note If @ref CONNECTOR_DEBUG  is not defined in connector_config.h, this callback
@@ -966,7 +966,7 @@
  * or disable firmware download capability during runtime.
  *
  * @note If @ref CONNECTOR_FIRMWARE_SERVICE configuration is not defined in @ref connector_config.h, this callback
- * will not be called and Firmware Download is not supported. Etherios Cloud Connector does not include firmware support.
+ * will not be called and Firmware Download is not supported. Cloud Connector does not include firmware support.
  *
  * @note If @ref CONNECTOR_FIRMWARE_SUPPORT is defined in @ref connector_config.h, this callback is not needed.
  * It enables firmware download capability. See @ref connector_config_data_options. CONNECTOR_FIRMWARE_SERVICE must be defined.
@@ -1001,7 +1001,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Clouse Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1033,7 +1033,7 @@
  * or disable data service capability during runtime.
  *
  * @note If @ref CONNECTOR_DATA_SERVICE configuration is not defined in @ref connector_config.h, this callback
- * will not be called and Data Service is not supported. Etherios Cloud Connector does not include data service.
+ * will not be called and Data Service is not supported. Cloud Connector does not include data service.
  *
  * @note If @ref CONNECTOR_DATA_SERVICE_SUPPORT is defined in @ref connector_config.h, this callback is not needed.
  * It enables data service capability. See @ref connector_config_data_options. CONNECTOR_DATA_SERVICE must be defined.
@@ -1070,7 +1070,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1102,7 +1102,7 @@
  * or disable file system capability during runtime.
  *
  * @note If @ref CONNECTOR_FILE_SYSTEM configuration is not defined in @ref connector_config.h, this callback
- * will not be called and File System is not supported. Etherios Cloud Connector does not include file system.
+ * will not be called and File System is not supported. Cloud Connector does not include file system.
  *
  * @note If @ref CONNECTOR_FILE_SYSTEM_SUPPORT is defined in @ref connector_config.h, this callback is not needed.
  * It enables file system capability. See @ref connector_config_data_options. CONNECTOR_FILE_SYSTEM must be defined.
@@ -1139,7 +1139,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1171,7 +1171,7 @@
  * or disable remote configuration capability during runtime.
  *
  * @note If @ref CONNECTOR_RCI_SERVICE is not defined in @ref connector_config.h, this callback
- * will not be called and remote configuration is not supported. Etherios Cloud Connector does not include remote configuration.
+ * will not be called and remote configuration is not supported. Cloud Connector does not include remote configuration.
  *
  * @note If @ref CONNECTOR_REMOTE_CONFIGURATION_SUPPORT is defined in @ref connector_config.h, this callback is not needed.
  * It enables remote configuration capability. See @ref connector_config_data_options.
@@ -1210,7 +1210,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1271,7 +1271,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1339,7 +1339,7 @@
  * <td>Callback successfully returned device ID method</td></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get device ID method and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get device ID method and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1372,7 +1372,7 @@
  * and implemented in the @b Platform function app_start_network_tcp() in config.c.
  *
  * @note If @ref CONNECTOR_TRANSPORT_TCP configuration is not defined in @ref connector_config.h, this callback
- * will not be called and TCP transport is not supported. Etherios Cloud Connector does not include TCP transport.
+ * will not be called and TCP transport is not supported. Cloud Connector does not include TCP transport.
  *
  * @note If @ref CONNECTOR_NETWORK_TCP_START is defined in @ref connector_config.h, this callback is not needed.
  * See @ref connector_config_data_options. CONNECTOR_TRANSPORT_TCP must be defined.
@@ -1409,7 +1409,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1435,7 +1435,7 @@
  * and implemented in the @b Platform function app_start_network_udp() in config.c.
  *
  * @note If @ref CONNECTOR_TRANSPORT_UDP configuration is not defined in @ref connector_config.h, this callback
- * will not be called and UDP transport is not supported. Etherios Cloud Connector does not include UDP transport.
+ * will not be called and UDP transport is not supported. Cloud Connector does not include UDP transport.
  *
  * @htmlonly
  * <table class="apitable">
@@ -1469,7 +1469,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1541,7 +1541,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get WAN type and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get WAN type and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1602,7 +1602,7 @@
  * <td>Callback successfully returned IMEI number</td></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>callback aborted Etherios Cloud Connector</td>
+ * <td>callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1693,7 +1693,7 @@
  * <td>Callback successfully returned ESN number</td></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>callback aborted Etherios Cloud Connector</td>
+ * <td>callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1785,7 +1785,7 @@
  * <td>Callback successfully returned MEID number</td></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>callback aborted Etherios Cloud Connector</td>
+ * <td>callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1881,7 +1881,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get identity verification form and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get identity verification form and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1944,7 +1944,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get the password and callback aborted Etherios Cloud Connector</td>
+ * <td>Callback was unable to get the password and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly

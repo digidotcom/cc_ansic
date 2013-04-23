@@ -13,7 +13,7 @@
 # Send a reboot command to the device.
 #
 # -------------------------------------------------
-# Usage: reboot.py <iDigi server URL> <username> <password> <device_id>
+# Usage: reboot.py <Device Cloud URL> <username> <password> <device_id>
 # -------------------------------------------------
 import httplib
 import base64
@@ -25,7 +25,7 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 def Usage():
-    print 'Usage: reboot.py <iDigi server URL> <username> <password> <device_id>\n'
+    print 'Usage: reboot.py <Device Cloud URL> <username> <password> <device_id>\n'
     
 def getText(elem):
     rc = []
@@ -34,13 +34,13 @@ def getText(elem):
             rc.append(node.data)
     return str(''.join(rc))
 
-def GetConnectionState(connector_server, username, password, device_id):
+def GetConnectionState(device_cloud, username, password, device_id):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP(connector_server,80)
+    webservice = httplib.HTTP(device_cloud,80)
 
     # get the record for the device ID that has the connection state
     webservice.putrequest("GET", "/ws/DeviceCore/?condition=devConnectwareId='%s'"%(device_id))
@@ -73,12 +73,12 @@ def GetConnectionState(connector_server, username, password, device_id):
 
     return connection_state
    
-def SendReboot(connector_server, username, password, device_id):
+def SendReboot(device_cloud, username, password, device_id):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
     
-    # create reboot message to send to server
+    # create reboot message to send to Device Cloud
     message = """<sci_request version="1.0"> 
         <reboot> 
             <targets>
@@ -89,7 +89,7 @@ def SendReboot(connector_server, username, password, device_id):
     """%(device_id)
     
     # to what URL to send the request with a given HTTP method
-    webservice = httplib.HTTP(connector_server,80)
+    webservice = httplib.HTTP(device_cloud,80)
     webservice.putrequest("POST", "/ws/sci")
     
     # add the authorization string into the HTTP header
