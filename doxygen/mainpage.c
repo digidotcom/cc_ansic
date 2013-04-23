@@ -1,4 +1,4 @@
- /*! @mainpage Cloud Connector
+ /*! @mainpage Etherios Cloud Connector
  *
  * @htmlinclude nav.html
  *
@@ -193,12 +193,9 @@
  * </tr>
  * <tr>
  * <td>Cloud Connector base usage</td>
- * <td>2436</td>
- * <td>2436</td>
- * <td>Memory usage for internal state machines, infrastructure and communication buffers.
- *     <br></br>Note when including @endhtmlonly @ref CONNECTOR_RCI_SERVICE an additional 760 bytes is allocated.
- *     When including @ref CONNECTOR_FILE_SYSTEM an additional 48 + @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH
- *     @htmlonly bytes is allocated.  </td>
+ * <td>2540</td>
+ * <td>2540</td>
+ * <td>Memory usage for internal state machines, infrastructure and communication buffers.</td>
  * </tr>
  * <tr>
  * <td>With @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE @htmlonly enabled</td>
@@ -207,16 +204,38 @@
  * <td></td>
  * </tr>
  * <tr>
+ * <td>With @endhtmlonly @ref CONNECTOR_DATA_SERVICE, @ref CONNECTOR_FILE_SYSTEM, or @ref CONNECTOR_RCI_SERVICE @htmlonly enabled</td>
+ * <td>96</td>
+ * <td>96</td>
+ * <td></td>
+ * </tr>
+ * <tr>
  * <td>With @endhtmlonly @ref CONNECTOR_DATA_SERVICE @htmlonly enabled</td>
- * <td>100 + 3372*n</td>
- * <td>100 + 108*n</td>
- * <td>Where n is the maximum number of simultaneous message transactions, defined in the @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly </td>
+ * <td>3380*n</td>
+ * <td>116*n</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>With @endhtmlonly @ref CONNECTOR_RCI_SERVICE @htmlonly enabled</td>
+ * <td>6684*n</td>
+ * <td>668*n</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>With @endhtmlonly @ref CONNECTOR_FILE_SYSTEM @htmlonly enabled</td>
+ * <td>3684*n</td>
+ * <td>144*n</td>
+ * <td>An additional @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly bytes is allocated. </td>
  * </tr>
  * <tr>
  * <td>Total</td>
- * <td>6012</td>
- * <td>2748</td>
+ * <td>6020</td>
+ * <td>2856</td>
  * <td>Assumes both @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, with n=1 (one data service message transaction maximum)</td>
+ * </tr>
+ * <tr>
+ * <td colspan="4"><b>Note:</b> Where <b>n</b> is the maximum number of simultaneous message transactions, defined in the
+ *                 @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly </td>
  * </tr>
  * </table>
  * @endhtmlonly
