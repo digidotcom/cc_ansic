@@ -4,7 +4,7 @@
  *
  * @section ssl_overview Overview
  *
- * This sample demonstrates how one can connect to Etherios Device Cloud securely. The sample includes
+ * This sample demonstrates how one can connect to Device Cloud securely. The sample includes
  * network_tcp_ssl.c, instead of network_tcp.c, to provide network specific user callbacks. That means
  * any application can run on ssl by including network_tcp_ssl.c.
  *
@@ -23,9 +23,9 @@
  *
  * -# The main(), defined in main.c, calls application_start()
  * -# The application_start(), defined in application.c, registers app_connector_callback()
- * -# The app_connector_callback(), defined in application.c, calls app_network_tcp_handler() for all network related Etherios Cloud Connector requests
+ * -# The app_connector_callback(), defined in application.c, calls app_network_tcp_handler() for all network related Cloud Connector requests
  * -# The app_network_tcp_handler(), defined in network_tcp_ssl.c, calls subsequent openssl functions to communicate
- *    with Etherios Device Cloud over SSL
+ *    with Device Cloud over SSL
  *
  * @section connect_build Building
  *
@@ -93,7 +93,7 @@
  *
  * <b> How to get CA certificate: </b>
  *
- * -# The Etherios Device Cloud CA Certificate is located in ./public/certificates
+ * -# The Device Cloud CA Certificate is located in ./public/certificates
  *
  * @note To convert other samples to use SSL, change the makefile to replace
  * network_tcp.c with network_tcp_ssl.c and include the libssl.a library.

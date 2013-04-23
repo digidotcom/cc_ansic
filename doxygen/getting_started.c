@@ -4,9 +4,9 @@
  *
  * @section table_of_contents_porting Getting Started
  *
- * The Getting Started process will walk you through the steps necessary to get Etherios
+ * The Getting Started process will walk you through the steps necessary to get
  * Cloud Connector integrated into your software development environment and running
- * applications that include a Device Cloud connection to Device Cloud for Etherios.
+ * applications that include a Device Cloud connection to Device Cloud.
  *
  * These Getting Started Process includes the following steps:
  *

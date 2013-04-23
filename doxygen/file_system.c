@@ -28,7 +28,7 @@
  * @section file_system_overview Overview
  *
  * The file system facility is an optional facility for applications to access files on the device 
- * remotely from Device Cloud by Etherios. The Etherios Cloud Connector invokes sequences of
+ * remotely from Device Cloud.  Cloud Connector invokes sequences of
  * application-defined callbacks to read from a file, to write to a file, and to list files or
  * directory entries.
  *
@@ -81,12 +81,12 @@
  * Data structures for all file system callbacks have the <b><i>void * errnum</i></b> field. If a callback encounters an error
  * it should set <b><i>errnum</i></b> to some user defined error token, for example <i>errno</i>, and return @ref connector_callback_error.
  * The <b><i>errnum</i></b> will be later used in the callback to @ref file_system_get_error "get error status and description", which
- * translates <b><i>errnum</i></b> to error status and error description to be send to Device Cloud by Etherios. 
+ * translates <b><i>errnum</i></b> to error status and error description to be send to Device Cloud.
  * 
  * Different scenarios for the session termination are described below.
  *
  * If the session is successful:
- *  -# Etherios Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
+ *  -# Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory",
  *     if there is an open file or directory.
  *  -# Cloud Connector sends the last portion of response data to Device Cloud.
  *
@@ -94,7 +94,7 @@
  *  -# The callback returns @ref connector_callback_abort status.
  *  -# Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
- *  -# Etherios Cloud Connector is aborted.
+ *  -# Cloud Connector is aborted.
  *
  * The callback encounters an error while performing the requested operation:
  *  -# The callback sets <b><i>errnum</i></b> in the data structure returns @ref connector_callback_error.
@@ -108,14 +108,14 @@
  *  -# Cloud Connector calls the callback to inform of @ref file_system_session_error "session error".
  *  -# Cloud Connector calls the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory", 
  *     if there is an open file or directory.
- *  -# Etherios Cloud Connector canceles the session.
+ *  -# Cloud Connector cancels the session.
  * <br /><br />
  *
  * @section file_system_large_files Large File Support
  *
  * The file system has following limitations for file sizes and data transfer sizes:
  *
- * -# The size of data in one get_file request from Device Cloud by Etherios is limited to 2MB - 1byte (2097151 bytes).
+ * -# The size of data in one get_file request from Device Cloud is limited to 2MB - 1byte (2097151 bytes).
  *    <br /><br />
  * -# Offset for setting file position and truncating a file is limited to 2 gigabytes.
  *    <br /><br />
@@ -181,7 +181,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -288,7 +288,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -396,7 +396,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -490,7 +490,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -580,7 +580,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -666,7 +666,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly 
@@ -745,7 +745,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -834,7 +834,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -953,7 +953,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1075,7 +1075,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1213,7 +1213,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1335,7 +1335,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1456,7 +1456,7 @@
  * </tr> 
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1489,9 +1489,9 @@
  * @section file_system_get_error    Get Error Description
  *
  * This callback gets an error status code and an error description
- * string to send to Device Cloud by Etherios.
+ * string to send to Device Cloud.
  *
- * Etherios Cloud Connector invokes this this callback if an earlier callback has returned
+ * Cloud Connector invokes this this callback if an earlier callback has returned
  * @ref connector_callback_error.
  *
  * Cloud Connector invokes this callback after calling the @ref file_system_close "close a file" 
@@ -1540,7 +1540,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -1608,7 +1608,7 @@
  * This callback gets an error in file_system_session, which
  * might be caused by network communication problems, session timeout, insufficient memory, etc.
  *
- * Etherios Cloud Connector will invoke a callback to @ref file_system_close "close a file" 
+ * Cloud Connector will invoke a callback to @ref file_system_close "close a file"
  * or the @ref file_system_closedir "close a directory" after this callback.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
@@ -1645,7 +1645,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback aborted Etherios Cloud Connector</td>
+ * <td>Callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly

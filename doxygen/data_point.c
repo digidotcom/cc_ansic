@@ -50,7 +50,7 @@
  *   <td>request_data</td>
  *   <td> Pointer to @endhtmlonly connector_request_data_point_binary_t @htmlonly structure, where member:
  *      <ul>
- *        <li><b><i>transport</i></b> is the communication method used to send the data point to Etherios Device Cloud</li>
+ *        <li><b><i>transport</i></b> is the communication method used to send the data point to Device Cloud</li>
  *        <li><b><i>user_context</i></b> is the application context which will be returned in the response</li>
  *        <li><b><i>path</i></b>, pointer to data stream name </li>
  *        <li><b><i>point</i></b>, pointer to binary data point value </li>
@@ -98,7 +98,7 @@
  *   status = connector_initiate_action(handle, connector_initiate_data_point_binary, &dp_binary_data);
  * @endcode
  *
- * This example will invoke Etherios Cloud Connector to send binary data point to Etherios Device
+ * This example will invoke Cloud Connector to send binary data point to Device
  * Cloud.  The result of this operation adds an entry in run_dp_binary data stream on Device Cloud.
  *
  * @note: The dp_binary_data, path and dp_value above are not stack variables. Either you can use a heap or a memory (global or static)
@@ -108,8 +108,8 @@
  *
  * @subsection binary_point_response  Binary data point response
  *
- * After calling connector_initiate_action(), Etherios Connector will prepare and send data point request
- * to Etherios Device Cloud asynchronously. Upon receiving the response, it makes
+ * After calling connector_initiate_action(), Cloud Connector will prepare and send data point request
+ * to Device Cloud asynchronously. Upon receiving the response, it makes
  * @ref connector_request_id_data_point_binary_response "binary data point response" callback to pass
  * Device Cloud response to the application. Application is free to release the allocated resources at this point.
  *
@@ -151,7 +151,7 @@
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *    <td>Aborts Etherios Cloud Connector</td>
+ *    <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -163,7 +163,7 @@
  *
  * @subsection binary_point_status  Binary data point status
  *
- * Etherios Cloud Connector makes @ref connector_request_id_data_point_binary_status "binary data point status"
+ * Cloud Connector makes @ref connector_request_id_data_point_binary_status "binary data point status"
  * @ref connector_callback_t "callback" 
  *
  * The @ref connector_request_id_data_point_binary_status "binary data point status"
@@ -205,7 +205,7 @@
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *    <td>Aborts Etherios Cloud Connector</td>
+ *    <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -289,8 +289,8 @@
  *
  * @subsection single_stream_point_response  Single stream data point response
  *
- * After calling connector_initiate_action(), Etherios Connector will prepare and send data point request
- * to Etherios Device Cloud asynchronously. Upon receiving the response, it makes
+ * After calling connector_initiate_action(), Cloud Connector will prepare and send data point request
+ * to Device Cloud asynchronously. Upon receiving the response, it makes
  * @ref connector_request_id_data_point_single_response "single stream data point response" callback to pass
  * Device Cloud response to the application. Application is free to release the allocated resources at this point.
  *
@@ -332,7 +332,7 @@
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *    <td>Aborts Etherios Cloud Connector</td>
+ *    <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -343,7 +343,7 @@
  *
  * @subsection single_stream_point_status  Single stream data point status
  *
- * Etherios Cloud Connector makes @ref connector_request_id_data_point_single_status single stream data point status"
+ * Cloud Connector makes @ref connector_request_id_data_point_single_status single stream data point status"
  * @ref connector_callback_t "callback"
  *
  * The @ref connector_request_id_data_point_single_status "single stream data point status"
@@ -385,7 +385,7 @@
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *    <td>Aborts Etherios Cloud Connector</td>
+ *    <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
  *    <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>

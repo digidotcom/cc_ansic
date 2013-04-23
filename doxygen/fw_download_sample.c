@@ -27,12 +27,12 @@
  * @ref fw_overview1 "Firmware Download" callbacks.  These callbacks are then processed in
  * app_firmware_handler() when a firmware request callback is received.
  *
- * All interaction with Etherios Cloud Connector is through the callback in this sample; Firmware download
- * is initiated fully from Etherios Device Cloud.  The file firmware.c contains the routines which process
+ * All interaction with Cloud Connector is through the callback in this sample; Firmware download
+ * is initiated fully from Device Cloud.  The file firmware.c contains the routines which process
  * the firmware download callbacks passed to app_firmware_handler().
  *
  * This sample defines all supported image files with .a and .bin file extensions.
- * The file extension is only validated when updating firmware from Etherios Device Cloud.
+ * The file extension is only validated when updating firmware from Device Cloud.
  *
  * @code
  * // list of all supported firmware target info
@@ -53,10 +53,10 @@
  * that the downloaded image is valid.
  *
  * When app_firmware_download_complete() returns @ref connector_firmware_download_success status,
- * it indicates the firmware image has been updated. Etherios Device Cloud will reset the unit,
+ * it indicates the firmware image has been updated. Device Cloud will reset the unit,
  * the routine app_firmware_reset() is called for resetting.
  *
- * The routine app_firmware_download_abort() is called when Etherios Device Cloud encounters error.
+ * The routine app_firmware_download_abort() is called when Device Cloud encounters error.
  *
  * @section connect_build Building
  *
@@ -103,12 +103,12 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td> Etherios Cloud Connector options</td>
+ *   <td> Cloud Connector options</td>
  *   <td>samples/firmware_download</td>
  * </tr>
  * <tr>
  * <th>connector_api.c</th>
- * <td>Code for Etherios Cloud Connector </td>
+ * <td>Code for Cloud Connector </td>
  * <td>private</td>
  * </tr>
  * <tr>
@@ -147,12 +147,12 @@
  * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * Firmware downloads can be initiated by Etherios Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
+ * Firmware downloads can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
  * or by issuing a @ref services "SCI update_firmware operation".
  *
- * @subsection fw_gui Firmware Download using Etherios Device Cloud GUI
+ * @subsection fw_gui Firmware Download using Device Manager
  *
- * Log on to Etherios Device Cloud at http://login.etherios.com/ and click on your device
+ * Log on to Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged to see your device, click the Refresh button.
  * The device's status should indicate as 'Connected'. Select the device for firmware update
@@ -161,7 +161,7 @@
  *
  * Then select Update Firmware to update your firmware under the More button, and then select
  * the file that is your firmware image on your local machine.  The image will then
- * start to upload to your Etherios Cloud Connector application.  The GUI will indicate when it's complete.
+ * start to upload to your Cloud Connector application.  The GUI will indicate when it's complete.
  *
  * @note The firmware image name must match the regular expression given to
  * filter names, see @ref fw_info.
@@ -177,7 +177,7 @@
  *
  * This sample provides two simple python scripts to update firmware image and query
  * a list of firmware target information using
- * @htmlonly <a href="web_services.html">Etherios Device Cloud Web Services.</a> @endhtmlonly
+ * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  * It sends a request to login.etherios.com.
  *
  * update_firmware.py opens and sends "image.a" to the device.

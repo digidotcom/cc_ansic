@@ -23,12 +23,12 @@
  *
  * @section fs_sample_description Code Flow
  *
- * The routine main() in the platform directory initializes Etherios Cloud Connector and registers the application callback
+ * The routine main() in the platform directory initializes Cloud Connector and registers the application callback
  * app_connector_callback() as part of @ref AppStructure "Public Application Framework". The app_connector_callback()
  * is defined in the application.c file. The app_connector_callback() callback calls app_file_system_handler(),
  * defined in the file_system.c file in the platform directory, when a file system request is received.
  *
- * All file system requests are initiated by Device Cloud by Etherios.
+ * All file system requests are initiated by Device Cloud.
  *
  * The app_file_system_handler() routine calls the following routines to perform different file I/O operations:
  * <br /><br />
@@ -143,7 +143,7 @@
  * @section fs_sample_put_file The put_file command
  *
  * The put_file command initiates a file system session, which writes a file on the device.
- * Etherios Cloud Connector will invoke the following application callbacks:
+ * Cloud Connector will invoke the following application callbacks:
  *
  *  -# @ref file_system_open "app_process_file_open()" is called with the "test_file.txt" path and
  *          @ref CONNECTOR_FILE_O_WRONLY | @ref CONNECTOR_FILE_O_CREAT oflag
@@ -158,7 +158,7 @@
  * @section fs_sample_get_file The get_file command
  *
  * The get_file command initiates a file system session, which reads a file and sends file data
- * to Device Cloud by Etherios. Etherios Cloud Connector will invoke the following application callbacks:
+ * to Device Cloud. Cloud Connector will invoke the following application callbacks:
  *
  *  -# @ref file_system_open "app_process_file_open()" is called with the "test_file.txt" path and
  *          @ref CONNECTOR_FILE_O_RDONLY oflag
@@ -172,7 +172,7 @@
  * @section fs_sample_ls_file The ls command
  *
  * The ls command initiates a file system session, which lists a file or directory.
- * In this example Etherios Cloud Connector will invoke the following application callback:
+ * In this example Cloud Connector will invoke the following application callback:
  *
  *  @ref file_system_stat "app_process_file_stat()" is called with the "test_file.txt" path and
  *          @ref connector_file_system_hash_none hash_algorithm.requested.
@@ -187,7 +187,7 @@
  * @endcode
  * <br />
  *
- * Etherios Cloud Connector will invoke the following application callbacks:
+ * Cloud Connector will invoke the following application callbacks:
  *
  *  -# @ref file_system_stat "app_process_file_stat()" called with the "./" path and
  *          @ref connector_file_system_hash_md5 hash_algorithm.requested
@@ -220,7 +220,7 @@
  *
  * @endcode
  *
- * Etherios Cloud Connector will invoke the @ref file_system_remove "app_process_file_remove()" callback.
+ * Cloud Connector will invoke the @ref file_system_remove "app_process_file_remove()" callback.
  * <br /><br />
  * 
  * @section fs_sample_output Sample output
@@ -300,12 +300,12 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td> Etherios Cloud Connector options</td>
+ *   <td> Cloud Connector options</td>
  *   <td>samples/file_system</td>
  * </tr>
  * <tr>
  * <th>connector_api.c</th>
- * <td>Code for Etherios Cloud Connector </td>
+ * <td>Code for Cloud Connector </td>
  * <td>private</td>
  * </tr>
  * <tr>

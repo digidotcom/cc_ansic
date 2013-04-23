@@ -25,7 +25,7 @@
  *
  * @section connect_description Code Flow
  *
- * The routine main() in the platform directory initializes Etherios Cloud Connector and
+ * The routine main() in the platform directory initializes Cloud Connector and
  * registers the application-defined callback. In the file application.c is the
  * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
  * when a data service request is received.
@@ -71,12 +71,12 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td>Etherios Cloud Connector options</td>
+ *   <td>Cloud Connector options</td>
  *   <td>samples/data_point</td>
  * </tr>
  * <tr>
  *   <th>connector_api.c</th>
- *   <td>Code for Etherios Cloud Connector </td>
+ *   <td>Code for Cloud Connector </td>
  *   <td>private</td>
  * </tr>
  * <tr>
@@ -111,7 +111,7 @@
  *
  * @section web_gui Viewing results from Device Cloud
  *
- * To view the results for this sample, log on to Etherios Device Cloud as described
+ * To view the results for this sample, log on to Device Cloud as described
  * in the @ref add_your_device_to_the_cloud "Getting Started" section.
  *
  * Once logged in click on the Data Services tab as shown below. Then select the Data

@@ -4,9 +4,9 @@
  *
  * @section device_request_overview Overview
  *
- * This sample demonstrates how to process data sent from Etherios Device Cloud.
+ * This sample demonstrates how to process data sent from Device Cloud.
  * Using the @ref data_service_overview "data service api" this application prints
- * out the data sent from Etherios Device Cloud.
+ * out the data sent from Device Cloud.
  *
  * @section device_request_location Source Code Location
  *
@@ -21,14 +21,14 @@
  *
  * @section connect_description Code Flow
  *
- * The routine main() in the platform directory initializes Etherios Cloud Connector and
+ * The routine main() in the platform directory initializes Cloud Connector and
  * registers the application callback.  In the file application.c is the
  * application defined callback app_connector_callback(), this routine calls app_data_service_handler()
  * when a device request is received.
  *
  * A User can use the included python script to send a device request to the device.
  *
- * When Etherios Device Cloud sends a device request to the device, app_data_service_handler() is called
+ * When Device Cloud sends a device request to the device, app_data_service_handler() is called
  * with @ref connector_request_id_data_service_receive_target to process the target of the request, and
  * @ref connector_request_id_data_service_receive_data to process the data. This callback
  * is continually called with this @ref connector_request_id_data_service_receive_data callback until
@@ -37,7 +37,7 @@
  *
  * After the @ref connector_request_id_data_service_receive_data callback is called for the last chunk of data,
  * @ref connector_request_id_data_service_receive_reply_data callback is called to send response
- * data back to Etherios Device Cloud. This sample sends and prints out the request and response data.
+ * data back to Device Cloud. This sample sends and prints out the request and response data.
  *
  * When @ref connector_request_id_data_service_receive_status callback is called it indicates
  * an error is encountered and needs to cancel the device request. In this example it cancels
@@ -83,12 +83,12 @@
  * </tr>
  * <tr>
  *   <th>connector_config.h</th>
- *   <td>Etherios Cloud Connector options</td>
+ *   <td>Cloud Connector options</td>
  *   <td>samples/device_request</td>
  * </tr>
  * <tr>
  * <th>connector_api.c</th>
- * <td>Code for Etherios Cloud Connector </td>
+ * <td>Code for Cloud Connector </td>
  * <td>private</td>
  * </tr>
  * <tr>
@@ -124,7 +124,7 @@
  * @section python_script Python script to send device request
  *
  * This sample provides a simple python script to send a data service device request to login.etherios.com
- * using @htmlonly <a href="web_services.html">Etherios Device Cloud Web Services.</a> @endhtmlonly
+ * using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  * To run the python script for this sample:
  *
  * @code

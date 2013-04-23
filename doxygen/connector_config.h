@@ -11,7 +11,7 @@
  */
  /**
   * @file
-  *  @brief Etherios Cloud Connector configuration options
+  *  @brief Cloud Connector configuration options
   *
   */
 #ifndef __CONNECTOR_CONFIG_H_
@@ -19,10 +19,10 @@
 
 
 /**
-* @defgroup connector_config_options Etherios Cloud Connector Configuration Options
+* @defgroup connector_config_options Cloud Connector Configuration Options
 * @{
 *
-* @brief Defines the major blocks of functionality used in Etherios Cloud Connector
+* @brief Defines the major blocks of functionality used in Cloud Connector
 */
 
 /**
@@ -33,7 +33,7 @@
 #define CONNECTOR_LITTLE_ENDIAN
 
 /**
- * When defined, Etherios Cloud Connector private library includes debug support.  Etherios Cloud Connector state
+ * When defined, Cloud Connector private library includes debug support.  Cloud Connector state
  * and debug data will be displayed using the @ref connector_debug_printf. See @ref debug_routine
  * for its implementation. Macro error testing is compiled and implemented using the
  * @ref ASSERT macro.
@@ -56,7 +56,7 @@
 #define CONNECTOR_DEBUG
 
 /**
- * When defined, Etherios Cloud Connector private library includes the @ref firmware_download
+ * When defined, Cloud Connector private library includes the @ref firmware_download
  * "Firmware Download Service".
  *
  * To disable the @ref firmware_download "Firmware Download Service" feature, comment
@@ -76,7 +76,7 @@
 #define CONNECTOR_FIRMWARE_SERVICE
 
 /**
- * When defined, Etherios Cloud Connector includes the @ref zlib "compression" support used with the
+ * When defined, Cloud Connector includes the @ref zlib "compression" support used with the
  * @ref data_service.
  *
  * By default, compression support is disabled.  To enable Optional Data Compression Support,
@@ -105,7 +105,7 @@
 #define CONNECTOR_COMPRESSION
 
 /**
- * If defined, Etherios Cloud Connector includes the @ref data_service.
+ * If defined, Cloud Connector includes the @ref data_service.
  * To disable the @ref data_service feature, comment this line out in connector_config.h:
  *
  * @code
@@ -124,7 +124,7 @@
 #define CONNECTOR_DATA_SERVICE
 
 /**
-* If defined, Etherios Cloud Connector includes the @ref data_point.
+* If defined, Cloud Connector includes the @ref data_point.
 * To disable the @ref data_point feature, comment this line out in connector_config.h:
 *
 * @code
@@ -143,7 +143,7 @@
 #define CONNECTOR_DATA_POINTS
 
 /**
- * If defined, Etherios Cloud Connector includes the @ref file_system.
+ * If defined, Cloud Connector includes the @ref file_system.
  * To enable the @ref file_system feature, uncomment this line in connector_config.h:
  *
  * @code
@@ -162,7 +162,7 @@
 #define CONNECTOR_FILE_SYSTEM
 
 /**
- * If defined, Etherios Cloud Connector includes the @ref rci_service.
+ * If defined, Cloud Connector includes the @ref rci_service.
  * To disable the @ref rci_service feature, comment this line out in connector_config.h:
  *
  * @code
@@ -184,8 +184,8 @@
 
 /**
  * This is used to define the maximum content length in bytes of an element's value for the @ref rci_service,
- * Etherios Cloud Connector includes the @ref rci_service that allows user remote configuration, control, and information
- * exchange between a device and Etherios Device Cloud.
+ * Cloud Connector includes the @ref rci_service that allows user remote configuration, control, and information
+ * exchange between a device and Device Cloud.
  * See @ref CONNECTOR_RCI_SERVICE to enable or disable the service.
  *
  * @code
@@ -197,7 +197,7 @@
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 
 /**
-* If defined, Etherios Cloud Connector includes the @ref cli_request.
+* If defined, Cloud Connector includes the @ref cli_request.
 * To disable the @ref cli_request feature, comment this line out in connector_config.h:
 *
 * @code
@@ -216,7 +216,7 @@
 #define CONNECTOR_SM_CLI
 
 /**
-* If defined, Etherios Cloud Connector includes the ability to receive multiple short messages in
+* If defined, Cloud Connector includes the ability to receive multiple short messages in
 * one packet. If there are more messages pending in Device Cloud then user will be notified with
 * @ref pending_data. To retreive pending mesages, user has to send a request (can be @ref ping_request)
 * to Device Cloud. If there is no @ref pending_data callback then that means no pending messages at this
@@ -263,7 +263,7 @@
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
 /**
- * When defined, Etherios Cloud Connector private library does not use dynamic memory allocations,
+ * When defined, Cloud Connector private library does not use dynamic memory allocations,
  * static memory buffers are used instead. This eliminates the possibility of memory fragmentation.
  *
  * When no dynamic RAM option is used, @ref CONNECTOR_MSG_MAX_TRANSACTION must be defined and it should be
@@ -285,7 +285,7 @@
 #define CONNECTOR_NO_MALLOC
 
 /**
- * If defined, Etherios Cloud Connector includes the TCP transport.
+ * If defined, Cloud Connector includes the TCP transport.
  * To disable this feature, comment this line out in connector_config.h:
  *
  * @code
@@ -303,7 +303,7 @@
 #define CONNECTOR_TRANSPORT_TCP
 
 /**
-* If defined, Etherios Cloud Connector includes the UDP transport.
+* If defined, Cloud Connector includes the UDP transport.
 * To disable this feature, comment this line out in connector_config.h:
 *
 * @code
@@ -353,7 +353,7 @@
  *  is uncompiled and the hard-coded values are used instead:
  *
  * @code
- *     #define CONNECTOR_DEVICE_TYPE                          "Etherios Cloud Connector Linux Sample"
+ *     #define CONNECTOR_DEVICE_TYPE                          "Cloud Connector Linux Sample"
  *     #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
  *     #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              75
  *     #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
@@ -371,7 +371,7 @@
  *     #define CONNECTOR_IDENTITY_VERIFICATION                connector_identity_verification_simple
  * @endcode
  *
- * This option is useful for reducing Etherios Cloud Connector code space for those applications that are sensitive to memory usage.  The following
+ * This option is useful for reducing Cloud Connector code space for those applications that are sensitive to memory usage.  The following
  * table describes the each define and the callback cross reference:
  *
  * @htmlonly
@@ -387,7 +387,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_CLOUD_URL @htmlonly </td>
- * <td>Etherios Device Cloud FQDN.
+ * <td>Device Cloud FQDN.
  * See @endhtmlonly @ref device_cloud_url @htmlonly</td>
  * </tr>
  * <tr>
@@ -408,7 +408,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_VENDOR_ID @htmlonly </td>
- * <td>Vendor ID from Etherios Device Cloud Account.
+ * <td>Vendor ID from Device Cloud Account.
  * See @endhtmlonly @ref vendor_id @htmlonly</td>
  * </tr>
  * <tr>
@@ -475,7 +475,7 @@
  * @see @ref device_type
  * @see @ref app_get_device_type
  */
-#define CONNECTOR_DEVICE_TYPE                             "Etherios Cloud Connector Linux Sample"
+#define CONNECTOR_DEVICE_TYPE                             "Cloud Connector Linux Sample"
 
 /**
  * When defined, this string hardcode for the @ref device_cloud_url instead of the application framework
@@ -529,7 +529,7 @@
  *
  * @see @ref vendor_id
  * @see @ref app_get_vendor_id()
- * @see @ref connector_vendor_id "Obtaining an Etherios Device Cloud Vendor ID"
+ * @see @ref connector_vendor_id "Obtaining an Device Cloud Vendor ID"
  */
 #define CONNECTOR_VENDOR_ID                            0x00000000
 

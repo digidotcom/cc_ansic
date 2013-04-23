@@ -4,23 +4,23 @@
  *
  * @section data_service_overview Data Service Overview
  *
- * The Data Service API is used to send data to and from Etherios Device Cloud.  Data service transfers
- * are either initiated from Etherios Device Cloud (@ref device_request) or the device itself (@ref send_data_request).
+ * The Data Service API is used to send data to and from Device Cloud.  Data service transfers
+ * are either initiated from Device Cloud (@ref device_request) or the device itself (@ref send_data_request).
  *
- * @li @ref send_data_request : Data transfers initiated by the device and used to write files on to Etherios Device Cloud.
+ * @li @ref send_data_request : Data transfers initiated by the device and used to write files on to Device Cloud.
  * Device Cloud may send a response back to the device indicating the transfer status.
- * @li @ref device_request : Transfers initiated from a web services client connected to Etherios Device Cloud which
+ * @li @ref device_request : Transfers initiated from a web services client connected to Device Cloud which
  * hosts the device. This transfer is used to send data to the device and the device may send a response back.
  *
  * @note See @ref data_service_support under Configuration to disable the data service.
  *
  * @section send_data_request Send data
  *
- * This is one way the device can send data to Etherios Device Cloud. The other method is using @ref data_point.
+ * This is one way the device can send data to Device Cloud. The other method is using @ref data_point.
  * It is the device originated transaction, starts when the connector_initiate_action() is called with request ID
  * @ref connector_initiate_send_data.
  *
- * Etherios Cloud Connector invokes the application-defined callback to get the actual data to send and to pass
+ * Cloud Connector invokes the application-defined callback to get the actual data to send and to pass
  * Device Cloud response.
  *      -# @ref initiate_send_data
  *      -# @ref send_data_length_callback
@@ -29,15 +29,15 @@
  *      -# @ref send_data_status_callback
  *
  * Once the @ref initiate_send_data is called the callbacks will be called in following sequence:
- *      -# Etherios Cloud Connector calls application-defined callback @ref send_data_callback to get the user data (chunk of data).
- *      -# Etherios Cloud Connector calls application-defined callback @ref send_data_response_callback to pass Device Cloud response.
- *      -# Etherios Cloud Connector calls application-defined callback @ref send_data_status_callback to inform session complete if
+ *      -# Cloud Connector calls application-defined callback @ref send_data_callback to get the user data (chunk of data).
+ *      -# Cloud Connector calls application-defined callback @ref send_data_response_callback to pass Device Cloud response.
+ *      -# Cloud Connector calls application-defined callback @ref send_data_status_callback to inform session complete if
  *         the response is not requested or error occurs while sending the data.
  *
- * For a non-tcp transport session, before making the very first call to get the user data, Etherios Cloud
+ * For a non-tcp transport session, before making the very first call to get the user data, Cloud
  * Connector will call the @ref send_data_length_callback to get the total length of the response data.
  *
- * Etherios Cloud Connector calls @ref send_data_callback repeatedly to get all data.
+ * Cloud Connector calls @ref send_data_callback repeatedly to get all data.
  *
  * @note See @ref data_service_support under Configuration to enable the data service.
  * @note See @ref CONNECTOR_TRANSPORT_TCP and @ref network_tcp_start to enable and start TCP.
@@ -45,7 +45,7 @@
  *
  * @subsection initiate_send_data Initiate Send Data
  *
- * The application initiates the send data to Etherios Device Cloud by calling connector_initiate_action()
+ * The application initiates the send data to Device Cloud by calling connector_initiate_action()
  * with @ref connector_initiate_send_data request and @ref connector_request_data_service_send_t request_data.
  *
  * The connector_initiate_action() is called with the following arguments:
@@ -73,7 +73,7 @@
  *        <ul>
  *        <li><b><i>transport</i></b>, a method to use to send data </li>
  *        <li><b><i>user_context</i></b>, is the user owned context pointer </li>
- *        <li><b><i>path</i></b> is Etherios Device Cloud file path containing the data (shouldn't be stack variable) </li>
+ *        <li><b><i>path</i></b> is Device Cloud file path containing the data (shouldn't be stack variable) </li>
  *        <li><b><i>content_type</i></b> is "text/plain", "text/xml", "application/json", etc (shouldn't be stack variable) </li>
  *        <li><b><i>option</i></b>, is to inform Device Connector on what to do with the data </li>
  *        <li><b><i>response_required</i></b>, set to connector_true if the response is needed </li>
@@ -96,13 +96,13 @@
  *   header.option = connector_data_service_send_option_append;
  *   header.user_context = file_path;
  *
- *   // Begin a file transfer to Etherios Device Cloud
+ *   // Begin a file transfer to Device Cloud
  *   status = connector_initiate_action(handle, connector_initiate_send_data, &header);
  * @endcode
  *
- * This example will invoke Etherios Cloud Connector to initiate a data transfer to Etherios Device
+ * This example will invoke Cloud Connector to initiate a data transfer to Device
  * Cloud.  The result of this operation creates a file testfile.txt in the testdir directory
- * on Etherios Device Cloud.  Once Etherios Device Cloud is ready to receive data
+ * on Device Cloud.  Once Device Cloud is ready to receive data
  * from the device the application callback is called requesting data.
  *
  * @note: The header, file_path and file_type above are not stack variables. Either you can use a heap or a memory (global or static)
@@ -161,7 +161,7 @@
  *
  * @subsection send_data_callback Send data callback
  *
- * After calling connector_initiate_action(), Etherios Cloud Connector will make @ref connector_request_id_data_service_send_data "Send Data"
+ * After calling connector_initiate_action(), Cloud Connector will make @ref connector_request_id_data_service_send_data "Send Data"
  * @ref connector_callback_t "callbacks" to retrieve the application data. These callbacks will continue
  * until the user sets more_data flag to connector_false or an error is encountered.
  *
@@ -215,8 +215,8 @@
  *
  * @subsection send_data_response_callback Send data response callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_data_service_send_response "response"
- * @ref connector_callback_t "callback" to pass Etherios Device Cloud response to the send data request.
+ * Cloud Connector will make @ref connector_request_id_data_service_send_response "response"
+ * @ref connector_callback_t "callback" to pass Device Cloud response to the send data request.
  * User can free their user_context and any other reserved data as soon as they receive this callback.
  *
  * The @ref connector_request_id_data_service_send_response "response" @ref connector_callback_t "callback"
@@ -268,7 +268,7 @@
  *
  * @subsection send_data_status_callback Send data status callback
  *
- * Etherios Cloud Connector will make @ref connector_request_id_data_service_send_status "status"
+ * Cloud Connector will make @ref connector_request_id_data_service_send_status "status"
  * @ref connector_callback_t "callback" to pass the reason for session complete. User will receive this
  * callback when Device Connector response is not requested or in case of any errors. The error from
  * the application level is returned via @ref connector_request_id_data_service_send_response "response".
@@ -325,13 +325,13 @@
  *
  * @section device_request Device Request
  *
- * Device requests are data transfers initiated by Etherios Device Cloud. They are used to
+ * Device requests are data transfers initiated by Device Cloud. They are used to
  * send data from Device Cloud to the device, and the device may send back a reply.
  * The user will receive the application callback when a device request is received from Device Cloud.
  * The application callback is continually called with the data from Device Cloud
  * until the transfer is complete or an error is encountered.
  *
- * Etherios Cloud Connector invokes the application-defined callback to process and respond a device request.
+ * Cloud Connector invokes the application-defined callback to process and respond a device request.
  *      -# @ref ds_receive_target
  *      -# @ref ds_receive_data
  *      -# @ref ds_receive_reply_data
@@ -339,16 +339,16 @@
  *      -# @ref ds_receive_status
  *
  * The sequence calling an application-defined callback for device request is:
- *      -# Etherios Cloud Connector calls application-defined callback @ref ds_receive_target to process the target of the device request
- *      -# Etherios Cloud Connector calls application-defined callback @ref ds_receive_data to process the data of the device request
- *      -# Etherios Cloud Connector calls application-defined callback @ref ds_receive_reply_length to get the total length in bytes for the response data.
+ *      -# Cloud Connector calls application-defined callback @ref ds_receive_target to process the target of the device request
+ *      -# Cloud Connector calls application-defined callback @ref ds_receive_data to process the data of the device request
+ *      -# Cloud Connector calls application-defined callback @ref ds_receive_reply_length to get the total length in bytes for the response data.
  *         This is only callback when device request is from UDP transport. See @ref CONNECTOR_TRANSPORT_UDP to enable UDP transport.
- *      -# Etherios Cloud Connector calls application-defined callback @ref ds_receive_reply_data for response data sent back to Etherios Device Cloud.
+ *      -# Cloud Connector calls application-defined callback @ref ds_receive_reply_data for response data sent back to Device Cloud.
  *
- * Etherios Cloud Connector calls step 2 repeatedly for all device request data and step 4 for all response data.
+ * Cloud Connector calls step 2 repeatedly for all device request data and step 4 for all response data.
  *
  * For a non-tcp transport session, before making the very first call to get the user response (only if
- * Etherios Device Cloud requested for the response), Etherios Cloud Connector will call the
+ * Device Cloud requested for the response), Cloud Connector will call the
  * @ref ds_receive_reply_length to get the total length of the response data.
  *
  * @note See @ref data_service_support under Configuration to enable the data service.
@@ -383,7 +383,7 @@
  *                                       subsequential callback.</dd>
  *           <dt>target</dt><dd> - Contains pointer to requested target string.</dd>
  *           <dt>response_required</dt><dd>
- *               <ul><li>@endhtmlonly @ref connector_true @htmlonly if Etherios Device Cloud requests a response and
+ *               <ul><li>@endhtmlonly @ref connector_true @htmlonly if Device Cloud requests a response and
  *                       @endhtmlonly @ref ds_receive_reply_data @htmlonly will be called for response data.</li>
  *                   <li>@endhtmlonly @ref connector_false @htmlonly if Device Cloud does not require a response and
  *                       @endhtmlonly @ref ds_receive_reply_data @htmlonly will not be called.
@@ -412,7 +412,7 @@
  *   <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  *   <td>Application encountered error.
  *       <br> @endhtmlonly @ref ds_receive_reply_data @htmlonly will be called
- *       to send error data back to Etherios Device Cloud.
+ *       to send error data back to Device Cloud.
  *       <br><b>Note:</b> The status in the response will be set to zero (not handled) if the request is originated from TCP transport.
  *   </td>
  * </tr>
@@ -474,7 +474,7 @@
  *   <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
  *   <td>Application encountered error.
  *       <br>@endhtmlonly @ref ds_receive_reply_data @htmlonly will be called
- *       to send error data back to Etherios Device Cloud.
+ *       to send error data back to Device Cloud.
  *       <br><b>Note:</b> The status in the response will be set to zero (not handled) if the request is originated from TCP transport.
  *   </td>
  * </tr>
@@ -483,7 +483,7 @@
  *
  * @subsection ds_receive_reply_data  Device Request Response Data Callback
  *
- * This callback is called for response or error data to be sent back to Etherios Device Cloud.
+ * This callback is called for response or error data to be sent back to Device Cloud.
  * This callback will be called repeatedly until there is no more data.
  *
  * @htmlonly
@@ -536,7 +536,7 @@
  *   <td>Busy and needs to be called back again</td>
  * </tr>
  *   <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- *   <td>Application encountered error. Etherios Cloud Connector will cancel the device request.</td>
+ *   <td>Application encountered error. Cloud Connector will cancel the device request.</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -595,8 +595,8 @@
  *
  * @subsection ds_receive_status  Device Request Status Callback
  *
- * This callback is called when Etherios Cloud Connector is done with the device request,
- * encounters error or receives error from Etherios Device Cloud. Application should
+ * This callback is called when Cloud Connector is done with the device request,
+ * encounters error or receives error from Device Cloud. Application should
  * free any memory associated with the request in ths callback.
  *
  * @htmlonly
@@ -621,12 +621,12 @@
  *       <dl><dt>transport</dt><dd> - Transport method from where the device request is originated.</dd>
  *           <dt>user_context</dt><dd> - Pointer to callback's context returned from previous device request callback.</dd>
  *           <dt>status</dt><dd> - Contains one of the following status:
- *                              <ul><li><b>connector_data_service_status_complete</b> - Etherios Cloud Connector is done with the device
- *                                       request. This is called only when Etherios Device Cloud doesn't request a response and
+ *                              <ul><li><b>connector_data_service_status_complete</b> - Cloud Connector is done with the device
+ *                                       request. This is called only when Device Cloud doesn't request a response and
  *                                        @endhtmlonly @ref ds_receive_data @htmlonly will not be called. </li>
  *                                  <li><b>connector_data_service_status_cancel</b> - The device request was canceled by the user.</li>
  *                                  <li><b>connector_data_service_status_timeout</b> - The device request was timed out.</li>
- *                                  <li><b>connector_data_service_status_session_error</b> - Etherios Cloud Connector encountered error.
+ *                                  <li><b>connector_data_service_status_session_error</b> - Cloud Connector encountered error.
  *                                         See session_error. </li></dd>
  *           <dt>session_error</dt><dd> - Contains @endhtmlonly @ref connector_session_error_t @htmlonly when status is
  *                                        <b>connector_data_service_status_session_error</b>.</li>
@@ -653,14 +653,14 @@
  * </table>
  * @endhtmlonly
  *
- * A user uses the SCI web service to send a device request to Etherios Device Cloud, which
+ * A user uses the SCI web service to send a device request to Device Cloud, which
  * in turn sends it to the device. An example of an application callback for a device
  * request is show below:
  *
  *
  * @section zlib Optional Data Compression Support
- * Etherios Cloud Connector has an optional Data Compression switch that reduces the amount of network traffic.  This option requires applications
- * to link with the zlib library and add the zlib header file (zlib.h) to Etherios Cloud Connector include path.
+ * Cloud Connector has an optional Data Compression switch that reduces the amount of network traffic.  This option requires applications
+ * to link with the zlib library and add the zlib header file (zlib.h) to Cloud Connector include path.
  *
  * @note Enabling this option greatly increases the application code size and memory required to execute.
  *
