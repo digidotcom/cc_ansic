@@ -4,16 +4,16 @@
  *
  * @section services Device Cloud Web Services
  *
- * Applications can communicate to devices through Etherios Device Cloud using Device Cloud Web Service
- * requests, which are sent to Etherios Device Cloud using the Server Command Interface (SCI).
- * The diagram below shows how a Web Services Client can send an SCI command to Etherios Device Cloud.
+ * Applications can communicate to devices through Device Cloud using Device Cloud Web Service
+ * requests, which are sent to Device Cloud using the SCI.
+ * The diagram below shows how a Web Services Client can send an SCI command to Device Cloud.
  * In this example, the web services call will address Device ID 00409dFFFF010202:
  *
  * @image html WebServices.jpg
  *
  * @section SCIservices Supported SCI Operations
  *
- * The Etherios Cloud Connector supports a subset of the SCI operations supported by Etherios Device Cloud, the
+ * The Cloud Connector supports a subset of the SCI operations supported by Device Cloud, the
  * supported SCI operations are listed in the table below:
  *
  * @htmlonly
@@ -50,8 +50,8 @@
  * @endhtmlonly
  *
  *
- * To learn more about Device Cloud Web Services, see Chapter 5 SCI (Server Command Interface) in the
- * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90002008_F.pdf">Device Cloud Web Services Programming Guide</a>@endhtmlonly.
+ * To learn more about Device Cloud Web Services, see Chapter 5 SCI in the
+ * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90002008_F.pdf">Web Services Programming Guide</a>@endhtmlonly.
  *
  * @note To access this document you will have to log on to Device Cloud
  *
