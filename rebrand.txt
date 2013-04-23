@@ -8,4 +8,4 @@ server
 #platform
 todo
 fixme
-etherios
+etherios etherios.com com.etherios

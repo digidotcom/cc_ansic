@@ -43,9 +43,10 @@
  *              -# @ref view_result_on_cloud
  *          -# @ref step9
  *
- * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_device_cloud", will be used to confirm your compilation tool chain
- * and integration, respectively.  When complete, your device will be connected to Etherios Device Cloud and displayed
- * in the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
+ * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_device_cloud", will
+ * be used to confirm your compilation and port, respectively.  When complete, your
+ * device will be connected to Device Cloud and displayed in the
+ * <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
  * @section step1 Step 1: Do you have an ANSI C89 or C99 compliant compiler?
  *
@@ -100,9 +101,8 @@
  *
  * Open the file debug.c and implement the @ref connector_debug_printf.  For the linux
  * platform the file is located at public/run/platforms/linux/debug.c.  Click on the
- * routine to see a description, then modify to operate with your platform.  Etherios
- * Cloud Connector calls this routine to display debug information when
- * @ref CONNECTOR_DEBUG is defined connector_config.h.
+ * routine to see a description, then modify to operate with your platform.  Cloud Connector
+ * calls this routine to display debug information when @ref CONNECTOR_DEBUG is defined connector_config.h.
  *
  * The file public/include/connector_debug.h implements the macros listed below, which
  * are also used to debug your port.
@@ -241,33 +241,34 @@
  * @note Do not execute the compile_and_link sample, as this only verifies that the build environment
  * is set up correctly. The application will exit on a failed ASSERT when run.
  *
- * @section step4 Step 4: Setup your Etherios Device Cloud Account
+ * @section step4 Step 4: Setup your Device Cloud Account
  *
- * @subsection connector_account Create an Etherios Device Cloud Account
- * Before getting started you will need to create a new Etherios Device Cloud account and obtain a unique Etherios Device Cloud Vendor ID (which is
- * a unique identifier for your company).
+ * @subsection connector_account Create a Device Cloud Account
+ * Before getting started you will need to create a Device Cloud account and obtain a
+ * unique Device Cloud Vendor ID (which is a unique identifier for your company).
  *
- * Later in this process, when you get the connect_to_device_cloud sample @ref good_results_output "running successfully", you will be @ref add_your_device_to_the_cloud "instructed to register"
- * your Device ID with Etherios Device Cloud.
+ * Later in this process, when you get the connect_to_device_cloud sample
+ * @ref good_results_output "running successfully", you will be
+ * @ref add_your_device_to_the_cloud "instructed to register your Device Cloud Device ID.
  *
  * To create an account, navigate to
- * https://myaccount.digi.com/ and follow the instructions to create and register your
- * Etherios Device Cloud account.
+ * https://myaccount.etherios.com.com/ and follow the instructions to create and register your
+ * Device Cloud account.
  *
- * @note If you have already created and registered an Etherios Device Cloud Account, navigate here
+ * @note If you have already created and registered a Device Cloud Account, navigate here
  * https://login.etherios.com/ and follow the instructions in the next step.
  *
  * @image html cloud_registration.png
  *
- * @subsection connector_login Login to Etherios Device Cloud
- * 1. Login with the user credentials you created in section @ref connector_account
+ * @subsection connector_login Login to Device Cloud
+ * 1. Now login to Device Cloud using your account credential's
  *
  * @image html cloud_login.png
  *
- * @subsection connector_vendor_id Obtain an Etherios Device Cloud Vendor ID
- * 2. If you are a first time Etherios Device Cloud developer, you will need to obtain an Etherios Device Cloud Vendor ID.  To
- * obtain an Etherios Device Cloud Vendor ID, select the Register for new vendor id button on the bottom of
- * the @b My @b Account section under @b Administration tab after successfully logging into https://login.etherios.com/.
+ * @subsection connector_vendor_id Obtain a Device Cloud Vendor ID
+ * 2. If you are a first time Device Cloud developer, you will need to obtain a Device Cloud Vendor ID.  To
+ * obtain a Device Cloud Vendor ID, select the Register for new vendor id button on the bottom of
+ * the @b My @b Account section under @b Administration tab.
  *
  * @image html cloud_vendor_id.png
  *
@@ -321,7 +322,7 @@
  * for your platform and implement the configuration routines.
  * All configuration routines are passed in a pointer to a pointer, along with a pointer to the size.
  * The address of the configuration item is stored in the pointer passed in, and the size is assigned to the pointer to the size variable.
- * For example, app_get_vendor_id() is the routine used to retrieve the Etherios Device Cloud account Vendor ID
+ * For example, app_get_vendor_id() is the routine used to retrieve your Device Cloud Vendor ID
  * and is shown below.
  * @code
  * static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
@@ -538,12 +539,12 @@
  *
  * Given this output, a thorough code review of the app_get_device_cloud_url() function should reveal a porting defect.
  *
- * @subsection add_your_device_to_the_cloud Add your Device to Etherios Device Cloud
+ * @subsection add_your_device_to_the_cloud Add your Device to Device Cloud
  *
  * The next several sections walk through the steps required to add your device to
- * Etherios Device Cloud.
+ * your Device Cloud account.
  *
- *  -# Navigate to http://login.etherios.com and log on to Etherios Device Cloud
+ *  -# Navigate to http://login.etherios.com and log on to Device Cloud
  *  -# Click on Device Manager tab.
  *  -# Click the Add Devices button to bring up the Add Devices dialog.
  * \n
@@ -561,19 +562,19 @@
  * \n
  * \n @image html cloud_add_device_enter_device_id.png
  * \n
- *  -# Click the OK button to add your device to Etherios Device Cloud.
+ *  -# Click the OK button to add your device to Device Cloud.
  * \n
  * \n @image html cloud_add_device_click_ok.png
  *
- * @subsection view_result_on_cloud Viewing Results on Etherios Device Cloud
+ * @subsection view_result_on_cloud Viewing Results on Device Cloud
  *
- * Click the Refresh button. The device will reconnect to Etherios Device Cloud.
- * If successful your device Status will show connected.  You can now communicate
- * with your device over Etherios Device Cloud.  The next step
+ * Click the Refresh button. The device will reconnect to Device Cloud.
+ * If successful your device Status will show connected and you can now communicate
+ * with your device using Device Cloud.  The next step
  * is to integrate in one of the samples to add in more functionality to your
  * application.
  *
- * @note If you cannot connect to Etherios Device Cloud, the most likely problem
+ * @note If you cannot connect to Device Cloud, the most likely problem
  * is in the Cloud Connector configuration.  Review the configuration routines in
  * config.c; the device ID and vendor ID must be valid to connect.
  *
@@ -581,8 +582,8 @@
  *
  * @section step9 Step 9: Next Steps
  *
- * Now that you have a basic sample up and running with Etherios Device Cloud, you
- * can port in more functionality to your application.  We first suggest
+ * Now that you have a basic sample up and running with Device Cloud, you
+ * can include more functionality to your application.  We first suggest
  * reading the @ref api1_overview "API" section of the documentation and then
  * select a sample which has the functionality you need.
  *
