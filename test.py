@@ -10,7 +10,7 @@
 #
 # ***************************************************************************
 #
-# Build the Etherios Connector test harness
+# Build the Connector test harness
 #
 import logging
 import commands
@@ -192,7 +192,6 @@ def generate_id(rest_session, method="mac"):
 
         if(method == "mac"):
             # DEVICE ID based on MAC ADDRESS
-            #*** Digi Web Page:
             #--- Example MAC: 112233:445566
             #--- Device ID mapping: 00000000-00000000-112233FF-FF445566
             device_id = DEVICE_ID_BASED_ON_MAC_PROTOTYPE % (base_id[:6], base_id[-6:])
@@ -200,7 +199,6 @@ def generate_id(rest_session, method="mac"):
             generated_id["mac"] = mac_addr
         elif(method == "imei"):
             # DEVICE ID based on IMEI
-            #*** Digi Web Page:
             #--- Example IMEI: AA-BBBBBB-CCCCCC-D
             #--- Device ID mapping: 00010000-00000000-0AABBBBB-BCCCCCCD
             #*** Config.c:
@@ -220,7 +218,6 @@ def generate_id(rest_session, method="mac"):
             generated_id["imei"] = imei_id
         elif(method == "esn"):
             # DEVICE ID based on ESN
-            #*** Digi Web Page:
             #--- Example ESN-Hex: MMSSSSSS
             #--- Device ID mapping: 00020000-00000000-00000000-MMSSSSSS
             esn_id = base_id[:8]
@@ -228,7 +225,6 @@ def generate_id(rest_session, method="mac"):
             generated_id["esn"] = esn_id
         elif(method == "meid"):
             # DEVICE ID based on MEID
-            #*** Digi Web Page:
             #--- Example MEID-Hex: RRXXXXXXZZZZZZ
             #--- Device ID mapping: 00040000-00000000-00RRXXXX-XXZZZZZZ
             block_R = base_id[:2]
@@ -242,7 +238,7 @@ def generate_id(rest_session, method="mac"):
             generated_id["meid"] = meid_id
 
 
-        TestRunner.log.info("Generated Device ID and adding to Etherios Account.",
+        TestRunner.log.info("Generated Device ID and adding to Device Cloud Account.",
             extra={'description' : '', 'test': '', 'device_id' : device_id})
         device_core = rest_mapper.create_resource('DeviceCore',
             devConnectwareId=device_id, dpUdpSmEnabled='true')
@@ -259,7 +255,7 @@ def generate_id(rest_session, method="mac"):
 
 def start_iik(executable, tty=False):
     """
-    Starts an Etherios Connector session in given path with given executable name.
+    Starts a Connector session in given path with given executable name.
     """
     if tty:
         os.system('/usr/bin/script -q -f -c "%s"' % (executable))
@@ -518,9 +514,9 @@ class TestRunner(object):
                 self.log.info('Finished Test.', extra=log_extra)
                 return
 
-            self.log.info('Starting Etherios Connector.', extra=log_extra)
+            self.log.info('Starting Cloud Connector.', extra=log_extra)
 
-            # Move idigi executable to a unique file name to allow us to isolate
+            # Move executable to a unique file name to allow us to isolate
             # the pid.
             old_connector_path = os.path.join(src_dir, 'connector')
             connector_executable = str(uuid.uuid4())
@@ -540,7 +536,7 @@ class TestRunner(object):
                 if pid == '':
                     raise Exception(">>> [%s] connector [%s] not running dir=[%s]" % (self.description, execution_type, src_dir))
 
-                self.log.info('Started Etherios Connector.', extra=log_extra)
+                self.log.info('Started Cloud Connector.', extra=log_extra)
                 for test_script in test_list:
                     # skip the test if script filename starts with 'test_nodebug'
                     if self.debug_on and test_script.find('test_nodebug') == 0:
@@ -665,7 +661,7 @@ def build_template(description, cflags):
     log.info('[%s] Executing [%s].' % (description, test_script))
 
     # Argument list to call nose with.  Generate a nosetest xml file in
-    # current directory, pass in idigi / iik connection settings.
+    # current directory, pass in connection settings.
     arguments = ['dvt/bin/nosetests',
                  '-s',
                  '--with-xunit',
@@ -685,7 +681,7 @@ def build_library(description, cflags, config_tool_jar):
     log.info('[%s] Executing [%s].' % (description, test_script))
 
     # Argument list to call nose with.  Generate a nosetest xml file in
-    # current directory, pass in idigi / iik connection settings.
+    # current directory, pass in connection settings.
     arguments = ['dvt/bin/nosetests',
                  '-s',
                  '--with-xunit',
@@ -712,16 +708,16 @@ def generate_config_tool_jar(build_path='tools/config'):
     return (process.returncode, data)
 
 def main():
-    parser = argparse.ArgumentParser(description="Etherios Connector Test Harness",
+    parser = argparse.ArgumentParser(description="Cloud Connector Test Harness",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('--username', action='store', type=str,
-        default='iikdvt', help="Etherios Username to run the test with.")
+        default='iikdvt', help="Device Cloud Username to run the test with.")
     parser.add_argument('--password', action='store', type=str,
-        default='iik1sfun', help="Etherios Password to run the test with.")
+        default='iik1sfun', help="Device Cloud Password to run the test with.")
     parser.add_argument('--hostname', action='store', type=str,
         default='test.etherios.com',
-        help='Etherios Server to connect devices to.')
+        help='Device Cloud URL to connect devices to.')
     parser.add_argument('--descriptor', action='store', type=str,
         default='linux-x64', help='A unique descriptor to describe the test.')
     parser.add_argument('--architecture', action='store', type=str,
