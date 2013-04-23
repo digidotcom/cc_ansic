@@ -50,7 +50,7 @@ def PostMessage(username, password, device_id, cloud_url):
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
     
-    # build disconnect message sent to server
+    # build disconnect message sent to Device Cloud
     message = """<sci_request version="1.0">
         <disconnect>
             <targets>

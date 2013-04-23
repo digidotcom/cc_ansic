@@ -65,7 +65,7 @@ def PostMessage(username, password, device_id, cloud_url):
         return -1
         
 
-    # build firmware download message sent to server
+    # build firmware download message sent to Device Cloud
     message = """<sci_request version="1.0">
         <update_firmware firmware_target="1" filename="%s">
             <targets>

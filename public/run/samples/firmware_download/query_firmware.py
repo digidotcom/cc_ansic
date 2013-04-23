@@ -49,7 +49,7 @@ def PostMessage(username, password, device_id, cloud_url):
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
     
-    # device request message to send to server
+    # device request message to send to Device Cloud
     message = """<sci_request version="1.0">
         <query_firmware_targets>
             <targets>

@@ -12,7 +12,7 @@
 #
 # ***************************************************************************
 # file_system.py
-# Send SCI file_system to server. 
+# Send SCI file_system to Device Cloud. 
 # -------------------------------------------------
 # Usage: file_system.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
@@ -58,7 +58,7 @@ def PostMessage(username, password, device_id, cloud_url):
 
     put_data = base64.encodestring(expected_content)[:-1]
     
-    # file system message to send to server
+    # file system message to send to Device Cloud
     message = """<sci_request version="1.0">
         <file_system>
             <targets>

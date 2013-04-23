@@ -48,7 +48,7 @@ def GetMessage(username, password, device_id, cloud_url):
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
 
-    # device request message to send to server
+    # device request message to send to Device Cloud
     path = """/ws/FileData/~/%s/test/test.txt"""%(device_id)
 
     # to what URL to send the request with a given HTTP method
