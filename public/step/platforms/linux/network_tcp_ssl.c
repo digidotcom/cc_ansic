@@ -47,7 +47,7 @@ typedef struct
     SSL * ssl;
 } app_ssl_t;
 
-static int app_setup_server_socket(void)
+static int app_setup_socket(void)
 {
     int const protocol = 0;
     int sd = socket(AF_INET, SOCK_STREAM, protocol);
@@ -82,7 +82,7 @@ done:
     return sd;
 }
 
-static int app_connect_to_server(int fd, in_addr_t const ip_addr)
+static int app_connect_to_device_cloud(int fd, in_addr_t const ip_addr)
 {
     int ret = -1;
     struct sockaddr_in sin = {0};
@@ -216,21 +216,21 @@ static void app_free_ssl_info(app_ssl_t * const ssl_ptr)
     }
 }
 
-static int app_verify_server_certificate(SSL * const ssl)
+static int app_verify_device_cloud_certificate(SSL * const ssl)
 {
     int ret = -1;
-    X509 * const server_cert = SSL_get_peer_certificate(ssl);
+    X509 * const device_cloud_cert = SSL_get_peer_certificate(ssl);
 
-    if (server_cert == NULL)
+    if (device_cloud_cert == NULL)
     {
-        APP_DEBUG("app_verify_server_certificate: No server certificate is provided\n");
+        APP_DEBUG("app_verify_device_cloud_certificate: No Device Cloud certificate is provided\n");
         goto done;
     }
 
     ret = SSL_get_verify_result(ssl);
     if (ret !=  X509_V_OK)
     {
-        APP_DEBUG("Server certificate is invalid %d\n", ret);
+        APP_DEBUG("Device Cloud certificate is invalid %d\n", ret);
         goto done;
     }
 
@@ -270,7 +270,7 @@ static int app_ssl_connect(app_ssl_t * const ssl_ptr)
         goto error;
     }
 
-    if (app_verify_server_certificate(ssl_ptr->ssl) != X509_V_OK)
+    if (app_verify_device_cloud_certificate(ssl_ptr->ssl) != X509_V_OK)
         goto error;
 
     ret = 0;
@@ -286,14 +286,14 @@ static connector_callback_status_t app_tcp_connect(in_addr_t const ip_addr,
     static app_ssl_t ssl_info = {0};
     socklen_t interface_addr_len;
 
-    ssl_info.sfd = app_setup_server_socket();
+    ssl_info.sfd = app_setup_socket();
     if (ssl_info.sfd < 0)
     {
         APP_DEBUG("Could not open socket\n");
         goto done;
     }
 
-    if (app_connect_to_server(ssl_info.sfd, ip_addr) < 0)
+    if (app_connect_to_device_cloud(ssl_info.sfd, ip_addr) < 0)
        goto error;
 
     if (app_is_connect_complete(ssl_info.sfd) < 0)
@@ -335,7 +335,7 @@ done:
 }
 
 /*
- * Send data to Etherios Device Cloud, this routine must not block.
+ * Send data to Device Cloud, this routine must not block.
  */
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
@@ -357,7 +357,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
 }
 
 /*
- * This routine reads a specified number of bytes from Etherios Device Cloud.
+ * This routine reads a specified number of bytes from Device Cloud.
  */
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
