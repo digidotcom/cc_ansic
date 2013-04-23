@@ -893,6 +893,7 @@ static connector_status_t fw_discovery(connector_data_t * const connector_ptr, v
             {
 
 #if defined CONNECTOR_RCI_SERVICE
+                /* coverity[uninit_use] */
                 result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.version);
                 if (result != connector_working) goto error;
 #endif
@@ -1080,6 +1081,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
         result = get_fw_config(fw_ptr, connector_request_id_firmware_target_count, &firmware_data);
         if (result == connector_working)
         {
+            /* coverity[uninit_use] */
             fw_ptr->target_count = firmware_data.count;
             if (fw_ptr->target_count > 0)
             {

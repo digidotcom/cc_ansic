@@ -151,7 +151,7 @@ typedef enum
 static void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
 {
 
-    fs_error_internal_t code = (fs_error_internal_t) data->errnum;
+    unsigned long int code = (unsigned long int) data->errnum;
 
     static struct
     {
@@ -179,6 +179,7 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
             break;
 
     default:
+        ASSERT(connector_false);
         code = fs_error_generic;
         break;
     }
@@ -219,7 +220,6 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
      uint8_t * fs_error_response = service_data->data_ptr;
      connector_file_system_get_error_t data;
 
-     data.user_context = context->user_context;
      data.buffer = fs_error_response + header_bytes;
      data.errnum = context->errnum;
      data.bytes_available = buffer_size;
@@ -232,6 +232,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
      else
      {
          connector_request_id_t request_id;
+         data.user_context = context->user_context;
          request_id.file_system_request = connector_request_id_file_system_get_error;
          
          status = connector_callback(connector_ptr->callback,
@@ -256,6 +257,7 @@ static connector_status_t format_file_error_msg(connector_data_t * const connect
          }
      }
      message_store_u8(fs_error_response, opcode, fs_error_opcode);
+     /* coverity[uninit_use] */
      message_store_u8(fs_error_response, error_code, (uint8_t)data.error_status);
      message_store_u8(fs_error_response, error_hint_len, (uint8_t) data.bytes_used);
 

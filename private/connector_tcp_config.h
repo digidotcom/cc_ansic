@@ -29,7 +29,7 @@ static connector_status_t get_config_vendor_id(connector_data_t * const connecto
         case connector_callback_continue:
             {
                 uint32_t const max_vendor_id = CONNECTOR_MAX_VENDOR_ID_NUMBER;
-
+                /* coverity[uninit_use] */
                 if ((config_vendor.id == 0) || (config_vendor.id >= max_vendor_id))
                 {
                     notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
@@ -70,8 +70,10 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
         switch (status)
         {
         case connector_callback_continue:
+            /* coverity[uninit_use] */
             if (device_type.string == NULL)
                 result = connector_invalid_data;
+            /* coverity[uninit_use] */
             else if ((device_type.length == 0) || (device_type.length > DEVICE_TYPE_LENGTH))
                 result = connector_invalid_data_size;
             else
@@ -133,6 +135,7 @@ static connector_status_t get_config_keepalive(connector_data_t * const connecto
                 uint16_t const min_interval = MIN_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
                 uint16_t const max_interval = MAX_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
 #endif
+                /* coverity[uninit_use] */
                 if ((keepalive.interval_in_seconds < min_interval) || (keepalive.interval_in_seconds > max_interval))
                 {
                     notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
@@ -182,8 +185,9 @@ static connector_status_t get_config_wait_count(connector_data_t * const connect
         switch (status)
         {
         case connector_callback_continue:
+            /* coverity[uninit_use] */
             if ((wait_count.count < WAIT_COUNT_MIN) ||
-                     (wait_count.count > WAIT_COUNT_MAX))
+                (wait_count.count > WAIT_COUNT_MAX))
             {
                 notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
                 result = connector_abort;
@@ -229,11 +233,13 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
             #define CC_ZERO_IP_ADDR         0x00000000
             #define CC_BROADCAST_IP_ADDR    0xFFFFFFFF
 
+            /* coverity[uninit_use] */
             if (config_ip.address == NULL)
             {
                 result = connector_invalid_data;
                 goto error;
             }
+            /* coverity[uninit_use] */
             if ((config_ip.ip_address_type != connector_ip_address_ipv6) && (config_ip.ip_address_type != connector_ip_address_ipv4))
             {
                 result =  connector_invalid_data_size;
@@ -297,6 +303,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
         switch (status)
         {
         case connector_callback_continue:
+            /* coverity[uninit_use] */
             switch (config_identity.type)
             {
             case connector_identity_verification_simple:
@@ -341,6 +348,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
         switch (status)
         {
         case connector_callback_continue:
+            /* coverity[uninit_use] */
             if (config_password.string == NULL)
             {
                 notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data);
@@ -348,6 +356,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
             }
             else
             {
+                /* coverity[uninit_use] */
                 connector_ptr->edp_data.config.password_length = config_password.length;
                 connector_ptr->edp_data.config.password = config_password.string;
 

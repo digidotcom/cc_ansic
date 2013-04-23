@@ -24,6 +24,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
 
             cb_data.transport = session->transport;
             cb_data.user_context = session->user.context;
+            cb_data.total_bytes = 0;
 
             #if (defined CONNECTOR_DATA_POINTS)
             if (SmIsDatapoint(session->flags))

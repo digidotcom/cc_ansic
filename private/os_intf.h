@@ -96,6 +96,7 @@ static connector_status_t get_system_time(connector_data_t * const connector_ptr
     switch (status)
     {
     case connector_callback_continue:
+        /* coverity[uninit_use] */
         *uptime = data.sys_uptime;
         result = connector_working;
         break;
