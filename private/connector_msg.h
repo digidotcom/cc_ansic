@@ -137,7 +137,7 @@ typedef enum
 
 typedef enum
 {
-    msg_capability_server,
+    msg_capability_cloud,
     msg_capability_client,
     msg_capability_count
 } msg_capability_type_t;
@@ -317,7 +317,7 @@ static void msg_set_error(msg_session_t * const session, connector_session_error
     msg_data_block_t * const dblock = (session->in_dblock != NULL) ? session->in_dblock : session->out_dblock;
     connector_bool_t const client_request_error = connector_bool(MsgIsClientOwned(dblock->status_flag) && MsgIsNotReceiving(dblock->status_flag));
     connector_bool_t const client_response_error = connector_bool(MsgIsNotClientOwned(dblock->status_flag) && MsgIsNotReceiving(dblock->status_flag));
-    connector_bool_t const server_request_error = connector_bool(MsgIsNotClientOwned(dblock->status_flag) && MsgIsReceiving(dblock->status_flag));
+    connector_bool_t const cloud_request_error = connector_bool(MsgIsNotClientOwned(dblock->status_flag) && MsgIsReceiving(dblock->status_flag));
 
     if (client_request_error && MsgIsStart(dblock->status_flag))
     {
@@ -336,7 +336,7 @@ static void msg_set_error(msg_session_t * const session, connector_session_error
         goto done;
     }
 
-    if (client_request_error || server_request_error)
+    if (client_request_error || cloud_request_error)
         MsgSetRequest(session->error_flag);
 
     if (client_request_error || client_response_error)
@@ -382,7 +382,7 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
                                           connector_bool_t const client_owned, connector_status_t * const status)
 {
     unsigned int session_id = MSG_INVALID_CLIENT_SESSION;
-    msg_capability_type_t const capability_id = client_owned ? msg_capability_server : msg_capability_client;
+    msg_capability_type_t const capability_id = client_owned ? msg_capability_cloud : msg_capability_client;
     msg_session_t * session = NULL;
     unsigned int flags = 0;
 
@@ -529,7 +529,7 @@ static connector_status_t msg_delete_session(connector_data_t * const connector_
 
     {
         unsigned int const flag = (session->in_dblock != NULL) ? session->in_dblock->status_flag : session->out_dblock->status_flag;
-        msg_capability_type_t const capability_id = MsgIsClientOwned(flag) ? msg_capability_server : msg_capability_client;
+        msg_capability_type_t const capability_id = MsgIsClientOwned(flag) ? msg_capability_cloud : msg_capability_client;
 
         if (msg_ptr->capabilities[capability_id].active_transactions > 0)
         {
@@ -1161,7 +1161,7 @@ static connector_status_t msg_start_session(connector_data_t * const connector_p
     if (session == NULL) goto error;
 
     {
-        connector_session_error_t const result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_server].window_size, msg_block_state_send_request);
+        connector_session_error_t const result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_request);
 
         status = msg_handle_pending_request(connector_ptr, msg_ptr, session, result);
     }
@@ -1224,22 +1224,22 @@ static connector_status_t msg_process_capabilities(connector_data_t * const conn
     uint8_t const version = message_load_u8(capability_packet, version);
 
     ASSERT_GOTO(version == MSG_FACILITY_VERSION, error);
-    msg_fac->capabilities[msg_capability_server].max_transactions = message_load_u8(capability_packet, max_transactions);
-    msg_fac->capabilities[msg_capability_server].window_size = message_load_be32(capability_packet, window_size);
+    msg_fac->capabilities[msg_capability_cloud].max_transactions = message_load_u8(capability_packet, max_transactions);
+    msg_fac->capabilities[msg_capability_cloud].window_size = message_load_be32(capability_packet, window_size);
 
     {
         uint8_t const comp_count = message_load_u8(capability_packet, compression_count);
         uint8_t const * compression_list = capability_packet + record_bytes(capability_packet);
         int i;
 
-        msg_fac->capabilities[msg_capability_server].compression_supported = connector_false;
+        msg_fac->capabilities[msg_capability_cloud].compression_supported = connector_false;
         for (i = 0; i < comp_count; i++)
         {
             uint8_t const compression_id = *compression_list++;
 
             if (compression_id == MSG_COMPRESSION_LIBZ)
             {
-                msg_fac->capabilities[msg_capability_server].compression_supported = connector_true;
+                msg_fac->capabilities[msg_capability_cloud].compression_supported = connector_true;
                 break;
             }
         }
@@ -1303,7 +1303,7 @@ static connector_status_t msg_pass_service_data(connector_data_t * const connect
                 ASSERT_GOTO(msg_ptr != NULL, error);
                 if (MsgIsDoubleBuf(dblock->status_flag) == connector_false)
                 {
-                    result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_server].window_size, msg_block_state_send_response);
+                    result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_response);
                     if (result != connector_session_error_none)
                         status = msg_inform_error(connector_ptr, session, result);
                 }
@@ -1654,8 +1654,8 @@ static connector_status_t msg_process_error(connector_data_t * const connector_p
     uint8_t * const error_packet = ptr;
     uint8_t const flag = message_load_u8(error_packet, flags);
     connector_bool_t const client_request_error = connector_bool(MsgIsRequest(flag) && MsgIsNotSender(flag));
-    connector_bool_t const server_response_error = connector_bool(MsgIsNotRequest(flag) && MsgIsSender(flag));
-    connector_bool_t const client_owned = connector_bool(client_request_error || server_response_error);
+    connector_bool_t const cloud_response_error = connector_bool(MsgIsNotRequest(flag) && MsgIsSender(flag));
+    connector_bool_t const client_owned = connector_bool(client_request_error || cloud_response_error);
     uint16_t const session_id = message_load_be16(error_packet, transaction_id);
     msg_session_t * const session = msg_find_session(msg_fac, session_id, client_owned);
 
