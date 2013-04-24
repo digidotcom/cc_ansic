@@ -852,8 +852,13 @@ static connector_callback_status_t dp_handle_length_callback(connector_data_serv
         case dp_content_type_csv:
         {
             size_t const sm_header_bytes = 6;
+            #if (defined CONNECTOR_TRANSPORT_UDP)
             size_t const transport_layer_bytes = (data_ptr->transport == connector_transport_udp) ? 18 : 10;
             size_t const max_packet_size = (data_ptr->transport == connector_transport_udp) ? SM_PACKET_SIZE_UDP : SM_PACKET_SIZE_SMS;
+            #else
+            size_t const transport_layer_bytes = 10;
+            size_t const max_packet_size = SM_PACKET_SIZE_SMS;
+            #endif
             size_t const max_payload_bytes = max_packet_size - (sm_header_bytes + transport_layer_bytes);
             size_t max_segments = 1;
 
