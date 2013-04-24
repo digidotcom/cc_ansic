@@ -1,6 +1,18 @@
-                      Release Notes for _RELEASE_NOTES_PARTNO_
-                     Etherios Cloud Connector v_CONNECTOR_SW_VERSION_
-                             _RELEASE_DATE_ 
+                        Release Notes PN _RELEASE_NOTES_PARTNO_
+                   Etherios Cloud Connector for Embedded
+                               v_CONNECTOR_SW_VERSION_ 
+
+INTRODUCTION
+
+        Cloud Connector is a software development package used to enable a device 
+        to exchange information with Device Cloud by Etherios.  Cloud Connector 
+        supports application to device data interaction (messaging), application 
+        and device data storage, and remote management of devices.  Devices are 
+        associated with Device Cloud through the Internet or other wide area 
+        network connections, which allows for communication between the device 
+        and customer applications, via Device Cloud.  
+
+SUPPORTED PRODUCTS
 
 ENHANCEMENTS
 
