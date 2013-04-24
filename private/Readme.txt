@@ -19,15 +19,15 @@ ENHANCEMENTS
     v1.2
      
         Support for Remote configuration (using the rci_request payload mechanism
-        within the send_message operation) has been added.  This allows iDigi 
+        within the send_message operation) has been added.  This allows Cloud 
         Connector applications to develop configurations that can be remotely 
-        managed (read/write) through iDigi Manager Pro or a web services client.  
+        managed (read/write) through Device Manager or a web services client.  
         Note this feature requires a C99 Compiler.
         
         Support for Remote File Systems (using the file_system operation) has 
         been added.  This allows remotely connected devices to easily connect
         to standard file system commands (i.e., open, close, read, write, stat) 
-        and have the file system contents displayed through iDigi Manager Pro or 
+        and have the file system contents displayed through Device Manager or 
         through a web services client. 
         
         Additional examples demonstrating secure connections using OpenSSL.  This 
@@ -36,7 +36,7 @@ ENHANCEMENTS
         
     v1.1
 
-        Added support for device requests from the iDigi device cloud, the IIK
+        Added support for device requests from the Device cloud, the Cloud Connector
         now supports bidirectional data transfers.
 
         Updated the original User Guide with an online software centric 
@@ -87,16 +87,16 @@ BUG FIXES
         Corrected rendering of XML entity characters contained in RCI 
         configuration pages.  [45364, 45365]
          
-        Corrected iDigi Manager Pro problems when RCI configuration input files  
+        Corrected Device Manager problems when RCI configuration input files  
         used a '0xhex' type or the keyword 'unit'.  The corrected type value 
         is now '0x_hex32' and the corrected keyword is now 'units'.  [44959]
         
-        Corrected intermittent problem with idigi_file_system_close callback on 
+        Corrected intermittent problem with Cloud_file_system_close callback on 
         the Linux platform when app_process_file_close() returns busy.  [44755] 
 
     v1.2
      
-        Corrected all platforms to include handling for unrecognized iDigi 
-        Callback cases with an connector_callback_unrecognized return value.  This 
-        was missing in v1.1 and will allow v1.2 applications to port correctly 
-        to v1.3 and beyond. 
+        Corrected all platforms to include handling for unrecognized Cloud 
+        Connector Callback cases with an connector_callback_unrecognized return 
+        value.  This was missing in v1.1 and will allow v1.2 applications to 
+        port correctly to v1.3 and beyond. 

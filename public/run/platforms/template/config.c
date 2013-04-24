@@ -12,7 +12,7 @@
 
  /**
   * @file
-  *  @brief Configuration routines for the iDigi Connector.
+  *  @brief Configuration routines for the Cloud Connector.
   *
   */
 #include <stdio.h>

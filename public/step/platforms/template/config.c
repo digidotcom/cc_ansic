@@ -103,8 +103,8 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
 
 static connector_callback_status_t app_get_server_url(char const ** url, size_t * const size)
 {
-#error "Specify iDigi Device Cloud URL"
-    static char const connector_server_url[] = "my.idigi.com";
+#error "Specify Device Cloud URL"
+    static  char const connector_cloud_url[] = "login.etherios.com";
 
     /* Return pointer to device type. */
     *url = connector_server_url;
@@ -636,12 +636,12 @@ static char const * app_status_error_to_string(connector_status_t const value)
 /**
  * @brief   Error status notification
  *
- * This routine is called when iDigi Connector encounters an error. This is used as
+ * This routine is called when Cloud Connector encounters an error. This is used as
  * a debug tool for finding configuration or keepalive error.
  *
  * The error_data argument contains class id, request id, and error status.
  *
- * @note If @ref CONNECTOR_DEBUG is not defined in connector_config.h, iDigi Connector will
+ * @note If @ref CONNECTOR_DEBUG is not defined in connector_config.h, Cloud Connector will
  * not call this callback to notify any error encountered.
  *
  * @retval None
