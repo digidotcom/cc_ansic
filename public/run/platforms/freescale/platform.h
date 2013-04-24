@@ -27,10 +27,12 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
 #endif
 int application_run(connector_handle_t handle);
-extern connector_callback_status_t app_get_vendor_id(uint8_t const ** const id, size_t * const size);
-extern connector_callback_status_t app_get_device_type(char const ** const type, size_t * const size);
-extern connector_callback_status_t app_custom_get_device_id(uint8_t const ** const id, size_t * const size);
-connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac);
+extern connector_callback_status_t app_get_server_url(connector_config_pointer_string_t * const config_url);
+extern connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor_id);
+extern connector_callback_status_t app_get_device_type(connector_config_pointer_string_t * const config_device_type);
+extern connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device);
+extern connector_callback_status_t app_custom_get_mac_addr(unsigned char * config_mac);
+extern connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac);
 /* TODO: Following three prototypes doesn't belong in this file */
 extern void Flash_NVRAM_get_mac_address(uint8_t * const address);
 extern void Flash_NVRAM_set_mac_address(uint8_t * const address);
