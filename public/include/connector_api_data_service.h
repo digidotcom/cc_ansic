@@ -19,7 +19,7 @@
 #define _CONNECTOR_DS_API_H
 
 /**
-* @defgroup connector_request_data_service_send_t  To send data to Etherios Device Cloud.
+* @defgroup connector_request_data_service_send_t  To send data to Device Cloud.
 * @{
 */
 /**
@@ -57,7 +57,7 @@ typedef struct
 */
 /**
  * Data service request ID,used in data service related callbacks to get user request/response
- * or to pass Etherios Device Cloud request/response.
+ * or to pass Device Cloud request/response.
  */
 typedef enum {
     connector_request_id_data_service_send_length,      /**< to get the total length of the data to send. Not applicable in TCP transport method */
@@ -149,7 +149,7 @@ typedef struct
 */
 
 /**
-* @defgroup connector_data_service_send_response_t  Response from Etherios Device Cloud
+* @defgroup connector_data_service_send_response_t  Response from Device Cloud
 * @{
 */
 /**
@@ -178,7 +178,7 @@ typedef struct
 
 
 /**
-* @defgroup connector_data_service_receive_target_t  The request target from Etherios Device Cloud
+* @defgroup connector_data_service_receive_target_t  The request target from Device Cloud
 * @{
 */
 /**
@@ -199,7 +199,7 @@ typedef struct
 */
 
 /**
-* @defgroup connector_data_service_receive_data_t  Request data from Etherios Device Cloud
+* @defgroup connector_data_service_receive_data_t  Request data from Device Cloud
 * @{
 */
 /**
@@ -221,7 +221,7 @@ typedef struct
 */
 
 /**
-* @defgroup connector_data_service_receive_reply_data_t  Response to Etherios Device Cloud
+* @defgroup connector_data_service_receive_reply_data_t  Response to Device Cloud
 * @{
 */
 /**

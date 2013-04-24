@@ -48,16 +48,16 @@
  * globalerror save_fail "Save fail"
  * globalerror memory_fail "Insufficient memory"
  *
- * # Device info that shows up in Etherios Device Cloud device summary
- * # Etherios Device Cloud queries this system setting to display the information in root folder
+ * # Device info that shows up in Device Cloud device summary
+ * # Device Cloud queries this system setting to display the information in root folder
  * group setting system "System"
  *     element description "Description" type string max 63
  *     element contact "Contact" type string max 63
  *     element location "Location" type string max 63
  *     error invalid_length "Invalid Length"
  *
- * # Etherios Device Cloud Password
- * # Etherios Deivce Manager uses this devicesecurity setting for password authentication
+ * # Device Cloud Password
+ * # Deivce Manager uses this devicesecurity setting for password authentication
  * # Note, as with all password, password type is a write-only field
  * # To include the devicesecurity setting, change devicesecurity.c.optional
  * # to devicesecurity.c and uncomment out the device_security functions in
@@ -72,7 +72,7 @@
  *
  * # Device location
  * # State configuration for GPS
- * # Must setup the following group for Latitude and Longitude to be shown in Etherios Device Cloud.
+ * # Must setup the following group for Latitude and Longitude to be shown in Device Cloud.
  * group state gps_stats "GPS"
  *     element latitude "Latitude" type string access read_only
  *     element longitude "Longitude" type string access read_only

@@ -337,9 +337,9 @@ connector_handle_t connector_init(connector_callback_t const callback)
     connector_status_t status;
 
 #if (defined CONNECTOR_SW_DESCRIPTION)
-    connector_debug_printf("Etherios Cloud Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
+    connector_debug_printf("Cloud Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
 #else
-    connector_debug_printf("Etherios Cloud Connector v%s\n", CONNECTOR_SW_VERSION);
+    connector_debug_printf("Cloud Connector v%s\n", CONNECTOR_SW_VERSION);
 #endif
 
     {
@@ -431,7 +431,7 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_got_device_id = connector_false;
                 connector_ptr->signature = NULL;
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
-                connector_debug_printf("connector_step: free Etherios Cloud Connector\n");
+                connector_debug_printf("connector_step: free Cloud Connector\n");
 
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 goto done;

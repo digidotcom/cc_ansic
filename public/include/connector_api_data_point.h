@@ -23,7 +23,7 @@
 * @{
 */
 /**
- * Data Point request IDs are used to return Etherios Device Cloud response for a Data point request.
+ * Data Point request IDs are used to return Device Cloud response for a Data point request.
  * The status IDs are called to indicate the send complete in case the response is not requested
  * or if any error occurs before sending the data point message.
  */
@@ -270,13 +270,13 @@ typedef struct
 */
 
 /**
-* @defgroup connector_data_point_response_t Carries Etherios Device Cloud response.
+* @defgroup connector_data_point_response_t Carries Device Cloud response.
 * @{
 */
 /**
 * The data in the callback with request id connector_request_id_data_point_binary_response and
 * connector_request_id_data_point_single_response will point to this data structure. The callback
-* is called when the Connector receives a response from Etherios Device Cloud.
+* is called when the Connector receives a response from Device Cloud.
 *
 * @see connector_request_id_data_point_t
 * @see connector_initiate_data_point_binary

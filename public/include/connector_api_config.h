@@ -24,13 +24,13 @@ typedef enum {
     connector_request_id_config_device_id,         /**< Requesting callback to return a unique device id which is used to identify the device.*/
     connector_request_id_config_vendor_id,         /**< Requesting callback to return a unique vendor id identifying the manufacturer of a device. */
     connector_request_id_config_device_type,       /**< Requesting callback to return device type that identifies the type of the device  */
-    connector_request_id_config_device_cloud_url,  /**< Requesting callback to return the Etherios Device Cloud URL which will be connected to */
+    connector_request_id_config_device_cloud_url,  /**< Requesting callback to return the Device Cloud URL which will be connected to */
     connector_request_id_config_connection_type,   /**< Requesting callback to return LAN or WAN connection type */
     connector_request_id_config_mac_addr,          /**< Requesting callback to return device's MAC addresss */
     connector_request_id_config_link_speed,        /**< Requesting callback to return link speed for WAN connection type */
     connector_request_id_config_phone_number,      /**< Requesting callback to return phone number dialed for WAN connection type */
-    connector_request_id_config_tx_keepalive,      /**< Requesting callback to return Etherios Device Cloud's Tx keep alive interval in seconds */
-    connector_request_id_config_rx_keepalive,      /**< Requesting callback to return Etherios Device Cloud's Rx keep alive interval in seconds */
+    connector_request_id_config_tx_keepalive,      /**< Requesting callback to return Device Cloud's Tx keep alive interval in seconds */
+    connector_request_id_config_rx_keepalive,      /**< Requesting callback to return Device Cloud's Rx keep alive interval in seconds */
     connector_request_id_config_wait_count,        /**< Requesting callback to return the number of intervals of not receiving a keep alive message after which a connection should be considered lost. */
     connector_request_id_config_ip_addr,           /**< Requesting callback to return device's IP address */
     connector_request_id_config_error_status,      /**< Error status notification which tells callback that error is encountered. */
@@ -44,7 +44,7 @@ typedef enum {
     connector_request_id_config_network_tcp,       /**< Requesting callback to return whether connection over TCP need to start now. */
     connector_request_id_config_network_udp,       /**< Requesting callback to return whether connection over UDP need to start now. */
     connector_request_id_config_network_sms,       /**< Requesting callback to return whether connection over SMS need to start now. */
-    connector_request_id_config_wan_type,          /**< Requesting callback to return WAN type used. It tells Etherios Cloud Connector whether it's GSM IMEI, CDMA ESN or CDMA MEID. */
+    connector_request_id_config_wan_type,          /**< Requesting callback to return WAN type used. It tells Cloud Connector whether it's GSM IMEI, CDMA ESN or CDMA MEID. */
     connector_request_id_config_esn,               /**< Requesting callback to return CDMA ESN (Electronic Serial Number) */
     connector_request_id_config_meid,              /**< Requesting callback to return CDMA MEID (Mobile Equipment Identifier) */
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
@@ -288,11 +288,11 @@ typedef struct {
  * @see connector_config_device_id_method_t
  */
 typedef enum {
-    connector_device_id_method_auto,         /**< Callback returns this type telling Etherios Cloud Connector to
+    connector_device_id_method_auto,         /**< Callback returns this type telling Cloud Connector to
                                                  generate the device ID from MAC address (See @ref mac_address callback)
                                                  for LAN connection type or genearte the device ID according to the @ref wan_type.
-                                                 @note Etherios Cloud Connector will not call @ref device_id callback. */
-    connector_device_id_method_manual       /**< Callback returns this type telling Etherios Cloud Connector to retrieve device ID from
+                                                 @note Cloud Connector will not call @ref device_id callback. */
+    connector_device_id_method_manual       /**< Callback returns this type telling Cloud Connector to retrieve device ID from
                                                   @ref device_id callback */
 } connector_device_id_method_t;
 /**
@@ -328,8 +328,8 @@ typedef struct {
 */
 typedef enum {
 
-    connector_connect_auto,     /**< Automic connect to Etherios Device Cloud */
-    connector_connect_manual   /**< Manual connect to Etherios Device Cloud */
+    connector_connect_auto,     /**< Automic connect to Device Cloud */
+    connector_connect_manual   /**< Manual connect to Device Cloud */
 } connector_connect_auto_type_t;
 /**
 * @}
@@ -342,7 +342,7 @@ typedef enum {
 */
 /**
 * Connection action which is used to to tell the connector to make connection to
-* Etherios Device Cloud automatically or manually. It's used for the following callbacks:
+* Device Cloud automatically or manually. It's used for the following callbacks:
 *   -# @ref connector_request_id_config_network_tcp
 *   -# @ref connector_request_id_config_network_udp
 *
@@ -408,11 +408,11 @@ typedef struct {
  * @see connector_config_identity_verification_t
  */
 typedef enum {
-    connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. Etherios Cloud Connector just transmits the
-                                                     device ID and the Etherios Device Cloud URL. */
-    connector_identity_verification_password        /**< Callback returns this form for password identity verification. Etherios Cloud Connector exchanges a pre-shared
-                                                     secret password with Etherios Device Cloud. The password must match the password set in Etherios Device Cloud.
-                                                     @note Etherios Cloud Connector will call @ref connector_request_id_config_password callback for the password. */
+    connector_identity_verification_simple,         /**< Callback returns this form for simple identity verification. Cloud Connector just transmits the
+                                                     device ID and the Device Cloud URL. */
+    connector_identity_verification_password        /**< Callback returns this form for password identity verification. Cloud Connector exchanges a pre-shared
+                                                     secret password with Device Cloud. The password must match the password set in Device Cloud.
+                                                     @note Cloud Connector will call @ref connector_request_id_config_password callback for the password. */
 } connector_identity_verification_t;
 /**
 * @}
