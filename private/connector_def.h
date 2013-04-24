@@ -50,9 +50,15 @@
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
 
 typedef enum {
+#if (defined CONNECTOR_TRANSPORT_TCP)
     connector_network_tcp,
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
     connector_network_udp,
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
     connector_network_sms,
+#endif
     connector_network_count
 } connector_network_type_t;
 

@@ -443,43 +443,51 @@ connector_status_t connector_step(connector_handle_t const handle)
 
 
     {
-        connector_network_type_t i;
-        connector_network_type_t current_network = connector_ptr->first_running_network;
+#define next_network(current_network) (((current_network) == last_network_index) ? first_network_index : ((current_network) + 1))
 
-        result = connector_idle;
+        connector_network_type_t const first_network_index = 0;
+        connector_network_type_t const last_network_index = (connector_network_count - 1);
+        connector_network_type_t const first_network_checked = connector_ptr->first_running_network;
+        connector_network_type_t current_network = first_network_checked;
 
-        for (i=connector_network_tcp; i < connector_network_count && result == connector_idle; i++)
+        do
         {
+            connector_status_t (*step_func)(connector_data_t * const connector_ptr);
+
             switch (current_network)
             {
 #if (defined CONNECTOR_TRANSPORT_TCP)
             case connector_network_tcp:
-                result = connector_edp_step(connector_ptr);
+                step_func = connector_edp_step;
                 break;
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
             case connector_network_udp:
-                result = connector_udp_step(connector_ptr);
+                step_func = connector_udp_step;
                 break;
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
             case connector_network_sms:
-                result = connector_sms_step(connector_ptr);
+                step_func = connector_sms_step;
                 break;
 #endif
             default:
+                ASSERT(connector_false);
+                result = connector_abort;
+                goto error;
                 break;
             }
 
-            current_network++;
-            if (current_network == connector_network_count) current_network = connector_network_tcp;
+            result = step_func(connector_ptr);
 
-        }
+            current_network = next_network(current_network);
+        } while ((current_network != first_network_checked) && (result == connector_idle));
 
-        connector_ptr->first_running_network = (result == connector_idle) ? connector_ptr->first_running_network + 1: current_network; /* next network type */
-        if (connector_ptr->first_running_network == connector_network_count) connector_ptr->first_running_network = connector_network_tcp;
+        connector_ptr->first_running_network = (result == connector_idle) ? next_network(first_network_checked): current_network;
+
+#undef next_network
     }
 
 error:

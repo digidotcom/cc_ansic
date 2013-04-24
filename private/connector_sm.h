@@ -628,9 +628,15 @@ done:
 }
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
-#define connector_udp_step(connector_ptr) sm_state_machine(connector_ptr, &connector_ptr->sm_udp)
+static connector_status_t connector_udp_step(connector_data_t * const connector_ptr)
+{
+	return sm_state_machine(connector_ptr, &connector_ptr->sm_udp);
+}
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-#define connector_sms_step(connector_ptr) sm_state_machine(connector_ptr, &connector_ptr->sm_sms)
+static connector_status_t connector_sms_step(connector_data_t * const connector_ptr)
+{
+	return sm_state_machine(connector_ptr, &connector_ptr->sm_sms);
+}
 #endif
