@@ -24,8 +24,35 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
     int result;
 
     va_start(args, format);
+
+#if __STDC_VERSION__ >= 199901L
     result = vsnprintf(str, size, format, args);
+#else
+    /*************************************************************************
+     * NOTE: Decided to have 64 bytes here considering following assumption  *
+     * 1. In the worst case, only one format specifier will be used.         *
+     * 2. Maximum of 48 bytes are used to represent a single precision value *
+     *************************************************************************/
+    #define SAFE_BUFFER_BYTES 64
+
+    if (size >= SAFE_BUFFER_BYTES)
+    {
+        result = vsprintf(str, format, args);
+    }
+    else
+    {
+        char local_buffer[SAFE_BUFFER_BYTES];
+        size_t const bytes_needed = vsprintf(local_buffer, format, args);
+
+        result = (bytes_needed < size) ? bytes_needed : size - 1;
+        memcpy(str, local_buffer, result);
+        str[result] = '\0';
+        result = bytes_needed;
+    }
+    #undef SAFE_BUFFER_BYTES
+#endif
     va_end(args);
+
     return result;
 }
 
@@ -97,39 +124,42 @@ static connector_callback_status_t app_os_reboot(void)
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_os_handler(connector_os_request_t const request,
-                                        void const * const request_data, size_t const request_length,
-                                        void * response_data, size_t * const response_length)
+connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
+                                           void * const data)
 {
     connector_callback_status_t status;
 
-    UNUSED_ARGUMENT(request_length);
-    UNUSED_ARGUMENT(response_length);
-
     switch (request)
     {
-    case connector_os_malloc:
+    case connector_request_id_os_malloc:
         {
-            size_t const * const bytes = request_data;
-
-            status = app_os_malloc(*bytes, response_data);
+            connector_os_malloc_t * p = data;
+            status = app_os_malloc(p->size, &p->ptr);
         }
         break;
 
-    case connector_os_free:
-        app_os_free(request_data);
-        status = connector_callback_continue;
+    case connector_request_id_os_free:
+        {
+            connector_os_free_t * p = data;
+            status = app_os_free(p->ptr);
+        }
         break;
 
-    case connector_os_system_up_time:
-        status = app_os_get_system_time(response_data);
+    case connector_request_id_os_system_up_time:
+        {
+            connector_os_system_up_time_t * p = data;
+            status = app_os_get_system_time(&p->sys_uptime);
+        }
         break;
 
-    case connector_os_yield:
-        status = app_os_yield(request_data);
+    case connector_request_id_os_yield:
+        {
+            connector_os_yield_t * p = data;
+            status = app_os_yield(&p->status);
+        }
         break;
 
-    case connector_os_reboot:
+    case connector_request_id_os_reboot:
         status = app_os_reboot();
         break;
 
@@ -141,5 +171,6 @@ connector_callback_status_t app_os_handler(connector_os_request_t const request,
 
     return status;
 }
+
 
 

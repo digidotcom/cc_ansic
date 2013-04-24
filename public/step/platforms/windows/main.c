@@ -42,8 +42,8 @@ int __cdecl main(int argc, char **argv)
          * a portion of the users application.
          */
         status = connector_step(connector_handle);
-        if (status != status != connector_success && status != connector_idle && 
-			status != connector_working && status != connector_pending)
+        if (status != connector_idle && status != connector_working && status != connector_pending &&
+            status != connector_active && status != connector_open_error)
         {
             /* We exclude connector_receive_error, connector_send_error, &
              * connector_connect_error. We want to reconnect iDigi Device Cloud

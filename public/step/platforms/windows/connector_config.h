@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012 Digi International Inc.,
+ * Copyright (c) 2011, 2012, 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -21,7 +21,6 @@
 /* #define CONNECTOR_RCI_SERVICE */
 #define CONNECTOR_TRANSPORT_TCP
 /* #define CONNECTOR_TRANSPORT_UDP */
-/* #define CONNECTOR_TRANSPORT_SMS */
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
@@ -29,14 +28,14 @@
 /* #define CONNECTOR_NO_MALLOC */
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
-#define CONNECTOR_DEVICE_TYPE                          "Etherios Cloud Connector Linux Sample"
-#define CONNECTOR_CLOUD_URL                            "my.idigi.com"
+#define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
+#define CONNECTOR_CLOUD_URL                            "login.etherios.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              5
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
 #define CONNECTOR_WAIT_COUNT                           5
 #define CONNECTOR_VENDOR_ID                            0x00000000
 #define CONNECTOR_MSG_MAX_TRANSACTION                  1
-#define CONNECTOR_CONNECTION_TYPE                      connector_lan_connection_type
+#define CONNECTOR_CONNECTION_TYPE                      connector_connection_type_lan
 #define CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND    0
 #define CONNECTOR_WAN_PHONE_NUMBER_DIALED              "012345678"
 #define CONNECTOR_FIRMWARE_SUPPORT
@@ -44,10 +43,11 @@
 #define CONNECTOR_FILE_SYSTEM_SUPPORT
 #define CONNECTOR_REMOTE_CONFIGURATION_SUPPORT
 
-#define CONNECTOR_DEVICE_ID_METHOD                      connector_auto_device_id_method
-#define CONNECTOR_NETWORK_TCP_START                     connector_auto_connect
-#define CONNECTOR_WAN_TYPE                              connector_imei_wan_type
-#define CONNECTOR_IDENTITY_VERIFICATION                 connector_simple_identity_verification
+#define CONNECTOR_DEVICE_ID_METHOD                      connector_device_id_method_auto
+#define CONNECTOR_NETWORK_TCP_START                     connector_connect_auto
+#define CONNECTOR_NETWORK_UDP_START                     connector_connect_auto
+#define CONNECTOR_WAN_TYPE                              connector_wan_type_imei
+#define CONNECTOR_IDENTITY_VERIFICATION                 connector_identity_verification_simple
 
 #endif
 
