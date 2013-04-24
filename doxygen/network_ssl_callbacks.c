@@ -21,7 +21,7 @@
  * As far as the top level calls are concerned there is no change between the SSL and non-SSL connection.
  *
  * The CA certificate is stored in public/certificates/ directory. A define APP_SSL_CA_CERT can be found
- * in platform.h. By default it is set to "../../../certificates/connector-ca-cert-public.crt".
+ * in platform.h. By default it is set to "../../../certificates/etherios-ca-cert-public.crt".
  *
  * @section ssl_connect Open
  *

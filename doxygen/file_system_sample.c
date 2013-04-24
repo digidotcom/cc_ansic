@@ -107,11 +107,12 @@
  * It sends a request to login.etherios.com. The file "test_file.txt" is created in the current directory
  * on the device with the file data "Connector file system sample\n".
  *
- * To run the python script in the sample, type:
+ * To execute file_system.py python script:
  *
  * @code
- * python file_system.py <username> <password> <device_id> [<cloud_url>]
+ * python file_system.py <Username> <Password> <Device ID> [<Device Cloud URL>]
  * @endcode
+ *
  *
  * The part of the python script which contains file system commands looks like:
  *
