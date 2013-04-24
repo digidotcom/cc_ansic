@@ -10,7 +10,7 @@
  * Service tab.
  *
  * To learn more about Device Cloud Data Streams, see Chapter 12 Device Cloud Data Streams in the
- * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90001150_H.pdf">Device Cloud User's Guide</a>@endhtmlonly.
+ * @htmlonly <a href="http://www.digi.com/support/productdetail?pid=5575">Device Cloud User's Guide</a>@endhtmlonly.
  *
  * @section data_point_location Source Code Location
  *

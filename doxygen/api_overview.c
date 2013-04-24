@@ -75,7 +75,7 @@
  *  @li Start transport (TCP, UDP or SMS)
  *  @li Stop transport (TCP, UDP, SMS or ALL) transport method
  *  @li Request Device Cloud status (Ping)
- *  @li Send dia message to Device Cloud
+ *  @li Send Data Stream message to Device Cloud
  *  @li Send device to cloud config message
  *
  * @subsection iik_callback Application Callback
