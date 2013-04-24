@@ -148,7 +148,8 @@
  * sample.
  *
  * Firmware downloads can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
- * or by issuing a @ref services "SCI update_firmware operation".
+ * or by issuing a web services call.  See @ref services "here" for more information on
+ * web service calls.
  *
  * @subsection fw_gui Firmware Download using Device Manager
  *
@@ -207,7 +208,7 @@
  * To execute query_firmware.py python script:
  *
  * @code
- * python query_firmware.py <username> <password> <device_id>
+ * python query_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]
  * @endcode
  *
  * An output of query_firmware.py:
