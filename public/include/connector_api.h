@@ -353,9 +353,15 @@ typedef enum  {
 */
 typedef enum
 {
+#if (defined CONNECTOR_TRANSPORT_TCP)
     connector_transport_tcp, /**< Use TCP. @ref CONNECTOR_TRANSPORT_TCP must be enabled. */
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
     connector_transport_udp, /**< Use UDP. @ref CONNECTOR_TRANSPORT_UDP must be enabled. */
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
     connector_transport_sms, /**< Reserved for now */
+#endif
     connector_transport_all  /**< All transports. */
 } connector_transport_t;
 /**
