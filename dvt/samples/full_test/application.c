@@ -40,7 +40,9 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
         case connector_close_status_abort:
              type = connector_false;
              break;
-
+        case connector_close_status_cloud_redirected:
+            sleep(2);
+           /* fall thru */
        /* otherwise it's an error and we want to retry */
        default:
              type = connector_true;

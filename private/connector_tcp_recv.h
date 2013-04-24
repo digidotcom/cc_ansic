@@ -473,7 +473,7 @@ enum {
             ASSERT_GOTO(payload == DISC_OP_PAYLOAD, error);
             ASSERT_GOTO(total_length > PACKET_EDP_PROTOCOL_SIZE, error);
 
-            connector_debug_printf("connector_facility_layer: receive data facility = 0x%04x\n", message_load_be16(edp_protocol, facility));
+            connector_debug_printf("edp_tcp_receive_process: receive data facility = 0x%04x\n", message_load_be16(edp_protocol, facility));
             /* adjust the length for facility process */
             {
                 uint16_t const length = (uint16_t)(total_length - PACKET_EDP_PROTOCOL_SIZE);

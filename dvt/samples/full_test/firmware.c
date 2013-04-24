@@ -138,6 +138,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         break;
 
     case dvt_case_fw_test_file:
+        ASSERT(test_file == NULL);
         if (test_file == NULL)
         {
             test_file = fopen(dvt_current_ptr->file_name,"w+");
@@ -205,9 +206,26 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
     case dvt_case_fw_test_file:
         if (test_file == NULL) goto error;
 
-        fseek(test_file, image_data->image.offset, SEEK_SET); /* Absolute offset */
-        fwrite(image_data->image.data, image_data->image.bytes_used, 1, test_file);
+        if (fseek(test_file, image_data->image.offset, SEEK_SET) < 0)
+        {
+            APP_DEBUG("fseek return error %d\n", errno);
+        }
+        {
+            size_t bytes_avail = image_data->image.bytes_used;
+            size_t bytes_written;
+            uint8_t * ptr = (uint8_t *)image_data->image.data;
+
+            while (bytes_avail > 0)
+            {
+
+                bytes_written = fwrite(ptr, bytes_avail, 1, test_file);
+                bytes_avail -= bytes_written;
+                ptr += bytes_written;
+            }
+        }
         dvt_current_ptr->file_size += image_data->image.bytes_used;
+        APP_DEBUG("target = %d, offset = 0x%04X, length = %" PRIsize " total length = %" PRIsize "\n", image_data->target_number, image_data->image.offset,
+                                            image_data->image.bytes_used, dvt_current_ptr->file_size);
         /* no break; */
     default:
         image_data->status = connector_firmware_status_success;
