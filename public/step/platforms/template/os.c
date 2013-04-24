@@ -51,7 +51,7 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
 static connector_callback_status_t app_os_reboot(void)
 {
 
-    APP_DEBUG("Reboot from server\n");
+    APP_DEBUG("Reboot\n");
     /* should not return from rebooting the system */
     return connector_callback_continue;
 }

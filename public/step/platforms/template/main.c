@@ -17,8 +17,8 @@ int main (void)
 {
     connector_handle_t connector_handle;
 
-    APP_DEBUG("main: Starting iDigi\n");
-    /* TODO: Initialized iik by calling connector_init
+    APP_DEBUG("main: Starting Connector\n");
+    /* Initialized iik by calling connector_init
      * with a callback. Replace connector_callback with
      * your callback function or add connector_callback.
      *
@@ -35,7 +35,7 @@ int main (void)
     {
         connector_status_t status;
         /*
-         * Example of using connector_step(), we run a portion of the iDigi Connector then run
+         * Example of using connector_step(), we run a portion of the Connector then run
          * a portion of the users application.
          */
         status = connector_step(connector_handle);
@@ -46,7 +46,7 @@ int main (void)
             break;
         }
 
-        /* TODO: execute other processes
+        /*  execute other processes
          *
          */
     }

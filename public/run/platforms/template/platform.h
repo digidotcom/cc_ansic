@@ -55,6 +55,10 @@ extern connector_callback_status_t app_status_handler(connector_status_request_t
                                            void const * const request_data, size_t const request_length,
                                            void * response_data, size_t * const response_length);
 
-#define APP_SSL_CA_CERT   "../../../certificates/idigi-ca-cert-public.crt"
+#if (defined RUNNIG_FROM_BASE)
+#define APP_SSL_CA_CERT   "./public/certificates/etherios-ca-cert-public.crt"
+#else
+#define APP_SSL_CA_CERT   "../../../../public/certificates/etherios-ca-cert-public.crt"
+#endif
 
 #endif /* _PLATFORM_H */
