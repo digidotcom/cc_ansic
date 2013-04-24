@@ -141,7 +141,6 @@ tar -xf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz"
 
 cd "${BASE_DIR}"
 python ../dvt/scripts/replace_str.py public/run/platforms/linux/config.c '#error' '//#error'
-python ../dvt/scripts/replace_str.py public/run/samples/compile_and_link/Makefile 'c99' 'c89'
 
 # Build all the IIK samples and platforms
 
