@@ -206,21 +206,26 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
     case dvt_case_fw_test_file:
         if (test_file == NULL) goto error;
 
-        if (fseek(test_file, image_data->image.offset, SEEK_SET) < 0)
-        {
-            APP_DEBUG("fseek return error %d\n", errno);
-        }
+        if (image_data->image.bytes_used > 0)
         {
             size_t bytes_avail = image_data->image.bytes_used;
             size_t bytes_written;
+            uint32_t offset = image_data->image.offset;
             uint8_t * ptr = (uint8_t *)image_data->image.data;
+
+
 
             while (bytes_avail > 0)
             {
 
+                if (fseek(test_file, offset, SEEK_SET) < 0)
+                {
+                    APP_DEBUG("fseek return error %d\n", errno);
+                }
                 bytes_written = fwrite(ptr, bytes_avail, 1, test_file);
                 bytes_avail -= bytes_written;
                 ptr += bytes_written;
+                offset += bytes_written;
             }
         }
         dvt_current_ptr->file_size += image_data->image.bytes_used;

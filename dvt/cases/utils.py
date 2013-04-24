@@ -310,7 +310,7 @@ def update_firmware(session, hostname, device, input_firmware, target):
         update_firmware_element.setAttribute("firmware_target", target)
 
     return session.post('https://%s/ws/sci' % hostname,
-        data=request.toprettyxml(), timeout=90).content
+        data=request.toprettyxml(), timeout=120).content
 
 class FileDataCallback(object):
 
