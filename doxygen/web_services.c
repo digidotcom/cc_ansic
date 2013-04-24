@@ -51,7 +51,7 @@
  *
  *
  * To learn more about Device Cloud Web Services, see Chapter 5 SCI in the
- * @htmlonly <a href="http://ftp1.digi.com/support/documentation/90002008_F.pdf">Web Services Programming Guide</a>@endhtmlonly.
+ * @htmlonly <a href="http://www.digi.com/support/productdetail?pid=5575">Web Services Programming Guide</a>@endhtmlonly.
  *
  * @note To access this document you will have to log on to Device Cloud
  *
