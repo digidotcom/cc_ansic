@@ -101,7 +101,7 @@ dvt_tests = {
     'full_test'                   : ('test_device_request.py',
                                      'test_put_request.py',
                                      'test_firmware_errors.py',
-                                     'test_firmware_validation.py',),
+                                     'test_firmware_validation.py',
                                      'test_reboot.py',
                                      'test_disconnect.py',),
     'file_system_cov'             : ('test_fs_cov.py',),
