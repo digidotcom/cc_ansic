@@ -92,7 +92,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #if !(defined CONNECTOR_CLOUD_URL)
 static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static  char const connector_cloud_url[] = "test.etherios.com";
+    static  char const connector_cloud_url[] = "login.etherios.com";
 
     config_url->string = (char *)connector_cloud_url;
     config_url->length = sizeof connector_cloud_url -1;
