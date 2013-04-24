@@ -31,7 +31,7 @@
  * @param [out] config_ip  Callback returns pointer to the IP address and type of IP Address.
  *
  * @retval connector_callback_continue  IP address was successfully returned
- * @retval connector_callback_abort     Could not get IP address and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get IP address and abort Cloud Connector.
  *
  * @see @ref ip_address API Configuration Callback
  */
@@ -51,7 +51,7 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
  * @param [out] config_mac  Callback returns pointer to memory containing the device's MAC address
  *
  * @retval connector_callback_continue  MAC address was successfully returned
- * @retval connector_callback_abort     Could not get the MAC address and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the MAC address and abort Cloud Connector.
  *
  * @see @ref mac_address API Configuration Callback
  */
@@ -96,7 +96,7 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
  * @param [out] config_device_id  Callback returns pointer to memory containing the device ID
  *
  * @retval connector_callback_continue  Device ID was successfully returned.
- * @retval connector_callback_abort     Could not get the device ID and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the device ID and abort Cloud Connector.
  *
  * @see @ref device_id API Configuration Callback
  */
@@ -141,7 +141,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
  * @param [out] config_vendor  Callback writes 4-byte device ID
  *
  * @retval connector_callback_continue  Vendor ID was successfully returned.
- * @retval connector_callback_abort     Could not get the vendor ID and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the vendor ID and abort Cloud Connector.
  *
  * @see @ref vendor_id API Configuration Callback
  * @see @ref connector_vendor_id
@@ -172,7 +172,7 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
  *                                  the length of the device type in bytes.
  *
  * @retval connector_callback_continue  Device type was successfully returned.
- * @retval connector_callback_abort     Could not get the device type and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the device type and abort Cloud Connector.
  *
  * @see @ref device_type API Configuration Callback
  * @see @ref CONNECTOR_DEVICE_TYPE
@@ -200,7 +200,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
  * @param [out] config_url  Callback returns pointer to memory containing the URL and the length of the URL in bytes.
  *
  * @retval connector_callback_continue  The URL type was successfully returned.
- * @retval connector_callback_abort     Could not get the URL and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the URL and abort Cloud Connector.
  *
  * @see @ref device_cloud_url API Configuration Callback
  *
@@ -226,7 +226,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
  * @param [out] config_connection  Pointer to connector_config_connection_type_t where callback writes the connection type,
  *
  * @retval connector_callback_continue  The connection type was successfully returned.
- * @retval connector_callback_abort     Could not get connection type and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get connection type and abort Cloud Connector.
  *
  * @see @ref connection_type API Configuration Callback
  *
@@ -251,7 +251,7 @@ static connector_callback_status_t app_get_connection_type(connector_config_conn
  * @param [out] config_link Pointer to connector_config_link_speed_t where callback writes 4-byte link speed.
  *
  * @retval connector_callback_continue  The link speed was successfully returned.
- * @retval connector_callback_abort     Could not get the link speed and abort Etherios Cloud Connector
+ * @retval connector_callback_abort     Could not get the link speed and abort Cloud Connector
  *
  * @see @ref link_speed API Configuration Callback
  *
@@ -276,7 +276,7 @@ static connector_callback_status_t app_get_link_speed(connector_config_link_spee
  *                                   the phone number and the length of the phone number in bytes.
  *
  * @retval connector_callback_continue  The phone number was successfully returned.
- * @retval connector_callback_abort     Could not get the phone number and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the phone number and abort Cloud Connector.
  *
  * @see @ref phone_number API Configuration Callback
  *
@@ -307,7 +307,7 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
  * @param [out] config_keepalive  Pointer to connector_config_keepalive_t where callback writes the keep alive interval in seconds.
  *
  * @retval connector_callback_continue  The keep alive interval was successfully returned.
- * @retval connector_callback_abort     Could not get the keep alive interval and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the keep alive interval and abort Cloud Connector.
  *
  * @see @ref tx_keepalive API Configuration Callback
  *
@@ -338,7 +338,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
  * @param [out] config_keepalive  Pointer to connector_config_keepalive_t where callback writes the keep alive interval in seconds.
  *
  * @retval connector_callback_continue  The keep alive interval was successfully returned.
- * @retval connector_callback_abort     Could not get the keep alive interval and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the keep alive interval and abort Cloud Connector.
  *
  * @see @ref rx_keepalive API Configuration Callback
  *
@@ -367,7 +367,7 @@ static connector_callback_status_t app_get_rx_keepalive_interval(connector_confi
  * @param [out] config_wait  Pointer to connector_config_wait_count_t where callback writes the wait count
  *
  * @retval connector_callback_continue  The wait count was successfully returned.
- * @retval connector_callback_abort     Could not get the wait count and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the wait count and abort Cloud Connector.
  *
  * @see @ref wait_count API Configuration Callback
  *
@@ -399,7 +399,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
  *                            connector_false  if firmware update is not supported.
  *
  * @retval connector_callback_continue  The firmware update support was successfully returned.
- * @retval connector_callback_abort     Could not get the firmware update support and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the firmware update support and abort Cloud Connector.
  *
  * @see @ref firmware_support API Configuration Callback
  *
@@ -425,7 +425,7 @@ static connector_callback_status_t app_get_firmware_support(config_status * cons
  *                            connector_false  if data service is not supported.
  *
  * @retval connector_callback_continue  The data service support was successfully returned.
- * @retval connector_callback_abort     Could not get the data service support and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the data service support and abort Cloud Connector.
  *
  * @see @ref data_service_support API Configuration Callback
  *
@@ -452,7 +452,7 @@ static connector_callback_status_t app_get_data_service_support(connector_config
  *                            connector_false  if file system is not supported.
  *
  * @retval connector_callback_continue  The file system support was successfully returned.
- * @retval connector_callback_abort     Could not get the file system support and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the file system support and abort Cloud Connector.
  *
  * @see @ref file_system_support API Configuration Callback
  *
@@ -504,7 +504,7 @@ static connector_callback_status_t app_get_remote_configuration_support(connecto
  *                           Writes 0 for unlimited transactions.
  *
  * @retval connector_callback_continue  The maximum simultaneous transactions was successfully returned.
- * @retval connector_callback_abort     Could not get the maximum simultaneous transactions and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the maximum simultaneous transactions and abort Cloud Connector.
  *
  * @see @ref max_msg_transactions API Configuration Callback
  *
@@ -529,13 +529,13 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
  * This routine tells Cloud Connector how to obtain a device ID.
  *
  * @param [out] config_device  Pointer connector_config_device_id_method_t where callback writes:
- *                      @li @a @b digi_device_id_method_auto: to generate device ID from
+ *                      @li @a @b connector_device_id_method_auto: to generate device ID from
  *                             - @ref mac_address callback for @ref connector_connection_type_lan connection type or
  *                             - @ref wan_type callback for @ref connector_connection_type_wan connection type.
  *                      @li @a @b connector_device_id_method_manual: to obtain device ID from @ref device_id callback.
  *
  * @retval connector_callback_continue  The device ID method was successfully returned.
- * @retval connector_callback_abort     Could not get the device ID method and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the device ID method and abort Cloud Connector.
  *
  * @see @ref connection_type API Callback
  *
@@ -561,7 +561,7 @@ static connector_callback_status_t app_get_device_id_method(connector_config_dev
  *                           Each nibble corresponds a decimal digit and most upper nibble must be 0.
  *
  * @retval connector_callback_continue  The IMEI number was successfully returned.
- * @retval connector_callback_abort     Could not get the IMEI number and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the IMEI number and abort Cloud Connector.
  *
  * @see @ref device_id_method API Callback
  * @see @ref connection_type API Callback
@@ -619,7 +619,7 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
  *                            connector_connect_manual to manually start TCP connection.
  *
  * @retval connector_callback_continue  TCP network connection was successfully started.
- * @retval connector_callback_abort     Abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Abort Cloud Connector.
  *
  * @see @ref network_tcp_start API Configuration Callback
  *
@@ -646,7 +646,7 @@ static connector_callback_status_t app_start_network_tcp(connector_config_connec
  *
  *
  * @retval connector_callback_continue  UDP configuration was successfully set to start automatically or manually.
- * @retval connector_callback_abort     Abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Abort Cloud Connector.
  *
  * @see @ref network_udp_start API Configuration Callback
  *
@@ -670,7 +670,7 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
  * @param [out] config_wan  Pointer to connector_config_wan_type_t where callback writes @ref connector_connection_type_t.
  *
  * @retval connector_callback_continue  The WAN type was successfully returned.
- * @retval connector_callback_abort     Could not get WAN type and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get WAN type and abort Cloud Connector.
  *
  * @see @ref wan_type API Configuration Callback
  *
@@ -698,7 +698,7 @@ static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t 
  *                           Each nibble corresponds a hexadecimal.
  *
  * @retval connector_callback_continue  The ESN number was successfully returned.
- * @retval connector_callback_abort     Could not get the ESN number and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the ESN number and abort Cloud Connector.
  *
  * @see @ref device_id_method API Callback
  * @see @ref connection_type API Callback
@@ -759,7 +759,7 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
  *                           Each nibble corresponds a hexadecimal or decimal digit.
  *
  * @retval connector_callback_continue  The MEID number was successfully returned.
- * @retval connector_callback_abort     Could not get the MEID number and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the MEID number and abort Cloud Connector.
  *
  * @see @ref device_id_method API Callback
  * @see @ref connection_type API Callback
@@ -823,7 +823,7 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
  * @param [out] config_identity  Pointer to connector_config_identity_verification_t where callback writes the identity verification form.
  *
  * @retval connector_callback_continue  The identity verification form was successfully returned.
- * @retval connector_callback_abort     Could not get the identity verification form and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the identity verification form and abort Cloud Connector.
  *
  * @see @ref app_get_password API Callback
  *
@@ -846,7 +846,7 @@ static connector_callback_status_t app_get_identity_verification(connector_confi
  *                               password and the length of the password in bytes.
  *
  * @retval connector_callback_continue  The password was successfully returned.
- * @retval connector_callback_abort     Could not get the password and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Could not get the password and abort Cloud Connector.
  *
  * @see @ref app_get_identity_verification API Callback
  *
@@ -862,7 +862,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
-/* End of Etherios Cloud Connector configuration routines */
+/* End of Cloud Connector configuration routines */
 /**
  * @cond Doxygen_Supress
  *
@@ -1196,7 +1196,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
  * not call this callback to notify any error encountered.
  *
  * @retval connector_callback_continue  No Error.
- * @retval connector_callback_abort     Abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Abort Cloud Connector.
  *                                  @note This function may be called again to free other pointer even if it has returned connector_callback_abort.
  *
  * @see @ref error_status API Configuration Callback

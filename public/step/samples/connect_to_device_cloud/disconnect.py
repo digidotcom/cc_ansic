@@ -25,7 +25,7 @@ def Usage():
     print 'Usage: disconnect.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
     print '    Causes a device to momentarily disconnect from Device Cloud.'
     print '    where:' 
-    print '        <Username> is the Device Cloud for Etherios account Username to which your device is'
+    print '        <Username> is the Device Cloud account Username to which your device is'
     print '                   connected.'
     print '        <Password> is the account password'
     print '        <Device ID> is the device to disconnect.' 

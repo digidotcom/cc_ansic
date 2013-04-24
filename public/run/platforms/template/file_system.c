@@ -12,7 +12,7 @@
 
 /**
  * @file
- *  @brief Rountines which implement the Etherios Cloud
+ *  @brief Rountines which implement the Cloud
  *         Connector file system
  *  
  *  @ref CONNECTOR_FILE_SYSTEM.
@@ -107,7 +107,7 @@ connector_callback_status_t app_process_file_read(connector_file_system_read_t *
  * @brief   Write File Data
  *
  * This routine writes data received from Device Cloud by 
- * Etherios to a file. 
+ * to a file.
  *
  * @param data  Pointer to a connector_file_system_write_t 
  *

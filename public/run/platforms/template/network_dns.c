@@ -11,7 +11,7 @@
  */
 /**
  * @file
- *  @brief DNS routines for Etherios Cloud Connector.
+ *  @brief DNS routines for Cloud Connector.
  */
 #include "connector_api.h"
 #include "platform.h"

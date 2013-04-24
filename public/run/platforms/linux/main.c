@@ -54,7 +54,7 @@ int main (void)
 
     connector_handle_t connector_handle;
 
-    APP_DEBUG("Start Etherios Cloud Connector for Embedded\n");
+    APP_DEBUG("Start Cloud Connector for Embedded\n");
     connector_handle = connector_init(app_connector_callback);
 
     if (connector_handle != NULL)
@@ -75,7 +75,7 @@ int main (void)
 
         pthread_join(connector_thread, NULL);
         pthread_join(application_thread, NULL);
-        APP_DEBUG("Etherios Cloud Connector terminated\n");
+        APP_DEBUG("Cloud Connector terminated\n");
     }
     else
     {

@@ -12,16 +12,16 @@
 
  /**
   * @file
-  *  @brief Functions used by Etherios Cloud Connector to interface to the OS.
+  *  @brief Functions used by Cloud Connector to interface to the OS.
   *
   */
 #include "connector_api.h"
 #include "platform.h"
 
 /**
- * @brief Etherios Cloud Connector snprintf
+ * @brief Cloud Connector snprintf
  *
- * The Etherios Cloud Connector uses this function to produce output string according to the format
+ * The Cloud Connector uses this function to produce output string according to the format
  * tags with the value of the argument list arg.
  *
  * @param [out] str String where output is written to.
@@ -60,7 +60,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  *  
  * @retval connector_callback_busy      Memory was temporarily 
  *          unavailable. 
- * @retval connector_callback_abort     Memory was not allocated and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Memory was not allocated and abort Cloud Connector.
  *
  * @see os_free
  * @see @ref malloc API Operating System Callback
@@ -83,7 +83,7 @@ connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
  *
  * @retval connector_callback_continue  Memory was freed.
  *
- * @retval connector_callback_abort     Memory was not freed and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Memory was not freed and abort Cloud Connector.
  *                                  @note This free callback may be called again to free other
  *                                  pointer even if it returns connector_callback_abort.
  * @see os_malloc
@@ -99,14 +99,14 @@ connector_callback_status_t app_os_free(void const * const ptr)
  * @brief   Get the system time.
  *
  * Get the current system time in seconds, this is only used as a reference
- * by Etherios Cloud Connector.
+ * by Cloud Connector.
  *
  *
  * @param [in] uptime   Current system time in seconds.
  *
  * @retval connector_callback_continue Able to get system time
  *
- * @retval connector_callback_abort    System time unavailable and abort Etherios Cloud Connector.
+ * @retval connector_callback_abort    System time unavailable and abort Cloud Connector.
  *
  * @see @ref uptime API Operating System Callback
  */
@@ -121,17 +121,17 @@ connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
  *
  * Yield or relinquish to run other task. This is called
  * to let other task to be executed when connector_run is called.
- * Etherios Cloud Connector calls this callback if Etherios Cloud Connector is busy and is not calling
+ * Cloud Connector calls this callback if Cloud Connector is busy and is not calling
  * receive callback
  *
  * @param [in] status
- *                     - If status is connector_idle, Etherios Cloud Connector is idling. No message is processed.
- *                     - If status is connector_working, Etherios Cloud Connector is processing a message and should be called at the earliest possible time.
- *                     - If status is connector_pending, Etherios Cloud Connector is busy or waiting to process a message and relinquishes other task to execution.
- *                     - If status is connector_active, Etherios Cloud Connector is busy or waiting to process a message and should be called at the earliest possible time.
+ *                     - If status is connector_idle, Cloud Connector is idling. No message is processed.
+ *                     - If status is connector_working, Cloud Connector is processing a message and should be called at the earliest possible time.
+ *                     - If status is connector_pending, Cloud Connector is busy or waiting to process a message and relinquishes other task to execution.
+ *                     - If status is connector_active, Cloud Connector is busy or waiting to process a message and should be called at the earliest possible time.
  *
  * @retval connector_callback_continue  It successfully yield for other task execution.
- * @retval connector_callback_abort     Abort Etherios Cloud Connector.
+ * @retval connector_callback_abort     Abort Cloud Connector.
  *
  * @see @ref yield API Operating System Callback
  */
@@ -153,8 +153,8 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
  * Reboot the system. This is called to reboot the system and should not return.
  *
  *
- * @retval connector_callback_continue  Continue Etherios Cloud Connector
- * @retval connector_callback_abort     Abort Etherios Cloud Connector.
+ * @retval connector_callback_continue  Continue Cloud Connector
+ * @retval connector_callback_abort     Abort Cloud Connector.
  *
  * @see @ref reboot API Operating System Callback
  */

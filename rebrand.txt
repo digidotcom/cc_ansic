@@ -8,5 +8,5 @@ server
 #platform
 todo
 fixme
-etherios etherios.com com.etherios
+etherios etherios.com com.etherios etherios-ca-cert
 idigi

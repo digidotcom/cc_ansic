@@ -26,7 +26,7 @@ def Usage():
     print 'Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
     print '    Pulls test/test.txt from a user account and displays the file\'s contents.'
     print '    Where' 
-    print '        <Username> is the Device Cloud for Etherios account Username to which your device is connected.'
+    print '        <Username> is the Device Cloud account Username to which your device is connected.'
     print '        <Password> is the account password'
     print '        <Device ID> is the device\'s ID.' 
     print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is login.etherios.com.' 

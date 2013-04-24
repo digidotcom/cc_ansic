@@ -20,7 +20,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-/* Etherios Cloud Connector Configuration routines */
+/* Cloud Connector Configuration routines */
 
 /*
  * Routine to get the IP address, you will need to modify this routine for your
@@ -485,7 +485,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
-/* End of Etherios Cloud Connector configuration routines */
+/* End of Cloud Connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
 #define enum_to_case(name)  case name:  result = #name;             break
@@ -736,7 +736,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
 }
 
 /*
- * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
+ * This routine is called when a configuration error is encountered by Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 static connector_callback_status_t app_config_error(connector_config_error_status_t const * const error_data)

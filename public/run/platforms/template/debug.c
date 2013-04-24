@@ -11,7 +11,7 @@
  */
  /**
   * @file
-  *  @brief Debug routine for the Etherios Cloud Connector.
+  *  @brief Debug routine for the Cloud Connector.
   *
   */
 
@@ -22,11 +22,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 /**
- * @brief Etherios Cloud Connector debug
+ * @brief Cloud Connector debug
  *
- * Debug output from Etherios Cloud Connector, Writes a formatted string to stdout, expanding the format
+ * Debug output from Cloud Connector, Writes a formatted string to stdout, expanding the format
  * tags with the value of the argument list arg.
- * Etherios Cloud Connector uses this routine to display debug information when @ref CONNECTOR_DEBUG is defined.
+ * Cloud Connector uses this routine to display debug information when @ref CONNECTOR_DEBUG is defined.
  *
  * @param [in] format Tells how to format the various arguments
  * @param [out] ...   A variable argument list of expressions whose values should be printed according

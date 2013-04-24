@@ -25,10 +25,10 @@
 * connector_class_id_network_udp.
 */
 typedef enum {
-    connector_request_id_network_open,     /**< Requesting callback to set up and make connection to Etherios Device Cloud */
-    connector_request_id_network_send,     /**< Requesting callback to send data to Etherios Device Cloud */
-    connector_request_id_network_receive,  /**< Requesting callback to receive data from Etherios Device Cloud */
-    connector_request_id_network_close     /**< Requesting callback to close Etherios Device Cloud connection */
+    connector_request_id_network_open,     /**< Requesting callback to set up and make connection to Device Cloud */
+    connector_request_id_network_send,     /**< Requesting callback to send data to Device Cloud */
+    connector_request_id_network_receive,  /**< Requesting callback to receive data from Device Cloud */
+    connector_request_id_network_close     /**< Requesting callback to close Device Cloud connection */
 } connector_request_id_network_t;
 /**
 * @}
@@ -39,10 +39,10 @@ typedef enum {
 * @{
 */
 /**
-* Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to Etherios Device Cloud.
+* Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to Device Cloud.
 */
 typedef struct  {
-    char const * CONST device_cloud_url;    /**< Pointer to Etherios Device Cloud URL  */
+    char const * CONST device_cloud_url;    /**< Pointer to Device Cloud URL  */
     connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
 /**
@@ -55,7 +55,7 @@ typedef struct  {
 * @{
 */
 /**
-* Send data structure for @ref connector_request_id_network_send callback which is called to send data to Etherios Device Cloud.
+* Send data structure for @ref connector_request_id_network_send callback which is called to send data to Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
@@ -73,7 +73,7 @@ typedef struct  {
 */
 /**
 * Read request structure for connector_request_id_network_receive callback which is called to receive
-* a specified number of bytes data from Etherios Device Cloud.
+* a specified number of bytes data from Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
@@ -90,20 +90,20 @@ typedef struct  {
 * @{
 */
 /**
-* Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
+* Reasons for @ref connector_request_id_network_close callback which is called to close the connection to Device Cloud.
 */
 typedef enum {
-    connector_close_status_cloud_disconnected = 1,    /**< Etherios Cloud Connector received a disconnect from Device Cloud. */
-    connector_close_status_cloud_redirected,          /**< Etherios Cloud Connector is redirected to different Device Cloud. */
-    connector_close_status_device_terminated,          /**< Etherios Cloud Connector is terminated via @ref connector_initiate_action
-                                                        Etherios Cloud Connector will terminate all active messages or requests and free all memory.
+    connector_close_status_cloud_disconnected = 1,    /**< Cloud Connector received a disconnect from Device Cloud. */
+    connector_close_status_cloud_redirected,          /**< Cloud Connector is redirected to different Device Cloud. */
+    connector_close_status_device_terminated,          /**< Cloud Connector is terminated via @ref connector_initiate_action
+                                                        Cloud Connector will terminate all active messages or requests and free all memory.
                                                         @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_stopped,             /**< Etherios Cloud Connector is stopped via @ref connector_initiate_action */
-    connector_close_status_no_keepalive,               /**< Etherios Cloud Connector has not received keep alive messages from Device Cloud */
-    connector_close_status_abort,                      /**< Etherios Cloud Connector is aborted either it encountered fatal error or callback aborted Etherios Cloud Connector.
-                                                        Etherios Cloud Connector will terminate all active messages or requests and free all memory.
+    connector_close_status_device_stopped,             /**< Cloud Connector is stopped via @ref connector_initiate_action */
+    connector_close_status_no_keepalive,               /**< Cloud Connector has not received keep alive messages from Device Cloud */
+    connector_close_status_abort,                      /**< Cloud Connector is aborted either it encountered fatal error or callback aborted Cloud Connector.
+                                                        Cloud Connector will terminate all active messages or requests and free all memory.
                                                         @ref connector_connect_auto_type_t returned status from the close callback will be ignored. */
-    connector_close_status_device_error                /**< Etherios Cloud Connector received error from callback which requires to close the connection. */
+    connector_close_status_device_error                /**< Cloud Connector received error from callback which requires to close the connection. */
 } connector_close_status_t;
 /**
 * @}
@@ -114,7 +114,7 @@ typedef enum {
 * @{
 */
 /**
-* Close request structure for @ref connector_request_id_network_close callback which is called to close the connection to Etherios Device Cloud.
+* Close request structure for @ref connector_request_id_network_close callback which is called to close the connection to Device Cloud.
 */
 typedef struct  {
     connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */

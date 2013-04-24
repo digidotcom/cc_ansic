@@ -18,7 +18,7 @@
 * @{
 */
 /**
-* This data structure is used when the device initiates the ping request to Etherios Device Cloud. The context will be returned
+* This data structure is used when the device initiates the ping request to Device Cloud. The context will be returned
 * when Device Connector receives the ping response.
 *
 * @see connector_request_id_sm_ping_response
@@ -63,7 +63,7 @@ typedef struct
 */
 typedef enum
 {
-    connector_request_id_sm_ping_request,   /**< used when Etherios Cloud Connector receives ping request from Etherios Device Cloud */
+    connector_request_id_sm_ping_request,   /**< used when Cloud Connector receives ping request from Device Cloud */
     connector_request_id_sm_ping_response,  /**< used when Cloud Connector receives ping response from Device Cloud */
     connector_request_id_sm_cli_request,    /**< used when Cloud Connector receives CLI request from Device Cloud */
     connector_request_id_sm_cli_response,   /**< used to get the CLI response */
@@ -71,7 +71,7 @@ typedef enum
     connector_request_id_sm_cli_status,     /**< called when error occurs in CLI session */
     connector_request_id_sm_more_data,      /**< indicates pending messages are available on Device Cloud,
                                                 User need to use new request (can be ping) to pull the pending messages from Device Cloud. */
-    connector_request_id_sm_opaque_response /**< Cloud Connector will use this to provide Etherios Device Cloud response for which
+    connector_request_id_sm_opaque_response /**< Cloud Connector will use this to provide Device Cloud response for which
                                                 there is no associated request */
 } connector_request_id_sm_t;
 /**
@@ -84,7 +84,7 @@ typedef enum
 */
 /**
 * This data structure is used when the the callback is called with the connector_request_id_sm_ping_request.
-* A ping request is received from Etherios Device Cloud and returning connector_callback_continue from the
+* A ping request is received from Device Cloud and returning connector_callback_continue from the
 * callback will result in success response to Device Cloud.
 *
 * @see connector_request_id_sm_ping_request
@@ -105,7 +105,7 @@ typedef struct
 */
 /**
 * This data structure is used when the callback is called with the connector_request_id_sm_ping_response.
-* A ping response is received from Etherios Device Cloud.
+* A ping response is received from Device Cloud.
 *
 * @see connector_request_id_sm_ping_response
 */
@@ -134,7 +134,7 @@ typedef struct
 */
 /**
 * This data structure is used when the callback is called to pass the CLI request received from
-* Etherios Device Cloud. The request ID associated with this structure is connector_request_id_sm_cli_request.
+* Device Cloud. The request ID associated with this structure is connector_request_id_sm_cli_request.
 *
 * @see connector_request_id_sm_cli_request
 *
@@ -233,7 +233,7 @@ typedef struct
 * @{
 */
 /**
-* This data structure is used when the callback is called to pass Etherios Device Cloud response for which the
+* This data structure is used when the callback is called to pass Device Cloud response for which the
 * associated request is not present. It may be cancelled by the user or by Cloud Connector after sending the request.
 * The request ID associated with this data staructure is connector_request_id_sm_opaque_response.
 *
@@ -246,14 +246,14 @@ typedef struct
     uint32_t CONST id;                      /**< can be used to keep track of a multipart response */
     void const * CONST data;                /**< pointer to opaque response */
     size_t CONST bytes_used;                /**< number of bytes available in the data */
-    connector_bool_t CONST error;           /**< connector_true means error response is received from Etherios Device Cloud */
+    connector_bool_t CONST error;           /**< connector_true means error response is received from Device Cloud */
 } connector_sm_opaque_response_t;
 /**
 * @}
 */
 
 /**
-* @defgroup connector_sm_more_data_t  Indicates pending data in Etherios Device Cloud.
+* @defgroup connector_sm_more_data_t  Indicates pending data in Device Cloud.
 * @{
 */
 /**

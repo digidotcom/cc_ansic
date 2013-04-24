@@ -26,7 +26,7 @@ def Usage():
     print '    device_request target_name set to \"myTarget\" and the Device Request data'
     print '    set to \"My device request data\".'
     print '    where:' 
-    print '        <Username> is the Device Cloud for Etherios account Username to which your device is'
+    print '        <Username> is the Device Cloud account Username to which your device is'
     print '                   connected.'
     print '        <Password> is the account password'
     print '        <Device ID> is the device to receive the Device Request.' 

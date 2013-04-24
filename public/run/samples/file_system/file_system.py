@@ -32,7 +32,7 @@ def Usage():
     print '    Puts file \"test_file.txt\" in the <Device ID> file system and'
     print '    then gets the file back.'
     print '    where:' 
-    print '        <Username> is the Device Cloud for Etherios account Username to which your device is'
+    print '        <Username> is the Device Cloud account Username to which your device is'
     print '                   connected.'
     print '        <Password> is the account password'
     print '        <Device ID> is the device to query.' 

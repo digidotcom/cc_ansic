@@ -401,7 +401,7 @@ typedef struct
 /**
 * Data structure used in
 * connector_request_id_file_system_stat callback, used
-* to get status for a path received from Etherios Device Cloud
+* to get status for a path received from Device Cloud
 * for ls request.
 */
 typedef struct
@@ -433,7 +433,7 @@ typedef struct
 * Data structure used in
 * connector_request_id_file_system_stat_dir_entry callback,
 * used to get status for for each directory entry in
-* the directory path, received from Etherios Device Cloud for ls
+* the directory path, received from Device Cloud for ls
 * request.
 */
 typedef struct
@@ -495,7 +495,7 @@ typedef struct
 
 /**
 * @defgroup connector_file_system_error_t File Error Status
-* File system error status code sent to Etherios Device Cloud @{
+* File system error status code sent to Device Cloud @{
                                                         */
 /**
 * Used in @ref connector_file_system_get_error_t

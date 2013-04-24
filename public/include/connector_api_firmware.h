@@ -104,12 +104,12 @@ typedef enum {
    connector_firmware_status_download_denied,                /**< Callback denied firmware update */
    connector_firmware_status_download_invalid_size,          /**< Callback returns invalid size */
    connector_firmware_status_download_invalid_version,       /**< Callback returns invalid version */
-   connector_firmware_status_download_unauthenticated,       /**< Etherios Device Cloud has not been authenticated */
-   connector_firmware_status_download_not_allowed,           /**< Etherios Device Cloud is not allowed to provided updates */
+   connector_firmware_status_download_unauthenticated,       /**< Device Cloud has not been authenticated */
+   connector_firmware_status_download_not_allowed,           /**< Device Cloud is not allowed to provided updates */
    connector_firmware_status_download_configured_to_reject,  /**< Callback rejects firmware update */
    connector_firmware_status_encountered_error,              /**< Callback encountered an error that precludes the firmware update */
    connector_firmware_status_user_abort,                     /**< User aborted firmware update */
-   connector_firmware_status_device_error,                   /**< Device or Etherios Device Cloud encountered an error in the download data */
+   connector_firmware_status_device_error,                   /**< Device or Device Cloud encountered an error in the download data */
    connector_firmware_status_invalid_offset,                 /**< connector_request_id_firmware_download_data callback found invalid offset. */
    connector_firmware_status_invalid_data,                   /**< connector_request_id_firmware_download_data callback found invalid data block.*/
    connector_firmware_status_hardware_error                  /**< Callback found permanent hardware error */
@@ -190,7 +190,7 @@ typedef struct {
 */
 /**
 * Firmware download complete structure containing information about firmware image data
-* for connector_request_id_firmware_download_complete callback which is called when Etherios Device Cloud is done
+* for connector_request_id_firmware_download_complete callback which is called when Device Cloud is done
 * sending all image data.
 */
 typedef struct {

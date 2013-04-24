@@ -17,9 +17,9 @@
 int main (void)
 {
 
-    /* TODO: should start a thread to initialize and start Etherios Cloud Connector.
+    /* TODO: should start a thread to initialize and start Cloud Connector.
      * connector_init() and connector_run should be called to initialize
-     * and start Etherios Cloud Connector.
+     * and start Cloud Connector.
      */
 
     return 0;
