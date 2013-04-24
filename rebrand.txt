@@ -3,9 +3,10 @@
 # format:
 # search-term [ exclude-term [ exclude-term ...]
 
-digi 'digi international' digit com.digi.connector com/digi/connector
+digi 'digi international' digit com.digi.connector com/digi/connector idigi
 server
 #platform
 todo
 fixme
 etherios etherios.com com.etherios
+idigi
