@@ -111,7 +111,7 @@ static connector_status_t sm_more_data_callback(connector_data_t * const connect
     connector_callback_status_t callback_status;
     connector_sm_more_data_t cb_data;
 
-    cb_data.transport = (sm_ptr->network.class_id == connector_class_id_network_udp) ? connector_transport_udp : connector_transport_sms;
+    cb_data.transport = sm_ptr->network.transport;
     request_id.sm_request = connector_request_id_sm_more_data;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
     result = sm_map_callback_status_to_connector_status(callback_status);
@@ -507,10 +507,10 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
             recv_ptr->total_bytes = read_data.bytes_used;
             recv_ptr->processed_bytes = 0;
 
-            switch (sm_ptr->network.class_id)
+            switch (sm_ptr->network.transport)
             {
                 #if (defined CONNECTOR_TRANSPORT_SMS)
-                case connector_class_id_network_sms:
+                case connector_transport_sms:
                     result = sm_decode_segment(connector_ptr, recv_ptr);
                     if(result != connector_working) goto done; /* not Device Cloud packet? */
                     result = sm_verify_sms_preamble(sm_ptr);
@@ -518,7 +518,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                 #endif
 
                 #if (defined CONNECTOR_TRANSPORT_UDP)
-                case connector_class_id_network_udp:
+                case connector_transport_udp:
                     result = sm_verify_udp_header(sm_ptr);
                     break;
                 #endif

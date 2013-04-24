@@ -95,13 +95,11 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     session->segments.processed = 0;
     session->segments.count = 0;
 
-    if (sm_ptr->network.class_id == connector_class_id_network_sms)
-    {
-        session->transport = connector_transport_sms;
+    session->transport = sm_ptr->network.transport;
+    #if (defined CONNECTOR_TRANSPORT_SMS)
+    if (session->transport == connector_transport_sms)
         SmSetEncoded(session->flags);
-    }
-    else
-        session->transport = connector_transport_udp;
+    #endif
 
     if (client_originated)
     {

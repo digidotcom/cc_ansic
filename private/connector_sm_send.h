@@ -339,10 +339,10 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         goto done;
     }
 
-    switch (sm_ptr->network.class_id)
+    switch (sm_ptr->network.transport)
     {
         #if (defined CONNECTOR_TRANSPORT_UDP)
-        case connector_class_id_network_udp:
+        case connector_transport_udp:
         {
             uint8_t const sm_udp_version_num = SM_UDP_VERSION << 4;
             uint8_t const version_byte = sm_udp_version_num | sm_ptr->transport.id_type;
@@ -355,7 +355,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         #endif
 
         #if (defined CONNECTOR_TRANSPORT_SMS)
-        case connector_class_id_network_sms:
+        case connector_transport_sms:
         {
             /* service ID available? */
             if (sm_ptr->transport.id_length > 0)
