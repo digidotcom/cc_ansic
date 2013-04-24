@@ -1,4 +1,4 @@
- /*! @mainpage Etherios Cloud Connector
+ /*! @mainpage Cloud Connector
  *
  * @htmlinclude nav.html
  *

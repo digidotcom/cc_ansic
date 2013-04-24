@@ -27,8 +27,7 @@
  *
  * @param data @ref connector_network_open_t
  *  <ul>
- *   <li><b><i>device_cloud_url</i></b> - FQDN of Etherios
- *   Device Cloud </li>
+ *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud </li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,
  *   @ref connector_network_handle_t "connector_network_handle_t"
@@ -58,7 +57,7 @@ connector_callback_status_t app_network_udp_open(connector_network_open_t * cons
  *
  * This routine sends data to Device Cloud. This
  * function must not block. If it encounters EAGAIN or
- * EWOULDBLOCK error, 0 bytes must be returned and Etherios
+ * EWOULDBLOCK error, 0 bytes must be returned and
  * Cloud Connector will continue calling this function. If
  * successful connector_callback_continue is returned. If the
  * data could not be sent connector_callback_busy is returned,

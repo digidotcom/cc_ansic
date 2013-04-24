@@ -12,7 +12,7 @@
 #
 # ***************************************************************************
 # get_file.py
-# Get a file from Etherios Device Cloud storage
+# Get a file from Device Cloud storage
 # -------------------------------------------------
 # Usage: get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------

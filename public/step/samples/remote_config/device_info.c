@@ -33,8 +33,8 @@ typedef struct {
     size_t desc_length;
 } device_info_config_data_t;
 
-device_info_config_data_t device_info_config_data = {"Etherios Connector Product\0", "\0", "Digi International Inc.\0",
-        "Etherios Connector Demo on Linux\nwith firmware upgrade, and remote configuration supports\0",
+device_info_config_data_t device_info_config_data = {"Cloud Connector Product\0", "\0", "Digi International Inc.\0",
+        "Cloud Connector Demo on Linux\nwith firmware upgrade, and remote configuration supports\0",
         102};
 
 void print_device_info_desc(void)

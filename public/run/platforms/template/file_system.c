@@ -78,7 +78,7 @@ connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t
  * @brief   Read File Data
  *
  * This routine reads data from a file to be sent to Device 
- * Cloud by Etherios. 
+ * Cloud.
  *
  * @param data  Pointer to a connector_file_system_read_t data 
  *              structure

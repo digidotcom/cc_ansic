@@ -6,7 +6,7 @@
 digi 'digi international' digit com.digi.connector com/digi/connector idigi
 server
 #platform
-todo
+#todo
 fixme
-etherios etherios.com com.etherios etherios-ca-cert
-idigi
+etherios etherios.co etherios-ca-cert
+idigi idigi-

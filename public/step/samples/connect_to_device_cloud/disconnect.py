@@ -12,7 +12,7 @@
 #
 # ***************************************************************************
 # disconnect.py
-# Send disconnect SCI operation to disconnect Etherios Device Cloud.
+# Send SCI disconnect command to disconnect from the Device Cloud.
 # -------------------------------------------------
 # Usage: disconnect.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------

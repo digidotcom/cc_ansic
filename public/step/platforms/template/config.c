@@ -92,7 +92,7 @@ static connector_callback_status_t app_get_vendor_id(uint8_t const ** id, size_t
 static connector_callback_status_t app_get_device_type(char const ** type, size_t * const size)
 {
 #error "Specify device type"
-    static char const device_type[] = "Etherios Cloud Connector Linux Sample";
+    static char const device_type[] = "Cloud Connector Linux Sample";
 
     /* Return pointer to device type. */
     *type = device_type;
@@ -101,14 +101,14 @@ static connector_callback_status_t app_get_device_type(char const ** type, size_
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_server_url(char const ** url, size_t * const size)
+static connector_callback_status_t app_get_s_e_r_v_e_r_url(char const ** url, size_t * const size)
 {
 #error "Specify Device Cloud URL"
     static  char const connector_cloud_url[] = "login.etherios.com";
 
     /* Return pointer to device type. */
-    *url = connector_server_url;
-    *size = sizeof connector_server_url -1;
+    *url = connector_s_e_r_v_e_r_url;
+    *size = sizeof connector_s_e_r_v_e_r_url -1;
 
     return connector_callback_continue;
 }
@@ -147,7 +147,7 @@ static connector_callback_status_t app_get_phone_number(char const ** number, si
 
 static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const ** interval, size_t * const size)
 {
-#error "Specify server to device TX keepalive interval in seconds"
+#error "Specify s_e_r_v_e_r to device TX keepalive interval in seconds"
 
 #define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     90
     /* Return pointer to Tx keepalive interval in seconds */
@@ -161,7 +161,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const 
 
 static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const ** interval, size_t * const size)
 {
-#error "Specify server to device RX keepalive interval in seconds"
+#error "Specify s_e_r_v_e_r to device RX keepalive interval in seconds"
 #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60
     /* Return pointer to Rx keepalive interval in seconds */
     static uint16_t const device_rx_keepalive_interval = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
@@ -174,11 +174,11 @@ static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const 
 
 static connector_callback_status_t app_get_wait_count(uint16_t const ** count, size_t * const size)
 {
-#error "Specify the number of times that not receiving keepalive messages from server is allowed"
+#error "Specify the number of times that not receiving keepalive messages from s_e_r_v_e_r is allowed"
 #define DEVICE_WAIT_COUNT     5
     /*
      * Return pointer to wait count (number of times not receiving Tx keepalive
-     * from server is allowed).
+     * from s_e_r_v_e_r is allowed).
      */
     static uint16_t const device_wait_count = DEVICE_WAIT_COUNT;
     *count = &device_wait_count;
@@ -443,7 +443,7 @@ static char const * app_config_class_to_string(connector_config_request_t const 
         enum_to_case(connector_config_device_id);
         enum_to_case(connector_config_vendor_id);
         enum_to_case(connector_config_device_type);
-        enum_to_case(connector_config_server_url);
+        enum_to_case(connector_config_s_e_r_v_e_r_url);
         enum_to_case(connector_config_connection_type);
         enum_to_case(connector_config_mac_addr);
         enum_to_case(connector_config_link_speed);
@@ -724,8 +724,8 @@ connector_callback_status_t app_config_handler(connector_config_request_t const 
         status = app_get_device_type(response_data, response_length);
         break;
 
-    case connector_config_server_url:
-        status = app_get_server_url(response_data, response_length);
+    case connector_config_s_e_r_v_e_r_url:
+        status = app_get_s_e_r_v_e_r_url(response_data, response_length);
         break;
 
     case connector_config_connection_type:

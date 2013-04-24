@@ -103,7 +103,7 @@ public class ConfigGenerator {
                         CONFIG_FILENAME));
 
         log("Description:");
-        log("\tIt generates and uploads configuration information (descriptors) to Etherios Device Cloud");
+        log("\tIt generates and uploads configuration information (descriptors) to Device Cloud");
         log("\tand it also generates ANSI C header file (remote_config.h) ");
         log("\tfrom the input configuration file.\n");
 
@@ -120,11 +120,11 @@ public class ConfigGenerator {
                         DASH + NO_DESC_OPTION));
         log(String
                 .format(
-                        "\t%-16s \t= optional vendor ID obtained from Etherios Device Cloud registration.",
+                        "\t%-16s \t= optional vendor ID obtained from Device Cloud registration.",
                         DASH + VENDOR_OPTION + "=<vendorID>"));
         log(String
                 .format(
-                        "\t%-16s \t  If not given, tool tries to retrieve it from Etherios Device Cloud",
+                        "\t%-16s \t  If not given, tool tries to retrieve it from Device Cloud",
                         ""));
 
         log(String
@@ -133,16 +133,16 @@ public class ConfigGenerator {
                         DASH + DIRECTORY_OPTION + "=<directory path>"));
         log(String
                 .format(
-						"\t%-16s \t= optional Etherios Device Cloud URL. Default is %s",
+						"\t%-16s \t= optional Device Cloud URL. Default is %s",
                         DASH + URL_OPTION + "=<device cloud URL>", URL_DEFAULT));
 
         log(String
                 .format(
-                        "\n\t%-16s \t= username to log in to Etherios Device Cloud. If no password is given you will be prompted to enter the password",
+                        "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
                         USERNAME));
         log(String
                 .format(
-                        "\t%-16s \t= optional password to log in to Etherios Device Cloud",
+                        "\t%-16s \t= optional password to log in to Device Cloud",
                         PASSWORD));
         log(String
                 .format(

@@ -32,14 +32,14 @@ int main (void)
     {
         connector_status_t status;
         /*
-         * Example of using connector_step(), we run a portion of Etherios Cloud Connector then run
+         * Example of using connector_step(), we run a portion of Cloud Connector then run
          * a portion of the users application.
          */
         status = connector_step(connector_handle);
         if (status != connector_idle && status != connector_working && status != connector_pending &&
             status != connector_active && status != connector_open_error)
          {
-            /* We want to reconnect to Etherios Device Cloud
+            /* We want to reconnect to Device Cloud
              * even if connector_step returns error in receive, send, or connect.
              */
             APP_DEBUG("main: connector_step() failed %d\n", status);

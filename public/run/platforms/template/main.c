@@ -17,7 +17,7 @@
 int main (void)
 {
 
-    /* TODO: should start a thread to initialize and start Cloud Connector.
+    /* should start a thread to initialize and start Cloud Connector.
      * connector_init() and connector_run should be called to initialize
      * and start Cloud Connector.
      */
