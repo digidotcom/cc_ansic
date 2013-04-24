@@ -252,7 +252,7 @@
  * @ref add_your_device_to_the_cloud "instructed to register your Device Cloud Device ID.
  *
  * To create an account, navigate to
- * https://myaccount.etherios.com.com/ and follow the instructions to create and register your
+ * https://myaccount.etherios.com/ and follow the instructions to create and register your
  * Device Cloud account.
  *
  * @note If you have already created and registered a Device Cloud Account, navigate here
@@ -284,12 +284,17 @@
  * Cloud Connector functions (like @ref send_data "sending data" or @ref firmware_download "firmware download")
  * should work flawlessly.
  *
- * Go into the platforms directory and select a platform which is similar to your platform.  If
- * none of the available platforms are similar to yours, you can use the template platform.
+ * In the platforms directory you will see the linux platform.  This platform was included
+ * since it's a well known operating system and has open source documentation readily
+ * available on the web.  If you're using linux, you begin application development
+ * by @ref application_start "skipping to the next step".
  *
- * In this guide we use the public/run/platforms/linux as an example, but all platforms have the same structure.
- * So choose a platform (or copy an existing one) and go into that directory.
+ * Otherwise, you should cut and paste the linux platform and port as described in the
+ * following sub sections.
  *
+ * @note In this guide we use the public/run/platforms/linux as an example, but all
+ * platforms should have the same structure.
+  *
  * @subsection os_routines OS Routines
  * Open the file os.c and implement the routines listed below.  For the linux platform
  * the file is located at public/run/platforms/@a my_platform/os.c.  Click on the routine
@@ -541,8 +546,12 @@
  *
  * @subsection add_your_device_to_the_cloud Add your Device to Device Cloud
  *
- * The next several sections walk through the steps required to add your device to
+ * Device IDs are a globally unique identifier for Device Cloud clients.  The
+ * next several sections walk through the steps required to add your device to
  * your Device Cloud account.
+ *
+ * @note Look @ref device_id "here" for more information on Device ID's.
+ *
  *
  *  -# Navigate to http://login.etherios.com and log on to Device Cloud
  *  -# Click on Device Manager tab.
