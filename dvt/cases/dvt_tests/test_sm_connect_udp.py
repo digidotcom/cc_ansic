@@ -82,7 +82,7 @@ class UdpConnectTestCase(ic_testcase.UDPTestCase):
         self.session.post('http://%s/ws/sci' % self.hostname,data=disconnect_request).content
 
 
-
+
     def check_disconnected(self):
 
         self.device_core = None
@@ -122,8 +122,8 @@ class UdpConnectTestCase(ic_testcase.UDPTestCase):
             # Parse response to determmine whether or not it timed out or
             # was successful.  If successful continue the test.
             dom = xml.dom.minidom.parseString(response)
+
             connect_response = dom.getElementsByTagName("request_connect")
-           
             self.assertEqual(1, len(connect_response), 
                 "No Connect Response Received. Response : %s" % connect_response)
     
@@ -150,7 +150,7 @@ class UdpConnectTestCase(ic_testcase.UDPTestCase):
     
                 time.sleep(1.0)
 
-            if self.device_core.dpConnectionStatus == 1:
+            if self.device_core.dpConnectionStatus == '1':
                 break
 
         # If not connected, fail the TestCase.
