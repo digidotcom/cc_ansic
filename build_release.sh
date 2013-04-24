@@ -105,10 +105,11 @@ if [ $TAG != "" ]
     sed -i 's/#define CONNECTOR_SW_VERSION \S*/#define CONNECTOR_SW_VERSION "'"$TAG"'"/g' "${BASE_DIR}/private/connector_info.h"
 fi
 
-# Replace the date in Readme.txt to match today's date
-today=`date +"%B %d, %Y"`
-echo ">> Setting Release Date to Today (${today}) in ${BASE_DIR}/private/Readme.txt"
-sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
+# Don't replace the date in Readme.txt to match today's date!!
+# This was eliminated due to ECO004263 regarding Release Note templaces (see 96000472) 
+#today=`date +"%B %d, %Y"`
+#echo ">> Setting Release Date to Today (${today}) in ${BASE_DIR}/private/Readme.txt"
+#sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
 
 # Replace the version number in connector_api.h
 python ./dvt/scripts/update_hex_version.py "${BASE_DIR}"/public/include/connector_api.h "${TAG}"
