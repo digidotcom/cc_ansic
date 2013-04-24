@@ -59,7 +59,8 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
     #endif
     Flash_NVRAM_get_mac_address(device_mac_addr);
 #elif defined(CONNECTOR_CUSTOMIZE_GET_MAC_METHOD)
-    status = app_custom_get_mac_addr(addr, size);
+    status = app_custom_get_mac_addr(device_mac_addr);
+    config_mac->data = device_mac_addr;
     goto done;
 #else
     #error Define the way the MAC address is provided to the library.
@@ -73,10 +74,11 @@ done:
     return status;
 }
 
+
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
 #if defined(CONNECTOR_CUSTOMIZE_GET_DEVICE_ID_METHOD)
-	return app_custom_get_device_id(id, size);
+	return app_custom_get_device_id(id);
 #else	
     #define DEVICE_ID_LENGTH    16
     static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
@@ -100,19 +102,6 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 
     return status;
 #endif
-}
-
-static connector_callback_status_t app_get_server_url(char const ** const url, size_t * const size)
-{
-    static char const connector_server_url[] = CONNECTOR_CLOUD_URL;
-
-    APP_DEBUG("get_server_url: Server URL %s\r\n", connector_server_url);
-
-    /* Return pointer to device type. */
-    *url = connector_server_url;
-    *size = strlen(connector_server_url);
-
-    return connector_callback_continue;
 }
 
 static connector_callback_status_t app_get_connection_type(connector_connection_type_t ** const type)
@@ -245,7 +234,6 @@ static connector_callback_status_t app_get_max_message_transactions(unsigned int
 #if !(defined CONNECTOR_DEVICE_ID_METHOD)
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
 {
-
     config_device->method = connector_device_id_method_auto;
 
     return connector_callback_continue;

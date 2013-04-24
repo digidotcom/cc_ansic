@@ -27,7 +27,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${ProjDirPath}/twrk60n512_Int_Flash_Release</value>
+					<value>${ProjDirPath}/twrk60n512_FirmwareUpdate</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.contents</key>
@@ -75,6 +75,14 @@
 		</link>
 	</linkedResources>
 	<variableList>
+		<variable>
+			<name>CYASSL_LIBRARY</name>
+			<value>file:/C:/CyaSSL-2.6.0_libs</value>
+		</variable>
+		<variable>
+			<name>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH</name>
+			<value>file:/C:/Etherios4Kinetis/Etherios_CC</value>
+		</variable>
 		<variable>
 			<name>MQX_ROOT_DIR</name>
 			<value>file:/C:/Freescale/Freescale_MQX_4_0</value>
