@@ -1391,7 +1391,7 @@
  * Supported hash algorithms are md5 and crc32.
  *
  * An application callback might need more than one pass to calculate the hash value.
- * It can use user_context to point to intermidiate data and return
+ * It can use user_context to point to intermediate data and return
  * @ref connector_callback_busy. The callback will be repeated until it completes hash
  * calculations and returns @ref connector_callback_continue.
  *

@@ -4,9 +4,10 @@
 # search-term [ exclude-term [ exclude-term ...]
 
 digi 'digi international' digit com.digi.connector com/digi/connector idigi
-server
+server SERVER_BASED_SEARCH 'web server'
 #platform
 #todo
 fixme
 etherios etherios.co etherios-ca-cert
-idigi idigi-
+idigi idigi- DIGI_REQUIRED_TO_GENERATE_INTERNAL_DOCUMENATION
+dia diagram intermediate dialed endian immediately dialing wikipedia dialog media
