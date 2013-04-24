@@ -54,9 +54,15 @@ char const * transport_to_string(connector_transport_t const value)
     char const * result = NULL;
     switch (value)
     {
+        #if (defined CONNECTOR_TRANSPORT_TCP)
         enum_to_case(connector_transport_tcp);
+        #endif
+        #if (defined CONNECTOR_TRANSPORT_UDP)
         enum_to_case(connector_transport_udp);
+        #endif
+        #if (defined CONNECTOR_TRANSPORT_SMS)
         enum_to_case(connector_transport_sms);
+        #endif
         enum_to_case(connector_transport_all);
     }
     return result;

@@ -185,7 +185,7 @@ void write_transport_error_file(connector_handle_t handle)
 #elif (defined CONNECTOR_TRANSPORT_UDP)
          transport = connector_transport_udp;
 #elif (defined CONNECTOR_TRANSPORT_SMS)
-         transport = connector_transport_SMS;
+         transport = connector_transport_sms;
 #endif
 
         do {
@@ -304,7 +304,7 @@ int application_run(connector_handle_t handle)
 #elif (defined CONNECTOR_TRANSPORT_UDP)
          transport = connector_transport_udp;
 #elif (defined CONNECTOR_TRANSPORT_SMS)
-         transport = connector_transport_SMS;
+         transport = connector_transport_sms;
 #endif
 
          status = send_file(handle, 255, (char * const)TERMINATE_TEST_FILE, (char * const)terminate_file_content, file_length, transport);
