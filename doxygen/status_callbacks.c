@@ -95,7 +95,6 @@
  *        <li><b><i>transport</i></b>
  *        <ul><li> @endhtmlonly @ref connector_transport_tcp @htmlonly </li>
  *            <li> @endhtmlonly @ref connector_transport_udp @htmlonly </li>
- *            <li> @endhtmlonly @ref connector_transport_sms @htmlonly </li>
  *            <li> @endhtmlonly @ref connector_transport_all @htmlonly </li> </ul>
  *        </li>
  *        <li><b><i>condition</i></b> Not used

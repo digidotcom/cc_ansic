@@ -72,8 +72,8 @@
  *
  *  @li Initiate a data transfer to Device Cloud, described in the data service API
  *  @li Terminate Cloud Connector
- *  @li Start transport (TCP, UDP or SMS)
- *  @li Stop transport (TCP, UDP, SMS or ALL) transport method
+ *  @li Start transport (TCP, UDP)
+ *  @li Stop transport (TCP, UDP or ALL) transport method
  *  @li Request Device Cloud status (Ping)
  *  @li Send Data Stream message to Device Cloud
  *  @li Send device to cloud config message
