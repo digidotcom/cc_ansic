@@ -12,7 +12,7 @@
 # Use GNU C Compiler
 CC = gcc${TARGET_PLATFORM}
 
-# Location of Private iDigi Code.
+# Location of Private Connector Code.
 CONNECTOR_DIR=${CONNECTOR_DIR}
 # Locate of Public Include Header Files.
 PUBLIC_HEADER_DIR=${PUBLIC_HEADER_DIR}${PLATFORM_DIR}
