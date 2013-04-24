@@ -279,7 +279,7 @@ public class Descriptors {
             }
             catch (Exception e)
             {
-                ConfigGenerator.log("ERROR: Invalid Etherios Device Cloud URL\n");
+                ConfigGenerator.log("ERROR: Invalid Device Cloud URL\n");
                 ConfigGenerator.debug_log("Invalid URL: " + ConfigGenerator.getUrlName());
                 System.exit(1);
             }
@@ -341,7 +341,7 @@ public class Descriptors {
                 ConfigGenerator
                         .log("Cannot create a new vendor ID for "
                                 + username
-                                + "user. User needs to manually create one. Refer to \"Setup your Etherios Acount\" section of the Getting started guide to obtain one.");
+                                + "user. User needs to manually create one. Refer to \"Setup your Device Cloud Acount\" section of the Getting started guide to obtain one.");
                 System.exit(1);
             }
 
@@ -355,7 +355,7 @@ public class Descriptors {
         }
 
         if (vendorId != null)
-            ConfigGenerator.log(String.format("Etherios Device Cloud registered vendor ID: 0x%X", Integer
+            ConfigGenerator.log(String.format("Device Cloud registered vendor ID: 0x%X", Integer
                     .parseInt(vendorId)));
     }
 
