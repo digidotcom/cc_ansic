@@ -76,8 +76,8 @@ class PollingDeviceConnectionMonitor(object):
             time.sleep(1.0)
             duration = time.time() - start_time
 
-        self.log.info('Connect time = %s Device last connect time = %s' %(device_core.dpLastConnectTime, self.last_connect))
-        self.log.info('Disconnect time = %s Device last disconnect time = %s' %(device_core.dpLastDisconnectTime, self.last_disconnect))
+        log.info('Connect time = %s Device last connect time = %s' %(device_core.dpLastConnectTime, self.last_connect))
+        log.info('Disconnect time = %s Device last disconnect time = %s' %(device_core.dpLastDisconnectTime, self.last_disconnect))
         # Device never connected, raise exception.
         raise ConnectivityException(
             'Device %s did not connect within %d seconds.' % \
@@ -97,8 +97,8 @@ class PollingDeviceConnectionMonitor(object):
             time.sleep(1.0)
             duration = time.time() - start_time
 
-        self.log.info('Connect time = %s Device last connect time = %s' %(device_core.dpLastConnectTime, self.last_connect))
-        self.log.info('Disconnect time = %s Device last disconnect time = %s' %(device_core.dpLastDisconnectTime, self.last_disconnect))
+        log.info('Connect time = %s Device last connect time = %s' %(device_core.dpLastConnectTime, self.last_connect))
+        log.info('Disconnect time = %s Device last disconnect time = %s' %(device_core.dpLastDisconnectTime, self.last_disconnect))
         
         # Device never disconnected, raise exception.
         raise ConnectivityException(
