@@ -441,8 +441,8 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
 
     def verify_file_request_abort(self, request):
  
-        monitor = PollingDeviceConnectionMonitor(self.push_client, self.dev_id)
-        monitor.start()
+#        monitor = PollingDeviceConnectionMonitor(self.push_client, self.dev_id)
+#        monitor.start()
 
         response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content 
 
@@ -450,14 +450,14 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
 
         self.verify_device_response_text(response, 'error id="2006"', "Abort expected") 
 
-        self.log.info("Waiting for iDigi to disconnect device.")
-        monitor.wait_for_disconnect(30)
-        self.log.info("Device disconnected.")
+#        self.log.info("Waiting for iDigi to disconnect device.")
+#        monitor.wait_for_disconnect(30)
+#        self.log.info("Device disconnected.")
 
-        self.log.info("Waiting for Device to reconnect.")
-        monitor.wait_for_connect(30)
-        self.log.info("Device connected.")
-        monitor.stop()
+#        self.log.info("Waiting for Device to reconnect.")
+#        monitor.wait_for_connect(30)
+#        self.log.info("Device connected.")
+#        monitor.stop()
 
         response = ""
         sync_failed = True
