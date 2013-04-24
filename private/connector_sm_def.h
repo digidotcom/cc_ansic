@@ -213,6 +213,7 @@ typedef struct connector_sm_data_t
         connector_sm_packet_t recv_packet;
         connector_network_handle_t * handle;
         connector_class_id_t class_id;
+        connector_transport_t transport;
     } network;
 
     struct
