@@ -302,8 +302,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -565,8 +564,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\shell</state>
         </option>
         <option>
@@ -1249,8 +1247,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -1512,7 +1509,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\host</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
           <state>$PROJ_DIR$\..</state>
         </option>
@@ -2195,8 +2192,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -2458,8 +2454,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\shell</state>
         </option>
         <option>
@@ -3142,8 +3137,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -3405,8 +3399,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -4094,8 +4087,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -4357,8 +4349,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\shell</state>
         </option>
         <option>
@@ -5041,8 +5032,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\shell</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
@@ -5304,7 +5294,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\host</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\shell</state>
           <state>$PROJ_DIR$\..</state>
         </option>
@@ -5994,5 +5984,3 @@
     </file>
   </group>
 </project>
-
-
