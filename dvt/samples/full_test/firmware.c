@@ -34,7 +34,7 @@ static dvt_data_t dvt_data_list[dvt_case_last] =
     {dvt_case_fw_invalid_offset,        {0x20,00,00,00}, dvt_state_init, "Invalid Offset",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
     {dvt_case_fw_invalid_data,          {0x21,00,00,00}, dvt_state_init, "Invalid Data",     ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
     {dvt_case_fw_hardware_error,        {0x22,00,00,00}, dvt_state_init, "Hardware Error",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
-    {dvt_case_fw_test_file,             {0x01,00,00,00}, dvt_state_init, "No Error",   ".*\\.[Bb][Ii][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE}
+    {dvt_case_fw_test_file,             {0x01,00,00,00}, dvt_state_init, "No Error",   ".*\\.[Tt][Xx][Tt]", "pattern.txt", DVT_FW_UNKNOWN_FILE_SIZE}
 };
 
 static dvt_data_t * dvt_current_ptr = NULL;

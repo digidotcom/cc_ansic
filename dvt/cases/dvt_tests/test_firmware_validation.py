@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 import os
 import time
 import ic_testcase
@@ -5,8 +6,8 @@ import xml.dom.minidom
 
 from ..utils import update_firmware
 
-firmware_file = 'dvt/cases/test_files/firmware.bin'
-target_file = 'firmware.bin'
+firmware_file = 'dvt/cases/test_files/pattern.txt'
+target_file = 'pattern.txt'
 
 class FirmwareValidTestCase(ic_testcase.TestCase):
     """ Performs a series of tests against several different firmware targets
