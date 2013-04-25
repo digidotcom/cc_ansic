@@ -443,10 +443,10 @@ connector_status_t connector_step(connector_handle_t const handle)
 
 
     {
-#define next_network(current_network) (((current_network) == last_network_index) ? first_network_index : ((current_network) + 1))
+#define next_network(current_network) (((current_network) == last_network_index) ? first_network_index : (connector_network_type_t) ((current_network) + 1))
 
-        connector_network_type_t const first_network_index = 0;
-        connector_network_type_t const last_network_index = (connector_network_count - 1);
+        connector_network_type_t const first_network_index = (connector_network_type_t) 0;
+        connector_network_type_t const last_network_index = (connector_network_type_t) (connector_network_count - 1);
         connector_network_type_t const first_network_checked = connector_ptr->first_running_network;
         connector_network_type_t current_network = first_network_checked;
 
