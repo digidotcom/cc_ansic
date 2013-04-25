@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 import time
 import ic_testcase
 import datetime
@@ -92,47 +93,7 @@ TARGET_DEVICE_REQUEST = \
 
 class MallocTestCase(ic_testcase.TestCase):
 
-    def test_malloc_a_fw(self):
-
-        """ Sends a firmware update to terminate Cloud Connector """
-
-        self.log.info("**** Malloc Test: Firmware Service")
-
-        # Send firmware target query
-        self.log.info("Sending firmware target query to %s." % self.device_id)
-
-        # Find firmware targets
-        request = self.session.post('http://%s/ws/sci' % self.hostname,
-            data=FIRMWARE_QUERY_REQUEST % self.device_id)
-
-        self.assertEqual(200, request.status_code)
-        firmware_targets_xml = request.content
-        #self.log.info("TARGETS %s." % firmware_targets_xml)
-
-        dom = xml.dom.minidom.parseString(firmware_targets_xml)
-        targets = dom.getElementsByTagName("target")
-
-        if len(targets) == 0:
-            self.log.info("Service not available")
-            return
-
-        # Encode firmware for transmittal
-        self.log.info("Target %d %s." % (0, firmware_target_file))
-
-        f = open(firmware_target_file, 'rb')
-        data = f.read()
-        data_value = encodestring(data)
-        f.close()
-
-        # Send update request
-        request = (FIRMWARE_DATA_REQUEST % (0, self.device_id, data_value))
-
-        self.log.info("Sending request to update firmware.")
-        response = self.session.post('http://%s/ws/sci' % self.hostname,
-                                     data=request)
-        self.log.info("Response:\n%s" % response.content)
-
-    def test_malloc_b_fs(self):
+    def test_malloc_a_fs(self):
 
         """ Sends file get command.
         """
@@ -189,7 +150,7 @@ class MallocTestCase(ic_testcase.TestCase):
 
         shutil.rmtree(my_dir)
 
-    def test_malloc_c_ds(self):
+    def test_malloc_b_ds(self):
 
         self.log.info("**** Malloc Test: Data Service")
         ok = self.invalid_target("invalid_target", 1600)
@@ -197,6 +158,46 @@ class MallocTestCase(ic_testcase.TestCase):
             return
         self.valid_target("data_target", 2048)
         self.valid_target("malloc_target", 100)
+
+    def test_malloc_c_fw(self):
+
+        """ Sends a firmware update to terminate Cloud Connector """
+
+        self.log.info("**** Malloc Test: Firmware Service")
+
+        # Send firmware target query
+        self.log.info("Sending firmware target query to %s." % self.device_id)
+
+        # Find firmware targets
+        request = self.session.post('http://%s/ws/sci' % self.hostname,
+            data=FIRMWARE_QUERY_REQUEST % self.device_id)
+
+        self.assertEqual(200, request.status_code)
+        firmware_targets_xml = request.content
+        #self.log.info("TARGETS %s." % firmware_targets_xml)
+
+        dom = xml.dom.minidom.parseString(firmware_targets_xml)
+        targets = dom.getElementsByTagName("target")
+
+        if len(targets) == 0:
+            self.log.info("Service not available")
+            return
+
+        # Encode firmware for transmittal
+        self.log.info("Target %d %s." % (0, firmware_target_file))
+
+        f = open(firmware_target_file, 'rb')
+        data = f.read()
+        data_value = encodestring(data)
+        f.close()
+
+        # Send update request
+        request = (FIRMWARE_DATA_REQUEST % (0, self.device_id, data_value))
+
+        self.log.info("Sending request to update firmware.")
+        response = self.session.post('http://%s/ws/sci' % self.hostname,
+                                     data=request)
+        self.log.info("Response:\n%s" % response.content)
 
     def invalid_target(self, my_target_name, data_len):
 
