@@ -583,7 +583,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_success @htmlonly</th>
- *   <td>Ping initiated</td>
+ *   <td>Cancel session initiated</td>
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_unavailable @htmlonly</th>
