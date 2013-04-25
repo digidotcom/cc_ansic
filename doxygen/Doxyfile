@@ -654,7 +654,6 @@ INPUT                  = ./mainpage.c \
                          ./config_callbacks.c \
                          ./web_services.c \
                          ./data_service.c \
-                         ./sm_callbacks.c \
                          ./status_callbacks.c \
                          ./file_system.c \
                          ./rci_service.c \
