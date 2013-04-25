@@ -10,7 +10,7 @@
 * =======================================================================
 */
 #include "mqx.h"
-#include "mqx_prv.h"
+#include "../../../mqx/source/include/mqx_prv.h" /* Uhm... yes, it's a weird way of including from ${MQX_ROOT_DIR}/mqx/source/include */
 #include <errno.h>
 #include <connector_types.h>
 #include "connector_api.h"
