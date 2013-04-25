@@ -99,7 +99,42 @@
  * from the openssl library.
  * <br /><br />
  * 
- * @section fs_sample_python_script Using a web Services client to write, read, and list a file
+ * @section running Running
+ *
+ * Once successfully built, run the executable, in Linux type ./connector to run the
+ * sample.
+ *
+ * File system transfers can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
+ * or by issuing a web services call.  See @ref fs_sample_python_script "here" for more information on
+ * web service calls.
+ * <br /><br />
+ *
+ * @subsection fs_gui Running file system using Device Manager
+ *
+ * Log on to Device Cloud at http://login.etherios.com/ and click on your device
+ * (described in the @ref connector_login "Getting Started Section").
+ * Once you are logged to see your device, click the Refresh button.
+ * The device's status should indicate as 'Connected'.
+ *
+ * @image html cloud_device_fs_connected.png
+ * <br />
+ * 
+ * Select device and double click the device.
+ * 
+ * @image html cloud_device_fs_menu.png
+ * <br />
+ * 
+ * Double click "File Management".
+ * 
+ * @image html cloud_device_fs_browse.png
+ * <br />
+ * 
+ * You see the listinf of "/" folder on the right. You can browse folders on your device, download, upload and delete.
+ * You can't create or remove
+ * file folders.
+ * <br /><br />
+ * 
+ * @section fs_sample_python_script Using a web services client to write, read, and list a file
  *
  * The sample provides a very basic web services script file_system.py, written in python, to
  * write, read, and list a file, using @htmlonly <a href="web_services.html">Web Services</a> @endhtmlonly.
