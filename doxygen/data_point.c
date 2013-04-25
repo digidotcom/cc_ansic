@@ -73,10 +73,6 @@
  *   <th>@endhtmlonly @ref connector_service_busy @htmlonly</th>
  *   <td>Previous binary data point is not yet processed</td>
  * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_service_busy @htmlonly</th>
- *   <td>Previous binary data point is not yet processed</td>
- * </tr>
  * </table>
  * @endhtmlonly
  *
@@ -255,7 +251,7 @@
  *        <li><b><i>transport</i></b> is the communication method used to send the data points to Device Cloud</li>
  *        <li><b><i>user_context</i></b> is the application context which will be returned in the response/status</li>
  *        <li><b><i>path</i></b>, pointer to data stream name </li>
- *        <li><b><i>uint</i></b>, a null-terminated unit, optional field, set to NULL if not used </li>
+ *        <li><b><i>unit</i></b>, a null-terminated unit, optional field, set to NULL if not used </li>
  *        <li><b><i>forward_to</i></b>, comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) </li>
  *        <li><b><i>point</i></b>, pointer to a @ref connector_data_point_t "data point structure" </li>
  *        <li><b><i>response_required</i></b>, set to connector_true if response is needed </li>

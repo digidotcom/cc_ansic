@@ -209,7 +209,7 @@
 * //#define CONNECTOR_SM_CLI
 * @endcode
 *
-* @see @ref sm_callbacks
+* @see @ref shortmessaging
 * @see @ref zlib
 * @see @ref CONNECTOR_COMPRESSION
 */
@@ -233,7 +233,7 @@
 * //#define CONNECTOR_SM_BATTERY
 * @endcode
 *
-* @see @ref sm_callbacks
+* @see @ref shortmessaging
 * @see @ref pending_data
 * @see @ref zlib
 * @see @ref CONNECTOR_COMPRESSION
@@ -711,7 +711,7 @@
 * If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
 * maximum short message session at a time. If not set, Cloud Connector will use the default of 2. 
 *
-* @see @ref sm_callbacks
+* @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 */
 #define CONNECTOR_SM_MAX_SESSIONS                  4
@@ -721,7 +721,7 @@
 * maximum short message segments used per session. If not set, Cloud Connector will use the default of 1.
 * User need to increase this value if they are planning to use short message to send larger data.
 *
-* @see @ref sm_callbacks
+* @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 */
 #define CONNECTOR_SM_MAX_SEGMENTS                  4
@@ -733,7 +733,7 @@
 * no timeout (0). Cloud Connector will wait for Device Cloud response (complete response) until
 * this period. 
 *
-* @see @ref sm_callbacks
+* @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 */
 #define CONNECTOR_SM_TIMEOUT                    30
