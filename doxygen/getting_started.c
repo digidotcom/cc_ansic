@@ -115,7 +115,7 @@
  * If you don't have vprintf or assert available redefine these macros to call corresponding
  * routines for your platform.
  *
- * @subsection snprinf_routine Implement snprintf routine
+ * @subsection snprintf_routine Implement snprintf routine
  *
  * Open the file os.c and implement the @ref connector_snprintf.  For the linux
  * platform the file is located at public/run/platforms/linux/os.c.  Click on the
