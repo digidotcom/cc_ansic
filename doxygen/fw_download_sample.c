@@ -187,7 +187,7 @@
  * To execute update_firmware.py python script:
  *
  * @code
- * python update_firmware.py <username> <password> <device_id>
+ * python update_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]
  * @endcode
  *
  * Example output from update_firmware.py:

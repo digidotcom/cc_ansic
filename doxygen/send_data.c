@@ -116,16 +116,14 @@
  * @li public/include
  * @li run/platforms/linux (substitute with your platform)
  *
- * @subsection Defines
- *
  * @section web_gui Viewing results from Device Cloud
  *
- * To view the results for this sample log on to Device Cloud as described
- * in the @ref add_your_device_to_the_cloud "Getting Started" section.
+ * To view the results of this sample, log on to Device Cloud as
+ * @ref add_your_device_to_the_cloud "described here".  Next, click
+ * the Data Services tab and double click to the device's folder.
  *
- * Once logged in click on the Data Services tab as shown below. Double click to the device folder.
- *
- * This sample creates a file test.txt in the test directory.  Double click on the test folder to
+ * The sample creates a file test.txt in the test directory.  Double click
+ * the test folder to
  * open the test directory.
  *
  * @image html cloud_data_services_folder.png
