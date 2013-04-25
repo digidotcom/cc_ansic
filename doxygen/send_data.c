@@ -119,22 +119,20 @@
  * @section web_gui Viewing results from Device Cloud
  *
  * To view the results of this sample, log on to Device Cloud as
- * @ref add_your_device_to_the_cloud "described here".  Next, click
- * the Data Services tab and double click to the device's folder.
- *
- * The sample creates a file test.txt in the test directory.  Double click
- * the test folder to
- * open the test directory.
+ * @ref add_your_device_to_the_cloud "described earlier".  Next, click
+ * the Data Services tab.  There you will see your device's and your device's
+ * data folders.
  *
  * @image html cloud_data_services_folder.png
  *
- * The file is then listed as shown (below). You can click on the file to view its contents, you will
- * see the file test.txt in the test directory after you run this sample.
+ * This sample creates a file test.txt in the test directory.  You can view the contents of the file
+ * which is located in the particular device's test folder.
  *
- * @section python_script Python script to retrieve a file from Device Cloud storage
  *
- * This sample provides a basic python script to retrieve the test.txt file from login.etherios.com
- * after a device has sent it to Device Cloud.
+ * @section python_script1 Using a web Services client to retrieve the file from Device Cloud
+ *
+ * The sample provides a very basic web services script, written in python, to retrieve test/test.txt
+ * from Device Cloud.
  *
  * Run the python script in the sample:
  *
@@ -142,7 +140,7 @@
  * python ./get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
  * @endcode
  *
- * The script prints the content of test.txt.
+ * The script will retrieve test/test.txt and then print the file contents.
  *
  * @htmlinclude terminate.html
  *

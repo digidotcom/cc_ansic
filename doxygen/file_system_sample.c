@@ -99,13 +99,13 @@
  * from the openssl library.
  * <br /><br />
  * 
- * @section fs_sample_python_script Python script to write, read, and list a file
+ * @section fs_sample_python_script Using a web Services client to write, read, and list a file
  *
- * This sample provides a simple python script file_system.py to write, read, and list a file,
- * using @htmlonly <a href="web_services.html">Device Cloud Web Services</a> @endhtmlonly.
+ * The sample provides a very basic web services script file_system.py, written in python, to
+ * write, read, and list a file, using @htmlonly <a href="web_services.html">Web Services</a> @endhtmlonly.
  *
- * It sends a request to login.etherios.com. The file "test_file.txt" is created in the current directory
- * on the device with the file data "Connector file system sample\n".
+ * The script sends a request to login.etherios.com.  The file "test_file.txt" is created in the
+ * current directory on the device with the file data "Connector file system sample\n".
  *
  * To execute file_system.py python script:
  *

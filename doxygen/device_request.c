@@ -121,11 +121,11 @@
  * @li public/include
  * @li run/platforms/linux (substitute with your platform)
  *
- * @section python_script Python script to send device request
+ * @section python_script2 Using a web Services client to send a device request
  *
- * This sample provides a simple python script to send a data service device request to login.etherios.com
- * using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
- * To run the python script for this sample:
+ * The sample provides a very basic web services script, written in python, to send a
+ * data service device request to login.etherios.com using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
+ * To run the python script:
  *
  * @code
  * python device_request.py <Username> <Password> <Device ID> [<Device Cloud URL>]

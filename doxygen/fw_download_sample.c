@@ -174,17 +174,14 @@
  * device.  The application prints out the target, code size and checksum of the
  * downloaded image.
  *
- * @subsection fw_python Firmware Download using python script
+ * @subsection fw_python Using a web Services client to query a device for target information and perform a Firmware Download
  *
- * This sample provides two simple python scripts to update firmware image and query
- * a list of firmware target information using
+ * The sample provides two web services scripts, written in python, to simulate a
+ * firmware download and to query a device for firmware target information using
  * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
- * It sends a request to login.etherios.com.
- *
- * update_firmware.py opens and sends "image.a" to the device.
  *
  *
- * To execute update_firmware.py python script:
+ * To perform a web services Download firmware operation, execute the update_firmware.py python script:
  *
  * @code
  * python update_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]
@@ -205,7 +202,8 @@
  *
  * @endcode
  *
- * To execute query_firmware.py python script:
+ * To perform a web services query for a device's firmware target information, execute
+ * the query_firmware.py python script:
  *
  * @code
  * python query_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]
