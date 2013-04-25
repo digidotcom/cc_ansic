@@ -5795,7 +5795,7 @@
         </option>
         <option>
           <name>MemFile</name>
-          <state>$TOOLKIT_DIR$\CONFIG\debugger\Freescale\MK60DN512Zxxx10.ddf</state>
+          <state>$TOOLKIT_DIR$\CONFIG\debugger\Freescale\MK70FN1M0xxx12.ddf</state>
         </option>
         <option>
           <name>RunToEnable</name>
@@ -5867,7 +5867,7 @@
         </option>
         <option>
           <name>FlashLoadersV3</name>
-          <state>$TOOLKIT_DIR$\config\flashloader\Freescale\FlashK60Dxxx128K.board</state>
+          <state>$TOOLKIT_DIR$\config\flashloader\Freescale\FlashK70Fxxx128K.board</state>
         </option>
         <option>
           <name>OCImagesSuppressCheck1</name>

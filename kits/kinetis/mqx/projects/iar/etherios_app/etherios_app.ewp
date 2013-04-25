@@ -305,9 +305,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -1252,9 +1252,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -2198,9 +2198,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -3145,9 +3145,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -3408,9 +3408,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -4097,9 +4097,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -5044,9 +5044,9 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\host</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\device</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -5697,13 +5697,43 @@
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_config.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_data_point.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_data_service.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_file_system.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_firmware.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_network.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_os.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_remote.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_api_short_message.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_debug.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_types.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\data_service.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\firmware_mqx.h</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\flash_mqx.h</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\os_support.h</name>
@@ -5717,43 +5747,10 @@
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</name>
           </file>
           <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.rci</name>
+          </file>
+          <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_config.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_point.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_service.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_file_system.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_firmware.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_network.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_os.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_remote.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_short_message.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_debug.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_types.h</name>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
@@ -5768,29 +5765,7 @@
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\file_system.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
-            <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
-            </excluded>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
-            <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_stub.c</name>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
@@ -6009,7 +5984,7 @@
       <name>$PROJ_DIR$\Sources\connector_config.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\Git projects\cc_ansic\kits\kinetis\mqx\projects\iar\etherios_app\Sources\connector_hooks.c</name>
+      <name>$PROJ_DIR$\Sources\connector_hooks.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Sources\main.c</name>
