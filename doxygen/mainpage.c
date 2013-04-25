@@ -204,38 +204,38 @@
  * <td></td>
  * </tr>
  * <tr>
- * <td>With @endhtmlonly @ref CONNECTOR_DATA_SERVICE, @ref CONNECTOR_FILE_SYSTEM, or @ref CONNECTOR_RCI_SERVICE @htmlonly enabled</td>
- * <td>96</td>
- * <td>96</td>
- * <td></td>
- * </tr>
- * <tr>
  * <td>With @endhtmlonly @ref CONNECTOR_DATA_SERVICE @htmlonly enabled</td>
- * <td>3380*n</td>
- * <td>116*n</td>
+ * <td>96</td>
+ * <td>96</td>
  * <td></td>
- * </tr>
- * <tr>
- * <td>With @endhtmlonly @ref CONNECTOR_RCI_SERVICE @htmlonly enabled</td>
- * <td>6684*n</td>
- * <td>668*n</td>
- * <td></td>
- * </tr>
- * <tr>
- * <td>With @endhtmlonly @ref CONNECTOR_FILE_SYSTEM @htmlonly enabled</td>
- * <td>3684*n</td>
- * <td>144*n</td>
- * <td>An additional @endhtmlonly @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly bytes is allocated. </td>
  * </tr>
  * <tr>
  * <td>Total</td>
  * <td>6020</td>
  * <td>2856</td>
- * <td>Assumes both @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, with n=1 (one data service message transaction maximum)</td>
+ * <td>With @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, plus @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly set to 1 </td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * For reference, here's a two additional dynamic RAM metrics, with @ref CONNECTOR_FIRMWARE_SERVICE disabled:
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ * <th class="title">Description</th>
+ * <th class="title">CONNECTOR_COMPRESSION enabled</th>
+ * <th class="title">CONNECTOR_COMPRESSION disabled</th>
  * </tr>
  * <tr>
- * <td colspan="4"><b>Note:</b> Where <b>n</b> is the maximum number of simultaneous message transactions, defined in the
- *                 @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly </td>
+ * <td>With @endhtmlonly @ref CONNECTOR_RCI_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, plus @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly set to 1 </td>
+ * <td>9424</td>
+ * <td>3408</td>
+ * </tr>
+ * <tr>
+ * <td>With @endhtmlonly @ref CONNECTOR_FILE_SYSTEM and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, plus @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly set to 1</td>
+ * <td>6424</td>
+ * <td>2884</td>
  * </tr>
  * </table>
  * @endhtmlonly
