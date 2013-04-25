@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 import time
 import ic_testcase
 import datetime
@@ -14,7 +14,7 @@ impl = getDOMImplementation()
 from ..utils import getText, clean_slate
 
 impl = getDOMImplementation()
-class DeviceRequestDvtTestCase(ic_testcase.TestCase):  
+class DeviceRequestDvtTestCase(ic_testcase.TestCase):
 
     def test_ds_invalid_target(self):
         """ Verifies that the [invalid target] device request returns expected error. """
@@ -44,7 +44,7 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
         """ Verifies that the [not handle] device request returns expected error. """
         self.send_device_request("not handle", True, True, False)
 
-    def test_ds_valid_target(self):    
+    def test_ds_valid_target(self):
         """ Verifies that the [valid target] device request returned match the expected response. """
         self.send_device_request("valid target", True, False, False)
 
@@ -52,7 +52,7 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
         """ Verifies that the [zero byte data] device request returns expected error. """
         self.send_device_request("zero byte data", False, False, False)
 
-# must be a last test   
+# must be a last test
     def test_timeout_response_ds(self):
         """ Verifies that the [timeout response] device request returned match the expected response. """
         self.send_device_request("timeout response", True, True, False)
@@ -85,10 +85,10 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
         self.log.info("Sending device request for \"%s\" target_name to server for device id  %s." % (target, self.device_id))
 
         # Send device request
-        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname, 
-                            data=my_target_device_request).content
+        device_request_response = self.session.post('http://%s/ws/sci' % self.hostname,
+                            data=my_target_device_request, timeout=120).content
 
-        # Parse request response 
+        # Parse request response
         self.log.info("Got Response: %s" % device_request_response)
         dom = xml.dom.minidom.parseString(device_request_response)
         device_response = dom.getElementsByTagName("device_request")
@@ -104,13 +104,13 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
             if not target == "timeout response":
                 cancelled_response = "Message transmission cancelled"
                 self.assertEqual(error, cancelled_response,
-                                     "returned error (%s) expected error (%s)" 
+                                     "returned error (%s) expected error (%s)"
                                      % (error, cancelled_response))
         else:
             self.log.info("Determining if the target_name is \"%s\"." %target)
             target_name = device_response[0].getAttribute('target_name')
-            self.assertEqual(target_name, target, 
-                             "returned target (%s) is not (%s)" 
+            self.assertEqual(target_name, target,
+                             "returned target (%s) is not (%s)"
                              % (target_name, target))
 
             # Validate status
@@ -132,5 +132,5 @@ class DeviceRequestDvtTestCase(ic_testcase.TestCase):
                     content_recv = device_response[0].firstChild.data
                     self.assertEqual(content_send, content_recv, "Mismatch in the sent and received data [%s]" %target)
 
-if __name__ == '__main__': 
-    unittest.main() 
+if __name__ == '__main__':
+    unittest.main()
