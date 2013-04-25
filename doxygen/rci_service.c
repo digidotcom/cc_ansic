@@ -43,6 +43,7 @@
  * @note Cloud Connector calls step 3 to 5 repeatedly for each configuration group.
  * @note See @ref rci_support under Configuration to enable or disable remote configuration.
  * @note See RCI tool for generating remote configruation source and header files.
+ * @note If remote configuration file specifies IPv4 type (see @ref rci_tool), @ref connector_snprintf must be implemented. See @ref snprinf_routine.
  *
  * @section rci_cancel Termination and Error Processing
  * The application-defined callback sets <b><i>error_id</i></b> field in the

@@ -15,6 +15,7 @@
  *              -# @ref non_compliant_adjustments
  *                  -# @ref data_type_format_etc
  *                  -# @ref debug_routine
+ *                  -# @ref snprintf_routine
  *          -# @ref step2
  *          -# @ref step3
  *              -# @ref connector_initialization
@@ -113,6 +114,13 @@
  *
  * If you don't have vprintf or assert available redefine these macros to call corresponding
  * routines for your platform.
+ *
+ * @subsection snprinf_routine Implement snprintf routine
+ *
+ * Open the file os.c and implement the @ref connector_snprintf.  For the linux
+ * platform the file is located at public/run/platforms/linux/os.c.  Click on the
+ * routine to see a description, then modify to operate with your platform.  Cloud Connector
+ * calls this routine to produce an output string according to the format.
  *
  * @section step2 Step 2: Modify connector_config.h
  *
