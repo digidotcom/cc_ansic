@@ -42,7 +42,7 @@ class TestCase(BaseICTestCase):
             % self.device_id)
 
         self.device_core = None
-        for _ in xrange(1,10):
+        for _ in xrange(1,20):
             response = self.rest_session.get_first('DeviceCore', 
                             params={'condition' : "devConnectwareId='%s'" \
                             % self.device_id})
@@ -63,7 +63,7 @@ class TestCase(BaseICTestCase):
 
         # If not connected, fail the TestCase.
         self.assertEqual('1', self.device_core.dpConnectionStatus, 
-            "Device %s not connected after 10 seconds." % self.device_id)
+            "Device %s not connected after 20 seconds." % self.device_id)
         self.log.info("Device %s is connected." % self.device_id)
 
 PING_REQUEST = """<sci_request version="1.0"> 
