@@ -9,11 +9,13 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-#include "connector_config.h"
-#include "platform.h"
 #include "connector_api.h"
+#include "platform.h"
+#include "connector.h"
 #include "os_support.h"
+#ifdef CONNECTOR_DATA_SERVICE
 #include "data_service.h"
+#endif
 #include "connector_config.h"
 #include "connector_debug.h"
 
@@ -26,11 +28,13 @@ static connector_callbacks_t connector_callback_list =
     NULL /* device reset */
 };
 
+#ifdef CONNECTOR_DATA_SERVICE
 typedef struct
 {
 	connector_request_data_service_send_t header;
     connector_app_send_data_t data_ptr;
 } connector_send_t;
+#endif
 
 static connector_handle_t connector_handle = NULL;
 
@@ -160,6 +164,7 @@ done:
     return status;
 }
 
+#ifdef CONNECTOR_DATA_SERVICE
 connector_error_t connector_send_data(char const * const path, connector_dataservice_data_t * const device_data, char const * const content_type)
 {
     static unsigned long send_event_block = 0;
@@ -210,7 +215,7 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
     send_info->header.path = path;
     send_info->header.content_type = content_type;
     send_info->header.user_context = &send_info->data_ptr;
-    send_info->header.transport = connector_transport_tcp;
+    send_info->header.transport = device_data->transport;
     send_info->header.response_required = connector_false;
 
     if ((device_data->flags & CONNECTOR_FLAG_APPEND_DATA) == CONNECTOR_FLAG_APPEND_DATA)
@@ -232,6 +237,8 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
             #define ECC_SEND_TIMEOUT_IN_MSEC 90000
             result = ecc_get_event(ECC_SEND_DATA_EVENT, send_info->data_ptr.event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
         	send_info->data_ptr.error = connector_error_success;
+            //TODO: Timeout is not evaluated
+
             result = send_info->data_ptr.error;
         }
         else
@@ -245,11 +252,11 @@ error:
     {
         send_event_block &= ~send_info->data_ptr.event_bit;
         ecc_free(send_info);
-        free(send_info);
     }
 
     return result;
 }
+#endif
 
 connector_callbacks_t * connector_get_app_callbacks(void)
 {
