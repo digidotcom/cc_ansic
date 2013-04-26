@@ -81,73 +81,73 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
- * <td>39529</td>
- * <td>11637</td>
- * <td>5</td>
- * <td>493</td>
+ * <td>38305</td>
+ * <td>11683</td>
+ * <td>0</td>
+ * <td>444</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
- * <td>32437</td>
- * <td>1872</td>
- * <td>5</td>
- * <td>493</td>
+ * <td>32298</td>
+ * <td>1236</td>
+ * <td>0</td>
+ * <td>440</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
- * <td>34438</td>
- * <td>11228</td>
- * <td>5</td>
- * <td>493</td>
+ * <td>32311</td>
+ * <td>11274</td>
+ * <td>0</td>
+ * <td>444</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
- * <td>27612</td>
- * <td>1780</td>
- * <td>5</td>
- * <td>493</td>
+ * <td>26513</td>
+ * <td>1156</td>
+ * <td>0</td>
+ * <td>440</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
- * <td>28256</td>
- * <td>9446</td>
- * <td>5</td>
- * <td>493</td>
+ * <td>26946</td>
+ * <td>9450</td>
+ * <td>0</td>
+ * <td>444</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_RCI_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
- * <td>22690</td>
- * <td>1656</td>
- * <td>5</td>
- * <td>493</td>
+ * <td>22038</td>
+ * <td>1020</td>
+ * <td>0</td>
+ * <td>440</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_DEBUG, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly set to 256.</td>
- * <td>27873</td>
- * <td>7602</td>
+ * <td>31366</td>
+ * <td>9147</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>24</td>
  * </tr>
   * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH @htmlonly set to 256.</td>
- * <td>23011</td>
- * <td>484</td>
+ * <td>26755</td>
+ * <td>672</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>20</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_DEBUG, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE @htmlonly enabled.</td>
- * <td>22525</td>
- * <td>7125</td>
+ * <td>25247</td>
+ * <td>8702</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>24</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE @htmlonly enabled.</td>
- * <td>18090</td>
- * <td>392</td>
+ * <td>20867</td>
+ * <td>592</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>20</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled.  @ref connector_config_data_options used. @htmlonly </td>
@@ -158,17 +158,24 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_FIRMWARE_SERVICE enabled.  @ref connector_config_data_options used. @htmlonly </td>
- * <td>11155</td>
- * <td>300</td>
+ * <td>11795</td>
+ * <td>472</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>20</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_DATA_SERVICE enabled.  @ref connector_config_data_options used. @htmlonly </td>
- * <td>13473</td>
- * <td>241</td>
+ * <td>17085</td>
+ * <td>460</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>20</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_DATA_SERVICE, @ref CONNECTOR_DATA_POINTS enabled.  @ref connector_config_data_options used. @htmlonly </td>
+ * <td>19608</td>
+ * <td>524</td>
+ * <td>4</td>
+ * <td>28</td>
  * </tr>
  * </table>
  * @endhtmlonly
