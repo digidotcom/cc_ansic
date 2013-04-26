@@ -25,7 +25,6 @@
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS             75
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS             75
 #define CONNECTOR_WAIT_COUNT                          5
-#define IPCFG_default_enet_device				  0
 
 #define CONNECTOR_FILE_SYSTEM
 #define FILE_SYSTEM_SDCARD
@@ -36,7 +35,7 @@
 #define FLASH_PART_0_LEN                          0xFFFFFFFF
 #define FLASH_PART_0_TYPE                         ".*\\.S19"
 #define FLASH_PART_0_DESC                         "srec Image"
-#define FLASH_PART_0_VER                          {1,1,0,0}
+#define FLASH_PART_0_VER                          {0,0,0,1}
 
 #define CONNECTOR_RCI_SERVICE
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 	256

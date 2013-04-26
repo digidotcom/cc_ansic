@@ -12,8 +12,13 @@
 #include <mqx.h>
 #include "connector_config.h"
 #include "platform.h"
-#include "firmware_mqx.h"
 #include "main.h"
+
+#if !defined IAR
+  #include "firmware_mqx.h"
+#else
+  #include "firmware_mqx_iar.h"
+#endif
 
 #if defined CONNECTOR_FIRMWARE_SERVICE
 extern int FlashWriteInProgress;
