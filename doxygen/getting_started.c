@@ -117,10 +117,14 @@
  *
  * @subsection snprintf_routine Implement snprintf routine
  *
- * Open the file os.c and implement the @ref connector_snprintf.  For the linux
- * platform the file is located at public/run/platforms/linux/os.c.  Click on the
- * routine to see a description, then modify to operate with your platform.  Cloud Connector
- * calls this routine to produce an output string according to the format.
+ * The function @ref connector_snprintf() is located in @ref os.c and used to build formatted
+ * output strings with the protection of a maximum string length (preventing erroneous
+ * buffer overwrites).  This maps one-to-one to ANSI C99 vsnprintf().
+ *
+ * For the linux platform, the function is fully implemented for either ANSI C99 or ANSI C89
+ * (using vsprintf() and memcpy()).  If these functions are unavailable on your platform, we
+ * recommend you look at our ANSI C89 implementation and mimic.
+ *
  *
  * @section step2 Step 2: Modify connector_config.h
  *
