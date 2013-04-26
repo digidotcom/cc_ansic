@@ -6369,7 +6369,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp\intflash.icf</state>
+          <state>C:\Etherios4Kinetis\utils\FWUpdateIntFlash.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
