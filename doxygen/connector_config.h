@@ -266,10 +266,14 @@
  * When defined, Cloud Connector private library does not use dynamic memory allocations,
  * static memory buffers are used instead. This eliminates the possibility of memory fragmentation.
  *
- * When no dynamic RAM option is used, @ref CONNECTOR_MSG_MAX_TRANSACTION must be defined and it should be
- * less or equal to 32. The number of simultaneous data service transactions, initiated by the device
- * is 1.
- *
+ * When no dynamic RAM option is used, @ref 
+ * CONNECTOR_MSG_MAX_TRANSACTION should be defined and it must
+ * be less or equal to 32. The default is 1. 
+ *  
+ * When no dynamic RAM option is used, @ref 
+ * CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS should be defined and 
+ * it must be less or equal to 32. The default is 1. 
+ *  
  * To enable no dynamic RAM feature, uncomment this line in connector_config.h:
  *
  * @code
@@ -283,6 +287,29 @@
  *
  */
 #define CONNECTOR_NO_MALLOC
+
+/**
+ * Maximum number of simultaneous send data sessions over @ref 
+ * CONNECTOR_TRANSPORT_TCP "TCP transport" if @ref 
+ * CONNECTOR_NO_MALLOC is defined. The default is 1. Must be 
+ * less or equal to 32. 
+ *  
+ * If @ref CONNECTOR_NO_MALLOC is not defined, maximum number of
+ * simultaneous send data sessions is unlimited.
+ *  
+ * To enable no dynamic RAM feature, uncomment this line in connector_config.h:
+ *
+ * @code
+ * //#define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
+ * @endcode
+ *
+ * To this:
+ * @code
+ * #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
+ * @endcode
+ *
+ */
+#define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
 
 /**
  * If defined, Cloud Connector includes the TCP transport.
