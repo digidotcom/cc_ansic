@@ -64,7 +64,12 @@
 #define msg_service_buffer_cnt  msg_session_buffer_cnt
 
 #if defined CONNECTOR_DATA_SERVICE
-#define msg_session_client_buffer_cnt  1
+
+#ifndef CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS
+#define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS   1
+#endif
+
+#define msg_session_client_buffer_cnt  CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS
 #define put_request_buffer_cnt      msg_session_client_buffer_cnt
 typedef data_service_context_t      named_buffer_type(put_request);
 
@@ -127,8 +132,17 @@ typedef struct
 
 #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
 
-#if CONNECTOR_MAX_SM_SESSIONS > 32
-#error "CONNECTOR_MAX_SM_SESSIONS must be <= 32"
+
+#ifndef CONNECTOR_SM_MAX_SEGMENTS
+#define CONNECTOR_SM_MAX_SEGMENTS   1
+#endif
+
+#ifndef CONNECTOR_SM_MAX_SESSIONS
+#define CONNECTOR_SM_MAX_SESSIONS   4
+#endif
+
+#if CONNECTOR_SM_MAX_SESSIONS > 32
+#error "CONNECTOR_SM_MAX_SESSIONS must be <= 32"
 #endif
 
 #if defined (CONNECTOR_TRANSPORT_UDP) && defined (CONNECTOR_TRANSPORT_SMS)
