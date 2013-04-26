@@ -38,6 +38,13 @@ class StopStartInitiateActionDvtTestCase(ic_testcase.TestCase):
             StopStartInitiateActionDvtTestCase.monitor.start()
         self.monitor = StopStartInitiateActionDvtTestCase.monitor
 
+    @classmethod
+    def tearDownClass(cls):
+        if StopStartInitiateActionDvtTestCase.monitor is not None:
+            StopStartInitiateActionDvtTestCase.monitor.stop()
+        ic_testcase.TestCase.tearDownClass()
+
+
     def test_terminate_request(self):
         """ Initiate [terminate_idigi] device request. """
 
