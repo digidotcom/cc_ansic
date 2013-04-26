@@ -151,10 +151,10 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled.  @ref connector_config_data_options used. @htmlonly </td>
- * <td>16598</td>
- * <td>389</td>
+ * <td>19477</td>
+ * <td>592</td>
  * <td>0</td>
- * <td>0</td>
+ * <td>20</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref step3 "compile_and_link" sample with @ref CONNECTOR_FIRMWARE_SERVICE enabled.  @ref connector_config_data_options used. @htmlonly </td>
