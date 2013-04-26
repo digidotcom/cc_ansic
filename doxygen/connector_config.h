@@ -291,23 +291,13 @@
 /**
  * Maximum number of simultaneous send data sessions over @ref 
  * CONNECTOR_TRANSPORT_TCP "TCP transport" if @ref 
- * CONNECTOR_NO_MALLOC is defined. The default is 1. Must be 
- * less or equal to 32. 
+ * CONNECTOR_NO_MALLOC is defined. 
+ *  
+ * The default is 1. Must be less or equal to 32.
  *  
  * If @ref CONNECTOR_NO_MALLOC is not defined, maximum number of
  * simultaneous send data sessions is unlimited.
  *  
- * To enable no dynamic RAM feature, uncomment this line in connector_config.h:
- *
- * @code
- * //#define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
- * @endcode
- *
- * To this:
- * @code
- * #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
- * @endcode
- *
  */
 #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
 

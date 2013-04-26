@@ -30,7 +30,7 @@
 /*#define ENABLE_COMPILE_TIME_DATA_PASSING */
 
 /* #define CONNECTOR_NO_MALLOC */
-/* #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1 */
+#define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
