@@ -14,7 +14,9 @@
 #define CONNECTOR_API_SHORT_MESSAGE_H
 
 /**
-* @defgroup connector_sm_send_ping_request_t Data type used to send ping request.
+* @defgroup connector_sm_send_ping_request_t connector_sm_send_ping_request_t
+*
+* @brief Data type used to send ping request.
 * @{
 */
 /**
@@ -100,7 +102,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_ping_response_t Data type used to pass ping response.
+* @defgroup connector_sm_ping_response_t connector_sm_ping_response_t
+* @brief Data type used to pass ping response.
 * @{
 */
 /**
@@ -129,7 +132,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_cli_request_t Data type used for cli request
+* @defgroup connector_sm_cli_request_t connector_sm_cli_request_t
+* @brief Data type used for cli request
 * @{
 */
 /**
@@ -153,7 +157,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_cli_response_t Data type used to get CLI response
+* @defgroup connector_sm_cli_response_t connector_sm_cli_response_t
+* Data type used to get CLI response
 * @{
 */
 /**
@@ -178,7 +183,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_cli_response_t Data type used to get CLI response
+* @defgroup connector_sm_cli_response_t connector_sm_cli_response_t
+* @brief Data type used to get CLI response
 * @{
 */
 /**
@@ -201,7 +207,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_cli_status_t Data type used to pass CLI status.
+* @defgroup connector_sm_cli_status_t connector_sm_cli_status_t
+* @brief Data type used to pass CLI status.
 * @{
 */
 /**
@@ -229,7 +236,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_opaque_response_t  Opaque response from Device Cloud
+* @defgroup connector_sm_opaque_response_t  connector_sm_opaque_response_t
+* @brief Opaque response from Device Cloud
 * @{
 */
 /**
@@ -253,7 +261,8 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_more_data_t  Indicates pending data in Device Cloud.
+* @defgroup connector_sm_more_data_t  connector_sm_more_data_t
+* @brief Indicates pending data in Device Cloud.
 * @{
 */
 /**

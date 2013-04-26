@@ -80,23 +80,25 @@
  *  -# A remote cellular device which uses expensive cellular link to send
  *     a reading once an hour.
  *
- * @section ping_request  Ping request
+ * @section ping_request  Ping Operations
  *
- * The device can send ping request to Device Cloud at any time to let Device Cloud know that Cloud Connector
- * is ready to receive any pending messages. Similarly Device Cloud user can ping their devices using a ping
- * request to Cloud Connector. These ping requests can be sent without requesting for a response.
+ * A Cloud Connector Application can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any time.  The purpose is to
+ * open a hole in a firewall and let Device Cloud know that the Application Cloud Connector is ready to
+ * receive pending operations.  Additionally, a Web Services application can @ref ping_request_from_cloud "search"
+ * for a Cloud Connector device by Pinging through the cloud.
  *
- * The following sub-sections will explain each scenario separately.
- *      -# @ref initiate_ping
- *      -# @ref ping_response_callback
- *      -# @ref ping_request_callback
+ * @subsection initiate_ping_to_cloud  Ping Device Cloud
  *
- * @subsection initiate_ping  Ping Device Cloud
+ * When an application has only @ref network_udp_start "UDP started"
+ * (TCP has @ref network_tcp_start "not started"), it's necessary to
+ * periodically contact Device Cloud so to open a hole in a firewall and receive data or commands
+ * from Device Cloud or Web Services applications.
+ * This can be achieved by initiating a Ping Device Cloud.
  *
- * The application initiates the ping request to Device Cloud by calling @ref connector_initiate_action "initiate action"
- * with @ref connector_initiate_ping_request request and @ref connector_sm_send_ping_request_t request_data.
+ * The application initiates a Ping Device Cloud by calling @ref connector_initiate_action()
+ * using a @ref connector_initiate_ping_request type and a connector_sm_send_ping_request_t
+ * request_data structure:
  *
- * The @ref connector_initiate_action "initiate action" is called with the following arguments:
  *
  * @htmlonly
  * <table class="apitable">
@@ -109,7 +111,7 @@
  * </tr>
  * <tr>
  *   <td>handle</td>
- *   <td>@endhtmlonly @ref connector_handle_t @htmlonly returned from the @endhtmlonly connector_init() @htmlonly function.</td>
+ *   <td>@endhtmlonly @ref connector_handle_t "Handle" returned from the connector_init() @htmlonly function.</td>
  * </tr>
  * <tr>
  *   <td>request</td>
@@ -119,9 +121,12 @@
  *   <td>request_data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_send_ping_request_t @htmlonly structure, where member:
  *      <ul>
- *        <li><b><i>transport</i></b>, a method to use to send ping </li>
- *        <li><b><i>user_context</i></b>, is the user owned context pointer, will help identify the response </li>
- *        <li><b><i>response_required</i></b>, set to connector_true if the response is needed </li>
+ *        <li><b><i>transport</i></b>: Transport mechanism for the Ping Request.  See @endhtmlonly @ref connector_transport_udp. @htmlonly </li>
+ *        <li><b><i>user_context</i></b>: An opaque application defined context.  This pointer is returned
+ *                                        during a @endhtmlonly @ref ping_response_callback "response callback" @htmlonly and used
+ *                                        to identify the origin of the response. </li>
+ *        <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a @ref ping_response_callback " response callback" is required.
+ *                                             Set to @ref connector_false when no response callback is required.  @htmlonly </li>
  *      </ul>
  *    </td>
  * </tr>
@@ -129,7 +134,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_success @htmlonly</th>
- *   <td>Ping initiated</td>
+ *   <td>Device Cloud Ping initiated</td>
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_unavailable @htmlonly</th>
@@ -163,14 +168,12 @@
  * @ref  ping_response_callback "response" callback. The value passed as the user_context will
  * be returned in the response.
  *
- * @subsection ping_response_callback  Ping response callback
+ * @subsection ping_response_callback  Ping Device Cloud Response callback
  *
- * This callback is called with @ref connector_request_id_sm_ping_response "ping response" @ref connector_callback_t "callback".
- *
- * When the response is requested then the callback with connector_sm_ping_status_success indicates a success response
- * from Device Cloud. When the response is not requested, a callback with connector_sm_ping_status_complete
- * indicates the ping is sent successfully. If the session is @ref cancel_session "canceled" by the user then the callback
- * will be called with connector_sm_ping_status_cancel.
+ * When a @ref initiate_ping_to_cloud operation has the @b response_required set to @ref connector_true,
+ * a @b ping_response_callback is made when a reply to the original Ping is received.  This callback
+ * has a @ref connector_request_id_sm_ping_response Request ID and with the data cast as a @ref connector_sm_ping_response_t
+ * with status set to @b connector_sm_ping_status_success .
  *
  * @htmlonly
  * <table class="apitable">
@@ -192,9 +195,11 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_ping_response_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method chosen to send a ping </li>
- *       <li><b><i>user_context</i></b>, is the user context provided in the request </li>
- *       <li><b><i>status</i></b>, a response code indicating success, complete or error </li>
+ *       <li><b><i>transport</i></b>: Transport mechanism of the original Ping Request.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>user_context</i></b>: The user_context pointer from the @ref initiate_ping_to_cloud.
+ *       <li><b><i>status</i></b>: The response code, where @endhtmlonly @b connector_sm_ping_status_success indicates reply
+ *                 received, @b connector_sm_ping_status_complete indicates @ref initiate_ping_to_cloud sent,
+ *                 and @b connector_sm_ping_status_cancel indicates the session was @ref cancel_session "canceled". @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -211,15 +216,17 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection ping_request_callback  Ping request callback
+ * @note When the @ref initiate_ping_to_cloud operation has the response_required set to @ref connector_false, this callback
+ * is made data with the @ref connector_sm_ping_response_t status set to @b connector_sm_ping_status_complete.  If
+ * the @b Ping @b Device @b Cloud session is @ref cancel_session "canceled", then the callback status is set to
+ * @b connector_sm_ping_status_cancel.
  *
- * Cloud Connector will make @ref connector_request_id_sm_ping_request "Ping Request"
- * @ref connector_callback_t "callback" to inform the application that ping is received. This callback
- * is just for the information purpose only. No action is needed from the application, unless it wants to
- * abort the connection.
  *
- * The @ref connector_request_id_sm_ping_request "Ping Request" @ref connector_callback_t "callback" is
- * called with following information:
+ * @subsection ping_request_from_cloud  Device Cloud Ping Request
+ *
+ * Cloud Connector will make a Ping Request @ref connector_request_id_sm_ping_request "callback" to
+ * inform the Cloud Connector Application that a ping was received.  This callback
+ * is just for the information purpose only.  No action is necessary.
  *
  * @htmlonly
  * <table class="apitable">
@@ -241,8 +248,9 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method on which ping is received </li>
- *       <li><b><i>response_required</i></b>, it will be set to connector_true if the Device Cloud wants the response from Cloud Connector </li>
+ *       <li><b><i>transport</i></b>: Ping transport mechanism.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if Device Cloud requests a response,
+ *                                            @ref connector_false if no response was requested.  @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -258,6 +266,9 @@
  * </tr>
  * </table>
  * @endhtmlonly
+ *
+ * @note The @b response_required member is passing information on to the application.  There is no required
+ * action necessary from the Cloud COnnector Application, regardless of the value for @b response_required.
  *
  * @section cli_request  CLI request
  *
