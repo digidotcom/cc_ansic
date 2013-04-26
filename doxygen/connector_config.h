@@ -295,7 +295,7 @@
  *  
  * The default is 1. Must be less or equal to 32.
  *  
- * If @ref CONNECTOR_NO_MALLOC is not defined, maximum number of
+ * If @ref CONNECTOR_NO_MALLOC is not defined, the number of
  * simultaneous send data sessions is unlimited.
  *  
  */
