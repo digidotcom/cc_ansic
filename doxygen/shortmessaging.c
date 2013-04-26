@@ -176,8 +176,8 @@
  *
  * When a @ref initiate_ping_to_cloud operation has the @b response_required set to @ref connector_true,
  * a @b ping_response_callback is made when a reply to the original Ping is received.  This callback
- * has a @ref connector_request_id_sm_ping_response Request ID and with the data cast as a @ref connector_sm_ping_response_t
- * with status set to @b connector_sm_ping_status_success .
+ * has a @ref connector_request_id_sm_ping_response Request ID and with the data cast as
+ * a @ref connector_sm_ping_response_t with status set to @b connector_sm_ping_status_success .
  *
  * @htmlonly
  * <table class="apitable">
@@ -274,11 +274,11 @@
  * @note The @b response_required member is passing information on to the application.  There is no required
  * action necessary from the Cloud Connector Application, regardless of the value for @b response_required.
  *
- * @section cli_support Command Line Support (CLI)
+ * @section cli_support Command Line Interface Support
  *
- * Cloud Connector will call these callbacks while processing a CLI request from Device Cloud.
- * The CLI callbacks will come in the following order, In case of any error while processing,
- * the @ref cli_status_callback will be called.
+ * Cloud Connector includes support for a Command Line Interface support to be displayed on the Device
+ * Cloud Device Manager CLI.  The following SM four callbacks are made (in sequence) to support an individual
+ * CLI request:
  *
  *      -# @ref cli_request_callback
  *      -# @ref cli_response_length_callback
@@ -287,11 +287,9 @@
  *
  * @subsection cli_request_callback  CLI request callback
  *
- * Cloud Connector will make @ref connector_request_id_sm_cli_request "CLI request"
- * @ref connector_callback_t "callback" to pass received CLI command from Device Cloud.
- *
- * The @ref connector_request_id_sm_cli_request "CLI request" @ref connector_callback_t "callback"
- * is called with following information:
+ * The @ref connector_request_id_sm_cli_request @ref connector_callback_t "callback" is the first call
+ * in a CLI command sequence.  This callback passes the Device Cloud CLI command and arguments to Cloud Connector
+ * using a @ref connector_sm_cli_request_t data cast.
  *
  * @htmlonly
  * <table class="apitable">
@@ -313,11 +311,15 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_request_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
- *       <li><b><i>user_context</i></b>, pointer to hold user context </li>
- *       <li><b><i>buffer</i></b>, CLI command received from Device Cloud </li>
- *       <li><b><i>bytes_used</i></b>, number of bytes in CLI command </li>
+ *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>user_context</i></b>: An opaque application defined context.  This pointer is passed to all subsequent
+ *                                        callbacks during the CLI sequence for this command.
+ *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. </li>
+ *       <li><b><i>bytes_used</i></b>: Number of bytes in the CLI command. </li>
  *       <li><b><i>response_required</i></b>, will be set to connector_true if Device Cloud needs response </li>
+ *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a CLI response
+ *                                            callback" is required.  Set to @ref connector_false when no response callback
+ *                                            is required.  @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
