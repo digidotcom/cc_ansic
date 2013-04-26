@@ -197,8 +197,8 @@
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 
 /**
-* If defined, Cloud Connector includes the @ref cli_request.
-* To disable the @ref cli_request feature, comment this line out in connector_config.h:
+* If defined, Cloud Connector includes the @ref cli_support.
+* To disable the @ref cli_support feature, comment this line out in connector_config.h:
 *
 * @code
 * #define CONNECTOR_SM_CLI

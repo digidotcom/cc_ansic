@@ -16,6 +16,8 @@
  *   -# @ref smsolutions
  *        -# @ref smcomplications
  *   -# @ref smsectionexamples
+ *   -# @ref ping_request
+ *   -# @ref cli_support
  *
  * @section smwhatisit What is Short Messaging?
  *
@@ -30,7 +32,7 @@
  * The SM protocol supports the following features:
  *      -# @ref ping_request "PING mechanism" between Cloud Connector and Device Cloud or vice versa
  *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud or vice versa
- *      -# @ref cli_request "CLI" from Device Cloud to Cloud Connector
+ *      -# @ref cli_support "CLI" from Device Cloud to Cloud Connector
  *      -# @ref sm_reboot "Reboot" from Device Cloud to Cloud Connector
  *      -# @ref sm_connect "Connect" from Device Cloud to Cloud Connector to start communication over TCP
  *      -# @ref pending_data "Message pending" to indicate more messages are queued on the Device Cloud for this device.
@@ -42,10 +44,12 @@
  *
  * At this point, all the communication with Device Cloud is either on the TCP or on the UDP.
  * The TCP based communication requires initial handshaking and connection maintenance
- * messages, but it is secure and reliable. On the other hand the UDP based communication
- * has no overhead that the TCP has, but it is unreliable.
+ * traffic, but it is secure and reliable.  On the other hand the UDP based communication
+ * has no connection overhead, but it is unreliable.
+ *
  * The message which are queued up in Device Cloud, are sent to the device when Device Cloud
  * receives a request from the device.
+ *
  *
  * @section smsectionwhoneedsit Who needs Short Messaging?
  *
@@ -80,12 +84,12 @@
  *  -# A remote cellular device which uses expensive cellular link to send
  *     a reading once an hour.
  *
- * @section ping_request  Ping Operations
+ * @section ping_request Ping Operations
  *
  * A Cloud Connector Application can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any time.  The purpose is to
  * open a hole in a firewall and let Device Cloud know that the Application Cloud Connector is ready to
  * receive pending operations.  Additionally, a Web Services application can @ref ping_request_from_cloud "search"
- * for a Cloud Connector device by Pinging through the cloud.
+ * for a Cloud Connector device by Pinging through Device Cloud.
  *
  * @subsection initiate_ping_to_cloud  Ping Device Cloud
  *
@@ -121,7 +125,7 @@
  *   <td>request_data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_send_ping_request_t @htmlonly structure, where member:
  *      <ul>
- *        <li><b><i>transport</i></b>: Transport mechanism for the Ping Request.  See @endhtmlonly @ref connector_transport_udp. @htmlonly </li>
+ *        <li><b><i>transport</i></b>: Ping Request transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly </li>
  *        <li><b><i>user_context</i></b>: An opaque application defined context.  This pointer is returned
  *                                        during a @endhtmlonly @ref ping_response_callback "response callback" @htmlonly and used
  *                                        to identify the origin of the response. </li>
@@ -154,7 +158,7 @@
  *
  *   ping_request.transport = connector_transport_udp;
  *   ping_request.response_required = connector_true;
- *   ping_request.user_context = &request;
+ *   ping_request.user_context = &ping_request;
  *
  *   // Send ping to Device Cloud
  *   status = connector_initiate_action(handle, connector_initiate_ping_request, &ping_request);
@@ -195,7 +199,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_ping_response_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Transport mechanism of the original Ping Request.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
  *       <li><b><i>user_context</i></b>: The user_context pointer from the @ref initiate_ping_to_cloud.
  *       <li><b><i>status</i></b>: The response code, where @endhtmlonly @b connector_sm_ping_status_success indicates reply
  *                 received, @b connector_sm_ping_status_complete indicates @ref initiate_ping_to_cloud sent,
@@ -248,7 +252,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Ping transport mechanism.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
  *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if Device Cloud requests a response,
  *                                            @ref connector_false if no response was requested.  @htmlonly </li>
  *     </ul>
@@ -268,9 +272,9 @@
  * @endhtmlonly
  *
  * @note The @b response_required member is passing information on to the application.  There is no required
- * action necessary from the Cloud COnnector Application, regardless of the value for @b response_required.
+ * action necessary from the Cloud Connector Application, regardless of the value for @b response_required.
  *
- * @section cli_request  CLI request
+ * @section cli_support Command Line Support (CLI)
  *
  * Cloud Connector will call these callbacks while processing a CLI request from Device Cloud.
  * The CLI callbacks will come in the following order, In case of any error while processing,
