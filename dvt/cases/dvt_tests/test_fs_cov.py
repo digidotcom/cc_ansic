@@ -13,7 +13,6 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 from ..utils import getText
-from ..utils import DeviceConnectionMonitor
 
 MAX_TEST_FILE_SIZE = 3000
 dummyFsize = 4
