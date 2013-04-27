@@ -75,15 +75,18 @@
  *
  * @section smsectionexamples Short Messaging Features
  *
+ * The SM protocol includes two categories of features: those requiring Cloud Connector
+ * Application extensions and those handled directly by the private Cloud Connector library.
  *
- * The SM protocol supports the following features:
+ * Requires Cloud Connector Application extensions:
  *      -# A @ref ping_request "PING" capability to verify communication between Cloud Connector and Device Cloud
  *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud
- *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
  *      -# @ref cli_support "CLI" from Device Cloud to Cloud Connector
- *      -# @ref sm_reboot "Reboot" from Device Cloud to Cloud Connector
  *      -# @ref pending_data "Message pending" to indicate more messages are queued on the Device Cloud for this device.
  *
+ * Handled by the Cloud Connector private:
+ *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
+ *      -# @ref sm_reboot "Reboot" from Device Cloud to Cloud Connector
  *
  * The message which are queued up in Device Cloud, are sent to the device when Device Cloud
  * receives a request from the device.
