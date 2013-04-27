@@ -24,17 +24,17 @@
  *
  * Cloud Connector is a software development package used to enable a device to
  * exchange information with Device Cloud.
- * Cloud Connector supports application to device data interaction (messaging),
+ * Cloud Connector enables application to device data interaction (messaging),
  * application and device data storage, and remote management of devices. Devices
  * are associated with Device Cloud through the Internet or other wide
  * area network connections, which allows for communication between the device and
- * customer applications, via Device Cloud.  An important part of this communication
+ * applications, via Device Cloud.  An important part of this communication
  * is the transfer of data from a device to Device Cloud.
- * Device Cloud is based on a cloud computing model that provides on-demand scalability so
+ * Device Cloud leverages a cloud computing model that provides on-demand scalability so
  * you can rest assured that when you need additional computing and storage, Device Cloud will
  * scale to meet your needs.  Device Cloud is designed using a high-availability
  * architecture, with redundancy and failover characteristics in mind.
- * Using Cloud Connector, customers can now easily develop cloud connected devices and
+ * Using Cloud Connector, you can now easily develop cloud connected devices and
  * applications that quickly scale from dozens to hundreds, thousands or even
  * millions of endpoints.
  *
@@ -45,26 +45,26 @@
  * The Cloud Connector software provided is ANSI X3.159-1989 (ANSI C89) and ISO/IEC 9899:1999 (ANSI C99)
  * compliant. The sample platforms provided use standard ANSI C calls which are available in most operating systems.
  * If you are running on a Linux i486 based platform and using the GNU toolchain the Linux platform
- * and samples can be run without any major modifications.
+ * and samples can be run without significant modifications.
  *
  * @note
- * Compilers that are not strictly ANSI C 89 or C99 compliant will most likely generate compilation
+ * Compilers that are not strictly compliant with ANSI C89 or C99 will most likely generate compilation
  * errors.  In that case, we recommend careful evaluation of each error and appropriate adjustments be
  * made within the public include area.  Cloud Connector was designed for portability.  This would
  * be the ideal place to make updates.
  *
  * @note
  * Some ANSI C89 compilers include elements of ANSI C99.  In particular, those
- * ANSI C89 compilers that also include stdint.h, which is apart of ANSI C99, will
+ * ANSI C89 compilers that also include stdint.h, which is a part of ANSI C99, will
  * result in compilation failures.  These compilation failures can be resolved
  * by defining CONNECTOR_HAVE_STDINT_HEADER in your make or build system.
  *
  * @section requirements Platform Memory Requirements
- * Cloud Connector requires both Flash and RAM.  Flash is needed to store instructions and variables.  RAM is needed for dynamic allocation
- * and program stack.
+ * Cloud Connector requires both persistent storage (Flash) and RAM.  Flash is used to store instructions and variables.  RAM is used for 
+ * dynamic allocation and program stack. Following are measurements taken on several configuration options. 
  *
- * @subsection CodespaceRequirements Code Space Estimates
- * The following Flash/Code space data was generated using Kubuntu 10.04 and gcc v4.4.3 for 32-bit i486 architecture
+ * @subsection CodespaceRequirements Flash Usage
+ * This data was generated using Kubuntu 10.04 and gcc v4.4.3 for 32-bit i486 architecture
  * using the @ref step3 "compile_and_link" or @ref rci_sample "simple_remote_config" sample applications.
  *
  * The build was optimized for size (-Os) with @ref CONNECTOR_COMPRESSION disabled in all cases.
@@ -73,11 +73,11 @@
  * @htmlonly
  * <table class="apitable">
  * <tr>
- * <th class="title">Cloud Connector Service Options and Configuration Methodology</th>
- * <th class="title">Text</th>
- * <th class="title">rodata</th>
- * <th class="title">data</th>
- * <th class="title">bss</th>
+ * <th class="title">Service Options and Configuration Methodology</th>
+ * <th class="title">.text</th>
+ * <th class="title">.rodata</th>
+ * <th class="title">.data</th>
+ * <th class="title">.bss</th>
  * </tr>
  * <tr>
  * <td>@endhtmlonly Uses the @ref rci_sample "simple_remote_config" sample with @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
@@ -180,14 +180,13 @@
  * </table>
  * @endhtmlonly
  *
- * References to Text, rodata, data, and bss refer to program instructions, constant-read-only data, initialized global and
- * static variables, and uninitialized zero-ed data, respectively.  References to the @ref connector_config_data_options refers to
- * the code reduction defines in connector_config.h: @ref CONNECTOR_DEVICE_TYPE, @ref CONNECTOR_CLOUD_URL, @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS,
+ * Options are explained in @ref connector_config_data_options and defined in connector_config.h. 
+ * See @ref CONNECTOR_DEVICE_TYPE, @ref CONNECTOR_CLOUD_URL, @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS,
  * @ref CONNECTOR_RX_KEEPALIVE_IN_SECONDS, @ref CONNECTOR_WAIT_COUNT, @ref CONNECTOR_VENDOR_ID, @ref CONNECTOR_MSG_MAX_TRANSACTION, @ref CONNECTOR_CONNECTION_TYPE,
  * @ref CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND, @ref CONNECTOR_WAN_PHONE_NUMBER_DIALED, @ref CONNECTOR_FIRMWARE_SUPPORT, and @ref CONNECTOR_DATA_SERVICE_SUPPORT.
  *
- * @subsection RAMRequirements Dynamic RAM Usage
- * The following dynamic RAM usage measurements were taken during for the @ref fw_download_sample by monitoring the
+ * @subsection RAMRequirements RAM Usage
+ * The following dynamic RAM usage measurements were taken using the @ref fw_download_sample by monitoring the
  * high-water mark during the @ref connector_request_id_os_malloc @ref connector_callback_t "application-defined callback".
  *
  * @htmlonly
@@ -199,10 +198,10 @@
  * <th class="title">Notes</th>
  * </tr>
  * <tr>
- * <td>Cloud Connector base usage</td>
+ * <td>Base usage</td>
  * <td>2540</td>
  * <td>2540</td>
- * <td>Memory usage for internal state machines, infrastructure and communication buffers.</td>
+ * <td>Internal state machines, infrastructure and communication buffers.</td>
  * </tr>
  * <tr>
  * <td>With @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE @htmlonly enabled</td>
@@ -225,7 +224,7 @@
  * </table>
  * @endhtmlonly
  *
- * Two additional measurements of the @ref rci_sample "Simple RCI" and @ref file_system_sample "File System samples"
+ * Two additional measurements with the @ref rci_sample "Simple RCI" and @ref file_system_sample "File System samples"
  * with @ref CONNECTOR_FIRMWARE_SERVICE disabled:
 *
  * @htmlonly
@@ -248,7 +247,7 @@
  * </table>
  * @endhtmlonly
  *
- * @note All measurements above were taken with @ref CONNECTOR_MSG_MAX_TRANSACTION set to 1
+ * All measurements above were taken with @ref CONNECTOR_MSG_MAX_TRANSACTION set to 1
  *
  * @subsection StackRequirements Program Stack Usage
  * The following program stack usage was observed using gcc 4.2.0 compiled for a 32-bit ARM9 TDMI architecture.
@@ -275,35 +274,39 @@
  * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client,
  * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
  *
- * @section features Cloud Connector Features
- *     @li Send data to and from a device through Device Cloud
- *     @li Update firmware on the device
- *     @li View and configure the device configurations
- *     @li Access a device's File System
- *     @li Reboot a device
+ * @section features Device Cloud Features
+ * By integrating Cloud Connector into your device, you instantly enable the power of Device Cloud for your device: 
+ *     @li Send data to the cloud
+ *     @li Receive data from the cloud
+ *     @li Enable remote control of the device from the cloud to:
+ *         @li Update the firmware
+ *         @li Change the configuration
+ *         @li Access the file system
+ *         @li Reboot
  *
  * @section communicating Communicating with your device
- * To manage your device you can use the <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
- * interface by logging into your @ref step4 "Device Cloud account".  Alternatively, you can communicate with
+ * To manage your device remotely you can use <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
+ * by logging into your @ref step4 "Device Cloud account".  Alternatively, you can communicate with
  * your device programmatically by using @ref web_services "Device Cloud Web Services".
  *
- * @ref web_services "Device Cloud Web Services" requests are sent from a remote application to
- * Device Cloud, which then directly communicates to the device.  This
+ * @ref web_services "Device Cloud Web Services" requests are used to send data from a remote application to
+ * Device Cloud, which then communicates to the device.  This
  * allows for bidirectional machine to machine communication.  Each Cloud Connector sample includes
  * a Python application demonstrating how to communicate to a device using the
  * @ref web_services "Device Cloud Web Services".
  *
  * @section threading Threading Model
  *
- * Cloud Connector can be deployed in a multithreaded (connector_run()) or round robin control loop (connector_step()) environment.
- * In environments that include preemptive threading, Cloud Connector can be implemented as a separate stand-alone thread
+ * Cloud Connector can be deployed in a multithreaded or round robin control loop environment.
+ *
+ * In multithreaded environments that include preemptive threading, Cloud Connector can be implemented as a separate stand-alone thread
  * by calling connector_run().  This is a blocking call that only returns due to a major system failure.
  *
- * Alternatively, when threading is unavailable, in a round robin control loop or fixed state machine, Cloud Connector can
+ * Alternatively, when threading is unavailable, typically in a round robin control loop or fixed state machine, Cloud Connector can
  * be implemented using the non-blocking connector_step() call within the round robin control loop.
  *
  * Note in a cooperative, non-preemptive multithreaded environment, either connector_run() or connector_step() can used, based on
- * system determinism and the potential for a non-cooperative thread to exceed Cloud Connector's system timing.
+ * system determinism and the potential for a non-cooperative thread to exceed Cloud Connector system timing requirements.
  *
  * @note You should decide before proceeding how you intend to call Cloud Connector (within a round robin control loop or running
  * as a separate thread).  In a limited services OS with no real time threading, you should use the connector_step() routine.
