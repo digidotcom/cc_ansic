@@ -177,7 +177,9 @@ typedef struct connector_data {
 
     connector_device_id_method_t device_id_method;
 
+#if (CONNECTOR_TRANSPORT_COUNT > 1)
     connector_network_type_t first_running_network;
+#endif
 
     connector_callback_t callback;
     connector_status_t error_code;
