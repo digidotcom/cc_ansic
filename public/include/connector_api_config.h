@@ -322,7 +322,7 @@ typedef struct {
 * @{
 */
 /**
-* Network connection action used to tell Ehterios Cloud Connector to automatic or manual connect.
+* Network connection action used to tell Cloud Connector to automatic or manual connect.
 *
 * @see connector_config_connect_type_t
 */

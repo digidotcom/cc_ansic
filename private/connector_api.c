@@ -378,13 +378,16 @@ connector_handle_t connector_init(connector_callback_t const callback)
 #if (defined CONNECTOR_TRANSPORT_TCP)
     status = connector_edp_init(connector_handle);
     COND_ELSE_GOTO(status == connector_working, error);
-    connector_handle->first_running_network = connector_network_tcp;
 #endif
 
-    #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
     status = connector_sm_init(connector_handle);
     COND_ELSE_GOTO(status == connector_working, error);
-    #endif
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_COUNT > 1)
+    connector_handle->first_running_network = (connector_network_type_t) 0;
+#endif
 
     connector_handle->signature = connector_signature;
     goto done;
@@ -441,7 +444,18 @@ connector_status_t connector_step(connector_handle_t const handle)
             break;
     }
 
+#if (CONNECTOR_TRANSPORT_COUNT == 1)
+#if (defined CONNECTOR_TRANSPORT_TCP)
+	result = connector_edp_step(connector_ptr);
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
+	result = connector_udp_step(connector_ptr);
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+	result = connector_sms_step(connector_ptr);
+#endif
 
+#else
     {
 #define next_network(current_network) (((current_network) == last_network_index) ? first_network_index : (connector_network_type_t) ((current_network) + 1))
 
@@ -457,27 +471,18 @@ connector_status_t connector_step(connector_handle_t const handle)
             switch (current_network)
             {
 #if (defined CONNECTOR_TRANSPORT_TCP)
-            case connector_network_tcp:
-                step_func = connector_edp_step;
-                break;
+            case connector_network_tcp: step_func = connector_edp_step; break;
 #endif
-
 #if (defined CONNECTOR_TRANSPORT_UDP)
-            case connector_network_udp:
-                step_func = connector_udp_step;
-                break;
+            case connector_network_udp: step_func = connector_udp_step; break;
 #endif
-
 #if (defined CONNECTOR_TRANSPORT_SMS)
-            case connector_network_sms:
-                step_func = connector_sms_step;
-                break;
+            case connector_network_sms: step_func = connector_sms_step; break;
 #endif
             default:
                 ASSERT(connector_false);
                 result = connector_abort;
-                goto error;
-                break;
+                goto error; break;
             }
 
             result = step_func(connector_ptr);
@@ -489,6 +494,7 @@ connector_status_t connector_step(connector_handle_t const handle)
 
 #undef next_network
     }
+#endif
 
 error:
     if ((result == connector_abort) &&
