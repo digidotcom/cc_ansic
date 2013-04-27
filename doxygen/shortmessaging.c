@@ -58,7 +58,7 @@
  *
  * Suppose your application samples data periodically and sends to Device Cloud once
  * per hour.  What if the data is lost?  Can you system tolerate this?  If no, you'll
- * need to your application to check for acknowledgments.  After some period of time
+ * need your application to check for acknowledgments.  After some period of time
  * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
  * Connector application.
  *
@@ -94,28 +94,6 @@
  *
  * @note Cloud Connector supports only the UDP transport (see @ref CONNECTOR_TRANSPORT_UDP) for Short Messaging.
  *       In the future, SMS will be supported.
- *
- * @subsection sm_connect Request to start TCP
- *
- * This acts like a shoulder tap to start the TCP transport method on a device. After
- * receiving this request, Cloud Connector will start the TCP. If TCP is disabled
- * (@ref CONNECTOR_TRANSPORT_TCP is not defined), then Cloud Connector will return an
- * error response to Device Cloud. Once the TCP is started, user can make use of the
- * TCP only features like firmware download, file transfer or secure and reliable
- * data transfer.
- *
- * @code
- *    <sci_request version="1.0">
- *      <send_message synchronous="false">
- *        <targets>
- *          <device id="00000000-00000000-00409DFF-FF432311"/>
- *        </targets>
- *        <sm_udp>
- *          <request_connect/>
- *        </sm_udp>
- *      </send_message>
- *    </sci_request>
- * @endcode
  *
  * @section ping_request Ping Operations
  *
@@ -702,10 +680,51 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection sm_reboot Reboot device on SM
+ *
+ * @subsection sm_connect Request TCP start
+ *
+ * This feature tells Cloud Connector to start the TCP/IP transport.  After
+ * receiving this request, Cloud Connector will start the TCP.
+ *
+ * Once the TCP transport @ref app_start_network_tcp "is started", Cloud Connector Applications can make use of
+ * the TCP features like @ref firmware_download, @ref rci_service, or reliable
+ * @ref data_point or @ref data_service over a @ref connector_transport_tcp "TCP/IP transport".
+ *
+ * The following @ref web_services call requests
+ *
+ * @code
+ *    <sci_request version="1.0">
+ *      <send_message synchronous="false">
+ *        <targets>
+ *          <device id="00000000-00000000-00409DFF-FF432311"/>
+ *        </targets>
+ *        <sm_udp>
+ *          <request_connect/>
+ *        </sm_udp>
+ *      </send_message>
+ *    </sci_request>
+ * @endcode
+ *
+ * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" then Cloud Connector
+ * will return an error response to Device Cloud.
+ *
+ * @subsection sm_reboot Reboot device
  *
  * User can use Short Message to reboot the device. After receiving this request
  * from Device Cloud, Cloud Connector will call @ref reboot to execute it.
+ *
+ * @code
+ *    <sci_request version="1.0">
+ *      <send_message synchronous="false">
+ *        <targets>
+ *          <device id="00000000-00000000-00409DFF-FF432311"/>
+ *        </targets>
+ *        <sm_udp>
+ *          <reboot/>
+ *        </sm_udp>
+ *      </send_message>
+ *    </sci_request>
+ * @endcode
  *
  *
  * @htmlinclude terminate.html

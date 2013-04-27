@@ -1,10 +1,10 @@
-/*! @page web_services Device Cloud Web Services
+/*! @page web_services Web Services
  *
  * @htmlinclude nav.html
  *
- * @section services Device Cloud Web Services
+ * @section services Web Services
  *
- * Applications can communicate to devices through Device Cloud using Device Cloud Web Service
+ * Applications can communicate to devices through Device Cloud using Web Service
  * requests, which are sent to Device Cloud using the SCI.
  * The diagram below shows how a Web Services Client can send an SCI command to Device Cloud.
  * In this example, the web services call will address Device ID 00409dFFFF010202:
