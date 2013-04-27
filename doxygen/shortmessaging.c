@@ -2,87 +2,117 @@
  *
  * @htmlinclude nav.html
  *
- * @section secsmintroduction Short Messaging Introduction
+ * @section secsmintroduction Introduction
  *
- * Short Message (SM) is a lightweight, message oriented protocol that
- * allows applications to optimize network data usage.
+ * TCP/IP communication includes overhead to establish, maintain, and close connections,
+ * as well as overhead to ensure delivery and integrity.  The communication is reliable and
+ * potentially @ref network_ssl_callbacks "secure".  Most Cloud Connector communication
+ * covered in this guide occurs over TCP/IP.
  *
- * This chapter will explain:
+ * The Short Message (SM) protocol was designed to be a lightweight, message based protocol
+ * ideal for costly transports or for minimizing traffic.  SM transports over UDP and therefore
+ * does not incur the cost TCP/IP connections.  Unfortunately, UDP includes classic limitations
+ * such as unreliable delivery, potential duplicate packets, and lack of data integrity.
+ * Cloud Connector applications that include SM will require consideration and handling of
+ * these UDP limitations.
  *
- *   -# @ref smwhatisit
- *        -# @ref smtransports
- *   -# @ref smsectionwhoneedsit
- *        -# @ref smsectionwhodoesnotneedsit
- *   -# @ref smsolutions
- *        -# @ref smcomplications
- *   -# @ref smsectionexamples
- *   -# @ref ping_request
- *   -# @ref cli_support
+ * @section smsectionwhoneedsit Should I use Short Messaging?
+ * Most Cloud Connector applications will be deployed on networks with few restrictions
+ * on data usage.  For these applications, we highly recommend using the samples included in
+ * this kit, that were intended @ref network_tcp_start "TCP/IP transport".  These applications
+ * will establish a @ref app_start_network_tcp "TCP/IP connection" and maintain it throughout the
+ * entire application's up time.
  *
- * @section smwhatisit What is Short Messaging?
+ * Conversely, some Cloud Connector applications could be deployed on networks that include
+ * data restrictions; or some Cloud Connector applications could be deployed on systems
+ * with severe power limitations.
  *
- * The Short Message (SM) protocol was designed to be a lightweight, message oriented
- * protocol suitable for use on transports that are:
- *    @li Expensive or where data usage needs to be kept to a minimum.
- *    @li Lossy
- *       -# Delivery not guaranteed
- *       -# Duplicates possible
- *       -# Data integrity not guaranteed
+ * For this latter group, Short Messaging should be considered.
+ *
+ * @subsection smsolutions How does Short Messaging solve my problem?
+ *
+ * A Cloud Connector application need not always have a TCP/IP connection.  Further, some
+ * Cloud Connector applications can eliminate this connection altogether.
+ *
+ * For example, a cellular based Cloud Connector application might send GPS data to Device Cloud
+ * every few hours and then check for remote instructions.  Based on the instruction, the
+ * application could then start a TCP/IP connection and perform a standard Cloud Connector
+ * operation.
+ *
+ * Alternatively, a battery based Cloud Connector application might power up, read a sensor,
+ * send the data to Device Cloud, check for pending Web Service instructions, and then shut down
+ * if no instructions are queued.
+ *
+ * In these two examples, minimizing network traffic is essential.  In the latter example,
+ * shutting power as soon as possible is critical.
+ *
+ * The system requirements of your application will have radical effects on your SM design.
+ * You can always optimize one thing, like power consumption, or network traffic, but this
+ * comes with the additional application overhead.
+  *
+ *
+ * @subsection smcomplications How does Short Messaging complicate my application?
+ *
+ * Depending on what you optimize, a Cloud Connector application will need to consider
+ * the unreliability of UDP.
+ *
+ * Suppose your application samples data periodically and sends to Device Cloud once
+ * per hour.  What if the data is lost?  Can you system tolerate this?  If no, you'll
+ * need to your application to check for acknowledgments.  After some period of time
+ * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
+ * Connector application.
+ *
+ * Now consider your Web Services Application that pulls this data.  What happens if
+ * the data sent from the last sample was received by Device Cloud, but the acknowledgment
+ * was lost?  Now your data is duplicated and your Web Services application will need
+ * to determine this.
+ *
+*  Suppose data integrity is a requirement.  You might want to change your Cloud
+ * Connector application to start a TCP/IP connection to send the data instead of
+ * relying on UDP.
+ *
+ * Cloud Connector has the flexibility to support either case.
+ *
+ * @section smsectionexamples Short Messaging Features
+ *
  *
  * The SM protocol supports the following features:
- *      -# @ref ping_request "PING mechanism" between Cloud Connector and Device Cloud or vice versa
- *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud or vice versa
+ *      -# A @ref ping_request "PING" capability to verify communication between Cloud Connector and Device Cloud
+ *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud
+ *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
  *      -# @ref cli_support "CLI" from Device Cloud to Cloud Connector
  *      -# @ref sm_reboot "Reboot" from Device Cloud to Cloud Connector
- *      -# @ref sm_connect "Connect" from Device Cloud to Cloud Connector to start communication over TCP
  *      -# @ref pending_data "Message pending" to indicate more messages are queued on the Device Cloud for this device.
  *
- * @note Cloud Connector supports only the UDP transport (see @ref CONNECTOR_TRANSPORT_UDP) for Short Messaging.
- *       In the future, SMS will be supported.
- *
- * @subsection smtransports Why is the transport important?
- *
- * At this point, all the communication with Device Cloud is either on the TCP or on the UDP.
- * The TCP based communication requires initial handshaking and connection maintenance
- * traffic, but it is secure and reliable.  On the other hand the UDP based communication
- * has no connection overhead, but it is unreliable.
  *
  * The message which are queued up in Device Cloud, are sent to the device when Device Cloud
  * receives a request from the device.
  *
  *
- * @section smsectionwhoneedsit Who needs Short Messaging?
+ * @note Cloud Connector supports only the UDP transport (see @ref CONNECTOR_TRANSPORT_UDP) for Short Messaging.
+ *       In the future, SMS will be supported.
  *
- * A small device with very limited memory and/or running on an expensive network where data
- * usage needs to be kept to a minimum. For example a battery operated device which uses cellular
- * connection to send a very small data to Device Cloud once a day can make use of this feature.
- * @note This method doesn't support firmware update and file system functionality.
+ * @subsection sm_connect Request to start TCP
  *
- * @subsection smsectionwhodoesnotneedsit Who doesn't need Short Messaging?
+ * This acts like a shoulder tap to start the TCP transport method on a device. After
+ * receiving this request, Cloud Connector will start the TCP. If TCP is disabled
+ * (@ref CONNECTOR_TRANSPORT_TCP is not defined), then Cloud Connector will return an
+ * error response to Device Cloud. Once the TCP is started, user can make use of the
+ * TCP only features like firmware download, file transfer or secure and reliable
+ * data transfer.
  *
- * The device which has ample/free/less expensive network resource and which has enough
- * memory doesn't need Short Messaging. Also, if the device requires firmware update or
- * file system access then it should enable TCP transport method.
- *
- * @section smsolutions How does Short Messaging solve my problem?
- *
- *  -# It uses smaller footprints compare to the TCP method
- *  -# Very less overhead per message
- *  -# No need to maintain the connection
- *  -# Has ability to opt out the response
- *
- * @subsection smcomplications How does Short Messaging complicate my application?
- *
- * If you decide to send a large amount of data (more than 1KiB), then the message will
- * be transferred in multiple segments. This can lead to a packet loss and an extended
- * delay in detecting that loss. So the large data transfer is not recommended in SM.
- *
- * @section smsectionexamples Short Messaging Examples
- *
- *  -# Battery operated device with small footprint which sends small amount of
- *     data once a day.
- *  -# A remote cellular device which uses expensive cellular link to send
- *     a reading once an hour.
+ * @code
+ *    <sci_request version="1.0">
+ *      <send_message synchronous="false">
+ *        <targets>
+ *          <device id="00000000-00000000-00409DFF-FF432311"/>
+ *        </targets>
+ *        <sm_udp>
+ *          <request_connect/>
+ *        </sm_udp>
+ *      </send_message>
+ *    </sci_request>
+ * @endcode
  *
  * @section ping_request Ping Operations
  *
@@ -674,14 +704,6 @@
  * User can use Short Message to reboot the device. After receiving this request
  * from Device Cloud, Cloud Connector will call @ref reboot to execute it.
  *
- * @subsection sm_connect Request to start TCP
- *
- * This acts like a shoulder tap to start the TCP transport method on a device. After
- * receiving this request, Cloud Connector will start the TCP. If TCP is disabled
- * (@ref CONNECTOR_TRANSPORT_TCP is not defined), then Cloud Connector will return an
- * error response to Device Cloud. Once the TCP is started, user can make use of the
- * TCP only features like firmware download, file transfer or secure and reliable
- * data transfer.
  *
  * @htmlinclude terminate.html
  */
