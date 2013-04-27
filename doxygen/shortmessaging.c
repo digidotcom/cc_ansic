@@ -19,7 +19,7 @@
  * @section smsectionwhoneedsit Should I use Short Messaging?
  * Most Cloud Connector applications will be deployed on networks with few restrictions
  * on data usage.  For these applications, we highly recommend using the samples included in
- * this kit, that were intended @ref network_tcp_start "TCP/IP transport".  These applications
+ * this kit, that were intended for a @ref network_tcp_start "TCP/IP transport".  These applications
  * will establish a @ref app_start_network_tcp "TCP/IP connection" and maintain it throughout the
  * entire application's up time.
  *
@@ -40,8 +40,8 @@
  * operation.
  *
  * Alternatively, a battery based Cloud Connector application might power up, read a sensor,
- * send the data to Device Cloud, check for pending Web Service instructions, and then shut down
- * if no instructions are queued.
+ * send the data to Device Cloud, check for pending @ref web_services "Web Service" instructions,
+ * and then shut down if no instructions are queued.
  *
  * In these two examples, minimizing network traffic is essential.  In the latter example,
  * shutting power as soon as possible is critical.
@@ -49,9 +49,10 @@
  * The system requirements of your application will have radical effects on your SM design.
  * You can always optimize one thing, like power consumption, or network traffic, but this
  * comes with the additional application overhead.
-  *
  *
  * @subsection smcomplications How does Short Messaging complicate my application?
+ *
+ * <b>UDP Reliability </b>
  *
  * Depending on what you optimize, a Cloud Connector application will need to consider
  * the unreliability of UDP.
@@ -62,16 +63,29 @@
  * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
  * Connector application.
  *
- * Now consider your Web Services Application that pulls this data.  What happens if
- * the data sent from the last sample was received by Device Cloud, but the acknowledgment
- * was lost?  Now your data is duplicated and your Web Services application will need
- * to determine this.
+ * Now consider your @ref web_services Application that pulls this data from Device Cloud.
+ * What happens if the data sent from the last sample was received by Device Cloud, but the
+ * acknowledgment was lost?  Now your data is duplicated on Device Cloud and your
+ * @ref web_services application will need to handle this case.
  *
-*  Suppose data integrity is a requirement.  You might want to change your Cloud
- * Connector application to start a TCP/IP connection to send the data instead of
- * relying on UDP.
+ * Suppose data integrity is a critical requirement.  In this case, a Cloud Connector
+ * application might choose to start a TCP/IP connection and send the data reliably
+ * instead of using the UDP transport.
  *
  * Cloud Connector has the flexibility to support either case.
+ *
+ * <b>Punching through Firewalls</b>
+ *
+ * Considering most devices are deployed behind a Firewall, Device Cloud is incapable of
+ * initiating an SM message exchange.  All @ref web_services "web service" requests are queued
+ * on Device Cloud and waiting for Device Cloud to receive Cloud Connector message.
+ *
+ * Cloud Connector @b must @b always @b initiate SM exchanges.  A critical
+ * component of your Cloud Connector Application must include a strategy to
+ * open the firewall.
+ *
+ * If Cloud Connector has no pending message to send, the application can
+ * @ref initiate_ping_to_cloud.
  *
  * @section smsectionexamples Short Messaging Features
  *
@@ -79,27 +93,22 @@
  * Application extensions and those handled directly by the private Cloud Connector library.
  *
  * Requires Cloud Connector Application extensions:
- *      -# A @ref ping_request "PING" capability to verify communication between Cloud Connector and Device Cloud
+ *      -# A @ref initiate_ping_to_cloud capability to open a Firewall between Cloud Connector and Device Cloud
  *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud
- *      -# @ref cli_support "CLI" from Device Cloud to Cloud Connector
+ *      -# @ref cli_support "Command Line Interface" support for Device Manager
  *      -# @ref pending_data "Message pending" to indicate more messages are queued on the Device Cloud for this device.
  *
  * Handled by the Cloud Connector private:
  *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
  *      -# @ref sm_reboot "Reboot" from Device Cloud to Cloud Connector
  *
- * The message which are queued up in Device Cloud, are sent to the device when Device Cloud
- * receives a request from the device.
- *
- *
- * @note Cloud Connector supports only the UDP transport (see @ref CONNECTOR_TRANSPORT_UDP) for Short Messaging.
- *       In the future, SMS will be supported.
- *
  * @section ping_request Ping Operations
  *
- * A Cloud Connector Application can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any time.  The purpose is to
- * open a hole in a firewall and let Device Cloud know that the Application Cloud Connector is ready to
- * receive pending operations.  Additionally, a Web Services application can @ref ping_request_from_cloud "search"
+ * A Cloud Connector Application can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any time.
+ * The purpose is to open a hole in a firewall and let Device Cloud know that the Application Cloud Connector is
+ * ready to receive pending or queued messages.
+ *
+ * Additionally, a @ref web_services application can @ref ping_request_from_cloud "search"
  * for a Cloud Connector device by Pinging through Device Cloud.
  *
  * @subsection initiate_ping_to_cloud  Ping Device Cloud
@@ -107,7 +116,7 @@
  * When an application has only @ref network_udp_start "UDP started"
  * (TCP has @ref network_tcp_start "not started"), it's necessary to
  * periodically contact Device Cloud so to open a hole in a firewall and receive data or commands
- * from Device Cloud or Web Services applications.
+ * from Device Cloud or @ref web_services applications.
  * This can be achieved by initiating a Ping Device Cloud.
  *
  * The application initiates a Ping Device Cloud by calling @ref connector_initiate_action()
@@ -518,14 +527,17 @@
  * </table>
  * @endhtmlonly
  *
- * @section pending_data  Pending data callback
+ * @section pending_data  Pending Data Available
  *
- * Cloud Connector will make @ref connector_request_id_sm_more_data "pending data"
- * @ref connector_callback_t "callback" to indicate the application that there are pending messages
- * on Device Cloud. Application can send any messages (ping if no data to send) to retrieve
- * the queued messages.
+ * Cloud Connector will make a @ref connector_request_id_sm_more_data @ref connector_callback_t "callback"
+ * to notify the application that additional SM messages are pending.
  *
- * @note This callback may be called only if @ref CONNECTOR_SM_BATTERY is defined.
+ * Battery-backed Applications can use this mechanism to remain awake for additional messages.  The callback
+ * can re-trigger a timer which signals a power down sequence, once the timer has expired.
+ *
+ *
+ * To retrieve pending messages from Device Cloud, Applications should call @ref initiate_ping_to_cloud.
+ *
  *
  * The @ref connector_request_id_sm_more_data "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -570,6 +582,8 @@
  * </tr>
  * </table>
  * @endhtmlonly
+ *
+ * @note This callback may be called only if @ref CONNECTOR_SM_BATTERY is defined.
  *
  * @subsection cancel_session  Cancel request
  *
@@ -683,14 +697,14 @@
  *
  * @subsection sm_connect Request TCP start
  *
- * This feature tells Cloud Connector to start the TCP/IP transport.  After
- * receiving this request, Cloud Connector will start the TCP.
+ * Requests the Cloud Connector to start it's TCP/IP transport.  This request will
+ * be handled in the Cloud Connector private layer will start the TCP.
  *
- * Once the TCP transport @ref app_start_network_tcp "is started", Cloud Connector Applications can make use of
+ * Once the TCP transport @ref network_tcp_start "is started", Cloud Connector Applications can make use of
  * the TCP features like @ref firmware_download, @ref rci_service, or reliable
  * @ref data_point or @ref data_service over a @ref connector_transport_tcp "TCP/IP transport".
  *
- * The following @ref web_services call requests
+ * The following @ref web_services example shows how to request a device to start it's TCP service:
  *
  * @code
  *    <sci_request version="1.0">
@@ -705,13 +719,15 @@
  *    </sci_request>
  * @endcode
  *
- * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" then Cloud Connector
- * will return an error response to Device Cloud.
+ * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" Cloud Connector
+ * returns an error response to Device Cloud.
  *
  * @subsection sm_reboot Reboot device
  *
- * User can use Short Message to reboot the device. After receiving this request
- * from Device Cloud, Cloud Connector will call @ref reboot to execute it.
+ * Requests a Cloud Connector reboot.  After receiving this request, Cloud Connector
+ * will invoke a @ref reboot callback.
+ *
+ * The following @ref web_services example shows how to reboot a device:
  *
  * @code
  *    <sci_request version="1.0">
