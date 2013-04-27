@@ -187,8 +187,8 @@
  * @ref CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND, @ref CONNECTOR_WAN_PHONE_NUMBER_DIALED, @ref CONNECTOR_FIRMWARE_SUPPORT, and @ref CONNECTOR_DATA_SERVICE_SUPPORT.
  *
  * @subsection RAMRequirements Dynamic RAM Usage
- * The following dynamic RAM usage was developed by monitoring the high-water mark during the
- * @ref connector_request_id_os_malloc @ref connector_callback_t "application-defined callback".
+ * The following dynamic RAM usage measurements were taken during for the @ref fw_download_sample by monitoring the
+ * high-water mark during the @ref connector_request_id_os_malloc @ref connector_callback_t "application-defined callback".
  *
  * @htmlonly
  * <table class="apitable">
@@ -220,13 +220,14 @@
  * <td>Total</td>
  * <td>6020</td>
  * <td>2856</td>
- * <td>With @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, plus @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly set to 1 </td>
+ * <td>With @endhtmlonly @ref CONNECTOR_FIRMWARE_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled. </td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
- * For reference, here's a two additional dynamic RAM metrics, with @ref CONNECTOR_FIRMWARE_SERVICE disabled:
- *
+ * Two additional measurements of the @ref rci_sample "Simple RCI" and @ref file_system_sample "File System samples"
+ * with @ref CONNECTOR_FIRMWARE_SERVICE disabled:
+*
  * @htmlonly
  * <table class="apitable">
  * <tr>
@@ -235,17 +236,19 @@
  * <th class="title">CONNECTOR_COMPRESSION disabled</th>
  * </tr>
  * <tr>
- * <td>With @endhtmlonly @ref CONNECTOR_RCI_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, plus @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly set to 1 </td>
+ * <td>With @endhtmlonly @ref CONNECTOR_RCI_SERVICE and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled.</td>
  * <td>9424</td>
  * <td>3408</td>
  * </tr>
  * <tr>
- * <td>With @endhtmlonly @ref CONNECTOR_FILE_SYSTEM and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled, plus @endhtmlonly @ref CONNECTOR_MSG_MAX_TRANSACTION @htmlonly set to 1</td>
+ * <td>With @endhtmlonly @ref CONNECTOR_FILE_SYSTEM and @ref CONNECTOR_DATA_SERVICE @htmlonly enabled.</td>
  * <td>6424</td>
  * <td>2884</td>
  * </tr>
  * </table>
  * @endhtmlonly
+ *
+ * @note All measurements above were taken with @ref CONNECTOR_MSG_MAX_TRANSACTION set to 1
  *
  * @subsection StackRequirements Program Stack Usage
  * The following program stack usage was observed using gcc 4.2.0 compiled for a 32-bit ARM9 TDMI architecture.
