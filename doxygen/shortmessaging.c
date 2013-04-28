@@ -6,28 +6,19 @@
  *
  * Short Messaging (SM) provides an alternative transport for communicating with the cloud and is 
  * typically used only when data usage is costly and guaranteed data delivery is unnecessary. SM 
- * uses UDP as a transport rather the TCP transport normally used in device-to-cloud communications.
+ * uses UDP as a transport rather than TCP transport normally used in device-to-cloud communications.
  *
  * TCP communication includes overhead to establish, maintain, and close connections as well as 
  * overhead to ensure delivery and integrity. The communication is reliable and can be 
- * @ref network_ssl_callbacks secured. Most cloud communications discussed in this guide leverage 
+ * @ref network_ssl_callbacks "secured". Most cloud communications discussed in this guide leverage
  * standard TCP communications.
  * 
  * SM communicates over UDP and therefore does not incur the TCP connection overhead. 
  * Unfortunately, UDP includes limitations such as unreliable delivery and the potential for 
- * duplicate packets. Implementations that include SM will require consideration and 
- * handling of these UDP limitations Ð a price you may choose to pay to reduce data usage on costly 
- * data networks such as cellular or satellite.
+ * duplicate packets. Applications that include SM will require consideration and
+ * handling of these UDP limitations - a price you may choose to pay to reduce data usage on costly
+ * networks such as cellular or satellite.
  *
- * Most devices will be deployed on networks with few restrictions on data usage. For these 
- * applications, TCP should be used and is the method demonstrated in all of the samples included in 
- * this kit. These applications will establish a TCP connection and maintain that connection so that 
- * the device is always securely accessible from the cloud.
- * 
- * Conversely, some devices could be deployed on networks that include data restrictions. Others may 
- * be battery-powered and must minimize active network time. For this latter group, Short Messaging 
- * should be considered.
- * 
  * @section smsectionwhoneedsit Should I use Short Messaging?
  * 
  * Most devices will be deployed on networks with few restrictions on data usage. For these 
@@ -147,8 +138,7 @@
  *   <td>request_data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_send_ping_request_t @htmlonly structure, where member:
  *      <ul>
- *        <li><b><i>transport</i></b>: Ping Request transport.  Set to @endhtmlonly @ref connector_transport_udp . @htmlonly </li>
- *        <li><b><i>transport</i></b>: Ping Request transport.  Set to @endhtmlonly @ref connector_transport_udp. @htmlonly </li>
+ *        <li><b><i>transport</i></b>: @endhtmlonly Should be set to @ref connector_transport_udp. @htmlonly </li>
  *        <li><b><i>user_context</i></b>: An opaque application-defined context.  This pointer is returned
  *                                        during a @endhtmlonly @ref ping_response_callback "response callback". @htmlonly </li>
  *        <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if notification of ping receipt is needed,
@@ -226,7 +216,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_ping_response_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: The user_context pointer from the  @endhtmlonly @ref initiate_ping_to_cloud. @htmlonly </li>
  *       <li><b><i>status</i></b>: The response code, where @endhtmlonly @b connector_sm_ping_status_success indicates reply
  *                 received, @b connector_sm_ping_status_complete indicates @ref initiate_ping_to_cloud sent,
@@ -286,7 +276,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Where pending data can be retrieved.  See @endhtmlonly @ref connector_transport_udp. @htmlonly </li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -354,7 +344,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_request_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Transport where Message was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: An opaque application-defined context.  This pointer is passed to all subsequent
  *                                        callbacks during the CLI sequence for this command.
  *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. </li>
@@ -420,7 +410,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_response_length_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Transport where initial CLI request was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: The opaque application-defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
  *       <li><b><i>total_bytes</i></b>: Maximum size in bytes of the CLI response to the initial @endhtmlonly @ref cli_request_callback @htmlonly </li>
  *     </ul>
@@ -480,7 +470,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_response_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Transport where initial CLI request was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: The opaque application-defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
  *       <li><b><i>buffer</i></b>: the memory to copy your CLI response. </li>
  *       <li><b><i>bytes_available</i></b>: buffer size available in bytes. </li>
@@ -546,7 +536,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_status_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Transport where initial CLI request was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: The opaque application-defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
  *       <li><b><i>status</i></b>: @endhtmlonly
  *                                 @b connector_sm_cli_status_cancel if @ref connector_initiate_stop_request_t "transport stopped"
@@ -656,7 +646,7 @@
  *   <td>request_data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
  *      <ul>
- *         <li><b><i>transport</i></b>: Where original request was sent.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Should be set to @ref connector_transport_udp. @htmlonly </li>
  *         <li><b><i>user_context</i></b>: The user_context from original request. </li>
  *      </ul>
  *   </td>
@@ -713,11 +703,11 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_opaque_response_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method on which the response is received </li>
- *       <li><b><i>id</i></b>, request ID associated with the response </li>
- *       <li><b><i>data</i></b>, received payload </li>
- *       <li><b><i>bytes_used</i></b>, number of bytes in the payload </li>
- *       <li><b><i>error</i></b>, is connector_true for error response for Device Cloud </li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
+ *       <li><b><i>id</i></b>: request ID associated with the response </li>
+ *       <li><b><i>data</i></b>: received payload </li>
+ *       <li><b><i>bytes_used</i></b>: number of bytes in the payload </li>
+ *       <li><b><i>error</i></b>: is connector_true for error response for Device Cloud </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -744,7 +734,7 @@
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
  * Cloud Connector will make a Ping Request @ref connector_request_id_sm_ping_request "callback" to
- * notify an Application that a ping was received.  This callback is for information only and no action
+ * notify an Application that a ping was received.  This callback is informational only and no action
  * is necessary.
   *
  * @htmlonly
@@ -767,7 +757,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if Device Cloud requests a response,
  *                                            @ref connector_false if no response was requested.  @htmlonly </li>
  *     </ul>
