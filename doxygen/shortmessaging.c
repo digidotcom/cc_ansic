@@ -58,7 +58,7 @@
  * the unreliability of UDP.
  *
  * Suppose your application samples data periodically and sends to Device Cloud once
- * per hour.  What if the data is lost?  Can you system tolerate this?  If no, you'll
+ * per hour.  What if the data is lost?  Can your system tolerate this?  If no, you'll
  * need your application to check for acknowledgments.  After some period of time
  * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
  * Connector application.
@@ -336,8 +336,7 @@
  *                                        callbacks during the CLI sequence for this command.
  *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. </li>
  *       <li><b><i>bytes_used</i></b>: Number of bytes in the CLI command. </li>
- *       <li><b><i>response_required</i></b>, will be set to connector_true if Device Cloud needs response </li>
- *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a CLI response
+  *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a CLI response
  *                                            callback" is required.  Set to @ref connector_false when no response callback
  *                                            is required.  @htmlonly </li>
  *     </ul>
