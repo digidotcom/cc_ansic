@@ -77,24 +77,24 @@
  * to update the standard ANSI data types, minimums, maximum, and standard format specifiers.
  *
  * -# Data types:
- *  @li @ref uint8_t
- *  @li @ref uint16_t
- *  @li @ref uint32_t
+ *  @li uint8_t
+ *  @li uint16_t
+ *  @li uint32_t
  *
  * -# Minimum and maximum values:
- *  @li @ref UINT16_MAX
- *  @li @ref INT32_MIN
- *  @li @ref INT32_MAX
- *  @li @ref UINT32_MAX
- *  @li @ref SIZE_MAX
+ *  @li UINT16_MAX
+ *  @li INT32_MIN
+ *  @li INT32_MAX
+ *  @li UINT32_MAX
+ *  @li SIZE_MAX
  *
  * -# Format specifiers:
- *  @li @ref SCNd32
- *  @li @ref SCNu32
- *  @li @ref SCNx32
- *  @li @ref PRId32
- *  @li @ref PRIu32
- *  @li @ref PRIx32
+ *  @li SCNd32
+ *  @li SCNu32
+ *  @li SCNx32
+ *  @li PRId32
+ *  @li PRIu32
+ *  @li PRIx32
  *
  * @note These are defined for ANSI C99 or typedefed/defined for ANSI C89.
  *
