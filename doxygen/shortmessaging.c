@@ -44,7 +44,7 @@
  * and then shut down if no instructions are queued.
  *
  * In these two examples, minimizing network traffic is essential.  In the latter example,
- * shutting power as soon as possible is critical.
+ * shutting power as soon as possible is @ref pending_data "critical".
  *
  * The system requirements of your application will have radical effects on your SM design.
  * You can always optimize one thing, like power consumption, or network traffic, but this
@@ -89,40 +89,33 @@
  *
  * @section smsectionexamples Short Messaging Features
  *
- * The SM protocol includes two categories of features: those requiring Cloud Connector
- * Application extensions and those handled directly by the private Cloud Connector library.
- *
- * Requires Cloud Connector Application extensions:
- *      -# A @ref initiate_ping_to_cloud capability to open a Firewall between Cloud Connector and Device Cloud
+ * The SM protocol includes four major functions:
+ *      -# @ref initiate_ping_to_cloud "Initiate Ping" to Device Cloud to open the Firewall between Cloud Connector and Device Cloud
  *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud
  *      -# @ref cli_support "Command Line Interface" support for Device Manager
- *      -# @ref pending_data "Message pending" to indicate more messages are queued on the Device Cloud for this device.
- *
- * Handled by the Cloud Connector private:
  *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
- *      -# @ref sm_reboot "Reboot" from Device Cloud to Cloud Connector
  *
- * @section ping_request Ping Operations
+ * For @ref CONNECTOR_SM_BATTERY "Battery-backed" SM applications:
+ *      -# @ref pending_data "Message pending" to notify applications more messages are queued.
  *
- * A Cloud Connector Application can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any time.
- * The purpose is to open a hole in a firewall and let Device Cloud know that the Application Cloud Connector is
+ * Several additional minor functions are also described below.
+ *
+ * @section ping_request Ping Device Cloud
+ *
+ * A Cloud Connector Application can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any
+ * time.  The purpose is to open a hole in a firewall and let Device Cloud know that the Application is
  * ready to receive pending or queued messages.
  *
- * Additionally, a @ref web_services application can @ref ping_request_from_cloud "search"
- * for a Cloud Connector device by Pinging through Device Cloud.
+ * @subsection initiate_ping_to_cloud  Initiate Ping Device Cloud
  *
- * @subsection initiate_ping_to_cloud  Ping Device Cloud
- *
- * When an application has only @ref network_udp_start "UDP started"
- * (TCP has @ref network_tcp_start "not started"), it's necessary to
- * periodically contact Device Cloud so to open a hole in a firewall and receive data or commands
- * from Device Cloud or @ref web_services applications.
- * This can be achieved by initiating a Ping Device Cloud.
+ * When an application has only @ref network_udp_start "UDP started" (TCP has @ref network_tcp_start
+ * "not started"), it's necessary to periodically contact Device Cloud so to open a hole in a firewall
+ * and receive data or commands from Device Cloud or @ref web_services applications.  This can be achieved
+ * by initiating a Ping Device Cloud.
  *
  * The application initiates a Ping Device Cloud by calling @ref connector_initiate_action()
  * using a @ref connector_initiate_ping_request type and a connector_sm_send_ping_request_t
  * request_data structure:
- *
  *
  * @htmlonly
  * <table class="apitable">
@@ -246,11 +239,18 @@
  * @b connector_sm_ping_status_cancel.
  *
  *
- * @subsection ping_request_from_cloud  Device Cloud Ping Request
+ * @section pending_data  Pending Data Available
  *
- * Cloud Connector will make a Ping Request @ref connector_request_id_sm_ping_request "callback" to
- * inform the Cloud Connector Application that a ping was received.  This callback
- * is just for the information purpose only.  No action is necessary.
+ * Cloud Connector will make a @ref connector_request_id_sm_more_data @ref connector_callback_t "callback"
+ * to notify the application that additional SM messages are pending.
+ *
+ * Battery-backed Applications can use this mechanism to remain awake for additional messages.  The callback
+ * can re-trigger a timer which signals a power down sequence, once the timer has expired.
+ *
+ * To retrieve pending messages from Device Cloud, Applications should call @ref initiate_ping_to_cloud.
+ *
+ * The @ref connector_request_id_sm_more_data "pending data" @ref connector_callback_t "callback"
+ * is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -266,20 +266,22 @@
  * </tr>
  * <tr>
  *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_request_id_sm_ping_request @htmlonly</td>
+ *   <td>@endhtmlonly @ref connector_request_id_sm_more_data @htmlonly</td>
  * </tr>
  * <tr>
  *   <td>data</td>
- *   <td>Pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:
+ *   <td>Pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
- *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if Device Cloud requests a response,
- *                                            @ref connector_false if no response was requested.  @htmlonly </li>
+ *       <li><b><i>transport</i></b>, on which the pending data can be retrieved </li>
  *     </ul>
  *   </td>
  * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr>
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ *   <th colspan="2" class="title">Return Values</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
+ * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
  *   <td>Continue</td>
@@ -291,8 +293,7 @@
  * </table>
  * @endhtmlonly
  *
- * @note The @b response_required member is passing information on to the application.  There is no required
- * action necessary from the Cloud Connector Application, regardless of the value for @b response_required.
+ * @note This callback is made only when @ref CONNECTOR_SM_BATTERY is defined.
  *
  * @section cli_support Command Line Interface Support
  *
@@ -396,7 +397,7 @@
  *   <td>Pointer to @endhtmlonly connector_sm_cli_response_length_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
- *       <li><b><i>user_context</i></b>, user provided context </li>
+ *       <li><b><i>user_context</i></b>, user_context provided context </li>
  *       <li><b><i>total_bytes</i></b>, total number of bytes in CLI response </li>
  *     </ul>
  *   </td>
@@ -450,7 +451,7 @@
  *   <td>Pointer to @endhtmlonly connector_sm_cli_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
- *       <li><b><i>user_context</i></b>, user provided context </li>
+ *       <li><b><i>user_context</i></b>, user_context provided context </li>
  *       <li><b><i>buffer</i></b>, to copy the CLI response </li>
  *       <li><b><i>bytes_available</i></b>, size of buffer in bytes </li>
  *       <li><b><i>bytes_used</i></b>, number of response bytes copied </li>
@@ -482,7 +483,7 @@
  * @subsection cli_status_callback  CLI session error callback
  *
  * This callback is called with @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
- * to indicate the reason for unusual CLI session terminate. User may get this call when @ref connector_initiate_stop_request_t
+ * to indicate the reason for unusual CLI session terminate.  may get this call when @ref connector_initiate_stop_request_t
  * "stop transport" is called while preparing the response or if Cloud Connector fails to allocate the required resources.
  *
  * The @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
@@ -509,7 +510,7 @@
  *   <td>Pointer to @endhtmlonly connector_sm_cli_status_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>, a method on which CLI request is received </li>
- *       <li><b><i>user_context</i></b>, user provided context </li>
+ *       <li><b><i>user_context</b>,  user_context provided context </li>
  *       <li><b><i>status</i></b>, reason for CLI session termination </li>
  *     </ul>
  *   </td>
@@ -527,70 +528,13 @@
  * </table>
  * @endhtmlonly
  *
- * @section pending_data  Pending Data Available
- *
- * Cloud Connector will make a @ref connector_request_id_sm_more_data @ref connector_callback_t "callback"
- * to notify the application that additional SM messages are pending.
- *
- * Battery-backed Applications can use this mechanism to remain awake for additional messages.  The callback
- * can re-trigger a timer which signals a power down sequence, once the timer has expired.
- *
- *
- * To retrieve pending messages from Device Cloud, Applications should call @ref initiate_ping_to_cloud.
- *
- *
- * The @ref connector_request_id_sm_more_data "pending data" @ref connector_callback_t "callback"
- * is called with the following information:
- *
- * @htmlonly
- * <table class="apitable">
- * <tr>
- *   <th colspan="2" class="title">Arguments</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_request_id_sm_more_data @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>data</td>
- *   <td>Pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:
- *     <ul>
- *       <li><b><i>transport</i></b>, on which the pending data can be retrieved </li>
- *     </ul>
- *   </td>
- * </tr>
- * <tr>
- *   <th colspan="2" class="title">Return Values</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- *   <td>Continue</td>
- * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts Cloud Connector</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * @note This callback may be called only if @ref CONNECTOR_SM_BATTERY is defined.
- *
+ * @section ping_request Ping Device Cloud
  * @subsection cancel_session  Cancel request
  *
  * The application initiates the cancel session request to Cloud Connector by calling @ref connector_initiate_action
  * "initiate cancel" with @ref connector_initiate_session_cancel request and @ref connector_sm_cancel_request_t request_data.
  *
- * User can make use of this API to cancel a session for which no response is received in a specified time. A
+ *  can make use of this API to cancel a session for which no response is received in a specified time. A
  * response from Device Cloud after canceling a session will result in @ref opaque_response.
  *
  * The @ref connector_initiate_action "initiate cancel" is called with the following arguments:
@@ -617,7 +561,7 @@
  *   <td>Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
  *      <ul>
  *         <li><b><i>transport</i></b>, on which the original request is sent </li>
- *         <li><b><i>user_context</i></b>, the last user context used on this session </li>
+ *         <li><b><i>user_context</i></b>, the last user_context used on this session </li>
  *      </ul>
  *   </td>
  * </tr>
@@ -638,13 +582,13 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection opaque_response  Opaque response callback
+ * @section opaque_response  Opaque response callback
  *
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
- * @ref connector_callback_t "callback" to indicate the application that it received a response from
- * Device Cloud for which no associated request is available. The reason for this is the session is
+ * @ref connector_callback_t "callback" to notify the application that it received a response for
+ * which no associated request is available.  The reason for this is the session is
  * terminated either because of the timeout specified in @ref CONNECTOR_SM_TIMEOUT or it is
- * @ref cancel_session "canceled" by the user.
+ * @ref cancel_session "canceled" by the Application.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -695,7 +639,7 @@
  * @endhtmlonly
  *
  *
- * @subsection sm_connect Request TCP start
+ * @section sm_connect Request TCP start
  *
  * Requests the Cloud Connector to start it's TCP/IP transport.  This request will
  * be handled in the Cloud Connector private layer will start the TCP.
@@ -722,7 +666,7 @@
  * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" Cloud Connector
  * returns an error response to Device Cloud.
  *
- * @subsection sm_reboot Reboot device
+ * @section sm_reboot Reboot device
  *
  * Requests a Cloud Connector reboot.  After receiving this request, Cloud Connector
  * will invoke a @ref reboot callback.
@@ -741,6 +685,54 @@
  *      </send_message>
  *    </sci_request>
  * @endcode
+ *
+ * @section ping_request_from_cloud  Device Cloud Ping Notification
+ *
+ * Cloud Connector will make a Ping Request @ref connector_request_id_sm_ping_request "callback" to
+ * notify an Application that a ping was received.  This callback is for information only and no action
+ * is necessary.
+  *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>class_id</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_id</td>
+ *   <td>@endhtmlonly @ref connector_request_id_sm_ping_request @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>data</td>
+ *   <td>Pointer to @endhtmlonly connector_sm_receive_ping_request_t @htmlonly structure:
+ *     <ul>
+ *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if Device Cloud requests a response,
+ *                                            @ref connector_false if no response was requested.  @htmlonly </li>
+ *     </ul>
+ *   </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ *   <td>Continue</td>
+ * </tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * @note The @b response_required member is passing information on to the application.  There is no required
+ * action necessary from the Cloud Connector Application, regardless of the value for @b response_required.
  *
  *
  * @htmlinclude terminate.html
