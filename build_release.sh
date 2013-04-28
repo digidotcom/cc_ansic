@@ -85,11 +85,11 @@ pending_file=$(find /eng/store/pending/90000000 -name "${GETTING_STARTED_GUIDE}"
 if [ -n "${pending_file}" ] 
   then
     echo ">> Pulling Getting Started Guide from ${pending_file}"
-    cp -f "${pending_file}" "${BASE_DIR}/GettingStarted.pdf"
+    cp -f "${pending_file}" "${BASE_DIR}/getting_started.pdf"
 elif [ -n "${released_file}" ]
   then
     echo ">> Pulling Getting Started Guide from ${released_file}"
-    cp -f "${released_file}" "${BASE_DIR}/GettingStarted.pdf"
+    cp -f "${released_file}" "${BASE_DIR}/getting_started.pdf"
 else
     echo ">> Cannot find ${GETTING_STARTED_GUIDE}*.pdf"
     exit 1
