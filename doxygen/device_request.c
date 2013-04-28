@@ -23,7 +23,7 @@
  *
  * The routine main() in the platform directory initializes Cloud Connector and
  * registers the application callback.  In the file application.c is the
- * application defined callback app_connector_callback(), this routine calls app_data_service_handler()
+ * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
  * when a device request is received.
  *
  * A User can use the included python script to send a device request to the device.

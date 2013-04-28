@@ -23,7 +23,7 @@
  * @section connect_description Code Flow
  *
  * The @ref AppStructure "Public Application Framework" @b Sample section file application.c contains
- * @ref connector_callback_t "application defined callback app_connector_callback()", which traps the
+ * @ref connector_callback_t "application-defined callback app_connector_callback()", which traps the
  * @ref fw_overview1 "Firmware Download" callbacks.  These callbacks are then processed in
  * app_firmware_handler() when a firmware request callback is received.
  *
@@ -78,7 +78,7 @@
  * </tr>
  * <tr>
  * <th>application.c</th>
- * <td>Contains application_run() and the application defined callback</td>
+ * <td>Contains application_run() and the application-defined callback</td>
  * <td>samples/firmware_download</td>
  * </tr>
  * <tr>

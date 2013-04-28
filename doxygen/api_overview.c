@@ -84,7 +84,7 @@
  * handle operating system (OS) calls, return device configuration data, and process firmware updates.
  * The callback is also used to report error status and event notification.  The application-defined
  * @ref connector_callback_t "callback" is passed into connector_init() upon startup.  When Cloud Connector needs to allocate
- * memory, access the network or perform other actions the application defined callback
+ * memory, access the network or perform other actions the application-defined callback
  * is called.
  *
  * Cloud Connector will invoke the application-defined callback to perform the following actions:

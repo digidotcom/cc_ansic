@@ -22,7 +22,7 @@
  *
  * The routine main() in the platform directory initializes Cloud Connector and
  * registers the application callback.  In the file application.c is the
- * application defined callback app_connector_callback(), this routine calls app_remote_config_handler()
+ * application-defined callback app_connector_callback(), this routine calls app_remote_config_handler()
  * when a remote command interface (RCI) request is received.
  *
  * A User can use the included python script to send a device request to the device.
@@ -201,7 +201,7 @@
  * </tr>
  * <tr>
  * <th>application.c</th>
- * <td>Contains application_run() and the application defined callback</td>
+ * <td>Contains application_run() and the application-defined callback</td>
  * <td>samples/remote_config</td>
  * </tr>
  * <tr>
