@@ -18,7 +18,7 @@
 
 #define CONNECTOR_CONST_PROTECTION
 
-/*	WARNING: connector_api.h must be the first connector_* header file
+/*  WARNING: connector_api.h must be the first connector_* header file
  * to guarantee CONNECTOR_VERSION is properly applied to all files */
 #include "connector_api.h"
 #include "connector_debug.h"
@@ -302,32 +302,44 @@ static connector_bool_t is_connector_stopped(connector_data_t * const connector_
 
 static void abort_connector(connector_data_t * const connector_ptr)
 {
-    connector_status_t status;
+    switch (connector_ptr->stop.state)
+    {
+        case connector_state_terminate_by_initiate_action:
+        case connector_state_abort_by_callback:
+            /* already shutting down - nothing to do here. */
+            break;
+
+        default:
+        {
+            connector_status_t status;
 
 #if (defined CONNECTOR_TRANSPORT_UDP) ||(defined CONNECTOR_TRANSPORT_SMS)
-    status = sm_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
+            status = sm_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
+            if (status != connector_success)
+                connector_debug_printf("abort_connector: sm_initiate_action returns error %d\n", status);
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
-    connector_ptr->sm_udp.close.status = connector_close_status_abort;
+            connector_ptr->sm_udp.close.status = connector_close_status_abort;
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-    connector_ptr->sm_sms.close.status = connector_close_status_abort;
+            connector_ptr->sm_sms.close.status = connector_close_status_abort;
 #endif
-    if (status != connector_success)
-        connector_debug_printf("abort_connector: sm_initiate_action returns error %d\n", status);
 #endif
 
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
-    status = edp_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
-    edp_set_close_status(connector_ptr, connector_close_status_abort);
-    if (status != connector_success)
-        connector_debug_printf("abort_connector: edp_initiate_action returns error %d\n", status);
+            status = edp_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
+            if (status != connector_success)
+                connector_debug_printf("abort_connector: edp_initiate_action returns error %d\n", status);
+
+            edp_set_close_status(connector_ptr, connector_close_status_abort);
 #endif
 
-    connector_ptr->stop.state = connector_state_abort_by_callback;
-    return;
+            connector_ptr->stop.state = connector_state_abort_by_callback;
+            break;
+        }
+    }
 }
 
 connector_handle_t connector_init(connector_callback_t const callback)
@@ -352,7 +364,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
 #endif
 
         COND_ELSE_GOTO(status == connector_working, done);
-		memset(handle, 0x00, sizeof *connector_handle); /* Init structure, all pointers to NULL */
+        memset(handle, 0x00, sizeof *connector_handle); /* Init structure, all pointers to NULL */
         connector_handle = handle;
     }
 
@@ -446,13 +458,13 @@ connector_status_t connector_step(connector_handle_t const handle)
 
 #if (CONNECTOR_TRANSPORT_COUNT == 1)
 #if (defined CONNECTOR_TRANSPORT_TCP)
-	result = connector_edp_step(connector_ptr);
+    result = connector_edp_step(connector_ptr);
 #endif
 #if (defined CONNECTOR_TRANSPORT_UDP)
-	result = connector_udp_step(connector_ptr);
+    result = connector_udp_step(connector_ptr);
 #endif
 #if (defined CONNECTOR_TRANSPORT_SMS)
-	result = connector_sms_step(connector_ptr);
+    result = connector_sms_step(connector_ptr);
 #endif
 
 #else
@@ -497,16 +509,17 @@ connector_status_t connector_step(connector_handle_t const handle)
 #endif
 
 error:
-    if ((result == connector_abort) &&
-        (connector_ptr->stop.state != connector_state_terminate_by_initiate_action) &&
-        (connector_ptr->stop.state != connector_state_abort_by_callback))
+    switch (result)
     {
-        /* let's abort Cloud Connector */
+    case connector_abort:
         abort_connector(connector_ptr);
+        /* no break; */
+    case connector_device_terminated:
+        result = connector_working;
+        break;
+    default:
+        break;
     }
-    /* wait until SMS/UDP/TCP are in terminated state */
-    if ((result == connector_abort) || (result == connector_device_terminated)) result = connector_working;
-
 
 done:
     return result;
