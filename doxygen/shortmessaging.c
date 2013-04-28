@@ -98,7 +98,7 @@
  * For @ref CONNECTOR_SM_BATTERY "Battery-backed" SM applications:
  *      -# @ref pending_data "Message pending" to notify applications more messages are queued.
  *
- * Several additional minor functions are also described below.
+ * Several @ref additional_apis "SM convenience APIs" are also described below.
  *
  * @section ping_request Ping Device Cloud
  *
@@ -185,6 +185,9 @@
  * @ref  ping_response_callback "response" callback. The value passed as the user_context will
  * be returned in the response.
  *
+ * @see @ref ping_response_callback
+ * @see @ref cancel_session
+ *
  * @subsection ping_response_callback  Ping Device Cloud Response callback
  *
  * When a @ref initiate_ping_to_cloud operation has the @b response_required set to @ref connector_true,
@@ -213,7 +216,7 @@
  *   <td>Pointer to @endhtmlonly connector_sm_ping_response_t @htmlonly structure:
  *     <ul>
  *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
- *       <li><b><i>user_context</i></b>: The user_context pointer from the @ref initiate_ping_to_cloud.
+ *       <li><b><i>user_context</i></b>: The user_context pointer from the  @endhtmlonly @ref initiate_ping_to_cloud. @htmlonly </li>
  *       <li><b><i>status</i></b>: The response code, where @endhtmlonly @b connector_sm_ping_status_success indicates reply
  *                 received, @b connector_sm_ping_status_complete indicates @ref initiate_ping_to_cloud sent,
  *                 and @b connector_sm_ping_status_cancel indicates the session was @ref cancel_session "canceled". @htmlonly </li>
@@ -233,10 +236,14 @@
  * </table>
  * @endhtmlonly
  *
- * @note When the @ref initiate_ping_to_cloud operation has the response_required set to @ref connector_false, this callback
- * is made data with the @ref connector_sm_ping_response_t status set to @b connector_sm_ping_status_complete.  If
- * the @b Ping @b Device @b Cloud session is @ref cancel_session "canceled", then the callback status is set to
+ * @note When @ref initiate_ping_to_cloud operation has the response_required set @ref connector_false, this callback
+ * is made with the @ref connector_sm_ping_response_t status set to @b connector_sm_ping_status_complete when the
+ * message is sent.  If the @ref initiate_ping_to_cloud operation is @ref cancel_session "canceled" before the
+ * message is sent, this callback is made with the @ref connector_sm_ping_response_t status is set to
  * @b connector_sm_ping_status_cancel.
+ *
+ * @see @ref initiate_ping_to_cloud
+ * @see @ref cancel_session
  *
  *
  * @section pending_data  Pending Data Available
@@ -272,7 +279,7 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_more_data_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, on which the pending data can be retrieved </li>
+ *       <li><b><i>transport</i></b>: Where pending data can be retrieved.  See @endhtmlonly @ref connector_transport_udp. @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -294,6 +301,9 @@
  * @endhtmlonly
  *
  * @note This callback is made only when @ref CONNECTOR_SM_BATTERY is defined.
+ *
+ * @see @ref initiate_ping_to_cloud
+ * @see @ref CONNECTOR_SM_BATTERY "Handling Battery-backed Applications"
  *
  * @section cli_support Command Line Interface Support
  *
@@ -527,7 +537,58 @@
  * </table>
  * @endhtmlonly
  *
- * @section ping_request Ping Device Cloud
+ * @section additional_apis Additional SM APIs
+ *
+ * The following SM APIs are also available.
+ *
+ * @subsection sm_connect Request TCP start
+ *
+ * Requests the Cloud Connector to start it's TCP/IP transport.  This request will
+ * be handled in the Cloud Connector private layer will start the TCP.
+ *
+ * Once the TCP transport @ref network_tcp_start "is started", Cloud Connector Applications can make use of
+ * the TCP features like @ref firmware_download, @ref rci_service, or reliable
+ * @ref data_point or @ref data_service over a @ref connector_transport_tcp "TCP/IP transport".
+ *
+ * The following @ref web_services example shows how to request a device to start it's TCP service:
+ *
+ * @code
+ *    <sci_request version="1.0">
+ *      <send_message synchronous="false">
+ *        <targets>
+ *          <device id="00000000-00000000-00409DFF-FF432311"/>
+ *        </targets>
+ *        <sm_udp>
+ *          <request_connect/>
+ *        </sm_udp>
+ *      </send_message>
+ *    </sci_request>
+ * @endcode
+ *
+ * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" Cloud Connector
+ * returns an error response to Device Cloud.
+ *
+ * @subsection sm_reboot Reboot device
+ *
+ * Requests a Cloud Connector reboot.  After receiving this request, Cloud Connector
+ * will invoke a @ref reboot callback.
+ *
+ * The following @ref web_services example shows how to reboot a device:
+ *
+ * @code
+ *    <sci_request version="1.0">
+ *      <send_message synchronous="false">
+ *        <targets>
+ *          <device id="00000000-00000000-00409DFF-FF432311"/>
+ *        </targets>
+ *        <sm_udp>
+ *          <reboot/>
+ *        </sm_udp>
+ *      </send_message>
+ *    </sci_request>
+ * @endcode
+ *
+ *
  * @subsection cancel_session  Cancel request
  *
  * The application initiates the cancel session request to Cloud Connector by calling @ref connector_initiate_action
@@ -581,7 +642,7 @@
  * </table>
  * @endhtmlonly
  *
- * @section opaque_response  Opaque response callback
+ * @subsection opaque_response  Opaque response callback
  *
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
  * @ref connector_callback_t "callback" to notify the application that it received a response for
@@ -638,54 +699,7 @@
  * @endhtmlonly
  *
  *
- * @section sm_connect Request TCP start
- *
- * Requests the Cloud Connector to start it's TCP/IP transport.  This request will
- * be handled in the Cloud Connector private layer will start the TCP.
- *
- * Once the TCP transport @ref network_tcp_start "is started", Cloud Connector Applications can make use of
- * the TCP features like @ref firmware_download, @ref rci_service, or reliable
- * @ref data_point or @ref data_service over a @ref connector_transport_tcp "TCP/IP transport".
- *
- * The following @ref web_services example shows how to request a device to start it's TCP service:
- *
- * @code
- *    <sci_request version="1.0">
- *      <send_message synchronous="false">
- *        <targets>
- *          <device id="00000000-00000000-00409DFF-FF432311"/>
- *        </targets>
- *        <sm_udp>
- *          <request_connect/>
- *        </sm_udp>
- *      </send_message>
- *    </sci_request>
- * @endcode
- *
- * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" Cloud Connector
- * returns an error response to Device Cloud.
- *
- * @section sm_reboot Reboot device
- *
- * Requests a Cloud Connector reboot.  After receiving this request, Cloud Connector
- * will invoke a @ref reboot callback.
- *
- * The following @ref web_services example shows how to reboot a device:
- *
- * @code
- *    <sci_request version="1.0">
- *      <send_message synchronous="false">
- *        <targets>
- *          <device id="00000000-00000000-00409DFF-FF432311"/>
- *        </targets>
- *        <sm_udp>
- *          <reboot/>
- *        </sm_udp>
- *      </send_message>
- *    </sci_request>
- * @endcode
- *
- * @section ping_request_from_cloud  Device Cloud Ping Notification
+ * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
  * Cloud Connector will make a Ping Request @ref connector_request_id_sm_ping_request "callback" to
  * notify an Application that a ping was received.  This callback is for information only and no action
