@@ -515,7 +515,7 @@
  * @subsection cli_status_callback  CLI session error callback
  *
  * The @ref connector_request_id_sm_cli_status callback is made when an unexpected CLI error occurs during
- * a @ref cli_cb_sequenced.  This error can occur if the @ref connector_initiate_stop_request_t "stop transport"
+ * a @ref cli_cb_sequence.  This error can occur if the @ref connector_initiate_stop_request_t "stop transport"
  * was initiated wile processing a CLI request or if Cloud Connector fails to allocate the required resources.
  *
  * @htmlonly
