@@ -9,9 +9,9 @@
  * potentially @ref network_ssl_callbacks "secure".  Most Cloud Connector communication
  * covered in this guide occurs over TCP/IP.
  *
- * The Short Message (SM) protocol was designed to be a lightweight, message based protocol
+ * The Short Message (SM) protocol was designed to be a lightweight, message-based protocol
  * ideal for costly transports or for minimizing traffic.  SM transports over UDP and therefore
- * does not incur the cost TCP/IP connections.  Unfortunately, UDP includes classic limitations
+ * does not incur the TCP/IP connection overhead.  Unfortunately, UDP includes limitations
  * such as unreliable delivery, potential duplicate packets, and lack of data integrity.
  * Cloud Connector applications that include SM will require consideration and handling of
  * these UDP limitations.
@@ -21,7 +21,7 @@
  * on data usage.  For these applications, we highly recommend using the samples included in
  * this kit, that were intended for a @ref network_tcp_start "TCP/IP transport".  These applications
  * will establish a @ref app_start_network_tcp "TCP/IP connection" and maintain it throughout the
- * entire application's up time.
+ * entire application's execution.
  *
  * Conversely, some Cloud Connector applications could be deployed on networks that include
  * data restrictions; or some Cloud Connector applications could be deployed on systems
@@ -58,7 +58,7 @@
  * the unreliability of UDP.
  *
  * Suppose your application samples data periodically and sends to Device Cloud once
- * per hour.  What if the data is lost?  Can your system tolerate this?  If no, you'll
+ * per hour.  What if the data is lost?  Can your system tolerate this?  If not, you'll
  * need your application to check for acknowledgments.  After some period of time
  * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
  * Connector application.
@@ -77,15 +77,14 @@
  * <b>Punching through Firewalls</b>
  *
  * Considering most devices are deployed behind a Firewall, Device Cloud is incapable of
- * initiating an SM message exchange.  All @ref web_services "web service" requests are queued
- * on Device Cloud and waiting for Device Cloud to receive Cloud Connector message.
+ * initiating an SM message exchange.  All @ref web_services "web service" SM requests are queued
+ * on Device Cloud, waiting for a Cloud Connector message.
  *
- * Cloud Connector @b must @b always @b initiate SM exchanges.  A critical
- * component of your Cloud Connector Application must include a strategy to
- * open the firewall.
+ * Cloud Connector @b must @b always @b initiate SM exchanges.  A key component of
+ * your Cloud Connector Application must include a strategy to open the firewall and
+ * drain the SM requests.
  *
- * If Cloud Connector has no pending message to send, the application can
- * @ref initiate_ping_to_cloud.
+ * If Cloud Connector has no pending message to send, the application can @ref initiate_ping_to_cloud.
  *
  * @section smsectionexamples Short Messaging Features
  *
