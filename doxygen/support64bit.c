@@ -4,6 +4,8 @@
  *
  * @section sixtyfourbit Why do I need support for 64-bit data types?
  *
+ * Support for 64-bit data types are needed in two places, in the File System and Data Ppoint.
+ *
  * From the top level these callbacks are analogous to the @ref network_callbacks.
  * Internally they provide interface to securely connect to Device Cloud
  * on SSL. Any application can make use of these APIs to obtain secure connection
