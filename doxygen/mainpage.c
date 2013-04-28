@@ -56,17 +56,17 @@
  *
  * @section requirements Platform Memory Requirements
  * Cloud Connector requires both persistent storage (Flash) and RAM.  Flash is used to store instructions and variables.  RAM is used for 
- * dynamic allocation and program stack. The following @ref memorymetricspage "measurements" were taken on several configuration options.
+ * dynamic allocation and program stack.  @ref memorymetricspage "Metrics are available" for typical Flash and RAM usage.
  *
  * @section features Device Cloud Features
  * By integrating Cloud Connector into your device, you instantly enable the power of Device Cloud for your device: 
- *     @li Send data to the cloud
- *     @li Receive data from the cloud
- *     @li Enable remote control of the device from the cloud to:
- *         @li Update the firmware
- *         @li Change the configuration
- *         @li Access the file system
- *         @li Reboot
+ *     - Send data to the cloud
+ *     - Receive data from the cloud
+ *     - Enable remote control of the device from the cloud to:
+ *         - Update the firmware
+ *         - Change the configuration
+ *         - Access the file system
+ *         - Reboot
  *
  * @section communicating Communicating with your device
  * To manage your device remotely you can use <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
