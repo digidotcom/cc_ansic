@@ -95,7 +95,7 @@
  *      -# @ref cli_support "Command Line Interface" support for Device Manager
  *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
  *
- * For @ref CONNECTOR_SM_BATTERY "Battery-backed" SM applications:
+ * An additional major function is available for @ref CONNECTOR_SM_BATTERY "Battery-backed" SM applications:
  *      -# @ref pending_data "Message pending" to notify applications more messages are queued.
  *
  * Several @ref additional_apis "SM convenience APIs" are also described below.
@@ -307,19 +307,24 @@
  *
  * @section cli_support Command Line Interface Support
  *
- * Cloud Connector includes support for a Command Line Interface support to be displayed on the Device
- * Cloud Device Manager CLI.  The following SM four callbacks are made (in sequence) to support an individual
- * CLI request:
+ * Cloud Connector includes support for a Command Line Interface (CLI) support to be displayed on the Device
+ * Cloud Device Manager CLI.
+ *
+ * @subsection cli_cb_sequence CLI Callback Sequence
+ * The following SM callbacks are made (in sequence) to support an individual CLI request:
  *
  *      -# @ref cli_request_callback
  *      -# @ref cli_response_length_callback
  *      -# @ref cli_response_callback
+ *
+ *      If an error is encountered during the CLI Callback Sequence, this additional CLI callback is made:
  *      -# @ref cli_status_callback
  *
  * @subsection cli_request_callback  CLI request callback
  *
- * The @ref connector_request_id_sm_cli_request callback is the first call
- * in a CLI command sequence.  This callback passes the Device Manager CLI command and arguments to
+ * The @ref connector_request_id_sm_cli_request callback is the initial call
+ * in a @ref cli_cb_sequence.  This callback is triggered by a Device Manager CLI request and it
+ * passes the Device Cloud command and arguments to
  * the Application in a connector_sm_cli_request_t data structure.
  *
  * @htmlonly
@@ -347,7 +352,7 @@
  *                                        callbacks during the CLI sequence for this command.
  *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. </li>
  *       <li><b><i>bytes_used</i></b>: Number of bytes used for the CLI command in the buffer. </li>
-  *      <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a response
+ *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a response
  *                                            is requested for this CLI command.  @ref connector_false if no
  *                                            response required.  @htmlonly </li>
  *     </ul>
@@ -381,15 +386,12 @@
  * @subsection cli_response_length_callback  Response length callback
  *
  * The @ref connector_request_id_sm_cli_response_length callback is the second call
- * in a CLI command sequence and used to get the maximum size of CLI response length in bytes.
+ * in a @ref cli_cb_sequence and used to get the maximum size of CLI response length in bytes.
  * This callback is made only if the @b response_required was set to @ref connector_true in
  * the initial @ref cli_request_callback call.
  *
- * Cloud Connector will allocate this memory block to process the remaining @ref cli_request_callback
+ * Cloud Connector will allocate this memory block to process the ensuing @ref cli_request_callback
  * sequence.
- *
- * The @ref connector_request_id_sm_cli_response_length "response length" @ref connector_callback_t "callback"
- * is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -411,9 +413,9 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_response_length_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
- *       <li><b><i>user_context</i></b>, user_context provided context </li>
- *       <li><b><i>total_bytes</i></b>, total number of bytes in CLI response </li>
+ *       <li><b><i>transport</i></b>: Transport where initial CLI request was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>user_context</i></b>: The opaque application defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
+ *       <li><b><i>total_bytes</i></b>: Maximum size in bytes of the CLI response to the initial @endhtmlonly @ref cli_request_callback @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -443,16 +445,13 @@
  * @subsection cli_response_callback  CLI response callback
  *
  * The @ref connector_request_id_sm_cli_response callback is the third call
- * in a CLI command sequence and is used to assemble a CLI response to send to Device Cloud.
+ * in a @ref cli_cb_sequence and is used to assemble a CLI response to send to Device Cloud.
  * This callback is made only if the @b response_required was set to @ref connector_true in
  * the initial @ref cli_request_callback call and after the @b cli_response_length_callback was
  * called to define the maximum CLI response size.
  *
  * Cloud Connector will continue to make @ref connector_request_id_sm_cli_response callbacks
  * until the @b more_data field is set to @ref connector_false.
- *
- * The @ref connector_request_id_sm_cli_response "CLI response" @ref connector_callback_t "callback"
- * is called with the following information:
  *
  * @htmlonly
  * <table class="apitable">
@@ -474,12 +473,14 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_response_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method on which the CLI request is received </li>
- *       <li><b><i>user_context</i></b>, user_context provided context </li>
- *       <li><b><i>buffer</i></b>, to copy the CLI response </li>
- *       <li><b><i>bytes_available</i></b>, size of buffer in bytes </li>
- *       <li><b><i>bytes_used</i></b>, number of response bytes copied </li>
- *       <li><b><i>more_data</i></b>, set this to connector_false if there is no more response data </li>
+ *       <li><b><i>transport</i></b>: Transport where initial CLI request was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>user_context</i></b>: The opaque application defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
+ *       <li><b><i>buffer</i></b>: the memory to copy your CLI response. </li>
+ *       <li><b><i>bytes_available</i></b>: buffer size available in bytes. </li>
+ *       <li><b><i>bytes_used</i></b>: number of bytes copied by the callback.</li>
+ *       <li><b><i>more_data</i></b>: Set to @endhtmlonly @ref connector_true if more data expected.
+ *                                    @ref connector_false if your response is complete.  @htmlonly
+ *       </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -504,8 +505,9 @@
  * </table>
  * @endhtmlonly
  *
- * @note This callback is used to fill a private buffer allocated after the @ref cli_response_length_callback callback
- * and must not exceed the length set by that callback.
+ * @note This callback is used to fill a private buffer allocated after the @ref cli_response_length_callback.
+ * The initial size of the @b bytes_available will reflect that size and get decremented for subsequent callbacks.
+ * The total number of @b bytes_used for all these callbacks must not exceed the maximum length set by cli_response_length_callback.
  *
  * @see @ref cli_request_callback
  * @see @ref cli_response_length_callback
@@ -513,12 +515,9 @@
  *
  * @subsection cli_status_callback  CLI session error callback
  *
- * This callback is called with @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
- * to indicate the reason for unusual CLI session terminate.  may get this call when @ref connector_initiate_stop_request_t
- * "stop transport" is called while preparing the response or if Cloud Connector fails to allocate the required resources.
- *
- * The @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
- * is called with the following information:
+ * The @ref connector_request_id_sm_cli_status callback is made when an unexpected CLI error occurs during
+ * a @ref cli_cb_sequenced.  This error can occur if the @ref connector_initiate_stop_request_t "stop transport"
+ * was initiated wile processing a CLI request or if Cloud Connector fails to allocate the required resources.
  *
  * @htmlonly
  * <table class="apitable">
@@ -540,9 +539,12 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_status_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>, a method on which CLI request is received </li>
- *       <li><b><i>user_context</b>,  user_context provided context </li>
- *       <li><b><i>status</i></b>, reason for CLI session termination </li>
+ *       <li><b><i>transport</i></b>: Transport where initial CLI request was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>user_context</i></b>: The opaque application defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
+ *       <li><b><i>status</i></b>: @endhtmlonly
+ *                                 @b connector_sm_cli_status_cancel if @ref connector_initiate_stop_request_t "transport stopped"
+ *                                 @b connector_sm_cli_status_error if resource allocation failure. @htmlonly
+ *       </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -679,7 +681,7 @@
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
  * to notify an application that a response was received with no known associated request.  The reason
  * for this is either the session  @ref CONNECTOR_SM_TIMEOUT "timed-out", was @ref cancel_session "canceled"
- * by the Application, or the transport was terminated and the Message context lost.
+ * by the Application, or the transport was @ref connector_initiate_stop_request_t "terminated" and the Message context lost.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
