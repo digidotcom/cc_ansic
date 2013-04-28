@@ -185,6 +185,7 @@
  * @ref  ping_response_callback "response" callback. The value passed as the user_context will
  * be returned in the response.
  *
+ * @see @ref connector_initiate_action()
  * @see @ref ping_response_callback
  * @see @ref cancel_session
  *
@@ -243,18 +244,17 @@
  * @b connector_sm_ping_status_cancel.
  *
  * @see @ref initiate_ping_to_cloud
- * @see @ref cancel_session
  *
  *
  * @section pending_data  Pending Data Available
  *
  * Cloud Connector will make a @ref connector_request_id_sm_more_data @ref connector_callback_t "callback"
- * to notify the application that additional SM messages are pending.
+ * to notify the application that additional SM messages are pending.   Applications should
+ * call @ref initiate_ping_to_cloud to retrieve pending messages from Device Cloud.
  *
- * Battery-backed Applications can use this mechanism to remain awake for additional messages.  The callback
- * can re-trigger a timer which signals a power down sequence, once the timer has expired.
- *
- * To retrieve pending messages from Device Cloud, Applications should call @ref initiate_ping_to_cloud.
+ * This callback is geared towards @ref CONNECTOR_SM_BATTERY "Battery-backed" Applications.   This callback
+ * can be used to re-trigger a timer which initiates a power down sequence.  When this callback occurs, the
+ * timer should be reset, extending the time before shutdown.
  *
  * The @ref connector_request_id_sm_more_data "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -318,9 +318,9 @@
  *
  * @subsection cli_request_callback  CLI request callback
  *
- * The @ref connector_request_id_sm_cli_request @ref connector_callback_t "callback" is the first call
- * in a CLI command sequence.  This callback passes the Device Cloud CLI command and arguments to Cloud Connector
- * using a @ref connector_sm_cli_request_t data cast.
+ * The @ref connector_request_id_sm_cli_request callback is the first call
+ * in a CLI command sequence.  This callback passes the Device Manager CLI command and arguments to
+ * the Application in a connector_sm_cli_request_t data structure.
  *
  * @htmlonly
  * <table class="apitable">
@@ -342,14 +342,14 @@
  *   <td>data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cli_request_t @htmlonly structure:
  *     <ul>
- *       <li><b><i>transport</i></b>: Ping Request Transport.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *       <li><b><i>transport</i></b>: Transport where Message was received.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
  *       <li><b><i>user_context</i></b>: An opaque application defined context.  This pointer is passed to all subsequent
  *                                        callbacks during the CLI sequence for this command.
  *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. </li>
- *       <li><b><i>bytes_used</i></b>: Number of bytes in the CLI command. </li>
-  *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a CLI response
- *                                            callback" is required.  Set to @ref connector_false when no response callback
- *                                            is required.  @htmlonly </li>
+ *       <li><b><i>bytes_used</i></b>: Number of bytes used for the CLI command in the buffer. </li>
+  *      <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a response
+ *                                            is requested for this CLI command.  @ref connector_false if no
+ *                                            response required.  @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -374,13 +374,19 @@
  * </table>
  * @endhtmlonly
  *
+ * @see @ref cli_response_length_callback
+ * @see @ref cli_response_callback
+ * @see @ref cli_status_callback
+ *
  * @subsection cli_response_length_callback  Response length callback
  *
- * Cloud Connector will make @ref connector_request_id_sm_cli_response_length "response length"
- * @ref connector_callback_t "callback" to get the total/maximum predicted CLI response length in bytes. This
- * callback will be made only if the response is requested by Device Cloud. Cloud Connector will allocate
- * the required resources based on the length specified here. Actual bytes used during
- * @ref cli_response_callback "response callback" can be anything, but not to exceed this bytes.
+ * The @ref connector_request_id_sm_cli_response_length callback is the second call
+ * in a CLI command sequence and used to get the maximum size of CLI response length in bytes.
+ * This callback is made only if the @b response_required was set to @ref connector_true in
+ * the initial @ref cli_request_callback call.
+ *
+ * Cloud Connector will allocate this memory block to process the remaining @ref cli_request_callback
+ * sequence.
  *
  * The @ref connector_request_id_sm_cli_response_length "response length" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -428,13 +434,22 @@
  * </table>
  * @endhtmlonly
  *
+ * @note The actual bytes used during @ref cli_response_callback sequence must be less than or equal
+ * to the @b total_bytes set by this callback.
+ *
+ * @see @ref cli_request_callback
+ * @see @ref cli_response_callback
+*
  * @subsection cli_response_callback  CLI response callback
  *
- * Cloud Connector will make @ref connector_request_id_sm_cli_response "CLI response"
- * @ref connector_callback_t "callback" to get the CLI response to send to Device Cloud. This
- * callback will be made only if the response is requested by Device Cloud. The filled bytes
- * must not exceed the available bytes. The available bytes is based on the @ref cli_response_length_callback
- * "total length" provided.
+ * The @ref connector_request_id_sm_cli_response callback is the third call
+ * in a CLI command sequence and is used to assemble a CLI response to send to Device Cloud.
+ * This callback is made only if the @b response_required was set to @ref connector_true in
+ * the initial @ref cli_request_callback call and after the @b cli_response_length_callback was
+ * called to define the maximum CLI response size.
+ *
+ * Cloud Connector will continue to make @ref connector_request_id_sm_cli_response callbacks
+ * until the @b more_data field is set to @ref connector_false.
  *
  * The @ref connector_request_id_sm_cli_response "CLI response" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -489,6 +504,13 @@
  * </table>
  * @endhtmlonly
  *
+ * @note This callback is used to fill a private buffer allocated after the @ref cli_response_length_callback callback
+ * and must not exceed the length set by that callback.
+ *
+ * @see @ref cli_request_callback
+ * @see @ref cli_response_length_callback
+ * @see @ref cli_status_callback
+ *
  * @subsection cli_status_callback  CLI session error callback
  *
  * This callback is called with @ref connector_request_id_sm_cli_status "CLI status" @ref connector_callback_t "callback"
@@ -536,6 +558,10 @@
  * </tr>
  * </table>
  * @endhtmlonly
+ *
+ * @see @ref cli_request_callback
+ * @see @ref cli_response_length_callback
+ * @see @ref cli_response_callback
  *
  * @section additional_apis Additional SM APIs
  *
@@ -591,11 +617,12 @@
  *
  * @subsection cancel_session  Cancel request
  *
- * The application initiates the cancel session request to Cloud Connector by calling @ref connector_initiate_action
- * "initiate cancel" with @ref connector_initiate_session_cancel request and @ref connector_sm_cancel_request_t request_data.
+ * Cancels the prior command related to user_context.  Applications call @ref connector_initiate_action
+ * with @ref connector_initiate_session_cancel request and @ref connector_sm_cancel_request_t
+ * "connector_sm_cancel_request_t" request_data.
  *
- *  can make use of this API to cancel a session for which no response is received in a specified time. A
- * response from Device Cloud after canceling a session will result in @ref opaque_response.
+ * Typically used to cancel a session for which no response was received.  The assumption being the initial message
+ * or the Cloud reply was lost due to @ref smcomplications "UDP reliability".
  *
  * The @ref connector_initiate_action "initiate cancel" is called with the following arguments:
  *
@@ -620,8 +647,8 @@
  *   <td>request_data</td>
  *   <td>Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
  *      <ul>
- *         <li><b><i>transport</i></b>, on which the original request is sent </li>
- *         <li><b><i>user_context</i></b>, the last user_context used on this session </li>
+ *         <li><b><i>transport</i></b>: Where original request was sent.  See @endhtmlonly @ref connector_transport_udp. @htmlonly</li>
+ *         <li><b><i>user_context</i></b>: The user_context from original request. </li>
  *      </ul>
  *   </td>
  * </tr>
@@ -642,13 +669,17 @@
  * </table>
  * @endhtmlonly
  *
- * @subsection opaque_response  Opaque response callback
+ * @note A Device Cloud response to a canceled session will result in @ref opaque_response.
  *
- * Cloud Connector will make @ref connector_request_id_sm_opaque_response "opaque response"
- * @ref connector_callback_t "callback" to notify the application that it received a response for
- * which no associated request is available.  The reason for this is the session is
- * terminated either because of the timeout specified in @ref CONNECTOR_SM_TIMEOUT or it is
- * @ref cancel_session "canceled" by the Application.
+ * @see @ref connector_initiate_action()
+ * @see @ref opaque_response
+ *
+ * @subsection opaque_response  Unsequenced Message callback
+ *
+ * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
+ * to notify an application that a response was received with no known associated request.  The reason
+ * for this is either the session  @ref CONNECTOR_SM_TIMEOUT "timed-out", was @ref cancel_session "canceled"
+ * by the Application, or the transport was terminated and the Message context lost.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -698,6 +729,8 @@
  * </table>
  * @endhtmlonly
  *
+ * @see @ref cancel_session
+ * @see @ref CONNECTOR_SM_TIMEOUT
  *
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
