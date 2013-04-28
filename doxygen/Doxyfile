@@ -647,6 +647,7 @@ INPUT                  = ./mainpage.c \
                          ./network_callbacks.c \
                          ./network_ssl_callbacks.c \
                          ./support64bit.c \
+                         ./swhierarchy.c \
                          ./memorymetrics.c \
                          ./shortmessaging.c \
                          ./connect_on_ssl.c \
