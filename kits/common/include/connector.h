@@ -323,7 +323,7 @@ typedef connector_app_error_t (* connector_reset_callback_t)(void);
  * @see idigi_device_response_callback_t
  * @see idigi_connector_error_t
  */
-connector_error_t idigi_register_device_request_callbacks(connector_device_request_callback_t request_callback, connector_device_response_callback_t response_callback,
+connector_error_t connector_register_device_request_callbacks(connector_device_request_callback_t request_callback, connector_device_response_callback_t response_callback,
                                                                 connector_firmware_download_callback_t download_callback, connector_reset_callback_t reset_callback);
 /**
 * @}
@@ -382,7 +382,7 @@ connector_error_t idigi_register_device_request_callbacks(connector_device_reque
  *  
  * @see idigi_connector_error_t
  */
-connector_error_t idigi_send_data(char const * const path, connector_dataservice_data_t * const device_data, char const * const content_type);
+connector_error_t connector_send_data(char const * const path, connector_dataservice_data_t * const device_data, char const * const content_type);
 /**
 * @}
 */
