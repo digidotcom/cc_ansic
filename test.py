@@ -280,7 +280,7 @@ class TestRunner(object):
         self.rest_session = rest_session(hostname,
                                 auth=(username, password), verify=False)
 
-        if test_name == 'connect_on_ssl':
+        if (test_name == 'connect_on_ssl') or (test_name is None):
             cflags += BASE_FLAGS
 
         self.description          = description
