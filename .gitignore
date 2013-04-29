@@ -22,6 +22,7 @@ output
 
 # Doxygen Generated Docs
 docs
+doxygen/html
 
 # Ignore compiled java class files and build/dist folders
 *.class
