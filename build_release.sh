@@ -79,19 +79,19 @@ rm -rf "${BASE_DIR}/public/step/platforms/template"
 rm -rf "${BASE_DIR}/public/step/platforms/windows"
 
 # Get the name of the getting starting guides and see which one is newer
-released_file=$(find /eng/store/released/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
-pending_file=$(find /eng/store/pending/90000000 -name "${GETTING_STARTED_GUIDE}"*.pdf)
+released_file=$(find /eng/store/released/90000000/"${GETTING_STARTED_GUIDE}" -name index.html)
+pending_file=$(find /eng/store/pending/90000000/"${GETTING_STARTED_GUIDE}" -name index.html)
 
 if [ -n "${pending_file}" ] 
   then
     echo ">> Pulling Getting Started Guide from ${pending_file}"
-    cp -f "${pending_file}" "${BASE_DIR}/getting_started.pdf"
+    cp -f "${pending_file}" "${BASE_DIR}/getting_started.html"
 elif [ -n "${released_file}" ]
   then
     echo ">> Pulling Getting Started Guide from ${released_file}"
-    cp -f "${released_file}" "${BASE_DIR}/getting_started.pdf"
+    cp -f "${released_file}" "${BASE_DIR}/getting_started.html"
 else
-    echo ">> Cannot find ${GETTING_STARTED_GUIDE}*.pdf"
+    echo ">> Cannot find ${GETTING_STARTED_GUIDE}*/index.html"
     exit 1
 fi
 
