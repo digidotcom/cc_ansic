@@ -13,7 +13,6 @@ from xml.dom.minidom import getDOMImplementation
 impl = getDOMImplementation()
 
 from ..utils import getText
-#from ..utils import PollingDeviceConnectionMonitor
 
 MAX_TEST_FILE_SIZE = 30
 dummyFsize = 4
@@ -440,23 +439,11 @@ class FileSystemDirTestCase(ic_testcase.TestCase):
 
     def verify_file_request_abort(self, request):
  
-#        monitor = PollingDeviceConnectionMonitor(self.push_client, self.dev_id)
-#        monitor.start()
-
         response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content 
 
         self.log.info("verify_file_request_abort: %s" % response)
 
         self.verify_device_response_text(response, 'error id="2006"', "Abort expected") 
-
-#        self.log.info("Waiting for iDigi to disconnect device.")
-#        monitor.wait_for_disconnect(30)
-#        self.log.info("Device disconnected.")
-
-#        self.log.info("Waiting for Device to reconnect.")
-#        monitor.wait_for_connect(30)
-#        self.log.info("Device connected.")
-#        monitor.stop()
 
         response = ""
         sync_failed = True
