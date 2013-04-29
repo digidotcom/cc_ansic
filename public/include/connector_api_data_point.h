@@ -81,7 +81,8 @@ typedef struct
 
 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
 /**
-* @defgroup connector_time_epoch_whole_t  Structure to represent time in milliseconds.
+* @defgroup connector_time_epoch_whole_t  connector_time_epoch_whole_t
+* @brief Structure to represent time in milliseconds.
 * @{
 */
 /**
@@ -91,7 +92,7 @@ typedef struct
 */
 typedef struct
 {
-    uint64_t milliseconds;
+    uint64_t milliseconds; /**< milliseconds portion of epoch time */
 } connector_time_epoch_whole_t;
 /**
 * @}
