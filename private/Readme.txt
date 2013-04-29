@@ -24,9 +24,9 @@ ENHANCEMENTS
         This is the initial public release and a replacement product 
         for the iDigi Connector for Embedded.  
         
-        With respect to iDigi Connector v1.2, the Cloud Connector  
-        includes optimized Remote Configuration support with radically 
-        smaller memory foot print and reduced network bandwidth needs; 
+        With respect to iDigi Connector v1.2, Cloud Connector includes 
+        optimized Remote Configuration support with significantly 
+        smaller memory foot print and reduced network bandwidth usage; 
         Support for Data Streams, and support for Short Messaging over 
         UDP.
 
@@ -50,9 +50,9 @@ HISTORY
         This is the initial public release and a replacement product 
         for the iDigi Connector for Embedded.  
         
-        With respect to iDigi Connector v1.2, the Cloud Connector  
-        includes optimized Remote Configuration support with radically 
-        smaller memory foot print and reduced network bandwidth needs; 
+        With respect to iDigi Connector v1.2, Cloud Connector includes 
+        optimized Remote Configuration support with significantly 
+        smaller memory foot print and reduced network bandwidth usage; 
         Support for Data Streams, and support for Short Messaging over 
         UDP.
 
