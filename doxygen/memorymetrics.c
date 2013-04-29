@@ -204,7 +204,14 @@
  * All measurements above were taken with @ref CONNECTOR_MSG_MAX_TRANSACTION set to 1
  *
  * @section StackRequirements Program Stack Usage
- * The following program stack usage was observed using gcc 4.2.0 compiled for a 32-bit ARM9 TDMI architecture.
+ * This data was generated using Kubuntu 10.04 and gcc v4.4.3 for 32-bit i486 architecture
+ * on a build optimized for size (-Os) with @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_DATA_SERVICE,
+ * @ref CONNECTOR_FILE_SYSTEM and @ref CONNECTOR_FIRMWARE_SERVICE enabled.
+ *
+ * This includes all stack usage from within the private Cloud Connector library, but none of the code implemented in the @ref connector_callback_t
+ * "application-defined callback".  These metrics should be treated as typical.  It is recommended that the actual program stack size
+ * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client,
+ * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
  *
  * @htmlonly
  * <table class="apitable">
@@ -214,19 +221,18 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_DEBUG @htmlonly disabled</td>
- * <td>1107</td>
+ * <td>1091</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_DEBUG @htmlonly enabled</td>
- * <td>1043</td>
+ * <td>1027</td>
  * </tr>
  * </table>
  * @endhtmlonly
  *
- * This includes all code from within the private Cloud Connector library, but none of the code implemented in the @ref connector_callback_t
- * "application-defined callback".  These metrics should be treated as typical.  It is recommended that the actual program stack size
- * used to call @ref connector_run() or connector_step() be these metrics plus the amount of memory typical for handling a TCP network client,
- * or a thread that accesses local configuration, or makes malloc/free OS calls, whichever is the worst case.
+ * @note We acknowledge the metric for the @ref CONNECTOR_DEBUG enabled versus disabled is unexpectedly
+ * lower.  We assume this is due to a compiler optimization.
+ *
  *
  *
  * @htmlinclude terminate.html
