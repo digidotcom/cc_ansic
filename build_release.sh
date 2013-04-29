@@ -66,6 +66,7 @@ cd ..
 mkdir -p docs/html
 cp -rf doxygen/html/* docs/html
 cp doxygen/user_guide.html docs/
+cp doxygen/images/cloud-connector-logo-H.png docs/html
 
 # Create a "${PRODUCT_NAME}" subdirectory which will be the root of the tarball.
 echo ">> Creating ${BASE_DIR} and copying public and private directories to it."
