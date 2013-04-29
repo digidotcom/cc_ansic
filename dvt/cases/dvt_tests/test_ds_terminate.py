@@ -58,10 +58,12 @@ def send_device_request(self, target_name, target_content):
     device_request_response = self.session.post('http://%s/ws/sci' % self.hostname, 
         data=my_target_device_request).content
         
+    self.log.info("Response: %s" % device_request_response)
+
     # Parse request response 
     dom = xml.dom.minidom.parseString(device_request_response)
     device_response = dom.getElementsByTagName("device_request")
-    
+
     # Validate target name
     my_target_name = device_response[0].getAttribute('target_name')
 #    if my_target_name != target_name:
