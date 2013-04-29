@@ -182,19 +182,16 @@
  *
  * @see @ref connector_initiate_action()
  * @see @ref ping_response_callback
- * @see @ref cancel_session
  *
  * @subsection ping_response_callback  Ping Device Cloud Response callback
  *
  * The ping_response_callback is made for one of the following conditions: 
- * the ping was successfully sent; the ping request has been canceled; a ping response has been received
+ * the ping was successfully sent or a ping response has been received
  * from the cloud, the ping timed out, or an error occurred. 
  *
  * @note When @ref initiate_ping_to_cloud operation has the response_required set @ref connector_false, this callback
  * is made with the @ref connector_sm_ping_response_t status set to @b connector_sm_ping_status_complete when the
- * message is sent.  If the @ref initiate_ping_to_cloud operation is @ref cancel_session "canceled" before the
- * message is sent, this callback is made with the @ref connector_sm_ping_response_t status is set to
- * @b connector_sm_ping_status_cancel.
+ * message is sent.
  *
  * @htmlonly
  * <table class="apitable">
@@ -219,8 +216,7 @@
  *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_udp. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: The user_context pointer from the  @endhtmlonly @ref initiate_ping_to_cloud. @htmlonly </li>
  *       <li><b><i>status</i></b>: The response code, where @endhtmlonly @b connector_sm_ping_status_success indicates reply
- *                 received, @b connector_sm_ping_status_complete indicates @ref initiate_ping_to_cloud sent,
- *                 and @b connector_sm_ping_status_cancel indicates the session was @ref cancel_session "canceled". @htmlonly </li>
+ *                 received, @b connector_sm_ping_status_complete indicates @ref initiate_ping_to_cloud sent. @htmlonly </li>
  *     </ul>
  *   </td>
  * </tr>
@@ -614,71 +610,12 @@
  * @endcode
  *
  *
- * @subsection cancel_session  Cancel request
- *
- * Cancels the prior command related to user_context.  Applications call @ref connector_initiate_action
- * with @ref connector_initiate_session_cancel request and @ref connector_sm_cancel_request_t
- * "connector_sm_cancel_request_t" request_data.
- *
- * Typically used to cancel a session for which no response was received.  The assumption being the initial message
- * or the Cloud reply was lost due to @ref smcomplications "UDP reliability".
- *
- * The @ref connector_initiate_action "initiate cancel" is called with the following arguments:
- *
- * @htmlonly
- * <table class="apitable">
- * <tr>
- *   <th colspan="2" class="title">Arguments</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Name</th>
- *   <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <td>handle</td>
- *   <td>@endhtmlonly @ref connector_handle_t @htmlonly returned from the @endhtmlonly connector_init() @htmlonly function.</td>
- * </tr>
- * <tr>
- *   <td>request</td>
- *   <td>@endhtmlonly @ref connector_initiate_session_cancel @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>request_data</td>
- *   <td>Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
- *      <ul>
- *       <li><b><i>transport</i></b>: @endhtmlonly Should be set to @ref connector_transport_udp. @htmlonly </li>
- *         <li><b><i>user_context</i></b>: The user_context from original request. </li>
- *      </ul>
- *   </td>
- * </tr>
- * <tr> <th colspan="2" class="title">Return Values</th> </tr>
- * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_success @htmlonly</th>
- *   <td>Cancel session initiated</td>
- * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_unavailable @htmlonly</th>
- *   <td>Cloud Connector is not running (not started or stopped) </td>
- * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_service_busy @htmlonly</th>
- *   <td>Previous SM request is not yet processed</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
- * @note A Device Cloud response to a canceled session will result in @ref opaque_response.
- *
- * @see @ref connector_initiate_action()
- * @see @ref opaque_response
- *
- * @subsection opaque_response  Unsequenced Message callback
+* @subsection opaque_response  Unsequenced Message callback
  *
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
  * to notify an application that a response was received with no known associated request.  The reason
- * for this is either the session  @ref CONNECTOR_SM_TIMEOUT "timed-out", was @ref cancel_session "canceled"
- * by the Application, or the transport was @ref connector_initiate_stop_request_t "terminated" and the Message context lost.
+ * for this is either the session  @ref CONNECTOR_SM_TIMEOUT "timed-out", or the transport was
+ * @ref connector_initiate_stop_request_t "terminated" and the Message context lost.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -728,7 +665,6 @@
  * </table>
  * @endhtmlonly
  *
- * @see @ref cancel_session
  * @see @ref CONNECTOR_SM_TIMEOUT
  *
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
