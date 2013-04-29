@@ -32,23 +32,21 @@
  *
  * @subsection smsolutions How does Short Messaging solve my problem?
  *
- * A device need not always have a TCP connection.  Further, some
- *
- * devices can eliminate this connection altogether.
- * For example, a cellular based device might send GPS data to Device Cloud
- * every few hours and then check for remote instructions.  Based on the instruction, the
- * application could then start a TCP connection and perform a standard Cloud Connector
+ * A device need not always have a TCP connection.  Further, some devices can eliminate
+ * this connection altogether.  For example, a cellular based device might send GPS data to
+ * Device Cloud every few hours and then check for remote instructions.  Based on the instruction,
+ * the application could then start a TCP connection and perform a standard Cloud Connector
  * operation.
  *
  * Alternatively, a battery based device might power up, read a sensor,
- * send the data to Device Cloud, check for pending @ref web_services "Web Service" instructions,
+ * send the data to Device Cloud, check for pending @ref pending_data "Web Service" instructions,
  * and then shut down if no instructions are queued.
  *
  * In these two examples, minimizing network traffic is essential.  In the latter example,
- * shutting power as soon as possible is @ref pending_data "critical".
+ * shutting power as soon as possible is critical.
  *
  * The system requirements of your application will have radical effects on your SM design.
- * You can always optimize one thing, like power consumption, or network traffic, but this
+ * You can always optimize the power consumption, or network traffic, but this
  * comes with the additional application overhead.
  *
  * @subsection smcomplications How does Short Messaging complicate my application?
@@ -58,7 +56,7 @@
  * Depending on what you optimize, a device will need to consider
  * the unreliability of UDP.
  *
- * Suppose your application samples data periodically and sends to Device Cloud once
+ * Suppose your application collects data periodically and sends it to Device Cloud once
  * per hour.  What if the data is lost?  Can your system tolerate this?  If not, you'll
  * need your application to check for acknowledgments.  After some period of time
  * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
