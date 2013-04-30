@@ -508,7 +508,7 @@
  *
  * The @ref connector_request_id_sm_cli_status callback is made when an unexpected CLI error occurs during
  * a @ref cli_cb_sequence.  This error can occur if the @ref connector_initiate_stop_request_t "stop transport"
- * was initiated wile processing a CLI request or if Cloud Connector fails to allocate the required resources.
+ * was initiated while processing a CLI request or if Cloud Connector fails to allocate the required resources.
  *
  * @htmlonly
  * <table class="apitable">
