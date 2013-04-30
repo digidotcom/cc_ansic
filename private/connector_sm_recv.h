@@ -156,6 +156,13 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
     uint8_t * data_ptr = &recv_ptr->data[recv_ptr->processed_bytes];
     uint8_t * const segment = data_ptr;
 
+    header->segment.count = 1;
+    header->segment.number = 0;
+    header->bytes = 0;
+    header->command = connector_sm_cmd_opaque_response;
+    header->isError = connector_false;
+    header->isCompressed = connector_false;
+
     {
         uint8_t const info_field = message_load_u8(segment, info);
         uint8_t const request_id_high_bits_mask = 0x03;
@@ -409,8 +416,6 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
     size_t sm_bytes = recv_ptr->total_bytes - recv_ptr->processed_bytes;
 
     sm_header.isPackCmd = connector_false;
-    sm_header.segment.count = 1;
-    sm_header.segment.number = 0;
     sm_header.crc16 = 0;
     do
     {
