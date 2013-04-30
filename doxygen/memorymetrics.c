@@ -165,7 +165,7 @@
  * </tr>
  * <tr>
  * <td>With @endhtmlonly @ref CONNECTOR_DATA_SERVICE @htmlonly enabled</td>
- * <td>96</td>
+ * <td>3376</td>
  * <td>96</td>
  * <td></td>
  * </tr>
@@ -201,7 +201,7 @@
  * </table>
  * @endhtmlonly
  *
- * All measurements above were taken with @ref CONNECTOR_MSG_MAX_TRANSACTION set to 1
+ * @note All measurements above were taken with @ref CONNECTOR_MSG_MAX_TRANSACTION set to 1
  *
  * @section StackRequirements Program Stack Usage
  * This data was generated using Kubuntu 10.04 and gcc v4.4.3 for 32-bit i486 architecture
