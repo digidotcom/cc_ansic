@@ -18,7 +18,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-extern connector_callback_status_t app_data_point_handler(connector_request_id_data_service_t const request, void  * const data);
+extern connector_callback_status_t app_data_point_handler(connector_request_id_data_point_t const request, void  * const data);
 extern connector_status_t app_send_data_point(connector_handle_t handle, void * const points, size_t const index);
 extern void * app_allocate_data_points(size_t const points_count);
 extern void app_free_data_points(void * points);
