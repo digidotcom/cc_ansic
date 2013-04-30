@@ -97,10 +97,16 @@
  * This example will invoke Cloud Connector to send binary data point to Device
  * Cloud.  The result of this operation adds an entry in run_dp_binary data stream on Device Cloud.
  *
- * @note: The dp_binary_data, path and dp_value above are not stack variables. Either you can use a heap or a memory (global or static)
+ * @note The dp_binary_data, path and dp_value above are not stack variables. Either you can use a heap or a memory (global or static)
  * variable to hold these values. You can release them when you get a @ref connector_request_id_data_point_binary_response "response"
  * or @ref connector_request_id_data_point_binary_status "status" callback. The value passed as the user_context will be returned
  * in the callback.
+ *
+ * @see connector_initiate_action()
+ * @see @ref binary_point_response
+ * @see connector_request_data_point_binary_t
+ * @see connector_initiate_data_point_binary
+ *
  *
  * @subsection binary_point_response  Binary data point response
  *
@@ -156,6 +162,9 @@
  * </table>
  * @endhtmlonly
  *
+ * @see @ref initiate_binary_point
+ * @see connector_data_point_response_t
+ * @see connector_request_id_data_point_binary_response
  *
  * @subsection binary_point_status  Binary data point status
  *
@@ -253,9 +262,9 @@
  *        <li><b><i>path</i></b>, pointer to data stream name </li>
  *        <li><b><i>unit</i></b>, a null-terminated unit, optional field, set to NULL if not used </li>
  *        <li><b><i>forward_to</i></b>, comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) </li>
- *        <li><b><i>point</i></b>, pointer to a @ref connector_data_point_t "data point structure" </li>
+ *        <li><b><i>point</i></b>, pointer to a @endhtmlonly @ref connector_data_point_t "connector_data_point_t" @htmlonly</li>
  *        <li><b><i>response_required</i></b>, set to connector_true if response is needed </li>
- *        <li><b><i>type</i></b>, data point @ref connector_data_point_type_t "content type" </li>
+ *        <li><b><i>type</i></b>, data point @endhtmlonly @ref connector_data_point_type_t "connector_data_point_type_t" @htmlonly </li>
  *      </ul>
  *    </td>
  * </tr>
@@ -273,13 +282,14 @@
  *   <th>@endhtmlonly @ref connector_service_busy @htmlonly</th>
  *   <td>Previous binary data point is not yet processed</td>
  * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_service_busy @htmlonly</th>
- *   <td>Previous binary data point is not yet processed</td>
- * </tr>
  * </table>
  * @endhtmlonly
  *
+ *@see connector_data_point_type_t
+ *@see connector_data_point_t
+ *@see connector_request_data_point_single_t
+ *@see connector_initiate_action()
+ *@see @ref single_stream_point_response
  *
  * An example of initiating a single stream data points transfer is shown @ref data_point_sample.
  *
@@ -337,10 +347,14 @@
  * </table>
  * @endhtmlonly
  *
+ * @see connector_request_id_data_point_single_response
+ * @see connector_data_point_response_t
+ * @see connector_request_data_point_single_t
+ * @see @ref initiate_single_stream_points
+
  * @subsection single_stream_point_status  Single stream data point status
  *
- * Cloud Connector makes @ref connector_request_id_data_point_single_status single stream data point status"
- * @ref connector_callback_t "callback"
+ * Cloud Connector makes @ref connector_request_id_data_point_single_status @ref connector_callback_t "callback"
  *
  * The @ref connector_request_id_data_point_single_status "single stream data point status"
  * @ref connector_callback_t "callback" is called with the following information:
