@@ -2,18 +2,17 @@
  *
  * @htmlinclude nav.html
  *
- * @section table_of_contents Overview
- *
- *          -# @ref intro
- *          -# @ref language
- *          -# @ref requirements
- *          -# @ref features
- *          -# @ref communicating
- *          -# @ref threading
- *          -# @ref code_organization
- *          -# @ref PortingFocus
- *              -# @ref DebugTips
- *          -# @ref the_getting_started_process
+ * @section table_of_contents Overview 
+ *     -# @ref intro
+ *     -# @ref language
+ *     -# @ref requirements
+ *     -# @ref features
+ *     -# @ref communicating
+ *     -# @ref threading
+ *     -# @ref code_organization
+ *     -# @ref PortingFocus
+ *         -# @ref DebugTips
+ *     -# @ref the_getting_started_process
  *
  * @section intro Introduction
  *
