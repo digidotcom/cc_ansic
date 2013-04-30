@@ -1,16 +1,16 @@
 body {
-	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
-	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif; color: #404041;
+    font-size: 12px;
 	width: 100%
 }
 
 div, table, dl {
-	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 }
 
 p {
-	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
     width: 60em;
 }
@@ -19,19 +19,20 @@ p {
 
 h1 {
 	font-size: 150%;
+    color: #4f5454;
 }
 
 .title {
 	font-size: 150%;
-        color: #0404B4;
+        color: #4f5454;
 	font-weight: bold;
 	margin: 10px 2px;
 }
 
 h2 {
 	font-size: 130%;
-        color: #0404B4;
-       border-bottom: 1px solid #0404B4;
+        color: #ff6319;
+       border-bottom: 1px solid #DAD5C9;
 }
 
 h3 {
@@ -110,13 +111,13 @@ div.navtab {
 /* @group Link Styling */
 
 a {
-	color: #3D578C;
+	color: #007AC9;
 	font-weight: normal;
 	text-decoration: none;
 }
 
 .contents a:visited {
-	color: #4665A2;
+	color: #007AC9;
 }
 
 a:hover {
@@ -129,9 +130,9 @@ a.qindex {
 
 a.qindexHL {
 	font-weight: bold;
-	background-color: #9CAFD4;
+	background-color: #BEB7A7;
 	color: #ffffff;
-	border: 1px double #869DCA;
+	border: 1px double #DAD5C9;
 }
 
 .contents a.qindexHL:visited {
@@ -146,11 +147,11 @@ a.elRef {
 }
 
 a.code {
-	color: #4665A2;
+	color: #4f5454;
 }
 
 a.codeRef {
-	color: #4665A2;
+	color: #ADADAD;
 }
 
 /* @end */
@@ -165,8 +166,8 @@ dl.el {
 }
 
 pre.fragment {
-	border: 1px solid #C4CFE5;
-	background-color: #FBFCFD;
+	border: 1px solid #BEB7A7;
+	background-color: #DAD5C9;
 	padding: 4px 6px;
     margin: 4px 8px 4px 2px;
 	overflow: auto;
@@ -205,29 +206,29 @@ div.groupText {
 }
 
 div.navtable {
-	border-right: 1px solid #C4CFE5;
+	border-right: 1px solid #4F5454;
         /* white-space: nowrap; */
-	/* border: 1px solid #A3B4D7; */
-	/* background-color: #EBEFF6; */
+	/* border: 1px solid #BEB7A7; */
+	/* background-color: #DAD5C9; */
 }
 
 .navtable a:hover
 {
     color:            #FFFFFF;
     /* font-weight:        bold; */
-    background-color: #405D79;
+    background-color: #DAD5C9;
 }
 
 
 .navcolor {
     /* font-weight:        bold; */
-    background-color: #C0DDF9;
+    background-color: #DAD5C9;
 }
 
 
 body {
 	background-color: white;
-	color: black;
+	color: #4F5454;
         margin: 0;
 }
 
@@ -246,14 +247,14 @@ td.indexkey {
 }
 
 td.indexvalue {
-	background-color: #EBEFF6;
-	border: 1px solid #C4CFE5;
+	background-color: #DAD5C9;
+	border: 1px solid #BEB7A7;
 	padding: 2px 10px;
 	margin: 2px 0px;
 }
 
 tr.memlist {
-	background-color: #EEF1F7;
+	background-color: #DAD5C9;
 }
 
 p.formulaDsp {
@@ -304,7 +305,7 @@ span.keywordflow {
 }
 
 span.comment {
-	color: #800000
+	color: #604020
 }
 
 span.preprocessor {
@@ -363,18 +364,18 @@ td.tiny {
 .dirtab {
 	padding: 4px;
 	border-collapse: collapse;
-	border: 1px solid #A3B4D7;
+	border: 1px solid #BEB7A7;
 }
 
 th.dirtab {
-	background: #EBEFF6;
+	background: #DAD5C9;
 	font-weight: bold;
 }
 
 hr {
 	height: 0px;
 	border: none;
-	border-top: 1px solid #4A6AAA;
+	border-top: 1px solid #BEB7A7;
 }
 
 hr.footer {
@@ -403,7 +404,7 @@ table.memberdecls {
 }
 
 .memItemLeft, .memItemRight, .memTemplParams {
-	border-top: 1px solid #C4CFE5;
+	border-top: 1px solid #BEB7A7;
 }
 
 .memItemLeft, .memTemplItemLeft {
@@ -661,13 +662,13 @@ table.doxtable {
 }
 
 table.doxtable td, table.doxtable th {
-	border: 1px solid #2D4068;
+	border: 1px solid #BEB7A7;
 	padding: 3px 7px 2px;
 }
 
 table.doxtable th {
-	background-color: #374F7F;
-	color: #FFFFFF;
+	background-color: #FFFFFF;
+	color: #4F5454;
 	font-size: 110%;
 	padding-bottom: 4px;
 	padding-top: 5px;
@@ -676,7 +677,7 @@ table.doxtable th {
 
 table.fieldtable {
         margin-bottom: 10px;
-        border: 1px solid #A8B8D9;
+        border: 1px solid #BEB7A7;
         border-spacing: 0px;
         -moz-border-radius: 4px;
         -webkit-border-radius: 4px;
@@ -692,13 +693,13 @@ table.fieldtable {
 
 .fieldtable td.fieldtype, .fieldtable td.fieldname {
         white-space: nowrap;
-        border-right: 1px solid #A8B8D9;
-        border-bottom: 1px solid #A8B8D9;
+        border-right: 1px solid #BEB7A7;
+        border-bottom: 1px solid #BEB7A7;
         vertical-align: top;
 }
 
 .fieldtable td.fielddoc {
-        border-bottom: 1px solid #A8B8D9;
+        border-bottom: 1px solid #BEB7A7;
 		width: 100%
 }
 
@@ -709,9 +710,9 @@ table.fieldtable {
 .fieldtable th {
         background-image:url('nav_f.png');
         background-repeat:repeat-x;
-        background-color: #E2E8F2;
+        background-color: #FFFFFF;
         font-size: 90%;
-        color: #253555;
+        color: #4F5454;
         padding-bottom: 4px;
         padding-top: 5px;
         text-align:left;
@@ -721,7 +722,7 @@ table.fieldtable {
         -webkit-border-top-right-radius: 4px;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
-        border-bottom: 1px solid #A8B8D9;
+        border-bottom: 1px solid #BEB7A7;
 }
 
 
@@ -791,27 +792,27 @@ table.fieldtable {
 table.apitable {
     /* width: 50% */
 	border-collapse:collapse;
-    border: 4px solid #2D4068;
+    border: 2px solid #ADADAD;
     border-spacing: 0px;
 }
 
 .apitable td, .apitable th {
-    border: 1px solid #2D4068;
+    border: 1px solid #4f5454;
     padding: 3px 7px 5px;
 	text-align: left;
 }
 
 .apitable th.title {
-    border: 1px solid #2D4068;
-    background-color: #108244;
+    border: 1px solid #4f5454;
+    background-color: #FFFFFF;
     font-size: 110%;
-	color: #FFFFFF;
+	color: #4f5454;
 	text-align: left;
 }
 
 .apitable th.subtitle{
-    border: 1px solid #2D4068;
-    background-color: #CCCCCC;
+    border: 1px solid #4f5454;
+    background-color: #FFFFFF;
     font-size: 100%;
 	text-align: left;
 }
@@ -848,9 +849,9 @@ div.header
 {
     background-image:url('nav_h.png');
     background-repeat:repeat-x;
-	background-color: #F9FAFC;
+	background-color: #FFFFFF;
 	margin:  0px;
-	border-bottom: 1px solid #C4CFE5;
+	border-bottom: 1px solid #BEB7A7;
 }
 
 div.headertitle
@@ -871,17 +872,17 @@ dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated,
 
 dl.note
 {
-        border-color: #D0C000;
+        border-color: #ff6319;
 }
 
 dl.warning, dl.attention
 {
-        border-color: #FF0000;
+        border-color: #ff6319;
 }
 
 dl.pre, dl.post, dl.invariant
 {
-        border-color: #00D000;
+        border-color: #BEB7A7;
 }
 
 dl.deprecated
@@ -942,12 +943,13 @@ dl.bug
 	padding: 0px;
 	margin: 0px;
 	width: 100%;
-	border-bottom: 1px solid #5373B4;
+    background-color: #007AC9;
+	border-bottom: 1px solid #DAD5C9;
 }
 
 .image
 {
-        text-align: left;
+        text-align: center;
 }
 
 .dotgraph
@@ -967,7 +969,7 @@ dl.bug
 
 div.zoom
 {
-	border: 1px solid #90A5CE;
+	border: 1px solid #BEB7A7;
 }
 
 dl.citelist {
