@@ -2,7 +2,7 @@
  *
  * @htmlinclude nav.html
  *
- * @section status_callbacks_overview Status callbacks Overview
+ * @section status_callbacks_overview Status Callbacks Overview
  *
  * The status callbacks APIs are used to send and receive status messages to and from Device Cloud and to notify
  * application when TCP communication is established, keep alive message is not received from Device Cloud, keep alive
