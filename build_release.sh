@@ -96,6 +96,9 @@ else
     exit 1
 fi
 
+# Allows a Linux system to view the html page.  See IC4C-105
+chmod -x "${BASE_DIR}/getting_started.html"
+
 # Replace the version number in Readme.txt to match the Tag used to build
 if [ $TAG != "" ]
   then
