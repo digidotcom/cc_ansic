@@ -223,7 +223,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                 #endif
 
                 default:
-                    point->time.source = connector_time_server;
+                    point->time.source = connector_time_cloud;
                     break;
             }
         }
