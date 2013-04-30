@@ -18,7 +18,7 @@
 *
 *                                          Freescale Kinetis
 *                                           featured on the
-*                                        Freescale TWR-K53N512
+*                                        Freescale TWR-KxxN512
 *                                          Evaluation Board
 *
 * Filename      : includes.h
@@ -62,7 +62,7 @@
 *********************************************************************************************************
 */
 
-#include  <MK53N512CMD100.h>
+#include  <MKxxN512yyy100.h>
 
 
 /*

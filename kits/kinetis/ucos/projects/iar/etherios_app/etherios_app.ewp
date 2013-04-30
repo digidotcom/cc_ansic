@@ -710,7 +710,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\..\..\BSP\Freescale\K53X_Flash.icf</state>
+          <state>$PROJ_DIR$\..\..\BSP\Freescale\KxxX_Flash.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1916,7 +1916,7 @@
         <name>$PROJ_DIR$\..\..\BSP\Freescale\low_level_init.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\BSP\Freescale\MK53N512CMD100.h</name>
+        <name>$PROJ_DIR$\..\..\BSP\Freescale\MKxxN512yyy100.h</name>
       </file>
     </group>
     <group>

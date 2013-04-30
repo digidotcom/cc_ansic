@@ -15,10 +15,10 @@
 *********************************************************************************************************
 *                                      APPLICATION CONFIGURATION
 *
-*                                        Freescale Kinetis K53
+*                                        Freescale Kinetis Kxx
 *                                               on the
 *
-*                                       Freescale TWR-K53N512
+*                                       Freescale TWR-KxxN512
 *                                          Evaluation Board
 *
 * Filename      : app_cfg.h

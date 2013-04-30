@@ -35,7 +35,7 @@
 *
 *                                          Freescale Kinetis
 *                                               on the
-*                                        Freescale TWR-K53N512
+*                                        Freescale TWR-KxxN512
 *                                          Evaluation Board
 *
 * Filename      : app.c
@@ -73,7 +73,7 @@ static  CPU_STK  AppTaskStartStk[APP_TASK_START_STK_SIZE];
 static  NET_IP_ADDR  App_IP_DNS_Srvr;
 #endif
 
-extern  const  NET_DEV_CFG_ETHER  NetDev_Cfg_K53N512_0;         /* Ethernet     configuration                           */
+extern  const  NET_DEV_CFG_ETHER  NetDev_Cfg_KxxN512_0;         /* Ethernet     configuration                           */
 extern  const  NET_PHY_CFG_ETHER  NetPhy_Cfg_0;                 /* Ethernet PHY configuration                           */
 
 
@@ -246,11 +246,11 @@ static  void  AppTCPIP_Init (void)
 
                                                                 /* Add interface device.                                */
     if_nbr  = NetIF_Add((void    *)&NetIF_API_Ether,            /* Ethernet  interface API.                             */
-                        (void    *)&NetDev_API_MACNET,          /* K53N512   device API.                                */
-                        (void    *)&NetDev_BSP_K53N512,         /* K53N512   device BSP.                                */
-                        (void    *)&NetDev_Cfg_K53N512_0,       /* K53N512   device configuration.                      */
+                        (void    *)&NetDev_API_MACNET,          /* KxxN512   device API.                                */
+                        (void    *)&NetDev_BSP_KxxN512,         /* KxxN512   device BSP.                                */
+                        (void    *)&NetDev_Cfg_KxxN512_0,       /* KxxN512   device configuration.                      */
                         (void    *)&NetPhy_API_Generic,         /* Generic   Phy API.                                   */
-                        (void    *)&NetPhy_Cfg_0,               /* K53N512   PHY configuration.                         */
+                        (void    *)&NetPhy_Cfg_0,               /* KxxN512   PHY configuration.                         */
                         (NET_ERR *)&err_net);
 
     APP_TEST_FAULT(err_net, NET_IF_ERR_NONE);                   /* Handle the error.                                    */

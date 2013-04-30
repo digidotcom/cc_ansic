@@ -85,7 +85,7 @@
                                                         /* Declare each specific devices' configuration (see Note #1) : */
 #ifdef  NET_IF_MODULE_ETHER_PRESENT
 
-extern  const  NET_DEV_CFG_ETHER  NetDev_Cfg_K53N512_0; /* Ethernet     configuration #0.                               */
+extern  const  NET_DEV_CFG_ETHER  NetDev_Cfg_KxxN512_0; /* Ethernet     configuration #0.                               */
 extern  const  NET_PHY_CFG_ETHER  NetPhy_Cfg_0;         /* Ethernet PHY configuration #0.                               */
 
 #endif

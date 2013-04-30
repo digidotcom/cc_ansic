@@ -170,7 +170,7 @@ const  NET_IF_CFG_LOOPBACK  NetIF_Cfg_Loopback = {
 
 #ifdef  NET_IF_MODULE_ETHER_PRESENT
 
-const  NET_DEV_CFG_ETHER  NetDev_Cfg_K53N512_0 = {
+const  NET_DEV_CFG_ETHER  NetDev_Cfg_KxxN512_0 = {
 
     NET_IF_MEM_TYPE_MAIN,           /* Desired receive  buffer memory pool type :                                       */
                                     /*   NET_IF_MEM_TYPE_MAIN        buffers allocated from main memory                 */
