@@ -380,7 +380,7 @@
  *   <td> Pointer to @endhtmlonly connector_data_service_receive_target_t @htmlonly structure where:
  *       <dl><dt>transport</dt><dd> - Transport method from where the device request is originated.</dd>
  *           <dt>user_context</dt><dd> - Callback writes its own context which will be passed back to
- *                                       subsequential callback.</dd>
+ *                                       subsequent callback.</dd>
  *           <dt>target</dt><dd> - Contains pointer to requested target string.</dd>
  *           <dt>response_required</dt><dd>
  *               <ul><li>@endhtmlonly @ref connector_true @htmlonly if Device Cloud requests a response and
@@ -445,7 +445,7 @@
  *       <dl><dt>transport</dt><dd> - Transport method from where the device request is originated.</dd>
  *           <dt>user_context</dt><dd> - Pointer to callback's context returned from previous device request callback.
  *                                       Callback may write its own context which will be passed back to
- *                                       subsequential callback.</dd>
+ *                                       subsequent callback.</dd>
  *           <dt>buffer</dt><dd> - Pointer to device request data.</dd>
  *           <dt>bytes_used</dt><dd> - Contains the length of device request data in bytes.</dd>
  *           <dt>more_data</dt><dd> - Contains @endhtmlonly @ref connector_true @htmlonly for more data and this callback
@@ -508,7 +508,7 @@
  *       <dl><dt>transport</dt><dd> - Transport method from where the device request is originated.</dd>
  *           <dt>user_context</dt><dd> - Pointer to callback's context returned from previous device request callback.
  *                                       Callback may write its own context which will be passed back to
- *                                       subsequential callback.</dd>
+ *                                       subsequent callback.</dd>
  *           <dt>buffer</dt><dd> - Pointer to memory where callback writes response data to.</dd>
  *           <dt>bytes_available</dt><dd> - Contains number of bytes available in the buffer.</dd>
  *           <dt>bytes_used</dt><dd> - Callback writes number of bytes written onto the buffer.</dd>
@@ -568,7 +568,7 @@
  *       <dl><dt>transport</dt><dd> - Transport method from where the device request is originated.</dd>
  *           <dt>user_context</dt><dd> - Pointer to callback's context returned from previous device request callback.
  *                                       Callback may write its own context which will be passed back to
- *                                       subsequential callback.</dd>
+ *                                       subsequent callback.</dd>
  *           <dt>total_bytes</dt><dd> - Callback writes total number of bytes for the response data.
  *       </dd></dl>
  * </td>

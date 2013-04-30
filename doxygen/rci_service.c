@@ -78,7 +78,7 @@
  * <td> Pointer to @endhtmlonly connector_remote_config_t @htmlonly structure:
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Callback writes its own context which will be passed back to
- *                subsequential callback.</dd>
+ *                subsequent callback.</dd>
  *         <dt><i>group</i></dt><dd>Not applicable</dd>
  *         <dt><i>element</i></dt><dd>Not applicable</dd>
  *         <dt><i>error_id</i></dt>
@@ -157,7 +157,7 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.
  *                Callback may write its own context which will be passed back to
- *                subsequential callback.</dd>
+ *                subsequent callback.</dd>
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
@@ -233,7 +233,7 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.
  *                 Callback may write its own context which will be passed back to
- *                 subsequential callback.</dd>
+ *                 subsequent callback.</dd>
  *
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
@@ -342,7 +342,7 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.
  *                     Callback may write its own context which will be passed back to
- *                     subsequential callback.</dd>
+ *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
  *         <dd> - the @endhtmlonly @ref connector_remote_action_set @htmlonly </dd>
  *
@@ -491,7 +491,7 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.
  *                Callback may write its own context which will be passed back to
- *                 subsequential callback.</dd>
+ *                 subsequent callback.</dd>
  *
  *         <dt><i>action</i></dt>
  *         <dd> - the @endhtmlonly @ref connector_remote_action_query @htmlonly </dd>
@@ -648,7 +648,7 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.
  *                 Callback may write its own context which will be passed back to
- *                 subsequential callback.</dd>
+ *                 subsequent callback.</dd>
  *
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
@@ -742,7 +742,7 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.
  *                Callback may write its own context which will be passed back to
- *                subsequential callback.</dd>
+ *                subsequent callback.</dd>
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
