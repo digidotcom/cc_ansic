@@ -10,6 +10,56 @@
  * =======================================================================
  */
 
+/* Example of adding a static buffer (single structure) or static buffer array named my_data
+ *  
+ * In os_intf.h: 
+ * 1. Add to connector_static_buffer_id_t:
+ *      named_buffer_id(my_data)
+ * - Single buffers share a msg_facility map, and their id's should go up from the bottom (28, 27, etc.)
+ * - All arrays should be before single buffers
+ *  
+ * In this file:
+ * 2. - If there is a type, add:
+ *         typedef my_buffer_type_t named_buffer_type(my_data);
+ *  
+ *    - If you know size in bytes instead (for example 100 bytes), add:
+ *         define_sized_buffer_type(my_data, 100);
+ *  
+ * For a single static buffer:
+ * 3. Add to connector_static_mem: 
+ *      named_buffer_define(my_data);
+ *  
+ * 4. Add to malloc_static_data(): 
+ *      case named_buffer_id(my_data):
+ *         malloc_named_static_buffer(my_data, size, ptr, status);
+ *         break;
+ *  
+ * 5. Add to free_static_data(): 
+ *      case named_buffer_id(my_data):
+ *           free_named_static_buffer(my_data);
+ *           break;
+ *  
+ * For an array of 20 elements (must be <= 32): 
+ * 3. Add: 
+ *      #define my_data_buffer_cnt 20
+ *  
+ * 4. Add to connector_static_mem: 
+ *      named_buffer_array_define(my_data);
+ *      named_buffer_map_define(my_data);
+ *
+ * 5. Add to malloc_static_data(): 
+ *      case named_buffer_id(my_data):
+ *         malloc_named_array_element(my_data, size, ptr, status);
+ *         break;
+ * 
+ * 6. Add to free_static_data(): 
+ *      case named_buffer_id(my_data):
+ *           free_named_array_element(my_data, ptr);
+ *           break;
+ * 
+ */
+
+
 #define named_buffer_type(name)         name##_static_buffer_t
 #define named_buffer_decl(name)         name
 #define named_buffer_map_decl(name)     name##_map
