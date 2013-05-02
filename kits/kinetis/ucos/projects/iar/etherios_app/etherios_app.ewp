@@ -99,7 +99,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>MK53DN512Zxxx10	Freescale MK53DN512Zxxx10</state>
+          <state>__RELACE_WITH__CHIP__</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1035,7 +1035,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>MK53DN512Zxxx10	Freescale MK53DN512Zxxx10</state>
+          <state>__RELACE_WITH__CHIP__</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
