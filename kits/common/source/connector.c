@@ -16,6 +16,9 @@
 #ifdef CONNECTOR_DATA_SERVICE
 #include "data_service.h"
 #endif
+#ifdef CONNECTOR_DATA_POINTS
+#include "data_point.h"
+#endif
 #include "connector_config.h"
 #include "connector_debug.h"
 
@@ -37,6 +40,58 @@ typedef struct
 #endif
 
 static connector_handle_t connector_handle = NULL;
+static connector_bool_t connection_ready = connector_false;
+void *get_connector_handle(void)
+{
+	return connector_handle;
+}
+
+connector_bool_t get_connection_status(void)
+{
+	return connection_ready;
+}
+static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
+{
+
+    switch (*status)
+    {
+    case connector_tcp_communication_started:
+        APP_DEBUG("connector_tcp_communication_started\n");
+        connection_ready = connector_true;
+        break;
+    case connector_tcp_keepalive_missed:
+        APP_DEBUG("connector_tcp_keepalive_missed\n");
+        break;
+    case connector_tcp_keepalive_restored:
+        APP_DEBUG("connector_tcp_keepalive_restored\n");
+        connection_ready = connector_true;
+        break;
+    }
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    switch (request)
+    {
+        case connector_request_id_status_tcp:
+            status = app_tcp_status(data);
+            break;
+
+        case connector_request_id_status_stop_completed:
+            APP_DEBUG("connector_restore_keepalive\n");
+            break;
+
+        default:
+            APP_DEBUG("Status request not supported in sm_udp: %d\n", request);
+            break;
+    }
+
+    return status;
+}
 
 connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                    connector_request_id_t const request_id,
@@ -64,12 +119,21 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         break;
 #endif
 
+#if (defined CONNECTOR_DATA_POINTS)
+    case connector_class_id_data_point:
+    	status = app_data_point_handler(request_id.data_point_request, data);
+        break;
+#endif
+        
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
     case connector_class_id_firmware:
         status = app_firmware_handler(request_id.data_service_request, data);
         break;
 #endif
 
+    case connector_class_id_status:
+        status = app_status_handler(request_id.status_request, data);
+        break;
 #if (defined CONNECTOR_FILE_SYSTEM)
     case connector_class_id_file_system:
         status = app_file_system_handler(request_id.file_system_request, data);

@@ -50,7 +50,7 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
 
         memcpy(device_mac_addr, literal_mac, sizeof device_mac_addr);
         #if BSPCFG_ENABLE_FLASHX
-        Flash_NVRAM_set_mac_address(device_mac_addr);
+        //Flash_NVRAM_set_mac_address(device_mac_addr);
         #endif
     }
 #elif defined(CONNECTOR_GET_MAC_FROM_NVRAM)

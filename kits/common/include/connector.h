@@ -438,5 +438,6 @@ connector_error_t connector_start(connector_status_callback_t status_callback);
 * @}
 */
 
+void *get_connector_handle(void);
 #endif
 

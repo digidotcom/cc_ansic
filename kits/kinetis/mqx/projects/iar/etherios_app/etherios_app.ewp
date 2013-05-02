@@ -6648,6 +6648,9 @@
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector_types.h</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\Etherios_CC\include\data_point.h</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\Etherios_CC\include\data_service.h</name>
         </file>
         <file>
@@ -6668,6 +6671,9 @@
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector.c</name>
           </file>
           <file>
+            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_point.c</name>
+          </file>
+          <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
           </file>
           <file>
@@ -6681,6 +6687,14 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk60n512 Int Flash Release</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk70f120m Int Flash Debug</configuration>
+              <configuration>twrk70f120m Int Flash Release</configuration>
+            </excluded>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.h</name>
@@ -6696,9 +6710,25 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_twrk60.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk60n512 Int Flash Release</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk70f120m Int Flash Debug</configuration>
+              <configuration>twrk70f120m Int Flash Release</configuration>
+            </excluded>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
+            <excluded>
+              <configuration>twrk60n512 Int Flash Debug</configuration>
+              <configuration>twrk60n512 Int Flash Release</configuration>
+              <configuration>twrk53 Int Flash Debug</configuration>
+              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk70f120m Int Flash Debug</configuration>
+              <configuration>twrk70f120m Int Flash Release</configuration>
+            </excluded>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.h</name>

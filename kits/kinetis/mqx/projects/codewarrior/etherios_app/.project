@@ -134,6 +134,11 @@
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/include/connector_types.h</locationURI>
 		</link>
 		<link>
+			<name>Sources/Etherios_Cloud_Connector/include/data_point.h</name>
+			<type>1</type>
+			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/include/data_point.h</locationURI>
+		</link>
+		<link>
 			<name>Sources/Etherios_Cloud_Connector/include/data_service.h</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/include/data_service.h</locationURI>
@@ -397,6 +402,11 @@
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/connector.c</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/connector.c</locationURI>
+		</link>
+		<link>
+			<name>Sources/Etherios_Cloud_Connector/platform/mqx/data_point.c</name>
+			<type>1</type>
+			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/data_point.c</locationURI>
 		</link>
 		<link>
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/data_service.c</name>

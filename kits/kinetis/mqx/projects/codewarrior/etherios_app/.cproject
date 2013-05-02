@@ -112,7 +112,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_twrk60.c|Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.c|Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx.c|Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -218,7 +218,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_twrk60.c|Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.c|Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx.c|Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -323,7 +323,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_twrk60.c|Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.c|Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx.c|Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -428,7 +428,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_twrk60.c|Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.c|Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx.c|Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -534,7 +534,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_twrk60.c|Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.c|Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx.c|Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -637,7 +637,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_twrk60.c|Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.c|Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx.c|Sources/Etherios_CC/platform/mqx/firmware_twrk60.c|Sources/Etherios_CC/platform/mqx/firmware_mqx.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -743,7 +743,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Sources/Etherios_CC/platform/mqx/firmware_stub.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Sources/Etherios_Cloud_Connector/platform/mqx/firmware_stub.c|Sources/Etherios_CC/platform/mqx/firmware_stub.c|Sources/Etherios Cloud Connector/platform/mqx/main.c|Sources/Etherios Cloud Connector/platform/mqx/remote_config_cb.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
