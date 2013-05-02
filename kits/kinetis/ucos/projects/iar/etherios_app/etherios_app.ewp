@@ -2091,6 +2091,9 @@
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\connector.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\data_service.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\debug.c</name>
         </file>
         <file>

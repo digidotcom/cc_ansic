@@ -9,8 +9,8 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-#ifdef CONNECTOR_DATA_SERVICE
 #include "connector_api.h"
+#ifdef CONNECTOR_DATA_SERVICE
 #include "platform.h"
 #include "os_support.h"
 #include "data_service.h"
