@@ -394,11 +394,6 @@
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/config.c</locationURI>
 		</link>
 		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/config.rci</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/config.rci</locationURI>
-		</link>
-		<link>
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/connector.c</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/connector.c</locationURI>
@@ -469,11 +464,6 @@
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/flash_mqx_iar.h</locationURI>
 		</link>
 		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/gps_stats.c</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/gps_stats.c</locationURI>
-		</link>
-		<link>
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/network.c</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/network.c</locationURI>
@@ -497,26 +487,6 @@
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/platform.h</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/platform.h</locationURI>
-		</link>
-		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/remote_config.h</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/remote_config.h</locationURI>
-		</link>
-		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/remote_config_cb.c</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/remote_config_cb.c</locationURI>
-		</link>
-		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/remote_config_cb.h</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/remote_config_cb.h</locationURI>
-		</link>
-		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/system.c</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/system.c</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
