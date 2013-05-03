@@ -91,7 +91,7 @@ def main():
 	replicate_example("send_data", "53")
 	replicate_example("send_data", "60")
 
-	replicate_example("device_request", iar_workspace)
+	#replicate_example("device_request", iar_workspace)
 
 	delete_example("53")
 	delete_example("60")
