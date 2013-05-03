@@ -6737,9 +6737,6 @@
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx_iar.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
-          </file>
-          <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
           </file>
           <file>
@@ -6753,18 +6750,6 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\platform.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
           </file>
         </group>
       </group>
