@@ -106,7 +106,8 @@ def sandbox(directory):
     place and will allow tests to run concurrently.
     """
     # Get a temporary directory name, then delete it.
-    sandbox_directory = tempfile.mkdtemp(suffix='_ecc')
+    # sandbox_directory = tempfile.mkdtemp(suffix='_ecc')
+    sandbox_directory = tempfile.mkdtemp()
     # Copy tree requires destination to not exist.
     os.removedirs(sandbox_directory)
     shutil.copytree(directory, sandbox_directory, symlinks=True)
