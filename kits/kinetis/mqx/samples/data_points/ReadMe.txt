@@ -11,9 +11,9 @@
 
   Introduction
   ------------
-  This sample demonstrates how one can use the iDigi cloud to control their remote device.
-  
-  The sample allows user to turn ON or OFF the TWR boards' LEDs (LED1 or LED2).
+  This sample sends raw data to the Etherios Device Cloud when push button SW1
+  is pushed once. The data sent will be stored in a specified file path on the
+  Device Cloud.
 
   Requirements
   ------------
@@ -52,63 +52,30 @@
              your device firmware version using the P&E Firmware Updater 
              Utility.
 
-
   Running the example
   -------------------
   Once updated the connector_config.h settings, all you need to do is to build and
   launch the application.
 
-  When the application is running, you can send Device Requests to change the status of the LEDs.
-  To do this from the Etherios webpage, follow these steps:
+  While it is running, you can press the push button 'SW1' to send raw data to
+  the cloud. You can see the console output on the terminal window for the
+  device status.
+
+  To verify that the text file has been uploaded to iDigi successfully, follow
+  these steps:
     1) Open your web browser and navigate to your Device Cloud by Etherios page 
        (login.etherios.com or login.etherios.co.uk) and log in with your username 
        and password.
-    2) Once there, go to the 'Documentation' section.
-    3) Select 'SCI Targets' to open the 'Select devices to be used in examples'
-       dialog. Use the 'Add Targets' combo box to look for the right Device ID,
-       click 'Add' and then 'OK'.
 
-       NOTE: Use the table in 'Device Manager > Devices' section to find
-       out the Device ID of your board.
+    2) Once there, go to the 'Data Services' section from the top menu.
 
-    4) Select the option 'Examples > SCI > Data Service > Send Request', on the
-       left panel a SCI request will be automatically generated.
-    5) Make sure the Device ID tag was automatically set to match your Device's ID.
-    6) Replace the target with "LED1" or "LED2" and the payload with ON or
-       OFF, i.e., to turn on LED1 the request should be:
+    3) Open the storage folder corresponding with your Device ID.
 
-       <sci_request version="1.0">
-          <data_service>
-             <targets>
-                <device id="00000000-00000000-XXXXXXFF-FFXXXXXX"/>
-             </targets>
-             <requests>
-                <device_request target_name="LED1">
-                   ON
-                </device_request>
-             </requests>
-          </data_service>
-       </sci_request>
+       NOTE: Use the table in 'Device Manager' section to find out the Device ID of 
+       your board.
 
-    7) Select 'Send' to see the request coming in the device. You should see
-       the console output on the terminal window for the received request:
-
-       Turning ON LED1
-       LED1 action is Success
-
-    8) Observe the response returned from the device on the 'Web Services
-       Responses' on the right. Click 'Click to examine' to see both request
-       and response, the last will be something similar to:
-
-       <sci_reply version="1.0">
-          <data_service>
-             <device id="00000000-00000000-XXXXXXFF-FFXXXXXX">
-                <requests>
-                   <device_request target_name="LED1" status="1">Success</device_request>
-                </requests>
-             </device>
-          </data_service>
-       </sci_reply>
+    4) You should be able to see a file called 'test.txt' under 'test/'. Open it
+       and verify it contains the text you sent with the application.
 
   Tested On
   ---------

@@ -1,7 +1,7 @@
 
-  o--------------------------------------------o
-  | Send Data to Etherios Device Cloud Example |
-  o--------------------------------------------o
+  o----------------------------------------o
+  | Basic Remote Configuration RCI Example |
+  o----------------------------------------o
 
   Compatible platforms
   --------------------
@@ -11,21 +11,20 @@
 
   Introduction
   ------------
-  This sample sends raw data to the Etherios Device Cloud when push button SW1
-  is pushed once. The data sent will be stored in a specified file path on the
-  Device Cloud.
+  This sample demonstrates how to perform a remote configuration of 
+  the device through Device Cloud using the remote configuration (RCI) service.
 
   Requirements
   ------------
   To run this example you will need:
     * Freescale Tower Kit with Ethernet connection.
-    * An Etherios account with the device registered in.
+    * A Device Cloud account with the device registered in.
 
   Example setup
   -------------
   1) Make sure the hardware is set up correctly:
        a) The device is powered on.
-       b) The device is connected to the Local Area Network (LAN) by the
+       b) The device is connected to the Local Area Network (LAN) by the 
           Ethernet cable and has Internet access.
 
   2) Configure the Etherios settings at the project's connector_config.h file.
@@ -52,7 +51,6 @@
              your device firmware version using the P&E Firmware Updater 
              Utility.
 
-
   Running the example
   -------------------
   Once updated the connector_config.h settings, all you need to do is to build and
@@ -62,21 +60,17 @@
   the cloud. You can see the console output on the terminal window for the
   device status.
 
-  To verify that the text file has been uploaded to iDigi successfully, follow
-  these steps:
+  To verify that that the Remote configuration support is working properly, 
+  follow these steps:
     1) Open your web browser and navigate to your Device Cloud by Etherios page 
        (login.etherios.com or login.etherios.co.uk) and log in with your username 
        and password.
-
-    2) Once there, go to the 'Data Services' section from the top menu.
-
-    3) Open the storage folder corresponding with your Device ID.
-
-       NOTE: Use the table in ''Device Manager > Devices' section to find out the Device ID of 
-       your board.
-
-    4) You should be able to see a file called 'test.txt' under 'test/'. Open it
-       and verify it contains the text you sent with the application.
+    2) Once there, go to the 'Device Manager' section.
+    3) Select 'Devices' to display the list of devices in your Device Cloud 
+       inventory.
+    4) Double-click on your device to access its settings remotely.
+    5) Open the 'System' group and try to change the 'Location' setting. Then 
+       click 'Save' to save this setting remotely.
 
   Tested On
   ---------
