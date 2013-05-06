@@ -150,6 +150,10 @@ def replicate_example(example_name, cw_workspace, iar_workspace):
 		shutil.copy(file, dest_sample_dir_cw + "\\Sources")
 		shutil.copy(file, dest_sample_dir_iar + "\\Sources")
 
+	for file in glob(root_dir + "\\kits\\kinetis\\mqx\\samples\\" + example_name  + "\\*.txt"):
+		shutil.copy(file, dest_sample_dir_cw)
+		shutil.copy(file, dest_sample_dir_iar)
+
 	change_cw_project_name(dest_sample_dir_cw, example_name)
 	change_iar_project_name(dest_sample_dir_iar, example_name)
 
@@ -159,11 +163,13 @@ def copy_rci_files(example_name, cw_workspace, iar_workspace):
 
 	#for file in glob(root_dir + "\\public\\run\\samples\\simple_remote_config\\*.c"):
 	for file in glob(root_dir + "\\public\\run\\samples\\simple_remote_config\\*.c"):
-		shutil.copy(file, dest_sample_dir_cw + "\\Sources")
-		shutil.copy(file, dest_sample_dir_iar + "\\Sources")
+		if ("application.c" not in file) and ("status.c" not in file):
+			shutil.copy(file, dest_sample_dir_cw + "\\Sources")
+			shutil.copy(file, dest_sample_dir_iar + "\\Sources")
 	for file in glob(root_dir + "\\public\\run\\samples\\simple_remote_config\\*.h"):
-		shutil.copy(file, dest_sample_dir_cw + "\\Sources")
-		shutil.copy(file, dest_sample_dir_iar + "\\Sources")
+		if ("connector_config.h" not in file):
+			shutil.copy(file, dest_sample_dir_cw + "\\Sources")
+			shutil.copy(file, dest_sample_dir_iar + "\\Sources")
 	for file in glob(root_dir + "\\public\\run\\samples\\simple_remote_config\\*.rci"):
 		shutil.copy(file, dest_sample_dir_cw + "\\Sources")
 		shutil.copy(file, dest_sample_dir_iar + "\\Sources")
@@ -178,6 +184,8 @@ def main():
 	replicate_example("firmware_update", cw_workspace, iar_workspace)
 	replicate_example("basic_rci", cw_workspace, iar_workspace)
 	copy_rci_files("basic_rci", cw_workspace, iar_workspace)
+
+
 	
 	add_ewdemo_files_to_iar_project(iar_workspace + "\\" + "ewdemo\\ewdemo.ewp")
 	add_firmware_update_files_to_iar_project(iar_workspace + "\\" + "firmware_update\\firmware_update.ewp")
