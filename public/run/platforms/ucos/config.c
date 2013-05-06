@@ -74,7 +74,7 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
     static uint8_t device_mac_addr[NET_IF_ETHER_ADDR_SIZE] = {0};
     NET_IF_NBR if_nbr;
     NET_IF *pif;
-    NET_DEV_CFG_ETHER *pdev_cfg;
+    NET_IF_DATA_802x  *p_if_data;  
     NET_ERR err_net; 
     connector_callback_status_t status = connector_callback_abort;
         
@@ -84,14 +84,10 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
     if (err_net != NET_IF_ERR_NONE)
         goto done;
 
-    pdev_cfg  = pif->Dev_Cfg;  /* Obtain ptr to the dev cfg struct. */
-        
-    /* Get configured HW MAC address string, */
-    NetASCII_Str_to_MAC(pdev_cfg->HW_AddrStr,
-                       (CPU_INT08U*)&device_mac_addr[0],
-                       &err_net);
-    if (err_net != NET_ASCII_ERR_NONE) 
-        goto done;
+    p_if_data = (NET_IF_DATA_802x *)pif->IF_Data;
+    NET_UTIL_VAL_COPY(  device_mac_addr,
+                        &p_if_data->HW_Addr[0],
+                        NET_IF_802x_ADDR_SIZE);
     
     config_mac->data = (uint8_t *)device_mac_addr;
     status = connector_callback_continue;
