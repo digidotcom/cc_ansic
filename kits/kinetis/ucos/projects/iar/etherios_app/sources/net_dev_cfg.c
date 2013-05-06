@@ -207,8 +207,7 @@ const  NET_DEV_CFG_ETHER  NetDev_Cfg_KxxN512_0 = {
 
              0u,                    /* Size           of device's data bus (in bits), if available.                     */
 
-
-   CONNECTOR_MAC_ADDRESS,           /* Desired device hardware address; may be NULL address or string ...               */
+   NULL,                            /* Desired device hardware address; may be NULL address or string ...               */
                                     /* ... if  device hardware address configured or set at run-time.                   */
                                     /* Defined in connector_config.h for Etherios Cloud Connector                       */
 };
