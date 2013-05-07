@@ -90,8 +90,8 @@ def main():
 	replicate_example("connect_to_etherios", "60")
 	replicate_example("send_data", "53")
 	replicate_example("send_data", "60")
-
-	#replicate_example("device_request", iar_workspace)
+	replicate_example("device_request", "53")
+	replicate_example("device_request", "60")
 
 	delete_example("53")
 	delete_example("60")
