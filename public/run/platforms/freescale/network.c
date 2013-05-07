@@ -21,7 +21,7 @@
 #include <connector_debug.h>
 #include <os_support.h>
 
-#if !defined USE_SSL
+#if !defined CONNECTOR_USE_SSL
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
