@@ -6947,6 +6947,9 @@
       <name>$PROJ_DIR$\Sources\main.h</name>
     </file>
   </group>
+  <file>
+    <name>$PROJ_DIR$\ReadMe.txt</name>
+  </file>
 </project>
 
 
