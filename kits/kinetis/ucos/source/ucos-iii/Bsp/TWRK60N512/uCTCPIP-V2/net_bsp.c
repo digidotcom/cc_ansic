@@ -539,7 +539,9 @@ static  CPU_INT32U  NetDev_ClkFreqGet (NET_IF   *pif,
 
     (void)&pif;                                                 /* Prevent 'variable unused' compiler warning.          */
 
+#if 0 //HB: This is making PushButton1 drop voltage to 2v
     OSC_CR |= OSC_CR_ERCLKEN_MASK;                              /* Enable External Reference Clk, OSCERCLK              */
+#endif
     
     clk_freq = BSP_CPU_ClkFreq();                               /* BSP_CPU_ClkFreq() running at 96 MHz                  */
     
@@ -784,8 +786,8 @@ static  void  NetDev_CfgExtIntCtrl (NET_IF   *p_if,
 
 
     BSP_IntVectSet(BSP_INT_ID_PORTA, NetBSP_ISR_HandlerKxxN512_1);       /* Add EXT ISR pin to the ISR handler.                  */
-
 	
+    
    *p_err = NET_DEV_ERR_NONE;
 }
 

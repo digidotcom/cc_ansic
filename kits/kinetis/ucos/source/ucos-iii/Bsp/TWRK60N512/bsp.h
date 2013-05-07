@@ -76,8 +76,8 @@
 #define  BSP_LED_YELLOW            3
 #define  BSP_LED_ORANGE            4
 
-#define  BSP_PB1                   0
-#define  BSP_PB2                   1
+#define  BSP_PB_START              0                  /* Push button at SW1 (start button).                   */
+#define  BSP_PB_STOP               1                  /* Push button at SW2 (stop  button).                   */
 
 #define BSP_CORE_DIV              (1)
 #define BSP_BUS_DIV               (2)
@@ -117,7 +117,7 @@
 #define  BSP_GPIOA_PIN_16                    DEF_BIT_16
 #define  BSP_GPIOA_PIN_17                    DEF_BIT_17
 #define  BSP_GPIOA_PIN_18                    DEF_BIT_18
-#define  BSP_GPIOA_PIN_19                    DEF_BIT_19         /* Push Button 1 @ SW6 in the schematics.               */
+#define  BSP_GPIOA_PB_START                  DEF_BIT_19         /* Push Button 1 @ SW1 in the schematics.               */
 #define  BSP_GPIOA_PIN_20                    DEF_BIT_20
 #define  BSP_GPIOA_PIN_21                    DEF_BIT_21
 #define  BSP_GPIOA_PIN_22                    DEF_BIT_22
@@ -166,7 +166,7 @@
 #define  BSP_GPIOC_PIN_02                    DEF_BIT_02
 #define  BSP_GPIOC_PIN_03                    DEF_BIT_03
 #define  BSP_GPIOC_PIN_04                    DEF_BIT_04
-#define  BSP_GPIOC_PB1                       DEF_BIT_05
+#define  BSP_GPIOC_PIN_05                    DEF_BIT_05
 #define  BSP_GPIOC_PIN_06                    DEF_BIT_06
 #define  BSP_GPIOC_PIN_07                    DEF_BIT_07
 #define  BSP_GPIOC_PIN_08                    DEF_BIT_08
@@ -174,7 +174,7 @@
 #define  BSP_GPIOC_PIN_10                    DEF_BIT_10
 #define  BSP_GPIOC_PIN_11                    DEF_BIT_11
 #define  BSP_GPIOC_PIN_12                    DEF_BIT_12
-#define  BSP_GPIOC_PB2                       DEF_BIT_13
+#define  BSP_GPIOC_PIN_13                   DEF_BIT_13
 #define  BSP_GPIOC_PIN_14                    DEF_BIT_14
 #define  BSP_GPIOC_PIN_15                    DEF_BIT_15
 #define  BSP_GPIOC_PIN_16                    DEF_BIT_16
@@ -227,7 +227,7 @@
 #define  BSP_GPIOE_PIN_23                    DEF_BIT_23
 #define  BSP_GPIOE_PIN_24                    DEF_BIT_24
 #define  BSP_GPIOE_PIN_25                    DEF_BIT_25
-#define  BSP_GPIOE_PIN_26                    DEF_BIT_26
+#define  BSP_GPIOE_PB_STOP                   DEF_BIT_26
 
 
 /*
@@ -610,6 +610,13 @@ void         BSP_LED_Off                 (CPU_INT08U     led);
 
 void         BSP_LED_Toggle              (CPU_INT08U     led);
 
+/*
+*********************************************************************************************************
+*                                              STATUS INPUTS
+*********************************************************************************************************
+*/
+
+CPU_BOOLEAN  BSP_StatusRd                (CPU_INT08U  id);
 
 /*
 *********************************************************************************************************

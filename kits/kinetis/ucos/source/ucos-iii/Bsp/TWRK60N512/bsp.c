@@ -88,7 +88,7 @@ static  CPU_INT32U  BSP_CPU_ClkFreq_MHz;
 
 static  void  BSP_PLL_Init   (void);
 static  void  BSP_LED_Init   (void);
-
+static  void  BSP_StatusInit (void);
 
 /*
 *********************************************************************************************************
@@ -199,7 +199,8 @@ void  BSP_Init (void)
 
                                                                 /* ... set and not used.                                */
     BSP_LED_Init();                                             /* Initialize the I/Os for the LED      controls.       */
-    
+
+    BSP_StatusInit();                                           /* Initialize the status inputs.                        */
     
 #ifdef TRACE_EN                                                 /* See project / compiler preprocessor options.         */
     DBGMCU_CR |=  DBGMCU_CR_TRACE_IOEN_MASK;                    /* Enable tracing (see Note #2).                        */
@@ -541,6 +542,80 @@ void  BSP_LED_Toggle (CPU_INT08U led)
     }
 }
 
+/*
+*********************************************************************************************************
+*                                            BSP_StatusInit()
+*
+* Description : Initialize the status port(s)
+*
+* Argument(s) : none.
+*
+* Return(s)   : none.
+*
+* Caller(s)   : BSP_Init()
+*
+* Note(s)     : none.
+*********************************************************************************************************
+*/
+
+static  void  BSP_StatusInit (void)
+{                   
+    PORTA_PCR19   = PORT_PCR_MUX(1);                             /* Alternative 1 (GPIO).                                */
+    PORTA_PCR19  |= PORT_PCR_PS_MASK;                            /* Internal Pull Up Resitor  Selected.                  */
+    PORTA_PCR19  |= PORT_PCR_PE_MASK;                            /* Internal Pull    Resistor Enabled.                   */
+    PORTA_PCR19  |= PORT_PCR_PFE_MASK;                           /* Passive Low Pass Filter Enabled.                     */
+      
+#if 0   //HB: Produces an exception
+    PORTE_PCR26  = PORT_PCR_MUX(1);                             /* Alternative 1 (GPIO).                                */
+    PORTE_PCR26 |= PORT_PCR_PS_MASK;                            /* Internal Pull Up Resitor  Selected.                  */
+    PORTE_PCR26 |= PORT_PCR_PE_MASK;                            /* Internal Pull    Resistor Enabled.                   */
+    PORTE_PCR26 |= PORT_PCR_PFE_MASK;                           /* Passive Low Pass Filter Enabled.                     */
+#endif
+}
+
+
+/*
+*********************************************************************************************************
+*                                            BSP_StatusRd()
+*
+* Description : Get the current status of a status input
+*
+* Argument(s) : id    is the status you want to get.
+*
+* Return(s)   : DEF_ON    if the status is asserted
+*               DEF_OFF   if the status is negated
+*
+* Caller(s)   : application
+*
+* Note(s)     : none.
+*********************************************************************************************************
+*/
+
+CPU_BOOLEAN  BSP_StatusRd (CPU_INT08U  id)
+{
+    CPU_BOOLEAN    bit_val;
+
+    switch (id) {
+        case BSP_PB_START:
+             if ((GPIOA_PDIR & BSP_GPIOA_PB_START) == BSP_GPIOA_PB_START) {
+                 bit_val = DEF_OFF;
+             } else {
+                 bit_val = DEF_ON;
+             }
+             return (bit_val);
+
+        case BSP_PB_STOP:
+             if ((GPIOA_PDIR & BSP_GPIOE_PB_STOP) == BSP_GPIOE_PB_STOP) {
+                 bit_val = DEF_OFF;
+             } else {
+                 bit_val = DEF_ON;
+             }
+             return (bit_val);
+
+        default:
+             return ((CPU_BOOLEAN)DEF_OFF);
+    }
+}
 
 /*
 *********************************************************************************************************
