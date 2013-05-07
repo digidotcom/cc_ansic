@@ -199,29 +199,29 @@ mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-DHCPc"    "%MICRIUM_OFFICIAL
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-DNSc"     "%MICRIUM_OFFICIAL_PACKAGE_DIR%\NET-TCPX-PKG000-X-P1\Micrium\Software\uC-DNSc"
 
 REM Following lines links ucos BSPs
-SET MICRIUM_BSPS_DIR="%UCOS_REPO_DIR%\BSPs"
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK53N512\BSP\*.*") do (
+SET MICRIUM_BSPS_DIR="%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\BSP"
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK53N512\BSP\ucos-iii\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\ucos-iii\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\ucos-iii\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK53N512\BSP\Freescale\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\Freescale\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\Freescale\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK53N512\BSP\uCTCPIP-V2\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\uCTCPIP-V2\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uCTCPIP-V2\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK60N512\BSP\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK60N512\BSP\ucos-iii\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\ucos-iii\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\ucos-iii\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK60N512\BSP\Freescale\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\Freescale\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\Freescale\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\ucos-iii\TWRK60N512\BSP\uCTCPIP-V2\*.*") do (
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uCTCPIP-V2\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCTCPIP-V2\%%~nxF" "%%F"
 )
 
