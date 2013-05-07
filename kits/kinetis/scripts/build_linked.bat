@@ -4,8 +4,8 @@ REM As the files are linked, all changes WILL AFFECT THE GIT REPOSITORY DIRECTLY
 cls
 SET ROOT_DIR=C:\Etherios4Kinetis
 SET EC_LIB_DIR=%ROOT_DIR%\Etherios_CC
-SET CW_WORKSPACE=%ROOT_DIR%\ecc_cw_project
-SET MQX_IAR_WORKSPACE=%ROOT_DIR%\ecc_iar_project
+SET CW_WORKSPACE=%ROOT_DIR%\CW10 Projects
+SET MQX_IAR_WORKSPACE=%ROOT_DIR%\IAR Projects
 SET UCOS_IAR_WORKSPACE=%ROOT_DIR%\uCOS
 REM UCOS_REPO_DIR must point to the ucos repository's root directory
 SET UCOS_REPO_DIR=C:\Git_root_c\ucos
@@ -228,6 +228,5 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uCTCPIP-V2\*.*") do (
 
 mklink /H "%ROOT_DIR%\utils\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"
 
-python build_mqx_examples.py
 :end
 pause

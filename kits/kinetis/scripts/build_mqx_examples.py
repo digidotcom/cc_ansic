@@ -6,8 +6,8 @@ import time
 
 root_dir = os.getcwd() + "\\..\\..\\.."					# Where the GIT repository is
 
-cw_workspace = "C:\\Etherios4Kinetis\\ecc_cw_project" 	# Where the CW template project is and where the created examples will be
-iar_workspace = "C:\\Etherios4Kinetis\\ecc_iar_project"  	# Where the IAR template project is and where the created examples will be
+cw_workspace = "C:\\Etherios4Kinetis\\CW10 Projects" 	# Where the CW template project is and where the created examples will be
+iar_workspace = "C:\\Etherios4Kinetis\\IAR Projects"  	# Where the IAR template project is and where the created examples will be
 template_name = "etherios_app" 							# The template application name (and folder)
 template_dir_cw = cw_workspace + "\\" + template_name		
 template_dir_iar = iar_workspace + "\\" + template_name
@@ -33,17 +33,29 @@ def replace(file_path, pattern, subst):
 def change_cw_project_name(sample_dir, new_name):
 	#sample_dir is the sample's root
 	template_name = "etherios_application"
-	replace(sample_dir + "\\.project", "<name>" + template_name + "</name>", "<name>" + new_name + "</name>")
+	replace(sample_dir + "\\.project", template_name, new_name) #these ".file" are not handled by he "for" loop
+	replace(sample_dir + "\\.cproject", template_name, new_name) #these ".file" are not handled by he "for" loop
 
+	for file in glob(sample_dir + "\\*.*"):
+		replace(file, template_name, new_name)
+		if template_name in file:
+			new_filename = file.replace(template_name, new_name)
+			os.rename(file, new_filename)
+	
 # Renames template_project.ewp by the new_name.ewp and replaces the reference in the IAR workspace (.eww)
 def change_iar_project_name(sample_dir, new_name):
 	#sample_dir is the sample's root
-	template_name = "<path>$WS_DIR$\\etherios_app.ewp</path>"
-	replace(sample_dir + "\\etherios_app.eww", template_name, "<path>$WS_DIR$\\" + new_name + ".ewp</path>")
-	os.rename(sample_dir + "\\etherios_app.ewp", sample_dir + "\\" + new_name + ".ewp")
-	os.rename(sample_dir + "\\etherios_app.eww", sample_dir + "\\" + new_name + ".eww")
-	os.rename(sample_dir + "\\etherios_app.ewd", sample_dir + "\\" + new_name + ".ewd")
-	os.rename(sample_dir + "\\etherios_app.dep", sample_dir + "\\" + new_name + ".dep")
+	template_name = "etherios_app.ewp"
+	for file in glob(sample_dir + "\\*.*"):
+		replace(file, template_name, new_name)
+		if template_name in file:
+			new_filename = file.replace(template_name, new_name)
+			os.rename(file, new_filename)
+	#replace(sample_dir + "\\etherios_app.eww", template_name, "<path>$WS_DIR$\\" + new_name + ".ewp</path>")
+	#os.rename(sample_dir + "\\etherios_app.ewp", sample_dir + "\\" + new_name + ".ewp")
+	#os.rename(sample_dir + "\\etherios_app.eww", sample_dir + "\\" + new_name + ".eww")
+	#os.rename(sample_dir + "\\etherios_app.ewd", sample_dir + "\\" + new_name + ".ewd")
+	#os.rename(sample_dir + "\\etherios_app.dep", sample_dir + "\\" + new_name + ".dep")
 
 # This hard-coded function adds the Etherios TWR Demo files to IAR project, it's not necessary in CW because it adds all files in a folder
 def add_ewdemo_files_to_iar_project(iar_ewp_file):
