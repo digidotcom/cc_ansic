@@ -348,7 +348,7 @@ static char const * app_convert_file_open_mode(int const oflag)
 static connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    char const * oflag = app_convert_file_open_mode(data->oflag);
+    char const * open_mode = app_convert_file_open_mode(data->oflag);
 
     MQX_FILE_PTR fd;
     char full_path[50] = {0};
@@ -356,7 +356,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     strcpy(full_path, filesystem_info->FS_NAME);
     strcat(full_path, data->path);
     
-    fd = _io_fopen(full_path, oflag);
+    fd = _io_fopen(full_path, open_mode);
     		
     if (fd == NULL)
     {
@@ -364,7 +364,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
         APP_DEBUG("app_process_file_open: _io_fopen returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
     }
 
-    APP_DEBUG("Open %s, %s, returned %ld\n", data->path, oflag, fd);
+    APP_DEBUG("Open %s, %s, returned %ld\n", data->path, open_mode, fd);
 
     data->handle = (void *) fd;
     data->user_context = NULL;
