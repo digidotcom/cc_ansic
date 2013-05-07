@@ -68,7 +68,6 @@
 *
 *END------------------------------------------------------------------*/
 
-/* TODO, SP: */
 FILESYSTEM_INFO_STRUCT_PTR	filesystem_info;
 
 void sdcard_task(uint_32 temp)
