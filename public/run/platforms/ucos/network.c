@@ -27,6 +27,7 @@ int idigi_connect_to_idigi_failures = 0;
 
 int nNET_SOCK_ERR_LINK_DOWN = 0;
 int nNET_SOCK_ERR_CONN_SIGNAL_TIMEOUT = 0;
+int nNET_DNS_ERR = 0;
 
 static NET_SOCK_ID socket_fd = NET_SOCK_ID_NONE;
 
@@ -59,7 +60,8 @@ static int app_dns_resolve_name(char const * const domain_name, in_addr_t * cons
     res_addr_ip = NET_UTIL_NET_TO_HOST_32(res_addr_ip);
     *ip_addr = res_addr_ip;
 
-    ret = 0;    
+    if (*ip_addr != 0)
+        ret = 0;    
 
     return ret;
 }
@@ -74,6 +76,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     connector_callback_status_t status = connector_callback_abort;
     NET_ERR err_net;
     CPU_INT08U sock_cfg08;
+    CPU_INT32U sock_cfg32;
             
     static unsigned long connect_time;
     
@@ -83,8 +86,11 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         {
             if (app_dns_resolve_name(data->device_cloud_url, &ip_addr) != 0)
             {
-                APP_DEBUG("network_connect: Can't resolve DNS for %s\n", data->device_cloud_url);
-                goto done;
+                nNET_DNS_ERR++;
+                idigi_connect_to_idigi_failures++;
+                APP_DEBUG("network_connect: Can't resolve DNS for %s. LinkDown?\n", data->device_cloud_url);
+                status = connector_callback_busy;
+                goto error;
             }
         }
 
@@ -119,7 +125,6 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
          * Override here NET_SOCK_CFG_TIMEOUT_CONN_REQ_MS in net_cfg.h which is
          * normally set to NET_TMR_TIME_INFINITE.
          */
-        CPU_INT32U sock_cfg32;
         sock_cfg32 = 5000;      // in mS
         NetSock_CfgTimeoutConnReqSet((NET_SOCK_ID) socket_fd, sock_cfg32, &err_net);
         if (err_net != NET_SOCK_ERR_NONE)
@@ -128,7 +133,6 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
             goto error;
         }
         sock_cfg32 = NetSock_CfgTimeoutConnReqGet_ms((NET_SOCK_ID) socket_fd, &err_net);
-        APP_DEBUG("NetSock_CfgTimeoutConnReqGet_ms = %d mS\n", sock_cfg32);
         
         app_os_get_system_time(&connect_time);
         
@@ -169,23 +173,6 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
                 idigi_connect_to_idigi_failures ++;
                 goto error;
         }
-#if 0
-        /* 
-         * We could override here NET_SOCK_CFG_TIMEOUT_RX_Q_MS in net_cfg.h which is
-         * normally set to NET_TMR_TIME_INFINITE; but as we are using the MSG_DONTWAIT
-         * flag in the recv() function it's not required to make the reception process 
-         * not blocking
-         */
-        sock_cfg32 = NetSock_CfgTimeoutRxQ_Get_ms((NET_SOCK_ID) socket_fd, &err_net);
-        APP_DEBUG("NetSock_CfgTimeoutRxQ_Get_ms = %d mS\n", sock_cfg32);
-        sock_cfg32 = 0;
-        NetSock_CfgTimeoutRxQ_Set((NET_SOCK_ID) socket_fd, sock_cfg32, &err_net);
-        if (err_net != NET_SOCK_ERR_NONE)
-        {
-            APP_DEBUG("NetSock_CfgTimeoutRxQ_Set error %d...\n", err_net);
-            goto error;
-        }
-#endif             
     }
 
     idigi_connect_to_idigi_successes ++;
@@ -193,10 +180,12 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     data->handle = &socket_fd;
     status = connector_callback_continue;
     APP_DEBUG("network_connect: connected to [%s] server.\n", data->device_cloud_url);
-    APP_DEBUG("network_connect: %d,%d,%d connect() failures\n", 
-               idigi_connect_to_idigi_failures, 
+    APP_DEBUG("network_connect: %d connect() failures\n", 
+               idigi_connect_to_idigi_failures); 
+    APP_DEBUG("network_connect: %d LinkDown,%d TimeOut,%d Dns connect() failures\n", 
                nNET_SOCK_ERR_LINK_DOWN,
-               nNET_SOCK_ERR_CONN_SIGNAL_TIMEOUT);
+               nNET_SOCK_ERR_CONN_SIGNAL_TIMEOUT,
+               nNET_DNS_ERR);
     goto done;
 
 error:

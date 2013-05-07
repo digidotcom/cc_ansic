@@ -338,7 +338,9 @@ static  void  AppTCPIP_Init (void)
     ip      = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_ADDRESS_STR, &err_net);
     msk     = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_MASK_STR,    &err_net);
     gateway = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_GATEWAY_STR, &err_net);
+#if (APP_CFG_DNS == DEF_ENABLED)
     App_IP_DNS_Srvr = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_DNS_SRVR_STR, &err_net);
+#endif
 
     cfg_success = NetIP_CfgAddrAdd(if_nbr, ip, msk, gateway, &err_net);
 
