@@ -2549,6 +2549,9 @@
       <name>$PROJ_DIR$\..\..\..\..\..\..\uC-TCPIP-V2\Ports\IAR\__dbg_net.c</name>
     </file>
   </group>
+  <file>
+    <name>$PROJ_DIR$\ReadMe.txt</name>
+  </file>
 </project>
 
 
