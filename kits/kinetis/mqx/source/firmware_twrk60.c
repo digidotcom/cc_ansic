@@ -30,8 +30,8 @@
 #ifndef FLASH_PART_0_DESC
 #define FLASH_PART_0_DESC                         "SRec Image"
 #endif
-#ifndef FLASH_PART_0_VER
-#define FLASH_PART_0_VER                          {0,0,0,1}
+#ifndef CONNECTOR_FIRMWARE_VERSION
+#define CONNECTOR_FIRMWARE_VERSION                          {0,0,0,1}
 #endif
 
 typedef struct {
@@ -45,7 +45,7 @@ typedef struct {
 static firmware_list_t firmware_list[] = {
     /* version     code_size     name_spec          description */
 #ifdef DEVICE_HAS_FLASH_PART_0
-    {FLASH_PART_0_VER, FLASH_PART_0_LEN, FLASH_PART_0_TYPE, FLASH_PART_0_DESC},
+    {CONNECTOR_FIRMWARE_VERSION, FLASH_PART_0_LEN, FLASH_PART_0_TYPE, FLASH_PART_0_DESC},
 #endif
 #ifdef DEVICE_HAS_FLASH_PART_1
     {FLASH_PART_1_VER, FLASH_PART_1_LEN, FLASH_PART_1_TYPE, FLASH_PART_1_DESC}
