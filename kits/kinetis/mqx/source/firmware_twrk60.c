@@ -13,7 +13,7 @@
 #include "main.h"
 #include "connector_config.h"
 
-#if defined(CONNECTOR_FIRMWARE_SERVICE)
+#if defined(APPLICATION_FIRMWARE_SERVICE_FULL)
 #include "connector_api.h"
 #include "platform.h"
 #include "connector_debug.h"
@@ -317,4 +317,4 @@ connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t
 
     return status;
 }
-#endif /* CONNECTOR_FIRMWARE_SERVICE */
+#endif /* APPLICATION_FIRMWARE_SERVICE_FULL */

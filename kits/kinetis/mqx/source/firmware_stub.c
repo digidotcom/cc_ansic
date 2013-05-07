@@ -12,7 +12,7 @@
 
 #include "connector_config.h"
 
-#if defined(CONNECTOR_FIRMWARE_SERVICE)
+#if defined(APPLICATION_FIRMWARE_SERVICE_STUB)
 #include "connector_api.h"
 #include "platform.h"
 #include "connector_debug.h"
@@ -22,6 +22,10 @@ typedef struct {
     char        * filespec;
     char        * description;
 } firmware_list_t;
+
+#ifndef CONNECTOR_FIRMWARE_VERSION
+#define CONNECTOR_FIRMWARE_VERSION	{0,0,0,1}
+#endif
 
 /* list of all supported firmware target info */
 static firmware_list_t firmware_list[] = {
@@ -187,4 +191,4 @@ connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t
 
     return status;
 }
-#endif /* CONNECTOR_FIRMWARE_SERVICE */
+#endif /* APPLICATION_FIRMWARE_SERVICE_STUB */
