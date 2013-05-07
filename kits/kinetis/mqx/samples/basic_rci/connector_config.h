@@ -15,20 +15,6 @@
 //#define CONNECTOR_VENDOR_ID                           0x00000001
 //#define CONNECTOR_CLOUD_URL                           "login.etherios.com"
 
-#ifndef CONNECTOR_MAC_ADDRESS
-#error "Please define a MAC address in connector_config.h"
-#endif
-
-#ifndef CONNECTOR_VENDOR_ID
-#error "Please define the Vendor ID in connector_config.h"
-#endif
-
-#ifndef CONNECTOR_VENDOR_ID
-#error "Please define the Device Cloud URL connector_config.h"
-#endif
-
-
-
 #define CONNECTOR_DEVICE_TYPE                         "TWRK60N512"
 /* Network category */
 #define CONNECTOR_CONNECTION_TYPE                     connector_connection_type_lan
@@ -51,3 +37,21 @@
 //#define CONNECTOR_FIRMWARE_SERVICE
 #define CONNECTOR_RCI_SERVICE
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 	256
+
+#ifndef CONNECTOR_MAC_ADDRESS
+#error "Please define a MAC address in connector_config.h"
+#endif
+
+#ifndef CONNECTOR_VENDOR_ID
+#error "Please define the Vendor ID in connector_config.h"
+#endif
+
+#ifndef CONNECTOR_VENDOR_ID
+#error "Please define the Device Cloud URL connector_config.h"
+#endif
+
+#if defined CONNECTOR_FIRMWARE_SERVICE
+#if !defined APPLICATION_FIRMWARE_SERVICE_STUB && !defined APPLICATION_FIRMWARE_SERVICE_FULL
+#error "You must define APPLICATION_FIRMWARE_SERVICE_STUB or APPLICATION_FIRMWARE_SERVICE_FULL in connector_config.h to support Firmware Updates"
+#endif
+#endif

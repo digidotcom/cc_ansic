@@ -37,6 +37,4 @@
 #define FLASH_PART_0_DESC                         "srec Image"
 #define FLASH_PART_0_VER                          {0,0,0,1}
 
-#define CONNECTOR_RCI_SERVICE
-#define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 	256
 #define CONNECTOR_CUSTOMIZE_GET_MAC_METHOD
