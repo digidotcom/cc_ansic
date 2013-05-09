@@ -70,6 +70,7 @@ int application_start(void)
                 APP_DEBUG("%s", buffer);
                 ecc_data.data_ptr = buffer;
                 ecc_data.length_in_bytes = bytes_copied;
+				ecc_data.transport = connector_transport_tcp;
                 ret = connector_send_data("test/test.txt", &ecc_data, NULL);
                 display_push_msg = TRUE;
             }
