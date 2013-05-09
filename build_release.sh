@@ -5,6 +5,7 @@ PRODUCT_NAME=connector
 BASE_DIR=$WORKSPACE/$PRODUCT_NAME
 OUTPUT_DIR=$WORKSPACE/output
 GETTING_STARTED_GUIDE=90001345
+GETTING_STARTED_GUIDE_RELEASED=90001345_A
 RELEASE_NOTES=93000761
 HTML_ZIP=40002854
 TARBALL_NUMBER=40002853
@@ -80,7 +81,7 @@ rm -rf "${BASE_DIR}/public/step/platforms/template"
 rm -rf "${BASE_DIR}/public/step/platforms/windows"
 
 # Get the name of the getting starting guides and see which one is newer
-released_file=$(find /eng/store/released/90000000/"${GETTING_STARTED_GUIDE}_${REVISION}" -name index.html)
+released_file=$(find /eng/store/released/90000000/"${GETTING_STARTED_GUIDE_RELEASED}" -name index.html)
 pending_file=$(find /eng/store/pending/90000000/"${GETTING_STARTED_GUIDE}" -name index.html)
 
 if [ -n "${pending_file}" ] 
