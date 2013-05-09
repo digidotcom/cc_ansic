@@ -91,6 +91,7 @@ sample_tests = {
     'device_request'    : ('test_device_request.py',),
     'file_system'       : ('test_file_system.py',),
     'remote_config'     : ('test_binary_rci.py',),
+    'data_point'        : ('test_data_point.py',),
 }
 run_sample  = TestType('run_sample', 'public/run/samples/',
                        'dvt/cases/sample_tests', sample_tests)
@@ -129,6 +130,7 @@ dvt_tests = {
     'imei_wan_type'               : ('test_imei_wan_type.py',),
     'esn_wan_type'                : ('test_esn_wan_type.py',),
     'meid_wan_type'               : ('test_meid_wan_type.py',),
+    'data_point_positive'         : ('test_data_point_positive.py',),
 }
 
 dvt_test    = TestType('dvt_test', 'dvt/samples/', 'dvt/cases/dvt_tests',
