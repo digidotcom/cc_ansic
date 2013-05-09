@@ -80,7 +80,7 @@ rm -rf "${BASE_DIR}/public/step/platforms/template"
 rm -rf "${BASE_DIR}/public/step/platforms/windows"
 
 # Get the name of the getting starting guides and see which one is newer
-released_file=$(find /eng/store/released/90000000/"${GETTING_STARTED_GUIDE}" -name index.html)
+released_file=$(find /eng/store/released/90000000/"${GETTING_STARTED_GUIDE}_${REVISION}" -name index.html)
 pending_file=$(find /eng/store/pending/90000000/"${GETTING_STARTED_GUIDE}" -name index.html)
 
 if [ -n "${pending_file}" ] 
