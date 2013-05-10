@@ -48,7 +48,7 @@ static connector_callback_status_t arrange_path(char **pstr_dest, const char *ps
 {
     size_t n, total_size;
     
-    total_size = strlen(pstr_cat) + strlen(HARDCODED_VOL);
+    total_size = strlen(pstr_cat) + strlen(HARDCODED_VOL) + 1;
     
     if ( total_size >= FS_FILENAME_MAX)
     {
@@ -64,7 +64,10 @@ static connector_callback_status_t arrange_path(char **pstr_dest, const char *ps
     }
     
     strcpy(*pstr_dest, HARDCODED_VOL);
-    strcat(*pstr_dest, &pstr_cat[1]);  //remove leading '/'
+    if (pstr_cat[0] == '/')
+        strcat(*pstr_dest, &pstr_cat[1]);  //remove leading '/'
+    else
+        strcat(*pstr_dest, pstr_cat);
  
     for(n=0;n<strlen(*pstr_dest);n++)
     {
