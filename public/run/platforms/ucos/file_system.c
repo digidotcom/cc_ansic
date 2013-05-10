@@ -27,31 +27,16 @@
 #include  <fs_dir.h>
 #include  <fs_entry.h>
 #include  <fs_vol.h>
-
-#define USE_FS_API
-#ifdef USE_FS_API
-#include <fs_api.h>
-#endif
+#include <fs_api.h> //TODO
 
 #if !defined CONNECTOR_FILE_SYSTEM
 #error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample"
 #endif
 
-#define HARDCODED_VOL "ram:0:\\"
-//TODO strcpy(full_path, filesystem_info->FS_NAME);
+#ifndef APP_MIN_VALUE
+#define APP_MIN_VALUE(a,b) (((a)<(b))?(a):(b))
+#endif
 
-void arrange_tree_sepatator (char *pstr_dest, const char *pstr_cat)
-{
-    size_t n;
-    strcpy(pstr_dest, HARDCODED_VOL);
-    strcat(pstr_dest, &pstr_cat[1]);  //remove leading '/'
- 
-    for(n=0;n<strlen(pstr_dest);n++)
-    {
-        if(pstr_dest[n] == '/')
-            pstr_dest[n] = '\\';
-    }
-}
 
 typedef struct
 {
@@ -59,23 +44,48 @@ typedef struct
     FS_DIR_ENTRY dir_entry;
 } app_dir_data_t;
 
-static connector_callback_status_t app_process_file_error(void ** const error_token, FS_ERR const fs_err)
+
+#define MAX_PATH_LEN 50     // Should be FS_FILENAME_MAX
+
+#define HARDCODED_VOL "ram:0:\\"
+//TODO: strcpy(full_path, filesystem_info->FS_NAME);
+static connector_callback_status_t arrange_path(char *pstr_dest, const char *pstr_cat)
+{
+    size_t n;
+    strcpy(pstr_dest, HARDCODED_VOL);
+  
+    if ( (strlen(pstr_dest) + strlen(HARDCODED_VOL)) > MAX_PATH_LEN)
+    {
+        APP_DEBUG("Too long path\n");
+        return connector_callback_error;
+    }
+                
+    strcat(pstr_dest, &pstr_cat[1]);  //remove leading '/'
+ 
+    for(n=0;n<strlen(pstr_dest);n++)
+    {
+        if(pstr_dest[n] == '/')
+            pstr_dest[n] = '\\';
+    }
+    
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_process_file_error(void ** const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
-    switch(fs_err)
+    switch(errnum)
     {
-#if 0   //TODO
     #if EAGAIN != EWOULDBLOCK
         case EWOULDBLOCK:
     #endif
-        case EAGAIN:
+        case FS_EAGAIN:
             status = connector_callback_busy;
             break;
-#endif
         default:
             status = connector_callback_error;
-            *error_token = (void *) fs_err;
+            *error_token = (void *) errnum;
             break;
     }
     return status;
@@ -114,15 +124,16 @@ static FS_FLAGS app_convert_file_open_mode(int const oflag)
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data)
+static connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_FLAGS oflag = app_convert_file_open_mode(data->oflag);
     FS_FILE *p_file;
     FS_ERR fs_err;
-    char full_path[50] = {0};
-
-    arrange_tree_sepatator (full_path, data->path);
+    char full_path[MAX_PATH_LEN] = {0};
+    
+    if ((status = arrange_path(full_path, data->path)) != connector_callback_continue)
+        return status;
     
     p_file = FSFile_Open(full_path, oflag, &fs_err);
     
@@ -158,7 +169,7 @@ connector_callback_status_t app_process_file_open(connector_file_system_open_t *
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
+static connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_FILE *p_file = data->handle;
@@ -226,7 +237,7 @@ connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data)
+static connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_FILE* p_file = data->handle;
@@ -268,7 +279,7 @@ connector_callback_status_t app_process_file_read(connector_file_system_read_t *
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data)
+static connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_FILE* p_file = data->handle;
@@ -308,7 +319,7 @@ connector_callback_status_t app_process_file_write(connector_file_system_write_t
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
+static connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
 
 {
     connector_callback_status_t status = connector_callback_continue;
@@ -347,7 +358,7 @@ connector_callback_status_t app_process_file_ftruncate(connector_file_system_tru
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data)
+static connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_FILE* p_file = data->handle;
@@ -387,14 +398,14 @@ connector_callback_status_t app_process_file_close(connector_file_system_close_t
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_remove(connector_file_system_remove_t * const data)
+static connector_callback_status_t app_process_file_remove(connector_file_system_remove_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_ENTRY_INFO  info;
     FS_ERR fs_err;
-    char full_path[50] = {0};
+    char full_path[MAX_PATH_LEN] = {0};
 
-    arrange_tree_sepatator (full_path, data->path);
+    arrange_path(full_path, data->path);
     
     APP_DEBUG("remove file %s", data->path);
     
@@ -404,17 +415,17 @@ connector_callback_status_t app_process_file_remove(connector_file_system_remove
         if (info.Attrib & FS_ENTRY_ATTRIB_DIR)
         {
             APP_DEBUG(",err: FS_ENTRY_ATTRIB_DIR");
-            status = app_process_file_error(&data->errnum, FS_ERR_INVALID_TYPE);  //TODO
+            status = app_process_file_error(&data->errnum, FS_EISDIR);  //TODO
         }
         else if (!(info.Attrib & FS_ENTRY_ATTRIB_WR))
         {
             APP_DEBUG("err: !FS_ENTRY_ATTRIB_WR");
-            status = app_process_file_error(&data->errnum, FS_ERR_INVALID_TYPE);  //TODO
+            status = app_process_file_error(&data->errnum, FS_EINVAL);  //TODO
         }
         else if (info.Attrib & FS_ENTRY_ATTRIB_HIDDEN)
         {
             APP_DEBUG("err: FS_ENTRY_ATTRIB_HIDDEN");
-            status = app_process_file_error(&data->errnum, FS_ERR_INVALID_TYPE);  //TODO
+            status = app_process_file_error(&data->errnum, FS_EINVAL);  //TODO
         }
         else
         {
@@ -442,13 +453,12 @@ static connector_callback_status_t get_statbuf(char const * const path, connecto
     FS_FILE *p_file;
     FS_ENTRY_INFO info;
     FS_ERR fs_err;
-    char full_path[50] = {0};
+    char full_path[MAX_PATH_LEN] = {0};
 
-    arrange_tree_sepatator (full_path, path);
+    arrange_path (full_path, path);
     
     APP_DEBUG("get_statbuf: path %s", path);
     
-    //TODO use FSEntry_Query
     p_file = FSFile_Open(full_path, FS_FILE_ACCESS_MODE_RD, &fs_err);
     if (fs_err == FS_ERR_ENTRY_NOT_FILE)
     {
@@ -477,26 +487,7 @@ static connector_callback_status_t get_statbuf(char const * const path, connecto
     
     statbuf->file_size = info.Size;
     statbuf->flags = connector_file_system_file_type_is_reg;
-#if 0
-    {
-        uint_16 date, time;
-        uint32_t epoch_time = 0;
-        MFS_DATE_TIME_PARAM file_date;
-        
-        file_date.DATE_PTR = &date;
-        file_date.TIME_PTR = &time;
-        
-        status = _io_ioctl(file, IO_IOCTL_GET_DATE_TIME, (uint_32 *) &file_date);
-        if (retval < 0) {
-            goto done;
-        }
-        
-        statbuf->last_modified = mfs_date_to_epoch(&file_date);
-    }
-#else
     statbuf->last_modified = info.DateAccess;
-#endif
-
 
     FSFile_Close(p_file, &fs_err);
 done:
@@ -523,7 +514,7 @@ done:
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
+static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
 {
     connector_callback_status_t status;
 
@@ -556,7 +547,7 @@ done:
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
+static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
     connector_callback_status_t status;
 
@@ -588,14 +579,14 @@ done:
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_t * const data)
+static connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_ERR fs_err;
     FS_DIR * p_dir;
-    char full_path[50] = {0};
+    char full_path[MAX_PATH_LEN] = {0};
 
-    arrange_tree_sepatator(full_path, data->path);
+    arrange_path(full_path, data->path);
            
     p_dir = FSDir_Open (full_path, &fs_err);
     
@@ -613,7 +604,7 @@ connector_callback_status_t app_process_file_opendir(connector_file_system_opend
         else
         {
             APP_DEBUG("malloc failed");
-            status = app_process_file_error(&data->errnum, FS_ERR_MEM_ALLOC);
+            status = app_process_file_error(&data->errnum, FS_ENOMEM /*FS_ERR_MEM_ALLOC*/);
             FSDir_Close(p_dir, &fs_err);
         }
     }
@@ -647,7 +638,7 @@ connector_callback_status_t app_process_file_opendir(connector_file_system_opend
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
+static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_ERR fs_err;
@@ -715,7 +706,7 @@ done:
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
+static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
     FS_ERR fs_err;
@@ -758,7 +749,7 @@ connector_callback_status_t app_process_file_closedir(connector_file_system_clos
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
+static connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
@@ -780,14 +771,58 @@ connector_callback_status_t app_process_file_hash(connector_file_system_hash_t *
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
+static connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
 {
-    connector_callback_status_t rc = connector_callback_continue;
+    long int errnum = (long int)data->errnum;
 
-    UNUSED_ARGUMENT(data);
+    data->bytes_used = 0;
 
-    return rc;
+    if (errnum != 0)
+    {
+        char * err_str = strerror(errnum);
+
+        data->bytes_used = APP_MIN_VALUE(strlen(err_str), data->bytes_available);
+        memcpy(data->buffer, err_str, data->bytes_used);
+    }
+
+    switch(errnum)
+    {
+        case FS_EACCES:
+        //case FS_EPERM:
+        case FS_EROFS:
+            data->error_status = connector_file_system_permision_denied;
+            break;
+
+        case FS_ENOMEM:
+        case FS_ENAMETOOLONG:
+            data->error_status = connector_file_system_out_of_memory;
+            break;
+
+        //case FS_ENOENT:
+        //case FS_ENODEV:
+        case FS_EBADF:
+            data->error_status = connector_file_system_path_not_found;
+            break;
+
+        case FS_EINVAL:
+        //case FS_ENOSYS:
+        case FS_ENOTDIR:
+        case FS_EISDIR:
+            data->error_status = connector_file_system_invalid_parameter;
+            break;
+
+        case FS_ENOSPC:
+            data->error_status = connector_file_system_insufficient_storage_space;
+            break;
+
+        default:
+            data->error_status = connector_file_system_unspec_error;
+            break;
+    }
+
+    return connector_callback_continue;
 }
+
 
 /**
  * @brief   Inform of a Session Error
@@ -804,13 +839,13 @@ connector_callback_status_t app_process_file_get_error(connector_file_system_get
  * @retval connector_callback_abort     The application aborts 
  *                                  Etherious Cloud connector.
  */
-connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
+static connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
 {
-    connector_callback_status_t rc = connector_callback_continue;
+     APP_DEBUG("Session Error %d\n", data->session_error);
 
-    UNUSED_ARGUMENT(data);
-
-    return rc;
+    /* All application resources, used in the session, must be released in this callback */
+    data->user_context = NULL;
+    return connector_callback_continue;
 }
 
 
