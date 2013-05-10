@@ -29,8 +29,8 @@ class DataPointTestCase(ic_testcase.TestCase):
         stream_run_path = "DataPoint/%s/%s" % (self.device_id, stream_run)
         stream_step_path = "DataPoint/%s/%s" % (self.device_id, stream_step)
 
-        self.log.info("Sleeping for 30 seconds to collect some samples...")
-        time.sleep(30)
+        self.log.info("Sleeping for 20 seconds to collect some samples...")
+        time.sleep(20)
 
         dataPoint_response = self.rest_session.get_first(stream_run_path, params={'order' : 'desc'})
         if dataPoint_response.status_code == 200:

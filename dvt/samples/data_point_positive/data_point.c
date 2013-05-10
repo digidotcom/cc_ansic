@@ -192,7 +192,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
             struct timeval current_time;
             int const status = gettimeofday(&current_time, NULL);
 
-            ASSERT(status == 0);
+            if (status != 0) goto error;
             switch (time_case)
             {
                 case connector_time_local_epoch_fractional:
