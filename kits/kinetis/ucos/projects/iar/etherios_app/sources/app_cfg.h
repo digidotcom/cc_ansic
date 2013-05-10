@@ -30,6 +30,18 @@
 #ifndef  __APP_CFG_H__
 #define  __APP_CFG_H__
 
+/*
+*********************************************************************************************************
+*                                       MODULE ENABLE / DISABLE
+*********************************************************************************************************
+*/
+
+// Application Filesystem will only be available if CONNECTOR_FILE_SYSTEM is defined in connector_config.h
+#ifdef CONNECTOR_FILE_SYSTEM
+#define  APP_CFG_FS_EN                         DEF_ENABLED
+#endif
+#define  APP_CFG_DNS                           DEF_ENABLED
+
 
 /*
 *********************************************************************************************************
@@ -38,7 +50,6 @@
 */
 
 #define  APP_CFG_IP_MODE_DHCP                  DEF_ENABLED
-#define  APP_CFG_DNS                           DEF_ENABLED
 
 #if (APP_CFG_IP_MODE_DHCP == DEF_DISABLED)
 #define  APP_CFG_IP_ADDRESS_STR                "10.101.1.129"
@@ -72,6 +83,7 @@
 #define  NET_OS_CFG_IF_TX_DEALLOC_TASK_PRIO               9u
 #define  NET_OS_CFG_IF_RX_TASK_PRIO                      10u
 #define  NET_OS_CFG_IF_LOOPBACK_TASK_PRIO                11u
+#define  CLK_OS_CFG_TASK_PRIO                             6u
 
 #define  CONNECTOR_RUN_CFG_TASK_PRIO                     15u
 
@@ -87,6 +99,8 @@
 #define  NET_OS_CFG_TMR_TASK_STK_SIZE                   512u
 #define  NET_OS_CFG_IF_TX_DEALLOC_TASK_STK_SIZE         128u
 #define  NET_OS_CFG_IF_RX_TASK_STK_SIZE                 512u
+
+#define  CLK_OS_CFG_TASK_STK_SIZE                       512
 
 #define  CONNECTOR_RUN_CFG_TASK_STK_SIZE                (2u* 512u)
 
@@ -109,6 +123,37 @@
 #define  NET_OS_CFG_IF_LOOPBACK_Q_SIZE                    5u
 #define  NET_OS_CFG_IF_RX_Q_SIZE                         20u
 #define  NET_OS_CFG_IF_TX_DEALLOC_Q_SIZE                 20u
+
+/*
+*********************************************************************************************************
+*                                       uC/FS: DRIVER CONFIGURATION
+*********************************************************************************************************
+*/
+
+//TODO: use fs_app_cfg.h
+
+#define  APP_CFG_FS_DEV_CNT                               1
+#define  APP_CFG_FS_VOL_CNT                               1
+#define  APP_CFG_FS_FILE_CNT                              1
+#define  APP_CFG_FS_DIR_CNT                               1
+#define  APP_CFG_FS_BUF_CNT                       (2 * APP_CFG_FS_VOL_CNT)
+#define  APP_CFG_FS_DEV_DRV_CNT                           1
+#define  APP_CFG_FS_WORKING_DIR_CNT                       0
+#define  APP_CFG_FS_MAX_SEC_SIZE                        512
+
+
+
+
+#define  APP_CFG_FS_IDE_EN                         DEF_DISABLED
+#define  APP_CFG_FS_MSC_EN                         DEF_DISABLED
+#define  APP_CFG_FS_NAND_EN                        DEF_DISABLED
+#define  APP_CFG_FS_NOR_EN                         DEF_DISABLED
+#define  APP_CFG_FS_RAM_EN                         DEF_ENABLED
+#define  APP_CFG_FS_SD_EN                          DEF_DISABLED
+#define  APP_CFG_FS_SD_CARD_EN                     DEF_DISABLED
+
+#define  APP_CFG_FS_RAM_NBR_SECS                    55  //org: (1 * 1024)
+#define  APP_CFG_FS_RAM_SEC_SIZE                          512
 
 
 /*

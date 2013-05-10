@@ -185,6 +185,9 @@ static  void  AppTaskStart (void *p_arg)
     CPU_INT32U  cpu_clk_freq;
     CPU_INT32U  cnts;
     OS_ERR      err_os;
+#if (APP_CFG_FS_EN == DEF_ENABLED)
+    CLK_ERR     err_clk;
+#endif
 
    (void)p_arg;
 
@@ -205,6 +208,10 @@ static  void  AppTaskStart (void *p_arg)
     
     Mem_Init();                                                 /* Initialize mem mgmt module, necessary for TCP-IP.    */
     
+#if (APP_CFG_FS_EN == DEF_ENABLED)
+    Clk_Init(&err_clk);                                         /* Initialize clock */
+#endif
+    
     AppGetRunTimeParameters();
     
     AppTCPIP_Init();                                            /* Initialize uC/TCP-IP and associated appliations.     */
@@ -213,6 +220,10 @@ static  void  AppTaskStart (void *p_arg)
     DNSc_Init(App_IP_DNS_Srvr);                                 /* Initialize DNS  client.                              */
 #endif
       
+#if (APP_CFG_FS_EN == DEF_ENABLED)
+    App_FS_Init();
+#endif
+
     AppTaskCreate();                                            /* Create application tasks.                            */
     
     APP_TRACE_INFO(("Calling Cloud Connector application_start\n"));

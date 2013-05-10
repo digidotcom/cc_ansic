@@ -22,16 +22,14 @@
 #include "connector_api.h"
 #include "platform.h"
 
+#ifdef CONNECTOR_FILE_SYSTEM
+
 #include  <fs.h>
 #include  <fs_file.h>
 #include  <fs_dir.h>
 #include  <fs_entry.h>
 #include  <fs_vol.h>
 #include <fs_api.h> //TODO
-
-#if !defined CONNECTOR_FILE_SYSTEM
-#error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample"
-#endif
 
 #ifndef APP_MIN_VALUE
 #define APP_MIN_VALUE(a,b) (((a)<(b))?(a):(b))
@@ -953,3 +951,4 @@ connector_callback_status_t app_file_system_handler(connector_request_id_file_sy
  * @endcond
  */
 
+#endif

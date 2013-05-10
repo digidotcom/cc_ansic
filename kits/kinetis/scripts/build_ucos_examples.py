@@ -92,6 +92,8 @@ def main():
 	replicate_example("send_data", "60")
 	replicate_example("device_request", "53")
 	replicate_example("device_request", "60")
+	replicate_example("file_system", "53")
+	replicate_example("file_system", "60")
 
 	delete_example("53")
 	delete_example("60")

@@ -316,6 +316,12 @@
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-TCPIP-V2\Dev\Ether\PHY\Generic</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-DHCPc\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-DNSc\Source</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Source</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\FAT</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\OS\UCOS-III</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\RAMDisk</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\Source</state>
           <state>c:\Etherios4Kinetis\Etherios_CC\include</state>
           <state>c:\Etherios4Kinetis\Etherios_CC\platform\ucos</state>
         </option>
@@ -1901,6 +1907,18 @@
       <name>$PROJ_DIR$\dns-c_cfg.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\fs_app.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\fs_app.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\fs_app_cfg.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\fs_cfg.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\includes.h</name>
     </file>
     <file>
@@ -1976,6 +1994,27 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\BSP\uCTCPIP-V2\net_bsp.h</name>
+      </file>
+    </group>
+  </group>
+  <group>
+    <name>uC/Clk</name>
+    <group>
+      <name>OS</name>
+      <group>
+        <name>uCOS-III</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\OS\uCOS-III\clk_os.c</name>
+        </file>
+      </group>
+    </group>
+    <group>
+      <name>Source</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\Source\clk.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\Source\clk.h</name>
       </file>
     </group>
   </group>
@@ -2056,6 +2095,9 @@
         <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\include\connector_api_data_service.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\include\connector_api_file_system.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\include\connector_api_network.h</name>
       </file>
       <file>
@@ -2095,6 +2137,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\debug.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\file_system.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\network.c</name>
@@ -2259,6 +2304,198 @@
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\ucos-iii\os_support.c</name>
         </file>
       </group>
+    </group>
+  </group>
+  <group>
+    <name>uC/FS</name>
+    <group>
+      <name>Dev</name>
+      <group>
+        <name>RamDisk</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\RAMDisk\fs_dev_ramdisk.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\RAMDisk\fs_dev_ramdisk.h</name>
+        </file>
+      </group>
+    </group>
+    <group>
+      <name>FAT</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_dir.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_dir.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_entry.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_entry.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_fat12.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_fat12.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_fat16.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_fat16.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_fat32.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_fat32.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_file.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_file.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_journal.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_journal.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_lfn.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_lfn.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_sfn.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_sfn.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\FAT\fs_fat_type.h</name>
+      </file>
+    </group>
+    <group>
+      <name>OS</name>
+      <group>
+        <name>uCOS-III</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\OS\uCOS-III\fs_os.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\OS\uCOS-III\fs_os.h</name>
+        </file>
+      </group>
+    </group>
+    <group>
+      <name>Source</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_api.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_api.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_buf.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_buf.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_cache.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_cache.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_cfg_fs.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_ctr.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_def.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_dev.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_dev.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_dir.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_dir.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_entry.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_entry.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_err.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_file.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_file.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_inc.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_partition.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_partition.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_sys.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_sys.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_type.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_unicode.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_unicode.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_util.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_util.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_vol.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Source\fs_vol.h</name>
+      </file>
     </group>
   </group>
   <group>
@@ -2549,6 +2786,9 @@
       <name>$PROJ_DIR$\..\..\..\..\..\..\uC-TCPIP-V2\Ports\IAR\__dbg_net.c</name>
     </file>
   </group>
+  <file>
+    <name>$PROJ_DIR$\clk_cfg.h</name>
+  </file>
   <file>
     <name>$PROJ_DIR$\ReadMe.txt</name>
   </file>
