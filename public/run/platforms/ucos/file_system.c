@@ -40,7 +40,7 @@
 #define HARDCODED_VOL "ram:0:\\"
 //TODO strcpy(full_path, filesystem_info->FS_NAME);
 
-void arrange_path(char *pstr_dest, const char *pstr_cat)
+void arrange_tree_sepatator (char *pstr_dest, const char *pstr_cat)
 {
     size_t n;
     strcpy(pstr_dest, HARDCODED_VOL);
@@ -122,7 +122,7 @@ connector_callback_status_t app_process_file_open(connector_file_system_open_t *
     FS_ERR fs_err;
     char full_path[50] = {0};
 
-    arrange_path(full_path, data->path);
+    arrange_tree_sepatator (full_path, data->path);
     
     p_file = FSFile_Open(full_path, oflag, &fs_err);
     
@@ -394,7 +394,7 @@ connector_callback_status_t app_process_file_remove(connector_file_system_remove
     FS_ERR fs_err;
     char full_path[50] = {0};
 
-    arrange_path(full_path, data->path);
+    arrange_tree_sepatator (full_path, data->path);
     
     APP_DEBUG("remove file %s", data->path);
     
@@ -444,62 +444,63 @@ static connector_callback_status_t get_statbuf(char const * const path, connecto
     FS_ERR fs_err;
     char full_path[50] = {0};
 
-    arrange_path(full_path, path);
+    arrange_tree_sepatator (full_path, path);
     
     APP_DEBUG("get_statbuf: path %s", path);
     
-    FSEntry_Query(full_path, &info, &fs_err);
+    //TODO use FSEntry_Query
+    p_file = FSFile_Open(full_path, FS_FILE_ACCESS_MODE_RD, &fs_err);
+    if (fs_err == FS_ERR_ENTRY_NOT_FILE)
+    {
+        APP_DEBUG(", Directory");
+        statbuf->flags = connector_file_system_file_type_is_dir;
+    	statbuf->file_size = 0;
+    	statbuf->last_modified = 0; /* Directories don't have this field */
+        goto done;
+    }
+    else if (fs_err != FS_ERR_NONE)
+    {
+        status = app_process_file_error(errnum, fs_err);
+        APP_DEBUG(", fs_err %d", fs_err);
+        goto done;
+    }
+            
+    FSFile_Query( p_file, &info, &fs_err); 
     if (fs_err != FS_ERR_NONE)
     {
         status = app_process_file_error(errnum, fs_err);
         APP_DEBUG(", fs_err %d", fs_err);
         goto done;
     }
+
+    APP_DEBUG(", File");
     
-    if (info.Attrib & FS_ENTRY_ATTRIB_DIR)
+    statbuf->file_size = info.Size;
+    statbuf->flags = connector_file_system_file_type_is_reg;
+#if 0
     {
-        APP_DEBUG(", Directory");
-        statbuf->flags = connector_file_system_file_type_is_dir;
-        statbuf->file_size = 0;
-        statbuf->last_modified = 0; /* Directories don't have this field */
-    }
-    else
-    {
-        p_file = FSFile_Open(full_path, FS_FILE_ACCESS_MODE_RD, &fs_err);
-        if (fs_err == FS_ERR_ENTRY_NOT_FILE)
-        {
-            //TODO: Remove should not happen
-            APP_DEBUG(", Directory");
-            statbuf->flags = connector_file_system_file_type_is_dir;
-            statbuf->file_size = 0;
-            statbuf->last_modified = 0; /* Directories don't have this field */
-            goto done;
-        }
-        else if (fs_err != FS_ERR_NONE)
-        {
-            status = app_process_file_error(errnum, fs_err);
-            APP_DEBUG(", fs_err %d", fs_err);
-            goto done;
-        }
-                
-        FSFile_Query( p_file, &info, &fs_err); 
-        if (fs_err != FS_ERR_NONE)
-        {
-            status = app_process_file_error(errnum, fs_err);
-            APP_DEBUG(", fs_err %d", fs_err);
-            goto done;
-        }
-
-        APP_DEBUG(", File");
+        uint_16 date, time;
+        uint32_t epoch_time = 0;
+        MFS_DATE_TIME_PARAM file_date;
         
-        statbuf->file_size = info.Size;
-        statbuf->flags = connector_file_system_file_type_is_reg;
-        statbuf->last_modified = info.DateAccess;
-
-        FSFile_Close(p_file, &fs_err);
+        file_date.DATE_PTR = &date;
+        file_date.TIME_PTR = &time;
+        
+        status = _io_ioctl(file, IO_IOCTL_GET_DATE_TIME, (uint_32 *) &file_date);
+        if (retval < 0) {
+            goto done;
+        }
+        
+        statbuf->last_modified = mfs_date_to_epoch(&file_date);
     }
+#else
+    statbuf->last_modified = info.DateAccess;
+#endif
 
+
+    FSFile_Close(p_file, &fs_err);
 done:
+  
     APP_DEBUG("\n");
   
 	return status;
@@ -594,7 +595,7 @@ connector_callback_status_t app_process_file_opendir(connector_file_system_opend
     FS_DIR * p_dir;
     char full_path[50] = {0};
 
-    arrange_path(full_path, data->path);
+    arrange_tree_sepatator(full_path, data->path);
            
     p_dir = FSDir_Open (full_path, &fs_err);
     
