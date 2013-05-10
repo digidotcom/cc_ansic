@@ -30,7 +30,6 @@ CPU_BOOLEAN set_clk(void)
     else
         APP_TRACE_INFO(("Error in Clk_GetDateTime\n"));
     
-    
     //TODO: Ask user for time
 #if 0
 #else
@@ -38,9 +37,9 @@ CPU_BOOLEAN set_clk(void)
     Yr = 2013;
     Month = 1;
     Day = 27;
-    Hr = 11;
-    Min = 11;
-    Sec = 11;
+    Hr = 10;
+    Min = 10;
+    Sec = 10;
     tz_sec = 0;
 #endif
     
@@ -51,6 +50,16 @@ CPU_BOOLEAN set_clk(void)
     if (ret != DEF_OK)
         APP_TRACE_INFO(("Clk_GetDateTime Failed\n"));
     
+    ret = Clk_GetDateTime(&date_time);
+    if (ret == DEF_OK)
+    {
+        APP_TRACE_INFO(("New Date/Time:\n"));
+        APP_TRACE_INFO(("Date = %u/%u/%u\n", date_time.Month, date_time.Day, date_time.Yr));
+        APP_TRACE_INFO(("Time = %u:%u:%u\n", date_time.Hr, date_time.Min, date_time.Sec));
+    }
+    else
+        APP_TRACE_INFO(("Error in Clk_GetDateTime\n"));
+    
     return ret;
 }
 
@@ -58,9 +67,12 @@ void fill_fs(void)
 {
     FS_FILE     *p_file;
     FS_ERR       fs_err;
+    OS_ERR       err_os;
     CPU_CHAR     p_src_buf[] = "Hello World\r\n";
     CPU_CHAR     p_dest_buf[100];
        
+    APP_TRACE_INFO(("Create some files and folders on Ram Filesystem for evaluation\n"));
+    
     p_file = FSFile_Open("ram:0:\\ucos_file1.txt", FS_FILE_ACCESS_MODE_RDWR | FS_FILE_ACCESS_MODE_CREATE, &fs_err);
     if (fs_err != FS_ERR_NONE)
         goto done;
@@ -85,7 +97,6 @@ void fill_fs(void)
     if (fs_err != FS_ERR_NONE)
         goto done;
     
-    
     // Create a dir
     FSEntry_Create ("ram:0:\\ucos_dir",
                         FS_ENTRY_TYPE_DIR,
@@ -93,6 +104,11 @@ void fill_fs(void)
                         &fs_err);
     if (fs_err != FS_ERR_NONE)
         goto done;   
+    
+    // Introduce a 2 second delay to test file DateTimeWr
+    OSTimeDlyHMSM(0, 0, 2, 0, 
+                      OS_OPT_TIME_HMSM_STRICT, 
+                      &err_os);
     
     p_file = FSFile_Open("ram:0:\\ucos_dir\\ucos_file2.txt", FS_FILE_ACCESS_MODE_RDWR | FS_FILE_ACCESS_MODE_CREATE, &fs_err);
     if (fs_err != FS_ERR_NONE)

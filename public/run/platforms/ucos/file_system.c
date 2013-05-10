@@ -502,7 +502,9 @@ static connector_callback_status_t get_statbuf(char const * const path, connecto
     
     statbuf->file_size = info.Size;
     statbuf->flags = connector_file_system_file_type_is_reg;
-    statbuf->last_modified = info.DateAccess;
+    /*  DateAccess is not keeping time 
+        So we can choose DateTimeWr or DateTimeCreate */
+    statbuf->last_modified = info.DateTimeWr;   // Date/time of last write
 
     FSFile_Close(p_file, &fs_err);
 done:
