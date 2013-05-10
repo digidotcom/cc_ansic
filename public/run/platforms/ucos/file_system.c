@@ -44,28 +44,34 @@ typedef struct
     FS_DIR_ENTRY dir_entry;
 } app_dir_data_t;
 
-
-#define MAX_PATH_LEN 50     // Should be FS_FILENAME_MAX
-
 #define HARDCODED_VOL "ram:0:\\"
 //TODO: strcpy(full_path, filesystem_info->FS_NAME);
-static connector_callback_status_t arrange_path(char *pstr_dest, const char *pstr_cat)
+static connector_callback_status_t arrange_path(char **pstr_dest, const char *pstr_cat)
 {
-    size_t n;
-    strcpy(pstr_dest, HARDCODED_VOL);
-  
-    if ( (strlen(pstr_dest) + strlen(HARDCODED_VOL)) > MAX_PATH_LEN)
+    size_t n, total_size;
+    
+    total_size = strlen(pstr_cat) + strlen(HARDCODED_VOL);
+    
+    if ( total_size >= FS_FILENAME_MAX)
     {
         APP_DEBUG("Too long path\n");
         return connector_callback_error;
     }
-                
-    strcat(pstr_dest, &pstr_cat[1]);  //remove leading '/'
- 
-    for(n=0;n<strlen(pstr_dest);n++)
+    
+    *pstr_dest = malloc (total_size);
+    if (*pstr_dest == NULL)
     {
-        if(pstr_dest[n] == '/')
-            pstr_dest[n] = '\\';
+        APP_DEBUG("Error in malloc for path\n");
+        return connector_callback_error;
+    }
+    
+    strcpy(*pstr_dest, HARDCODED_VOL);
+    strcat(*pstr_dest, &pstr_cat[1]);  //remove leading '/'
+ 
+    for(n=0;n<strlen(*pstr_dest);n++)
+    {
+        if((*pstr_dest)[n] == '/')
+            (*pstr_dest)[n] = '\\';            
     }
     
     return connector_callback_continue;
@@ -130,13 +136,13 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     FS_FLAGS oflag = app_convert_file_open_mode(data->oflag);
     FS_FILE *p_file;
     FS_ERR fs_err;
-    char full_path[MAX_PATH_LEN] = {0};
+    char *full_path=NULL;
     
-    if ((status = arrange_path(full_path, data->path)) != connector_callback_continue)
+    if ((status = arrange_path(&full_path, data->path)) != connector_callback_continue)
         return status;
     
     p_file = FSFile_Open(full_path, oflag, &fs_err);
-    
+          
     APP_DEBUG("Open file %s, oflag 0x%x, returned p_file 0x%x", data->path, oflag, p_file);
     
     if (fs_err != FS_ERR_NONE)
@@ -149,6 +155,9 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
 
     data->handle = (void *) p_file;
 
+    if (full_path != NULL)
+        free(full_path);
+   
     return status;
 }
 
@@ -403,9 +412,10 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     connector_callback_status_t status = connector_callback_continue;
     FS_ENTRY_INFO  info;
     FS_ERR fs_err;
-    char full_path[MAX_PATH_LEN] = {0};
+    char *full_path=NULL;
 
-    arrange_path(full_path, data->path);
+    if ((status = arrange_path(&full_path, data->path)) != connector_callback_continue)
+        return status;
     
     APP_DEBUG("remove file %s", data->path);
     
@@ -441,6 +451,9 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     
     APP_DEBUG("\n");
     
+    if (full_path != NULL)
+        free(full_path);
+    
     return status;
 }
 
@@ -453,9 +466,10 @@ static connector_callback_status_t get_statbuf(char const * const path, connecto
     FS_FILE *p_file;
     FS_ENTRY_INFO info;
     FS_ERR fs_err;
-    char full_path[MAX_PATH_LEN] = {0};
+    char *full_path=NULL;
 
-    arrange_path (full_path, path);
+    if ((status = arrange_path(&full_path, path)) != connector_callback_continue)
+        return status;
     
     APP_DEBUG("get_statbuf: path %s", path);
     
@@ -493,7 +507,10 @@ static connector_callback_status_t get_statbuf(char const * const path, connecto
 done:
   
     APP_DEBUG("\n");
-  
+
+    if (full_path != NULL)
+        free(full_path);
+        
 	return status;
 }
 
@@ -584,9 +601,10 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     connector_callback_status_t status = connector_callback_continue;
     FS_ERR fs_err;
     FS_DIR * p_dir;
-    char full_path[MAX_PATH_LEN] = {0};
+    char *full_path=NULL;
 
-    arrange_path(full_path, data->path);
+    if ((status = arrange_path(&full_path, data->path)) != connector_callback_continue)
+        return status;
            
     p_dir = FSDir_Open (full_path, &fs_err);
     
@@ -616,6 +634,9 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     
     APP_DEBUG("\n");
 
+    if (full_path != NULL)
+        free(full_path);
+    
     return status;
 }
 
