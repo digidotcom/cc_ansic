@@ -2098,6 +2098,9 @@
         <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\include\connector_api_file_system.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\include\connector_api_firmware.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\include\connector_api_network.h</name>
       </file>
       <file>
@@ -2140,6 +2143,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\file_system.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\firmware_stub.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\network.c</name>
