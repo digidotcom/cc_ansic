@@ -188,7 +188,7 @@ for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\*.*"
 
 REM Following lines links all necessary folders from the Micrium official package directory
 REM Micrium official package directory CAN'T be distributed to clients
-SET MICRIUM_OFFICIAL_PACKAGE_DIR="%UCOS_REPO_DIR%\Micrium_Official_Packackages"
+SET MICRIUM_OFFICIAL_PACKAGE_DIR=%UCOS_REPO_DIR%\Micrium_Official_Packackages
 
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uCOS-III" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\KRN-K3XX-PKG000-X-P1\Micrium\Software\uCOS-III"
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-LIB" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\KRN-K3XX-PKG000-X-P1\Micrium\Software\uC-LIB"
@@ -204,7 +204,7 @@ mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uc-fs" "%MICRIUM_OFFICIAL_PACKA
 
 
 REM Following lines links ucos BSPs
-SET MICRIUM_BSPS_DIR="%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\BSP"
+SET MICRIUM_BSPS_DIR=%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\BSP
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\%%~nxF" "%%F"
 )
