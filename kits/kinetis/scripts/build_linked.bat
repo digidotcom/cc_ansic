@@ -4,9 +4,10 @@ REM As the files are linked, all changes WILL AFFECT THE GIT REPOSITORY DIRECTLY
 cls
 SET ROOT_DIR=C:\Etherios4Kinetis
 SET EC_LIB_DIR=%ROOT_DIR%\Etherios_CC
-SET CW_WORKSPACE=%ROOT_DIR%\CW10 Projects
-SET MQX_IAR_WORKSPACE=%ROOT_DIR%\IAR Projects
-SET UCOS_IAR_WORKSPACE=%ROOT_DIR%\uCOS
+SET PROJECTS_DIR=%ROOT_DIR%\Projects
+SET MQX_CW_WORKSPACE=%PROJECTS_DIR%\MQX\CW10 Projects
+SET MQX_IAR_WORKSPACE=%PROJECTS_DIR%\MQX\IAR Projects
+SET UCOS_IAR_WORKSPACE=%PROJECTS_DIR%\uCOS
 REM UCOS_REPO_DIR must point to the ucos repository's root directory
 SET UCOS_REPO_DIR=C:\Git_root_c\ucos
 REM BASE_DIR must point to the repository's root directory
@@ -21,7 +22,7 @@ REM Restore directory
 popd
 
 RMDIR /S /Q "%EC_LIB_DIR%"
-RMDIR /S /Q "%CW_WORKSPACE%"
+RMDIR /S /Q "%MQX_CW_WORKSPACE%"
 RMDIR /S /Q "%MQX_IAR_WORKSPACE%"
 RMDIR /S /Q "%UCOS_IAR_WORKSPACE%"
 
@@ -35,10 +36,16 @@ MKDIR "%EC_LIB_DIR%\platform\mqx"
 MKDIR "%EC_LIB_DIR%\platform\ucos"
 MKDIR "%EC_LIB_DIR%\platform\ucos\ucos-iii"
 
-MKDIR "%CW_WORKSPACE%"
-MKDIR "%CW_WORKSPACE%\etherios_app"
-MKDIR "%CW_WORKSPACE%\etherios_app\Sources"
-MKDIR "%CW_WORKSPACE%\etherios_app\Sources\fs_devices"
+MKDIR "%PROJECTS_DIR%"
+MKDIR "%PROJECTS_DIR%\MQX"
+MKDIR "%MQX_CW_WORKSPACE%"
+MKDIR "%MQX_IAR_WORKSPACE%"
+MKDIR "%UCOS_IAR_WORKSPACE%"
+
+MKDIR "%MQX_CW_WORKSPACE%"
+MKDIR "%MQX_CW_WORKSPACE%\etherios_app"
+MKDIR "%MQX_CW_WORKSPACE%\etherios_app\Sources"
+MKDIR "%MQX_CW_WORKSPACE%\etherios_app\Sources\fs_devices"
 
 MKDIR "%MQX_IAR_WORKSPACE%"
 MKDIR "%MQX_IAR_WORKSPACE%\etherios_app"
@@ -142,18 +149,18 @@ REM mklink /H "%EC_LIB_DIR%\platform\mqx\gps_stats.c" "%BASE_DIR%\public\run\sam
 
 REM Link the template application in CodeWarrior workspace.
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\*.*") do (
-	mklink /H "%CW_WORKSPACE%\etherios_app\%%~nxF" "%%F"
+	mklink /H "%MQX_CW_WORKSPACE%\etherios_app\%%~nxF" "%%F"
 )
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\Sources\*.*") do (
-	mklink /H "%CW_WORKSPACE%\etherios_app\Sources\%%~nxF" "%%F"
+	mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\%%~nxF" "%%F"
 )
 
-mklink /H "%CW_WORKSPACE%\etherios_app\Sources\main.c" "%BASE_DIR%\public\run\platforms\freescale\main.c"
-mklink /H "%CW_WORKSPACE%\etherios_app\Sources\main.h" "%BASE_DIR%\public\run\platforms\freescale\main.h"
-mklink /H "%CW_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\kinetis\mqx\samples\send_data\application.c"
+mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\main.c" "%BASE_DIR%\public\run\platforms\freescale\main.c"
+mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\main.h" "%BASE_DIR%\public\run\platforms\freescale\main.h"
+mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\kinetis\mqx\samples\send_data\application.c"
 
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\source\fs_devices\*.*") do (
-	mklink /H "%CW_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"
+	mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"
 )
 
 REM Link the mqx template application in IAR workspace.

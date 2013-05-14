@@ -6,8 +6,8 @@ import time
 
 root_dir = os.getcwd() + "\\..\\..\\.."					# Where the GIT repository is
 
-cw_workspace = "C:\\Etherios4Kinetis\\CW10 Projects" 	# Where the CW template project is and where the created examples will be
-iar_workspace = "C:\\Etherios4Kinetis\\IAR Projects"  	# Where the IAR template project is and where the created examples will be
+cw_workspace = "C:\\Etherios4Kinetis\\Projects\\MQX\\CW10 Projects" 	# Where the CW template project is and where the created examples will be
+iar_workspace = "C:\\Etherios4Kinetis\\Projects\\MQX\\IAR Projects"  	# Where the IAR template project is and where the created examples will be
 template_name = "etherios_app" 							# The template application name (and folder)
 template_dir_cw = cw_workspace + "\\" + template_name		
 template_dir_iar = iar_workspace + "\\" + template_name

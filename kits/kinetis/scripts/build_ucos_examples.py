@@ -8,7 +8,7 @@ import time
 #iar_workspace = "C:\Etherios4Kinetis\ucos\ecc_iar_project"  	
 #iar_workspace_53 = "C:\Etherios4Kinetis\uCOS\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\etherios_projects"  	
 #iar_workspace_60 = "C:\Etherios4Kinetis\uCOS\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\etherios_projects"  	
-iar_workspace_leading = "C:\Etherios4Kinetis\uCOS\Micrium\Software\EvalBoards\Freescale\TWR-K"
+iar_workspace_leading = "C:\Etherios4Kinetis\Projects\uCOS\Micrium\Software\EvalBoards\Freescale\TWR-K"
 iar_workspace_trail = "N512\IAR\etherios_projects"  	
 # The template application name (and folder)
 template_name = "etherios_app" 					
