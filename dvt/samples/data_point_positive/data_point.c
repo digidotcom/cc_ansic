@@ -174,7 +174,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
 
             case connector_data_point_type_string:
             {
-                static char * value[APP_MAX_POINTS] = {"Hello World!", "c,o,m,m,a", "Line\nFeed", "Line\twith\ttabs", "\"Hi\"", ""};
+                static char * value[APP_MAX_POINTS] = {"Hello World!", "c,o,m,m,a", "line\nfeed", "t\ta\tb", "\"quote\"", "s p a c e"};
 
                 point->data.type = connector_data_type_native;
                 point->data.element.native.string_value = value[test_case];
