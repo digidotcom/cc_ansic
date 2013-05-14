@@ -45,7 +45,7 @@ def change_cw_project_name(sample_dir, new_name):
 # Renames template_project.ewp by the new_name.ewp and replaces the reference in the IAR workspace (.eww)
 def change_iar_project_name(sample_dir, new_name):
 	#sample_dir is the sample's root
-	template_name = "etherios_app.ewp"
+	template_name = "etherios_app"
 	for file in glob(sample_dir + "\\*.*"):
 		replace(file, template_name, new_name)
 		if template_name in file:
