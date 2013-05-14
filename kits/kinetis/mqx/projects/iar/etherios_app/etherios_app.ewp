@@ -6369,7 +6369,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>C:\Etherios4Kinetis\utils\FWUpdateIntFlash.icf</state>
+          <state>C:\Etherios4Kinetis\Tools\FWUpdateIntFlash.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>

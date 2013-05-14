@@ -693,7 +693,7 @@
 									<listOptionValue builtIn="false" value="&quot;rtcs.a&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;cyassl.a&quot;"/>
 								</option>
-								<option id="com.freescale.arm.cdt.toolchain.linker.commandFile.990213144" name="Linker Command File" superClass="com.freescale.arm.cdt.toolchain.linker.commandFile" value="${ETHERIOS_CLOUD_CONNECTOR_LIB_PATH}/../utils/FWUpdateIntFlash.lcf" valueType="string"/>
+								<option id="com.freescale.arm.cdt.toolchain.linker.commandFile.990213144" name="Linker Command File" superClass="com.freescale.arm.cdt.toolchain.linker.commandFile" value="${ETHERIOS_CLOUD_CONNECTOR_LIB_PATH}/../Tools/FWUpdateIntFlash.lcf" valueType="string"/>
 								<inputType id="com.freescale.arm.cdt.toolchain.linker.input.1818836750" name="ARM Linker Input" superClass="com.freescale.arm.cdt.toolchain.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

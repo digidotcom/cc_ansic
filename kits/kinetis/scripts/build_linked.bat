@@ -26,8 +26,8 @@ RMDIR /S /Q "%MQX_CW_WORKSPACE%"
 RMDIR /S /Q "%MQX_IAR_WORKSPACE%"
 RMDIR /S /Q "%UCOS_IAR_WORKSPACE%"
 
-MKDIR %ROOT_DIR%
-MKDIR %ROOT_DIR%\utils
+MKDIR "%ROOT_DIR%"
+MKDIR "%ROOT_DIR%\Tools"
 MKDIR "%EC_LIB_DIR%"
 MKDIR "%EC_LIB_DIR%\private"
 MKDIR "%EC_LIB_DIR%\include"
@@ -237,8 +237,8 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uCTCPIP-V2\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCTCPIP-V2\%%~nxF" "%%F"
 )
 
-
-mklink /H "%ROOT_DIR%\utils\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"
+mklink /H "%ROOT_DIR%\Tools\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"
+mklink /H "%ROOT_DIR%\Tools\FWUpdateIntFlash.icf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.icf"
 
 :end
 pause
