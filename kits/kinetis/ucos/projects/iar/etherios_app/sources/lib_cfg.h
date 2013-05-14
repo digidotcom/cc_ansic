@@ -32,6 +32,7 @@
 *********************************************************************************************************
 */
 
+#include <connector_config.h>
 
 /*
 *********************************************************************************************************
@@ -111,9 +112,17 @@
                                                         /*   DEF_ENABLED      Memory allocation ENABLED                 */
 
 
-#define  LIB_MEM_CFG_HEAP_SIZE            28500u        /* Configure heap memory size         [see Note #2a].           */
-//#define  LIB_MEM_CFG_HEAP_SIZE          38500u	//HB: increased
+#define  LIB_MEM_CFG_HEAP_SIZE_ORG      28500u        /* Configure heap memory size         [see Note #2a].           */
 
+#ifndef CONNECTOR_FIRMWARE_SERVICE
+#define  LIB_MEM_CFG_HEAP_SIZE_FW      (0u)
+#else
+/* HB: Increased to be able to increase 'device's large receive buffers' (See net_dev_cfg.c) from 10 to 15 buffers. 
+       If not Firmware update is not working.
+*/
+#define  LIB_MEM_CFG_HEAP_SIZE_FW      (1518u*5u)
+#endif
+#define  LIB_MEM_CFG_HEAP_SIZE         (LIB_MEM_CFG_HEAP_SIZE_ORG + LIB_MEM_CFG_HEAP_SIZE_FW)
 
 #if 0                                                   /* Configure heap memory base address (see Note #2b).           */
 #define  LIB_MEM_CFG_HEAP_BASE_ADDR       0x00000000u

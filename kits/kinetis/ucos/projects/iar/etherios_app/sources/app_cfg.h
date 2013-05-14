@@ -152,7 +152,7 @@
 #define  APP_CFG_FS_SD_EN                          DEF_DISABLED
 #define  APP_CFG_FS_SD_CARD_EN                     DEF_DISABLED
 
-#define  APP_CFG_FS_RAM_NBR_SECS                    55  //org: (1 * 1024)
+#define  APP_CFG_FS_RAM_NBR_SECS                    45  //org: (1 * 1024)
 #define  APP_CFG_FS_RAM_SEC_SIZE                          512
 
 
