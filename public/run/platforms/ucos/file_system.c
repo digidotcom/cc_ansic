@@ -31,10 +31,25 @@
 #include  <fs_vol.h>
 #include <fs_api.h> //TODO
 
+/* Configure Volume Name
+   Currently only one volume at a time is supported. Available ones:
+   APP_CFG_FS_SD_CARD_EN
+   APP_CFG_FS_RAM_EN (Be aware of memory constrains)
+*/
+#if (APP_CFG_FS_SD_CARD_EN == DEF_ENABLED)
+#define VOLUME_NAME "sdcard:0:\\"
+#elif (APP_CFG_FS_RAM_EN == DEF_ENABLED)
+#define VOLUME_NAME "ram:0:\\"
+#endif
+
+
 #ifndef APP_MIN_VALUE
 #define APP_MIN_VALUE(a,b) (((a)<(b))?(a):(b))
 #endif
 
+#if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > FS_CFG_MAX_PATH_NAME_LEN
+#error CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > FS_CFG_MAX_PATH_NAME_LEN. Please review these definitions
+#endif
 
 typedef struct
 {
@@ -42,13 +57,11 @@ typedef struct
     FS_DIR_ENTRY dir_entry;
 } app_dir_data_t;
 
-#define HARDCODED_VOL "ram:0:\\"
-//TODO: strcpy(full_path, filesystem_info->FS_NAME);
 static connector_callback_status_t arrange_path(char **pstr_dest, const char *pstr_cat)
 {
     size_t n, total_size;
     
-    total_size = strlen(pstr_cat) + strlen(HARDCODED_VOL) + 1;
+    total_size = strlen(pstr_cat) + strlen(VOLUME_NAME) + 1;
     
     if ( total_size >= FS_FILENAME_MAX)
     {
@@ -63,7 +76,7 @@ static connector_callback_status_t arrange_path(char **pstr_dest, const char *ps
         return connector_callback_error;
     }
     
-    strcpy(*pstr_dest, HARDCODED_VOL);
+    strcpy(*pstr_dest, VOLUME_NAME);
     if (pstr_cat[0] == '/')
         strcat(*pstr_dest, &pstr_cat[1]);  //remove leading '/'
     else
@@ -262,7 +275,7 @@ static connector_callback_status_t app_process_file_read(connector_file_system_r
     
     if (fs_err != FS_ERR_NONE)
     {
-		status = app_process_file_error(data->errnum, fs_err);
+		status = app_process_file_error(&data->errnum, fs_err);
         APP_DEBUG(", fs_err %d", fs_err);
     }
 
@@ -304,7 +317,7 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
     
     if (fs_err != FS_ERR_NONE)
     {
-		status = app_process_file_error(data->errnum, fs_err);
+		status = app_process_file_error(&data->errnum, fs_err);
         APP_DEBUG("fs_err %d", fs_err);
     }
 
@@ -342,7 +355,7 @@ static connector_callback_status_t app_process_file_ftruncate(connector_file_sys
     
     if (fs_err != FS_ERR_NONE)
     {
-		status = app_process_file_error(data->errnum, fs_err);
+		status = app_process_file_error(&data->errnum, fs_err);
         APP_DEBUG(", fs_err %d", fs_err);
     }
 

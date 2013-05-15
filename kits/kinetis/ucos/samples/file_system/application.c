@@ -6,7 +6,6 @@ static void connector_status(connector_error_t const status, char const * const 
 {
     APP_TRACE_INFO(("connector_status: status update %d [%s]\n", status, status_message));
 }
-
 CPU_BOOLEAN set_clk(void)
 {
     CPU_BOOLEAN ret;
@@ -63,6 +62,7 @@ CPU_BOOLEAN set_clk(void)
     return ret;
 }
 
+#ifdef APP_CFG_FS_RAM_EN
 void fill_fs(void)
 {
     FS_FILE     *p_file;
@@ -125,6 +125,7 @@ void fill_fs(void)
     
 done:
 }
+#endif
 
 int application_start(void)
 {
@@ -135,7 +136,9 @@ int application_start(void)
     set_clk();
     
     /* Create some files and folders on Ram Filesystem for evaluation */
+#ifdef APP_CFG_FS_RAM_EN
     fill_fs();
+#endif
 
     APP_TRACE_INFO(("application_start: calling connector_start\n"));
     ret = connector_start(connector_status);

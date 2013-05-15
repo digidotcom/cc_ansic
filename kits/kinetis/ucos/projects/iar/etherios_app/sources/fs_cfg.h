@@ -184,7 +184,7 @@
 
 
                                                                 /* Config min alignment of buf's     (see Note #13) :   */
-#define  FS_CFG_BUF_ALIGN_OCTETS                 sizeof(CPU_DATA)
+#define  FS_CFG_BUF_ALIGN_OCTETS                 16u //sizeof(CPU_DATA)
 
 
 /*

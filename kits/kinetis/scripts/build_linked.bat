@@ -58,12 +58,14 @@ MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IA
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\ucos-iii"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\Freescale"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uCTCPIP-V2"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\FS"
 
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\etherios_projects\etherios_app"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\ucos-iii"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\Freescale"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCTCPIP-V2"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\FS"
 
 
 REM Link the library
@@ -224,6 +226,9 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\Freescale\*.*") do (
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\uCTCPIP-V2\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uCTCPIP-V2\%%~nxF" "%%F"
 )
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\FS\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\FS\%%~nxF" "%%F"
+)
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\%%~nxF" "%%F"
 )
@@ -235,6 +240,9 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\Freescale\*.*") do (
 )
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uCTCPIP-V2\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCTCPIP-V2\%%~nxF" "%%F"
+)
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\FS\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\FS\%%~nxF" "%%F"
 )
 
 mklink /H "%ROOT_DIR%\Tools\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"

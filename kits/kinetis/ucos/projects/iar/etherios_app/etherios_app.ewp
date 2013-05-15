@@ -321,6 +321,8 @@
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\FAT</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\OS\UCOS-III</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\RAMDisk</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\SD</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\SD\Card</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\include</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos</state>
@@ -1913,9 +1915,6 @@
       <name>$PROJ_DIR$\fs_app.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\fs_app_cfg.h</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\fs_cfg.h</name>
     </file>
     <file>
@@ -1979,6 +1978,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\BSP\bsp_ser.c</name>
+      </file>
+    </group>
+    <group>
+      <name>uC/FS</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\BSP\FS\fs_dev_sd_card_bsp.c</name>
       </file>
     </group>
     <group>
@@ -2323,6 +2328,24 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\RAMDisk\fs_dev_ramdisk.h</name>
+        </file>
+      </group>
+      <group>
+        <name>SD</name>
+        <group>
+          <name>Card</name>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\SD\Card\fs_dev_sd_card.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\SD\Card\fs_dev_sd_card.h</name>
+          </file>
+        </group>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\SD\fs_dev_sd.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\uC-FS\Dev\SD\fs_dev_sd.h</name>
         </file>
       </group>
     </group>

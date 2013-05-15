@@ -130,8 +130,6 @@
 *********************************************************************************************************
 */
 
-//TODO: use fs_app_cfg.h
-
 #define  APP_CFG_FS_DEV_CNT                               1
 #define  APP_CFG_FS_VOL_CNT                               1
 #define  APP_CFG_FS_FILE_CNT                              1
@@ -141,20 +139,16 @@
 #define  APP_CFG_FS_WORKING_DIR_CNT                       0
 #define  APP_CFG_FS_MAX_SEC_SIZE                        512
 
-
-
-
 #define  APP_CFG_FS_IDE_EN                         DEF_DISABLED
 #define  APP_CFG_FS_MSC_EN                         DEF_DISABLED
 #define  APP_CFG_FS_NAND_EN                        DEF_DISABLED
 #define  APP_CFG_FS_NOR_EN                         DEF_DISABLED
-#define  APP_CFG_FS_RAM_EN                         DEF_ENABLED
+#define  APP_CFG_FS_RAM_EN                         DEF_DISABLED
 #define  APP_CFG_FS_SD_EN                          DEF_DISABLED
-#define  APP_CFG_FS_SD_CARD_EN                     DEF_DISABLED
+#define  APP_CFG_FS_SD_CARD_EN                     DEF_ENABLED
 
-#define  APP_CFG_FS_RAM_NBR_SECS                    45  //org: (1 * 1024)
+#define  APP_CFG_FS_RAM_NBR_SECS                           45
 #define  APP_CFG_FS_RAM_SEC_SIZE                          512
-
 
 /*
 *********************************************************************************************************
