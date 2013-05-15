@@ -700,14 +700,14 @@ static connector_callback_status_t dp_handle_data_callback(connector_data_servic
     switch (dp_info->type)
     {
         case dp_content_type_binary:
-            if (dp_info->data.binary.bytes_to_send < data_ptr->bytes_available)
+            if (dp_info->data.binary.bytes_to_send > data_ptr->bytes_available)
             {
-                data_ptr->bytes_used = dp_info->data.binary.bytes_to_send;
+                data_ptr->bytes_used = data_ptr->bytes_available;
                 data_ptr->more_data = connector_true;
             }
             else
             {
-                data_ptr->bytes_used = data_ptr->bytes_available;
+                data_ptr->bytes_used = dp_info->data.binary.bytes_to_send;
                 data_ptr->more_data = connector_false;
             }
 
