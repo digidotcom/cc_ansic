@@ -48,7 +48,11 @@ connector_bool_t get_connection_status(void)
 }
 static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
 {
-
+    /* We don't want to see first missed and restored keepalive debug printf.
+     * Keepalive sometimes missed and restored almost at the same time.
+     */
+    static size_t keepalive_missed_count = 0;
+    
     switch (*status)
     {
     case connector_tcp_communication_started:
@@ -56,10 +60,14 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
         connection_ready = connector_true;
         break;
     case connector_tcp_keepalive_missed:
-        APP_DEBUG("connector_tcp_keepalive_missed\n");
+        if (keepalive_missed_count > 0)
+            APP_DEBUG("connector_tcp_keepalive_missed\n");
+        keepalive_missed_count++;
         break;
     case connector_tcp_keepalive_restored:
-        APP_DEBUG("connector_tcp_keepalive_restored\n");
+        keepalive_missed_count--;
+        if (keepalive_missed_count > 0)
+            APP_DEBUG("connector_tcp_keepalive_restored\n");
         connection_ready = connector_true;
         break;
     }
