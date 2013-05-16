@@ -132,11 +132,11 @@
 
 #define  APP_CFG_FS_DEV_CNT                               1
 #define  APP_CFG_FS_VOL_CNT                               1
-#define  APP_CFG_FS_FILE_CNT                              1
-#define  APP_CFG_FS_DIR_CNT                               1
-#define  APP_CFG_FS_BUF_CNT                       (2 * APP_CFG_FS_VOL_CNT)
+#define  APP_CFG_FS_FILE_CNT                              5
+#define  APP_CFG_FS_DIR_CNT                               5
+#define  APP_CFG_FS_BUF_CNT                       (4 * APP_CFG_FS_VOL_CNT)
 #define  APP_CFG_FS_DEV_DRV_CNT                           1
-#define  APP_CFG_FS_WORKING_DIR_CNT                       0
+#define  APP_CFG_FS_WORKING_DIR_CNT                       5
 #define  APP_CFG_FS_MAX_SEC_SIZE                        512
 
 #define  APP_CFG_FS_IDE_EN                         DEF_DISABLED

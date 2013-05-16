@@ -43,7 +43,7 @@
 
 #define    NET_DEV_CFG_MODULE
 #include  <net.h>
-#include <connector_config.h>
+#include <connector_config.h>   //TODO: Remove: Added initially to be able to configure based on connector config
 
 
 /*$PAGE*/
@@ -177,12 +177,7 @@ const  NET_DEV_CFG_ETHER  NetDev_Cfg_KxxN512_0 = {
                                     /*   NET_IF_MEM_TYPE_MAIN        buffers allocated from main memory                 */
                                     /*   NET_IF_MEM_TYPE_DEDICATED   buffers allocated from (device's) dedicated memory */
     1520u,                          /* Desired size      of device's large receive  buffers (in octets) [see Note #2].  */
-#ifndef CONNECTOR_FIRMWARE_SERVICE
-      10u,                      /* Desired number    of device's large receive  buffers             [see Note #3a].     */
-#else
-/* HB: Increased: If not Firmware update is not working. */
-      15u,                      /* Desired number    of device's large receive  buffers             [see Note #3a].     */
-#endif
+      15u, /* org 10 */             /* Desired number    of device's large receive  buffers             [see Note #3a].     */
       16u,                          /* Desired alignment of device's       receive  buffers (in octets) [see Note #4].  */
        0u,                          /* Desired offset from base receive  index, if needed   (in octets) [see Note #5a]. */
 
@@ -191,7 +186,8 @@ const  NET_DEV_CFG_ETHER  NetDev_Cfg_KxxN512_0 = {
                                     /*   NET_IF_MEM_TYPE_MAIN        buffers allocated from main memory                 */
                                     /*   NET_IF_MEM_TYPE_DEDICATED   buffers allocated from (device's) dedicated memory */
     1614u,                          /* Desired size      of device's large transmit buffers (in octets) [see Note #2].  */
-       4u,                          /* Desired number    of device's large transmit buffers             [see Note #3b]. */
+       8u /* org 4 */,              /* Desired number    of device's large transmit buffers             [see Note #3b]. */
+
      152u,                          /* Desired size      of device's small transmit buffers (in octets) [see Note #2].  */
        3u,                          /* Desired number    of device's small transmit buffers             [see Note #3b]. */
       16u,                          /* Desired alignment of device's       transmit buffers (in octets) [see Note #4].  */

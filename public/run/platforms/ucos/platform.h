@@ -15,9 +15,13 @@
 
 #include "connector_api.h"
 
+#if (defined CONNECTOR_DEBUG)
 void connector_debug_printf(char const * const format, ...);
 
 #define APP_DEBUG   connector_debug_printf
+#else
+#define APP_DEBUG
+#endif
 
 #define CONNECTOR_RUN_CFG_QUANTA        100
 

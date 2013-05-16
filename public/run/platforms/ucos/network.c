@@ -247,7 +247,11 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
             APP_DEBUG("network_send: socket closed\n");
             status = connector_callback_abort;
             break;
-                            
+        case NET_ERR_TX:
+            /* I'm having this error when running out of 'device's large transmit buffers' */
+            APP_DEBUG("network_send: NET_ERR_TX -> busy\n");
+            status = connector_callback_busy;
+            break;
         default:
             APP_DEBUG("network_send: failed, code = %d\n", err_net);
             status = connector_callback_abort;
