@@ -438,6 +438,8 @@ connector_error_t connector_start(connector_status_callback_t status_callback);
 * @}
 */
 
+#if defined CONNECTOR_DATA_POINTS
 connector_error_t connector_send_data_point(connector_request_data_point_single_t * const data_point);
+#endif
 #endif
 
