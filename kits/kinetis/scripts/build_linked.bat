@@ -141,14 +141,6 @@ for %%F in ("%BASE_DIR%\kits\common\include\*.h") do (
 	mklink /H "%EC_LIB_DIR%\include\%%~nxF" "%%F"
 )
 
-REM mklink /H "%EC_LIB_DIR%\platform\mqx\config.rci" "%BASE_DIR%\public\run\samples\simple_remote_config\config.rci"
-REM mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config.h" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config.h"
-REM mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config_cb.c" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config_cb.c"
-REM mklink /H "%EC_LIB_DIR%\platform\mqx\remote_config_cb.h" "%BASE_DIR%\public\run\samples\simple_remote_config\remote_config_cb.h"
-REM mklink /H "%EC_LIB_DIR%\platform\mqx\system.c" "%BASE_DIR%\public\run\samples\simple_remote_config\system.c"
-REM mklink /H "%EC_LIB_DIR%\platform\mqx\gps_stats.c" "%BASE_DIR%\public\run\samples\simple_remote_config\gps_stats.c"
-
-
 REM Link the template application in CodeWarrior workspace.
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\*.*") do (
 	mklink /H "%MQX_CW_WORKSPACE%\etherios_app\%%~nxF" "%%F"
@@ -159,7 +151,6 @@ for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\Sourc
 
 mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\main.c" "%BASE_DIR%\public\run\platforms\freescale\main.c"
 mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\main.h" "%BASE_DIR%\public\run\platforms\freescale\main.h"
-mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\kinetis\mqx\samples\send_data\application.c"
 
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\source\fs_devices\*.*") do (
 	mklink /H "%MQX_CW_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"
@@ -174,7 +165,6 @@ for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\iar\etherios_app\Sources\*.*")
 )
 mklink /H "%MQX_IAR_WORKSPACE%\etherios_app\Sources\main.c" "%BASE_DIR%\public\run\platforms\freescale\main.c"
 mklink /H "%MQX_IAR_WORKSPACE%\etherios_app\Sources\main.h" "%BASE_DIR%\public\run\platforms\freescale\main.h"
-mklink /H "%MQX_IAR_WORKSPACE%\etherios_app\Sources\application.c" "%BASE_DIR%\kits\kinetis\mqx\samples\send_data\application.c"
 
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\source\fs_devices\*.*") do (
 	mklink /H "%MQX_IAR_WORKSPACE%\etherios_app\Sources\fs_devices\%%~nxF" "%%F"

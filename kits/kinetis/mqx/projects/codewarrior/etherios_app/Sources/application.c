@@ -36,3 +36,4 @@ int application_start(void)
 error:
     return status;
 }
+
