@@ -41,10 +41,6 @@ typedef struct
 
 static connector_handle_t connector_handle = NULL;
 static connector_bool_t connection_ready = connector_false;
-void *get_connector_handle(void)
-{
-	return connector_handle;
-}
 
 connector_bool_t get_connection_status(void)
 {
@@ -192,6 +188,9 @@ connector_error_t connector_start(connector_status_callback_t status_callback)
     ASSERT_GOTO(status == connector_error_success, error);
 
     status = ecc_create_event(ECC_SEND_DATA_EVENT);
+#if defined (CONNECTOR_DATA_POINTS)
+    status = ecc_create_event(ECC_DATA_POINTS_EVENT);
+#endif
     ASSERT_GOTO(status == connector_error_success, error);
 
 error:
@@ -316,6 +315,84 @@ error:
     {
         send_event_block &= ~send_info->data_ptr.event_bit;
         ecc_free(send_info);
+    }
+
+    return result;
+}
+#endif
+
+#ifdef CONNECTOR_DATA_POINTS
+connector_error_t connector_send_data_point(connector_request_data_point_single_t * const data_point)
+{
+    static unsigned long send_event_block = 0;
+    connector_error_t result = connector_error_network_error;
+    connector_app_send_data_point_t * const data_point_info = ecc_malloc(sizeof(*data_point_info));
+
+    if (data_point == NULL)
+    {
+        APP_DEBUG("connector_send_data: invalid parameter\n");
+        result = connector_error_invalid_parameter;
+        goto error;
+    }
+
+    if (data_point_info == NULL)
+    {
+        APP_DEBUG("connector_send_data: malloc failed\n");
+        result = connector_error_resource_error;
+        goto error;
+    }
+
+    data_point_info->data_point_stream = data_point;
+    {
+        unsigned long available_bit = 0x80000000;
+
+        while (available_bit != 0)
+        {
+            if (!(send_event_block & available_bit))
+                break;
+            available_bit >>= 1;
+        }
+
+        send_event_block |= available_bit;
+        data_point_info->event_bit = available_bit;
+        if (available_bit == 0)
+        {
+            APP_DEBUG("connector_send_data: Exceeded maximum of 32 sessions active at a time\n");
+            result = connector_error_resource_error;
+            goto error;
+        }
+
+        /* make sure none of the stale event is pending */
+        ecc_clear_event(ECC_DATA_POINTS_EVENT, available_bit);
+    }
+
+    /* we are storing some stack variables here, need to block until we get a response */
+    data_point_info->error = connector_success;
+    data_point_info->data_point_stream->user_context = data_point_info;
+
+    {
+        connector_status_t const status = connector_initiate_action(connector_handle, connector_initiate_data_point_single, data_point_info->data_point_stream);
+
+        if (status == connector_success)
+        {
+            #define ECC_SEND_TIMEOUT_IN_MSEC 90000
+            result = ecc_get_event(ECC_DATA_POINTS_EVENT, data_point_info->event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
+        	data_point_info->error = connector_error_success;
+            //TODO: Timeout is not evaluated
+
+            result = data_point_info->error;
+        }
+        else
+        {
+            result = (status == connector_init_error) ? connector_init_error : connector_no_resource;
+        }
+    }
+
+error:
+    if (data_point_info != NULL)
+    {
+        send_event_block &= ~data_point_info->event_bit;
+        ecc_free(data_point_info);
     }
 
     return result;

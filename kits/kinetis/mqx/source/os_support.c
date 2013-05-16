@@ -17,7 +17,8 @@
 
 static char const * event_list[] =
 {
-    "idigi_send"
+    "connector_send",
+    "connector_data_point"
 };
 
 static size_t const event_list_size = asizeof(event_list);

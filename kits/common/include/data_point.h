@@ -10,11 +10,18 @@
  * =======================================================================
  */
 
-#ifndef DATA_SERVICE_H
-#define DATA_SERVICE_H
+#ifndef DATA_POINTS_H
+#define DATA_POINTS_H
 
 #include "connector_config.h"
 #include "connector_api_data_point.h"
+
+typedef struct
+{
+	connector_request_data_point_single_t * data_point_stream;
+    unsigned long event_bit;
+    connector_error_t error;
+} connector_app_send_data_point_t;
 
 connector_callback_status_t app_data_point_handler(connector_request_id_data_point_t const request, void  * const data);
 #endif

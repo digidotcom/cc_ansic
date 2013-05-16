@@ -27,14 +27,46 @@ void *app_allocate_data_points(size_t const points_count);
 
 connector_bool_t get_connection_status(void);
 
+void fill_data_point(connector_data_point_t * const point)
+{
+    point->data.type = connector_data_type_native;
+    point->data.element.native.int_value = rand() % 100;
+    {
+        TIME_STRUCT current_time;
+        _time_get(&current_time);
+
+        point->time.source = connector_time_local_epoch_fractional;
+        point->time.value.since_epoch_fractional.seconds = current_time.SECONDS;
+        point->time.value.since_epoch_fractional.milliseconds = 0;
+    }
+
+    {
+        static char latitude_str[] = "26.78";
+        static char longitude_str[] = "60.44";
+        static char elevation_str[] = "90";
+
+        point->location.type = connector_location_type_text;
+        point->location.value.text.latitude = latitude_str;
+        point->location.value.text.longitude = longitude_str;
+        point->location.value.text.elevation = elevation_str;
+    }
+
+    {
+        static char dp_description[] = "Water temperature";
+
+        point->description = dp_description;
+    }
+
+    point->quality.type = connector_quality_type_ignore;
+    point->next = NULL; /* Pointer to the next connector_data_point_t, NULL for end of list */
+}
+
+
 int application_start(void)
 {
-   size_t const points_per_message = 5;
-   void * const points = app_allocate_data_points(points_per_message);
-   size_t points_sent = 0;
-   size_t busy_count = 0;
    void *handle = NULL;
    int ret;
+   connector_data_point_t * const point = _mem_alloc(sizeof *point);
    
    if (SNTP_oneshot(IPADDR(84,77,40,132), 3000) != RTCS_OK) {
 		printf("SNTP_oneshot failed!\n");
@@ -59,45 +91,50 @@ int application_start(void)
 	    _time_delay(1000);
    } while (get_connection_status() != connector_true);
    
-   handle = get_connector_handle();
-   
-   if (points == NULL)  goto error;
+   srand(0x5EBA5);
 
    for(;;)
    {
-		int const point_interval_in_seconds = 5000;
-		size_t const current_index = points_sent % points_per_message;
-		connector_status_t const status = app_send_data_point(handle, points, current_index);
+		#define WAIT_INTERVAL 5000 /* 5 second */
+		connector_status_t status;
+		connector_request_data_point_single_t dp_stream;
+		
+		dp_stream.transport = connector_transport_tcp;
+		dp_stream.forward_to = NULL;
+		dp_stream.path = "Temperature";
+		dp_stream.point = point;
+		dp_stream.unit = "Celsius";
+		dp_stream.user_context = NULL;
+		dp_stream.type = connector_data_point_type_integer;
+		dp_stream.response_required = connector_true;
+		
+		fill_data_point(point);
+		
+		APP_DEBUG("Sending Data point %d to %s\n", dp_stream.point->data.element.native.int_value, dp_stream.path);
+		status = connector_send_data_point(&dp_stream);
 
 		switch (status)
 		{
 			case connector_init_error:
+				APP_DEBUG("connector_send_data_point: returned connector_init_error\n");
+				break;
 			case connector_service_busy:
+				APP_DEBUG("connector_send_data_point: returned connector_service_busy\n");
+				break;
 			case connector_unavailable:
-			{
-				int const point_delay_in_seconds = 10000;
-
-				if (++busy_count > points_per_message) goto done;
-				APP_DEBUG(".");
-				_time_delay(point_delay_in_seconds);
+				APP_DEBUG("connector_send_data_point: returned connector_unavailable\n");
 				break;
-			}
-
 			case connector_success:
-				points_sent++;
-				busy_count = 0;
+				APP_DEBUG("Data Point uploaded successfully\n");
 				break;
-
 			default:
-				APP_DEBUG("Failed to send data point:%" PRIsize ", status:%d\n", points_sent, status);
+				APP_DEBUG("Failed to send data point! status: %d\n", status);
 				goto done;
 		}
-
-		_time_delay(point_interval_in_seconds);
+		_time_delay(WAIT_INTERVAL);
 	}
 
 done:
-	app_free_data_points(points);
 
 error:
 	APP_DEBUG("Data point sample is exited!\n");

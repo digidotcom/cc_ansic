@@ -26,6 +26,7 @@ typedef struct
 } connector_callbacks_t;
 
 #define ECC_SEND_DATA_EVENT 	0
+#define ECC_DATA_POINTS_EVENT 	1
 #define ECC_MAX_NUM_EVENTS  	1
 
 connector_error_t ecc_create_event(int const event);
