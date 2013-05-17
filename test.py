@@ -131,6 +131,7 @@ dvt_tests = {
     'esn_wan_type'                : ('test_esn_wan_type.py',),
     'meid_wan_type'               : ('test_meid_wan_type.py',),
     'data_point_positive'         : ('test_data_point_positive.py',),
+    'data_point_negative'         : ('test_data_point_negative.py',),
 }
 
 dvt_test    = TestType('dvt_test', 'dvt/samples/', 'dvt/cases/dvt_tests',
