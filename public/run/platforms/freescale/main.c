@@ -19,10 +19,10 @@ TASK_TEMPLATE_STRUCT MQX_template_list[] =
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
    {MAIN_TASK, Main_task, 2048, 9, "main", MQX_AUTO_START_TASK},
    {CONNECTOR_TASK, connector_thread, CONNECTOR_THREAD_STACK_SIZE, 10, "Cloud Connector", 0},
-#ifdef FILE_SYSTEM_SDCARD
+#ifdef APPLICATION_FILE_SYSTEM_SDCARD
    {SDCARD_TASK, sdcard_task,  2048, 11, "SDcard Task", MQX_AUTO_START_TASK},
 #endif
-#ifdef FILE_SYSTEM_USB
+#ifdef APPLICATION_FILE_SYSTEM_USB
    {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
 #endif
 #if (defined CONNECTOR_FIRMWARE_SERVICE_FULL)

@@ -14,10 +14,10 @@
 
 #include "connector_config.h"
 
-#ifdef FILE_SYSTEM_SDCARD
+#ifdef APPLICATION_FILE_SYSTEM_SDCARD
 #include "sdcard_task.h"
 #endif
-#ifdef FILE_SYSTEM_USB
+#ifdef APPLICATION_FILE_SYSTEM_USB
 #include "MFS_USB.h"
 #include "USB_File.h"
 #endif
@@ -27,16 +27,13 @@
 
 #ifdef CONNECTOR_FILE_SYSTEM
 
-#if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
-#error The maximum supported CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH is 460
+#if (!defined(APPLICATION_FILE_SYSTEM_USB) && !defined(APPLICATION_FILE_SYSTEM_SDCARD)) || \
+	(defined(APPLICATION_FILE_SYSTEM_USB) && defined(APPLICATION_FILE_SYSTEM_SDCARD))
+#error You must define which file system device to use in connector_config.h (APPLICATION_FILE_SYSTEM_SDCARD or APPLICATION_FILE_SYSTEM_USB)
 #endif
 
-#if !defined(FILE_SYSTEM_USB) && !defined(FILE_SYSTEM_SDCARD)
-#error "You must define where the Filesyste is located (FILE_SYSTEM_SDCARD or FILE_SYSTEM_USB)"
-#endif
-
-#if !defined CONNECTOR_FILE_SYSTEM 
-#error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample" 
+#if !defined CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH
+#error Please define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH in connector_config.h
 #endif
 
 #if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
@@ -197,7 +194,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     _mqx_int result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_CHANGE_CURRENT_DIR, (uint_32 *)data->path);
 
     if (result < 0) {
-    	status = app_process_file_error(data->errnum, errno);
+    	status = app_process_file_error(&data->errnum, errno);
     } else {
     	MFS_SEARCH_PARAM *search_param = _mem_alloc(sizeof(MFS_SEARCH_PARAM));
     	MFS_SEARCH_DATA *search_data = _mem_alloc(sizeof(MFS_SEARCH_DATA));
@@ -261,11 +258,11 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 
 	result = _mem_free(search_data);
 	if (result < 0) {
-		status = app_process_file_error(data->errnum, errno);
+		status = app_process_file_error(&data->errnum, errno);
 	}
 	result = _mem_free(search_param);
 	if (result < 0) {
-		status = app_process_file_error(data->errnum, errno);
+		status = app_process_file_error(&data->errnum, errno);
 	}
     
 	return status;
@@ -360,7 +357,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
     		
     if (fd == NULL)
     {
-		status = app_process_file_error(data->errnum, MQX_ENOENT);
+		status = app_process_file_error(&data->errnum, MQX_ENOENT);
         APP_DEBUG("app_process_file_open: _io_fopen returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
     }
 
@@ -398,7 +395,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
     offset = fseek(fd, data->requested_offset, origin);
     if (offset < 0)
     {
-		status = app_process_file_error(data->errnum, errno);
+		status = app_process_file_error(&data->errnum, errno);
         APP_DEBUG("app_process_file_lseek error: fseek returned: %ld\n", __FILE__, __FUNCTION__, __LINE__, fd);
     }
 	data->resulting_offset = (connector_file_offset_t) offset;
@@ -437,7 +434,7 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_GET_FILE_ATTR, &attributes_param);
     if (result != MFS_NO_ERROR) {
 		APP_DEBUG("app_process_file_remove failed: %ld\n", __FILE__, __FUNCTION__, __LINE__, result);
-		status = app_process_file_error(data->errnum, errno);
+		status = app_process_file_error(&data->errnum, errno);
 		goto done;
     }
 
@@ -447,13 +444,13 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     	result = _io_ioctl(filesystem_info->FS_FD_PTR, IO_IOCTL_REMOVE_SUBDIR, (void *)data->path);
     } else {
         APP_DEBUG("%s is not a file or directory\n", data->path, result, errno);
-		status = app_process_file_error(data->errnum, MQX_EINVAL);
+		status = app_process_file_error(&data->errnum, MQX_EINVAL);
     	goto done;
     }
     
     if (result != MFS_NO_ERROR)
     {
-		status = app_process_file_error(data->errnum, errno);
+		status = app_process_file_error(&data->errnum, errno);
         goto done;
     }    
 
@@ -471,12 +468,12 @@ static connector_callback_status_t app_process_file_read(connector_file_system_r
 
     if (result < 0)
     {
-		status = app_process_file_error(data->errnum, errno);
-        APP_DEBUG("read %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
+		status = app_process_file_error(&data->errnum, errno);
+        APP_DEBUG("read %ld, %u, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         goto done;
     }
 
-    APP_DEBUG("read %ld, %zu, returned %d\n", fd, data->bytes_available, result);
+    APP_DEBUG("read %ld, %u, returned %d\n", fd, data->bytes_available, result);
     data->bytes_used = result;
 
 done:
@@ -492,12 +489,12 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
     
     if (result < 0)
     {
-		status = app_process_file_error(data->errnum, errno);
-        APP_DEBUG("write %ld, %zu, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
+		status = app_process_file_error(&data->errnum, errno);
+        APP_DEBUG("write %ld, %u, returned %d, errno %d\n", fd, data->bytes_available, result, errno);
         goto done;
     }
 
-    APP_DEBUG("write %ld, %zu, returned %d\n", fd, data->bytes_available, result);
+    APP_DEBUG("write %ld, %u, returned %d\n", fd, data->bytes_available, result);
 
     data->bytes_used = result;
     
@@ -513,7 +510,7 @@ static connector_callback_status_t app_process_file_close(connector_file_system_
 
     if (result < 0 && errno == MQX_EIO)
     {
-		status = app_process_file_error(data->errnum, errno);
+		status = app_process_file_error(&data->errnum, errno);
     }
 
     APP_DEBUG("close %ld returned %d\n", fd, result);

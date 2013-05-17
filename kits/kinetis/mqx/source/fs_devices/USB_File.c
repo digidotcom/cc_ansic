@@ -36,7 +36,7 @@
 
 #include "connector_config.h"
 
-#ifdef FILE_SYSTEM_USB
+#ifdef APPLICATION_FILE_SYSTEM_USB
 #include "MFS_USB.h"
 
 #include "USB_File.h"
@@ -236,5 +236,5 @@ void usb_filesystem_uninstall( FILESYSTEM_INFO_STRUCT_PTR  usb_fs_ptr)
 
     printf("USB device removed.\n");
 }
-#endif /* FILE_SYSTEM_USB */
+#endif /* APPLICATION_FILE_SYSTEM_USB */
 /* EOF */

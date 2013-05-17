@@ -14,8 +14,9 @@
 
 //#define CONNECTOR_FILE_SYSTEM
 //#define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
-//#define FILE_SYSTEM_USB 		/* Define only one */
-//#define FILE_SYSTEM_SDCARD	/* Define only one */
+//#define APPLICATION_FILE_SYSTEM_USB 		/* Define only one */
+//#define APPLICATION_FILE_SYSTEM_SDCARD	/* Define only one */
+//#define APPLICATION_IGNORE_SDCARD_PROTECTION /* Define if compiling for TWRK60N512 RevD */
 
 //#define CONNECTOR_RCI_SERVICE
 //#define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 	256
