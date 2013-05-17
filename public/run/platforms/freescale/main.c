@@ -121,7 +121,7 @@ error:
 * 
 * Task Name    : Main_task
 * Comments     :
-*    This starts iDigi Connector
+*    This starts Device Cloud Connector
 *
 *END*-----------------------------------------------------*/
 

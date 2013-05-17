@@ -20,7 +20,7 @@ static LWGPIO_STRUCT push_button;
 
 static void connector_status(connector_error_t const status, char const * const status_message)
 {
-    APP_DEBUG("idigi_status: status update %d [%s]\n", status, status_message);
+    APP_DEBUG("connector_status: status update %d [%s]\n", status, status_message);
 }
 
 int application_start(void)
@@ -38,11 +38,11 @@ int application_start(void)
     lwgpio_set_functionality(&push_button, BSP_BUTTON1_MUX_GPIO);
     lwgpio_set_attribute(&push_button, LWGPIO_ATTR_PULL_UP, LWGPIO_AVAL_ENABLE);
 
-    APP_DEBUG("application_start: calling idigi_connector_start\n");
+    APP_DEBUG("application_start: calling connector_start\n");
     ret = connector_start(connector_status);
     if (ret != connector_success)
     {
-        APP_DEBUG("idigi_connector_start failed [%d]\n", ret);
+        APP_DEBUG("connector_start failed [%d]\n", ret);
         goto error;
     }
 
@@ -55,7 +55,7 @@ int application_start(void)
         static connector_dataservice_data_t ecc_data = {0};
         static boolean display_push_msg = TRUE;
         static unsigned char count = 0;
-        static char buffer[] = "iDigi Device application data. Count xxxx.\n";
+        static char buffer[] = "Etherios Cloud Connector Device application data. Count xxxx.\n";
         size_t const buf_size = (sizeof buffer) - 1;
 
         if (lwgpio_get_value(&push_button) == LWGPIO_VALUE_LOW)
@@ -63,13 +63,14 @@ int application_start(void)
             while (lwgpio_get_value(&push_button) == LWGPIO_VALUE_LOW)
                 _time_delay(WAIT_FOR_10_MSEC);
 
-            APP_DEBUG("Sending data to the iDigi Device Cloud using idigi_send_data...\n");
+            APP_DEBUG("Sending data to the Etherios Device Cloud using connector_send_data...\n");
             {
-                size_t const bytes_copied = snprintf(buffer, buf_size, "iDigi Device application data. Count %d.\n", count);
+                size_t const bytes_copied = snprintf(buffer, buf_size, "Etherios Cloud Connector Device application data. Count %d.\n", count);
 
                 APP_DEBUG("%s", buffer);
                 ecc_data.data_ptr = buffer;
                 ecc_data.length_in_bytes = bytes_copied;
+				ecc_data.transport = connector_transport_tcp;
                 ret = connector_send_data("test/test.txt", &ecc_data, NULL);
                 display_push_msg = TRUE;
             }
@@ -78,7 +79,7 @@ int application_start(void)
         {
             if (display_push_msg)
             {
-                APP_DEBUG("\nPush SW1 to send data to the iDigi Device Cloud.\n");
+                APP_DEBUG("\nPush SW1 to send data to the Etherios Device Cloud.\n");
                 display_push_msg = FALSE;
             }
 

@@ -40,7 +40,7 @@ void ecc_software_reset(void);
 void ecc_watchdog_reset(void);
 
 void connector_thread(unsigned long initial_data);
-extern connector_callbacks_t * idigi_get_app_callbacks(void);
+extern connector_callbacks_t * connector_get_app_callbacks(void);
 extern unsigned long start_system_up_time;
 
 #define UNUSED_PARAMETER(x)     ((void)x)

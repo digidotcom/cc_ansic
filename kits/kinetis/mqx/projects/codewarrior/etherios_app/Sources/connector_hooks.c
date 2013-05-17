@@ -1,5 +1,5 @@
 /*
- * Write here your custom hooks for iDigi Connector.
+ * Write here your custom hooks for Cloud Connector.
  * 
  * They will be automatically included in the project.
  * 

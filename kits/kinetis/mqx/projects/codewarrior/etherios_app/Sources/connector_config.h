@@ -9,9 +9,9 @@
 #define CONNECTOR_DEVICE_TYPE                         "MQX 4.0 on Kinetis"
 
 /* Services category */
-//#define CONNECTOR_MSG_MAX_TRANSACTION                 1
+#define CONNECTOR_MSG_MAX_TRANSACTION                 1
 //#define CONNECTOR_DATA_POINTS
-//#define CONNECTOR_DATA_SERVICE
+#define CONNECTOR_DATA_SERVICE
 
 
 #define CONNECTOR_FILE_SYSTEM

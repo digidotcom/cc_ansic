@@ -119,7 +119,7 @@ static connector_callback_status_t app_os_yield(void)
 
 connector_callback_status_t app_os_reboot(void)
 {
-	APP_DEBUG("Reboot request from iDigi!\n");
+	APP_DEBUG("Reboot request from Device Cloud!\n");
 	ecc_software_reset();
 	return connector_callback_continue;
 }

@@ -22,7 +22,7 @@ static LWGPIO_STRUCT led2;
 
 static void connector_status(connector_error_t const status, char const * const status_message)
 {
-    APP_DEBUG("idigi_status: status update %d [%s]\n", status, status_message);
+    APP_DEBUG("connector_status: status update %d [%s]\n", status, status_message);
 }
 
 /*

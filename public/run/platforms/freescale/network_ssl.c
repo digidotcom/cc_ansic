@@ -341,7 +341,7 @@ done:
 }
 
 /*
- * Send data to the iDigi Device Cloud, this routine must not block.
+ * Send data to the Device Cloud, this routine must not block.
  */
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
@@ -368,7 +368,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
 }
 
 /*
- * This routine reads a specified number of bytes from the iDigi Device Cloud.
+ * This routine reads a specified number of bytes from the Device Cloud.
  */
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
@@ -388,7 +388,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
         FD_ZERO(&read_set);
         FD_SET(ssl_ptr->sfd, &read_set);
 
-        /* Blocking point for iDigi connector */
+        /* Blocking point for Connector */
         ready = select(ssl_ptr->sfd + 1, &read_set, NULL, NULL, &timeout);
         if (ready == 0)
         {

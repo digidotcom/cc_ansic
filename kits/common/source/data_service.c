@@ -35,9 +35,6 @@ static void free_connector_request(connector_request_t * request)
     }
 }
 
-connector_callbacks_t * connector_get_app_callbacks(void);
-
-
 static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_data)
 {
     connector_callback_status_t status = connector_callback_continue;

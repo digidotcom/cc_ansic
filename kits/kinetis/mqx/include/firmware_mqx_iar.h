@@ -153,6 +153,6 @@ struct fapp_tftp_tx_handler_srec
 /************************************************************************
 *     Function Prototypes
 *************************************************************************/
-int idigi_rx_handler_srec (unsigned char* data, unsigned long data_size);
+int rx_handler_srec (unsigned char* data, unsigned long data_size);
 
 #endif

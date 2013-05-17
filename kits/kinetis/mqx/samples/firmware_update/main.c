@@ -30,7 +30,7 @@ TASK_TEMPLATE_STRUCT MQX_template_list[] =
    {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
 #endif
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
-    {FLASH_TASK, flash_task, 4096, 10, "iDigi_flash", 0},
+    {FLASH_TASK, flash_task, 4096, 10, "Flash Task", 0},
 #endif
    {0,           0,           0,     0,   0,      0,                 }
 };
@@ -117,7 +117,7 @@ void read_ipconfig(network_start_params_t *netwrok_parameters);
 * 
 * Task Name    : Main_task
 * Comments     :
-*    This starts iDigi Connector
+*    This starts Cloud Connector
 *
 *END*-----------------------------------------------------*/
 

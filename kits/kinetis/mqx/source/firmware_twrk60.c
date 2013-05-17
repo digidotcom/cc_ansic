@@ -94,7 +94,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
 
     if (download_info == NULL)
     {
-        APP_DEBUG("app_firmware_download_request ERROR: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_request ERROR: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -104,7 +104,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         goto done;
     }
 
-    /* Create the iDigi Flash Task */
+    /* Create the Connector Flash Task */
     flash_taskid = ecc_create_task(FLASH_TASK, 0);
     if (flash_taskid <= 0)
     {
@@ -139,7 +139,7 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
 
     if (image_data == NULL)
     {
-        APP_DEBUG("app_firmware_image_data ERROR: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_image_data ERROR: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -183,7 +183,7 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
 
     if (download_complete == NULL)
     {
-        APP_DEBUG("app_firmware_download_complete Error: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_complete Error: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -234,7 +234,7 @@ static connector_callback_status_t app_firmware_download_abort(connector_firmwar
 
     if (abort_data == NULL)
     {
-        APP_DEBUG("app_firmware_download_abort Error: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_abort Error: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
