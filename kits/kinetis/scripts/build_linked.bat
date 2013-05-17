@@ -28,6 +28,7 @@ RMDIR /S /Q "%UCOS_IAR_WORKSPACE%"
 
 MKDIR "%ROOT_DIR%"
 MKDIR "%ROOT_DIR%\Tools"
+MKDIR "%ROOT_DIR%\Python_scripts"
 MKDIR "%EC_LIB_DIR%"
 MKDIR "%EC_LIB_DIR%\private"
 MKDIR "%EC_LIB_DIR%\include"
@@ -238,5 +239,25 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\FS\*.*") do (
 mklink /H "%ROOT_DIR%\Tools\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"
 mklink /H "%ROOT_DIR%\Tools\FWUpdateIntFlash.icf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.icf"
 
+REM The following links python scripts from all samples to destination
+SET RETURN_DIR="%CD%"
+REM Change to the dir where to look recursively
+cd "%BASE_DIR%\public\run\samples\"
+call :treeProcess
+cd %RETURN_DIR%
+
 :end
 pause
+exit /B
+
+:treeProcess
+for %%F in (*.py) do (
+	mklink /H "%ROOT_DIR%\Python_scripts\%%~nxF" "%%F"
+	REM echo "%ROOT_DIR%\Python_scripts\%%~nxF" "%%F"
+)
+for /D %%d in (*) do (
+    cd %%d
+    call :treeProcess
+    cd ..
+)
+goto:eof
