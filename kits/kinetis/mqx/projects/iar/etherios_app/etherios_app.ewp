@@ -1887,7 +1887,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk53 Int Flash Debug</name>
+    <name>twrk53n512 Int Flash Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1901,15 +1901,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk53 Int Flash Debug\Exe</state>
+          <state>twrk53n512 Int Flash Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk53 Int Flash Debug\Obj</state>
+          <state>twrk53n512 Int Flash Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk53 Int Flash Debug\List</state>
+          <state>twrk53n512 Int Flash Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2828,7 +2828,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk53 Int Flash Release</name>
+    <name>twrk53n512 Int Flash Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -2842,15 +2842,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk53 Int Flash Release\Exe</state>
+          <state>twrk53n512 Int Flash Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk53 Int Flash Release\Obj</state>
+          <state>twrk53n512 Int Flash Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk53 Int Flash Release\List</state>
+          <state>twrk53n512 Int Flash Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -6690,8 +6690,8 @@
             <excluded>
               <configuration>twrk60n512 Int Flash Debug</configuration>
               <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk53n512 Int Flash Debug</configuration>
+              <configuration>twrk53n512 Int Flash Release</configuration>
               <configuration>twrk70f120m Int Flash Debug</configuration>
               <configuration>twrk70f120m Int Flash Release</configuration>
             </excluded>
@@ -6713,8 +6713,8 @@
             <excluded>
               <configuration>twrk60n512 Int Flash Debug</configuration>
               <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk53n512 Int Flash Debug</configuration>
+              <configuration>twrk53n512 Int Flash Release</configuration>
               <configuration>twrk70f120m Int Flash Debug</configuration>
               <configuration>twrk70f120m Int Flash Release</configuration>
             </excluded>
@@ -6724,8 +6724,8 @@
             <excluded>
               <configuration>twrk60n512 Int Flash Debug</configuration>
               <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
+              <configuration>twrk53n512 Int Flash Debug</configuration>
+              <configuration>twrk53n512 Int Flash Release</configuration>
               <configuration>twrk70f120m Int Flash Debug</configuration>
               <configuration>twrk70f120m Int Flash Release</configuration>
             </excluded>
