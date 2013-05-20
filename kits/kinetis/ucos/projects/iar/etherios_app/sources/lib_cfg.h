@@ -112,7 +112,12 @@
                                                         /*   DEF_ENABLED      Memory allocation ENABLED                 */
 
 
+/* Etherios Cloud Connector:
+   Increase LIB_MEM_CFG_HEAP_SIZE based on registered Connector services.
+*/
 #define  LIB_MEM_CFG_HEAP_SIZE_ORG      28500u        /* Configure heap memory size         [see Note #2a].           */
+
+#define  LIB_MEM_CFG_HEAP_SIZE_ETH      (/* Increased Rx Buffers */(1520u*5u) + /* Increasd Tx Buffers */(1614u*4u))
 
 #ifndef CONNECTOR_FILE_SYSTEM
 #define  LIB_MEM_CFG_HEAP_SIZE_FS      (0u)
@@ -120,9 +125,16 @@
 #define  LIB_MEM_CFG_HEAP_SIZE_FS      (1024u*10u)
 #endif
 
-#define  LIB_MEM_CFG_HEAP_SIZE_ETH      (/* Increased Rx Buffers */(1518u*5u) + /* Increasd Tx Buffers */(1614u*4u))
+#ifndef CONNECTOR_RCI_SERVICE
+#define  LIB_MEM_CFG_HEAP_SIZE_RCI      (0u)
+#else
+#define  LIB_MEM_CFG_HEAP_SIZE_RCI      (1024u*5u)
+#endif
 
-#define  LIB_MEM_CFG_HEAP_SIZE         (LIB_MEM_CFG_HEAP_SIZE_ORG + LIB_MEM_CFG_HEAP_SIZE_ETH + LIB_MEM_CFG_HEAP_SIZE_FS)
+#define  LIB_MEM_CFG_HEAP_SIZE         (LIB_MEM_CFG_HEAP_SIZE_ORG + \
+                                        LIB_MEM_CFG_HEAP_SIZE_ETH + \
+                                        LIB_MEM_CFG_HEAP_SIZE_FS + \
+                                        LIB_MEM_CFG_HEAP_SIZE_RCI)
 
 #if 0                                                   /* Configure heap memory base address (see Note #2b).           */
 #define  LIB_MEM_CFG_HEAP_BASE_ADDR       0x00000000u
