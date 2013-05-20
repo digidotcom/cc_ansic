@@ -38,17 +38,6 @@
 #define CONNECTOR_WAIT_COUNT                          5
 #define CONNECTOR_NO_COMPRESSION
 /* * * * * * * * * * * * * * * * * * * * */
-#ifndef CONNECTOR_MAC_ADDRESS
-#error "Please define a MAC address in connector_config.h"
-#endif
-
-#ifndef CONNECTOR_VENDOR_ID
-#error "Please define the Vendor ID in connector_config.h"
-#endif
-
-#ifndef CONNECTOR_VENDOR_ID
-#error "Please define the Device Cloud URL connector_config.h"
-#endif
 
 #if defined CONNECTOR_FIRMWARE_SERVICE
 #if !defined APPLICATION_FIRMWARE_SERVICE_STUB && !defined APPLICATION_FIRMWARE_SERVICE_FULL

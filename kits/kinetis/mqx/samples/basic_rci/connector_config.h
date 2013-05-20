@@ -41,7 +41,7 @@
 #error "Please define the Vendor ID in connector_config.h"
 #endif
 
-#ifndef CONNECTOR_VENDOR_ID
+#ifndef CONNECTOR_CLOUD_URL
 #error "Please define the Device Cloud URL connector_config.h"
 #endif
 
