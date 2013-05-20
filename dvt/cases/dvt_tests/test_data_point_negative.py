@@ -4,22 +4,22 @@ import sys
 
 from utils import DeviceConnectionMonitor
 
-class DataPointPositiveTestCase(ic_testcase.TestCase):
+class DataPointNegativeTestCase(ic_testcase.TestCase):
     monitor=None
 
     def setUp(self):
         ic_testcase.TestCase.setUp(self)
         # Optimization, reuse the DeviceConnectionMonitor to avoid creating
         # multiple sessions over and over.
-        if DataPointPositiveTestCase.monitor is None:
-            DataPointPositiveTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
-            DataPointPositiveTestCase.monitor.start()
-        self.monitor = DataPointPositiveTestCase.monitor
+        if DataPointNegativeTestCase.monitor is None:
+            DataPointNegativeTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+            DataPointNegativeTestCase.monitor.start()
+        self.monitor = DataPointNegativeTestCase.monitor
 
     @classmethod
     def tearDownClass(cls):
-        if DataPointPositiveTestCase.monitor is not None:
-            DataPointPositiveTestCase.monitor.stop()
+        if DataPointNegativeTestCase.monitor is not None:
+            DataPointNegativeTestCase.monitor.stop()
         ic_testcase.TestCase.tearDownClass()
 
     def test_dp1_tcp_int(self):
@@ -87,18 +87,21 @@ class DataPointPositiveTestCase(ic_testcase.TestCase):
             except Exception, e:
                 self.log.info("Received Exception for %s, retrying\n" % stream_name)
 
-        self.assertTrue(dataPoint_response.status_code == 200)
-        data_point  = dataPoint_response.resource
-        if stream_name.find('binary') == -1:
-            self.log.info("Found %s, %s" % (stream_name, data_point))
-            if stream_name.find('string') > 0:
-                self.assertTrue(data_point == None)
-        else:
-            self.log.info("Found %s, DataPoint: binary data" % stream_name)
+        if dataPoint_response.status_code == 200:
+            data_point  = dataPoint_response.resource
+            if stream_name.find('binary') == -1:
+                self.log.info("Found %s, %s" % (stream_name, data_point))
+                if stream_name.find('string') > 0:
+                    self.assertTrue(data_point == None)
+            else:
+                self.log.info("Found %s, DataPoint: binary data" % stream_name)
 
-        self.log.info("Deleting %s..." % stream_name)
-        response = self.rest_session.delete(stream_path)
-        self.log.info("Delete response: %s" % response)
+            self.log.info("Deleting %s..." % stream_name)
+            response = self.rest_session.delete(stream_path)
+            self.log.info("Delete response: %s" % response)
+        else:
+            self.assertTrue(dataPoint_response.status_code == 400 or dataPoint_response.status_code == 500)
+            self.log.info("%s is not found and is deleted by the user" % stream_name)
 
 if __name__ == '__main__':
     unittest.main()
