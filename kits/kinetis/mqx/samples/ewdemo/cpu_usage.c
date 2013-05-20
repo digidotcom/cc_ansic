@@ -63,7 +63,7 @@ void init_cpu_usage(void)
  * utilization of 6 percent. 
  */
 	
-#ifdef TWR_K53N512
+#ifdef TWRK53N512
 	cpu_usage_baseline = 0x850dde;
 #else
 	cpu_usage_baseline = 0x270664;

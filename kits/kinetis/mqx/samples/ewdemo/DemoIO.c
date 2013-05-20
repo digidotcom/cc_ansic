@@ -47,7 +47,7 @@ boolean InitializeIO(void)
         lwgpio_set_functionality(&led2, BSP_LED2_MUX_GPIO);
     }
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
     if (TRUE == lwgpio_init(&led3, BSP_LED3, LWGPIO_DIR_OUTPUT, LWGPIO_VALUE_NOCHANGE))    {
         /* swich pin functionality (MUX) to GPIO mode */
         lwgpio_set_functionality(&led3, BSP_LED3_MUX_GPIO);
