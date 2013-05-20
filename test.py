@@ -37,6 +37,7 @@ from build_utils import get_template_dirs, setup_platform, build, sandbox
 from stat import * # ST_SIZE etc
 from threading import Thread
 import random
+import errno            # This module makes available standard errno system symbols
 
 import makegen
 
@@ -588,7 +589,7 @@ class TestRunner(object):
                 #     self.rest_session.delete(device_location)
                 # except:
                 #     pass # If delete fails, proceed anyways
-                device_location = None
+                #device_location = None
                 # Killing the process should also cause the thread to complete.
                 if self.gcov and test != 'compile_and_link' and test_script is not None:
                     self.log.info('Flushing gcov coverage data for pid %s and exiting.' % pid, extra=log_extra)
@@ -618,6 +619,16 @@ class TestRunner(object):
 
             # Delete device if it was not previously deleted.
             if device_location is not None:
+                # Check that process is finished
+                retries = 10
+                status = self.isRunningProcess(pid)
+                while(retries>0 and status[0] is True):
+                    retries -= 1
+                    self.log.info(status[1], extra=log_extra)
+                    self.log.info("Waiting a second to finish the process...", extra=log_extra)
+                    time.sleep(1)
+
+                # Remove Device from server
                 try:
                     self.log.info("Deleting Device %s." % device_location, extra=log_extra)
                     self.rest_session.delete(device_location)
@@ -656,6 +667,22 @@ class TestRunner(object):
             _msg = "Sandbox is None, aborts the removal process"
             return (False, _msg)
 
+
+    def isRunningProcess(self, pid):
+        try:
+            os.kill(int(pid), 0)
+            _msg = "Process with pid %s is still running" % pid
+            return (True,_msg)
+        except OSError, err:
+            if err.errno == errno.ESRCH:
+                _msg ="Process with pid %s is not running" % pid
+                return (False,_msg)
+            elif err.errno == errno.EPERM:
+                _msg ="No permission to signal this process with pid %s !!" % pid
+                return (True,_msg)
+            else:
+                _msg ="Unknown error sending the signal to process with pid %s !!" % pid
+                return (True,_msg)
 
 def clean_output(directory):
     for root, folders, files in os.walk(directory):
