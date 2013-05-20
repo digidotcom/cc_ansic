@@ -9,7 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-#include <mqx.h>
+
 #include "connector_api.h"
 
 #if (defined CONNECTOR_DATA_POINTS)
