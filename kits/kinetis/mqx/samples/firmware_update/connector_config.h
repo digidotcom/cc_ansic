@@ -24,6 +24,8 @@
 /* Services category */
 #define CONNECTOR_MSG_MAX_TRANSACTION                 1
 #define CONNECTOR_FIRMWARE_SERVICE
+#define APPLICATION_FIRMWARE_SERVICE_FULL
+
 #define	DEVICE_HAS_FLASH_PART_0
 #define FLASH_PART_0_LEN                          0xFFFFFFFF
 #define FLASH_PART_0_TYPE                         ".*\\.S19"
