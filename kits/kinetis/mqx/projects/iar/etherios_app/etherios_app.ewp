@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>twrk60n512 Int Flash Debug</name>
+    <name>twrk60n512_Int_Flash_Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -17,15 +17,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk60n512 Int Flash Debug\Exe</state>
+          <state>twrk60n512_Int_Flash_Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk60n512 Int Flash Debug\Obj</state>
+          <state>twrk60n512_Int_Flash_Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk60n512 Int Flash Debug\List</state>
+          <state>twrk60n512_Int_Flash_Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -944,7 +944,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk60n512 Int Flash Release</name>
+    <name>twrk60n512_Int_Flash_Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -958,15 +958,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk60n512 Int Flash Release\Exe</state>
+          <state>twrk60n512_Int_Flash_Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk60n512 Int Flash Release\Obj</state>
+          <state>twrk60n512_Int_Flash_Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk60n512 Int Flash Release\List</state>
+          <state>twrk60n512_Int_Flash_Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -1887,7 +1887,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk53n512 Int Flash Debug</name>
+    <name>twrk53n512_Int_Flash_Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1901,15 +1901,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk53n512 Int Flash Debug\Exe</state>
+          <state>twrk53n512_Int_Flash_Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk53n512 Int Flash Debug\Obj</state>
+          <state>twrk53n512_Int_Flash_Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk53n512 Int Flash Debug\List</state>
+          <state>twrk53n512_Int_Flash_Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2828,7 +2828,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk53n512 Int Flash Release</name>
+    <name>twrk53n512_Int_Flash_Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -2842,15 +2842,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk53n512 Int Flash Release\Exe</state>
+          <state>twrk53n512_Int_Flash_Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk53n512 Int Flash Release\Obj</state>
+          <state>twrk53n512_Int_Flash_Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk53n512 Int Flash Release\List</state>
+          <state>twrk53n512_Int_Flash_Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -3776,7 +3776,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk70f120m Int Flash Debug</name>
+    <name>twrk70f120m_Int_Flash_Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -3790,15 +3790,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk70f120m Int Flash Debug\Exe</state>
+          <state>twrk70f120m_Int_Flash_Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk70f120m Int Flash Debug\Obj</state>
+          <state>twrk70f120m_Int_Flash_Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk70f120m Int Flash Debug\List</state>
+          <state>twrk70f120m_Int_Flash_Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -4717,7 +4717,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk70f120m Int Flash Release</name>
+    <name>twrk70f120m_Int_Flash_Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -4731,15 +4731,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk70f120m Int Flash Release\Exe</state>
+          <state>twrk70f120m_Int_Flash_Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk70f120m Int Flash Release\Obj</state>
+          <state>twrk70f120m_Int_Flash_Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk70f120m Int Flash Release\List</state>
+          <state>twrk70f120m_Int_Flash_Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -6688,12 +6688,12 @@
           <file>
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53n512 Int Flash Debug</configuration>
-              <configuration>twrk53n512 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
+              <configuration>twrk60n512_Int_Flash_Debug</configuration>
+              <configuration>twrk60n512_Int_Flash_Release</configuration>
+              <configuration>twrk53n512_Int_Flash_Debug</configuration>
+              <configuration>twrk53n512_Int_Flash_Release</configuration>
+              <configuration>twrk70f120m_Int_Flash_Debug</configuration>
+              <configuration>twrk70f120m_Int_Flash_Release</configuration>
             </excluded>
           </file>
           <file>
@@ -6711,23 +6711,23 @@
           <file>
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_twrk60.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53n512 Int Flash Debug</configuration>
-              <configuration>twrk53n512 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
+              <configuration>twrk60n512_Int_Flash_Debug</configuration>
+              <configuration>twrk60n512_Int_Flash_Release</configuration>
+              <configuration>twrk53n512_Int_Flash_Debug</configuration>
+              <configuration>twrk53n512_Int_Flash_Release</configuration>
+              <configuration>twrk70f120m_Int_Flash_Debug</configuration>
+              <configuration>twrk70f120m_Int_Flash_Release</configuration>
             </excluded>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53n512 Int Flash Debug</configuration>
-              <configuration>twrk53n512 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
+              <configuration>twrk60n512_Int_Flash_Debug</configuration>
+              <configuration>twrk60n512_Int_Flash_Release</configuration>
+              <configuration>twrk53n512_Int_Flash_Debug</configuration>
+              <configuration>twrk53n512_Int_Flash_Release</configuration>
+              <configuration>twrk70f120m_Int_Flash_Debug</configuration>
+              <configuration>twrk70f120m_Int_Flash_Release</configuration>
             </excluded>
           </file>
           <file>
