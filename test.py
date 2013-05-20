@@ -182,7 +182,7 @@ DVT_TESTS = dict((test.name,test) for test in [malloc_test,
                                            keepalive_test, timing_test,
                                            stacksize_test])
 
-def generate_id(rest_session, method="mac"):
+def generate_id(rest_session, method="mac", mac_address=None):
     """
     Generate a Pseudo Random Device Id (low probability of duplication) and
     provision device to account.
@@ -198,9 +198,15 @@ def generate_id(rest_session, method="mac"):
             # DEVICE ID based on MAC ADDRESS
             #--- Example MAC: 112233:445566
             #--- Device ID mapping: 00000000-00000000-112233FF-FF445566
-            device_id = DEVICE_ID_BASED_ON_MAC_PROTOTYPE % (base_id[:6], base_id[-6:])
-            mac_addr = MAC_ADDR_PROTOTYPE % (base_id[:6], base_id[-6:])
-            generated_id["mac"] = mac_addr
+            if(mac_address is None):
+                device_id = DEVICE_ID_BASED_ON_MAC_PROTOTYPE % (base_id[:6], base_id[-6:])
+                mac_addr = MAC_ADDR_PROTOTYPE % (base_id[:6], base_id[-6:])
+                generated_id["mac"] = mac_addr
+            else:
+                device_id = DEVICE_ID_BASED_ON_MAC_PROTOTYPE % (mac_address[0:2]+mac_address[3:5]+mac_address[6:8],
+                                                                mac_address[9:11]+mac_address[12:14]+mac_address[15:17])
+                generated_id["mac"] = MAC_ADDR_PROTOTYPE % (mac_address[0:2]+mac_address[3:5]+mac_address[6:8],
+                                                           mac_address[9:11]+mac_address[12:14]+mac_address[15:17])
         elif(method == "imei"):
             # DEVICE ID based on IMEI
             #--- Example IMEI: AA-BBBBBB-CCCCCC-D
@@ -272,7 +278,7 @@ def unique_device_type():
 class TestRunner(object):
     log = None
 
-    def __init__(self, hostname, username, password, description, base_dir,
+    def __init__(self, hostname, username, password, mac_address, description, base_dir,
         debug_on=False, cflags='', replace_list=[], update_config_header=False,
         tty=False, gcov=False, test_type=None, test_name=None,
         config_tool_jar='ConfigGenerator.jar', keystore=None):
@@ -286,6 +292,7 @@ class TestRunner(object):
         if (test_name == 'connect_on_ssl') or (test_name is None):
             cflags += BASE_FLAGS
 
+        self.mac_address          = mac_address
         self.description          = description
         self.base_dir             = base_dir
         self.debug_on             = debug_on
@@ -433,7 +440,7 @@ class TestRunner(object):
             else:
                 method = "mac"
 
-            (device_id, generated_id, device_location) = generate_id(self.rest_session, method)
+            (device_id, generated_id, device_location) = generate_id(self.rest_session, method, self.mac_address)
             log_extra['device_id'] = device_id
 
             if(method=="mac"):
@@ -722,6 +729,9 @@ def main():
     parser.add_argument('--hostname', action='store', type=str,
         default='test.etherios.com',
         help='Device Cloud URL to connect devices to.')
+    parser.add_argument('--mac_address', action='store', type=str,
+        default=None,
+        help='Device MAC to use in Device Cloud URL. ej: 11:22:33:44:55:66')
     parser.add_argument('--descriptor', action='store', type=str,
         default='linux-x64', help='A unique descriptor to describe the test.')
     parser.add_argument('--architecture', action='store', type=str,
@@ -806,7 +816,7 @@ def main():
         else:
             log.info("============ %s =============" % configuration)
             runner = TestRunner(args.hostname, args.username, args.password,
-                description, base_dir, debug_on, cflags,
+                args.mac_address, description, base_dir, debug_on, cflags,
                 replace_list=replace_list, tty=args.tty,
                 test_name=args.test_name, test_type=args.test_type,
                 config_tool_jar = config_tool_jar, keystore= keystore,

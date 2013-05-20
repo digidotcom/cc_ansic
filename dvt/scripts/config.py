@@ -156,6 +156,7 @@ def update_config_c(cnfg_file, **device_config):
   if( device_config.has_key('device_mac') and device_config['device_mac'] != None):
     # Setup MAC Address
     mac_addr = device_config['device_mac']
+    print("*********************** %s *****************************" % mac_addr)
     new_mac = '{' + '0x' + mac_addr[0] + mac_addr[1] + ', '
     new_mac += '0x' + mac_addr[2] + mac_addr[3] + ', '
     new_mac += '0x' + mac_addr[4] + mac_addr[5] + ', '
