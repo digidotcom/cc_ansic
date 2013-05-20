@@ -85,7 +85,8 @@ static  void  ECC_Run_Task  (void *p_arg);                        /* iDigiConnec
 
 static char const * event_list[] =
 {
-    "idigi_send",
+    "connector_send",
+    "connector_data_point"
 };
 
 OS_FLAG_GRP EventFlagGrpList[ECC_MAX_NUM_EVENTS];
