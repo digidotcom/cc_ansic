@@ -153,13 +153,18 @@ static connector_status_t sm_get_more_response_data(connector_data_t * const con
         session->bytes_processed += cb_data.bytes_used;
         ASSERT(session->bytes_processed <= session->in.bytes);
         if (!cb_data.more_data)
+        {
             sm_set_payload_complete(session);
+        }
+        else
+        {
+            ASSERT(cb_data.bytes_used < cb_data.bytes_available);
+        }
     }
 
 error:
     return result;
 }
-
 
 #if (defined CONNECTOR_COMPRESSION)
 static connector_status_t sm_compress_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
