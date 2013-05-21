@@ -2,6 +2,8 @@
 
 #include <connector.h>
 
+connector_error_t connector_config(void);
+
 static void connector_status(connector_error_t const status, char const * const status_message)
 {
     APP_TRACE_INFO(("connector_status: status update %d [%s]\n", status, status_message));
@@ -11,6 +13,9 @@ int application_start(void)
 {
     OS_ERR      err_os;
     connector_error_t ret;
+
+    APP_TRACE_INFO(("application_start: calling connector_config\n"));
+    connector_config();
 
     APP_TRACE_INFO(("application_start: calling connector_start\n"));
     ret = connector_start(connector_status);

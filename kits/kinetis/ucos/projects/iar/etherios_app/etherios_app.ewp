@@ -1897,6 +1897,9 @@
       <name>$PROJ_DIR$\application.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\connector_config.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\connector_config.h</name>
     </file>
     <file>

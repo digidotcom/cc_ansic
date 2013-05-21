@@ -129,12 +129,9 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 }
 
 #if !(defined CONNECTOR_VENDOR_ID)
+uint32_t device_vendor_id = 0x00000000;   /* Filled by connector_config.c */
 static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
 {
-#error  "Specify vendor id"
-
-    static uint32_t const device_vendor_id = 0x00000000;
-
     config_vendor->id  =  device_vendor_id;
 
     return connector_callback_continue;
@@ -155,10 +152,12 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #endif
 
 #if !(defined CONNECTOR_CLOUD_URL)
+#if !(defined CLOUD_URL_LENGTH)
+#define CLOUD_URL_LENGTH   64
+#endif
+char connector_cloud_url[CLOUD_URL_LENGTH] = {0};   /* Filled by connector_config.c */
 static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static  char const connector_cloud_url[] = "login.etherios.com";
-
     config_url->string = (char *)connector_cloud_url;
     config_url->length = sizeof connector_cloud_url -1;
 
