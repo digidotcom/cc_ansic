@@ -32,7 +32,7 @@
      Define the following macros with your device MAC address (from the TWR-SER module)
      and the Device type (user-defined string):
         #define CONNECTOR_MAC_ADDRESS                     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC}
-        #define CONNECTOR_DEVICE_TYPE                     "EtheriosSample"
+        #define CONNECTOR_DEVICE_TYPE                     "Send Data Example"
 
      And the following with your account Vendor ID and Cloud URL:
         #define CONNECTOR_VENDOR_ID                       0xAABBCCDD
@@ -56,14 +56,14 @@
   Running the example
   -------------------
   Once updated the connector_config.h settings, all you need to do is to build and
-  launch the application.
+  launch the application as described in the Help Topics.
 
   While it is running, you can press the push button 'SW1' to send raw data to
   the cloud. You can see the console output on the terminal window for the
   device status.
 
-  To verify that the text file has been uploaded to iDigi successfully, follow
-  these steps:
+  To verify that the text file has been uploaded to the Device Cloud successfully, 
+  follow these steps:
     1) Open your web browser and navigate to your Device Cloud by Etherios page 
        (login.etherios.com or login.etherios.co.uk) and log in with your username 
        and password.
@@ -72,11 +72,19 @@
 
     3) Open the storage folder corresponding with your Device ID.
 
-       NOTE: Use the table in ''Device Manager > Devices' section to find out the Device ID of 
+       NOTE: Use the table in 'Device Manager > Devices' section to find out the Device ID of 
        your board.
 
     4) You should be able to see a file called 'test.txt' under 'test/'. Open it
        and verify it contains the text you sent with the application.
+
+  Optionally, a Python 2.7 script is provided with a very basic web services script to 
+  retrieve the test/test.txt file from Device Cloud. To run the example, open a command line,
+  navigate to [ETHERIOS_CC_4_KINETIS_PATH]\Python Scripts\ and run:
+
+    python get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
+
+  The script will retrieve test/test.txt and then print the file contents.
 
   Tested On
   ---------

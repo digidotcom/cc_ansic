@@ -10,7 +10,9 @@
 
   Introduction
   ------------
-  Freescale Kinetis TWRK60N512 and TWRK53N512 Demo application.
+  Freescale Kinetis TWRK60N512 and TWRK53N512 Demo application. This application shows
+  most of the Device Cloud capabilities when working in multitasking environments sending
+  asynchronous data to the Device Cloud that can be read from a Web Application.
 
   Requirements
   ------------

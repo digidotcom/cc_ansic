@@ -11,7 +11,8 @@
 
   Introduction
   ------------
-  This sample demonstrates how one can use the iDigi cloud to control their remote device.
+  This sample demonstrates how one can use the Device Cloud by Etherios to control their remote
+  device.
   
   The sample allows user to turn ON or OFF the TWR boards' LEDs (LED1 or LED2).
 
@@ -32,7 +33,7 @@
      Define the following macros with your device MAC address (from the TWR-SER module)
      and the Device type (user-defined string):
         #define CONNECTOR_MAC_ADDRESS                     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC}
-        #define CONNECTOR_DEVICE_TYPE                     "EtheriosSample"
+        #define CONNECTOR_DEVICE_TYPE                     "Device Request Example"
 
      And the following with your account Vendor ID and Cloud URL:
         #define CONNECTOR_VENDOR_ID                       0xAABBCCDD
@@ -110,6 +111,16 @@
           </data_service>
        </sci_reply>
 
+  Optionally, a Python 2.7 script is provided with a very basic web services script to 
+  send a device request to Device Cloud. To run the script, open a command line, navigate 
+  to [ETHERIOS_CC_4_KINETIS_PATH]\Python Scripts\ and run:
+
+    python device_request.py <username> <password> <device_id> <target_led> <state>'
+
+  For Example:
+  
+    pyhton device_request.py username password 00000000-00000000-001234FF-FF567890 LED2 ON
+  
   Tested On
   ---------
   TWRK53N512 Board

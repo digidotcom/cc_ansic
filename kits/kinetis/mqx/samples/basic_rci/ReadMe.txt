@@ -11,8 +11,8 @@
 
   Introduction
   ------------
-  This sample demonstrates how to perform a remote configuration of 
-  the device through Device Cloud using the remote configuration (RCI) service.
+  This sample demonstrates how to perform a remote configuration of the device through 
+  Device Cloud using the remote configuration (RCI) service.
 
   Requirements
   ------------
