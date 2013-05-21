@@ -612,6 +612,7 @@
 									<listOptionValue builtIn="false" value="&quot;${MQX_ROOT_DIR}/lib/twrk70f120m.cw10/release/rtcs&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${MQX_ROOT_DIR}/lib/twrk70f120m.cw10/release/bsp&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${MQX_ROOT_DIR}/lib/twrk70f120m.cw10/release/psp&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${MQX_ROOT_DIR}/lib/twrk70f120m.cw10/release/mfs&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${MQX_ROOT_DIR}/lib/twrk70f120m.cw10/release&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${MQX_ROOT_DIR}/lib/twrk70f120m.cw10/release/bsp/Generated_Code&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${MCUToolsBaseDir}/ProcessorExpert/lib/Kinetis/pdd/inc&quot;"/>
