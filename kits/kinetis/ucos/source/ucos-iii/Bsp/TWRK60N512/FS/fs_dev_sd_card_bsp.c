@@ -1055,7 +1055,7 @@ void  FSDev_SD_Card_BSP_CmdDataWr (FS_QTY               unit_nbr,
 CPU_INT32U  FSDev_SD_Card_BSP_GetBlkCntMax (FS_QTY      unit_nbr,
                                             CPU_INT32U  blk_size)
 {
-    return (DEF_INT_32U_MAX_VAL);
+    return (DEF_INT_32U_MAX_VAL); //HB: Evaluate to limit to 1
 }
 
 
@@ -1216,6 +1216,8 @@ void  FSDev_SD_Card_BSP_SetClkFreq (FS_QTY      unit_nbr,
     while (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_PRSSTAT, (K60N512_BIT_PRSSTAT_DAT_INHIBIT | K60N512_BIT_PRSSTAT_CMD_INHIBIT)) == DEF_YES) {
         ;                                                           /* Wait until able to issue next DAT & CMD Command      */
     }
+    
+    FSDev_SD_Card_BSP_SetTimeoutData(unit_nbr, 0xFFFFFFFFuL);       /* Reset Data Timeout Value to Max Value                */
 }
 
 
