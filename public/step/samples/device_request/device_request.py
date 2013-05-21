@@ -21,7 +21,7 @@ import base64
 import sys
 
 def Usage():
-    print 'Usage: device_request.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
+    print 'Usage: device_request.py <Username> <Password> <Device ID> <Target> <Request Data> [<Device Cloud URL>]'
     print '    Sends an SCI Data Service-Device Request to <Device ID> with the'
     print '    device_request target_name set to \"myTarget\" and the Device Request data'
     print '    set to \"My device request data\".'
@@ -30,6 +30,8 @@ def Usage():
     print '                   connected.'
     print '        <Password> is the account password'
     print '        <Device ID> is the device to receive the Device Request.' 
+	print '        <Target> is the Device\'s target that will handle the Request Data.' 
+	print '        <Request Data> is the data to be passed to the Device\'s target.' 
     print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
     print '                   login.etherios.com.' 
     print '' 
@@ -45,7 +47,7 @@ def Usage():
     print '            Sends an SCI Data Service-Device Request to 00000000-00000000-00049DFF-FFAABBCC '
     print '            (in user account myaccount) through login.etherios.co.uk.\n'
    
-def PostMessage(username, password, device_id, cloud_url):
+def PostMessage(username, password, device_id, target, state, cloud_url):
     # create HTTP basic authentication string, this consists of
     # "username:password" base64 encoded
     auth = base64.encodestring("%s:%s"%(username,password))[:-1]
@@ -57,11 +59,11 @@ def PostMessage(username, password, device_id, cloud_url):
                 <device id="%s"/>
             </targets>
             <requests>
-            <device_request target_name="myTarget">My device request data</device_request>
+            <device_request target_name="%s">"%s"</device_request>
             </requests>
         </data_service>
     </sci_request>
-    """%(device_id)
+    """%(device_id, target, state)
     
     # to what URL to send the request with a given HTTP method
     webservice = httplib.HTTP(cloud_url,80)
@@ -91,16 +93,15 @@ def PostMessage(username, password, device_id, cloud_url):
 def main(argv):
     #process arguments
     count = len(argv);
-    if (count < 3) or (count > 4):
+    if (count < 5) or (count > 6):
         Usage()
     else:
-        if count > 3:
-            cloud_url = argv[3]
+        if count > 5:
+            cloud_url = argv[5]
         else:
             cloud_url = "login.etherios.com"
-        PostMessage(argv[0], argv[1], argv[2], cloud_url)
+        PostMessage(argv[0], argv[1], argv[2], argv[3], argv[4], cloud_url)
 
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
-    
