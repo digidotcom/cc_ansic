@@ -307,13 +307,61 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
     connector_callback_status_t status = connector_callback_continue;
     FS_FILE* p_file = data->handle;
     FS_ERR fs_err;
+    CPU_SIZE_T result;
 
+#if 1
+    /*
+        We have found problem on the Filesystem or the SDCard driver that let 
+        us do for now following operations:
+            - Align to 32bit
+            - Split into 512 byte blocks
+    */
+    char * p_buf = (char*)data->buffer;
+    CPU_SIZE_T remaining = data->bytes_available;
+    char char_to_write;
+    
     APP_DEBUG("write p_file 0x%x, %u", p_file, data->bytes_available);
     
-    CPU_SIZE_T result = FSFile_Wr(p_file, (void*)data->buffer, data->bytes_available, &fs_err);
-    data->bytes_used = result;
+    data->bytes_used = 0;
+
+    /* Align to 32bit */
+    while (  ((CPU_INT32U)p_buf) % 4)
+    {
+        char_to_write = *p_buf;
+        result = FSFile_Wr(p_file, (void*)&char_to_write,1, &fs_err);
+        if ((result != 1) || (fs_err != FS_ERR_NONE))
+        {
+            APP_DEBUG("write ERROR p_file 0x%x, offset %u, towrite 1", p_file, data->bytes_used);
+            goto done;
+        }
+        remaining -= result;
+        data->bytes_used += result;
+        p_buf += result;
+    }
+    APP_DEBUG(", aligned %u", data->bytes_used);
+
+    /* Split into 512 byte blocks */
+    while (remaining)
+    {
+        result = FSFile_Wr(p_file, (void*)p_buf, (remaining>512)?512:remaining, &fs_err);
+        if ((result != ((remaining>512)?512:remaining)) || (fs_err != FS_ERR_NONE))
+        {
+            APP_DEBUG("write ERROR p_file 0x%x, offset %u, towrite 512", p_file, data->bytes_used);
+            goto done;
+        }
+        remaining -= result;
+        data->bytes_used += result;
+        p_buf += result;
+    }      
+#else
+    APP_DEBUG("write p_file 0x%x, %u", p_file, data->bytes_available);
     
-    APP_DEBUG(", returned %d", result);
+    result = FSFile_Wr(p_file, (void*)data->buffer, data->bytes_available, &fs_err);
+    data->bytes_used = result;
+#endif
+    
+done:
+    APP_DEBUG(", returned %d", data->bytes_used);
     
     if (fs_err != FS_ERR_NONE)
     {
