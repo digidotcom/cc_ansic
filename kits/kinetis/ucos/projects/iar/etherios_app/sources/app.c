@@ -115,9 +115,7 @@ static  void  AppDHCPcInit     (NET_IF_NBR);
 
 int application_start(void);
 
-void AppGetRunTimeParameters(void);
-
-NET_ERR app_set_mac_addr(NET_IF_NBR if_nbr);
+NET_ERR app_config_mac_addr(NET_IF_NBR if_nbr);
 
 /*
 *********************************************************************************************************
@@ -212,8 +210,6 @@ static  void  AppTaskStart (void *p_arg)
     Clk_Init(&err_clk);                                         /* Initialize clock */
 #endif
     
-    AppGetRunTimeParameters();
-    
     AppTCPIP_Init();                                            /* Initialize uC/TCP-IP and associated appliations.     */
     
 #if (APP_CFG_DNS == DEF_ENABLED)
@@ -232,9 +228,18 @@ static  void  AppTaskStart (void *p_arg)
     return;
 }
 
-static uint8_t device_mac_addr[NET_IF_ETHER_ADDR_SIZE] = {0};
+/*
+    uCOS is normally hardcoding the mac address in file net_dev_cfg.c.
+    We have set there a NULL to be able to configure here through 
+    app_read_mac_addr and app_config_mac_addr functions the mac address 
+    dynamically.
+    That let us ask for the desired mac address through the serial port for
+    that users evaluating the precompiled application.
+    If CONNECTOR_MAC_ADDRESS is defined in connector_config.h the mac will be
+    taken from there without asking the user.
+*/
 
-void AppGetRunTimeParameters(void)
+void app_read_mac_addr(uint8_t *device_mac_addr)
 {
     CPU_CHAR user_mac[NET_IF_802x_ADDR_SIZE_STR];
     NET_ERR err_net; 
@@ -244,10 +249,10 @@ void AppGetRunTimeParameters(void)
     Str_Copy_N(user_mac,
                CONNECTOR_MAC_ADDRESS,
                NET_IF_802x_ADDR_SIZE_STR);
-    APP_TRACE_INFO(("AppGetParameters: Using MAC=%s\n",CONNECTOR_MAC_ADDRESS));
+    APP_TRACE_INFO(("app_read_mac_addr: Using MAC=%s\n",CONNECTOR_MAC_ADDRESS));
 #else
 ask_again:
-    APP_TRACE_INFO(("AppGetParameters: Type desired MAC address:\n"));
+  APP_TRACE_INFO(("app_read_mac_addr: Type desired MAC address in AA:BB:CC:DD:EE:FF format:\n"));
     BSP_Ser_RdStr(user_mac, NET_IF_802x_ADDR_SIZE_STR);
 #endif
     
@@ -256,25 +261,24 @@ ask_again:
                    &err_net);
     if (err_net != NET_ASCII_ERR_NONE) 
     {
-        APP_TRACE_INFO(("AppGetParameters: Wrong MAC\n"));
+        APP_TRACE_INFO(("app_read_mac_addr: Wrong MAC\n"));
 #ifndef CONNECTOR_MAC_ADDRESS
         goto ask_again;
 #endif
     }
     
-    /* TODO: For clients using prebuild binary image, ask on the serial port for custom parameters like:
-                CONNECTOR_MAC_ADDRESS
-                CONNECTOR_DEVICE_TYPE
-                CONNECTOR_VENDOR_ID
-    */  
+    APP_TRACE_INFO(("\napp_read_mac_addr: device_mac_addr: %s\n", user_mac));
 }
 
-NET_ERR app_set_mac_addr(NET_IF_NBR if_nbr)
+NET_ERR app_config_mac_addr(NET_IF_NBR if_nbr)
 {
     NET_IF *pif;
     NET_IF_DATA_802x  *p_if_data;
-    NET_ERR err_net; 
-        
+    NET_ERR err_net;
+    uint8_t device_mac_addr[NET_IF_ETHER_ADDR_SIZE] = {0};
+      
+    app_read_mac_addr(device_mac_addr);
+    
     pif = NetIF_Get (if_nbr, &err_net);
     if (err_net != NET_IF_ERR_NONE)
         goto done;
@@ -329,7 +333,7 @@ static  void  AppTCPIP_Init (void)
 
     APP_TEST_FAULT(err_net, NET_IF_ERR_NONE);                   /* Handle the error.                                    */
     
-    app_set_mac_addr(if_nbr);
+    app_config_mac_addr(if_nbr);
 
     APP_TRACE_INFO(("Starting the interface device..."));
     
