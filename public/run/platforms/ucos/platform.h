@@ -35,14 +35,5 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
 #endif
 int application_run(connector_handle_t handle);
-extern connector_callback_status_t app_get_vendor_id(uint8_t const ** const id, size_t * const size);
-extern connector_callback_status_t app_get_device_type(char const ** const type, size_t * const size);
-extern connector_callback_status_t app_custom_get_device_id(uint8_t const ** const id, size_t * const size);
-connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac);
-/* TODO: Following three prototypes doesn't belong in this file */
-extern void Flash_NVRAM_get_mac_address(uint8_t * const address);
-extern void Flash_NVRAM_set_mac_address(uint8_t * const address);
-extern unsigned long ic_create_task(unsigned long const index_number, unsigned long const parameter);
-extern unsigned long ic_destroy_task(unsigned long const task_id);
 
 #endif /* _PLATFORM_H */
