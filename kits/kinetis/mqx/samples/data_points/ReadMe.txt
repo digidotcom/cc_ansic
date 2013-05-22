@@ -11,10 +11,9 @@
 
   Introduction
   ------------
-  This sample sends streaming data points to the Etherios Device Cloud when 
-  push button SW1 is pushed once. Device Cloud (with Data Stream enabled) on the 
-  other hand collects these data and the data shows up under Data Streams page 
-  inside the Data Service tab.
+  This sample sends streaming data points to the Etherios Device Cloud simulating a
+  sampling device. On the other handDevice Cloud (with Data Stream enabled) collects
+  these data and the data shows up under Data Streams page inside the Data Service tab.
   
   This example uploads one Data Point per second simulating a "sawtooth" signal.
 

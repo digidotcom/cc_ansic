@@ -86,12 +86,9 @@ int application_start(void)
         goto error;
     }
 
-    do {
-    	_time_delay(1000);
-    } while (get_connection_status() == 0);
-
     {
     	connector_request_data_point_single_t *data_point = _mem_alloc(sizeof *data_point);
+    	connector_callback_status_t status;
     	
     	data_point->forward_to = NULL;
     	data_point->path = "SawtoothSignal";
@@ -106,7 +103,10 @@ int application_start(void)
     	for (;;) {
         	fill_data_point(data_point);
         	APP_DEBUG("Sending sample %d at %d\n", data_point->point->data.element.native.int_value, data_point->point->time.value.since_epoch_fractional.seconds);
-        	connector_send_data_point(data_point);
+        	status = connector_send_data_point(data_point);
+        	if (status == connector_init_error) {
+        		APP_DEBUG("Connector not ready yet\n");
+        	}
         	_time_delay(TIME_BETWEEN_SAMPLES);
     	}
     }

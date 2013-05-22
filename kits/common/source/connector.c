@@ -42,10 +42,6 @@ typedef struct
 static connector_handle_t connector_handle = NULL;
 static connector_bool_t connection_ready = connector_false;
 
-connector_bool_t get_connection_status(void)
-{
-	return connection_ready;
-}
 static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
 {
     /* We don't want to see first missed and restored keepalive debug printf.

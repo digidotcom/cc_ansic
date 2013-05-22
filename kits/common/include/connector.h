@@ -330,7 +330,7 @@ connector_error_t connector_register_device_request_callbacks(connector_device_r
 */
 
 /**
- * @defgroup connector_send_data_point Send data to a file on the Device Cloud.
+ * @defgroup connector_send_data Send data to a file on the Device Cloud.
  * @{ 
  * @b Include: connector.h
  */
