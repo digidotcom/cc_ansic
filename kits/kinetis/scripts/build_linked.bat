@@ -197,6 +197,7 @@ mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CPU" "%MICRIUM_OFFICIAL_PACK
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-TCPIP-V2" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\NET-TCPX-PKG000-X-P1\Micrium\Software\uC-TCPIP-V2"
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-DHCPc"    "%MICRIUM_OFFICIAL_PACKAGE_DIR%\NET-TCPX-PKG000-X-P1\Micrium\Software\uC-DHCPc"
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-DNSc"     "%MICRIUM_OFFICIAL_PACKAGE_DIR%\NET-TCPX-PKG000-X-P1\Micrium\Software\uC-DNSc"
+mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-SNTPc"     "%MICRIUM_OFFICIAL_PACKAGE_DIR%\NET-TCPX-PKG001-X-P1\Micrium\Software\uC-SNTPc"
 
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-Clk" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\FSX-FSXX-PKG000-X-P1\Micrium\Software\uC-Clk"
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uc-crc" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\FSX-FSXX-PKG000-X-P1\Micrium\Software\uc-crc"

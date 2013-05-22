@@ -124,7 +124,7 @@
 
 #define  CLK_CFG_SIGNAL_FREQ_HZ                         1000u   /* Configure signal frequency  (see Note #3).           */
 
-#define  CLK_CFG_TZ_DFLT_SEC                               0    /* Configure default time zone (see Note #4).           */
+#define  CLK_CFG_TZ_DFLT_SEC                            7200u   /* Configure default time zone (see Note #4).           */
 
 
 /*$PAGE*/

@@ -316,6 +316,7 @@
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-TCPIP-V2\Dev\Ether\PHY\Generic</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-DHCPc\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-DNSc\Source</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uC-SNTPc\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\FAT</state>
@@ -1950,6 +1951,9 @@
     <file>
       <name>$PROJ_DIR$\os_cfg_app.h</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\sntp-c_cfg.h</name>
+    </file>
   </group>
   <group>
     <name>BSP</name>
@@ -2650,6 +2654,22 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\uCOS-III\Source\os_var.c</name>
+      </file>
+    </group>
+  </group>
+  <group>
+    <name>uC/SNTPc</name>
+    <excluded>
+      <configuration>Flash</configuration>
+      <configuration>Release</configuration>
+    </excluded>
+    <group>
+      <name>Source</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-SNTPc\Source\sntp-c.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\uC-SNTPc\Source\sntp-c.h</name>
       </file>
     </group>
   </group>

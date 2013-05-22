@@ -13,18 +13,22 @@ static void connector_status(connector_error_t const status, char const * const 
 }
 
 #if (APP_CFG_CLK == DEF_ENABLED)
+#ifndef CLK_TS_NTP
+typedef CLK_TS_SEC CLK_TS_NTP;  //HB: Added
+#endif
+
+//TODO: Move
+CPU_INT32U SNTPc_GetLocalTime_s (void)
+{
+    CLK_TS_NTP ts_ntp;
+    Clk_GetTS_NTP(&ts_ntp);
+    return ((CPU_INT32U)ts_ntp);
+}
+
 CPU_BOOLEAN set_clk(void)
 {
-    CPU_BOOLEAN ret;
-    
+    CPU_BOOLEAN ret;    
     CLK_DATE_TIME date_time;
-    CLK_YR Yr;
-    CLK_DAY Day;
-    CLK_MONTH Month;
-    CLK_HR Hr;
-    CLK_MIN Min;
-    CLK_SEC Sec;
-    CLK_TZ_SEC tz_sec;
            
     ret = Clk_GetDateTime(&date_time);
     if (ret == DEF_OK)
@@ -37,25 +41,53 @@ CPU_BOOLEAN set_clk(void)
         APP_TRACE_INFO(("Error in Clk_GetDateTime\n"));
  
 #if (APP_CFG_SNTP == DEF_ENABLED)
+    {
+        CLK_TS_NTP ntp_time;
+        SNTP_PKT sntp_pkt;
+        NET_IP_ADDR   App_IP_NTP_Srvr = 0x544D2884;      //Hardcoded SNTP server IP
+        
+        ret = SNTPc_ReqRemoteTime(App_IP_NTP_Srvr, &sntp_pkt);
+        if (ret == DEF_OK) 
+        {
+            ntp_time = SNTPc_GetRemoteTime_s(&sntp_pkt);
+            //Clk_SetTS_NTP(&ntp_time);
+            ret = Clk_TS_NTP_ToDateTime(ntp_time, 
+                                        CLK_CFG_TZ_DFLT_SEC,    /* TimeZone configured in clk_sfg.h */
+                                        &date_time);
+            if (ret != DEF_OK)
+                APP_TRACE_INFO(("Clk_TS_NTP_ToDateTime Failed\n"));
+        }
+    }
 #else
-    // TODO: Ask user for time?
-    // Set a fix data/time as reference
-    Yr = 2013;
-    Month = 5;
-    Day = 22;
-    Hr = 12;
-    Min = 23;
-    Sec = 0;
-    tz_sec = 0;
+    {
+        CLK_YR Yr;
+        CLK_DAY Day;
+        CLK_MONTH Month;
+        CLK_HR Hr;
+        CLK_MIN Min;
+        CLK_SEC Sec;
+        CLK_TZ_SEC tz_sec;
+
+        // TODO: Ask user for time?
+        // Set a fix data/time as reference
+        Yr = 2013;
+        Month = 5;
+        Day = 22;
+        Hr = 17;
+        Min = 00;
+        Sec = 0;
+        tz_sec = 7200; /* UTC+2 */
+
+        ret = Clk_DateTimeMake(&date_time, Yr, Month, Day, Hr, Min, Sec, tz_sec);
+        if (ret != DEF_OK)
+            APP_TRACE_INFO(("Clk_DateTimeMake Failed\n"));
+    }
 #endif
-    
-    ret = Clk_DateTimeMake(&date_time, Yr, Month, Day, Hr, Min, Sec, tz_sec);
-    if (ret != DEF_OK)
-        APP_TRACE_INFO(("Clk_DateTimeMake Failed\n"));
+
     ret = Clk_SetDateTime(&date_time);
     if (ret != DEF_OK)
-        APP_TRACE_INFO(("Clk_GetDateTime Failed\n"));
-    
+        APP_TRACE_INFO(("Clk_SetDateTime Failed\n"));
+
     ret = Clk_GetDateTime(&date_time);
     if (ret == DEF_OK)
     {
