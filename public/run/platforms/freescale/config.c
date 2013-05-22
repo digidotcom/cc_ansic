@@ -16,7 +16,11 @@
 #include <platform.h>
 #include <bele.h>
 #include "connector_config.h"
+
 #define IPCFG_default_enet_device       0
+
+extern _enet_address device_mac_addr; /* defined in main.c */
+
 /*
  * Routine to get the IP address, you will need to modify this routine for your
  * platform.
@@ -36,36 +40,11 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
     return status;
 }
 
-#define MAC_ADDR_LENGTH     6
-static _enet_address device_mac_addr = {0};
-
-
 connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
     connector_callback_status_t status = connector_callback_abort;
 
-#if defined(CONNECTOR_MAC_ADDRESS)
-    {
-        _enet_address const literal_mac = CONNECTOR_MAC_ADDRESS;
-
-        memcpy(device_mac_addr, literal_mac, sizeof device_mac_addr);
-        #if BSPCFG_ENABLE_FLASHX
-        //Flash_NVRAM_set_mac_address(device_mac_addr);
-        #endif
-    }
-#elif defined(CONNECTOR_GET_MAC_FROM_NVRAM)
-    #if !BSPCFG_ENABLE_FLASHX
-    #error Verify that BSPCFG_ENABLE_FLASHX is defined (different than 0) in user_config.h. Please recompile BSP with this option.
-    #endif
-    Flash_NVRAM_get_mac_address(device_mac_addr);
-#elif defined(CONNECTOR_CUSTOMIZE_GET_MAC_METHOD)
-    status = app_custom_get_mac_addr(device_mac_addr);
-    config_mac->data = device_mac_addr;
-    goto done;
-#else
-    #error Define the way the MAC address is provided to the library.
-#endif
-
+    ipcfg_get_mac(IPCFG_default_enet_device, device_mac_addr);
     config_mac->data = device_mac_addr;
 
     status = connector_callback_continue;
@@ -123,16 +102,25 @@ static connector_callback_status_t app_get_link_speed(connector_config_link_spee
 }
 #endif
 
-#if !(defined CONNECTOR_WAN_PHONE_NUMBER_DIALED)
-static connector_callback_status_t app_get_phone_number(connector_config_pointer_string_t * const config_phone_number)
+#if !(defined CONNECTOR_CLOUD_URL)
+#if !(defined CLOUD_URL_LENGTH)
+#define CLOUD_URL_LENGTH   64
+#endif
+char connector_cloud_url[CLOUD_URL_LENGTH] = {0};   /* Filled by connector_config.c */
+static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    /*
-     * Return pointer to phone number for WAN connection type.
-     */
-    static char const phone_number[] ="000-000-0000";
+    config_url->string = (char *)connector_cloud_url;
+    config_url->length = sizeof connector_cloud_url -1;
 
-    config_phone_number->string = (char *)phone_number;
-    config_phone_number->length = sizeof phone_number -1;
+    return connector_callback_continue;
+}
+#endif
+
+#if !(defined CONNECTOR_VENDOR_ID)
+uint32_t device_vendor_id = 0x00000000;   /* Filled by connector_config.c */
+static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
+{
+    config_vendor->id  =  device_vendor_id;
 
     return connector_callback_continue;
 }
@@ -375,7 +363,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
 #if !(defined CONNECTOR_CLOUD_URL)
     case connector_request_id_config_device_cloud_url:
-        status = app_get_server_url(data);
+        status = app_get_device_cloud_url(data);
         break;
 #endif
 
@@ -389,12 +377,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     case connector_request_id_config_link_speed:
         status = app_get_link_speed(data);
         break;
-#endif
-
-#if !(defined CONNECTOR_WAN_PHONE_NUMBER_DIALED)
-    case connector_request_id_config_phone_number:
-        status = app_get_phone_number(data);
-       break;
 #endif
 
 #if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)

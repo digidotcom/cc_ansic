@@ -6938,16 +6938,19 @@
       <name>$PROJ_DIR$\Sources\application.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Sources\connector_config.h</name>
+      <name>$PROJ_DIR$\Sources\connector_config.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Sources\connector_hooks.c</name>
+      <name>$PROJ_DIR$\Sources\connector_config.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Sources\main.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Sources\main.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\parsing_utils.c</name>
     </file>
   </group>
   <file>
