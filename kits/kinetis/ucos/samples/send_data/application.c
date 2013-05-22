@@ -26,11 +26,7 @@ int application_start(void)
     }
       
     BSP_LED_Off(BSP_LED_ALL);                                   /* Turn off all LEDs.                                   */
-    
-	//Test without this 2->5 downs
-    /* Delay 2 Second to let iDigiConnector connect to iDigi */
-    OSTimeDlyHMSM(0, 0, 2, 0, OS_OPT_TIME_HMSM_NON_STRICT, &err_os);
-    
+        
     while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.       */
         #define WAIT_FOR_10_MSEC    10
         static connector_dataservice_data_t ecc_data = {0};

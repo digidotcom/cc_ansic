@@ -17,6 +17,7 @@
 /* #define CONNECTOR_FIRMWARE_SERVICE */
 /* #define CONNECTOR_COMPRESSION */
 /* #define CONNECTOR_DATA_SERVICE */
+/* #define CONNECTOR_DATA_POINTS */
 /* #define CONNECTOR_FILE_SYSTEM */
 /* #define CONNECTOR_RCI_SERVICE */
 #define CONNECTOR_TRANSPORT_TCP
@@ -35,14 +36,23 @@
 #endif
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
-#define CONNECTOR_DEVICE_TYPE                          "uC-OSIII running on TWR-K module"
-#define CONNECTOR_MAC_ADDRESS                          "00:50:C2:25:60:02"
-#define CONNECTOR_CLOUD_URL                            "my.idigi.co.uk"
+
+//Uncomment and customize following parameter:
+//#define CONNECTOR_MAC_ADDRESS                        "00:00:00:00:00:00"
+#define CONNECTOR_MAC_ADDRESS                          "00:50:C2:25:60:02" //TODO: Remove
+
+//Uncomment and customize following parameter:
+//#define CONNECTOR_CLOUD_URL                          "login.etherios.com"
+#define CONNECTOR_CLOUD_URL                            "login.etherios.co.uk" //TODO: Remove
+
+//Uncomment and customize following parameter:
+//#define CONNECTOR_VENDOR_ID                          0x00000000
+#define CONNECTOR_VENDOR_ID                            0x04000036 //TODO: Remove
+
+#define CONNECTOR_DEVICE_TYPE                          "uC-OSIII running on TWR-K module"   
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              75u
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75u
 #define CONNECTOR_WAIT_COUNT                           5
-//#define CONNECTOR_VENDOR_ID                          0x00000001
-#define CONNECTOR_VENDOR_ID                            0x04000036
 #define CONNECTOR_MSG_MAX_TRANSACTION                  1
 #define CONNECTOR_CONNECTION_TYPE                      connector_connection_type_lan
 #define CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND    0

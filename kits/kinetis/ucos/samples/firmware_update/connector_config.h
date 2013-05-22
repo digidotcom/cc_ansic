@@ -17,6 +17,7 @@
 #define CONNECTOR_FIRMWARE_SERVICE /* Warn: Implement Stub functions */
 /* #define CONNECTOR_COMPRESSION */
 /* #define CONNECTOR_DATA_SERVICE */
+/* #define CONNECTOR_DATA_POINTS */
 /* #define CONNECTOR_FILE_SYSTEM */
 /* #define CONNECTOR_RCI_SERVICE */
 #define CONNECTOR_TRANSPORT_TCP

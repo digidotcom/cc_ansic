@@ -1897,6 +1897,9 @@
       <name>$PROJ_DIR$\application.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\clk_cfg.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\connector_config.c</name>
     </file>
     <file>
@@ -2142,6 +2145,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\connector.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\data_point.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\data_service.c</name>
@@ -2818,9 +2824,6 @@
       <name>$PROJ_DIR$\..\..\..\..\..\..\uC-TCPIP-V2\Ports\IAR\__dbg_net.c</name>
     </file>
   </group>
-  <file>
-    <name>$PROJ_DIR$\clk_cfg.h</name>
-  </file>
   <file>
     <name>$PROJ_DIR$\ReadMe.txt</name>
   </file>

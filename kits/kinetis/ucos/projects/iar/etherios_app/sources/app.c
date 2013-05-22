@@ -183,7 +183,7 @@ static  void  AppTaskStart (void *p_arg)
     CPU_INT32U  cpu_clk_freq;
     CPU_INT32U  cnts;
     OS_ERR      err_os;
-#if (APP_CFG_FS_EN == DEF_ENABLED)
+#if (APP_CFG_CLK == DEF_ENABLED)
     CLK_ERR     err_clk;
 #endif
 
@@ -206,7 +206,7 @@ static  void  AppTaskStart (void *p_arg)
     
     Mem_Init();                                                 /* Initialize mem mgmt module, necessary for TCP-IP.    */
     
-#if (APP_CFG_FS_EN == DEF_ENABLED)
+#if (APP_CFG_CLK == DEF_ENABLED)
     Clk_Init(&err_clk);                                         /* Initialize clock */
 #endif
     
