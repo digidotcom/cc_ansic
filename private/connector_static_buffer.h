@@ -379,6 +379,7 @@ static connector_status_t malloc_static_data(connector_data_t * const connector_
 #if defined CONNECTOR_DATA_POINTS
     case named_buffer_id(data_point_block):
         malloc_named_array_element(data_point_block, size, ptr, status);
+        break;
 #endif
 #endif
 #endif
