@@ -23,8 +23,8 @@
 #define MAIN_TASK 1
 #define CONNECTOR_TASK 2
 #define CONNECTOR_FLASH_TASK 3
-#define ADC_TASK 4
-#define ACCEL_TASK 5
+#define SDCARD_TASK				4
+#define USB_TASK				5
 #define CONNECTOR_LED_TASK 6
 #define CONNECTOR_TOUCH_TASK 7
 #define CONNECTOR_BUTTON_TASK 8
@@ -33,6 +33,8 @@
 #define CONNECTOR_APP_TASK 11
 #define CONNECTOR_GPIO_TASK 12
 #define CONNECTOR_CPU_USAGE_TASK 13
+#define CONNECTOR_ADC_TASK 14
+#define CONNECTOR_ACCEL_TASK 15
 
 #define ENET_DEVICE 0
 
@@ -46,6 +48,8 @@ void connector_utility_task2(unsigned long initial_data);
 void connector_app_run_task(unsigned long initial_data);
 void connector_gpio_pulse_task(unsigned long initial_data);
 void connector_cpu_usage(unsigned long initial_data);
-void main_task(uint_32 initial_data);
+void Main_task(uint_32 initial_data);
 
+extern void sdcard_task(uint_32);
+extern void USB_task(uint_32);
 #endif /* __main_h_ */

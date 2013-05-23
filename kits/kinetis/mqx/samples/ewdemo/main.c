@@ -21,24 +21,32 @@
 TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
-   {MAIN_TASK, main_task, 5120, 9, "main", MQX_AUTO_START_TASK},
+   {MAIN_TASK, Main_task, 5120, 9, "main", MQX_AUTO_START_TASK},
    {CONNECTOR_TASK, connector_thread, 5120, 9, "Etherios_connector", 0},
-   {ADC_TASK,             	  adc_Task,             1024,  10, "ADC",             0,},
-   {ACCEL_TASK,           	  accel_Task,           1024,  10, "Accelerometer",   0,},
-   {CONNECTOR_LED_TASK,       connector_led_task,       1024,  10, "connector_led",       0,},
-   {CONNECTOR_TOUCH_TASK,     connector_touch_pad_task, 1024,  10, "connector_touch",     0,},
-   {CONNECTOR_BUTTON_TASK,    connector_button_task,    2048,  10, "connector_button",    0},
-   {CONNECTOR_UTILITY_1,      connector_utility_task1,  1024,  10, "connector_utility1",  0,},
-   {CONNECTOR_UTILITY_2,      connector_utility_task2,  1024,  10, "connector_utility2",  0 },
-   {CONNECTOR_APP_TASK,       connector_app_run_task,   3072,   9, "connector_app_run",   0,},
-   {CONNECTOR_GPIO_TASK,      connector_gpio_pulse_task,1500,  10, "connector_gpio",      0 },
-   {CONNECTOR_CPU_USAGE_TASK, connector_cpu_usage,      1024,  10, "connector_cpu",       0 },
+   {CONNECTOR_ADC_TASK,       adc_Task,             	1024,  10, "ADC",             0,},
+   {CONNECTOR_ACCEL_TASK,     accel_Task,      		    1024,  10, "Accelerometer",   0,},
+   {CONNECTOR_LED_TASK,       connector_led_task,       1024,  10, "connector_led",   0,},
+   {CONNECTOR_TOUCH_TASK,     connector_touch_pad_task, 1024,  10, "connector_touch", 0,},
+   {CONNECTOR_BUTTON_TASK,    connector_button_task,    2048,  10, "connector_button", 0},
+   {CONNECTOR_UTILITY_1,      connector_utility_task1,  1024,  10, "connector_utility1", 0,},
+   {CONNECTOR_UTILITY_2,      connector_utility_task2,  1024,  10, "connector_utility2", 0 },
+   {CONNECTOR_APP_TASK,       connector_app_run_task,   3072,   9, "connector_app_run",  0,},
+   {CONNECTOR_GPIO_TASK,      connector_gpio_pulse_task,1500,  10, "connector_gpio",     0 },
+   {CONNECTOR_CPU_USAGE_TASK, connector_cpu_usage,      1024,  10, "connector_cpu",      0 },
+#ifdef APPLICATION_FILE_SYSTEM_SDCARD
+   {SDCARD_TASK, sdcard_task,  2048, 11, "SDcard Task", MQX_AUTO_START_TASK},
+#endif
+#ifdef APPLICATION_FILE_SYSTEM_USB
+   {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
+#endif
+#if (defined CONNECTOR_FIRMWARE_SERVICE_FULL)
+    {FLASH_TASK, flash_task, 4096, 10, "Connector_flash", 0},
+#endif
    {0,                    0,                     0,    0,   0,      0,         }
 };
 
-static uint_32 network_start(void)
+static uint_32 network_start(_enet_address const * mac_addr)
 {
-    uint8_t * mac_addr = NULL;
     IPCFG_IP_ADDRESS_DATA ip_data;
     uint_32 result = RTCS_create();
 
@@ -48,23 +56,7 @@ static uint_32 network_start(void)
         goto error;
     }
 
-    {
-		#define MAC_ADDR_LENGTH	6
-        size_t size;
-        connector_config_pointer_data_t config_data = {NULL, MAC_ADDR_LENGTH};
-        
-        if (app_get_mac_addr(&config_data) != connector_callback_continue)
-        {
-            APP_DEBUG("Failed to get device MAC address");
-            goto error;
-        }
-
-        mac_addr = config_data.data;
-        APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
-                  (mac_addr)[0], (mac_addr)[1], (mac_addr)[2], (mac_addr)[3], (mac_addr)[4], (mac_addr)[5]);
-    }
-
-    result = ipcfg_init_device (ENET_DEVICE, mac_addr);
+    result = ipcfg_init_device (ENET_DEVICE, (uint8_t *)mac_addr);
     if (result != RTCS_OK)
     {
         APP_DEBUG("Failed to initialize Ethernet device, error = %X", result);
@@ -104,29 +96,77 @@ static uint_32 network_start(void)
     APP_DEBUG("\nDNS Address     : %d.%d.%d.%d\n",IPBYTES(ipcfg_get_dns_ip(ENET_DEVICE,0)));
     result = RTCS_OK;
     
-#ifdef USE_SSL
-    if (SNTP_oneshot(IPADDR(64,90,182,55), 20000) != RTCS_OK) {
+
+#if (defined USE_SSL)
+    if (SNTP_oneshot(IPADDR(84,77,40,132), 3000) != RTCS_OK) {
     	printf("SNTP_oneshot failed!\n");
+    	printf("Setting time to 1/1/2013\n");
+		{
+			TIME_STRUCT time;
+			time.SECONDS =  1356998400; /* 01/01/2013 00:00:00 */
+			time.MILLISECONDS = 0;
+			_time_set(&time);
+		}
     }
 #endif
     
 error:
     return result;
 }
+/* Following hook will be called during application initialitation if 
+   CONNECTOR_MAC_ADDRESS is not defined in connector_config.h
+   It requests the Device MAC Address through the serial port and uses
+   it to configure the Ethernet Stack.
+*/
 
+#define MAC_ADDR_LENGTH     6
+#define MAX_MAC_ADDR_STR   20
+
+
+#if defined(CONNECTOR_MAC_ADDRESS)
+_enet_address device_mac_addr = CONNECTOR_MAC_ADDRESS;
+
+_enet_address const *read_mac(void)
+{
+	return &device_mac_addr; 
+}
+#else
+_enet_address device_mac_addr;
+
+_enet_address *read_mac(void)
+{
+	char linebuffer[MAX_MAC_ADDR_STR];
+	char *p_linebuffer = linebuffer;
+	uint8_t got_mac = 0;
+
+	do {
+		printf("Enter the MAC address (aabbcc:ddeeffgg): ");
+		get_line(&p_linebuffer, sizeof (linebuffer));
+		putchar('\n');
+		got_mac = mac_parse(device_mac_addr, linebuffer);
+	} while (!got_mac);
+	
+	return &device_mac_addr;
+}
+#endif /* CONNECTOR_MAC_ADDRESS */
 
 /*TASK*-----------------------------------------------------
 * 
 * Task Name    : Main_task
 * Comments     :
-*    This starts Etherios Cloud Connector
+*    This starts Device Cloud Connector
 *
 *END*-----------------------------------------------------*/
 
-void main_task(uint_32 initial_data)
+void Main_task(uint_32 initial_data)
 {
-    uint_32 const result = network_start();
-
+    uint_32 result;
+    _enet_address const * mac_addr;
+    
+    mac_addr = read_mac();
+    connector_config();
+    result = network_start(mac_addr);
+  
     if (result == RTCS_OK)
     {
         int const status = application_start();

@@ -219,10 +219,10 @@ void initialize_k60_tower_demo(void)
     InitializeIO();
 
 	/* Create Acceletometer Task to read accelerometer data */
-	_task_create(0, ACCEL_TASK, 0);
+	_task_create(0, CONNECTOR_ACCEL_TASK, 0);
 
 	/* Create ADC Task to read POT and Temp Sensor */
-	_task_create(0, ADC_TASK, 0);
+	_task_create(0, CONNECTOR_ADC_TASK, 0);
 
 	/* Create LED Task to display current state of the LEDs */
 	_task_create(0, CONNECTOR_LED_TASK, 0);
