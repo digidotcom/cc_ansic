@@ -2,9 +2,6 @@
 
 #include <connector.h>
 
-#define SAWTOOTH_SIGNAL_MAX 	10
-#define SAWTOOTH_SIGNAL_MIN 	-10
-
 connector_error_t connector_config(void);
 
 static void connector_status(connector_error_t const status, char const * const status_message)
@@ -101,59 +98,21 @@ CPU_BOOLEAN set_clk(void)
 }
 #endif
 
-void fill_data_point(connector_data_point_t *point)
-{
-	static int signal_value = SAWTOOTH_SIGNAL_MIN;
-	static int increasing = 1;
-	
-	point->description = "Sawtooth Signal";
-
-	point->location.type =  connector_location_type_text;
-	point->location.value.text.latitude = "42.27";
-	point->location.value.text.longitude = "2.27";
-	point->location.value.text.elevation = "391.00";
-	
-	point->next = NULL;
-	point->quality.type = connector_quality_type_ignore;
-	{
-#if (APP_CFG_CLK == DEF_ENABLED)
-        CLK_TS_SEC  ts_unix_sec;
-        Clk_GetTS_Unix (&ts_unix_sec);
-        point->time.source = connector_time_local_epoch_fractional;
-		point->time.value.since_epoch_fractional.seconds = ts_unix_sec;
-		point->time.value.since_epoch_fractional.milliseconds = 0;
-#endif
-	}
-	
-	point->data.type = connector_data_type_native;
-	point->data.element.native.int_value = signal_value;
-	
-	if (increasing) {
-		signal_value++;
-		if (signal_value == SAWTOOTH_SIGNAL_MAX)
-			increasing = 0;
-	} else {
-		signal_value--;
-		if (signal_value == SAWTOOTH_SIGNAL_MIN)
-			increasing = 1;
-	}
-}
-
 int application_start(void)
 {
     OS_ERR err_os = OS_ERR_NONE;
     connector_error_t ret;
 
 #if (APP_CFG_CLK == DEF_ENABLED)
-    /* Set System Time using SNTPc so samples are uploaded to the cloud with
+    /* Set System Time using SNTPc so files are uploaded to the cloud with
        correct timestamp.
     */
-    set_clk();  //moved below get_connection_status to ensure tcp is ready
+    set_clk();
 #endif
     
     APP_TRACE_INFO(("application_start: calling connector_config\n"));
     connector_config();
-    
+        
     APP_TRACE_INFO(("application_start: calling connector_start\n"));
     ret = connector_start(connector_status);
     if (ret != connector_error_success)
@@ -162,34 +121,14 @@ int application_start(void)
         return -1;
     }
     
-    // Wait connector connected
-    OSTimeDlyHMSM(0, 0, 5, 0, OS_OPT_TIME_HMSM_NON_STRICT, &err_os);
-    
     BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
     
-    {
-        static connector_request_data_point_single_t request_data_point = {0};
-        static connector_data_point_t data_point = {0};
-    	
-    	request_data_point.forward_to = NULL;
-    	request_data_point.path = "SawtoothSignal";
-    	request_data_point.response_required = connector_false;
-    	request_data_point.transport = connector_transport_tcp;
-    	request_data_point.type = connector_data_point_type_integer;
-    	request_data_point.unit = "Volts";
-    	request_data_point.user_context = NULL;
-    	
-    	request_data_point.point = &data_point;
-    	
-    	for (;;) {
-        	fill_data_point(&data_point);
-        	APP_TRACE_INFO(("Sending sample %d at %d\n", 
-                            request_data_point.point->data.element.native.int_value, 
-                            request_data_point.point->time.value.since_epoch_fractional.seconds));
-        	connector_send_data_point(&request_data_point);
-            // Delay time between samples: 1 Second.
-            OSTimeDlyHMSM(0, 0, 1, 0, OS_OPT_TIME_HMSM_STRICT, &err_os);
-    	}
+    while (DEF_TRUE && (err_os == OS_ERR_NONE)) {   /* Task body, always written as an infinite loop.       */
+        BSP_LED_Toggle(2);      
+        
+        OSTimeDlyHMSM(0, 0, 0, 500, 
+                      OS_OPT_TIME_HMSM_STRICT, 
+                      &err_os);
     }
     
     return 0;

@@ -123,6 +123,9 @@ def main():
 	replicate_example("basic_rci", "53")
 	replicate_example("basic_rci", "60")
 
+	replicate_example("data_points", "53")
+	replicate_example("data_points", "60")
+
 	delete_example("53")
 	delete_example("60")
 	

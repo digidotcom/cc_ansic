@@ -27,7 +27,7 @@ int application_start(void)
       
     BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
     
-	while (DEF_TRUE && (err_os == OS_ERR_NONE)) {   /* Task body, always written as an infinite loop.       */
+    while (DEF_TRUE && (err_os == OS_ERR_NONE)) {   /* Task body, always written as an infinite loop.       */
         BSP_LED_Toggle(2);      
         
         OSTimeDlyHMSM(0, 0, 0, 500, 
