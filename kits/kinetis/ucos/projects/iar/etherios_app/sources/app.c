@@ -394,6 +394,26 @@ static  void  AppTCPIP_Init (void)
         APP_TRACE_INFO(("unavailable\n\r"));
     }
 #endif    
+ 
+    /* Wait until link is up. If not we are having problems with sockets 
+       when doing SNTP or connection to the cloud if using static ip
+    */
+    {
+        CPU_BOOLEAN    link_state;
+        OS_ERR         err_os;
+        do
+        {
+            NetIF_IO_Ctrl((NET_IF_NBR ) if_nbr,
+                                 (CPU_INT08U ) NET_IF_IO_CTRL_LINK_STATE_GET,
+                                 (void      *)&link_state,
+                                 (NET_ERR   *)&err_net);
+            if (err_net == NET_IF_ERR_NONE) 
+            {
+              APP_TRACE_INFO(("link_state=%s\n",link_state?"Up":"Down"));
+                OSTimeDlyHMSM(0, 0, 0, 250, OS_OPT_TIME_HMSM_NON_STRICT, &err_os);
+            }
+        }while (!link_state);
+    }
 }
 
 /*
