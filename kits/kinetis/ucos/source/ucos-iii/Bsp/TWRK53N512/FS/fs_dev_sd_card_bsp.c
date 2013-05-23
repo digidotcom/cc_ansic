@@ -95,6 +95,8 @@
 #define  K60N512_BIT_XFERTYP_CIC_EN                     DEF_BIT_20
 #define  K60N512_BIT_XFERTYP_CRC_CHECK_EN               DEF_BIT_19
 
+#define  K60N512_BIT_XFERTYP_CMDTYP_MSK                (DEF_BIT_FIELD(2, 22))
+#define  K60N512_BIT_XFERTYP_CMDTYP(typ)               (DEF_BIT_MASK(typ, 22) & K60N512_BIT_XFERTYP_CMDTYP_MSK)
 #define  K60N512_BIT_XFERTYP_RESPONSE_TYPE_136          DEF_BIT_16
 #define  K60N512_BIT_XFERTYP_RESPONSE_TYPE_48           DEF_BIT_17
 #define  K60N512_BIT_XFERTYP_RESPONSE_TYPE_48_CHK_BUSY (DEF_BIT_17 | DEF_BIT_16)
@@ -477,7 +479,7 @@ CPU_BOOLEAN  FSDev_SD_Card_BSP_Open (FS_QTY  unit_nbr)
                                                                     /* Set Watermark Level for Read and Write to 64 Words   */
     p_sdhc->K60_SDHC_WML = (SDHC_WML_WRWML(64u) | SDHC_WML_RDWML(64u));
     
-                                                                    /* Set a Transfer Block size to 200 Bytes               */
+                                                                    /* Set a Transfer Block size to 512 Bytes               */
     p_sdhc->K60_SDHC_BLKATTR = (SDHC_BLKATTR_BLKCNT(1) | SDHC_BLKATTR_BLKSIZE(200));
     
                                                                     /* Initialize Default Clock Frequency                   */
@@ -694,6 +696,8 @@ void  FSDev_SD_Card_BSP_CmdStart (FS_QTY               unit_nbr,
 
     xfer_dat_cont   = 0u;
     
+    p_sdhc->K60_SDHC_IRQSTAT = 0xFFFFFFFF;
+    
 
     while ((DEF_BIT_IS_SET(p_sdhc->K60_SDHC_PRSSTAT, K60N512_BIT_PRSSTAT_DAT_INHIBIT) == DEF_YES) && 
            (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_PRSSTAT, K60N512_BIT_PRSSTAT_CMD_INHIBIT) == DEF_YES)) {
@@ -712,12 +716,17 @@ void  FSDev_SD_Card_BSP_CmdStart (FS_QTY               unit_nbr,
             }
         }
     }
+    
+    if (DEF_BIT_IS_SET(p_cmd->Flags, FS_DEV_SD_CARD_CMD_FLAG_STOP_DATA_TX) == DEF_YES) {
+        xfer_dat_cont |= K60N512_BIT_XFERTYP_CMDTYP(3u);
+        xfer_dat_cont |= K60N512_BIT_XFERTYP_MSB_SEL |
+                         K60N512_BIT_XFERTYP_BLK_CNT_EN;
+    }
 
     if (p_cmd->DataDir == FS_DEV_SD_CARD_DATA_DIR_HOST_TO_CARD) {
         xfer_dat_cont &= ~K60N512_BIT_XFERTYP_DATA_TRANS_DIR;       /* Clear the Direction to Write                         */
         xfer_dat_cont |= K60N512_BIT_XFERTYP_DMA_EN                 /* Enable DMA Functionality                             */
-                      |  K60N512_BIT_XFERTYP_DATA_PRES_SEL          /* Indicate Data is Present & Transfer using DAT Line   */
-                      |  K60N512_BIT_XFERTYP_BLK_CNT_EN;            /* Enable Block Count                                   */
+                      |  K60N512_BIT_XFERTYP_DATA_PRES_SEL;         /* Indicate Data is Present & Transfer using DAT Line   */
 
         p_sdhc->K60_SDHC_DSADDR = (CPU_INT32U)p_data;               /* Set p_data in DMA System Address Register            */
     }
@@ -725,14 +734,14 @@ void  FSDev_SD_Card_BSP_CmdStart (FS_QTY               unit_nbr,
     if (p_cmd->DataDir == FS_DEV_SD_CARD_DATA_DIR_CARD_TO_HOST) {
         xfer_dat_cont |= K60N512_BIT_XFERTYP_DATA_TRANS_DIR         /* Set the Direction to Read                            */
                       |  K60N512_BIT_XFERTYP_DMA_EN                 /* Enable DMA Functionality                             */
-                      |  K60N512_BIT_XFERTYP_DATA_PRES_SEL          /* Indicate Data is Present & Transfer using DAT Line   */
-                      |  K60N512_BIT_XFERTYP_BLK_CNT_EN;            /* Enable Block Count                                   */
+                      |  K60N512_BIT_XFERTYP_DATA_PRES_SEL;         /* Indicate Data is Present & Transfer using DAT Line   */
 
         p_sdhc->K60_SDHC_DSADDR = (CPU_INT32U)p_data;               /* Set p_data in DMA System Address Register            */
     }
     
     if (DEF_BIT_IS_SET(p_cmd->DataType, FS_DEV_SD_CARD_DATA_TYPE_MULTI_BLOCK) == DEF_YES) {
-        xfer_dat_cont |= (K60N512_BIT_XFERTYP_BLK_CNT_EN);          /* Enable Block Count for Multiple Block Transfers      */
+        xfer_dat_cont |=  K60N512_BIT_XFERTYP_BLK_CNT_EN |          /* Enable Block Count for Multiple Block Transfers      */
+                          K60N512_BIT_XFERTYP_MSB_SEL;
     }
     
     if (DEF_BIT_IS_SET(p_cmd->Flags, FS_DEV_SD_CARD_CMD_FLAG_INIT) == DEF_YES) {
@@ -744,12 +753,21 @@ void  FSDev_SD_Card_BSP_CmdStart (FS_QTY               unit_nbr,
         }
     }
     
+    p_sdhc->K60_SDHC_BLKATTR = 0u;
     if (DEF_BIT_IS_SET(p_cmd->Flags, FS_DEV_SD_CARD_CMD_FLAG_START_DATA_TX) == DEF_YES) {
                                                                     /* Setting Block Count in Block Attribute Register      */
         p_sdhc->K60_SDHC_BLKATTR  = SDHC_BLKATTR_BLKCNT(p_cmd->BlkCnt); 
                                                                     /* Setting Block Size in Block Attribute Register       */
         p_sdhc->K60_SDHC_BLKATTR |= SDHC_BLKATTR_BLKSIZE(p_cmd->BlkSize);
     }
+        
+    if (DEF_BIT_IS_SET(p_cmd->Flags, FS_DEV_SD_CARD_CMD_FLAG_CRC_VALID) == DEF_YES) {
+        xfer_dat_cont |= K60N512_BIT_XFERTYP_CRC_CHECK_EN;          /* Check CRC.                                           */
+    }
+
+    if (DEF_BIT_IS_SET(p_cmd->Flags, FS_DEV_SD_CARD_CMD_FLAG_IX_VALID) == DEF_YES) {
+        xfer_dat_cont |= K60N512_BIT_XFERTYP_CIC_EN;                /* Check index.                                         */
+    }        
     
                                                                     /* ------------------ SETUP COMMAND ------------------- */
     p_sdhc->K60_SDHC_CMDARG      = p_cmd->Arg;                      /* Write Arg in Command Argument Register               */
@@ -819,6 +837,8 @@ void  FSDev_SD_Card_BSP_CmdWaitEnd (FS_QTY               unit_nbr,
     
     FS_OS_SemPend(&FSDev_SD_Sem, 0u);                               /* Pend till Command Complete or CMD Timeout Error      */
     
+    *p_err = FS_DEV_SD_CARD_ERR_NONE;
+    
     if (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_CMD_TIMEOUT_ERR) == DEF_YES) {
         if (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_CMD_CRC_ERR) == DEF_YES) {
             *p_err = FS_DEV_SD_CARD_ERR_RESP_CHKSUM;                /* Command CRC Error                                    */
@@ -862,30 +882,23 @@ void  FSDev_SD_Card_BSP_CmdWaitEnd (FS_QTY               unit_nbr,
     } else {
         ;
     }
+    
+    if(DEF_BIT_IS_SET(p_cmd->Flags, FS_DEV_SD_CARD_CMD_FLAG_STOP_DATA_TX) == DEF_YES) {
+       *p_err = FS_DEV_SD_CARD_ERR_WAIT_TIMEOUT;
+    }
                                                                     /* Reset DAT Line on Data Error                         */
     if (DEF_BIT_IS_SET_ANY(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK) == DEF_YES) {
-        p_sdhc->K60_SDHC_SYSCTL |= K60N512_BIT_SYSCTL_RESET_DAT_LINE;
-        
-        while (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_SYSCTL, K60N512_BIT_SYSCTL_RESET_DAT_LINE) == DEF_YES) {
-          ;                                                         /* Wait till reset is complete                          */
-        }
                                                                     /* Clear Corresponding errors after Reset is Complete   */
-        DEF_BIT_CLR(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK);
+        DEF_BIT_SET(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK);
     }
                                                                     /* Reset CMD Line on Command Error                      */
     if (DEF_BIT_IS_SET_ANY(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_CMD_MASK) == DEF_YES) {
-        p_sdhc->K60_SDHC_SYSCTL |= K60N512_BIT_SYSCTL_RESET_CMD_LINE;
-        
-        while (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_SYSCTL, K60N512_BIT_SYSCTL_RESET_CMD_LINE) == DEF_YES) {
-          ;                                                         /* Wait till reset is complete                          */
-        }
                                                                     /* Clear Corresponding errors after Reset is Complete   */
-        DEF_BIT_CLR(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_CMD_MASK);
+        DEF_BIT_SET(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_CMD_MASK);
     }
     
     p_sdhc->K60_SDHC_IRQSTAT = K60N512_BIT_IRQSTAT_CMD_COMP;        /* Clear Command Complete Flag                          */
     
-   *p_err = FS_DEV_SD_CARD_ERR_NONE;
     return;
     
 }
@@ -929,6 +942,7 @@ void  FSDev_SD_Card_BSP_CmdDataRd (FS_QTY               unit_nbr,
                                    void                *p_dest,
                                    FS_DEV_SD_CARD_ERR  *p_err)
 {   
+    volatile CPU_INT32U irq_stat;
                                                                     /* Enable Interrupt Signals                             */
     p_sdhc->K60_SDHC_IRQSIGEN = K60N512_BIT_IRQSIGEN_TRANSFER_COMP_INT_EN
                               | K60N512_BIT_IRQSIGEN_DMA_ERR_INT_EN
@@ -936,7 +950,7 @@ void  FSDev_SD_Card_BSP_CmdDataRd (FS_QTY               unit_nbr,
     
     FS_OS_SemPend(&FSDev_SD_Sem, 0u);                               /* Pend till Interrupt Signal(s) are set                */
 
-    
+    irq_stat = p_sdhc->K60_SDHC_IRQSTAT;
     if (DEF_BIT_IS_SET_ANY(p_sdhc->K60_SDHC_AC12ERR, K60N512_BIT_AC12ERR_CMD_ERR_MASK) == DEF_YES) {
         *p_err = FS_DEV_SD_CARD_ERR_DATA;                           /* Generic Auto CMD12 Error                             */             
     } else if (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_END_BIT_ERR) == DEF_YES) {
@@ -951,16 +965,6 @@ void  FSDev_SD_Card_BSP_CmdDataRd (FS_QTY               unit_nbr,
         } else {
             *p_err = FS_DEV_SD_CARD_ERR_NONE;                       /* Transfer Complete, no errors                         */
         }
-    }
-                                                                    /* Reset DAT Line on Data Error                         */
-    if (DEF_BIT_IS_SET_ANY(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK) == DEF_YES) {
-        p_sdhc->K60_SDHC_SYSCTL |= K60N512_BIT_SYSCTL_RESET_DAT_LINE;
-        
-        while (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_SYSCTL, K60N512_BIT_SYSCTL_RESET_DAT_LINE) == DEF_YES) {
-          ;                                                         /* Wait till reset is complete                          */
-        }
-                                                                    /* Clear Corresponding errors after Reset is Complete   */
-        DEF_BIT_CLR(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK);
     }
     
     p_sdhc->K60_SDHC_IRQSTAT = DEF_INT_32_MASK;                     /* Clear all Interrupt Flags                            */
@@ -1025,7 +1029,7 @@ void  FSDev_SD_Card_BSP_CmdDataWr (FS_QTY               unit_nbr,
             *p_err = FS_DEV_SD_CARD_ERR_NONE;                       /* Transfer Complete, no errors                         */
         }
                                                                     /* Clear Corresponding errors after Reset is Complete   */
-        DEF_BIT_CLR(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK);
+        DEF_BIT_SET(p_sdhc->K60_SDHC_IRQSTAT, K60N512_BIT_IRQSTAT_DATA_MASK);
     }
     
     p_sdhc->K60_SDHC_IRQSTAT = DEF_INT_32_MASK;                     /* Clear all Interrupt Flags                            */
@@ -1168,6 +1172,7 @@ void  FSDev_SD_Card_BSP_SetClkFreq (FS_QTY      unit_nbr,
     CPU_INT08U   cnt_div;
     CPU_BOOLEAN  found_val;
     
+    freq = 400000;
     
     (void)&unit_nbr;                                                /* Prevent compiler warning.                            */
 
@@ -1204,9 +1209,6 @@ void  FSDev_SD_Card_BSP_SetClkFreq (FS_QTY      unit_nbr,
     while (DEF_BIT_IS_CLR(p_sdhc->K60_SDHC_PRSSTAT, K60N512_BIT_PRSSTAT_SD_CLK_STABLE) == DEF_YES) {
         ;                                                           /* Wait till SD Clock is Stable before Enabling Clock   */
     }
-    
-                                                                    /* System Clock is Active                               */
-    DEF_BIT_CLR(p_sdhc->K60_SDHC_PRSSTAT, K60N512_BIT_PRSSTAT_SYS_CLK_GATED_OFF);
         
     p_sdhc->K60_SDHC_SYSCTL |= K60N512_BIT_SYSCTL_SD_CLK_EN         /* Enable SD Clock                                      */
                             |  K60N512_BIT_SYSCTL_PERIPH_CLK_EN     /* Enable Peripheral Clock                              */
@@ -1216,6 +1218,8 @@ void  FSDev_SD_Card_BSP_SetClkFreq (FS_QTY      unit_nbr,
     while (DEF_BIT_IS_SET(p_sdhc->K60_SDHC_PRSSTAT, (K60N512_BIT_PRSSTAT_DAT_INHIBIT | K60N512_BIT_PRSSTAT_CMD_INHIBIT)) == DEF_YES) {
         ;                                                           /* Wait until able to issue next DAT & CMD Command      */
     }
+    
+    p_sdhc->K60_SDHC_SYSCTL |= SDHC_SYSCTL_DTOCV(14u);
 }
 
 
