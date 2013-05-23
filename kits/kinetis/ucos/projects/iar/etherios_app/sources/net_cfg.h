@@ -568,7 +568,14 @@
 
                                                                 /* Configure socket timeout values (see Note #5) :      */
                                                                 /* Configure (datagram) socket receive queue timeout.   */
+#if 0
 #define  NET_SOCK_CFG_TIMEOUT_RX_Q_MS           NET_TMR_TIME_INFINITE
+#else
+/* Changed Default Rx timeout so in case SNTPc fails, it doesn't block.
+   That module is not customizing timeout and may hang 
+*/
+#define  NET_SOCK_CFG_TIMEOUT_RX_Q_MS           5000
+#endif
                                                                 /* Configure socket connection request timeout.         */
 #define  NET_SOCK_CFG_TIMEOUT_CONN_REQ_MS       NET_TMR_TIME_INFINITE
                                                                 /* Configure socket connection accept  timeout.         */

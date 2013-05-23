@@ -53,6 +53,11 @@ CPU_BOOLEAN set_clk(void)
             if (ret != DEF_OK)
                 APP_TRACE_INFO(("Clk_TS_NTP_ToDateTime Failed\n"));
         }
+        else
+        {
+            APP_TRACE_INFO(("SNTPc_ReqRemoteTime Failed. Date/Time not set\n"));
+            return ret;
+        }
     }
 #else
     {
