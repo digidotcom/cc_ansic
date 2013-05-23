@@ -1261,6 +1261,15 @@
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-TCPIP-V2\Dev\Ether\PHY\Generic</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-DHCPc\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-DNSc\Source</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uC-SNTPc\Source</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Source</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\FAT</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\OS\UCOS-III</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\RAMDisk</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\SD</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\SD\Card</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\Source</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\include</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos</state>
         </option>
