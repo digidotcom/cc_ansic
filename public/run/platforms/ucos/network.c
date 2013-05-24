@@ -16,7 +16,18 @@
 #include <platform.h>
 #include <connector_debug.h>
 #include "os_support.h"
+
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
 #include <dns-c.h>
+#else
+#warning "Your project seems to lack DNS:
+#warning "Then you should fill CONNECTOR_CLOUD_URL define with Etherios Cloud IP instead of URL
+#warning "If your projet has DNS, please, define APP_CFG_DNS_EN  to DEF_ENABLED in your app_cfg.h file
+#endif
+
+#if (NET_BSD_CFG_API_EN != DEF_ENABLED)
+#warning: We need NET_BSD_CFG_API_EN to be DEF_ENABLED while now
+#endif 
 
 extern connector_callback_status_t app_os_get_system_time(unsigned long * const uptime);
 
@@ -50,6 +61,7 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
     }
 }
 
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
 static int app_dns_resolve_name(char const * const domain_name, in_addr_t * const ip_addr)
 {
     int ret = -1;
@@ -57,7 +69,6 @@ static int app_dns_resolve_name(char const * const domain_name, in_addr_t * cons
     NET_IP_ADDR   res_addr_ip;
     
     res_addr_ip = DNSc_GetHostByName((CPU_CHAR *)domain_name);
-    res_addr_ip = NET_UTIL_NET_TO_HOST_32(res_addr_ip);
     *ip_addr = res_addr_ip;
 
     if (*ip_addr != 0)
@@ -65,6 +76,7 @@ static int app_dns_resolve_name(char const * const domain_name, in_addr_t * cons
 
     return ret;
 }
+#endif
 
 #if defined CONNECTOR_TRANSPORT_TCP
 static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
@@ -84,7 +96,12 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     {
         NET_IP_ADDR ip_addr;
         {
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
             if (app_dns_resolve_name(data->device_cloud_url, &ip_addr) != 0)
+#else
+            ip_addr = inet_addr((char*)data->device_cloud_url);
+            if (ip_addr == 0xFFFFFFFF /*INADDR_NONE*/)
+#endif
             {
                 nNET_DNS_ERR++;
                 idigi_connect_to_idigi_failures++;
@@ -109,7 +126,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         Mem_Clr((void *)&addr,
         (CPU_SIZE_T) addr_size);
         addr.AddrFamily = NET_SOCK_ADDR_FAMILY_IP_V4;
-        addr.Addr = NET_UTIL_HOST_TO_NET_32(ip_addr);      
+        addr.Addr = ip_addr; // already in network order
         addr.Port = NET_UTIL_HOST_TO_NET_16(CONNECTOR_PORT);
                 
         // Override NET_SOCK_CFG_BLOCK_SEL in net_cfg.h

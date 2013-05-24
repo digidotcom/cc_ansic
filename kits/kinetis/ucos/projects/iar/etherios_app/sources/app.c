@@ -316,7 +316,6 @@ static  void  AppTCPIP_Init (void)
     CPU_BOOLEAN  cfg_success;
 #endif
     NET_ERR      err_net;
-    CPU_CHAR     addr_ip_str[NET_ASCII_LEN_MAX_ADDR_IP];
     
     err_net = Net_Init();                                       /* Initialize uC/TCP-IP.                                */
 
@@ -381,17 +380,20 @@ static  void  AppTCPIP_Init (void)
 #endif    
     
 #if (APP_CFG_DNS_EN == DEF_ENABLED)
-    APP_TRACE_INFO(("DNS server "));
-    if (App_IP_DNS_Srvr != NET_IP_ADDR_NONE) {
-      
-        NetASCII_IP_to_Str((NET_IP_ADDR) App_IP_DNS_Srvr,
-                           (CPU_CHAR  *) addr_ip_str,
-                           (CPU_BOOLEAN) DEF_NO,
-                           (NET_ERR   *)&err_net);
-        APP_TEST_FAULT(err_net, NET_ASCII_ERR_NONE);
-        APP_TRACE_INFO(("= %s\n\r",    &addr_ip_str[0]));
-    } else {
-        APP_TRACE_INFO(("unavailable\n\r"));
+    {
+        CPU_CHAR     addr_ip_str[NET_ASCII_LEN_MAX_ADDR_IP];
+        APP_TRACE_INFO(("DNS server "));
+        if (App_IP_DNS_Srvr != NET_IP_ADDR_NONE) {
+          
+            NetASCII_IP_to_Str((NET_IP_ADDR) App_IP_DNS_Srvr,
+                               (CPU_CHAR  *) addr_ip_str,
+                               (CPU_BOOLEAN) DEF_NO,
+                               (NET_ERR   *)&err_net);
+            APP_TEST_FAULT(err_net, NET_ASCII_ERR_NONE);
+            APP_TRACE_INFO(("= %s\n\r",    &addr_ip_str[0]));
+        } else {
+            APP_TRACE_INFO(("unavailable\n\r"));
+        }
     }
 #endif    
  
