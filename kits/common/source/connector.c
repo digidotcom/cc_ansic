@@ -40,7 +40,6 @@ typedef struct
 #endif
 
 static connector_handle_t connector_handle = NULL;
-static connector_bool_t connection_ready = connector_false;
 
 static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
 {
@@ -53,7 +52,6 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
     {
     case connector_tcp_communication_started:
         APP_DEBUG("connector_tcp_communication_started\n");
-        connection_ready = connector_true;
         break;
     case connector_tcp_keepalive_missed:
         if (keepalive_missed_count > 0)
@@ -64,7 +62,6 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
         keepalive_missed_count--;
         if (keepalive_missed_count > 0)
             APP_DEBUG("connector_tcp_keepalive_restored\n");
-        connection_ready = connector_true;
         break;
     }
 
