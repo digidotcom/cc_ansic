@@ -42,17 +42,17 @@
 #define  APP_CFG_FS_EN                         DEF_ENABLED
 #endif
 
-#define  APP_CFG_DNS                           DEF_ENABLED
+#define  APP_CFG_DNS_EN                        DEF_ENABLED
 
 #if (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_DATA_POINTS)
 /* These two connector modules require that the application has clock features
    to set correctly the data/time of files/samples uploaded.
 */
-#define  APP_CFG_CLK                           DEF_ENABLED
-/* TODO: APP_CFG_SNTP should be enabled below. Disable it for now until we clarify
+#define  APP_CFG_CLK_EN                        DEF_ENABLED
+/* TODO: APP_CFG_SNTP_EN should be enabled below. Disable it for now until we clarify
 	 source code version incompatibility
 */
-#define  APP_CFG_SNTP                          DEF_DISABLED
+#define  APP_CFG_SNTP_EN                       DEF_DISABLED
 #endif
 
 

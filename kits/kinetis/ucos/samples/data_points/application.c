@@ -12,7 +12,7 @@ static void connector_status(connector_error_t const status, char const * const 
     APP_TRACE_INFO(("connector_status: status update %d [%s]\n", status, status_message));
 }
 
-#if (APP_CFG_CLK == DEF_ENABLED)
+#if (APP_CFG_CLK_EN == DEF_ENABLED)
 #ifndef CLK_TS_NTP
 typedef CLK_TS_SEC CLK_TS_NTP;  //Added temporarily
 #endif
@@ -39,7 +39,7 @@ CPU_BOOLEAN set_clk(void)
     else
         APP_TRACE_INFO(("Error in Clk_GetDateTime\n"));
  
-#if (APP_CFG_SNTP == DEF_ENABLED)
+#if (APP_CFG_SNTP_EN == DEF_ENABLED)
     {
         CLK_TS_NTP ntp_time;
         SNTP_PKT sntp_pkt;
@@ -121,7 +121,7 @@ void fill_data_point(connector_data_point_t *point)
 	point->next = NULL;
 	point->quality.type = connector_quality_type_ignore;
 	{
-#if (APP_CFG_CLK == DEF_ENABLED)
+#if (APP_CFG_CLK_EN == DEF_ENABLED)
         CLK_TS_SEC  ts_unix_sec;
         Clk_GetTS_Unix (&ts_unix_sec);
         point->time.source = connector_time_local_epoch_fractional;
@@ -149,7 +149,7 @@ int application_start(void)
     OS_ERR err_os = OS_ERR_NONE;
     connector_error_t ret;
 
-#if (APP_CFG_CLK == DEF_ENABLED)
+#if (APP_CFG_CLK_EN == DEF_ENABLED)
     /* Set System Time using SNTPc so samples are uploaded to the cloud with
        correct timestamp.
     */

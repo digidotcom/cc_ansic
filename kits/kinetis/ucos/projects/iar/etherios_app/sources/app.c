@@ -71,7 +71,7 @@
 static  OS_TCB   AppTaskStartTCB; 
 static  CPU_STK  AppTaskStartStk[APP_TASK_START_STK_SIZE];
 
-#if (APP_CFG_DNS == DEF_ENABLED)
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
 static  NET_IP_ADDR  App_IP_DNS_Srvr;
 #endif
 
@@ -183,7 +183,7 @@ static  void  AppTaskStart (void *p_arg)
     CPU_INT32U  cpu_clk_freq;
     CPU_INT32U  cnts;
     OS_ERR      err_os;
-#if (APP_CFG_CLK == DEF_ENABLED)
+#if (APP_CFG_CLK_EN == DEF_ENABLED)
     CLK_ERR     err_clk;
 #endif
 
@@ -206,13 +206,13 @@ static  void  AppTaskStart (void *p_arg)
     
     Mem_Init();                                                 /* Initialize mem mgmt module, necessary for TCP-IP.    */
     
-#if (APP_CFG_CLK == DEF_ENABLED)
+#if (APP_CFG_CLK_EN == DEF_ENABLED)
     Clk_Init(&err_clk);                                         /* Initialize clock */
 #endif
     
     AppTCPIP_Init();                                            /* Initialize uC/TCP-IP and associated appliations.     */
     
-#if (APP_CFG_DNS == DEF_ENABLED)
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
     DNSc_Init(App_IP_DNS_Srvr);                                 /* Initialize DNS  client.                              */
 #endif
       
@@ -353,7 +353,7 @@ static  void  AppTCPIP_Init (void)
     ip      = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_ADDRESS_STR, &err_net);
     msk     = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_MASK_STR,    &err_net);
     gateway = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_GATEWAY_STR, &err_net);
-#if (APP_CFG_DNS == DEF_ENABLED)
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
     App_IP_DNS_Srvr = NetASCII_Str_to_IP((CPU_CHAR *)APP_CFG_IP_DNS_SRVR_STR, &err_net);
 #endif
 
@@ -380,7 +380,7 @@ static  void  AppTCPIP_Init (void)
     }
 #endif    
     
-#if (APP_CFG_DNS == DEF_ENABLED)
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
     APP_TRACE_INFO(("DNS server "));
     if (App_IP_DNS_Srvr != NET_IP_ADDR_NONE) {
       
@@ -445,7 +445,7 @@ static  void  AppDHCPcInit (NET_IF_NBR  if_nbr)
     NET_ERR           err_net;
     OS_ERR            err_os;
     DHCPc_ERR         err_dhcp_app;
-#if (APP_CFG_DNS == DEF_ENABLED)
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
     CPU_INT08U        opt_buf[5 * sizeof(NET_IP_ADDR)];
     CPU_INT16U        opt_buf_len;
 #endif
@@ -559,7 +559,7 @@ static  void  AppDHCPcInit (NET_IF_NBR  if_nbr)
         APP_TRACE_INFO((&addr_ip_str[0]));
         APP_TRACE_INFO(("\n\r"));
       
-#if (APP_CFG_DNS == DEF_ENABLED)
+#if (APP_CFG_DNS_EN == DEF_ENABLED)
                                                                                 /* ---- GET IF's DHCPc OPTs/PARAMs ---- */
         opt_buf_len = sizeof(opt_buf);
         DHCPc_GetOptVal((NET_IF_NBR    ) if_nbr,
