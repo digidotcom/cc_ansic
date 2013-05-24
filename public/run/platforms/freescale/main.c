@@ -25,7 +25,7 @@ TASK_TEMPLATE_STRUCT MQX_template_list[] =
 #ifdef APPLICATION_FILE_SYSTEM_USB
    {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
 #endif
-#if (defined CONNECTOR_FIRMWARE_SERVICE_FULL)
+#if (defined APPLICATION_FIRMWARE_SERVICE_FULL)
     {FLASH_TASK, flash_task, 4096, 10, "Connector_flash", 0},
 #endif
    {0,           0,           0,     0,   0,      0,                 }
