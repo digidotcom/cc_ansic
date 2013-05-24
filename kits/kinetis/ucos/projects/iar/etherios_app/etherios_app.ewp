@@ -2000,6 +2000,12 @@
       </file>
     </group>
     <group>
+      <name>uC/EtheriosCloudConnector</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\BSP\uCEtheriosConnector\connector_bsp.c</name>
+      </file>
+    </group>
+    <group>
       <name>uC/FS</name>
       <file>
         <name>$PROJ_DIR$\..\..\BSP\FS\fs_dev_sd_card_bsp.c</name>

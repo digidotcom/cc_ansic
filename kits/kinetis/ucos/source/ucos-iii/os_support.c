@@ -10,14 +10,15 @@
  * =======================================================================
  */
 #include <stdlib.h>
+#include <app_cfg.h>
 #include <os_cfg_app.h>
 #include <os.h>   
 #include <connector_debug.h>
 #include "os_support.h"
 #include "platform.h"
 
-#include <bsp.h>
-
+void Connector_BSP_software_reset(void);
+void Connector_BSP_watchdog_reset(void);
 
 /*
 *********************************************************************************************************
@@ -200,31 +201,16 @@ void ecc_free(void * ptr)
 
 void ecc_software_reset(void)
 {
-    #define VECTKEY  0x05FA0000
-
-    // Issue a System Reset Request
-    SCB_AIRCR = VECTKEY | SCB_AIRCR_SYSRESETREQ_MASK;
+    // uCOS doen't have any Reboot command. Tell BSP to do that.
+    Connector_BSP_software_reset();
 
     while (1) {}
 }
 
 void ecc_watchdog_reset(void)
 {
-    /* Issue a watchdog */
-
-    /* disable all interrupts */
-    asm(" CPSID i");
-
-    /* Write 0xC520 to the unlock register */ WDOG_UNLOCK = 0xC520;
- 
-    /* Followed by 0xD928 to complete the unlock */ WDOG_UNLOCK = 0xD928;
- 
-    /* enable all interrupts */
-    asm(" CPSIE i");
- 
-    /* Clear the WDOGEN bit to disable the watchdog */ //WDOG_STCTRLH &= ~WDOG_STCTRLH_WDOGEN_MASK;
-
-    WDOG_STCTRLH != WDOG_STCTRLH_WDOGEN_MASK;
+    // uCOS doen't have any Reboot command. Tell BSP to do that.
+    Connector_BSP_watchdog_reset();
 }
 
 connector_error_t ecc_create_thread(void)
