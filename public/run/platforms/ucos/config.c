@@ -61,7 +61,7 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
                        (NET_ERR   *)&err_net);
     APP_DEBUG("get_ip_address: IP Address: %s\n\n", addr_ip_str);
     
-    addr_ip = htonl(addr_ip_tbl[0]);    
+    addr_ip =  NET_UTIL_HOST_TO_NET_32(addr_ip_tbl[0]);
     
     config_ip->ip_address_type = connector_ip_address_ipv4;
     config_ip->address = (uint8_t *)&addr_ip;

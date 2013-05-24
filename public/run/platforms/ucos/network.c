@@ -25,10 +25,6 @@
 #warning "If your projet has DNS, please, define APP_CFG_DNS_EN  to DEF_ENABLED in your app_cfg.h file
 #endif
 
-#if (NET_BSD_CFG_API_EN != DEF_ENABLED)
-#warning: We need NET_BSD_CFG_API_EN to be DEF_ENABLED while now
-#endif 
-
 extern connector_callback_status_t app_os_get_system_time(unsigned long * const uptime);
 
 int idigi_network_receive_failures = 0;
@@ -62,7 +58,7 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
 }
 
 #if (APP_CFG_DNS_EN == DEF_ENABLED)
-static int app_dns_resolve_name(char const * const domain_name, in_addr_t * const ip_addr)
+static int app_dns_resolve_name(char const * const domain_name, NET_IP_ADDR * const ip_addr)
 {
     int ret = -1;
     
@@ -99,8 +95,11 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
 #if (APP_CFG_DNS_EN == DEF_ENABLED)
             if (app_dns_resolve_name(data->device_cloud_url, &ip_addr) != 0)
 #else
-            ip_addr = inet_addr((char*)data->device_cloud_url);
-            if (ip_addr == 0xFFFFFFFF /*INADDR_NONE*/)
+            ip_addr = NetASCII_Str_to_IP((CPU_CHAR *) data->device_cloud_url,
+                                          &err_net);
+            ip_addr =  NET_UTIL_HOST_TO_NET_32(ip_addr);
+            
+            if (err_net !=  NET_ASCII_ERR_NONE)
 #endif
             {
                 nNET_DNS_ERR++;
@@ -160,7 +159,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         /* Connect to device */
         NET_SOCK_RTN_CODE ret= NetSock_Conn((NET_SOCK_ID) socket_fd,
                                             (NET_SOCK_ADDR *) &addr,
-                                            (NET_SOCK_ADDR_LEN) (sizeof (struct sockaddr_in)),
+                                            (NET_SOCK_ADDR_LEN) (sizeof (addr)),
                                             (NET_ERR *) &err_net);          
         switch (err_net)
         {
