@@ -49,10 +49,7 @@
    to set correctly the data/time of files/samples uploaded.
 */
 #define  APP_CFG_CLK_EN                        DEF_ENABLED
-/* TODO: APP_CFG_SNTP_EN should be enabled below. Disable it for now until we clarify
-	 source code version incompatibility
-*/
-#define  APP_CFG_SNTP_EN                       DEF_DISABLED
+#define  APP_CFG_SNTP_EN                       DEF_ENABLED
 #endif
 
 
