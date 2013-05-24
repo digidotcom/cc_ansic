@@ -302,6 +302,7 @@
           <state>$PROJ_DIR$\..\..\BSP\uCOS-III</state>
           <state>$PROJ_DIR$\..\..\BSP\Freescale</state>
           <state>$PROJ_DIR$\..\..\BSP\uCTCPIP-V2</state>
+          <state>$PROJ_DIR$\..\..\BSP\uCEtheriosConnector</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-LIB</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-CPU</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-CPU\ARM-Cortex-M4\IAR</state>
@@ -2003,6 +2004,9 @@
       <name>uC/EtheriosCloudConnector</name>
       <file>
         <name>$PROJ_DIR$\..\..\BSP\uCEtheriosConnector\connector_bsp.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\BSP\uCEtheriosConnector\connector_bsp.h</name>
       </file>
     </group>
     <group>

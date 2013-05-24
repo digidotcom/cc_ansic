@@ -1,6 +1,8 @@
 #include <includes.h>
 
 #include <connector.h>
+#include <connector_bsp.h>
+
 
 /* Following hook will be called during initialitation if 
    CONNECTOR_VENDOR_ID is not defined in connector_config.h
@@ -15,7 +17,7 @@ void app_config_vendor_id(void)
     
  ask_again:
     APP_TRACE_INFO(("app_config_vendor_id: Type desired device_vendor_id in 0xAABBCCDD format:\n"));
-    BSP_Ser_RdStr(device_vendor_id_str, MAX_VENDOR_ID_STR);
+    Connector_BSP_Serial_Read_Str(device_vendor_id_str, MAX_VENDOR_ID_STR);
     
     device_vendor_id = Str_ParseNbr_Int32U(device_vendor_id_str, NULL, DEF_NBR_BASE_HEX);
     if ((device_vendor_id == DEF_INT_32U_MAX_VAL) || (device_vendor_id == 0))
@@ -40,7 +42,7 @@ extern char connector_cloud_url[];
 void app_config_device_cloud_url(void)
 {
     APP_TRACE_INFO(("app_config_device_cloud_url: Type desired connector_cloud_url:\n"));
-    BSP_Ser_RdStr(connector_cloud_url, CLOUD_URL_LENGTH);
+    Connector_BSP_Serial_Read_Str(connector_cloud_url, CLOUD_URL_LENGTH);
     
     APP_TRACE_INFO(("\napp_config_device_cloud_url: connector_cloud_url: %s\n", connector_cloud_url));
 }

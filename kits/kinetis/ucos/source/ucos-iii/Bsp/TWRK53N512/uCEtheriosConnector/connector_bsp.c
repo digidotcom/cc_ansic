@@ -26,3 +26,8 @@ void Connector_BSP_watchdog_reset(void)
 
     WDOG_STCTRLH != WDOG_STCTRLH_WDOGEN_MASK;
 }
+
+void Connector_BSP_Serial_Read_Str(CPU_CHAR *p_str, CPU_INT16U len)
+{
+    BSP_Ser_RdStr(p_str, len);
+}

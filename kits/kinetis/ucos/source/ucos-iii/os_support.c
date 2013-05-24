@@ -16,9 +16,7 @@
 #include <connector_debug.h>
 #include "os_support.h"
 #include "platform.h"
-
-void Connector_BSP_software_reset(void);
-void Connector_BSP_watchdog_reset(void);
+#include <connector_bsp.h>
 
 /*
 *********************************************************************************************************
