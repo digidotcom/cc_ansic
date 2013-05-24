@@ -13,13 +13,10 @@ static void connector_status(connector_error_t const status, char const * const 
 }
 
 #if (APP_CFG_CLK_EN == DEF_ENABLED)
-#ifndef CLK_TS_NTP
-typedef CLK_TS_SEC CLK_TS_NTP;  //Added temporarily
-#endif
 
 CPU_INT32U SNTPc_GetLocalTime_s (void)
 {
-    CLK_TS_NTP ts_ntp;
+    CLK_TS_SEC ts_ntp;
     Clk_GetTS_NTP(&ts_ntp);
     return ((CPU_INT32U)ts_ntp);
 }
@@ -41,7 +38,7 @@ CPU_BOOLEAN set_clk(void)
  
 #if (APP_CFG_SNTP_EN == DEF_ENABLED)
     {
-        CLK_TS_NTP ntp_time;
+        CLK_TS_SEC ntp_time;
         SNTP_PKT sntp_pkt;
         NET_IP_ADDR   App_IP_NTP_Srvr = 0x544D2884;      //Hardcoded SNTP server IP
         
@@ -49,12 +46,9 @@ CPU_BOOLEAN set_clk(void)
         if (ret == DEF_OK) 
         {
             ntp_time = SNTPc_GetRemoteTime_s(&sntp_pkt);
-            //Clk_SetTS_NTP(&ntp_time);
-            ret = Clk_TS_NTP_ToDateTime(ntp_time, 
-                                        CLK_CFG_TZ_DFLT_SEC,    /* TimeZone configured in clk_sfg.h */
-                                        &date_time);
+            ret = Clk_SetTS_NTP(ntp_time);
             if (ret != DEF_OK)
-                APP_TRACE_INFO(("Clk_TS_NTP_ToDateTime Failed\n"));
+                APP_TRACE_INFO(("Clk_SetTS_NTP Failed\n"));
         }
         else
         {
@@ -72,25 +66,26 @@ CPU_BOOLEAN set_clk(void)
         CLK_SEC Sec;
         CLK_TZ_SEC tz_sec;
 
-        // TODO: Ask user for time?
+        // TODO: Ask user for Local Time?
         // Set a fix data/time as reference
         Yr = 2013;
         Month = 5;
-        Day = 22;
-        Hr = 17;
-        Min = 00;
+        Day = 24;
+        Hr = 14;
+        Min = 12;
         Sec = 0;
-        tz_sec = 7200; /* UTC+2 */
+        tz_sec = CLK_CFG_TZ_DFLT_SEC;
 
         ret = Clk_DateTimeMake(&date_time, Yr, Month, Day, Hr, Min, Sec, tz_sec);
         if (ret != DEF_OK)
             APP_TRACE_INFO(("Clk_DateTimeMake Failed\n"));
+        
+         ret = Clk_SetDateTime(&date_time);
+         if (ret != DEF_OK)
+             APP_TRACE_INFO(("Clk_SetDateTime Failed\n"));
+
     }
 #endif
-
-    ret = Clk_SetDateTime(&date_time);
-    if (ret != DEF_OK)
-        APP_TRACE_INFO(("Clk_SetDateTime Failed\n"));
 
     ret = Clk_GetDateTime(&date_time);
     if (ret == DEF_OK)
@@ -122,6 +117,7 @@ void fill_data_point(connector_data_point_t *point)
 	point->quality.type = connector_quality_type_ignore;
 	{
 #if (APP_CFG_CLK_EN == DEF_ENABLED)
+        /* Fill point time with GMT+0 epoch time */
         CLK_TS_SEC  ts_unix_sec;
         Clk_GetTS_Unix (&ts_unix_sec);
         point->time.source = connector_time_local_epoch_fractional;
@@ -153,7 +149,7 @@ int application_start(void)
     /* Set System Time using SNTPc so samples are uploaded to the cloud with
        correct timestamp.
     */
-    set_clk();  //moved below get_connection_status to ensure tcp is ready
+    set_clk();
 #endif
     
     APP_TRACE_INFO(("application_start: calling connector_config\n"));
