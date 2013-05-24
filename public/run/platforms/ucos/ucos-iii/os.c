@@ -103,49 +103,27 @@ connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
     return connector_callback_continue;
 }
 
-/*  OSSchedRoundRobinYield() won't do anything when RoundRobin has not been 
-    enabled or when there is no other threads with same priority running. 
-    I don't see the scheduler behave correctly in that cases so we introduce a 
-    quanta delay for that cases when connector status is idle
-*/
-#define DELAY_WHEN_IDLE
-
 connector_callback_status_t app_os_yield(connector_status_t const * const status)
 {
     OS_ERR  err;
-#ifdef DELAY_WHEN_IDLE
     OS_TICK timeout_in_ticks;
-#endif
  
-#if OS_CFG_SCHED_ROUND_ROBIN_EN
-    OSSchedRoundRobinYield (&err);
-#else
-    err = OS_ERR_ROUND_ROBIN_DISABLED;
-#endif
-    switch (err)
+    /* OSTimeDly: If the specified delay is greater than 0
+       then, a context switch will result  
+    */
+    timeout_in_ticks = 1;   
+
+#if 0
+    if (*status == connector_idle)
     {
-    case OS_ERR_NONE:
-        break;
-    case OS_ERR_ROUND_ROBIN_1:
-    case OS_ERR_ROUND_ROBIN_DISABLED:
-        {
-#ifdef DELAY_WHEN_IDLE
-            if (*status == connector_idle)
-            {
-                /* Sleep for the thread time quanta  */
-                timeout_in_ticks = CONNECTOR_RUN_CFG_QUANTA;
-      
-                OSTimeDly(timeout_in_ticks, OS_OPT_TIME_DLY, &err);
-                if (err != OS_ERR_NONE)
-                    return connector_callback_abort;
-            }
-#endif 
-        }
-        break;
-    default:
-        return connector_callback_abort;
-        break;
+        /* Sleep longer in this case?  */
+        timeout_in_ticks = OS_CFG_TICK_RATE_HZ * 1;  /* 1 second */
     }
+#endif
+    
+    OSTimeDly(timeout_in_ticks, OS_OPT_TIME_DLY, &err);
+    if (err != OS_ERR_NONE)
+        return connector_callback_abort;
           
     return connector_callback_continue;
 }

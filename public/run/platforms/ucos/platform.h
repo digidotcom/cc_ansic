@@ -23,8 +23,6 @@ void connector_debug_printf(char const * const format, ...);
 #define APP_DEBUG
 #endif
 
-#define CONNECTOR_RUN_CFG_QUANTA        100
-
 #define UNUSED_ARGUMENT(x)     ((void)x)
 
 /* Callbacks for this platform */

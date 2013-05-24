@@ -227,7 +227,7 @@ connector_error_t ecc_create_thread(void)
                  (CPU_STK_SIZE)(CONNECTOR_RUN_CFG_TASK_STK_SIZE / 10u),
                  (CPU_STK_SIZE) CONNECTOR_RUN_CFG_TASK_STK_SIZE,
                  (OS_MSG_QTY  ) 0u,
-                 (OS_TICK     ) CONNECTOR_RUN_CFG_QUANTA,
+                 (OS_TICK     ) 0,
                  (void       *) 0,
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
                  (OS_ERR     *)&os_err);
