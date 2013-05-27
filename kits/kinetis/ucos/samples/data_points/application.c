@@ -1,6 +1,7 @@
 #include <includes.h>
 
 #include <connector.h>
+#include <connector_bsp.h>
 
 #define SAWTOOTH_SIGNAL_MAX 	10
 #define SAWTOOTH_SIGNAL_MIN 	-10
@@ -166,7 +167,7 @@ int application_start(void)
     // Wait connector connected
     OSTimeDlyHMSM(0, 0, 5, 0, OS_OPT_TIME_HMSM_NON_STRICT, &err_os);
     
-    BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
     
     {
         static connector_request_data_point_single_t request_data_point = {0};

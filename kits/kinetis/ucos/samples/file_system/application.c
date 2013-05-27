@@ -1,6 +1,7 @@
 #include <includes.h>
 
 #include <connector.h>
+#include <connector_bsp.h>
 
 connector_error_t connector_config(void);
 
@@ -119,10 +120,10 @@ int application_start(void)
         return -1;
     }
     
-    BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(BSP_LED_ALL);             /* Turn off all LEDs.                                   */
     
     while (DEF_TRUE && (err_os == OS_ERR_NONE)) {   /* Task body, always written as an infinite loop.       */
-        BSP_LED_Toggle(2);      
+        Connector_BSP_LED_Toggle(2);      
         
         OSTimeDlyHMSM(0, 0, 0, 500, 
                       OS_OPT_TIME_HMSM_STRICT, 

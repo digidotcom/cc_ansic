@@ -1,6 +1,7 @@
 #include <includes.h>
 
 #include <connector.h>
+#include <connector_bsp.h>
 
 connector_error_t connector_config(void);
 
@@ -15,9 +16,9 @@ static void connector_status(connector_error_t const status, char const * const 
 static void set_led_state(CPU_INT08U led, CPU_BOOLEAN state)
 {
     if (state)
-        BSP_LED_On(led);
+        Connector_BSP_LED_On(led);
     else
-        BSP_LED_Off(led);
+        Connector_BSP_LED_Off(led);
 }
 
 static CPU_INT08U get_led_pin(char const * const ledString)
@@ -96,7 +97,7 @@ int application_start(void)
         return -1;
     }
       
-    BSP_LED_Off(BSP_LED_ALL);                                   /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(BSP_LED_ALL);    /* Turn off all LEDs. */
     
     APP_TRACE_INFO(("application_start: calling connector_register_device_request_callbacks\n"));
     ret = connector_register_device_request_callbacks(device_request_callback, device_response_callback, NULL, NULL);
