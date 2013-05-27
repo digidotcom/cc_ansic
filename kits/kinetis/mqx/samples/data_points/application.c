@@ -24,9 +24,8 @@ static void connector_status(connector_error_t const status, char const * const 
     APP_DEBUG("connector_status: status update %d [%s]\n", status, status_message);
 }
 
-void fill_data_point(connector_request_data_point_single_t *data_point)
+void fill_data_point(connector_data_point_t *point)
 {
-	connector_data_point_t *point = data_point->point;
 	static int signal_value = SAWTOOTH_SIGNAL_MIN;
 	static int increasing = 1;
 	
@@ -87,23 +86,25 @@ int application_start(void)
     }
 
     {
-    	connector_request_data_point_single_t *data_point = _mem_alloc(sizeof *data_point);
+    	static connector_request_data_point_single_t request_data_point = {0};
+    	static connector_data_point_t data_point = {0};
     	connector_callback_status_t status;
     	
-    	data_point->forward_to = NULL;
-    	data_point->path = "SawtoothSignal";
-    	data_point->response_required = connector_false;
-    	data_point->transport = connector_transport_tcp;
-    	data_point->type = connector_data_point_type_integer;
-    	data_point->unit = "Volts";
-    	data_point->user_context = NULL;
     	
-    	data_point->point = _mem_alloc(sizeof *data_point->point);
+    	request_data_point.forward_to = NULL;
+    	request_data_point.path = "SawtoothSignal";
+    	request_data_point.response_required = connector_false;
+    	request_data_point.transport = connector_transport_tcp;
+    	request_data_point.type = connector_data_point_type_integer;
+    	request_data_point.unit = "Volts";
+    	request_data_point.user_context = NULL;
+    	
+    	request_data_point.point = &data_point;
     	
     	for (;;) {
-        	fill_data_point(data_point);
-        	APP_DEBUG("Sending sample %d at %d\n", data_point->point->data.element.native.int_value, data_point->point->time.value.since_epoch_fractional.seconds);
-        	status = connector_send_data_point(data_point);
+        	fill_data_point(&data_point);
+        	APP_DEBUG("Sending sample %d at %d\n", request_data_point.point->data.element.native.int_value, request_data_point.point->time.value.since_epoch_fractional.seconds);
+        	status = connector_send_data_point(&request_data_point);
         	if (status == connector_init_error) {
         		APP_DEBUG("Connector not ready yet\n");
         	}

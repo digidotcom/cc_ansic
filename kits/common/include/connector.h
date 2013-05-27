@@ -439,6 +439,72 @@ connector_error_t connector_start(connector_status_callback_t status_callback);
 */
 
 #if defined CONNECTOR_DATA_POINTS
+/**
+ * @defgroup connector_send_data_point Upload a data point to the Device Cloud.
+ * @{ 
+ * @b Include: connector.h
+ */
+/** 
+ *
+ * This function is used to upload a data point to the Etherios Device Cloud.
+ * @param data_point pointer to a @ref connector_request_data_point_single_t preiously filled by the user which contains the necessary
+ * data to be uploaded to the Device Cloud.
+ * 
+ * @retval connector_error_success success
+ * @retval connector_error_invalid_parameter Indicates bad parameters
+ * @retval connector_data_service_send_response_cloud_error Indicates error response from the Device Cloud
+ *
+ * Example Usage:
+ * @code
+ *    	static connector_request_data_point_single_t request_data_point = {0};
+ *     	static connector_data_point_t data_point = {0};
+ *   	connector_callback_status_t status;
+ *   	
+ *   	
+ *   	request_data_point.forward_to = NULL;
+ *   	request_data_point.path = "Temperature";
+ *   	request_data_point.response_required = connector_false;
+ *   	request_data_point.transport = connector_transport_tcp;
+ *   	request_data_point.type = connector_data_point_type_integer;
+ *   	request_data_point.unit = "Kelvin";
+ *   	request_data_point.user_context = NULL;
+ *   	
+ *   	request_data_point.point = &data_point;
+ *  
+ * 		data_point.description = "Beer temperature";
+ *			
+ *		data_point.location.type =  connector_location_type_text;
+ *		data_point.location.value.text.latitude = "42.27";
+ *		data_point.location.value.text.longitude = "2.27";
+ * 		data_point.location.value.text.elevation = "391.00";
+ *		
+ *		data_point.next = NULL;
+ *		data_point.quality.type = connector_quality_type_ignore;
+ *		{
+ *			TIME_STRUCT time;
+ *			get_time(&time);
+ *			data_point.time.source = connector_time_local_epoch_fractional;
+ *			data_point.time.value.since_epoch_fractional.seconds = time.SECONDS;
+ *			data_point.time.value.since_epoch_fractional.milliseconds = time.MILLISECONDS;
+ *		}
+ *		
+ *		data_point.data.type = connector_data_type_native;
+ *
+ *    	for (;;) {
+ *			static int value = 1;
+ *			
+ *			data_point.data.element.native.int_value = value++;
+ *        	status = connector_send_data_point(&request_data_point);
+ *        	if (status == connector_init_error) {
+ *        		APP_DEBUG("Connector not ready yet\n");
+ *        	}
+ *        	delay(TIME_BETWEEN_SAMPLES);
+ *    	}
+ * @endcode 
+ *  
+ *  
+ * @see connector_error_t
+ */
 connector_error_t connector_send_data_point(connector_request_data_point_single_t * const data_point);
 #endif
 #endif
