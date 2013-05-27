@@ -12,23 +12,12 @@
 #include "connector_config.h"
 
 #if (defined CONNECTOR_DEBUG)
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-/* Would be safer to inlcude just app_cfg.h; but then we miss the TRACE function 
- * custom declaration.
- */
-#include <includes.h>
+#include <os.h>   
+#include <connector_bsp.h>
 
 void connector_debug_printf(char const * const format, ...)
 {
-#if defined(APP_TRACE)		// uCOS-III TRACE macro
-    APP_TRACE((char *)format);
-#elif defined(APP_CFG_TRACE)	// uCOS-II TRACE macro
-    APP_CFG_TRACE((char *)format);
-#else
-    (void) format;
-#endif
+    connector_BSP_debug_printf(format);
 }
 #else
  /* to avoid ISO C forbids an empty translation unit compiler error */

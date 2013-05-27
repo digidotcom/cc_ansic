@@ -31,11 +31,6 @@
  * IDIGI_DEBUG disabled: 2091
  */
 
-#if ( !defined LIB_MEM_CFG_ALLOC_EN ) 
-#warning "LIB_MEM_CFG_ALLOC_EN not enabled in app_cfg.h !!!!!"
-#endif
-
-
 /*
 *********************************************************************************************************
 *                                           LOCAL CONSTANTS
