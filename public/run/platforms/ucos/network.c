@@ -26,6 +26,7 @@
 #endif
 
 extern connector_callback_status_t app_os_get_system_time(unsigned long * const uptime);
+extern connector_callback_status_t app_os_delay(unsigned short const timeout_in_milliseconds);
 
 int idigi_network_receive_failures = 0;
 int idigi_network_send_failures = 0;
@@ -208,7 +209,6 @@ error:
     if (status == connector_callback_busy)
     {
         unsigned long elapsed_time;
-        OS_ERR  err_os;
 
         app_os_get_system_time(&elapsed_time);
         elapsed_time -= connect_time;
@@ -217,7 +217,7 @@ error:
             status = connector_callback_abort;
         
         // Don't be too demanding if link is still down.
-        OSTimeDly(OS_CFG_TICK_RATE_HZ * 1, OS_OPT_TIME_DLY, &err_os);
+        app_os_delay(1000);
     }
     if (status == connector_callback_abort)
     {

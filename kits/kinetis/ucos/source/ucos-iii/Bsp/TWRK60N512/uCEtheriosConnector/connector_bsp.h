@@ -17,9 +17,9 @@
 void connector_BSP_debug_printf(char const * const format, ...);
 void Connector_BSP_software_reset(void);
 void Connector_BSP_watchdog_reset(void);
-void Connector_BSP_Serial_Read_Str(CPU_CHAR *p_str, CPU_INT16U len);
-void Connector_BSP_LED_On(CPU_INT08U led);
-void Connector_BSP_LED_Off(CPU_INT08U led);
-void Connector_BSP_LED_Toggle(CPU_INT08U led);
-CPU_BOOLEAN Connector_BSP_Status_Read(CPU_INT08U id);
+void Connector_BSP_Serial_Read_Str(char *p_str, unsigned short len);
+void Connector_BSP_LED_On(unsigned char led);
+void Connector_BSP_LED_Off(unsigned char led);
+void Connector_BSP_LED_Toggle(unsigned char led);
+unsigned char Connector_BSP_Status_Read(unsigned char id);
 

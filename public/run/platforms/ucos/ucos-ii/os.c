@@ -10,8 +10,7 @@
  * =======================================================================
  */
 
-#include <os_cfg_app.h>
-#include <os.h>   
+#include <ucos_ii.h> 
 #include <lib_mem.h>
 #include "os_support.h"
 #include "platform.h"
@@ -87,26 +86,30 @@ static connector_callback_status_t app_os_free(void * const ptr)
 
 connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
 {
-    OS_ERR err;
-    OS_TICK curr_tick;
+#if (OS_VERSION >= 287u)
+    INT32U curr_tick;
+#else
+    INT16U curr_tick;
+#endif
       
-    curr_tick = OSTimeGet(&err);
-    if (err != OS_ERR_NONE)
-        return connector_callback_abort;
+    curr_tick = OSTimeGet();
 
     if (start_system_up_time == 0)
         start_system_up_time = curr_tick;
     
     /* Up time in seconds */
-    *uptime = (curr_tick - start_system_up_time) / OS_CFG_TICK_RATE_HZ;
+    *uptime = (curr_tick - start_system_up_time) / OS_TICKS_PER_SEC;
 
     return connector_callback_continue;
 }
 
-connector_callback_status_t app_os_yield(connector_status_t const * const status)
+static connector_callback_status_t app_os_yield(connector_status_t const * const status)
 {
-    OS_ERR  err;
-    OS_TICK timeout_in_ticks;
+#if (OS_VERSION >= 287u)
+    INT32U timeout_in_ticks;
+#else
+    INT16U timeout_in_ticks;
+#endif
  
     /* OSTimeDly: If the specified delay is greater than 0
        then, a context switch will result  
@@ -117,27 +120,26 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
     if (*status == connector_idle)
     {
         /* Sleep longer in this case?  */
-        timeout_in_ticks = OS_CFG_TICK_RATE_HZ * 1;  /* 1 second */
+        timeout_in_ticks = OS_TICKS_PER_SEC * 1;  /* 1 second */
     }
 #endif
     
-    OSTimeDly(timeout_in_ticks, OS_OPT_TIME_DLY, &err);
-    if (err != OS_ERR_NONE)
-        return connector_callback_abort;
+    OSTimeDly(timeout_in_ticks);
           
     return connector_callback_continue;
 }
 
 connector_callback_status_t app_os_delay(unsigned short const timeout_in_milliseconds)
 {   
-    OS_ERR  err;
-    OS_TICK timeout_in_ticks;
+#if (OS_VERSION >= 287u)
+    INT32U timeout_in_ticks;
+#else
+    INT16U timeout_in_ticks;
+#endif
     
-    timeout_in_ticks = timeout_in_milliseconds * 1000 / OS_CFG_TICK_RATE_HZ;
+    timeout_in_ticks = timeout_in_milliseconds * 1000 / OS_TICKS_PER_SEC;
     
-    OSTimeDly(timeout_in_ticks, OS_OPT_TIME_DLY, &err);
-    if (err != OS_ERR_NONE)
-        return connector_callback_abort;
+    OSTimeDly(timeout_in_ticks);
           
     return connector_callback_continue;
 }

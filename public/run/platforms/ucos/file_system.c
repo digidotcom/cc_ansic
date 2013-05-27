@@ -29,7 +29,7 @@
 #include  <fs_dir.h>
 #include  <fs_entry.h>
 #include  <fs_vol.h>
-#include <fs_api.h> //TODO
+#include  <fs_api.h> //TODO
 
 /* Configure Volume Name
    Currently only one volume at a time is supported. Available ones:
@@ -40,6 +40,8 @@
 #define VOLUME_NAME "sdcard:0:\\"
 #elif (APP_CFG_FS_RAM_EN == DEF_ENABLED)
 #define VOLUME_NAME "ram:0:\\"
+#else
+#error You have to enable a uC/FS: DRIVER in app_cfg.h 
 #endif
 
 

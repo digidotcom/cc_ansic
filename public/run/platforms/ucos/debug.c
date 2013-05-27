@@ -12,7 +12,6 @@
 #include "connector_config.h"
 
 #if (defined CONNECTOR_DEBUG)
-#include <os.h>   
 #include <connector_bsp.h>
 
 void connector_debug_printf(char const * const format, ...)

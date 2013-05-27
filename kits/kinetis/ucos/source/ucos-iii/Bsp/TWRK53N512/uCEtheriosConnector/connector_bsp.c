@@ -1,4 +1,4 @@
-#include <bsp.h>
+#include <includes.h>
 #include <connector_config.h>
 
 /* Micrium BSPs don't have unified function names or functionalities.
@@ -49,31 +49,32 @@ void Connector_BSP_watchdog_reset(void)
 }
 
 /* Implement here your BSP function to read a string from the serial port */
-void Connector_BSP_Serial_Read_Str(CPU_CHAR *p_str, CPU_INT16U len)
+void Connector_BSP_Serial_Read_Str(char *p_str, unsigned short len)
 {
     BSP_Ser_RdStr(p_str, len);
 }
 
 /* Implement here your BSP function to Turn On a led */
-void Connector_BSP_LED_On(CPU_INT08U led)
+void Connector_BSP_LED_On(unsigned char led)
 {
     BSP_LED_On(led);
 }
 
 /* Implement here your BSP function to Turn Off a led */
-void Connector_BSP_LED_Off(CPU_INT08U led)
+void Connector_BSP_LED_Off(unsigned char led)
 {
     BSP_LED_Off(led);
 }
 
 /* Implement here your BSP function to Toggle a led */
-void Connector_BSP_LED_Toggle(CPU_INT08U led)
+void Connector_BSP_LED_Toggle(unsigned char led)
 {
     BSP_LED_Toggle(led);
 }
 
 /* Implement here your BSP function to read a push button */
-CPU_BOOLEAN  Connector_BSP_Status_Read(CPU_INT08U  id)
+unsigned char Connector_BSP_Status_Read(unsigned char id)
 {
-   return BSP_StatusRd(id);
+   //return BSP_StatusRd(id);
+  return DEF_NO;
 }
