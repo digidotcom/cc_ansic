@@ -2005,9 +2005,6 @@
       <file>
         <name>$PROJ_DIR$\..\..\BSP\uCEtheriosConnector\connector_bsp.c</name>
       </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\BSP\uCEtheriosConnector\connector_bsp.h</name>
-      </file>
     </group>
     <group>
       <name>uC/FS</name>
@@ -2189,6 +2186,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\platform.h</name>
+        </file>
+		<file>
+          <name>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos\connector_bsp.h</name>
         </file>
       </group>
       <group>

@@ -11,8 +11,6 @@ void connector_BSP_debug_printf(char const * const format, ...)
 {
 #if defined(APP_TRACE)		    // uCOS-III TRACE macro
     APP_TRACE((char *)format);
-#elif defined(APP_CFG_TRACE)	// uCOS-II TRACE macro
-    APP_CFG_TRACE((char *)format);
 #else
     (void) format;
 #endif
@@ -75,6 +73,5 @@ void Connector_BSP_LED_Toggle(unsigned char led)
 /* Implement here your BSP function to read a push button */
 unsigned char Connector_BSP_Status_Read(unsigned char id)
 {
-   //return BSP_StatusRd(id);
-  return DEF_NO;
+    return BSP_StatusRd(id);
 }
