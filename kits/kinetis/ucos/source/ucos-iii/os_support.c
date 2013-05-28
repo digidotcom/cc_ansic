@@ -24,12 +24,6 @@
 *********************************************************************************************************
 */
 
-/* TODO Supervise: connector documentation claims:
- * Program Stack Usage: 
- * The following program stack usage was observed using gcc 4.2.0 compiled for a 32-bit ARM9 TDMI architecture
- * IDIGI_DEBUG disabled: 1723
- * IDIGI_DEBUG disabled: 2091
- */
 
 /*
 *********************************************************************************************************
@@ -92,7 +86,7 @@ connector_error_t ecc_create_event(int const event)
 
     ASSERT_GOTO(event < ECC_MAX_NUM_EVENTS, error);
     
-    ASSERT(ECC_MAX_NUM_EVENTS == asizeof(event_list)); //TODO
+    ASSERT(ECC_MAX_NUM_EVENTS == asizeof(event_list));
 
     OSFlagCreate(&EventFlagGrpList[event],
                  (char*)event_list[event],

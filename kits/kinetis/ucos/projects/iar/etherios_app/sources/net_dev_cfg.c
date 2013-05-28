@@ -43,7 +43,6 @@
 
 #define    NET_DEV_CFG_MODULE
 #include  <net.h>
-#include <connector_config.h>   //TODO: Remove: Added initially to be able to configure based on connector config
 
 
 /*$PAGE*/
