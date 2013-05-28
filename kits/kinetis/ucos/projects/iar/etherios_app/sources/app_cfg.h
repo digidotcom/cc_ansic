@@ -39,17 +39,29 @@
 // Application Filesystem will only be available if CONNECTOR_FILE_SYSTEM is defined in connector_config.h
 
 #ifdef CONNECTOR_FILE_SYSTEM
+
+/* APP_CFG_FS_EN:
+                    required for CONNECTOR_FILE_SYSTEM module
+*/
 #define  APP_CFG_FS_EN                         DEF_ENABLED
+
 #endif
 
 #define  APP_CFG_DNS_EN                        DEF_ENABLED
 
 #if (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_DATA_POINTS)
-/* These two connector modules require that the application has clock features
-   to set correctly the data/time of files/samples uploaded.
+
+/* APP_CFG_CLK_EN:
+                    required for CONNECTOR_FILE_SYSTEM module
+                    optional for CONNECTOR_DATA_POINTS module
 */
 #define  APP_CFG_CLK_EN                        DEF_ENABLED
-#define  APP_CFG_SNTP_EN                       DEF_ENABLED
+
+/* APP_CFG_SNTP_EN:
+                    optional for CONNECTOR_FILE_SYSTEM module
+                    optional for CONNECTOR_DATA_POINTS module
+*/
+#define  APP_CFG_SNTP_EN                       DEF_DISABLED
 #endif
 
 

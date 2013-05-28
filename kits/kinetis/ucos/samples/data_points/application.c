@@ -13,7 +13,7 @@ static void connector_status(connector_error_t const status, char const * const 
     APP_TRACE_INFO(("connector_status: status update %d [%s]\n", status, status_message));
 }
 
-#if (APP_CFG_CLK_EN == DEF_ENABLED)
+#if ((APP_CFG_CLK_EN == DEF_ENABLED) && (APP_CFG_SNTP_EN == DEF_ENABLED))
 
 CPU_INT32U SNTPc_GetLocalTime_s (void)
 {
@@ -117,13 +117,15 @@ void fill_data_point(connector_data_point_t *point)
 	point->next = NULL;
 	point->quality.type = connector_quality_type_ignore;
 	{
-#if (APP_CFG_CLK_EN == DEF_ENABLED)
+#if ((APP_CFG_CLK_EN == DEF_ENABLED) && (APP_CFG_SNTP_EN == DEF_ENABLED))
         /* Fill point time with GMT+0 epoch time */
         CLK_TS_SEC  ts_unix_sec;
         Clk_GetTS_Unix (&ts_unix_sec);
         point->time.source = connector_time_local_epoch_fractional;
 		point->time.value.since_epoch_fractional.seconds = ts_unix_sec;
 		point->time.value.since_epoch_fractional.milliseconds = 0;
+#else
+        point->time.source = connector_time_cloud;
 #endif
 	}
 	
@@ -145,9 +147,9 @@ int application_start(void)
 {
     connector_error_t ret;
 
-#if (APP_CFG_CLK_EN == DEF_ENABLED)
+#if ((APP_CFG_CLK_EN == DEF_ENABLED) && (APP_CFG_SNTP_EN == DEF_ENABLED))
     /* Set System Time using SNTPc so samples are uploaded to the cloud with
-       correct timestamp.
+       device timestamp.
     */
     set_clk();
 #endif
@@ -166,7 +168,7 @@ int application_start(void)
     // Wait connector connected
     app_os_delay(5000);
     
-    Connector_BSP_LED_Off(0);                       /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
     
     {
         static connector_request_data_point_single_t request_data_point = {0};
@@ -184,9 +186,14 @@ int application_start(void)
     	
     	for (;;) {
         	fill_data_point(&data_point);
-        	APP_TRACE_INFO(("Sending sample %d at %d\n", 
-                            request_data_point.point->data.element.native.int_value, 
+        	APP_TRACE_INFO(("Sending sample %d", 
+                            request_data_point.point->data.element.native.int_value));
+#if ((APP_CFG_CLK_EN == DEF_ENABLED) && (APP_CFG_SNTP_EN == DEF_ENABLED))
+            APP_TRACE_INFO(("at %d\n", 
                             request_data_point.point->time.value.since_epoch_fractional.seconds));
+#else
+            APP_TRACE_INFO(("\n"));
+#endif
         	connector_send_data_point(&request_data_point);
             // Delay time between samples: 1 Second.
             app_os_delay(1000);

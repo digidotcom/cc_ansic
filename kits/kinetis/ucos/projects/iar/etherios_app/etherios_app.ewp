@@ -2678,6 +2678,10 @@
   </group>
   <group>
     <name>uC/SNTPc</name>
+    <excluded>
+      <configuration>Flash</configuration>
+      <configuration>Release</configuration>
+    </excluded>
     <group>
       <name>Source</name>
       <file>

@@ -102,7 +102,7 @@ int application_start(void)
     connector_error_t ret;
 
 #if (APP_CFG_CLK_EN == DEF_ENABLED)
-    /* Set System Time using SNTPc so files are uploaded to the cloud with
+    /* Set System Time so files are uploaded to the cloud with
        correct timestamp.
     */
     set_clk();
