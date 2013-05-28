@@ -27,12 +27,6 @@ void Connector_BSP_software_reset(void)
 
 }
 
-//TODO: Remove, not used.
-void Connector_BSP_watchdog_reset(void)
-{
-  
-}
-
 /* Implement here your BSP function to read a string from the serial port */
 void Connector_BSP_Serial_Read_Str(char *p_str, unsigned short len)
 {

@@ -200,12 +200,6 @@ void ecc_software_reset(void)
     while (1) {}
 }
 
-void ecc_watchdog_reset(void)
-{
-    // uCOS doen't have any Reboot command. Tell BSP to do that.
-    Connector_BSP_watchdog_reset();
-}
-
 connector_error_t ecc_create_thread(void)
 {
     connector_error_t status = connector_error_success;

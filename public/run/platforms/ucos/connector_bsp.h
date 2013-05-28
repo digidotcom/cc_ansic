@@ -1,7 +1,6 @@
 /* Connector BSP functions */
 void connector_BSP_debug_printf(char const * const format, ...);
 void Connector_BSP_software_reset(void);
-void Connector_BSP_watchdog_reset(void);
 void Connector_BSP_Serial_Read_Str(char *p_str, unsigned short len);
 void Connector_BSP_LED_On(unsigned char led);
 void Connector_BSP_LED_Off(unsigned char led);
