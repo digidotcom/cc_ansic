@@ -11,8 +11,7 @@
  */
 #include <stdlib.h>
 #include <app_cfg.h>
-#include <os_cfg_app.h>
-#include <os.h>   
+#include <ucos_ii.h> 
 #include <connector_debug.h>
 #include "os_support.h"
 #include "platform.h"
@@ -57,8 +56,7 @@
 *                                       LOCAL GLOBAL VARIABLES
 *********************************************************************************************************
 */
-static  OS_TCB   ECC_Run_TaskTCB;
-static  CPU_STK  ECC_Run_TaskStk[CONNECTOR_RUN_CFG_TASK_STK_SIZE];  /* Stack for iDigiConnector Run task. */
+static  OS_STK  ECC_Run_TaskStk[CONNECTOR_RUN_CFG_TASK_STK_SIZE];  /* Stack for iDigiConnector Run task. */
 
 int idigi_malloc_failures = 0;
 
@@ -88,16 +86,13 @@ OS_FLAG_GRP EventFlagGrpList[ECC_MAX_NUM_EVENTS];
 connector_error_t ecc_create_event(int const event)
 {
     connector_error_t status = connector_error_event_error;
-    OS_ERR err;
+    INT8U err;
 
     ASSERT_GOTO(event < ECC_MAX_NUM_EVENTS, error);
     
     ASSERT(ECC_MAX_NUM_EVENTS == asizeof(event_list)); //TODO
 
-    OSFlagCreate(&EventFlagGrpList[event],
-                 (char*)event_list[event],
-                 (OS_FLAGS)0,
-                 &err);
+    EventFlagGrpList[event] = *OSFlagCreate(0, &err);
     if (err != OS_ERR_NONE)
     {
         APP_DEBUG("Failed to create %s event\n", event_list[event]);
@@ -113,11 +108,11 @@ error:
 connector_error_t ecc_clear_event(int const event, unsigned long const event_bit)
 {
     connector_error_t status = connector_error_event_error;
-    OS_ERR err;
+    INT8U err;
    
     OSFlagPost(&EventFlagGrpList[event],
                event_bit,
-               (OS_OPT)OS_OPT_POST_FLAG_CLR,
+               OS_FLAG_CLR,
                &err);
     if (err == OS_ERR_NONE)
         status = connector_error_success;
@@ -128,17 +123,19 @@ connector_error_t ecc_clear_event(int const event, unsigned long const event_bit
 connector_error_t ecc_get_event(int const event, unsigned long const event_bit, unsigned long timeout_ms)
 {
     connector_error_t status = connector_error_event_error;
-    OS_TICK timeout_in_ticks;
-    OS_ERR err;
-    CPU_TS ts;
+#if (OS_VERSION >= 287u)
+    INT32U timeout_in_ticks;
+#else
+    INT16U timeout_in_ticks;
+#endif
+    INT8U err;
     
-    timeout_in_ticks = timeout_ms * 1000 / OS_CFG_TICK_RATE_HZ;
+    timeout_in_ticks = timeout_ms * 1000 / OS_TICKS_PER_SEC;
     
     OSFlagPend(&EventFlagGrpList[event],
                event_bit,
-               (OS_TICK )timeout_in_ticks,
-               (OS_OPT)OS_OPT_PEND_FLAG_SET_ANY,
-               &ts,
+               timeout_in_ticks,
+               OS_FLAG_WAIT_SET_ANY,
                &err);
     if (err == OS_ERR_NONE)
         status = connector_error_success;
@@ -149,11 +146,11 @@ connector_error_t ecc_get_event(int const event, unsigned long const event_bit, 
 connector_error_t ecc_set_event(int const event, unsigned long const event_bit)
 {
     connector_error_t status = connector_error_event_error;
-    OS_ERR err;
+    INT8U err;
     
     OSFlagPost(&EventFlagGrpList[event],
                event_bit,
-               (OS_OPT)OS_OPT_POST_FLAG_SET,
+               OS_FLAG_SET,
                &err);
     if (err == OS_ERR_NONE)
         status = connector_error_success;
@@ -209,26 +206,47 @@ void ecc_watchdog_reset(void)
 connector_error_t ecc_create_thread(void)
 {
     connector_error_t status = connector_error_success;
-    OS_ERR os_err;
-      
-    OSTaskCreate((OS_TCB     *)&ECC_Run_TaskTCB,
-                 (CPU_CHAR   *)"ECC Run",
-                 (OS_TASK_PTR ) ECC_Run_Task,
-                 (void       *) 0,
-                 (OS_PRIO     ) CONNECTOR_RUN_CFG_TASK_PRIO,
-                 (CPU_STK    *)&ECC_Run_TaskStk[0],
-                 (CPU_STK_SIZE)(CONNECTOR_RUN_CFG_TASK_STK_SIZE / 10u),
-                 (CPU_STK_SIZE) CONNECTOR_RUN_CFG_TASK_STK_SIZE,
-                 (OS_MSG_QTY  ) 0u,
-                 (OS_TICK     ) 0,
-                 (void       *) 0,
-                 (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
-                 (OS_ERR     *)&os_err);
+    INT8U os_err;
 
-      
+#if OS_TASK_CREATE_EXT_EN > 0u
+    #if OS_STK_GROWTH == 1u
+    os_err=OSTaskCreateExt(ECC_Run_Task,
+                          (void *)0,                                       /* No arguments passed to OSTmrTask()      */
+                          &ECC_Run_TaskStk[CONNECTOR_RUN_CFG_TASK_STK_SIZE - 1u],  /* Set Top-Of-Stack                        */
+                          CONNECTOR_RUN_CFG_TASK_PRIO,
+                          CONNECTOR_RUN_CFG_TASK_PRIO,
+                          &ECC_Run_TaskStk[0],                               /* Set Bottom-Of-Stack                     */
+                          CONNECTOR_RUN_CFG_TASK_STK_SIZE,
+                          (void *)0,                                       /* No TCB extension                        */
+                          OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);      /* Enable stack checking + clear stack     */
+    #else
+    os_err=OSTaskCreateExt(ECC_Run_Task,
+                          (void *)0,                                       /* No arguments passed to OSTmrTask()      */
+                          &ECC_Run_TaskStk[0],                              /* Set Top-Of-Stack                        */
+                          CONNECTOR_RUN_CFG_TASK_PRIO,
+                          CONNECTOR_RUN_CFG_TASK_PRIO,
+                          &ECC_Run_TaskStk[CONNECTOR_RUN_CFG_TASK_STK_SIZE - 1u],  /* Set Bottom-Of-Stack                     */
+                          CONNECTOR_RUN_CFG_TASK_STK_SIZE,
+                          (void *)0,                                       /* No TCB extension                        */
+                          OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);      /* Enable stack checking + clear stack     */
+    #endif
+#else
+    #if OS_STK_GROWTH == 1u
+    os_err=OSTaskCreate(ECC_Run_Task,
+                       (void *)0,
+                       &ECC_Run_TaskStk[CONNECTOR_RUN_CFG_TASK_STK_SIZE - 1u],
+                       CONNECTOR_RUN_CFG_TASK_PRIO);
+    #else
+    os_err=OSTaskCreate(ECC_Run_Task,
+                       (void *)0,
+                       &ECC_Run_TaskStk[0],
+                       CONNECTOR_RUN_CFG_TASK_PRIO);
+    #endif
+#endif
+        
     if (os_err !=  OS_ERR_NONE)
     {
-        APP_DEBUG("Failed to create IDIGI_CONNECTOR_TASK\n");
+        APP_DEBUG("Failed to create CONNECTOR_TASK\n");
         status = connector_error_failed_to_create_thread;
     }
   

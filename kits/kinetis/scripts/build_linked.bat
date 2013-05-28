@@ -35,6 +35,7 @@ MKDIR "%EC_LIB_DIR%\include"
 MKDIR "%EC_LIB_DIR%\platform\"
 MKDIR "%EC_LIB_DIR%\platform\mqx"
 MKDIR "%EC_LIB_DIR%\platform\ucos"
+MKDIR "%EC_LIB_DIR%\platform\ucos\ucos-ii"
 MKDIR "%EC_LIB_DIR%\platform\ucos\ucos-iii"
 
 MKDIR "%PROJECTS_DIR%"
@@ -100,6 +101,11 @@ for %%F in ("%BASE_DIR%\public\run\platforms\ucos\*.*") do (
 	)
 )
 
+REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\ucos-ii\*.*" into "%EC_LIB_DIR%\platform\ucos\ucos-ii"
+for %%F in ("%BASE_DIR%\public\run\platforms\ucos\ucos-ii\*.*") do (
+	mklink /H "%EC_LIB_DIR%\platform\ucos\ucos-ii\%%~nxF" "%%F"
+)
+
 REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\ucos-iii\*.*" into "%EC_LIB_DIR%\platform\ucos\ucos-iii"
 for %%F in ("%BASE_DIR%\public\run\platforms\ucos\ucos-iii\*.*") do (
 	mklink /H "%EC_LIB_DIR%\platform\ucos\ucos-iii\%%~nxF" "%%F"
@@ -122,6 +128,11 @@ for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\*.c") do (
 REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\*.c" into "%EC_LIB_DIR%\platform\ucos\ucos-iii"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\*.c") do (
 	mklink /H "%EC_LIB_DIR%\platform\ucos\ucos-iii\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\ucos-ii\*.c" into "%EC_LIB_DIR%\platform\ucos\ucos-ii"
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\ucos-ii\*.c") do (
+	mklink /H "%EC_LIB_DIR%\platform\ucos\ucos-ii\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\include\*.h" into "%EC_LIB_DIR%platform\ucos\"
