@@ -300,10 +300,7 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
         {
             #define ECC_SEND_TIMEOUT_IN_MSEC 90000
             result = ecc_get_event(ECC_SEND_DATA_EVENT, send_info->data_ptr.event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
-        	send_info->data_ptr.error = connector_error_success;
-            //TODO: Timeout is not evaluated
-
-            result = send_info->data_ptr.error;
+            send_info->data_ptr.error = result;
         }
         else
         {
@@ -378,10 +375,7 @@ connector_error_t connector_send_data_point(connector_request_data_point_single_
         {
             #define ECC_SEND_TIMEOUT_IN_MSEC 90000
             result = ecc_get_event(ECC_DATA_POINTS_EVENT, data_point_info->event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
-        	data_point_info->error = connector_error_success;
-            //TODO: Timeout is not evaluated
-
-            result = data_point_info->error;
+        	data_point_info->error = result;
         }
         else
         {
