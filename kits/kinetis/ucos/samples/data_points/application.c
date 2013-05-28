@@ -143,7 +143,6 @@ void fill_data_point(connector_data_point_t *point)
 
 int application_start(void)
 {
-    OS_ERR err_os = OS_ERR_NONE;
     connector_error_t ret;
 
 #if (APP_CFG_CLK_EN == DEF_ENABLED)
@@ -165,7 +164,7 @@ int application_start(void)
     }
     
     // Wait connector connected
-    OSTimeDlyHMSM(0, 0, 5, 0, OS_OPT_TIME_HMSM_NON_STRICT, &err_os);
+    app_os_delay(5000);
     
     Connector_BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
     
@@ -190,7 +189,7 @@ int application_start(void)
                             request_data_point.point->time.value.since_epoch_fractional.seconds));
         	connector_send_data_point(&request_data_point);
             // Delay time between samples: 1 Second.
-            OSTimeDlyHMSM(0, 0, 1, 0, OS_OPT_TIME_HMSM_STRICT, &err_os);
+            app_os_delay(1000);
     	}
     }
     

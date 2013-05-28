@@ -12,7 +12,6 @@ static void connector_status(connector_error_t const status, char const * const 
 
 int application_start(void)
 {
-    OS_ERR      err_os;
     connector_error_t ret;
 
     APP_TRACE_INFO(("application_start: calling connector_config\n"));
@@ -40,7 +39,7 @@ int application_start(void)
         if (Connector_BSP_Status_Read(BSP_PB_START) == DEF_OFF)
         {
             while (Connector_BSP_Status_Read(BSP_PB_START) == DEF_OFF)
-                OSTimeDlyHMSM(0, 0, 0, WAIT_FOR_10_MSEC, OS_OPT_TIME_HMSM_STRICT, &err_os);
+                app_os_delay(WAIT_FOR_10_MSEC);
 
             Connector_BSP_LED_On(BSP_LED_ALL);    /* Turn on both led to indicate the request has been sent */
             APP_TRACE_INFO(("Sending data to the Device Cloud using connector_send_data...\n"));
@@ -65,7 +64,7 @@ int application_start(void)
                 display_push_msg = DEF_FALSE;
             }
 
-            OSTimeDlyHMSM(0, 0, 0, WAIT_FOR_10_MSEC, OS_OPT_TIME_HMSM_STRICT, &err_os);
+            app_os_delay(WAIT_FOR_10_MSEC);
             continue;
         }
 

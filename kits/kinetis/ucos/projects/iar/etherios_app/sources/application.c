@@ -12,7 +12,6 @@ static void connector_status(connector_error_t const status, char const * const 
 
 int application_start(void)
 {
-    OS_ERR err_os = OS_ERR_NONE;
     connector_error_t ret;
 
     APP_TRACE_INFO(("application_start: calling connector_config\n"));
@@ -28,12 +27,10 @@ int application_start(void)
       
     Connector_BSP_LED_Off(BSP_LED_ALL);             /* Turn off all LEDs.                                   */
     
-    while (DEF_TRUE && (err_os == OS_ERR_NONE)) {   /* Task body, always written as an infinite loop.       */
+    while (DEF_TRUE) {   /* Task body, always written as an infinite loop.       */
         Connector_BSP_LED_Toggle(2);      
         
-        OSTimeDlyHMSM(0, 0, 0, 500, 
-                      OS_OPT_TIME_HMSM_STRICT, 
-                      &err_os);
+        app_os_delay(500);
     }
     
     return 0;
