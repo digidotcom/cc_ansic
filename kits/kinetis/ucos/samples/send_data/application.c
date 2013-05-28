@@ -24,9 +24,12 @@ int application_start(void)
         APP_TRACE_INFO(("connector_start failed [%d]\n", ret));
         return -1;
     }
-      
+     
+    // Wait connector connected
+    app_os_delay(5000);
+    
     Connector_BSP_LED_Off(0);                         /* Turn off all LEDs.                                   */
-        
+    
     while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.       */
         #define WAIT_FOR_10_MSEC    10
         static connector_dataservice_data_t ecc_data = {0};
@@ -36,9 +39,9 @@ int application_start(void)
         size_t const buf_size = (sizeof buffer) - 1;
 
         /* Check SW1 PushButton status. A rise edge will trigger a data send to the cloud */
-        if (Connector_BSP_Status_Read(0) == DEF_OFF)
+        if (Connector_BSP_Status_Read(0) == DEF_ON)
         {
-            while (Connector_BSP_Status_Read(0) == DEF_OFF)
+            while (Connector_BSP_Status_Read(0) == DEF_ON)
                 app_os_delay(WAIT_FOR_10_MSEC);
 
             Connector_BSP_LED_On(0);    /* Turn on both led to indicate the request has been sent */
@@ -51,7 +54,6 @@ int application_start(void)
                 ecc_data.data_ptr = buffer;
                 ecc_data.length_in_bytes = bytes_copied;
                 /* Following function will block until data is sent or timed out */
-                // TODO: Create a task for each transmision ?
                 ret = connector_send_data("test/test.txt", &ecc_data, NULL);
                 display_push_msg = DEF_TRUE;
             }
@@ -70,14 +72,14 @@ int application_start(void)
 
         if (ret != connector_error_success)
         {
-            APP_TRACE_INFO(("Send failed [%d]\n", ret));
+            APP_TRACE_INFO(("Send data failed [%d]\n", ret));
             Connector_BSP_LED_Off(2);    /* Turn on just led1 to indicate Failure */
         }
         else
         {
-            APP_TRACE_INFO(("Send completed\n"));
+            APP_TRACE_INFO(("Send data completed\n"));
             Connector_BSP_LED_Off(1);    /* Turn on just led2 to indicate Success */
-            ecc_data.flags = CONNECTOR_FLAG_APPEND_DATA;;
+            ecc_data.flags = CONNECTOR_FLAG_APPEND_DATA;
             count++;
         }
     }
