@@ -1,19 +1,3 @@
-#ifndef BSP_LED_ALL
-#define BSP_LED_ALL         0
-#endif
-
-#ifndef BSP_LED_ORANGE
-#define BSP_LED_ORANGE      1
-#endif
-
-#ifndef BSP_LED_YELLOW
-#define BSP_LED_YELLOW      2
-#endif
-
-#ifndef BSP_PB_START
-#define BSP_PB_START        0
-#endif
-
 /* Connector BSP functions */
 void connector_BSP_debug_printf(char const * const format, ...);
 void Connector_BSP_software_reset(void);

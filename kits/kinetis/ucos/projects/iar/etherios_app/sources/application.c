@@ -25,10 +25,10 @@ int application_start(void)
         return -1;
     }
       
-    Connector_BSP_LED_Off(BSP_LED_ALL);             /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(0);             /* Turn off all LEDs.                                   */
     
     while (DEF_TRUE) {   /* Task body, always written as an infinite loop.       */
-        Connector_BSP_LED_Toggle(2);      
+        Connector_BSP_LED_Toggle(1);      
         
         app_os_delay(500);
     }

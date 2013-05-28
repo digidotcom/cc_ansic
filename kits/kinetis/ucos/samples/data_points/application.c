@@ -166,7 +166,7 @@ int application_start(void)
     // Wait connector connected
     app_os_delay(5000);
     
-    Connector_BSP_LED_Off(BSP_LED_ALL);                       /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(0);                       /* Turn off all LEDs.                                   */
     
     {
         static connector_request_data_point_single_t request_data_point = {0};

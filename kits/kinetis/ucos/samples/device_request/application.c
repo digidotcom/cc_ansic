@@ -26,9 +26,9 @@ static CPU_INT08U get_led_pin(char const * const ledString)
     CPU_INT08U led = -1;
 
     if (!strcmp(ledString, "LED1"))
-        led = BSP_LED_ORANGE;
+        led = 1;
     else if (!strcmp(ledString, "LED2"))
-        led = BSP_LED_YELLOW;
+        led = 2;
     else
     {
         APP_TRACE_INFO(("Unknown target [%s]\n", ledString));
@@ -97,7 +97,7 @@ int application_start(void)
         return -1;
     }
       
-    Connector_BSP_LED_Off(BSP_LED_ALL);    /* Turn off all LEDs. */
+    Connector_BSP_LED_Off(0);    /* Turn off all LEDs. */
     
     APP_TRACE_INFO(("application_start: calling connector_register_device_request_callbacks\n"));
     ret = connector_register_device_request_callbacks(device_request_callback, device_response_callback, NULL, NULL);

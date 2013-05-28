@@ -25,7 +25,7 @@ int application_start(void)
         return -1;
     }
       
-    Connector_BSP_LED_Off(BSP_LED_ALL);                         /* Turn off all LEDs.                                   */
+    Connector_BSP_LED_Off(0);                         /* Turn off all LEDs.                                   */
         
     while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.       */
         #define WAIT_FOR_10_MSEC    10
@@ -36,12 +36,12 @@ int application_start(void)
         size_t const buf_size = (sizeof buffer) - 1;
 
         /* Check SW1 PushButton status. A rise edge will trigger a data send to the cloud */
-        if (Connector_BSP_Status_Read(BSP_PB_START) == DEF_OFF)
+        if (Connector_BSP_Status_Read(0) == DEF_OFF)
         {
-            while (Connector_BSP_Status_Read(BSP_PB_START) == DEF_OFF)
+            while (Connector_BSP_Status_Read(0) == DEF_OFF)
                 app_os_delay(WAIT_FOR_10_MSEC);
 
-            Connector_BSP_LED_On(BSP_LED_ALL);    /* Turn on both led to indicate the request has been sent */
+            Connector_BSP_LED_On(0);    /* Turn on both led to indicate the request has been sent */
             APP_TRACE_INFO(("Sending data to the Device Cloud using connector_send_data...\n"));
             {
                 size_t const bytes_copied = snprintf(buffer, buf_size, "Device application data. Count %d.\n", count);
@@ -71,12 +71,12 @@ int application_start(void)
         if (ret != connector_error_success)
         {
             APP_TRACE_INFO(("Send failed [%d]\n", ret));
-            Connector_BSP_LED_Off(BSP_LED_YELLOW);    /* Turn on just orange led to indicate Failure */
+            Connector_BSP_LED_Off(2);    /* Turn on just led1 to indicate Failure */
         }
         else
         {
             APP_TRACE_INFO(("Send completed\n"));
-            Connector_BSP_LED_Off(BSP_LED_ORANGE);    /* Turn on just yellow led to indicate Success */
+            Connector_BSP_LED_Off(1);    /* Turn on just led2 to indicate Success */
             ecc_data.flags = CONNECTOR_FLAG_APPEND_DATA;;
             count++;
         }
