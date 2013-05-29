@@ -29,7 +29,6 @@
 #include  <fs_dir.h>
 #include  <fs_entry.h>
 #include  <fs_vol.h>
-#include  <fs_api.h> //TODO
 
 /* Configure Volume Name
    Currently only one volume at a time is supported. Available ones:
@@ -65,7 +64,7 @@ static connector_callback_status_t arrange_path(char **pstr_dest, const char *ps
     
     total_size = strlen(pstr_cat) + strlen(VOLUME_NAME) + 1;
     
-    if ( total_size >= FS_FILENAME_MAX)
+    if ( total_size >= FS_CFG_MAX_FULL_NAME_LEN )
     {
         APP_DEBUG("Too long path\n");
         return connector_callback_error;
@@ -99,12 +98,14 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
 
     switch(errnum)
     {
+/*  Not available
     #if EAGAIN != EWOULDBLOCK
         case EWOULDBLOCK:
     #endif
         case FS_EAGAIN:
             status = connector_callback_busy;
             break;
+*/
         default:
             status = connector_callback_error;
             *error_token = (void *) errnum;
@@ -489,17 +490,17 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
         if (info.Attrib & FS_ENTRY_ATTRIB_DIR)
         {
             APP_DEBUG(",err: FS_ENTRY_ATTRIB_DIR");
-            status = app_process_file_error(&data->errnum, FS_EISDIR);  //TODO
+            status = app_process_file_error(&data->errnum, FS_ERR_ENTRY_NOT_FILE);
         }
         else if (!(info.Attrib & FS_ENTRY_ATTRIB_WR))
         {
             APP_DEBUG("err: !FS_ENTRY_ATTRIB_WR");
-            status = app_process_file_error(&data->errnum, FS_EINVAL);  //TODO
+            status = app_process_file_error(&data->errnum, FS_ERR_ENTRY_RD_ONLY);
         }
         else if (info.Attrib & FS_ENTRY_ATTRIB_HIDDEN)
         {
             APP_DEBUG("err: FS_ENTRY_ATTRIB_HIDDEN");
-            status = app_process_file_error(&data->errnum, FS_EINVAL);  //TODO
+            status = app_process_file_error(&data->errnum, FS_ERR_ENTRY_RD_ONLY);
         }
         else
         {
@@ -688,7 +689,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
         else
         {
             APP_DEBUG("malloc failed");
-            status = app_process_file_error(&data->errnum, FS_ENOMEM /*FS_ERR_MEM_ALLOC*/);
+            status = app_process_file_error(&data->errnum, FS_ERR_MEM_ALLOC);
             FSDir_Close(p_dir, &fs_err);
         }
     }
@@ -765,7 +766,7 @@ static connector_callback_status_t app_process_file_readdir(connector_file_syste
         else
         {
             APP_DEBUG(", entry name too long");
-            status = app_process_file_error(&data->errnum, FS_ERR_OVF);
+            status = app_process_file_error(&data->errnum, FS_ERR_NAME_TOO_LONG);
         }
     }
 
@@ -861,44 +862,52 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 static connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
 {
     long int errnum = (long int)data->errnum;
+    size_t  max_bytes_required;
 
     data->bytes_used = 0;
 
-    if (errnum != 0)
+    /* Send original uCOS fs_err error code */
+    #define UCOS_ERR_STR "uCOS fs_err:"
+    max_bytes_required = strlen(UCOS_ERR_STR) + 6;
+    if ((errnum != 0) && (data->bytes_available > max_bytes_required))
     {
-        char * err_str = strerror(errnum);
-
-        data->bytes_used = APP_MIN_VALUE(strlen(err_str), data->bytes_available);
-        memcpy(data->buffer, err_str, data->bytes_used);
+        sprintf((char*)data->buffer, "%s %d", UCOS_ERR_STR, errnum);     
+        data->bytes_used = strlen((char*)data->buffer);
     }
 
     switch(errnum)
     {
-        case FS_EACCES:
-        //case FS_EPERM:
-        case FS_EROFS:
+        case FS_ERR_DEV_WR_PROT:
+        case FS_ERR_ENTRY_RD_ONLY:
             data->error_status = connector_file_system_permision_denied;
             break;
 
-        case FS_ENOMEM:
-        case FS_ENAMETOOLONG:
+        case FS_ERR_MEM_ALLOC:
+        case FS_ERR_NAME_PATH_TOO_LONG:
+        case FS_ERR_NAME_TOO_LONG:
             data->error_status = connector_file_system_out_of_memory;
             break;
 
-        //case FS_ENOENT:
-        //case FS_ENODEV:
-        case FS_EBADF:
+        case FS_ERR_ENTRY_NOT_FOUND:
             data->error_status = connector_file_system_path_not_found;
             break;
 
-        case FS_EINVAL:
-        //case FS_ENOSYS:
-        case FS_ENOTDIR:
-        case FS_EISDIR:
+        case FS_ERR_ENTRY_EXISTS:
+        case FS_ERR_ENTRY_INVALID:
+        case FS_ERR_ENTRY_NOT_DIR:
+        case FS_ERR_ENTRY_NOT_EMPTY:
+        case FS_ERR_ENTRY_NOT_FILE:
+        case FS_ERR_ENTRY_OPEN:
+        case FS_ERR_ENTRY_TYPE_INVALID:
+        case FS_ERR_NAME_EMPTY:
+        case FS_ERR_NAME_EXT_TOO_LONG:
+        case FS_ERR_NAME_INVALID:
+        case FS_ERR_NAME_NULL:
             data->error_status = connector_file_system_invalid_parameter;
             break;
 
-        case FS_ENOSPC:
+        case FS_ERR_DEV_FULL:
+        case FS_ERR_DIR_FULL:
             data->error_status = connector_file_system_insufficient_storage_space;
             break;
 
