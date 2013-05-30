@@ -742,9 +742,10 @@
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.isoParser.120757127" name="ISO Template Parser" superClass="com.freescale.arm.cdt.toolchain.armCpp.language.cpp.isoParser" value="false" valueType="boolean"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.otherFlags.715072988" name="Other Flags" superClass="com.freescale.arm.cdt.toolchain.armCpp.otherFlags" value="-define __CODEWARRIOR__=1" valueType="string"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode.1403282397" name="Speed vs. Size" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.mode.space" valueType="enumerated"/>
-								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.level.1171997341" name="Optimization Level" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.level" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.level.level4" valueType="enumerated"/>
+								<option id="com.freescale.arm.cdt.toolchain.armCpp.optimization.level.1171997341" name="Optimization Level" superClass="com.freescale.arm.cdt.toolchain.armCpp.optimization.level" value="com.freescale.arm.cdt.toolchain.armCpp.optimization.level.level0" valueType="enumerated"/>
 								<option id="com.freescale.arm.cdt.toolchain.armCpp.input.define.1743694822" name="Defined Macros" superClass="com.freescale.arm.cdt.toolchain.armCpp.input.define" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="TWRK60N512"/>
+									<listOptionValue builtIn="false" value="APPLICATION_FIRMWARE_SERVICE_FULL"/>
 								</option>
 								<inputType id="com.freescale.arm.cdt.toolchain.armCpp.cSource.305224317" name="ARM C/C++ Compiler" superClass="com.freescale.arm.cdt.toolchain.armCpp.cSource"/>
 							</tool>

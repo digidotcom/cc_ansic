@@ -3,12 +3,13 @@
 /* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
 /*-Specials-*/
 define symbol __ICFEDIT_intvec_start__ = 0x0000C000;
+define symbol __ICFEDIT_intvecRAM_start__   = 0x1fff0410;
 /*-Memory Regions-*/
-define symbol __ICFEDIT_region_ROM_start__   = 0x0000C420;
-define symbol __ICFEDIT_region_ROM_end__     = 0x0007F000 - 1;
+define symbol __ICFEDIT_region_ROM_start__   = 0x0000C420 ;
+define symbol __ICFEDIT_region_ROM_end__     = 0x0007FFFF;
 define symbol __ICFEDIT_region_RAM_start__   = 0x1fff0000;
 define symbol __ICFEDIT_region_RAM_end__     = 0x2000FFF0;
-define symbol __fnet_params_region_start__   = 0x000B8000;
+define symbol __fnet_params_region_start__   = 0x0007F000;
 define symbol __fnet_params_region_end__     = __fnet_params_region_start__ + 0x00001000 - 1;
 define symbol __fnet_bootloader_region_start__   = 0x00000000;
 define symbol __fnet_bootloader_region_end__     = 0x0000C000 - 1;
@@ -31,8 +32,8 @@ define exported symbol __INTERNAL_FLASH_SIZE = 0x00080000;
 define exported symbol __INTERNAL_FLEXNVM_BASE = 0;
 define exported symbol __INTERNAL_FLEXNVM_SIZE = 0;
 
-define exported symbol __VECTOR_TABLE_ROM_START = 0x00000000;
-define exported symbol __VECTOR_TABLE_RAM_START = __ICFEDIT_region_RAM_start__;
+define exported symbol __VECTOR_TABLE_ROM_START = __ICFEDIT_intvec_start__;
+define exported symbol __VECTOR_TABLE_RAM_START = __ICFEDIT_intvecRAM_start__;
 
 define exported symbol __DEFAULT_PROCESSOR_NUMBER = 1;
 define exported symbol __DEFAULT_INTERRUPT_STACK_SIZE = 1024;
@@ -78,12 +79,12 @@ do not initialize  { section .kernel_data };
 do not initialize  { section .flashx };
 
 //place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec, block CFMPROTROM };
+place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
 place in ROM_region { first block TEXTSECTION, readonly,  last block FLASHX_POOL };
-place at address mem:__fnet_params_region_start__ { readwrite section .fapp_params };
+//place at address mem:__fnet_params_region_start__ { readwrite section .fapp_params };
+place in fnet_params_region { readwrite section .fapp_params };
 place at address mem:__fnet_bootloader_region_start__ { readwrite section .fapp_bootloader };
-
-place at address mem:__ICFEDIT_region_RAM_start__ { readwrite section .vectors_ram };
+place at address mem:__ICFEDIT_intvecRAM_start__ { readwrite section .vectors_ram };
 
 /* each block/segment must be in one line (association to region) because I need kernel data start after other datas */
 place in RAM_region   { block USER_MEMORY, last block KERNEL_DATA };
-

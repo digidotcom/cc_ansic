@@ -5826,6 +5826,7 @@
           <name>CCDefines</name>
           <state>IAR</state>
           <state>TWRK60N512</state>
+          <state>APPLICATION_FIRMWARE_SERVICE_FULL</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -6250,11 +6251,11 @@
         </option>
         <option>
           <name>OCOutputOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>etherios_app.srec</state>
+          <state>app.s19</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -6429,7 +6430,7 @@
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkProgramEntryLabelSelect</name>
@@ -6437,7 +6438,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
-          <state>__iar_program_start</state>
+          <state>__boot</state>
         </option>
         <option>
           <name>DoFill</name>
@@ -6703,9 +6704,6 @@
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_mqx.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_mqx_iar.h</name>
-          </file>
-          <file>
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_stub.c</name>
             <excluded>
               <configuration>twrk60n512_FirmwareUpdate</configuration>
@@ -6735,9 +6733,6 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\flash_mqx.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\flash_mqx_iar.h</name>
           </file>
           <file>
             <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\network.c</name>

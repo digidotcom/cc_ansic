@@ -16,11 +16,7 @@
 #include "pcb.h"
 #include "connector_config.h"
 
-#if !defined IAR
-  #include "flash_mqx.h"
-#else
-  #include "flash_mqx_iar.h"
-#endif
+#include "flash_mqx.h"
 
 #ifndef APP_DEBUG
 #define APP_DEBUG   _io_printf

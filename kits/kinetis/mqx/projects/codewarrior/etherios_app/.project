@@ -434,11 +434,6 @@
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/firmware_mqx.h</locationURI>
 		</link>
 		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/firmware_mqx_iar.h</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/firmware_mqx_iar.h</locationURI>
-		</link>
-		<link>
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/firmware_stub.c</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/firmware_stub.c</locationURI>
@@ -457,11 +452,6 @@
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx.h</name>
 			<type>1</type>
 			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/flash_mqx.h</locationURI>
-		</link>
-		<link>
-			<name>Sources/Etherios_Cloud_Connector/platform/mqx/flash_mqx_iar.h</name>
-			<type>1</type>
-			<locationURI>ETHERIOS_CLOUD_CONNECTOR_LIB_PATH/platform/mqx/flash_mqx_iar.h</locationURI>
 		</link>
 		<link>
 			<name>Sources/Etherios_Cloud_Connector/platform/mqx/network.c</name>
