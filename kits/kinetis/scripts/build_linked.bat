@@ -61,7 +61,7 @@ MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IA
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\Freescale"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uCTCPIP-V2"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\FS"
-MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uCEtheriosConnector"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uC-CloudConnector"
 
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\etherios_projects\etherios_app"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP"
@@ -69,7 +69,7 @@ MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IA
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\Freescale"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCTCPIP-V2"
 MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\FS"
-MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCEtheriosConnector"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uC-CloudConnector"
 
 
 REM Link the library
@@ -155,6 +155,80 @@ for %%F in ("%BASE_DIR%\kits\common\include\*.h") do (
 	mklink /H "%EC_LIB_DIR%\include\%%~nxF" "%%F"
 )
 
+
+REM Link the library in the uCOS style:
+SET UC_CLOUD_CONNECTOR_DIR=%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector
+
+
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Headers\platform"
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Headers\public"
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Source\platform"
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Source\private"
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-ii"
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-iii"
+
+REM echo Linking "%BASE_DIR%\private\*.*"
+for %%F in ("%BASE_DIR%\private\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\private\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\public\include\*.h"
+for %%F in ("%BASE_DIR%\public\include\*.h") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Headers\public\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\*.c"
+for %%F in ("%BASE_DIR%\public\run\platforms\ucos\*.c") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\platform\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\*.h"
+for %%F in ("%BASE_DIR%\public\run\platforms\ucos\*.h") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Headers\platform\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\ucos-ii\*.*"
+for %%F in ("%BASE_DIR%\public\run\platforms\ucos\ucos-ii\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-ii\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\ucos-iii\*.*"
+for %%F in ("%BASE_DIR%\public\run\platforms\ucos\ucos-iii\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-iii\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\*.c"
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\*.c") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\platform\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\ucos-ii\*.c"
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\ucos-ii\*.c") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-ii\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\*.c"
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\*.c") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-iii\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\include\*.h"
+REM for %%F in ("%BASE_DIR%\kits\kinetis\ucos\include\*.h") do (
+REM  	mklink /H "%EC_LIB_DIR%\platform\ucos\%%~nxF" "%%F"
+REM )
+
+REM echo Linking "%BASE_DIR%\kits\common\source\*.c"
+for %%F in ("%BASE_DIR%\kits\common\source\*.c") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\platform\%%~nxF" "%%F"
+)
+
+REM echo Linking "%BASE_DIR%\kits\common\include\*.h" into "%EC_LIB_DIR%\include\"
+for %%F in ("%BASE_DIR%\kits\common\include\*.h") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Headers\platform\%%~nxF" "%%F"
+	mklink /H "%EC_LIB_DIR%\include\%%~nxF" "%%F"
+)
+
+
 REM Link the template application in CodeWarrior workspace.
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\*.*") do (
 	mklink /H "%MQX_CW_WORKSPACE%\etherios_app\%%~nxF" "%%F"
@@ -234,8 +308,8 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\uCTCPIP-V2\*.*") do (
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\FS\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\FS\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\uCEtheriosConnector\*.*") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uCEtheriosConnector\%%~nxF" "%%F"
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\uC-CloudConnector\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K53N512\IAR\BSP\uC-CloudConnector\%%~nxF" "%%F"
 )
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\%%~nxF" "%%F"
@@ -252,8 +326,8 @@ for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uCTCPIP-V2\*.*") do (
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\FS\*.*") do (
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\FS\%%~nxF" "%%F"
 )
-for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uCEtheriosConnector\*.*") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uCEtheriosConnector\%%~nxF" "%%F"
+for %%F in ("%MICRIUM_BSPS_DIR%\TWRK60N512\uC-CloudConnector\*.*") do (
+	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\BSP\uC-CloudConnector\%%~nxF" "%%F"
 )
 
 mklink /H "%ROOT_DIR%\Tools\FWUpdateIntFlash.lcf" "%BASE_DIR%\kits\kinetis\mqx\projects\misc\FWUpdateIntFlash.lcf"
