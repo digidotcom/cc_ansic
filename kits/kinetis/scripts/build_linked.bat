@@ -8,6 +8,7 @@ SET PROJECTS_DIR=%ROOT_DIR%\Projects
 SET MQX_CW_WORKSPACE=%PROJECTS_DIR%\MQX\CW10 Projects
 SET MQX_IAR_WORKSPACE=%PROJECTS_DIR%\MQX\IAR Projects
 SET UCOS_IAR_WORKSPACE=%PROJECTS_DIR%\uCOS
+SET UC_CLOUD_CONNECTOR_DIR=%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector
 REM UCOS_REPO_DIR must point to the ucos repository's root directory
 SET UCOS_REPO_DIR=C:\Git_root_c\ucos
 REM BASE_DIR must point to the repository's root directory
@@ -157,8 +158,6 @@ for %%F in ("%BASE_DIR%\kits\common\include\*.h") do (
 
 
 REM Link the library in the uCOS style:
-SET UC_CLOUD_CONNECTOR_DIR=%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector
-
 
 MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Headers\platform"
 MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Headers\public"
@@ -169,47 +168,47 @@ MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-iii"
 
 REM echo Linking "%BASE_DIR%\private\*.*"
 for %%F in ("%BASE_DIR%\private\*.*") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\private\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Source\private\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\public\include\*.h"
 for %%F in ("%BASE_DIR%\public\include\*.h") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Headers\public\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Headers\public\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\*.c"
 for %%F in ("%BASE_DIR%\public\run\platforms\ucos\*.c") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\platform\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Source\platform\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\*.h"
 for %%F in ("%BASE_DIR%\public\run\platforms\ucos\*.h") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Headers\platform\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Headers\platform\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\ucos-ii\*.*"
 for %%F in ("%BASE_DIR%\public\run\platforms\ucos\ucos-ii\*.*") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-ii\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-ii\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\public\run\platforms\ucos\ucos-iii\*.*"
 for %%F in ("%BASE_DIR%\public\run\platforms\ucos\ucos-iii\*.*") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-iii\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-iii\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\*.c"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\*.c") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\platform\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Source\platform\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\ucos-ii\*.c"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\ucos-ii\*.c") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-ii\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-ii\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\*.c"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\*.c") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Os\ucos-iii\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Os\ucos-iii\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\kits\kinetis\ucos\include\*.h"
@@ -219,15 +218,14 @@ REM )
 
 REM echo Linking "%BASE_DIR%\kits\common\source\*.c"
 for %%F in ("%BASE_DIR%\kits\common\source\*.c") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Source\platform\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Source\platform\%%~nxF" "%%F"
 )
 
 REM echo Linking "%BASE_DIR%\kits\common\include\*.h" into "%EC_LIB_DIR%\include\"
 for %%F in ("%BASE_DIR%\kits\common\include\*.h") do (
-	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CloudConnector\Headers\platform\%%~nxF" "%%F"
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Headers\platform\%%~nxF" "%%F"
 	mklink /H "%EC_LIB_DIR%\include\%%~nxF" "%%F"
 )
-
 
 REM Link the template application in CodeWarrior workspace.
 for %%F in ("%BASE_DIR%\kits\kinetis\mqx\projects\codewarrior\etherios_app\*.*") do (
@@ -273,6 +271,21 @@ for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\*.*"
 	mklink /H "%UCOS_IAR_WORKSPACE%\Micrium\Software\EvalBoards\Freescale\TWR-K60N512\IAR\etherios_projects\etherios_app\%%~nxF" "%%F"
 )
 
+REM Link the ucos template application in the uCOS style for Cfg:
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\connector_config.*") do (
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Cfg\Template\%%~nxF" "%%F"
+)
+
+REM Link the ucos template application in the uCOS style for App:
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\application.c") do (
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\App\Template\%%~nxF" "%%F"
+)
+
+REM Link the ucos template application in the uCOS style for Bsp:
+for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\common\Bsp\connector_bsp.c") do (
+	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Bsp\Template\%%~nxF" "%%F"
+)
+ 
 REM Following lines links all necessary folders from the Micrium official package directory
 REM Micrium official package directory CAN'T be distributed to clients
 SET MICRIUM_OFFICIAL_PACKAGE_DIR=%UCOS_REPO_DIR%\Micrium_Official_Packackages
