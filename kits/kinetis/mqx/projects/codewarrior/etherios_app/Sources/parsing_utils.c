@@ -126,6 +126,9 @@ int vendor_parse(uint32_t *vendor_id, char *str)
 	while (*str && (*str == ' ' || *str == ':' || *str == '-')) 
 		str++;
 	
+	if (*str == '0' && (*(str + 1) == 'x' || *(str + 1) == 'x'))
+		str += 2;
+
 	*vendor_id = strtol(str, NULL, 16);
 	if (!*vendor_id) {
 		return 0; /* No conversion */

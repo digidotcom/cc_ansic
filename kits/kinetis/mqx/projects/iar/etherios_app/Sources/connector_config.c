@@ -30,7 +30,7 @@ void app_config_vendor_id(void)
     
     do {
         _io_printf("app_config_vendor_id: Type desired device_vendor_id in 0xAABBCCDD format:\n");
-		get_line(&device_vendor_id_str_p, MAX_VENDOR_ID_STR);
+		get_line(&device_vendor_id_str_p, sizeof(device_vendor_id_str));
 		got_vendor_id = vendor_parse(&device_vendor_id, device_vendor_id_str);
     } while (!got_vendor_id);
     
