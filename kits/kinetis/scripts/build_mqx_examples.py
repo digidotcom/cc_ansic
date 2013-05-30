@@ -88,33 +88,6 @@ def add_ewdemo_files_to_iar_project(iar_ewp_file):
 	#Move new file
 	shutil.move(abs_path, iar_ewp_file)
 
-# This hard-coded function adds the read_config.c file to firmware update project. Not necessary in CW
-def add_firmware_update_files_to_iar_project(iar_ewp_file):
-	files_to_add = ("read_config.c",)
-	file_tag = "\n\n<file>\n"
-	file_tag_close = "\n\n</file>\n"
-	name_tag = "\n\n<name>"
-	name_tag_close = "</name>\n"
-	#Create temp file
-	fh, abs_path = mkstemp()
-	new_file = open(abs_path,'w')
-	old_file = open(iar_ewp_file)
-	for line in old_file:
-		new_file.write(line)
-		if "<name>Source</name>" in line:
-			for file in files_to_add:
-				full_file_path = "$PROJ_DIR$\\Sources\\" + file
-				new_file.write(file_tag + name_tag + full_file_path + name_tag_close + file_tag_close)
-	#close temp file
-	new_file.close()
-	os.close(fh)
-	old_file.close()
-	#Remove original file
-	os.remove(iar_ewp_file)
-	#Move new file
-	shutil.move(abs_path, iar_ewp_file)
-
-
 # This hard-coded function adds the RCI files to BASIC RCI project. Not necessary in CW
 def add_basic_rci_files_to_iar_project(iar_ewp_file):
 	files_to_add = ("gps_stats.c", "system.c", "remote_config.h", "remote_config_cb.h", "remote_config_cb.c")
@@ -193,14 +166,12 @@ def main():
 	replicate_example("device_request", cw_workspace, iar_workspace)
 	replicate_example("ewdemo", cw_workspace, iar_workspace)
 	replicate_example("data_points", cw_workspace, iar_workspace)
-	replicate_example("firmware_update", cw_workspace, iar_workspace)
 	replicate_example("basic_rci", cw_workspace, iar_workspace)
 	copy_rci_files("basic_rci", cw_workspace, iar_workspace)
 
 
 	
 	add_ewdemo_files_to_iar_project(iar_workspace + "\\" + "ewdemo\\ewdemo.ewp")
-	add_firmware_update_files_to_iar_project(iar_workspace + "\\" + "firmware_update\\firmware_update.ewp")
 	add_basic_rci_files_to_iar_project(iar_workspace + "\\" + "basic_rci\\basic_rci.ewp")
 
 
