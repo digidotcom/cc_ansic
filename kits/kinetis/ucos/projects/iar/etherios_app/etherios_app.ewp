@@ -1271,8 +1271,8 @@
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\SD</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uc-fs\Dev\SD\Card</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\uC-Clk\Source</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\..\..\..\..\Etherios_CC\platform\ucos</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uC-CloudConnector\Headers\public</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\..\uC-CloudConnector\Headers\platform</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
