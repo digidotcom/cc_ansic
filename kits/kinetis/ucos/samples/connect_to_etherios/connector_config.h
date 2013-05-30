@@ -39,15 +39,12 @@
 
 //Uncomment and customize following parameter:
 //#define CONNECTOR_MAC_ADDRESS                        "00:00:00:00:00:00"
-#define CONNECTOR_MAC_ADDRESS                          "00:50:C2:25:60:02" //TODO: Remove
 
 //Uncomment and customize following parameter:
 //#define CONNECTOR_CLOUD_URL                          "login.etherios.com"
-#define CONNECTOR_CLOUD_URL                            "login.etherios.co.uk" //TODO: Remove
 
 //Uncomment and customize following parameter:
 //#define CONNECTOR_VENDOR_ID                          0x00000000
-#define CONNECTOR_VENDOR_ID                            0x04000036 //TODO: Remove
 
 #define CONNECTOR_DEVICE_TYPE                          "uC-OSIII running on TWR-K module"   
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              75u

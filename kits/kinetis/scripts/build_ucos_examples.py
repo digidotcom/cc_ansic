@@ -3,6 +3,7 @@ from tempfile import mkstemp
 import os
 from glob import glob
 import time
+import sys
 
 # Where the IAR template project is and where the created examples will be
 iar_workspace_leading = "C:\Etherios4Kinetis\Projects\uCOS\Micrium\Software\EvalBoards\Freescale\TWR-K"
@@ -10,8 +11,15 @@ iar_workspace_trail = "N512\IAR\etherios_projects"
 # The template application name (and folder)
 template_name = "etherios_app" 					
 
+# Customize here your development preferences that will be set to connector_config.h if this script is 
+# called with "DEV" as first argument
+dev 	   = 0
+dev_mac    = "00:50:C2:25:60:02"
+dev_cloud  = "login.etherios.co.uk"
+dev_vendor = "0x04000036"
+
+
 # Where the GIT repository is
-#BASE_DIR = "C:\Git_root_c\iDigi\cc_ansic" 			
 BASE_DIR = os.getcwd() + "\\..\\..\\.."
 
 # Replace the whole line that contains "pattern" by "subst" in "file_path"
@@ -82,6 +90,24 @@ def add_basic_rci_files_to_iar_project(iar_ewp_file, tower):
 	#Move new file
 	shutil.move(abs_path, iar_ewp_file_with_path)
 
+# Replaces some configuration parameters in connector_config.h for development
+def customize_params_development(sample_dir):
+	#sample_dir is the sample's root
+	replace(sample_dir + "\connector_config.h", 
+			"//#define CONNECTOR_MAC_ADDRESS", "#define CONNECTOR_MAC_ADDRESS")
+	replace(sample_dir + "\connector_config.h", 
+			"00:00:00:00:00:00", dev_mac)
+
+	replace(sample_dir + "\connector_config.h", 
+			"//#define CONNECTOR_CLOUD_URL", "#define CONNECTOR_CLOUD_URL")
+	replace(sample_dir + "\connector_config.h", 
+			"login.etherios.com", dev_cloud)
+
+	replace(sample_dir + "\connector_config.h", 
+			"//#define CONNECTOR_VENDOR_ID", "#define CONNECTOR_VENDOR_ID")
+	replace(sample_dir + "\connector_config.h", 
+			"0x00000000", dev_vendor)
+
 # This functions copies the template application, changes its name by "example_name" and replaces demo-specific files from GIT repository
 def replicate_example(example_name, tower):
 	iar_workspace = iar_workspace_leading + tower + iar_workspace_trail
@@ -98,6 +124,9 @@ def replicate_example(example_name, tower):
 
 	change_iar_project_name(dest_sample_dir_iar, example_name, tower)
 
+	if dev == 1:
+		customize_params_development(dest_sample_dir_iar)
+
 
 # This function deletes template application
 def delete_example(tower):
@@ -107,7 +136,11 @@ def delete_example(tower):
 
 # main application 
 def main():
+	global dev
 	print 'git repo: %s' %(BASE_DIR)
+
+	if len(sys.argv) > 1 and sys.argv[1] == "DEV":
+		dev = 1
 
 	replicate_example("connect_to_etherios", "53")
 	replicate_example("connect_to_etherios", "60")

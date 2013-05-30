@@ -1,5 +1,6 @@
 @echo off
 REM This script links all necessary files from eC to create the directory for Etherios4Kinetis
+REM If first argument is "DEV" some helpful stuff is done for development
 REM As the files are linked, all changes WILL AFFECT THE GIT REPOSITORY DIRECTLY
 cls
 SET ROOT_DIR=C:\Etherios4Kinetis
@@ -293,6 +294,7 @@ REM Link the ucos template application in the uCOS style for Doc:
 MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Doc"
 REM TODO: Add Doc
  
+IF NOT "%1"=="DEV" goto skip_ucos_packages_official
 REM Following lines links all necessary folders from the Micrium official package directory
 REM Micrium official package directory CAN'T be distributed to clients
 SET MICRIUM_OFFICIAL_PACKAGE_DIR=%UCOS_REPO_DIR%\Micrium_Official_Packackages
@@ -310,7 +312,26 @@ mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-Clk" "%MICRIUM_OFFICIAL_PACK
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uc-crc" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\FSX-FSXX-PKG000-X-P1\Micrium\Software\uc-crc"
 mklink /D "%UCOS_IAR_WORKSPACE%\Micrium\Software\uc-fs" "%MICRIUM_OFFICIAL_PACKAGE_DIR%\FSX-FSXX-PKG000-X-P1\Micrium\Software\uc-fs"
 
+goto skip_ucos_packages_fake
 
+:skip_ucos_packages_official
+
+REM Following lines create Micrium official package directory structure
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uCOS-III"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-LIB"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-CPU"
+
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-TCPIP-V2"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-DHCPc"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-DNSc"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-SNTPc"
+
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uC-Clk"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uc-crc"
+MKDIR "%UCOS_IAR_WORKSPACE%\Micrium\Software\uc-fs"
+
+:skip_ucos_packages_fake
+						
 REM Following lines links ucos BSPs
 SET MICRIUM_BSPS_DIR=%BASE_DIR%\kits\kinetis\ucos\source\ucos-iii\BSP
 for %%F in ("%MICRIUM_BSPS_DIR%\TWRK53N512\*.*") do (
@@ -359,6 +380,10 @@ REM Change to the dir where to look recursively
 cd "%BASE_DIR%\public\run\samples\"
 call :treeProcess
 cd %RETURN_DIR%
+
+
+REM Calling build_ucos_examples.py
+python .\build_ucos_examples.py "%1"
 
 :end
 pause
