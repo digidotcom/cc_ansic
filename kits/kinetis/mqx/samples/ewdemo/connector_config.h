@@ -25,7 +25,7 @@
 
 #define CONNECTOR_FIRMWARE_SERVICE
 #define APPLICATION_FIRMWARE_SERVICE_STUB
-//#define APPLICATION_FIRMWARE_SERVICE_FULL
+
 
 /* Advanced category */
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS             75
@@ -33,10 +33,8 @@
 #define CONNECTOR_WAIT_COUNT                          5
 #define CONNECTOR_NO_COMPRESSION
 /* * * * * * * * * * * * * * * * * * * * */
-#if defined CONNECTOR_FIRMWARE_SERVICE
-#if !defined APPLICATION_FIRMWARE_SERVICE_STUB && !defined APPLICATION_FIRMWARE_SERVICE_FULL
-#error "You must define APPLICATION_FIRMWARE_SERVICE_STUB or APPLICATION_FIRMWARE_SERVICE_FULL in connector_config.h to support Firmware Updates"
-#endif
+#if defined CONNECTOR_FIRMWARE_SERVICE && !defined APPLICATION_FIRMWARE_SERVICE_FULL
+#define APPLICATION_FIRMWARE_SERVICE_STUB
 #endif
 
 /* Network category */
