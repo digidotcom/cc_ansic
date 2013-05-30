@@ -1,5 +1,5 @@
 @echo off
-REM This script links all necessary files from iC to create the directory for iC4FSL
+REM This script links all necessary files from eC to create the directory for Etherios4Kinetis
 REM As the files are linked, all changes WILL AFFECT THE GIT REPOSITORY DIRECTLY
 cls
 SET ROOT_DIR=C:\Etherios4Kinetis
@@ -272,19 +272,26 @@ for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\*.*"
 )
 
 REM Link the ucos template application in the uCOS style for Cfg:
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Cfg\Template"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\connector_config.*") do (
 	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Cfg\Template\%%~nxF" "%%F"
 )
 
 REM Link the ucos template application in the uCOS style for App:
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\App\Template"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\projects\iar\etherios_app\Sources\application.c") do (
 	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\App\Template\%%~nxF" "%%F"
 )
 
 REM Link the ucos template application in the uCOS style for Bsp:
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Bsp\Template"
 for %%F in ("%BASE_DIR%\kits\kinetis\ucos\source\common\Bsp\connector_bsp.c") do (
 	mklink /H "%UC_CLOUD_CONNECTOR_DIR%\Bsp\Template\%%~nxF" "%%F"
 )
+
+REM Link the ucos template application in the uCOS style for Doc:
+MKDIR "%UC_CLOUD_CONNECTOR_DIR%\Doc"
+REM TODO: Add Doc
  
 REM Following lines links all necessary folders from the Micrium official package directory
 REM Micrium official package directory CAN'T be distributed to clients
