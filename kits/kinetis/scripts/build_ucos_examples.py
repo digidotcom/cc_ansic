@@ -90,6 +90,20 @@ def add_basic_rci_files_to_iar_project(iar_ewp_file, tower):
 	#Move new file
 	shutil.move(abs_path, iar_ewp_file_with_path)
 
+# Exclude from build not required uCOS components for an example
+def add_exclude(example_name, tower, name):
+	iar_workspace = iar_workspace_leading + tower + iar_workspace_trail
+
+	sample_iar = iar_workspace + "\\" + example_name + "\\" + example_name + ".ewp"
+
+	replace(sample_iar, 
+			"<name>" + name + "</name>", 
+			"<name>" + name + "</name>\n" + 
+			"    <excluded>\n" + 
+			"      <configuration>Release</configuration>\n" +
+			"      <configuration>Flash</configuration>\n" + 
+			"    </excluded>")
+
 # Replaces some configuration parameters in connector_config.h for development
 def customize_params_development(sample_dir):
 	#sample_dir is the sample's root
@@ -127,7 +141,6 @@ def replicate_example(example_name, tower):
 	if dev == 1:
 		customize_params_development(dest_sample_dir_iar)
 
-
 # This function deletes template application
 def delete_example(tower):
 	dir_path = iar_workspace_leading + tower + iar_workspace_trail + "\\etherios_app"
@@ -143,25 +156,53 @@ def main():
 		dev = 1
 
 	replicate_example("connect_to_etherios", "53")
+	add_exclude("connect_to_etherios", "53", "uC/FS")
+	add_exclude("connect_to_etherios", "53", "uC/Clk")
 	replicate_example("connect_to_etherios", "60")
+	add_exclude("connect_to_etherios", "60", "uC/FS")
+	add_exclude("connect_to_etherios", "60", "uC/Clk")
+
 	replicate_example("send_data", "53")
+	add_exclude("send_data", "53", "uC/FS")
+	add_exclude("send_data", "53", "uC/Clk")
 	replicate_example("send_data", "60")
+	add_exclude("send_data", "60", "uC/FS")
+	add_exclude("send_data", "60", "uC/Clk")
+
 	replicate_example("device_request", "53")
+	add_exclude("device_request", "53", "uC/FS")
+	add_exclude("device_request", "53", "uC/Clk")
 	replicate_example("device_request", "60")
+	add_exclude("device_request", "60", "uC/FS")
+	add_exclude("device_request", "60", "uC/Clk")
+
+	#file_system sample requires uC/FS and uC/Clk
 	replicate_example("file_system", "53")
 	replicate_example("file_system", "60")
+
 	replicate_example("firmware_update", "53")
+	add_exclude("firmware_update", "53", "uC/FS")
+	add_exclude("firmware_update", "53", "uC/Clk")
 	replicate_example("firmware_update", "60")
+	add_exclude("firmware_update", "60", "uC/FS")
+	add_exclude("firmware_update", "60", "uC/Clk")
 
 	replicate_example("basic_rci", "53")
+	add_exclude("basic_rci", "53", "uC/FS")
+	add_exclude("basic_rci", "53", "uC/Clk")
 	replicate_example("basic_rci", "60")
+	add_exclude("basic_rci", "60", "uC/FS")
+	add_exclude("basic_rci", "60", "uC/Clk")
 
+	#data_points sample uC/Clk
 	replicate_example("data_points", "53")
+	add_exclude("data_points", "53", "uC/FS")
 	replicate_example("data_points", "60")
+	add_exclude("data_points", "60", "uC/FS")
 
 	delete_example("53")
 	delete_example("60")
 	
-	add_basic_rci_files_to_iar_project("basic_rci\\basic_rci.ewp", "53")
-	add_basic_rci_files_to_iar_project("basic_rci\\basic_rci.ewp", "60")
+#	add_basic_rci_files_to_iar_project("basic_rci\\basic_rci.ewp", "53")
+#	add_basic_rci_files_to_iar_project("basic_rci\\basic_rci.ewp", "60")
 main()
