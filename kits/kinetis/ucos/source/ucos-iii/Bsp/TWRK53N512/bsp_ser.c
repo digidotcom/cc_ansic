@@ -132,7 +132,7 @@ void  BSP_Ser_Init (CPU_INT32U  baud_rate)
 
     channel = UART3_BASE_PTR;                                   /* UART3 Base Address.                                  */
 
-    cpu_clk_freq = BSP_CPU_ClkFreq();
+    cpu_clk_freq = 48000000;  //BSP_CPU_ClkFreq();		/* Serial Clock = Bus Clock at 48 MHz 			*/
                                                                 /* ------------------ INIT OS OBJECTS ----------------- */
     BSP_OS_SemCreate(&BSP_SerTxWait,   0, "Serial Tx Wait");
     BSP_OS_SemCreate(&BSP_SerRxWait,   0, "Serial Rx Wait");
