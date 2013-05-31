@@ -43,9 +43,26 @@ RCI_SET_SETTING = \
 </sci_request>"""
 
 class StackSizeTestCase(ic_testcase.TestCase):
+    monitor=None
+
+    def setUp(self):
+        ic_testcase.TestCase.setUp(self)
+        # Optimization, reuse the DeviceConnectionMonitor to avoid creating
+        # multiple sessions over and over.
+        if StackSizeTestCase.monitor is None:
+            StackSizeTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+            StackSizeTestCase.monitor.start()
+        self.monitor = StackSizeTestCase.monitor
+
+    @classmethod
+    def tearDownClass(cls):
+        if StackSizeTestCase.monitor is not None:
+            StackSizeTestCase.monitor.stop()
+        ic_testcase.TestCase.tearDownClass()
+
 
     def test_stacksize_with_rci_query_setting(self):
-    
+
         """ Sends query_setting. 
         """
         self.log.info("**** Stack Size (RCI) Test:  RCI query_setting")
@@ -61,14 +78,14 @@ class StackSizeTestCase(ic_testcase.TestCase):
         # Parse request response 
         dom = xml.dom.minidom.parseString(rci_response)
         rci_error_response = dom.getElementsByTagName('error')
-    
+
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
             self.assertTrue(error is found, "Got error response")
 
     def test_stacksize_with_rci_set_setting(self):
-    
+
         """ Sends set_setting. 
         """
         self.log.info("**** Stack Size (RCI) Test:  RCI set_setting")
@@ -90,31 +107,25 @@ class StackSizeTestCase(ic_testcase.TestCase):
             self.log.info("Response: %s" % rci_response)
             self.assertTrue(error is found, "Got error response")
 
-        monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
 
-        try:
-            monitor.start()
-            if device_is_connected(self) == False:
-                self.log.info("Waiting for device to connect before start testing")
-                monitor.wait_for_connect(30)
-            self.log.info("Device is connected. Start testing")
+        if device_is_connected(self) == False:
+            self.log.info("Waiting for device to connect before start testing")
+            self.monitor.wait_for_connect(30)
+        self.log.info("Device is connected. Start testing")
 
-            rci_request = (RCI_SET_SETTING % (self.device_id, "terminate"));
+        rci_request = (RCI_SET_SETTING % (self.device_id, "terminate"));
 
-            # Send RCI request
-            rci_response = self.session.post('http://%s/ws/sci' % self.hostname, data=rci_request).content
+        # Send RCI request
+        rci_response = self.session.post('http://%s/ws/sci' % self.hostname, data=rci_request).content
 
-            self.log.info("Waiting for iDigi to disconnect device.")
-            monitor.wait_for_disconnect(30)
-            self.log.info("Device disconnected.")
+        self.log.info("Waiting for iDigi to disconnect device.")
+        self.monitor.wait_for_disconnect(30)
+        self.log.info("Device disconnected.")
 
-            self.log.info("Waiting for Device to reconnect.")
-            monitor.wait_for_connect(30)
-            self.log.info("Device connected.")
+        self.log.info("Waiting for Device to reconnect.")
+        self.monitor.wait_for_connect(30)
+        self.log.info("Device connected.")
 
-        finally:
-            monitor.stop()        
-        
 
 if __name__ == '__main__':
     unittest.main()

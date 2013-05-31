@@ -74,9 +74,26 @@ RCI_QUERY_STATE = \
 </sci_request>"""
 
 class StackSizeTestCase(ic_testcase.TestCase):
+    monitor=None
+
+    def setUp(self):
+        ic_testcase.TestCase.setUp(self)
+        # Optimization, reuse the DeviceConnectionMonitor to avoid creating
+        # multiple sessions over and over.
+        if StackSizeTestCase.monitor is None:
+            StackSizeTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+            StackSizeTestCase.monitor.start()
+        self.monitor = StackSizeTestCase.monitor
+
+    @classmethod
+    def tearDownClass(cls):
+        if StackSizeTestCase.monitor is not None:
+            StackSizeTestCase.monitor.stop()
+        ic_testcase.TestCase.tearDownClass()
+
 
     def test_stacksize_with_begin_rci(self):
-    
+
         """ Sends query_setting. 
         """
         self.log.info("**** Stack Size FS Test:  start RCI query_state")
@@ -92,14 +109,14 @@ class StackSizeTestCase(ic_testcase.TestCase):
         # Parse request response 
         dom = xml.dom.minidom.parseString(rci_response)
         rci_error_response = dom.getElementsByTagName('error')
-    
+
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
             self.assertTrue(error is found, "Got error response")
 
     def test_stacksize_with_fs(self):
-    
+
         """ Sends file get command. 
         """
         my_dir = tempfile.mkdtemp(suffix='_stacksizefs')
@@ -120,7 +137,7 @@ class StackSizeTestCase(ic_testcase.TestCase):
             self.log.info("Service not available.")
             shutil.rmtree(my_dir)
             return
-        
+
         # Parse request response 
         self.log.info(file_get_response)
         dom = xml.dom.minidom.parseString(file_get_response)
@@ -130,7 +147,7 @@ class StackSizeTestCase(ic_testcase.TestCase):
             self.fail("Response didn't contain \"get_file\" element: %s" % file_get_response)
 
         data =  b64decode(getText(get_data[0].getElementsByTagName("data")[0]))
-        
+
         # Print file data
         #self.log.info("Received:")
         #self.log.info("File Data: \"%s\"." % data)
@@ -143,7 +160,7 @@ class StackSizeTestCase(ic_testcase.TestCase):
 
         self.assertEqual(in_text, data,
             "get file error") 
-        
+
         request = (FILE_LS_REQUEST % (self.device_id, my_ls_path))
 
         self.log.info("Sending file ls command for \"%s\" to server for device id  %s." % (my_ls_path, self.device_id))
@@ -156,29 +173,24 @@ class StackSizeTestCase(ic_testcase.TestCase):
 
         shutil.rmtree(my_dir)
 
-        monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
 
-        try:
-            monitor.start()
-            if device_is_connected(self) == False:
-                self.log.info("Waiting for device to connect before start testing")
-                monitor.wait_for_connect(30)
-            self.log.info("Device is connected. Start testing")
-            
-            request = (FILE_PUT_GET_REQUEST % (self.device_id, "terminate.test", put_data, my_file_path))
-            # Send device request
-            file_get_response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
+        if device_is_connected(self) == False:
+            self.log.info("Waiting for device to connect before start testing")
+            self.monitor.wait_for_connect(30)
+        self.log.info("Device is connected. Start testing")
 
-            self.log.info("Waiting for iDigi to disconnect device.")
-            monitor.wait_for_disconnect(30)
-            self.log.info("Device disconnected.")
+        request = (FILE_PUT_GET_REQUEST % (self.device_id, "terminate.test", put_data, my_file_path))
+        # Send device request
+        file_get_response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
 
-            self.log.info("Waiting for Device to reconnect.")
-            monitor.wait_for_connect(30)
-            self.log.info("Device connected.")
+        self.log.info("Waiting for iDigi to disconnect device.")
+        self.monitor.wait_for_disconnect(30)
+        self.log.info("Device disconnected.")
 
-        finally:
-            monitor.stop()        
+        self.log.info("Waiting for Device to reconnect.")
+        self.monitor.wait_for_connect(30)
+        self.log.info("Device connected.")
+
 
     def get_random_word(self, wordLen):
         word = ''

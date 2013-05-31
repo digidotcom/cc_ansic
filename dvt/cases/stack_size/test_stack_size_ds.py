@@ -44,6 +44,23 @@ RCI_QUERY_STATE = \
 </sci_request>"""
 
 class StackSizeTestCase(ic_testcase.TestCase):
+    monitor=None
+
+    def setUp(self):
+        ic_testcase.TestCase.setUp(self)
+        # Optimization, reuse the DeviceConnectionMonitor to avoid creating
+        # multiple sessions over and over.
+        if StackSizeTestCase.monitor is None:
+            StackSizeTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+            StackSizeTestCase.monitor.start()
+        self.monitor = StackSizeTestCase.monitor
+
+    @classmethod
+    def tearDownClass(cls):
+        if StackSizeTestCase.monitor is not None:
+            StackSizeTestCase.monitor.stop()
+        ic_testcase.TestCase.tearDownClass()
+
 
     def test_stacksize_with_begin_rci(self):
 
@@ -75,29 +92,25 @@ class StackSizeTestCase(ic_testcase.TestCase):
         self.log.info("**** Beginning Stack Size DVT:  Device request")
         self.valid_target("ds_stacksize_test", 2048)
         self.valid_target("put_ds_stacksize_test", 100)
-        monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
 
-        try:
-            monitor.start()
 
-            if device_is_connected(self) == False:
-                self.log.info("Waiting for device to connect before start testing")
-                monitor.wait_for_connect(30)
-            self.log.info("Device is connected. Start testing")
+        if device_is_connected(self) == False:
+            self.log.info("Waiting for device to connect before start testing")
+            self.monitor.wait_for_connect(30)
+        self.log.info("Device is connected. Start testing")
 
-            # Send device request to request terminate the sample
-            device_request_response = self.send_device_request('request_terminate', 0)
-            self.log.info("RESPONSE %s" %device_request_response)
+        # Send device request to request terminate the sample
+        device_request_response = self.send_device_request('request_terminate', 0)
+        self.log.info("RESPONSE %s" %device_request_response)
 
-            self.log.info("Waiting for cloud to disconnect device.")
-            monitor.wait_for_disconnect(30)
-            self.log.info("Device disconnected.")
+        self.log.info("Waiting for cloud to disconnect device.")
+        self.monitor.wait_for_disconnect(30)
+        self.log.info("Device disconnected.")
 
-            self.log.info("Waiting for Device to reconnect.")
-            monitor.wait_for_connect(30)
-            self.log.info("Device connected.")
-        finally:
-            monitor.stop()
+        self.log.info("Waiting for Device to reconnect.")
+        self.monitor.wait_for_connect(30)
+        self.log.info("Device connected.")
+
 
 
     def invalid_target(self, my_target_name, data_len):

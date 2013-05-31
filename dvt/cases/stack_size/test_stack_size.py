@@ -120,6 +120,23 @@ TARGET_DEVICE_REQUEST = \
 </sci_request>"""
 
 class StackSizeCase(ic_testcase.TestCase):
+    monitor=None
+
+    def setUp(self):
+        ic_testcase.TestCase.setUp(self)
+        # Optimization, reuse the DeviceConnectionMonitor to avoid creating
+        # multiple sessions over and over.
+        if StackSizeCase.monitor is None:
+            StackSizeCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+            StackSizeCase.monitor.start()
+        self.monitor = StackSizeCase.monitor
+
+    @classmethod
+    def tearDownClass(cls):
+        if StackSizeCase.monitor is not None:
+            StackSizeCase.monitor.stop()
+        ic_testcase.TestCase.tearDownClass()
+
 
     def test_stacksize_a_with_ds(self):
         """ Sends device request. 
@@ -129,7 +146,7 @@ class StackSizeCase(ic_testcase.TestCase):
         self.valid_target("put_ds_stacksize_test", 100)
 
     def test_stacksize_b_with_rci_query_setting(self):
-    
+
         """ Sends query_setting. 
         """
         self.log.info("**** Stack Size DVT:  test_stacksize_b_with_rci_query_setting")
@@ -145,14 +162,14 @@ class StackSizeCase(ic_testcase.TestCase):
         # Parse request response 
         dom = xml.dom.minidom.parseString(rci_response)
         rci_error_response = dom.getElementsByTagName('error')
-    
+
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
             self.assertTrue(error is found, "Got error response")
 
     def test_stacksize_c_with_rci_set_setting(self):
-    
+
         """ Sends set_setting. 
         """
         self.log.info("**** Stack Size DVT:  test_stacksize_c_with_rci_set_setting")
@@ -168,14 +185,14 @@ class StackSizeCase(ic_testcase.TestCase):
         # Parse request response 
         dom = xml.dom.minidom.parseString(rci_response)
         rci_error_response = dom.getElementsByTagName('error')
-    
+
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
             self.assertTrue(error is found, "Got error response")
 
     def test_stacksize_d_with_fs(self):
-    
+
         """ Sends file get command. 
         """
         my_dir = tempfile.mkdtemp(suffix='_stacksize')
@@ -196,7 +213,7 @@ class StackSizeCase(ic_testcase.TestCase):
             self.log.info("Service not available.")
             shutil.rmtree(my_dir)
             return
-        
+
         # Parse request response 
         self.log.info(file_get_response)
         dom = xml.dom.minidom.parseString(file_get_response)
@@ -206,7 +223,7 @@ class StackSizeCase(ic_testcase.TestCase):
             self.fail("Response didn't contain \"get_file\" element: %s" % file_get_response)
 
         data =  b64decode(getText(get_data[0].getElementsByTagName("data")[0]))
-        
+
         # Print file data
         #self.log.info("Received:")
         #self.log.info("File Data: \"%s\"." % data)
@@ -218,7 +235,7 @@ class StackSizeCase(ic_testcase.TestCase):
         self.log.info("!!! data len: \"%d\", in len: \"%d\"" %  (len(data), len(in_text)))
 
         self.assertEqual(in_text, data, "get file error") 
-        
+
         request = (FILE_LS_REQUEST % (self.device_id, my_ls_path))
 
         self.log.info("Sending file ls command for \"%s\" to server for device id  %s." % (my_ls_path, self.device_id))
@@ -232,14 +249,14 @@ class StackSizeCase(ic_testcase.TestCase):
         shutil.rmtree(my_dir)
 
     def test_stacksize_z_with_fw(self):
-    
+
         """ Sends a firmware update """
-    
+
         self.log.info("**** Stack Size DVT: test_stacksize_z_with_fw")
 
         # Send firmware target query
         self.log.info("Sending firmware target query to %s." % self.device_id)
-               
+
         # Find firmware targets
         firmware_targets_xml = self.session.post('http://%s/ws/sci' % self.hostname, 
             data=FIRMWARE_QUERY_REQUEST % self.device_id).content
@@ -251,7 +268,7 @@ class StackSizeCase(ic_testcase.TestCase):
         if len(targets) == 0:
             self.log.info("Service not available")
             return
-    
+
         # Encode firmware for transmittal
         firmware_file = 'dvt/cases/test_files/firmware_malloc.txt'
         self.log.info("Target %d %s." % (fw_target_num, firmware_file))
@@ -261,31 +278,24 @@ class StackSizeCase(ic_testcase.TestCase):
         data_value = encodestring(data)
         f.close()
 
-        monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+        # Send update request
+        request = (FIRMWARE_DATA_REQUEST % (fw_target_num, self.device_id, data_value))
 
-        try:
-            monitor.start()
-            # Send update request
-            request = (FIRMWARE_DATA_REQUEST % (fw_target_num, self.device_id, data_value))
+        self.log.info("Sending request to update firmware.")
+        response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
+        self.log.info("Response to:\n%s" % response)
 
-            self.log.info("Sending request to update firmware.")
-            response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
-            self.log.info("Response to:\n%s" % response)
+        self.log.info("Waiting for iDigi to disconnect device.")
+        self.monitor.wait_for_disconnect(30)
+        self.log.info("Device disconnected.")
 
-            self.log.info("Waiting for iDigi to disconnect device.")
-            monitor.wait_for_disconnect(30)
-            self.log.info("Device disconnected.")
-
-            self.log.info("Waiting for Device to reconnect.")
-            monitor.wait_for_connect(30)
-            self.log.info("Device connected.")
-
-        finally:
-            monitor.stop()        
+        self.log.info("Waiting for Device to reconnect.")
+        self.monitor.wait_for_connect(30)
+        self.log.info("Device connected.")
 
 
     def invalid_target(self, my_target_name, data_len):
-    
+
         """ Verifies that the device request returned match the expected 
         response.
         """
@@ -300,7 +310,7 @@ class StackSizeCase(ic_testcase.TestCase):
         # Parse request response 
         dom = xml.dom.minidom.parseString(device_request_response)
         device_response = dom.getElementsByTagName("device_request")
-        
+
         # Validate cancel message response
         self.log.info("Determining if \"%s\" target is cancelled." % my_target_name)
         error = getText(device_response[0].getElementsByTagName('error')[0])
@@ -329,7 +339,7 @@ class StackSizeCase(ic_testcase.TestCase):
         # Parse request response
         dom = xml.dom.minidom.parseString(device_request_response)
         device_response = dom.getElementsByTagName("device_request")
-        
+
         # Validate target name
         self.log.info("Determining if the target_name is \"%s\"." % my_target_name)
         target_name = device_response[0].getAttribute('target_name')
@@ -347,7 +357,7 @@ class StackSizeCase(ic_testcase.TestCase):
         return "ok"
 
     def send_device_request(self, target_name, request_length):
-        
+
         request_data = self.get_random_word(request_length);
 
         request = (TARGET_DEVICE_REQUEST % (self.device_id, target_name, request_data))

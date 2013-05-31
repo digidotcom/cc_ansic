@@ -29,7 +29,7 @@ FIRMWARE_QUERY_REQUEST = \
     </targets>
   </query_firmware_targets>
 </sci_request>"""
-    
+
 FIRMWARE_DATA_REQUEST= \
 """<sci_request version="1.1">
     <update_firmware firmware_target="%d">
@@ -41,28 +41,44 @@ FIRMWARE_DATA_REQUEST= \
 </sci_request>"""
 
 class StackSizeTestCase(ic_testcase.TestCase):
+    monitor=None
+
+    def setUp(self):
+        ic_testcase.TestCase.setUp(self)
+        # Optimization, reuse the DeviceConnectionMonitor to avoid creating
+        # multiple sessions over and over.
+        if StackSizeTestCase.monitor is None:
+            StackSizeTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
+            StackSizeTestCase.monitor.start()
+        self.monitor = StackSizeTestCase.monitor
+
+    @classmethod
+    def tearDownClass(cls):
+        if StackSizeTestCase.monitor is not None:
+            StackSizeTestCase.monitor.stop()
+        ic_testcase.TestCase.tearDownClass()
+
 
     def test_stacksize_with_fw(self):
-    
         """ Sends a firmware update """
-    
+
         self.log.info("**** Stack Size DVT: Firmware Service")
 
         # Send firmware target query
         self.log.info("Sending firmware target query to %s." % self.device_id)
-               
+
         # Find firmware targets
         firmware_targets_xml = self.session.post('http://%s/ws/sci' % self.hostname, 
             data=FIRMWARE_QUERY_REQUEST % self.device_id).content
         #self.log.info("TARGETS %s." % firmware_targets_xml)
-  
+
         dom = xml.dom.minidom.parseString(firmware_targets_xml)
         targets = dom.getElementsByTagName("target")
 
         if len(targets) == 0:
             self.log.info("Service not available")
             return
-    
+
         # Encode firmware for transmittal
         firmware_file = 'dvt/cases/test_files/firmware_malloc.txt'
         self.log.info("Target %d %s." % (fw_target_num, firmware_file))
@@ -72,32 +88,27 @@ class StackSizeTestCase(ic_testcase.TestCase):
         data_value = encodestring(data)
         f.close()
 
-        monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
 
-        try:
-            monitor.start()
-            if device_is_connected(self) == False:
-                self.log.info("Waiting for device to connect before start testing")
-                monitor.wait_for_connect(30)
-            self.log.info("Device is connected. Start testing")
-            
-            # Send update request
-            request = (FIRMWARE_DATA_REQUEST % (fw_target_num, self.device_id, data_value))
+        if device_is_connected(self) == False:
+            self.log.info("Waiting for device to connect before start testing")
+            self.monitor.wait_for_connect(30)
+        self.log.info("Device is connected. Start testing")
 
-            self.log.info("Sending request to update firmware.")
-            response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
-            self.log.info("Response to:\n%s" % response)
+        # Send update request
+        request = (FIRMWARE_DATA_REQUEST % (fw_target_num, self.device_id, data_value))
 
-            self.log.info("Waiting for iDigi to disconnect device.")
-            monitor.wait_for_disconnect(30)
-            self.log.info("Device disconnected.")
+        self.log.info("Sending request to update firmware.")
+        response = self.session.post('http://%s/ws/sci' % self.hostname, data=request).content
+        self.log.info("Response to:\n%s" % response)
 
-            self.log.info("Waiting for Device to reconnect.")
-            monitor.wait_for_connect(30)
-            self.log.info("Device connected.")
+        self.log.info("Waiting for iDigi to disconnect device.")
+        self.monitor.wait_for_disconnect(30)
+        self.log.info("Device disconnected.")
 
-        finally:
-            monitor.stop()        
+        self.log.info("Waiting for Device to reconnect.")
+        self.monitor.wait_for_connect(30)
+        self.log.info("Device connected.")
+
 
 if __name__ == '__main__':
     unittest.main()
