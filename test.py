@@ -274,7 +274,7 @@ def start_iik(executable, tty=False):
         os.system('%s 2>&1' % (executable))
 
 def unique_device_type():
-    return 'iC DVT %s' % str(uuid.uuid4().hex)[:25]
+    return 'ECC DVT %s' % str(uuid.uuid4().hex)[:25]
 
 class TestRunner(object):
     log = None
