@@ -423,6 +423,7 @@ class TestRunner(object):
 
         device_location = None
         try:
+            pid = None
             sandbox_dir = sandbox(self.base_dir)
             src_dir        = os.path.join(sandbox_dir, base_src_dir)
             test_dir       = os.path.join(sandbox_dir, base_script_dir)
@@ -619,14 +620,15 @@ class TestRunner(object):
 
             # Delete device if it was not previously deleted.
             if device_location is not None:
-                # Check that process is finished
-                retries = 10
-                status = self.isRunningProcess(pid)
-                while(retries>0 and status[0] is True):
-                    retries -= 1
-                    self.log.info(status[1], extra=log_extra)
-                    self.log.info("Waiting a second to finish the process...", extra=log_extra)
-                    time.sleep(1)
+                if(pid is not None):
+                    # Check that process is finished
+                    retries = 10
+                    status = self.isRunningProcess(pid)
+                    while(retries>0 and status[0] is True):
+                        retries -= 1
+                        self.log.info(status[1], extra=log_extra)
+                        self.log.info("Waiting a second to finish the process...", extra=log_extra)
+                        time.sleep(1)
 
                 # Remove Device from server
                 try:
