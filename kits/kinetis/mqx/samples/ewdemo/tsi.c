@@ -38,7 +38,7 @@ void TSI_Start()
 void TSI_Init(void)
 {
   SIM_SCGC5 |= (SIM_SCGC5_TSI_MASK); //Turn on clock to TSI module
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   PORTA_PCR4 = PORT_PCR_MUX(0);      //Enable ALT0 for portA4
   PORTB_PCR2 = PORT_PCR_MUX(0);      //Enable ALT0 for portB2
   PORTB_PCR3 = PORT_PCR_MUX(0);      //Enable ALT0 for portB3
@@ -51,7 +51,7 @@ void TSI_Init(void)
   TSI0_GENCS |= ((TSI_GENCS_NSCN(10))|(TSI_GENCS_PS(3)));
   TSI0_SCANC |= ((TSI_SCANC_EXTCHRG(3))|(TSI_SCANC_REFCHRG(31))|(TSI_SCANC_DELVOL(7))|(TSI_SCANC_SMOD(0))|(TSI_SCANC_AMPSC(0)));
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   ELECTRODE_ENABLE_REG = ELECTRODE0_EN_MASK|ELECTRODE1_EN_MASK|ELECTRODE2_EN_MASK|ELECTRODE3_EN_MASK;
 #else
   ELECTRODE_ENABLE_REG = ELECTRODE0_EN_MASK|ELECTRODE1_EN_MASK;
@@ -86,7 +86,7 @@ void TSI_SelfCalibration(void)
   ELECTRODE1_OVERRUN = (uint_32)((g16ElectrodeBaseline[ELECTRODE1]+ELECTRODE1_OVRRUN));
   g16ElectrodeTouch[ELECTRODE1] = g16ElectrodeBaseline[ELECTRODE1] + ELECTRODE1_TOUCH;
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   g16ElectrodeBaseline[ELECTRODE2] = ELECTRODE2_COUNT;
   ELECTRODE2_OVERRUN = (uint_32)((g16ElectrodeBaseline[ELECTRODE2]+ELECTRODE2_OVRRUN));
   g16ElectrodeTouch[ELECTRODE2] = g16ElectrodeBaseline[ELECTRODE2] + ELECTRODE2_TOUCH;
@@ -160,7 +160,7 @@ void TSI_isr(pointer isr)
   }
   /***********************/
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   /* Process electrode 2 */
   l16Counter = ELECTRODE2_COUNT;
   if(l16Counter>g16ElectrodeTouch[ELECTRODE2])
@@ -233,7 +233,7 @@ void TSI_isr(pointer isr)
     lValidTouch &= ~((1<<ELECTRODE1));
   }
   
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   if(lValidTouch&((1<<ELECTRODE2)))
   {
     if(mode==TOUCH)

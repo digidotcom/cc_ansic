@@ -10,13 +10,29 @@
 * =======================================================================
 */
 
+#include "main.h"
 #include "connector_config.h"
 
-#if defined(CONNECTOR_FIRMWARE_SERVICE)
+#if defined(APPLICATION_FIRMWARE_SERVICE_FULL)
 #include "connector_api.h"
 #include "platform.h"
 #include "connector_debug.h"
-#define FLASH_TASK				3
+
+#if !defined DEVICE_HAS_FLASH_PART_0 && !defined DEVICE_HAS_FLASH_PART_1
+#define	DEVICE_HAS_FLASH_PART_0
+#endif
+#ifndef FLASH_PART_0_LEN
+#define FLASH_PART_0_LEN                          0xFFFFFFFF
+#endif
+#ifndef FLASH_PART_0_TYPE
+#define FLASH_PART_0_TYPE                         ".*\\.S19"
+#endif
+#ifndef FLASH_PART_0_DESC
+#define FLASH_PART_0_DESC                         "SRec Image"
+#endif
+#ifndef CONNECTOR_FIRMWARE_VERSION
+#define CONNECTOR_FIRMWARE_VERSION                          {0,0,0,1}
+#endif
 
 typedef struct {
 	connector_firmware_version_t    version;
@@ -29,7 +45,7 @@ typedef struct {
 static firmware_list_t firmware_list[] = {
     /* version     code_size     name_spec          description */
 #ifdef DEVICE_HAS_FLASH_PART_0
-    {FLASH_PART_0_VER, FLASH_PART_0_LEN, FLASH_PART_0_TYPE, FLASH_PART_0_DESC}
+    {CONNECTOR_FIRMWARE_VERSION, FLASH_PART_0_LEN, FLASH_PART_0_TYPE, FLASH_PART_0_DESC},
 #endif
 #ifdef DEVICE_HAS_FLASH_PART_1
     {FLASH_PART_1_VER, FLASH_PART_1_LEN, FLASH_PART_1_TYPE, FLASH_PART_1_DESC}
@@ -78,7 +94,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
 
     if (download_info == NULL)
     {
-        APP_DEBUG("app_firmware_download_request ERROR: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_request ERROR: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -88,7 +104,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         goto done;
     }
 
-    /* Create the iDigi Flash Task */
+    /* Create the Connector Flash Task */
     flash_taskid = ecc_create_task(FLASH_TASK, 0);
     if (flash_taskid <= 0)
     {
@@ -123,7 +139,7 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
 
     if (image_data == NULL)
     {
-        APP_DEBUG("app_firmware_image_data ERROR: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_image_data ERROR: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -167,7 +183,7 @@ static connector_callback_status_t app_firmware_download_complete(connector_firm
 
     if (download_complete == NULL)
     {
-        APP_DEBUG("app_firmware_download_complete Error: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_complete Error: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -218,7 +234,7 @@ static connector_callback_status_t app_firmware_download_abort(connector_firmwar
 
     if (abort_data == NULL)
     {
-        APP_DEBUG("app_firmware_download_abort Error: iDigi passes incorrect parameters\n");
+        APP_DEBUG("app_firmware_download_abort Error: Device Cloud passes incorrect parameters\n");
         status = connector_callback_abort;
         goto done;
     }
@@ -301,4 +317,4 @@ connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t
 
     return status;
 }
-#endif /* CONNECTOR_FIRMWARE_SERVICE */
+#endif /* APPLICATION_FIRMWARE_SERVICE_FULL */

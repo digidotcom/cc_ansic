@@ -27,7 +27,7 @@ extern volatile unsigned char keypressed;
 
 #define ELECTRODE_ENABLE_REG    TSI0_PEN
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   #define ELECTRODE0_COUNT  (uint_16)((TSI0_CNTR5>>16)&0x0000FFFF)
   #define ELECTRODE1_COUNT  (uint_16)((TSI0_CNTR9)&0x0000FFFF)
   #define ELECTRODE2_COUNT  (uint_16)((TSI0_CNTR7>>16)&0x0000FFFF)

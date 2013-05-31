@@ -11,7 +11,7 @@
 #include "tower_demo.h"
 #include <i2c.h>
 
-#ifdef TWR_K53N512
+#ifdef TWRK53N512
 #if !BSPCFG_ENABLE_I2C1
 #error This application requires BSPCFG_ENABLE_I2C1 defined non-zero in user_config.h. Please recompile libraries with this option.
 #endif
@@ -145,7 +145,7 @@ void accel_Task(uint_32 data)
 void InitializeI2C()
 {
   /* Open the I2C driver, and assign a I2C device handler*/
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
   fd = fopen ("i2c0:", NULL);
 #else
   fd = fopen ("i2c1:", NULL);
@@ -160,7 +160,7 @@ void InitializeI2C()
   /* Set I2C into Master mode */
   ioctl (fd, IO_IOCTL_I2C_SET_MASTER_MODE, NULL);
   
-#ifdef TWR_K53N512
+#ifdef TWRK53N512
   //PORTC_PCR10  @ address 0x4004B028
   PORTC_PCR10 &= ~PORT_PCR_MUX_MASK ; 
   PORTC_PCR10 |=  PORT_PCR_MUX(2); 

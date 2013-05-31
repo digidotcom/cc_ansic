@@ -1,22 +1,26 @@
 
-  o------------------------------o
-  | Device Request iDigi Example |
-  o------------------------------o
+  o--------------------------------------------o
+  | Send Data to Etherios Device Cloud Example |
+  o--------------------------------------------o
 
   Compatible platforms
   --------------------
-  * TWRK60n512 Board (current)
+  * TWRK53N512 Board
+  * TWRK60N512 Board
+  * TWRK70F120M Board
 
   Introduction
   ------------
-  This sample demonstrates how one can use the iDigi cloud to control their remote device.
-  The sample allows user to turn ON or OFF the LEDs (LED1 or LED2).
+  This sample demonstrates how one can use the Device Cloud by Etherios to control their remote
+  device.
+  
+  The sample allows user to turn ON or OFF the TWR boards' LEDs (LED1 or LED2).
 
   Requirements
   ------------
   To run this example you will need:
     * Freescale Tower Kit with Ethernet connection.
-    * An iDigi account with the device registered in.
+    * An Etherios account with the device registered in.
 
   Example setup
   -------------
@@ -25,52 +29,52 @@
        b) The device is connected to the Local Area Network (LAN) by the
           Ethernet cable and has Internet access.
 
-  2) Configure the iDigi settings using the 'iDigi Connector Configurator'.
-     To open it double-click on the 'idigi_config.xml' file of the project:
+  2) Configure the Etherios settings at the project's connector_config.h file.
+     Define the following macros with your device MAC address (from the TWR-SER module)
+     and the Device type (user-defined string):
+        #define CONNECTOR_MAC_ADDRESS                     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC}
+        #define CONNECTOR_DEVICE_TYPE                     "Device Request Example"
 
-       * Select 'General' and configure:
-           - The 'MAC Address' of your device.
-           - The 'Vendor ID' of your iDigi account.
+     And the following with your account Vendor ID and Cloud URL:
+        #define CONNECTOR_VENDOR_ID                       0xAABBCCDD
+        #define CONNECTOR_CLOUD_URL                       "login.etherios.com"
 
-       * Save the changes by selecting 'File > Save'.
-
-  3) Go to 'Start > Programs > P&E OSBDM OSJTAG Virtual Serial Toolkit
-     > Utilities > Terminal Utility' to open the Terminal window.
-
-     Select 'USB Port' from the 'Port' combo box and configure the following
-     connection parameters:
+  3) Open and configure a Serial Terminal with the following parameters:
          Baudrate: 115200
          Parity:   None
          Bits:     8
 
-     Click the 'Open Serial Port' button to open the port. The message 'Open'
-     will appear next to the 'Bits' combo box.
+     The Port number depends on your PC configuration and on wether you are using
+     the Tower USB serial port or the TWR-ELEV DB9 connector.
+     
+	 **NOTE: To recognize the USB port as a Serial port, the minimum Firmware 
+             version should be 31.21.
+             Use the P&E Terminal Utility for inferior versions; or update 
+             your device firmware version using the P&E Firmware Updater 
+             Utility.
 
-  4) Make sure the Eclipse IDE has the iDigi settings configured correctly.
-     To do so, go to 'Window > Preferences' and select the 'iDigi
-     Configuration' group. Ensure the 'User name' and 'Password' values are
-     configured with your iDigi account credentials.
 
   Running the example
   -------------------
-  The example is already configured, so all you need to do is to build and
+  Once updated the connector_config.h settings, all you need to do is to build and
   launch the application.
 
-  To verify that that file with your message has been sent to iDigi follow
-  these steps:
-    1) Press the 'iDigiME' button of the toolbar to access to your iDigi
-       dashboard.
-    2) Once there, go to the 'Web Services Console' section.
+  When the application is running, you can send Device Requests to change the status of the LEDs.
+  To do this from the Etherios webpage, follow these steps:
+    1) Open your web browser and navigate to your Device Cloud by Etherios page 
+       (login.etherios.com or login.etherios.co.uk) and log in with your username 
+       and password.
+    2) Once there, go to the 'Documentation' section.
     3) Select 'SCI Targets' to open the 'Select devices to be used in examples'
        dialog. Use the 'Add Targets' combo box to look for the right Device ID,
        click 'Add' and then 'OK'.
 
-       NOTE: Use the table in 'iDigi Manager Pro > Devices' section to find
+       NOTE: Use the table in 'Device Manager > Devices' section to find
        out the Device ID of your board.
 
     4) Select the option 'Examples > SCI > Data Service > Send Request', on the
        left panel a SCI request will be automatically generated.
-    5) Make sure the Device ID is correct.
+    5) Make sure the Device ID tag was automatically set to match your Device's ID.
     6) Replace the target with "LED1" or "LED2" and the payload with ON or
        OFF, i.e., to turn on LED1 the request should be:
 
@@ -107,7 +111,19 @@
           </data_service>
        </sci_reply>
 
+  Optionally, a Python 2.7 script is provided with a very basic web services script to 
+  send a device request to Device Cloud. To run the script, open a command line, navigate 
+  to [ETHERIOS_CC_4_KINETIS_PATH]\Python Scripts\ and run:
+
+    python device_request.py <username> <password> <device_id> <target_led> <state>'
+
+  For Example:
+  
+    pyhton device_request.py username password 00000000-00000000-001234FF-FF567890 LED2 ON
+  
   Tested On
   ---------
-  TWRK60n512 Board
+  TWRK53N512 Board
+  TWRK60N512 Board
+  TWRK70F120M Board
 

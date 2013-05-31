@@ -29,7 +29,7 @@
 
 #include "connector_config.h"
 
-#ifdef FILE_SYSTEM_SDCARD
+#ifdef APPLICATION_FILE_SYSTEM_SDCARD
 
 #include <mqx.h>
 #include <bsp.h>
@@ -68,7 +68,6 @@
 *
 *END------------------------------------------------------------------*/
 
-/* TODO, SP: */
 FILESYSTEM_INFO_STRUCT_PTR	filesystem_info;
 
 void sdcard_task(uint_32 temp)
@@ -174,7 +173,7 @@ void sdcard_task(uint_32 temp)
         inserted = !lwgpio_get_value(&sd_detect);
 #endif
 
-#if defined BSP_SDCARD_GPIO_PROTECT
+#if defined BSP_SDCARD_GPIO_PROTECT && !defined IGNORE_SDCARD_PROTECTION
         /* Get value of protect pin */
         readonly = lwgpio_get_value(&sd_protect);
 #endif
@@ -323,4 +322,4 @@ void sdcard_task(uint_32 temp)
         _time_delay (200);
     }
 }
-#endif
+#endif /* APPLICATION_FILE_SYSTEM_SDCARD */

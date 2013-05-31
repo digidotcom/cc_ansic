@@ -26,7 +26,8 @@ typedef struct
 } connector_callbacks_t;
 
 #define ECC_SEND_DATA_EVENT 	0
-#define ECC_MAX_NUM_EVENTS  	1
+#define ECC_DATA_POINTS_EVENT 	1
+#define ECC_MAX_NUM_EVENTS  	2
 
 connector_error_t ecc_create_event(int const event);
 connector_error_t ecc_set_event(int const event, unsigned long const event_bit);
@@ -39,7 +40,7 @@ void ecc_software_reset(void);
 void ecc_watchdog_reset(void);
 
 void connector_thread(unsigned long initial_data);
-extern connector_callbacks_t * idigi_get_app_callbacks(void);
+extern connector_callbacks_t * connector_get_app_callbacks(void);
 extern unsigned long start_system_up_time;
 
 #define UNUSED_PARAMETER(x)     ((void)x)

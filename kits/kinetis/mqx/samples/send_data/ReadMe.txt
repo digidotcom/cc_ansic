@@ -1,23 +1,25 @@
 
-  o----------------------------o
-  | Send Data to iDigi Example |
-  o----------------------------o
+  o--------------------------------------------o
+  | Send Data to Etherios Device Cloud Example |
+  o--------------------------------------------o
 
   Compatible platforms
   --------------------
-  * TWRK60n512 Board (current)
+  * TWRK53N512 Board
+  * TWRK60N512 Board
+  * TWRK70F120M Board
 
   Introduction
   ------------
-  This sample sends raw data to iDigi Cloud when push button SW1
-  is pushed once. The sent data will be stored in a specified file
-  path on the Cloud.
+  This sample sends raw data to the Etherios Device Cloud when push button SW1
+  is pushed once. The data sent will be stored in a specified file path on the
+  Device Cloud.
 
   Requirements
   ------------
   To run this example you will need:
     * Freescale Tower Kit with Ethernet connection.
-    * An iDigi account with the device registered in.
+    * An Etherios account with the device registered in.
 
   Example setup
   -------------
@@ -26,56 +28,67 @@
        b) The device is connected to the Local Area Network (LAN) by the
           Ethernet cable and has Internet access.
 
-  2) Configure the iDigi settings using the 'iDigi Connector Configurator'.
-     To open it double-click on the 'idigi_config.xml' file of the project:
+  2) Configure the Etherios settings at the project's connector_config.h file.
+     Define the following macros with your device MAC address (from the TWR-SER module)
+     and the Device type (user-defined string):
+        #define CONNECTOR_MAC_ADDRESS                     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC}
+        #define CONNECTOR_DEVICE_TYPE                     "Send Data Example"
 
-       * Select 'General' and configure:
-           - The 'MAC Address' of your device.
-           - The 'Vendor ID' of your iDigi account.
+     And the following with your account Vendor ID and Cloud URL:
+        #define CONNECTOR_VENDOR_ID                       0xAABBCCDD
+        #define CONNECTOR_CLOUD_URL                       "login.etherios.com"
 
-       * Save the changes by selecting 'File > Save'.
-
-  3) Go to 'Start > Programs > P&E OSBDM OSJTAG Virtual Serial Toolkit
-     > Utilities > Terminal Utility' to open the Terminal window.
-
-     Select 'USB Port' from the 'Port' combo box and configure the following
-     connection parameters:
+  3) Open and configure a Serial Terminal with the following parameters:
          Baudrate: 115200
          Parity:   None
          Bits:     8
 
-     Click the 'Open Serial Port' button to open the port. The message 'Open'
-     will appear next to the 'Bits' combo box.
+     The Port number depends on your PC configuration and on wether you are using
+     the Tower USB serial port or the TWR-ELEV DB9 connector.
+     
+	 **NOTE: To recognize the USB port as a Serial port, the minimum Firmware 
+             version should be 31.21.
+             Use the P&E Terminal Utility for inferior versions; or update 
+             your device firmware version using the P&E Firmware Updater 
+             Utility.
 
-  4) Make sure the Eclipse IDE has the iDigi settings configured correctly.
-     To do so, go to 'Window > Preferences' and select the 'iDigi
-     Configuration' group. Ensure the 'User name' and 'Password' values are
-     configured with your iDigi account credentials.
 
   Running the example
   -------------------
-  The example is already configured, so all you need to do is to build and
-  launch the application.
+  Once updated the connector_config.h settings, all you need to do is to build and
+  launch the application as described in the Help Topics.
 
   While it is running, you can press the push button 'SW1' to send raw data to
   the cloud. You can see the console output on the terminal window for the
   device status.
 
-  To verify that the text file has been uploaded to iDigi successfully, follow
-  these steps:
-    1) Press the 'iDigiME' button of the toolbar to access to your iDigi
-       dashboard.
-    2) Once there, go to the 'iDigi Manager Pro' section and access the 'Data
-       Services' item from the top menu.
+  To verify that the text file has been uploaded to the Device Cloud successfully, 
+  follow these steps:
+    1) Open your web browser and navigate to your Device Cloud by Etherios page 
+       (login.etherios.com or login.etherios.co.uk) and log in with your username 
+       and password.
+
+    2) Once there, go to the 'Data Services' section from the top menu.
+
     3) Open the storage folder corresponding with your Device ID.
 
-       NOTE: Use the table in 'iDigi Manager Pro > Devices' section to find
-       out the Device ID of your board.
+       NOTE: Use the table in 'Device Manager > Devices' section to find out the Device ID of 
+       your board.
 
     4) You should be able to see a file called 'test.txt' under 'test/'. Open it
        and verify it contains the text you sent with the application.
 
+  Optionally, a Python 2.7 script is provided with a very basic web services script to 
+  retrieve the test/test.txt file from Device Cloud. To run the example, open a command line,
+  navigate to [ETHERIOS_CC_4_KINETIS_PATH]\Python Scripts\ and run:
+
+    python get_file.py <Username> <Password> <Device ID> [<Device Cloud URL>]
+
+  The script will retrieve test/test.txt and then print the file contents.
+
   Tested On
   ---------
-  TWRK60n512 Board
+  TWRK53N512 Board
+  TWRK60N512 Board
+  TWRK70F120M Board
 

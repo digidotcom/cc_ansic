@@ -18,6 +18,7 @@
 #define APP_DEBUG   log_printf
 
 #define UNUSED_ARGUMENT(x)     ((void)x)
+#define IPCFG_default_enet_device       0
 
 /* Callbacks for this platform */
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request, void * const data);

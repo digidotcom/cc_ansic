@@ -12,8 +12,9 @@
 #include <mqx.h>
 #include "connector_config.h"
 #include "platform.h"
-#include "firmware_mqx.h"
 #include "main.h"
+
+#include "firmware_mqx.h"
 
 #if defined CONNECTOR_FIRMWARE_SERVICE
 extern int FlashWriteInProgress;
@@ -210,6 +211,7 @@ int rx_handler_srec (unsigned char* data, unsigned long n)
                         
                         address = (unsigned long)addr;
                         
+                        #if 0
                         if (first_time == 1)
                         {
                         	first_time = 0;
@@ -219,8 +221,12 @@ int rx_handler_srec (unsigned char* data, unsigned long n)
                         	}
                         	
                         }
+                        #else
+                          flash_address_offset = 0xc000; /* 48k bootloader offset */
+                        #endif
 #ifdef DEBUG_FLASH
                         APP_DEBUG("Writing to Flash [0x%x] bytes [%d]\n", PFLASH_BLOCK1_IMAGE_BASE + (address - flash_address_offset), (unsigned int)(srec.record.count - (2+type)));
+                        printf("%x + %x - %x = %x\n", PFLASH_BLOCK1_IMAGE_BASE, address, flash_address_offset, PFLASH_BLOCK1_IMAGE_BASE + (address - flash_address_offset));
 #endif
                         /* Setup address to write to */
                         fseek(flash_file, -PFLASH_BLOCK1_BASE + 4 + (address - flash_address_offset), IO_SEEK_END);

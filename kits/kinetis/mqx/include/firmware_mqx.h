@@ -51,20 +51,25 @@
 
 /* To use _Pragma(), enable C99 Extensions. */
 
-#pragma c99 on
 
 /* For CW10.1 ARM compiler. After CW10.2 Release is obsolete. */
 #if FNET_MK
-	#define FNET_COMP_PACKED __attribute__ ((aligned (1)))
+	//#define FNET_COMP_PACKED __attribute__ ((aligned (1)))
+        #define FNET_COMP_PACKED        
 #endif
 
-#if 1 /* Newest CWs pragma */
+#if defined(IAR)
+    /* Disable some warnings.*/
+    #pragma diag_suppress=Pe009,Pa039,Pe177
+    /* To use _Pragma(), enable C99 Extensions. */
+    #define FNET_COMP_PACKED_BEGIN  _Pragma("pack(1)")
+    #define FNET_COMP_PACKED_END    _Pragma("pack()")
+#else /* Newest CWs pragma */
+        #pragma c99 on
 	#define FNET_COMP_PACKED_BEGIN  _Pragma("pack(1)")
 	#define FNET_COMP_PACKED_END    _Pragma("pack()")
-#else /* Old CWs pragma */
-	#define FNET_COMP_PACKED_BEGIN  _Pragma("options align = packed")
-	#define FNET_COMP_PACKED_END    _Pragma("options align = reset")
 #endif
+
 /* SREC Tx Handler states */ 
 typedef enum 
 {

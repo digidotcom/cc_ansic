@@ -93,7 +93,8 @@ fapp_params_tftp_file_type_t;
 
 /* For CW10.1 ARM compiler. After CW10.2 Release is obsolete. */
 #if FNET_MK
-	#define FNET_COMP_PACKED __attribute__ ((aligned (1)))
+	//#define FNET_COMP_PACKED __attribute__ ((aligned (1)))
+        #define FNET_COMP_PACKED
 #endif
 
 #if 1 /* Newest CWs pragma */

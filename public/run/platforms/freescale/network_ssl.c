@@ -22,7 +22,7 @@
 #include <connector_debug.h>
 #include <os_support.h>
 
-#if defined USE_SSL
+#if defined CONNECTOR_USE_SSL
 #include <cyassl/ssl.h>
 
 /* Global structure of connected interface */
@@ -160,7 +160,6 @@ static int app_load_certificate_and_key(CYASSL_CTX * const ctx)
         if (ret != 1)
         {
             APP_DEBUG("Failed to load CA cert %d\n", ret);
-            // ERR_print_errors_fp(stderr);
             goto error;
         }
     }
@@ -292,25 +291,35 @@ static connector_callback_status_t app_tcp_connect(_ip_address const ip_addr, co
     ssl_info.sfd = app_setup_server_socket();
     if (ssl_info.sfd < 0)
     {
-        APP_DEBUG("Could not open socket\n");
-        goto done;
+    	APP_DEBUG("app_setup_server_socket failed\n");
+    	goto done;
     }
 
-    if (app_connect_to_server(ssl_info.sfd, ip_addr) < 0)
-       goto error;
+    if (app_connect_to_server(ssl_info.sfd, ip_addr) < 0) {
+    	APP_DEBUG("app_connect_to_server failed\n");
+    	goto error;
+    }
+       
 
-    if (app_is_connect_complete(ssl_info.sfd) < 0)
+    if (app_is_connect_complete(ssl_info.sfd) < 0){
+    	APP_DEBUG("app_is_connect_complete failed\n");
         goto error;
+    }
 
-    if (app_ssl_connect(&ssl_info) < 0)
+
+    if (app_ssl_connect(&ssl_info) < 0) {
+    	APP_DEBUG("app_ssl_connect failed\n");
         goto error;
+    }
 
     /* make it non-blocking now */
     if (set_socket_options(ssl_info.sfd) < 0)
     {
     	status = connector_callback_error;
+    	APP_DEBUG("set_socket_options failed\n");
 		goto done;
     }
+    
     /* Get socket info of connected interface */
     interface_addr_len = sizeof(interface_addr);
     if (getsockname(ssl_info.sfd, &interface_addr, &interface_addr_len))
@@ -326,14 +335,13 @@ static connector_callback_status_t app_tcp_connect(_ip_address const ip_addr, co
 
 error:
     app_free_ssl_info(&ssl_info);
-    //app_dns_set_redirected(connector_class_network_tcp, 0);
 
 done:
     return status;
 }
 
 /*
- * Send data to the iDigi Device Cloud, this routine must not block.
+ * Send data to the Device Cloud, this routine must not block.
  */
 static connector_callback_status_t app_network_tcp_send(connector_network_send_t * const data)
 {
@@ -345,8 +353,6 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
     if (bytes_sent == SSL_FATAL_ERROR)
     {
         APP_DEBUG("network_send: send() failed RTCS error [%lx]\n", CyaSSL_get_error(ssl_ptr->ssl, bytes_sent));
-        //CyaSSL_set_shutdown(ssl_ptr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
-        //app_dns_cache_invalidate(connector_class_network_tcp);
         status = connector_callback_error;
     }
     else
@@ -362,7 +368,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
 }
 
 /*
- * This routine reads a specified number of bytes from the iDigi Device Cloud.
+ * This routine reads a specified number of bytes from the Device Cloud.
  */
 static connector_callback_status_t app_network_tcp_receive(connector_network_receive_t * const data)
 {
@@ -382,7 +388,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
         FD_ZERO(&read_set);
         FD_SET(ssl_ptr->sfd, &read_set);
 
-        /* Blocking point for iDigi connector */
+        /* Blocking point for Connector */
         ready = select(ssl_ptr->sfd + 1, &read_set, NULL, NULL, &timeout);
         if (ready == 0)
         {
@@ -398,7 +404,6 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
     }
 
     bytes_read = CyaSSL_read(ssl_ptr->ssl, data->buffer, data->bytes_available);
-    //bytes_read = CyaSSL_recv(ssl_ptr->ssl, (char *)read_data->buffer, (int)read_data->length, 0);
     if (bytes_read == SSL_FATAL_ERROR)
     {
         int ssl_error = CyaSSL_get_error(ssl_ptr->ssl, bytes_read);
@@ -409,9 +414,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
         }
 
         /* EOF on input: the connection was closed. */
-        //CyaSSL_set_shutdown(ssl_ptr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
         APP_DEBUG("SSL_read failed %d\n", bytes_read);
-        //app_dns_cache_invalidate(connector_class_network_tcp);
         status = connector_callback_error;
     }
     else
@@ -449,8 +452,6 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     connector_callback_status_t status;
     _ip_address server_ip_addr;
 
-//    status = app_dns_resolve(connector_class_id_network_tcp, data->device_cloud_url, &ip_addr);
-//    if (status != connector_callback_continue)
     if (app_dns_resolve(data->device_cloud_url, &server_ip_addr) == FALSE)
     {
         APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", data->device_cloud_url);

@@ -19,18 +19,20 @@ TASK_TEMPLATE_STRUCT MQX_template_list[] =
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
    {MAIN_TASK, Main_task, 2048, 9, "main", MQX_AUTO_START_TASK},
    {CONNECTOR_TASK, connector_thread, CONNECTOR_THREAD_STACK_SIZE, 10, "Cloud Connector", 0},
-#ifdef FILE_SYSTEM_SDCARD
+#ifdef APPLICATION_FILE_SYSTEM_SDCARD
    {SDCARD_TASK, sdcard_task,  2048, 11, "SDcard Task", MQX_AUTO_START_TASK},
 #endif
-#ifdef FILE_SYSTEM_USB
+#ifdef APPLICATION_FILE_SYSTEM_USB
    {USB_TASK, USB_task, 2048, 12, "USB Task", MQX_AUTO_START_TASK},
+#endif
+#if (defined APPLICATION_FIRMWARE_SERVICE_FULL)
+    {FLASH_TASK, flash_task, 4096, 10, "Connector_flash", 0},
 #endif
    {0,           0,           0,     0,   0,      0,                 }
 };
 
-static uint_32 network_start(void)
+static uint_32 network_start(_enet_address const * mac_addr)
 {
-    uint8_t * mac_addr = NULL;
     IPCFG_IP_ADDRESS_DATA ip_data;
     uint_32 result = RTCS_create();
 
@@ -40,23 +42,7 @@ static uint_32 network_start(void)
         goto error;
     }
 
-    {
-		#define MAC_ADDR_LENGTH	6
-        size_t size;
-        connector_config_pointer_data_t config_data = {NULL, MAC_ADDR_LENGTH};
-        
-        if (app_get_mac_addr(&config_data) != connector_callback_continue)
-        {
-            APP_DEBUG("Failed to get device MAC address");
-            goto error;
-        }
-
-        mac_addr = config_data.data;
-        APP_DEBUG("MAC Address: %2.2X:%2.2X:%2.2X:%2.2X:%2.2X:%2.2X\r\n",
-                  (mac_addr)[0], (mac_addr)[1], (mac_addr)[2], (mac_addr)[3], (mac_addr)[4], (mac_addr)[5]);
-    }
-
-    result = ipcfg_init_device (ENET_DEVICE, mac_addr);
+    result = ipcfg_init_device (ENET_DEVICE, (uint8_t *)mac_addr);
     if (result != RTCS_OK)
     {
         APP_DEBUG("Failed to initialize Ethernet device, error = %X", result);
@@ -114,18 +100,60 @@ error:
     return result;
 }
 
+/* Following hook will be called during application initialitation if 
+   CONNECTOR_MAC_ADDRESS is not defined in connector_config.h
+   It requests the Device MAC Address through the serial port and uses
+   it to configure the Ethernet Stack.
+*/
+
+#define MAC_ADDR_LENGTH     6
+#define MAX_MAC_ADDR_STR   20
+
+
+#if defined(CONNECTOR_MAC_ADDRESS)
+_enet_address device_mac_addr = CONNECTOR_MAC_ADDRESS;
+
+_enet_address const *read_mac(void)
+{
+	return &device_mac_addr; 
+}
+#else
+_enet_address device_mac_addr;
+
+_enet_address *read_mac(void)
+{
+	char linebuffer[MAX_MAC_ADDR_STR];
+	char *p_linebuffer = linebuffer;
+	uint8_t got_mac = 0;
+
+	do {
+		printf("Enter the MAC address (aabbcc:ddeeffgg): ");
+		get_line(&p_linebuffer, sizeof (linebuffer));
+		putchar('\n');
+		got_mac = mac_parse(device_mac_addr, linebuffer);
+	} while (!got_mac);
+	
+	return &device_mac_addr;
+}
+#endif /* CONNECTOR_MAC_ADDRESS */
+
 /*TASK*-----------------------------------------------------
 * 
 * Task Name    : Main_task
 * Comments     :
-*    This starts iDigi Connector
+*    This starts Device Cloud Connector
 *
 *END*-----------------------------------------------------*/
 
 void Main_task(uint_32 initial_data)
 {
-    uint_32 const result = network_start();
-
+    uint_32 result;
+    _enet_address const * mac_addr;
+    
+    mac_addr = read_mac();
+    connector_config();
+    result = network_start(mac_addr);
+  
     if (result == RTCS_OK)
     {
         int const status = application_start();

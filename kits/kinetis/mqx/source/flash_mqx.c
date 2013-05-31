@@ -14,8 +14,9 @@
 #include "flashx.h"
 #include "ethernet.h"
 #include "pcb.h"
-#include "flash_mqx.h"
 #include "connector_config.h"
+
+#include "flash_mqx.h"
 
 #ifndef APP_DEBUG
 #define APP_DEBUG   _io_printf

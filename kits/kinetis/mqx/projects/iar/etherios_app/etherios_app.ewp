@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>twrk60n512 Int Flash Debug</name>
+    <name>twrk60n512_Int_Flash_Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -17,15 +17,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk60n512 Int Flash Debug\Exe</state>
+          <state>twrk60n512_Int_Flash_Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk60n512 Int Flash Debug\Obj</state>
+          <state>twrk60n512_Int_Flash_Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk60n512 Int Flash Debug\List</state>
+          <state>twrk60n512_Int_Flash_Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -164,10 +164,8 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>CONNECTOR_VERSION=0x01030000UL</state>
-          <state>BOOTLOADER_ENABLED=0</state>
-          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>TWRK60N512</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -302,12 +300,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -565,8 +562,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\debug\shell</state>
         </option>
         <option>
@@ -949,7 +945,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk60n512 Int Flash Release</name>
+    <name>twrk60n512_Int_Flash_Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -963,15 +959,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk60n512 Int Flash Release\Exe</state>
+          <state>twrk60n512_Int_Flash_Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk60n512 Int Flash Release\Obj</state>
+          <state>twrk60n512_Int_Flash_Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk60n512 Int Flash Release\List</state>
+          <state>twrk60n512_Int_Flash_Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -1110,11 +1106,8 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>NDEBUG</state>
-          <state>CONNECTOR_VERSION=0x01030000UL</state>
-          <state>BOOTLOADER_ENABLED=0</state>
-          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>TWRK60N512</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1249,12 +1242,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -1512,7 +1504,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\host</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
           <state>$PROJ_DIR$\..</state>
         </option>
@@ -1896,7 +1888,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk53 Int Flash Debug</name>
+    <name>twrk53n512_Int_Flash_Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1910,15 +1902,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk53 Int Flash Debug\Exe</state>
+          <state>twrk53n512_Int_Flash_Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk53 Int Flash Debug\Obj</state>
+          <state>twrk53n512_Int_Flash_Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk53 Int Flash Debug\List</state>
+          <state>twrk53n512_Int_Flash_Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -2057,10 +2049,8 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>CONNECTOR_VERSION=0x01030000UL</state>
-          <state>BOOTLOADER_ENABLED=0</state>
-          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>TWRK53N512</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -2195,12 +2185,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -2458,8 +2447,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\debug\shell</state>
         </option>
         <option>
@@ -2842,7 +2830,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk53 Int Flash Release</name>
+    <name>twrk53n512_Int_Flash_Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -2856,15 +2844,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk53 Int Flash Release\Exe</state>
+          <state>twrk53n512_Int_Flash_Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk53 Int Flash Release\Obj</state>
+          <state>twrk53n512_Int_Flash_Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk53 Int Flash Release\List</state>
+          <state>twrk53n512_Int_Flash_Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -3003,11 +2991,8 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>NDEBUG</state>
-          <state>CONNECTOR_VERSION=0x01030000UL</state>
-          <state>BOOTLOADER_ENABLED=0</state>
-          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>TWRK53N512</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -3142,12 +3127,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -3405,12 +3389,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk53n512.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -3795,7 +3778,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk70f120m Int Flash Debug</name>
+    <name>twrk70f120m_Int_Flash_Debug</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -3809,15 +3792,15 @@
         <debug>1</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk70f120m Int Flash Debug\Exe</state>
+          <state>twrk70f120m_Int_Flash_Debug\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk70f120m Int Flash Debug\Obj</state>
+          <state>twrk70f120m_Int_Flash_Debug\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk70f120m Int Flash Debug\List</state>
+          <state>twrk70f120m_Int_Flash_Debug\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -3956,10 +3939,8 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state>CONNECTOR_VERSION=0x01030000UL</state>
-          <state>BOOTLOADER_ENABLED=0</state>
-          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>TWRK70F120M</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -4094,12 +4075,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -4357,8 +4337,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\debug\shell</state>
         </option>
         <option>
@@ -4741,7 +4720,7 @@
     </settings>
   </configuration>
   <configuration>
-    <name>twrk70f120m Int Flash Release</name>
+    <name>twrk70f120m_Int_Flash_Release</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -4755,15 +4734,15 @@
         <debug>0</debug>
         <option>
           <name>ExePath</name>
-          <state>twrk70f120m Int Flash Release\Exe</state>
+          <state>twrk70f120m_Int_Flash_Release\Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>twrk70f120m Int Flash Release\Obj</state>
+          <state>twrk70f120m_Int_Flash_Release\Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>twrk70f120m Int Flash Release\List</state>
+          <state>twrk70f120m_Int_Flash_Release\List</state>
         </option>
         <option>
           <name>Variant</name>
@@ -4902,11 +4881,8 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>NDEBUG</state>
-          <state>CONNECTOR_VERSION=0x01030000UL</state>
-          <state>BOOTLOADER_ENABLED=0</state>
-          <state>CONNECTOR_TRANSPORT_TCP</state>
           <state>IAR</state>
+          <state>TWRK70F120M</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -5041,12 +5017,11 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\host</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\device</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\shell</state>
-          <state>C:\Etherios_CC\include</state>
-          <state>C:\Etherios_CC\platform\mqx</state>
-          <state>C:\Etherios_CC\private</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
           <state>C:\CyaSSL-2.6.0_libs</state>
           <state>$PROJ_DIR$\Sources</state>
           <state>$PROJ_DIR$\Sources\fs_devices</state>
@@ -5304,7 +5279,7 @@
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\rtcs</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\mfs</state>
-          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb\host</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\usb</state>
           <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk70f120m.iar\release\shell</state>
           <state>$PROJ_DIR$\..</state>
         </option>
@@ -5687,6 +5662,950 @@
       <data/>
     </settings>
   </configuration>
+  <configuration>
+    <name>twrk60n512_FirmwareUpdate</name>
+    <toolchain>
+      <name>ARM</name>
+    </toolchain>
+    <debug>0</debug>
+    <settings>
+      <name>General</name>
+      <archiveVersion>3</archiveVersion>
+      <data>
+        <version>21</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>ExePath</name>
+          <state>twrk60n512_FirmwareUpdate\Exe</state>
+        </option>
+        <option>
+          <name>ObjPath</name>
+          <state>twrk60n512_FirmwareUpdate\Obj</state>
+        </option>
+        <option>
+          <name>ListPath</name>
+          <state>twrk60n512_FirmwareUpdate\List</state>
+        </option>
+        <option>
+          <name>Variant</name>
+          <version>20</version>
+          <state>39</state>
+        </option>
+        <option>
+          <name>GEndianMode</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>Input variant</name>
+          <version>3</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>Input description</name>
+          <state>Full formatting.</state>
+        </option>
+        <option>
+          <name>Output variant</name>
+          <version>2</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>Output description</name>
+          <state>Full formatting.</state>
+        </option>
+        <option>
+          <name>GOutputBinary</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>FPU</name>
+          <version>2</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGCoreOrChip</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>GRuntimeLibSelect</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>GRuntimeLibSelectSlave</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>RTDescription</name>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
+        </option>
+        <option>
+          <name>OGProductVersion</name>
+          <state>5.40.0.51529</state>
+        </option>
+        <option>
+          <name>OGLastSavedByProductVersion</name>
+          <state>6.50.2.4581</state>
+        </option>
+        <option>
+          <name>GeneralEnableMisra</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GeneralMisraVerbose</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGChipSelectEditMenu</name>
+          <state>MK60DN512Zxxx10	Freescale MK60DN512Zxxx10</state>
+        </option>
+        <option>
+          <name>GenLowLevelInterface</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GEndianModeBE</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>OGBufferedTerminalOutput</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GenStdoutInterface</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GeneralMisraRules98</name>
+          <version>0</version>
+          <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
+        </option>
+        <option>
+          <name>GeneralMisraVer</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>GeneralMisraRules04</name>
+          <version>0</version>
+          <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
+        </option>
+        <option>
+          <name>RTConfigPath2</name>
+          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
+        </option>
+        <option>
+          <name>GFPUCoreSlave</name>
+          <version>20</version>
+          <state>39</state>
+        </option>
+        <option>
+          <name>GBECoreSlave</name>
+          <version>20</version>
+          <state>39</state>
+        </option>
+        <option>
+          <name>OGUseCmsis</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OGUseCmsisDspLib</name>
+          <state>0</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>ICCARM</name>
+      <archiveVersion>2</archiveVersion>
+      <data>
+        <version>28</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>CCDefines</name>
+          <state>IAR</state>
+          <state>TWRK60N512</state>
+          <state>APPLICATION_FIRMWARE_SERVICE_FULL</state>
+        </option>
+        <option>
+          <name>CCPreprocFile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPreprocComments</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPreprocLine</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCListCFile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCListCMnemonics</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCListCMessages</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCListAssFile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCListAssSource</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCEnableRemarks</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCDiagSuppress</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CCDiagRemark</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CCDiagWarning</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CCDiagError</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CCObjPrefix</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CCAllowList</name>
+          <version>1</version>
+          <state>1111111</state>
+        </option>
+        <option>
+          <name>CCDebugInfo</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IEndianMode</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IProcessor</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IExtraOptionsCheck</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IExtraOptions</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CCLangConformance</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCSignedPlainChar</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CCRequirePrototypes</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCMultibyteSupport</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCDiagWarnAreErr</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCompilerRuntimeInfo</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IFpuProcessor</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>OutputFile</name>
+          <state>$FILE_BNAME$.o</state>
+        </option>
+        <option>
+          <name>CCLibConfigHeader</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>PreInclude</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CompilerMisraOverride</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCIncludePath2</name>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\psp</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp\Generated_Code</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\include</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\platform\mqx</state>
+          <state>C:\Etherios4Kinetis\Etherios_CC\private</state>
+          <state>C:\CyaSSL-2.6.0_libs</state>
+          <state>$PROJ_DIR$\Sources</state>
+          <state>$PROJ_DIR$\Sources\fs_devices</state>
+        </option>
+        <option>
+          <name>CCStdIncCheck</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCCodeSection</name>
+          <state>.text</state>
+        </option>
+        <option>
+          <name>IInterwork2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IProcessorMode2</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CCOptLevel</name>
+          <state>3</state>
+        </option>
+        <option>
+          <name>CCOptStrategy</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCOptLevelSlave</name>
+          <state>3</state>
+        </option>
+        <option>
+          <name>CompilerMisraRules98</name>
+          <version>0</version>
+          <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
+        </option>
+        <option>
+          <name>CompilerMisraRules04</name>
+          <version>0</version>
+          <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
+        </option>
+        <option>
+          <name>CCPosIndRopi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPosIndRwpi</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCPosIndNoDynInit</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccLang</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccAllowVLA</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IccCppDialect</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccExceptions</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccRTTI</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccStaticDestr</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccCppInlineSemantics</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IccFloatSemantics</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCOptimizationNoSizeConstraints</name>
+          <state>0</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>AARM</name>
+      <archiveVersion>2</archiveVersion>
+      <data>
+        <version>8</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>AObjPrefix</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>AEndian</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>ACaseSensitivity</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>MacroChars</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AWarnEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AWarnWhat</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AWarnOne</name>
+          <state></state>
+        </option>
+        <option>
+          <name>AWarnRange1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>AWarnRange2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>ADebug</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AltRegisterNames</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>ADefines</name>
+          <state></state>
+        </option>
+        <option>
+          <name>AList</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AListHeader</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>AListing</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>Includes</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>MacDefs</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>MacExps</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>MacExec</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OnlyAssed</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>MultiLine</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>PageLengthCheck</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>PageLength</name>
+          <state>80</state>
+        </option>
+        <option>
+          <name>TabSpacing</name>
+          <state>8</state>
+        </option>
+        <option>
+          <name>AXRef</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AXRefDefines</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AXRefInternal</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AXRefDual</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AProcessor</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>AFpuProcessor</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>AOutputFile</name>
+          <state>$FILE_BNAME$.o</state>
+        </option>
+        <option>
+          <name>AMultibyteSupport</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>ALimitErrorsCheck</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>ALimitErrorsEdit</name>
+          <state>100</state>
+        </option>
+        <option>
+          <name>AIgnoreStdInclude</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AUserIncludes</name>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\psp</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp\Generated_Code</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\shell</state>
+          <state>$PROJ_DIR$\..</state>
+        </option>
+        <option>
+          <name>AExtraOptionsCheckV2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>AExtraOptionsV2</name>
+          <state></state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>OBJCOPY</name>
+      <archiveVersion>0</archiveVersion>
+      <data>
+        <version>1</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>OOCOutputFormat</name>
+          <version>2</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>OCOutputOverride</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>OOCOutputFile</name>
+          <state>app.s19</state>
+        </option>
+        <option>
+          <name>OOCCommandLineProducer</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>OOCObjCopyEnable</name>
+          <state>1</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>CUSTOM</name>
+      <archiveVersion>3</archiveVersion>
+      <data>
+        <extensions></extensions>
+        <cmdline></cmdline>
+      </data>
+    </settings>
+    <settings>
+      <name>BICOMP</name>
+      <archiveVersion>0</archiveVersion>
+      <data/>
+    </settings>
+    <settings>
+      <name>BUILDACTION</name>
+      <archiveVersion>1</archiveVersion>
+      <data>
+        <prebuild></prebuild>
+        <postbuild></postbuild>
+      </data>
+    </settings>
+    <settings>
+      <name>ILINK</name>
+      <archiveVersion>0</archiveVersion>
+      <data>
+        <version>15</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>IlinkLibIOConfig</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>XLinkMisraHandler</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkInputFileSlave</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOutputFile</name>
+          <state>ic4mqx_1.3.out</state>
+        </option>
+        <option>
+          <name>IlinkDebugInfoEnable</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkKeepSymbols</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkDefines</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkConfigDefines</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkMapFile</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkLogFile</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogInitialization</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogModule</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogSection</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogVeneer</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkIcfOverride</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkIcfFile</name>
+          <state>C:\Etherios4Kinetis\Tools\FWUpdateIntFlash.icf</state>
+        </option>
+        <option>
+          <name>IlinkIcfFileSlave</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkEnableRemarks</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkSuppressDiags</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkTreatAsRem</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkTreatAsWarn</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkTreatAsErr</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkWarningsAreErrors</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkUseExtraOptions</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkExtraOptions</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkLowLevelInterfaceSlave</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkAutoLibEnable</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkAdditionalLibs</name>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\psp\psp.a</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\bsp\bsp.a</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\rtcs\rtcs.a</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\mfs\mfs.a</state>
+          <state>C:\Freescale\Freescale_MQX_4_0\lib\twrk60n512.iar\release\usb\usbh.a</state>
+          <state>C:\CyaSSL-2.6.0_libs\IAR\twrk60n512\cyassl.a</state>
+        </option>
+        <option>
+          <name>IlinkOverrideProgramEntryLabel</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkProgramEntryLabelSelect</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkProgramEntryLabel</name>
+          <state>__boot</state>
+        </option>
+        <option>
+          <name>DoFill</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>FillerByte</name>
+          <state>0xFF</state>
+        </option>
+        <option>
+          <name>FillerStart</name>
+          <state>0x0</state>
+        </option>
+        <option>
+          <name>FillerEnd</name>
+          <state>0x0</state>
+        </option>
+        <option>
+          <name>CrcSize</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CrcAlign</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CrcPoly</name>
+          <state>0x11021</state>
+        </option>
+        <option>
+          <name>CrcCompl</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CrcBitOrder</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CrcInitialValue</name>
+          <state>0x0</state>
+        </option>
+        <option>
+          <name>DoCrc</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkBE8Slave</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkBufferedTerminalOutput</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkStdoutInterfaceSlave</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CrcFullSize</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkIElfToolPostProcess</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogAutoLibSelect</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogRedirSymbols</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkLogUnusedFragments</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcReverseByteOrder</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcUseAsInput</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptInline</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptExceptionsAllow</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptExceptionsForce</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCmsis</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptMergeDuplSections</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkOptUseVfe</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkOptForceVfe</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackAnalysisEnable</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkStackControlFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IlinkStackCallGraphFile</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CrcAlgorithm</name>
+          <version>0</version>
+          <state>1</state>
+        </option>
+        <option>
+          <name>CrcUnitSize</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>IARCHIVE</name>
+      <archiveVersion>0</archiveVersion>
+      <data>
+        <version>0</version>
+        <wantNonLocal>1</wantNonLocal>
+        <debug>0</debug>
+        <option>
+          <name>IarchiveInputs</name>
+          <state></state>
+        </option>
+        <option>
+          <name>IarchiveOverride</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IarchiveOutput</name>
+          <state>###Unitialized###</state>
+        </option>
+      </data>
+    </settings>
+    <settings>
+      <name>BILINK</name>
+      <archiveVersion>0</archiveVersion>
+      <data/>
+    </settings>
+  </configuration>
   <group>
     <name>Source</name>
     <group>
@@ -5694,19 +6613,52 @@
       <group>
         <name>include</name>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\connector.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\data_service.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\firmware_mqx.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_config.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\flash_mqx.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_data_point.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\include\os_support.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_data_service.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_file_system.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_firmware.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_network.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_os.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_remote.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_api_short_message.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_debug.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\connector_types.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\data_point.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\data_service.h</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\include\os_support.h</name>
         </file>
       </group>
       <group>
@@ -5714,261 +6666,236 @@
         <group>
           <name>mqx</name>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\config.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\config.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\config.rci</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\connector.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_config.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\data_point.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_point.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\data_service.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_data_service.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\debug.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_file_system.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\etherios-ca-cert-public.crt.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_firmware.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\file_system.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_network.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_os.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_remote.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_api_short_message.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_debug.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\connector_types.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\data_service.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\debug.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\etherios-ca-cert-public.crt.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\file_system.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_mqx.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
+              <configuration>twrk60n512_Int_Flash_Debug</configuration>
+              <configuration>twrk60n512_Int_Flash_Release</configuration>
+              <configuration>twrk53n512_Int_Flash_Debug</configuration>
+              <configuration>twrk53n512_Int_Flash_Release</configuration>
+              <configuration>twrk70f120m_Int_Flash_Debug</configuration>
+              <configuration>twrk70f120m_Int_Flash_Release</configuration>
             </excluded>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_mqx.h</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_stub.c</name>
             <excluded>
-              <configuration>twrk60n512 Int Flash Debug</configuration>
-              <configuration>twrk60n512 Int Flash Release</configuration>
-              <configuration>twrk53 Int Flash Debug</configuration>
-              <configuration>twrk53 Int Flash Release</configuration>
-              <configuration>twrk70f120m Int Flash Debug</configuration>
-              <configuration>twrk70f120m Int Flash Release</configuration>
+              <configuration>twrk60n512_FirmwareUpdate</configuration>
             </excluded>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\gps_stats.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\firmware_twrk60.c</name>
+            <excluded>
+              <configuration>twrk60n512_Int_Flash_Debug</configuration>
+              <configuration>twrk60n512_Int_Flash_Release</configuration>
+              <configuration>twrk53n512_Int_Flash_Debug</configuration>
+              <configuration>twrk53n512_Int_Flash_Release</configuration>
+              <configuration>twrk70f120m_Int_Flash_Debug</configuration>
+              <configuration>twrk70f120m_Int_Flash_Release</configuration>
+            </excluded>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\flash_mqx.c</name>
+            <excluded>
+              <configuration>twrk60n512_Int_Flash_Debug</configuration>
+              <configuration>twrk60n512_Int_Flash_Release</configuration>
+              <configuration>twrk53n512_Int_Flash_Debug</configuration>
+              <configuration>twrk53n512_Int_Flash_Release</configuration>
+              <configuration>twrk70f120m_Int_Flash_Debug</configuration>
+              <configuration>twrk70f120m_Int_Flash_Release</configuration>
+            </excluded>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\network_ssl.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\flash_mqx.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\network.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\os_support.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\network_ssl.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\platform.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\os.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config.h</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\os_support.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\remote_config_cb.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\..\Etherios_CC\platform\mqx\system.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\platform\mqx\platform.h</name>
           </file>
         </group>
       </group>
       <group>
         <name>private</name>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\bele.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\bele.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\chk_config.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\chk_config.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_api.c</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_api.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_cc.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_cc.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_data_point.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_data_point.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_data_service.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_data_service.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_def.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_def.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_edp.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp_def.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_edp_def.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_edp_util.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_edp_util.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_file_system.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_file_system.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_firmware.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_firmware.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_global_config.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_global_config.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_info.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_info.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_msg.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_msg.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_cmd.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm_cmd.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_def.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm_def.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_recv.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm_recv.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_send.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm_send.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_session.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm_session.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_sm_utils.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_sm_utils.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_static_buffer.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_static_buffer.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_close.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_tcp_close.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_config.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_tcp_config.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_open.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_tcp_open.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_recv.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_tcp_recv.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\connector_tcp_send.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\connector_tcp_send.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\debug.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\debug.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\ei_packet.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\ei_packet.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\layer.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\layer.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\os_intf.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\os_intf.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_buffer.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_buffer.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_callback.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_callback.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_debug.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_debug.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_element.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_element.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_error.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_error.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_group.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_group.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_input.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_input.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_output.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_output.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_string.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_string.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_support.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_support.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_traverse.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_traverse.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_binary_util.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_binary_util.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_fwstub.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_fwstub.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\rci_service.h</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\rci_service.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\..\Etherios_CC\private\Readme.txt</name>
+          <name>$PROJ_DIR$\..\..\..\..\Etherios_CC\private\Readme.txt</name>
         </file>
       </group>
     </group>
@@ -6006,10 +6933,10 @@
       <name>$PROJ_DIR$\Sources\application.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Sources\connector_config.h</name>
+      <name>$PROJ_DIR$\Sources\connector_config.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\Git projects\cc_ansic\kits\kinetis\mqx\projects\iar\etherios_app\Sources\connector_hooks.c</name>
+      <name>$PROJ_DIR$\Sources\connector_config.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Sources\main.c</name>
@@ -6017,7 +6944,13 @@
     <file>
       <name>$PROJ_DIR$\Sources\main.h</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\Sources\parsing_utils.c</name>
+    </file>
   </group>
+  <file>
+    <name>$PROJ_DIR$\ReadMe.txt</name>
+  </file>
 </project>
 
 

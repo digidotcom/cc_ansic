@@ -201,7 +201,7 @@ void initialize_k60_tower_demo(void)
     unsigned short reset_count;
     connector_status_t rc;
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
 	disable_flash_cache();
 	APP_DEBUG("\n\nKinetis TWR-K60N512 MQX %s Demo\n", _mqx_version);
 #else
@@ -219,10 +219,10 @@ void initialize_k60_tower_demo(void)
     InitializeIO();
 
 	/* Create Acceletometer Task to read accelerometer data */
-	_task_create(0, ACCEL_TASK, 0);
+	_task_create(0, CONNECTOR_ACCEL_TASK, 0);
 
 	/* Create ADC Task to read POT and Temp Sensor */
-	_task_create(0, ADC_TASK, 0);
+	_task_create(0, CONNECTOR_ADC_TASK, 0);
 
 	/* Create LED Task to display current state of the LEDs */
 	_task_create(0, CONNECTOR_LED_TASK, 0);
@@ -500,7 +500,7 @@ void connector_touch_pad_task(unsigned long initial_data)
         //Get the key pressed
         key=LastKeyPressed();
 
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
         if (key == 1)
 #else
         if (key == 0)
@@ -517,7 +517,7 @@ void connector_touch_pad_task(unsigned long initial_data)
             if (rc)
     		    APP_DEBUG("connector_touch_pad_task: error adding to syslog buffer\n");
         }
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
         else if (key == 2)
 #else
         else if (key == 1)
@@ -562,7 +562,7 @@ void connector_led_task(unsigned long initial_data)
             SetOutput(led1,ON);
             SetOutput(led2,OFF);
             
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
             SetOutput(led3,ON);
             SetOutput(led4,OFF);
 #endif
@@ -575,7 +575,7 @@ void connector_led_task(unsigned long initial_data)
             SetOutput(led1,OFF);
             SetOutput(led2,ON);
             
-#ifndef TWR_K53N512
+#ifndef TWRK53N512
             SetOutput(led3,OFF);
             SetOutput(led4,ON);
 #endif
@@ -950,13 +950,13 @@ void connector_app_run_task(unsigned long initial_data)
                 minutes = (seconds_since_reset / 60) % 60;
                 seconds = seconds_since_reset % 60;
                 
-#ifdef TWR_K53N512
+#ifdef TWRK53N512
                 snprintf(put_temp_buffer, BUFFER_SIZE, "Platform: Kinetis TWR-K53N512\n\nOS: MQX %s Build %s\n\n"
 #else
                 snprintf(put_temp_buffer, BUFFER_SIZE, "Platform: Kinetis TWR-K60N512\n\nOS: MQX %s Build %s\n\n"
 #endif
 #ifdef SYSINFO_CPU
-#ifdef TWR_K53N512
+#ifdef TWRK53N512
                 "CPU: MK53N512VMD144: K53N512 in a 144 MAPBGA with 100MHz operation\n"
 #else
                 "CPU: MK60N512VMD144: K60N512 in a 144 MAPBGA with 100MHz operation\n"

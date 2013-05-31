@@ -128,7 +128,7 @@
  * To run the python script:
  *
  * @code
- * python device_request.py <Username> <Password> <Device ID> [<Device Cloud URL>]
+ * python device_request.py <Username> <Password> <Device ID> <Target> <Request Data> [<Device Cloud URL>]
  * @endcode
  *
  * Output from this sample:

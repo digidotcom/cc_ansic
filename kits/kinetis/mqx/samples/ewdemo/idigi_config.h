@@ -14,8 +14,8 @@
   *  @brief IIK configuration options
   *
   */
-#ifndef __IDIGI_CONFIG_H_
-#define __IDIGI_CONFIG_H_
+#ifndef __CONNECTOR_CONFIG_H__
+#define __CONNECTOR_CONFIG_H__
 
 
 /**

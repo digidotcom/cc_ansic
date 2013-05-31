@@ -9,11 +9,16 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-#include "connector_config.h"
-#include "platform.h"
 #include "connector_api.h"
+#include "platform.h"
+#include "connector.h"
 #include "os_support.h"
+#ifdef CONNECTOR_DATA_SERVICE
 #include "data_service.h"
+#endif
+#ifdef CONNECTOR_DATA_POINTS
+#include "data_point.h"
+#endif
 #include "connector_config.h"
 #include "connector_debug.h"
 
@@ -26,13 +31,64 @@ static connector_callbacks_t connector_callback_list =
     NULL /* device reset */
 };
 
+#ifdef CONNECTOR_DATA_SERVICE
 typedef struct
 {
 	connector_request_data_service_send_t header;
     connector_app_send_data_t data_ptr;
 } connector_send_t;
+#endif
 
 static connector_handle_t connector_handle = NULL;
+
+static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
+{
+    /* We don't want to see first missed and restored keepalive debug printf.
+     * Keepalive sometimes missed and restored almost at the same time.
+     */
+    static size_t keepalive_missed_count = 0;
+    
+    switch (*status)
+    {
+    case connector_tcp_communication_started:
+        APP_DEBUG("connector_tcp_communication_started\n");
+        break;
+    case connector_tcp_keepalive_missed:
+        if (keepalive_missed_count > 0)
+            APP_DEBUG("connector_tcp_keepalive_missed\n");
+        keepalive_missed_count++;
+        break;
+    case connector_tcp_keepalive_restored:
+        keepalive_missed_count--;
+        if (keepalive_missed_count > 0)
+            APP_DEBUG("connector_tcp_keepalive_restored\n");
+        break;
+    }
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    switch (request)
+    {
+        case connector_request_id_status_tcp:
+            status = app_tcp_status(data);
+            break;
+
+        case connector_request_id_status_stop_completed:
+            APP_DEBUG("connector_restore_keepalive\n");
+            break;
+
+        default:
+            APP_DEBUG("Status request not supported in sm_udp: %d\n", request);
+            break;
+    }
+
+    return status;
+}
 
 connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                    connector_request_id_t const request_id,
@@ -60,12 +116,21 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         break;
 #endif
 
+#if (defined CONNECTOR_DATA_POINTS)
+    case connector_class_id_data_point:
+    	status = app_data_point_handler(request_id.data_point_request, data);
+        break;
+#endif
+        
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
     case connector_class_id_firmware:
-        status = app_firmware_handler(request_id.data_service_request, data);
+        status = app_firmware_handler(request_id.firmware_request, data);
         break;
 #endif
 
+    case connector_class_id_status:
+        status = app_status_handler(request_id.status_request, data);
+        break;
 #if (defined CONNECTOR_FILE_SYSTEM)
     case connector_class_id_file_system:
         status = app_file_system_handler(request_id.file_system_request, data);
@@ -124,6 +189,9 @@ connector_error_t connector_start(connector_status_callback_t status_callback)
     ASSERT_GOTO(status == connector_error_success, error);
 
     status = ecc_create_event(ECC_SEND_DATA_EVENT);
+#if defined (CONNECTOR_DATA_POINTS)
+    status = ecc_create_event(ECC_DATA_POINTS_EVENT);
+#endif
     ASSERT_GOTO(status == connector_error_success, error);
 
 error:
@@ -160,6 +228,7 @@ done:
     return status;
 }
 
+#ifdef CONNECTOR_DATA_SERVICE
 connector_error_t connector_send_data(char const * const path, connector_dataservice_data_t * const device_data, char const * const content_type)
 {
     static unsigned long send_event_block = 0;
@@ -210,7 +279,7 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
     send_info->header.path = path;
     send_info->header.content_type = content_type;
     send_info->header.user_context = &send_info->data_ptr;
-    send_info->header.transport = connector_transport_tcp;
+    send_info->header.transport = device_data->transport;
     send_info->header.response_required = connector_false;
 
     if ((device_data->flags & CONNECTOR_FLAG_APPEND_DATA) == CONNECTOR_FLAG_APPEND_DATA)
@@ -231,8 +300,7 @@ connector_error_t connector_send_data(char const * const path, connector_dataser
         {
             #define ECC_SEND_TIMEOUT_IN_MSEC 90000
             result = ecc_get_event(ECC_SEND_DATA_EVENT, send_info->data_ptr.event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
-        	send_info->data_ptr.error = connector_error_success;
-            result = send_info->data_ptr.error;
+            send_info->data_ptr.error = result;
         }
         else
         {
@@ -245,11 +313,86 @@ error:
     {
         send_event_block &= ~send_info->data_ptr.event_bit;
         ecc_free(send_info);
-        free(send_info);
     }
 
     return result;
 }
+#endif
+
+#ifdef CONNECTOR_DATA_POINTS
+connector_error_t connector_send_data_point(connector_request_data_point_single_t * const data_point)
+{
+    static unsigned long send_event_block = 0;
+    connector_error_t result = connector_error_network_error;
+    connector_app_send_data_point_t * const data_point_info = ecc_malloc(sizeof(*data_point_info));
+
+    if (data_point == NULL)
+    {
+        APP_DEBUG("connector_send_data: invalid parameter\n");
+        result = connector_error_invalid_parameter;
+        goto error;
+    }
+
+    if (data_point_info == NULL)
+    {
+        APP_DEBUG("connector_send_data: malloc failed\n");
+        result = connector_error_resource_error;
+        goto error;
+    }
+
+    data_point_info->data_point_stream = data_point;
+    {
+        unsigned long available_bit = 0x80000000;
+
+        while (available_bit != 0)
+        {
+            if (!(send_event_block & available_bit))
+                break;
+            available_bit >>= 1;
+        }
+
+        send_event_block |= available_bit;
+        data_point_info->event_bit = available_bit;
+        if (available_bit == 0)
+        {
+            APP_DEBUG("connector_send_data: Exceeded maximum of 32 sessions active at a time\n");
+            result = connector_error_resource_error;
+            goto error;
+        }
+
+        /* make sure none of the stale event is pending */
+        ecc_clear_event(ECC_DATA_POINTS_EVENT, available_bit);
+    }
+
+    /* we are storing some stack variables here, need to block until we get a response */
+    data_point_info->error = connector_success;
+    data_point_info->data_point_stream->user_context = data_point_info;
+
+    {
+        connector_status_t const status = connector_initiate_action(connector_handle, connector_initiate_data_point_single, data_point_info->data_point_stream);
+
+        if (status == connector_success)
+        {
+            #define ECC_SEND_TIMEOUT_IN_MSEC 90000
+            result = ecc_get_event(ECC_DATA_POINTS_EVENT, data_point_info->event_bit, ECC_SEND_TIMEOUT_IN_MSEC);
+        	data_point_info->error = result;
+        }
+        else
+        {
+            result = (status == connector_init_error) ? connector_init_error : connector_no_resource;
+        }
+    }
+
+error:
+    if (data_point_info != NULL)
+    {
+        send_event_block &= ~data_point_info->event_bit;
+        ecc_free(data_point_info);
+    }
+
+    return result;
+}
+#endif
 
 connector_callbacks_t * connector_get_app_callbacks(void)
 {
