@@ -133,11 +133,11 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
     {
         unsigned long current_time;
-        void * seed_ptr = &current_time;
 
         result = get_system_time(connector_ptr, &current_time);
         ASSERT_GOTO(result == connector_working, error);
-        sm_ptr->last_request_id = rand_r(seed_ptr); /* replace with srand() & rand() if rand_r() is not available */
+        srand(current_time);
+        sm_ptr->last_request_id = rand();
     }
 
 error:
