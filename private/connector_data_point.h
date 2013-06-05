@@ -423,10 +423,11 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
             bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId32, dp_ptr->data.element.native.int_value);
             break;
 
+#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
         case connector_data_point_type_long:
-            /* bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId64, dp_ptr->data.element.native.long_value); */
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%lld", dp_ptr->data.element.native.long_value);
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId64, dp_ptr->data.element.native.long_value);
             break;
+#endif
 
 
         case connector_data_point_type_string:

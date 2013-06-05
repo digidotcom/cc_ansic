@@ -124,8 +124,10 @@ typedef struct connector_data_point_t
         {
             union
             {
-                int int_value;      /**< 32-bit two's complement integer */
-                long long_value;    /**< 64-bit two's complement integer */
+                int32_t int_value;    /**< 32-bit two's complement integer */
+                #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                int64_t long_value;   /**< 64-bit two's complement integer */
+                #endif
                 char * string_value;/**< a null-terminated utf-8 encoding string */
                 #if (defined FLOATING_POINT_SUPPORTED)
                 float float_value;  /**< 32-bit IEEE754 floating point */
