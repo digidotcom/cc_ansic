@@ -571,7 +571,15 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
 
         if (session->command == connector_sm_cmd_data)
             target_length++;
+
+        session->bytes_processed = target_length;
+        /* Return pending so bytes_processed and session->segments.processed are not incremented */
+        status = connector_pending;
+        goto done;
     }
+    
+    if ((session->segments.processed == 0) && (session->command == connector_sm_cmd_data))
+        target_length = session->bytes_processed;
 
     data_ptr += target_length;
 
@@ -598,6 +606,8 @@ error:
         session->bytes_processed = bytes;
         status = connector_working;
     }
+    else if ((status == connector_working) && (session->segments.processed == 0))
+        session->bytes_processed -= target_length;
 
 done:
     return status;
