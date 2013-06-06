@@ -95,12 +95,12 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
 /*
  * This function fills all "statbuf" members, path must be Nul-terminated
  */
-static size_t get_statbuf(char const * const path, connector_file_system_statbuf_t * statbuf)
+static _mqx_int get_statbuf(char const * const path, connector_file_system_statbuf_t * statbuf)
 {
 	MFS_FILE_ATTR_PARAM attributes_param;
 	uchar attributes = 0;
     char full_path[50] = {0};
-	size_t retval = 0;
+	_mqx_int retval = 0;
 
     strcpy(full_path, filesystem_info->FS_NAME);
     strcat(full_path, path);
@@ -130,7 +130,6 @@ static size_t get_statbuf(char const * const path, connector_file_system_statbuf
 		statbuf->flags = connector_file_system_file_type_is_reg;
 		{
 			uint_16 date, time;
-			uint32_t epoch_time = 0;
 			MFS_DATE_TIME_PARAM file_date;
 			
 			file_date.DATE_PTR = &date;
@@ -157,7 +156,7 @@ done:
 static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    size_t result;
+    _mqx_int result;
 
     result = get_statbuf(data->path, &data->statbuf);
     if (result < 0)
@@ -173,8 +172,7 @@ done:
 static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-	uchar attributes = 0;
-    size_t result;
+    _mqx_int result;
 
     result = get_statbuf(data->path, &data->statbuf);
     if (result < 0)
