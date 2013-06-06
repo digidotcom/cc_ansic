@@ -119,9 +119,15 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     point->data.element.native.int_value = rand();
                 }
                 break;
-
             case connector_data_point_type_long:
+			    #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
                 if (test_case == 1)
+                {
+                    point->data.type = connector_data_type_native;
+                    point->data.element.native.long_value = lrand48();
+                }
+                else
+				#endif
                 {
                     static char value[sizeof(long) * 3];
 
@@ -129,13 +135,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     snprintf(value, sizeof value, "%ld", lrand48());
                     point->data.element.text = value;
                 }
-                else
-                {
-                    point->data.type = connector_data_type_native;
-                    point->data.element.native.long_value = lrand48();
-                }
                 break;
-
             case connector_data_point_type_float:
                 #if (defined FLOATING_POINT_SUPPORTED)
                 if (test_case == 1)
