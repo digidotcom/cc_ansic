@@ -274,7 +274,7 @@ def start_iik(executable, tty=False):
         os.system('%s 2>&1' % (executable))
 
 def unique_device_type():
-    return 'iC DVT %s' % str(uuid.uuid4().hex)[:25]
+    return 'ECC DVT %s' % str(uuid.uuid4().hex)[:24]
 
 class TestRunner(object):
     log = None
@@ -319,7 +319,7 @@ class TestRunner(object):
 
         # Defines key values device should be compiled with
         self.device_config = {
-            'device_type'     : unique_device_type(),
+            'device_type'     : None,
             'device_mac'      : None,
             'device_imei'     : None,
             'device_esn'      : None,
@@ -605,8 +605,9 @@ class TestRunner(object):
                     self.log.info("Executing gcovr: %s" % cmd, extra=log_extra)
                     os.system(cmd)
                 else:
-                    self.log.info('Killing Process with pid %s.' % pid, extra=log_extra)
-                    os.kill(int(pid), signal.SIGKILL)
+                    if(pid is not None and len(pid)>0):
+                        self.log.info('Killing Process with pid %s.' % pid, extra=log_extra)
+                        os.kill(int(pid), signal.SIGKILL)
         except Exception, e:
             log.exception(e)
         finally:
@@ -620,7 +621,7 @@ class TestRunner(object):
 
             # Delete device if it was not previously deleted.
             if device_location is not None:
-                if(pid is not None):
+                if(pid is not None and len(pid)>0):
                     # Check that process is finished
                     retries = 10
                     status = self.isRunningProcess(pid)

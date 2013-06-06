@@ -144,7 +144,7 @@ def update_config_c(cnfg_file, **device_config):
   new_vendor_id = '0x%08X' % vendor_id
   
   # Setup Device ID
-  device_id = device_config['device_type'] if device_config.has_key('device_type') else 'iC DVT'
+  device_id = device_config['device_type'] if device_config.has_key('device_type') else 'ECC DVT'
 
   # Setup iDigi Server
   connector_host = device_config['connector_host'] if device_config.has_key('connector_host') else 'test.etherios.com'
