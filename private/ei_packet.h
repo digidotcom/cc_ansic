@@ -76,8 +76,8 @@ do { \
 #define message_load_u8(record, field) *(record + field_named_data(record, field, offset))
 #endif
 
-#define PACKET_EDP_PROTOCOL_SIZE        record_bytes(edp_protocol)
-#define PACKET_EDP_HEADER_SIZE          record_bytes(edp_header)
+#define PACKET_EDP_PROTOCOL_SIZE        ((size_t)record_bytes(edp_protocol))
+#define PACKET_EDP_HEADER_SIZE          ((size_t)record_bytes(edp_header))
 #define PACKET_EDP_FACILITY_SIZE        (PACKET_EDP_PROTOCOL_SIZE + PACKET_EDP_HEADER_SIZE)
 
 /* private definitions */
