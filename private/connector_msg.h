@@ -382,7 +382,7 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
                                           connector_bool_t const client_owned, connector_status_t * const status)
 {
     unsigned int session_id = MSG_INVALID_CLIENT_SESSION;
-    msg_capability_type_t const capability_id = client_owned ? msg_capability_cloud : msg_capability_client;
+    msg_capability_type_t const capability_id = client_owned == connector_true ? msg_capability_cloud : msg_capability_client;
     msg_session_t * session = NULL;
     unsigned int flags = 0;
 
@@ -401,7 +401,7 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
         }
     }
 
-    if (client_owned)
+    if (client_owned == connector_true)
     {
         session_id = msg_find_next_available_id(msg_ptr);
         if (session_id == MSG_INVALID_CLIENT_SESSION) goto done;
@@ -433,7 +433,7 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
         size_t const single_buffer_bytes = bytes_in_block + bytes_in_service_data;
         size_t const double_buffer_bytes = MsgIsCompressed(flags) ? 2 * single_buffer_bytes : (2 * single_buffer_bytes) + MSG_MAX_SEND_PACKET_SIZE;
         size_t const total_bytes = bytes_in_session + (MsgIsDoubleBuf(flags) ? double_buffer_bytes : single_buffer_bytes);
-        connector_static_buffer_id_t buffer_id = client_owned ? named_buffer_id(msg_session_client) : named_buffer_id(msg_session);
+        connector_static_buffer_id_t buffer_id = client_owned == connector_true ? named_buffer_id(msg_session_client) : named_buffer_id(msg_session);
 
         *status = malloc_data_buffer(connector_ptr, total_bytes, buffer_id, &ptr);
         if (*status != connector_working) goto done;
@@ -454,14 +454,14 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
         }
         else
         {
-            msg_data_block_t ** const current_dblock_ptr = client_owned ? &session->out_dblock : &session->in_dblock;
-            msg_data_block_t ** const other_dblock_ptr = client_owned ? &session->in_dblock : &session->out_dblock;
+            msg_data_block_t ** const current_dblock_ptr = client_owned == connector_true ? &session->out_dblock : &session->in_dblock;
+            msg_data_block_t ** const other_dblock_ptr = client_owned == connector_true ? &session->in_dblock : &session->out_dblock;
 
             *current_dblock_ptr = (msg_data_block_t *)(session + 1);
             *other_dblock_ptr = NULL;
             data_ptr += bytes_in_block;
-            session->service_layer_data.need_data = (msg_service_data_t *)(client_owned ? (*current_dblock_ptr) + 1 : NULL);
-            session->service_layer_data.have_data = (msg_service_data_t *)(client_owned ? NULL : (*current_dblock_ptr) + 1);
+            session->service_layer_data.need_data = (msg_service_data_t *)(client_owned == connector_true ? (*current_dblock_ptr) + 1 : NULL);
+            session->service_layer_data.have_data = (msg_service_data_t *)(client_owned == connector_true ? NULL : (*current_dblock_ptr) + 1);
             session->send_data_ptr = NULL;
         }
     }
@@ -529,7 +529,7 @@ static connector_status_t msg_delete_session(connector_data_t * const connector_
 
     {
         unsigned int const flag = (session->in_dblock != NULL) ? session->in_dblock->status_flag : session->out_dblock->status_flag;
-        msg_capability_type_t const capability_id = MsgIsClientOwned(flag) ? msg_capability_cloud : msg_capability_client;
+        msg_capability_type_t const capability_id = MsgIsClientOwned(flag) == connector_true ? msg_capability_cloud : msg_capability_client;
 
         if (msg_ptr->capabilities[capability_id].active_transactions > 0)
         {
@@ -599,7 +599,7 @@ static connector_session_error_t msg_initialize_data_block(msg_session_t * const
         session->current_state = msg_state_get_data;
         session->service_layer_data.need_data->data_ptr = NULL;
         #if (defined CONNECTOR_COMPRESSION)
-        if (connector_bool(MsgIsNotDeflated(session->out_dblock->status_flag)))
+        if (MsgIsNotDeflated(session->out_dblock->status_flag) == connector_true)
         {
             memset(&session->out_dblock->zlib, 0, sizeof session->out_dblock->zlib);
             ASSERT_GOTO(deflateInit(&session->out_dblock->zlib, Z_DEFAULT_COMPRESSION) == Z_OK, compression_error);
@@ -630,7 +630,7 @@ static connector_session_error_t msg_initialize_data_block(msg_session_t * const
         MsgSetReceiving(session->in_dblock->status_flag);
         session->current_state = msg_state_receive;
         #if (defined CONNECTOR_COMPRESSION)
-        if (connector_bool(MsgIsNotInflated(session->in_dblock->status_flag)))
+        if (MsgIsNotInflated(session->in_dblock->status_flag) == connector_true)
         {
             memset(&session->in_dblock->zlib, 0, sizeof session->in_dblock->zlib);
             ASSERT_GOTO(inflateInit(&session->in_dblock->zlib) == Z_OK, compression_error);
@@ -854,7 +854,7 @@ static connector_status_t msg_send_complete(connector_data_t * const connector_p
             #endif
 
             session->service_layer_data.need_data->data_ptr = NULL;
-            session->current_state = MsgIsAckPending(dblock->status_flag) ? msg_state_wait_ack : session->saved_state;
+            session->current_state = MsgIsAckPending(dblock->status_flag) == connector_true ? msg_state_wait_ack : session->saved_state;
 
             break;
 
@@ -1032,7 +1032,7 @@ static connector_status_t msg_prepare_send_data(connector_data_t * const connect
     }
 
     {
-        size_t const header_bytes = MsgIsStart(dblock->status_flag) ? record_end(start_packet) : record_end(data_packet);
+        size_t const header_bytes = MsgIsStart(dblock->status_flag) == connector_true ? record_end(start_packet) : record_end(data_packet);
         msg_service_data_t * const service_data = session->service_layer_data.need_data;
         unsigned int const flag = MsgIsStart(dblock->status_flag) ? MSG_FLAG_START : 0;
 
@@ -1062,7 +1062,7 @@ static connector_status_t msg_process_send_data(connector_data_t * const connect
         MsgSetLastData(dblock->status_flag);
 
     {
-        size_t const header_bytes = MsgIsStart(dblock->status_flag) ? record_end(start_packet) : record_end(data_packet);
+        size_t const header_bytes = MsgIsStart(dblock->status_flag) == connector_true ? record_end(start_packet) : record_end(data_packet);
         uint8_t * const msg_buffer = GET_PACKET_DATA_POINTER(session->send_data_ptr, PACKET_EDP_FACILITY_SIZE);
 
         session->send_data_bytes = service_data->length_in_bytes + header_bytes;
@@ -1926,7 +1926,7 @@ static connector_status_t msg_delete_facility(connector_data_t * const connector
             }
         }
 
-        status = is_empty ? del_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM) : connector_working;
+        status = is_empty == connector_true ? del_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM) : connector_working;
     }
 
 error:

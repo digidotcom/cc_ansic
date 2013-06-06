@@ -318,7 +318,7 @@ static connector_status_t process_data_service_device_response(connector_data_t 
     connector_bool_t const isFirstResponse = connector_bool(MsgIsStart(service_data->flags));
 
     /* save some room for response header on 1st response data */
-    size_t const header_length = isFirstResponse ? record_bytes(ds_device_response_header) : 0;
+    size_t const header_length = isFirstResponse == connector_true ? record_bytes(ds_device_response_header) : 0;
     uint8_t * const data_ptr = service_data->data_ptr;
 
 
@@ -895,7 +895,7 @@ static connector_status_t data_service_initiate(connector_data_t * const connect
 
     ASSERT_GOTO(request != NULL, error);
 
-    status = msg_initiate_request(connector_ptr, request) ? connector_success : connector_service_busy;
+    status = msg_initiate_request(connector_ptr, request) == connector_true ? connector_success : connector_service_busy;
 
 error:
     return status;
