@@ -83,7 +83,6 @@ static int set_socket_options(int const fd)
 {
 	#define SOCKET_BUFFER_SIZE 		512
 	#define SOCKET_TIMEOUT_MSEC 	1000000
-	boolean success = FALSE;
 	uint_32 option = TRUE;
 	int retval;
 	
@@ -203,12 +202,6 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     if (socket_fd == RTCS_SOCKET_ERROR)
     {
         _ip_address server_ip_addr;
-
-        struct timeval timeout = {0};
-		fd_set read_set;
-		fd_set write_set;
-		struct sockaddr_in sin = {0};
-		uint_32 result;
 
         if (app_dns_resolve(data->device_cloud_url, &server_ip_addr) == FALSE)
         {
@@ -357,25 +350,6 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
 
 done:
     return status;
-}
-
-static connector_callback_status_t app_server_disconnected(void)
-{
-    APP_DEBUG("Disconnected from server\n");
-    /* if connector_run or connector_step is called again,
-    * it will reconnect to the Device Cloud.
-    */
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_server_reboot(void)
-{
-    APP_DEBUG("Reboot from server\n");
-
-    /* should not return from rebooting the system */
-    ecc_software_reset();
-
-    return connector_callback_continue;
 }
 
 /*

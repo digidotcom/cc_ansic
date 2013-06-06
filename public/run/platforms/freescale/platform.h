@@ -34,10 +34,8 @@ extern connector_callback_status_t app_get_device_type(connector_config_pointer_
 extern connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device);
 extern connector_callback_status_t app_custom_get_mac_addr(unsigned char * config_mac);
 extern connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac);
-/* TODO: Following three prototypes doesn't belong in this file */
-extern void Flash_NVRAM_get_mac_address(uint8_t * const address);
-extern void Flash_NVRAM_set_mac_address(uint8_t * const address);
+extern connector_callback_status_t app_os_get_system_time(unsigned long * const uptime);
 extern unsigned long ic_create_task(unsigned long const index_number, unsigned long const parameter);
 extern unsigned long ic_destroy_task(unsigned long const task_id);
-
+void log_printf(const char * const msg, ...);
 #endif /* _PLATFORM_H */

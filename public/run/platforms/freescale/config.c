@@ -49,7 +49,6 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
 
     status = connector_callback_continue;
 
-done:
     return status;
 }
 
@@ -83,6 +82,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 #endif
 }
 
+#if !(defined CONNECTOR_CONNECTION_TYPE)
 static connector_callback_status_t app_get_connection_type(connector_connection_type_t ** const type)
 {
     /* Return pointer to connection type */
@@ -92,6 +92,7 @@ static connector_callback_status_t app_get_connection_type(connector_connection_
 
     return connector_callback_continue;
 }
+#endif
 
 #if !(defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
 static connector_callback_status_t app_get_link_speed(connector_config_link_speed_t * const config_link)
@@ -210,6 +211,7 @@ static connector_callback_status_t app_get_remote_configuration_support(connecto
 }
 #endif
 
+#if ((defined CONNECTOR_DATA_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE)) && !(defined CONNECTOR_MSG_MAX_TRANSACTION)
 static connector_callback_status_t app_get_max_message_transactions(unsigned int * const transCount)
 {
     #define CONNECTOR_MAX_MSG_TRANSACTIONS   1
@@ -218,6 +220,7 @@ static connector_callback_status_t app_get_max_message_transactions(unsigned int
 
     return connector_callback_continue;
 }
+#endif
 
 #if !(defined CONNECTOR_DEVICE_ID_METHOD)
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
@@ -255,6 +258,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
 }
 /* End of Connector configuration routines */
 
+#ifdef CONNECTOR_DEBUG
 /*
  * This routine is called when a configuration error is encountered by the Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
@@ -329,7 +333,7 @@ static connector_callback_status_t app_config_error(connector_config_error_statu
 
     return result;
 }
-
+#endif
 
 /*
  * Configuration callback routine.

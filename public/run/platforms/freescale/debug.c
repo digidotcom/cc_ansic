@@ -9,6 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
+#include "platform.h"
 #include "connector_config.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,11 +19,12 @@
 
 static char buf[DEBUG_MAX_LINE_LEN + 1];
 static unsigned long seconds_since_reset;
+
+#ifdef VERBOSE
 static unsigned long days = 0, hours = 0, minutes = 0, seconds = 0;
+#endif
 
 #if defined(CONNECTOR_DEBUG)
-
-
 void connector_debug_printf(char const * const format, ...)
 {
     va_list args;
@@ -47,8 +49,6 @@ void connector_debug_printf(char const * const format, ...)
 
 #endif
 
-
-
 void log_printf(const char * const msg, ...)
 {	
     if (msg)
@@ -60,18 +60,17 @@ void log_printf(const char * const msg, ...)
         
         app_os_get_system_time(&seconds_since_reset);
 
+#ifdef VERBOSE
         days    = seconds_since_reset / (60 * 60 * 24);
         hours   = (seconds_since_reset / (60 * 60)) % 24;
         minutes = (seconds_since_reset / 60) % 60;
         seconds = seconds_since_reset % 60;
 
-#ifdef VERBOSE
-        _io_printf("days[%d] hr[%d] min[%d] sec[%d] ", days, hours, minutes, seconds);
+        printf("days[%d] hr[%d] min[%d] sec[%d] ", days, hours, minutes, seconds);
 #else
-        _io_printf("[%d] ", seconds_since_reset);        
+        printf("[%d] ", seconds_since_reset);        
 #endif
-        _io_printf(buf);
+        printf(buf);
         va_end(args);
     }
 }
-

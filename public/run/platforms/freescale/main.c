@@ -14,6 +14,10 @@
 #include "os_support.h"
 #include "connector_config.h"
 
+connector_error_t connector_config(void);
+int mac_parse(_enet_address enet_address, const char *str);
+int get_line(char **lineptr, size_t limit);
+
 TASK_TEMPLATE_STRUCT MQX_template_list[] =
 { 
 /*  Task number, Entry point, Stack, Pri, String, Auto? */
@@ -164,7 +168,6 @@ void Main_task(uint_32 initial_data)
         }
     }
 
-error:
     _task_block();
 }
 

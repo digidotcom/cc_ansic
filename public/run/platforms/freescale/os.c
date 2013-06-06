@@ -14,6 +14,8 @@
 #include "connector_api.h"
 #include "platform.h"
 #include "connector_debug.h"
+#include "os_support.h"
+#include <stdio.h>
 #include <stdarg.h>
 
 int connector_malloc_failures = 0;
@@ -154,7 +156,6 @@ connector_callback_status_t app_os_handler(connector_request_id_os_t const reque
 
     case connector_request_id_os_yield:
         {
-            connector_os_yield_t * p = data;
             status = app_os_yield();
         }
         break;
