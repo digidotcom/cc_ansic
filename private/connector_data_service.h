@@ -673,7 +673,23 @@ static connector_status_t process_send_response(connector_data_t * const connect
 
     user_data.transport = connector_transport_tcp;
     user_data.user_context = ds_ptr->callback_context;
-    user_data.hint = (char *)((service_data->length_in_bytes > record_end(put_response)) ? put_response + record_end(put_response) : NULL);
+    if (service_data->length_in_bytes > record_end(put_response))
+    {
+        int const max_hint_length = (MSG_MAX_RECV_PACKET_SIZE - PACKET_EDP_HEADER_SIZE - record_end(start_packet) - record_end(put_response));
+        uint8_t * const hint_start = put_response + record_end(put_response);
+        uint8_t * const hint_end = put_response + service_data->length_in_bytes;
+        size_t hint_length = (hint_end - hint_start) < max_hint_length ? hint_end - hint_start : max_hint_length;
+        char * const hint = (char *)hint_start;
+
+        /* Add a nul-terminator only if necessary */
+        if (hint[hint_length - 1] != '\0')
+            hint[hint_length] = '\0';
+        user_data.hint = hint;
+    }
+    else
+    {
+        user_data.hint = NULL;
+    }
 
     switch (result)
     {
