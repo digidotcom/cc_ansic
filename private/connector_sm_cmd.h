@@ -545,6 +545,8 @@ static connector_status_t sm_pass_target_info(connector_data_t * const connector
 
     request_id.data_service_request = connector_request_id_data_service_receive_target;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+    if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+        callback_status = connector_callback_error; 
     result = sm_map_callback_status_to_connector_status(callback_status);
     session->user.context = cb_data.user_context;
 
@@ -595,6 +597,8 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         cb_data.more_data = SmIsNotLastData(session->flags);
         request_id.data_service_request = connector_request_id_data_service_receive_data;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+        if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+            callback_status = connector_callback_error;
         status = sm_map_callback_status_to_connector_status(callback_status);
         session->user.context = cb_data.user_context;
     }
@@ -676,6 +680,9 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
 
     request_id.os_request = connector_request_id_os_reboot;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL);
+    /* JIRA IC4C-119 */
+    //ASSERT(callback_status != connector_callback_unrecognized);
+    
     result = sm_map_callback_status_to_connector_status(callback_status);
 
     return result;
@@ -695,7 +702,7 @@ static connector_status_t sm_process_ping_response(connector_data_t * const conn
     return status;
 }
 
-static connector_status_t sm_process_ping_reqest(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+static connector_status_t sm_process_ping_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status;
     connector_request_id_t request_id;
@@ -707,6 +714,8 @@ static connector_status_t sm_process_ping_reqest(connector_data_t * const connec
 
     request_id.sm_request = connector_request_id_sm_ping_request;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+    if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+        callback_status = connector_callback_continue;
     status = sm_map_callback_status_to_connector_status(callback_status);
 
     return status;
@@ -809,7 +818,7 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
         case connector_sm_cmd_ping:
             if (SmIsCloudOwned(session->flags))
             {
-                result = sm_process_ping_reqest(connector_ptr, session);
+                result = sm_process_ping_request(connector_ptr, session);
             }
             else
             {

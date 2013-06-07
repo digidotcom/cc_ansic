@@ -684,8 +684,15 @@ static connector_status_t sm_handle_complete(connector_data_t * const connector_
     if (SmIsReboot(session->flags))
         result = sm_process_reboot(connector_ptr);
 
-    if (result != connector_pending)
+    if (result == connector_abort)
+    {
+    	/* Keep connector_abort as the result */
+        sm_delete_session(connector_ptr, sm_ptr, session);	/* JIRA IC4C-119 */
+    }
+    else if (result != connector_pending)
+    {
         result = sm_delete_session(connector_ptr, sm_ptr, session);
+    }
 
 error:
     return result;
