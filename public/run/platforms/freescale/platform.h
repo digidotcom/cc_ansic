@@ -38,4 +38,12 @@ extern connector_callback_status_t app_os_get_system_time(unsigned long * const 
 extern unsigned long ic_create_task(unsigned long const index_number, unsigned long const parameter);
 extern unsigned long ic_destroy_task(unsigned long const task_id);
 void log_printf(const char * const msg, ...);
+
+#if defined CONNECTOR_FIRMWARE_SERVICE
+extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request_id, void * const data);
+#endif
+#if defined CONNECTOR_FILE_SYSTEM
+extern connector_callback_status_t app_file_system_handler(connector_request_id_file_system_t const request, void * const data);
+#endif
+
 #endif /* _PLATFORM_H */
