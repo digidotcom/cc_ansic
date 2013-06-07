@@ -36,8 +36,8 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
             {
                 request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_length : connector_request_id_data_service_receive_reply_length;
                 status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
-				if (status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
-        			status = connector_callback_continue;
+                if (status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+                    status = connector_callback_continue;
             }
 
             session->in.bytes = cb_data.total_bytes;
@@ -55,6 +55,8 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
 
             request_id.sm_request = connector_request_id_sm_cli_response_length;
             status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+            if (status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+                status = connector_callback_continue;
             session->in.bytes = cb_data.total_bytes;
             break;
         }
