@@ -272,7 +272,8 @@ static connector_status_t process_data_service_device_request(connector_data_t *
                 switch (result)
                 {
                     case connector_working:
-                        if (MsgIsLastData(service_data->flags))
+                        if (MsgIsLastData(service_data->flags) && 
+                        	        data_service->request_type != connector_request_id_data_service_receive_reply_length)
                             data_service->request_type = connector_request_id_data_service_receive_reply_data;
                         break;
                     default:
