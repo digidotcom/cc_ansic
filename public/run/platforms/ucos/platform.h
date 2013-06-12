@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Digi International Inc.,
+ * Copyright (c) 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -9,7 +9,6 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-
 #ifndef _PLATFORM_H
 #define _PLATFORM_H
 
