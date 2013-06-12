@@ -255,6 +255,8 @@ static connector_callback_status_t sm_inform_ping_complete(connector_data_t * co
 
         request_id.sm_request = connector_request_id_sm_ping_response;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+        if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-142 */
+            callback_status = connector_callback_continue;
     }
 
     return callback_status;
