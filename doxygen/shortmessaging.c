@@ -225,6 +225,10 @@
  * <td>Continue</td>
  * </tr>
  * <tr>
+ *   <td>@endhtmlonly @ref connector_callback_unrecognized @htmlonly</td>
+ *   <td>Application doesn't implement this callback</td>
+ * </tr>
+ * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
  * <td>Aborts Cloud Connector</td>
  * </tr>
@@ -360,6 +364,10 @@
  *   <td>Aborts Cloud Connector</td>
  * </tr>
  * <tr>
+ *   <td>@endhtmlonly @ref connector_callback_unrecognized @htmlonly</td>
+ *   <td>Application doesn't implement this callback</td>
+ * </tr>
+ * <tr>
  *   <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
  *   <td>Busy and needs to be called back again</td>
  * </tr>
@@ -419,6 +427,10 @@
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
  *   <td>Aborts Cloud Connector</td>
+ * </tr>
+ * <tr>
+ *   <td>@endhtmlonly @ref connector_callback_unrecognized @htmlonly</td>
+ *   <td>Application doesn't implement this callback</td>
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_busy @htmlonly</th>
@@ -544,6 +556,10 @@
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
  *   <td>Continue</td>
+ * </tr>
+ * <tr>
+ *   <td>@endhtmlonly @ref connector_callback_unrecognized @htmlonly</td>
+ *   <td>Application doesn't implement this callback</td>
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -702,6 +718,10 @@
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
  *   <td>Continue</td>
+ * </tr>
+ * <tr>
+ *   <td>@endhtmlonly @ref connector_callback_unrecognized @htmlonly</td>
+ *   <td>Application doesn't implement this callback</td>
  * </tr>
  * <tr>
  *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
