@@ -55,18 +55,9 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         {
             size_t const sm_udp_version_length = 1;
 
-            if (connector_ptr->wan_id != NULL)
-            {
-                sm_ptr->transport.id_type = connector_sm_id_type_imei;
-                sm_ptr->transport.id = connector_ptr->wan_id; /* BUG: Needs byte alignment */
-                sm_ptr->transport.id_length = connector_ptr->wan_id_length - 1;  /* excluding check digit, TODO: what about ESN? */
-            }
-            else
-            {
-                sm_ptr->transport.id_type = connector_sm_id_type_device_id;
-                sm_ptr->transport.id = connector_ptr->device_id;
-                sm_ptr->transport.id_length = DEVICE_ID_LENGTH;
-            }
+            sm_ptr->transport.id_type = connector_sm_id_type_device_id;
+            sm_ptr->transport.id = connector_ptr->device_id;
+            sm_ptr->transport.id_length = DEVICE_ID_LENGTH;
 
             sm_ptr->network.class_id = connector_class_id_network_udp;
             sm_ptr->network.transport = connector_transport_udp;
