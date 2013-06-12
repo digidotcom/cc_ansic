@@ -362,7 +362,7 @@ done:
 
 int application_udp(connector_handle_t handle)
 {
-#if (defined CONNECTOR_TRANSPORT_UDP1)
+#if (defined CONNECTOR_TRANSPORT_UDP)
     connector_status_t status;
     int index = 0;
 
