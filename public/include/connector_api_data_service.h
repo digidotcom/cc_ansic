@@ -45,7 +45,8 @@ typedef struct
         connector_data_service_send_option_transient    /**< Device Cloud need not store the data but can send it to the consumer */
     } option;       /**< what action Device Cloud should take after receing this request. Applicable only in TCP transport method */
 
-    connector_bool_t response_required; /**< set to connector_true if response is needed */
+    connector_bool_t response_required; /**< set to connector_true if response is needed. If @ref transport is set to @ref connector_transport_tcp
+                                             this field is ignored and a response is always received. */
 } connector_request_data_service_send_t;
 /**
 * @}
