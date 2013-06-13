@@ -93,7 +93,7 @@ class Test_brci_string(object):
 
 
 
-    def getSettingValue(self, groupName, settingName, cache = "no"):
+    def getSettingValue(self, groupName, settingName, cache = "false"):
         # Create RCI query, ej:
         # <sci_request version="1.0">
         #       <send_message cache="no">
@@ -172,7 +172,7 @@ class Test_brci_string(object):
 
 
 
-    def setSettingValue(self, groupName, settingName, newValue, cache = "no"):
+    def setSettingValue(self, groupName, settingName, newValue, cache = "false"):
         # Escape new setting value to allow all kind of characters
         newValue = xml.sax.saxutils.escape(newValue)
 
