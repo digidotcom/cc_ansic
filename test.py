@@ -274,8 +274,37 @@ def start_iik(executable, tty=False):
     else:
         os.system('%s 2>&1' % (executable))
 
-def unique_device_type():
-    return 'ECC DVT %s' % str(uuid.uuid4().hex)[:24]
+def unique_device_type(testName = None):
+    # Device type format:
+    #   "ECC DVT test_case cb9e96ba3d5bbb"
+    #   "ECC DVT test_case_bigger 4f9ef4d"
+    #   "ECC DVT test_case_maxbigger 4f9e"
+
+    # Common header for all test cases
+    deviceType = "ECC DVT " # 8 characters
+
+    # Additional header based on test name
+    if ( testName != None ):
+        maxTestNameLenght = 32 - len(deviceType) - 5 # at least we reserve 5 characters for random
+
+        if( len(testName)<maxTestNameLenght ):
+            deviceType = "%s%s " % (deviceType,testName)
+        else:
+            deviceType = "%s%s " % (deviceType,testName[:maxTestNameLenght])
+
+    # Additional random header
+    if ( len(deviceType) < 32 ):
+        randomLenght = 32 - len(deviceType)
+        deviceType = "%s%s" % (deviceType, str(uuid.uuid4().hex)[:randomLenght] )
+
+    # Max lenght for Device type is 32 characters
+    if( len(deviceType) > 32 ):
+        deviceType = "%s" % (deviceType[:32])
+
+    # return "Device type"
+    return deviceType
+
+
 
 class TestRunner(object):
     log = None
@@ -409,7 +438,10 @@ class TestRunner(object):
     def run_test(self, test, test_list, execution_type, base_src_dir,
         base_script_dir, replace_list=[], sample=False):
         device_config = self.device_config.copy()
-        device_config['device_type'] = unique_device_type()
+
+        # Generate a device type based on test case
+        device_config['device_type'] = unique_device_type(test)
+
         if test == 'keep_alive_test':
             # Temporary kludge, inject different keepalive/waitcount values
             # for this test only.  This will eventually be refactored.
