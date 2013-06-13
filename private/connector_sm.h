@@ -320,6 +320,19 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         goto error;
                     }
 
+                    #if (defined CONNECTOR_DATA_POINTS)
+                    if (request == connector_initiate_data_point_single)
+                    {
+                        result = dp_initiate_data_point_single(request_data);
+                        goto error;
+                    }
+                    else if (request == connector_initiate_data_point_binary)
+                    {
+                        result = dp_initiate_data_point_binary(request_data);
+                        goto error;
+                    }
+                    #endif
+                    
                     if (sm_ptr->pending.data != NULL) goto error;
                     sm_ptr->pending.data = request_data;
                     sm_ptr->pending.request = request;

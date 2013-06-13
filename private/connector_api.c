@@ -577,16 +577,6 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
         result = connector_success;
         break;
 
-#if (defined CONNECTOR_DATA_POINTS)
-    case connector_initiate_data_point_single:
-        result = dp_initiate_data_point_single(request_data);
-        break;
-
-    case connector_initiate_data_point_binary:
-        result = dp_initiate_data_point_binary(request_data);
-        break;
-#endif
-
    default:
         if (connector_ptr->stop.state == connector_state_terminate_by_initiate_action)
         {

@@ -370,6 +370,50 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
         result = data_service_initiate(connector_ptr, request_data);
         break;
 #endif /* CONNECTOR_DATA_SERVICE */
+#if (defined CONNECTOR_DATA_POINTS)
+    case connector_initiate_data_point_single:
+    case connector_initiate_data_point_binary:
+        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud) goto done;
+
+        switch (edp_get_active_state(connector_ptr))
+        {
+        case connector_transport_idle:
+            result = connector_unavailable;
+            goto done;
+
+        case connector_transport_close:
+            if (edp_get_initiate_state(connector_ptr) == connector_transport_open)
+            {
+
+            }
+            /* no break  to return error */
+        case connector_transport_redirect:
+            result = connector_unavailable;
+            goto done;
+
+            /* no break to return error */
+        case connector_transport_terminate:
+            goto done;
+
+        case connector_transport_open:
+        case connector_transport_send:
+        case connector_transport_receive:
+            switch (edp_get_initiate_state(connector_ptr))
+            {
+                case connector_transport_close:
+                    result = connector_unavailable;
+                    goto done;
+                default:
+                    break;
+            }
+            break;
+        }
+        if (request == connector_initiate_data_point_single)
+            result = dp_initiate_data_point_single(request_data);
+        else if (request ==	connector_initiate_data_point_binary)
+            result = dp_initiate_data_point_binary(request_data);
+        break;
+#endif /* CONNECTOR_DATA_POINTS */
 
     case connector_initiate_transport_stop:
         switch (edp_get_active_state(connector_ptr))
