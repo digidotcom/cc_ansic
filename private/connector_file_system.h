@@ -163,7 +163,7 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
         {"Path too long",                   connector_file_system_out_of_memory},
         {"Request formar error",            connector_file_system_request_format_error},
         {"Invalid offset",                  connector_file_system_invalid_parameter},
-        {"Invalid hash algorythm",          connector_file_system_invalid_parameter},
+        {"Invalid hash algorithm",          connector_file_system_invalid_parameter},
         {"Unspecified error",               connector_file_system_unspec_error},
         {"Offset is too large or negative", connector_file_system_request_format_error}
     };
