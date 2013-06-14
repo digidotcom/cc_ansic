@@ -4,6 +4,7 @@ import xml.sax.saxutils         # http://wiki.python.org/moin/EscapingXml
 import time
 import ic_testcase
 import logging
+import random
 from ic_plugin import ICPlugin
 
 log = logging.getLogger('ic_testcase')
@@ -155,6 +156,13 @@ class Test_brci_string(object):
         if(nodeElement.nodeType != xml.dom.minidom.Node.ELEMENT_NODE):
             log.error("Wrong Element Node for setting '%s'" % (settingName) )
             return None
+
+
+
+        # Check if the element is empty, ej "<product/>"
+        # Then return empty value
+        if( nodeElement.toxml() == "<%s/>" % settingName):
+            return ""
 
 
 
@@ -323,4 +331,27 @@ class Test_brci_string(object):
                             "Verification for characters '%s' was unsuccessful." % eachline)
 
 
+    def test_bigger_string_device_info_description(self):
+        # Verify that Device is connected
+        self.ensure_connected()
 
+        # Generate all valid characters in lise
+        listCharacters = self.getListValidCharactersString()
+
+        # String for the description
+        newDescription = "%s" % listCharacters * 10 # 940 characters
+
+        for index in range(0,512):
+            log.info("\n\n")
+            log.info("Set and Verify description with a string lenght of %s characters:\n'%s'\n\n" % (len(newDescription), newDescription) )
+
+            # Set and verify setting with each line
+            assert_equal(   True, # Expected value
+                            self.verifySettingValue("device_info","desc", newDescription), # Returned value
+                            "Verification of field description for characters '%s' was unsuccessful." % newDescription)
+
+            # Generate a new character
+            charIndex = random.randint(0,len(listCharacters)-1)
+
+            # Add a new character
+            newDescription = "%s%s" % (newDescription,listCharacters[charIndex])
