@@ -93,8 +93,13 @@ class Test_brci_string(object):
                 "Device %s not connected." % ICPlugin.device_id)
 
 
+    def getSettingValue(self, groupName, settingName, settingType, cache = "false"):
+        # Use a specific query for setting or state
+        if ( settingType == "setting" ):
+            getQuery = QUERY_SETTING
+        else:
+            getQuery = QUERY_STATE
 
-    def getSettingValue(self, groupName, settingName, cache = "false"):
         # Create RCI query, ej:
         # <sci_request version="1.0">
         #       <send_message cache="no">
@@ -110,7 +115,7 @@ class Test_brci_string(object):
         # </sci_request>
         rciQuery = RCI_BASE_TEMPLATE % ( cache, # cache
                                          ICPlugin.device_id, # Device ID
-                                         QUERY_SETTING % groupName) # RCI query
+                                         getQuery % groupName) # RCI query
 
 
         # Send request to server and get the response
@@ -143,7 +148,7 @@ class Test_brci_string(object):
         # Check if we only have a setting node
         if(nodeList.length != 1):
             log.error("Duplicated setting '%s', Response: %s" % (settingName, xmlResponse.toprettyxml(indent="  ")) )
-            return None
+            return (None,xmlResponse)
 
 
 
@@ -155,14 +160,14 @@ class Test_brci_string(object):
         #Check if we have a valid element node
         if(nodeElement.nodeType != xml.dom.minidom.Node.ELEMENT_NODE):
             log.error("Wrong Element Node for setting '%s'" % (settingName) )
-            return None
+            return (None,xmlResponse)
 
 
 
         # Check if the element is empty, ej "<product/>"
         # Then return empty value
         if( nodeElement.toxml() == "<%s/>" % settingName):
-            return ""
+            return ("",xmlResponse)
 
 
 
@@ -172,17 +177,24 @@ class Test_brci_string(object):
         ## Check if we have a valid Text node
         if(nodeText.nodeType != xml.dom.minidom.Node.TEXT_NODE):
             log.error("Wrong Text Node for setting '%s'" % (settingName) )
-            return None
+            return (None,xmlResponse)
 
 
         # Return value for the setting
-        return nodeText.data
+        return (nodeText.data,xmlResponse)
 
 
 
-    def setSettingValue(self, groupName, settingName, newValue, cache = "false"):
+    def setSettingValue(self, groupName, settingName, settingType, newValue, cache = "false"):
         # Escape new setting value to allow all kind of characters
         newValue = xml.sax.saxutils.escape(newValue)
+
+
+        # Use a specific query for setting or state
+        if ( settingType == "setting" ):
+            setQuery = SET_SETTING
+        else:
+            setQuery = SET_STATE
 
 
         # Create RCI query, ej:
@@ -200,7 +212,7 @@ class Test_brci_string(object):
         # </sci_request>
         rciQuery = RCI_BASE_TEMPLATE % ( cache, # cache
                                          ICPlugin.device_id, # Device ID
-                                         SET_SETTING % (groupName, # Group
+                                         setQuery % (groupName, # Group
                                                         1, # Index
                                                         settingName, # setting
                                                         newValue, # new value to set
@@ -239,7 +251,7 @@ class Test_brci_string(object):
                 log.error("Duplicated setting '%s', Response: %s" % (settingName, xmlResponse.toprettyxml(indent="  ")) )
             elif(nodeList.length == 0):
                 log.error("There is not a setting '%s', Response: %s" % (settingName, xmlResponse.toprettyxml(indent="  ")) )
-            return False
+            return (False,xmlResponse)
 
 
 
@@ -251,7 +263,7 @@ class Test_brci_string(object):
         #Check if we have a valid element node
         if(nodeElement.nodeType != xml.dom.minidom.Node.ELEMENT_NODE):
             log.error("Wrong Element Node for setting '%s'" % (settingName) )
-            return False
+            return (False,xmlResponse)
 
 
         # Get Text Node for the setting
@@ -260,27 +272,29 @@ class Test_brci_string(object):
         ## Check if we have a valid Text node
         if(nodeText is not None):
             log.error("Wrong Text Node for setting '%s'" % (settingName) )
-            return False
+            return (False,xmlResponse)
 
-        return True
+        return (True,xmlResponse)
 
 
 
-    def verifySettingValue(self, groupName, settingName, newValue, cache = "no"):
+    def verifySettingValue(self, groupName, settingName, settingType, newValue, cache = "false"):
         # Initialize result
         result = False
 
         # Get original value
-        originalValue = self.getSettingValue(groupName,settingName)
+        originalValue,xmlResponse = self.getSettingValue(groupName, settingName, settingType, cache = cache)
         log.info("Original value is '%s'" % (originalValue))
+
         # Check if we expect changes
         if(originalValue == newValue):
             log.warning("Original value '%s' match with the new value '%s' to be setup " % (originalValue,newValue) )
 
         # Set new value
-        if( self.setSettingValue(groupName,settingName,newValue) ):
+        setResult,xmlResponse = self.setSettingValue(groupName, settingName, settingType, newValue, cache = cache)
+        if( setResult ):
             # Get new value
-            modifiedValue = self.getSettingValue(groupName,settingName)
+            modifiedValue,xmlResponse = self.getSettingValue(groupName, settingName, settingType, cache = cache)
 
             # Verify original and modified values
             if(newValue == modifiedValue):
@@ -290,6 +304,183 @@ class Test_brci_string(object):
                 log.error("New value '%s' does not match with obtained value '%s'" % (newValue,modifiedValue) )
 
         return result
+
+
+
+    def verifySettingError(self, groupName, settingName, settingType, newValue, cache = "false", errorID = None, errorDesc = None, errorHint = None):
+        # Initialize result
+        result = False
+
+        # Get original value
+        originalValue,xmlResponse = self.getSettingValue(groupName, settingName, settingType, cache = cache)
+        log.info("Original value is '%s'" % (originalValue))
+
+        # Set new value
+        setResult,xmlSetResponse = self.setSettingValue(groupName, settingName, settingType, newValue, cache = cache)
+        if( not setResult ):
+            # Get saved value
+            modifiedValue,xmlResponse = self.getSettingValue(groupName, settingName, settingType, cache = cache)
+
+            # Verify original and modified are the same
+            if(originalValue == modifiedValue):
+                result = True
+                log.info("Original value '%s' match with obtained value '%s'" % (originalValue,modifiedValue) )
+            else:
+                log.error("Original value '%s' does not match with obtained value '%s'" % (originalValue,modifiedValue) )
+                return False
+
+            # Verify error codes and descriptions
+            # <sci_reply version="1.0">
+            #  <send_message>
+            #   <device id="00000000-00000000-2B5254FF-FFA18761">
+            #    <error id="2021">
+            #      <desc>Invalid BinaryRCI request submited</desc>
+            #      <hint>Invalid set_setting/set_state unable to set field model which is has access of read_only</hint>
+            #    </error>
+            #   </device>
+            #  </send_message>
+            # </sci_reply>
+            if ( self.checkError(xmlSetResponse, errorID = errorID, errorDesc = errorDesc, errorHint = errorHint) ):
+                result = True
+            else:
+                return False
+        else:
+            log.error("Set process did not report any errors with the value '%s'" % (newValue) )
+
+        return result
+
+
+
+    def checkError(self, xmlResponse, errorID = None, errorDesc = None, errorHint = None):
+        # Get list of nodes for the setting
+        nodeListError = xmlResponse.getElementsByTagName("error") # return a NodeList object
+
+        # Check if we only have a setting node
+        if(nodeListError.length != 1):
+            if(nodeListError.length >1):
+                log.error("Duplicated setting '%s', Response: %s" % ("error", xmlResponse.toprettyxml(indent="  ")) )
+            elif(nodeListError.length == 0):
+                log.error("There is not a setting '%s', Response: %s" % ("error", xmlResponse.toprettyxml(indent="  ")) )
+            return False
+
+        # Get Node for the setting, ej:
+        # node.toxml():
+        #  <error id="2021">
+        #    <desc>Invalid BinaryRCI request submited</desc>
+        #    <hint>Invalid set_setting/set_state unable to set field model which is has access of read_only</hint>
+        #  </error>
+        nodeElementError = nodeListError[0] # return a Node object
+
+        #Check if we have a valid element node
+        if(nodeElementError.nodeType != xml.dom.minidom.Node.ELEMENT_NODE):
+            log.error("Wrong Element Node for setting '%s'" % ("error") )
+            return False
+
+
+        # Verify if error identifier matches with the errorID as argument
+        if ( errorID != None ):
+            # Check error node has an id attribute
+            if ( nodeElementError.hasAttribute("id") ):
+                # Get error id
+                returnedID = nodeElementError.getAttribute("id")
+                # Check error ids are the same
+                if(returnedID != errorID):
+                    log.error("Expected error ID '%s' does not match with returned id '%s'" % (errorID,returnedID) )
+                    return False
+                else:
+                    log.info("Expected error ID '%s' match with returned id '%s'" % (errorID,returnedID) )
+
+
+
+        # Verify if error description matches with the description as argument
+        if ( errorDesc != None ):
+            # Get list of nodes for the setting "desc"
+            settingName = "desc"
+            nodeListDesc = nodeElementError.getElementsByTagName(settingName) # return a NodeList object
+
+            # Check if we only have a setting node
+            if(nodeListDesc.length != 1):
+                if(nodeListDesc.length >1):
+                    log.error("Duplicated setting '%s', Response: %s" % (settingName, nodeElementError.toprettyxml(indent="  ")) )
+                elif(nodeListDesc.length == 0):
+                    log.error("There is not a setting '%s', Response: %s" % (settingName, nodeElementError.toprettyxml(indent="  ")) )
+                return False
+
+            # Get Node for the setting, ej:
+            # node.toxml():
+            #    <desc>Invalid BinaryRCI request submited</desc>
+            nodeElementDesc = nodeListDesc[0]
+
+            #Check if we have a valid element node
+            if(nodeElementDesc.nodeType != xml.dom.minidom.Node.ELEMENT_NODE):
+                log.error("Wrong Element Node for setting '%s'" % (settingName) )
+                return False
+
+            # Get Text Node for the setting
+            nodeTextDesc = nodeElementDesc.firstChild # return a Text Node object
+
+            ## Check if we have a valid Text node
+            if(nodeTextDesc.nodeType != xml.dom.minidom.Node.TEXT_NODE):
+                log.error("Wrong Text Node for setting '%s'" % (settingName) )
+                return False
+
+            # Return value for the setting
+            returnedDescription = nodeTextDesc.data
+
+            # Check error descriptions are the same
+            if(returnedDescription != errorDesc):
+                log.error("Expected error description '%s' does not match with returned description '%s'" % (errorDesc,returnedDescription) )
+                return False
+            else:
+                log.info("Expected error description '%s'  match with returned description '%s'" % (errorDesc,returnedDescription) )
+
+
+
+        # Verify if error hint matches with the hint as argument
+        if ( errorHint != None ):
+            # Get list of nodes for the setting "desc"
+            settingName = "hint"
+            nodeListHint = nodeElementError.getElementsByTagName(settingName) # return a NodeList object
+
+            # Check if we only have a setting node
+            if(nodeListHint.length != 1):
+                if(nodeListHint.length >1):
+                    log.error("Duplicated setting '%s', Response: %s" % (settingName, nodeElementError.toprettyxml(indent="  ")) )
+                elif(nodeListHint.length == 0):
+                    log.error("There is not a setting '%s', Response: %s" % (settingName, nodeElementError.toprettyxml(indent="  ")) )
+                return False
+
+            # Get Node for the setting, ej:
+            # node.toxml():
+            #    <desc>Invalid BinaryRCI request submited</desc>
+            nodeElementHint = nodeListHint[0]
+
+            #Check if we have a valid element node
+            if(nodeElementHint.nodeType != xml.dom.minidom.Node.ELEMENT_NODE):
+                log.error("Wrong Element Node for setting '%s'" % (settingName) )
+                return False
+
+            # Get Text Node for the setting
+            nodeTextHint = nodeElementHint.firstChild # return a Text Node object
+
+            ## Check if we have a valid Text node
+            if(nodeTextHint.nodeType != xml.dom.minidom.Node.TEXT_NODE):
+                log.error("Wrong Text Node for setting '%s'" % (settingName) )
+                return False
+
+            # Return value for the setting
+            returnedHint = nodeTextHint.data
+
+
+            # Check error hints are the same
+            if(returnedHint != errorHint):
+                log.error("Expected error hint '%s' does not match with returned hint '%s'" % (errorHint,returnedHint) )
+                return False
+            else:
+                log.info("Expected error hint '%s' match with returned hint '%s'" % (errorHint,returnedHint) )
+
+
+        return True
 
 
 
@@ -324,10 +515,20 @@ class Test_brci_string(object):
         lines = self.getChunks( self.getListValidCharactersString(), # return a string, ej: !"#$%&\'()*+,-.
                                 64) # max length for each line
 
+        # Initialize arguments
+        groupName = "device_info"
+        settingName = "product"
+        settingType = "setting"
+
         # Set and verify setting with each line
         for eachline in lines:
             assert_equal(   True, # Expected value
-                            self.verifySettingValue("device_info","product", eachline), # Returned value
+                            self.verifySettingValue( groupName,       # Group name
+                                                     settingName,     # Setting name
+                                                     settingType,     # Setting type
+                                                     eachline,        # New value
+                                                     cache = "false"  # Disable/Enable cache
+                                                     ), # Returned value
                             "Verification for characters '%s' was unsuccessful." % eachline)
 
 
@@ -335,8 +536,13 @@ class Test_brci_string(object):
         # Verify that Device is connected
         self.ensure_connected()
 
-        # Generate all valid characters in lise
+        # Generate all valid characters in a line
         listCharacters = self.getListValidCharactersString()
+
+        # Initialize arguments
+        groupName = "device_info"
+        settingName = "desc"
+        settingType = "setting"
 
         # String for the description
         newDescription = "%s" % listCharacters * 10 # 940 characters
@@ -347,7 +553,12 @@ class Test_brci_string(object):
 
             # Set and verify setting with each line
             assert_equal(   True, # Expected value
-                            self.verifySettingValue("device_info","desc", newDescription), # Returned value
+                            self.verifySettingValue( groupName,       # Group name
+                                                    settingName,      # Setting name
+                                                    settingType,      # Setting type
+                                                    newDescription,   # New value
+                                                    cache = "false"   # Disable/Enable cache
+                                                    ), # Returned value
                             "Verification of field description for characters '%s' was unsuccessful." % newDescription)
 
             # Generate a new character
@@ -355,3 +566,27 @@ class Test_brci_string(object):
 
             # Add a new character
             newDescription = "%s%s" % (newDescription,listCharacters[charIndex])
+
+
+
+    def test_read_only_debug_info_version(self):
+        # Verify that Device is connected
+        self.ensure_connected()
+
+        # Initialize arguments
+        newVersion = "0123456789"
+        groupName = "debug_info"
+        settingName = "version"
+        settingType = "state"
+
+        assert_equal(   True, # Expected value
+                        self.verifySettingError(groupName,       # Group name
+                                                settingName,     # Setting name
+                                                settingType,     # Setting type
+                                                newVersion,      # New value
+                                                cache = "false",  # Disable/Enable cache
+                                                errorID = "2021", # Expected Error ID
+                                                errorDesc = "Invalid BinaryRCI request submited", # Expected Error Description
+                                                errorHint = "Invalid set_setting/set_state unable to set field %s which is has access of read_only" % settingName  # Expected Error Hint
+                                                ), # Returned value
+                        "Verification for read_only type field '%s' was unsuccessful." % newVersion)
