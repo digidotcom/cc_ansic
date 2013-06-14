@@ -136,9 +136,12 @@ int application_step(connector_handle_t handle)
 
 error:
     APP_DEBUG("Data point sample error\n");
-    if (points != NULL)
-        app_free_data_points(points);
 
 done:
+    if ((result != 0) && (points != NULL))
+    {
+        app_free_data_points(points);
+        points = NULL;
+    }
     return result;
 }
