@@ -689,7 +689,7 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
     request_id.os_request = connector_request_id_os_reboot;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL);
     /* JIRA IC4C-119 */
-    //ASSERT(callback_status != connector_callback_unrecognized);
+    /* ASSERT(callback_status != connector_callback_unrecognized); */
     
     result = sm_map_callback_status_to_connector_status(callback_status);
 
