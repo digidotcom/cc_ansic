@@ -37,7 +37,7 @@
 #define CONNECTOR_WAIT_COUNT                           5
 #define CONNECTOR_VENDOR_ID                            0x00000000
 #define CONNECTOR_MSG_MAX_TRANSACTION                  1
-#define CONNECTOR_CONNECTION_TYPE                      connector_wan_connection_type
+#define CONNECTOR_CONNECTION_TYPE                      connector_connection_type_wan
 #define CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND    0
 #define CONNECTOR_WAN_PHONE_NUMBER_DIALED              "012345678"
 #define CONNECTOR_FIRMWARE_SUPPORT
