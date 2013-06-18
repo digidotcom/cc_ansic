@@ -245,7 +245,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                     result = connector_abort;
                     goto done;
                 default:
-                    ASSERT(connector_falase);
+                    ASSERT(connector_false);
             }
         }
         result = connector_pending;
