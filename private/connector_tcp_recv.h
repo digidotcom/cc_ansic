@@ -237,13 +237,15 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                 case connector_callback_busy:
                     result = (connector_ptr->edp_data.receive_packet.index <= receive_packet_length) ? connector_idle : connector_pending;
                     goto done;
+                case connector_callback_error:
+                    result = connector_unavailable;
+                    goto done;
                 case connector_callback_abort:
                     edp_set_close_status(connector_ptr, connector_close_status_abort);
-                    /* not break */
-                default:
                     result = connector_abort;
                     goto done;
-
+                default:
+                    ASSERT(connector_falase);
             }
         }
         result = connector_pending;

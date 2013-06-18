@@ -896,7 +896,7 @@ done:
         if (edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud)
         {
            /* set the close state and make it goes to close connection state */
-            edp_set_close_status(connector_ptr, connector_close_status_abort);
+            edp_set_close_status(connector_ptr, connector_close_status_device_error);
             edp_set_active_state(connector_ptr, connector_transport_close);
             result = connector_working;
         }
