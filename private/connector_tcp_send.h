@@ -318,13 +318,16 @@ static connector_status_t edp_tcp_send_process(connector_data_t * const connecto
                 result = connector_pending;
                 goto done;
 
+            case connector_callback_error:
+                edp_set_close_status(connector_ptr, connector_close_status_device_error);
+                edp_set_active_state(connector_ptr, connector_transport_close);
+                break;
             case connector_callback_abort:
                 edp_set_close_status(connector_ptr, connector_close_status_abort);
-                /* no break; */
-
-            default:
-
                 edp_set_active_state(connector_ptr, connector_transport_close);
+                break;
+            default:
+                ASSERT(connector_false);
                 break;
         }
     }
