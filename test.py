@@ -124,6 +124,7 @@ dvt_tests = {
     'sm_send_data'                : ('test_sm_send_data_udp.py',),
     'sm_device_request'           : ('test_sm_device_request_udp.py',),
     'sm_connect'                  : ('test_sm_connect_udp.py',),
+    'sm_connect_imei_wan'         : ('test_sm_connect_udp.py',),
     'stop_start_action'           : ('test_stop_start.py',
                                      'test_abort_ds.py',
                                      'test_abort_stop_cb.py',
@@ -466,7 +467,7 @@ class TestRunner(object):
                 config.replace_string(connector_config, s, r)
 
             # Setup method for generate Device ID
-            if test == 'imei_wan_type':
+            if test in ['imei_wan_type','sm_connect_imei_wan']:
                 method = "imei"
             elif test == 'esn_wan_type':
                 method = "esn"
