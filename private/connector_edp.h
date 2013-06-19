@@ -352,7 +352,6 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             result = connector_unavailable;
             goto done;
 
-            /* no break to return error */
         case connector_transport_terminate:
             goto done;
 
@@ -386,14 +385,13 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
         case connector_transport_close:
             if (edp_get_initiate_state(connector_ptr) == connector_transport_open)
             {
-
+                break;
             }
             /* no break  to return error */
         case connector_transport_redirect:
             result = connector_unavailable;
             goto done;
 
-            /* no break to return error */
         case connector_transport_terminate:
             goto done;
 
@@ -410,10 +408,17 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             }
             break;
         }
-        if (request == connector_initiate_data_point_single)
-            result = dp_initiate_data_point_single(request_data);
-        else if (request ==	connector_initiate_data_point_binary)
-            result = dp_initiate_data_point_binary(request_data);
+        switch (request)
+        {
+            case connector_initiate_data_point_single:
+                result = dp_initiate_data_point_single(request_data);
+                break;
+            case connector_initiate_data_point_binary:
+                result = dp_initiate_data_point_binary(request_data);
+                break;
+            default:
+                break;
+        }
         break;
 #endif /* CONNECTOR_DATA_POINTS */
 

@@ -321,15 +321,16 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                     }
 
                     #if (defined CONNECTOR_DATA_POINTS)
-                    if (request == connector_initiate_data_point_single)
+                    switch (request)
                     {
-                        result = dp_initiate_data_point_single(request_data);
-                        goto error;
-                    }
-                    else if (request == connector_initiate_data_point_binary)
-                    {
-                        result = dp_initiate_data_point_binary(request_data);
-                        goto error;
+                        case connector_initiate_data_point_single:
+                            result = dp_initiate_data_point_single(request_data);
+                            goto error;
+                        case connector_initiate_data_point_binary:
+                            result = dp_initiate_data_point_binary(request_data);
+                            goto error;
+                        default:
+                            break;
                     }
                     #endif
                     
