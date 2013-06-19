@@ -565,13 +565,14 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
 {
     uint8_t * data_ptr = payload;
     connector_status_t status = connector_working;
-    size_t target_length =  0;
 
     if (session->error == connector_sm_error_complete)
         goto done;
 
     if (session->bytes_processed == 0)
     {
+    	size_t target_length =  0;
+    	
         if (session->command == connector_sm_cmd_data)
             target_length = 0x1F & *data_ptr;
 
@@ -581,30 +582,34 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
 
         /* Increase target_length: 
          * It's required for connector_sm_cmd_data to point correctly to actual data,
-         * and will be used for connector_sm_cmd_no_path_data to mark that sm_pass_target_info 
+         * and will be used for connector_sm_cmd_no_path_data to signal that sm_pass_target_info 
          * has already been called */
         target_length++;
 
+        /* Set pre-processed bytes for segment 0 */
         session->bytes_processed = target_length;
+        
         /* Return pending so bytes_processed and session->segments.processed are not incremented */
         status = connector_pending;
         goto done;
     }
     
-    if ((session->segments.processed == 0) && (session->command == connector_sm_cmd_data))
-        target_length = session->bytes_processed;
-
-    data_ptr += target_length;
-
     {
         connector_callback_status_t callback_status;
         connector_request_id_t request_id;
         connector_data_service_receive_data_t cb_data;
+        size_t bytes_pre_processed =  0;
+        
+        /* Compute pre-processed bytes for segment 0 */
+        if ((session->segments.processed == 0) && (session->command == connector_sm_cmd_data))
+        	bytes_pre_processed = session->bytes_processed;
 
+        data_ptr += bytes_pre_processed;
+        
         cb_data.transport = session->transport;
         cb_data.user_context = session->user.context;
         cb_data.buffer = data_ptr;
-        cb_data.bytes_used = bytes - target_length;
+        cb_data.bytes_used = bytes - bytes_pre_processed;
         cb_data.more_data = SmIsNotLastData(session->flags);
         request_id.data_service_request = connector_request_id_data_service_receive_data;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
@@ -615,14 +620,23 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
     }
 
 error:
-    if (status == connector_device_error)
+	switch (status)
     {
-        session->error = connector_sm_error_complete;
-        session->bytes_processed = bytes;
-        status = connector_working;
+        case connector_device_error:
+        	session->error = connector_sm_error_complete;
+        	session->bytes_processed = bytes;
+        	status = connector_working;
+            break;
+
+        case connector_working:
+        	/* Restore pre-processed bytes for segment 0 */
+        	if (session->segments.processed == 0)
+        	    session->bytes_processed = 0;
+            break;
+
+        default:
+            break;
     }
-    else if ((status == connector_working) && (session->segments.processed == 0))
-        session->bytes_processed -= target_length;
 
 done:
     return status;
