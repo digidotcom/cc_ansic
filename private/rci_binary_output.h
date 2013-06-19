@@ -682,6 +682,14 @@ static void rci_generate_output(rci_t * const rci)
             }
         }
     }
+    else if ((rci_buffer_used(&rci->buffer.output) > 0) && (rci->status == rci_status_busy))
+    {
+        /* We are here since we have no space left for more output data and we have output data waiting to be sent.
+           So set up the state to send out the output data and come back to rci */
+
+        rci->status = rci_status_flush_output;
+    }
+
 
 #if defined RCI_DEBUG
     {
