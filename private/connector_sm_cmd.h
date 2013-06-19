@@ -579,8 +579,11 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         if (status != connector_working)
             goto error;
 
-        if (session->command == connector_sm_cmd_data)
-            target_length++;
+        /* Increase target_length: 
+         * It's required for connector_sm_cmd_data to point correctly to actual data,
+         * and will be used for connector_sm_cmd_no_path_data to mark that sm_pass_target_info 
+         * has already been called */
+        target_length++;
 
         session->bytes_processed = target_length;
         /* Return pending so bytes_processed and session->segments.processed are not incremented */
