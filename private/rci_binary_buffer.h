@@ -51,7 +51,7 @@ static uint8_t rci_buffer_read(rci_buffer_t const * const buffer)
 
 static connector_bool_t ptr_in_range(void const * const pointer, void const * const start, void const * const end)
 {
-    return connector_bool((pointer >= start) && (pointer < end));
+    return connector_bool((pointer >= start) && (pointer <= end));
 }
 
 static connector_bool_t ptr_in_buffer(uint8_t const * const pointer, rci_buffer_t const * const buffer)
