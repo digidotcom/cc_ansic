@@ -212,7 +212,7 @@ static connector_callback_status_t sm_inform_cli_complete(connector_data_t * con
     cb_data.status = (session->error == connector_sm_error_cancel) ? connector_sm_cli_status_cancel : connector_sm_cli_status_error;
     request_id.sm_request = connector_request_id_sm_cli_status;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
-    if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+    if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_error;
 
     return callback_status;
@@ -255,7 +255,7 @@ static connector_callback_status_t sm_inform_ping_complete(connector_data_t * co
 
         request_id.sm_request = connector_request_id_sm_ping_response;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
-        if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-142 */
+        if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_continue;
     }
 
@@ -457,7 +457,7 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
 
         request_id.sm_request = connector_request_id_sm_cli_request;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request);
-        if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+        if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
         result = sm_map_callback_status_to_connector_status(callback_status);
         if (callback_status == connector_callback_continue)
@@ -505,7 +505,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
 
         request_id.sm_request = connector_request_id_sm_cli_response;
         status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_response);
-        if (status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+        if (status == connector_callback_unrecognized)
             status = connector_callback_error;
         ASSERT(cli_response.bytes_available >= cli_response.bytes_used);
         result = sm_map_callback_status_to_connector_status(status);
@@ -553,7 +553,7 @@ static connector_status_t sm_pass_target_info(connector_data_t * const connector
 
     request_id.data_service_request = connector_request_id_data_service_receive_target;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
-    if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+    if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_error; 
     result = sm_map_callback_status_to_connector_status(callback_status);
     session->user.context = cb_data.user_context;
@@ -613,7 +613,7 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         cb_data.more_data = SmIsNotLastData(session->flags);
         request_id.data_service_request = connector_request_id_data_service_receive_data;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
-        if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+        if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
         status = sm_map_callback_status_to_connector_status(callback_status);
         session->user.context = cb_data.user_context;
@@ -739,7 +739,7 @@ static connector_status_t sm_process_ping_request(connector_data_t * const conne
 
     request_id.sm_request = connector_request_id_sm_ping_request;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
-    if (callback_status == connector_callback_unrecognized)		/* JIRA IC4C-119 */
+    if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_continue;
     status = sm_map_callback_status_to_connector_status(callback_status);
 
