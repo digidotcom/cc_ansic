@@ -32,6 +32,54 @@ ENHANCEMENTS
 
 BUG FIXES
 
+    v2.0.1
+
+        Removed rand_r() which is not C89 compliant.  [IC4C-109]
+
+        connector_initiate_action() connector_initiate_data_point_
+        binary request over connector_transport_tcp writes incorrect 
+        data to Device Cloud.  [IC4C-110]
+
+        Sample project "data_point" in step mode, hangs and throws a 
+        core dump.  [IC4C-111]
+
+        SM (/UDP) does not work with IMEI WAN Device IDs.  [IC4C-115]
+
+        Datapoins not working when CONNECTOR_NO_MALLOC defined.  
+        [IC4C-116]
+
+        Data point native types for int and long are ambiguous.
+        [IC4C-118]
+
+        The connector_callback_unrecognized user return value in SM 
+        Cloud request callback is not handled correctly.  [IC4C-119]
+
+        Bad termination of hint on DP4D error.  [IC4C-139]
+
+        Function tcp_receive_packet() does not handle connector_
+        callback_error case correctly.  [IC4C-140] [IC4C-159]
+
+        Function edp_tcp_send_process() defaults connector_callback_
+        error case for tcp_send_buffer().  [IC4C-140] [IC4C-160]
+
+        Initiate action calls doesn't check if transport is running.
+        [IC4C-141]
+
+        Bad handling of ping_response callback returning unrecognized.
+        [IC4C-142]
+
+        Data Put from platform over SM/UDP continuously sends target 
+        callback.  [IC4C-149]
+
+        Callback returning error is not correctly handled when 
+        receiving data from the platform.  [IC4C-151]
+
+        Cloud Connector gives a malformed bRCI command, recovering a 
+        big string.  [IC4C-157]
+
+        Cloud Connector gives a malformed bRCI command, setting a 
+        big string.  [IC4C-163]          
+
     v2.0.0
 
         Corrected ARM misalignment warnings, which cause compilation 
