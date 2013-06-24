@@ -79,6 +79,8 @@ class SmUdpMultipartDvtTestCase(ic_testcase.UDPTestCase):
 
         self.log.info("Sending SM UDP command \"%s\" to server for device id  %s." % (test_name, self.device_id))
 
+        self.log.info("Sending SCI Request:\n%s\n" % my_sm_udp_request)
+
         # Send device request
         sm_udp_response = self.session.post('http://%s/ws/sci' % self.hostname, data=my_sm_udp_request).content
 
@@ -94,7 +96,7 @@ class SmUdpMultipartDvtTestCase(ic_testcase.UDPTestCase):
         expected_data = f.read(size_to_read)
         f.close()
 
-        self.assertEqual(expected_data, received_data, "Received data does not match what is expected")
+        self.assertEqual(expected_data, received_data, "Received data does not match what is expected:\n Expected Data:%s\nReceived Data:%s\n" % (repr(expected_data),repr(received_data)))
 
 if __name__ == '__main__':
     unittest.main() 

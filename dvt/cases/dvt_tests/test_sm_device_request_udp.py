@@ -63,6 +63,8 @@ class DeviceRequestUdpTestCase(ic_testcase.UDPTestCase):
 
         self.log.info("Sending SM UDP command \"%s\" to server for device id  %s." % (test_name, self.device_id))
 
+        self.log.info("Sending SCI Request:\n%s\n" % my_sm_udp_request)
+
         # Send device request
         sm_udp_response = self.session.post('http://%s/ws/sci' % self.hostname, data=my_sm_udp_request).content
 
