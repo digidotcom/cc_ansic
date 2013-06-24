@@ -31,6 +31,12 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if defined (CONNECTOR_RCI_SERVICE)
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
 #endif
+#if defined (CONNECTOR_FILE_SYSTEM)
+connector_callback_status_t app_file_system_handler(connector_request_id_file_system_t const request, void * const data);
+#endif
+#if defined (CONNECTOR_FIRMWARE_SERVICE)
+connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request_id, void * const data);
+#endif
 int application_run(connector_handle_t handle);
 
 #endif /* _PLATFORM_H */
