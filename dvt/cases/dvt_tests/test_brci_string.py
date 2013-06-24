@@ -600,7 +600,7 @@ class Test_brci_string(object):
 
 
 
-    def test_bigger_string_than_buffer_device_info_description(self):
+    def test_xbigger_string_than_buffer_device_info_description(self):
         ''' Verify if setting a string bigger than reserved buffer, not throws memory errors '''
 
         # Verify that Device is connected
