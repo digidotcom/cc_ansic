@@ -34,7 +34,9 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
 #include "connector_global_config.h"
 
 static connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context);
+#if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
 static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
+#endif
 
 #if (defined CONNECTOR_DATA_POINTS)
 #include "connector_data_point.h"
@@ -59,6 +61,7 @@ static char const connector_signature[] = CONNECTOR_SW_VERSION;
 static uint8_t connector_device_id[DEVICE_ID_LENGTH];
 static connector_bool_t connector_got_device_id = connector_false;
 
+#if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
 static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_connect_type_t * const config_connect)
@@ -106,6 +109,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
     }
     return result;
 }
+#endif
 
 static connector_status_t get_wan_device_id(connector_data_t * const connector_ptr,
                                             uint8_t * const device_id,
