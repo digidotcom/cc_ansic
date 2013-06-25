@@ -499,6 +499,8 @@ enum fw_download_response {
     /* Parse firmware download request. Then, call the callback
      * with these values and send download request response.
      */
+    download_request.code_size = message_load_be32(fw_download_request, code_size);
+
     string_id_length = (size_t)(length - record_bytes(fw_download_request));
 
     {

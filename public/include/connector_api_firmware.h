@@ -151,6 +151,8 @@ typedef struct {
 
     char CONST * filename;              /**< Pointer to filename of the image to be downloaded */
 
+    uint32_t code_size;                 /**< size of the code that is ready to be sent to the target */
+
     connector_firmware_status_t status; /**< Callback writes error status if error is encountered */
 
 } connector_firmware_download_start_t;

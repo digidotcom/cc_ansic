@@ -193,6 +193,7 @@
  * Cloud Connector parses the information in the firmware download request and passes the information to the callback:
  *  -# A target number which target the firmware is intended for.
  *  -# The name of the file to be sent.
+ *  -# The size of the code that is ready to be sent to the target. 
  *
  * @htmlonly
  * <table class="apitable">
@@ -211,6 +212,7 @@
  * <td>Pointer to @endhtmlonly connector_firmware_download_start_t @htmlonly
  *     <dl><dt>target_number</dt><dd>Contains the target number which target the firmware is intended for.</dd>
  *         <dt>filename</dt><dd>Contain a pointer to file name to be downloaded.</dd>
+ *         <dt>code_size</dt><dd>Size of the code that is ready to be sent to the target.</dd>
  *         <dt>status</dt><dd>Callback writes  @endhtmlonly @ref connector_firmware_status_t @htmlonly status when error is encountered</dd>
  *     </dl>
  * </td>
@@ -249,6 +251,7 @@
  *
  *          APP_DEBUG("target = %d\n",         download_info->target_number);
  *          APP_DEBUG("filename = %s\n",       download_info->filename);
+ *          APP_DEBUG("code size = %d\n",      download_info->code_size);
  *          // initialize & prepare for firmware update
  *          total_image_size = 0;
  *          firmware_download_started = 1;

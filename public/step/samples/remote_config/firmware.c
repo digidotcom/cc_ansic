@@ -69,6 +69,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
 
     APP_DEBUG("target = %d\n",         download_info->target_number);
     APP_DEBUG("filename = %s\n",       download_info->filename);
+    APP_DEBUG("code size = %d\n",      download_info->code_size);
 
     total_image_size = 0;
     firmware_download_started = 1;
