@@ -139,7 +139,8 @@ typedef struct
         connector_data_service_status_complete,      /**< response is not requested and session is completed successfully */
         connector_data_service_status_cancel,        /**< session is cancelled by the user */
         connector_data_service_status_timeout,       /**< session timed out */
-        connector_data_service_status_session_error  /**< error from lower communication layer  */
+        connector_data_service_status_session_error, /**< error from lower communication layer  */
+        connector_data_service_status_COUNT          /**< Number of elements in this enumeration */
     } CONST status;       /**< reason for end of session */
 
     connector_session_error_t CONST session_error;   /**< lower communication layer error code */
@@ -168,7 +169,8 @@ typedef struct
         connector_data_service_send_response_success,       /**< send data success */
         connector_data_service_send_response_bad_request,   /**< at least some portion of the request is not valid */
         connector_data_service_send_response_unavailable,   /**< service not available, may retry later */
-        connector_data_service_send_response_cloud_error    /**< Device Cloud encountered error while handling the request */
+        connector_data_service_send_response_cloud_error,   /**< Device Cloud encountered error while handling the request */
+        connector_data_service_send_response_COUNT          /**< Number in elements of this enumeration */
     } CONST response;     /**< Device Cloud response code for send data */
 
     char const * CONST hint;    /**< error hint returned from Device Cloud, NULL if success or hint is not provided */
