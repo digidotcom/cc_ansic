@@ -157,6 +157,19 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
 
     /* DVT Test Case: test_download_validation */
     case dvt_case_fw_test_file:
+        /* Check file name is not sending*/
+        if ( strcmp(download_info->filename,"") != 0 )
+        {
+            APP_DEBUG("firmware_download_request ERROR: checking file name of firmware: expected <empty>, returned %s \n", download_info->filename);
+            download_info->status = connector_firmware_status_user_abort;
+            goto error;
+        }
+        else
+        {
+            APP_DEBUG("firmware_download_request INFO: file name for firmware matches: expected '', returned '%s' \n", download_info->filename);
+        }
+
+        /* Write the file*/
         ASSERT(test_file == NULL);
         if (test_file == NULL)
         {
