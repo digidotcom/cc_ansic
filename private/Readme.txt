@@ -45,7 +45,7 @@ BUG FIXES
 
         SM (/UDP) does not work with IMEI WAN Device IDs.  [IC4C-115]
 
-        Datapoins not working when CONNECTOR_NO_MALLOC defined.  
+        Datapoints not working when CONNECTOR_NO_MALLOC defined.  
         [IC4C-116]
 
         Data point native types for int and long are ambiguous.
@@ -79,6 +79,12 @@ BUG FIXES
 
         Cloud Connector gives a malformed bRCI command, setting a 
         big string.  [IC4C-163]          
+
+        Firmware download API no longer provides program size. 
+        [IC4C-168]
+
+        Adjusted maximum incoming RCI buffer to CONNECTOR_RCI_
+        MAXIMUM_CONTENT_LENGTH define. [IC4C-176] [IC4C-164]
 
     v2.0.0
 
