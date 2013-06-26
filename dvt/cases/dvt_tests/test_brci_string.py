@@ -549,9 +549,11 @@ class Test_brci_string(object):
         settingType = "setting"
 
         # String for the description
-        newDescription = "%s" % listCharacters * 10 # 940 characters
+        newDescription = "%s" % listCharacters * 9 # 846 characters
 
-        for index in range(0,512):
+        # Check string to maximum size 1400
+        for index in range(0,555):
+
             log.info("\n\n")
             log.info("Set and Verify description with a string lenght of %s characters:\n'%s'\n\n" % (len(newDescription), newDescription) )
 
@@ -571,6 +573,25 @@ class Test_brci_string(object):
             # Add a new character
             newDescription = "%s%s" % (newDescription,listCharacters[charIndex])
 
+
+        # Check string bigger than maximum size fails (1401)
+        log.info("\n\n")
+        log.info("Set and Verify description with a string lenght of %s characters bigger than reserved buffer of 1400:\n'%s'\n\n" % (len(newDescription), newDescription) )
+
+        assert_equal(   True, # Expected value
+                self.verifySettingError(groupName,       # Group name
+                                        settingName,     # Setting name
+                                        settingType,     # Setting type
+                                        newDescription,      # New value
+                                        cache = "false",  # Disable/Enable cache
+                                        errorID = "2", # Expected Error ID
+                                        errorDesc = "Bad configuration", # Expected Error Description
+                                        errorHint = "Maximum content size exceeded" # Expected Error Hint
+                                        ), # Returned value
+                "Verification of field description for characters '%s' was unsuccessful." % newDescription)
+
+        # Verify that Device is connected
+        self.ensure_connected()
 
 
     def test_read_only_debug_info_version(self):
