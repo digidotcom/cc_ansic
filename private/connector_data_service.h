@@ -279,8 +279,8 @@ static connector_status_t process_data_service_device_request(connector_data_t *
                                 break;
 		    
                             default:
-                                if (MsgIsLastData(service_data->flags)
-                                    data_service->request_type = connector_request_id_data_service_receive_reply_data
+                                if (MsgIsLastData(service_data->flags))
+                                    data_service->request_type = connector_request_id_data_service_receive_reply_data;
                                 break;
                         }
                         break;
