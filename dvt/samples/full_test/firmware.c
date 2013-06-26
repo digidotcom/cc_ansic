@@ -20,6 +20,8 @@
 
 #define DVT_FW_UNKNOWN_FILE_SIZE   ((uint32_t)-1)
 
+#define DVT_FW_FILE_SIZE_EXPECTED       21682
+
 static dvt_data_t dvt_data_list[dvt_case_last] =
 {
     {dvt_case_fw_download_denied,       {0x15,00,00,00}, dvt_state_init, "Download Denied",  ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
@@ -90,6 +92,22 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
 
     APP_DEBUG("target = %d\n", download_info->target_number);
     APP_DEBUG("filename = %s\n", download_info->filename);
+    APP_DEBUG("code size = %d\n",      download_info->code_size);
+
+
+    /* Check if pattern.txt code_size match with the expected size */
+    if ( download_info->code_size != DVT_FW_FILE_SIZE_EXPECTED )
+    {
+        APP_DEBUG("firmware_download_request ERROR: checking code size of firmware: expected %d bytes , returned %d bytes\n", DVT_FW_FILE_SIZE_EXPECTED, download_info->code_size);
+        download_info->status = connector_firmware_status_user_abort;
+        goto error;
+    }
+    else
+    {
+        APP_DEBUG("firmware_download_request INFO: code size for firmware matched: expected %d bytes , returned %d bytes\n", DVT_FW_FILE_SIZE_EXPECTED, download_info->code_size);
+    }
+
+
     if (download_info->target_number > dvt_case_last)
     {
         APP_DEBUG("firmware_download_request ERROR: In progress target : %d\n", dvt_current_ptr->target);
@@ -137,6 +155,7 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
         download_info->status = connector_firmware_status_encountered_error;
         break;
 
+    /* DVT Test Case: test_download_validation */
     case dvt_case_fw_test_file:
         ASSERT(test_file == NULL);
         if (test_file == NULL)
