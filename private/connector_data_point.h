@@ -769,6 +769,8 @@ static connector_callback_status_t dp_handle_response_callback(connector_data_t 
         case connector_data_service_send_response_cloud_error:
             user_data.response = connector_data_point_response_cloud_error;
             break;
+        default:
+        	ASSERT(connector_false);
     }
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
