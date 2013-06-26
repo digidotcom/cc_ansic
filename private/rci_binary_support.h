@@ -259,7 +259,7 @@ typedef struct
         rci_input_state_t state;
         unsigned int flag;
         uint8_t * destination;
-        uint8_t storage[ROUND_UP(CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH + sizeof nul + sizeof(int), sizeof (int))];
+        uint8_t storage[CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH + sizeof nul + sizeof(int)];
     } input;
 
     struct {
