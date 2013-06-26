@@ -964,7 +964,7 @@ static void rci_parse_input(rci_t * const rci)
             case rci_input_state_done:
                 break;
         }
-#if 0
+
         {
             size_t const storage_bytes = sizeof rci->input.storage;
             uint8_t const * const storage_end = rci->input.storage + storage_bytes;
@@ -976,7 +976,6 @@ static void rci_parse_input(rci_t * const rci)
                 goto done;
             }
         }
-#endif
 
         rci_buffer_advance(input, 1);
     }
