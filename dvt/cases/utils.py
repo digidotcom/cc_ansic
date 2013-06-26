@@ -283,7 +283,7 @@ def clean_slate(rest_session, file_location):
        log.info('File %s was not deleted' % file_location)
        log.info('*********************************')
 
-def update_firmware(session, hostname, device, input_firmware, target):
+def update_firmware(session, hostname, device, input_firmware, target, filename=None):
 
     request = impl.createDocument(None, "sci_request", None)
     sci_element = request.documentElement
@@ -308,6 +308,9 @@ def update_firmware(session, hostname, device, input_firmware, target):
 
     if target:
         update_firmware_element.setAttribute("firmware_target", target)
+
+    if ( filename is not None ):
+        update_firmware_element.setAttribute("filename", filename)
 
     return session.post('https://%s/ws/sci' % hostname,
         data=request.toprettyxml(), timeout=120).content

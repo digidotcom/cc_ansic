@@ -36,12 +36,15 @@ static dvt_data_t dvt_data_list[dvt_case_last] =
     {dvt_case_fw_invalid_offset,        {0x20,00,00,00}, dvt_state_init, "Invalid Offset",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
     {dvt_case_fw_invalid_data,          {0x21,00,00,00}, dvt_state_init, "Invalid Data",     ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
     {dvt_case_fw_hardware_error,        {0x22,00,00,00}, dvt_state_init, "Hardware Error",   ".*\\.[Ee][Xx][Nn]", "firmware.bin", DVT_FW_UNKNOWN_FILE_SIZE},
-    {dvt_case_fw_test_file,             {0x01,00,00,00}, dvt_state_init, "No Error",   ".*\\.[Tt][Xx][Tt]", "pattern.txt", DVT_FW_UNKNOWN_FILE_SIZE}
+    {dvt_case_fw_test_file,             {0x01,00,00,00}, dvt_state_init, "No Error",   ".*\\.[Tt][Xx][Tt]", "pattern.txt", DVT_FW_UNKNOWN_FILE_SIZE},
+    {dvt_case_fw_test_file_filename,    {0x02,00,00,00}, dvt_state_init, "No Error",   ".*\\.[Tt][Xx][Tt]", "pattern_downloaded.txt", DVT_FW_UNKNOWN_FILE_SIZE}
 };
 
 static dvt_data_t * dvt_current_ptr = NULL;
 
 FILE * test_file = NULL;
+
+FILE * test_file_filename = NULL;
 
 static connector_callback_status_t app_firmware_target_count(connector_firmware_count_t * const target_info)
 {
@@ -178,6 +181,30 @@ static connector_callback_status_t app_firmware_download_request(connector_firmw
             dvt_current_ptr->state = dvt_state_fw_download_progress;
             break;
         }
+
+    /* DVT Test Case: test_download_validation_filename */
+    case dvt_case_fw_test_file_filename:
+        /* Check file name is sending*/
+        if ( strcmp(download_info->filename,dvt_current_ptr->file_name) != 0 )
+        {
+            APP_DEBUG("firmware_download_request ERROR: checking file name of firmware: expected %s, returned %s \n", dvt_current_ptr->file_name, download_info->filename);
+            download_info->status = connector_firmware_status_user_abort;
+            goto error;
+        }
+        else
+        {
+            APP_DEBUG("firmware_download_request INFO: file name for firmware matches: expected %s, returned '%s' \n", dvt_current_ptr->file_name, download_info->filename);
+        }
+
+        /* Write the file*/
+        ASSERT(test_file_filename == NULL);
+        if (test_file == NULL)
+        {
+            test_file_filename = fopen(download_info->filename,"w+");
+            ASSERT(test_file_filename != NULL);
+            dvt_current_ptr->state = dvt_state_fw_download_progress;
+            break;
+        }
     default:
         dvt_current_ptr->state = dvt_state_fw_download_progress;
         download_info->status = connector_firmware_status_success;
@@ -264,11 +291,50 @@ static connector_callback_status_t app_firmware_image_data(connector_firmware_do
         APP_DEBUG("target = %d, offset = 0x%04X, length = %" PRIsize " total length = %" PRIsize "\n", image_data->target_number, image_data->image.offset,
                                             image_data->image.bytes_used, dvt_current_ptr->file_size);
         /* no break; */
-    default:
         image_data->status = connector_firmware_status_success;
+        goto done;
+
+    case dvt_case_fw_test_file_filename:
+        if (test_file_filename == NULL) goto error;
+
+        if (image_data->image.bytes_used > 0)
+        {
+            size_t bytes_avail = image_data->image.bytes_used;
+            size_t bytes_written;
+            uint32_t offset = image_data->image.offset;
+            uint8_t * ptr = (uint8_t *)image_data->image.data;
+
+
+
+            while (bytes_avail > 0)
+            {
+
+                if (fseek(test_file_filename, offset, SEEK_SET) < 0)
+                {
+                    APP_DEBUG("fseek return error %d\n", errno);
+                }
+                bytes_written = fwrite(ptr, bytes_avail, 1, test_file_filename);
+                bytes_avail -= bytes_written;
+                ptr += bytes_written;
+                offset += bytes_written;
+            }
+        }
+        dvt_current_ptr->file_size += image_data->image.bytes_used;
+        APP_DEBUG("target = %d, offset = 0x%04X, length = %" PRIsize " total length = %" PRIsize "\n", image_data->target_number, image_data->image.offset,
+                                            image_data->image.bytes_used, dvt_current_ptr->file_size);
+        /* no break; */
+        image_data->status = connector_firmware_status_success;
+        goto done;
+
+    default:
+        /*image_data->status = connector_firmware_status_success;*/
         /* APP_DEBUG("target = %d, offset = 0x%04X, length = %" PRIsize " total length = %" PRIsize "\n", image_data->target_number, image_data->image.offset,
                                                                                      image_data->image.bytes_used, dvt_current_ptr->file_size);
          */
+        /*goto done;*/
+
+        /* should not be here */
+        ASSERT(connector_false);
         goto done;
     }
 
