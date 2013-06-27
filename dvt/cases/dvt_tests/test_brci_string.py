@@ -574,7 +574,10 @@ class Test_brci_string(object):
             newDescription = "%s%s" % (newDescription,listCharacters[charIndex])
 
 
-        # Check string bigger than maximum size fails (1401)
+        # Check string bigger than maximum size fails (1401) and the value is not modified
+        # reverse string to verify with a different string
+        newDescription = newDescription[::-1]
+
         log.info("\n\n")
         log.info("Set and Verify description with a string lenght of %s characters bigger than reserved buffer of 1400:\n'%s'\n\n" % (len(newDescription), newDescription) )
 
