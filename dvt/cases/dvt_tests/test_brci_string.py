@@ -533,6 +533,8 @@ class Test_brci_string(object):
                                                      ), # Returned value
                             "Verification for characters '%s' was unsuccessful." % eachline)
 
+        # Verify that Device is connected
+        self.ensure_connected()
 
     def test_increasing_string_size_device_info_description(self):
         ''' Increase a string until the limit of the reserved buffer '''
@@ -621,6 +623,8 @@ class Test_brci_string(object):
                                                 ), # Returned value
                         "Verification for read_only type field '%s' was unsuccessful." % newVersion)
 
+        # Verify that Device is connected
+        self.ensure_connected()
 
 
 
@@ -655,3 +659,7 @@ class Test_brci_string(object):
                                         errorHint = "Maximum content size exceeded" # Expected Error Hint
                                         ), # Returned value
                 "Verification of field description for characters '%s' was unsuccessful." % newDescription)
+
+
+        # Verify that Device is connected
+        self.ensure_connected()
