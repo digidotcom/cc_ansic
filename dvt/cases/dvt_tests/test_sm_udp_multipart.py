@@ -84,6 +84,8 @@ class SmUdpMultipartDvtTestCase(ic_testcase.UDPTestCase):
         # Send device request
         sm_udp_response = self.session.post('http://%s/ws/sci' % self.hostname, data=my_sm_udp_request).content
 
+        self.log.info("Received SCI Response:\n%s\n" % sm_udp_response)
+
         # Parse request response 
         dom = xml.dom.minidom.parseString(sm_udp_response)
         sm_response = dom.getElementsByTagName("sm_udp")
