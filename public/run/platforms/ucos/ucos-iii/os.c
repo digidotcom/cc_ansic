@@ -61,13 +61,18 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 static connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
 {
-    connector_callback_status_t status = connector_callback_abort;
+    connector_callback_status_t status = connector_callback_continue;
     
     *ptr = ecc_malloc(size); 
 
-    if (*ptr != NULL)
-        status = connector_callback_continue;
-
+    if (*ptr == NULL)
+    {
+#ifndef CONNECTOR_NO_MALLOC
+        /* uCOS is failing when calling malloc with more than 2KB */
+        APP_DEBUG("malloc problems: please, define CONNECTOR_NO_MALLOC in connector_config.h.\r\n");
+#endif
+        status = connector_callback_abort;
+    }
     return status;
 }
 
