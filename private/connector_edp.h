@@ -193,7 +193,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         case connector_transport_open:
             result = edp_tcp_open_process(connector_ptr);
             if (result == connector_open_error)
-                edp_set_initiate_state(connector_ptr, connector_idle);
+                edp_set_initiate_state(connector_ptr, connector_transport_idle);
             break;
 
         case connector_transport_send:
