@@ -35,7 +35,7 @@ class RedirectTestCase(ic_testcase.TestCase):
         if RedirectTestCase.monitor is None:
             RedirectTestCase.monitor = DeviceConnectionMonitor(self.push_client, self.dev_id)
             RedirectTestCase.monitor.start()
-    
+
     @classmethod
     def tearDownClass(cls):
         if RedirectTestCase.monitor is not None:
@@ -43,7 +43,7 @@ class RedirectTestCase(ic_testcase.TestCase):
         ic_testcase.TestCase.tearDownClass()
 
     def test_redirect(self):
-    
+
         """ Sends redirect request to given device and verifies that it
         disconnects and reconnects
         """  
@@ -58,14 +58,13 @@ class RedirectTestCase(ic_testcase.TestCase):
         while count > 0:        
             # Send SCI redirect request (using admin credentials).
             self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
-            response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
+            response = self.admin_session.post('https://%s/ws/sci' % (self.hostname),
                         data=redirect_request)
-
-            self.assertEqual(200, response.status_code)
-
 
             # Print response to request.
             self.log.info("Received SCI Response: \n%s\n" % response.content)
+
+            self.assertEqual(200, response.status_code)
 
             redirected = response.content.find("redirected")
             if redirected == -1:
@@ -75,19 +74,19 @@ class RedirectTestCase(ic_testcase.TestCase):
                     RedirectTestCase.monitor.wait_for_connect(60)
             else:
                 count = 0 
-        
+
         self.log.info("Waiting for Device Cloud to disconnect device.")
         RedirectTestCase.monitor.wait_for_disconnect(30)
         self.log.info("Device disconnected.")
-        
+
         self.log.info("Waiting for Device to reconnect.")
         RedirectTestCase.monitor.wait_for_connect(60)
         self.log.info("Device connected.") 
 
     def test_redirect_multi_urls_first_nonidigi(self):
-    
-        """ Sends redirect request to given device starting with a nonidigi 
-        host and verifies that it disconnects and reconnects to an idigi 
+
+        """ Sends redirect request to given device starting with a nonidigi
+        host and verifies that it disconnects and reconnects to an idigi
         server.
         """
         self.log.info("***** Beginnning test_redirect_multi_urls_first_nonidigi *****")
@@ -98,18 +97,18 @@ class RedirectTestCase(ic_testcase.TestCase):
         destination = DESTINATION % nonconnector_host + DESTINATION % self.hostname
         redirect_request = REDIRECT_REQUEST % \
             (self.device_id, destination)
-        
+
         count = 5
-        while count > 0:        
+        while count > 0:
             # Send SCI redirect request (using admin credentials).
             self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
-            response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
+            response = self.admin_session.post('https://%s/ws/sci' % (self.hostname),
                         data=redirect_request)
-        
-            self.assertEqual(200, response.status_code)
 
             # Print response to request.
             self.log.info("Received SCI Response: \n%s\n" % response.content)
+
+            self.assertEqual(200, response.status_code)
 
             redirected = response.content.find("redirected")
             if redirected == -1:
@@ -123,15 +122,15 @@ class RedirectTestCase(ic_testcase.TestCase):
         self.log.info("Waiting for Device Cloud to disconnect device.")
         RedirectTestCase.monitor.wait_for_disconnect(30)
         self.log.info("Device disconnected.")
-        
+
         self.log.info("Waiting for Device to reconnect.")
         RedirectTestCase.monitor.wait_for_connect(60)
-        self.log.info("Device connected.") 
-        
+        self.log.info("Device connected.")
+
     def test_redirect_singleurl_nondigi(self):
-        
+
         """ Sends redirect reqeust to given device starting with a noniDigi
-        host and verifies that it disconnets and reconnects to an iDigi 
+        host and verifies that it disconnets and reconnects to an iDigi
         server.
         """
         self.log.info("***** Beginnning test_redirect_singleurl_nondigi *****")
@@ -140,18 +139,18 @@ class RedirectTestCase(ic_testcase.TestCase):
         # Create the request to redirect the device to a nonidigi server.
         redirect_request = REDIRECT_REQUEST % \
             (self.device_id, DESTINATION % nonconnector_host)
-            
+
         count = 5
-        while count > 0:        
+        while count > 0:
             # Send SCI redirect request (using admin credentials).
             self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
-            response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
+            response = self.admin_session.post('https://%s/ws/sci' % (self.hostname),
                         data=redirect_request)
-        
-            self.assertEqual(200, response.status_code)
 
             # Print response to request.
             self.log.info("Received SCI Response: \n%s\n" % response.content)
+
+            self.assertEqual(200, response.status_code)
 
             redirected = response.content.find("redirected")
             if redirected == -1:
@@ -161,7 +160,7 @@ class RedirectTestCase(ic_testcase.TestCase):
                     RedirectTestCase.monitor.wait_for_connect(60)
             else:
                 count = 0
-        
+
         self.log.info("Waiting for iDigi to disconnect device.")
         RedirectTestCase.monitor.wait_for_disconnect(30)
         self.log.info("Device disconnected.")
@@ -169,28 +168,28 @@ class RedirectTestCase(ic_testcase.TestCase):
         self.log.info("Waiting for Device to reconnect.")
         RedirectTestCase.monitor.wait_for_connect(60)
         self.log.info("Device connected.")
-    
+
     def test_redirect_zero_destinations(self):
-    
+
         """ Sends redirect request with no destinations to given device.
         Verifies that an error response is returned.
         """
-        
+
         self.log.info("***** Beginnning Redirect Test with zero destination URLs *****")
-        
+
         self.log.info("Sending Connection Control Redirect to %s." % self.device_id)
-        
+
         # Create redirect request with no destinations
         redirect_request = REDIRECT_REQUEST % (self.device_id, "")
-        
+
         # Send SCI redirect request (using admin credentials).
         self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
-        response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
+        response = self.admin_session.post('https://%s/ws/sci' % (self.hostname),
                     data=redirect_request)
-    
+
         # Print response to request.
         self.log.info("Received SCI Response: \n%s\n" % response.content)
-        
+
         # Verifying the request returns an error.
         self.log.info("Determining if we have received error response.")
         error = response.content.find("error")
