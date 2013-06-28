@@ -57,13 +57,15 @@ class RedirectTestCase(ic_testcase.TestCase):
         count = 5
         while count > 0:        
             # Send SCI redirect request (using admin credentials).
+            self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
             response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
                         data=redirect_request)
-        
+
             self.assertEqual(200, response.status_code)
 
+
             # Print response to request.
-            self.log.info("response:\n%s" % response.content)
+            self.log.info("Received SCI Response: \n%s\n" % response.content)
 
             redirected = response.content.find("redirected")
             if redirected == -1:
@@ -74,7 +76,7 @@ class RedirectTestCase(ic_testcase.TestCase):
             else:
                 count = 0 
         
-        self.log.info("Waiting for iDigi to disconnect device.")
+        self.log.info("Waiting for Device Cloud to disconnect device.")
         RedirectTestCase.monitor.wait_for_disconnect(30)
         self.log.info("Device disconnected.")
         
@@ -100,13 +102,14 @@ class RedirectTestCase(ic_testcase.TestCase):
         count = 5
         while count > 0:        
             # Send SCI redirect request (using admin credentials).
+            self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
             response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
                         data=redirect_request)
         
             self.assertEqual(200, response.status_code)
 
             # Print response to request.
-            self.log.info("response:\n%s" % response.content)
+            self.log.info("Received SCI Response: \n%s\n" % response.content)
 
             redirected = response.content.find("redirected")
             if redirected == -1:
@@ -117,7 +120,7 @@ class RedirectTestCase(ic_testcase.TestCase):
             else:
                 count = 0
 
-        self.log.info("Waiting for iDigi to disconnect device.")
+        self.log.info("Waiting for Device Cloud to disconnect device.")
         RedirectTestCase.monitor.wait_for_disconnect(30)
         self.log.info("Device disconnected.")
         
@@ -141,13 +144,14 @@ class RedirectTestCase(ic_testcase.TestCase):
         count = 5
         while count > 0:        
             # Send SCI redirect request (using admin credentials).
+            self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
             response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
                         data=redirect_request)
         
             self.assertEqual(200, response.status_code)
 
             # Print response to request.
-            self.log.info("response:\n%s" % response.content)
+            self.log.info("Received SCI Response: \n%s\n" % response.content)
 
             redirected = response.content.find("redirected")
             if redirected == -1:
@@ -180,11 +184,12 @@ class RedirectTestCase(ic_testcase.TestCase):
         redirect_request = REDIRECT_REQUEST % (self.device_id, "")
         
         # Send SCI redirect request (using admin credentials).
+        self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
         response = self.admin_session.post('https://%s/ws/sci' % (self.hostname), 
                     data=redirect_request)
     
         # Print response to request.
-        self.log.info("response:\n%s" % response.content)
+        self.log.info("Received SCI Response: \n%s\n" % response.content)
         
         # Verifying the request returns an error.
         self.log.info("Determining if we have received error response.")
