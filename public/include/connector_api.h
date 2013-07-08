@@ -91,44 +91,44 @@ typedef enum {
 #endif
 
  /**
- * @defgroup connector_port_numbers Etherious Device Cloud Port
+ * @defgroup connector_port_numbers Device Cloud Port
  * Numbers @{
  */
 /**
- * Port number to connect to Etherious Device Cloud
+ * Port number to connect to Device Cloud
  *
  * This port number is for connector_network_open callback to make
- * a connection to Etherious Device Cloud.
+ * a connection to Device Cloud.
  *
  * @see CONNECTOR_SSL_PORT
  * @see CONNECTOR_UDP_PORT
  * @see connector_network_open
  */
-#define CONNECTOR_PORT       3197   /**< Port number used to connect to Etherious Device Cloud. */
+#define CONNECTOR_PORT       3197   /**< Port number used to connect to Device Cloud. */
 
 /**
- * Port number to make a secure connection to Etherious Device Cloud
+ * Port number to make a secure connection to Device Cloud
  *
  * This port number is for connector_network_open callback to make
- * a secured connection to Etherious Device Cloud.
+ * a secured connection to Device Cloud.
  *
  * @see CONNECTOR_PORT
  * @see CONNECTOR_UDP_PORT
  * @see connector_network_open
  */
-#define CONNECTOR_SSL_PORT   3199   /**< Secured port number used to connect to Etherious Device Cloud. */
+#define CONNECTOR_SSL_PORT   3199   /**< Secured port number used to connect to Device Cloud. */
 
 /**
- * Etherious Device Cloud UDP port number
+ * Device Cloud UDP port number
  *
  * This port number is for connector_network_open callback to communicate with
- * the Etherious Device Cloud over UDP.
+ * the Device Cloud over UDP.
  *
  * @see CONNECTOR_PORT
  * @see CONNECTOR_SSL_PORT
  * @see connector_network_open
  */
-#define CONNECTOR_UDP_PORT       3297   /**< UDP port number used to communicate with Etherious Device Cloud. */
+#define CONNECTOR_UDP_PORT       3297   /**< UDP port number used to communicate with Device Cloud. */
 /**
 * @}
 */

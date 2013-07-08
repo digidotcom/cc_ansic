@@ -145,7 +145,7 @@ static FS_FLAGS app_convert_file_open_mode(int const oflag)
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_open(connector_file_system_open_t * const data)
 {
@@ -193,7 +193,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
 {
@@ -261,7 +261,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data)
 {
@@ -303,7 +303,7 @@ static connector_callback_status_t app_process_file_read(connector_file_system_r
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data)
 {
@@ -391,7 +391,7 @@ done:
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
 
@@ -430,7 +430,7 @@ static connector_callback_status_t app_process_file_ftruncate(connector_file_sys
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data)
 {
@@ -470,7 +470,7 @@ static connector_callback_status_t app_process_file_close(connector_file_system_
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_remove(connector_file_system_remove_t * const data)
 {
@@ -596,7 +596,7 @@ done:
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_stat(connector_file_system_stat_t * const data)
 {
@@ -629,7 +629,7 @@ done:
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_stat_dir_entry(connector_file_system_stat_dir_entry_t * const data)
 {
@@ -661,7 +661,7 @@ done:
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_opendir(connector_file_system_opendir_t * const data)
 {
@@ -724,7 +724,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
@@ -792,7 +792,7 @@ done:
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
@@ -835,7 +835,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_hash(connector_file_system_hash_t * const data)
 {
@@ -857,7 +857,7 @@ static connector_callback_status_t app_process_file_hash(connector_file_system_h
  *
  * @retval connector_callback_continue	Success 
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
 {
@@ -933,7 +933,7 @@ static connector_callback_status_t app_process_file_get_error(connector_file_sys
  *
  * @retval connector_callback_continue	Continue 
  * @retval connector_callback_abort     The application aborts 
- *                                  Etherious Cloud connector.
+ *                                  Cloud Connector.
  */
 static connector_callback_status_t app_process_file_session_error(connector_file_system_session_error_t * const data)
 {
