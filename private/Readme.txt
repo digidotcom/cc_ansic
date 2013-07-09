@@ -41,7 +41,10 @@ BUG FIXES
 
 KNOWN LIMITATIONS
 
-        None 
+        When using RCI facility, if a setting value is set to a string 
+        longer than CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH (defined at 
+        connector_config.h), the setting is overwritten and the response 
+        received has both success and error fields.  [IC4C-180]
     
 HISTORY
 
