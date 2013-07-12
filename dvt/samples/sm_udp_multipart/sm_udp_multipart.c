@@ -37,6 +37,22 @@ connector_status_t app_send_ping(connector_handle_t handle)
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
     APP_DEBUG("Sent ping [%d].\n", status);
 
+
+    /* Added to avoid deadlock due to a connector_init_error */
+    static int counter_connector_init_error_send_ping = 0;
+    if(status == connector_init_error)
+    {
+        counter_connector_init_error_send_ping++;
+
+        if(counter_connector_init_error_send_ping>10)
+        {
+            APP_DEBUG("ABORT TEST DUE TO A connector_init_error in app_send_ping *********************\n");
+            exit(0);
+        }
+    }
+    /* Added to avoid deadlock due to a connector_init_error */
+
+
     return status;
 }
 
@@ -69,6 +85,23 @@ connector_status_t app_send_data(connector_handle_t handle)
         response_needed = response_needed ? connector_false : connector_true;
         test_cases++;
     }
+
+
+    /* Added to avoid deadlock due to a connector_init_error */
+    static int counter_connector_init_error_send_data = 0;
+
+    if(status == connector_init_error)
+    {
+        counter_connector_init_error_send_data++;
+
+        if(counter_connector_init_error_send_data>10)
+        {
+            APP_DEBUG("ABORT TEST DUE TO A connector_init_error in app_send_data *********************\n");
+            exit(0);
+        }
+    }
+    /* Added to avoid deadlock due to a connector_init_error */
+
 
     return status;
 }
@@ -250,6 +283,8 @@ static connector_callback_status_t app_handle_device_request(connector_request_i
         {
             connector_data_service_receive_data_t * const recv_ptr = cb_data;
             client_data_t * const app_ptr = recv_ptr->user_context;
+
+            APP_DEBUG("Received data in the request: %s\n", recv_ptr->buffer );
 
             if (memcmp(recv_ptr->buffer, &app_ptr->data_ptr[app_ptr->bytes_sent], recv_ptr->bytes_used))
             {
