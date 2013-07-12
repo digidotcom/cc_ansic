@@ -591,6 +591,7 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         
         /* Return pending so bytes_processed and session->segments.processed are not incremented */
         status = connector_pending;
+        SmSetTargetInPayload(session->flags);
         goto done;
     }
     
@@ -601,8 +602,8 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         size_t bytes_pre_processed =  0;
         
         /* Compute pre-processed bytes for segment 0 */
-        if ((session->segments.processed == 0) && (session->command == connector_sm_cmd_data))
-        	bytes_pre_processed = session->bytes_processed;
+        if (SmIsTargetInPayload(session->flags) && (session->command == connector_sm_cmd_data))
+            bytes_pre_processed = session->bytes_processed;
 
         data_ptr += bytes_pre_processed;
         
@@ -615,6 +616,8 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
         if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
+        if (callback_status != connector_callback_busy)
+            SmClearTargetInPayload(session->flags);  
         status = sm_map_callback_status_to_connector_status(callback_status);
         session->user.context = cb_data.user_context;
     }

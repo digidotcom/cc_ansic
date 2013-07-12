@@ -27,17 +27,18 @@
 
 /* NOTE: Some of these bits are tied to protocol, so please don't change them
          without referring to SM protocol */
-#define SM_ERROR           0x0001
-#define SM_LAST_DATA       0x0002
-#define SM_MULTI_PART      0x0004
-#define SM_RESPONSE_NEEDED 0x0008
-#define SM_RESPONSE_DATA   0x0010
-#define SM_CLIENT_OWNED    0x0020
-#define SM_ENCODED         0x0040
-#define SM_COMPRESSED      0x0080
-#define SM_REBOOT          0x0100
-#define SM_DATA_POINT      0x8000
-
+#define SM_ERROR               0x0001
+#define SM_LAST_DATA           0x0002
+#define SM_MULTI_PART          0x0004
+#define SM_RESPONSE_NEEDED     0x0008
+#define SM_RESPONSE_DATA       0x0010
+#define SM_CLIENT_OWNED        0x0020
+#define SM_ENCODED             0x0040
+#define SM_COMPRESSED          0x0080
+#define SM_REBOOT              0x0100
+#define SM_TARGET_IN_PAYLOAD   0x0200
+#define SM_DATA_POINT          0x8000
+                                
 #define SmIsBitSet(flag, bit) (connector_bool(((flag) & (bit)) == (bit)))
 #define SmIsBitClear(flag, bit) (connector_bool(((flag) & (bit)) == 0))
 #define SmBitSet(flag, bit) ((flag) |= (bit))
@@ -53,6 +54,7 @@
 #define SmIsEncoded(flag) SmIsBitSet((flag), SM_ENCODED)
 #define SmIsReboot(flag) SmIsBitSet((flag), SM_REBOOT)
 #define SmIsDatapoint(flag) SmIsBitSet((flag), SM_DATA_POINT)
+#define SmIsTargetInPayload(flag) SmIsBitSet((flag), SM_TARGET_IN_PAYLOAD)
 
 #define SmIsRequest(flag) SmIsBitClear((flag), SM_RESPONSE_DATA)
 #define SmIsNotLastData(flag) SmIsBitClear((flag), SM_LAST_DATA)
@@ -71,6 +73,7 @@
 #define SmSetEncoded(flag) SmBitSet((flag), SM_ENCODED)
 #define SmSetReboot(flag) SmBitSet((flag), SM_REBOOT)
 #define SmSetDatapoint(flag) SmBitSet((flag), SM_DATA_POINT)
+#define SmSetTargetInPayload(flag) SmBitSet((flag), SM_TARGET_IN_PAYLOAD)
 
 #define SmClearError(flag) SmBitClear((flag), SM_ERROR)
 #define SmClearResponse(flag) SmBitClear((flag), SM_RESPONSE_DATA)
@@ -78,6 +81,7 @@
 #define SmClearLastData(flag) SmBitClear((flag), SM_LAST_DATA)
 #define SmClearMultiPart(flag) SmBitClear((flag), SM_MULTI_PART)
 #define SmClearCompressed(flag) SmBitClear((flag), SM_COMPRESSED)
+#define SmClearTargetInPayload(flag) SmBitClear((flag), SM_TARGET_IN_PAYLOAD)
 
 typedef enum
 {
