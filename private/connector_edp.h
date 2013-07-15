@@ -192,8 +192,6 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
 
         case connector_transport_open:
             result = edp_tcp_open_process(connector_ptr);
-            if (result == connector_open_error)
-                edp_set_initiate_state(connector_ptr, connector_transport_idle);
             break;
 
         case connector_transport_send:
@@ -296,11 +294,14 @@ check_state:
         case connector_transport_open:
             switch (edp_get_active_state(connector_ptr))
             {
+                case connector_transport_terminate:
+                    break;
                 case connector_transport_close:
                 case connector_transport_idle:
-                    edp_set_active_state(connector_ptr, connector_transport_open);
-                    break;
-                case connector_transport_terminate:
+                    if (result != connector_open_error)
+                        edp_set_active_state(connector_ptr, connector_transport_open);
+                    else
+                        edp_set_initiate_state(connector_ptr, connector_transport_idle);
                     break;
                 default:
                     edp_set_initiate_state(connector_ptr, connector_transport_idle);
