@@ -17,6 +17,7 @@
 #include "platform.h"
 #include <linux/reboot.h>
 #include <sys/reboot.h>
+#include <sched.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,10 +112,14 @@ connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
 
 connector_callback_status_t app_os_yield(connector_status_t const * const status)
 {
-    if (*status == connector_idle)
+    int error;
+
+    UNUSED_ARGUMENT(status);
+    error = sched_yield();
+    if (error)
     {
-        unsigned int const timeout_in_microseconds =  1000000;
-        usleep(timeout_in_microseconds);
+        /* In the Linux implementation this function always succeeds */
+        APP_DEBUG("app_os_yield: shced_yield failed with %d\n", error);
     }
 
     return connector_callback_continue;
