@@ -214,12 +214,12 @@ error:
         elapsed_time -= connect_time;
 
         if (elapsed_time >= APP_CONNECT_TIMEOUT)
-            status = connector_callback_abort;
+            status = connector_callback_error;
         
         // Don't be too demanding if link is still down.
         app_os_delay(1000);
     }
-    if (status == connector_callback_abort)
+    if (status == connector_callback_error)
     {
         if (socket_fd != NET_SOCK_ID_NONE)
         {
@@ -261,7 +261,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
         case NET_SOCK_ERR_NOT_USED:
         case NET_SOCK_ERR_CLOSED:
             APP_DEBUG("network_send: socket closed\n");
-            status = connector_callback_abort;
+            status = connector_callback_error;
             break;
         case NET_ERR_TX:
             /* I'm having this error when running out of 'device's large transmit buffers' */
@@ -270,7 +270,7 @@ static connector_callback_status_t app_network_tcp_send(connector_network_send_t
             break;
         default:
             APP_DEBUG("network_send: failed, code = %d\n", err_net);
-            status = connector_callback_abort;
+            status = connector_callback_error;
             break;
     }
 
@@ -311,7 +311,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
         case NET_SOCK_ERR_NOT_USED:
         case NET_SOCK_ERR_CLOSED:
             APP_DEBUG("network_receive: NET_SOCK_ERR_CLOSED\n");
-            status = connector_callback_abort;
+            status = connector_callback_error;
             break;
 
        case NET_SOCK_ERR_INVALID_TYPE:
@@ -321,7 +321,7 @@ static connector_callback_status_t app_network_tcp_receive(connector_network_rec
 
         default:
             APP_DEBUG("network_receive: failed, code = %d\n", err_net);
-            status = connector_callback_abort;
+            status = connector_callback_error;
             break;
     }
     
@@ -345,6 +345,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
         case NET_SOCK_ERR_CLOSED:
         case NET_SOCK_ERR_FAULT:
         case NET_SOCK_ERR_NONE:
+		case NET_SOCK_ERR_CONN_SIGNAL_TIMEOUT:
             status = connector_callback_continue;
             socket_fd = NET_SOCK_ID_NONE;
             break;
