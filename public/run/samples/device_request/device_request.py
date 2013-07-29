@@ -59,7 +59,7 @@ def PostMessage(username, password, device_id, target, state, cloud_url):
                 <device id="%s"/>
             </targets>
             <requests>
-            <device_request target_name="%s">"%s"</device_request>
+            <device_request target_name="%s">%s</device_request>
             </requests>
         </data_service>
     </sci_request>
