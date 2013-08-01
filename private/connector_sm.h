@@ -73,9 +73,8 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         {
             connector_callback_status_t status;
 
-            request_id.config_request = connector_request_id_config_sms_service_id;
-            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &sm_ptr->transport.id);
-            ASSERT_GOTO(status == connector_callback_continue, error);
+            sm_ptr->transport.id_type = connector_sm_id_type_none;
+            sm_ptr->transport.id_length = 0;
 
             request = connector_request_id_config_network_sms;
             sm_ptr->network.class_id = connector_class_id_network_sms;
