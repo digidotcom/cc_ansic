@@ -303,6 +303,12 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
     return connector_callback_continue;
 }
 
+static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
+{
+    config_connect->type = connector_connect_auto;
+    return connector_callback_continue;
+}
+
 #if !(defined CONNECTOR_WAN_TYPE)
 static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
 {
@@ -869,6 +875,12 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if !(defined CONNECTOR_NETWORK_UDP_START)
      case connector_request_id_config_network_udp:
          status = app_start_network_udp(data);
+         break;
+#endif
+
+#if !(defined CONNECTOR_NETWORK_SMS_START)
+     case connector_request_id_config_network_sms:
+         status = app_start_network_sms(data);
          break;
 #endif
 

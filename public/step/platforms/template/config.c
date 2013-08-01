@@ -291,6 +291,20 @@ static connector_callback_status_t app_start_network_tcp(connector_auto_connect_
     return connector_callback_continue;
 }
 
+static connector_callback_status_t app_start_network_udp(connector_auto_connect_type_t * const connect_type)
+{
+    *connect_type = connector_auto_connect;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_start_network_sms(connector_auto_connect_type_t * const connect_type)
+{
+    *connect_type = connector_auto_connect;
+
+    return connector_callback_continue;
+}
+
 static connector_callback_status_t app_get_wan_type(connector_wan_type_t * const type)
 {
 #error "Specify connector_imei_wan_type for IMEI, connector_esn_wan_type for ESN, or connector_meid_wan_type for MEID WAN type"
@@ -806,6 +820,14 @@ connector_callback_status_t app_config_handler(connector_config_request_t const 
 
      case connector_config_network_tcp:
          status = app_start_network_tcp(response_data);
+         break;
+
+     case connector_config_network_udp:
+         status = app_start_network_udp(response_data);
+         break;
+
+     case connector_config_network_sms:
+         status = app_start_network_sms(response_data);
          break;
 
      case connector_config_wan_type:
