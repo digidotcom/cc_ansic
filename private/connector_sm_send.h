@@ -314,7 +314,7 @@ error:
 #if (defined CONNECTOR_TRANSPORT_SMS)
 static connector_status_t sm_encode_segment(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
-    size_t const data_size = (session->bytes_processed * 5)/4;
+    size_t const data_size = 1+(sm_ptr->network.send_packet.total_bytes * 5)/4;
     void * data_ptr = NULL;
     connector_status_t result = malloc_data_buffer(connector_ptr, data_size, named_buffer_id(sm_data_block), &data_ptr);
 
