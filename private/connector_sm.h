@@ -71,8 +71,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
         {
-            connector_callback_status_t status;
-
             sm_ptr->transport.id_type = connector_sm_id_type_none;
             sm_ptr->transport.id_length = 0;
 
