@@ -1487,6 +1487,65 @@
  *
  * @endcode
  *
+ * @section network_sms_start  Start network SMS
+ *
+ * Return @ref connector_config_connect_type_t to automatically or manually start SMS transport.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_start_network_sms() in config.c.
+ *
+ * @note If @ref CONNECTOR_TRANSPORT_SMS configuration is not defined in @ref connector_config.h, this callback
+ * will not be called and SMS transport is not supported. Cloud Connector does not include SMS transport.
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_network_sms @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly connector_config_connect_type_t @htmlonly:
+ *          <dl>
+ *              <dt><i>type</i></dt><dd>
+ *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic establish SMS connection to Device Cloud.</li>
+ *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual establish SMS connection to Device Cloud.
+ *                          @endhtmlonly Note: Call @ref connector_initiate_action with
+ *                                                  @ref connector_initiate_transport_start @htmlonly to start UPD transport.</li></ul>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned the status</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const device_connect)
+ * {
+ *    device_connect->type = connector_connect_auto;
+ *
+ *    return connector_callback_continue;
+ * }
+ *
+ * @endcode
  *
  * @section wan_type WAN Type
  *

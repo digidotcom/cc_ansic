@@ -337,6 +337,24 @@
 #define CONNECTOR_TRANSPORT_UDP
 
 /**
+* If defined, Cloud Connector includes the SMS transport.
+* To disable this feature, comment this line out in connector_config.h:
+*
+* @code
+* #define CONNECTOR_TRANSPORT_SMS
+* @endcode
+*
+* To this:
+* @code
+* // #define CONNECTOR_TRANSPORT_SMS
+* @endcode
+*
+* @see @ref network_sms_start
+* @see @ref app_start_network_sms()
+*/
+#define CONNECTOR_TRANSPORT_SMS
+
+/**
  * This is used to enable support for file sizes larger than 2
  * gigabyte in file system listing requests. On linux platform 
  * the following must be added to Makefile: 
