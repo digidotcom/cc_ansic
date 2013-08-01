@@ -59,7 +59,7 @@
 #define CONNECTOR_DATA_SERVICE
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_UDP)
+#if ((defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS))
 #define CONNECTOR_SHORT_MESSAGE
 #endif
 
