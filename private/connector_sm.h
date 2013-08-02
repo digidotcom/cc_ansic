@@ -77,7 +77,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             request = connector_request_id_config_network_sms;
             sm_ptr->network.class_id = connector_class_id_network_sms;
             sm_ptr->network.transport = connector_transport_sms;
-            sm_ptr->transport.mtu = SM_PACKET_SIZE_SMS;
+            sm_ptr->transport.mtu = SM_PACKET_SIZE_SMS_ENCODED;
             {
                 size_t const preamble_bytes = ((sm_ptr->transport.id != NULL) && (sm_ptr->transport.id_length > 0)) ? sm_ptr->transport.id_length + 1 : 0;
 

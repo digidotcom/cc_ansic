@@ -207,7 +207,7 @@ typedef struct
 #if defined CONNECTOR_TRANSPORT_UDP 
 #define SM_MAX_MTU  SM_PACKET_SIZE_UDP
 #else
-#define SM_MAX_MTU  SM_PACKET_SIZE_SMS
+#define SM_MAX_MTU  SM_PACKET_SIZE_SMS_ENCODED
 #endif
 
 typedef connector_sm_session_t named_buffer_type(sm_session);
