@@ -769,6 +769,26 @@ static connector_status_t sm_process_opaque_response(connector_data_t * const co
     return status;
 }
 
+static connector_status_t sm_process_config_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
+{
+    connector_status_t status;
+    connector_request_id_t request_id;
+    connector_sm_config_request_t cb_data;
+    connector_callback_status_t callback_status;
+
+    cb_data.transport = session->transport;
+	//TODO: two specific fields: phone-number, service-id
+    cb_data.data = payload;
+    cb_data.bytes_used = bytes;
+    cb_data.error = SmIsError(session->flags);
+
+    request_id.sm_request = connector_request_id_sm_config_request;
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+    status = sm_map_callback_status_to_connector_status(callback_status);
+
+    return status;
+}
+
 static connector_status_t sm_prepare_payload(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
@@ -862,6 +882,10 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
 
         case connector_sm_cmd_opaque_response:
             result = sm_process_opaque_response(connector_ptr, session, payload, bytes);
+            break;
+
+        case connector_sm_cmd_config:
+		    result = sm_process_config_request(connector_ptr, session, payload, bytes);
             break;
 
         default:

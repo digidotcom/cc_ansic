@@ -405,6 +405,17 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             break;
         }
 
+        case connector_request_id_sm_config_request:
+        {
+        	connector_sm_config_request_t * const request = data;
+            char * pdata = (char *)request->data;
+            APP_DEBUG("Received configure request with %" PRIsize " bytes:\n", request->bytes_used);
+            APP_DEBUG("phone-number=%s\n", pdata);
+            pdata += strlen(pdata)+1;
+            APP_DEBUG("service-id=%s\n", pdata);
+            break;
+        }
+        	
         case connector_request_id_sm_more_data:
         {
             connector_sm_more_data_t * const more_data = data;
