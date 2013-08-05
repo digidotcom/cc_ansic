@@ -61,7 +61,7 @@ typedef struct
 */
 /**
 * Short message related callbacks will use these request IDs. The class ID associated with these request ID is
-* connector_class_id_short_message and supported transport methods under this class is UDP and SMS.
+* connector_class_id_short_message and supported transport methods under this class is UDP.
 */
 typedef enum
 {
@@ -73,10 +73,8 @@ typedef enum
     connector_request_id_sm_cli_status,     /**< called when error occurs in CLI session */
     connector_request_id_sm_more_data,      /**< indicates pending messages are available on Device Cloud,
                                                 User need to use new request (can be ping) to pull the pending messages from Device Cloud. */
-    connector_request_id_sm_opaque_response,/**< Cloud Connector will use this to provide Device Cloud response for which
+    connector_request_id_sm_opaque_response /**< Cloud Connector will use this to provide Device Cloud response for which
                                                 there is no associated request */
-    connector_request_id_sm_config_request /**< Cloud Connector use this to configure transport specific information and identity
-                                                information so that the server and device can communicate via SM */
 } connector_request_id_sm_t;
 /**
 * @}
@@ -258,29 +256,6 @@ typedef struct
     size_t CONST bytes_used;                /**< number of bytes available in the data */
     connector_bool_t CONST error;           /**< connector_true means error response is received from Device Cloud */
 } connector_sm_opaque_response_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_sm_config_request_t  connector_sm_config_request_t
-* @brief Configure resquest from Device Cloud
-* @{
-*/
-/**
-* This data structure is used when the callback is called to pass the Configure request received from
-* Device Cloud. 
-*
-* @see connector_request_id_sm_config_request
-*
-*/
-typedef struct
-{
-    connector_transport_t CONST transport;  /**< transport method on which Configure resquest is received */
-    void const * CONST data;                /**< pointer to configure request */
-    size_t CONST bytes_used;                /**< number of bytes available in the data */
-    connector_bool_t CONST error;           /**< connector_true means error response is received from Device Cloud */
-} connector_sm_config_request_t;
 /**
 * @}
 */

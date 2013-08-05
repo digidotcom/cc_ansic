@@ -624,7 +624,7 @@
  * @endcode
  *
  *
- * @subsection opaque_response  Unsequenced Message callback
+* @subsection opaque_response  Unsequenced Message callback
  *
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
  * to notify an application that a response was received with no known associated request.  The reason
@@ -680,60 +680,6 @@
  * @endhtmlonly
  *
  * @see @ref CONNECTOR_SM_TIMEOUT
- *
- * @subsection configure_resquest  Unsequenced Message callback
- *
- * Cloud Connector will make @ref connector_request_id_sm_config_request @ref connector_callback_t "callback"
- * to notify an application that a configure command was received to configure transport specific information 
- * and identity information so that the server and device can communicate via SM.
- *
- * The @ref connector_request_id_sm_config_resquest @ref connector_callback_t "callback"
- * is called with the following information:
- *
- * @htmlonly
- * <table class="apitable">
- * <tr>
- *   <th colspan="2" class="title">Arguments</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <td>class_id</td>
- *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>request_id</td>
- *   <td>@endhtmlonly @ref connector_request_id_sm_config_resquest @htmlonly</td>
- * </tr>
- * <tr>
- *   <td>data</td>
- *   <td>Pointer to @endhtmlonly connector_sm_config_resquest_t @htmlonly structure:
- *     <ul>
- *       <li><b><i>transport</i></b>: @endhtmlonly Will be set to @ref connector_transport_sms. @htmlonly </li>
- *       <li><b><i>data</i></b>: received payload </li>
- *       <li><b><i>bytes_used</i></b>: number of bytes in the payload </li>
- *       <li><b><i>error</i></b>: is connector_true for error response for Device Cloud </li>
- *     </ul>
- *   </td>
- * </tr>
- * <tr>
- *   <th colspan="2" class="title">Return Values</th>
- * </tr>
- * <tr>
- *   <th class="subtitle">Values</th> <th class="subtitle">Description</th>
- * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- *   <td>Continue</td>
- * </tr>
- * <tr>
- *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
- *   <td>Aborts Cloud Connector</td>
- * </tr>
- * </table>
- * @endhtmlonly
- *
  *
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
