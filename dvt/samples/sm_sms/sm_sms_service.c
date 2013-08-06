@@ -17,10 +17,13 @@ static int app_waiting_for_ping_complete = 0;
 static int app_waiting_for_ping_response = 0;
 static int app_waiting_for_data_complete = 0;
 static int app_waiting_for_data_response = 0;
+static int app_waiting_for_config_complete = 0;
+static int app_waiting_for_config_response = 0;
 
 #define APP_MAX_TIMEOUT   60
 static int app_ping_time_remaining = APP_MAX_TIMEOUT;
 static int app_data_time_remaining = APP_MAX_TIMEOUT;
+static int app_config_time_remaining = APP_MAX_TIMEOUT;
 
 connector_status_t app_send_ping(connector_handle_t handle)
 {
@@ -147,6 +150,73 @@ connector_status_t app_send_data(connector_handle_t handle)
         response_needed = response_needed ? connector_false : connector_true;
 
     APP_DEBUG("Status: %d, file: %s\n", status, file_path);
+
+error:
+    return status;
+}
+
+connector_status_t app_send_config(connector_handle_t handle)
+{
+    connector_status_t status = connector_no_resource;
+    static connector_sm_send_config_request_t cfg_request; /* Cloud connector will hold this until we get a response/error callback */
+    static char const identifier[] = "8934041511080745564";
+    static connector_bool_t response_needed = connector_true;
+
+    cfg_request.transport = connector_transport_sms;
+    if (response_needed)
+    {
+        if (app_waiting_for_config_response)
+        {
+            app_config_time_remaining--;
+
+            if (app_config_time_remaining == 0)
+            {
+                APP_DEBUG("ERROR: No response callback for config.\n");
+                status = connector_exceed_timeout;
+            }
+            else
+                status = connector_service_busy;
+
+            goto error;
+        }
+
+        app_config_time_remaining = APP_MAX_TIMEOUT;
+        app_waiting_for_config_response = 1;
+        cfg_request.user_context = &app_waiting_for_config_response;
+    }
+    else
+    {
+        if (app_waiting_for_config_complete)
+        {
+            APP_DEBUG("ERROR: No complete callback for config.\n");
+            status = connector_exceed_timeout;
+            goto error;
+        }
+
+        app_waiting_for_config_complete = 1;
+        cfg_request.user_context = &app_waiting_for_config_complete;
+    }
+
+    cfg_request.identifier = identifier;   /* null-terminated string containing an identifier for the current SIM.  
+										 	* This will normally be set as the ICCID of the SIM.  If there is no SIM, 
+										 	* an appropriate ID for this phone number may be set instead.  
+										 	* This field is optional
+											*/
+    cfg_request.sim_slot = 0;				/* single byte indicating the SIM slot */
+    cfg_request.response_required = response_needed;
+
+    status = connector_initiate_action(handle, connector_initiate_config_message, &cfg_request);
+    if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */
+    {
+        if (response_needed)
+            app_waiting_for_config_response = 0;
+        else
+            app_waiting_for_config_complete = 0;
+    }
+    else
+        response_needed = response_needed ? connector_false : connector_true;
+
+    APP_DEBUG("Sent Configuration. Status: %d\n", status);
 
 error:
     return status;
@@ -410,6 +480,38 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             connector_sm_more_data_t * const more_data = data;
 
             APP_DEBUG("More SM data is waiting on %s in Etherios Device Cloud\n", (more_data->transport == connector_transport_sms) ? "SMS" : "UDP");
+            break;
+        }
+        
+        case connector_request_id_sm_config_request:
+        {
+        	connector_sm_receive_config_request_t * const request = data;
+            
+            APP_DEBUG("Received connector_request_id_sm_config_request request. response %s needed\n", request->response_required ? "is" : "is not");
+            APP_DEBUG("phone-number=%s\n", request->phone_number);
+            APP_DEBUG("service-id=%s\n", request->service_id);
+            break;
+        }
+        
+        case connector_request_id_sm_config_response:
+        {
+            connector_sm_config_response_t * const config_resp = data;
+
+            switch (config_resp->status)
+            {
+                case connector_sm_config_status_success:
+                    app_waiting_for_config_response = 0;
+                    break;
+
+                case connector_sm_config_status_complete:
+                    app_waiting_for_config_complete = 0;
+                    break;
+
+                default:
+                    break;
+            }
+
+            APP_DEBUG("Received config response [%d].\n", config_resp->status);
             break;
         }
 

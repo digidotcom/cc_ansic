@@ -701,6 +701,8 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
         enum_to_case(connector_request_id_sm_cli_status);
         enum_to_case(connector_request_id_sm_more_data);
         enum_to_case(connector_request_id_sm_opaque_response);
+        enum_to_case(connector_request_id_sm_config_request);
+        enum_to_case(connector_request_id_sm_config_response);
     }
     return result;
 }

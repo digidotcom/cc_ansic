@@ -94,8 +94,8 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             break;
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-        case connector_sm_server_to_device_config:
-        case connector_sm_device_to_server_config:
+        case connector_request_id_sm_config_request:
+        case connector_request_id_sm_config_response:
             break;
 #endif
 

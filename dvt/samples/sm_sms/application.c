@@ -23,6 +23,7 @@ extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t cons
 
 extern connector_status_t app_send_ping(connector_handle_t handle);
 extern connector_status_t app_send_data(connector_handle_t handle);
+extern connector_status_t app_send_config(connector_handle_t handle);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -97,9 +98,10 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 int application_run(connector_handle_t handle)
 {
     int return_status = 0;
-    unsigned int const ping_interval_in_seconds = 90;
+#if (defined CONNECTOR_TRANSPORT_SMS)
+    unsigned int const ping_interval_in_seconds = 60;
     typedef connector_status_t (* send_fn_t)(connector_handle_t handle);
-    send_fn_t const send_fn[] = {app_send_ping, app_send_data};
+    send_fn_t const send_fn[] = {app_send_config, app_send_ping, app_send_data};
     size_t const send_fn_count = asizeof(send_fn);
     size_t message_count = 0;
 
@@ -131,6 +133,9 @@ int application_run(connector_handle_t handle)
     }
 
 done:
+#else
+	UNUSED_ARGUMENT(handle);
+#endif
     return return_status;
 }
 
