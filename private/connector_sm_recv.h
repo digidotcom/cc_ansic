@@ -316,6 +316,9 @@ static connector_status_t sm_update_session(connector_data_t * const connector_p
         if (header->isRequest)
         {
             if (header->isResponseNeeded) SmSetResponseNeeded(session->flags);
+            /* If the first segment of a multipart SMS that arrived was not segment0, previously stored session->command information is wrong as 
+             * for multipart messages, type is only included in the 0th segment. Update it here */
+            session->command = header->command;
         }
         else if (header->isError)
         {
