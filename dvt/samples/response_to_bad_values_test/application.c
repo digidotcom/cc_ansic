@@ -27,9 +27,9 @@ config_test_t config_test[connector_request_id_config_password +1] = {config_tes
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
-    UNUSED_ARGUMENT(class_id);
-
     connector_bool_t type;
+
+    UNUSED_ARGUMENT(class_id);
 
     switch (status)
     {

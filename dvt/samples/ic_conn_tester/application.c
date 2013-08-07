@@ -20,9 +20,9 @@ char * status_to_str(connector_status_t arg)
 
 connector_connect_auto_type_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
-    UNUSED_ARGUMENT(class_id);
-
     connector_connect_auto_type_t type;
+
+    UNUSED_ARGUMENT(class_id);
 
     switch (status)
     {

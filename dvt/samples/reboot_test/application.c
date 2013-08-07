@@ -26,9 +26,9 @@ extern connector_status_t send_put_request(connector_handle_t handle, char * con
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
-    UNUSED_ARGUMENT(class_id);
-
     connector_bool_t type;
+
+    UNUSED_ARGUMENT(class_id);
 
     switch (status)
     {

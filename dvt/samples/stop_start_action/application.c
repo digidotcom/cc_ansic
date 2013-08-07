@@ -65,9 +65,9 @@ static char const * app_class_to_string(connector_class_id_t const value)
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
-    UNUSED_ARGUMENT(class_id);
-
     connector_bool_t type;
+
+    UNUSED_ARGUMENT(class_id);
 
     APP_DEBUG("app_connector_reconnect: %s close status %s\n", app_class_to_string(class_id), close_status_to_string(status));
 
