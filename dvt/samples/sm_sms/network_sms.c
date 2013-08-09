@@ -34,6 +34,7 @@
 
 /* Etherios Cloud telephone where to send SMS messages */
 char server_phone_number[]= "447786201216";	//Initialized to login.etherios.com phone number
+//char server_phone_number[14]= ""; 	// Not initialized, to test server_to_client provisioning
 
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
@@ -143,39 +144,61 @@ static connector_callback_status_t app_is_sms_connect_complete(int const fd)
     return status;
 }
 
-static connector_callback_status_t config_server_phone_number(int const fd)
+connector_callback_status_t config_server_phone_number(int const fd)
 {
 	connector_callback_status_t status;
 	static char const phone_number_prefix[] = "phone-number=";
 	char str_to_send[sizeof(phone_number_prefix)+sizeof(server_phone_number)];
 	int ccode;
 	
+	static int local_fd = -1;
+	
+	// Catch fd to use when called from application
+	if (fd != -1)
+		local_fd = fd;
+	
+	if (local_fd == -1)
+	{
+			APP_DEBUG("config_server_phone_number: Conexion to proxy not yet ready\n");	
+			return connector_callback_error;
+	}
+	
+	if (strlen(server_phone_number) == 0)
+	{
+		APP_DEBUG("config_server_phone_number: server_phone_number not yet configured\n");
+		return connector_callback_error;
+	}
+	
 	strcpy(str_to_send,phone_number_prefix);
 		
 	strcat(str_to_send, server_phone_number);
-		
-	ccode = write(fd, str_to_send, strlen(str_to_send));
+	            
+	APP_DEBUG("config_server_phone_number: %s\n", str_to_send);
+	
+	ccode = write(local_fd, str_to_send, strlen(str_to_send));
     if (ccode >= 0)
     	status = connector_callback_continue;
     else
     	status = connector_callback_error;
 
+    usleep(1000000);	// Let the proxy digest previous command
+    
 #ifdef CONNECTOR_TRANSPORT_SMS_SHARED_CODE
 	#error "We'll make a fake sms_proxy_service_id.py to test shared codes"
   
-	usleep(1000000);	// Let the proxy digest previous command
 	{
 		static char const service_id_prefix[] = "service-id=";
 	    strcpy(str_to_send,service_id_prefix);
 	    
 		strcat(str_to_send, "idgp");
 		
-		ccode = write(fd, str_to_send, strlen(str_to_send));
+		ccode = write(local_fd, str_to_send, strlen(str_to_send));
 	    if (ccode >= 0)
 	    	status = connector_callback_continue;
 	    else
 	    	status = connector_callback_error;
 	}
+	usleep(1000000);	// Let the proxy digest previous command
 #endif
     
 	return(status);
@@ -375,7 +398,6 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
 static connector_callback_status_t app_network_sms_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-#if 1
     int * const fd = data->handle;
 
     int ccode = read(*fd, data->buffer, data->bytes_available);
@@ -407,41 +429,6 @@ static connector_callback_status_t app_network_sms_receive(connector_network_rec
             status = connector_callback_error;
         }
     }
-#else
-    //char cfg[] = ".=;>.lGCeG2eNbN0JP=;2?3c";
-    //char cli[] = ".=D:EQ=xnGDzbpi";	//cli help
-    //char cfg_res[] = "0s'*dEA2V;!!!!!!!!!!$s;5V0Wes,!!";	//Este es que que genero yo mal
-    //char cfg_res[] = "0q_3lAh";	//Este es que manda el X4
-    //char cfg_res[] = "0rny#A,";	//Este mando yo ahora (dejandolo a su bola). En el cloud se ve '/configure' (OK)
-    char s0[] = "/g/qD#Azc3D0bK1@<-!qF>5O,1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI";
-    char s1[] = "/g/tZ5w(5Q2)_BQ3A<0C1GlxI2eNkO0jyOA2)_BQ3A<0C1GlxI2eNkO0jyOA2)_BQ3A<0C1GlxI2eNkO0jyOA2)_BQ3A<0C1GlxI2eNkO0jyOA2)_BQ3A<0C1GlxI2eNkO0jyOA2)_BQ3A<0C1GlxI2eNkO0jyOA";
-    char s2[] = "/g/wt4>k#U3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0JP==1h70M3&wZI1,CfE2E*TU0E"; 
-    
-	static int i = 0;
-	
-	if (i == 0)
-	{
-		data->bytes_used = (size_t)strlen(s0);
-		memcpy(data->buffer,s0,	data->bytes_used);	
-	}
-	else if (i == 1)
-	{
-		data->bytes_used = (size_t)strlen(s1);
-		memcpy(data->buffer,s1,	data->bytes_used);
-	}
-	else if (i == 2)
-	{
-		data->bytes_used = (size_t)strlen(s2);
-		memcpy(data->buffer,s2,	data->bytes_used);
-	}
-	else
-	{
-		status = connector_callback_busy;
-	}
-	if (data->bytes_used)
-		APP_DEBUG("app_network_sms_receive %d: %d bytes\n", i, data->bytes_used);
-	i++;
-#endif
 
     return status;
 }

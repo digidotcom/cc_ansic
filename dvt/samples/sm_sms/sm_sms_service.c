@@ -25,6 +25,9 @@ static int app_ping_time_remaining = APP_MAX_TIMEOUT;
 static int app_data_time_remaining = APP_MAX_TIMEOUT;
 static int app_config_time_remaining = APP_MAX_TIMEOUT;
 
+extern char server_phone_number[];
+extern connector_callback_status_t config_server_phone_number(int const fd);
+
 connector_status_t app_send_ping(connector_handle_t handle)
 {
     connector_status_t status;
@@ -490,6 +493,12 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             APP_DEBUG("Received connector_request_id_sm_config_request request. response %s needed\n", request->response_required ? "is" : "is not");
             APP_DEBUG("phone-number=%s\n", request->phone_number);
             APP_DEBUG("service-id=%s\n", request->service_id);
+            
+            /* Update Etherios Cloud telephone where to send SMS messages */
+            strcpy(server_phone_number,request->phone_number);
+            /* Send to sms_proxy */
+            config_server_phone_number(-1);
+            
             break;
         }
         
