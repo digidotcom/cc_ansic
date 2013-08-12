@@ -48,24 +48,24 @@
  * device will be connected to Device Cloud and displayed in the
  * <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
  *
- * @section step1 Do you have an ANSI C89 or C99 compliant compiler?
+ * @section step1 Do you have a C89 or C99 compliant compiler?
  *
  * The Cloud Connector software is ANSI X3.159-1989 (ANSI C89) or ISO/IEC
- * 9899:1999 (ANSI C99) compliant.  If your compiler is ANSI C89 or C99 compliant and you
+ * 9899:1999 (ANSI C99) compliant.  If your compiler is C89 or C99 compliant and you
  * are running on a 32-bit processor you can skip to @ref step2 "Step 2".
  *
  * @subsection i_have_C89_and_64bit Are you trying to compile C89 on a 64-bit machine?
  *
- * If your target is a 64-bit machine and your compiler is ANSI C89, this configuration @htmlonly<B>is not
- * supported!</B>@endhtmlonly
+ * If your target is a 64-bit machine and your compiler is C89 compliant, this configuration 
+ * @htmlonly<B>is not supported!</B>@endhtmlonly
  *
- * You will either have to find a ANSI C99 compiler for your target or you will have
+ * You will either have to find a C99 compiler for your target or you will have
  * to make updates and adjustments as outlined in the following steps.
  *
  * @note This combination should be rare, given most 64-bit processors were unavailable
- * prior to 1999.  We expect 64-bit targets to have ANSI C99 support.
+ * prior to 1999.  We expect 64-bit targets to have C99 support.
  *
- * @subsection non_compliant_adjustments What to do about non ANSI C89 or C99 compliant compilers
+ * @subsection non_compliant_adjustments What to do about non C89 or C99 compliant compilers
  *
  * Updates and adjustments will be necessary to properly compile the Cloud Connector software with
  * your compiler and tool chain.  To begin these updates, complete the following steps:
@@ -95,7 +95,7 @@
  *  @li PRIu32
  *  @li PRIx32
  *
- * @note These are defined for ANSI C99 or typedefed/defined for ANSI C89.
+ * @note These are defined for C99 or typedefed/defined for C89.
  *
  * @subsection debug_routine Implement the debug routine and macro
  *
@@ -118,11 +118,11 @@
  *
  * The function @ref connector_snprintf() is located in @ref os.c and used to build formatted
  * output strings with the protection of a maximum string length (preventing erroneous
- * buffer overwrites).  This maps one-to-one to ANSI C99 vsnprintf().
+ * buffer overwrites).  This maps one-to-one to C99 vsnprintf().
  *
- * For the linux platform, the function is fully implemented for either ANSI C99 or ANSI C89
+ * For the linux platform, the function is fully implemented for either C99 or C89
  * (using vsprintf() and memcpy()).  If these functions are unavailable on your platform, we
- * recommend you look at our ANSI C89 implementation and mimic.
+ * recommend you look at our C89 implementation and mimic.
  *
  *
  * @section step2 Modify connector_config.h
@@ -207,7 +207,7 @@
  *
  * @subsection errors_due_to_C89_and_stdint C89 stdint.h compilation errors
  *
- * Some ANSI C89 compilers include elements that were eventually released in ANSI C99, in particular,
+ * Some C89 compilers include elements that were eventually released in C99, in particular,
  * stdint.h.  For these hybrid compilers, the compilation phase will result in errors:
  *
  * @code

@@ -31,7 +31,7 @@
  *  @li PRIu64
  *  @li PRIx64
  *
- * @note These are automatically defined for ANSI C99.
+ * @note These are automatically defined for C99.
  *
  * @section data_point_time_since_epoch 64-bit Data Point Epoch Time
  *

@@ -42,14 +42,14 @@
  * and samples can be run without significant modifications.
  *
  * @note
- * Compilers that are not strictly compliant with ANSI C89 or C99 will most likely generate compilation
+ * Compilers that are not strictly compliant with C89 or C99 will most likely generate compilation
  * errors.  In that case, we recommend careful evaluation of each error and appropriate adjustments be
  * made within the public include area.  Cloud Connector was designed for portability.  This would
  * be the ideal place to make updates.
  *
  * @note
- * Some ANSI C89 compilers include elements of ANSI C99.  In particular, those
- * ANSI C89 compilers that also include stdint.h, which is a part of ANSI C99, will
+ * Some C89 compilers include elements of C99.  In particular, those
+ * C89 compilers that also include stdint.h, which is a part of C99, will
  * result in compilation failures.  These compilation failures can be resolved
  * by defining CONNECTOR_HAVE_STDINT_HEADER in your make or build system.
  *
