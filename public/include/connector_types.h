@@ -50,7 +50,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
   #endif
 #endif
 
-#if defined CONNECTOR_HAVE_STDINT_HEADER_
+#if defined CONNECTOR_HAVE_STDINT_HEADER
   #include <stdint.h>
   #include <inttypes.h>
 
