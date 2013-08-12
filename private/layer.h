@@ -13,7 +13,7 @@
 
 #define MANDATORY_FACILITY          (connector_request_id_config_t)-1
 
-#define SET_FACILITY_SUPPORT(i) (0x01U << (i))
+#define SET_FACILITY_SUPPORT(i) (UINT32_C(0x01) << (i))
 #define IS_FACILITY_SUPPORTED(connector_ptr, table_index)    (connector_ptr->edp_data.facilities.supported_mask & SET_FACILITY_SUPPORT(table_index))
 
 typedef connector_status_t (* connector_facility_service_init_cb_t)(struct connector_data * const connector_ptr, unsigned int const facility_index);

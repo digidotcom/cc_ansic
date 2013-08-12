@@ -35,10 +35,10 @@ static connector_remote_config_data_t const connector_rci_config_data = {
 };
 #endif
 
-#define BINARY_RCI_FIELD_LOWER_ID_MASK 0x3FU
-#define BINARY_RCI_FIELD_MIDDLE_ID_MASK 0x380U
-#define BINARY_RCI_FIELD_MIDDLE_BIT_ID_MASK 0x800U
-#define BINARY_RCI_FIELD_UPPER_ID_MASK (~0x1FFFU)
+#define BINARY_RCI_FIELD_LOWER_ID_MASK UINT32_C(0x3F)
+#define BINARY_RCI_FIELD_MIDDLE_ID_MASK UINT32_C(0x380)
+#define BINARY_RCI_FIELD_MIDDLE_BIT_ID_MASK UINT32_C(0x800)
+#define BINARY_RCI_FIELD_UPPER_ID_MASK (~UINT32_C(0x1FFF))
 
 
 static unsigned int decode_element_id(uint32_t const value)
@@ -67,9 +67,9 @@ static uint32_t encode_element_id(unsigned int const id)
 }
 
 
-#define BINARY_RCI_GROUP_ID_LOWER_BIT_MASK  0x03FU   /* [5:0] */
-#define BINARY_RCI_GROUP_ID_MIDDLE_BIT_MASK 0xF80U   /* [11:7] */
-#define BINARY_RCI_GROUP_ID_UPPER_BIT_MASK  ~(0x1FFU)    /* [:13] */
+#define BINARY_RCI_GROUP_ID_LOWER_BIT_MASK  UINT32_C(0x03F)   /* [5:0] */
+#define BINARY_RCI_GROUP_ID_MIDDLE_BIT_MASK UINT32_C(0xF80)   /* [11:7] */
+#define BINARY_RCI_GROUP_ID_UPPER_BIT_MASK  ~(UINT32_C(0x1FF))    /* [:13] */
 
 static unsigned int decode_group_id(uint32_t const group_id)
 {

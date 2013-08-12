@@ -106,7 +106,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     {
         unsigned long const tx_keepalive_interval = GET_TX_KEEPALIVE_INTERVAL(connector_ptr);
 
-        unsigned long const wait_count = connector_ptr->edp_data.keepalive.miss_tx_count + 1UL;
+        unsigned long const wait_count = connector_ptr->edp_data.keepalive.miss_tx_count + UINT32_C(1);
         unsigned long const max_timeout = (tx_keepalive_interval * wait_count);
 
         if (!is_valid_timing_limit(connector_ptr, connector_ptr->edp_data.keepalive.last_tx_received_time, max_timeout))

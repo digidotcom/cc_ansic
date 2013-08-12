@@ -392,7 +392,7 @@ enum fw_info {
         message_store_u8(fw_info, opcode, fw_info_response_opcode);
         message_store_u8(fw_info, target, target);
         message_store_be32(fw_info, version, FW_VERION_NUMBER(firmware_info->version));
-        message_store_be32(fw_info, code_size, 0L);
+        message_store_be32(fw_info, code_size, INT32_C(0));
         fw_info += record_bytes(fw_info);
 
         connector_debug_printf("firmware description = %d %s %s\n", fw_ptr->desc_length, firmware_info->description, firmware_info->filespec);
@@ -520,7 +520,7 @@ enum fw_download_response {
             if (end_ptr != NULL) *end_ptr = '\0';
             {
                 size_t const label_length = (size_t)(end_ptr - string_id_ptr);
-                string_id_length -= (1U + label_length);
+                string_id_length -= (UINT32_C(1) + label_length);
             }
             string_id_ptr++;
         }
@@ -784,8 +784,8 @@ enum fw_complete_response {
         /* send firmware download complete response */
         message_store_u8(fw_complete_response, opcode, fw_download_complete_response_opcode);
         message_store_u8(fw_complete_response, target, download_complete.target_number);
-        message_store_be32(fw_complete_response, version, 0L);
-        message_store_be32(fw_complete_response, checksum, 0L);
+        message_store_be32(fw_complete_response, version, INT32_C(0));
+        message_store_be32(fw_complete_response, checksum, INT32_C(0));
         message_store_u8(fw_complete_response, status, download_complete.status);
 
         fw_ptr->last_fw_keepalive_sent_time = 0;

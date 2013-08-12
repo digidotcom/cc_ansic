@@ -294,11 +294,11 @@ static connector_status_t receive_protocol_version(connector_data_t * const conn
 static connector_status_t send_identity_verification(connector_data_t * const connector_ptr)
 {
     /* The security operations other than encryption... */
-    #define SECURITY_OPER_IDENT_FORM     0x80U
+    #define SECURITY_OPER_IDENT_FORM     UINT32_C(0x80)
 
     /* Identity verification form codes... */
-    #define SECURITY_IDENT_FORM_SIMPLE   0x00U /* simple verification */
-    #define SECURITY_IDENT_FORM_PASSWORD 0x02U /* password verification */
+    #define SECURITY_IDENT_FORM_SIMPLE   UINT32_C(0x00) /* simple verification */
+    #define SECURITY_IDENT_FORM_PASSWORD UINT32_C(0x02) /* password verification */
 
     enum edp_security {
         field_define(edp_security, opcode, uint8_t),
@@ -406,7 +406,7 @@ done:
 
 static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 {
-    #define SECURITY_OPER_URL            0x86U
+    #define SECURITY_OPER_URL            UINT32_C(0x86)
 
     /*
      * packet format:

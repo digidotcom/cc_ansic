@@ -18,18 +18,18 @@ static void rci_output_error_id(rci_t * const rci)
 
     if (rci->error.command_error)
     {
-        #define BINARY_RCI_COMMAND_LOWER_ERROR_ID_MASK  0x7FFU
-        #define BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK   (~0x1FFFU)
+        #define BINARY_RCI_COMMAND_LOWER_ERROR_ID_MASK  UINT32_C(0x7FF)
+        #define BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK   (~UINT32_C(0x1FFF))
         /* Command Error ID is [:13][10:0] */
         value = (response->error_id & BINARY_RCI_COMMAND_LOWER_ERROR_ID_MASK);
-        value |= ((response->error_id << 2U) & BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK);
+        value |= ((response->error_id << UINT32_C(2)) & BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK);
     }
     else
     {
         /* Error Id is [:13][10:7][5:0] */
-        #define BINARY_RCI_LOWER_ERROR_ID_MASK 0x3FU
-        #define BINARY_RCI_MIDDLE_ERROR_ID_MASK 0x780U
-        #define BINARY_RCI_UPPER_ERROR_ID_MASK  ()~0x1FFFU)
+        #define BINARY_RCI_LOWER_ERROR_ID_MASK UINT32_C(0x3F)
+        #define BINARY_RCI_MIDDLE_ERROR_ID_MASK UINT32_C(0x780)
+        #define BINARY_RCI_UPPER_ERROR_ID_MASK  ()~UINT32_C(0x1FFF))
 
         value = response->error_id & BINARY_RCI_LOWER_ERROR_ID_MASK;
         value |= (response->error_id << 1) & BINARY_RCI_MIDDLE_ERROR_ID_MASK;

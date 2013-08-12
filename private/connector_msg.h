@@ -20,19 +20,19 @@
 
 #define MSG_INVALID_CLIENT_SESSION  0xFFFF
 
-#define MSG_FLAG_REQUEST      0x01U
-#define MSG_FLAG_LAST_DATA    0x02U
-#define MSG_FLAG_SENDER       0x04U
+#define MSG_FLAG_REQUEST      UINT32_C(0x01)
+#define MSG_FLAG_LAST_DATA    UINT32_C(0x02)
+#define MSG_FLAG_SENDER       UINT32_C(0x04)
 
-#define MSG_FLAG_CLIENT_OWNED 0x20U
-#define MSG_FLAG_RECEIVING    0x40U
-#define MSG_FLAG_START        0x80U
-#define MSG_FLAG_ACK_PENDING  0x100U
-#define MSG_FLAG_COMPRESSED   0x200U
-#define MSG_FLAG_INFLATED     0x400U
-#define MSG_FLAG_DEFLATED     0x800U
-#define MSG_FLAG_SEND_NOW     0x1000U
-#define MSG_FLAG_DOUBLE_BUF   0x2000U
+#define MSG_FLAG_CLIENT_OWNED UINT32_C(0x20)
+#define MSG_FLAG_RECEIVING    UINT32_C(0x40)
+#define MSG_FLAG_START        UINT32_C(0x80)
+#define MSG_FLAG_ACK_PENDING  UINT32_C(0x100)
+#define MSG_FLAG_COMPRESSED   UINT32_C(0x200)
+#define MSG_FLAG_INFLATED     UINT32_C(0x400)
+#define MSG_FLAG_DEFLATED     UINT32_C(0x800)
+#define MSG_FLAG_SEND_NOW     UINT32_C(0x1000)
+#define MSG_FLAG_DOUBLE_BUF   UINT32_C(0x2000)
 
 #define MsgIsBitSet(flag, bit)   (connector_bool(((flag) & (bit)) == (bit)))
 #define MsgIsBitClear(flag, bit) (connector_bool(((flag) & (bit)) == 0))

@@ -23,8 +23,8 @@ pthread_t application_thread;
 
 __thread void * stack_top;
 __thread void * stack_bottom;
-__thread size_t stack_size_used = 0L;
-__thread size_t stack_size = 0L;
+__thread size_t stack_size_used = INT32_C(0);
+__thread size_t stack_size = INT32_C(0);
 
 void * PrintThreadStackInit(size_t * StackSize, size_t * GuardSize)
 {

@@ -50,7 +50,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
   #endif
 #endif
 
-#if defined CONNECTOR_HAVE_STDINT_HEADER
+#if defined CONNECTOR_HAVE_STDINT_HEADER_
   #include <stdint.h>
   #include <inttypes.h>
 
@@ -67,16 +67,29 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned char uint8_t;
 
+#define INT8_C(c)      c
+#define UINT8_C(c)	    c
+
+#ifndef UINT8_MAX
+/**
+*  Unsigned 8 bit maximum value.
+*/
+#define UINT8_MAX  UINT8_C(0xFF)
+#endif
+
 /**
  *  Unsigned 16 bit value.
  */
   typedef unsigned short uint16_t;
 
+#define INT16_C(c)     c
+#define UINT16_C(c)	    c
+
 #ifndef UINT16_MAX
 /**
 *  Unsigned 16 bit maximum value.
 */
-#define UINT16_MAX  0xFFFF
+#define UINT16_MAX  UINT16_C(0xFFFF)
 #endif
 
 /**
@@ -84,11 +97,14 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned long int uint32_t;
 
+#define INT32_C(c)     c
+#define UINT32_C(c)	    c ## U
+
 #ifndef UINT32_MAX
 /**
 *  Unsigned 32 bit maximum value.
 */
-#define UINT32_MAX 4294967295UL
+#define UINT32_MAX UINT32_C(4294967295)
 #endif
 
 #ifndef SCNu32
@@ -114,14 +130,14 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 /**
 *  Signed 32 bit minimum value.
 */
-#define INT32_MIN -2147483648L
+#define INT32_MIN -INT32_C(2147483648)
 #endif
 
 #ifndef INT32_MAX
 /**
 *  Signed 32 bit maximum value.
 */
-#define INT32_MAX 2147483647L
+#define INT32_MAX INT32_C(2147483647)
 #endif
 
 #ifndef SCNd32
@@ -159,12 +175,17 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned long long int uint64_t;
 
+
+#define INT64_C(c)     c ## LL
+#define UINT64_C(c)	    c ## ULL
+
 #ifndef UINT64_MAX
 /**
 *  Unsigned 64 bit maximum value.
 */
-#define UINT64_MAX 18446744073709551615ULL
+#define UINT64_MAX UINT64_C(18446744073709551615)
 #endif
+
 
 #ifndef SCNu64
 /**
@@ -189,14 +210,14 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 /**
 *  Signed 64 bit minimum value.
 */
-#define INT64_MIN -9223372036854775808LL
+#define INT64_MIN -INT64_C(9223372036854775808)
 #endif
 
 #ifndef INT64_MAX
 /**
 *  Signed 64 bit maximum value.
 */
-#define INT64_MAX 9223372036854775807LL
+#define INT64_MAX INT64_C(9223372036854775807)
 #endif
 
 #ifndef SCNd64

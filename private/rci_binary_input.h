@@ -73,8 +73,8 @@ static void reset_input_content(rci_t * const rci)
     rci->shared.content.length = 0;
 }
 
-#define BINARY_RCI_ONE_BYTE_LIMIT_MASK  0x7FU
-#define BINARY_RCI_HI_BYTE_MASK         0x1FU
+#define BINARY_RCI_ONE_BYTE_LIMIT_MASK  UINT32_C(0x7F)
+#define BINARY_RCI_HI_BYTE_MASK         UINT32_C(0x1F)
 
 static size_t get_modifier_ber(rci_t * const rci, uint32_t * const value)
 {

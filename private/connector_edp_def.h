@@ -41,17 +41,17 @@
  * MT version 2 message type defines.
  * Refer to EDP specification rev. 14.2 for a description of MT version 2.
  */
-#define E_MSG_MT2_TYPE_VERSION              0x0004U /* C -> S */
-#define E_MSG_MT2_TYPE_LEGACY_EDP_VERSION   0x0004U /* C -> S */
-#define E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP  0x0001U /* C <- S */
-#define E_MSG_MT2_TYPE_VERSION_OK           0x0010U /* C <- S */
-#define E_MSG_MT2_TYPE_VERSION_BAD          0x0011U /* C <- S */
-#define E_MSG_MT2_TYPE_CLOUD_OVERLOAD       0x0012U /* C <- S */
-#define E_MSG_MT2_TYPE_KA_RX_INTERVAL       0x0020U /* C -> S */
-#define E_MSG_MT2_TYPE_KA_TX_INTERVAL       0x0021U /* C -> S */
-#define E_MSG_MT2_TYPE_KA_WAIT              0x0022U /* C -> S */
-#define E_MSG_MT2_TYPE_KA_KEEPALIVE         0x0030U /* bi-directional */
-#define E_MSG_MT2_TYPE_PAYLOAD              0x0040U /* bi-directional */
+#define E_MSG_MT2_TYPE_VERSION              UINT32_C(0x0004) /* C -> S */
+#define E_MSG_MT2_TYPE_LEGACY_EDP_VERSION   UINT32_C(0x0004) /* C -> S */
+#define E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP  UINT32_C(0x0001) /* C <- S */
+#define E_MSG_MT2_TYPE_VERSION_OK           UINT32_C(0x0010) /* C <- S */
+#define E_MSG_MT2_TYPE_VERSION_BAD          UINT32_C(0x0011) /* C <- S */
+#define E_MSG_MT2_TYPE_CLOUD_OVERLOAD       UINT32_C(0x0012) /* C <- S */
+#define E_MSG_MT2_TYPE_KA_RX_INTERVAL       UINT32_C(0x0020) /* C -> S */
+#define E_MSG_MT2_TYPE_KA_TX_INTERVAL       UINT32_C(0x0021) /* C -> S */
+#define E_MSG_MT2_TYPE_KA_WAIT              UINT32_C(0x0022) /* C -> S */
+#define E_MSG_MT2_TYPE_KA_KEEPALIVE         UINT32_C(0x0030) /* bi-directional */
+#define E_MSG_MT2_TYPE_PAYLOAD              UINT32_C(0x0040) /* bi-directional */
 
 #define URL_PREFIX  "en://"
 #define GET_PACKET_DATA_POINTER(p, s)   (uint8_t *)(((uint8_t *)p) + (s))

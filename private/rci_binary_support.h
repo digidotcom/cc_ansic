@@ -12,15 +12,15 @@
 
 #include <stdarg.h>
 
-#define BINARY_RCI_ATTRIBUTE_BIT  0x40U  /* bit 6 */
+#define BINARY_RCI_ATTRIBUTE_BIT  UINT32_C(0x40)  /* bit 6 */
 
-#define BINARY_RCI_NO_VALUE        0xE0U
-#define BINARY_RCI_TERMINATOR      0xE1U
+#define BINARY_RCI_NO_VALUE        UINT32_C(0xE0)
+#define BINARY_RCI_TERMINATOR      UINT32_C(0xE1)
 
-#define BINARY_RCI_ERROR_INDICATOR_BIT  0x1000U /* bit 12 */
+#define BINARY_RCI_ERROR_INDICATOR_BIT  UINT32_C(0x1000) /* bit 12 */
 
-#define BINARY_RCI_FIELD_TYPE_INDICATOR_BIT 0x40U /* bit 6 */
-#define BINARY_RCI_FIELD_ATTRIBUTE_BIT      0x400U /* bit 10 */
+#define BINARY_RCI_FIELD_TYPE_INDICATOR_BIT UINT32_C(0x40) /* bit 6 */
+#define BINARY_RCI_FIELD_ATTRIBUTE_BIT      UINT32_C(0x400) /* bit 10 */
 /* #define BINARY_RCI_FIELD_ASCENDING_INDICATOR_BIT    (0x1 << 6) */
 
 /*
@@ -34,9 +34,9 @@
  *    1 1 1 0 0 0 0 0   NONUM (No Value)
  *    1 1 1 0 0 0 0 1   TRM (Terminator)
  */
-#define BINARY_RCI_SIZE_ALTERNATE_FLAG          0x80U /* bit 7 */
-#define BINARY_RCI_SIZE_MODIFIER_MASK           0x60U /* bits 6:5 */
-#define BINARY_RCI_SIZE_MODIFIER(value)         (rci_size_modifier_t)((value & BINARY_RCI_SIZE_MODIFIER_MASK) >> 5U)
+#define BINARY_RCI_SIZE_ALTERNATE_FLAG          UINT32_C(0x80) /* bit 7 */
+#define BINARY_RCI_SIZE_MODIFIER_MASK           UINT32_C(0x60) /* bits 6:5 */
+#define BINARY_RCI_SIZE_MODIFIER(value)         (rci_size_modifier_t)((value & BINARY_RCI_SIZE_MODIFIER_MASK) >> UINT32_C(5))
 
 typedef enum {
     binary_rci_one_follow_byte,
@@ -45,9 +45,9 @@ typedef enum {
 } rci_size_modifier_t;
 
 
-#define BINARY_RCI_MULTI_FOLLOW_BYTE_MASK       0x03U
+#define BINARY_RCI_MULTI_FOLLOW_BYTE_MASK       UINT32_C(0x03)
 #define BINARY_RCI_MULTI_FOLLOW_BYTES(value)    (value & BINARY_RCI_MULTI_FOLLOW_BYTE_MASK)
-#define BINARY_RCI_SET_MULTI_FOLLOW_BYTES(value) (BINARY_RCI_SIZE_ALTERNATE_FLAG | (binary_rci_multi_follow_byte << 5U) |value)
+#define BINARY_RCI_SET_MULTI_FOLLOW_BYTES(value) (BINARY_RCI_SIZE_ALTERNATE_FLAG | (binary_rci_multi_follow_byte << UINT32_C(5)) |value)
 
 enum {
     binary_rci_two_follow_byte,
@@ -55,7 +55,7 @@ enum {
     binary_rci_eight_follow_byte
 };
 
-#define RCI_FLAG_GET_ALL_INSTANCES     0x01U
+#define RCI_FLAG_GET_ALL_INSTANCES     UINT32_C(0x01)
 
 #define RCI_NO_HINT             NULL
 #define INVALID_ID              UINT_MAX

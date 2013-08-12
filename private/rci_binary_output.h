@@ -44,15 +44,15 @@ static size_t get_bytes_followed(uint32_t value)
      * Get additional bytes needed according to the value.
      */
     size_t bytes = 0;
-    if (value <= 0x7FU)
+    if (value <= UINT32_C(0x7F))
     {
         bytes = 0;
     }
-    else if (value < 0x2000U)
+    else if (value < UINT32_C(0x2000))
     {
         bytes = 1;
     }
-    else if (value < 0x10000U)
+    else if (value < UINT32_C(0x10000))
     {
         bytes = 2;
     }
@@ -105,7 +105,7 @@ static connector_bool_t rci_output_uint32(rci_t * const rci, uint32_t const valu
             }
             case record_bytes(rci_ber_u8):
             {
-                #define MAX_ONE_BYTE_FOLLOW_VALUE   0x1FFFU
+                #define MAX_ONE_BYTE_FOLLOW_VALUE   UINT32_C(0x1FFF)
 
                 /* two bytes with range [0, 0x1FFF] */
                 uint8_t * const rci_ber_u8 = rci_ber;
