@@ -277,7 +277,7 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
         }
     }
 
-    connector_debug_printf("connector_stop_callback: %s\n", transport_status_to_string(transport));
+    connector_debug_printf("connector_stop_callback: %s\n", transport_to_string(transport));
     return result;
 }
 

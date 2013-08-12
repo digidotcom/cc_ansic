@@ -42,7 +42,7 @@ static void connector_debug_printf(char const * const format, ...)
 
 #if (defined CONNECTOR_DEBUG)
 
-static char const * transport_status_to_string(connector_transport_t const value)
+static char const * transport_to_string(connector_transport_t const value)
 {
     char const * result = NULL;
     switch (value)
@@ -62,6 +62,6 @@ static char const * transport_status_to_string(connector_transport_t const value
 }
 #else
 
-#define transport_status_to_string(value)       NULL
+#define transport_to_string(value)       NULL
 #endif
 
