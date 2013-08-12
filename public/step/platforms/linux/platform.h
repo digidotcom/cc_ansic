@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Digi International Inc.,
+ * Copyright (c) 2011, 2012, 2013 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -23,6 +23,12 @@
 /* GCC emits a warning message for alignment issues when casting. Normally we fix these by reorganizing our structures.
    In some cases these structures are in system header files and cannot be changed. This macro should be used in those situations. */
 #define cast_for_alignment(cast, ptr)   ((cast) ((void *) (ptr)))
+
+
+typedef enum {
+    connector_connector_idle,
+    connector_connector_running
+} connector_connector_state_t;
 
 extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                           connector_request_id_t const request_id,
@@ -52,13 +58,12 @@ extern connector_callback_status_t app_os_get_system_time(unsigned long * const 
 
 extern connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status);
 extern connector_callback_status_t app_status_handler(connector_request_id_status_t const request,
-                                           void * const data);
+                                                      void * const data);
 
 #if (defined RUNNIG_FROM_BASE)
 #define APP_SSL_CA_CERT   "./public/certificates/etherios-ca-cert-public.crt"
 #else
 #define APP_SSL_CA_CERT   "../../../../public/certificates/etherios-ca-cert-public.crt"
 #endif
-
 
 #endif /* _PLATFORM_H */

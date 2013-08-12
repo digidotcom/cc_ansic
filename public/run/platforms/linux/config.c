@@ -224,7 +224,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
 #endif
 
 #if !(defined CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
-/* This keep alive is sent from the device to the cloud  */
+/* This keep alive is sent from the device to Device Cloud  */
 static connector_callback_status_t app_get_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
 #define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60

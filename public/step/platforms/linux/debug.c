@@ -11,7 +11,7 @@
  */
 #include "connector_config.h"
 
-#if defined(CONNECTOR_DEBUG)
+#if (defined CONNECTOR_DEBUG)
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -27,8 +27,7 @@ void connector_debug_printf(char const * const format, ...)
     fflush(stdout);
 }
 #else
-
-/* to avoid ISO C forbids an empty translation unit compiler error */
+ /* to avoid ISO C forbids an empty translation unit compiler error */
 typedef int dummy;
 
 #endif
