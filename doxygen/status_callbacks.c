@@ -70,7 +70,7 @@
  * @section status_stop_completed Stop Completion
  *
  * This callback is called when Cloud Connector has stopped running. It's invoked from connector_initiate_action() call on @ref connector_initiate_transport_stop.
- * When connector_initiate_action() is called, this calblack will be called after the specified transport has stopped running.
+ * When connector_initiate_action() is called, this callback will be called after the specified transport has stopped running.
  *
  * @htmlonly
  * <table class="apitable">

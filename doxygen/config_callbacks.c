@@ -370,7 +370,7 @@
  *          <dl>
  *              <dt><i>type</i></dt>
  *              <dd> <ul><li> @endhtmlonly @ref connector_connection_type_lan @htmlonly - Callback returns this for LAN connection type</li>
- *                       <li> @endhtmlonly @ref connector_connection_type_wan @htmlonly - Callback returns this for WAN conenction type</li></ul>
+ *                       <li> @endhtmlonly @ref connector_connection_type_wan @htmlonly - Callback returns this for WAN connection type</li></ul>
  *              </dd>
  *          </dl>
  * </td>
@@ -501,7 +501,7 @@
  * <td> Pointer to @endhtmlonly connector_config_link_speed_t @htmlonly:
  *          <dl>
  *              <dt><i>speed</i></dt>
- *              <dd> - Callback writes 4-byte integer speed of the link in bits per second. All zeros represents unknown speed.</dd>
+ *              <dd> - Callback writes 4-byte integer speed of the link in bits per second. All zeros represent unknown speed.</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -788,7 +788,7 @@
  * <td> Pointer to @endhtmlonly connector_config_wait_count_t @htmlonly:
  *          <dl>
  *              <dt><i>count</i></dt>
- *              <dd> - Callback writes 2-byte wait count.It must be between 2 and 63 times.</dd>
+ *              <dd> - Callback writes 2-byte wait count. It must be between 2 and 63 times.</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -1328,7 +1328,7 @@
  *                                                            generate the device ID according to the @ref wan_type @htmlonly for WAN connection type.</li>
  *                      <li>@endhtmlonly @ref connector_device_id_method_manual @htmlonly - Callback returns this telling Cloud Connector to retrieve
  *                                                            the device ID from @endhtmlonly @ref connector_request_id_config_device_id @htmlonly callback.</li></ul>
- *                  Note: the @endhtmlonly @ref device_id @htmlonly calblack will not be called if connector_device_id_method_auto is returned.
+ *                  Note: the @endhtmlonly @ref device_id @htmlonly callback will not be called if connector_device_id_method_auto is returned.
  *          </dl>
  * </td>
  * </tr>
@@ -1589,7 +1589,7 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_data_t @htmlonly:
  *          <dl>
  *              <dt><i>data</i></dt>
- *              <dd> - Callback returns the pointer which contains IMEI number including a check digit. Each nibble corresponds a
+ *              <dd> - Callback returns the pointer which contains IMEI number including a check digit. Each nibble corresponds with a
  *                     decimal digit and most upper nibble must be 0.</dd>
  *              <dt><i>bytes_required</i></dt><dd> - Contains 8 bytes which is required for the IMEI number in the data pointer</dd>
  *            </dl>
@@ -1773,7 +1773,7 @@
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains MEID number. Each nibble corresponds a
- *                     hexadecimal digit.Check digit is not included.</dd>
+ *                     hexadecimal digit. Check digit is not included.</dd>
  *              <dt><i>bytes_required</i></dt><dd> - Contains 7 bytes which is required for the MEID number in the data pointer</dd>
  *            </dl>
  * </td>

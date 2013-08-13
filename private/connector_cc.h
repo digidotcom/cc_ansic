@@ -206,7 +206,7 @@ enum cc_connection_info {
      *  -------------------------------------------------------
      *
      * 1. call callback to get ip address & build ip_address
-     * 2. call callback to get & build conenction type
+     * 2. call callback to get & build connection type
      * 3. if connection type is LAN, call callback to get and build mac address for connection information
      * 4. if connection type is WAN, call callback to get and build link speed for connection information
      * 5. if connection type is WAN, call callback to get and build phone number for connection information

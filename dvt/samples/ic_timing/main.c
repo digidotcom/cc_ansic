@@ -287,7 +287,7 @@ int main (void)
         fprintf(file_fd, TIMING_TABLE_HTML_OPEN_TABLE);
 
         {
-            /* Need to subtract callback's time from calblack time */
+            /* Need to subtract callback's time from callback time */
             struct timespec elapsed_time = {0};
 
             total_elapsed_time(&elapsed_time, callback_time, connector_time);

@@ -152,7 +152,7 @@ static connector_status_t process_ds_receive_target(connector_data_t * const con
 
     *data_length = (ds_device_request - data);
 
-    /* Add NUL to the target string. Must NUL-terminate it after parsing all parameters.
+    /* Add NUL to the target string. Must NULL-terminate it after parsing all parameters.
      * The NUL char is on parameter_count field in the request.
      */
     target_string[target_length] = '\0';
@@ -689,7 +689,7 @@ static connector_status_t process_send_response(connector_data_t * const connect
         size_t hint_length = (hint_end - hint_start) < max_hint_length ? hint_end - hint_start : max_hint_length;
         char * const hint = (char *)hint_start;
 
-        /* Add a nul-terminator only if necessary */
+        /* Add a null-terminator only if necessary */
         if (hint[hint_length - 1] != '\0')
             hint[hint_length] = '\0';
         user_data.hint = hint;
