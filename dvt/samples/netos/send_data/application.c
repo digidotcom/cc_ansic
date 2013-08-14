@@ -29,7 +29,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
                                     void const * const request_data, size_t const request_length,
                                     void * response_data, size_t * const response_length)
 {
-    connector_callback_status_t   status = connector_callback_continue;
+    connector_callback_status_t   status = connector_callback_unrecognized;
 
     switch (class_id)
     {

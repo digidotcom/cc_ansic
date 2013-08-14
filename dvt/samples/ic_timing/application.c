@@ -44,7 +44,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
                                                    connector_request_id_t const request_id,
                                                    void * const data)
 {
-    connector_callback_status_t   status = connector_callback_continue;
+    connector_callback_status_t   status = connector_callback_unrecognized;
 
     struct timespec start_time;
     struct timespec end_time;

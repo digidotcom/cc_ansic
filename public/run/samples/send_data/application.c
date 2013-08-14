@@ -50,7 +50,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
                                                    connector_request_id_t const request_id,
                                                    void * const data)
 {
-    connector_callback_status_t   status;
+    connector_callback_status_t   status = connector_callback_unrecognized;
 
     switch (class_id)
     {
@@ -75,7 +75,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         break;
 
     default:
-        status = connector_callback_unrecognized;
+        /* not supported */
         break;
     }
     return status;
