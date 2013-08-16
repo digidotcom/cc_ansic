@@ -158,7 +158,20 @@ typedef struct connector_data_point_t
 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
             connector_time_epoch_whole_t since_epoch_whole;             /**< Time since the Epoch time in milliseconds */
 #endif
-            char * iso8601_string;                                      /**< A null-terminated local time in ISO 8601 format */
+            char * iso8601_string;                                      /**< 
+                                                                             A null-terminated local time in ISO 8601 format. Supported format is YYYY-MM-DDTHH:MM:SS[.mmm][+/-hh:mm] where:
+                                                                             - YYYY year.
+                                                                             - MM month (1-12).
+                                                                             - DD month day (1-31).
+                                                                             - HH hours (24-hour format).
+                                                                             - MM minutes (0-59).
+                                                                             - SS seconds (0-59).
+                                                                             - mmmm (optional) milliseconds (0-999).
+                                                                             - +/- (optional) hh:mm is the UTC offset in hours and minutes. Nautical time zones are not supported except for Z. If not specified defaults to +00:00.
+                                                                             - Some examples of valid representations: 
+                                                                                 - 2012-01-12T06:16:55.235Z
+                                                                                 - 2012-12-22T03:16:44Z
+                                                                                 - 2012-12-21T19:16:44-08:00 */
         } value;    /**< Time value data structure */
 
     } time;   /**< Time at the data point is captured */
