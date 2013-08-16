@@ -76,6 +76,7 @@ static connector_callback_status_t connector_callback(connector_callback_t const
             status = connector_callback_abort;
             break;
     }
+    ASSERT(status != connector_callback_unrecognized);
 
     return status;
 }
