@@ -423,6 +423,7 @@ typedef union {
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_request_id_sm_t sm_request;                       /**< Short message request ID for short message class */
     #endif
+    int int_value;                                             /**< For debugging purposes. */
 } connector_request_id_t;
 /**
 * @}
