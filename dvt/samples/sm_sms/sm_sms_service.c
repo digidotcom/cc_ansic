@@ -493,6 +493,8 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             /* This callback is mainly informative as:
              *    - At the configuration layer: 
              *      Phone number has already been reconfigured by the connector through connector_request_id_reconfig_device_cloud_phone.
+             *    - At the transport layer:
+             *      SMS transport open function has been called through connector_request_id_network_open so new phone makes effect. 
              */
         	
             APP_DEBUG("Received connector_request_id_sm_config_request request. response %s needed\n", request->response_required ? "is" : "is not");
