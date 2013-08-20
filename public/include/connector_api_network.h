@@ -42,7 +42,11 @@ typedef enum {
 * Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to Device Cloud.
 */
 typedef struct  {
-    char const * CONST device_cloud_url;    /**< Pointer to Device Cloud URL  */
+    union
+    {
+        char const * CONST url;             /**< Pointer to Device Cloud URL  */
+        char const * CONST phone;           /**< Pointer to Device Cloud Phone Number  */
+    } device_cloud;
     connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
 /**

@@ -32,10 +32,6 @@
 #define GW_PORT		9999
 #define GW_IP		"10.101.1.121"
 
-/* Etherios Cloud telephone where to send SMS messages */
-char server_phone_number[]= "447786201216";	//Initialized to login.etherios.com phone number
-//char server_phone_number[14]= ""; 	// Not initialized, to test server_to_client provisioning
-
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
 
@@ -144,42 +140,40 @@ static connector_callback_status_t app_is_sms_connect_complete(int const fd)
     return status;
 }
 
-connector_callback_status_t config_server_phone_number(int const fd)
+connector_callback_status_t config_server_phone_number(int const fd, const char * device_cloud_phone)
 {
 	connector_callback_status_t status;
 	static char const phone_number_prefix[] = "phone-number=";
-	char str_to_send[sizeof(phone_number_prefix)+sizeof(server_phone_number)];
+	char *str_to_send = NULL;
 	int ccode;
-	
-	static int local_fd = -1;
-	
-	// Catch fd to use when called from application
-	if (fd != -1)
-		local_fd = fd;
-	
-	if (local_fd == -1)
+		
+	if (strlen(device_cloud_phone) == 0)
 	{
-			APP_DEBUG("config_server_phone_number: Conexion to proxy not yet ready\n");	
-			return connector_callback_error;
+		APP_DEBUG("config_server_phone_number: device_cloud_phone not yet configured\n");
+		return connector_callback_error;
 	}
 	
-	if (strlen(server_phone_number) == 0)
+	str_to_send = malloc(sizeof(phone_number_prefix)+strlen(device_cloud_phone));
+	
+	if (str_to_send == NULL)
 	{
-		APP_DEBUG("config_server_phone_number: server_phone_number not yet configured\n");
+		APP_DEBUG("config_server_phone_number: malloc failed\n");
 		return connector_callback_error;
 	}
 	
 	strcpy(str_to_send,phone_number_prefix);
 		
-	strcat(str_to_send, server_phone_number);
+	strcat(str_to_send, device_cloud_phone);
 	            
 	APP_DEBUG("config_server_phone_number: %s\n", str_to_send);
 	
-	ccode = write(local_fd, str_to_send, strlen(str_to_send));
+	ccode = write(fd, str_to_send, strlen(str_to_send));
     if (ccode >= 0)
     	status = connector_callback_continue;
     else
     	status = connector_callback_error;
+    
+    free (str_to_send);
 
     usleep(1000000);	// Let the proxy digest previous command
     
@@ -192,7 +186,7 @@ connector_callback_status_t config_server_phone_number(int const fd)
 	    
 		strcat(str_to_send, "idgp");
 		
-		ccode = write(local_fd, str_to_send, strlen(str_to_send));
+		ccode = write(fd, str_to_send, strlen(str_to_send));
 	    if (ccode >= 0)
 	    	status = connector_callback_continue;
 	    else
@@ -273,7 +267,7 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     {
          APP_DEBUG("app_network_sms_open: connected to %s\n", GW_IP);
          
-         config_server_phone_number(fd);
+         config_server_phone_number(fd, data->device_cloud.phone);
          goto done;
     }
 

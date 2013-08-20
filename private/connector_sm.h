@@ -364,7 +364,16 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
         connector_network_open_t open_data;
         connector_request_id_t request_id;
 
-        open_data.device_cloud_url = connector_ptr->device_cloud_url;
+        switch(sm_ptr->network.class_id)
+        {
+            case connector_class_id_network_sms:
+                open_data.device_cloud.phone = connector_ptr->device_cloud_phone;
+                break;
+
+            default:
+                open_data.device_cloud.url = connector_ptr->device_cloud_url;
+                break;
+        }
         open_data.handle = NULL;
 
         request_id.network_request = connector_request_id_network_open;
