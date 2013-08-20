@@ -649,6 +649,12 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
         config_request.service_id = (phone_bytes < bytes) ? config_request.phone_number + phone_bytes : NULL;
     }
 
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    /* Update configuration */
+    result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
+#endif
+
+    /* Callback to user */
     {
         connector_request_id_t request_id;
         connector_callback_status_t callback_status;

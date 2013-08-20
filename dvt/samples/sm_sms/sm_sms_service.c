@@ -490,6 +490,11 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
         	connector_sm_receive_config_request_t * const request = data;
             
+            /* This callback is mainly informative as:
+             *    - At the configuration layer: 
+             *      Phone number has already been reconfigured by the connector through connector_request_id_reconfig_device_cloud_phone.
+             */
+        	
             APP_DEBUG("Received connector_request_id_sm_config_request request. response %s needed\n", request->response_required ? "is" : "is not");
             APP_DEBUG("phone-number=%s\n", request->phone_number);
             APP_DEBUG("service-id=%s\n", request->service_id);

@@ -174,6 +174,34 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 }
 #endif
 
+#if !(defined CONNECTOR_CLOUD_PHONE)
+
+static char connector_cloud_phone[] = "447786201216";
+
+static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_url)
+{
+
+    config_url->string = (char *)connector_cloud_phone;
+    config_url->length = sizeof connector_cloud_phone -1;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_set_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+    if (config_phone->length > (sizeof connector_cloud_phone -1))
+    {
+        return connector_callback_error;
+    }
+
+    strcpy(connector_cloud_phone, config_phone->string);
+
+    /* Maybe user want to save here connector_cloud_phone to persistent storage */
+
+    return connector_callback_continue;
+}
+#endif
+
 #if !(defined CONNECTOR_CONNECTION_TYPE)
 static connector_callback_status_t app_get_connection_type(connector_config_connection_type_t * const config_connection)
 {
@@ -526,6 +554,8 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);
+        enum_to_case(connector_request_id_config_device_cloud_phone);
+        enum_to_case(connector_request_id_reconfig_device_cloud_phone);
         enum_to_case(connector_request_id_config_connection_type);
         enum_to_case(connector_request_id_config_mac_addr);
         enum_to_case(connector_request_id_config_link_speed);
@@ -852,6 +882,16 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if !(defined CONNECTOR_CLOUD_URL)
     case connector_request_id_config_device_cloud_url:
         status = app_get_device_cloud_url(data);
+        break;
+#endif
+
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    case connector_request_id_config_device_cloud_phone:
+        status = app_get_device_cloud_phone(data);
+        break;
+
+    case connector_request_id_reconfig_device_cloud_phone:
+        status = app_set_device_cloud_phone(data);
         break;
 #endif
 

@@ -162,6 +162,9 @@ typedef struct connector_data {
     char * device_cloud_url;
     size_t device_cloud_url_length;
 
+    char * device_cloud_phone;
+    size_t device_cloud_phone_length;
+
     connector_connection_type_t connection_type;
 
     connector_wan_type_t wan_type;

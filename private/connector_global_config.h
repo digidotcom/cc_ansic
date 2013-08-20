@@ -138,6 +138,94 @@ done:
 }
 #endif
 
+#if !(defined CONNECTOR_CLOUD_PHONE)
+static connector_status_t get_config_device_cloud_phone(connector_data_t * const connector_ptr)
+{
+    connector_status_t result = connector_working;
+    connector_callback_status_t callback_status;
+    connector_config_pointer_string_t   cloud_phone;
+    connector_request_id_t request_id;
+
+    request_id.config_request = connector_request_id_config_device_cloud_phone;
+
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone);
+    switch (callback_status)
+    {
+    case connector_callback_continue:
+        /* coverity[uninit_use] */
+        if (cloud_phone.length == 0)
+        {
+            result =  connector_invalid_data_size;
+        }
+        /* coverity[uninit_use] */
+        else if (cloud_phone.string == NULL)
+        {
+            result = connector_invalid_data;
+        }
+        else
+        {
+            connector_ptr->device_cloud_phone_length = cloud_phone.length;
+            connector_ptr->device_cloud_phone = cloud_phone.string;
+        }
+        break;
+
+    case connector_callback_busy:
+    case connector_callback_unrecognized:
+    case connector_callback_abort:
+    case connector_callback_error:
+        result = connector_abort;
+        goto done;
+    }
+
+    if (result != connector_working)
+    {
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        result = connector_abort;
+    }
+
+done:
+    return result;
+}
+
+/* This function will only be called under SMS trasport when a 'provisioning' message is received */
+static connector_status_t set_config_device_cloud_phone(connector_data_t * const connector_ptr, char * phone_number)
+{
+    connector_status_t result = connector_working;
+    connector_callback_status_t callback_status;
+    connector_config_pointer_string_t cloud_phone;
+    connector_request_id_t request_id;
+
+    request_id.config_request = connector_request_id_reconfig_device_cloud_phone;
+
+    cloud_phone.string = phone_number; 
+    cloud_phone.length = strlen(phone_number);
+
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone);
+    switch (callback_status)
+    {
+    case connector_callback_continue:
+        /* User may have changed the pointer during reconfiguration... So reload it again */
+        get_config_device_cloud_phone(connector_ptr);
+        break;
+
+    case connector_callback_busy:
+    case connector_callback_unrecognized:
+    case connector_callback_abort:
+    case connector_callback_error:
+        result = connector_abort;
+        goto error;
+    }
+error:
+    if (result != connector_working)
+    {
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        result = connector_abort;
+    }
+
+    return result;
+}
+#endif
+
 static connector_status_t get_config_connection_type(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
