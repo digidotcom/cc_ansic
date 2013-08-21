@@ -176,14 +176,26 @@ connector_callback_status_t config_server_phone_number(int const fd, const char 
     free (str_to_send);
 
     usleep(1000000);	// Let the proxy digest previous command
+
+//#define TEST_SERVICE_ID	"IDGP"
     
-#if 0
+#ifdef TEST_SERVICE_ID
+
 	// This is used together a fake sms_proxy_service_id.py to test shared codes:
 	{
 		static char const service_id_prefix[] = "service-id=";
+		
+		str_to_send = malloc(sizeof(service_id_prefix)+sizeof(TEST_SERVICE_ID));
+			
+		if (str_to_send == NULL)
+		{
+			APP_DEBUG("config_server_phone_number: malloc failed\n");
+			return connector_callback_error;
+		}
+			
 	    strcpy(str_to_send,service_id_prefix);
 	    
-		strcat(str_to_send, "IDGP");
+		strcat(str_to_send, TEST_SERVICE_ID);
 		
 		ccode = write(fd, str_to_send, strlen(str_to_send));
 	    if (ccode >= 0)
@@ -191,6 +203,9 @@ connector_callback_status_t config_server_phone_number(int const fd, const char 
 	    else
 	    	status = connector_callback_error;
 	}
+	
+	free (str_to_send);
+	
 	usleep(1000000);	// Let the proxy digest previous command
 #endif
     
