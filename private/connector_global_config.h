@@ -208,41 +208,72 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
         get_config_device_cloud_phone(connector_ptr);
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-        /* Call sms transport open so new phone makes effect */
-		{
-	        connector_callback_status_t status;
-	        connector_network_open_t open_data;
-	        connector_request_id_t request_id;
-			connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;	/* Assume it's SMS transport */
+        /* Call sms transport close/open so new phone makes effect */
+        {
+		    connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;	/* Assume it's SMS transport */
+        
+		    if (sm_ptr->network.handle != NULL)
+		    {
+		        connector_callback_status_t status;
+		        connector_request_id_t request_id;
+                //connector_network_close_t close_data;
+                connector_network_open_t open_data;
 
-	        open_data.device_cloud.phone = connector_ptr->device_cloud_phone;
-	        open_data.handle = NULL;
+#if 0
+                /* Close */
+                close_data.handle = sm_ptr->network.handle;
+                close_data.status = connector_close_status_device_stopped;
 
-	        request_id.network_request = connector_request_id_network_open;
-	        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
+                connector_debug_printf("sm_close_transport: status %d\n", sm_ptr->close.status);
+                request_id.network_request = connector_request_id_network_close;
+                callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
+                switch (callback_status)
+                {
+                    case connector_callback_busy:
+                        result = connector_pending;
+                        goto error;
+
+                    case connector_callback_continue:
+                        result = connector_working;
+                        break;
+
+                    default:
+                        sm_ptr->close.status = connector_close_status_abort;
+                        break;
+                }
+
+                sm_ptr->network.handle = NULL;
+#endif		
+				/* Open */
+		        open_data.device_cloud.phone = connector_ptr->device_cloud_phone;
+		        open_data.handle = NULL;
+
+		        request_id.network_request = connector_request_id_network_open;
+		        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
 			
-			switch (status)
-	        {
-	            case connector_callback_continue:
-	                result = connector_working;
-	                sm_ptr->network.handle = open_data.handle;
-	                break;
+				switch (status)
+		        {
+		            case connector_callback_continue:
+	    	            result = connector_working;
+	        	        sm_ptr->network.handle = open_data.handle;
+	            	    break;
 
-	            case  connector_callback_abort:
-	                result = connector_abort;
-	                goto error;
+		            case  connector_callback_abort:
+		                result = connector_abort;
+	    	            goto error;
 
-	            case connector_callback_unrecognized:
-	                result = connector_unavailable;
-	                goto error;
+		            case connector_callback_unrecognized:
+		                result = connector_unavailable;
+	    	            goto error;
 
-	            case connector_callback_error:
-	                result = connector_open_error;
-	                goto error;
+		            case connector_callback_error:
+		                result = connector_open_error;
+	    	            goto error;
 
-	            case connector_callback_busy:
-	                result = connector_pending;
-	                goto error;
+		            case connector_callback_busy:
+		                //result = connector_pending;
+	    	            goto error;
+		        }
 	        }
         }
 #endif
