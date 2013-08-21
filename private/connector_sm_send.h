@@ -327,7 +327,6 @@ static connector_status_t sm_encode_segment(connector_data_t * const connector_p
         result = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), data_ptr);
         if (result != connector_working) goto error;
         session->sm_state = connector_sm_state_send_data;
-        result = sm_send_segment(connector_ptr, sm_ptr);
     }
 
 error:
@@ -493,10 +492,25 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
     if (SmIsEncoded(session->flags))
     {
         session->sm_state = connector_sm_state_encoding;
+        /* Increase pointer to skip preamble encodig */
+        if (sm_ptr->transport.id_length)
+        {
+            send_ptr->data += (sm_ptr->transport.id_length+1);
+            send_ptr->total_bytes -= (sm_ptr->transport.id_length+1);
+        }
+
         result = sm_encode_segment(connector_ptr, sm_ptr, session);
+
+        /* Restore pointer */
+        if (sm_ptr->transport.id_length)
+        {
+            send_ptr->data -= (sm_ptr->transport.id_length+1);
+            send_ptr->total_bytes += (sm_ptr->transport.id_length+1);
+        }
     }
-    else
     #endif
+
+    if (result == connector_working)
     {
         result = sm_send_segment(connector_ptr, sm_ptr);
     }
@@ -537,6 +551,10 @@ static connector_status_t sm_process_send_path(connector_data_t * const connecto
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_sm_state_encoding:
             result = sm_encode_segment(connector_ptr, sm_ptr, session);
+            if (result == connector_working)
+            {
+                result = sm_send_segment(connector_ptr, sm_ptr);
+            }
             break;
         #endif
 
