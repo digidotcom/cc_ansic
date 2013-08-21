@@ -297,6 +297,56 @@ error:
 }
 #endif
 
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+static connector_status_t get_config_device_cloud_service_id(connector_data_t * const connector_ptr)
+{
+    connector_status_t result = connector_working;
+    connector_callback_status_t callback_status;
+    connector_config_pointer_string_t   cloud_service_id;
+    connector_request_id_t request_id;
+
+    request_id.config_request = connector_request_id_config_device_cloud_service_id;
+
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_service_id);
+    switch (callback_status)
+    {
+    case connector_callback_continue:
+        /* we allow lenght == 0 for service_id */
+        /*if (cloud_service_id.length == 0)
+        {
+            result =  connector_invalid_data_size;
+        }
+        */
+        if (cloud_service_id.string == NULL)
+        {
+            result = connector_invalid_data;
+        }
+        else
+        {
+            connector_ptr->device_cloud_service_id_length = cloud_service_id.length;
+            connector_ptr->device_cloud_service_id = cloud_service_id.string;
+        }
+        break;
+
+    case connector_callback_busy:
+    case connector_callback_unrecognized:
+    case connector_callback_abort:
+    case connector_callback_error:
+        result = connector_abort;
+        goto done;
+    }
+
+    if (result != connector_working)
+    {
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        result = connector_abort;
+    }
+
+done:
+    return result;
+}
+#endif
+
 static connector_status_t get_config_connection_type(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;

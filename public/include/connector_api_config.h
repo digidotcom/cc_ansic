@@ -27,6 +27,8 @@ typedef enum {
     connector_request_id_config_device_cloud_url,  /**< Requesting callback to return the Device Cloud URL which will be connected to */
     connector_request_id_config_device_cloud_phone,/**< Requesting callback to return the Device Cloud Phone Number where to send SMSs (Only used for SMS transport) */
     connector_request_id_reconfig_device_cloud_phone,/**< Requesting callback to reconfgure the Device Cloud Phone Number where to send SMSs (Only used for SMS transport) */
+    connector_request_id_config_device_cloud_service_id,/**< Requesting callback to return the Device Cloud Phone Number service-id (if used)
+                                                             where to send SMSs (Only used for SMS transport) */
     connector_request_id_config_connection_type,   /**< Requesting callback to return LAN or WAN connection type */
     connector_request_id_config_mac_addr,          /**< Requesting callback to return device's MAC addresss */
     connector_request_id_config_link_speed,        /**< Requesting callback to return link speed for WAN connection type */

@@ -71,8 +71,26 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
         {
-            sm_ptr->transport.id_type = connector_sm_id_type_none;
-            sm_ptr->transport.id_length = 0;
+            #if (defined CONNECTOR_CLOUD_SERVICE_ID)
+            static uint8_t service_id[] = CONNECTOR_CLOUD_SERVICE_ID;
+            size_t const service_id_length = sizeof service_id -1;
+            #else
+            size_t service_id_length = connector_ptr->device_cloud_service_id_length;
+            char * service_id = connector_ptr->device_cloud_service_id;
+            #endif
+
+            if (service_id_length)
+            {
+                sm_ptr->transport.id_type = connector_sm_id_type_service_id;
+                sm_ptr->transport.id = (uint8_t *)service_id;
+                sm_ptr->transport.id_length = service_id_length;
+            }
+            else
+            {
+                /* No shared codes used */
+                sm_ptr->transport.id_type = connector_sm_id_type_none;
+                sm_ptr->transport.id_length = 0;
+            }
 
             request = connector_request_id_config_network_sms;
             sm_ptr->network.class_id = connector_class_id_network_sms;

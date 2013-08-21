@@ -177,14 +177,13 @@ connector_callback_status_t config_server_phone_number(int const fd, const char 
 
     usleep(1000000);	// Let the proxy digest previous command
     
-#ifdef CONNECTOR_TRANSPORT_SMS_SHARED_CODE
-	#error "We'll make a fake sms_proxy_service_id.py to test shared codes"
-  
+#if 0
+	// This is used together a fake sms_proxy_service_id.py to test shared codes:
 	{
 		static char const service_id_prefix[] = "service-id=";
 	    strcpy(str_to_send,service_id_prefix);
 	    
-		strcat(str_to_send, "idgp");
+		strcat(str_to_send, "IDGP");
 		
 		ccode = write(fd, str_to_send, strlen(str_to_send));
 	    if (ccode >= 0)
@@ -392,6 +391,7 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
 static connector_callback_status_t app_network_sms_receive(connector_network_receive_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
+
     int * const fd = data->handle;
 
     int ccode = read(*fd, data->buffer, data->bytes_available);
@@ -453,9 +453,9 @@ static connector_callback_status_t app_network_sms_close(connector_network_close
     connector_callback_status_t status = connector_callback_continue;
     int * const fd = data->handle;
 
-    app_dns_set_redirected(connector_class_id_network_tcp, data->status == connector_close_status_cloud_redirected);
+    app_dns_set_redirected(connector_class_id_network_sms, data->status == connector_close_status_cloud_redirected);
 
-    data->reconnect = app_connector_reconnect(connector_class_id_network_tcp, data->status);
+    data->reconnect = app_connector_reconnect(connector_class_id_network_sms, data->status);
 
     if (close(*fd) < 0)
     {

@@ -103,7 +103,8 @@ typedef enum
 {
     connector_sm_id_type_device_id,
     connector_sm_id_type_imei,
-    connector_sm_id_type_none
+    connector_sm_id_type_none,
+    connector_sm_id_type_service_id
 } connector_sm_id_type_t;
 
 typedef enum

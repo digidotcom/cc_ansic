@@ -39,6 +39,7 @@
 #define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
 #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
 #define CONNECTOR_CLOUD_PHONE                          "447786201216"
+#define CONNECTOR_CLOUD_SERVICE_ID                     ""	/* empty: No shared-code used */
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              5
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
 #define CONNECTOR_WAIT_COUNT                           5
