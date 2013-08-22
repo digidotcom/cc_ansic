@@ -508,27 +508,6 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
                     result = connector_pending;
                     break;
                 }
-
-                /* Read from user function the Device ID */
-                device_id_data.data = connector_ptr->device_id;
-                request_id.config_request = connector_request_id_config_device_id;
-
-                status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
-                switch (status)
-                {
-                case connector_callback_continue:
-                    break;
-                case connector_callback_abort:
-                    result = connector_abort;
-                    break;
-                case connector_callback_unrecognized:
-                case connector_callback_error:
-                    result = connector_device_error;
-                    break;
-                case connector_callback_busy:
-                    result = connector_pending;
-                    break;
-                }
             }
         }
 
