@@ -473,9 +473,6 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
         */
         {
             uint8_t * const opcode = GET_PACKET_DATA_POINTER(edp_header, PACKET_EDP_HEADER_SIZE);
-            connector_request_id_t request_id;
-            connector_callback_status_t status;
-            connector_config_pointer_data_t device_id_data;
 
             if (*opcode != SECURITY_OPER_DEVICE_ID)
             {
@@ -485,13 +482,17 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
             else
             {
                 uint8_t * const device_id = opcode + sizeof(*opcode);
+                connector_request_id_t request_id;
+                connector_callback_status_t status;
+                connector_config_pointer_data_t device_id_data;
 
-                device_id_data.bytes_required = DEVICE_ID_LENGTH;
-
-                /* Call user function to save the Device ID that Device Cloud gave us */
-                device_id_data.data = device_id;
-                request_id.config_request = connector_request_id_config_set_device_id;
+                /* Update internal device_id, needed for future connections */
                 memcpy(connector_ptr->device_id, device_id, DEVICE_ID_LENGTH);
+                /* Call user function to save the provisioned Device ID */
+                device_id_data.bytes_required = DEVICE_ID_LENGTH;
+                device_id_data.data = device_id;
+
+                request_id.config_request = connector_request_id_config_set_device_id;
                 status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
                 switch (status)
                 {
