@@ -59,7 +59,6 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
 
 static char const connector_signature[] = CONNECTOR_SW_VERSION;
 static uint8_t connector_device_id[DEVICE_ID_LENGTH];
-static connector_bool_t connector_got_device_id = connector_false;
 
 #if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
 static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
@@ -176,7 +175,7 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
 {
     connector_status_t result = connector_working;
 
-    if (connector_got_device_id)
+    if (connector_ptr->connector_got_device_id)
     {
         connector_ptr->device_id_method = connector_device_id_method_manual;
         goto done;
@@ -190,6 +189,7 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
             result = get_config_device_id(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
             memcpy(connector_device_id, connector_ptr->device_id, sizeof connector_device_id);
+            connector_ptr->connector_got_device_id = connector_true;
             break;
 
         case connector_device_id_method_auto:
@@ -216,6 +216,7 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
                 break;
 
                 case connector_connection_type_wan:
+                {
                     result = get_config_wan_type(connector_ptr);
                     COND_ELSE_GOTO(result == connector_working, error);
 
@@ -232,17 +233,21 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
                         break;
                     }
                     break;
+                }
             }
+            connector_ptr->connector_got_device_id = connector_true;
             break;
         }
+        case connector_device_id_method_provisioning:
+            connector_ptr->connector_got_device_id = connector_false;
+            result = connector_working;
+            break;
     }
-
+    connector_ptr->device_id = connector_device_id;
     COND_ELSE_GOTO(result == connector_working, error);
 
 done:
-    connector_ptr->device_id = connector_device_id;
-    connector_got_device_id = connector_true;
-    connector_debug_hexvalue("Device ID ", connector_ptr->device_id, DEVICE_ID_LENGTH);
+    /*connector_debug_hexvalue("Device ID ", connector_ptr->device_id, DEVICE_ID_LENGTH);*/
 
 error:
     return result;
@@ -447,7 +452,7 @@ connector_status_t connector_step(connector_handle_t const handle)
         case connector_state_terminate_by_initiate_action:
             if (is_connector_stopped(connector_ptr, connector_close_status_device_terminated))
             {
-                connector_got_device_id = connector_false;
+                connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provissioning! */
                 connector_ptr->signature = NULL;
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 connector_debug_printf("connector_step: free Cloud Connector\n");

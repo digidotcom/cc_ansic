@@ -115,23 +115,19 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
     return connector_callback_continue;
 }
 
+#define DEVICE_ID_LENGTH    16
+static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
+
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-
-    #define DEVICE_ID_LENGTH    16
-
-    static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
-
-    device_id[8] = device_mac_addr[0];
-    device_id[9] = device_mac_addr[1];
-    device_id[10] = device_mac_addr[2];
-    device_id[11] = 0xFF;
-    device_id[12] = 0xFF;
-    device_id[13] = device_mac_addr[3];
-    device_id[14] = device_mac_addr[4];
-    device_id[15] = device_mac_addr[5];
-
     config_device_id->data = device_id;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
+{
+    memcpy(config_device_id->data, device_id, DEVICE_ID_LENGTH);
 
     return connector_callback_continue;
 }
@@ -823,6 +819,10 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     {
     case connector_request_id_config_device_id:
         status = app_get_device_id(data);
+        break;
+
+    case connector_request_id_config_set_device_id:
+        status = app_set_device_id(data);
         break;
 
     case connector_request_id_config_mac_addr:

@@ -362,6 +362,49 @@ done:
     return result;
 }
 
+static connector_status_t send_provisioning(connector_data_t * const connector_ptr)
+{
+    #define SECURITY_OPER_PROVISION_ID      0x89
+    #define PROVISION_ID_LENGTH             4
+
+    enum edp_device_id {
+        field_define(edp_provision_id, opcode, uint8_t),
+        field_define(edp_provision_id, provision_id, uint32_t),
+        record_end(edp_provision_id)
+    };
+
+    connector_status_t result;
+    uint8_t * edp_header;
+    uint8_t * edp_provision_id;
+    size_t const provision_id_message_size = record_bytes(edp_provision_id);
+
+    edp_header = tcp_get_packet_buffer(connector_ptr, E_MSG_MT2_MSG_NUM, &edp_provision_id, NULL);
+    if (edp_header == NULL)
+    {
+        result = connector_pending;
+        goto done;
+    }
+
+    /*
+     * packet format:
+     *  -------------------------------------------------------
+     * | 0 - 1 | 2 - 3 |        4                  |   5 - 8   |
+     *  -------------------------------------------------------
+     * |   EDP header  | Provision ID opcode | Provision ID ID |
+     *  -------------------------------------------------------
+    */
+    message_store_u8(edp_provision_id, opcode, SECURITY_OPER_PROVISION_ID);
+
+    ASSERT(connector_ptr->edp_data.config.vendor_id != NULL);
+    message_store_be32(edp_provision_id, provision_id, connector_ptr->edp_data.config.vendor_id);
+
+    result = tcp_initiate_send_packet(connector_ptr, edp_header, provision_id_message_size,
+                                E_MSG_MT2_TYPE_PAYLOAD, tcp_release_packet_buffer,
+                                NULL);
+    done:
+    return result;
+}
+
 static connector_status_t send_device_id(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_DEVICE_ID      0x81
@@ -401,6 +444,98 @@ static connector_status_t send_device_id(connector_data_t * const connector_ptr)
                                 E_MSG_MT2_TYPE_PAYLOAD, tcp_release_packet_buffer,
                                 NULL);
 done:
+    return result;
+}
+
+static connector_status_t receive_device_id(connector_data_t * const connector_ptr)
+{
+    connector_status_t result;
+    connector_buffer_t * packet_buffer;
+
+    result = tcp_receive_packet(connector_ptr, &packet_buffer);
+
+    if (result == connector_working)
+    {
+        uint8_t * edp_header;
+
+        ASSERT(packet_buffer != NULL);
+
+        edp_header = packet_buffer->buffer;
+
+        connector_debug_printf("Receive Device ID \n");
+        /*
+         * packet format:
+         *  ----------------------------------------------
+         * | 0 - 1 | 2 - 3 |        4         |  5 - 20   |
+         *  ----------------------------------------------
+         * |   EDP header  | Device ID opcode | Device ID |
+         *  ----------------------------------------------
+        */
+        {
+            uint8_t * const opcode = GET_PACKET_DATA_POINTER(edp_header, PACKET_EDP_HEADER_SIZE);
+            connector_request_id_t request_id;
+            connector_callback_status_t status;
+            connector_config_pointer_data_t device_id_data;
+
+            if (*opcode != SECURITY_OPER_DEVICE_ID)
+            {
+                /* Device ID error. Notify user. */
+                result = connector_abort;
+            }
+            else
+            {
+                uint8_t * const device_id = opcode + sizeof(*opcode);
+
+                device_id_data.bytes_required = DEVICE_ID_LENGTH;
+
+                /* Call user function to save the Device ID that Device Cloud gave us */
+                device_id_data.data = device_id;
+                request_id.config_request = connector_request_id_config_set_device_id;
+                memcpy(connector_ptr->device_id, device_id, DEVICE_ID_LENGTH);
+                status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
+                switch (status)
+                {
+                case connector_callback_continue:
+                    break;
+                case connector_callback_abort:
+                    result = connector_abort;
+                    break;
+                case connector_callback_unrecognized:
+                case connector_callback_error:
+                    result = connector_device_error;
+                    break;
+                case connector_callback_busy:
+                    result = connector_pending;
+                    break;
+                }
+
+                /* Read from user function the Device ID */
+                device_id_data.data = connector_ptr->device_id;
+                request_id.config_request = connector_request_id_config_device_id;
+
+                status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
+                switch (status)
+                {
+                case connector_callback_continue:
+                    break;
+                case connector_callback_abort:
+                    result = connector_abort;
+                    break;
+                case connector_callback_unrecognized:
+                case connector_callback_error:
+                    result = connector_device_error;
+                    break;
+                case connector_callback_busy:
+                    result = connector_pending;
+                    break;
+                }
+            }
+        }
+
+        tcp_release_receive_packet(connector_ptr, packet_buffer);
+    }
+    else if (result == connector_idle) result = connector_pending;
+
     return result;
 }
 
@@ -787,10 +922,21 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             }
             break;
         case edp_security_send_device_id:
-            result = send_device_id(connector_ptr);
-            if (result == connector_working)
+            if (connector_ptr->connector_got_device_id)
             {
-                next_state = edp_security_send_device_cloud_url;
+                result = send_device_id(connector_ptr);
+                if (result == connector_working)
+                {
+                    next_state = edp_security_send_device_cloud_url;
+                }
+            }
+            else
+            {
+                result = send_provisioning(connector_ptr);
+                if (result == connector_working)
+                {
+                    next_state = edp_security_receive_device_id;
+                }
             }
             break;
         case edp_security_send_device_cloud_url:
@@ -883,7 +1029,14 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             edp_set_edp_state(connector_ptr, edp_security_send_identity_verification);
         }
         break;
-
+    case edp_security_receive_device_id:
+    	result = receive_device_id(connector_ptr);
+        if (result == connector_working)
+        {
+        	connector_ptr->connector_got_device_id = connector_true;
+            edp_set_edp_state(connector_ptr, edp_security_send_device_cloud_url);
+        }
+    	break;
     case edp_facility_process:
         /* Should not be here since active state should not be open state. */
         ASSERT(connector_false);

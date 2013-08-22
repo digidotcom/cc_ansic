@@ -334,6 +334,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
         {
         case connector_device_id_method_manual:
         case connector_device_id_method_auto:
+        case connector_device_id_method_provisioning:
             connector_ptr->device_id_method = device_id.method;
             break;
 

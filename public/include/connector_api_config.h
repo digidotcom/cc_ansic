@@ -22,6 +22,7 @@
 */
 typedef enum {
     connector_request_id_config_device_id,         /**< Requesting callback to return a unique device id which is used to identify the device.*/
+    connector_request_id_config_set_device_id,     /**< Requesting callback to set a new device ID given by Device Cloud (when provisioning is enabled) */
     connector_request_id_config_vendor_id,         /**< Requesting callback to return a unique vendor id identifying the manufacturer of a device. */
     connector_request_id_config_device_type,       /**< Requesting callback to return device type that identifies the type of the device  */
     connector_request_id_config_device_cloud_url,  /**< Requesting callback to return the Device Cloud URL which will be connected to */
@@ -292,8 +293,11 @@ typedef enum {
                                                  generate the device ID from MAC address (See @ref mac_address callback)
                                                  for LAN connection type or genearte the device ID according to the @ref wan_type.
                                                  @note Cloud Connector will not call @ref device_id callback. */
-    connector_device_id_method_manual       /**< Callback returns this type telling Cloud Connector to retrieve device ID from
+    connector_device_id_method_manual,       /**< Callback returns this type telling Cloud Connector to retrieve device ID from
                                                   @ref device_id callback */
+    connector_device_id_method_provisioning  /**< Callback returns this type telling Cloud Connector to retrieve device ID from
+                                                  Device Cloud. The device will be automatically registered in the account and
+                                                  it must save the configuration in @ref set_device_id callback. */
 } connector_device_id_method_t;
 /**
 * @}

@@ -88,6 +88,7 @@ typedef enum {
     edp_initialization_receive_protocol_version,
     edp_security_send_identity_verification,
     edp_security_send_device_id,
+    edp_security_receive_device_id,
     edp_security_send_device_cloud_url,
     edp_security_send_password,
     edp_discovery_send_vendor_id,

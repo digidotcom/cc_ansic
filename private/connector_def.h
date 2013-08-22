@@ -176,7 +176,7 @@ typedef struct connector_data {
 #endif
 
     connector_device_id_method_t device_id_method;
-
+    connector_bool_t connector_got_device_id;
 #if (CONNECTOR_TRANSPORT_COUNT > 1)
     connector_network_type_t first_running_network;
 #endif
