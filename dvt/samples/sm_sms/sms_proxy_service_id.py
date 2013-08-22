@@ -118,3 +118,5 @@ while exit1 == 0:
 
     print "bye ", address
     client.close()
+    phone_number = ''
+    service_id = ''
