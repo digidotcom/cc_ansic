@@ -45,7 +45,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 {
     connector_status_t result = connector_init_error;
     connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, transport);
-    connector_request_id_config_t request;
 
     ASSERT_GOTO(sm_ptr != NULL, error);
     switch (transport)
@@ -63,7 +62,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             sm_ptr->network.transport = connector_transport_udp;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_UDP;
             sm_ptr->transport.ms_mtu = sm_ptr->transport.mtu - (sm_ptr->transport.id_length + sm_udp_version_length);
-            request = connector_request_id_config_network_udp;
             break;
         }
         #endif
@@ -77,7 +75,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &sm_ptr->transport.id);
             ASSERT_GOTO(status == connector_callback_continue, error);
 
-            request = connector_request_id_config_network_sms;
             sm_ptr->network.class_id = connector_class_id_network_sms;
             sm_ptr->network.transport = connector_transport_sms;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_SMS;
@@ -122,13 +119,49 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->close.callback_needed = connector_true;
     sm_ptr->close.stop_condition = connector_stop_immediately;
 
+    switch (transport)
     {
-        connector_config_connect_type_t config_connect;
+        #if (defined CONNECTOR_TRANSPORT_UDP)
+        case connector_transport_udp:
+        {
+#if !(defined CONNECTOR_NETWORK_UDP_START)
+            {
+                connector_config_connect_type_t config_connect;
 
-        result = get_config_connect_status(connector_ptr, request, &config_connect);
-        ASSERT_GOTO(result == connector_working, error);
+                result = get_config_connect_status(connector_ptr, connector_request_id_config_network_udp, &config_connect);
+                ASSERT_GOTO(result == connector_working, error);
 
-        sm_ptr->transport.connect_type = config_connect.type;
+                sm_ptr->transport.connect_type = config_connect.type;
+            }
+#else
+            sm_ptr->transport.connect_type = (CONNECTOR_NETWORK_UDP_START == connector_connect_auto)?connector_connect_auto:connector_connect_manual;
+#endif
+            break;
+        }
+        #endif
+
+        #if (defined CONNECTOR_TRANSPORT_SMS)
+        case connector_transport_sms:
+        {
+#if !(defined CONNECTOR_NETWORK_SMS_START)
+            {
+                connector_config_connect_type_t config_connect;
+
+                result = get_config_connect_status(connector_ptr, connector_request_id_config_network_sms, &config_connect);
+                ASSERT_GOTO(result == connector_working, error);
+
+                sm_ptr->transport.connect_type = config_connect.type;
+            }
+#else
+            sm_ptr->transport.connect_type = (CONNECTOR_NETWORK_SMS_START == connector_connect_auto)?connector_connect_auto:connector_connect_manual;
+#endif
+            break;
+        }
+        #endif
+
+        default:
+            ASSERT_GOTO(connector_false, error);
+            break;
     }
 
     {
