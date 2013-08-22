@@ -216,10 +216,9 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
 		    {
 		        connector_callback_status_t status;
 		        connector_request_id_t request_id;
-                //connector_network_close_t close_data;
+                connector_network_close_t close_data;
                 connector_network_open_t open_data;
 
-#if 0
                 /* Close */
                 close_data.handle = sm_ptr->network.handle;
                 close_data.status = connector_close_status_device_stopped;
@@ -243,7 +242,7 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
                 }
 
                 sm_ptr->network.handle = NULL;
-#endif		
+
 				/* Open */
 		        open_data.device_cloud.phone = connector_ptr->device_cloud_phone;
 		        open_data.handle = NULL;

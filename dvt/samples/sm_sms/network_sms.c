@@ -88,8 +88,11 @@ static connector_callback_status_t app_sms_connect(int const fd, in_addr_t const
         {
         case EINTR:
         case EAGAIN:
-        case EINPROGRESS:
             status = connector_callback_busy;
+            break;
+        case EINPROGRESS:
+            APP_DEBUG("app_sms_connect: EINPROGRESS, fd %d, errno %d\n", fd, err);
+            usleep(10000);
             break;
 
         default:
