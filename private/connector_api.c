@@ -58,7 +58,6 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
 
 
 static char const connector_signature[] = CONNECTOR_SW_VERSION;
-static uint8_t connector_device_id[DEVICE_ID_LENGTH];
 
 #if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
 static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
@@ -163,8 +162,6 @@ enum {
             device_id[1] = meid_hex_device_id_prefix;
             break;
         }
-
-        connector_ptr->device_id = device_id;
     }
 
     return result;
@@ -188,7 +185,6 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
         case connector_device_id_method_manual:
             result = get_config_device_id(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
-            memcpy(connector_device_id, connector_ptr->device_id, sizeof connector_device_id);
             connector_ptr->connector_got_device_id = connector_true;
             break;
 
@@ -204,14 +200,14 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
                     result = get_config_mac_addr(connector_ptr);
                     COND_ELSE_GOTO(result == connector_working, error);
 
-                    connector_device_id[8] = connector_ptr->mac_addr[0];
-                    connector_device_id[9] = connector_ptr->mac_addr[1];
-                    connector_device_id[10] = connector_ptr->mac_addr[2];
-                    connector_device_id[11] = 0xFF;
-                    connector_device_id[12] = 0xFF;
-                    connector_device_id[13] = connector_ptr->mac_addr[3];
-                    connector_device_id[14] = connector_ptr->mac_addr[4];
-                    connector_device_id[15] = connector_ptr->mac_addr[5];
+                    connector_ptr->device_id[8] = connector_ptr->mac_addr[0];
+                    connector_ptr->device_id[9] = connector_ptr->mac_addr[1];
+                    connector_ptr->device_id[10] = connector_ptr->mac_addr[2];
+                    connector_ptr->device_id[11] = 0xFF;
+                    connector_ptr->device_id[12] = 0xFF;
+                    connector_ptr->device_id[13] = connector_ptr->mac_addr[3];
+                    connector_ptr->device_id[14] = connector_ptr->mac_addr[4];
+                    connector_ptr->device_id[15] = connector_ptr->mac_addr[5];
                 }
                 break;
 
@@ -223,13 +219,13 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
                     switch (connector_ptr->wan_type)
                     {
                     case connector_wan_type_imei:
-                        result = get_wan_device_id(connector_ptr, connector_device_id, connector_request_id_config_imei_number);
+                        result = get_wan_device_id(connector_ptr, connector_ptr->device_id, connector_request_id_config_imei_number);
                         break;
                     case connector_wan_type_esn:
-                        result = get_wan_device_id(connector_ptr, connector_device_id, connector_request_id_config_esn);
+                        result = get_wan_device_id(connector_ptr, connector_ptr->device_id, connector_request_id_config_esn);
                         break;
                     case connector_wan_type_meid:
-                        result = get_wan_device_id(connector_ptr, connector_device_id, connector_request_id_config_meid);
+                        result = get_wan_device_id(connector_ptr, connector_ptr->device_id, connector_request_id_config_meid);
                         break;
                     }
                     break;
@@ -243,7 +239,6 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
             result = connector_working;
             break;
     }
-    connector_ptr->device_id = connector_device_id;
     COND_ELSE_GOTO(result == connector_working, error);
 
 done:

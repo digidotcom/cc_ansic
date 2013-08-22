@@ -65,7 +65,7 @@ static connector_status_t get_config_device_id(connector_data_t * const connecto
         else if (device_id.data == NULL)
             result = connector_invalid_data;
         else
-            connector_ptr->device_id = device_id.data;
+            memcpy(connector_ptr->device_id, device_id.data, DEVICE_ID_LENGTH);
         break;
     case connector_callback_busy:
         result = connector_pending;
