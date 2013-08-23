@@ -48,6 +48,31 @@ connector_callback_status_t app_network_sms_open(connector_network_open_t * cons
 }
 
 /**
+ * @brief   Configure the Device Cloud phone number where to send SMSs for SMS transport
+ *
+ * @param data @ref connector_network_config_cloud_phone_t
+ *  <ul>
+ *   <li><b><i>handle</i></b> - Network handle </li>
+ *   <li><b><i>device_cloud_phone</i></b> - Phone Number of Device Cloud where to send SMSs </li>
+ * </ul>
+ *
+ * @retval connector_callback_continue   The routine has successfully configured the Device Cloud's connection.
+ * @retval connector_callback_error     The operation failed, Cloud Connector
+ *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
+  *
+ * @see @ref open "Network API callback Config"
+ */
+static connector_callback_status_t app_network_sms_config_cloud_phone(connector_network_config_cloud_phone_t * const data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    int * const fd = data->handle;
+
+    status = config_server_phone_number(*fd, data->device_cloud_phone);
+    
+    return status;
+}
+
+/**
  * @brief   Send data to Device Cloud
  *
  * This routine sends data to Device Cloud. This
@@ -173,6 +198,10 @@ connector_callback_status_t app_network_sms_handler(connector_request_id_network
     {
     case connector_request_id_network_open:
         status = app_network_sms_open(data);
+        break;
+
+    case connector_request_id_network_config_cloud_phone:
+        status = app_network_sms_config_cloud_phone(data);
         break;
 
     case connector_request_id_network_send:

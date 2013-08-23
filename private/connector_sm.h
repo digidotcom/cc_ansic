@@ -418,11 +418,12 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
         switch(sm_ptr->network.class_id)
         {
             case connector_class_id_network_sms:
-                open_data.device_cloud.phone = connector_ptr->device_cloud_phone;
+                /* No sense for SMS. SMS will use instead the device_cloud_phone passed in sm_config_cloud_phone */ 
+                open_data.device_cloud_url = NULL;
                 break;
 
             default:
-                open_data.device_cloud.url = connector_ptr->device_cloud_url;
+                open_data.device_cloud_url = connector_ptr->device_cloud_url;
                 break;
         }
         open_data.handle = NULL;
@@ -471,6 +472,57 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
     }
 
 error:
+    return result;
+}
+
+static connector_status_t sm_config_cloud_phone(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+{
+    connector_status_t result;
+
+    {
+        connector_callback_status_t status;
+        connector_network_config_cloud_phone_t config_data;
+        connector_request_id_t request_id;
+
+        switch(sm_ptr->network.class_id)
+        {
+            case connector_class_id_network_sms:
+                config_data.device_cloud_phone = connector_ptr->device_cloud_phone;
+                break;
+
+            default:
+                /* UDP doesn't require this configuration */
+                result = connector_working;
+				goto done;
+        }
+        config_data.handle = sm_ptr->network.handle;
+
+        request_id.network_request = connector_request_id_network_config_cloud_phone;
+        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &config_data);
+        switch (status)
+        {
+            case connector_callback_continue:
+                result = connector_working;
+                break;
+
+            case  connector_callback_abort:
+                result = connector_abort;
+                goto done;
+
+            case connector_callback_unrecognized:
+                result = connector_unavailable;
+                goto done;
+
+            case connector_callback_error:
+                result = connector_open_error;
+                goto done;
+
+            case connector_callback_busy:
+                result = connector_pending;
+                goto done;
+        }
+    }
+done:
     return result;
 }
 
@@ -590,6 +642,8 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
 
             case connector_transport_open:
                 result = sm_open_transport(connector_ptr, sm_ptr);
+                if (result == connector_working)
+                    result = sm_config_cloud_phone(connector_ptr, sm_ptr);
                 sm_ptr->transport.state = (result == connector_working) ? connector_transport_receive : connector_transport_idle;
                 goto done;
 

@@ -177,6 +177,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 #if !(defined CONNECTOR_CLOUD_PHONE)
 
 static char connector_cloud_phone[] = "447786201216";
+//static char connector_cloud_phone[16] = "";	/* empty: will require a provisioning message from the server for initialization */
 
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
@@ -606,6 +607,7 @@ static char const * app_network_class_to_string(connector_request_id_network_t c
     switch (value)
     {
         enum_to_case(connector_request_id_network_open);
+        enum_to_case(connector_request_id_network_config_cloud_phone);
         enum_to_case(connector_request_id_network_send);
         enum_to_case(connector_request_id_network_receive);
         enum_to_case(connector_request_id_network_close);

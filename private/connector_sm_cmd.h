@@ -654,6 +654,27 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
     result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
 #endif
 
+    /* Callback sms transport config so new phone makes effect */
+    {
+	    connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;	/* Assume it's SMS transport */
+        ASSERT(sm_ptr->network.class_id == connector_class_id_network_sms);
+    
+	    if (sm_ptr->network.handle != NULL)
+	    {
+	        connector_callback_status_t callback_status;
+	        connector_request_id_t request_id;
+			connector_network_config_cloud_phone_t config_data;
+
+			/* Config */
+			config_data.handle = sm_ptr->network.handle;
+	        config_data.device_cloud_phone = connector_ptr->device_cloud_phone;
+
+			request_id.network_request = connector_request_id_network_config_cloud_phone;
+	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &config_data);		
+			result = sm_map_callback_status_to_connector_status(callback_status);
+        }
+    }
+
     /* Callback to user */
     {
         connector_request_id_t request_id;

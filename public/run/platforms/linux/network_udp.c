@@ -155,10 +155,10 @@ static connector_callback_status_t app_network_udp_open(connector_network_open_t
 
     data->handle = &fd;
 
-    status = app_dns_resolve(connector_class_id_network_udp, data->device_cloud.url, &ip_addr);
+    status = app_dns_resolve(connector_class_id_network_udp, data->device_cloud_url, &ip_addr);
     if (status != connector_callback_continue)
     {
-        APP_DEBUG("app_network_udp_open: Can't resolve DNS for %s\n", data->device_cloud.url);
+        APP_DEBUG("app_network_udp_open: Can't resolve DNS for %s\n", data->device_cloud_url);
         goto done;
     }
 

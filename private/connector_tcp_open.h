@@ -19,7 +19,7 @@ static connector_status_t connect_to_cloud(connector_data_t * const connector_pt
 
     connector_request_id_t request_id;
 
-    open_data.device_cloud.url = cloud_url;
+    open_data.device_cloud_url = cloud_url;
     open_data.handle = NULL;
 
     request_id.network_request = connector_request_id_network_open;

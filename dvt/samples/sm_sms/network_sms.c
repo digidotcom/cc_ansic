@@ -88,11 +88,8 @@ static connector_callback_status_t app_sms_connect(int const fd, in_addr_t const
         {
         case EINTR:
         case EAGAIN:
-            status = connector_callback_busy;
-            break;
         case EINPROGRESS:
-            APP_DEBUG("app_sms_connect: EINPROGRESS, fd %d, errno %d\n", fd, err);
-            usleep(10000);
+            status = connector_callback_busy;
             break;
 
         default:
@@ -283,8 +280,6 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     if (status == connector_callback_continue)
     {
          APP_DEBUG("app_network_sms_open: connected to %s\n", GW_IP);
-         
-         config_server_phone_number(fd, data->device_cloud.phone);
          goto done;
     }
 
@@ -316,6 +311,31 @@ error:
     }
 
 done:
+    return status;
+}
+
+/**
+ * @brief   Configure the Device Cloud phone number where to send SMSs for SMS transport
+ *
+ * @param data @ref connector_network_config_cloud_phone_t
+ *  <ul>
+ *   <li><b><i>handle</i></b> - Network handle </li>
+ *   <li><b><i>device_cloud_phone</i></b> - Phone Number of Device Cloud where to send SMSs </li>
+ * </ul>
+ *
+ * @retval connector_callback_continue   The routine has successfully configured the Device Cloud's connection.
+ * @retval connector_callback_error     The operation failed, Cloud Connector
+ *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
+  *
+ * @see @ref open "Network API callback Config"
+ */
+static connector_callback_status_t app_network_sms_config_cloud_phone(connector_network_config_cloud_phone_t * const data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    int * const fd = data->handle;
+
+    status = config_server_phone_number(*fd, data->device_cloud_phone);
+    
     return status;
 }
 
@@ -501,6 +521,10 @@ connector_callback_status_t app_network_sms_handler(connector_request_id_network
         status = app_network_sms_open(data);
         break;
 
+    case connector_request_id_network_config_cloud_phone:
+        status = app_network_sms_config_cloud_phone(data);
+        break;
+
     case connector_request_id_network_send:
         status = app_network_sms_send(data);
         break;
@@ -514,7 +538,7 @@ connector_callback_status_t app_network_sms_handler(connector_request_id_network
         break;
 
     default:
-        APP_DEBUG("app_network_udp_handler: unrecognized callback request_id [%d]\n", request_id);
+        APP_DEBUG("app_network_sms_handler: unrecognized callback request_id [%d]\n", request_id);
         status = connector_callback_unrecognized;
         break;
 
