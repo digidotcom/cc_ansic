@@ -570,8 +570,8 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);
-        enum_to_case(connector_request_id_config_device_cloud_phone);
-        enum_to_case(connector_request_id_reconfig_device_cloud_phone);
+        enum_to_case(connector_request_id_config_get_device_cloud_phone);
+        enum_to_case(connector_request_id_config_set_device_cloud_phone);
         enum_to_case(connector_request_id_config_device_cloud_service_id);
         enum_to_case(connector_request_id_config_connection_type);
         enum_to_case(connector_request_id_config_mac_addr);
@@ -904,11 +904,11 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #endif
 
 #if !(defined CONNECTOR_CLOUD_PHONE)
-    case connector_request_id_config_device_cloud_phone:
+    case connector_request_id_config_get_device_cloud_phone:
         status = app_get_device_cloud_phone(data);
         break;
 
-    case connector_request_id_reconfig_device_cloud_phone:
+    case connector_request_id_config_set_device_cloud_phone:
         status = app_set_device_cloud_phone(data);
         break;
 #endif

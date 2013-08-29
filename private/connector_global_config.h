@@ -146,7 +146,7 @@ static connector_status_t get_config_device_cloud_phone(connector_data_t * const
     connector_config_pointer_string_t   cloud_phone;
     connector_request_id_t request_id;
 
-    request_id.config_request = connector_request_id_config_device_cloud_phone;
+    request_id.config_request = connector_request_id_config_get_device_cloud_phone;
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone);
     switch (callback_status)
@@ -195,7 +195,7 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
     connector_config_pointer_string_t cloud_phone;
     connector_request_id_t request_id;
 
-    request_id.config_request = connector_request_id_reconfig_device_cloud_phone;
+    request_id.config_request = connector_request_id_config_set_device_cloud_phone;
 
     cloud_phone.string = phone_number; 
     cloud_phone.length = strlen(phone_number);
