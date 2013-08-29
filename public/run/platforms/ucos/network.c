@@ -94,9 +94,9 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         NET_IP_ADDR ip_addr;
         {
 #if (APP_CFG_DNS_EN == DEF_ENABLED)
-            if (app_dns_resolve_name(data->device_cloud.url, &ip_addr) != 0)
+            if (app_dns_resolve_name(data->device_cloud_url, &ip_addr) != 0)
 #else
-            ip_addr = NetASCII_Str_to_IP((CPU_CHAR *) data->device_cloud.url,
+            ip_addr = NetASCII_Str_to_IP((CPU_CHAR *) data->device_cloud_url,
                                           &err_net);
             ip_addr =  NET_UTIL_HOST_TO_NET_32(ip_addr);
             
@@ -105,7 +105,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
             {
                 nNET_DNS_ERR++;
                 idigi_connect_to_idigi_failures++;
-                APP_DEBUG("network_connect: Can't resolve DNS for %s. LinkDown?\n", data->device_cloud.url);
+                APP_DEBUG("network_connect: Can't resolve DNS for %s. LinkDown?\n", data->device_cloud_url);
                 status = connector_callback_busy;
                 goto error;
             }
@@ -153,7 +153,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         
         app_os_get_system_time(&connect_time);
         
-        APP_DEBUG("Connecting to %s...\n", data->device_cloud.url);
+        APP_DEBUG("Connecting to %s...\n", data->device_cloud_url);
     }
 
     {
@@ -196,7 +196,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
 
     data->handle = &socket_fd;
     status = connector_callback_continue;
-    APP_DEBUG("network_connect: connected to [%s] server.\n", data->device_cloud.url);
+    APP_DEBUG("network_connect: connected to [%s] server.\n", data->device_cloud_url);
     APP_DEBUG("network_connect: %d connect() failures\n", 
                idigi_connect_to_idigi_failures); 
     APP_DEBUG("network_connect: %d LinkDown,%d TimeOut,%d Dns connect() failures\n", 
