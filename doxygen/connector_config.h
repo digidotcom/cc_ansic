@@ -478,8 +478,18 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_NETWORK_TCP_START @htmlonly </td>
- * <td>If defined it enables and starts TCP.
+ * <td>If defined it enables and starts TCP transport.
  * See @endhtmlonly @ref network_tcp_start @htmlonly</td>
+ * </tr>
+  * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_NETWORK_UDP_START @htmlonly </td>
+ * <td>If defined it enables and starts UDP transport.
+ * See @endhtmlonly @ref network_udp_start @htmlonly</td>
+ * </tr>
+  * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_NETWORK_SMS_START @htmlonly </td>
+ * <td>If defined it enables and starts SMS transport.
+ * See @endhtmlonly @ref network_sms_start @htmlonly</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_WAN_TYPE @htmlonly </td>
@@ -788,6 +798,18 @@
  *
  */
 #define CONNECTOR_HAVE_STDINT_HEADER
+
+/**
+ * When defined, this string hardcode for the @ref device_cloud_phone instead of the application framework
+ * function @ref app_get_device_cloud_phone (called via the @ref connector_request_id_config_get_device_cloud_phone @ref connector_callback_t "callback" in config.c)
+ * and function @ref app_set_device_cloud_phone (called via the @ref connector_request_id_config_set_device_cloud_phone @ref connector_callback_t "callback" in config.c).
+ *
+ * @note There is no need to implement or port @ref app_get_device_cloud_phone and app_set_device_cloud_phone when CONNECTOR_CLOUD_PHONE is defined.
+ *
+ * @see @ref device_cloud_phone
+ * @see @ref app_get_device_cloud_phone() and app_set_device_cloud_phone()
+ */
+#define CONNECTOR_CLOUD_PHONE                               "447786201216"
 
 /**
 * @}
