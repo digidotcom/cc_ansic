@@ -246,7 +246,6 @@ typedef struct
     uint32_t window_size;
     connector_bool_t compression_supported;
     uint8_t active_transactions;
-    uint8_t advertised_transactions; /* TODO: Remove this when issue IDIGI-328 is addressed and replace advertised_transactions by max_transactions in rest of the file */
     uint8_t max_transactions;
 } msg_capabilities_t;
 
@@ -704,7 +703,7 @@ static connector_status_t msg_send_capabilities(connector_data_t * const connect
     message_store_u8(capability_packet, opcode, msg_opcode_capability);
     message_store_u8(capability_packet, flags, flag);
     message_store_u8(capability_packet, version, MSG_FACILITY_VERSION);
-    message_store_u8(capability_packet, max_transactions, msg_ptr->capabilities[msg_capability_client].advertised_transactions);
+    message_store_u8(capability_packet, max_transactions, msg_ptr->capabilities[msg_capability_client].max_transactions);
     message_store_be32(capability_packet, window_size, msg_ptr->capabilities[msg_capability_client].window_size);
 
     /* append compression algorithms supported */
@@ -1972,25 +1971,7 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
         }
         #endif
 
-         msg_ptr->capabilities[msg_capability_client].advertised_transactions = config_max_transaction.count;
-
-         /* TODO: Remove this block when IDIGI-328 is fixed */
-        {
-            uint8_t services_count = 0;
-
-            #if (defined CONNECTOR_DATA_SERVICE)
-            services_count++;
-            #endif
-            #if (defined CONNECTOR_FILE_SYSTEM)
-            services_count++;
-            #endif
-            #if (defined CONNECTOR_RCI_SERVICE)
-            services_count++;
-            #endif
-
-            config_max_transaction.count *= services_count;
-            msg_ptr->capabilities[msg_capability_client].max_transactions = config_max_transaction.count;
-        }
+        msg_ptr->capabilities[msg_capability_client].max_transactions = config_max_transaction.count;
 
         {
             uint32_t const recv_window = 16384;
