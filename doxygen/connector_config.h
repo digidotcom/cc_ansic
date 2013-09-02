@@ -770,7 +770,6 @@
 */
 #define CONNECTOR_SM_MAX_SEGMENTS                  4
 
-
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
 * session timeout in seconds to this value. If not set, Cloud Connector will use the default of
@@ -781,7 +780,6 @@
 * @see @ref CONNECTOR_TRANSPORT_UDP
 */
 #define CONNECTOR_SM_TIMEOUT                    30
-
 
 /**
  * When defined, the Cloud Connector compilation will expect the ANSI C99 stdint.h header file,
@@ -800,16 +798,27 @@
 #define CONNECTOR_HAVE_STDINT_HEADER
 
 /**
- * When defined, this string hardcode for the @ref device_cloud_phone instead of the application framework
+ * When defined, this string hardcode for the @ref get_device_cloud_phone @ref set_device_cloud_phone instead of the application framework
  * function @ref app_get_device_cloud_phone (called via the @ref connector_request_id_config_get_device_cloud_phone @ref connector_callback_t "callback" in config.c)
  * and function @ref app_set_device_cloud_phone (called via the @ref connector_request_id_config_set_device_cloud_phone @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_device_cloud_phone and app_set_device_cloud_phone when CONNECTOR_CLOUD_PHONE is defined.
  *
- * @see @ref device_cloud_phone
+ * @see @ref get_device_cloud_phone and @ref set_device_cloud_phone
  * @see @ref app_get_device_cloud_phone() and app_set_device_cloud_phone()
  */
 #define CONNECTOR_CLOUD_PHONE                               "447786201216"
+
+/**
+ * When defined, this string hardcode for the @ref device_cloud_service_id instead of the application framework
+ * function @ref app_get_device_cloud_service_id (called via the @ref connector_request_id_config_device_cloud_service_id @ref connector_callback_t "callback" in config.c).
+ *
+ * @note There is no need to implement or port @ref app_get_device_cloud_service_id when CONNECTOR_CLOUD_SERVICE_ID is defined.
+ *
+ * @see @ref device_cloud_service_id
+ * @see @ref app_get_device_cloud_service_id()
+ */
+#define CONNECTOR_CLOUD_SERVICE_ID                          "" /* empty: No shared-code used */
 
 /**
 * @}
