@@ -513,6 +513,7 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
     switch (value)
     {
         enum_to_case(connector_request_id_config_device_id);
+        enum_to_case(connector_request_id_config_set_device_id);
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);

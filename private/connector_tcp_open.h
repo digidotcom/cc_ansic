@@ -395,8 +395,12 @@ static connector_status_t send_provisioning(connector_data_t * const connector_p
     */
     message_store_u8(edp_provision_id, opcode, SECURITY_OPER_PROVISION_ID);
 
-    ASSERT(connector_ptr->edp_data.config.vendor_id != NULL);
+#if !(defined CONNECTOR_VENDOR_ID)
+    ASSERT(connector_ptr->edp_data.config.vendor_id != 0);
     message_store_be32(edp_provision_id, provision_id, connector_ptr->edp_data.config.vendor_id);
+#else
+    message_store_be32(edp_provision_id, provision_id, CONNECTOR_VENDOR_ID);
+#endif
 
     result = tcp_initiate_send_packet(connector_ptr, edp_header, provision_id_message_size,
                                 E_MSG_MT2_TYPE_PAYLOAD, tcp_release_packet_buffer,
