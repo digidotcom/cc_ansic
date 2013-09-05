@@ -192,19 +192,19 @@ static connector_bool_t get_string(rci_t * const rci, char const * * string, siz
     {
         size_t const bytes = rci->shared.content.length;
 
+        if (*length > CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH)
+        {
+            connector_debug_printf("Maximum content size exceeded while getting  a string - wanted %u, had %u\n", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
+            rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+            goto done;
+        }
+
         if (bytes == (ber_bytes + *length))
         {
             char * data = (char *)(rci->shared.content.data + ber_bytes);
 
             if (!destination_in_storage(rci))
             {
-                if (*length >= sizeof rci->input.storage)
-                {
-                    connector_debug_printf("Maximum content size exceeded while getting  a string - wanted %u, had %u\n", *length, sizeof rci->input.storage);
-                    rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
-                    goto done;
-                }
-
                 memcpy(rci->input.storage, data, *length);
                 data = (char *)rci->input.storage;
             }
