@@ -640,21 +640,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
     connector_status_t result = connector_success;
     connector_sm_receive_config_request_t config_request;
 
-    ASSERT(SmIsLastData(session->flags));
-    config_request.phone_number = payload;
-
-    {
-        size_t const phone_bytes = strlen(config_request.phone_number) + 1;
-
-        config_request.service_id = (phone_bytes < bytes) ? config_request.phone_number + phone_bytes : NULL;
-    }
-
-#if !(defined CONNECTOR_CLOUD_PHONE)
-    /* Update configuration */
-    result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
-#endif
-
-    /* Callback sms transport config so new phone makes effect */
+    /* Callback sms transport close/open so new phone makes effect */
     {
 	    connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;	/* Assume it's SMS transport */
         ASSERT(sm_ptr->network.class_id == connector_class_id_network_sms);
@@ -663,17 +649,81 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 	    {
 	        connector_callback_status_t callback_status;
 	        connector_request_id_t request_id;
-			connector_network_config_cloud_phone_t config_data;
+			connector_network_close_t close_data;
 
-			/* Config */
-			config_data.handle = sm_ptr->network.handle;
-	        config_data.device_cloud_phone = connector_ptr->device_cloud_phone;
+			/* Close */
+			close_data.handle = sm_ptr->network.handle;
+			close_data.status = connector_close_status_device_stopped;
 
-			request_id.network_request = connector_request_id_network_config_cloud_phone;
-	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &config_data);		
-			result = sm_map_callback_status_to_connector_status(callback_status);
+			request_id.network_request = connector_request_id_network_close;
+	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);		
+            switch (callback_status)
+            {
+                case connector_callback_busy:
+                    result = connector_pending;
+                    goto error;
+
+                case connector_callback_continue:
+                    sm_ptr->network.handle = NULL;
+                    result = connector_working;
+                    break;
+
+                default:
+                    sm_ptr->close.status = connector_close_status_abort;
+                    break;
+            }
+        }
+        
+        if (sm_ptr->network.handle == NULL)
+	    {
+	        connector_callback_status_t callback_status;
+	        connector_request_id_t request_id;
+			connector_network_open_t open_data;
+
+			/* Open */
+            open_data.device_cloud_url = connector_ptr->device_cloud_phone;
+            open_data.handle = NULL;
+
+			request_id.network_request = connector_request_id_network_open;
+	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);		
+            switch (callback_status)
+            {
+                case connector_callback_continue:
+    	            result = connector_working;
+        	        sm_ptr->network.handle = open_data.handle;
+            	    break;
+
+	            case  connector_callback_abort:
+	                result = connector_abort;
+    	            goto error;
+
+	            case connector_callback_unrecognized:
+	                result = connector_unavailable;
+    	            goto error;
+
+	            case connector_callback_error:
+	                result = connector_open_error;
+    	            goto error;
+
+	            case connector_callback_busy:
+	                result = connector_pending;
+    	            goto error;
+	        }
         }
     }
+
+	/* Callback to config.c so user can save the new phone to persistent storage */
+    ASSERT(SmIsLastData(session->flags));
+    config_request.phone_number = payload;
+
+    {
+        size_t const phone_bytes = strlen(config_request.phone_number) + 1;
+        config_request.service_id = (phone_bytes < bytes) ? config_request.phone_number + phone_bytes : NULL;
+    }
+
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
+#endif
 
     /* Callback to user */
     {
@@ -686,7 +736,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &config_request);
         result = sm_map_callback_status_to_connector_status(callback_status);
     }
-
+error:
     return result;
 }
 #endif

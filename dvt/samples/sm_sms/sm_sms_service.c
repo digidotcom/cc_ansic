@@ -494,7 +494,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
              *    - At the configuration layer: 
              *      Phone number has already been reconfigured by the connector through connector_request_id_config_set_device_cloud_phone.
              *    - At the transport layer:
-             *      SMS transport config function has been called through connector_request_id_network_config_cloud_phone so new phone makes effect. 
+             *      SMS transport close/open functions have been called through connector_request_id_network_close/connector_request_id_network_open so new phone makes effect. 
              */
         	
             APP_DEBUG("Received connector_request_id_sm_config_request request. response %s needed\n", request->response_required ? "is" : "is not");

@@ -22,8 +22,8 @@
  *
  * @param data @ref connector_network_open_t
  *  <ul>
- *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. Not Used (NULL) for SMS. SMS will use instead 
- *   the device_cloud_phone passed in app_network_sms_config_cloud_phone.
+ *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud Phone number 
+ *                                        where to send SMSs.
  *   </li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,
@@ -41,30 +41,6 @@
  * @see @ref open "Network API callback Open"
  */
 connector_callback_status_t app_network_sms_open(connector_network_open_t * const data)
-{
-    connector_callback_status_t rc = connector_callback_continue;
-
-    UNUSED_ARGUMENT(data);
-
-    return rc;
-}
-
-/**
- * @brief   Configure the Device Cloud phone number where to send SMSs for SMS transport
- *
- * @param data @ref connector_network_config_cloud_phone_t
- *  <ul>
- *   <li><b><i>handle</i></b> - Network handle </li>
- *   <li><b><i>device_cloud_phone</i></b> - Phone Number of Device Cloud where to send SMSs </li>
- * </ul>
- *
- * @retval connector_callback_continue	The routine has successfully configured the Device Cloud's connection.
- * @retval connector_callback_error     The operation failed, Cloud Connector
- *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
-  *
- * @see @ref open "Network API callback Config"
- */
-static connector_callback_status_t app_network_sms_config_cloud_phone(connector_network_config_cloud_phone_t * const data)
 {
     connector_callback_status_t rc = connector_callback_continue;
 
@@ -199,10 +175,6 @@ connector_callback_status_t app_network_sms_handler(connector_request_id_network
     {
     case connector_request_id_network_open:
         status = app_network_sms_open(data);
-        break;
-
-    case connector_request_id_network_config_cloud_phone:
-        status = app_network_sms_config_cloud_phone(data);
         break;
 
     case connector_request_id_network_send:

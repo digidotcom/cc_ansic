@@ -217,7 +217,8 @@ connector_callback_status_t config_server_phone_number(int const fd, const char 
  *
  * @param data @ref connector_network_open_t
  *  <ul>
- *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud </li>
+ *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud Phone number 
+ *                                        where to send SMSs.</li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,
  *   @ref connector_network_handle_t "connector_network_handle_t"
@@ -280,6 +281,9 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     if (status == connector_callback_continue)
     {
          APP_DEBUG("app_network_sms_open: connected to %s\n", GW_IP);
+
+         status = config_server_phone_number(fd, data->device_cloud_url);
+
          goto done;
     }
 
@@ -311,31 +315,6 @@ error:
     }
 
 done:
-    return status;
-}
-
-/**
- * @brief   Configure the Device Cloud phone number where to send SMSs for SMS transport
- *
- * @param data @ref connector_network_config_cloud_phone_t
- *  <ul>
- *   <li><b><i>handle</i></b> - Network handle </li>
- *   <li><b><i>device_cloud_phone</i></b> - Phone Number of Device Cloud where to send SMSs </li>
- * </ul>
- *
- * @retval connector_callback_continue   The routine has successfully configured the Device Cloud's connection.
- * @retval connector_callback_error     The operation failed, Cloud Connector
- *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
-  *
- * @see @ref open "Network API callback Config"
- */
-static connector_callback_status_t app_network_sms_config_cloud_phone(connector_network_config_cloud_phone_t * const data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    int * const fd = data->handle;
-
-    status = config_server_phone_number(*fd, data->device_cloud_phone);
-    
     return status;
 }
 
@@ -497,10 +476,10 @@ static connector_callback_status_t app_network_sms_close(connector_network_close
 
     if (close(*fd) < 0)
     {
-        APP_DEBUG("network_tcp_close: close() failed, fd %d, errno %d\n", *fd, errno);
+        APP_DEBUG("network_sms_close: close() failed, fd %d, errno %d\n", *fd, errno);
     }
     else
-        APP_DEBUG("network_tcp_close: fd %d\n", *fd);
+        APP_DEBUG("network_sms_close: fd %d\n", *fd);
 
     *fd = -1;
 
@@ -519,10 +498,6 @@ connector_callback_status_t app_network_sms_handler(connector_request_id_network
     {
     case connector_request_id_network_open:
         status = app_network_sms_open(data);
-        break;
-
-    case connector_request_id_network_config_cloud_phone:
-        status = app_network_sms_config_cloud_phone(data);
         break;
 
     case connector_request_id_network_send:

@@ -604,7 +604,6 @@ static char const * app_network_class_to_string(connector_request_id_network_t c
     switch (value)
     {
         enum_to_case(connector_request_id_network_open);
-        enum_to_case(connector_request_id_network_config_cloud_phone);
         enum_to_case(connector_request_id_network_send);
         enum_to_case(connector_request_id_network_receive);
         enum_to_case(connector_request_id_network_close);
