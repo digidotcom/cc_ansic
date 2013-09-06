@@ -74,6 +74,7 @@ CFLAGS += -I$(PLATFORM_DIR)""",
     'PUBLIC_HEADER_DIR'       : "../../../include",
     # What to include in sample make process, if anything.
     'POST_SAMPLE'             : "",
+    'GAMMU_INCLUDES'          : "",
 }
 
 def generate_makefile(path, make_template):
@@ -139,15 +140,23 @@ PLATFORM = template"""
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_dns.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp_ssl.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
-        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
         subs['LIBS'] += ' -lssl'
     elif sample not in LINK_SAMPLES and 'network.c' not in app_src:
         #  Otherwise add network.c.
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_dns.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
-        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
 
+    if sample == 'sm_sms':
+        if 'network_sms.c' not in app_src:
+            # Add network_ssl.c to PLATFORM_SRCS and -lssl to LIBS.
+            subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
+        else:
+            subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
+    if sample == 'sm_sms_gammu':
+        subs['LIBS'] += ' -lGammu'
+        subs['GAMMU_INCLUDES'] = "CFLAGS += -I/usr/include/gammu"
+        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
     if sample == 'file_system' and 'file_system.c' not in app_src:
         # Add file_system.c to PLATFORM_SRCS.  -lcrypto if APP_ENABLE_MD5
         # passed.

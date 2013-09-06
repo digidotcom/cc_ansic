@@ -35,6 +35,9 @@ CFLAGS +=-std=c99
 CFLAGS += -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
 # Include Public Header Files.
 CFLAGS += -I. -I$$(PUBLIC_HEADER_DIR)
+#Include Gammu libraries for SMS support.
+${GAMMU_INCLUDES}
+
 ${PLATFORM_HEADER_INCLUDE}
 ifeq ($$(DEBUG),true)
 CFLAGS += -g -O0 -DDEBUG
