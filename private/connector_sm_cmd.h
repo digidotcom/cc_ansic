@@ -639,6 +639,14 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 {
     connector_status_t result = connector_success;
     connector_sm_receive_config_request_t config_request;
+    
+    ASSERT(SmIsLastData(session->flags));
+    config_request.phone_number = payload;
+
+    {
+        size_t const phone_bytes = strlen(config_request.phone_number) + 1;
+        config_request.service_id = (phone_bytes < bytes) ? config_request.phone_number + phone_bytes : NULL;
+    }
 
     /* Callback sms transport close/open so new phone makes effect */
     {
@@ -681,7 +689,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 			connector_network_open_t open_data;
 
 			/* Open */
-            open_data.device_cloud_url = connector_ptr->device_cloud_phone;
+            open_data.device_cloud_url = config_request.phone_number;
             open_data.handle = NULL;
 
 			request_id.network_request = connector_request_id_network_open;
@@ -713,14 +721,6 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
     }
 
 	/* Callback to config.c so user can save the new phone to persistent storage */
-    ASSERT(SmIsLastData(session->flags));
-    config_request.phone_number = payload;
-
-    {
-        size_t const phone_bytes = strlen(config_request.phone_number) + 1;
-        config_request.service_id = (phone_bytes < bytes) ? config_request.phone_number + phone_bytes : NULL;
-    }
-
 #if !(defined CONNECTOR_CLOUD_PHONE)
     result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
 #endif
