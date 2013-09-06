@@ -172,11 +172,8 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
 {
     connector_status_t result = connector_working;
 
-    if (connector_ptr->connector_got_device_id)
-    {
-        connector_ptr->device_id_method = connector_device_id_method_manual;
-        goto done;
-    }
+    connector_ptr->connector_got_device_id = connector_false;
+
     result = get_config_device_id_method(connector_ptr);
     COND_ELSE_GOTO(result == connector_working, error);
 
@@ -185,7 +182,19 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
         case connector_device_id_method_manual:
             result = get_config_device_id(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
-            connector_ptr->connector_got_device_id = connector_true;
+            {
+                int i;
+                /* If the returned Device ID is zero, Cloud Connector will ask the Device Cloud for a Device ID. */
+                /* Start from the end of the array because normally first bytes are zero. */
+                for (i = sizeof connector_ptr->device_id; i; i--)
+                {
+                    if (connector_ptr->device_id[i - 1])
+                    {
+                        connector_ptr->connector_got_device_id = connector_true;
+                        break;
+                    }
+                }
+            }
             break;
 
         case connector_device_id_method_auto:
@@ -234,10 +243,6 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
             connector_ptr->connector_got_device_id = connector_true;
             break;
         }
-        case connector_device_id_method_provisioning:
-            connector_ptr->connector_got_device_id = connector_false;
-            result = connector_working;
-            break;
     }
     COND_ELSE_GOTO(result == connector_working, error);
 

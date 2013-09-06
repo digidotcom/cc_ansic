@@ -116,18 +116,18 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 }
 
 #define DEVICE_ID_LENGTH    16
-static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
+static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    config_device_id->data = device_id;
+    config_device_id->data = provisioned_device_id;
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    memcpy(config_device_id->data, device_id, DEVICE_ID_LENGTH);
+    memcpy(config_device_id->data, provisioned_device_id, DEVICE_ID_LENGTH);
 
     return connector_callback_continue;
 }
@@ -164,7 +164,51 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
     static  char const connector_cloud_url[] = "login.etherios.com";
 
     config_url->string = (char *)connector_cloud_url;
-    config_url->length = sizeof connector_cloud_url -1;
+    config_url->length = sizeof connector_cloud_url - 1;
+
+    return connector_callback_continue;
+}
+#endif
+
+#if !(defined CONNECTOR_CLOUD_PHONE)
+
+static char connector_cloud_phone[] = "447786201216";
+//static char connector_cloud_phone[16] = "";	/* empty: will require a provisioning message from the server for initialization */
+
+static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+
+    config_phone->string = (char *)connector_cloud_phone;
+    config_phone->length = sizeof connector_cloud_phone -1;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_set_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+    if (config_phone->length > (sizeof connector_cloud_phone -1))
+    {
+        return connector_callback_error;
+    }
+
+    strcpy(connector_cloud_phone, config_phone->string);
+
+    /* Maybe user want to save connector_cloud_phone to persistent storage */
+
+    return connector_callback_continue;
+}
+#endif
+
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+
+static char connector_cloud_service_id[] = "";	/* empty: No shared-code used */
+//static char connector_cloud_service_id[] = "IDGP";
+
+static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
+{
+
+    config_service_id->string = (char *)connector_cloud_service_id;
+    config_service_id->length = strlen(connector_cloud_service_id);
 
     return connector_callback_continue;
 }
@@ -296,7 +340,7 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
 {
 
-    config_device->method = connector_device_id_method_auto;
+    config_device->method = connector_device_id_method_manual;
 
     return connector_callback_continue;
 }
@@ -519,9 +563,13 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
     switch (value)
     {
         enum_to_case(connector_request_id_config_device_id);
+        enum_to_case(connector_request_id_config_set_device_id);
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);
+        enum_to_case(connector_request_id_config_get_device_cloud_phone);
+        enum_to_case(connector_request_id_config_set_device_cloud_phone);
+        enum_to_case(connector_request_id_config_device_cloud_service_id);
         enum_to_case(connector_request_id_config_connection_type);
         enum_to_case(connector_request_id_config_mac_addr);
         enum_to_case(connector_request_id_config_link_speed);
@@ -556,6 +604,7 @@ static char const * app_network_class_to_string(connector_request_id_network_t c
     switch (value)
     {
         enum_to_case(connector_request_id_network_open);
+        enum_to_case(connector_request_id_network_config_cloud_phone);
         enum_to_case(connector_request_id_network_send);
         enum_to_case(connector_request_id_network_receive);
         enum_to_case(connector_request_id_network_close);
@@ -852,6 +901,22 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if !(defined CONNECTOR_CLOUD_URL)
     case connector_request_id_config_device_cloud_url:
         status = app_get_device_cloud_url(data);
+        break;
+#endif
+
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    case connector_request_id_config_get_device_cloud_phone:
+        status = app_get_device_cloud_phone(data);
+        break;
+
+    case connector_request_id_config_set_device_cloud_phone:
+        status = app_set_device_cloud_phone(data);
+        break;
+#endif
+
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+    case connector_request_id_config_device_cloud_service_id:
+        status = app_get_device_cloud_service_id(data);
         break;
 #endif
 

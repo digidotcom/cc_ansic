@@ -116,18 +116,18 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 }
 
 #define DEVICE_ID_LENGTH    16
-static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
+static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    config_device_id->data = device_id;
+    config_device_id->data = provisioned_device_id;
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    memcpy(config_device_id->data, device_id, DEVICE_ID_LENGTH);
+    memcpy(config_device_id->data, provisioned_device_id, DEVICE_ID_LENGTH);
 
     return connector_callback_continue;
 }
@@ -164,7 +164,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
     static  char const connector_cloud_url[] = "login.etherios.com";
 
     config_url->string = (char *)connector_cloud_url;
-    config_url->length = sizeof connector_cloud_url -1;
+    config_url->length = sizeof connector_cloud_url - 1;
 
     return connector_callback_continue;
 }
@@ -340,7 +340,7 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
 {
 
-    config_device->method = connector_device_id_method_auto;
+    config_device->method = connector_device_id_method_manual;
 
     return connector_callback_continue;
 }

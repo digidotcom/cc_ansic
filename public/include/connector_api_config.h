@@ -297,11 +297,8 @@ typedef enum {
                                                  generate the device ID from MAC address (See @ref mac_address callback)
                                                  for LAN connection type or genearte the device ID according to the @ref wan_type.
                                                  @note Cloud Connector will not call @ref device_id callback. */
-    connector_device_id_method_manual,       /**< Callback returns this type telling Cloud Connector to retrieve device ID from
+    connector_device_id_method_manual        /**< Callback returns this type telling Cloud Connector to retrieve device ID from
                                                   @ref device_id callback */
-    connector_device_id_method_provisioning  /**< Callback returns this type telling Cloud Connector to retrieve device ID from
-                                                  Device Cloud. The device will be automatically registered in the account and
-                                                  it must save the configuration in @ref set_device_id callback. */
 } connector_device_id_method_t;
 /**
 * @}
