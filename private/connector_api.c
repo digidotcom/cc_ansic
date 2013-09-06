@@ -246,8 +246,6 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
     }
     COND_ELSE_GOTO(result == connector_working, error);
 
-    /*connector_debug_hexvalue("Device ID ", connector_ptr->device_id, DEVICE_ID_LENGTH);*/
-
 error:
     return result;
 }
