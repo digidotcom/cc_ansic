@@ -27,12 +27,16 @@
  *  -# @ref device_id_method
  *  -# @ref network_tcp_start
  *  -# @ref network_udp_start
+ *  -# @ref network_sms_start
  *  -# @ref wan_type
  *  -# @ref imei_number
  *  -# @ref esn_number
  *  -# @ref meid_number
  *  -# @ref identity_verification
  *  -# @ref password
+ *  -# @ref get_device_cloud_phone
+ *  -# @ref set_device_cloud_phone
+ *  -# @ref device_cloud_service_id
  *
  * @section device_id Device ID
  * Returns a unique Device ID used to identify the device.
@@ -1487,6 +1491,65 @@
  *
  * @endcode
  *
+ * @section network_sms_start  Start network SMS
+ *
+ * Return @ref connector_config_connect_type_t to automatically or manually start SMS transport.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_start_network_sms() in config.c.
+ *
+ * @note If @ref CONNECTOR_TRANSPORT_SMS configuration is not defined in @ref connector_config.h, this callback
+ * will not be called and SMS transport is not supported. Cloud Connector does not include SMS transport.
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_network_sms @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly connector_config_connect_type_t @htmlonly:
+ *          <dl>
+ *              <dt><i>type</i></dt><dd>
+ *                  <ul><li>@endhtmlonly @ref connector_connect_auto @htmlonly - Callback returns this to automatic establish SMS connection to Device Cloud.</li>
+ *                      <li>@endhtmlonly @ref connector_connect_manual @htmlonly - Callback returns this to manual establish SMS connection to Device Cloud.
+ *                          @endhtmlonly Note: Call @ref connector_initiate_action with
+ *                                                  @ref connector_initiate_transport_start @htmlonly to start UPD transport.</li></ul>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned the status</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const device_connect)
+ * {
+ *    device_connect->type = connector_connect_auto;
+ *
+ *    return connector_callback_continue;
+ * }
+ *
+ * @endcode
  *
  * @section wan_type WAN Type
  *
@@ -1961,6 +2024,224 @@
  *     config_password->string = (char *)connector_password;
  *     config_password->length = sizeof connector_password -1;
  *
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section get_device_cloud_phone Device Cloud Phone Number (Get)
+ *
+ * Returns Device Cloud Phone Number where to send SMSs (Only used for SMS transport).
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_get_device_cloud_phone() in config.c.
+ *
+ * @note If @ref CONNECTOR_CLOUD_PHONE configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_device_cloud_phone()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_get_device_cloud_phone @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
+ *          <dl>
+ *              <dt><i>string</i></dt>
+ *              <dd> - Callback returns the pointer to the Device Cloud Phone Number where to send SMSs (Only used for SMS transport).</dd>
+ *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud Phone Number. Maximum is 64 bytes.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned Device Cloud Phone Number</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to get Device Cloud Phone Number and callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * static char connector_cloud_phone[] = "447786201216";
+ *
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
+ * {
+ *
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_get_device_cloud_phone)
+ *     {
+ *         // Return pointer to Device Cloud Phone Number.
+ *         connector_config_pointer_string_t * const config_phone = data;
+ *
+ *         config_phone->string = (char *)connector_cloud_phone;
+ *         config_phone->length = sizeof connector_cloud_phone -1;
+ *     }
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section set_device_cloud_phone Device Cloud Phone Number (Set)
+ *
+ * This config callback is used to set (not to get) the Device Cloud Phone Number where to send SMSs (Only used for SMS transport).
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_set_device_cloud_phone() in config.c.
+ *
+ * @note If @ref CONNECTOR_CLOUD_PHONE configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_set_device_cloud_phone()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_set_device_cloud_phone @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
+ *          <dl>
+ *              <dt><i>string</i></dt>
+ *              <dd> - Pointer passed to the Callback containing the Device Cloud Phone Number where to send SMSs in order to 
+ *              </dd>  be stored in persistent storage. (Only used for SMS transport)
+ *              <dt><i>length</i></dt><dd> - Number of bytes of Device Cloud Phone Number passed. Maximum is 64 bytes.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully set Device Cloud Phone Number</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set Device Cloud Phone Number and callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * static char connector_cloud_phone[16] = "";	// empty: will require a provisioning message from the server for initialization
+ *
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
+ * {
+ *
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_set_device_cloud_phone)
+ *     {
+ *         if (config_phone->length > (sizeof connector_cloud_phone -1))
+ *         {
+ *             return connector_callback_error;
+ *         }
+ *
+ *         strcpy(connector_cloud_phone, config_phone->string);
+ *
+ *         // Maybe user want to save connector_cloud_phone to persistent storage
+ *
+ *         return connector_callback_continue;
+ *     }
+ * }
+ *
+ * @endcode
+ *
+ *
+ * @section device_cloud_service_id Device Cloud Phone service-id
+ *
+ * Return Device Cloud service-id (if used) where to send SMSs (Only used for SMS transport).
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_get_device_cloud_service_id() in config.c.
+ *
+ * @note If @ref CONNECTOR_CLOUD_SERVICE_ID configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_device_cloud_service_id()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_device_cloud_service_id @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
+ *          <dl>
+ *              <dt><i>string</i></dt>
+ *              <dd> - Callback returns the pointer to Device Cloud Phone Number service-id (if used) where to send SMSs.</dd>
+ *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud service-id. Maximum is 64 bytes.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned Device Cloud service-id</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to get Device Cloud service-id and callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
+ *                                                    connector_request_id_t const request_id
+ *                                                    void * const data)
+ * {
+ *
+ *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_cloud_service_id)
+ *     {
+ *         // Return pointer to Device Cloud service_id.
+ *         static char connector_cloud_service_id[] = "";	// empty: No shared code
+ *         connector_config_pointer_string_t * const config_service_id = data;
+ *
+ *         config_service_id->string = (char *)connector_cloud_service_id;
+ *         config_service_id->length = sizeof connector_cloud_service_id -1;
+ *     }
  *     return connector_callback_continue;
  * }
  *

@@ -27,6 +27,8 @@ void connector_debug_printf(char const * const format, ...);
 /* Callbacks for this platform */
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request, void * const data);
 connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request_id, void * const data);
+connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request_id, void * const data);
+connector_callback_status_t app_network_sms_handler(connector_request_id_network_t const request_id, void * const data);
 connector_callback_status_t app_config_handler(connector_request_id_config_t const request_id, void * const data);
 #if defined (CONNECTOR_RCI_SERVICE)
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);

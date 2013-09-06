@@ -662,6 +662,33 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
 }
 
 /**
+ * @brief  Start Network SMS
+ *
+ * This routine tells Cloud Connector whether it automatically or manually starts SMS.
+ * You need to call connector_initiate_action with connector_initiate_transport_start to start SMS if manually is selected
+ * when this callback is called.
+ *
+ * @param [out] config_connect  Pointer connector_config_connect_type_t where callback writes connector_connect_auto to
+ *                              automatically start SMS connection or connector_connect_manual to manually start SMS connection.
+ *
+ *
+ * @retval connector_callback_continue  SMS configuration was successfully set to start automatically or manually.
+ * @retval connector_callback_abort     Abort Cloud Connector.
+ *
+ * @see @ref network_sms_start API Configuration Callback
+ *
+ * @note This routine is not called if you define @b CONNECTOR_TRANSPORT_SMS configuration in @ref connector_config.h.
+ * @note This CONNECTOR_TRANSPORT_SMS indicates application supports network SMS.
+ *
+ * @note See @ref CONNECTOR_TRANSPORT_SMS to include SMS code in Cloud Connector.
+*/
+static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
+{
+    config_connect->type = connector_connect_auto;
+    return connector_callback_continue;
+}
+
+/**
  * @brief   Get the WAN type
  *
  * This routine specifies the WAN type as @ref connector_wan_type_imei, @ref connector_wan_type_esn, or
@@ -1137,6 +1164,8 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
         enum_to_case(connector_request_id_sm_cli_status);
         enum_to_case(connector_request_id_sm_more_data);
         enum_to_case(connector_request_id_sm_opaque_response);
+        enum_to_case(connector_request_id_sm_config_request);
+        enum_to_case(connector_request_id_sm_config_response);
     }
     return result;
 }
@@ -1371,6 +1400,10 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
      case connector_request_id_config_network_udp:
          status = app_start_network_udp(data);
+         break;
+
+     case connector_request_id_config_network_sms:
+         status = app_start_network_sms(data);
          break;
 
      case connector_request_id_config_wan_type:

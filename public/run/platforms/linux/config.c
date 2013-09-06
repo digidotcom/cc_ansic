@@ -170,6 +170,50 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 }
 #endif
 
+#if !(defined CONNECTOR_CLOUD_PHONE)
+
+static char connector_cloud_phone[] = "447786201216";
+//static char connector_cloud_phone[16] = "";	/* empty: will require a provisioning message from the server for initialization */
+
+static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+
+    config_phone->string = (char *)connector_cloud_phone;
+    config_phone->length = sizeof connector_cloud_phone -1;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_set_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+    if (config_phone->length > (sizeof connector_cloud_phone -1))
+    {
+        return connector_callback_error;
+    }
+
+    strcpy(connector_cloud_phone, config_phone->string);
+
+    /* Maybe user want to save connector_cloud_phone to persistent storage */
+
+    return connector_callback_continue;
+}
+#endif
+
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+
+static char connector_cloud_service_id[] = "";	/* empty: No shared-code used */
+//static char connector_cloud_service_id[] = "IDGP";
+
+static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
+{
+
+    config_service_id->string = (char *)connector_cloud_service_id;
+    config_service_id->length = strlen(connector_cloud_service_id);
+
+    return connector_callback_continue;
+}
+#endif
+
 #if !(defined CONNECTOR_CONNECTION_TYPE)
 static connector_callback_status_t app_get_connection_type(connector_config_connection_type_t * const config_connection)
 {
@@ -372,6 +416,12 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
     return connector_callback_continue;
 }
 
+static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
+{
+    config_connect->type = connector_connect_auto;
+    return connector_callback_continue;
+}
+
 #if !(defined CONNECTOR_WAN_TYPE)
 static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
 {
@@ -517,6 +567,9 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);
+        enum_to_case(connector_request_id_config_get_device_cloud_phone);
+        enum_to_case(connector_request_id_config_set_device_cloud_phone);
+        enum_to_case(connector_request_id_config_device_cloud_service_id);
         enum_to_case(connector_request_id_config_connection_type);
         enum_to_case(connector_request_id_config_mac_addr);
         enum_to_case(connector_request_id_config_link_speed);
@@ -551,6 +604,7 @@ static char const * app_network_class_to_string(connector_request_id_network_t c
     switch (value)
     {
         enum_to_case(connector_request_id_network_open);
+        enum_to_case(connector_request_id_network_config_cloud_phone);
         enum_to_case(connector_request_id_network_send);
         enum_to_case(connector_request_id_network_receive);
         enum_to_case(connector_request_id_network_close);
@@ -695,6 +749,8 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
         enum_to_case(connector_request_id_sm_cli_status);
         enum_to_case(connector_request_id_sm_more_data);
         enum_to_case(connector_request_id_sm_opaque_response);
+        enum_to_case(connector_request_id_sm_config_request);
+        enum_to_case(connector_request_id_sm_config_response);
     }
     return result;
 }
@@ -848,6 +904,22 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         break;
 #endif
 
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    case connector_request_id_config_get_device_cloud_phone:
+        status = app_get_device_cloud_phone(data);
+        break;
+
+    case connector_request_id_config_set_device_cloud_phone:
+        status = app_set_device_cloud_phone(data);
+        break;
+#endif
+
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+    case connector_request_id_config_device_cloud_service_id:
+        status = app_get_device_cloud_service_id(data);
+        break;
+#endif
+
 #if !(defined CONNECTOR_CONNECTION_TYPE)
     case connector_request_id_config_connection_type:
         status = app_get_connection_type(data);
@@ -943,6 +1015,12 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if !(defined CONNECTOR_NETWORK_UDP_START)
      case connector_request_id_config_network_udp:
          status = app_start_network_udp(data);
+         break;
+#endif
+
+#if !(defined CONNECTOR_NETWORK_SMS_START)
+     case connector_request_id_config_network_sms:
+         status = app_start_network_sms(data);
          break;
 #endif
 

@@ -26,6 +26,7 @@
 */
 typedef enum {
     connector_request_id_network_open,     /**< Requesting callback to set up and make connection to Device Cloud */
+    connector_request_id_network_config_cloud_phone,   /**< Requesting callback to to configure the Device Cloud phone number */
     connector_request_id_network_send,     /**< Requesting callback to send data to Device Cloud */
     connector_request_id_network_receive,  /**< Requesting callback to receive data from Device Cloud */
     connector_request_id_network_close     /**< Requesting callback to close Device Cloud connection */
@@ -45,6 +46,22 @@ typedef struct  {
     char const * CONST device_cloud_url;    /**< Pointer to Device Cloud URL  */
     connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_network_config_cloud_phone_t Network Config Data Structure
+* @{
+*/
+/**
+* Network config data structure for @ref connector_request_id_network_config_cloud_phone callback which is called to configure the Device Cloud phone 
+* number where to send SMSs for SMS transport.
+*/
+typedef struct  {
+    connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
+    char const * CONST device_cloud_phone;      /**< Pointer to Device Cloud Phone Number  */
+} connector_network_config_cloud_phone_t;
 /**
 * @}
 */

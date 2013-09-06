@@ -59,7 +59,7 @@
 #define CONNECTOR_DATA_SERVICE
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_UDP)
+#if ((defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS))
 #define CONNECTOR_SHORT_MESSAGE
 #endif
 
@@ -308,6 +308,7 @@ typedef enum
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_initiate_ping_request,    /**< Sends a ping request to Device Cloud. Supported only under UDP and SMS transport methods */
     connector_initiate_session_cancel,  /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods */
+    connector_initiate_config_message,  /**< Sends configuration info to Etherios Device Cloud. Supported only under SMS transport method */
     #endif
 
     #if (defined CONNECTOR_DATA_POINTS)

@@ -139,12 +139,14 @@ PLATFORM = template"""
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_dns.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp_ssl.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
+        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
         subs['LIBS'] += ' -lssl'
     elif sample not in LINK_SAMPLES and 'network.c' not in app_src:
         #  Otherwise add network.c.
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_dns.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
+        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_sms.c'
 
     if sample == 'file_system' and 'file_system.c' not in app_src:
         # Add file_system.c to PLATFORM_SRCS.  -lcrypto if APP_ENABLE_MD5

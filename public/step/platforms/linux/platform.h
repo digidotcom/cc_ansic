@@ -44,6 +44,9 @@ extern connector_callback_status_t app_network_tcp_handler(connector_request_id_
 extern connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request,
                                                            void * const data);
 
+extern connector_callback_status_t app_network_sms_handler(connector_request_id_network_t const request,
+                                                           void * const data);
+
 extern connector_callback_status_t app_config_handler(connector_request_id_config_t const request,
                                                       void * const data);
 
