@@ -340,7 +340,7 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
 {
 
-    config_device->method = connector_device_id_method_manual;
+    config_device->method = connector_device_id_method_auto;
 
     return connector_callback_continue;
 }
@@ -604,7 +604,6 @@ static char const * app_network_class_to_string(connector_request_id_network_t c
     switch (value)
     {
         enum_to_case(connector_request_id_network_open);
-        enum_to_case(connector_request_id_network_config_cloud_phone);
         enum_to_case(connector_request_id_network_send);
         enum_to_case(connector_request_id_network_receive);
         enum_to_case(connector_request_id_network_close);

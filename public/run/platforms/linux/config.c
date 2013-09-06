@@ -340,7 +340,7 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
 {
 
-    config_device->method = connector_device_id_method_manual;
+    config_device->method = connector_device_id_method_auto;
 
     return connector_callback_continue;
 }
