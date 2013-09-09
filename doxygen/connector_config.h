@@ -421,7 +421,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_CLOUD_URL @htmlonly </td>
- * <td>Device Cloud FQDN.
+ * <td>Device Cloud FQDN (typically, login.etherios.com or login.etherios.co.uk).
  * See @endhtmlonly @ref device_cloud_url @htmlonly</td>
  * </tr>
  * <tr>
@@ -522,7 +522,7 @@
 #define CONNECTOR_DEVICE_TYPE                             "Cloud Connector Linux Sample"
 
 /**
- * When defined, this string hardcode for the @ref device_cloud_url instead of the application framework
+ * When defined, this string hardcode for the @ref device_cloud_url (typically, login.etherios.com or login.etherios.co.uk) instead of the application framework
  * function @ref app_get_device_cloud_url (called via the @ref connector_request_id_config_device_cloud_url @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_get_device_cloud_url when CONNECTOR_CLOUD_URL is defined.

@@ -195,7 +195,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
  * @brief   Get the Device Cloud URL
  *
  * This routine assigns a pointer to the ASCII null-terminated string of
- * Device Cloud FQDN, this is typically login.etherios.com.
+ * Device Cloud FQDN, this is typically login.etherios.com or login.etherios.co.uk depending on which Device Cloud cluster the device connects to.
  *
  * @param [out] config_url  Callback returns pointer to memory containing the URL and the length of the URL in bytes.
  *
