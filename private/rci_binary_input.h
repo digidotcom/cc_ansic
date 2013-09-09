@@ -183,10 +183,10 @@ error:
 }
 #endif
 
-static connector_bool_t get_string(rci_t * const rci, char const * * string, uint32_t * const length)
+static connector_bool_t get_string(rci_t * const rci, char const * * string, size_t * const length)
 {
     connector_bool_t got_string = connector_false;
-    size_t const ber_bytes = get_modifier_ber(rci, length);
+    size_t const ber_bytes = get_modifier_ber(rci, (uint32_t *)length);
 
     if (ber_bytes > 0)
     {
