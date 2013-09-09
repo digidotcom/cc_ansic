@@ -9,7 +9,10 @@
  * data and information that can be accessed through Device Cloud using Cloud Connector.
  * User must include the generated header file and provide callback functions to handle all
  * device configuration in an application.
- *
+ * @note This section assumes that you have Java Runtime Environment already installed in your system. If you
+ * are not sure or do not know how to install it properly, please follow the instructions in 
+ * @htmlonly <a href=http://www.java.com/en/download/help/download_options.xml>this link</a>@endhtmlonly
+ * 
  * -# @ref rci_tool_usage
  * -# @ref rci_tool_location
  * -# @ref rci_tool_file

@@ -88,7 +88,10 @@
  *   java -jar /connector/tools/ConfigGenerator.jar username:password "Linux Application" 1.0.0.0 config.rci
  *
  * @endcode
- *
+ * @note To run the above line you need to have Java Runtime Environment installed in your system. If you
+ * are not sure or do not know how to install it properly, please follow the instructions in 
+ * @htmlonly <a href=http://www.java.com/en/download/help/download_options.xml>this link</a>@endhtmlonly
+ * 
  * When Device Cloud sends a RCI request to the device, app_remote_config_handler() is called with the following request ID:
  * -# @ref connector_request_id_remote_config_session_start
  * -# @ref connector_request_id_remote_config_action_start
