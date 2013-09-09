@@ -186,12 +186,16 @@ error:
 static connector_bool_t get_string(rci_t * const rci, char const * * string, size_t * const length)
 {
     connector_bool_t got_string = connector_false;
-    size_t const ber_bytes = get_modifier_ber(rci, (uint32_t *)length);
+    uint32_t value;
+    size_t const ber_bytes = get_modifier_ber(rci, &value);
 
     if (ber_bytes > 0)
     {
         size_t const bytes = rci->shared.content.length;
+        size_t const size_max = SIZE_MAX;
 
+        ASSERT(value <= size_max);
+        *length = value;
         if (*length > CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH)
         {
             connector_debug_printf("Maximum content size exceeded while getting  a string - wanted %u, had %u\n", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);

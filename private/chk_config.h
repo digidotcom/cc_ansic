@@ -47,5 +47,10 @@
 
 #endif /* (defined CONNECTOR_TRANSPORT_TCP) */
 
+#if (defined CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH)
+#if CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH > SIZE_MAX
+    #error "Invalid CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH, it must be lower than SIZE_MAX"
+#endif
+#endif
 
 #endif /* CHK_CONFIG_H_ */
