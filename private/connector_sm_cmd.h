@@ -669,6 +669,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
             {
                 case connector_callback_busy:
                     result = connector_pending;
+                    sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
                     goto error;
 
                 case connector_callback_continue:
@@ -715,6 +716,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 
 	            case connector_callback_busy:
 	                result = connector_pending;
+	                sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
     	            goto error;
 	        }
         }

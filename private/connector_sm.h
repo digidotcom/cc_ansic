@@ -595,7 +595,8 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
 
             case connector_transport_receive:
                 sm_ptr->transport.state = connector_transport_send;
-                result = sm_receive_data(connector_ptr, sm_ptr); /* NOTE: sm_receive_data has precedence over sm_process_recv_path just to keep the receive buffer ready */
+                if (sm_ptr->network.handle != NULL)    /* Give a chance to dynamic reconfiguration of the network when provisioning message arrives */
+                    result = sm_receive_data(connector_ptr, sm_ptr); /* NOTE: sm_receive_data has precedence over sm_process_recv_path just to keep the receive buffer ready */
                 if ((result != connector_idle) && (result != connector_pending))
                     goto done;
                 else
