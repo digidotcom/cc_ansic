@@ -13,6 +13,7 @@
 #ifndef CONNECTOR_API_SHORT_MESSAGE_H
 #define CONNECTOR_API_SHORT_MESSAGE_H
 
+#if (defined CONNECTOR_SHORT_MESSAGE)
 /**
 * @defgroup connector_sm_send_ping_request_t connector_sm_send_ping_request_t
 *
@@ -371,5 +372,12 @@ typedef struct
 /**
 * @}
 */
+#endif /* defined CONNECTOR_SHORT_MESSAGE */
 
+#if !defined _CONNECTOR_API_H
+#error  "Illegal inclusion of connector_api_short_message.h. You should only include connector_api.h in user code."
+#endif
+
+#else
+#error  "Illegal inclusion of connector_api_short_message.h. You should only include connector_api.h in user code."
 #endif /* CONNECTOR_API_SHORT_MESSAGE_H */

@@ -18,6 +18,8 @@
 #ifndef _CONNECTOR_API_DATA_POINT_H
 #define _CONNECTOR_API_DATA_POINT_H
 
+#if (defined CONNECTOR_DATA_POINTS)
+
 /**
 * @defgroup connector_request_id_data_point_t Data Point Request IDs
 * @{
@@ -350,6 +352,13 @@ typedef struct
 /**
 * @}
 */
+#endif /* defined CONNECTOR_DATA_POINTS */
 
+#if !defined _CONNECTOR_API_H
+#error  "Illegal inclusion of connector_api_data_point.h. You should only include connector_api.h in user code."
+#endif
+
+#else
+#error  "Illegal inclusion of connector_api_data_point.h. You should only include connector_api.h in user code."
 #endif /* _CONNECTOR_API_DATA_POINT_H */
 

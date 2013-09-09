@@ -18,6 +18,8 @@
 #ifndef _CONNECTOR_DS_API_H
 #define _CONNECTOR_DS_API_H
 
+#if (defined CONNECTOR_DATA_SERVICE)
+
 /**
 * @defgroup connector_request_data_service_send_t  To send data to Device Cloud.
 * @{
@@ -246,5 +248,13 @@ typedef struct
 * @}
 */
 
+#endif /* defined CONNECTOR_DATA_SERVICE */
+
+#if !defined _CONNECTOR_API_H
+#error  "Illegal inclusion of connector_api_data_service.h. You should only include connector_api.h in user code."
+#endif
+
+#else
+#error  "Illegal inclusion of connector_api_data_service.h. You should only include connector_api.h in user code."
 #endif /* _CONNECTOR_DS_API_H */
 

@@ -13,6 +13,7 @@
 #ifndef _CONNECTOR_API_REMOTE_H
 #define _CONNECTOR_API_REMOTE_H
 
+#if (defined CONNECTOR_RCI_SERVICE)
 #include "connector_types.h"
 /**
 * @defgroup connector_request_id_remote_config_t Remote Configuration Request IDs
@@ -89,5 +90,12 @@ typedef enum {
 * @}
 */
 
+#endif /* defined CONNECTOR_RCI_SERVICE */
 
+#if !defined _CONNECTOR_API_H
+#error  "Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code."
+#endif
+
+#else
+#error  "Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code."
 #endif /* connector_api_element_H_ */

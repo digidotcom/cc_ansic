@@ -18,6 +18,8 @@
 #ifndef _CONNECTOR_API_FILE_SYSTEM_H
 #define _CONNECTOR_API_FILE_SYSTEM_H
 
+#if (defined CONNECTOR_FILE_SYSTEM)
+
 /**
 * @defgroup connector_request_id_file_system_t File System
 * Request IDs
@@ -563,4 +565,12 @@ typedef struct
 * @}
 */
 
+#endif /* defined CONNECTOR_FILE_SYSTEM */
+
+#if !defined _CONNECTOR_API_H
+#error  "Illegal inclusion of connector_api_file_system.h. You should only include connector_api.h in user code."
+#endif
+
+#else
+#error  "Illegal inclusion of connector_api_file_system.h. You should only include connector_api.h in user code."
 #endif

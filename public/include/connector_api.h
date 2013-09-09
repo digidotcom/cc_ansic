@@ -85,10 +85,7 @@ typedef enum {
 
 #include "connector_api_config.h"
 #include "connector_api_network.h"
-
-#if (defined CONNECTOR_RCI_SERVICE)
 #include "connector_api_remote.h"
-#endif
 
  /**
  * @defgroup connector_port_numbers Device Cloud Port
@@ -370,25 +367,11 @@ typedef enum
 * @}
 */
 
-#if (defined CONNECTOR_FIRMWARE_SERVICE)
 #include "connector_api_firmware.h"
-#endif
-
-#if (defined CONNECTOR_DATA_SERVICE)
 #include "connector_api_data_service.h"
-#endif
-
-#if (defined CONNECTOR_DATA_POINTS)
 #include "connector_api_data_point.h"
-#endif
-
-#if (defined CONNECTOR_FILE_SYSTEM)
 #include "connector_api_file_system.h"
-#endif
-
-#if (defined CONNECTOR_SHORT_MESSAGE)
 #include "connector_api_short_message.h"
-#endif
 
 #include "connector_api_os.h"
 
