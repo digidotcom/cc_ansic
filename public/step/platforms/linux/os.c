@@ -113,7 +113,7 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
 {
     if (*status == connector_idle)
     {
-        unsigned int const timeout_in_microseconds =  1000000;
+        unsigned int const timeout_in_microseconds =  100000;
         usleep(timeout_in_microseconds);
     }
 

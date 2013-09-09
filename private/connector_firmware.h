@@ -937,6 +937,10 @@ static connector_status_t fw_process(connector_data_t * const connector_ptr, voi
 
     if (edp_header == NULL)
     {
+        if (fw_ptr->update_started)
+        {
+            result = connector_pending;
+        }
         goto done;
     }
 
