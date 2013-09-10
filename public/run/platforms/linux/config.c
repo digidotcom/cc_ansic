@@ -172,14 +172,13 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 
 #if !(defined CONNECTOR_CLOUD_PHONE)
 
-static char connector_cloud_phone[] = "447786201216";
-//static char connector_cloud_phone[16] = "";	/* empty: will require a provisioning message from the server for initialization */
+static char connector_cloud_phone[16] = ""; /* empty: will require a provisioning message from the server for initialization */
 
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
 
     config_phone->string = (char *)connector_cloud_phone;
-    config_phone->length = sizeof connector_cloud_phone -1;
+    config_phone->length = sizeof connector_cloud_phone - 1;
 
     return connector_callback_continue;
 }
@@ -202,7 +201,6 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
 #if !(defined CONNECTOR_CLOUD_SERVICE_ID)
 
 static char connector_cloud_service_id[] = "";	/* empty: No shared-code used */
-//static char connector_cloud_service_id[] = "IDGP";
 
 static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
 {
