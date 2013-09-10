@@ -77,7 +77,6 @@ typedef enum
     connector_request_id_sm_opaque_response,/**< Cloud Connector will use this to provide Device Cloud response for which
                                                 there is no associated request */
     connector_request_id_sm_config_request, /**< used when Cloud Connector receives config request from Device Cloud. Used only if the transport method is SMS */
-    connector_request_id_sm_config_response /**< used when Cloud Connector receives config response from Device Cloud. Used only if the transport method is SMS */
 } connector_request_id_sm_t;
 /**
 * @}
@@ -285,41 +284,6 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_send_config_request_t connector_sm_send_config_request_t
-*
-* @brief Data type used to send config request.
-* @{
-*/
-/**
-* This data structure is used when the device initiates the config request to Device Cloud. The context will be returned
-* when Device Connector receives the config response.
-*
-* @see connector_request_id_sm_config_response
-*/
-typedef struct
-{
-    connector_transport_t transport;    /**< transport method to use */
-    void * user_context;                /**< user context, will be returned in response callback */
-
-    char sim_slot;                      /**< single byte indicating the SIM slot:
-                                         *  0 means unknown or N/A
-                                         *  1 is the first SIM slot
-                                         *  2 is the second SIM slot
-                                         *  All other values reserved
-                                         */
-    char const * identifier;            /**< null-terminated string containing an identifier for the current SIM.  
-                                         * This will normally be set as the ICCID of the SIM.  If there is no SIM, 
-                                         * an appropriate ID for this phone number may be set instead.  
-                                         * This field is optional.
-                                         */
-    connector_bool_t response_required; /**< set to connector_true if response is needed */
-} connector_sm_send_config_request_t;
-/**
-* @}
-*/
-
-
-/**
 * @defgroup connector_sm_receive_config_request_t Data type used receive config request.
 * @{
 */
@@ -343,41 +307,11 @@ typedef struct
 * @}
 */
 
-/**
-* @defgroup connector_sm_config_response_t connector_sm_config_response_t
-* @brief Data type used to pass config response.
-* @{
-*/
-/**
-* This data structure is used when the callback is called with the connector_request_id_sm_config_response.
-* A config response is received from Device Cloud.
-*
-* @see connector_request_id_sm_config_response
-*/
-typedef struct
-{
-    connector_transport_t CONST transport; /**< transport method used */
-    void * user_context;    /**< user context passed in config request connector_initiate_action call */
-
-    enum
-    {
-        connector_sm_config_status_success,   /**< success response received from Device Cloud */
-        connector_sm_config_status_complete,  /**< session completed successfully, response is not requested */
-        connector_sm_config_status_cancel,    /**< session cancelled by the user */
-        connector_sm_config_status_timeout,   /**< timed out waiting for a response from Device Cloud */
-        connector_sm_config_status_error      /**< internal error in Cloud Connector */
-    } CONST status;  /**< response/status returned from Device Cloud/Cloud Connector */
-
-} connector_sm_config_response_t;
-/**
-* @}
-*/
 #endif /* defined CONNECTOR_SHORT_MESSAGE */
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_short_message.h. You should only include connector_api.h in user code."
 #endif
-
 #else
 #error  "Illegal inclusion of connector_api_short_message.h. You should only include connector_api.h in user code."
 #endif /* CONNECTOR_API_SHORT_MESSAGE_H */

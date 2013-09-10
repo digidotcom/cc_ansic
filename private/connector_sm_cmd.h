@@ -52,20 +52,6 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             #endif
             break;
         }
-        #if (defined CONNECTOR_TRANSPORT_SMS)
-        case connector_initiate_config_message:
-        {
-            connector_sm_send_config_request_t const * const request = sm_ptr->pending.data;
-
-            ASSERT_GOTO(request->transport == connector_transport_sms, error);
-            session->user.context = request->user_context;
-            session->user.header = request;
-            session->command = connector_sm_cmd_config;
-            response_needed = request->response_required;
-            session->sm_state = connector_sm_state_prepare_payload;
-            break;
-        }
-        #endif
 
         default:
             ASSERT_GOTO(connector_false, error);
@@ -276,49 +262,6 @@ static connector_callback_status_t sm_inform_ping_complete(connector_data_t * co
     return callback_status;
 }
 
-static connector_callback_status_t sm_inform_config_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
-{
-    connector_callback_status_t callback_status = connector_callback_continue;
-
-    if (SmIsClientOwned(session->flags))
-    {
-        connector_request_id_t request_id;
-        connector_sm_config_response_t cb_data;
-
-        cb_data.transport = session->transport;
-        cb_data.user_context = session->user.context;
-        switch (session->error)
-        {
-            case connector_sm_error_none:
-                cb_data.status = connector_sm_config_status_success;
-                break;
-
-            case connector_sm_error_cancel:
-                cb_data.status = connector_sm_config_status_cancel;
-                break;
-
-            case connector_sm_error_timeout:
-                cb_data.status = connector_sm_config_status_timeout;
-                break;
-
-            case connector_sm_error_complete:
-                cb_data.status = connector_sm_config_status_complete;
-                break;
-
-            default:
-                cb_data.status = connector_sm_config_status_error;
-                break;
-        }
-
-        request_id.sm_request = connector_request_id_sm_config_response;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
-        if (callback_status == connector_callback_unrecognized)
-            callback_status = connector_callback_continue;
-    }
-
-    return callback_status;
-}
-
 static connector_status_t sm_inform_session_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result;
@@ -338,10 +281,6 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
             callback_status = sm_inform_cli_complete(connector_ptr, session);
             break;
         #endif
-
-        case connector_sm_cmd_config:
-            callback_status = sm_inform_config_complete(connector_ptr, session);
-            break;
 
         case connector_sm_cmd_ping:
             callback_status = sm_inform_ping_complete(connector_ptr, session);
@@ -596,45 +535,6 @@ done:
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-static connector_status_t sm_prepare_config_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
-{
-    connector_status_t result;
-    uint8_t const device_id_prefix[] = {'0', 'x'};
-    size_t const device_id_prefix_size = sizeof device_id_prefix;
-    connector_sm_send_config_request_t const * const request = session->user.header;
-    size_t const sim_slot_number_bytes = 1;
-    size_t id_bytes = strlen(request->identifier) + 1; /* +1 for nul-termination */
-
-    session->in.bytes = device_id_prefix_size + DEVICE_ID_LENGTH;
-    session->in.bytes += sim_slot_number_bytes + id_bytes;
-    result = sm_allocate_user_buffer(connector_ptr, &session->in);
-    if (result != connector_working)
-    {
-        session->error = connector_sm_error_no_resource;
-        goto error;
-    }
-
-    {
-        uint8_t * data_ptr = session->in.data;
-
-        memcpy(data_ptr, device_id_prefix, device_id_prefix_size);
-        data_ptr += device_id_prefix_size;
-        ASSERT(connector_ptr->device_id != NULL);
-        memcpy(data_ptr, connector_ptr->device_id, DEVICE_ID_LENGTH);
-        data_ptr += DEVICE_ID_LENGTH;
-        //ASSERT(request->sim_slot <= UCHAR_MAX);
-        *data_ptr++ = (uint8_t)request->sim_slot;
-        memcpy(data_ptr, request->identifier, id_bytes);
-        data_ptr += id_bytes;
-        session->bytes_processed = data_ptr - session->in.data;
-    }
-
-    sm_set_payload_complete(session);
-
-error:
-    return result;
-}
-
 static connector_status_t sm_process_config_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
     connector_status_t result = connector_success;
@@ -958,22 +858,6 @@ static connector_status_t sm_process_ping_request(connector_data_t * const conne
     return status;
 }
 
-#if (defined CONNECTOR_TRANSPORT_SMS)
-static connector_status_t sm_process_config_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session/*, void * payload, size_t const bytes*/)
-{
-    connector_status_t status;
-    connector_callback_status_t const callback_status = sm_inform_config_complete(connector_ptr, session);
-
-    status = sm_map_callback_status_to_connector_status(callback_status);
-    if (SmIsError(session->flags) && (status != connector_pending))
-    {
-        session->error = connector_sm_error_none;
-        SmClearError(session->flags);
-    }
-    return status;
-}
-#endif
-
 static connector_status_t sm_process_opaque_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
 {
     connector_status_t status;
@@ -1011,13 +895,6 @@ static connector_status_t sm_prepare_payload(connector_data_t * const connector_
         case connector_sm_cmd_cli:
             ASSERT_GOTO(SmIsCloudOwned(session->flags), error);
             prepare_fn = sm_prepare_cli_response;
-            break;
-        #endif
-
-        #if (defined CONNECTOR_TRANSPORT_SMS)
-        case connector_sm_cmd_config:
-            ASSERT_GOTO(SmIsClientOwned(session->flags), error);
-            prepare_fn = sm_prepare_config_request;
             break;
         #endif
 
@@ -1072,11 +949,6 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
 			if (SmIsCloudOwned(session->flags))
             {
                 result = sm_process_config_request(connector_ptr, session, payload, bytes);
-            }
-            else
-            {
-                result = sm_process_config_response(connector_ptr, session);
-                next_state = connector_sm_state_complete;
             }
             break;
         #endif

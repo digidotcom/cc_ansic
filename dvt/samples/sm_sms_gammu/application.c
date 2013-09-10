@@ -23,7 +23,6 @@ extern connector_callback_status_t app_sm_handler(connector_request_id_sm_t cons
 
 extern connector_status_t app_send_ping(connector_handle_t handle);
 extern connector_status_t app_send_data(connector_handle_t handle);
-extern connector_status_t app_send_config(connector_handle_t handle);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {

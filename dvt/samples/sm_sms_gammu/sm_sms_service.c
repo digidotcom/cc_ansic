@@ -17,15 +17,10 @@ static int app_waiting_for_ping_complete = 0;
 static int app_waiting_for_ping_response = 0;
 static int app_waiting_for_data_complete = 0;
 static int app_waiting_for_data_response = 0;
-static int app_waiting_for_config_complete = 0;
-static int app_waiting_for_config_response = 0;
 
 #define APP_MAX_TIMEOUT   60
 static int app_ping_time_remaining = APP_MAX_TIMEOUT;
 static int app_data_time_remaining = APP_MAX_TIMEOUT;
-
-extern char server_phone_number[];
-extern connector_callback_status_t config_server_phone_number(int const fd);
 
 connector_status_t app_send_ping(connector_handle_t handle)
 {
@@ -436,28 +431,6 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             break;
         }
         
-        case connector_request_id_sm_config_response:
-        {
-            connector_sm_config_response_t * const config_resp = data;
-
-            switch (config_resp->status)
-            {
-                case connector_sm_config_status_success:
-                    app_waiting_for_config_response = 0;
-                    break;
-
-                case connector_sm_config_status_complete:
-                    app_waiting_for_config_complete = 0;
-                    break;
-
-                default:
-                    break;
-            }
-
-            APP_DEBUG("Received config response [%d].\n", config_resp->status);
-            break;
-        }
-
         default:
             APP_DEBUG("Request not supported in this sample: %d\n", request);
             break;
