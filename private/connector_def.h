@@ -190,6 +190,10 @@ typedef struct connector_data {
     connector_callback_t callback;
     connector_status_t error_code;
 
+#if (defined CONNECTOR_TRANSPORT_UDP || defined CONNECTOR_TRANSPORT_SMS)
+    uint32_t last_request_id;
+#endif
+
 #if (defined CONNECTOR_TRANSPORT_UDP)
     connector_sm_data_t sm_udp;
 #endif

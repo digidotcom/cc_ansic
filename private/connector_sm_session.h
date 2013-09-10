@@ -9,22 +9,22 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-static connector_status_t sm_get_request_id(connector_sm_data_t * const sm_ptr)
+static connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_pending;
-    unsigned long const request_id = sm_ptr->last_request_id;
+    unsigned long const request_id = connector_ptr->last_request_id;
 
     do
     {
         connector_sm_session_t * session = sm_ptr->session.head;
 
-        sm_ptr->last_request_id++;
-        sm_ptr->last_request_id &= SM_REQUEST_ID_MASK;
+        connector_ptr->last_request_id++;
+        connector_ptr->last_request_id &= SM_REQUEST_ID_MASK;
 
         while (session != NULL)
         {
             /* already used? */
-            if (session->request_id == sm_ptr->last_request_id)
+            if (session->request_id == connector_ptr->last_request_id)
                 break;
 
             session = session->next;
@@ -33,9 +33,9 @@ static connector_status_t sm_get_request_id(connector_sm_data_t * const sm_ptr)
         if (session == NULL)
             break;
 
-    } while (request_id != sm_ptr->last_request_id);
+    } while (request_id != connector_ptr->last_request_id);
 
-    ASSERT_GOTO(request_id != sm_ptr->last_request_id, error);
+    ASSERT_GOTO(request_id != connector_ptr->last_request_id, error);
     result = connector_working;
 
 error:
@@ -107,9 +107,9 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
         ASSERT_GOTO(result == connector_working, error);
         SmSetClientOwned(session->flags);
 
-        result = sm_get_request_id(sm_ptr);
+        result = sm_get_request_id(connector_ptr, sm_ptr);
         ASSERT_GOTO(result == connector_working, error);
-        session->request_id = sm_ptr->last_request_id;
+        session->request_id = connector_ptr->last_request_id;
         sm_ptr->session.active_client_sessions++;
     }
     else

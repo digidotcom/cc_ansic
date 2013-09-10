@@ -189,7 +189,6 @@ typedef struct connector_sm_packet_t
 
 typedef struct connector_sm_data_t
 {
-    uint32_t last_request_id;
     connector_status_t error_code;
     unsigned long timeout_in_seconds;  /* 0 means wait forever */
 
