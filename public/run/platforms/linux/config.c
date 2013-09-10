@@ -127,7 +127,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 
 static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    memcpy(config_device_id->data, provisioned_device_id, DEVICE_ID_LENGTH);
+    memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
 
     return connector_callback_continue;
 }

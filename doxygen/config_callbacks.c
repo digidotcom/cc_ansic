@@ -6,7 +6,8 @@
  * Cloud Connector interfaces to the platform's configuration through the callbacks listed below.  These
  * are called through the application callback described in the @ref api1_overview.
  *
- *  -# @ref device_id
+ *  -# @ref get_device_id
+ *  -# @ref set_device_id
  *  -# @ref vendor_id
  *  -# @ref device_type
  *  -# @ref device_cloud_url
@@ -38,23 +39,25 @@
  *  -# @ref set_device_cloud_phone
  *  -# @ref device_cloud_service_id
  *
- * @section device_id Device ID
+ * @section get_device_id Get the Device ID
  * Returns a unique Device ID used to identify the device.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
- * and implemented in the @b Platform function app_get_device_id() in config.c.
+ * and implemented in the @b Platform function app_get_device_id() in config.c. It is called to get a unique device ID 
+ * which is used to identify the device, typically, it will be read from a non-volatile media.
  *
- * Device IDs are a globally unique identifier for Device Cloud clients.  The Device ID is a
- * 16-octet value derived from the MAC address of a network interface, IMEI, ESN or MEID on the client.
- * The mapping from MAC address to Device ID consists of inserting "FFFF" in the middle
- * of the MAC and setting all other bytes of the Device ID to 0.
- * For Example:
- * MAC Address 12:34:56:78:9A:BC, would map to a Device ID: 00000000-123456FF-FF789ABC.
- * If a client has more than one network interface, it does not matter to Device Cloud which
- * network interface MAC is used for the basis of the Device ID.  If the MAC is read
- * directly from the network interface to generate the client's Device ID, care must be
- * taken to always use the same network interface's MAC since there is a unique mapping
- * between a device and a Device ID.
+ * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
+ * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
+ * is called to provide the Cloud Connector with a previously saved (e.g.: to a file or EEPROM)
+ * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, the
+ * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
+ * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
+ * If this function sets config_device_id to 0, the Cloud Connector will ask Device Cloud for a 
+ * Device ID and then call the @ref get_device_id method so the user saves to a non-volatile
+ * media the Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
+ * in this function.
+ * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
+ * account which @ref vendor_id is provided.
  *
  * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_device_id()
@@ -77,7 +80,7 @@
  *          <dl>
  *              <dt><i>data</i></dt>
  *              <dd> - Callback returns the pointer which contains application's device ID</dd>
- *              <dt><i>bytes_required</i></dt><dd> - Contains 16 bytes which is required for the application's device ID in the data pointer</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Length of the Device ID (16 bytes).</dd>
  *            </dl>
  * </td>
  *
@@ -99,37 +102,83 @@
  *
  * @code
  *
- * connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
- *                                                    connector_request_id_t const request_id
- *                                                    void  * const data)
+ * #define DEVICE_ID_LENGTH    16
+ * static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
+ * 
+ * static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
  * {
- *
- *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_id)
- *     {
- *          static uint8_t my_device_id[DEVICE_ID_LENGTH];
- *          connector_config_pointer_data_t * const config_device_id = data;
- *
- *          // just uses the MAC address to format the device ID
- *          my_device_id[8] = my_device_mac_addr[0];
- *          my_device_id[9] = my_device_mac_addr[1];
- *          my_device_id[10] = my_device_mac_addr[2];
- *          my_device_id[11] = 0xFF;
- *          my_device_id[12] = 0xFF;
- *          my_device_id[13] = my_device_mac_addr[3];
- *          my_device_id[14] = my_device_mac_addr[4];
- *          my_device_id[15] = my_device_mac_addr[5];
- *
- *          // return the address of my_device_id
- *          ASSERT(config_device_id->bytes_required == sizeof my_device_id);
- *          config_device_id->data   = my_device_id;
- *     }
+ *     config_device_id->data = provisioned_device_id;
+ * 
  *     return connector_callback_continue;
  * }
- *
- *
  * @endcode
  *
+ * @section set_device_id Set the Device ID
+ * Saves the Device ID into a non-volatile media (EEPROM, file, NVRAM, etc.).
  *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_set_device_id() in config.c.
+ *
+ * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
+ * This routine is called when @ref device_id_method is set to @ref connector_device_id_method_manual and a zero'ed Device ID
+ * is provided in @ref app_get_device_id.
+ * In this function the provided Device ID must be saved to a non-volatile media to be read in future
+ * access by @ref app_get_device_id function.
+ *
+ * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
+ * @see app_get_device_id()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_device_id @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly connector_config_pointer_data_t @htmlonly:
+ *          <dl>
+ *              <dt><i>data</i></dt>
+ *              <dd> - Pointer which contains application's device ID</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Length of the Device ID (16 bytes).</dd>
+ *            </dl>
+ * </td>
+ *
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned device ID</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to get device ID and callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define DEVICE_ID_LENGTH    16
+ * static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
+ * 
+ * static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
+ * {
+ *     memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
+ * 
+ *     return connector_callback_continue;
+ * }
+ * @endcode
+ * 
  * @section vendor_id Vendor ID
  *
  * Return vendor ID which is a unique code identifying the manufacturer of a device.
