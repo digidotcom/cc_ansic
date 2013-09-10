@@ -122,18 +122,20 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                 break;
 
             case connector_data_point_type_long:
+               #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
                 if (test_case == 1)
+                {
+                    point->data.type = connector_data_type_native;
+                    point->data.element.native.long_value = lrand48();
+                }
+                else
+               #endif
                 {
                     static char value[sizeof(long) * 3];
 
                     point->data.type = connector_data_type_text;
                     snprintf(value, sizeof value, "%ld", lrand48());
                     point->data.element.text = value;
-                }
-                else
-                {
-                    point->data.type = connector_data_type_native;
-                    point->data.element.native.long_value = lrand48();
                 }
                 break;
 
