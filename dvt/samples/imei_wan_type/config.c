@@ -20,7 +20,7 @@
 #include "connector_api.h"
 #include "platform.h"
 
-/* Etherios Cloud Connector Configuration routines */
+/* Cloud Connector Configuration routines */
 
 char * wan_id_string = NULL;
 /*
@@ -116,23 +116,19 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
     return connector_callback_continue;
 }
 
+#define DEVICE_ID_LENGTH    16
+static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
+
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
+    config_device_id->data = provisioned_device_id;
 
-    #define DEVICE_ID_LENGTH    16
+    return connector_callback_continue;
+}
 
-    static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
-
-    device_id[8] = device_mac_addr[0];
-    device_id[9] = device_mac_addr[1];
-    device_id[10] = device_mac_addr[2];
-    device_id[11] = 0xFF;
-    device_id[12] = 0xFF;
-    device_id[13] = device_mac_addr[3];
-    device_id[14] = device_mac_addr[4];
-    device_id[15] = device_mac_addr[5];
-
-    config_device_id->data = device_id;
+static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
+{
+    memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
 
     return connector_callback_continue;
 }
@@ -164,12 +160,54 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #endif
 
 #if !(defined CONNECTOR_CLOUD_URL)
-static connector_callback_status_t get_config_device_cloud_url(connector_config_pointer_string_t * const config_url)
+static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
     static  char const connector_cloud_url[] = "login.etherios.com";
-    /* Return pointer to device type. */
+
     config_url->string = (char *)connector_cloud_url;
-    config_url->length = sizeof connector_cloud_url -1;
+    config_url->length = sizeof connector_cloud_url - 1;
+
+    return connector_callback_continue;
+}
+#endif
+
+#if !(defined CONNECTOR_CLOUD_PHONE)
+
+static char connector_cloud_phone[16] = "+447786201217"; /* empty: will require a provisioning message from the server for initialization */
+
+static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+
+    config_phone->string = (char *)connector_cloud_phone;
+    config_phone->length = sizeof connector_cloud_phone - 1;
+
+    return connector_callback_continue;
+}
+
+static connector_callback_status_t app_set_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+    if (config_phone->length > (sizeof connector_cloud_phone -1))
+    {
+        return connector_callback_error;
+    }
+
+    strcpy(connector_cloud_phone, config_phone->string);
+
+    /* Maybe user want to save connector_cloud_phone to persistent storage */
+
+    return connector_callback_continue;
+}
+#endif
+
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+
+static char connector_cloud_service_id[] = "";	/* empty: No shared-code used */
+
+static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
+{
+
+    config_service_id->string = (char *)connector_cloud_service_id;
+    config_service_id->length = strlen(connector_cloud_service_id);
 
     return connector_callback_continue;
 }
@@ -380,6 +418,12 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
     return connector_callback_continue;
 }
 
+static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
+{
+    config_connect->type = connector_connect_auto;
+    return connector_callback_continue;
+}
+
 #if !(defined CONNECTOR_WAN_TYPE)
 connector_wan_type_t wan_type = connector_wan_type_imei;
 #else
@@ -499,18 +543,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_get_sms_service_id(connector_config_pointer_string_t * const config_service_id)
-{
-    static  char const sms_service_id[] = "IDGP";
-
-    /* Return pointer to service_id. */
-    config_service_id->string = (char *)sms_service_id;
-    config_service_id->length = sizeof sms_service_id -1;
-
-    return connector_callback_continue;
-}
-
-/* End of Etherios Cloud Connector configuration routines */
+/* End of Cloud Connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
 #define enum_to_case(name)  case name:  result = #name;             break
@@ -542,9 +575,13 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
     switch (value)
     {
         enum_to_case(connector_request_id_config_device_id);
+        enum_to_case(connector_request_id_config_set_device_id);
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);
+        enum_to_case(connector_request_id_config_get_device_cloud_phone);
+        enum_to_case(connector_request_id_config_set_device_cloud_phone);
+        enum_to_case(connector_request_id_config_device_cloud_service_id);
         enum_to_case(connector_request_id_config_connection_type);
         enum_to_case(connector_request_id_config_mac_addr);
         enum_to_case(connector_request_id_config_link_speed);
@@ -649,13 +686,14 @@ static char const * app_file_system_class_to_string(connector_request_id_file_sy
         enum_to_case(connector_request_id_file_system_lseek);
         enum_to_case(connector_request_id_file_system_ftruncate);
         enum_to_case(connector_request_id_file_system_close);
-        enum_to_case(connector_request_id_file_system_rm);
+        enum_to_case(connector_request_id_file_system_remove);
         enum_to_case(connector_request_id_file_system_stat);
+        enum_to_case(connector_request_id_file_system_stat_dir_entry);
         enum_to_case(connector_request_id_file_system_opendir);
         enum_to_case(connector_request_id_file_system_readdir);
         enum_to_case(connector_request_id_file_system_closedir);
-        enum_to_case(connector_request_id_file_system_strerror);
-        enum_to_case(connector_request_id_file_system_msg_error);
+        enum_to_case(connector_request_id_file_system_get_error);
+        enum_to_case(connector_request_id_file_system_session_error);
         enum_to_case(connector_request_id_file_system_hash);
     }
     return result;
@@ -722,6 +760,7 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
         enum_to_case(connector_request_id_sm_cli_status);
         enum_to_case(connector_request_id_sm_more_data);
         enum_to_case(connector_request_id_sm_opaque_response);
+        enum_to_case(connector_request_id_sm_config_request);
     }
     return result;
 }
@@ -760,7 +799,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
 }
 
 /*
- * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
+ * This routine is called when a configuration error is encountered by Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 static connector_callback_status_t app_config_error(connector_config_error_status_t const * const error_data)
@@ -849,6 +888,10 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         status = app_get_device_id(data);
         break;
 
+    case connector_request_id_config_set_device_id:
+        status = app_set_device_id(data);
+        break;
+
     case connector_request_id_config_mac_addr:
         status = app_get_mac_addr(data);
         break;
@@ -867,7 +910,23 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
 #if !(defined CONNECTOR_CLOUD_URL)
     case connector_request_id_config_device_cloud_url:
-        status = get_config_device_cloud_url(data);
+        status = app_get_device_cloud_url(data);
+        break;
+#endif
+
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    case connector_request_id_config_get_device_cloud_phone:
+        status = app_get_device_cloud_phone(data);
+        break;
+
+    case connector_request_id_config_set_device_cloud_phone:
+        status = app_set_device_cloud_phone(data);
+        break;
+#endif
+
+#if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+    case connector_request_id_config_device_cloud_service_id:
+        status = app_get_device_cloud_service_id(data);
         break;
 #endif
 
@@ -966,6 +1025,12 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if !(defined CONNECTOR_NETWORK_UDP_START)
      case connector_request_id_config_network_udp:
          status = app_start_network_udp(data);
+         break;
+#endif
+
+#if !(defined CONNECTOR_NETWORK_SMS_START)
+     case connector_request_id_config_network_sms:
+         status = app_start_network_sms(data);
          break;
 #endif
 
