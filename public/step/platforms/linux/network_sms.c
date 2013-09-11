@@ -14,14 +14,12 @@
  *  @brief Rountines which implement Cloud Connector network interface for
  *  @ref CONNECTOR_TRANSPORT_SMS.
  */
-#include <gammu.h>
-#include <stdlib.h>
-
 
 #include "connector_api.h"
 #include "platform.h"
 
 #if defined CONNECTOR_TRANSPORT_SMS
+#include <gammu.h>
 
 #define MAX_TELEPHONE_NUMBER_LENGTH		32 /* TODO: define it better. */
 
@@ -39,7 +37,7 @@ gammu_sms_handler_t g_sms_handle;
 connector_callback_status_t gammu_error_handler(GSM_Error error)
 {
     if (error != ERR_NONE) {
-        printf("GAMMU error: %s\n", GSM_ErrorString(error));
+        APP_DEBUG("GAMMU error: %s\n", GSM_ErrorString(error));
         return connector_callback_error;
     }
     return connector_callback_continue;
@@ -53,15 +51,15 @@ void send_sms_callback(GSM_StateMachine *state_machine, int status, int MessageR
     
     g_sms_handle.send_sms_callback_asserted = connector_true;
     
-    printf("Sent SMS");
+    APP_DEBUG("Sent SMS");
     if (status == 0) {
-        printf("..OK");
+        APP_DEBUG("..OK");
         g_sms_handle.sms_send_status = ERR_NONE;
 	} else {
-        printf("..error %i", status);
+        APP_DEBUG("..error %i", status);
         g_sms_handle.sms_send_status = ERR_UNKNOWN;
     }
-    printf(", message reference=%d\n", MessageReference);
+    APP_DEBUG(", message reference=%d\n", MessageReference);
 }
 
 gboolean sms_inbox_is_empty(GSM_StateMachine *state_machine)
@@ -224,7 +222,7 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
     sms.Class = 1;
 
     sms_handle->send_sms_callback_asserted = connector_false;
-    printf("SP:%s sending SMS to %s\n", __FUNCTION__, sms_handle->server_telephone);
+
     error = GSM_SendSMS(sms_handle->state_machine, &sms);
 
     status = gammu_error_handler(error);
@@ -293,7 +291,7 @@ static connector_callback_status_t app_network_sms_receive(connector_network_rec
 
         if (data->bytes_available < (size_t)sms.Length)
         {
-            printf("app_network_sms_receive: buffer is not long enough to store received SMS\n");
+            APP_DEBUG("app_network_sms_receive: buffer is not long enough to store received SMS\n");
             status = connector_callback_error;
             goto done;
         }
