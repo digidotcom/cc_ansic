@@ -577,7 +577,7 @@ connector_status_t connector_run(connector_handle_t const handle)
     return rc;
 }
 
-connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
+connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void * const request_data)
 {
     connector_status_t result = connector_init_error;
     connector_data_t * connector_ptr = (connector_data_t *)handle;

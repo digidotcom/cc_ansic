@@ -295,21 +295,22 @@ typedef enum {
 */
 typedef enum
 {
-    connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method */
-    connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method */
+    connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method. */
+    connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method. */
 
     #if (defined CONNECTOR_DATA_SERVICE)
     connector_initiate_send_data,       /**< Initiates the action to send data to the Device Cloud, the data will be stored in a file on Device Cloud. */
     #endif
 
     #if (defined CONNECTOR_SHORT_MESSAGE)
-    connector_initiate_ping_request,    /**< Sends a ping request to Device Cloud. Supported only under UDP and SMS transport methods */
-    connector_initiate_session_cancel,  /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods */
+    connector_initiate_ping_request,       /**< Sends a ping request to Device Cloud. Supported only under UDP and SMS transport methods. */
+    connector_initiate_session_cancel,     /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods. */
+    connector_initiate_sesion_cancel_all,  /**< Initiates the action to cancel all active sessions. Supported only under UDP and SMS transport methods. */
     #endif
 
     #if (defined CONNECTOR_DATA_POINTS)
-    connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Device Cloud */
-    connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Device Cloud */
+    connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Device Cloud. */
+    connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Device Cloud. */
     #endif
 
     connector_initiate_terminate        /**< Terminates and stops Cloud Connector from running. */
@@ -791,7 +792,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  * @see connector_handle_t
  * @see connector_callback_t
  */
-connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data);
+connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void * const request_data);
 /**
 * @}.
 */

@@ -224,6 +224,7 @@ typedef struct connector_sm_data_t
     {
         void const * data;
         connector_initiate_request_t request;
+        uint32_t request_id;
     } pending;
 
     struct

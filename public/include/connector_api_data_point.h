@@ -247,6 +247,7 @@ typedef struct
     connector_transport_t transport;/**< transport method to use */
     void * user_context;            /**< user context to be passed back in response */
 
+    uint32_t request_id;            /**< SM protocol session's Request ID. */
     char * path;                    /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     void * point;                   /**< binary data of size specified in bytes_used */
     size_t bytes_used;              /**< number of bytes in the point buffer */
@@ -276,6 +277,7 @@ typedef struct
     connector_transport_t transport;    /**< transport method to use */
     void * user_context;                /**< user context to be passed back in response */
 
+    uint32_t request_id;                /**< SM protocol session's Request ID. */
     char * path;                        /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */

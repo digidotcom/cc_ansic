@@ -39,6 +39,7 @@ typedef struct
     char const * path;                  /**< destination path */
     char const * content_type;          /**< null-terminated content type (text/plain, text/xml, application/json, etc. Applicable only in TCP transport method */
 
+    uint32_t request_id;                /**< SM protocol session's Request ID. */
     enum
     {
         connector_data_service_send_option_overwrite,   /**< overwrite the content if the path is already exists */
