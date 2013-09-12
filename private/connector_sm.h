@@ -207,6 +207,50 @@ error:
     return status;
 }
 
+/* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
+static void get_request_id_ptr(connector_initiate_request_t const request, void * const request_data, uint32_t * * request_id)
+{
+
+    switch (request)
+    {
+#if (defined CONNECTOR_DATA_POINTS)
+        case connector_initiate_data_point_single:
+        {
+            connector_request_data_point_single_t * const data = request_data;
+
+            *request_id = &data->request_id;
+			break;
+        }
+        case connector_initiate_data_point_binary:
+        {
+            connector_request_data_point_binary_t * const data = request_data;
+
+            *request_id = &data->request_id;
+            break;
+        }
+#endif
+        case connector_initiate_send_data:
+        {
+            connector_request_data_service_send_t * const data = request_data;
+
+            *request_id = &data->request_id;
+            break;
+         }
+        case connector_initiate_ping_request:
+        {
+            connector_sm_send_ping_request_t * const data = request_data;
+
+            *request_id = &data->request_id;
+            break;
+        }
+        default:
+        	*request_id = NULL;
+        	break;
+    }
+
+    return;
+}
+
 static connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void * const request_data)
 {
     connector_status_t result = connector_service_busy;
@@ -368,52 +412,23 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         goto error;
                     }
 
-                    switch (request)
-                    {
-#if (defined CONNECTOR_DATA_POINTS)
-                        case connector_initiate_data_point_single:
-                        {
-                            connector_request_data_point_single_t * const data = request_data;
-
-                            request_id = &data->request_id;
-                        }
-                        case connector_initiate_data_point_binary:
-                        {
-                            connector_request_data_point_binary_t * const data = request_data;
-
-                            request_id = &data->request_id;
-                        }
-#endif
-                        case connector_initiate_send_data:
-                        {
-                            connector_request_data_service_send_t * const data = request_data;
-
-                            request_id = &data->request_id;
-                            break;
-                         }
-                        case connector_initiate_ping_request:
-                        {
-                            connector_sm_send_ping_request_t * const data = request_data;
-
-                            request_id = &data->request_id;
-                            break;
-                        }
-                        default:
-                            break;
-                    }
+                    get_request_id_ptr(request, request_data, &request_id);
                     ASSERT(request_id != NULL);
                     /* dp_initiate_data_point_single/binary() convert a connector_initiate_data_point_single/binary
                      * to a connector_initiate_send_data, but we want that that "hidden" connector_initiate_send_data
                      * use the same request_id, which has been already set by dp_send_message().
                      * */
-                    if (sm_ptr->pending.data == NULL)
+                    if (sm_ptr->pending.pending_internal)
                     {
+                        sm_ptr->pending.pending_internal = connector_false; /* Use the same request_id */
+                    }
+                    else
+                    {
+                        /* Update request_id */
                         result = sm_get_request_id(connector_ptr, sm_ptr);
                         ASSERT_GOTO(result == connector_working, error);
                         *request_id = connector_ptr->last_request_id;
                     }
-                    sm_ptr->pending.data = request_data;
-                    sm_ptr->pending.request = request;
                     sm_ptr->pending.request_id = *request_id;
 
 #if (defined CONNECTOR_DATA_POINTS)
@@ -421,11 +436,13 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                     {
                         case connector_initiate_data_point_single:
                         {
+                            sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point_single(request_data);
                             goto error;
                         }
                         case connector_initiate_data_point_binary:
                         {
+                            sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point_binary(request_data);
                             goto error;
                         }
@@ -434,6 +451,9 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                             break;
                     }
 #endif
+                    if (sm_ptr->pending.data != NULL) goto error;
+                    sm_ptr->pending.data = request_data;
+                    sm_ptr->pending.request = request;
                     break;
                 }
             }
