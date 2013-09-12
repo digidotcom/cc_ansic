@@ -172,7 +172,11 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 
 #if !(defined CONNECTOR_CLOUD_PHONE)
 
-static char connector_cloud_phone[16] = ""; /* empty: will require a provisioning message from the server for initialization */
+/* Configure the phone number of the server where to send SMSs.
+ * Will be updated if a SMSs provisioning message arrives from the server.
+ * If set to nothing, will require a provisioning message from the server for initialization.
+ */
+static char connector_cloud_phone[] = "447786201216";	/* phone number corresponding to login.etherios.com */
 
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
@@ -187,6 +191,7 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
 {
     if (config_phone->length > (sizeof connector_cloud_phone -1))
     {
+        APP_DEBUG("app_set_device_cloud_phone: Not enough room to store cloud_phone.\n");
         return connector_callback_error;
     }
 
@@ -200,7 +205,11 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
 
 #if !(defined CONNECTOR_CLOUD_SERVICE_ID)
 
-static char connector_cloud_service_id[] = "";	/* empty: No shared-code used */
+/* Service-Id used to communicate with the server through SMS
+ * if empty, not shared-code used (default when using long codes)
+ * When using shared-codes within US you may need to use "IDGP" 
+ */
+static char connector_cloud_service_id[] = "";  /* empty: No shared-code used */
 
 static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
 {
