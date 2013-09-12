@@ -73,6 +73,9 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
     return connector_callback_continue;
 }
 
+#define DEVICE_ID_LENGTH    16
+static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
+
 /**
  * @brief   Get the Cloud Connector's device ID
  *
@@ -99,10 +102,7 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
  * @see @ref device_id API Configuration Callback
  */
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
-{
-    #define DEVICE_ID_LENGTH    16
-    extern uint8_t provisioned_device_id[];
-    
+{   
     config_device_id->data = provisioned_device_id;
 
     return connector_callback_continue;
@@ -116,16 +116,15 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
  * In this function the provided Device ID must be saved to a non-volatile media to be read in future
  * access by @ref app_get_device_id function.
  *
- * @param [out] config_device_id  Callback returns pointer to memory containing the device ID
+ * @param [in] config_device_id  pointer to memory containing the device ID to be stored in non-voltaile media.
  *
- * @retval connector_callback_continue  Device ID was successfully returned.
- * @retval connector_callback_abort     Could not get the device ID and abort Cloud Connector.
+ * @retval connector_callback_continue  Device ID was successfully written.
+ * @retval connector_callback_abort     Could not set the device ID, abort Cloud Connector.
  *
  * @see @ref device_id API Configuration Callback
  */
 static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    extern uint8_t provisioned_device_id[];
     memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
 
     return connector_callback_continue;
@@ -210,6 +209,91 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 
     config_url->string = (char *)connector_cloud_url;
     config_url->length = sizeof connector_cloud_url -1;
+
+    return connector_callback_continue;
+}
+
+/**
+ * @brief   Get the Device Cloud Phone Number where to send SMSs (Only used for SMS transport)
+ *
+ * This routine assigns a pointer to the ASCII null-terminated string of
+ * Device Cloud Phone Number, this is typically 447786201216 if using world wide long codes or 32075 withing US.
+ *
+ * @param [out] config_phone  Callback returns pointer to memory containing the Phone Number and the length of the Phone Number in bytes.
+ *
+ * @retval connector_callback_continue  The Phone Number was successfully returned.
+ * @retval connector_callback_abort     Could not get the Phone Number and abort Cloud Connector.
+ *
+ * @see @ref get_device_cloud_phone API Configuration Callback
+ *
+ * @note This routine is not needed if you define @b CONNECTOR_CLOUD_PHONE configuration in @ref connector_config.h.
+ * See @ref connector_config_data_options
+ */
+static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+    static char connector_cloud_phone[] = "447786201216";	/* phone number corresponding to login.etherios.com */
+
+    config_phone->string = (char *)connector_cloud_phone;
+    config_phone->length = sizeof connector_cloud_phone -1;
+
+    return connector_callback_continue;
+}
+
+/**
+ * @brief   Set the Device Cloud Phone Number where to send SMSs (Only used for SMS transport)
+ *
+ * This routine is used to set (not to get) the Device Cloud Phone Number where to send SMSs (Only used for SMS transport)
+ *
+ * @param [in] config_phone  Pointer passed to the Callback containing the Device Cloud Phone Number where to send 
+ *                SMSs in order to be stored in persistent storage. (Only used for SMS transport).
+ *
+ * @retval connector_callback_continue  The Phone Number was successfully stored.
+ * @retval connector_callback_abort     Could not set the Phone Number and abort Cloud Connector.
+ *
+ * @see @ref set_device_cloud_phone API Configuration Callback
+ *
+ * @note This routine is not needed if you define @b CONNECTOR_CLOUD_PHONE configuration in @ref connector_config.h.
+ * See @ref connector_config_data_options
+ */
+static connector_callback_status_t app_set_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
+{
+    static char connector_cloud_phone[16] = "";	// empty: will require a provisioning message from the server for initialization
+
+    if (config_phone->length > (sizeof connector_cloud_phone -1))
+    {
+        APP_DEBUG("app_set_device_cloud_phone: Not enough room to store cloud_phone.\n");
+        return connector_callback_error;
+    }
+
+    strcpy(connector_cloud_phone, config_phone->string);
+
+    /* Maybe user want to save connector_cloud_phone to persistent storage */
+
+    return connector_callback_continue;
+}
+
+/**
+ * @brief   Get the Device Cloud service-id (if used) where to send SMSs (Only used for SMS transport)
+ *
+ * This routine assigns a pointer to the ASCII null-terminated string of
+ * Device Cloud Service Id, this is typically empty if using world wide long codes or IDGP withing US.
+ *
+ * @param [out] config_service_id  Callback returns pointer to memory containing the Service Id and the length of the Service Id in bytes.
+ *
+ * @retval connector_callback_continue  The Service Id was successfully returned.
+ * @retval connector_callback_abort     Could not get the Service Id and abort Cloud Connector.
+ *
+ * @see @ref get_device_cloud_service_id API Configuration Callback
+ *
+ * @note This routine is not needed if you define @b CONNECTOR_CLOUD_SERVICE_ID configuration in @ref connector_config.h.
+ * See @ref connector_config_data_options
+ */
+static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
+{
+    static char connector_cloud_service_id[] = "";  /* empty: No shared-code used */
+
+    config_service_id->string = (char *)connector_cloud_service_id;
+    config_service_id->length = strlen(connector_cloud_service_id);
 
     return connector_callback_continue;
 }
@@ -392,7 +476,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
  * If firmware update is not supported, callback for connector_class_id_firmware
  * class will not be executed.
  *
- * @param [out] config_status  Pointer to config_status where callback writes connector_true if firmware update is supported or
+ * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if firmware update is supported or
  *                            connector_false  if firmware update is not supported.
  *
  * @retval connector_callback_continue  The firmware update support was successfully returned.
@@ -405,7 +489,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
  *
  * @note See @ref CONNECTOR_FIRMWARE_SERVICE to include firmware access facility code in Cloud Connector.
  */
-static connector_callback_status_t app_get_firmware_support(config_status * const config_status)
+static connector_callback_status_t app_get_firmware_support(connector_config_supported_t * const config_status)
 {
     config_status->supported = connector_true;
 
@@ -418,7 +502,7 @@ static connector_callback_status_t app_get_firmware_support(config_status * cons
  * This routine tells Cloud Connector whether the data service facility is supported or not.
  * If you plan on sending data to/from Device Cloud return connector_true.
  *
- * @param [out] config_status  Pointer to config_status where callback writes connector_true if data service is supported or
+ * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if data service is supported or
  *                            connector_false  if data service is not supported.
  *
  * @retval connector_callback_continue  The data service support was successfully returned.
@@ -445,7 +529,7 @@ static connector_callback_status_t app_get_data_service_support(connector_config
  * This routine tells Cloud Connector whether the file system facility is supported or not.
  * If you plan to access device files from Device Cloud return connector_true.
  *
- * @param [out] config_status  Pointer to config_status where callback writes connector_true if file system is supported or
+ * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if file system is supported or
  *                            connector_false  if file system is not supported.
  *
  * @retval connector_callback_continue  The file system support was successfully returned.
@@ -472,7 +556,7 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
  * This routine tells Cloud Connector whether the remote configuration service is supported or not.
  * If you plan on accessing device data configurations through Device Cloud return connector_true.
  *
- * @param [out] config_status  Pointer to config_status where callback writes connector_true if remote configuration is supported or
+ * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if remote configuration is supported or
  *                            connector_false  if remtoe configuration is not supported.
  *
  * @retval connector_callback_continue  The remote configuration support was successfully returned.
@@ -545,6 +629,26 @@ static connector_callback_status_t app_get_device_id_method(connector_config_dev
     config_device->method = connector_device_id_method_auto;
 
     return connector_callback_continue;
+}
+
+static void get_hex_digit(char str, uint8_t * const value)
+{
+
+    if (isdigit(str))
+    {
+        *value = str - '0';
+    }
+    else if (isxdigit(str))
+    {
+        int const hex = tolower(str);
+        *value = (hex - 'a') + 10;
+    }
+    else
+    {
+        APP_DEBUG("get_hex_digit: invalid digit %c\n", str);
+    }
+
+    return;
 }
 
 /**
@@ -927,9 +1031,13 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
     switch (value)
     {
         enum_to_case(connector_request_id_config_device_id);
+        enum_to_case(connector_request_id_config_set_device_id);
         enum_to_case(connector_request_id_config_vendor_id);
         enum_to_case(connector_request_id_config_device_type);
         enum_to_case(connector_request_id_config_device_cloud_url);
+        enum_to_case(connector_request_id_config_get_device_cloud_phone);
+        enum_to_case(connector_request_id_config_set_device_cloud_phone);
+        enum_to_case(connector_request_id_config_device_cloud_service_id);
         enum_to_case(connector_request_id_config_connection_type);
         enum_to_case(connector_request_id_config_mac_addr);
         enum_to_case(connector_request_id_config_link_speed);
@@ -1006,6 +1114,7 @@ static char const * app_os_class_to_string(connector_request_id_os_t const value
  * @cond Doxygen_Supress
  *
  */
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
 static char const * app_firmware_class_to_string(connector_request_id_firmware_t const value)
 {
     char const * result = NULL;
@@ -1021,6 +1130,7 @@ static char const * app_firmware_class_to_string(connector_request_id_firmware_t
     }
     return result;
 }
+#endif
 /**
  * @endcond
  */
@@ -1029,6 +1139,7 @@ static char const * app_firmware_class_to_string(connector_request_id_firmware_t
  * @cond Doxygen_Supress
  *
  */
+#if (defined CONNECTOR_RCI_SERVICE)
 static char const * app_remote_config_class_to_string(connector_request_id_remote_config_t const value)
 {
     char const * result = NULL;
@@ -1045,6 +1156,7 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
     }
     return result;
 }
+#endif
 /**
  * @endcond
  */
@@ -1053,6 +1165,7 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
  * @cond Doxygen_Supress
  *
  */
+#if (defined CONNECTOR_FILE_SYSTEM)
 static char const * app_file_system_class_to_string(connector_request_id_file_system_t const value)
 {
     char const * result = NULL;
@@ -1076,6 +1189,7 @@ static char const * app_file_system_class_to_string(connector_request_id_file_sy
     }
     return result;
 }
+#endif
 /**
  * @endcond
  */
@@ -1084,6 +1198,7 @@ static char const * app_file_system_class_to_string(connector_request_id_file_sy
  * @cond Doxygen_Supress
  *
  */
+#if (defined CONNECTOR_DATA_SERVICE)
 static char const * app_data_service_class_to_string(connector_request_id_data_service_t const value)
 {
     char const * result = NULL;
@@ -1101,6 +1216,7 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
     }
     return result;
 }
+#endif
 /**
  * @endcond
  */
@@ -1109,6 +1225,7 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
  * @cond Doxygen_Supress
  *
  */
+#if (defined CONNECTOR_DATA_POINTS)
 static char const * app_data_point_class_to_string(connector_request_id_data_point_t const value)
 {
     char const * result = NULL;
@@ -1121,6 +1238,7 @@ static char const * app_data_point_class_to_string(connector_request_id_data_poi
     }
     return result;
 }
+#endif
 /**
  * @endcond
  */
@@ -1314,6 +1432,10 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         status = app_get_device_id(data);
         break;
 
+    case connector_request_id_config_set_device_id:
+        status = app_set_device_id(data);
+        break;
+
     case connector_request_id_config_mac_addr:
         status = app_get_mac_addr(data);
         break;
@@ -1328,6 +1450,18 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
     case connector_request_id_config_device_cloud_url:
         status = app_get_device_cloud_url(data);
+        break;
+
+    case connector_request_id_config_get_device_cloud_phone:
+        status = app_get_device_cloud_phone(data);
+        break;
+
+    case connector_request_id_config_set_device_cloud_phone:
+        status = app_set_device_cloud_phone(data);
+        break;
+
+    case connector_request_id_config_device_cloud_service_id:
+        status = app_get_device_cloud_service_id(data);
         break;
 
     case connector_request_id_config_connection_type:

@@ -364,6 +364,7 @@
  *  @li app_get_ip_address()
  *  @li app_get_mac_addr()
  *  @li app_get_device_id()
+ *  @li app_set_device_id()
  *  @li app_get_vendor_id()
  *  @li app_get_device_type()
  *  @li app_get_device_cloud_url()
@@ -386,6 +387,9 @@
  *  @li app_get_identity_verification()
  *  @li app_get_password()
  *  @li app_config_error()
+ *  @li app_get_device_cloud_phone()
+ *  @li app_set_device_cloud_phone()
+ *  @li app_get_device_cloud_service_id()
  *
  * @note For information on using hard coded values instead of these configuration callbacks,
  *       which helps to reduce Cloud Connector code space,  see @ref connector_config_data_options
