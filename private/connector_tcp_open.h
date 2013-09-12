@@ -362,6 +362,7 @@ done:
     return result;
 }
 
+#if (CONNECTOR_VERSION >= 0x02010000)
 static connector_status_t send_provisioning(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_PROVISION_ID      0x89
@@ -408,6 +409,7 @@ static connector_status_t send_provisioning(connector_data_t * const connector_p
     done:
     return result;
 }
+#endif
 
 static connector_status_t send_device_id(connector_data_t * const connector_ptr)
 {
@@ -453,6 +455,7 @@ done:
     return result;
 }
 
+#if (CONNECTOR_VERSION >= 0x02010000)
 static connector_status_t receive_device_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result;
@@ -525,6 +528,7 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
 
     return result;
 }
+#endif	
 
 static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 {
@@ -909,6 +913,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             }
             break;
         case edp_security_send_device_id:
+#if (CONNECTOR_VERSION >= 0x02010000)
             if (connector_ptr->connector_got_device_id)
             {
                 result = send_device_id(connector_ptr);
@@ -925,6 +930,11 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
                     next_state = edp_security_receive_device_id;
                 }
             }
+#else
+            result = send_device_id(connector_ptr);
+            if (result == connector_working)
+                next_state = edp_security_send_device_cloud_url;
+#endif
             break;
         case edp_security_send_device_cloud_url:
             result = send_cloud_url(connector_ptr);
@@ -1016,6 +1026,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             edp_set_edp_state(connector_ptr, edp_security_send_identity_verification);
         }
         break;
+#if (CONNECTOR_VERSION >= 0x02010000)
     case edp_security_receive_device_id:
     	result = receive_device_id(connector_ptr);
         if (result == connector_working)
@@ -1024,6 +1035,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             edp_set_edp_state(connector_ptr, edp_security_send_device_cloud_url);
         }
     	break;
+#endif
     case edp_facility_process:
         /* Should not be here since active state should not be open state. */
         ASSERT(connector_false);
