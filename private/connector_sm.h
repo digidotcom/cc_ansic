@@ -191,8 +191,7 @@ static connector_status_t connector_sm_init(connector_data_t * const connector_p
     status = get_system_time(connector_ptr, &current_time);
     ASSERT_GOTO(status == connector_working, error);
     srand(current_time);
-    connector_ptr->last_request_id = rand();
-
+    connector_ptr->last_request_id = rand() & SM_REQUEST_ID_MASK;
     #if (defined CONNECTOR_TRANSPORT_UDP)
     status = sm_initialize(connector_ptr, connector_transport_udp);
     ASSERT_GOTO(status == connector_working, error);
