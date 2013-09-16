@@ -245,7 +245,7 @@ static connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr,
     session->segments.size_array = NULL;
     if (session->in.bytes <= max_payload)
         session->segments.count = 1;
-    #if (defined CONNECTOR_SM_MULTIPART)
+    #if (CONNECTOR_SM_MAX_SEGMENTS > 1)
     else
     {
         size_t const segment0_ovaerhead_bytes = record_end(segment0) - record_end(segmentn);
@@ -405,7 +405,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
             if (SmIsCompressed(session->flags))
                 SmSetCompressed(cmd_field);
 
-            #if (defined CONNECTOR_SM_MULTIPART)
+            #if (CONNECTOR_SM_MAX_SEGMENTS > 1)
             if (SmIsMultiPart(session->flags))
             {
                 uint8_t * const segment0 = sm_header;
