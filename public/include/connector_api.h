@@ -305,7 +305,7 @@ typedef enum
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_initiate_ping_request,       /**< Sends a ping request to Device Cloud. Supported only under UDP and SMS transport methods. */
     connector_initiate_session_cancel,     /**< Initiates the action to cancel the session, can be used in case of timeout. Supported only under UDP and SMS transport methods. */
-    connector_initiate_sesion_cancel_all,  /**< Initiates the action to cancel all active sessions. Supported only under UDP and SMS transport methods. */
+    connector_initiate_session_cancel_all,  /**< Initiates the action to cancel all active sessions. Supported only under UDP and SMS transport methods. */
     #endif
 
     #if (defined CONNECTOR_DATA_POINTS)
