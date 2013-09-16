@@ -372,6 +372,73 @@
 #define CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES
 
 /**
+* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
+* the define below to set the maximum short message session at a time. If not set, Cloud Connector will 
+* use the default of 2.
+*
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+* @see @ref CONNECTOR_TRANSPORT_SMS
+*/
+#define CONNECTOR_SM_MAX_SESSIONS                  4
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
+* the define below to set the maximum short message segments used per session. If not set, Cloud Connector 
+* will use the default of 1. User need to increase this value if they are planning to use short message to 
+* send larger data.
+*
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+* @see @ref CONNECTOR_TRANSPORT_SMS
+*/
+#define CONNECTOR_SM_MAX_SEGMENTS                  4
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
+* the define below to set the session timeout in seconds to this value. If not set, Cloud Connector will 
+* use the default of no timeout (0). Cloud Connector will wait for Device Cloud response (complete response) 
+* until this period. 
+*
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+* @see @ref CONNECTOR_TRANSPORT_SMS
+*/
+#define CONNECTOR_SM_TIMEOUT                    30
+
+/**
+ * When defined, the Cloud Connector compilation will expect the C99 stdint.h header file,
+ * even though we're setup for an C89 environment.
+ *
+ * This define should get added to your makefile:
+ *
+ * @code
+ * CFLAGS +=-std=c89 -DCONNECTOR_HAVE_STDINT_HEADER
+ * @endcode
+ *
+ * @see @ref errors_due_to_C89_and_stdint
+ * @see @ref resolving_compilation_issues
+ *
+ */
+#define CONNECTOR_HAVE_STDINT_HEADER
+
+/**
+ * When defined, the Cloud Connector compilation will expect the compiler has float support by:
+ *    - float and double types are supported. 
+ *    - "%f" and "%lf" format specifiers are supported.
+ *
+ */
+#define FLOATING_POINT_SUPPORTED
+
+/**
+ * When defined, the Cloud Connector compilation will expect the compiler has 64 bit integers support by:
+ *    - int64_t and uint64_t types are supported. 
+ *    - "%lld" and "%" PRId64 format specifiers are supported.
+ *
+ */
+#define CONNECTOR_HAS_64_BIT_INTEGERS
+
+/**
  * @}*/
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
@@ -400,9 +467,15 @@
  *     #define CONNECTOR_FIRMWARE_SUPPORT
  *     #define CONNECTOR_DATA_SERVICE_SUPPORT
  *     #define CONNECTOR_FILE_SYSTEM_SUPPORT
+ *     #define CONNECTOR_REMOTE_CONFIGURATION_SUPPORT
+ *     #define CONNECTOR_DEVICE_ID_METHOD                     connector_device_id_method_auto
  *     #define CONNECTOR_NETWORK_TCP_START                    connector_connect_auto
+ *     #define CONNECTOR_NETWORK_UDP_START                    connector_connect_auto
+ *     #define CONNECTOR_NETWORK_SMS_START                    connector_connect_auto
  *     #define CONNECTOR_WAN_TYPE                             connector_wan_type_imei
  *     #define CONNECTOR_IDENTITY_VERIFICATION                connector_identity_verification_simple
+ *     #define CONNECTOR_CLOUD_PHONE                          "447786201216"
+ *     #define CONNECTOR_CLOUD_SERVICE_ID                     "" /*empty: No shared-code used *\/
  * @endcode
  *
  * This option is useful for reducing Cloud Connector code space for those applications that are sensitive to memory usage.  The following
@@ -477,16 +550,31 @@
  * See @endhtmlonly @ref data_service_support @htmlonly</td>
  * </tr>
  * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_FILE_SYSTEM_SUPPORT @htmlonly </td>
+ * <td>If defined it enables file system capability.
+ * See @endhtmlonly @ref file_system_support @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_REMOTE_CONFIGURATION_SUPPORT @htmlonly </td>
+ * <td>If defined it enables remote configuration capability.
+ * See @endhtmlonly @ref rci_support @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_DEVICE_ID_METHOD @htmlonly </td>
+ * <td>Tells Cloud Connector how to obtain a device ID.
+ * See @endhtmlonly @ref device_id_method @htmlonly</td>
+ * </tr>
+ * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_NETWORK_TCP_START @htmlonly </td>
  * <td>If defined it enables and starts TCP transport.
  * See @endhtmlonly @ref network_tcp_start @htmlonly</td>
  * </tr>
-  * <tr>
+ * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_NETWORK_UDP_START @htmlonly </td>
  * <td>If defined it enables and starts UDP transport.
  * See @endhtmlonly @ref network_udp_start @htmlonly</td>
  * </tr>
-  * <tr>
+ * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_NETWORK_SMS_START @htmlonly </td>
  * <td>If defined it enables and starts SMS transport.
  * See @endhtmlonly @ref network_sms_start @htmlonly</td>
@@ -502,6 +590,16 @@
  * <td> @endhtmlonly @ref identity_verification @htmlonly for
  * simple or password identity verification form.
  * See @endhtmlonly @ref identity_verification @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_CLOUD_PHONE @htmlonly </td>
+ * <td>Device Cloud Phone Number where to send SMSs (Only used for SMS transport).
+ * See @endhtmlonly @ref get_device_cloud_phone and @ref set_device_cloud_phone @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref CONNECTOR_CLOUD_SERVICE_ID @htmlonly </td>
+ * <td>Device Cloud Service ID (if required) used during SMS transport.
+ * See @endhtmlonly @ref device_cloud_service_id @htmlonly</td>
  * </tr>
  * </tr>
  * </table>
@@ -706,7 +804,7 @@
 
 /**
  * When defined, this string hardcode for the @ref network_udp_start instead of the application framework
- * function @ref app_start_network_udp() (called via the @ref connector_request_id_config_network_tcp @ref connector_callback_t "callback" in config.c).
+ * function @ref app_start_network_udp() (called via the @ref connector_request_id_config_network_udp @ref connector_callback_t "callback" in config.c).
  *
  * @note There is no need to implement or port @ref app_start_network_udp() when CONNECTOR_NETWORK_UDP_START is defined. The
  * values for this define are limited to @ref connector_connect_auto or @ref connector_connect_manual.
@@ -719,6 +817,20 @@
  */
 #define CONNECTOR_NETWORK_UDP_START                 connector_connect_auto
 
+/**
+ * When defined, this string hardcode for the @ref network_sms_start instead of the application framework
+ * function @ref app_start_network_sms() (called via the @ref connector_request_id_config_network_sms @ref connector_callback_t "callback" in config.c).
+ *
+ * @note There is no need to implement or port @ref app_start_network_sms() when CONNECTOR_NETWORK_SMS_START is defined. The
+ * values for this define are limited to @ref connector_connect_auto or @ref connector_connect_manual.
+ * @note This define is only used when @ref CONNECTOR_TRANSPORT_SMS is defined in @ref connector_config.h.
+ *
+ * @see @ref network_sms_start
+ * @see @ref connector_connect_auto_type_t
+ * @see @ref app_start_network_sms()
+ * @see @ref CONNECTOR_TRANSPORT_SMS
+ */
+#define CONNECTOR_NETWORK_SMS_START                 connector_connect_auto
 
 /**
  * When defined, this string hardcode for the @ref wan_type instead of the application framework
@@ -749,54 +861,6 @@
  */
 #define CONNECTOR_IDENTITY_VERIFICATION                 connector_identity_verification_simple
 
-#endif
-
-/**
-* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
-* maximum short message session at a time. If not set, Cloud Connector will use the default of 2. 
-*
-* @see @ref shortmessaging
-* @see @ref CONNECTOR_TRANSPORT_UDP
-*/
-#define CONNECTOR_SM_MAX_SESSIONS                  4
-
-/**
-* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
-* maximum short message segments used per session. If not set, Cloud Connector will use the default of 1.
-* User need to increase this value if they are planning to use short message to send larger data.
-*
-* @see @ref shortmessaging
-* @see @ref CONNECTOR_TRANSPORT_UDP
-*/
-#define CONNECTOR_SM_MAX_SEGMENTS                  4
-
-/**
-* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the
-* session timeout in seconds to this value. If not set, Cloud Connector will use the default of
-* no timeout (0). Cloud Connector will wait for Device Cloud response (complete response) until
-* this period. 
-*
-* @see @ref shortmessaging
-* @see @ref CONNECTOR_TRANSPORT_UDP
-*/
-#define CONNECTOR_SM_TIMEOUT                    30
-
-/**
- * When defined, the Cloud Connector compilation will expect the C99 stdint.h header file,
- * even though we're setup for an C89 environment.
- *
- * This define should get added to your makefile:
- *
- * @code
- * CFLAGS +=-std=c89 -DCONNECTOR_HAVE_STDINT_HEADER
- * @endcode
- *
- * @see @ref errors_due_to_C89_and_stdint
- * @see @ref resolving_compilation_issues
- *
- */
-#define CONNECTOR_HAVE_STDINT_HEADER
-
 /**
  * When defined, this string hardcode for the @ref get_device_cloud_phone @ref set_device_cloud_phone instead of the application framework
  * function @ref app_get_device_cloud_phone (called via the @ref connector_request_id_config_get_device_cloud_phone @ref connector_callback_t "callback" in config.c)
@@ -824,5 +888,6 @@
 * @}
 */
 
+#endif
 
 #endif

@@ -2228,7 +2228,7 @@
  *
  * @section device_cloud_service_id Device Cloud Phone service-id
  *
- * Return Device Cloud service-id (if used) where to send SMSs (Only used for SMS transport).
+ * Return Device Cloud service-id (if required) used during SMS transport.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_cloud_service_id() in config.c.
@@ -2255,7 +2255,7 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
  *          <dl>
  *              <dt><i>string</i></dt>
- *              <dd> - Callback returns the pointer to Device Cloud Phone Number service-id (if used) where to send SMSs.</dd>
+ *              <dd> - Callback returns the pointer to Device Cloud Phone Number service-id (if required) used during SMS transport.</dd>
  *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud service-id. Maximum is 64 bytes.</dd>
  *          </dl>
  * </td>
