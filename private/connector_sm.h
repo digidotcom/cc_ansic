@@ -207,9 +207,8 @@ error:
 }
 
 /* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
-static void get_request_id_ptr(connector_initiate_request_t const request, void * const request_data, uint32_t * * request_id)
+static void get_request_id_ptr(connector_initiate_request_t const request, void * const request_data, uint32_t * * const request_id)
 {
-
     switch (request)
     {
 #if (defined CONNECTOR_DATA_POINTS)
@@ -243,8 +242,8 @@ static void get_request_id_ptr(connector_initiate_request_t const request, void 
             break;
         }
         default:
-        	*request_id = NULL;
-        	break;
+            *request_id = NULL;
+            break;
     }
 
     return;
@@ -437,13 +436,13 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         {
                             sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point_single(request_data);
-                            goto error;
+                            goto done_datapoints;
                         }
                         case connector_initiate_data_point_binary:
                         {
                             sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point_binary(request_data);
-                            goto error;
+                            goto done_datapoints;
                         }
 
                         default:
@@ -463,6 +462,9 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
 done:
     result = connector_success;
 
+#if (defined CONNECTOR_DATA_POINTS)
+done_datapoints:
+#endif
 error:
     return result;
 }

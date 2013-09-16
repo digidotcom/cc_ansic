@@ -247,7 +247,8 @@ typedef struct
     connector_transport_t transport;/**< transport method to use */
     void * user_context;            /**< user context to be passed back in response */
 
-    uint32_t request_id;            /**< SM protocol session's Request ID. */
+    uint32_t request_id;            /**< SM protocol session's Request ID. This field is filles by connector_initiate_action()
+                                         and might be used for cancelling the session. See @connector_initiate_session_cancel */
     char * path;                    /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     void * point;                   /**< binary data of size specified in bytes_used */
     size_t bytes_used;              /**< number of bytes in the point buffer */

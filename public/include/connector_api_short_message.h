@@ -30,7 +30,8 @@ typedef struct
 {
     connector_transport_t transport;    /**< transport method to use */
     void * user_context;                /**< user context, will be returned in response callback */
-    uint32_t request_id;          /**< SM protocol session's Request ID. */
+    uint32_t request_id;                /**< SM protocol session's Request ID. This field is filles by connector_initiate_action()
+                                             and might be used for cancelling the session. See @connector_initiate_session_cancel */
 
     connector_bool_t response_required; /**< set to connector_true if response is needed */
 } connector_sm_send_ping_request_t;
