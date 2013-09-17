@@ -91,7 +91,6 @@
  * ones required for TCP transport like @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud". 
  *
  * If initial configuration steps are not done, none of the features described in following chapters will work:
- *
  *      -# Initial configuration on the cloud for UDP transport: \n 
  *         It's required enabling the transport using @ref sm_upd_enable_dm "Device Manager" or through 
  *         @ref sm_upd_enable_ws "web Services". \n
@@ -126,7 +125,17 @@
  *
  * @subsection sm_upd_enable_ws Enable UDP transport using web Services:
  *
- * TODO
+ * A web service script written in python is provided to Enable (or Disable) UDP transport for a device using
+ * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
+ *
+ * Execute EnableUDP.py python script by:
+ * @code
+ * python EnableUDP.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP(true or false)>
+ * @endcode
+ *
+ *
+ * To learn more about Device Cloud UDP configuration using web Services, see SM/UDP Chapter in the
+ * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008/index.html">Device Cloud Programming Guide</a>@endhtmlonly.
  *
  * @subsection sm_udp_enable_battery_dm Enable "Battery-backed" SM applications for UDP transport using Device Manager:
  *
@@ -141,7 +150,13 @@
  *
  * @subsection sm_udp_enable_battery_ws Enable "Battery-backed" SM applications for UDP transport using web Services:
  *
- * TODO
+ * A web service script written in python is provided to Enable (or Disable) "Battery Operated Mode" option for UDP 
+ * transport for a device using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
+ *
+ * Execute EnableUDP_Battery.py python script by:
+ * @code
+ * python EnableUDP_Battery.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP_Battery(true or false)>
+ * @endcode
  *
  * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Manager:
  *
@@ -168,7 +183,18 @@
  *
  * @subsection sm_sms_enable_ws Enable/Configure SMS transport using web Services:
  *
- * TODO
+ * A web service script written in python is provided to Configure (and hence enable SMS transport) your device's phone number using
+ * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
+ * It will first try to find current phone configuration for the device-id to update it. If no entry is found, a new entry is created 
+ * with the provided device's phone number.
+ *
+ * Execute ProvisionSMS.py python script by:
+ * @code
+ * python ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Device ID> <Device Phone Number>
+ * @endcode
+ *
+ * To learn more about Device Cloud SMS configuration using web Services, see SMS Chapter in the
+ * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008/index.html">Device Cloud Programming Guide</a>@endhtmlonly.
  *
  * @section smsectionexamples Short Messaging Features
  *

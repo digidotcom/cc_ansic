@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # ***************************************************************************
-# Copyright (c) 2012 Digi International Inc.,
+# Copyright (c) 2013 Digi International Inc.,
 # All rights not expressly granted are reserved.
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
@@ -13,9 +13,9 @@
 # ***************************************************************************
 # ProvisionSMS.py
 # Configures the Device Phone Number where to send SMSs on a registered device-id in Device Cloud.
-# -------------------------------------------------
-# Usage: ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Phone Number>
-# -------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# Usage: ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Device ID> <Device Phone Number>
+# ------------------------------------------------------------------------------------------
 import httplib
 import base64
 import sys
@@ -32,7 +32,7 @@ def Usage():
     print '        <Password> is the account password'
     print '        <Device Cloud URL> is the Device Cloud URL.'
     print '        <Device ID> is the Device ID in format: 00000000-00000000-B06002FF-FFD33499'
-    print '        <Phone number> Phone number'
+    print '        <Device Phone number> Phone number'
 
 def getText(elem):
     rc = []
