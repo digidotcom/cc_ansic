@@ -58,7 +58,7 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
         request_id.network_request = connector_request_id_network_close;
 
         status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data);
-
+        ASSERT(status != connector_callback_unrecognized);
         switch (status)
         {
         case connector_callback_busy:

@@ -24,6 +24,7 @@ static connector_status_t connect_to_cloud(connector_data_t * const connector_pt
 
     request_id.network_request = connector_request_id_network_open;
     status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data);
+    ASSERT(status != connector_callback_unrecognized);
     switch (status)
     {
     case connector_callback_continue:

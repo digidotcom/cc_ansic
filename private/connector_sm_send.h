@@ -285,6 +285,7 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
 
     request_id.network_request = connector_request_id_network_send;
     status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &send_data);
+    ASSERT(status != connector_callback_unrecognized);
     result = sm_map_callback_status_to_connector_status(status);
     if (status != connector_callback_continue) goto error;
 

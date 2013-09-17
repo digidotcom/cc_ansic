@@ -61,6 +61,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
 
 
         status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &read_data);
+        ASSERT(status != connector_callback_unrecognized);
         switch (status)
         {
         case connector_callback_unrecognized:

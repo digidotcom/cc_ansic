@@ -564,7 +564,8 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 			close_data.status = connector_close_status_device_stopped;
 
 			request_id.network_request = connector_request_id_network_close;
-	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);		
+	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);	
+                ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
                 case connector_callback_busy:
@@ -594,7 +595,8 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
             open_data.handle = NULL;
 
 			request_id.network_request = connector_request_id_network_open;
-	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);		
+	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
+                ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
                 case connector_callback_continue:
