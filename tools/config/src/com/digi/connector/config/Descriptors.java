@@ -48,10 +48,10 @@ public class Descriptors {
         else {
             if (vendorId.startsWith("0x")) {
                 String hex = vendorId.substring(2);
-                ConfigGenerator.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", Integer.parseInt(hex, 16), Integer.parseInt(hex, 16)));
+                ConfigGenerator.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", Long.parseLong(hex, 16), Long.parseLong(hex, 16)));
             } else {
                 String dec = vendorId;
-                ConfigGenerator.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", Integer.parseInt(dec, 10), Integer.parseInt(dec, 10)));
+                ConfigGenerator.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", Long.parseLong(dec, 10), Long.parseLong(dec, 10)));
             }
         }
         this.callDeleteFlag = true;
@@ -113,7 +113,11 @@ public class Descriptors {
             System.exit(1);
         }
         ConfigGenerator.debug_log("Deleted target: " + target);
-        ConfigGenerator.debug_log(String.format("Deleted: 0x%X/%s", Integer.parseInt(vendorId), deviceType));
+        if (vendorId.startsWith("0x"))
+            ConfigGenerator.debug_log(String.format("Deleted: 0x%X/%s", Long.parseLong(vendorId.substring(2), 16), deviceType));
+        else
+            ConfigGenerator.debug_log(String.format("Deleted: 0x%X/%s", Long.parseLong(vendorId, 10), deviceType));
+            
         ConfigGenerator.debug_log(response);
     }
     
@@ -355,8 +359,7 @@ public class Descriptors {
         }
 
         if (vendorId != null)
-            ConfigGenerator.log(String.format("Device Cloud registered vendor ID: 0x%X", Integer
-                    .parseInt(vendorId)));
+            ConfigGenerator.log(String.format("Device Cloud registered vendor ID: 0x%X", Long.parseLong(vendorId)));
     }
 
 
