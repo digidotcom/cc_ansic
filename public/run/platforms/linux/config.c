@@ -107,7 +107,6 @@ static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00,
 static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
 #error "Specify device MAC address for LAN connection"
-
     ASSERT(config_mac->bytes_required == MAC_ADDR_LENGTH);
 
     config_mac->data = (uint8_t *)device_mac_addr;
@@ -116,10 +115,24 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 }
 
 #define DEVICE_ID_LENGTH    16
+#define DEVICE_ID_FILENAME  "device_id.cfg"
+
 static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
 static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
 {
+    if (access(DEVICE_ID_FILENAME, F_OK) != -1)
+    {
+        FILE *file;
+        int bytes_read;
+
+        file = fopen(DEVICE_ID_FILENAME, "r");
+        bytes_read = fread(provisioned_device_id, sizeof provisioned_device_id[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
+        printf("***bytes_read = %d\n", bytes_read);
+        ASSERT(bytes_read == sizeof provisioned_device_id);
+        fclose(file);
+    }
+
     config_device_id->data = provisioned_device_id;
 
     return connector_callback_continue;
@@ -127,7 +140,14 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 
 static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
+    FILE *file;
+    int bytes_writen;
+
+    file = fopen(DEVICE_ID_FILENAME, "w+");
+    bytes_writen = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
+    ASSERT(bytes_writen == sizeof provisioned_device_id);
+    printf("***bytes_writen = %d\n", bytes_writen);
+    fclose(file);
 
     return connector_callback_continue;
 }
@@ -138,7 +158,6 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
 #error  "Specify vendor id"
 
     static uint32_t const device_vendor_id = 0x00000000;
-
     config_vendor->id  =  device_vendor_id;
 
     return connector_callback_continue;
