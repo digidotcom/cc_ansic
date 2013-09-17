@@ -76,7 +76,7 @@ typedef enum
                                                 User need to use new request (can be ping) to pull the pending messages from Device Cloud. */
     connector_request_id_sm_opaque_response,/**< Cloud Connector will use this to provide Device Cloud response for which
                                                 there is no associated request */
-    connector_request_id_sm_config_request, /**< used when Cloud Connector receives config request from Device Cloud. Used only if the transport method is SMS */
+    connector_request_id_sm_config_request /**< used when Cloud Connector receives config request from Device Cloud. Used only if the transport method is SMS */
 } connector_request_id_sm_t;
 /**
 * @}
