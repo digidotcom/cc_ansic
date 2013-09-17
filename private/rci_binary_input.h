@@ -192,9 +192,11 @@ static connector_bool_t get_string(rci_t * const rci, char const * * string, siz
     if (ber_bytes > 0)
     {
         size_t const bytes = rci->shared.content.length;
+#if defined CONNECTOR_DEBUG
         size_t const size_max = SIZE_MAX;
 
         ASSERT(value <= size_max);
+#endif
         *length = value;
         if (*length > CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH)
         {
