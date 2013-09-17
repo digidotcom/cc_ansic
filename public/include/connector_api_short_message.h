@@ -62,7 +62,7 @@ typedef struct
 */
 /**
 * Short message related callbacks will use these request IDs. The class ID associated with these request ID is
-* connector_class_id_short_message and supported transport methods under this class is UDP.
+* connector_class_id_short_message and supported transport methods under this class are UDP and SMS.
 */
 typedef enum
 {

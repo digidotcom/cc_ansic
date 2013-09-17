@@ -358,7 +358,7 @@ typedef enum
     connector_transport_udp, /**< Use UDP. @ref CONNECTOR_TRANSPORT_UDP must be enabled. */
 #endif
 #if (defined CONNECTOR_TRANSPORT_SMS)
-    connector_transport_sms, /**< Reserved for now */
+    connector_transport_sms, /**< Use SMS. @ref CONNECTOR_TRANSPORT_SMS must be enabled. */
 #endif
     connector_transport_all  /**< All transports. */
 } connector_transport_t;
@@ -401,7 +401,7 @@ typedef union {
     #if (defined CONNECTOR_FILE_SYSTEM)
     connector_request_id_file_system_t   file_system_request;   /**< File system request ID for file system class */
     #endif
-    connector_request_id_network_t  network_request;            /**< Network request ID for network TCP class, network UDP class, and network SMS class */
+    connector_request_id_network_t  network_request;            /**< Network request ID for network TCP class, network UDP class and network SMS class */
     connector_request_id_status_t status_request;               /**< Status request ID for status class */
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_request_id_sm_t sm_request;                       /**< Short message request ID for short message class */
@@ -475,6 +475,7 @@ typedef struct
     connector_transport_t transport;        /**< Transport will be stopped:
                                             - @ref connector_transport_tcp
                                             - @ref connector_transport_udp
+                                            - @ref connector_transport_sms
                                             - @ref connector_transport_all */
 
     connector_stop_condition_t condition;   /**< Condition to stop the transport:
@@ -730,7 +731,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *
  *                      @li @b connector_initiate_transport_start:
  *                          Starts the specified (@ref connector_transport_tcp
- *                          or @ref connector_transport_udp) transport method.
+ *                          , @ref connector_transport_udp or @ref connector_transport_sms) transport method.
  *
  *                      @li @b connector_initiate_transport_stop:
  *                          Stops the Cloud Connector transport mechanism.  Note this call
@@ -738,6 +739,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Transports include:
  *                              - @ref connector_transport_tcp - TCP transport
  *                              - @ref connector_transport_udp - UDP transport
+ *                              - @ref connector_transport_sms - SMS transport
  *                              - @ref connector_transport_all - all transports.
  *
  *                      @li @b connector_initiate_data_point_binary:
@@ -748,7 +750,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *
  *                      @li @b connector_initiate_ping_request:
  *                          Sends status message to the Device Cloud.  Supported for
- *                          @ref connector_transport_udp transport method only.
+ *                          @ref connector_transport_udp and @ref connector_transport_sms transports method only.
  *
  *                      @li @b connector_initiate_session_cancel:
  *                          Initiates the action to cancel the timedout session.

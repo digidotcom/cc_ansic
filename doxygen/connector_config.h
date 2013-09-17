@@ -216,31 +216,6 @@
 #define CONNECTOR_SM_CLI
 
 /**
-* If defined, Cloud Connector includes the ability to receive multiple short messages in
-* data payload.  If there are more messages pending in Device Cloud, the Application is notified with
-* @ref pending_data callback.  This define allows battery-based applications to reduce the time it takes
-* to process commands and go back to sleep.
-*
-* To disable the this functionality, comment this line out in connector_config.h:
-*
-* @code
-* #define CONNECTOR_SM_BATTERY
-* @endcode
-*
-* To this:
-* @code
-* //#define CONNECTOR_SM_BATTERY
-* @endcode
-*
-* @see @ref shortmessaging
-* @see @ref pending_data
-* @see @ref zlib
-* @see @ref CONNECTOR_COMPRESSION
-*/
-#define CONNECTOR_SM_BATTERY
-
-
-/**
  * This is used to define the maximum length in bytes of the full file path on the device, supported by the @ref file_system.
  * This length includes an ending null-character.
  *

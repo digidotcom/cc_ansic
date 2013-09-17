@@ -350,9 +350,11 @@ typedef enum {
 * Device Cloud automatically or manually. It's used for the following callbacks:
 *   -# @ref connector_request_id_config_network_tcp
 *   -# @ref connector_request_id_config_network_udp
+*   -# @ref connector_request_id_config_network_sms
 *
 * @see @ref network_tcp_start
 * @see @ref network_udp_start
+* @see @ref network_sms_start
 */
 typedef struct {
     connector_connect_auto_type_t type;   /**< Connection action */

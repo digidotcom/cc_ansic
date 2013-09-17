@@ -23,17 +23,28 @@
  * a domain name and open a communication socket in this callback. UDP does not guarantee reliable data
  * delivery.
  *
- * The callback is responsible to setup any socket options.
+ * The @ref connector_class_id_network_sms transport does not establish a connection. It's very likely that 
+ * the user configures during this callback the Device Cloud Phone Number where to send SMSs available through 
+ * the data->device_cloud_url parameter. Final implementation as to be done by the user as the way to 
+ * communicate with the hardware in charge of sending and receiving SMSs is not standard at all. As a 
+ * reference, for the linux platform sample, network_sms.c file implements support for "Gammu", a cellular 
+ * manager for mobile phones/modems.
+ * @note This callback is called also after an SMS provisioning message arrives from the server to let the user
+ * reconfigure the Device Cloud Phone Number if necessary.
+ *
+ * The callback is responsible to setup any socket options for TCP and UDP transports.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function:
  * <ul>
  *   <li> @ref app_network_tcp_open() in network_tcp.c</li>
  *   <li> @ref app_network_udp_open() in network_udp.c</li>
+ *   <li> @ref app_network_sms_open() in network_sms.c</li>
  * </ul>
  *
  * @see @ref network_tcp_start "Start TCP transport automatically or manually"
  * @see @ref network_udp_start "Start UDP transport automatically or manually"
+ * @see @ref network_sms_start "Start SMS transport automatically or manually"
  * <br /><br />
  *
  * @htmlonly
@@ -55,6 +66,9 @@
  *         <ul>
  *           <li>@endhtmlonly @ref CONNECTOR_UDP_PORT @htmlonly for non-secure port number.</li>
  *         </ul>
+ *       </li>
+ *       <br />
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly - Does not use any define.</li>
  *    </ul>
  * </td>
  * </tr>
@@ -110,7 +124,8 @@
  * <ul>
  *   <li> @ref app_network_tcp_send() in network_tcp.c</li>
  *   <li> @ref app_network_udp_send() in network_udp.c</li>
-  * </ul>
+ *   <li> @ref app_network_sms_send() in network_sms.c</li>
+ * </ul>
  * <br />
  *
  * @htmlonly
@@ -123,6 +138,7 @@
  *    <ul>
  *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</li>
  *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul>
  * </td>
  * </tr>
@@ -178,6 +194,7 @@
  * <ul>
  *   <li> @ref app_network_tcp_receive() in network_tcp.c</li>
  *   <li> @ref app_network_udp_receive() in network_udp.c</li>
+ *   <li> @ref app_network_sms_receive() in network_sms.c</li>
  * </ul>
  * <br />
  *
@@ -191,6 +208,7 @@
  *    <ul>
  *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</li>
  *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul>
  * </td>
  * </tr>
@@ -241,6 +259,7 @@
  * <ul>
  *   <li> @ref app_network_tcp_close() in network_tcp.c</li>
  *   <li> @ref app_network_udp_close() in network_udp.c</li>
+ *   <li> @ref app_network_sms_close() in network_sms.c</li>
  * </ul>
  * <br />
  *
@@ -254,6 +273,7 @@
  *    <ul>
  *       <li>@endhtmlonly @ref connector_class_id_network_tcp @htmlonly</li>
  *       <li>@endhtmlonly @ref connector_class_id_network_udp @htmlonly</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly</li>
  *    </ul>
  * </td>
  * </tr>

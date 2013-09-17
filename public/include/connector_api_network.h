@@ -23,6 +23,7 @@
 * The class id for this connector_request_id_network_t is
 * connector_class_id_network_tcp,
 * connector_class_id_network_udp.
+* connector_class_id_network_sms.
 */
 typedef enum {
     connector_request_id_network_open,     /**< Requesting callback to set up and make connection to Device Cloud */
@@ -42,7 +43,7 @@ typedef enum {
 * Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to Device Cloud.
 */
 typedef struct  {
-    char const * CONST device_cloud_url;    /**< Pointer to Device Cloud URL  */
+    char const * CONST device_cloud_url;    /**< Pointer to Device Cloud URL. For SMS transport it's the Device cloud Phone Number where to send SMSs  */
     connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
 /**
