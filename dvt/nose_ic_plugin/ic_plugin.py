@@ -49,7 +49,7 @@ class ICPlugin(Plugin):
                                     auth=(options.username, options.password),
                                     verify=False, timeout=120)
         ICPlugin.admin_session = requests.session(
-                                    auth=('testbed', 'sa!test'),
+                                    auth=('testbed', 'Sa!test11'),
                                     verify=False)
         ICPlugin.push_client   = idigi_monitor_api.push_client(options.username,
                                     options.password, hostname=options.hostname, 
