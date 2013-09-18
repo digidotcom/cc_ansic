@@ -44,7 +44,7 @@
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_id() in config.c. It is called to get a unique device ID 
- * which is used to identify the device, typically, it will be read from a non-volatile media.
+ * which is used to identify the device, typically, it will be read from a non-volatile storage.
  *
  * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
  * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
@@ -127,6 +127,11 @@
  * @endcode
  *
  * @section set_device_id Set the Device ID
+ * 
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_set_device_id() in config.c. It is called to save the Device ID 
+ * given by Device Cloud to the device. It should be saved to a non-volatile storage to be recovered in future sessions.
+ * 
  * Saves the Device ID into a non-volatile storage (EEPROM, file, NVRAM, etc.).
  *
  * This routine is called when a zero'ed Device ID is provided in @ref app_get_device_id and 
