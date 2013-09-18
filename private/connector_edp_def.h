@@ -15,8 +15,12 @@
 
 #include "ei_packet.h"
 
+#if !defined MSG_MAX_RECV_PACKET_SIZE
 #define MSG_MAX_RECV_PACKET_SIZE 1600
+#endif
+#if !defined MSG_MAX_SEND_PACKET_SIZE
 #define MSG_MAX_SEND_PACKET_SIZE 512
+#endif
 
 #define EDP_MT_VERSION      2
 

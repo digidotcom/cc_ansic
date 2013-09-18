@@ -414,6 +414,14 @@
 #define CONNECTOR_HAS_64_BIT_INTEGERS
 
 /**
+ * Sets the outbound packets' maximum size in TCP transport (it has no effect in SM/UDP or SM/SMS).
+ * If it is not defined the default value of 512 is used. This value is used for buffers declaration
+ * so it might help to save RAM. If you do not know which value to use, leave it undefined.
+ *
+ */
+#define MSG_MAX_SEND_PACKET_SIZE        512
+
+/**
  * @}*/
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
