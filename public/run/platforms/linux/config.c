@@ -128,7 +128,6 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 
         file = fopen(DEVICE_ID_FILENAME, "r");
         bytes_read = fread(provisioned_device_id, sizeof provisioned_device_id[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
-        printf("***bytes_read = %d\n", bytes_read);
         ASSERT(bytes_read == sizeof provisioned_device_id);
         fclose(file);
     }
@@ -146,7 +145,6 @@ static connector_callback_status_t app_set_device_id(connector_config_pointer_da
     file = fopen(DEVICE_ID_FILENAME, "w+");
     bytes_writen = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
     ASSERT(bytes_writen == sizeof provisioned_device_id);
-    printf("***bytes_writen = %d\n", bytes_writen);
     fclose(file);
 
     return connector_callback_continue;
