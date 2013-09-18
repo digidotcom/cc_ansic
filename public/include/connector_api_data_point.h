@@ -161,16 +161,22 @@ typedef struct connector_data_point_t
             connector_time_epoch_whole_t since_epoch_whole;             /**< Time since the Epoch time in milliseconds */
 #endif
             char * iso8601_string;                                      /**< 
-                                                                             A null-terminated local time in ISO 8601 format. Supported format is YYYY-MM-DDTHH:MM:SS[.mmm][+/-hh:mm] where:
-                                                                             - YYYY year.
-                                                                             - MM month (1-12).
-                                                                             - DD month day (1-31).
-                                                                             - HH hours (24-hour format).
-                                                                             - MM minutes (0-59).
-                                                                             - SS seconds (0-59).
-                                                                             - mmmm (optional) milliseconds (0-999).
-                                                                             - +/- (optional) hh:mm is the UTC offset in hours and minutes. Nautical time zones are not supported except for Z. If not specified defaults to +00:00.
-                                                                             - Some examples of valid representations: 
+                                                                             A null-terminated local time in ISO 8601 format. Supported format is YYYY-MM-DDThh:mm:ss[.mmm]TZD (eg 2012-03-29T10:05:45-06:00) where:
+                                                                             - YYYY = four-digit year.
+                                                                             - MM = two-digit month (eg 03=March).
+                                                                             - DD = two-digit day of the month (01 through 31).
+                                                                             - T = a set character indicating the start of the time element.
+                                                                             - hh = two digits of an hour (00 through 23, AM/PM not included).
+                                                                             - mm = two digits of a minute (00 through 59).
+                                                                             - ss = two digits of a second (00 through 59).
+                                                                             - mmmm (optional) milliseconds (0 through 999).
+                                                                             - TZD = time zone designator (Z or +hh:mm or -hh:mm), the + or - values indicate how far ahead or behind a time zone is from the UTC zone. US time zone values are as follows:
+                                                                                 - EDT = -4:00
+                                                                                 - EST/CDT = -5:00
+                                                                                 - CST/MDT = -6:00
+                                                                                 - MST/PDT = -7:00
+                                                                                 - PST = -8:00
+                                                                             - Some examples of valid representations:
                                                                                  - 2012-01-12T06:16:55.235Z
                                                                                  - 2012-12-22T03:16:44Z
                                                                                  - 2012-12-21T19:16:44-08:00 */
