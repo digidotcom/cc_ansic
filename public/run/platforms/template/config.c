@@ -79,20 +79,19 @@ static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 /**
  * @brief   Get the Cloud Connector's device ID
  *
- * This routine is called to get a unique device ID which is used to identify the device.
- *
  * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
  * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
  * is called to provide the Cloud Connector with a previously saved (e.g.: to a file or EEPROM)
  * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, they
  * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
  * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
- * If this function sets config_device_id to 0, the Cloud Connector will ask Device Cloud for a 
+ * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a 
  * Device ID and then call function @ref app_set_device_id so the user saves to a non-volatile
- * media the Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
+ * storage that provisioned Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
  * in this function.
  * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
  * account which @ref vendor_id is provided.
+ * @note Provision a Device ID can only be done by TCP transport.
  *
  * @param [out] config_device_id  Callback returns pointer to memory containing the device ID
  *
@@ -113,10 +112,10 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
  *
  * This routine is called when a zero'ed Device ID is provided in @ref app_get_device_id and 
  * @ref device_id_method is set to @ref connector_device_id_method_manual.
- * In this function the provided Device ID must be saved to a non-volatile media to be read in future
+ * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_get_device_id function.
- *
- * @param [in] config_device_id  pointer to memory containing the device ID to be stored in non-voltaile media.
+ * @note Provision a Device ID can only be done by TCP transport.
+ * @param [in] config_device_id  pointer to memory containing the device ID to be stored in non-volatile storage.
  *
  * @retval connector_callback_continue  Device ID was successfully written.
  * @retval connector_callback_abort     Could not set the device ID, abort Cloud Connector.

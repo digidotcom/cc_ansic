@@ -49,15 +49,16 @@
  * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
  * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
  * is called to provide the Cloud Connector with a previously saved (e.g.: to a file or EEPROM)
- * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, the
+ * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, they
  * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
  * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
- * If this function sets config_device_id to 0, the Cloud Connector will ask Device Cloud for a 
- * Device ID and then call the @ref get_device_id method so the user saves to a non-volatile
- * media the Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
+ * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a 
+ * Device ID and then call function @ref app_set_device_id so the user saves to a non-volatile
+ * storage that provisioned Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
  * in this function.
  * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
  * account which @ref vendor_id is provided.
+ * @note Provision a Device ID can only be done by TCP transport.
  *
  * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_get_device_id()
@@ -79,8 +80,8 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_data_t @htmlonly:
  *          <dl>
  *              <dt><i>data</i></dt>
- *              <dd> - Callback returns the pointer which contains application's device ID</dd>
- *              <dt><i>bytes_required</i></dt><dd> - Length of the Device ID (16 bytes).</dd>
+ *              <dd> - Callback sets the pointer which contains the Device ID</dd>
+ *              <dt><i>bytes_required</i></dt><dd> - Length of the Device ID in bytes.</dd>
  *            </dl>
  * </td>
  *
@@ -93,7 +94,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get device ID and callback aborted Cloud Connector</td>
+ * <td>Callback was unable to get Device ID and Cloud Connector will be aborted</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -101,12 +102,24 @@
  * Example:
  *
  * @code
- *
  * #define DEVICE_ID_LENGTH    16
+ * #define DEVICE_ID_FILENAME  "device_id.cfg"
+ * 
  * static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  * 
  * static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
  * {
+ *     if (access(DEVICE_ID_FILENAME, F_OK) != -1)
+ *     {
+ *         FILE *file;
+ *         int bytes_read;
+ * 
+ *         file = fopen(DEVICE_ID_FILENAME, "r");
+ *         bytes_read = fread(provisioned_device_id, sizeof provisioned_device_id[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
+ *         ASSERT(bytes_read == sizeof provisioned_device_id);
+ *         fclose(file);
+ *     }
+ * 
  *     config_device_id->data = provisioned_device_id;
  * 
  *     return connector_callback_continue;
@@ -114,19 +127,19 @@
  * @endcode
  *
  * @section set_device_id Set the Device ID
- * Saves the Device ID into a non-volatile media (EEPROM, file, NVRAM, etc.).
+ * Saves the Device ID into a non-volatile storage (EEPROM, file, NVRAM, etc.).
  *
- * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
- * and implemented in the @b Platform function app_set_device_id() in config.c.
- *
- * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
- * This routine is called when @ref device_id_method is set to @ref connector_device_id_method_manual and a zero'ed Device ID
- * is provided in @ref app_get_device_id.
- * In this function the provided Device ID must be saved to a non-volatile media to be read in future
+ * This routine is called when a zero'ed Device ID is provided in @ref app_get_device_id and 
+ * @ref device_id_method is set to @ref connector_device_id_method_manual.
+ * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_get_device_id function.
+ * @note Provision a Device ID can only be done by TCP transport.
+ * @param [in] config_device_id  pointer to memory containing the device ID to be stored in non-volatile storage.
  *
- * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
- * @see app_get_device_id()
+ * @retval connector_callback_continue  Device ID was successfully written.
+ * @retval connector_callback_abort     Could not set the device ID, abort Cloud Connector.
+ *
+ * @see @ref device_id API Configuration Callback
  *
  * @htmlonly
  * <table class="apitable">
@@ -145,7 +158,7 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_data_t @htmlonly:
  *          <dl>
  *              <dt><i>data</i></dt>
- *              <dd> - Pointer which contains application's device ID</dd>
+ *              <dd> - Pointer which contains application's Device ID</dd>
  *              <dt><i>bytes_required</i></dt><dd> - Length of the Device ID (16 bytes).</dd>
  *            </dl>
  * </td>
@@ -159,7 +172,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get device ID and callback aborted Cloud Connector</td>
+ * <td>Callback was unable to save Device ID and Cloud Connector will be aborted</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -167,13 +180,26 @@
  * Example:
  *
  * @code
- *
  * #define DEVICE_ID_LENGTH    16
+ * #define DEVICE_ID_FILENAME  "device_id.cfg"
+ * 
  * static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  * 
- * static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
+ * static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
  * {
- *     memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
+ *     if (access(DEVICE_ID_FILENAME, F_OK) != -1)
+ *     {
+ *         FILE *file;
+ *         int bytes_writen;
+ * 
+ *         file = fopen(DEVICE_ID_FILENAME, "w+");
+ *         bytes_writen = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
+ *
+ *         ASSERT(bytes_writen == sizeof provisioned_device_id);
+ *         fclose(file);
+ *     }
+ * 
+ *     config_device_id->data = provisioned_device_id;
  * 
  *     return connector_callback_continue;
  * }

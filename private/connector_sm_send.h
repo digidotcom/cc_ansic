@@ -357,6 +357,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
             uint8_t const version_byte = sm_udp_version_num | sm_ptr->transport.id_type;
 
             *data_ptr++ = version_byte;
+            ASSERT(connector_ptr->connector_got_device_id);
             memcpy(data_ptr, sm_ptr->transport.id, sm_ptr->transport.id_length);
             data_ptr += sm_ptr->transport.id_length;
             break;
