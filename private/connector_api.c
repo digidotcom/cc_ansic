@@ -183,17 +183,12 @@ static connector_status_t manage_device_id(connector_data_t * const connector_pt
             result = get_config_device_id(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
             {
-                int i;
+                uint8_t const null_device_id[DEVICE_ID_LENGTH] = {0x00};
                 /* If the returned Device ID is zero, Cloud Connector will ask the Device Cloud for a Device ID. */
-                /* Start from the end of the array because normally first bytes are zero. */
-                for (i = sizeof connector_ptr->device_id; i; i--)
-                {
-                    if (connector_ptr->device_id[i - 1])
-                    {
-                        connector_ptr->connector_got_device_id = connector_true;
-                        break;
-                    }
-                }
+                if (memcmp(connector_ptr->device_id, null_device_id, sizeof null_device_id) == 0)
+                    connector_ptr->connector_got_device_id = connector_false;
+                else
+                    connector_ptr->connector_got_device_id = connector_true;
             }
             break;
 
