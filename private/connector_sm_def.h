@@ -19,7 +19,15 @@
 #include "ei_packet.h"
 
 #define SM_UDP_VERSION 0x01
+
+#if defined SM_PACKET_SIZE_UDP
+#if  CONNECTOR_SM_MAX_SEGMENTS > 1
+#error "SM_PACKET_SIZE_UDP cannot be override if multi-packet messaging is ON (CONNECTOR_SM_MAX_SEGMENTS > 1)"
+#endif
+#else
 #define SM_PACKET_SIZE_UDP 1472
+#endif
+
 #define SM_PACKET_SIZE_SMS 128
 #define SM_PACKET_SIZE_SMS_ENCODED ((SM_PACKET_SIZE_SMS/4) * 5)
 #define SM_REQUEST_ID_MASK 0x3FF  /* 10 bits */
