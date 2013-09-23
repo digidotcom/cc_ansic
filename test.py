@@ -538,7 +538,7 @@ class TestRunner(object):
             build_args = ['dvt/bin/nosetests',
                           '--with-xunit',
                           '-s', # Don't Capture STDOUT
-                          '--xunit-file=%s_%s_%s_build.nxml' % (self.description, execution_type, test),
+                          '--xunit-file=%s_%s_%s_build.xml' % (self.description, execution_type, test),
                           '--with-build',
                           '--build_cflags=%s' % self.cflags,
                           '--build_src=%s' % src_dir,
@@ -603,7 +603,7 @@ class TestRunner(object):
                             arguments = ['dvt/bin/nosetests',
                                          '--with-xunit',
                                          '-s', # Don't capture STDOUT (allow everything else to print)
-                                         '--xunit-file=%s_%s_%s_%s.nxml' % (self.description, execution_type, test, test_script),
+                                         '--xunit-file=%s_%s_%s_%s.xml' % (self.description, execution_type, test, test_script),
                                          '--with-ic',
                                          '--ic-username=%s'  % self.username,
                                          '--ic-password=%s'  % self.password,
@@ -723,7 +723,7 @@ class TestRunner(object):
 
 def clean_output(directory):
     for root, folders, files in os.walk(directory):
-        for test_result in filter(lambda f: f.endswith('.nxml') or f.endswith('coverage.xml'), files):
+        for test_result in filter(lambda f: f.endswith('.xml') or f.endswith('coverage.xml'), files):
             file_path = os.path.join(root, test_result)
             log.info("Removing %s." % file_path)
             os.remove(file_path)
@@ -740,7 +740,7 @@ def build_template(description, cflags):
     arguments = ['dvt/bin/nosetests',
                  '-s',
                  '--with-xunit',
-                 '--xunit-file=%s_%s.nxml' % (description, test_script),
+                 '--xunit-file=%s_%s.xml' % (description, test_script),
                  '--with-build',
                  '--build_cflags=%s' % (cflags)]
 
@@ -760,7 +760,7 @@ def build_library(description, cflags, config_tool_jar):
     arguments = ['dvt/bin/nosetests',
                  '-s',
                  '--with-xunit',
-                 '--xunit-file=%s_%s.nxml' % (description, test_script),
+                 '--xunit-file=%s_%s.xml' % (description, test_script),
                  '--with-build',
                  '--build_config_tool_jar=%s' % config_tool_jar,
                  '--build_cflags=%s' % (cflags)]

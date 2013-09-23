@@ -11,6 +11,7 @@
 # Ignore generated nosetests and coverage data
 nosestest*.xml
 *.nxml
+linux-*.xml
 *coverage.xml
 
 # Ignore memory usage files
