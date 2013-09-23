@@ -60,6 +60,9 @@ at: %s
 
     if client != None: 
         client.send(a.message) 
+        # Let time to the connector to digest the message in order to avoid two messages 
+        # are received together. TODO: flush?
+        time.sleep(5)
     else:
         print ("Not connected to any client")
  
