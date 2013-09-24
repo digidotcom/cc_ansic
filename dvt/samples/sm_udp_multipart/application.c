@@ -158,6 +158,8 @@ int application_run(connector_handle_t handle)
             default:
                 goto done;
         }
+
+        sleep(ping_interval_in_seconds);
     }
 
 done:
