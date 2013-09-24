@@ -141,11 +141,14 @@ PLATFORM = template"""
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp_ssl.c'
         subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
         subs['LIBS'] += ' -lssl'
-    elif sample not in LINK_SAMPLES and 'network.c' not in app_src:
-        #  Otherwise add network.c.
-        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_dns.c'
-        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp.c'
-        subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
+    elif sample not in LINK_SAMPLES:
+        if 'network.c' not in app_src:
+            if 'network_dns.c' not in app_src:
+                subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_dns.c'
+            if 'network_tcp.c' not in app_src:
+                subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_tcp.c'
+            if 'network_udp.c' not in app_src:
+                subs['PLATFORM_SRCS'] += ' $(PLATFORM_DIR)/network_udp.c'
 
     if sample == 'sm_sms':
         if 'network_sms.c' not in app_src:

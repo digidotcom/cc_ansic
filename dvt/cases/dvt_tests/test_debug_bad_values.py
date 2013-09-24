@@ -14,7 +14,7 @@ test_table = [
 
             "connector_request_id_config_connection_type,connector_invalid_data_range,connector_init failed\n",
 
-            "connector_request_id_config_mac_addr,connector_invalid_data,connector_run thread terminated\n",
+            "connector_request_id_config_mac_addr,connector_invalid_data,network_tcp_close connector_close_status_device_error\n",
 
             "connector_request_id_config_vendor_id,connector_invalid_data_range,connector_init failed\n",
 
@@ -31,8 +31,8 @@ test_table = [
 
             "connector_request_id_config_identity_verification,connector_invalid_data_range,connector_init failed\n",
 
-            "connector_request_id_config_ip_addr,connector_invalid_data_range,connector_run thread terminated\n",
-            "connector_request_id_config_ip_addr,connector_invalid_data_size,connector_run thread terminated\n",
+            "connector_request_id_config_ip_addr,connector_invalid_data_range,network_tcp_close connector_close_status_device_error\n",
+            "connector_request_id_config_ip_addr,connector_invalid_data_size,network_tcp_close connector_close_status_device_error\n",
 
             "connector_request_id_config_firmware_facility,connector_invalid_data_range,connector_init failed\n",
 
@@ -53,7 +53,7 @@ test_table = [
 
 ]
 
-connector_run_thread_terminated = "connector_run thread terminated\n"
+connector_tcp_closed = "network_tcp_close connector_close_status_device_error\n"
 
 class ResponseToBadValuesDvtTestCase(ic_testcase.TestCase):
 
@@ -83,7 +83,7 @@ class ResponseToBadValuesDvtTestCase(ic_testcase.TestCase):
             line_case = line.split(',', 3)
             is_found = False
 
-            if len(line) > 0 and line != connector_run_thread_terminated:
+            if len(line) > 0 and line != connector_tcp_closed:
                 index = 0
                 for test in test_table:
                     test_case = test.split(',', 3)
