@@ -344,8 +344,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
     if (send_ptr->total_bytes > 0)
     {
-        result = connector_pending;
-        goto done;
+        goto send;
     }
 
     switch (sm_ptr->network.transport)
@@ -511,7 +510,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         }
     }
     #endif
-
+send:
     if (result == connector_working)
     {
         result = sm_send_segment(connector_ptr, sm_ptr);
