@@ -721,9 +721,9 @@ class TestRunner(object):
                 _msg ="Unknown error sending the signal to process with pid %s !!" % pid
                 return (True,_msg)
 
-def clean_output(directory):
+def clean_output(description, directory):
     for root, folders, files in os.walk(directory):
-        for test_result in filter(lambda f: f.endswith('.xml') or f.endswith('coverage.xml'), files):
+        for test_result in filter(lambda f: f.startswith(description) and f.endswith('.xml') or f.endswith('coverage.xml'), files):
             file_path = os.path.join(root, test_result)
             log.info("Removing %s." % file_path)
             os.remove(file_path)
@@ -839,7 +839,7 @@ def main():
         cflags='DFLAGS=-m32'
 
     log.info("============ Cleaning Test Previous Output Files. ============")
-    clean_output('.')
+    clean_output(args.descriptor, '.')
 
     # create empty memory usage file
     mem_usage_file = open(MEMORY_USAGE_FILE, 'w')
