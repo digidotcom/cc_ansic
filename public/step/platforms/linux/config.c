@@ -370,24 +370,43 @@ static connector_callback_status_t app_get_device_id_method(connector_config_dev
 }
 #endif
 
-static void get_hex_digit(char str, uint8_t * const value)
+/* Converts the first digit char ('0' to '9') to a nibble starting at index and working backwards. */
+static unsigned int digit_to_nibble(char const * const string, int * const index)
 {
-
-    if (isdigit(str))
+    unsigned int nibble = 0;
+    int current;
+     
+    for (current = *index; current >= 0; current--)
     {
-        *value = str - '0';
+        int const ch = string[current];
+         
+        if (isdigit(ch))
+        {
+            nibble = ch - '0';
+            break;
+        }
     }
-    else if (isxdigit(str))
+    *index = current - 1;
+ 
+    return nibble;
+}
+  
+/* Parse a string with non-digit characters into an array (i.e.: 0123456-78-901234-5 will be stored in {0x01, 0x23, 0x45, 0x67, 0x89, 0x01, 0x23, 0x45}) */
+static int str_to_uint8_array(char const * const str, uint8_t * const array, size_t const array_size)
+{
+    int i;
+    int const string_length = strlen(str);
+    int index = string_length - 1;
+ 
+    for (i = array_size - 1; i >= 0; i--)
     {
-        int const hex = tolower(str);
-        *value = (hex - 'a') + 10;
+        unsigned int const ls_nibble = digit_to_nibble(str, &index);
+        unsigned int const ms_nibble = digit_to_nibble(str, &index);
+ 
+        array[i] = (ms_nibble << 4) + ls_nibble;
     }
-    else
-    {
-        APP_DEBUG("get_hex_digit: invalid digit %c\n", str);
-    }
-
-    return;
+ 
+    return 0;
 }
 
 static connector_callback_status_t app_get_imei_number(connector_config_pointer_data_t * const config_imei)
@@ -397,31 +416,10 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    static char const app_imei_number_string[] = "000000-00-000000-0";
+    char const app_imei_number_string[] = "0000000-00-000000-0";
     static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
-    int i = sizeof app_imei_number_string -1;
-    int index = sizeof app_imei_number -1;
-
-    while (i > 0)
-    {
-        int n = 0;
-
-        app_imei_number[index] = 0;
-
-        /* loop 2 times here for 2 digits (1 bytes) */
-        while (n < 2 && i > 0)
-        {
-            i--;
-            if (app_imei_number_string[i] != '-')
-            {
-                uint8_t value;
-                get_hex_digit(app_imei_number_string[i], &value);
-                app_imei_number[index] += (value << ((uint8_t)n * 4));
-                n++;
-            }
-        }
-        index--;
-    }
+    
+    str_to_uint8_array(app_imei_number_string, app_imei_number, sizeof app_imei_number);
 
     config_imei->data = app_imei_number;
     ASSERT(config_imei->bytes_required == sizeof app_imei_number);
@@ -463,32 +461,10 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    static char const app_esn_hex_string[] = "00000000";
+    char const app_esn_hex_string[] = "00000000";
     static uint8_t app_esn_hex[APP_ESN_HEX_LENGTH] = {0};
-    int i = sizeof app_esn_hex_string -1;
-    int index = sizeof app_esn_hex -1;
-
-    while (i > 0)
-    {
-        int n = 0;
-
-        app_esn_hex[index] = 0;
-
-        /* loop 2 times here for 2 digits (1 bytes) */
-        while (n < 2 && i > 0)
-        {
-            i--;
-            if (app_esn_hex_string[i] != '-')
-            {
-                uint8_t value;
-                get_hex_digit(app_esn_hex_string[i], &value);
-                app_esn_hex[index] += (value << ((uint8_t)n * 4));
-                n++;
-            }
-        }
-        index--;
-    }
-
+    
+    str_to_uint8_array(app_esn_hex_string, app_esn_hex, sizeof app_esn_hex);
     config_esn->data = app_esn_hex;
     ASSERT(config_esn->bytes_required == sizeof app_esn_hex);
 
@@ -502,31 +478,10 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    static char const app_meid_hex_string[] = "00000000000000";
+    char const app_meid_hex_string[] = "00000000000000";
     static uint8_t app_meid_hex[APP_MEID_HEX_LENGTH] = {0};
-    int i = sizeof app_meid_hex_string -1;
-    int index = sizeof app_meid_hex -1;
 
-    while (i > 0)
-    {
-        int n = 0;
-
-        app_meid_hex[index] = 0;
-
-        /* loop 2 times here for 2 digits (1 bytes) */
-        while (n < 2 && i > 0)
-        {
-            i--;
-            if (app_meid_hex_string[i] != '-')
-            {
-                uint8_t value;
-                get_hex_digit(app_meid_hex_string[i], &value);
-                app_meid_hex[index] += (value << ((uint8_t)n * 4));
-                n++;
-            }
-        }
-        index--;
-    }
+    str_to_uint8_array(app_meid_hex_string, app_meid_hex, sizeof app_meid_hex);
 
     config_meid->data = app_meid_hex;
     ASSERT(config_meid->bytes_required == sizeof app_meid_hex);
