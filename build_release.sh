@@ -10,6 +10,8 @@ RELEASE_NOTES=93000761
 HTML_ZIP=40002854
 TARBALL_NUMBER=40002853
 TARBALL_NAME=${TARBALL_NUMBER}_${REVISION}
+ZIP_NUMBER=4000xxxx
+ZIP_NAME=${ZIP_NUMBER}_${REVISION}
 NOTES_NAME=${RELEASE_NOTES}_${REVISION}
 HTML_NAME=${HTML_ZIP}_${REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
@@ -38,6 +40,7 @@ function cleanup ()
     cp -v "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" "${ARCHIVE}/"
     cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${ARCHIVE}/"
     cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${ZIP_NAME}.zip" "${ARCHIVE}/"
 
 
     echo ">> Cleaning Up ${OUTPUT_DIR} and ${BASE_DIR}"
@@ -141,9 +144,14 @@ cd "${WORKSPACE}"
 echo ">> Removing base dir ${BASE_DIR}."
 rm -rf "${BASE_DIR}"
 
-# Uncompress the tarball we just created and run our tests
+# Uncompress the tarball we just created.
 echo ">> Uncompressing ${OUTPUT_DIR}/${TARBALL_NAME}.tgz."
 tar -xf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz"
+
+# Change all LF to CR+LF
+echo ">> Changing all LF to CR+LF and creating ${OUTPUT_DIR}/${ZIP_NAME}.zip."
+find "${BASE_DIR}" -type f -name *.[ch] -exec sed -i ':a;N;$!ba;s/\n/\r\n/g' '{}' \;
+zip "${OUTPUT_DIR}/${ZIP_NAME}.zip" -r "${PRODUCT_NAME}"/
 
 cd "${BASE_DIR}"
 python ../dvt/scripts/replace_str.py public/run/platforms/linux/config.c '#error' '//#error'
@@ -173,6 +181,7 @@ if [[ "${PENDING}" == "true" ]]; then
     # If successfull push the tarball to pending, if PENDING environment variable is set to 1.
     echo ">> Copying the Tarball to Pending."
     cp -v "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" /eng/store/pending/40000000
+    cp -v "${OUTPUT_DIR}/${ZIP_NAME}.zip" /eng/store/pending/40000000
     cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" /eng/store/pending/93000000
     cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" /eng/store/pending/40000000
 fi
