@@ -450,7 +450,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
     {
         size_t const filled_bytes = data_ptr - send_ptr->data;
-        size_t const bytes_available = sm_ptr->transport.mtu - filled_bytes;
+        size_t const bytes_available = sm_ptr->transport.ms_mtu - (data_ptr - sm_header);
         size_t payload_bytes;
 
         if (SmIsError(session->flags))
