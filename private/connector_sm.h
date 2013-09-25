@@ -96,7 +96,10 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             {
                 size_t const preamble_bytes = ((sm_ptr->transport.id != NULL) && (sm_ptr->transport.id_length > 0)) ? sm_ptr->transport.id_length + 1 : 0;
 
-                sm_ptr->transport.ms_mtu = sm_ptr->transport.mtu - preamble_bytes;
+                /* Preamble is NOT encoded85, so for a service-id like 'IDGP ' there is room for 160-5=155 not encoded85 caracters.
+                   After encoding, that will lead to a max payload of 155*4/5=124 bytes.				   
+                 */
+                sm_ptr->transport.ms_mtu = (((sm_ptr->transport.mtu - preamble_bytes)*4) / 5);
             }
             break;
         }
