@@ -37,7 +37,7 @@ static connector_callback_status_t app_get_mac_addr(uint8_t ** const addr, size_
             connector_callback_continue : connector_callback_abort;
 }
 
-static connector_callback_status_t app_get_device_id(uint8_t const ** id, size_t * const size)
+static connector_callback_status_t app_load_device_id(uint8_t const ** id, size_t * const size)
 {
     #define DEVICE_ID_LENGTH    16
 
@@ -687,7 +687,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     switch (request)
     {
     case connector_config_device_id:
-        status = app_get_device_id(response_data, response_length);
+        status = app_load_device_id(response_data, response_length);
         break;
 
     case connector_config_mac_addr:

@@ -363,8 +363,8 @@
  * your platform, please review each routine:
  *  @li app_get_ip_address()
  *  @li app_get_mac_addr()
- *  @li app_get_device_id()
- *  @li app_set_device_id()
+ *  @li app_load_device_id()
+ *  @li app_save_device_id()
  *  @li app_get_vendor_id()
  *  @li app_get_device_type()
  *  @li app_get_device_cloud_url()

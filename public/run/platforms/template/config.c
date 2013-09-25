@@ -77,7 +77,7 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
 /**
- * @brief   Get the Cloud Connector's device ID
+ * @brief   Load the Cloud Connector's device ID
  *
  * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
  * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
@@ -86,7 +86,7 @@ static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
  * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
  * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a 
- * Device ID and then call function @ref app_set_device_id so the user saves to a non-volatile
+ * Device ID and then call function @ref app_save_device_id so the user saves to a non-volatile
  * storage that provisioned Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
  * in this function.
  * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
@@ -100,7 +100,7 @@ static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  *
  * @see @ref device_id API Configuration Callback
  */
-static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
+static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
 {   
     config_device_id->data = provisioned_device_id;
 
@@ -108,12 +108,12 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 }
 
 /**
- * @brief   Set the Cloud Connector's Device ID
+ * @brief   Save the Cloud Connector's Device ID
  *
- * This routine is called when a zero'ed Device ID is provided in @ref app_get_device_id and 
+ * This routine is called when a zero'ed Device ID is provided in @ref app_load_device_id and 
  * @ref device_id_method is set to @ref connector_device_id_method_manual.
  * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
- * access by @ref app_get_device_id function.
+ * access by @ref app_load_device_id function.
  * @note Provision a Device ID can only be done by TCP transport.
  * @param [in] config_device_id  pointer to memory containing the device ID to be stored in non-volatile storage.
  *
@@ -122,7 +122,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
  *
  * @see @ref device_id API Configuration Callback
  */
-static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
+static connector_callback_status_t app_save_device_id(connector_config_pointer_data_t * const config_device_id)
 {
     memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
 
@@ -657,9 +657,10 @@ static void get_hex_digit(char str, uint8_t * const value)
  * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
  * @ref connector_wan_type_imei.
  *
- * @param [out] config_imei  Pointer to memory which contains 14 IMEI decimal digits plus one check digit.
- *                           Each nibble corresponds a decimal digit and most upper nibble must be 0.
- *
+ * @param [out] config_imei  Pointer to connector_config_pointer_data_t where callback returns pointer to an 8 bytes array with the 14 digit IMEI plus one check 
+ *                           digit encoded in one digit per nibble with most upper nibble being 0.
+ *                           For example, "350077-52-323751-3" ESN must be returned as a pointer to a uint8_t array filled with {0x03, 0x50, 0x07, 0x75, 0x23, 0x23, 0x75, 0x13}.
+ * 
  * @retval connector_callback_continue  The IMEI number was successfully returned.
  * @retval connector_callback_abort     Could not get the IMEI number and abort Cloud Connector.
  *
@@ -816,14 +817,13 @@ static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t 
 /**
  * @brief   Get ESN number
  *
- * This routine returns ESN number. This routine is called when @ref device_id_method callback returns
+ * This routine returns the device's ESN (Electronic Serial Number). This routine is called when @ref device_id_method callback returns
  * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
  * @ref connector_wan_type_esn.
  *
- *
- * @param [out] config_esn  Pointer to connector_config_pointer_data_t where callback returns pointer to 8 ESN hexadecimal of ESN number.
- *                           Each nibble corresponds a hexadecimal.
- *
+ * @param [out] config_esn  Pointer to connector_config_pointer_data_t where callback returns pointer to a 4 bytes array with the 8 digit ESN encoded in one digit per nibble.
+ *                          For example, "12345678" ESN must be returned as a pointer to a uint8_t array filled with {0x12, 0x34, 0x56, 0x78}.
+
  * @retval connector_callback_continue  The ESN number was successfully returned.
  * @retval connector_callback_abort     Could not get the ESN number and abort Cloud Connector.
  *
@@ -876,14 +876,13 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
 /**
  * @brief   Get MEID number
  *
- * This routine returns MEID number. This routine is called when @ref device_id_method callback returns
+ * This routine returns MEID (Mobile Equipment Identifier) number. This routine is called when @ref device_id_method callback returns
  * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
  * @ref connector_wan_type_meid.
  *
  *
- * @param [out] config_meid  Pointer to connector_config_pointer_data_t where callback returns pointer which
- *                           contains 14 MEID hexadecimal. check digit is not included.
- *                           Each nibble corresponds a hexadecimal or decimal digit.
+ * @param [out] config_meid  Pointer to connector_config_pointer_data_t where callback returns pointer to a 7 bytes array with the 14 digit MEID encoded in one digit per nibble.
+ *                           For example, "12345678901234" MEID must be returned as a pointer to a uint8_t array filled with {0x12, 0x34, 0x56, 0x78, 0x90, 0x12, 0x34}.
  *
  * @retval connector_callback_continue  The MEID number was successfully returned.
  * @retval connector_callback_abort     Could not get the MEID number and abort Cloud Connector.
@@ -1428,11 +1427,11 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     switch (request_id)
     {
     case connector_request_id_config_device_id:
-        status = app_get_device_id(data);
+        status = app_load_device_id(data);
         break;
 
     case connector_request_id_config_set_device_id:
-        status = app_set_device_id(data);
+        status = app_save_device_id(data);
         break;
 
     case connector_request_id_config_mac_addr:

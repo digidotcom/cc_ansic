@@ -119,14 +119,14 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 #define DEVICE_ID_LENGTH    16
 static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
-static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
+static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
 {
     config_device_id->data = provisioned_device_id;
 
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_set_device_id(connector_config_pointer_data_t * const config_device_id)
+static connector_callback_status_t app_save_device_id(connector_config_pointer_data_t * const config_device_id)
 {
     memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
 
@@ -885,11 +885,11 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     switch (request_id)
     {
     case connector_request_id_config_device_id:
-        status = app_get_device_id(data);
+        status = app_load_device_id(data);
         break;
 
     case connector_request_id_config_set_device_id:
-        status = app_set_device_id(data);
+        status = app_save_device_id(data);
         break;
 
     case connector_request_id_config_mac_addr:

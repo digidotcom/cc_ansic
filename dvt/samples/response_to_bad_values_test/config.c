@@ -126,7 +126,7 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 
 static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
 
-static connector_callback_status_t app_get_device_id(connector_config_pointer_data_t * const config_device_id)
+static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
 {
 
     device_id[8] = device_mac_addr[0];
@@ -859,7 +859,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     switch (request_id)
     {
     case connector_request_id_config_device_id:
-        status = app_get_device_id(data);
+        status = app_load_device_id(data);
         break;
 
     case connector_request_id_config_mac_addr:
@@ -989,7 +989,7 @@ void write_python_result_file(char *file_buffer)
     FILE * fp = NULL;
     connector_config_pointer_data_t id;
 
-    app_get_device_id(&id);
+    app_load_device_id(&id);
 
     snprintf(filename, sizeof(filename), "%02X%02X%02X%02X-%02X%02X%02X%02X-%02X%02X%02X%02X-%02X%02X%02X%02X.txt",
             id.data[0], id.data[1], id.data[2], id.data[3], id.data[4], id.data[5], id.data[6], id.data[7],
