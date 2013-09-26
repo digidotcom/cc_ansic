@@ -25,15 +25,55 @@
 
 #include "connector_api.h"
 #include "platform.h"
-#include "network_dns.h"
 
 #if defined CONNECTOR_TRANSPORT_SMS
 
-#define GW_PORT		9999
-#define GW_IP		"10.101.1.121"
+#define GW_PORT		9999		/* Port number is hardcoded in sms_proxy.py running in ConnectPort X4 Gateway */
+#define GW_ADDR		"10.101.1.121"
 
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
+
+static int app_dns_resolve_name(char const * const domain_name, in_addr_t * const ip_addr)
+{
+    int ret = -1;
+    struct addrinfo *res_list;
+    struct addrinfo *res;
+
+   {
+        struct addrinfo hint = {0};
+        int error;
+
+        hint.ai_socktype = SOCK_STREAM;
+        hint.ai_family   = AF_INET;
+        error = getaddrinfo(domain_name, NULL, &hint, &res_list);
+        if (error != 0)
+        {
+            APP_DEBUG("dns_resolve_name: DNS resolution failed for [%s]\n", domain_name);
+            goto done;
+        }
+    }
+
+    /* loop over all returned results and look for a IPv4 address */
+    for (res = res_list; res; res = res->ai_next)
+    {
+        if (res->ai_family == PF_INET)
+        {
+            struct sockaddr_in * const sa = cast_for_alignment(struct sockaddr_in *, res->ai_addr);
+            struct in_addr const ipv4_addr = sa->sin_addr;
+
+            *ip_addr = ipv4_addr.s_addr;
+            APP_DEBUG("dns_resolve_name: ip address = [%s]\n", inet_ntoa(ipv4_addr));
+            ret = 0;
+            break;
+        }
+    }
+
+    freeaddrinfo(res_list);
+
+done:
+    return ret;
+}
 
 static int app_sms_create_socket(void)
 {
@@ -263,10 +303,10 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     {
         in_addr_t ip_addr;
 
-        status = app_dns_resolve(connector_class_id_network_sms, GW_IP, &ip_addr);
+        status = app_dns_resolve_name(GW_ADDR, &ip_addr);
         if (status != connector_callback_continue)
         {
-            APP_DEBUG("app_network_sms_open: Can't resolve DNS for %s\n", GW_IP);
+            APP_DEBUG("app_network_sms_open: Can't resolve DNS for %s\n", GW_ADDR);
             goto done;
         }
 
@@ -294,7 +334,7 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     status = app_is_sms_connect_complete(fd);
     if (status == connector_callback_continue)
     {
-         APP_DEBUG("app_network_sms_open: connected to %s\n", GW_IP);
+         APP_DEBUG("app_network_sms_open: connected to %s\n", GW_ADDR);
 
          status = config_server_phone_number(fd, data->device_cloud_url);
 
@@ -318,8 +358,7 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
 error:
     if (status == connector_callback_error)
     {
-        APP_DEBUG("app_network_sms_open: failed to connect to %s\n", GW_IP);
-        app_dns_set_redirected(connector_class_id_network_sms, 0);
+        APP_DEBUG("app_network_sms_open: failed to connect to %s\n", GW_ADDR);
 
         if (fd >= 0)
         {
@@ -386,7 +425,6 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
         {
             status = connector_callback_error;
             APP_DEBUG("app_network_tcp_send: send() failed, errno %d\n", err);
-            app_dns_cache_invalidate(connector_class_id_network_tcp);
         }
     }
 
@@ -450,7 +488,6 @@ static connector_callback_status_t app_network_sms_receive(connector_network_rec
         {
             APP_DEBUG("network_receive: recv() failed, errno %d\n", err);
             /* if not timeout (no data) return an error */
-            app_dns_cache_invalidate(connector_class_id_network_tcp);
             status = connector_callback_error;
         }
     }
@@ -483,8 +520,6 @@ static connector_callback_status_t app_network_sms_close(connector_network_close
 {
     connector_callback_status_t status = connector_callback_continue;
     int * const fd = data->handle;
-
-    app_dns_set_redirected(connector_class_id_network_sms, data->status == connector_close_status_cloud_redirected);
 
     data->reconnect = app_connector_reconnect(connector_class_id_network_sms, data->status);
 
