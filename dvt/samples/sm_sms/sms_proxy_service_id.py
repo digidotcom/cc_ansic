@@ -61,6 +61,8 @@ at: %s
     else:
         #Adding '(service-id):'
         client.send(''.join(['(', service_id, '):', a.message])) 
+    # Introduce a delay to avoid two messages are sent together. TODO: flush?
+    time.sleep(1)
 
 print ("mute: %d" % (mute))
 
@@ -109,7 +111,7 @@ while exit1 == 0:
                     print ("Service-id FAIL: %s vs %s" % (service_id, data[:len(service_id)]))
             if send_message != '':
                 if mute == 0:
-                    print ("Sending SMS to %s: %s" % (phone_number, send_message))
+                    print ("Sending SMS to %s:\n%s" % (phone_number, send_message))
                     digisms.send(phone_number, send_message)
                 else:
                     print ("SKIP Sending SMS to %s: %s" % (phone_number, send_message))

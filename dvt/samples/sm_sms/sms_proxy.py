@@ -60,9 +60,8 @@ at: %s
 
     if client != None: 
         client.send(a.message) 
-        # Let time to the connector to digest the message in order to avoid two messages 
-        # are received together. TODO: flush?
-        time.sleep(5)
+        # Introduce a delay to avoid two messages are sent together. TODO: flush?
+        time.sleep(1)
     else:
         print ("Not connected to any client")
  
@@ -114,7 +113,7 @@ def ListenForConnections():
                 print ("phone_number not set!!!!!!!. Use 'phone-number' command")
             elif data:
                 if mute == 0:
-                    print ("Sending SMS to %s: %s" % (phone_number, data))
+                    print ("Sending SMS to %s:\n%s" % (phone_number, data))
                     digisms.send(phone_number, data)
                 else:
                     print ("SKIP Sending SMS to %s: %s" % (phone_number, data))

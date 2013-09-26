@@ -38,6 +38,7 @@ static struct sockaddr_in interface_addr;
 static int app_sms_create_socket(void)
 {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
+    int buffer_size;
 
     if (fd >= 0)
     {
@@ -51,6 +52,19 @@ static int app_sms_create_socket(void)
         if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &enabled, sizeof(enabled)) < 0)
         {
             APP_DEBUG("open_socket: setsockopt TCP_NODELAY failed, errno %d\n", errno);
+        }
+
+        /* Adjust Send and Receive buffer size to SMS message max characters */
+        buffer_size = 160;
+        if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &buffer_size, sizeof(buffer_size)) < 0)
+        {
+            APP_DEBUG("open_socket: setsockopt SO_SNDBUF failed, errno %d\n", errno);
+        }
+
+        buffer_size = 160;
+        if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &buffer_size, sizeof(buffer_size)) < 0)
+        {
+            APP_DEBUG("open_socket: setsockopt SO_SNDBUF failed, errno %d\n", errno);
         }
 
         if (ioctl(fd, FIONBIO, &enabled) < 0)
