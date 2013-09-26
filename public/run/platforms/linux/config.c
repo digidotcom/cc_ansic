@@ -416,7 +416,7 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    char const app_imei_number_string[] = "0000000-00-000000-0";
+    char const app_imei_number_string[] = "000000-00-000000-0";
     static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
     
     str_to_uint8_array(app_imei_number_string, app_imei_number, sizeof app_imei_number);
