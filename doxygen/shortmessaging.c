@@ -16,7 +16,7 @@
  * SM communicates over UDP or SMS and therefore does not incur the TCP connection overhead. 
  * Unfortunately, UDP and SMS include limitations such as unreliable delivery and the potential for 
  * duplicate packets. Applications that include SM will require consideration and handling
- * of these UDP and SMS limitations - a price you may choose to pay to reduce data usage on costly
+ * of these transports' limitations - a price you may choose to pay to reduce data usage on costly
  * networks such as cellular or satellite.
  *
  * @section smsectionwhoneedsit Should I use Short Messaging?
@@ -32,13 +32,13 @@
  *
  * @subsection smsolutions How does Short Messaging solve my problem?
  *
- * A device need not always have a TCP connection.  Further, some devices can eliminate
- * this connection altogether.  For example, a cellular based device might send GPS data to
+ * A device does not need to always have a TCP connection. Further, some devices can eliminate
+ * this connection altogether.  For example, a cellular-based device might send GPS data to
  * Device Cloud every few hours and then check for remote instructions.  Based on the instruction,
  * the application could then start a TCP connection and perform a standard Cloud Connector
  * operation.
  *
- * Alternatively, a battery based device might power up, read a sensor,
+ * Alternatively, a battery-based device might power up, read a sensor,
  * send the data to Device Cloud, check for pending @ref pending_data "Web Service" instructions,
  * and then shut down if no instructions are queued.
  *
@@ -56,10 +56,10 @@
  * Depending on what you optimize, a device will need to consider
  * the unreliability of UDP and SMS.
  *
- * Suppose your application collects data periodically and sends it to Device Cloud once
- * per hour.  What if the data is lost?  Can your system tolerate this?  If not, you'll
+ * Suppose that your application collects data periodically and sends it to Device Cloud once
+ * per hour.  What if the data is lost?  Can your system tolerate this?  If not, you will
  * need your application to check for acknowledgments.  After some period of time
- * you'll have to timeout and re-send the data.  This adds complexity to your Cloud
+ * you will have to timeout and re-send the data.  This adds complexity to your Cloud
  * Connector application.
  *
  * Now consider your @ref web_services Application that pulls this data from Device Cloud.
@@ -73,73 +73,74 @@
  *
  * Cloud Connector has the flexibility to support either case.
  *
- * <b>Punching through Ethernet Firewalls for SM UDP transport</b>
+ * <b>Punching through Ethernet Firewalls for SM over UDP transport</b>
  *
  * Considering most devices are deployed behind an Ethernet Firewall, Device Cloud is incapable of
- * initiating an SM UDP message exchange.  All @ref web_services "web service" SM UDP requests are queued
+ * initiating an SM over UDP message exchange.  All @ref web_services "web service" SM over UDP requests are queued
  * on Device Cloud, waiting for a Cloud Connector message.
  *
- * Cloud Connector @b must @b always @b initiate SM UDP exchanges.  A key component of
+ * Cloud Connector @b must @b always @b initiate SM over UDP exchanges.  A key component of
  * your implementation must include a strategy to open the firewall and
- * drain the SM UDP requests.
+ * drain the SM over UDP requests.
  *
  * If Cloud Connector has no pending message to send, the application can @ref initiate_ping_to_cloud.
  *
- * @section smsectioninitialconfig Short Messaging required initial configuration on the cloud
+ * @section smsectioninitialconfig Short Messaging required initial configuration on the Device Cloud
  *
  * In order to use SM protocol, some initial configuration steps are required on the server in addition to the
  * ones required for TCP transport like @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud". 
  *
  * If initial configuration steps are not done, none of the features described in following chapters will work:
  *      -# Initial configuration on the cloud for UDP transport: \n 
- *         It's required enabling the transport using @ref sm_upd_enable_dm "Device Manager" or through 
- *         @ref sm_upd_enable_ws "web Services". \n
- *         UDP tranport allows an option for "Battery-backed" applications that (if desired) has to be enabled on the
- *         server using @ref sm_udp_enable_battery_dm "Device Manager" or through @ref sm_udp_enable_battery_ws "web Services".
+ *         It's required to enable this transport using @ref sm_upd_enable_dm "Device Manager" or through 
+ *         @ref sm_upd_enable_ws "Web Services". \n
+ *         UDP tranport allows an option for "Battery-backed" applications that, if desired, has to be enabled on the
+ *         server using @ref sm_udp_enable_battery_dm "Device Manager" or through @ref sm_udp_enable_battery_ws "Web Services".
  *      -# Initial configuration on the cloud for SMS transport: \n 
- *         It's required enabling the transport by providing your device's phone number... so the cloud knows to 
- *         which phone number send outgoing SMSs and can also match incoming SMS messages to a registered device-id.\n
+ *         It's required to enable this transport by providing your device's phone number. This way Device Cloud 
+ *         can match incoming SMS messages to a registered Device ID.\n
  *         This configuration can be done using @ref sm_sms_enable_dm "Device Manager" or through 
  *         @ref sm_sms_enable_ws "web Services".
  *
- * @subsection sm_upd_enable_dm Enable UDP transport using Device Manager:
+ * @subsection sm_upd_enable_dm Enable UDP transport using Device Manager
  *
- * Log on to Device Cloud at http://login.etherios.com/ and click on your device
- * (described in the @ref connector_login "Getting Started Section").
- * Once you are logged to see your device, click the Refresh button.
- * It's not required that the device's status indicate 'Connected' (as that just represent the TCP transport status). 
+ * Log into your Device Cloud account and click on your device (described in the @ref connector_login "Getting Started Section").
+ * It's not required that the device's status indicate 'Connected' (that only represents the TCP transport status). 
  * Select the device to configure.
  *
  * @image html cloud_device_connected.png
  *
- * Then click the More button and under SM/UDP select Configure.
+ * Then click the @b More button and under @b SM/UDP select @b Configure.
  *
  * @image html cloud_sm_udp_configure.png
  *
- * Then click on the 'SM/UDP Service Enabled' checkbox.
+ * Then click on the @b SM/UDP @b Service @b Enabled checkbox.
  *
  * @image html cloud_sm_udp_configure_enable.png
  *
  * To learn more about Device Cloud UDP configuration using Device Manager, see SM/UDP Chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device Cloud User's Guide</a>@endhtmlonly.
  *
- * @subsection sm_upd_enable_ws Enable UDP transport using web Services:
+ * @subsection sm_upd_enable_ws Enable UDP transport using Web Services
  *
- * A web service script written in python is provided to Enable (or Disable) UDP transport for a device using
+ * A python script is provided to Enable or Disable UDP transport for a device using
  * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  *
- * Execute EnableUDP.py python script by:
+ * Execute EnableUDP.py python script as follows:
  * @code
- * python EnableUDP.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP(true or false)>
+ * python EnableUDP.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP>
  * @endcode
- *
+ * For example:
+ * @code
+ * python EnableUDP.py etherios etheriosSuperSecretPassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA true
+ * @endcode
  *
  * To learn more about Device Cloud UDP configuration using web Services, see SM/UDP Chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008/index.html">Device Cloud Programming Guide</a>@endhtmlonly.
  *
- * @subsection sm_udp_enable_battery_dm Enable "Battery-backed" SM applications for UDP transport using Device Manager:
+ * @subsection sm_udp_enable_battery_dm Enable "Battery-backed" SM applications for UDP transport using Device Manager
  *
- * Follow the same steps described for @ref sm_upd_enable_dm "Enable UDP transport using Device Manager" and click on
+ * Follow the same steps described in @ref sm_upd_enable_dm and click on
  * the 'Battery Operated Mode' checkbox additionally.
  *
  * @image html cloud_sm_udp_configure_enable_battery.png
@@ -148,7 +149,7 @@
  * SM/UDP Chapter in the@htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device 
  * Cloud User's Guide</a>@endhtmlonly.
  *
- * @subsection sm_udp_enable_battery_ws Enable "Battery-backed" SM applications for UDP transport using web Services:
+ * @subsection sm_udp_enable_battery_ws Enable "Battery-backed" SM applications for UDP transport using web Services
  *
  * A web service script written in python is provided to Enable (or Disable) "Battery Operated Mode" option for UDP 
  * transport for a device using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
@@ -158,12 +159,10 @@
  * python EnableUDP_Battery.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP_Battery(true or false)>
  * @endcode
  *
- * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Manager:
+ * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Manager
  *
- * Log on to Device Cloud at http://login.etherios.com/ and click on your device
- * (described in the @ref connector_login "Getting Started Section").
- * Once you are logged to see your device, click the Refresh button.
- * It's not required that the device's status indicate 'Connected' (as that just represent the TCP transport status). 
+ * Log into your Device Cloud account and click on your device (described in the @ref connector_login "Getting Started Section").
+ * It's not required that the device's status indicate 'Connected' (that only represents the TCP transport status). 
  * Select the device to configure.
  *
  * @image html cloud_device_connected.png
@@ -181,7 +180,7 @@
  * To learn more about Device Cloud SMS configuration using Device Manager, see SMS Chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device Cloud User's Guide</a>@endhtmlonly.
  *
- * @subsection sm_sms_enable_ws Enable/Configure SMS transport using web Services:
+ * @subsection sm_sms_enable_ws Enable/Configure SMS transport using Web Services
  *
  * A web service script written in python is provided to Configure (and hence enable SMS transport) your device's phone number using
  * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
@@ -198,20 +197,20 @@
  *
  * @section smsectionexamples Short Messaging Features
  *
- * The SM protocol includes four major functions:
+ * The SM protocol includes four major features:
  *      -# @ref initiate_ping_to_cloud "Initiate Ping" to Device Cloud. Especially useful for UDP transport 
  *                                     to open the Firewall between Cloud Connector and Device Cloud
  *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud
  *      -# @ref cli_support "Command Line Interface" support for Device Manager
  *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
  *
- * An additional major function is available for @ref sm_udp_enable_battery_dm "Battery-backed" SM applications over UDP:
+ * An additional major feature is available for @ref sm_udp_enable_battery_dm "Battery-backed" SM applications over UDP:
  *      -# @ref pending_data "Message pending" to notify applications more messages are queued.
  *
  * An additional major function is available to do @ref CONNECTOR_SM_PROVISION "SMS Provisioning" for SM over SMS:
  *      -# @ref config_request_from_cloud "SMS Provisioning" to notify applications that an SMS provisioning message
- *                                                           has been received from the cloud to configure on the device
- *                                                           the cloud phone number where to send SMS messages.
+ *                                                           has been received from Device Cloud. This way the device
+ *                                                           configures the phone number where to send SMS messages.
  *
  * Several @ref additional_apis "SM convenience APIs" are also described below.
  *

@@ -105,7 +105,7 @@
  * on Device Cloud.  Once Device Cloud is ready to receive data
  * from the device the application callback is called requesting data.
  *
- * @note: The header, file_path and file_type above are not stack variables. Either you can use a heap or a memory (global or static)
+ * @note The header, file_path and file_type above are not stack variables. Either you can use a heap or a memory (global or static)
  * variable to hold these values. You can release them when you get a @ref connector_request_id_data_service_send_response "response"
  * or @ref connector_request_id_data_service_send_status "status" callback. The value passed as the user_context will be returned
  * in every callback for this session. User is free to update this at any point during the session.
@@ -613,7 +613,7 @@
  *
  * This callback is called when Cloud Connector is done with the device request,
  * encounters error or receives error from Device Cloud. Application should
- * free any memory associated with the request in ths callback.
+ * free any memory associated with the request in this callback.
  *
  * @htmlonly
  * <table class="apitable">

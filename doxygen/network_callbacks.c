@@ -24,15 +24,15 @@
  * delivery.
  *
  * The @ref connector_class_id_network_sms transport does not establish a connection. It's very likely that 
- * the user configures during this callback the Device Cloud Phone Number where to send SMSs available through 
- * the data->device_cloud_url parameter. Final implementation as to be done by the user as the way to 
+ * during this callback the user configures the Device Cloud Phone Number where to send SMSs available through 
+ * the data->device_cloud_url parameter. Final implementation has to be done by the user as the way to 
  * communicate with the hardware in charge of sending and receiving SMSs is not standard at all. As a 
- * reference, for the linux platform sample, network_sms.c file implements support for "Gammu", a cellular 
+ * reference, for the linux platform sample, network_sms.c file implements support for @htmlonly <a href="http://wammu.eu/gammu/">Gammu</a>@endhtmlonly, a cellular 
  * manager for mobile phones/modems.
  * @note This callback is called also after an SMS provisioning message arrives from the server to let the user
  * reconfigure the Device Cloud Phone Number if necessary.
  *
- * The callback is responsible to setup any socket options for TCP and UDP transports.
+ * The callback is responsible of setting up any socket options for TCP and UDP transports.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function:
@@ -68,7 +68,7 @@
  *         </ul>
  *       </li>
  *       <br />
- *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly - Does not use any define.</li>
+ *       <li>@endhtmlonly @ref connector_class_id_network_sms @htmlonly - Does not use any defined macro.</li>
  *    </ul>
  * </td>
  * </tr>
