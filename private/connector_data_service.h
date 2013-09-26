@@ -412,17 +412,16 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     connector_data_service_status_t device_request;
 
 
-    /* Done with the request dp_request == true (response has been returned).
-     * So do not call the callback.
-     */
-    if (data_service->dp_request) goto done;
-
     device_request.transport = connector_transport_tcp;
     device_request.user_context = data_service->callback_context;
     data_service->request_type = connector_request_id_data_service_receive_status;
 
     switch (service_request->error_value)
     {
+        case connector_session_error_none:
+            device_request.status = connector_data_service_status_complete;
+            break;
+
         case connector_session_error_cancel:
             device_request.status = connector_data_service_status_cancel;
             break;
@@ -441,7 +440,6 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
 
     data_service->callback_context = device_request.user_context;
 
-done:
     return result;
 }
 
@@ -743,6 +741,10 @@ static connector_status_t process_send_error(connector_data_t * const connector_
 
     switch (service_request->error_value)
     {
+        case connector_session_error_none:
+            user_data.status = connector_data_service_status_complete;
+            break;
+
         case connector_session_error_cancel:
             user_data.status = connector_data_service_status_cancel;
             break;

@@ -360,7 +360,7 @@ static connector_status_t msg_call_service_layer(connector_data_t * const connec
     service_ptr->session = session;
 
     status = cb_fn(connector_ptr, service_ptr);
-    if ((status == connector_working) && (service_ptr->service_type == msg_service_type_error))
+    if ((status == connector_working) && (service_ptr->service_type == msg_service_type_error) && (session->service_layer_data.error_value != connector_session_error_none))
     {
         msg_set_error(session, service_ptr->error_value);
         status = connector_unavailable;
@@ -827,14 +827,21 @@ static connector_status_t msg_send_complete(connector_data_t * const connector_p
             /* update session state */
             if (MsgIsLastData(dblock->status_flag))
             {
+                return_status = msg_inform_error(connector_ptr, session, connector_session_error_none);
+                if (return_status != connector_working)
+                    goto done;
+
                 if (MsgIsRequest(dblock->status_flag))
+                {
                     session->current_state = msg_state_receive;
+                }
                 else
                 {
                     connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
 
                     return_status = msg_delete_session(connector_ptr, msg_ptr, session);
                 }
+
                 goto done;
             }
 
