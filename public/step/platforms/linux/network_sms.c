@@ -156,7 +156,8 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     GSM_SetSendSMSStatusCallback(state_machine, send_sms_callback, NULL);
 
     g_sms_handle.state_machine = state_machine;
-    memcpy(g_sms_handle.server_telephone, data->device_cloud_url, strlen(data->device_cloud_url) + 1);
+    strcpy(g_sms_handle.server_telephone, "+");
+    strcat(g_sms_handle.server_telephone, data->device_cloud_url);
 
     data->handle = &g_sms_handle;
 
