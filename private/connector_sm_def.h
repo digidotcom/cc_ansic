@@ -203,7 +203,7 @@ typedef struct connector_sm_data_t
     struct
     {
         size_t mtu;
-        size_t ms_mtu;
+        size_t sm_mtu;
         uint8_t * id;
         size_t id_length;
         connector_sm_id_type_t id_type;

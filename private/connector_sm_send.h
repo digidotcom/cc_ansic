@@ -71,7 +71,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
     result = sm_map_callback_status_to_connector_status(status);
     if (status == connector_callback_continue)
     {
-        ASSERT_GOTO(session->in.bytes < (sm_ptr->transport.ms_mtu * UCHAR_MAX), error);
+        ASSERT_GOTO(session->in.bytes < (sm_ptr->transport.sm_mtu * UCHAR_MAX), error);
         session->sm_state = connector_sm_state_prepare_payload;
     }
 
@@ -239,7 +239,7 @@ error:
 static connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
-    size_t const max_payload = sm_ptr->transport.ms_mtu - record_end(segment);
+    size_t const max_payload = sm_ptr->transport.sm_mtu - record_end(segment);
 
     session->segments.processed = 0;
     session->segments.size_array = NULL;
@@ -449,7 +449,7 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
     {
         size_t const filled_bytes = data_ptr - send_ptr->data;
-        size_t const bytes_available = sm_ptr->transport.ms_mtu - (data_ptr - sm_header);
+        size_t const bytes_available = sm_ptr->transport.sm_mtu - (data_ptr - sm_header);
         size_t payload_bytes;
 
         if (SmIsError(session->flags))

@@ -61,7 +61,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             sm_ptr->network.class_id = connector_class_id_network_udp;
             sm_ptr->network.transport = connector_transport_udp;
             sm_ptr->transport.mtu = SM_PACKET_SIZE_UDP;
-            sm_ptr->transport.ms_mtu = sm_ptr->transport.mtu - (sm_ptr->transport.id_length + sm_udp_version_length);
+            sm_ptr->transport.sm_mtu = sm_ptr->transport.mtu - (sm_ptr->transport.id_length + sm_udp_version_length);
             break;
         }
         #endif
@@ -99,7 +99,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                 /* Preamble is NOT encoded85, so for a service-id like 'IDGP ' there is room for 160-5=155 not encoded85 caracters.
                    After encoding, that will lead to a max payload of 155*4/5=124 bytes.				   
                  */
-                sm_ptr->transport.ms_mtu = (((sm_ptr->transport.mtu - preamble_bytes)*4) / 5);
+                sm_ptr->transport.sm_mtu = (((sm_ptr->transport.mtu - preamble_bytes)*4) / 5);
             }
             break;
         }
