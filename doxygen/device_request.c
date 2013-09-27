@@ -9,7 +9,6 @@
  * out the data sent from Device Cloud.
  *
  * @section device_request_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @a /connector/public/run/samples/device_request
  *

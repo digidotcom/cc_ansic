@@ -13,7 +13,6 @@
  * @htmlonly <a href="http://www.digi.com/support/productdetail?pid=5575">Device Cloud User's Guide</a>@endhtmlonly.
  *
  * @section data_point_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @a /connector/public/run/samples/data_point
  *

@@ -10,7 +10,6 @@
  * API.
  *
  * @section firmware_download_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @a /connector/public/run/samples/firmware_download
  *

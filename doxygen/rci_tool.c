@@ -106,7 +106,6 @@
  * @endcode
  *
  * @section rci_tool_location Location
- *
  *      - The ConfigGenerator.jar locates in @a @b /connector/tools directory.
  *
  *

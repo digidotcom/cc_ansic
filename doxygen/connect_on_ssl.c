@@ -9,7 +9,6 @@
  * any application can run on ssl by including network_tcp_ssl.c.
  *
  * @section connect_on_ssl_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @a /connector/public/run/samples/connect_on_ssl
  *

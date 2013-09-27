@@ -9,7 +9,6 @@
  * on Device Cloud.
  *
  * @section send_data_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @a /connector/public/run/samples/send_data
  *

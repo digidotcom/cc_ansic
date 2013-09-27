@@ -9,7 +9,6 @@
  * <br /><br /> 
  *
  * @section fs_sample_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @htmlonly<I>/connector/public/run/samples/file_system</I>@endhtmlonly
  *

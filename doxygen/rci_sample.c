@@ -8,7 +8,6 @@
  * This is a simple sample which does not write on the device but demonstrates the remote configuration callback.
  *
  * @section rci_sample_location Source Code Location
- *
  *      - For the connector_run() version:
  *           - @a /connector/public/run/samples/simple_remote_config
  *
