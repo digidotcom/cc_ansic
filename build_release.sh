@@ -150,7 +150,7 @@ tar -xf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz"
 
 # Change all LF to CR+LF
 echo ">> Changing all LF to CR+LF and creating ${OUTPUT_DIR}/${ZIP_NAME}.zip."
-find "${BASE_DIR}" -type f -name *.[ch] -exec sed -i ':a;N;$!ba;s/\n/\r\n/g' '{}' \;
+find "${BASE_DIR}" -type f -exec grep -Il . {} \; -exec sed -i ':a;N;$!ba;s/\n/\r\n/g' '{}' \;
 zip "${OUTPUT_DIR}/${ZIP_NAME}.zip" -r "${PRODUCT_NAME}"/
 
 cd "${BASE_DIR}"
