@@ -31,8 +31,10 @@
  * with @ref connector_request_id_data_service_receive_target to process the target of the request, and
  * @ref connector_request_id_data_service_receive_data to process the data. This callback
  * is continually called with this @ref connector_request_id_data_service_receive_data callback until
- * the last chunk of data is processed. This sample examines the given target and prints out the device request data.
- * It sends an error message if the target name is not "myTarget".
+ * the last chunk of data is processed.\n
+ * This sample examines the given target and prints out the device request data.
+ * It sends an error message if the target name is not "myTarget". 
+ * Note that target matches the 'target_name' attribute of the device request issued on the Cloud.
  *
  * After the @ref connector_request_id_data_service_receive_data callback is called for the last chunk of data,
  * @ref connector_request_id_data_service_receive_reply_data callback is called to send response

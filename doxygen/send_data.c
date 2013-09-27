@@ -27,7 +27,8 @@
  *
  * The routine application_run() (or application_step()) which is called after initialization calls the routine
  * app_send_put_request() to initiate the data transfer to Device Cloud. This routine initiates the data transfer
- * by calling connector_initiate_action(); once Device Cloud is ready to receive data the app_data_service_handler()
+ * by calling connector_initiate_action() which provides also the Device Cloud file path where data has to be stored; 
+ * once Device Cloud is ready to receive data the app_data_service_handler()
  * routine is called. The callback then returns the string "Connector data service sample!\n" back to
  * Device Cloud. This data is @b copied @b into @b the @b callback's @b buffer, by setting more_data to
  * connector_false indicates the only message in this data transfer. If you set more_data to connector_true then
@@ -124,8 +125,8 @@
  *
  * @image html cloud_data_services_folder.png
  *
- * This sample creates a file test.txt in the test directory.  You can view the contents of the file
- * which is located in the particular device's test folder.
+ * This sample creates 'test/test.txt' file (the path specified in the connector_initiate_action()) in the Device Cloud.  
+ * You can view the contents of the file which is located in the particular device's test folder.
  *
  *
  * @section python_script1 Using a web Services client to retrieve the file from Device Cloud

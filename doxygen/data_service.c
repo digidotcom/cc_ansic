@@ -42,6 +42,7 @@
  * @note See @ref data_service_support under Configuration to enable the data service.
  * @note See @ref CONNECTOR_TRANSPORT_TCP and @ref network_tcp_start to enable and start TCP.
  * @note See @ref CONNECTOR_TRANSPORT_UDP and @ref network_udp_start to enable and start UDP.
+ * @note See @ref CONNECTOR_TRANSPORT_SMS and @ref network_sms_start to enable and start SMS.
  *
  * @subsection initiate_send_data Initiate Send Data
  *
@@ -73,7 +74,7 @@
  *        <ul>
  *        <li><b><i>transport</i></b>, a method to use to send data </li>
  *        <li><b><i>user_context</i></b>, is the user owned context pointer </li>
- *        <li><b><i>path</i></b> is Device Cloud file path containing the data (shouldn't be stack variable) </li>
+ *        <li><b><i>path</i></b> is Device Cloud file path where data will be stored (shouldn't be stack variable) </li>
  *        <li><b><i>content_type</i></b> is "text/plain", "text/xml", "application/json", etc (shouldn't be stack variable) </li>
  *        <li><b><i>option</i></b>, is to inform Device Connector on what to do with the data </li>
  *        <li><b><i>response_required</i></b>, set to connector_true if the response is needed </li>
@@ -343,10 +344,12 @@
  *      -# @ref ds_receive_status
  *
  * The sequence calling an application-defined callback for device request is:
- *      -# Cloud Connector calls application-defined callback @ref ds_receive_target to process the target of the device request
+ *      -# Cloud Connector calls application-defined callback @ref ds_receive_target to process the target of the device request. 
+ *          Target can be used freely by the user and it's normally used to multiplex the data destination/purpose.
  *      -# Cloud Connector calls application-defined callback @ref ds_receive_data to process the data of the device request
  *      -# Cloud Connector calls application-defined callback @ref ds_receive_reply_length to get the total length in bytes for the response data.
- *         This is only callback when device request is from UDP transport. See @ref CONNECTOR_TRANSPORT_UDP to enable UDP transport.
+ *         This is only callback when device request is from UDP or SMS transports. See @ref CONNECTOR_TRANSPORT_UDP to enable UDP transport and
+ *         @ref CONNECTOR_TRANSPORT_SMS to enable SMS transport.
  *      -# Cloud Connector calls application-defined callback @ref ds_receive_reply_data for response data sent back to Device Cloud.
  *
  * Cloud Connector calls step 2 repeatedly for all device request data and step 4 for all response data.
@@ -358,6 +361,7 @@
  * @note See @ref data_service_support under Configuration to enable the data service.
  * @note See @ref CONNECTOR_TRANSPORT_TCP and @ref network_tcp_start to enable and start TCP.
  * @note See @ref CONNECTOR_TRANSPORT_UDP and @ref network_udp_start to enable and start UDP.
+ * @note See @ref CONNECTOR_TRANSPORT_SMS and @ref network_sms_start to enable and start SMS.
  *
  * @subsection ds_receive_target  Device Request Target Callback
  *
@@ -385,7 +389,11 @@
  *       <dl><dt>transport</dt><dd> - Transport method from where the device request is originated.</dd>
  *           <dt>user_context</dt><dd> - Callback writes its own context which will be passed back to
  *                                       subsequent callback.</dd>
- *           <dt>target</dt><dd> - Contains pointer to requested target string.</dd>
+ *           <dt>target</dt><dd> - Contains pointer to requested target string (matching the 'target_name' attribute 
+ *                                 of the device request issued on the Cloud). Target can be used freely by the user. 
+ *                                 It's normally used to multiplex the data destination/purpose. If the Cloud request 
+ *                                 does not have contains 'target_name' attribute, this callback will be called with
+ *                                 'target' pointing to NULL.</dd>
  *           <dt>response_required</dt><dd>
  *               <ul><li>@endhtmlonly @ref connector_true @htmlonly if Device Cloud requests a response and
  *                       @endhtmlonly @ref ds_receive_reply_data @htmlonly will be called for response data.</li>
