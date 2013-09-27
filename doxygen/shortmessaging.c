@@ -126,7 +126,7 @@
  * A python script is provided to Enable or Disable UDP transport for a device using
  * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  *
- * Execute EnableUDP.py python script located in @a @b /connector/tools directory as follows:
+ * Execute EnableUDP.py python script located in @a @b /connector/tools/python directory as follows:
  * @code
  * python EnableUDP.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP>
  * @endcode
@@ -154,7 +154,7 @@
  * A web service script written in python is provided to Enable (or Disable) "Battery Operated Mode" option for UDP 
  * transport for a device using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  *
- * Execute EnableUDP_Battery.py python script located in @a @b /connector/tools directory as follows:
+ * Execute EnableUDP_Battery.py python script located in @a @b /connector/tools/python directory as follows:
  * @code
  * python EnableUDP_Battery.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP_Battery(true or false)>
  * @endcode
@@ -187,7 +187,7 @@
  * It will first try to find current phone configuration for the device-id to update it. If no entry is found, a new entry is created 
  * with the provided device's phone number.
  *
- * Execute ProvisionSMS.py python script located in @a @b /connector/tools directory as follows:
+ * Execute ProvisionSMS.py python script located in @a @b /connector/tools/python directory as follows:
  * @code
  * python ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Device ID> <Device Phone Number>
  * @endcode
