@@ -19,6 +19,102 @@
  * of these transports' limitations - a price you may choose to pay to reduce data usage on costly
  * networks such as cellular or satellite.
  *
+ * @section smfeatures What services are supported by Short Messaging?
+ * 
+ * SM protocol also differs from EDP (TCP-transport only) in the facilities that are supported. See the following table:
+ * 
+* @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="4" class="title">Features supported by each transport</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Feature</th>
+ *   <th class="subtitle">TCP</th>
+ *   <th class="subtitle">UDP</th>
+ *   <th class="subtitle">SMS</th>
+ * </tr>
+ * <tr>
+ *   <td>Reboot</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>Data Services</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>Data Points</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>File system</td>
+ *   <td>Yes</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ * </tr>
+ * <tr>
+ *   <td>Remote Configuration Interface (RCI)</td>
+ *   <td>Yes</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ * </tr>
+ * <tr>
+ *   <td>Firmware download</td>
+ *   <td>Yes</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ * </tr>
+ * <tr>
+ *   <td>Secure (SSL) connection</td>
+ *   <td>Yes</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ * </tr>
+ * <tr>
+ *   <td>Ping</td>
+ *   <td>No</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>Command Line Interface (CLI)</td>
+ *   <td>No</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>Connect (start TCP)</td>
+ *   <td>No</td>
+ *   <td>Yes</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>Cloud to Connector Device ID Provisioning</td>
+ *   <td>Yes</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ * </tr>
+ * <tr>
+ *   <td>Cloud to Connector phone number Provisioning</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ *   <td>Yes</td>
+ * </tr>
+ * <tr>
+ *   <td>Connector to Cloud phone number Provisioning</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ *   <td>No</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ * 
  * @section smsectionwhoneedsit Should I use Short Messaging?
  * 
  * Most devices will be deployed on networks with few restrictions on data usage. For these 
@@ -158,6 +254,10 @@
  * @code
  * python EnableUDP_Battery.py <Username> <Password> <Device Cloud URL> <Device ID> <EnableUDP_Battery(true or false)>
  * @endcode
+ * For example:
+ * @code
+ * python EnableUDP_Battery.py etherios etheriosSuperSecretPassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA true
+ * @endcode
  *
  * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Manager
  *
@@ -191,7 +291,11 @@
  * @code
  * python ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Device ID> <Device Phone Number>
  * @endcode
- *
+ * For example:
+ * @code
+ * python ProvisionSMS.py etherios etheriosSuperSecretPassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA 54123456789
+ * @endcode
+ * 
  * To learn more about Device Cloud SMS configuration using web Services, see SMS Chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008/index.html">Device Cloud Programming Guide</a>@endhtmlonly.
  *
