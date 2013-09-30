@@ -138,7 +138,7 @@ typedef struct
 
     enum
     {
-        connector_data_service_status_complete,      /**< response is not requested and session is completed successfully */
+        connector_data_service_status_complete,      /**< session is completed successfully */
         connector_data_service_status_cancel,        /**< session is cancelled by the user */
         connector_data_service_status_timeout,       /**< session timed out */
         connector_data_service_status_session_error, /**< error from lower communication layer  */
