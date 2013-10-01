@@ -157,8 +157,6 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             {
                 APP_DEBUG("Cloud response [%s]: %s\n", ds_info->file_path, resp_ptr->hint);
             }
-
-            ds_info->state = (resp_ptr->response == connector_data_service_send_response_success)? dvt_state_response_complete : dvt_state_request_error;
             break;
         }
 
@@ -168,9 +166,18 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             dvt_ds_t * const ds_info = error_ptr->user_context;
 
             ASSERT(ds_info != NULL);
-            APP_DEBUG("Error response %d for %s\n", error_ptr->status, ds_info->file_path);
-            ds_info->state = dvt_state_request_error;
-            status = connector_callback_error;
+            switch(error_ptr->status)
+            {
+                case connector_data_service_status_complete:
+                    APP_DEBUG("Put request complete for %s\n", ds_info->file_path);
+                    ds_info->state = dvt_state_response_complete;
+                    break;
+                default:
+                    APP_DEBUG("Error response %d for %s\n", error_ptr->status, ds_info->file_path);
+                    ds_info->state = dvt_state_request_error;
+                    status = connector_callback_error;
+                    break;
+            }
             break;
         }
 
@@ -395,8 +402,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         if (target_info->data == NULL)
         {
             APP_DEBUG("process_device_request: malloc failed %s\n", target_info->target);
-            status = connector_callback_error;
-            goto clear;
+            goto cancel;
         }
     }
 
@@ -411,7 +417,6 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
 cancel:
     status = connector_callback_error;
 
-clear:
     if (target_info != NULL && target_info->data != NULL)
     {
         free(target_info->data);
@@ -462,8 +467,7 @@ static connector_callback_status_t app_process_device_request_response(connector
             break;
 
         case dvt_case_ds_not_handle:
-            status = connector_callback_error;
-            goto clear;
+            goto cancel;
 
         case dvt_case_ds_start_put_request:
         case dvt_case_ds_query_put_request:
@@ -492,22 +496,12 @@ static connector_callback_status_t app_process_device_request_response(connector
 
         if (target_info->bytes_sent < target_info->length_in_bytes)
             data_ptr->more_data = connector_true;
-        else
-            goto clear;
     }
 
     goto done;
 
 cancel:
     status = connector_callback_error;
-
-clear:
-    if (target_info != NULL && target_info->data != NULL)
-    {
-        free(target_info->data);
-        target_info->data = NULL;
-    }
-
 done:
     return status;
 }
@@ -542,6 +536,9 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
     switch (status_data->status)
     {
+    case connector_data_service_status_complete:
+        APP_DEBUG("app_process_device_request_status: session completed\n");
+        break;
     case connector_data_service_status_session_error:
         APP_DEBUG("app_process_device_request_status: session error %d\n",
                     status_data->session_error);
@@ -552,7 +549,7 @@ static connector_callback_status_t app_process_device_request_status(connector_d
         break;
     }
 
-    if (target_info != NULL && target_info->data != NULL)
+    if (target_info->test_case != dvt_case_ds_start_put_request && target_info != NULL && target_info->data != NULL)
     {
         free(target_info->data);
         target_info->data = NULL;

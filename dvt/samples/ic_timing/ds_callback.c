@@ -194,8 +194,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             /* should be done now */
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
-            free(user);
-            put_file_active_count--;
+
 
             break;
         }
@@ -205,9 +204,10 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             connector_data_service_status_t * const error_ptr = cb_data;
             ds_record_t * const user = error_ptr->user_context;
 
-            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
-            ASSERT(user != NULL);
+            APP_DEBUG("app_put_request_handler (status): %s session %p done with status = %d\n", user->file_path, (void *)user, error_ptr->status);
             free(user);
+            ASSERT(user != NULL);
+
             put_file_active_count--;
 
             break;
@@ -409,9 +409,6 @@ static connector_callback_status_t app_process_device_request_response(connector
         {
             close_timing_table("End device request ", app_device_request_target_to_string(device_request->target));
             APP_DEBUG("process_device_response: End device request\n");
-
-            device_request_active_count--;
-            free(device_request);
         }
     }
 
@@ -429,6 +426,10 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
         switch (status_data->status)
         {
+        case connector_data_service_status_complete:
+            APP_DEBUG("app_process_device_request_status: handle %p session completed\n",
+                    (void *) device_request);
+            break;
         case connector_data_service_status_session_error:
             APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
                        (void *) device_request, status_data->session_error);

@@ -171,8 +171,6 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             /* should be done now */
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
-            put_file_active_count--;
-            free(user);
 
             break;
         }
@@ -182,7 +180,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             connector_data_service_status_t * const error_ptr = cb_data;
             ds_record_t * const user = error_ptr->user_context;
 
-            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
+            APP_DEBUG("app_put_request_handler (status): %s session %p done with status = %d\n", user->file_path, (void *)user, error_ptr->status);
             ASSERT(user != NULL);
             free(user);
             put_file_active_count--;
@@ -334,7 +332,7 @@ static connector_callback_status_t app_process_device_request_response(connector
         /* cancel before sending any response data */
         APP_DEBUG("process_device_response: handle %p cancel\n", (void *)device_request);
         status = connector_callback_error;
-        goto error;
+        goto done;
     }
 
     if (device_request->response_data != NULL)
@@ -354,7 +352,7 @@ static connector_callback_status_t app_process_device_request_response(connector
         reply_data->bytes_used = bytes;
         reply_data->more_data = (device_request->length_in_bytes == 0 && device_request->count == 1) ? connector_false : connector_true;
    }
-    else goto error;
+    else goto done;
 
     if (device_request->length_in_bytes == 0)
     {
@@ -365,18 +363,8 @@ static connector_callback_status_t app_process_device_request_response(connector
             device_request->response_data = ds_buffer;
             device_request->length_in_bytes = (rand() % (DS_DATA_SIZE +1));
         }
-        else
-        {
-            /* done. let free memory */
-            goto error;
-        }
     }
     goto done;
-
-error:
-    /* done */
-    device_request_active_count--;
-    free(device_request);
 
 done:
     return status;
