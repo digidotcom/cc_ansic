@@ -517,7 +517,6 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
 
             dvt_ptr = &dvt_dp_info[dp_ptr->transport];
             APP_DEBUG("Received dp binary response %s [%d]: %s\n", dp_ptr->path, resp_ptr->response, (resp_ptr->hint != NULL) ? resp_ptr->hint : "null");
-            free_dp_binary_ptr(dp_ptr);
             break;
         }
 
@@ -553,7 +552,6 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
 
             dvt_ptr = &dvt_dp_info[dp_ptr->transport];
             APP_DEBUG("Received dp single response %s [%d]: %s\n", dp_ptr->path, resp_ptr->response, (resp_ptr->hint != NULL) ? resp_ptr->hint : "null");
-            free_dp_single_ptr(dp_ptr);
             break;
         }
 
