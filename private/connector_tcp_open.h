@@ -447,7 +447,7 @@ static connector_status_t send_device_id(connector_data_t * const connector_ptr)
     ASSERT(connector_ptr->device_id != NULL);
     memcpy((edp_device_id + field_named_data(edp_device_id, id, offset)), connector_ptr->device_id, DEVICE_ID_LENGTH);
 
-    connector_debug_hexvalue("Sending Device ID: ", connector_ptr->device_id, DEVICE_ID_LENGTH);
+    connector_debug_hexvalue("Sending Device ID", connector_ptr->device_id, DEVICE_ID_LENGTH);
 
     result = tcp_initiate_send_packet(connector_ptr, edp_header, device_id_message_size,
                                 E_MSG_MT2_TYPE_PAYLOAD, tcp_release_packet_buffer,
@@ -501,7 +501,7 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
                 device_id_data.bytes_required = DEVICE_ID_LENGTH;
                 device_id_data.data = device_id;
 
-                connector_debug_hexvalue("Received Device ID: ", device_id, DEVICE_ID_LENGTH);
+                connector_debug_hexvalue("Received Device ID", device_id, DEVICE_ID_LENGTH);
 
                 request_id.config_request = connector_request_id_config_set_device_id;
                 status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
