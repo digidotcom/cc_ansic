@@ -468,14 +468,16 @@ static connector_status_t data_service_device_request_callback(connector_data_t 
     case msg_service_type_free:
         {
             msg_session_t * const session = service_request->session;
+#if (CONNECTOR_VERSION >= 0x02010000)
             if (session->error == connector_session_error_none)
             {
                 /* If there is no error, call the user to inform that session is done */
                 service_request->error_value = connector_session_error_none;
                 status = process_data_service_device_error(connector_ptr, service_request);
                 if (status != connector_working)
-                    goto done;
+                    break;
             }
+#endif
             status = free_data_buffer(connector_ptr, named_buffer_id(msg_service), session->service_context);
             break;
         }
@@ -485,7 +487,6 @@ static connector_status_t data_service_device_request_callback(connector_data_t 
         break;
     }
 
-done:
     return status;
 }
 
@@ -803,6 +804,7 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
 
         case msg_service_type_free:
             {
+#if (CONNECTOR_VERSION >= 0x02010000)
                 msg_session_t * const session = service_request->session;
                 if (session->error == connector_session_error_none)
                 {
@@ -810,8 +812,9 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
                     service_request->error_value = connector_session_error_none;
                     status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
                     if (status != connector_working)
-                        goto done;
+                        break;
                 }
+#endif
                 if (ds_ptr != NULL)
                     status = free_data_buffer(connector_ptr, named_buffer_id(put_request), ds_ptr);
                 else
@@ -823,7 +826,7 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
             ASSERT(connector_false);
             break;
     }
-done:
+
     return status;
 }
 
