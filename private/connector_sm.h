@@ -592,7 +592,18 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
 
             case connector_transport_open:
                 result = sm_open_transport(connector_ptr, sm_ptr);
-                sm_ptr->transport.state = (result == connector_working) ? connector_transport_receive : connector_transport_idle;
+                switch(result)
+                {
+                    case connector_working:
+                        sm_ptr->transport.state = connector_transport_receive;
+                        break;
+                    case connector_pending:
+                        sm_ptr->transport.state = connector_transport_open;
+                        break;
+                    default:
+                        sm_ptr->transport.state = connector_transport_idle;
+                        break;            		
+                }
                 goto done;
 
             case connector_transport_receive:
