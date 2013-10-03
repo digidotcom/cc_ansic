@@ -116,20 +116,38 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 
 #define DEVICE_ID_LENGTH    16
 #define DEVICE_ID_FILENAME  "device_id.cfg"
+#define EXECUTABLE_NAME     "connector"
 
 static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
 static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    if (access(DEVICE_ID_FILENAME, F_OK) != -1)
+    char proc_path[PATH_MAX];
+    char device_id_full_path[PATH_MAX] = {0};
+    
+    pid_t pid = getpid();
+    sprintf(proc_path, "/proc/%d/exe", pid);
+    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1) 
+    {
+        perror("readlink");
+    }
+    else
+    {
+        /* 'device_id_full_path' has the full executable path (i.e.: /home/user/connector/public/run/samples/connecto_to_device_cloud/connector
+         * We want to write the file to be in the same folder (in previous case /home/user/connector/public/run/samples/connecto_to_device_cloud
+         */
+        strcpy(device_id_full_path + strlen(device_id_full_path) - strlen(EXECUTABLE_NAME), DEVICE_ID_FILENAME);
+    }
+
+    if (access(device_id_full_path, F_OK) != -1)
     {
         FILE *file;
         int bytes_read;
 
-        file = fopen(DEVICE_ID_FILENAME, "r");
+        file = fopen(device_id_full_path, "r");
         bytes_read = fread(provisioned_device_id, sizeof provisioned_device_id[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
         ASSERT(bytes_read == sizeof provisioned_device_id);
-        APP_DEBUG("app_load_device_id: read %d bytes from %s\n", bytes_read, DEVICE_ID_FILENAME);
+        APP_DEBUG("app_load_device_id: read %d bytes from %s\n", bytes_read, device_id_full_path);
         fclose(file);
     }
 
@@ -142,11 +160,27 @@ static connector_callback_status_t app_save_device_id(connector_config_pointer_d
 {
     FILE *file;
     int bytes_writen;
-
-    file = fopen(DEVICE_ID_FILENAME, "w+");
+    char proc_path[PATH_MAX];
+    char device_id_full_path[PATH_MAX] = {0};
+    
+    pid_t pid = getpid();
+    sprintf(proc_path, "/proc/%d/exe", pid);
+    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1) 
+    {
+        perror("readlink");
+    }
+    else
+    {
+        /* 'device_id_full_path' has the full executable path (i.e.: /home/user/connector/public/run/samples/connecto_to_device_cloud/connector
+         * We want to write the file to be in the same folder (in previous case /home/user/connector/public/run/samples/connecto_to_device_cloud
+         */
+        strcpy(device_id_full_path + strlen(device_id_full_path) - strlen(EXECUTABLE_NAME), DEVICE_ID_FILENAME);
+    }
+    
+    file = fopen(device_id_full_path, "w+");
     bytes_writen = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
     ASSERT(bytes_writen == sizeof provisioned_device_id);
-    APP_DEBUG("app_load_device_id: wrote %d bytes to %s\n", bytes_writen, DEVICE_ID_FILENAME);
+    APP_DEBUG("app_load_device_id: wrote %d bytes to %s\n", bytes_writen, device_id_full_path);
     fclose(file);
 
     return connector_callback_continue;
