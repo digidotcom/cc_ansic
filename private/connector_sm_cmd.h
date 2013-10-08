@@ -106,7 +106,9 @@ done:
 static size_t sm_get_max_payload_bytes(connector_sm_data_t * const sm_ptr)
 {
     size_t const sm_header_size = 5;
-    size_t const max_payload_bytes = sm_ptr->transport.sm_mtu - sm_header_size;
+    
+    //This is used for Rx path...
+    size_t const max_payload_bytes = sm_ptr->transport.sm_mtu_rx - sm_header_size;
 
     return max_payload_bytes;
 }
