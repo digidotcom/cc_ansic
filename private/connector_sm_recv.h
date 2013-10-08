@@ -12,13 +12,13 @@
 #if (defined CONNECTOR_TRANSPORT_SMS)
 static connector_status_t sm_decode_segment(connector_data_t * const connector_ptr, connector_sm_packet_t * const recv_ptr)
 {
-    size_t const data_size = 1 + (recv_ptr->total_bytes * 4)/5;
+    size_t const data_size = 1 + ((recv_ptr->total_bytes - recv_ptr->processed_bytes) * 4)/5;
     void * data_ptr = NULL;
     connector_status_t result = malloc_data_buffer(connector_ptr, data_size, named_buffer_id(sm_data_block), &data_ptr);
 
     if (result == connector_working)
     {
-        recv_ptr->total_bytes = sm_decode85(data_ptr, data_size, recv_ptr->data, recv_ptr->total_bytes);
+        recv_ptr->total_bytes = sm_decode85(data_ptr, data_size, recv_ptr->data + recv_ptr->processed_bytes, recv_ptr->total_bytes - recv_ptr->processed_bytes);
         memcpy(recv_ptr->data, data_ptr, recv_ptr->total_bytes);
         result = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), data_ptr);
     }
@@ -524,13 +524,11 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                 case connector_transport_sms:
                     result = sm_verify_sms_preamble(sm_ptr);
                     if(result != connector_working) goto done; /* not Device Cloud packet? */
-
-                    /* Remove sms preamble */
-                    sm_ptr->network.recv_packet.data += sm_ptr->network.recv_packet.processed_bytes;
-                    sm_ptr->network.recv_packet.total_bytes -= sm_ptr->network.recv_packet.processed_bytes;
-                    sm_ptr->network.recv_packet.processed_bytes = 0;
                     
                     result = sm_decode_segment(connector_ptr, recv_ptr);
+
+                    /* Remove sms preamble */
+                    sm_ptr->network.recv_packet.processed_bytes = 0;
 
                     break;
                 #endif
