@@ -635,7 +635,7 @@ class TestRunner(object):
                         # Otherwise, explicitly filter private
                         inclusion = '-e ".*%s/private.*"' % sandbox_dir
                     cwd = os.getcwd()
-                    cmd = 'cd %s; %s/dvt/scripts/gcovr %s --root %s -d --xml %s > "%s/%s_%s_%s_%s_coverage.xml"' % (src_dir, sandbox_dir, sandbox_dir, sandbox_dir, inclusion, cwd, self.description, execution_type, test, test_script)
+                    cmd = 'cd %s; %s/dvt/scripts/gcovr %s --root %s --html %s -o "%s/%s_%s_%s_%s_coverage.html"' % (src_dir, sandbox_dir, sandbox_dir, sandbox_dir, inclusion, cwd, self.description, execution_type, test, test_script)
                     self.log.info("Executing gcovr: %s" % cmd, extra=log_extra)
                     os.system(cmd)
                 else:
