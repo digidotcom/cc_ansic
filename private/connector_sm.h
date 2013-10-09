@@ -102,13 +102,13 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 	                   For Tx: 'IDGP '
 	                           There is room for 160-5=155 not encoded85 caracters. After encoding, that will lead to a max payload of 155*4/5=124 bytes.				   
 	                 */
-	                sm_ptr->transport.sm_mtu_tx = (((sm_ptr->transport.mtu - (sm_ptr->transport.id_length + 1))*4) / 5);
+	                sm_ptr->transport.sm_mtu_tx = (((sm_ptr->transport.mtu - (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE))*4) / 5);
 					/*
 	                   For Rx: '(IDGP):'
 	                           There is room for 160-7=153 not encoded85 caracters. After encoding, that will lead to a max payload of 153*4/5=122 bytes.				   
 	                 */
 
-	                sm_ptr->transport.sm_mtu_rx = (((sm_ptr->transport.mtu - (sm_ptr->transport.id_length + 3))*4) / 5);
+	                sm_ptr->transport.sm_mtu_rx = (((sm_ptr->transport.mtu - (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_RX_SIZE))*4) / 5);
 				}
 				else
 				{

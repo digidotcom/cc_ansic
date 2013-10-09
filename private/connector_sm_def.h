@@ -91,6 +91,9 @@
 #define SmClearCompressed(flag) SmBitClear((flag), SM_COMPRESSED)
 #define SmClearTargetInPayload(flag) SmBitClear((flag), SM_TARGET_IN_PAYLOAD)
 
+#define SMS_SERVICEID_WRAPPER_TX_SIZE     1  /* 'service-id '   */
+#define SMS_SERVICEID_WRAPPER_RX_SIZE     3  /* '(service-id):' */
+
 typedef enum
 {
     connector_sm_cmd_ping,

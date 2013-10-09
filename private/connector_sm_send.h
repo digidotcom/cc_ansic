@@ -496,8 +496,8 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         /* Increase pointer to skip preamble encoding */
         if (sm_ptr->transport.id_length)
         {
-            send_ptr->data += (sm_ptr->transport.id_length + 1);
-            send_ptr->total_bytes -= (sm_ptr->transport.id_length + 1);
+            send_ptr->data += (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE);
+            send_ptr->total_bytes -= (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE);
         }
 
         result = sm_encode_segment(connector_ptr, sm_ptr, session);
@@ -505,8 +505,8 @@ static connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         /* Restore pointer if it has preamble */
         if (sm_ptr->transport.id_length)
         {
-            send_ptr->data -= (sm_ptr->transport.id_length + 1);
-            send_ptr->total_bytes += (sm_ptr->transport.id_length + 1);
+            send_ptr->data -= (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE);
+            send_ptr->total_bytes += (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE);
         }
     }
     #endif
