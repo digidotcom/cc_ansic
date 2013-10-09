@@ -195,6 +195,7 @@ static connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 #if defined CONNECTOR_DEBUG
         size_t const size_max = SIZE_MAX;
 
+        (void)size_max;
         ASSERT(value <= size_max);
 #endif
         *length = value;
