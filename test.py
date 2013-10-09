@@ -635,9 +635,22 @@ class TestRunner(object):
                         # Otherwise, explicitly filter private
                         inclusion = '-e ".*%s/private.*"' % sandbox_dir
                     cwd = os.getcwd()
-                    cmd = 'cd %s; %s/dvt/scripts/gcovr %s --root %s --html %s -o "%s/%s_%s_%s_%s_coverage.html"' % (src_dir, sandbox_dir, sandbox_dir, sandbox_dir, inclusion, cwd, self.description, execution_type, test, test_script)
+                    cmd = 'cd %s; %s/dvt/scripts/gcovr %s --html-details --html %s -o "%s/%s_%s_%s_%s_coverage.html"' % (src_dir, sandbox_dir, sandbox_dir, inclusion, cwd, self.description, execution_type, test, test_script)
                     self.log.info("Executing gcovr: %s" % cmd, extra=log_extra)
                     os.system(cmd)
+                    tmp_file = "tmp_file"
+                    for files in os.listdir("."):
+                        if files.endswith(".html"):
+                            old_page = open(files, "rw")
+                            new_page = open(tmp_file, "w+")
+                            for line in old_page:
+                                if sandbox_dir[1:] + "/" in line:
+                                    line = line.replace(sandbox_dir[1:] + "/", "")
+                                new_page.write(line)
+                            new_page.close()
+                            old_page.close()
+                            os.remove(files)
+                            os.rename(tmp_file, "%s" %(files))
                 else:
                     if(pid is not None and len(pid)>0):
                         self.log.info('Killing Process with pid %s.' % pid, extra=log_extra)
