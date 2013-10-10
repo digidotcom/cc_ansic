@@ -413,6 +413,9 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
     if (ccode >= 0)
     {
         data->bytes_used = (size_t)ccode;
+
+        if ((data->bytes_available == 160) && (((char*)data->buffer)[159] == '@'))
+            APP_DEBUG("app_network_sms_send: Sending '@' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
     else
     {
