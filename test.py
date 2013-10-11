@@ -631,13 +631,15 @@ class TestRunner(object):
                     os.kill(int(pid), signal.SIGUSR1)
                     cwd = os.getcwd()
                     coverageInfoPath = "lcov_coverage.info"
-                    cmd = 'lcov --capture --directory %s --base-directory %s --output-file %s' % (sandbox_dir, src_dir + "/", coverageInfoPath)
-                    #cmd = 'lcov --capture --directory %s --output-file %s' % (sandbox_dir, coverageInfoPath)
+                    cmd = 'lcov --capture --directory %s --base-directory %s --output-file %s' % (sandbox_dir, src_dir, coverageInfoPath)
                     self.log.info("Executing lcov: %s" % cmd, extra=log_extra)
+                    print "Executing %s" % (cmd)
                     os.system(cmd)
                     cmd = 'lcov --remove %s /usr\* --output-file "%s"' % (coverageInfoPath, coverageInfoPath)
+                    print "Executing %s" % (cmd)
                     os.system(cmd)
-                    cmd = 'genhtml %s --prefix --output-directory "%s/coverage"' % (coverageInfoPath, cwd)
+                    cmd = 'genhtml %s --output-directory "%s/coverage"' % (coverageInfoPath, cwd)
+                    print "Executing %s" % (cmd)
                     os.system(cmd)
                 else:
                     if(pid is not None and len(pid)>0):
