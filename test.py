@@ -629,28 +629,16 @@ class TestRunner(object):
                 if self.gcov and test != 'compile_and_link' and test_script is not None:
                     self.log.info('Flushing gcov coverage data for pid %s and exiting.' % pid, extra=log_extra)
                     os.kill(int(pid), signal.SIGUSR1)
-                    # Only include Coverage data for files in private directory unless this is a sample test.
-                    inclusion = '-f ".*%s/private.*"' % sandbox_dir
-                    if sample:
-                        # Otherwise, explicitly filter private
-                        inclusion = '-e ".*%s/private.*"' % sandbox_dir
                     cwd = os.getcwd()
-                    cmd = 'cd %s; %s/dvt/scripts/gcovr %s --html-details --html %s -o "%s/%s_%s_%s_%s_coverage.html"' % (src_dir, sandbox_dir, sandbox_dir, inclusion, cwd, self.description, execution_type, test, test_script)
-                    self.log.info("Executing gcovr: %s" % cmd, extra=log_extra)
+                    coverageInfoPath = "lcov_coverage.info"
+                    cmd = 'lcov --capture --directory %s --base-directory %s --output-file %s' % (sandbox_dir, src_dir + "/", coverageInfoPath)
+                    #cmd = 'lcov --capture --directory %s --output-file %s' % (sandbox_dir, coverageInfoPath)
+                    self.log.info("Executing lcov: %s" % cmd, extra=log_extra)
                     os.system(cmd)
-                    tmp_file = "tmp_file"
-                    for files in os.listdir("."):
-                        if files.endswith(".html"):
-                            old_page = open(files, "rw")
-                            new_page = open(tmp_file, "w+")
-                            for line in old_page:
-                                if sandbox_dir[1:] + "/" in line:
-                                    line = line.replace(sandbox_dir[1:] + "/", "")
-                                new_page.write(line)
-                            new_page.close()
-                            old_page.close()
-                            os.remove(files)
-                            os.rename(tmp_file, "%s" %(files))
+                    cmd = 'lcov --remove %s /usr\* --output-file "%s"' % (coverageInfoPath, coverageInfoPath)
+                    os.system(cmd)
+                    cmd = 'genhtml %s --prefix --output-directory "%s/coverage"' % (coverageInfoPath, cwd)
+                    os.system(cmd)
                 else:
                     if(pid is not None and len(pid)>0):
                         self.log.info('Killing Process with pid %s.' % pid, extra=log_extra)
@@ -701,7 +689,7 @@ class TestRunner(object):
             if(directory != "/"):
                 if os.path.exists(directory):
                     try:
-                        shutil.rmtree(directory)
+                        #shutil.rmtree(directory)
                         _msg = "Sandbox was removed from '%s'" % (directory)
                         return (True, _msg)
                     except OSError,e:
