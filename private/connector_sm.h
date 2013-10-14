@@ -377,7 +377,34 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
 
             break;
 
-        default:
+        case connector_initiate_session_cancel:
+        case connector_initiate_session_cancel_all:
+        {
+            connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
+
+            if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
+            {
+                result = connector_unavailable;
+                goto error;
+            }
+
+            if (sm_ptr->pending.data != NULL)
+                goto error;
+
+            sm_ptr->pending.data = request_data;
+            sm_ptr->pending.request = request;
+            sm_ptr->pending.pending_internal = connector_false;
+            break;
+        }
+
+        case connector_initiate_ping_request:
+#if (defined CONNECTOR_DATA_SERVICE)
+        case connector_initiate_send_data:
+#endif
+#if (defined CONNECTOR_DATA_POINTS)
+        case connector_initiate_data_point_binary:
+        case connector_initiate_data_point_single:
+#endif
         {
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
 
@@ -396,8 +423,9 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                 case connector_transport_terminate:
                     result = connector_unavailable;
                     goto error;
-
-                default:
+                case connector_transport_send:
+                case connector_transport_receive:
+                case connector_transport_redirect:
                 {
                     uint32_t * request_id = NULL;
 
@@ -446,14 +474,21 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                             break;
                     }
 #endif
-                    if (sm_ptr->pending.data != NULL) goto error;
+                    if (sm_ptr->pending.data != NULL)
+                        goto error;
                     sm_ptr->pending.data = request_data;
                     sm_ptr->pending.request = request;
                     break;
                 }
+                default:
+                    ASSERT(connector_false);
+                    break;
             }
             break;
         }
+        default:
+            ASSERT(connector_false);
+            break;
     }
 
 done:

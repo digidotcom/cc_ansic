@@ -177,35 +177,47 @@ error:
     return result;
 }
 
-static connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, void const * const user_context)
+/* If request_id == NULL cancel ALL sessions. Else cancel the SM session whose Request ID matches the one passed as a parameter. */
+static connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint32_t const * const request_id)
 {
     connector_status_t result = connector_working;
     connector_sm_session_t * session = sm_ptr->session.head;
-    connector_bool_t cancel_all = connector_bool(user_context == NULL);
+    connector_bool_t cancel_all = connector_bool(request_id == NULL);
+
+    if (cancel_all != connector_true && *request_id == SM_INVALID_REQUEST_ID)
+        goto done;
 
     while (session != NULL)
     {
         connector_status_t status;
+        connector_sm_session_t * next_session = NULL;
 
-        if (cancel_all || (session->user.context == user_context))
+        if (cancel_all || (session->request_id == *request_id))
         {
             if (session->user.context != NULL)
             {
                 session->error = connector_sm_error_cancel;
                 status = sm_inform_session_complete(connector_ptr, session);
                 if (status != connector_working)
+                {
                     result = connector_abort;
+                    break;
+                }
             }
-
+            next_session = session->next;
             status = sm_delete_session(connector_ptr, sm_ptr, session);
-            if (result != connector_working)
+            if (status != connector_working)
+            {
                 result = connector_abort;
+                break;
+            }
             if (!cancel_all) break;
         }
 
-        session = session->next;
+        session = next_session != NULL ? next_session : session->next;
     }
 
+done:
     return result;
 }
 
@@ -252,7 +264,13 @@ static connector_status_t sm_process_pending_data(connector_data_t * const conne
         {
             connector_sm_cancel_request_t const * const request = sm_ptr->pending.data;
 
-            result = sm_cancel_session(connector_ptr, sm_ptr, request->user_context);
+            result = sm_cancel_session(connector_ptr, sm_ptr, &request->request_id);
+            break;
+        }
+
+        case connector_initiate_session_cancel_all:
+        {
+            result = sm_cancel_session(connector_ptr, sm_ptr, NULL);
             break;
         }
 

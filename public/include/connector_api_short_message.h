@@ -14,6 +14,9 @@
 #define CONNECTOR_API_SHORT_MESSAGE_H
 
 #if (defined CONNECTOR_SHORT_MESSAGE)
+
+#define SM_INVALID_REQUEST_ID   UINT32_C(~0x0)
+
 /**
 * @defgroup connector_sm_send_ping_request_t connector_sm_send_ping_request_t
 *
@@ -45,14 +48,15 @@ typedef struct
 */
 /**
 * This data structure is used when the device initiates the cancel session request. This data
-* structure is used in connector_initiate_action() with action ID connector_initiate_session_cancel.
+* structure is used in connector_initiate_action() with action ID connector_initiate_session_cancel and connector_initiate_session_cancel_all.
 *
 * @see connector_initiate_session_cancel
+* @see connector_initiate_session_cancel_all
 */
 typedef struct
 {
     connector_transport_t transport; /**< transport method to use */
-    void * user_context;             /**< user context */
+    uint32_t request_id;             /**< SM Request ID to be canceled, for connector_initiate_session_cancel_all this is ignored */
 } connector_sm_cancel_request_t;
 /**
 * @}
