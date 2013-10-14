@@ -29,7 +29,7 @@
 #if defined CONNECTOR_TRANSPORT_SMS
 
 #define GW_PORT		9999		/* Port number is hardcoded in sms_proxy.py running in ConnectPort X4 Gateway */
-#define GW_ADDR		"10.101.1.198"
+#define GW_ADDR		"10.101.1.121"
 
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
