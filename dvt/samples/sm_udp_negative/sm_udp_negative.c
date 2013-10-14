@@ -34,7 +34,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
             static connector_sm_cancel_request_t cancel_request;
 
             cancel_request.transport = request.transport;
-            cancel_request.user_context = request.user_context;
+            cancel_request.request_id = request.request_id;
 
             APP_DEBUG("Trying to cancel the ping request\n");
             do
@@ -90,7 +90,7 @@ connector_status_t app_send_data(connector_handle_t handle)
             static connector_sm_cancel_request_t cancel_request;
 
             cancel_request.transport = header_ptr->transport;
-            cancel_request.user_context = header_ptr->user_context;
+            cancel_request.request_id = header_ptr->request_id;
 
             APP_DEBUG("Trying to cancel the send data request\n");
             do

@@ -26,6 +26,7 @@ typedef struct
 {
     char const * data_ptr;
     size_t bytes;
+    uint32_t request_id;
 } client_data_t;
 
 static client_data_t * app_send_data = NULL;
@@ -59,7 +60,7 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
         static connector_sm_cancel_request_t request;
 
        request.transport = app_transport;
-       request.user_context = app_send_data;
+       request.request_id = app_send_data->request_id;
 
        APP_DEBUG("Previous data send pending, cancel it\n");
        status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
@@ -100,14 +101,20 @@ connector_status_t app_send_put_request(connector_handle_t handle, connector_boo
     header.transport = app_transport;
     header.content_type = file_type;
     header.user_context = app_send_data;
+    header.request_id = SM_INVALID_REQUEST_ID;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
+
     APP_DEBUG("Status: %d, file: %s\n", status, header.path);
 
     if (status != connector_success)
     {
         free(app_send_data);
         app_send_data = NULL;
+    }
+    else
+    {
+        app_send_data->request_id = header.request_id;
     }
 
 done:

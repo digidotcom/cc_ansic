@@ -48,7 +48,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
         static connector_sm_cancel_request_t cancel_request;
 
         cancel_request.transport = connector_transport_udp;
-        cancel_request.user_context = &app_ping_pending;
+        cancel_request.request_id = request.request_id;
 
         APP_DEBUG("Previous ping pending, cancel it\n");
         status = connector_initiate_action(handle, connector_initiate_session_cancel, &cancel_request);
@@ -58,13 +58,14 @@ connector_status_t app_send_ping(connector_handle_t handle)
             APP_DEBUG("connector_initiate_session_cancel returned %d\n", status);
         goto done;
     }
-    app_ping_pending = connector_true;
 
     request.transport = connector_transport_udp;
-    request.user_context = &app_ping_pending;
+    request.user_context = NULL;
     request.response_required = connector_true;
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
-    if (status != connector_success)
+    if (status == connector_success)
+        app_ping_pending = connector_true;
+    else
         app_ping_pending = connector_false;
 
     APP_DEBUG("Sent ping [%d].\n", status);
