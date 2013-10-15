@@ -205,8 +205,9 @@ error:
 
 #if (CONNECTOR_VERSION >= 0x02010000)
 /* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
-static void get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data, uint32_t * * const request_id)
+static uint32_t * get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data)
 {
+    uint32_t * request_id;
     switch (request)
     {
 #if (defined CONNECTOR_DATA_POINTS)
@@ -214,14 +215,14 @@ static void get_request_id_ptr(connector_initiate_request_t const request, void 
         {
             connector_request_data_point_single_t const * const data = request_data;
 
-            *request_id = data->request_id;
-			break;
+            request_id = data->request_id;
+            break;
         }
         case connector_initiate_data_point_binary:
         {
             connector_request_data_point_binary_t const * const data = request_data;
 
-            *request_id = data->request_id;
+            request_id = data->request_id;
             break;
         }
 #endif
@@ -229,22 +230,22 @@ static void get_request_id_ptr(connector_initiate_request_t const request, void 
         {
             connector_request_data_service_send_t const * const data = request_data;
 
-            *request_id = data->request_id;
+            request_id = data->request_id;
             break;
          }
         case connector_initiate_ping_request:
         {
             connector_sm_send_ping_request_t const * const data = request_data;
 
-            *request_id = data->request_id;
+            request_id = data->request_id;
             break;
         }
         default:
-            *request_id = NULL;
+            request_id = NULL;
             break;
     }
 
-    return;
+    return request_id;
 }
 #endif
 
@@ -440,7 +441,7 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         goto error;
                     }
 #if (CONNECTOR_VERSION >= 0x02010000)
-                    get_request_id_ptr(request, request_data, &request_id);
+                    request_id = get_request_id_ptr(request, request_data);
                     /* dp_initiate_data_point_single/binary() convert a connector_initiate_data_point_single/binary
                      * to a connector_initiate_send_data, but we want that that "hidden" connector_initiate_send_data
                      * use the same request_id, which has been already set by dp_send_message().
