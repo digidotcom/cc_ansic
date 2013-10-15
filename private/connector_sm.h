@@ -493,7 +493,10 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                     }
 #endif
                     if (sm_ptr->pending.data != NULL)
+                    {
+                        result = connector_service_busy;
                         goto error;
+                    }
                     sm_ptr->pending.data = request_data;
                     sm_ptr->pending.request = request;
                     break;
