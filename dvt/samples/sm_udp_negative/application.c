@@ -96,7 +96,7 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
 static connector_status_t start_transport(connector_handle_t handle)
 {
-    connector_transport_t transport = connector_transport_udp;
+    connector_transport_t const transport = connector_transport_udp;
     connector_status_t status;
 
     do
@@ -115,7 +115,7 @@ static connector_status_t start_transport(connector_handle_t handle)
 
 static connector_status_t stop_transport(connector_handle_t handle)
 {
-    connector_initiate_stop_request_t transport = {connector_transport_udp, connector_stop_immediately};
+    connector_initiate_stop_request_t const transport = {connector_transport_udp, connector_stop_immediately};
     connector_status_t status;
 
     do

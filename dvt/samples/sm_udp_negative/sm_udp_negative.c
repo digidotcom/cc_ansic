@@ -18,11 +18,15 @@ connector_status_t app_send_ping(connector_handle_t handle)
 {
     connector_status_t status;
     static connector_sm_send_ping_request_t request;
+    static uint32_t ping_request_id;
+    
     int dummy_context = 0;
 
     request.transport = connector_transport_udp;
     request.user_context = &dummy_context;
     request.response_required = request.response_required ? connector_false : connector_true;
+    request.request_id = &ping_request_id;
+
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
     APP_DEBUG("Sent ping [%d].\n", status);
     if (status == connector_success)
@@ -34,7 +38,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
             static connector_sm_cancel_request_t cancel_request;
 
             cancel_request.transport = request.transport;
-            cancel_request.request_id = request.request_id;
+            cancel_request.request_id = *request.request_id;
 
             APP_DEBUG("Trying to cancel the ping request\n");
             do
@@ -60,6 +64,7 @@ typedef struct
     connector_request_data_service_send_t header;
     char const * data_ptr;
     size_t bytes;
+    uint32_t request_id;
 } client_data_t;
 
 connector_status_t app_send_data(connector_handle_t handle)
@@ -80,6 +85,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     header_ptr->response_required = response_needed;
     header_ptr->path = (test_cases % 3) ? NULL : file_path;
     header_ptr->user_context = app_ptr; /* will be returned in all subsequent callbacks */
+    header_ptr->request_id = &app_ptr->request_id;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, header_ptr);
     APP_DEBUG("Status: Send %s [%d]\n", file_path, status);
@@ -90,7 +96,7 @@ connector_status_t app_send_data(connector_handle_t handle)
             static connector_sm_cancel_request_t cancel_request;
 
             cancel_request.transport = header_ptr->transport;
-            cancel_request.request_id = header_ptr->request_id;
+            cancel_request.request_id = *header_ptr->request_id;
 
             APP_DEBUG("Trying to cancel the send data request\n");
             do

@@ -40,6 +40,8 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &request;
     request.response_required = connector_true;
+    request.request_id = NULL;
+
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
 
     return status;
@@ -101,7 +103,7 @@ connector_status_t app_send_put_request(connector_handle_t handle, connector_boo
     header.transport = app_transport;
     header.content_type = file_type;
     header.user_context = app_send_data;
-    header.request_id = SM_INVALID_REQUEST_ID;
+    header.request_id = &app_send_data->request_id;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
 
@@ -111,10 +113,6 @@ connector_status_t app_send_put_request(connector_handle_t handle, connector_boo
     {
         free(app_send_data);
         app_send_data = NULL;
-    }
-    else
-    {
-        app_send_data->request_id = header.request_id;
     }
 
 done:
