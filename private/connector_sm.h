@@ -205,38 +205,38 @@ error:
 
 #if (CONNECTOR_VERSION >= 0x02010000)
 /* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
-static void get_request_id_ptr(connector_initiate_request_t const request, void * const request_data, uint32_t * * const request_id)
+static void get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data, uint32_t * * const request_id)
 {
     switch (request)
     {
 #if (defined CONNECTOR_DATA_POINTS)
         case connector_initiate_data_point_single:
         {
-            connector_request_data_point_single_t * const data = request_data;
+            connector_request_data_point_single_t const * const data = request_data;
 
-            *request_id = &data->request_id;
+            *request_id = data->request_id;
 			break;
         }
         case connector_initiate_data_point_binary:
         {
-            connector_request_data_point_binary_t * const data = request_data;
+            connector_request_data_point_binary_t const * const data = request_data;
 
-            *request_id = &data->request_id;
+            *request_id = data->request_id;
             break;
         }
 #endif
         case connector_initiate_send_data:
         {
-            connector_request_data_service_send_t * const data = request_data;
+            connector_request_data_service_send_t const * const data = request_data;
 
-            *request_id = &data->request_id;
+            *request_id = data->request_id;
             break;
          }
         case connector_initiate_ping_request:
         {
-            connector_sm_send_ping_request_t * const data = request_data;
+            connector_sm_send_ping_request_t const * const data = request_data;
 
-            *request_id = &data->request_id;
+            *request_id = data->request_id;
             break;
         }
         default:
@@ -248,11 +248,7 @@ static void get_request_id_ptr(connector_initiate_request_t const request, void 
 }
 #endif
 
-#if (CONNECTOR_VERSION >= 0x02010000)
-static connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void * const request_data)
-#else
 static connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
-#endif
 {
     connector_status_t result = connector_service_busy;
     connector_data_t * const connector_ptr = (connector_data_t *)handle;
@@ -445,23 +441,35 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                     }
 #if (CONNECTOR_VERSION >= 0x02010000)
                     get_request_id_ptr(request, request_data, &request_id);
-                    ASSERT(request_id != NULL);
                     /* dp_initiate_data_point_single/binary() convert a connector_initiate_data_point_single/binary
                      * to a connector_initiate_send_data, but we want that that "hidden" connector_initiate_send_data
                      * use the same request_id, which has been already set by dp_send_message().
                      * */
                     if (sm_ptr->pending.pending_internal)
                     {
-                        sm_ptr->pending.pending_internal = connector_false; /* Use the same request_id */
+                        sm_ptr->pending.pending_internal = connector_false;
+                        if (request_id != NULL)
+                        {
+                            /* Use the same request_id */
+                            sm_ptr->pending.request_id = *request_id;
+                        }
+                        else
+                        {
+                            /* Update request_id */
+                            result = sm_get_request_id(connector_ptr, sm_ptr);
+                            ASSERT_GOTO(result == connector_working, error);
+                            sm_ptr->pending.request_id = connector_ptr->last_request_id;
+                        }
                     }
                     else
                     {
                         /* Update request_id */
                         result = sm_get_request_id(connector_ptr, sm_ptr);
                         ASSERT_GOTO(result == connector_working, error);
-                        *request_id = connector_ptr->last_request_id;
+                        sm_ptr->pending.request_id = connector_ptr->last_request_id;
+                        if (request_id != NULL)
+                            *request_id = sm_ptr->pending.request_id;
                     }
-                    sm_ptr->pending.request_id = *request_id;
 #endif
 
 #if (defined CONNECTOR_DATA_POINTS)

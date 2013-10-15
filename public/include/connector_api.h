@@ -792,7 +792,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  * @see connector_handle_t
  * @see connector_callback_t
  */
-connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void * const request_data);
+connector_status_t connector_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data);
 /**
 * @}.
 */
