@@ -34,7 +34,7 @@
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
 
-static int app_dns_resolve_name(char const * const domain_name, in_addr_t * const ip_addr)
+static int app_sms_dns_resolve_name(char const * const domain_name, in_addr_t * const ip_addr)
 {
     int ret = -1;
     struct addrinfo *res_list;
@@ -49,7 +49,7 @@ static int app_dns_resolve_name(char const * const domain_name, in_addr_t * cons
         error = getaddrinfo(domain_name, NULL, &hint, &res_list);
         if (error != 0)
         {
-            APP_DEBUG("dns_resolve_name: DNS resolution failed for [%s]\n", domain_name);
+            APP_DEBUG("sms_dns_resolve_name: DNS resolution failed for [%s]\n", domain_name);
             goto done;
         }
     }
@@ -63,7 +63,7 @@ static int app_dns_resolve_name(char const * const domain_name, in_addr_t * cons
             struct in_addr const ipv4_addr = sa->sin_addr;
 
             *ip_addr = ipv4_addr.s_addr;
-            APP_DEBUG("dns_resolve_name: ip address = [%s]\n", inet_ntoa(ipv4_addr));
+            APP_DEBUG("sms_dns_resolve_name: ip address = [%s]\n", inet_ntoa(ipv4_addr));
             ret = 0;
             break;
         }
@@ -303,7 +303,7 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
     {
         in_addr_t ip_addr;
 
-        status = app_dns_resolve_name(GW_ADDR, &ip_addr);
+        status = app_sms_dns_resolve_name(GW_ADDR, &ip_addr);
         if (status != connector_callback_continue)
         {
             APP_DEBUG("app_network_sms_open: Can't resolve DNS for %s\n", GW_ADDR);
@@ -414,6 +414,7 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
     {
         data->bytes_used = (size_t)ccode;
 
+        APP_DEBUG("app_network_sms_send: send %d bytes\n", data->bytes_used);
         if ((data->bytes_available == 160) && (((char*)data->buffer)[159] == '@'))
             APP_DEBUG("app_network_sms_send: Sending '@' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
@@ -427,7 +428,7 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
         else
         {
             status = connector_callback_error;
-            APP_DEBUG("app_network_tcp_send: send() failed, errno %d\n", err);
+            APP_DEBUG("app_network_sms_send: send() failed, errno %d\n", err);
         }
     }
 
@@ -470,6 +471,7 @@ static connector_callback_status_t app_network_sms_receive(connector_network_rec
     if (ccode > 0)
     {
         data->bytes_used = (size_t)ccode;
+        APP_DEBUG("app_network_sms_receive: recv %d bytes\n", data->bytes_used);
     }
     else
     if (ccode == 0)
@@ -489,7 +491,7 @@ static connector_callback_status_t app_network_sms_receive(connector_network_rec
         }
         else
         {
-            APP_DEBUG("network_receive: recv() failed, errno %d\n", err);
+            APP_DEBUG("app_network_sms_receive: recv() failed, errno %d\n", err);
             /* if not timeout (no data) return an error */
             status = connector_callback_error;
         }
