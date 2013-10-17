@@ -668,6 +668,7 @@ INPUT                  = ./mainpage.c \
                          ./rci_tool.c \
                          ./connector_config.h \
                          ./remote_config.h \
+                         ./upgrade_existing.c \
                          ../public/run/platforms/template \
                          ../public/include
 
