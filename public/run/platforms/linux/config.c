@@ -416,9 +416,12 @@ static unsigned int digit_to_nibble(char const * const string, int * const index
     {
         int const ch = string[current];
          
-        if (isdigit(ch))
+        if (isxdigit(ch))
         {
-            nibble = ch - '0';
+            if (isdigit(ch))
+                nibble = ch - '0';
+            else
+                nibble = toupper(ch) - 'A' + 0xA;
             break;
         }
     }
