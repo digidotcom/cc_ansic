@@ -474,17 +474,17 @@ connector_status_t app_send_data_point(connector_handle_t const handle)
                 static connector_sm_cancel_request_t cancel_request;
 
                 cancel_request.transport = connector_transport_udp;
-                cancel_request.user_context = NULL;
+                cancel_request.request_id = 0;
 
                 APP_DEBUG("Trying to cancel all pending UDP sessions\n");
                 do
                 {
-                    status = connector_initiate_action(handle, connector_initiate_session_cancel, &cancel_request);
+                    status = connector_initiate_action(handle, connector_initiate_session_cancel_all, &cancel_request);
                     if (status == connector_service_busy)
                         usleep(2);
                     else
                     {
-                        APP_DEBUG("connector_initiate_session_cancel returned %d\n", status);
+                        APP_DEBUG("connector_initiate_session_cancel_all returned %d\n", status);
                     }
                 } while (status == connector_service_busy);
             }

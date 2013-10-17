@@ -26,6 +26,7 @@ typedef struct
 {
     char const * data_ptr;
     size_t bytes;
+    uint32_t request_id;
 } client_data_t;
 
 static client_data_t * app_send_data = NULL;
@@ -39,6 +40,8 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &request;
     request.response_required = connector_true;
+    request.request_id = NULL;
+
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
 
     return status;
@@ -59,7 +62,7 @@ connector_status_t app_cancel_put_request(connector_handle_t handle)
         static connector_sm_cancel_request_t request;
 
        request.transport = app_transport;
-       request.user_context = app_send_data;
+       request.request_id = app_send_data->request_id;
 
        APP_DEBUG("Previous data send pending, cancel it\n");
        status = connector_initiate_action(handle, connector_initiate_session_cancel, &request);
@@ -100,8 +103,10 @@ connector_status_t app_send_put_request(connector_handle_t handle, connector_boo
     header.transport = app_transport;
     header.content_type = file_type;
     header.user_context = app_send_data;
+    header.request_id = &app_send_data->request_id;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
+
     APP_DEBUG("Status: %d, file: %s\n", status, header.path);
 
     if (status != connector_success)

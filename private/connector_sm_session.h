@@ -9,6 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
+/* This function searchs for the next valid request_id and leaves it in connector_ptr->last_request_id */
 static connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_pending;
@@ -107,9 +108,7 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
         ASSERT_GOTO(result == connector_working, error);
         SmSetClientOwned(session->flags);
 
-        result = sm_get_request_id(connector_ptr, sm_ptr);
-        ASSERT_GOTO(result == connector_working, error);
-        session->request_id = connector_ptr->last_request_id;
+        session->request_id = sm_ptr->pending.request_id;
         sm_ptr->session.active_client_sessions++;
     }
     else
@@ -178,6 +177,52 @@ error:
     return result;
 }
 
+/* If request_id == NULL cancel ALL sessions. Else cancel the SM session whose Request ID matches the one passed as a parameter. */
+#if (CONNECTOR_VERSION >= 0x02010000)
+static connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint32_t const * const request_id)
+{
+    connector_status_t result = connector_working;
+    connector_sm_session_t * session = sm_ptr->session.head;
+    connector_bool_t cancel_all = connector_bool(request_id == NULL);
+
+    if (cancel_all != connector_true && *request_id == SM_INVALID_REQUEST_ID)
+        goto done;
+
+    while (session != NULL)
+    {
+        connector_status_t status;
+        connector_sm_session_t * next_session = NULL;
+
+        if (cancel_all || (session->request_id == *request_id))
+        {
+            if (session->user.context != NULL)
+            {
+                session->error = connector_sm_error_cancel;
+                status = sm_inform_session_complete(connector_ptr, session);
+                if (status != connector_working)
+                {
+                    result = connector_abort;
+                    break;
+                }
+            }
+            next_session = session->next;
+            status = sm_delete_session(connector_ptr, sm_ptr, session);
+            if (status != connector_working)
+            {
+                result = connector_abort;
+                break;
+            }
+            if (!cancel_all)
+                break;
+        }
+
+        session = next_session != NULL ? next_session : session->next;
+    }
+
+done:
+    return result;
+}
+#else
 static connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, void const * const user_context)
 {
     connector_status_t result = connector_working;
@@ -187,6 +232,7 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
     while (session != NULL)
     {
         connector_status_t status;
+        connector_sm_session_t * next_session = NULL;
 
         if (cancel_all || (session->user.context == user_context))
         {
@@ -198,18 +244,23 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
                     result = connector_abort;
             }
 
+            next_session = session->next;
             status = sm_delete_session(connector_ptr, sm_ptr, session);
-            if (result != connector_working)
+            if (status != connector_working)
+            {
                 result = connector_abort;
-            if (!cancel_all) break;
+                break;
+            }
+            if (!cancel_all)
+                break;
         }
 
-        session = session->next;
+        session = next_session;
     }
 
     return result;
 }
-
+#endif
 static connector_status_t sm_process_pending_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_idle;
@@ -252,11 +303,20 @@ static connector_status_t sm_process_pending_data(connector_data_t * const conne
         case connector_initiate_session_cancel:
         {
             connector_sm_cancel_request_t const * const request = sm_ptr->pending.data;
-
+#if (CONNECTOR_VERSION >= 0x02010000)
+            result = sm_cancel_session(connector_ptr, sm_ptr, &request->request_id);
+#else
             result = sm_cancel_session(connector_ptr, sm_ptr, request->user_context);
+#endif
             break;
         }
-
+#if (CONNECTOR_VERSION >= 0x02010000)
+        case connector_initiate_session_cancel_all:
+        {
+            result = sm_cancel_session(connector_ptr, sm_ptr, NULL);
+            break;
+        }
+#endif
         default:
         {
             connector_bool_t const client_originated = connector_true;

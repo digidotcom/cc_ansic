@@ -146,7 +146,7 @@ struct connector_data;
 #include "connector_edp_def.h"
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+#if defined(CONNECTOR_SHORT_MESSAGE)
 #include "connector_sm_def.h"
 #endif
 

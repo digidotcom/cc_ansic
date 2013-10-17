@@ -64,6 +64,8 @@ connector_status_t app_send_ping(connector_handle_t handle)
     }
 
     request.response_required = response_needed;
+    request.request_id = NULL;
+
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
     if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */
     {
@@ -134,6 +136,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     header.user_context = &app_data; /* will be returned in all subsequent callbacks */
     header.path  = file_path;
     header.response_required = response_needed;
+    header.request_id = NULL;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
     if (status != connector_success) /* don't wait, need to set this before calling initiate action to avoid any possible race condition */

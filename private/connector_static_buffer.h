@@ -180,8 +180,7 @@ typedef struct
 #endif
 #endif /* CONNECTOR_TRANSPORT_TCP */
 
-#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
-
+#if (defined CONNECTOR_SHORT_MESSAGE)
 
 #ifndef CONNECTOR_SM_MAX_SEGMENTS
 #define CONNECTOR_SM_MAX_SEGMENTS   1
@@ -215,7 +214,7 @@ typedef connector_sm_session_t named_buffer_type(sm_session);
 define_sized_buffer_type(sm_packet, 2 * SM_MAX_MTU);
 define_sized_buffer_type(sm_data_block, CONNECTOR_SM_MAX_SEGMENTS * SM_MAX_MTU);
 
-#endif /* CONNECTOR_TRANSPORT_UDP || CONNECTOR_TRANSPORT_SMS */
+#endif /* defined CONNECTOR_SHORT_MESSAGE */
 
 typedef connector_data_t named_buffer_type(connector_data);
 

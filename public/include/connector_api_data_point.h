@@ -253,6 +253,9 @@ typedef struct
     connector_transport_t transport;/**< transport method to use */
     void * user_context;            /**< user context to be passed back in response */
 
+    uint32_t * request_id;          /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
+                                         and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
+                                         See @connector_initiate_session_cancel*/
     char * path;                    /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     void * point;                   /**< binary data of size specified in bytes_used */
     size_t bytes_used;              /**< number of bytes in the point buffer */
@@ -282,6 +285,9 @@ typedef struct
     connector_transport_t transport;    /**< transport method to use */
     void * user_context;                /**< user context to be passed back in response */
 
+    uint32_t * request_id;              /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
+                                             and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
+                                             See @connector_initiate_session_cancel*/
     char * path;                        /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
@@ -289,6 +295,7 @@ typedef struct
     connector_bool_t response_required; /**< set to connector_true if response is needed */
     connector_data_point_type_t type;   /**< data point content type */
 } connector_request_data_point_single_t;
+
 /**
 * @}
 */

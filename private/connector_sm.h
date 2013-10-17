@@ -204,12 +204,8 @@ error:
 static connector_status_t connector_sm_init(connector_data_t * const connector_ptr)
 {
     connector_status_t status;
-    unsigned long current_time;
 
-    status = get_system_time(connector_ptr, &current_time);
-    ASSERT_GOTO(status == connector_working, error);
-    srand(current_time);
-    connector_ptr->last_request_id = rand();
+    connector_ptr->last_request_id = SM_DEFAULT_REQUEST_ID;
 
     #if (defined CONNECTOR_TRANSPORT_UDP)
     status = sm_initialize(connector_ptr, connector_transport_udp);
@@ -224,6 +220,52 @@ static connector_status_t connector_sm_init(connector_data_t * const connector_p
 error:
     return status;
 }
+
+#if (CONNECTOR_VERSION >= 0x02010000)
+/* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
+static uint32_t * get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data)
+{
+    uint32_t * request_id;
+    switch (request)
+    {
+#if (defined CONNECTOR_DATA_POINTS)
+        case connector_initiate_data_point_single:
+        {
+            connector_request_data_point_single_t const * const data = request_data;
+
+            request_id = data->request_id;
+            break;
+        }
+        case connector_initiate_data_point_binary:
+        {
+            connector_request_data_point_binary_t const * const data = request_data;
+
+            request_id = data->request_id;
+            break;
+        }
+#endif
+        case connector_initiate_send_data:
+        {
+            connector_request_data_service_send_t const * const data = request_data;
+
+            request_id = data->request_id;
+            break;
+         }
+        case connector_initiate_ping_request:
+        {
+            connector_sm_send_ping_request_t const * const data = request_data;
+
+            request_id = data->request_id;
+            break;
+        }
+        default:
+            request_id = NULL;
+            break;
+    }
+
+    return request_id;
+}
+#endif
 
 static connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
 {
@@ -356,7 +398,36 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
 
             break;
 
-        default:
+        case connector_initiate_session_cancel:
+#if (CONNECTOR_VERSION >= 0x02010000)
+        case connector_initiate_session_cancel_all:
+#endif
+        {
+            connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
+
+            if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
+            {
+                result = connector_unavailable;
+                goto error;
+            }
+
+            if (sm_ptr->pending.data != NULL)
+                goto error;
+
+            sm_ptr->pending.data = request_data;
+            sm_ptr->pending.request = request;
+            sm_ptr->pending.pending_internal = connector_false;
+            break;
+        }
+
+        case connector_initiate_ping_request:
+#if (defined CONNECTOR_DATA_SERVICE)
+        case connector_initiate_send_data:
+#endif
+#if (defined CONNECTOR_DATA_POINTS)
+        case connector_initiate_data_point_binary:
+        case connector_initiate_data_point_single:
+#endif
         {
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
 
@@ -375,40 +446,97 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                 case connector_transport_terminate:
                     result = connector_unavailable;
                     goto error;
-
-                default:
+                case connector_transport_send:
+                case connector_transport_receive:
+                case connector_transport_redirect:
+                {
+#if (CONNECTOR_VERSION >= 0x02010000)
+                    uint32_t * request_id = NULL;
+#endif
                     if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
                     {
                         result = connector_unavailable;
                         goto error;
                     }
+#if (CONNECTOR_VERSION >= 0x02010000)
+                    request_id = get_request_id_ptr(request, request_data);
+                    /* dp_initiate_data_point_single/binary() convert a connector_initiate_data_point_single/binary
+                     * to a connector_initiate_send_data, but we want that that "hidden" connector_initiate_send_data
+                     * use the same request_id, which has been already set by dp_send_message().
+                     * */
+                    if (sm_ptr->pending.pending_internal)
+                    {
+                        sm_ptr->pending.pending_internal = connector_false;
+                        if (request_id != NULL)
+                        {
+                            /* Use the same request_id */
+                            sm_ptr->pending.request_id = *request_id;
+                        }
+                        else
+                        {
+                            /* Update request_id */
+                            result = sm_get_request_id(connector_ptr, sm_ptr);
+                            ASSERT_GOTO(result == connector_working, error);
+                            sm_ptr->pending.request_id = connector_ptr->last_request_id;
+                        }
+                    }
+                    else
+                    {
+                        /* Update request_id */
+                        result = sm_get_request_id(connector_ptr, sm_ptr);
+                        ASSERT_GOTO(result == connector_working, error);
+                        sm_ptr->pending.request_id = connector_ptr->last_request_id;
+                        if (request_id != NULL)
+                            *request_id = sm_ptr->pending.request_id;
+                    }
+#endif
 
-                    #if (defined CONNECTOR_DATA_POINTS)
+#if (defined CONNECTOR_DATA_POINTS)
                     switch (request)
                     {
                         case connector_initiate_data_point_single:
+                        {
+                            sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point_single(request_data);
-                            goto error;
+                            goto done_datapoints;
+                        }
                         case connector_initiate_data_point_binary:
+                        {
+                            sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point_binary(request_data);
-                            goto error;
+                            goto done_datapoints;
+                        }
+
                         default:
                             break;
                     }
-                    #endif
-                    
-                    if (sm_ptr->pending.data != NULL) goto error;
+#endif
+                    if (sm_ptr->pending.data != NULL)
+                    {
+                        result = connector_service_busy;
+                        goto error;
+                    }
                     sm_ptr->pending.data = request_data;
                     sm_ptr->pending.request = request;
+                    break;
+                }
+                default:
+                    ASSERT(connector_false);
                     break;
             }
             break;
         }
+        default:
+            ASSERT(connector_false);
+            break;
     }
 
 done:
     result = connector_success;
 
+#if (defined CONNECTOR_DATA_POINTS)
+done_datapoints:
+#endif
 error:
     return result;
 }
