@@ -26,7 +26,7 @@ typedef struct
 connector_status_t app_send_put_request(connector_handle_t handle)
 {
     connector_status_t status = connector_no_resource;
-    static connector_request_data_service_send_t header; /* Connector will hold this until we get a response/error callback */
+    static connector_request_data_service_send_t header; /* Cloud Connector will hold this until we get a response/error callback */
     static char const file_path[] = "test/test.txt";
     static char const file_type[] = "text/plain";
     static char const buffer[] = "Connector data service sample\n";
@@ -90,7 +90,6 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
         case connector_request_id_data_service_send_response:
         {
             connector_data_service_send_response_t * const resp_ptr = cb_data;
-            client_data_t * const app_data = resp_ptr->user_context;
 
             APP_DEBUG("Received %s response from Device Cloud\n", (resp_ptr->response == connector_data_service_send_response_success) ? "success" : "error");
             if (resp_ptr->hint != NULL)
@@ -98,7 +97,6 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                 APP_DEBUG("Device Cloud response %s\n", resp_ptr->hint);
             }
 
-            free(app_data);
             break;
         }
 

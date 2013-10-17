@@ -175,8 +175,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             /* should be done now */
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
-            free(user);
-            put_file_active_count--;
+
 
             break;
         }
@@ -188,7 +187,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             ASSERT(user != NULL);
 
-            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
+            APP_DEBUG("app_put_request_handler (status): %s session %p done with status = %d\n", user->file_path, (void *)user, error_ptr->status);
             free(user);
             put_file_active_count--;
 
@@ -341,13 +340,6 @@ static connector_callback_status_t app_process_device_request_response(connector
             device_request->response_data = ds_buffer;
             device_request->length_in_bytes = (rand() % (DS_DATA_SIZE +1));
         }
-        else
-        {
-            APP_DEBUG("app_process_device_request_response: End device request\n");
-
-            device_request_active_count--;
-            free(device_request);
-        }
     }
 
 done:
@@ -365,6 +357,10 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
         switch (status_data->status)
         {
+        case connector_data_service_status_complete:
+            APP_DEBUG("app_process_device_request_status: handle %p session completed\n",
+                    (void *) device_request);
+            break;
         case connector_data_service_status_session_error:
             APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
                        (void *) device_request, status_data->session_error);

@@ -72,7 +72,7 @@ static connector_status_t call_ds_receive_callback(connector_data_t * const conn
 
         default:
             ASSERT(connector_false);
-            break;;
+            break;
     }
 
     return result;
@@ -412,17 +412,16 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     connector_data_service_status_t device_request;
 
 
-    /* Done with the request dp_request == true (response has been returned).
-     * So do not call the callback.
-     */
-    if (data_service->dp_request) goto done;
-
     device_request.transport = connector_transport_tcp;
     device_request.user_context = data_service->callback_context;
     data_service->request_type = connector_request_id_data_service_receive_status;
 
     switch (service_request->error_value)
     {
+        case connector_session_error_none:
+            device_request.status = connector_data_service_status_complete;
+            break;
+
         case connector_session_error_cancel:
             device_request.status = connector_data_service_status_cancel;
             break;
@@ -441,7 +440,6 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
 
     data_service->callback_context = device_request.user_context;
 
-done:
     return result;
 }
 
@@ -460,19 +458,33 @@ static connector_status_t data_service_device_request_callback(connector_data_t 
         break;
 
     case msg_service_type_error:
+    {
+        msg_session_t * const session = service_request->session;
+        session->error = service_request->error_value;
         status = process_data_service_device_error(connector_ptr, service_request);
         break;
+    }
 
     case msg_service_type_free:
         {
             msg_session_t * const session = service_request->session;
-
+#if (CONNECTOR_VERSION >= 0x02010000)
+            if (session->error == connector_session_error_none)
+            {
+                /* If there is no error, call the user to inform that session is done */
+                service_request->error_value = connector_session_error_none;
+                status = process_data_service_device_error(connector_ptr, service_request);
+                if (status != connector_working)
+                    break;
+            }
+#endif
             status = free_data_buffer(connector_ptr, named_buffer_id(msg_service), session->service_context);
+            break;
         }
-        break;
 
     default:
         ASSERT(connector_false);
+        break;
     }
 
     return status;
@@ -743,6 +755,10 @@ static connector_status_t process_send_error(connector_data_t * const connector_
 
     switch (service_request->error_value)
     {
+        case connector_session_error_none:
+            user_data.status = connector_data_service_status_complete;
+            break;
+
         case connector_session_error_cancel:
             user_data.status = connector_data_service_status_cancel;
             break;
@@ -779,16 +795,32 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
             break;
 
         case msg_service_type_error:
+        {
+            msg_session_t * const session = service_request->session;
+            session->error = service_request->error_value;
             status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
             break;
+        }
 
         case msg_service_type_free:
-            if (ds_ptr != NULL)
-                status = free_data_buffer(connector_ptr, named_buffer_id(put_request), ds_ptr);
-            else
-                status = connector_working;
-            break;
-
+            {
+#if (CONNECTOR_VERSION >= 0x02010000)
+                msg_session_t * const session = service_request->session;
+                if (session->error == connector_session_error_none)
+                {
+                    /* If there is no error, call the user to inform that session is done */
+                    service_request->error_value = connector_session_error_none;
+                    status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
+                    if (status != connector_working)
+                        break;
+                }
+#endif
+                if (ds_ptr != NULL)
+                    status = free_data_buffer(connector_ptr, named_buffer_id(put_request), ds_ptr);
+                else
+                    status = connector_working;
+                break;
+            }
         default:
             status = connector_idle;
             ASSERT(connector_false);

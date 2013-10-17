@@ -222,7 +222,6 @@
  *
  * Cloud Connector will make @ref connector_request_id_data_service_send_response "response"
  * @ref connector_callback_t "callback" to pass Device Cloud response to the send data request.
- * User can free their user_context and any other reserved data as soon as they receive this callback.
  *
  * The @ref connector_request_id_data_service_send_response "response" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -275,9 +274,10 @@
  *
  * Cloud Connector will make @ref connector_request_id_data_service_send_status "status"
  * @ref connector_callback_t "callback" to pass the reason for session complete. User will receive this
- * callback when Device Connector response is not requested or in case of any errors. The error from
- * the application level is returned via @ref connector_request_id_data_service_send_response "response".
- * User can free their user_context and any other reserved data as soon as they receive this callback.
+ * callback when Device Connector finishes with the session. User can free their user_context and any other
+ * reserved data as soon as they receive this callback.
+ * In case of error, the error from the application level is returned via 
+ * @ref connector_request_id_data_service_send_response "response".
  *
  * The @ref connector_request_id_data_service_send_status "status" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -398,8 +398,7 @@
  *               <ul><li>@endhtmlonly @ref connector_true @htmlonly if Device Cloud requests a response and
  *                       @endhtmlonly @ref ds_receive_reply_data @htmlonly will be called for response data.</li>
  *                   <li>@endhtmlonly @ref connector_false @htmlonly if Device Cloud does not require a response and
- *                       @endhtmlonly @ref ds_receive_reply_data @htmlonly will not be called.
- *                       <br><b>Note:</b> Application must free any memory associated with the device request.</li></ul>
+ *                       @endhtmlonly @ref ds_receive_reply_data @htmlonly will not be called.</li></ul>
  *       </dd></dl>
  * </td>
  * <tr>

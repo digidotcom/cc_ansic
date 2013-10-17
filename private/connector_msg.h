@@ -828,13 +828,16 @@ static connector_status_t msg_send_complete(connector_data_t * const connector_p
             if (MsgIsLastData(dblock->status_flag))
             {
                 if (MsgIsRequest(dblock->status_flag))
+                {
                     session->current_state = msg_state_receive;
+                }
                 else
                 {
                     connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
 
                     return_status = msg_delete_session(connector_ptr, msg_ptr, session);
                 }
+
                 goto done;
             }
 

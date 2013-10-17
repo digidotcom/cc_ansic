@@ -230,11 +230,6 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
                 terminate_flag = device_request_idle;
             }
 
-            /* should be done now */
-            APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
-            app_os_free(user);
-            put_file_active_count--;
-
             break;
         }
 
@@ -243,7 +238,7 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
             connector_data_service_status_t * const error_ptr = cb_data;
             ds_record_t * const user = error_ptr->user_context;
 
-            APP_DEBUG("app_put_request_handler (status): %s cancel this session %p\n", user->file_path, (void *)user);
+            APP_DEBUG("app_put_request_handler (status): %s session %p completed with error %d\n", user->file_path, (void *)user, error_ptr->status);
             ASSERT(user != NULL);
             app_os_free(user);
             put_file_active_count--;

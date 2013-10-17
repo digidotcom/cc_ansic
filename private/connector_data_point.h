@@ -770,14 +770,16 @@ static connector_callback_status_t dp_handle_response_callback(connector_data_t 
             user_data.response = connector_data_point_response_cloud_error;
             break;
         default:
-        	ASSERT(connector_false);
+            ASSERT(connector_false);
     }
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
     if (callback_status == connector_callback_busy) goto error;
 
+#if (CONNECTOR_VERSION < 0x02010000)
     if (free_data_buffer(connector_ptr, named_buffer_id(data_point_block), dp_info) != connector_working)
         callback_status = connector_callback_abort;
+#endif
 
 error:
     return callback_status;

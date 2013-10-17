@@ -30,8 +30,6 @@ typedef struct device_request_handle {
     device_request_response_status_t status;
 } device_request_handle_t;
 
-static unsigned int device_request_active_count = 0;
-
 static connector_callback_status_t app_process_device_request_target(connector_data_service_receive_target_t * const target_data)
 {
     connector_callback_status_t status = connector_callback_continue;
@@ -77,7 +75,6 @@ static connector_callback_status_t app_process_device_request_target(connector_d
         device_request->response_data = NULL;
         device_request->target = device_request_target;
      }
-    device_request_active_count++;
 
 done:
     return status;
@@ -160,11 +157,6 @@ static connector_callback_status_t app_process_device_request_response(connector
         memcpy(reply_data->buffer, buffer, bytes_used);
         reply_data->bytes_used = bytes_used;
 
-        if (!reply_data->more_data)
-        {   /* done */
-            device_request_active_count--;
-            free(device_request);
-        }
     }
 
     return status;
@@ -181,17 +173,20 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
         switch (status_data->status)
         {
+        case connector_data_service_status_complete:
+            APP_DEBUG("app_process_device_request_status: handle %p session completed\n",
+                       (void *) device_request);
+            break;
         case connector_data_service_status_session_error:
-            APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
+            APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
                        (void *) device_request, status_data->session_error);
             break;
         default:
-            APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
+            APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
                         (void *)device_request, status_data->status);
             break;
         }
 
-        device_request_active_count--;
         free(device_request);
     }
 

@@ -35,8 +35,11 @@
  * the callback is called again to get the next chunk of data, this can be repeated to transfer larger data.
  *
  * If app_data_service_handler() is called with @ref connector_request_id_data_service_send_response then this
- * indicates a response from Device Cloud, @ref connector_request_id_data_service_send_status would indicate
- * the session is completed without Device Cloud response.
+ * indicates a response from Device Cloud (if transport is set to TCP, this callback will be always called).
+ * 
+ * When the session is completed app_data_service_handler() is called with @ref connector_request_id_data_service_send_status,
+ * in that callback the user must check the "status" field of @ref connector_data_service_status_t to determine if the
+ * session was completed successfully or not. Also, in this callback all the allocated resources might be freed.
  *
  * @section connect_build Building
  *

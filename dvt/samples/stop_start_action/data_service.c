@@ -356,9 +356,6 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
             result = connector_callback_busy;
             goto done;
         }
-
-        app_os_free(device_request);
-        device_request_active_count--;
     }
 
 done:
@@ -474,13 +471,6 @@ static connector_callback_status_t app_process_device_request_response(connector
 
     }
 
-    if (device_request->length_in_bytes == 0)
-    {   /* done */
-        APP_DEBUG("app_process_device_request_response: done %p (more data = %d)\n", (void *)device_request, reply_data->more_data);
-        device_request_active_count--;
-        app_os_free(device_request);
-    }
-
 done:
     return result;
 }
@@ -496,6 +486,10 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
         switch (status_data->status)
         {
+        case connector_data_service_status_complete:
+            APP_DEBUG("app_process_device_request_status: handle %p session completed\n",
+                    (void *) device_request);
+            break;
         case connector_data_service_status_session_error:
             APP_DEBUG("app_process_device_request_status: handle %p session error %d\n",
                        (void *) device_request, status_data->session_error);
@@ -600,9 +594,6 @@ connector_callback_status_t app_put_request_handler(connector_request_id_data_se
 
             /* should be done now */
             APP_DEBUG("app_put_request_handler (response): status = %d, %s done this session %p\n", resp_ptr->response, user->file_path, (void *)user);
-            put_file_active_count[user->header.transport]--;
-            app_os_free(user);
-
 
             break;
         }

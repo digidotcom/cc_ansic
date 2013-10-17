@@ -41,8 +41,9 @@
  * data back to Device Cloud. This sample sends and prints out the request and response data.
  *
  * When @ref connector_request_id_data_service_receive_status callback is called it indicates
- * an error is encountered and needs to cancel the device request. In this example it cancels
- * the request by freeing any memory used.
+ * that the session has been completed. The user must check if an error was encountered or everything went as expected by
+ * checking the "status" field of @ref connector_data_service_status_t. Also, all the resources allocated for the 
+ * Device Request can be freed in this callback.
  *
  * @section connect_build Building
  *
