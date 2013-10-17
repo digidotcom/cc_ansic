@@ -414,7 +414,7 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
     {
         data->bytes_used = (size_t)ccode;
 
-        APP_DEBUG("app_network_sms_send: send %d bytes\n", data->bytes_used);
+        APP_DEBUG("app_network_sms_send: send %d bytes\n", ccode);
         if ((data->bytes_available == 160) && (((char*)data->buffer)[159] == '@'))
             APP_DEBUG("app_network_sms_send: Sending '@' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
@@ -471,7 +471,7 @@ static connector_callback_status_t app_network_sms_receive(connector_network_rec
     if (ccode > 0)
     {
         data->bytes_used = (size_t)ccode;
-        APP_DEBUG("app_network_sms_receive: recv %d bytes\n", data->bytes_used);
+        APP_DEBUG("app_network_sms_receive: recv %d bytes\n", ccode);
     }
     else
     if (ccode == 0)
