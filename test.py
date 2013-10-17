@@ -185,7 +185,7 @@ DVT_TESTS = dict((test.name,test) for test in [malloc_test,
                                            keepalive_test, timing_test,
                                            stacksize_test])
 
-def generate_id(rest_session, method="mac", mac_address=None):
+def generate_id(rest_session, method="mac", mac_address=None, imei=None, meid=None, esn=None):
     """
     Generate a Pseudo Random Device Id (low probability of duplication) and
     provision device to account.
@@ -206,10 +206,8 @@ def generate_id(rest_session, method="mac", mac_address=None):
                 mac_addr = MAC_ADDR_PROTOTYPE % (base_id[:6], base_id[-6:])
                 generated_id["mac"] = mac_addr
             else:
-                device_id = DEVICE_ID_BASED_ON_MAC_PROTOTYPE % (mac_address[0:2]+mac_address[3:5]+mac_address[6:8],
-                                                                mac_address[9:11]+mac_address[12:14]+mac_address[15:17])
-                generated_id["mac"] = MAC_ADDR_PROTOTYPE % (mac_address[0:2]+mac_address[3:5]+mac_address[6:8],
-                                                           mac_address[9:11]+mac_address[12:14]+mac_address[15:17])
+                device_id = DEVICE_ID_BASED_ON_MAC_PROTOTYPE % (mac_address[:6], mac_address[-6:])
+                generated_id["mac"] = MAC_ADDR_PROTOTYPE % (mac_address[:6], mac_address[-6:])
         elif(method == "imei"):
             # DEVICE ID based on IMEI
             #--- Example IMEI: AA-BBBBBB-CCCCCC-D
@@ -218,38 +216,51 @@ def generate_id(rest_session, method="mac", mac_address=None):
             #--- Example IMEI: AAAAAA-BB-CCCCCC-D"
             #--- Device ID mapping: 00010000-00000000-0AAAAAAB-BCCCCCCD
             # '00010000-00000000-0%s-%s'
-            block_A = random.randint(100000,999999)
-            block_B = random.randint(10,99)
-            block_C = random.randint(100000,999999)
-            block_D = random.randint(0,9)
-            imei_id = IMEI_NUMBER_PROTOTYPE % (block_A,
-                                            block_B,
-                                            block_C,
-                                            block_D)
-            device_id = DEVICE_ID_BASED_ON_IMEI_PROTOTYPE % (str(block_A)+str(block_B)[:1],
-                                                            str(block_B)[1:]+str(block_C)+str(block_D))
-            generated_id["imei"] = imei_id
+            if (imei is None):
+                block_A = random.randint(100000,999999)
+                block_B = random.randint(10,99)
+                block_C = random.randint(100000,999999)
+                block_D = random.randint(0,9)
+                imei_id = IMEI_NUMBER_PROTOTYPE % (block_A,
+                                                block_B,
+                                                block_C,
+                                                block_D)
+                device_id = DEVICE_ID_BASED_ON_IMEI_PROTOTYPE % (str(block_A)+str(block_B)[:1],
+                                                                str(block_B)[1:]+str(block_C)+str(block_D))
+                generated_id["imei"] = imei_id
+
+            else:
+                device_id = DEVICE_ID_BASED_ON_IMEI_PROTOTYPE % (str(imei)[:6] + str(imei)[7], str(imei)[8] + str(imei)[10:16] + str(imei)[-1:])
+                generated_id["imei"] = IMEI_NUMBER_PROTOTYPE % (str(imei)[:6], str(imei)[7:9], str(imei)[10:16], str(imei)[-1:])
+
         elif(method == "esn"):
             # DEVICE ID based on ESN
             #--- Example ESN-Hex: MMSSSSSS
             #--- Device ID mapping: 00020000-00000000-00000000-MMSSSSSS
-            esn_id = base_id[:8]
-            device_id = DEVICE_ID_BASED_ON_ESN_PROTOTYPE % (esn_id)
-            generated_id["esn"] = esn_id
+            if (esn is None):
+                esn_id = base_id[:8]
+                device_id = DEVICE_ID_BASED_ON_ESN_PROTOTYPE % (esn_id)
+                generated_id["esn"] = esn_id
+            else:
+                device_id = DEVICE_ID_BASED_ON_ESN_PROTOTYPE % (esn)
+                generated_id["esn"] = esn
         elif(method == "meid"):
             # DEVICE ID based on MEID
             #--- Example MEID-Hex: RRXXXXXXZZZZZZ
             #--- Device ID mapping: 00040000-00000000-00RRXXXX-XXZZZZZZ
-            block_R = base_id[:2]
-            block_X = base_id[2:8]
-            block_Z = base_id[-6:]
-            meid_id = MEID_NUMBER_PROTOTYPE % (block_R,
-                                            block_X,
-                                            block_Z)
-            device_id = DEVICE_ID_BASED_ON_MEID_PROTOTYPE % (block_R+block_X[:4],
-                                                             block_X[4:]+block_Z)
-            generated_id["meid"] = meid_id
-
+            if (meid is None):
+                block_R = base_id[:2]
+                block_X = base_id[2:8]
+                block_Z = base_id[-6:]
+                meid_id = MEID_NUMBER_PROTOTYPE % (block_R,
+                                                block_X,
+                                                block_Z)
+                device_id = DEVICE_ID_BASED_ON_MEID_PROTOTYPE % (block_R+block_X[:4],
+                                                                block_X[4:]+block_Z)
+                generated_id["meid"] = meid_id
+            else:
+                device_id = DEVICE_ID_BASED_ON_MEID_PROTOTYPE % (str(meid)[:6],str(meid)[-8:])
+                generated_id["meid"] = MEID_NUMBER_PROTOTYPE % (str(meid)[:2], str(meid)[2:8], str(meid)[-6:])
 
         TestRunner.log.info("Generated Device ID and adding to Device Cloud Account.",
             extra={'description' : '', 'test': '', 'device_id' : device_id})
@@ -310,7 +321,7 @@ def unique_device_type(testName = None):
 class TestRunner(object):
     log = None
 
-    def __init__(self, hostname, username, password, mac_address, description, base_dir,
+    def __init__(self, hostname, username, password, mac_address, imei, meid, esn, description, base_dir,
         debug_on=False, cflags='', replace_list=[], update_config_header=False,
         tty=False, gcov=False, test_type=None, test_name=None,
         config_tool_jar='ConfigGenerator.jar', keystore=None):
@@ -325,6 +336,9 @@ class TestRunner(object):
             cflags += BASE_FLAGS
 
         self.mac_address          = mac_address
+        self.imei                 = imei
+        self.meid                 = meid
+        self.esn                  = esn
         self.description          = description
         self.base_dir             = base_dir
         self.debug_on             = debug_on
@@ -476,7 +490,7 @@ class TestRunner(object):
             else:
                 method = "mac"
 
-            (device_id, generated_id, device_location) = generate_id(self.rest_session, method, self.mac_address)
+            (device_id, generated_id, device_location) = generate_id(self.rest_session, method, self.mac_address, self.imei, self.meid, self.esn)
             log_extra['device_id'] = device_id
 
             if(method=="mac"):
@@ -798,7 +812,16 @@ def main():
         help='Device Cloud URL to connect devices to.')
     parser.add_argument('--mac_address', action='store', type=str,
         default=None,
-        help='Device MAC to use in Device Cloud URL. ej: 11:22:33:44:55:66')
+        help='Device MAC to use in Device Cloud URL. ej: 112233:445566')
+    parser.add_argument('--imei', action='store', type=str,
+        default=None,
+        help='Device IMEI to use for generating Device ID. ej: AAAAAA-BB-CCCCCC-D')
+    parser.add_argument('--meid', action='store', type=str,
+        default=None,
+        help='Device MEID to use for generating Device ID. ej: RRXXXXXXZZZZZZ')
+    parser.add_argument('--esn', action='store', type=str,
+        default=None,
+        help='Device ESN to use for generating Device ID. ej: MMSSSSSS')
     parser.add_argument('--descriptor', action='store', type=str,
         default='linux-x64', help='A unique descriptor to describe the test.')
     parser.add_argument('--architecture', action='store', type=str,
@@ -883,7 +906,7 @@ def main():
         else:
             log.info("============ %s =============" % configuration)
             runner = TestRunner(args.hostname, args.username, args.password,
-                args.mac_address, description, base_dir, debug_on, cflags,
+                args.mac_address, args.imei, args.meid, args.esn, description, base_dir, debug_on, cflags,
                 replace_list=replace_list, tty=args.tty,
                 test_name=args.test_name, test_type=args.test_type,
                 config_tool_jar = config_tool_jar, keystore= keystore,
