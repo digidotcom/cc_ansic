@@ -229,7 +229,7 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
 
 #if (CONNECTOR_VERSION >= 0x02010000)
 static connector_status_t dp_send_message(connector_data_t * const connector_ptr, data_point_info_t * const dp_info,
-                                          connector_transport_t const transport, connector_bool_t const response_needed, uint32_t request_id)
+                                          connector_transport_t const transport, connector_bool_t const response_needed, uint32_t * request_id)
 #else
 static connector_status_t dp_send_message(connector_data_t * const connector_ptr, data_point_info_t * const dp_info,
                                           connector_transport_t const transport, connector_bool_t const response_needed)
