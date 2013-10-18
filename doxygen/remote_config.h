@@ -45,7 +45,7 @@ typedef enum {
     connector_element_type_multiline_string,    /**< This type is used for a string that may be more
                                                than one line. A "text area" is shown in Device
                                                Cloud that allows a user to form multiple lines by pressing enter. */
-    connector_element_type_password,            /**< This Password type is same as string type except it’s shown "*"
+    connector_element_type_password,            /**< This Password type is same as string type except it's shown "*"
                                                 when a user types in characters in  Device Cloud. */
     connector_element_type_int32,               /**< 32-bit signed integer value */
     connector_element_type_uint32,              /**< 32-bit unsigned integer value */
@@ -62,7 +62,7 @@ typedef enum {
     connector_element_type_ipv4,                /**< Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in the Device Cloud */
     connector_element_type_fqdnv4,              /**< This type accepts either ipv4 or DNS name. */
     connector_element_type_fqdnv6,              /**< This type accepts either IPv6 address, IPv4 address, or DNS name. */
-    connector_element_type_datetime = 22             /**< Date and time type. It’s string which contains the ISO 8601 standard
+    connector_element_type_datetime = 22             /**< Date and time type. It's string which contains the ISO 8601 standard
                                                  for date and time representation. The format is: YYYY-MM-DDTHH:MM:SStz
                                                  where
                                                      @htmlonly
