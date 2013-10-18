@@ -181,9 +181,10 @@ TESTS = dict((test.name,test) for test in [run_sample, step_sample,
 SAMPLE_TESTS = dict((test.name,test) for test in [run_sample, step_sample])
 
 DVT_TESTS = dict((test.name,test) for test in [malloc_test,
-                                           dvt_test, admin_test,
-                                           keepalive_test, timing_test,
-                                           stacksize_test])
+                                           dvt_test, keepalive_test, 
+                                           timing_test, stacksize_test])
+
+ADMIN_TESTS = dict((test.name,test) for test in [admin_test])
 
 def generate_id(rest_session, method="mac", mac_address=None, imei=None, meid=None, esn=None):
     """
@@ -413,6 +414,9 @@ class TestRunner(object):
             elif self.test_type == 'dvt':
                 self.log.info("Executing dvt tests.", extra=self.log_extra)
                 tests = DVT_TESTS
+            elif self.test_type == 'admin':
+                self.log.info("Executing admin tests.", extra=self.log_extra)
+                tests = ADMIN_TESTS
             elif self.test_type not in TESTS:
                 self.log.error("test_type (%s) is not valid (%s)."\
                     % (self.test_type, TESTS.keys()), extra=self.log_extra)
