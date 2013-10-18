@@ -19,4 +19,4 @@ extern connector_callback_status_t app_dns_resolve(connector_class_id_t const cl
 extern void app_dns_set_redirected(connector_class_id_t const class_id, int const state);
 extern void app_dns_cache_invalidate(connector_class_id_t const class_id);
 
-#endif /* _NETWORK_DNS_H */
+#endif

@@ -505,4 +505,4 @@ connector_callback_status_t app_network_tcp_handler(connector_request_id_network
 
     return status;
 }
-#endif /* defined USE_SSL */
+#endif

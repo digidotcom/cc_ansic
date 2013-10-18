@@ -68,4 +68,4 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
 #endif
 
 
-#endif /* _PLATFORM_H */
+#endif

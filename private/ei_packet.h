@@ -95,4 +95,4 @@ enum edp_protocol {
 };
 
 
-#endif  /* _EI_PACKET_H */
+#endif

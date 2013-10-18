@@ -565,7 +565,7 @@ typedef struct
 * @}
 */
 
-#endif /* defined CONNECTOR_FILE_SYSTEM */
+#endif
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_file_system.h. You should only include connector_api.h in user code."

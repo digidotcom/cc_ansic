@@ -27,4 +27,4 @@ connector_error_t connector_config(void);
 /* This delay abstraction let sample application work for both uCOS-II and uCOS-III */
 connector_callback_status_t app_os_delay(unsigned short const timeout_in_milliseconds); 
 
-#endif /* _CONNECTOR_BSP_H */
+#endif

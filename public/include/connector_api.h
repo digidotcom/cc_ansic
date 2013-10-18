@@ -805,4 +805,4 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 #undef CONNECTOR_CONST_STORAGE
 #endif
 
-#endif /* _CONNECTOR_API_H */
+#endif

@@ -121,4 +121,4 @@ static  uint16_t bele_SWAP16(uint16_t const val)
 
 #endif
 
-#endif /* BELE_H_ */
+#endif

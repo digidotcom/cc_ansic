@@ -214,7 +214,7 @@ typedef connector_sm_session_t named_buffer_type(sm_session);
 define_sized_buffer_type(sm_packet, 2 * SM_MAX_MTU);
 define_sized_buffer_type(sm_data_block, CONNECTOR_SM_MAX_SEGMENTS * SM_MAX_MTU);
 
-#endif /* defined CONNECTOR_SHORT_MESSAGE */
+#endif
 
 typedef connector_data_t named_buffer_type(connector_data);
 

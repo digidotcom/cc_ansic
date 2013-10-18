@@ -31,5 +31,5 @@ extern int application_start(void);
 
 extern void sdcard_task(uint_32);
 extern void USB_task(uint_32);
-#endif /* __main_h_ */
+#endif
 

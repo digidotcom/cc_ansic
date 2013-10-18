@@ -90,7 +90,7 @@ typedef enum {
 * @}
 */
 
-#endif /* defined CONNECTOR_RCI_SERVICE */
+#endif
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code."
@@ -98,4 +98,4 @@ typedef enum {
 
 #else
 #error  "Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code."
-#endif /* connector_api_element_H_ */
+#endif

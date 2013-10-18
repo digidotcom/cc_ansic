@@ -665,7 +665,7 @@ static void process_field_value(rci_t * const rci)
             goto done;
         }
         break;
-#endif /* RCI_PARSER_USES_STRINGS */
+#endif
 
 
 #if defined RCI_PARSER_USES_INT32
@@ -743,7 +743,7 @@ static void process_field_value(rci_t * const rci)
         rci->shared.value.unsigned_integer_value = value;
         break;
     }
-#endif /* (defined RCI_PARSER_USES_UNSIGNED_INTEGER) */
+#endif
 
 #if defined RCI_PARSER_USES_FLOAT
     case connector_element_type_float:
@@ -863,7 +863,7 @@ static void process_field_no_value(rci_t * const rci)
             rci->shared.value.string_value = (char *)rci->input.storage;
             rci->input.storage[0] = (uint8_t)nul;
             break;
-#endif /* RCI_PARSER_USES_STRINGS */
+#endif
 
 #if defined RCI_PARSER_USES_INT32
         case connector_element_type_int32:
@@ -887,7 +887,7 @@ static void process_field_no_value(rci_t * const rci)
 #endif
             rci->shared.value.unsigned_integer_value = 0;
             break;
-#endif /* (defined RCI_PARSER_USES_UNSIGNED_INTEGER) */
+#endif
 
 #if defined RCI_PARSER_USES_FLOAT
         case connector_element_type_float:

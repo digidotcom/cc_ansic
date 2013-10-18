@@ -590,7 +590,7 @@ static connector_remote_group_table_t const connector_group_table[] = {
 };
 
 
-#endif /* CONNECTOR_RCI_PARSER_INTERNAL_DATA */
+#endif
 
 
 #undef CONST
@@ -600,4 +600,4 @@ static connector_remote_group_table_t const connector_group_table[] = {
 #endif
 
 
-#endif /* remote_config_h */
+#endif

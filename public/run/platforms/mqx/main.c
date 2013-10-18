@@ -139,7 +139,7 @@ _enet_address *read_mac(void)
 	
 	return &device_mac_addr;
 }
-#endif /* CONNECTOR_MAC_ADDRESS */
+#endif
 
 /*TASK*-----------------------------------------------------
 * 

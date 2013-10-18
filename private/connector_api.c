@@ -418,7 +418,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
     COND_ELSE_GOTO(status == connector_working, error);
 #endif
 
-#if (defined CONNECTOR_SHORT_MESSAGE)
+#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
     status = connector_sm_init(connector_handle);
     COND_ELSE_GOTO(status == connector_working, error);
 #endif
@@ -648,7 +648,7 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
                 else if (result != connector_success) break;
                 else if (request != connector_initiate_transport_stop) break;
                 /* no break; */
-#endif /* defined CONNECTOR_SHORT_MESSAGE */
+#endif
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
             case connector_transport_tcp:

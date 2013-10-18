@@ -314,11 +314,11 @@ typedef struct
 * @}
 */
 
-#endif /* defined CONNECTOR_SHORT_MESSAGE */
+#endif
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_short_message.h. You should only include connector_api.h in user code."
 #endif
 #else
 #error  "Illegal inclusion of connector_api_short_message.h. You should only include connector_api.h in user code."
-#endif /* CONNECTOR_API_SHORT_MESSAGE_H */
+#endif

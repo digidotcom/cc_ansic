@@ -233,4 +233,4 @@ typedef struct connector_edp_data {
 
 } connector_edp_data_t;
 
-#endif /* CONNECTOR_EDP_DEF_H_ */
+#endif

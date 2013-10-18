@@ -132,4 +132,4 @@ typedef struct  {
 
 #else
 #error  "Illegal inclusion of connector_api_network.h. You should only include connector_api.h in user code."
-#endif /* CONNECTOR_API_NETWORK_H */
+#endif

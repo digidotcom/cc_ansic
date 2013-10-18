@@ -219,4 +219,4 @@ typedef struct connector_data {
 
 } connector_data_t;
 
-#endif /* CONNECTOR_DEF_H_ */
+#endif

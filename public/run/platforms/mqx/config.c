@@ -141,7 +141,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(uint16_t const 
 
     return connector_callback_continue;
 }
-#endif /* !defined(CONNECTOR_TX_KEEPALIVE_IN_SECONDS) */
+#endif
 
 #if !defined(CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
 /* This keep alive is sent from the device to the server  */
@@ -156,7 +156,7 @@ static connector_callback_status_t app_get_rx_keepalive_interval(uint16_t const 
 
     return connector_callback_continue;
 }
-#endif /* !defined(CONNECTOR_RX_KEEPALIVE_IN_SECONDS) */
+#endif
 
 #if !defined(CONNECTOR_WAIT_COUNT)
 static connector_callback_status_t app_get_wait_count(uint16_t const ** const count, size_t * const size)
@@ -173,7 +173,7 @@ static connector_callback_status_t app_get_wait_count(uint16_t const ** const co
 
     return connector_callback_continue;
 }
-#endif /* !defined(CONNECTOR_WAIT_COUNT) */
+#endif
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE) && !(defined CONNECTOR_FIRMWARE_SUPPORT)
 static connector_callback_status_t app_get_firmware_support(connector_config_supported_t * const config_status)

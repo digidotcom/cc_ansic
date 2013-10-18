@@ -743,7 +743,7 @@ static connector_callback_status_t app_config_error(connector_config_error_statu
 
     return result;
 }
-#endif /* CONNECTOR_DEBUG */
+#endif
 
 /*
  * Configuration callback routine.

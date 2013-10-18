@@ -600,4 +600,4 @@ connector_callback_status_t app_file_system_handler(connector_request_id_file_sy
 
     return status;
 }
-#endif /* #ifdef CONNECTOR_FILE_SYSTEM */
+#endif

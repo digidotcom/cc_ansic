@@ -288,4 +288,4 @@ typedef void * connector_network_handle_t;
 */
 
 
-#endif /* CONNECTOR_TYPES_H_ */
+#endif

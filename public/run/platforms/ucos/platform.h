@@ -41,4 +41,4 @@ connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t
 #endif
 int application_run(connector_handle_t handle);
 
-#endif /* _PLATFORM_H */
+#endif

@@ -225,4 +225,4 @@ typedef struct {
 * @}
 */
 
-#endif /* remote_config_h */
+#endif

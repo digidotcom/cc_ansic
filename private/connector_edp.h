@@ -371,7 +371,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
         }
         result = data_service_initiate(connector_ptr, request_data);
         break;
-#endif /* CONNECTOR_DATA_SERVICE */
+#endif
 #if (defined CONNECTOR_DATA_POINTS)
     case connector_initiate_data_point_single:
     case connector_initiate_data_point_binary:
@@ -421,7 +421,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
                 break;
         }
         break;
-#endif /* CONNECTOR_DATA_POINTS */
+#endif
 
     case connector_initiate_transport_stop:
         switch (edp_get_active_state(connector_ptr))

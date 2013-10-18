@@ -517,7 +517,7 @@ static void rci_output_field_value(rci_t * const rci)
         ASSERT(rci->shared.value.string_value != NULL);
         overflow = rci_output_string(rci, rci->shared.value.string_value, strlen(rci->shared.value.string_value));
         break;
-#endif /* RCI_PARSER_USES_STRINGS */
+#endif
 
 #if defined RCI_PARSER_USES_IPV4
     case connector_element_type_ipv4:
@@ -547,7 +547,7 @@ static void rci_output_field_value(rci_t * const rci)
 
         overflow = rci_output_uint32(rci, rci->shared.value.unsigned_integer_value);
         break;
-#endif /* RCI_PARSER_USES_UNSIGNED_INTEGER */
+#endif
 
 #if defined RCI_PARSER_USES_FLOAT
     case connector_element_type_float:

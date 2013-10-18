@@ -47,4 +47,4 @@ extern void app_system_group_cancel(connector_remote_config_cancel_t * const rem
 * extern connector_callback_status_t app_device_security_group_end(connector_remote_config_t * const remote_config);
 * extern void app_device_security_group_cancel(connector_remote_config_cancel_t * const remote_config);
 */
-#endif /* REMOTE_CONFIG_CB_H_ */
+#endif

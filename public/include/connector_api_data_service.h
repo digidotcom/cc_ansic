@@ -251,7 +251,7 @@ typedef struct
 * @}
 */
 
-#endif /* defined CONNECTOR_DATA_SERVICE */
+#endif
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_data_service.h. You should only include connector_api.h in user code."
@@ -259,5 +259,5 @@ typedef struct
 
 #else
 #error  "Illegal inclusion of connector_api_data_service.h. You should only include connector_api.h in user code."
-#endif /* _CONNECTOR_DS_API_H */
+#endif
 

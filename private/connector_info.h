@@ -14,4 +14,4 @@
 
 #define CONNECTOR_SW_VERSION "2.0.0.0"
 
-#endif /* CONNECTOR_INFO_H_ */
+#endif

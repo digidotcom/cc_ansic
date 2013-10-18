@@ -56,4 +56,4 @@ void connector_debug_printf(char const * const format, ...);
 #define CONFIRM(cond)           do { switch(0) {case 0: case (cond):;} } while (0)
 
 
-#endif /* CONNECTOR_DEBUG_H_ */
+#endif

@@ -239,7 +239,7 @@ typedef struct {
 /**
 * @}
 */
-#endif /* (defined CONNECTOR_FIRMWARE_SERVICE) */
+#endif
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_firmware.h. You should only include connector_api.h in user code."
@@ -247,5 +247,5 @@ typedef struct {
 
 #else
 #error  "Illegal inclusion of connector_api_firmware.h. You should only include connector_api.h in user code."
-#endif /* CONNECTOR_API_FIRMWARE_H */
+#endif
 

@@ -529,7 +529,7 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
 
     return result;
 }
-#endif	
+#endif
 
 static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 {

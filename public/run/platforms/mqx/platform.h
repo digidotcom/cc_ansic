@@ -46,4 +46,4 @@ extern connector_callback_status_t app_firmware_handler(connector_request_id_fir
 extern connector_callback_status_t app_file_system_handler(connector_request_id_file_system_t const request, void * const data);
 #endif
 
-#endif /* _PLATFORM_H */
+#endif
