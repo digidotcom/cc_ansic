@@ -43,7 +43,7 @@ typedef enum {
     connector_request_id_file_system_opendir,          /**< inform callback to start processing a directory */
     connector_request_id_file_system_readdir,          /**< inform callback to read next directory entry */
     connector_request_id_file_system_closedir,         /**< inform callback to end processing a directory */
-    connector_request_id_file_system_get_error,         /**< inform callback to get the error data informatiopn */
+    connector_request_id_file_system_get_error,         /**< inform callback to get the error data information */
     connector_request_id_file_system_session_error,     /**< inform callback of an error condition */
     connector_request_id_file_system_hash              /**< inform callback to return file hash value */
 } connector_request_id_file_system_t;
@@ -312,7 +312,7 @@ typedef struct
 * File system hash algorithm @{
 */
 /**
-* Hash algorithm gives different options for hash values returned in the file lisings.
+* Hash algorithm gives different options for hash values returned in the file listings.
 *
 * @see @ref connector_request_id_file_system_stat
 * @see @ref connector_request_id_file_system_hash
@@ -375,11 +375,11 @@ typedef enum
 
 /**
 * @defgroup connector_file_system_statbuf_t File Status Buffer 
-* Data type used to return file statu 
+* Data type used to return file status
 * @{
 */
 /**
-* File status data structure is used to return the status of a direcory or a file, specified by the path.
+* File status data structure is used to return the status of a directory or a file, specified by the path.
 * It is used in
 * @ref connector_request_id_file_system_stat and
 * @ref connector_request_id_file_system_stat_dir_entry
@@ -537,7 +537,7 @@ typedef struct
 
     void  * CONST buffer;              /**< A pointer to memory, where callback writes error description */
     size_t  CONST bytes_available;     /**< Size of a error description buffer */
-    size_t  bytes_used;                /**< Number of error descriptio bytes */
+    size_t  bytes_used;                /**< Number of error descriptionbytes */
 
     connector_file_system_error_t error_status; /**< Error status */
 

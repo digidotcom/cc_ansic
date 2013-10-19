@@ -248,7 +248,7 @@ static connector_status_t tcp_rx_keepalive_process(connector_data_t * const conn
 
     /* Sends rx keepalive if keepalive timing is expired.
      *
-     * last_rx_keeplive_time is last time we sent Rx keepalive.
+     * last_rx_keepalive_time is last time we sent Rx keepalive.
      */
     if (is_valid_timing_limit(connector_ptr, connector_ptr->edp_data.keepalive.last_rx_sent_time, GET_RX_KEEPALIVE_INTERVAL(connector_ptr)))
     {

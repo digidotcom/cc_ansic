@@ -4,7 +4,7 @@
  *
  * @section rci_advance_sample_overview Overview
  *
- * This sample demonstrates how to retreive and set device configurations using @ref rci_service "remote configuration callbacks".
+ * This sample demonstrates how to retrieve and set device configurations using @ref rci_service "remote configuration callbacks".
  * This sample does not write on the device but demonstrates the remote configuration callback.
  *
 * @section rci_sample_location Source Code Location

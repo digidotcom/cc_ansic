@@ -208,7 +208,7 @@ static fw_abort_status_t get_abort_status_code(connector_firmware_status_t const
     case connector_firmware_status_download_not_allowed:
     case connector_firmware_status_download_configured_to_reject:
     case connector_firmware_status_encountered_error:
-        /* not abort status so defult to device error */
+        /* not abort status so default to device error */
         code.abort_status = fw_device_error;
         break;
     case connector_firmware_status_success:
@@ -492,7 +492,7 @@ enum fw_download_response {
 
     if (fw_ptr->update_started == connector_true)
     {
-        connector_debug_printf("process_fw_download_reqeust: cannot start another firmware update target %d\n", download_request.target_number);
+        connector_debug_printf("process_fw_download_request: cannot start another firmware update target %d\n", download_request.target_number);
         goto error;
     }
 
@@ -723,7 +723,7 @@ static connector_status_t process_fw_abort(connector_firmware_data_t * const fw_
 static connector_status_t process_fw_complete(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_complete_request, uint16_t const length)
 {
 
-/* Firmware downlaod complete message format:
+/* Firmware download complete message format:
  *  ----------------------------------------
  * |   0    |   1    |   2 - 5   |  6 - 9   |
  *  ----------------------------------------

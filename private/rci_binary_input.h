@@ -824,7 +824,7 @@ static void process_field_no_value(rci_t * const rci)
 
     if (has_rci_no_value(modifier_ber))
     {
-        /* this initializes element.value in case for set settng */
+        /* this initializes element.value in case for set setting */
         connector_group_element_t const * const element = get_current_element(rci);
         connector_element_value_type_t const type = element->type;
 

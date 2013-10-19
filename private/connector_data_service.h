@@ -89,7 +89,7 @@ static connector_status_t process_ds_receive_target(connector_data_t * const con
      *  -------------------------------------------------------------------------------------------------------
      * |   0    |   1    |  2+N   |    +1     |     +1      |    +1       |    +M       |  ...       | +P      |
      *  -------------------------------------------------------------------------------------------------------
-     * | Opcode | Target | Target | Parameter | Parameter 1 | Parameter 1 | Parameter 1 | Additioanl | Payload |
+     * | Opcode | Target | Target | Parameter | Parameter 1 | Parameter 1 | Parameter 1 | Additional | Payload |
      * |        | length | string |   count   |     ID      | data length |    data     | parameters |         |
      *  -------------------------------------------------------------------------------------------------------
      *
@@ -277,7 +277,7 @@ static connector_status_t process_data_service_device_request(connector_data_t *
                         {
                             case connector_request_id_data_service_receive_reply_length:
                                 break;
-		    
+
                             default:
                                 if (MsgIsLastData(service_data->flags))
                                     data_service->request_type = connector_request_id_data_service_receive_reply_data;

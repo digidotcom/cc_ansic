@@ -188,7 +188,7 @@ done:
     return result;
 }
 
-/* This function will only be called under SMS trasport when a 'provisioning' message is received */
+/* This function will only be called under SMS transport when a 'provisioning' message is received */
 static connector_status_t set_config_device_cloud_phone(connector_data_t * const connector_ptr, char * phone_number)
 {
     connector_status_t result = connector_working;
@@ -241,7 +241,7 @@ static connector_status_t get_config_device_cloud_service_id(connector_data_t * 
     switch (callback_status)
     {
     case connector_callback_continue:
-        /* we allow lenght == 0 for service_id */
+        /* we allow length == 0 for service_id */
         /*if (cloud_service_id.length == 0)
         {
             result =  connector_invalid_data_size;

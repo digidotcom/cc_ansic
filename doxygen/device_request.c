@@ -70,7 +70,7 @@
  * </tr>
  * <tr>
  * <th>device_request.c</th>
- * <td>Rountines used to process the data service device requests</td>
+ * <td>Routines used to process the data service device requests</td>
  * <td>samples/device_request</td>
  * </tr>
  * <tr>

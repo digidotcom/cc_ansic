@@ -110,7 +110,7 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
 /**
  * @brief   Save the Cloud Connector's Device ID
  *
- * This routine is called when a zero'ed Device ID is provided in @ref app_load_device_id and 
+ * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id and 
  * @ref device_id_method is set to @ref connector_device_id_method_manual.
  * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_load_device_id function.
@@ -556,7 +556,7 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
  * If you plan on accessing device data configurations through Device Cloud return connector_true.
  *
  * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if remote configuration is supported or
- *                            connector_false  if remtoe configuration is not supported.
+ *                            connector_false  if remote configuration is not supported.
  *
  * @retval connector_callback_continue  The remote configuration support was successfully returned.
  * @retval connector_callback_abort     Could not get the remote configuration support and abort Cloud Connector.

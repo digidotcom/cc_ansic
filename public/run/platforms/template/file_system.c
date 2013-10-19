@@ -12,7 +12,7 @@
 
 /**
  * @file
- *  @brief Rountines which implement the Cloud
+ *  @brief Routines which implement the Cloud
  *         Connector file system
  *  
  *  @ref CONNECTOR_FILE_SYSTEM.
@@ -32,7 +32,7 @@
  * @retval connector_callback_continue	File opened successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -58,7 +58,7 @@ connector_callback_status_t app_process_file_open(connector_file_system_open_t *
  * @retval connector_callback_continue	Offset set successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -88,7 +88,7 @@ connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t
  *                                  end-of-file.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -115,7 +115,7 @@ connector_callback_status_t app_process_file_read(connector_file_system_read_t *
  *                                  written successfully
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -140,7 +140,7 @@ connector_callback_status_t app_process_file_write(connector_file_system_write_t
  * @retval connector_callback_continue	File truncated successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -167,7 +167,7 @@ connector_callback_status_t app_process_file_ftruncate(connector_file_system_tru
  * @retval connector_callback_continue	File truncated successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -193,7 +193,7 @@ connector_callback_status_t app_process_file_close(connector_file_system_close_t
  * @retval connector_callback_continue	File removed successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -219,7 +219,7 @@ connector_callback_status_t app_process_file_remove(connector_file_system_remove
  * @retval connector_callback_continue	Operation was successful.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -246,7 +246,7 @@ connector_callback_status_t app_process_file_stat(connector_file_system_stat_t *
  * @retval connector_callback_continue	Operation was successful.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -273,7 +273,7 @@ connector_callback_status_t app_process_file_stat_dir_entry(connector_file_syste
  *                                  successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -301,7 +301,7 @@ connector_callback_status_t app_process_file_opendir(connector_file_system_opend
  *                                  entries.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -328,7 +328,7 @@ connector_callback_status_t app_process_file_readdir(connector_file_system_readd
  *                                  successfully.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -347,7 +347,7 @@ connector_callback_status_t app_process_file_closedir(connector_file_system_clos
  * @brief   Get File Hash Value
  *
  * This routine returns hash value for the specified path and 
- * hash algorythm
+ * hash algorithm
  *
  * @param data  Pointer to a connector_file_system_hash_t 
  *              data structure
@@ -355,7 +355,7 @@ connector_callback_status_t app_process_file_closedir(connector_file_system_clos
  * @retval connector_callback_continue	Hash value returned.
  * @retval connector_callback_busy 		Busy. The routine will be 
  *                                  called again.
- * @retval connector_callback_error     An error has occured,
+ * @retval connector_callback_error     An error has occurred,
  *                                  Application-defined error
  *                                  code is returned in errnum.
  * @retval connector_callback_abort     The application aborts 
@@ -396,7 +396,7 @@ connector_callback_status_t app_process_file_get_error(connector_file_system_get
  * @brief   Inform of a Session Error
  *
  * This routine informs of a file system session error, 
- * whichn might be caused by network communication problems,
+ * which might be caused by network communication problems,
  * session timeout, insufficient memory, etc. 
  *
  * @param data  Pointer to a 

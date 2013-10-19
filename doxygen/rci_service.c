@@ -98,7 +98,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback successfully started remote configuration or error has occured</td>
+ * <td>Callback successfully started remote configuration or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -190,7 +190,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback successfully started setting or querying remote configuration or error has occured</td>
+ * <td>Callback successfully started setting or querying remote configuration or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -270,7 +270,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback successfully started processing a configuration group or error has occured</td>
+ * <td>Callback successfully started processing a configuration group or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -432,7 +432,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback successfully set an element of the configuration group or error has occured</td>
+ * <td>Callback successfully set an element of the configuration group or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -587,7 +587,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback successfully retrieved an element's value or error has occured</td>
+ * <td>Callback successfully retrieved an element's value or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -685,7 +685,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback was successfully done processing the configuration group or error has occured</td>
+ * <td>Callback was successfully done processing the configuration group or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -775,7 +775,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback was successfully done setting or queryin remote configuration or error has occured</td>
+ * <td>Callback was successfully done setting or queryin remote configuration or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
@@ -846,7 +846,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
- * <td>Callback was successfully done remote configuration request or error has occured</td>
+ * <td>Callback was successfully done remote configuration request or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>

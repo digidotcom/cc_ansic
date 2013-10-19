@@ -11,7 +11,7 @@
  */
 /**
  * @file
- *  @brief Rountines which implement Cloud Connector network interface for
+ *  @brief Routines which implement Cloud Connector network interface for
  *  @ref CONNECTOR_TRANSPORT_SMS.
  */
 #include "connector_api.h"
@@ -75,7 +75,7 @@ connector_callback_status_t app_network_sms_open(connector_network_open_t * cons
  *                                  EAGAIN or EWOULDBLOCK error.
  *                                  It will be called again to
  *                                  send data.
- * @retval connector_callback_error     An irrecoverable error has occured,  Cloud Connector will call
+ * @retval connector_callback_error     An irrecoverable error has occurred,  Cloud Connector will call
  *                                  @ref app_network_sms_close.
  * @retval connector_callback_abort     The application aborts Cloud Connector.
  *
@@ -110,7 +110,7 @@ connector_callback_status_t app_network_sms_send(connector_network_send_t * cons
  * @retval connector_callback_continue	The routine has received some data.
  * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or
  *                                  EWOULDBLOCK error. It will be called again to receive data.
- * @retval connector_callback_error     An irrecoverable error has occured,  Cloud Connector will call
+ * @retval connector_callback_error     An irrecoverable error has occurred,  Cloud Connector will call
  *                                  @ref app_network_sms_close.
  * @retval connector_callback_abort     The application aborts Cloud Connector.
  *

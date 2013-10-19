@@ -176,7 +176,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr>
  * <tr>
@@ -283,7 +283,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr>
  * <tr>
@@ -391,7 +391,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -485,7 +485,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -575,7 +575,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -661,7 +661,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -740,7 +740,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -829,7 +829,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -948,7 +948,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -1070,7 +1070,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -1208,7 +1208,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -1330,7 +1330,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>
@@ -1451,7 +1451,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_error @htmlonly</td>
- * <td>An error has occured
+ * <td>An error has occurred
  * </td>
  * </tr> 
  * <tr>

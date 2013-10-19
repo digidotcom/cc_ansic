@@ -176,7 +176,7 @@ enum fw_info {
      * build and send firmware info response
     */
     {
-        #define FW_NOT_UPGRADABLE_DESCRIPTION "Non updatable firmware"
+        #define FW_NOT_UPGRADABLE_DESCRIPTION "Non updateable firmware"
 
         static const char fw_target_description[] = FW_NOT_UPGRADABLE_DESCRIPTION;
         static const size_t fw_target_description_length = sizeof fw_target_description -1;

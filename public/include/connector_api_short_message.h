@@ -237,7 +237,7 @@ typedef struct
     enum
     {
         connector_sm_cli_status_cancel, /**< cancelled by the user */
-        connector_sm_cli_status_error   /**< error occured while preparing the response */
+        connector_sm_cli_status_error   /**< error occurred while preparing the response */
     } CONST status; /**< CLI session termination reason */
 
 } connector_sm_cli_status_t;
@@ -253,7 +253,7 @@ typedef struct
 /**
 * This data structure is used when the callback is called to pass Device Cloud response for which the
 * associated request is not present. It may be cancelled by the user or by Cloud Connector after sending the request.
-* The request ID associated with this data staructure is connector_request_id_sm_opaque_response.
+* The request ID associated with this data structure is connector_request_id_sm_opaque_response.
 *
 * @see connector_request_id_sm_opaque_response
 *
@@ -278,7 +278,7 @@ typedef struct
 /**
 * This data structure is used when the callback is called with the connector_request_id_more_data.
 * This indicates that more messages are pending in Device Cloud for the device. User need
-* to send request (can be ping) to retreive pending messages.
+* to send request (can be ping) to retrieve pending messages.
 *
 * @see connector_request_id_more_data
 */

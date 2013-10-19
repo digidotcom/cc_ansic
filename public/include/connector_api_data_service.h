@@ -48,7 +48,7 @@ typedef struct
         connector_data_service_send_option_archive,     /**< archive the data in given path */
         connector_data_service_send_option_append,      /**< append to existing file/path */
         connector_data_service_send_option_transient    /**< Device Cloud need not store the data but can send it to the consumer */
-    } option;       /**< what action Device Cloud should take after receing this request. Applicable only in TCP transport method */
+    } option;       /**< what action Device Cloud should take after receiving this request. Applicable only in TCP transport method */
 
     connector_bool_t response_required; /**< set to connector_true if response is needed. If @ref transport is set to @ref connector_transport_tcp
                                              this field is ignored and a response is always received. */
@@ -132,7 +132,7 @@ typedef struct
 * The callback data with request ID connector_request_id_data_service_send_status and
 * connector_request_id_data_service_receive_status will point to this structure.
 * The callback is called to report the the status why session is closed. User can free
-* any allocated resources for this session after receing this callback.
+* any allocated resources for this session after receiving this callback.
 */
 typedef struct
 {
@@ -162,7 +162,7 @@ typedef struct
 /**
 * The callback data with request ID connector_request_id_data_service_send_response will point to this structure.
 * The callback is called to pass Device Cloud response. User can free any allocated resources for this session
-* after receing this callback.
+* after receiving this callback.
 */
 typedef struct
 {
@@ -213,7 +213,7 @@ typedef struct
 /**
 * The callback data with request ID connector_request_id_data_service_receive_data will point to this structure.
 * The callback is called to pass Device Cloud response. User can free any allocated resources for this session
-* after receing this callback.
+* after receiving this callback.
 */
 typedef struct
 {

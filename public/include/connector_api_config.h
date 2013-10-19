@@ -262,7 +262,7 @@ typedef struct {
 * @{
 */
 /**
-* Service supported status configuarion for the following callbacks:
+* Service supported status configuration for the following callbacks:
 *   -# @ref connector_request_id_config_firmware_facility
 *   -# @ref connector_request_id_config_data_service
 *   -# @ref connector_request_id_config_file_system
@@ -287,7 +287,7 @@ typedef struct {
 *
 */
 /**
- * Device ID method type which is used in the applciation's callback telling
+ * Device ID method type which is used in the application's callback telling
  * the connector how to obtain a device ID.
  *
  * @see connector_config_device_id_method_t
@@ -295,7 +295,7 @@ typedef struct {
 typedef enum {
     connector_device_id_method_auto,         /**< Callback returns this type telling Cloud Connector to
                                                  generate the device ID from MAC address (See @ref mac_address callback)
-                                                 for LAN connection type or genearte the device ID according to the @ref wan_type.
+                                                 for LAN connection type or generate the device ID according to the @ref wan_type.
                                                  @note Cloud Connector will not call @ref device_id callback. */
     connector_device_id_method_manual        /**< Callback returns this type telling Cloud Connector to retrieve device ID from
                                                   @ref device_id callback */
@@ -333,7 +333,7 @@ typedef struct {
 */
 typedef enum {
 
-    connector_connect_auto,     /**< Automic connect to Device Cloud */
+    connector_connect_auto,     /**< Automatic connect to Device Cloud */
     connector_connect_manual   /**< Manual connect to Device Cloud */
 } connector_connect_auto_type_t;
 /**

@@ -268,7 +268,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                  * during edp connection process since no facility is
                  * running.
                  * Otherwise, we setup the packet in receive_packet_data index
-                 * to receive actual data. Otherwise, we dont have actual
+                 * to receive actual data. Otherwise, we don't have actual
                  * data received but we need to be able to receive keepalive.
                  */
                 connector_ptr->edp_data.receive_packet.data_packet = tcp_new_receive_packet(connector_ptr);

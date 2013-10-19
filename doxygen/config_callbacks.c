@@ -191,7 +191,7 @@
  * 
  * Saves the Device ID into a non-volatile storage (EEPROM, file, NVRAM, etc.).
  *
- * This routine is called when a zero'ed Device ID is provided in @ref app_load_device_id and 
+ * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id and 
  * @ref device_id_method is set to @ref connector_device_id_method_manual.
  * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_load_device_id function.

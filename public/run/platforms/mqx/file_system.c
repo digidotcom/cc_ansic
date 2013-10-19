@@ -79,7 +79,7 @@ static uint_32 mfs_date_to_epoch(MFS_DATE_TIME_PARAM_PTR date)
 	if (_time_from_date(&mqx_date, &epoch)) {
 		return epoch.SECONDS;	
 	} else {
-		return ~0; /* Error ocurred, probably invalid date*/
+		return ~0; /* Error occurred, probably invalid date*/
 	}
 }
 
@@ -198,10 +198,10 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     	MFS_SEARCH_DATA *search_data = _mem_alloc(sizeof(MFS_SEARCH_DATA));
     	
     	if (search_param == NULL) {
-    		APP_DEBUG("app_process_file_opendir: failed to allocate memmory for MFS_SEARCH_PARAM\n", __FILE__, __FUNCTION__, __LINE__);
+    		APP_DEBUG("app_process_file_opendir: failed to allocate memory for MFS_SEARCH_PARAM\n", __FILE__, __FUNCTION__, __LINE__);
     		goto done;
     	} else if (search_data == NULL) {
-    		APP_DEBUG("app_process_file_opendir: failed to allocate memmory for MFS_SEARCH_DATA\n", __FILE__, __FUNCTION__, __LINE__);
+    		APP_DEBUG("app_process_file_opendir: failed to allocate memory for MFS_SEARCH_DATA\n", __FILE__, __FUNCTION__, __LINE__);
     		goto done;
     	}
     	search_param->ATTRIBUTE = MFS_SEARCH_ANY;

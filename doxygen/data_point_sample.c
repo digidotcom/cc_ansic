@@ -37,7 +37,7 @@
  *
  * If the app_data_point_handler() is called with @ref connector_request_id_data_point_single_response
  * then this indicates a response from Device Cloud is received, The @ref connector_request_id_data_point_single_status
- * would indicate an error occured while sending data points. This sample uses linux, /proc/stat file
+ * would indicate an error occurred while sending data points. This sample uses linux, /proc/stat file
  * to calculate the CPU usage.
  *
  * @section connect_build Building

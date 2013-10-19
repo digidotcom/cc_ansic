@@ -469,7 +469,7 @@ connector_status_t connector_step(connector_handle_t const handle)
         case connector_state_terminate_by_initiate_action:
             if (is_connector_stopped(connector_ptr, connector_close_status_device_terminated))
             {
-                connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provissioning! */
+                connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
                 connector_ptr->signature = NULL;
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 connector_debug_printf("connector_step: free Cloud Connector\n");

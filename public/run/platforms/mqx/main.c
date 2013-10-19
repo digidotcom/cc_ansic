@@ -104,7 +104,7 @@ error:
     return result;
 }
 
-/* Following hook will be called during application initialitation if 
+/* Following hook will be called during application initialization if 
    CONNECTOR_MAC_ADDRESS is not defined in connector_config.h
    It requests the Device MAC Address through the serial port and uses
    it to configure the Ethernet Stack.

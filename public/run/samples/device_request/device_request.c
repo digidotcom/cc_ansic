@@ -49,7 +49,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
             ptr = malloc(sizeof *device_request);
             if (ptr == NULL)
             {
-                /* no memeory so cancel this request */
+                /* no memory so cancel this request */
                 APP_DEBUG("app_process_device_request: malloc fails for device request \"%s\" target\n", target_data->target);
                 status = connector_callback_error;
                 goto done;

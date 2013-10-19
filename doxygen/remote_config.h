@@ -54,7 +54,7 @@ typedef enum {
     connector_element_type_float,               /**< Floating value. float.h is included. */
     connector_element_type_enum,                /**< enum is used to define a set of allowed values for an element.
                                                 This is a pull-down menu shown in the Device Cloud. */
-    connector_element_type_on_off = 11,            /**< "on" or "off" value. An applciation's callback should use
+    connector_element_type_on_off = 11,            /**< "on" or "off" value. An application's callback should use
                                                  connector_on value for "on"  or connector_off value for "off". See @ref connector_on_off_t*/
     connector_element_type_boolean,             /**< true or false value. An application's callback should use connector_true
                                                 value for true  or connector_false value for false. See @ref connector_bool_t */

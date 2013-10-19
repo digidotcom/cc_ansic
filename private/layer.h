@@ -32,7 +32,7 @@ typedef struct {
     connector_facility_service_process_cb_t process_cb;
 } connector_facility_service_t;
 
-/* Table of all supported facilites.
+/* Table of all supported facilities.
  *
  * The connector will call the callback to see whether it supports each optional facility.
  * It will call init_cb to initialize the facility and delete_cb to remove the facility.

@@ -507,21 +507,21 @@ typedef struct
  *
  */
  /**
- * @param class_id 				This is a grouping or category of callback functions.  Each class_id contains a number of related request_id's.
- * @param request_id 			The request ID defines the specific callback being requested.
- * @param data 			        Points to specific structure for a given class ID and request ID
+ * @param class_id              This is a grouping or category of callback functions.  Each class_id contains a number of related request_id's.
+ * @param request_id            The request ID defines the specific callback being requested.
+ * @param data                  Points to specific structure for a given class ID and request ID
  *
- * @retval	connector_callback_continue	The callback completed successfully and Cloud Connector should continue
- * 										it's process.
- * @retval  connector_callback_busy		The callback could not complete the operation within the allowable time frame.
- * 										Do not advance the Cloud Connector state and recall this callback at some
- * 										later time.
- * @retval  connector_callback_error    An application level error occured while processing the callback.
- * @retval 	connector_callback_abort	The application is requesting Cloud Connector to abort execution.  This will
- * 										cause connector_run() or connector_step() to terminate with status @ref connector_abort.
- * @retval	connector_callback_unrecognized	An unsupported and unrecognized callback was received.  The application does not
- * 										support this request.  This should be implemented in the application to allow for
- * 										graceful recovery and upgrade-ability to future Cloud Connector releases.
+ * @retval  connector_callback_continue The callback completed successfully and Cloud Connector should continue
+ *                                      it's process.
+ * @retval  connector_callback_busy     The callback could not complete the operation within the allowable time frame.
+ *                                      Do not advance the Cloud Connector state and recall this callback at some
+ *                                      later time.
+ * @retval  connector_callback_error    An application level error occurred while processing the callback.
+ * @retval  connector_callback_abort    The application is requesting Cloud Connector to abort execution.  This will
+ *                                      cause connector_run() or connector_step() to terminate with status @ref connector_abort.
+ * @retval  connector_callback_unrecognized An unsupported and unrecognized callback was received.  The application does not
+ *                                      support this request.  This should be implemented in the application to allow for
+ *                                      graceful recovery and upgrade-ability to future Cloud Connector releases.
  *
  * @see connector_callback_status_t
  * @see connector_init()
@@ -547,8 +547,8 @@ typedef connector_callback_status_t (* connector_callback_t) (connector_class_id
  * @param [in] callback  Callback function that is used to
  *        interface between the application and Cloud Connector.
  *
- * @retval NULL   		An error occurred and Cloud Connector was unable to initialize.
- * @retval "Not NULL"	Success.  A Handle was returned for subsequent Cloud Connector calls.
+ * @retval NULL         An error occurred and Cloud Connector was unable to initialize.
+ * @retval "Not NULL"   Success.  A Handle was returned for subsequent Cloud Connector calls.
  *
  * Example Usage:
  * @code
@@ -587,25 +587,25 @@ connector_handle_t connector_init(connector_callback_t const callback);
  * @param [in] handle  Handle returned from connector_init
  *
  * @retval connector_init_error             Cloud Connector was not properly initialized.  The application requires a
- * 										call to connector_init() prior to calling this function.
+ *                                      call to connector_init() prior to calling this function.
  * @retval connector_abort                  Cloud Connector was aborted by callback function.
  * @retval connector_invalid_data_size      An @ref iik_callback "application callback" returned an invalid response_length.
- *   									This is an application callback defect and should be corrected.  To locate the
- *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
- * 										debugging, see the section on @ref debug_routine "how to implement debug support".
+ *                                      This is an application callback defect and should be corrected.  To locate the
+ *                                      faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
+ *                                      debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_invalid_data_range     An @ref iik_callback "application callback" returned invalid response_data.
- *  									This is an application callback defect and should be corrected.  To locate the
- *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
- * 										debugging, see the section on @ref debug_routine "how to implement debug support".
+ *                                      This is an application callback defect and should be corrected.  To locate the
+ *                                      faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
+ *                                      debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_invalid_payload_packet Cloud Connector received invalid payload message.
  * @retval connector_keepalive_error        Cloud Connector did not receive keep alive messages. Device Cloud may be offline.
  * @retval connector_bad_version            Device Cloud rejected version number.
  * @retval connector_exceed_timeout         Callback exceeded timeout value before it returned.
  * @retval connector_unsupported_security   Cloud Connector received a packet with unsupported security.
  * @retval connector_invalid_data           An @ref iik_callback "application callback" returned unexpected NULL response_data.
- *  									This is an application callback defect and should be corrected.  To locate the
- *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
- * 										debugging, see the section on @ref debug_routine "how to implement debug support".
+ *                                      This is an application callback defect and should be corrected.  To locate the
+ *                                      faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
+ *                                      debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_device_terminated      Cloud Connector was terminated by user via connector_initiate_action() call.
  * @retval connector_idle                   Cloud Connector is idling. Cloud Connector has no message to process and relinquishes other task execution.
  * @retval connector_working                Cloud Connector is processing a message and should be called at the earliest possible time.
@@ -621,8 +621,8 @@ connector_handle_t connector_init(connector_callback_t const callback);
  *
  *     for (;;)
  *     {
- *     	    status = connector_step(connector_handle);
- *     	    other_system_tasks();
+ *          status = connector_step(connector_handle);
+ *          other_system_tasks();
  *     }
  * @endcode
  *
@@ -653,27 +653,27 @@ connector_status_t connector_step(connector_handle_t const handle);
  * See Cloud Connector @ref threading "Threading Model section" for more information on the differences
  * between connector_run() and connector_step().
  *
- * @param [in] handle  					Handle returned from connector_init() call.
+ * @param [in] handle                   Handle returned from connector_init() call.
  *
  * @retval connector_init_error             Cloud Connector was not properly initialized.  The application requires a
- * 										call to connector_init() prior to calling this function.
+ *                                      call to connector_init() prior to calling this function.
  * @retval connector_abort                  Cloud Connector was aborted by callback function.
  * @retval connector_invalid_data_size      An @ref iik_callback "application callback" returned an invalid response_length.
- *   									This is an application callback defect and should be corrected.  To locate the
- *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
- * 										debugging, see the section on @ref debug_routine "how to implement debug support".
+ *                                      This is an application callback defect and should be corrected.  To locate the
+ *                                      faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
+ *                                      debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_invalid_data_range     An @ref iik_callback "application callback" returned invalid response_data.
- *  									This is an application callback defect and should be corrected.  To locate the
- *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
- * 										debugging, see the section on @ref debug_routine "how to implement debug support".
+ *                                      This is an application callback defect and should be corrected.  To locate the
+ *                                      faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
+ *                                      debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_keepalive_error        Cloud Connector did not receive keep alive messages. Device Cloud may be offline.
  * @retval connector_bad_version            Device Cloud rejected version number.
  * @retval connector_exceed_timeout         Callback exceeded timeout value before it returned.
  * @retval connector_unsupported_security   Cloud Connector received a packet with unsupported security.
  * @retval connector_invalid_data           An @ref iik_callback "application callback" returned unexpected NULL response_data.
- *  									This is an application callback defect and should be corrected.  To locate the
- *  									faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
- * 										debugging, see the section on @ref debug_routine "how to implement debug support".
+ *                                      This is an application callback defect and should be corrected.  To locate the
+ *                                      faulty callback, enable @ref CONNECTOR_DEBUG.  For more information on
+ *                                      debugging, see the section on @ref debug_routine "how to implement debug support".
  * @retval connector_device_error           Close Callback returns
  *                                      error. If connector_step or connector_run is called again, it
  *                                      will re-establish the connection.
@@ -754,7 +754,7 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          @ref connector_transport_udp and @ref connector_transport_sms transports method only.
  *
  *                      @li @b connector_initiate_session_cancel:
- *                          Initiates the action to cancel the timedout session.
+ *                          Initiates the action to cancel a session.
  *
  * @param [in] request_data  Pointer to Request data
  *                      @li @b connector_initiate_terminate:

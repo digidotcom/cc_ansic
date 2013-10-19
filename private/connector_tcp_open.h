@@ -280,7 +280,7 @@ static connector_status_t receive_protocol_version(connector_data_t * const conn
             if (*response_code != initialization_version_response_acceptable)
             {
                 edp_set_close_status(connector_ptr, connector_close_status_abort);
-                connector_debug_printf("receive_procotol_version:version is not accepted by Device Cloud\n");
+                connector_debug_printf("receive_protocol_version:version is not accepted by Device Cloud\n");
                 edp_set_active_state(connector_ptr, connector_transport_close);
             }
         }

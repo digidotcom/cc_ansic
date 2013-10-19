@@ -22,7 +22,7 @@
 #else
 #warning "Your project seems to lack DNS:
 #warning "Then you should fill CONNECTOR_CLOUD_URL define with Etherios Cloud IP instead of URL
-#warning "If your projet has DNS, please, define APP_CFG_DNS_EN  to DEF_ENABLED in your app_cfg.h file
+#warning "If your project has DNS, please, define APP_CFG_DNS_EN  to DEF_ENABLED in your app_cfg.h file
 #endif
 
 extern connector_callback_status_t app_os_get_system_time(unsigned long * const uptime);
@@ -216,7 +216,7 @@ error:
         if (elapsed_time >= APP_CONNECT_TIMEOUT)
             status = connector_callback_error;
         
-        // Don't be too demanding if link is still down.
+        // Don't be too demandingg if link is still down.
         app_os_delay(1000);
     }
     if (status == connector_callback_error)

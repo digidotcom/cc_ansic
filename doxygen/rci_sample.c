@@ -4,7 +4,7 @@
  *
  * @section rci_sample_overview Overview
  *
- * This sample demonstrates how to retreive and set device configurations using @ref rci_service "remote configuration callbacks".
+ * This sample demonstrates how to retrieve and set device configurations using @ref rci_service "remote configuration callbacks".
  * This is a simple sample which does not write on the device but demonstrates the remote configuration callback.
  *
  * @section rci_sample_location Source Code Location
@@ -56,7 +56,7 @@
  *     error invalid_length "Invalid Length"
  *
  * # Device Cloud Password
- * # Deivce Manager uses this devicesecurity setting for password authentication
+ * # Device Manager uses this devicesecurity setting for password authentication
  * # Note, as with all password, password type is a write-only field
  * # To include the devicesecurity setting, change devicesecurity.c.optional
  * # to devicesecurity.c and uncomment out the device_security functions in
