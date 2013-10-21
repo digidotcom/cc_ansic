@@ -184,16 +184,14 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
     connector_status_t result = connector_working;
     connector_sm_session_t * session = sm_ptr->session.head;
     connector_bool_t cancel_all = connector_bool(request_id == NULL);
-
-    if (cancel_all != connector_true && *request_id == SM_INVALID_REQUEST_ID)
-        goto done;
-
+    
     while (session != NULL)
     {
         connector_status_t status;
         connector_sm_session_t * next_session = NULL;
+        uint32_t session_request_id = request_id != NULL ? *request_id : SM_INVALID_REQUEST_ID;
 
-        if (cancel_all || (session->request_id == *request_id))
+        if (cancel_all || (session_request_id == *request_id))
         {
             if (session->user.context != NULL)
             {
