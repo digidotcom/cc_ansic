@@ -217,7 +217,6 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
         session = next_session != NULL ? next_session : session->next;
     }
 
-done:
     return result;
 }
 #else
