@@ -370,6 +370,7 @@ static void * get_data_point_single(dvt_dp_t * dvt_ptr)
     }
 
     dp_ptr->user_context = dp_ptr;
+    dp_ptr->request_id = NULL;
     goto done;
 
 error:
@@ -398,7 +399,7 @@ static void * get_binary_point(size_t * bytes)
     {
         APP_DEBUG("get_binary_point: Failed to malloc binary point %" PRIsize " bytes\n", rand_bytes);
     }
-
+    
     return data_ptr;
 }
 
@@ -429,6 +430,7 @@ static void * get_data_point_binary(dvt_dp_t * dvt_ptr)
     }
 
     dp_ptr->user_context = dp_ptr;
+    dp_ptr->request_id = NULL;
     goto done;
 
 error:
@@ -754,4 +756,3 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
 
     return status;
 }
-
