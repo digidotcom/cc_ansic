@@ -168,6 +168,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             }
 #else
             sm_ptr->transport.connect_type = (CONNECTOR_NETWORK_UDP_START == connector_connect_auto)?connector_connect_auto:connector_connect_manual;
+            result = connector_working;
 #endif
             break;
         }
@@ -187,6 +188,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             }
 #else
             sm_ptr->transport.connect_type = (CONNECTOR_NETWORK_SMS_START == connector_connect_auto)?connector_connect_auto:connector_connect_manual;
+            result = connector_working;
 #endif
             break;
         }
