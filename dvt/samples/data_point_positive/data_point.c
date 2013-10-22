@@ -367,6 +367,7 @@ static void * get_data_point_single(dvt_dp_t * dvt_ptr)
     }
 
     dp_ptr->user_context = dp_ptr;
+    dp_ptr->request_id = NULL;
     goto done;
 
 error:
@@ -426,6 +427,7 @@ static void * get_data_point_binary(dvt_dp_t * dvt_ptr)
     }
 
     dp_ptr->user_context = dp_ptr;
+    dp_ptr->request_id = NULL;
     goto done;
 
 error:
