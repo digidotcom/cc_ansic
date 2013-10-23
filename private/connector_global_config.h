@@ -138,6 +138,7 @@ done:
 }
 #endif
 
+#if (defined CONNECTOR_TRANSPORT_SMS)
 #if (CONNECTOR_VERSION >= 0x02010000)
 #if !(defined CONNECTOR_CLOUD_PHONE)
 static connector_status_t get_config_device_cloud_phone(connector_data_t * const connector_ptr)
@@ -275,6 +276,7 @@ static connector_status_t get_config_device_cloud_service_id(connector_data_t * 
 done:
     return result;
 }
+#endif
 #endif
 #endif
 
