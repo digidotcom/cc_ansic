@@ -176,13 +176,13 @@ done:
 
 static connector_status_t tcp_receive_packet(connector_data_t * const connector_ptr, connector_buffer_t ** packet)
 {
-    typedef enum {
+    enum {
         receive_packet_init,
         receive_packet_type,
         receive_packet_length,
         receive_packet_data,
         receive_packet_complete
-    } receive_packet_index_t;
+    };
 
     connector_status_t result = connector_idle;
 
