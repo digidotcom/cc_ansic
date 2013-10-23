@@ -1,4 +1,6 @@
 #!/bin/bash
+
+WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 rc=0
 rca=0
 PRODUCT_NAME=connector
@@ -54,7 +56,7 @@ function build_config_tool ()
     ant -f "${WORKSPACE}/tools/config/build.xml" -Ddist.dir="${TOOLS_DIR}"
 }
 
-python dvt/scripts/makegen.py all
+./dvt/scripts/makegen.sh
 
 # Create the output directory.
 mkdir -p "${OUTPUT_DIR}"
@@ -78,6 +80,7 @@ mkdir -p "${BASE_DIR}"
 cp -rf private "${BASE_DIR}"
 cp -rf public "${BASE_DIR}"
 cp -rf docs "${BASE_DIR}"
+rm     "${BASE_DIR}/public/run/platforms/linux/network_sms_proxy.c_aux"
 rm -rf "${BASE_DIR}/public/run/platforms/mqx"
 rm -rf "${BASE_DIR}/public/run/platforms/ucos"
 rm -rf "${BASE_DIR}/public/run/platforms/template"
