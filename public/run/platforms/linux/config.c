@@ -260,7 +260,7 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
 
 /* Service-Id used to communicate with the server through SMS
  * if empty, not shared-code used (default when using long codes)
- * When using shared-codes within US you may need to use "IDGP" 
+ * When using shared-codes within US you may need to use "idgp" 
  */
 static char connector_cloud_service_id[] = "";  /* empty: No shared-code used */
 

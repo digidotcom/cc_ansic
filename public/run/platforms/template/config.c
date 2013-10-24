@@ -275,7 +275,7 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
  * @brief   Get the Device Cloud service-id (if used) where to send SMSs (Only used for SMS transport)
  *
  * This routine assigns a pointer to the ASCII null-terminated string of
- * Device Cloud Service Id, this is typically empty if using world wide long codes or IDGP withing US.
+ * Device Cloud Service Id, this is typically empty if using world wide long codes or idgp withing US.
  *
  * @param [out] config_service_id  Callback returns pointer to memory containing the Service Id and the length of the Service Id in bytes.
  *

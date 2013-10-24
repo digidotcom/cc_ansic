@@ -380,7 +380,7 @@ static connector_callback_status_t app_get_password(char const ** password, size
 
 static connector_callback_status_t app_get_sms_service_id(char const ** const service_id, size_t * const size)
 {
-    static  char const sms_service_id[] = "IDGP";
+    static  char const sms_service_id[] = "idgp";
 
     /* Return pointer to service_id. */
     *service_id = sms_service_id;
