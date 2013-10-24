@@ -472,7 +472,6 @@ static connector_status_t data_service_device_request_callback(connector_data_t 
             if (session->error == connector_session_error_none)
             {
                 /* If there is no error, call the user to inform that session is done */
-                service_request->error_value = connector_session_error_none;
                 status = process_data_service_device_error(connector_ptr, service_request);
                 if (status != connector_working)
                     break;
@@ -645,9 +644,8 @@ static connector_status_t process_send_request(connector_data_t * const connecto
         service_data->length_in_bytes += user_data.bytes_used;
         if (user_data.more_data == connector_false)
             MsgSetLastData(service_data->flags);
-
-        goto done;
     }
+    goto done;
 
 error:
     set_data_service_error(service_request, connector_session_error_format);
@@ -809,7 +807,6 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
                 if (session->error == connector_session_error_none)
                 {
                     /* If there is no error, call the user to inform that session is done */
-                    service_request->error_value = connector_session_error_none;
                     status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
                     if (status != connector_working)
                         break;
