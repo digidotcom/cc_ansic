@@ -45,7 +45,15 @@ static connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_
         if (valid_prefix && valid_shared_key && valid_suffix)
             sm_ptr->network.recv_packet.processed_bytes = suffix_position + suffix_bytes;
         else
+        {
+            int i;
+            connector_debug_printf("sm_verify_sms_preamble: valid_prefix=%d, valid_shared_key=%d, valid_suffix=%d\n", valid_prefix, valid_shared_key, valid_suffix);
+            for(i=0;i<20;i++)
+            {
+                connector_debug_printf("%d=%c\n", i, ((char *)(data_ptr))[i]);
+			}
             result = connector_invalid_response;
+        }
     }
 
     return result;
