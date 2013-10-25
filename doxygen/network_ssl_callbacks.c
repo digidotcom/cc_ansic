@@ -20,7 +20,7 @@
  * write the network layer callback APIs to connect, send, receive and close the SSL connection.
  * As far as the top level calls are concerned there is no change between the SSL and non-SSL connection.
  *
- * The CA certificate is stored in public/certificates/ directory. A define APP_SSL_CA_CERT can be found
+ * The CA certificate is stored in public/certificates/ directory. A define APP_SSL_CA_CERT_PATH can be found
  * in platform.h. By default it is set to "../../../certificates/etherios-ca-cert-public.crt".
  *
  * @section ssl_connect Open
@@ -127,7 +127,7 @@
  *
  *    SSL_set_fd(ssl_ptr->ssl, ssl_ptr->sfd);
  *
- *    ret = SSL_CTX_load_verify_locations(ctx, APP_SSL_CA_CERT, NULL);
+ *    ret = SSL_CTX_load_verify_locations(ctx, APP_SSL_CA_CERT_PATH, NULL);
  *    if (ret != 1) 
  *    {
  *        APP_DEBUG("Failed to load CA cert [%d]\n", ret);

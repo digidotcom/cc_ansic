@@ -165,7 +165,7 @@ static int app_load_certificate_and_key(SSL_CTX * const ctx)
     int ret = -1;
 
     {
-        ret = SSL_CTX_load_verify_locations(ctx, APP_SSL_CA_CERT, NULL);
+        ret = SSL_CTX_load_verify_locations(ctx, APP_SSL_CA_CERT_PATH, NULL);
         if (ret != 1)
         {
             APP_DEBUG("Failed to load CA cert %d\n", ret);
