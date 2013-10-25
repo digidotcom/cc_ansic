@@ -46,12 +46,9 @@ static connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_
             sm_ptr->network.recv_packet.processed_bytes = suffix_position + suffix_bytes;
         else
         {
-            int i;
             connector_debug_printf("sm_verify_sms_preamble: valid_prefix=%d, valid_shared_key=%d, valid_suffix=%d\n", valid_prefix, valid_shared_key, valid_suffix);
-            for(i=0;i<20;i++)
-            {
-                connector_debug_printf("%d=%c\n", i, ((char *)(data_ptr))[i]);
-			}
+            connector_debug_printf("%s\n",(char *)data_ptr);
+
             result = connector_invalid_response;
         }
     }
@@ -531,8 +528,20 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                 #if (defined CONNECTOR_TRANSPORT_SMS)
                 case connector_transport_sms:
                     result = sm_verify_sms_preamble(sm_ptr);
-                    if(result != connector_working) goto done; /* not Device Cloud packet? */
-                    
+                    switch(result)
+                    {
+                        case connector_working:
+                            break;
+                        case connector_invalid_response:
+                            /* not Device Cloud packet? Ignore the packet */
+                            recv_ptr->total_bytes = 0;
+                            recv_ptr->processed_bytes = 0;
+                            result = connector_working;
+                            goto done;
+                        default:
+                            goto done;
+                    }
+                                                                
                     result = sm_decode_segment(connector_ptr, recv_ptr);
 
                     /* Remove sms preamble */
