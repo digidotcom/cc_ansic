@@ -417,8 +417,6 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             case connector_initiate_data_point_binary:
                 result = dp_initiate_data_point_binary(request_data);
                 break;
-            default:
-                break;
         }
         break;
 #endif
