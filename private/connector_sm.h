@@ -406,6 +406,8 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
 #endif
         {
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
+            
+            ASSERT_GOTO(sm_ptr != NULL, error);
 
             if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
             {
@@ -434,6 +436,7 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
 
             ASSERT_GOTO(sm_ptr != NULL, error);
+
             if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
             {
                 result = connector_unavailable;
