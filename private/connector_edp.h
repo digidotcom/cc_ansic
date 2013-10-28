@@ -417,6 +417,19 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             case connector_initiate_data_point_binary:
                 result = dp_initiate_data_point_binary(request_data);
                 break;
+            /* default: */
+            case connector_initiate_transport_start:
+            case connector_initiate_transport_stop:
+#if (defined CONNECTOR_DATA_SERVICE)
+            case connector_initiate_send_data:
+#endif
+#if (defined CONNECTOR_SHORT_MESSAGE)
+            case connector_initiate_ping_request:
+            case connector_initiate_session_cancel:
+            case connector_initiate_session_cancel_all:
+#endif
+            case connector_initiate_terminate:
+                break;
         }
         break;
 #endif
