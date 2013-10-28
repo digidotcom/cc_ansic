@@ -28,8 +28,14 @@
 
 #if defined CONNECTOR_TRANSPORT_SMS
 
-#define GW_PORT		9999		/* Port number is hardcoded in sms_proxy.py running in ConnectPort X4 Gateway */
-#define GW_ADDR		"10.101.1.121"
+#define GW_PORT		9999		    /* Port number is hardcoded in sms_proxy.py running in ConnectPort X4 Gateway */
+#define GW_ADDR_ES  "10.101.1.121"  /* Gateway running sms_proxy.py in Spain office */
+#define GW_ADDR_US  "10.9.16.85"    /* Gateway running sms_proxy.py in US office */
+
+/* Use by default the US office proxy that uses local call and plain cost. Note that this IP can be overriden by the DVTs
+   using the --ansic_sms_proxy_ip option
+ */
+#define GW_ADDR     GW_ADDR_US      
 
 /* Global structure of connected interface */
 static struct sockaddr_in interface_addr;
