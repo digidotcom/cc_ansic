@@ -237,13 +237,17 @@ static connector_status_t get_config_device_cloud_service_id(connector_data_t * 
     connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_device_cloud_service_id;
-    cloud_service_id.string = NULL;
-    cloud_service_id.length = 0;
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_service_id);
     switch (callback_status)
     {
     case connector_callback_continue:
+        /* we allow length == 0 for service_id */
+        /*if (cloud_service_id.length == 0)
+        {
+            result =  connector_invalid_data_size;
+        }
+        */
         if (cloud_service_id.string == NULL)
         {
             result = connector_invalid_data;
