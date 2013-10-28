@@ -81,7 +81,7 @@ enum fw_target_list{
     record_end(fw_target_list)
 };
 
-#define FW_VERION_NUMBER(version)  (MAKE32_4(version.major, version.minor, version.revision, version.build))
+#define FW_VERSION_NUMBER(version)  (MAKE32_4(version.major, version.minor, version.revision, version.build))
 
 static size_t const target_list_header_size = field_named_data(fw_target_list, opcode, size);
 static size_t const target_list_size = record_bytes(fw_target_list);
@@ -106,7 +106,7 @@ typedef struct {
 static connector_status_t confirm_fw_version(connector_firmware_data_t * const fw_ptr, uint8_t target_number, connector_firmware_version_t const version)
 {
     connector_status_t result = connector_working;
-    uint32_t const version_number = FW_VERION_NUMBER(version);
+    uint32_t const version_number = FW_VERSION_NUMBER(version);
 
     if (target_number == 0 && version_number != rci_get_firmware_target_zero_version())
     {
@@ -391,7 +391,7 @@ enum fw_info {
 
         message_store_u8(fw_info, opcode, fw_info_response_opcode);
         message_store_u8(fw_info, target, target);
-        message_store_be32(fw_info, version, FW_VERION_NUMBER(firmware_info->version));
+        message_store_be32(fw_info, version, FW_VERSION_NUMBER(firmware_info->version));
         message_store_be32(fw_info, code_size, INT32_C(0));
         fw_info += record_bytes(fw_info);
 
@@ -902,7 +902,7 @@ static connector_status_t fw_discovery(connector_data_t * const connector_ptr, v
                 if (result != connector_working) goto error;
 #endif
                 message_store_u8(fw_target_list, target, firmware_info.target_number);
-                message_store_be32(fw_target_list, version, FW_VERION_NUMBER(firmware_info.version));
+                message_store_be32(fw_target_list, version, FW_VERSION_NUMBER(firmware_info.version));
 
                 /* set up for next target pair info*/
                 fw_target_list += target_list_size;
