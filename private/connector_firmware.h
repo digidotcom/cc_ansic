@@ -891,6 +891,7 @@ static connector_status_t fw_discovery(connector_data_t * const connector_ptr, v
 
             /* get the current firmware version for this target */
             firmware_info.target_number = target_number;
+            memset(&firmware_info.version, 0x00, sizeof firmware_info.version);
             /* call callback */
             result = get_fw_config(fw_ptr, connector_request_id_firmware_info, &firmware_info);
             if (result == connector_working)
