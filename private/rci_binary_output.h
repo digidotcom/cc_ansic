@@ -203,75 +203,46 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
     connector_bool_t overflow = connector_true;
     size_t const avail_bytes = rci_buffer_remaining(output);
 
-    if (avail_bytes < sizeof(uint32_t)) goto done;
-
+    if (avail_bytes < sizeof(uint32_t))
+    {
+        goto done;
+    }
+    else
     {
         uint32_t ipv4 = 0;
-
         uint8_t * const rci_ber_u32 = rci_buffer_position(output);
-
-#if 0
-        int ip1;
-        int ip2;
-        int ip3;
-        int ip4;
-        char remaining;
-
-        int items = sscanf(string, "%d.%d.%d.%d%c", &ip1, &ip2, &ip3, &ip4, &remaining);
-
-        if (items != 4 || ip1 > 255 || ip2 > 255 || ip3 > 255 || ip4 > 255 || ip1 < 0 || ip2 < 0 || ip3 < 0 || ip4 < 0)
-        {
-            connector_request_id_t request_id;
-            request_id.remote_config_request = connector_request_id_remote_config_group_process;
-            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range);
-            rci->status = rci_status_error;
-            overflow = connector_false;
-            connector_debug_printf("Invalid IPv4 %s\n", string);
-            goto done;
-        }
-
-/*         ipv4 = (ip1 << 24) | (ip2 << 16) | (ip3 << 8) | (ip4); */
-        ipv4 = MAKE32_4(ip1, ip2, ip3, ip4);
-
-
-
-#else
         int dot_count = 0;
         size_t i;
         size_t length = strlen(string);
-        char ptr[4] = "\0";
-        int index = 0;
+        char aux_string[4] = {'\0', '\0', '\0', '\0'}; /* Three chars plus terminator. */
+
+        size_t index = 0;
 
         for (i = 0; i < length; i++)
         {
-            if (index > 3) break;
+            if (index > sizeof(aux_string) - 1)
+                break;
 
             if (string[i] != '.')
             {
-                ptr[index++] = string[i];
-                ptr[index] = '\0';
+                aux_string[index++] = string[i];
             }
 
             if (string[i] == '.' || i == (length -1))
             {
-                long val;
+                long int val;
                 char * endptr;
 
-               val = strtol(ptr, &endptr, 10);
-
-                /* Check for various possible errors */
-/*                if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-                       || (errno != 0 && val == 0))
-*/
+                val = strtol(aux_string, &endptr, 10);
                 if (endptr == NULL || *endptr != '\0' || val < 0 || val > 255)
                 {
                     break;
                 }
 
                 ipv4 = (ipv4 << 8) | val;
-
                 dot_count++;
                 index = 0;
+                memset(aux_string, '\0', sizeof aux_string);
             }
         }
         if (dot_count != 4)
@@ -284,7 +255,6 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
             connector_debug_printf("Invalid IPv4 \"%s\"\n", string);
             goto done;
         }
-#endif
 
         message_store_u8(rci_ber_u32, opcode, sizeof ipv4);
         message_store_be32(rci_ber_u32, value, ipv4);
