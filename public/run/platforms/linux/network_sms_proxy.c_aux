@@ -376,13 +376,24 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
 {
     connector_callback_status_t status = connector_callback_continue;
     int * const fd = data->handle;
+    static unsigned long last_message_time = 0;
+    unsigned long present_time;
+
+    if (last_message_time != 0)
+    {
+        app_os_get_system_time(&present_time);
+        if (last_message_time == present_time)
+        {
+            return connector_callback_busy;
+        }
+    }
 
     int ccode = write(*fd, data->buffer, data->bytes_available);
     if (ccode >= 0)
     {
         data->bytes_used = (size_t)ccode;
 
-        usleep(1000000);    /* Let the proxy digest previous command */
+        app_os_get_system_time(&last_message_time);
 
         APP_DEBUG("app_network_sms_send: send %d bytes\n", ccode);
         if ((data->bytes_available == 160) && (((char*)data->buffer)[159] == '@'))
