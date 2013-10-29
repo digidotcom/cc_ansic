@@ -49,6 +49,8 @@
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
 
+#define CONNECTOR_TRANSPORT_RECONNECT_AFTER     1
+
 typedef enum {
 #if (defined CONNECTOR_TRANSPORT_TCP)
     connector_network_tcp,
@@ -69,7 +71,8 @@ typedef enum {
     connector_transport_receive,
     connector_transport_close,
     connector_transport_terminate,
-    connector_transport_redirect
+    connector_transport_redirect,
+    connector_transport_wait_for_reconnect
 } connector_transport_state_t;
 
 #define connector_bool(cond)    ((cond) ? connector_true : connector_false)

@@ -217,6 +217,8 @@ typedef struct connector_edp_data {
         uint16_t miss_tx_count;
     } keepalive;
 
+    unsigned long int connect_at;
+
     connector_close_status_t  close_status;
     connector_network_handle_t * network_handle;
 

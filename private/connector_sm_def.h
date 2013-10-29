@@ -214,6 +214,7 @@ typedef struct connector_sm_data_t
         connector_sm_id_type_t id_type;
         connector_transport_state_t state;
         connector_connect_auto_type_t connect_type;
+        unsigned long int connect_at;
     } transport;
 
     struct

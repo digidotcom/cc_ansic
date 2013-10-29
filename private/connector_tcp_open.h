@@ -824,40 +824,58 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
     switch (edp_get_edp_state(connector_ptr))
     {
     case edp_communication_connect_to_cloud:
-        if (connector_ptr->edp_data.keepalive.last_tx_received_time != 0)
-        {
-            if (connector_ptr->edp_data.keepalive.last_rx_sent_time == 0)
-            {
-                connector_debug_printf("Wait %d sec before connecting\n", connector_ptr->edp_data.keepalive.last_tx_received_time);
-                if (get_system_time(connector_ptr, &connector_ptr->edp_data.keepalive.last_rx_sent_time) != connector_working)
-                {
-                    result = connector_abort;
-                    goto done;
-                }
-            }
-            if (is_valid_timing_limit(connector_ptr, connector_ptr->edp_data.keepalive.last_rx_sent_time, connector_ptr->edp_data.keepalive.last_tx_received_time))
-            {
-                /* within timing */
-                goto done;
-            }
-
-            connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
-            connector_ptr->edp_data.keepalive.last_tx_received_time = 0;
-        }
         result = connect_to_cloud(connector_ptr, connector_ptr->edp_data.config.cloud_url);
 
-        if (result == connector_working)
+        switch(result)
         {
+        case connector_working:
             edp_set_edp_state(connector_ptr, edp_communication_send_version);
             connector_ptr->edp_data.send_packet.packet_buffer.in_use = connector_false;
             connector_ptr->edp_data.receive_packet.packet_buffer.in_use = connector_false;
             connector_ptr->edp_data.receive_packet.packet_buffer.next = NULL;
             connector_ptr->edp_data.receive_packet.free_packet_buffer = &connector_ptr->edp_data.receive_packet.packet_buffer;
-        }
-        else if (result == connector_unavailable)
-        {
+            break;
+        case connector_unavailable:
             edp_set_active_state(connector_ptr, connector_transport_idle);
             connector_ptr->edp_data.stop.auto_connect = connector_false;
+            break;
+        case connector_open_error:
+        {
+            if (result == connector_open_error)
+            {
+                connector_ptr->edp_data.connect_at = 0;
+                edp_set_active_state(connector_ptr, connector_transport_wait_for_reconnect);
+#if (defined CONNECTOR_NETWORK_TCP_START)
+                if (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
+#else
+                if (connector_ptr->edp_data.connect_type == connector_connect_manual)
+#endif
+                {
+                    /* Application must call initiate_action to Start Cloud Connector */
+                    edp_set_active_state(connector_ptr, connector_transport_idle);
+                }
+            }
+            break;
+        }
+        case connector_success:
+        case connector_init_error:
+        case connector_invalid_data_size:
+        case connector_invalid_data_range:
+        case connector_invalid_data:
+        case connector_keepalive_error:
+        case connector_bad_version:
+        case connector_device_terminated:
+        case connector_service_busy:
+        case connector_invalid_response:
+        case connector_no_resource:
+        case connector_idle:
+        case connector_pending:
+        case connector_active:
+        case connector_abort:
+        case connector_device_error:
+        case connector_exceed_timeout:
+        case connector_invalid_payload_packet:
+            break;
         }
         break;
 
@@ -1052,23 +1070,6 @@ done:
             edp_set_close_status(connector_ptr, connector_close_status_device_error);
             edp_set_active_state(connector_ptr, connector_transport_close);
             result = connector_working;
-        }
-        else if (result == connector_open_error)
-        {
-            /* setup the 1 second delay for reconnection */
-            connector_ptr->edp_data.keepalive.last_tx_received_time = 1;
-            connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
-
-#if (defined CONNECTOR_NETWORK_TCP_START)
-            if (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
-#else
-            if (connector_ptr->edp_data.connect_type == connector_connect_manual)
-#endif
-            {
-                /* Application must call initiate_action to Start Cloud Connector */
-                edp_set_active_state(connector_ptr, connector_transport_idle);
-            }
-
         }
     }
     return result;

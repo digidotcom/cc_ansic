@@ -228,6 +228,27 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         case connector_transport_redirect:
             result = edp_redirect_process(connector_ptr);
            break;
+
+        case connector_transport_wait_for_reconnect:
+        {
+            if (connector_ptr->edp_data.connect_at == 0)
+            {
+                connector_debug_printf("Waiting %d second before reconnecting TCP transport\n", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
+                result = get_system_time(connector_ptr, &connector_ptr->edp_data.connect_at);
+                if (result != connector_working)
+                    goto done;
+                connector_ptr->edp_data.connect_at += CONNECTOR_TRANSPORT_RECONNECT_AFTER;
+            } else {
+                unsigned long int uptime;
+
+                result = get_system_time(connector_ptr, &uptime);
+                if (result != connector_working)
+                    goto done;
+                if (uptime >= connector_ptr->edp_data.connect_at)
+                    edp_set_active_state(connector_ptr, connector_transport_open);
+            }
+            break;
+        }
         }
 
         if (result == connector_device_terminated
@@ -349,6 +370,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
                 break;
             }
             /* no break  to return error */
+        case connector_transport_wait_for_reconnect:
         case connector_transport_redirect:
             result = connector_unavailable;
             goto done;
@@ -393,6 +415,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             result = connector_unavailable;
             goto done;
 
+        case connector_transport_wait_for_reconnect:
         case connector_transport_terminate:
             goto done;
 
@@ -510,7 +533,8 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             break;
 
         case connector_transport_terminate:
-            break;;
+        case connector_transport_wait_for_reconnect:
+            break;
         }
 
         break;

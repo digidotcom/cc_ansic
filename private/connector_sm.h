@@ -750,6 +750,12 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
                     case connector_pending:
                         sm_ptr->transport.state = connector_transport_open;
                         break;
+                    case connector_open_error:
+                    {
+                        sm_ptr->transport.connect_at = 0;
+                        sm_ptr->transport.state = connector_transport_wait_for_reconnect;
+                        break;
+                    }
                     default:
                         sm_ptr->transport.state = connector_transport_idle;
                         break;            		
@@ -842,6 +848,33 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
             case connector_transport_terminate:
                 break;
 
+            case connector_transport_wait_for_reconnect:
+            {
+                if (sm_ptr->transport.connect_at == 0)
+                {
+#if (defined CONNECTOR_TRANSPORT_UDP) && defined CONNECTOR_TRANSPORT_SMS
+                    connector_debug_printf("Waiting %d second before reconnecting SM transport %s\n",
+                                 CONNECTOR_TRANSPORT_RECONNECT_AFTER, sm_ptr->network.transport == connector_transport_udp ? "UDP" : "SMS");
+#elif defined CONNECTOR_TRANSPORT_UDP
+                    connector_debug_printf("Waiting %d second before reconnecting SM transport UDP\n", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
+#else
+                    connector_debug_printf("Waiting %d second before reconnecting SM transport SMS\n", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
+#endif
+                    result = get_system_time(connector_ptr, &sm_ptr->transport.connect_at);
+                    if (result != connector_working)
+                        goto done;
+                    sm_ptr->transport.connect_at += CONNECTOR_TRANSPORT_RECONNECT_AFTER;
+                } else {
+                    unsigned long int uptime;
+
+                    result = get_system_time(connector_ptr, &uptime);
+                    if (result != connector_working)
+                        goto done;
+                    if (uptime >= sm_ptr->transport.connect_at)
+                        sm_ptr->transport.state = connector_transport_open;
+                }
+                break;
+            }
             default:
                 ASSERT_GOTO(connector_false, error);
                 break;
