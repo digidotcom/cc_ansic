@@ -106,7 +106,6 @@ typedef enum
     connector_sm_cmd_config,
     connector_sm_cmd_data,
     connector_sm_cmd_no_path_data,
-    connector_sm_cmd_dia,
     /* Add new commands here */
     connector_sm_cmd_opaque_response
 } connector_sm_cmd_t;
