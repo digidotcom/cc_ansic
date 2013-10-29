@@ -12,14 +12,14 @@
 static connector_status_t sm_get_user_data_length(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result;
-    connector_callback_status_t status;
-    connector_request_id_t request_id;
+    connector_callback_status_t status = connector_callback_continue;
 
     switch (session->command)
     {
         case connector_sm_cmd_data:
         case connector_sm_cmd_no_path_data: 
         {
+#if (defined CONNECTOR_DATA_SERVICE)
             connector_data_service_length_t cb_data;
 
             cb_data.transport = session->transport;
@@ -34,6 +34,8 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
             else
             #endif
             {
+                connector_request_id_t request_id;
+
                 request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_length : connector_request_id_data_service_receive_reply_length;
                 status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
                 if (status == connector_callback_unrecognized)
@@ -41,6 +43,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
             }
 
             session->in.bytes = cb_data.total_bytes;
+#endif
             break;
         }
 
@@ -48,6 +51,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
         case connector_sm_cmd_cli:
         {
             connector_sm_cli_response_length_t cb_data;
+            connector_request_id_t request_id;
 
             cb_data.transport = session->transport;
             cb_data.user_context = session->user.context;
@@ -79,6 +83,7 @@ error:
     return result;
 }
 
+#if (defined CONNECTOR_DATA_SERVICE)
 static connector_status_t sm_get_more_request_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
@@ -169,6 +174,7 @@ static connector_status_t sm_get_more_response_data(connector_data_t * const con
 error:
     return result;
 }
+#endif
 
 #if (defined CONNECTOR_COMPRESSION)
 static connector_status_t sm_compress_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
@@ -536,7 +542,9 @@ static connector_status_t sm_process_send_path(connector_data_t * const connecto
             break;
 
         case connector_sm_state_more_data:
+#if (defined CONNECTOR_DATA_SERVICE)
             result = SmIsClientOwned(session->flags) ? sm_get_more_request_data(connector_ptr, session) : sm_get_more_response_data(connector_ptr, session);
+#endif
             break;
 
         #if (defined CONNECTOR_COMPRESSION)

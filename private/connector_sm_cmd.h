@@ -30,7 +30,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             session->sm_state = connector_sm_state_prepare_segment;
             break;
         }
-
+#if (defined CONNECTOR_DATA_SERVICE)
         case connector_initiate_send_data:
         {
             connector_request_data_service_send_t const * const request = sm_ptr->pending.data;
@@ -52,7 +52,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             #endif
             break;
         }
-
+#endif
         default:
             ASSERT_GOTO(connector_false, error);
             break;
@@ -156,6 +156,7 @@ static connector_status_t sm_map_callback_status_to_connector_status(connector_c
     return result;
 }
 
+#if (defined CONNECTOR_DATA_SERVICE)
 static connector_callback_status_t sm_inform_data_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_request_id_t request_id;
@@ -201,6 +202,7 @@ static connector_callback_status_t sm_inform_data_complete(connector_data_t * co
 
     return callback_status;
 }
+#endif
 
 #if (defined CONNECTOR_SM_CLI)
 static connector_callback_status_t sm_inform_cli_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
@@ -275,7 +277,9 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
     {
         case connector_sm_cmd_data:
         case connector_sm_cmd_no_path_data:
+#if (defined CONNECTOR_DATA_SERVICE)
             callback_status = sm_inform_data_complete(connector_ptr, session);
+#endif
             break;
 
         #if (defined CONNECTOR_SM_CLI)
@@ -647,6 +651,7 @@ error:
 }
 #endif
 
+#if (defined CONNECTOR_DATA_SERVICE)
 static connector_status_t sm_pass_target_info(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * const target_ptr, size_t target_bytes)
 {
     #define SM_TARGET_MAX_LENGTH    32
@@ -812,6 +817,7 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
 
     return status;
 }
+#endif
 
 static connector_status_t sm_process_reboot(connector_data_t * const connector_ptr)
 {
@@ -931,12 +937,16 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
         case connector_sm_cmd_no_path_data:
             if (SmIsCloudOwned(session->flags))
             {
+#if (defined CONNECTOR_DATA_SERVICE)
                 result = sm_process_data_request(connector_ptr, session, payload, bytes);
+#endif
                 next_state = connector_sm_state_get_total_length;
             }
             else
             {
+#if (defined CONNECTOR_DATA_SERVICE)
                 result = sm_process_data_response(connector_ptr, session, payload, bytes);
+#endif
                 next_state = connector_sm_state_complete;
             }
             break;

@@ -246,6 +246,7 @@ static uint32_t * get_request_id_ptr(connector_initiate_request_t const request,
             break;
         }
 #endif
+#if (defined CONNECTOR_DATA_SERVICE)
         case connector_initiate_send_data:
         {
             connector_request_data_service_send_t const * const data = request_data;
@@ -253,6 +254,7 @@ static uint32_t * get_request_id_ptr(connector_initiate_request_t const request,
             request_id = data->request_id;
             break;
          }
+#endif
         case connector_initiate_ping_request:
         {
             connector_sm_send_ping_request_t const * const data = request_data;
