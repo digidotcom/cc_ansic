@@ -32,7 +32,7 @@
  *                                       v v v v
  *                           UINT32_C(0x01010000)
  */
-#define CONNECTOR_VERSION   UINT32_C(0x02010000)
+#define CONNECTOR_VERSION   0x02010000
 
 #include "connector_config.h"
 
