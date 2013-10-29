@@ -370,11 +370,11 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
                 break;
             }
             /* no break  to return error */
-        case connector_transport_wait_for_reconnect:
         case connector_transport_redirect:
             result = connector_unavailable;
             goto done;
 
+        case connector_transport_wait_for_reconnect:
         case connector_transport_terminate:
             goto done;
 
