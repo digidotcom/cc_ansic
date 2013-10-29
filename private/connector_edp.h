@@ -532,9 +532,9 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             }
             break;
 
-        case connector_transport_terminate:
         case connector_transport_wait_for_reconnect:
-            break;
+        case connector_transport_terminate:
+            goto done;
         }
 
         break;
