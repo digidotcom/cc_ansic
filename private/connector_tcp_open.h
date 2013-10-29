@@ -841,19 +841,16 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             break;
         case connector_open_error:
         {
-            if (result == connector_open_error)
-            {
-                connector_ptr->edp_data.connect_at = 0;
-                edp_set_active_state(connector_ptr, connector_transport_wait_for_reconnect);
+            connector_ptr->edp_data.connect_at = 0;
+            edp_set_active_state(connector_ptr, connector_transport_wait_for_reconnect);
 #if (defined CONNECTOR_NETWORK_TCP_START)
-                if (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
+            if (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
 #else
-                if (connector_ptr->edp_data.connect_type == connector_connect_manual)
+            if (connector_ptr->edp_data.connect_type == connector_connect_manual)
 #endif
-                {
-                    /* Application must call initiate_action to Start Cloud Connector */
-                    edp_set_active_state(connector_ptr, connector_transport_idle);
-                }
+            {
+                /* Application must call initiate_action to Start Cloud Connector */
+                edp_set_active_state(connector_ptr, connector_transport_idle);
             }
             break;
         }
