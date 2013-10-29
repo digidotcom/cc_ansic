@@ -207,12 +207,6 @@ static connector_callback_status_t app_process_device_request_response(connector
             /* let's copy the response data to service_response buffer */
         memcpy(reply_data->buffer, buffer, bytes_used);
         reply_data->bytes_used = bytes_used;
-
-        if (!reply_data->more_data)
-        {   /* done */
-            device_request_active_count--;
-            free(device_request);
-        }
     }
 
     return status;
@@ -229,6 +223,10 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
         switch (status_data->status)
         {
+        case connector_data_service_status_complete:
+            APP_DEBUG("app_process_device_request_error: handle %p session completed successfully (%d)\n",
+                       (void *) device_request, status_data->session_error);
+            break;
         case connector_data_service_status_session_error:
             APP_DEBUG("app_process_device_request_error: handle %p session error %d\n",
                        (void *) device_request, status_data->session_error);
