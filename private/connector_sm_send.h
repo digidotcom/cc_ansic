@@ -14,6 +14,10 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
     connector_status_t result;
     connector_callback_status_t status = connector_callback_continue;
 
+#if !(defined CONNECTOR_DATA_SERVICE) && !(defined CONNECTOR_SM_CLI)
+    (void)(connector_ptr); /* Unused argument */
+#endif
+
     switch (session->command)
     {
         case connector_sm_cmd_data:
