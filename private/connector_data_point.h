@@ -199,6 +199,41 @@ static connector_status_t dp_inform_status(connector_data_t * const connector_pt
     return result;
 }
 
+static connector_status_t dp_cancel_session(connector_data_t * const connector_ptr, void const * const session, uint32_t const * const request_id)
+{
+    connector_status_t status = connector_working;
+    connector_bool_t cancel_all = connector_bool(request_id == NULL);
+
+    if (data_point_binary_pending != NULL)
+    {
+        if (*data_point_binary_pending->request_id == *request_id || cancel_all)
+        {
+            if (session == NULL)
+            {
+                status = dp_inform_status(connector_ptr, connector_request_id_data_point_binary_status, data_point_binary_pending->transport, data_point_binary_pending->user_context, connector_session_error_cancel);
+                if (status != connector_working)
+                  goto done;
+            }
+            data_point_binary_pending = NULL;
+        }
+    }
+
+    if (data_point_single_pending != NULL)
+    {
+        if (*data_point_single_pending->request_id == *request_id || cancel_all)
+        {
+            if (session == NULL)
+            {
+                status = dp_inform_status(connector_ptr, connector_request_id_data_point_single_status, data_point_single_pending->transport, data_point_single_pending->user_context, connector_session_error_cancel);
+                if (status != connector_working)
+                  goto done;
+            }
+            data_point_single_pending = NULL;
+        }
+    }
+done:
+    return status;
+}
 
 static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, char const * const path, char const * const extension)
 {
