@@ -320,9 +320,10 @@ static connector_status_t sm_switch_path(connector_data_t * const connector_ptr,
     if (session->in.data != NULL)
     {
         result = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), session->in.data);
+        if (result != connector_working) goto error;
+
         session->in.bytes = 0;
         session->in.data = NULL;
-        if (result != connector_working) goto error;
     }
 
     if (SmIsResponseNeeded(session->flags))
@@ -332,6 +333,8 @@ static connector_status_t sm_switch_path(connector_data_t * const connector_ptr,
         SmClearMultiPart(session->flags);
         SmSetResponse(session->flags);
         session->segments.processed = 0;
+        if (session->command == connector_sm_cmd_data || session->command == connector_sm_cmd_no_path_data)
+            SmClearResponseNeeded(session->flags); /* After the response is sent, inform the user that the session is completed */
     }
     else
     {
