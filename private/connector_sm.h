@@ -451,6 +451,7 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                 case connector_transport_open:
                 case connector_transport_close:
                 case connector_transport_terminate:
+                case connector_transport_wait_for_reconnect:
                     result = connector_unavailable;
                     goto error;
                 case connector_transport_send:
