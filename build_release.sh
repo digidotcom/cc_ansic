@@ -56,12 +56,19 @@ function build_config_tool ()
     ant -f "${WORKSPACE}/tools/config/build.xml" -Ddist.dir="${TOOLS_DIR}"
 }
 
+function copy_python_scripts ()
+{
+    mkdir -p "${TOOLS_DIR}/python"
+    cp "${WORKSPACE}/tools/python/"*.py "${TOOLS_DIR}/python"
+}
+
 ./dvt/scripts/makegen.sh
 
 # Create the output directory.
 mkdir -p "${OUTPUT_DIR}"
 
 build_config_tool
+copy_python_scripts
 
 # Create the doxygen documentation
 cd doxygen
