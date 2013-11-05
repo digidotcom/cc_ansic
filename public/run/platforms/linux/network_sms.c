@@ -85,6 +85,10 @@ GSM_Error get_first_sms(GSM_StateMachine *state_machine, GSM_SMSMessage *sms)
     error = GSM_GetNextSMS(state_machine, &multisms, start);
     if (error != ERR_NONE)
         goto done;
+
+    if (multisms.SMS[0].Location < 0 || multisms.SMS[0].Location == GSM_PHONE_MAXSMSINFOLDER)
+         multisms.SMS[0].Location = 0; /* Some Modems do not set the Location properly. */
+
     memcpy(sms, &multisms.SMS[0], sizeof *sms);
 done:
     return error;
