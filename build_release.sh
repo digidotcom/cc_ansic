@@ -11,11 +11,11 @@ GETTING_STARTED_GUIDE_RELEASED=90001345_A
 RELEASE_NOTES=93000761
 HTML_ZIP=40002854
 TARBALL_NUMBER=40002853
-TARBALL_NAME=${TARBALL_NUMBER}_${REVISION}
-ZIP_NUMBER=40002861
-ZIP_NAME=${ZIP_NUMBER}_${REVISION}
-NOTES_NAME=${RELEASE_NOTES}_${REVISION}
-HTML_NAME=${HTML_ZIP}_${REVISION}
+TARBALL_NAME=${TARBALL_NUMBER}_${TAR_REVISION}
+ZIPFILE_NUMBER=40002861
+ZIPFILE_NAME=${ZIPFILE_NUMBER}_${ZIP_REVISION}
+NOTES_NAME=${RELEASE_NOTES}_${TAR_REVISION}
+HTML_NAME=${HTML_ZIP}_${TAR_REVISION}
 TOOLS_DIR=${BASE_DIR}/tools
 
 SAMPLES="compile_and_link
@@ -42,7 +42,7 @@ function cleanup ()
     cp -v "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" "${ARCHIVE}/"
     cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${ARCHIVE}/"
     cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" "${ARCHIVE}/"
-    cp -v "${OUTPUT_DIR}/${ZIP_NAME}.zip" "${ARCHIVE}/"
+    cp -v "${OUTPUT_DIR}/${ZIPFILE_NAME}.zip" "${ARCHIVE}/"
 
 
     echo ">> Cleaning Up ${OUTPUT_DIR} and ${BASE_DIR}"
@@ -152,9 +152,9 @@ echo ">> Uncompressing ${OUTPUT_DIR}/${TARBALL_NAME}.tgz."
 tar -xf "${OUTPUT_DIR}/${TARBALL_NAME}.tgz"
 
 # Change all LF to CR+LF
-echo ">> Changing all LF to CR+LF and creating ${OUTPUT_DIR}/${ZIP_NAME}.zip."
+echo ">> Changing all LF to CR+LF and creating ${OUTPUT_DIR}/${ZIPFILE_NAME}.zip."
 find "${BASE_DIR}" -type f -exec grep -Il . {} \; -exec sed -i ':a;N;$!ba;s/\n/\r\n/g' '{}' \;
-zip "${OUTPUT_DIR}/${ZIP_NAME}.zip" -r "${PRODUCT_NAME}"/
+zip "${OUTPUT_DIR}/${ZIPFILE_NAME}.zip" -r "${PRODUCT_NAME}"/
 
 cd "${BASE_DIR}"
 python ../dvt/scripts/replace_str.py public/run/platforms/linux/config.c '#error' '//#error'
@@ -184,7 +184,7 @@ if [[ "${PENDING}" == "true" ]]; then
     # If successfull push the tarball to pending, if PENDING environment variable is set to 1.
     echo ">> Copying the Tarball to Pending."
     cp -v "${OUTPUT_DIR}/${TARBALL_NAME}.tgz" /eng/store/pending/40000000
-    cp -v "${OUTPUT_DIR}/${ZIP_NAME}.zip" /eng/store/pending/40000000
+    cp -v "${OUTPUT_DIR}/${ZIPFILE_NAME}.zip" /eng/store/pending/40000000
     cp -v "${OUTPUT_DIR}/${NOTES_NAME}.zip" /eng/store/pending/93000000
     cp -v "${OUTPUT_DIR}/${HTML_NAME}.zip" /eng/store/pending/40000000
 fi
