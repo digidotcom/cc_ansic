@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # ***************************************************************************
-# Copyright (c) 2012, 2013 Digi International Inc.,
+# Copyright (c) 2013 Digi International Inc.,
 # All rights not expressly granted are reserved.
 # 
 # This Source Code Form is subject to the terms of the Mozilla Public
