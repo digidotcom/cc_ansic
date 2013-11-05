@@ -30,9 +30,9 @@
  * Note current version number denotes:  1.1.0.0
  *                                       | | | |
  *                                       v v v v
- *                           UINT32_C(0x01010000)
+ *                                    0x01010000
  */
-#define CONNECTOR_VERSION   0x02010000
+#define CONNECTOR_VERSION    0x02010001
 
 #include "connector_config.h"
 

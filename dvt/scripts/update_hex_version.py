@@ -13,9 +13,9 @@ if __name__ == '__main__':
   myStrVer=str.split(args[1], '.')
   if len(myStrVer) == 4:
      # only come here if there is a 4 tuple tag
-     myHexVer = "0x%02x%02x%02x%02xUL" % (int(myStrVer[0]), int(myStrVer[1]), int(myStrVer[2]), int(myStrVer[3]))
+     myHexVer = "0x%02x%02x%02x%02x" % (int(myStrVer[0]), int(myStrVer[1]), int(myStrVer[2]), int(myStrVer[3]))
      myReplacement = "#define CONNECTOR_VERSION    " + myHexVer
-     mySearchPattern = '#define\s+CONNECTOR_VERSION\s+0x\w+UL'
+     mySearchPattern = '#define\s+CONNECTOR_VERSION\s+0x\w+'
 
      newtext = re.sub(mySearchPattern, myReplacement, text, 1) 
 
