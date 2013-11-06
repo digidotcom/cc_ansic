@@ -116,6 +116,9 @@
  * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
  * account which @ref vendor_id is provided.
  * @note Provision a Device ID can only be done by TCP transport.
+ * @note This feature will only work if you enable your account for allowing Device ID provision. To to this, please
+ * refer to the@htmlonly<a href="http://ftp1.digi.com/support/documentation/html/90001150/">Device Cloud User's Guide</a>@endhtmlonly,
+ * section "User Account Administration", subsection "About the Account Settings Menu", paragraph "Managing your Vendor Information".
  *
  * @see @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud"
  * @see app_load_device_id()
