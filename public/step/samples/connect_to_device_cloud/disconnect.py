@@ -12,7 +12,7 @@
 #
 # ***************************************************************************
 # disconnect.py
-# Send SCI disconnect command to disconnect from the Device Cloud.
+# Send disconnect SCI operation to disconnect Device Cloud.
 # -------------------------------------------------
 # Usage: disconnect.py <Username> <Password> <Device ID> [<Device Cloud URL>]
 # -------------------------------------------------
