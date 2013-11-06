@@ -80,7 +80,7 @@
  * <th>data</th>
  * <td> Pointer to @endhtmlonly @ref connector_network_open_t "connector_network_open_t" @htmlonly structure
  *        <ul>
- *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to the Device Cloud URL. For SMS transport it's the Device Cloud where to send SMSs </li>
+ *          <li><b><i>device_cloud_url</i></b> - [IN] Pointer to the Device Cloud URL. For SMS transport it's the Device Cloud phone number to which SMS will be sent</li>
  *          <li><b><i>handle</i></b> - [OUT] Returned @endhtmlonly @ref connector_network_handle_t "network handle" @htmlonly which is used throughout network callbacks </li>
  *        </ul>
  * </td>
