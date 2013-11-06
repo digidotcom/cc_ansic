@@ -43,7 +43,7 @@
  * @endcode
  *
  * The routine app_firmware_download_request() is called when the download is first
- * initiated.  It receives information about the download and retuns @ref connector_firmware_status_success
+ * initiated.  It receives information about the download and returns @ref connector_firmware_status_success
  * status indicating that is ready to accept the FW download.
  *
  * The app_firmware_image_data() routine is repeatedly called with the image data
@@ -169,7 +169,7 @@
  * @image html cloud_firmware_download.png
  *
  * The results in this application are displayed in the output console of the
- * application.  Since this is only a sample the fiwmware is not updated on the
+ * application.  Since this is only a sample the firmware is not updated on the
  * device.  The application prints out the target, code size and checksum of the
  * downloaded image.
  *

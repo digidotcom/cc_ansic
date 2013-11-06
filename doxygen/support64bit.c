@@ -5,7 +5,7 @@
  * @section sixtyfourbit Using 64-bit values
  *
  * The connector has two places where 64-bit data types can be used. If your device supports 64-bit values
- * there are some effeciency gains by enabling this support.
+ * there are some efficiency gains by enabling this support.
  *
  * Please be aware of the @ref i_have_C89_and_64bit "restrictions" on C89 and 64-bit support.
  *

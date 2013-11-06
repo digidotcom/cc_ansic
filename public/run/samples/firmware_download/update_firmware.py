@@ -25,7 +25,7 @@ import sys
 
 def Usage():
     print 'Usage: update_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
-    print '    Performs a firwmare download operation to target 0 on <Device ID> using a local'
+    print '    Performs a firmware download operation to target 0 on <Device ID> using a local'
     print '    file \"image.a\".'
     print '    where:' 
     print '        <Username> is the Device Cloud account Username to which your device is'

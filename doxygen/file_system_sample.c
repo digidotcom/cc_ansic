@@ -346,7 +346,7 @@
  * <tr>
  *  <th>file_system.c</th>
  *  <td>Application callbacks for file system</td>
- *  <td>platforms/<i>my_platforme</i></td>
+ *  <td>platforms/<i>my_platform</i></td>
  * </tr>
  * <tr>
  *  <th>os.c</th>

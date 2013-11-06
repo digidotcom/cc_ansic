@@ -139,7 +139,7 @@
  *
  *         <dt>description</dt><dd>Callback writes an ASCII description string of the target.</dd>
  *         <dt>filespec</dt>
- *         <dd>Callback writes a regular expression for the firmare image name of the target.
+ *         <dd>Callback writes a regular expression for the firmware image name of the target.
  *             No file name spec can be returned if only a single target (target 0) is supported.
  *             If an application wants to match the file name "image.bin", it must return "image\.bin" for
  *             regular expression. Regular expressions are case sensitive. If file names for the given

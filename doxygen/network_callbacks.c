@@ -19,7 +19,7 @@
  * @ref connector_class_id_network_tcp transport it establishes a connection between Cloud Connector
  * and Device Cloud.
  *
- * The @ref connector_class_id_network_udp transport does not stablish a connection, but it can resolve
+ * The @ref connector_class_id_network_udp transport does notestablish a connection, but it can resolve
  * a domain name and open a communication socket in this callback. UDP does not guarantee reliable data
  * delivery.
  *

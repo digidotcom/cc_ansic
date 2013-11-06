@@ -775,7 +775,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback was successfully done setting or queryin remote configuration or error has occurred</td>
+ * <td>Callback was successfully done setting or queryingremote configuration or error has occurred</td>
  * </tr>
  * <tr>
  * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>

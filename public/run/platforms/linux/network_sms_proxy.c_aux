@@ -11,7 +11,7 @@
  */
 /**
  * @file
- *  @brief Rountines which implement Cloud Connector network interface for
+ *  @brief Routines which implement Cloud Connector network interface for
  *  @ref CONNECTOR_TRANSPORT_SMS.
  */
 #include <sys/socket.h>
@@ -32,7 +32,7 @@
 #define GW_ADDR_ES  "10.101.1.121"  /* Gateway running sms_proxy.py in Spain office */
 #define GW_ADDR_US  "10.9.16.85"    /* Gateway running sms_proxy.py in US office */
 
-/* Use by default the US office proxy that uses local call and plain cost. Note that this IP can be overriden by the DVTs
+/* Use by default the US office proxy that uses local call and plain cost. Note that this IP can be overridden by the DVTs
    using the --ansic_sms_proxy_ip option
  */
 #define GW_ADDR     GW_ADDR_US      
@@ -372,7 +372,7 @@ done:
  *                                  EAGAIN or EWOULDBLOCK error.
  *                                  It will be called again to
  *                                  send data.
- * @retval connector_callback_error     An irrecoverable error has occured,  Cloud Connector will call
+ * @retval connector_callback_error     An irrecoverable error has occurred,  Cloud Connector will call
  *                                  @ref app_network_sms_close.
  * @retval connector_callback_abort     The application aborts Cloud Connector.
  *
@@ -442,7 +442,7 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
  * @retval connector_callback_continue	The routine has received some data.
  * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or
  *                                  EWOULDBLOCK error. It will be called again to receive data.
- * @retval connector_callback_error     An irrecoverable error has occured,  Cloud Connector will call
+ * @retval connector_callback_error     An irrecoverable error has occurred,  Cloud Connector will call
  *                                  @ref app_network_sms_close.
  * @retval connector_callback_abort     The application aborts Cloud Connector.
  *

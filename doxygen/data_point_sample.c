@@ -6,7 +6,7 @@
  *
  * This sample demonstrates how to send streaming data points from a device to Device Cloud.
  * This application sends cpu usage as data points periodically. Device Cloud (with Data Stream enabled)
- * on the otherhand collects these data and the data shows up under Data Streams page inside the Data
+ * on the other hand collects these data and the data shows up under Data Streams page inside the Data
  * Service tab.
  *
  * To learn more about Device Cloud Data Streams, see Chapter 12 Device Cloud Data Streams in the

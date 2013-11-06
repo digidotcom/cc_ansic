@@ -190,7 +190,7 @@
  *      -# Initial configuration on the cloud for UDP transport: \n 
  *         It's required to enable this transport using @ref sm_upd_enable_dm "Device Manager" or through 
  *         @ref sm_upd_enable_ws "Web Services". \n
- *         UDP tranport allows an option for "Battery-backed" applications that, if desired, has to be enabled on the
+ *         UDP transport allows an option for "Battery-backed" applications that, if desired, has to be enabled on the
  *         server using @ref sm_udp_enable_battery_dm "Device Manager" or through @ref sm_udp_enable_battery_ws "Web Services".
  *      -# Initial configuration on the cloud for SMS transport: \n 
  *         It's required to enable this transport by providing your device's phone number. This way Device Cloud 

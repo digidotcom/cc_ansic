@@ -72,7 +72,7 @@
  *
  * All application session memory must be released in the last callback of the session, typically 
  * the callback to @ref file_system_close "close a file" or @ref file_system_closedir "close a directory".
- * This callback will be invoked if the file or directory was opened successfully, even if the fyle system
+ * This callback will be invoked if the file or directory was opened successfully, even if the file system
  * session had an error.
  * <br /><br />
  *
@@ -382,7 +382,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Reading from a file succeded</td>
+ * <td>Reading from a file succeeded</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -476,7 +476,7 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Writing to a file succeded</td>
+ * <td>Writing to a file succeeded</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_busy @htmlonly</td>
@@ -759,7 +759,7 @@
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *
- *     // Posix function to remove a file
+ *     // POSIX function to remove a file
  *     int result = unlink(data->path);
  *
  *    if (result < 0)
@@ -783,7 +783,7 @@
  *
  * @section file_system_opendir     Open a Directory
  *
- * This callback opens a directory for the spesified path.
+ * This callback opens a directory for the specified path.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_process_file_opendir() in file_system.c
@@ -1567,7 +1567,7 @@
  *       case EACCES:
  *       case EPERM:
  *       case EROFS:
- *           data->error_status = connector_file_system_permision_denied;
+ *           data->error_status = connector_file_system_permission_denied;
  *           break;
  *
  *       case ENOMEM:

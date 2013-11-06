@@ -990,7 +990,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
 
 /* End of Cloud Connector configuration routines */
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #define enum_to_case(name)  case name:  result = #name;             break
@@ -1020,7 +1020,7 @@ static char const * app_class_to_string(connector_class_id_t const value)
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 static char const * app_config_class_to_string(connector_request_id_config_t const value)
@@ -1068,7 +1068,7 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 static char const * app_network_class_to_string(connector_request_id_network_t const value)
@@ -1088,7 +1088,7 @@ static char const * app_network_class_to_string(connector_request_id_network_t c
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 static char const * app_os_class_to_string(connector_request_id_os_t const value)
@@ -1109,7 +1109,7 @@ static char const * app_os_class_to_string(connector_request_id_os_t const value
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
@@ -1134,7 +1134,7 @@ static char const * app_firmware_class_to_string(connector_request_id_firmware_t
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #if (defined CONNECTOR_RCI_SERVICE)
@@ -1160,7 +1160,7 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #if (defined CONNECTOR_FILE_SYSTEM)
@@ -1193,7 +1193,7 @@ static char const * app_file_system_class_to_string(connector_request_id_file_sy
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #if (defined CONNECTOR_DATA_SERVICE)
@@ -1220,7 +1220,7 @@ static char const * app_data_service_class_to_string(connector_request_id_data_s
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #if (defined CONNECTOR_DATA_POINTS)
@@ -1242,7 +1242,7 @@ static char const * app_data_point_class_to_string(connector_request_id_data_poi
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 static char const * app_status_class_to_string(connector_request_id_status_t const value)
@@ -1260,7 +1260,7 @@ static char const * app_status_class_to_string(connector_request_id_status_t con
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 #if (defined CONNECTOR_SHORT_MESSAGE)
@@ -1287,7 +1287,7 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
  */
 
 /**
- * @cond Doxygen_Supress
+ * @cond Doxygen_Suppress
  *
  */
 static char const * app_status_error_to_string(connector_status_t const value)

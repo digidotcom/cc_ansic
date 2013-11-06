@@ -143,9 +143,9 @@
  *    }
  *
  *    {
- *        X509 * const cloud_sert = SSL_get_peer_certificate(ssl);
+ *        X509 * const cloud_cert = SSL_get_peer_certificate(ssl);
  *
- *        if (cloud_sert == NULL)
+ *        if (cloud_cert == NULL)
  *        {
  *            APP_DEBUG("No certificate is provided by Device Cloud\n");
  *            goto done;

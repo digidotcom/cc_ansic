@@ -529,7 +529,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_WAN_PHONE_NUMBER_DIALED @htmlonly </td>
- * <td>String represetnation of a WAN cellular phone connection.
+ * <td>String representation of a WAN cellular phone connection.
  * See @endhtmlonly @ref phone_number @htmlonly</td>
  * </tr>
  * <tr>

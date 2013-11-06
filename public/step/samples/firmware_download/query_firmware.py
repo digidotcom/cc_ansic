@@ -23,7 +23,7 @@ import sys
 
 def Usage():
     print 'Usage: query_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]'
-    print '    Queries the firwmare version numbers for <Device ID>.'
+    print '    Queries the firmware version numbers for <Device ID>.'
     print '    where:' 
     print '        <Username> is the Device Cloud account Username to which your device is'
     print '                   connected.'
@@ -38,10 +38,10 @@ def Usage():
     print '            or short: 00049DFF-FFAABBCC\n'
     print '    Example Usage:' 
     print '        python ./query_firmware.py myaccount mypassword 00049DFF-FFAABBCC'
-    print '            Queries the firwmare version numbers of 00000000-00000000-00049DFF-FFAABBCC '
+    print '            Queries the firmware version numbers of 00000000-00000000-00049DFF-FFAABBCC '
     print '            (in user account myaccount) through login.etherios.com.\n'
     print '        python ./query_firmware.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
-    print '            Queries the firwmare version numbers of 00000000-00000000-00049DFF-FFAABBCC '
+    print '            Queries the firmware version numbers of 00000000-00000000-00049DFF-FFAABBCC '
     print '            (in user account myaccount) through login.etherios.co.uk.\n'
    
 def PostMessage(username, password, device_id, cloud_url):

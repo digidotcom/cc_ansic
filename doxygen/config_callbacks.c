@@ -255,12 +255,12 @@
  *     if (access(DEVICE_ID_FILENAME, F_OK) != -1)
  *     {
  *         FILE *file;
- *         int bytes_writen;
+ *         int bytes_written;
  * 
  *         file = fopen(DEVICE_ID_FILENAME, "w+");
- *         bytes_writen = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
+ *         bytes_written = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
  *
- *         ASSERT(bytes_writen == sizeof provisioned_device_id);
+ *         ASSERT(bytes_written == sizeof provisioned_device_id);
  *         fclose(file);
  *     }
  * 

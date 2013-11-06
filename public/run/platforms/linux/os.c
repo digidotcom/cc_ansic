@@ -124,7 +124,7 @@ connector_callback_status_t app_os_yield(connector_status_t const * const status
     if (error)
     {
         /* In the Linux implementation this function always succeeds */
-        APP_DEBUG("app_os_yield: shced_yield failed with %d\n", error);
+        APP_DEBUG("app_os_yield: sched_yield failed with %d\n", error);
     }
 
     return connector_callback_continue;

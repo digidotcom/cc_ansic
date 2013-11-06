@@ -9,7 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-/* This function searchs for the next valid request_id and leaves it in connector_ptr->last_request_id */
+/* This function searches for the next valid request_id and leaves it in connector_ptr->last_request_id */
 static connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_pending;

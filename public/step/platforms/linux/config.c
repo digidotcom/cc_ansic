@@ -159,7 +159,7 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
 static connector_callback_status_t app_save_device_id(connector_config_pointer_data_t * const config_device_id)
 {
     FILE *file;
-    int bytes_writen;
+    int bytes_written;
     char proc_path[PATH_MAX];
     char device_id_full_path[PATH_MAX] = {0};
     
@@ -178,9 +178,9 @@ static connector_callback_status_t app_save_device_id(connector_config_pointer_d
     }
     
     file = fopen(device_id_full_path, "w+");
-    bytes_writen = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
-    ASSERT(bytes_writen == sizeof provisioned_device_id);
-    APP_DEBUG("app_load_device_id: wrote %d bytes to %s\n", bytes_writen, device_id_full_path);
+    bytes_written = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
+    ASSERT(bytes_written == sizeof provisioned_device_id);
+    APP_DEBUG("app_load_device_id: wrote %d bytes to %s\n", bytes_written, device_id_full_path);
     fclose(file);
 
     return connector_callback_continue;

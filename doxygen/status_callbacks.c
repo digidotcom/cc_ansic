@@ -47,7 +47,7 @@
  *             <dd> - TCP communication has been established. User and application is able to start message and data transfer. </dd>
  *             <dt><b>@endhtmlonly @ref connector_tcp_keepalive_missed @htmlonly </b>
  *             <dd> - Cloud Connector has not received a keep alive message from Device Cloud
- *                    within the time specifed in @endhtmlonly @ref connector_request_id_config_tx_keepalive callback or
+ *                    within the time specified in @endhtmlonly @ref connector_request_id_config_tx_keepalive callback or
  *                    @ref CONNECTOR_TX_KEEPALIVE_IN_SECONDS. See @ref tx_keepalive @htmlonly </dd>
  *             <dt><b>@endhtmlonly @ref connector_tcp_keepalive_restored @htmlonly </b>
  *             <dd> - Cloud Connector has received and recovered missed keep alive message from Device Cloud. </dd>

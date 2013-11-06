@@ -334,7 +334,7 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
         result = FSFile_Wr(p_file, (void*)&char_to_write,1, &fs_err);
         if ((result != 1) || (fs_err != FS_ERR_NONE))
         {
-            APP_DEBUG("write ERROR p_file 0x%x, offset %u, towrite 1", p_file, data->bytes_used);
+            APP_DEBUG("write ERROR p_file 0x%x, offset %u, to write 1", p_file, data->bytes_used);
             goto done;
         }
         remaining -= result;
@@ -349,7 +349,7 @@ static connector_callback_status_t app_process_file_write(connector_file_system_
         result = FSFile_Wr(p_file, (void*)p_buf, (remaining>512)?512:remaining, &fs_err);
         if ((result != ((remaining>512)?512:remaining)) || (fs_err != FS_ERR_NONE))
         {
-            APP_DEBUG("write ERROR p_file 0x%x, offset %u, towrite 512", p_file, data->bytes_used);
+            APP_DEBUG("write ERROR p_file 0x%x, offset %u, to write 512", p_file, data->bytes_used);
             goto done;
         }
         remaining -= result;
@@ -879,7 +879,7 @@ static connector_callback_status_t app_process_file_get_error(connector_file_sys
     {
         case FS_ERR_DEV_WR_PROT:
         case FS_ERR_ENTRY_RD_ONLY:
-            data->error_status = connector_file_system_permision_denied;
+            data->error_status = connector_file_system_permission_denied;
             break;
 
         case FS_ERR_MEM_ALLOC:

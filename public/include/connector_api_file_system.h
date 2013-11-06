@@ -513,7 +513,7 @@ typedef enum
     connector_file_system_request_format_error,         /**< Request format error */
     connector_file_system_invalid_parameter,            /**< Invalid parameter */
     connector_file_system_out_of_memory,                /**< Out of memory */
-    connector_file_system_permision_denied              /**< Permission denied */
+    connector_file_system_permission_denied              /**< Permission denied */
 
 } connector_file_system_error_t;
 /**
