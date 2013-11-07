@@ -18,6 +18,7 @@ static connector_callback_status_t app_tcp_status(connector_tcp_status_t const *
     switch (*status)
     {
     case connector_tcp_communication_started:
+        keepalive_missed_count = 0;
         APP_DEBUG("connector_tcp_communication_started\n");
         break;
     case connector_tcp_keepalive_missed:
