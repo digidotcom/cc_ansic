@@ -218,7 +218,7 @@ static connector_callback_status_t app_process_file_get_error(connector_file_sys
         case EACCES:
         case EPERM:
         case EROFS:
-            data->error_status = connector_file_system_permision_denied;
+            data->error_status = connector_file_system_permission_denied;
             break;
 
         case ENOMEM:
