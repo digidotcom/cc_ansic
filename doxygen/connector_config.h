@@ -632,7 +632,7 @@
  * @see @ref tx_keepalive
  * @see @ref  app_get_tx_keepalive_interval()
  */
-#define CONNECTOR_TX_KEEPALIVE_IN_SECONDS                 75
+#define CONNECTOR_TX_KEEPALIVE_IN_SECONDS                 90
 
 /**
  * When defined, this string hardcode for the @ref rx_keepalive instead of the application framework
@@ -643,24 +643,24 @@
  * @see @ref rx_keepalive
  * @see @ref app_get_rx_keepalive_interval()
  */
-#define CONNECTOR_RX_KEEPALIVE_IN_SECONDS                 75
+#define CONNECTOR_RX_KEEPALIVE_IN_SECONDS                 60
 
 /**
  * When defined, this string hardcode for the @ref wait_count instead of the application framework
  * function @ref app_get_wait_count() (called via the @ref connector_request_id_config_wait_count @ref connector_callback_t "callback" in config.c).
  *
- * @note There is no need to implement or port @ref app_get_wait_count() when CONNECTOR_RX_KEEPALIVE_IN_SECONDS is defined.
+ * @note There is no need to implement or port @ref app_get_wait_count() when CONNECTOR_WAIT_COUNT is defined.
  *
  * @see @ref wait_count
  * @see @ref app_get_wait_count()
  */
-#define CONNECTOR_WAIT_COUNT                              10
+#define CONNECTOR_WAIT_COUNT                              5
 
 /**
  * When defined, this 4 byte value is hardcode for the @ref vendor_id instead of the application framework
  * function @ref app_get_vendor_id() (called via the @ref connector_request_id_config_vendor_id @ref connector_callback_t "callback" in config.c).
  *
- * @note There is no need to implement or port @ref app_get_wait_count() when CONNECTOR_RX_KEEPALIVE_IN_SECONDS is defined.
+ * @note There is no need to implement or port @ref app_get_vendor_id() when CONNECTOR_VENDOR_ID is defined.
  *
  * @see @ref vendor_id
  * @see @ref app_get_vendor_id()

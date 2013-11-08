@@ -936,7 +936,7 @@
  * <td> Pointer to @endhtmlonly connector_config_wait_count_t @htmlonly:
  *          <dl>
  *              <dt><i>count</i></dt>
- *              <dd> - Callback writes 2-byte wait count. It must be between 2 and 63 times.</dd>
+ *              <dd> - Callback writes 2-byte wait count. It must be between 2 and 64 times.</dd>
  *          </dl>
  * </td>
  * </tr>
