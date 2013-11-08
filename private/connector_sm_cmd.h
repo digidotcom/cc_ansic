@@ -963,7 +963,7 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_sm_cmd_config:
-			if (SmIsCloudOwned(session->flags))
+            if (SmIsCloudOwned(session->flags))
             {
                 result = sm_process_config_request(connector_ptr, session, payload, bytes);
             }
@@ -975,6 +975,9 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
             if (edp_get_active_state(connector_ptr) == connector_transport_idle)
                 edp_set_active_state(connector_ptr, connector_transport_open);
             result = connector_working;
+            #else
+            connector_debug_printf("WARNING: received a 'request connect' but TCP transport is not available\n");
+            result = connector_device_error;
             #endif
             break;
 
