@@ -104,6 +104,7 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
         connector_ptr->edp_data.stop.auto_connect = connector_bool(config_connect.type == connector_connect_auto);
     }
 #else
+    ASSERT((CONNECTOR_NETWORK_TCP_START == connector_connect_auto) || (CONNECTOR_NETWORK_TCP_START == connector_connect_manual));
     if (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
     {
         edp_set_active_state(connector_ptr, connector_transport_open);
@@ -119,6 +120,7 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
         connector_identity_verification_t const identity_verification = connector_ptr->edp_data.config.identity_verification;
 #else
     {
+        ASSERT((CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_simple) || (CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_password));
         connector_identity_verification_t const identity_verification = CONNECTOR_IDENTITY_VERIFICATION;
 #endif
 

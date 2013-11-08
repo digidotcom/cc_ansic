@@ -167,7 +167,8 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                 sm_ptr->transport.connect_type = config_connect.type;
             }
 #else
-            sm_ptr->transport.connect_type = (CONNECTOR_NETWORK_UDP_START == connector_connect_auto)?connector_connect_auto:connector_connect_manual;
+            ASSERT((CONNECTOR_NETWORK_UDP_START == connector_connect_auto) || (CONNECTOR_NETWORK_UDP_START == connector_connect_manual));
+            sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
             result = connector_working;
 #endif
             break;
@@ -187,7 +188,8 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                 sm_ptr->transport.connect_type = config_connect.type;
             }
 #else
-            sm_ptr->transport.connect_type = (CONNECTOR_NETWORK_SMS_START == connector_connect_auto)?connector_connect_auto:connector_connect_manual;
+            ASSERT((CONNECTOR_NETWORK_SMS_START == connector_connect_auto) || (CONNECTOR_NETWORK_SMS_START == connector_connect_manual));
+            sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
             result = connector_working;
 #endif
             break;

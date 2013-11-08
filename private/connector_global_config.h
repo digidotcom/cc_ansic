@@ -280,6 +280,7 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
     connector_status_t result = connector_working;
 
 #if (defined CONNECTOR_CONNECTION_TYPE)
+    ASSERT((CONNECTOR_CONNECTION_TYPE == connector_connection_type_lan) || (CONNECTOR_CONNECTION_TYPE == connector_connection_type_wan));
     connector_ptr->connection_type = CONNECTOR_CONNECTION_TYPE;
 #else
     connector_config_connection_type_t  config_connection;
@@ -454,6 +455,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
     connector_status_t result = connector_working;
 
 #if (defined CONNECTOR_DEVICE_ID_METHOD)
+    ASSERT((CONNECTOR_DEVICE_ID_METHOD == connector_device_id_method_auto) || (CONNECTOR_DEVICE_ID_METHOD == connector_device_id_method_manual));
     connector_ptr->device_id_method = CONNECTOR_DEVICE_ID_METHOD;
 #else
     connector_callback_status_t callback_status;
@@ -601,6 +603,7 @@ static connector_status_t get_config_wan_type(connector_data_t * const connector
 {
     connector_status_t result = connector_working;
 #if (defined CONNECTOR_WAN_TYPE)
+    ASSERT((CONNECTOR_WAN_TYPE == connector_wan_type_imei) || (CONNECTOR_WAN_TYPE == connector_wan_type_esn) || (CONNECTOR_WAN_TYPE == connector_wan_type_meid));
     connector_ptr->wan_type = CONNECTOR_WAN_TYPE;
 #else
     connector_callback_status_t callback_status;
