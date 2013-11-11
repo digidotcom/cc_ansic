@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# This release generates all the part numbers required for releasing and
+# optionally moves it to "pending" folder in the \\eng server.
+# This needs the following environment variables defined:
+#     TAR_REVISION
+#     ZIP_REVISION
+#     TAG
+#     PENDING
+# For example, for creating the 2.1.0.0 release, the following must be executed:
+# 
+#     export TAR_REVISION=C
+#     export ZIP_REVISION=A
+#     export TAG=2.1.0.0
+#     export PENDING=false
+#     ./build_release.sh
+# 
+# The project's taggint scheme is W.X.Y.Z; for Major, Minor, Revision and Build numbers
+# respectively. For example, 2.1.0.0.
+#
+# The release is automated in this Bamboo Plan http://bamboo.digi.com/browse/CCTH-RC
+# And in this Jenkins CI Job: http://jenkins.ci.digi.com/job/Etherios%20Cloud%20Connector/job/Release%20Candidate/
+
 WORKSPACE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 rc=0
 rca=0
