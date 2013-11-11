@@ -359,15 +359,27 @@
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
-* the define below to set the maximum short message segments used per session. If not set, Cloud Connector 
-* will use the default of 1. User need to increase this value if they are planning to use short message to 
-* send larger data.
+* the define below to enable multipart message functionality. If not set, Cloud Connector will only allow 
+* transmission and reception of single part messages.
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+* @see @ref CONNECTOR_TRANSPORT_SMS
+*/
+#define CONNECTOR_SM_MULTIPART
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
+* the define below to set the maximum short message segments used per session during message reception 
+* (This define does not affect the number of segments for transmission which are unlimitted). If not set, 
+* Cloud Connector will use the default of 1. User need to increase this value if they are planning to use 
+* short message to receive larger data. @ref CONNECTOR_SM_MULTIPART must be defined in order to configure 
+* define below to a value bigger than 1. 
 *
 * @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 * @see @ref CONNECTOR_TRANSPORT_SMS
 */
-#define CONNECTOR_SM_MAX_SEGMENTS                  4
+#define CONNECTOR_SM_MAX_RX_SEGMENTS               4
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
@@ -449,9 +461,9 @@
  * @code
  *     #define CONNECTOR_DEVICE_TYPE                          "Cloud Connector Linux Sample"
  *     #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
- *     #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              75
- *     #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              75
- *     #define CONNECTOR_WAIT_COUNT                           10
+ *     #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              90
+ *     #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              60
+ *     #define CONNECTOR_WAIT_COUNT                           5
  *     #define CONNECTOR_VENDOR_ID                            0x00000000
  *     #define CONNECTOR_MSG_MAX_TRANSACTION                  1
  *     #define CONNECTOR_CONNECTION_TYPE                      connector_connection_type_lan
