@@ -138,12 +138,12 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
 
-    #if (defined CONNECTOR_SM_MAX_SEGMENTS) && (CONNECTOR_SM_MAX_SEGMENTS > 1) && (!defined CONNECTOR_SM_MULTIPART)
-    #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_SEGMENTS bigger than 1"
+    #if (defined CONNECTOR_SM_MAX_RX_SEGMENTS) && (CONNECTOR_SM_MAX_RX_SEGMENTS > 1) && (!defined CONNECTOR_SM_MULTIPART)
+    #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_RX_SEGMENTS bigger than 1"
     #endif
 
-    #if (defined CONNECTOR_SM_MAX_SEGMENTS)
-    sm_ptr->session.max_segments = CONNECTOR_SM_MAX_SEGMENTS;
+    #if (defined CONNECTOR_SM_MAX_RX_SEGMENTS)
+    sm_ptr->session.max_segments = CONNECTOR_SM_MAX_RX_SEGMENTS;
     #else
     sm_ptr->session.max_segments = 1;
     #endif

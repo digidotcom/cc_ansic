@@ -226,7 +226,7 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
         #else
         {
             connector_debug_printf("Received multipart packet, but multipart is disabled\n");
-            connector_debug_printf("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_SEGMENTS defines\n");
+            connector_debug_printf("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_RX_SEGMENTS defines\n");
             goto error;
         }
         #endif
@@ -434,7 +434,7 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
         if ((sm_header.segment.count > sm_ptr->session.max_segments) || (sm_header.segment.number >= sm_ptr->session.max_segments))
         {
             connector_debug_printf("sm_process_packet: Exceeded maximum segments [%" PRIsize "/%" PRIsize "]!\n", sm_header.segment.count, sm_ptr->session.max_segments);
-            connector_debug_printf("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_SEGMENTS defines\n");
+            connector_debug_printf("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_RX_SEGMENTS defines\n");
             goto error;
         }
 
