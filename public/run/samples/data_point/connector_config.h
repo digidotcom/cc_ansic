@@ -28,6 +28,7 @@
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
 #define CONNECTOR_SM_MAX_SESSIONS   4
+#define CONNECTOR_SM_MULTIPART
 #define CONNECTOR_SM_MAX_SEGMENTS   16
 #define CONNECTOR_SM_TIMEOUT        10  /* In seconds, 0: Wait forever for the complete request/response */
 

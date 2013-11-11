@@ -21,8 +21,8 @@
 #define SM_UDP_VERSION 0x01
 
 #if defined SM_PACKET_SIZE_UDP
-#if  CONNECTOR_SM_MAX_SEGMENTS > 1
-#error "SM_PACKET_SIZE_UDP cannot be override if multi-packet messaging is ON (CONNECTOR_SM_MAX_SEGMENTS > 1)"
+#if  defined CONNECTOR_SM_MULTIPART
+#error "SM_PACKET_SIZE_UDP cannot be override if multi-packet messaging is ON (defined CONNECTOR_SM_MULTIPART)"
 #endif
 #else
 #define SM_PACKET_SIZE_UDP 1472

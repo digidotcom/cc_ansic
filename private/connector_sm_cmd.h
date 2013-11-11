@@ -102,7 +102,7 @@ done:
     return;
 }
 
-#if (defined CONNECTOR_COMPRESSION) || (CONNECTOR_SM_MAX_SEGMENTS > 1)
+#if (defined CONNECTOR_COMPRESSION) || (defined CONNECTOR_SM_MULTIPART)
 static size_t sm_get_max_payload_bytes(connector_sm_data_t * const sm_ptr)
 {
     size_t const sm_header_size = 5;
@@ -1048,7 +1048,7 @@ static connector_status_t sm_process_payload(connector_data_t * const connector_
     uint8_t * data_ptr;
     size_t bytes;
 
-#if (CONNECTOR_SM_MAX_SEGMENTS > 1)
+#if (defined CONNECTOR_SM_MULTIPART)
     if (SmIsMultiPart(session->flags))
     {
         size_t const max_payload_bytes = sm_get_max_payload_bytes(sm_ptr);
