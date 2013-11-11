@@ -268,7 +268,9 @@ static connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr,
     #else
     else
     {
-        connector_debug_printf("sm_prepare_segment: Multi-part is disabled\n");
+        connector_debug_printf("sm_prepare_segment: Multipart is disabled. Please define CONNECTOR_SM_MULTIPART in connector_config.h.\n");
+        ASSERT(connector_false);
+        result = connector_invalid_data_size;
         goto error;
     }
     #endif

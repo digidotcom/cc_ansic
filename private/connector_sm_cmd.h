@@ -75,6 +75,9 @@ static void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_statu
         case connector_idle:
             goto done;
 
+        case connector_invalid_data_size:
+            connector_debug_printf("WARNING: received a 'connector_invalid_data_size'\n");
+            break;
         case connector_abort:
         case connector_invalid_response:
             sm_ptr->close.status = connector_close_status_abort;
