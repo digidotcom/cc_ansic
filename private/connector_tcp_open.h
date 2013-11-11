@@ -752,12 +752,12 @@ static connector_status_t send_device_type(connector_data_t * const connector_pt
     message_store_u8(edp_device_type, security_coding, SECURITY_PROTO_NONE);
     message_store_u8(edp_device_type, opcode, DISC_OP_DEVICETYPE);
 
-	{
-		uint16_t const length16 = (uint16_t) device_type_length;
+    {
+        uint16_t const length16 = (uint16_t) device_type_length;
 
-		ASSERT(device_type_length <= UINT16_MAX);
-		message_store_be16(edp_device_type, length, length16);
-	}
+        ASSERT(device_type_length <= UINT8_MAX); /* Despite the size is a 16-bit integer, the maximum allowed is 255 */
+        message_store_be16(edp_device_type, length, length16);
+    }
 
     edp_device_type += device_type_header_size;
     memcpy(edp_device_type, connector_device_type, device_type_length);
