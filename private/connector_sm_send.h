@@ -258,8 +258,8 @@ static connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr,
     #if (defined CONNECTOR_SM_MULTIPART)
     else
     {
-        size_t const segment0_ovaerhead_bytes = record_end(segment0) - record_end(segmentn);
-        size_t const segment_count = (session->in.bytes + ((max_payload + segment0_ovaerhead_bytes) - 1))/max_payload;
+        size_t const segment0_overhead_bytes = record_end(segment0) - record_end(segmentn);
+        size_t const segment_count = (session->in.bytes + ((max_payload + segment0_overhead_bytes) - 1))/max_payload;
 
         ASSERT_GOTO(segment_count < 256, error);
         session->segments.count = segment_count;

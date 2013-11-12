@@ -445,9 +445,41 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
     char * const cli_command = payload;
     size_t const cli_bytes = strlen(cli_command) + 1; /* +1 for nul-terminate */
 
+    connector_sm_data_t * sm_ptr = NULL;
+
+    switch (session->transport)
+    {
+        #if (defined CONNECTOR_TRANSPORT_UDP)
+        case connector_transport_udp:
+            sm_ptr = &connector_ptr->sm_udp;
+            break;
+        #endif
+
+        #if (defined CONNECTOR_TRANSPORT_SMS)
+        case connector_transport_sms:
+            sm_ptr = &connector_ptr->sm_sms;
+            break;
+        #endif
+
+        default:
+            ASSERT(connector_false);
+            break;
+    }
+
     if (bytes > cli_bytes)
     {
-        size_t const max_response_bytes = LoadBE16(cli_command + cli_bytes);
+        size_t const max_response_packets = LoadBE16(cli_command + cli_bytes);
+        size_t max_response_bytes = 0;
+
+        size_t const max_payload = sm_ptr->transport.sm_mtu_tx - record_end(segment);
+
+        if (max_response_packets == 1)
+            max_response_bytes = max_payload;
+        else
+        {
+            size_t const segment0_overhead_bytes = record_end(segment0) - record_end(segmentn);
+            max_response_bytes = max_response_packets * max_payload - segment0_overhead_bytes;
+        }
 
         session->user.header = (void *)max_response_bytes;
     }
