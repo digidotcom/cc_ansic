@@ -443,8 +443,6 @@ static size_t dp_process_string(char * const string, char * const buffer, size_t
         char * const format = need_quotes ? "\"%s\"" : "%s";
 
         bytes_processed = connector_snprintf(buffer, bytes_available, format, string);
-        if (bytes_available < bytes_processed)
-            bytes_processed = bytes_available - 1;
 
         if (bytes_used_ptr != NULL)
             *bytes_used_ptr = need_quotes ? bytes_processed - 2 : bytes_processed;
@@ -710,10 +708,9 @@ static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * cons
         bytes_copied = process_fn(dp_info, data_ptr, bytes_remaining);
         if (bytes_copied > 0)
         {
-            /* not enough space to send current entry, use the next packet to send the remaining data */
             if (bytes_copied >= bytes_remaining)
             {
-                bytes_remaining = 0;
+                /* not enough space to send current entry, use the next packet to send the remaining data */
                 break;
             }
 
