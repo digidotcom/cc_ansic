@@ -48,11 +48,13 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
     {
         char local_buffer[SAFE_BUFFER_BYTES];
         size_t const bytes_needed = vsprintf(local_buffer, format, args);
-
         result = (bytes_needed < size) ? bytes_needed : size - 1;
-        memcpy(str, local_buffer, result);
-        str[result] = '\0';
-        result = bytes_needed;
+        if (result > 0)
+        {
+            memcpy(str, local_buffer, result);
+            str[result] = '\0';
+            result = bytes_needed;
+        }
     }
     #undef SAFE_BUFFER_BYTES
 #endif
