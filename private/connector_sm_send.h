@@ -110,6 +110,8 @@ static connector_status_t sm_get_more_request_data(connector_data_t * const conn
         if (SmIsDatapoint(session->flags))
         {
             status = dp_handle_callback(connector_ptr, connector_request_id_data_service_send_data, &cb_data);
+            if (!cb_data.bytes_used)
+                sm_set_payload_complete(session);
         }
         else
 #endif
@@ -129,7 +131,7 @@ static connector_status_t sm_get_more_request_data(connector_data_t * const conn
         session->bytes_processed += cb_data.bytes_used;
         ASSERT(session->bytes_processed <= session->in.bytes);
         if (!cb_data.more_data)
-            sm_set_payload_complete(session);
+            sm_set_payload_complete(session); /* Can't write more. Send the segment. */
     }
 
 error:
