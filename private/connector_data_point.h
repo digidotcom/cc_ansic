@@ -206,7 +206,7 @@ static connector_status_t dp_cancel_session(connector_data_t * const connector_p
 
     if (data_point_binary_pending != NULL)
     {
-        if (cancel_all || *data_point_binary_pending->request_id == *request_id)
+        if (cancel_all || ((data_point_binary_pending->request_id != NULL) && (*data_point_binary_pending->request_id == *request_id)))
         {
             if (session == NULL)
             {
@@ -220,7 +220,7 @@ static connector_status_t dp_cancel_session(connector_data_t * const connector_p
 
     if (data_point_single_pending != NULL)
     {
-        if (cancel_all || *data_point_single_pending->request_id == *request_id)
+        if (cancel_all || ((data_point_single_pending->request_id != NULL) && (*data_point_single_pending->request_id == *request_id)))
         {
             if (session == NULL)
             {
