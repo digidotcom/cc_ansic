@@ -197,6 +197,7 @@ static connector_status_t dp_inform_status(connector_data_t * const connector_pt
     return result;
 }
 
+#if (CONNECTOR_VERSION >= 0x02010000)
 static connector_status_t dp_cancel_session(connector_data_t * const connector_ptr, void const * const session, uint32_t const * const request_id)
 {
     connector_status_t status = connector_working;
@@ -238,6 +239,7 @@ static connector_status_t dp_cancel_session(connector_data_t * const connector_p
 done:
     return status;
 }
+#endif
 
 static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, char const * const path, char const * const extension)
 {

@@ -451,7 +451,9 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
 #if (defined CONNECTOR_SHORT_MESSAGE)
             case connector_initiate_ping_request:
             case connector_initiate_session_cancel:
+#if (CONNECTOR_VERSION >= 0x02010000)
             case connector_initiate_session_cancel_all:
+#endif
 #endif
             case connector_initiate_terminate:
                 break;
