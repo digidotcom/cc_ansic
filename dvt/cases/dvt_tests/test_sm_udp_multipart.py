@@ -49,13 +49,13 @@ class SmUdpMultipartDvtTestCase(ic_testcase.UDPTestCase):
         """ Verifies that the multipart CLI to the device processed correctly. """
         self.send_sm_udp_request("command", '<command> get file </command>', os.path.getsize(test_file_name))
 
-    def test_sm_udp_multipart_cli_limit_1450(self):
-        """ Verifies that the multipart CLI, with max 1450 bytes response, to the device processed correctly. """
-        self.send_sm_udp_request("command", '<command maxResponseSize="1450"> get 1450 bytes </command>', 1450)
+    def test_sm_udp_multipart_cli_limit_1p(self):
+        """ Verifies that the multipart CLI, with max 1 packet response, to the device processed correctly. """
+        self.send_sm_udp_request("command", '<command maxResponseSize="1"> get 1 packet </command>', 1450)
 
-    def test_sm_udp_multipart_cli_limit_2899(self):
-        """ Verifies that the multipart CLI, with max 2899 bytes response, to the device processed correctly. """
-        self.send_sm_udp_request("command", '<command maxResponseSize="2899"> get 2899 bytes </command>', 2899)
+    def test_sm_udp_multipart_cli_limit_2p(self):
+        """ Verifies that the multipart CLI, with max 2 packet response, to the device processed correctly. """
+        self.send_sm_udp_request("command", '<command maxResponseSize="2"> get 2 packet </command>', 2898)
 
     def test_sm_udp_multipart_verify_send_data(self):
         time.sleep(10) #Wait a little
