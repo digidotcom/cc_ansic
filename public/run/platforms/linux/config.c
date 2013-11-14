@@ -201,7 +201,7 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
 #if !(defined CONNECTOR_DEVICE_TYPE)
 static connector_callback_status_t app_get_device_type(connector_config_pointer_string_t * const config_device_type)
 {
-    static char const device_type[] = "ECC DVT";
+    static char const device_type[] = "Linux Application";
 
     /* Return pointer to device type. */
     config_device_type->string = (char *)device_type;
