@@ -187,29 +187,20 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
     
     while (session != NULL)
     {
-        connector_status_t status;
         connector_sm_session_t * next_session = NULL;
         uint32_t session_request_id = request_id != NULL ? *request_id : SM_INVALID_REQUEST_ID;
 
         if (cancel_all || (session_request_id == *request_id))
         {
-            if (session->user.context != NULL)
-            {
-                session->error = connector_sm_error_cancel;
-                status = sm_inform_session_complete(connector_ptr, session);
-                if (status != connector_working)
-                {
-                    result = connector_abort;
-                    break;
-                }
-            }
-            next_session = session->next;
-            status = sm_delete_session(connector_ptr, sm_ptr, session);
-            if (status != connector_working)
-            {
-                result = connector_abort;
+            session->error = connector_sm_error_cancel;
+            result = sm_inform_session_complete(connector_ptr, session);
+            if (result != connector_working)
                 break;
-            }
+            next_session = session->next;
+            result = sm_delete_session(connector_ptr, sm_ptr, session);
+            if (result != connector_working)
+                break;
+
             if (!cancel_all)
                 break;
         }
