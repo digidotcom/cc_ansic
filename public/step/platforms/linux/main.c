@@ -19,11 +19,11 @@ int main (void)
     int status=EXIT_FAILURE;
     connector_handle_t connector_handle;
 
-    APP_DEBUG("main: Starting Connector\n");
+    APP_DEBUG("Start Cloud Connector for Embedded\n");
     connector_handle = connector_init(app_connector_callback);
     if (connector_handle == NULL)
     {
-        APP_DEBUG("main: connector_init() failed\n");
+        APP_DEBUG("Unable to initialize the connector\n");
         goto done;
     }
 

@@ -67,4 +67,3 @@ extern connector_callback_status_t app_status_handler(connector_request_id_statu
 #define APP_SSL_CA_CERT_PATH   "../../../../public/certificates/etherios-ca-cert-public.crt"
 #endif
 #endif
-
