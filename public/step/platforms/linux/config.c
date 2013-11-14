@@ -201,7 +201,7 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
 #if !(defined CONNECTOR_DEVICE_TYPE)
 static connector_callback_status_t app_get_device_type(connector_config_pointer_string_t * const config_device_type)
 {
-    static char const device_type[] = "Linux Application";
+    static char const device_type[] = "ECC DVT";
 
     /* Return pointer to device type. */
     config_device_type->string = (char *)device_type;
@@ -229,7 +229,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
  * Will be updated if a SMSs provisioning message arrives from the server.
  * If set to nothing, will require a provisioning message from the server for initialization.
  */
-static char connector_cloud_phone[] = "447786201216";	/* phone number corresponding to login.etherios.com */
+static char connector_cloud_phone[] = "447786201216"; /* phone number corresponding to login.etherios.com */
 
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
@@ -450,12 +450,12 @@ static int str_to_uint8_array(char const * const str, uint8_t * const array, siz
 
 static connector_callback_status_t app_get_imei_number(connector_config_pointer_data_t * const config_imei)
 {
-#define APP_IMEI_LENGTH 8
-
+#define APP_IMEI_LENGTH         8
+#define APP_IMEI_STRING_LENGTH  (sizeof("000000-00-000000-0") - 1)
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    char const app_imei_number_string[] = "000000-00-000000-0";
+    char const app_imei_number_string[APP_IMEI_STRING_LENGTH] = "000000-00-000000-0";
     static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
     
     str_to_uint8_array(app_imei_number_string, app_imei_number, sizeof app_imei_number);
@@ -495,12 +495,12 @@ static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t 
 
 static connector_callback_status_t app_get_esn(connector_config_pointer_data_t * const config_esn)
 {
-#define APP_ESN_HEX_LENGTH 4
-
+#define APP_ESN_HEX_LENGTH              4
+#define APP_ESN_HEX_STRING_LENGTH       (sizeof("00000000") - 1)
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    char const app_esn_hex_string[] = "00000000";
+    char const app_esn_hex_string[APP_ESN_HEX_STRING_LENGTH] = "00000000";
     static uint8_t app_esn_hex[APP_ESN_HEX_LENGTH] = {0};
     
     str_to_uint8_array(app_esn_hex_string, app_esn_hex, sizeof app_esn_hex);
@@ -512,12 +512,12 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
 
 static connector_callback_status_t app_get_meid(connector_config_pointer_data_t * const config_meid)
 {
-#define APP_MEID_HEX_LENGTH 7
-
+#define APP_MEID_HEX_LENGTH             7
+#define APP_MEID_HEX_STRING_LENGTH      (sizeof("00000000000000") - 1)
     /* Each nibble corresponds a decimal digit.
      * Most upper nibble must be 0.
      */
-    char const app_meid_hex_string[] = "00000000000000";
+    char const app_meid_hex_string[APP_MEID_HEX_STRING_LENGTH] = "00000000000000";
     static uint8_t app_meid_hex[APP_MEID_HEX_LENGTH] = {0};
 
     str_to_uint8_array(app_meid_hex_string, app_meid_hex, sizeof app_meid_hex);
