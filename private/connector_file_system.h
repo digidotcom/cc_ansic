@@ -527,13 +527,13 @@ done:
 /* This function is a custom implementation of GNU/Linux's non-standard strnlen() */
 static int strnlen_(char const * const string, int maxlen)
 {
-	volatile const char *e;
-	int n;
-	
-	for (e = string, n = 0; *e && n < maxlen; e++, n++)
-	;
-	
-	return n;
+    volatile const char *e;
+    int n;
+
+    for (e = string, n = 0; *e && n < maxlen; e++, n++)
+        ;
+
+    return n;
 }
 
 static connector_status_t call_file_readdir_user(connector_data_t * const connector_ptr,

@@ -21,7 +21,7 @@
 #if defined CONNECTOR_TRANSPORT_SMS
 #include <gammu.h>
 
-#define MAX_TELEPHONE_NUMBER_LENGTH		32 /* TODO: define it better. */
+#define MAX_TELEPHONE_NUMBER_LENGTH     32 /* TODO: define it better. */
 
 typedef struct gammu_sms_handler {
     char server_telephone[MAX_TELEPHONE_NUMBER_LENGTH];
@@ -36,7 +36,8 @@ gammu_sms_handler_t g_sms_handle;
 /* Function to handle errors */
 connector_callback_status_t gammu_error_handler(GSM_Error error)
 {
-    if (error != ERR_NONE) {
+    if (error != ERR_NONE)
+    {
         APP_DEBUG("GAMMU error: %s\n", GSM_ErrorString(error));
         return connector_callback_error;
     }
@@ -52,10 +53,13 @@ void send_sms_callback(GSM_StateMachine *state_machine, int status, int MessageR
     g_sms_handle.send_sms_callback_asserted = connector_true;
     
     APP_DEBUG("Sent SMS");
-    if (status == 0) {
+    if (status == 0)
+    {
         APP_DEBUG("..OK");
         g_sms_handle.sms_send_status = ERR_NONE;
-	} else {
+    }
+    else
+    {
         APP_DEBUG("..error %i", status);
         g_sms_handle.sms_send_status = ERR_UNKNOWN;
     }
@@ -191,9 +195,9 @@ done:
  *   <li><b><i>bytes_used</i></b> - Number of bytes sent </li>
  * </ul>
  *
- * @retval connector_callback_continue	The routine has sent
+ * @retval connector_callback_continue  The routine has sent
  *         some data.
- * @retval connector_callback_busy 		No data was sent, the
+ * @retval connector_callback_busy  No data was sent, the
  *                                  routine has encountered
  *                                  EAGAIN or EWOULDBLOCK error.
  *                                  It will be called again to
@@ -208,9 +212,10 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
 {
     connector_callback_status_t status = connector_callback_continue;
     gammu_sms_handler_t *sms_handle = data->handle;
-	GSM_SMSMessage sms;
+    GSM_SMSMessage sms;
     GSM_Error error;
 
+    data->bytes_used = data->bytes_available; /* All bytes sent */
     GSM_SetDefaultSMSData(&sms);
 
     EncodeUnicode(sms.Number, sms_handle->server_telephone, strlen(sms_handle->server_telephone));
@@ -264,8 +269,8 @@ static connector_callback_status_t app_network_sms_send(connector_network_send_t
  *   </li>
  * </ul>
  *
- * @retval connector_callback_continue	The routine has received some data.
- * @retval connector_callback_busy 		No data is pending, the routine has encountered EAGAIN or
+ * @retval connector_callback_continue  The routine has received some data.
+ * @retval connector_callback_busy      No data is pending, the routine has encountered EAGAIN or
  *                                  EWOULDBLOCK error. It will be called again to receive data.
  * @retval connector_callback_error     An irrecoverable error has occurred,  Cloud Connector will call
  *                                  @ref app_network_sms_close.
@@ -331,8 +336,8 @@ done:
  *   </li>
  * </ul>
  *
- * @retval connector_callback_continue	The callback has successfully closed the connection.
- * @retval connector_callback_busy 		The network device is busy, the routine will be called again to complete close.
+ * @retval connector_callback_continue  The callback has successfully closed the connection.
+ * @retval connector_callback_busy      The network device is busy, the routine will be called again to complete close.
  * @retval connector_callback_abort     The application aborts Cloud Connector.
  *
  * @see @ref connector_callback_status_t

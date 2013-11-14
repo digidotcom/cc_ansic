@@ -67,8 +67,8 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned char uint8_t;
 
-#define INT8_C(c)      c
-#define UINT8_C(c)	    c
+#define INT8_C(c)       c
+#define UINT8_C(c)      c
 
 #ifndef UINT8_MAX
 /**
@@ -82,8 +82,8 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned short uint16_t;
 
-#define INT16_C(c)     c
-#define UINT16_C(c)	    c
+#define INT16_C(c)      c
+#define UINT16_C(c)     c
 
 #ifndef UINT16_MAX
 /**
@@ -97,8 +97,8 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned long int uint32_t;
 
-#define INT32_C(c)     c
-#define UINT32_C(c)	    c ## U
+#define INT32_C(c)      c
+#define UINT32_C(c)     c ## U
 
 #ifndef UINT32_MAX
 /**
@@ -176,8 +176,8 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
   typedef unsigned long long int uint64_t;
 
 
-#define INT64_C(c)     c ## LL
-#define UINT64_C(c)	    c ## ULL
+#define INT64_C(c)      c ## LL
+#define UINT64_C(c)     c ## ULL
 
 #ifndef UINT64_MAX
 /**

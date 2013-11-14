@@ -59,7 +59,7 @@ typedef struct  {
 */
 typedef struct  {
     connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
-    void const * CONST buffer;                 	/**< Pointer to data to be sent */
+    void const * CONST buffer;                  /**< Pointer to data to be sent */
     size_t CONST bytes_available;               /**< Number of bytes to send in the buffer */
     size_t bytes_used;                          /**< Number of bytes sent */
 } connector_network_send_t;

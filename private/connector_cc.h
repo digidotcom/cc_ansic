@@ -100,13 +100,12 @@ enum cc_redirect_report {
 
     message_store_u8(redirect_report, opcode, FAC_CC_REDIRECT_REPORT);
     message_store_u8(redirect_report, code, cc_ptr->report_code);
-	{
-		uint8_t const length8 = (uint8_t) report_message_length;
+    {
+        uint8_t const length8 = (uint8_t) report_message_length;
 
-		ASSERT(report_message_length <= UCHAR_MAX);
-		message_store_u8(redirect_report, message_length, length8);
-	}
-
+        ASSERT(report_message_length <= UCHAR_MAX);
+        message_store_u8(redirect_report, message_length, length8);
+    }
 
     url_length = cc_ptr->origin_url_length;
 
@@ -124,12 +123,12 @@ enum cc_redirect_report {
         url_length += prefix_len;
 
     }
-	{
-		uint16_t const length16 = (uint16_t) url_length;
+    {
+        uint16_t const length16 = (uint16_t) url_length;
 
-		ASSERT(url_length <= UINT16_MAX);
-		message_store_be16(redirect_report, url_length, length16);
-	}
+        ASSERT(url_length <= UINT16_MAX);
+        message_store_be16(redirect_report, url_length, length16);
+    }
 
     result = tcp_initiate_send_facility_packet(connector_ptr, edp_header,
                                            redirect_report_header_size + url_length,

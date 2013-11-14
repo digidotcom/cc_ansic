@@ -62,12 +62,12 @@ static connector_status_t tcp_initiate_send_packet(connector_data_t * const conn
 
     message_store_be16(edp_header, type, type);
 
-	{
-		uint16_t const length16 = (uint16_t) length;
+    {
+        uint16_t const length16 = (uint16_t) length;
 
-		ASSERT(length <= UINT16_MAX);
-		message_store_be16(edp_header, length, length16);
-	}
+        ASSERT(length <= UINT16_MAX);
+        message_store_be16(edp_header, length, length16);
+    }
 
     /* clear the actual number of bytes to be sent */
     connector_ptr->edp_data.send_packet.bytes_sent = 0;

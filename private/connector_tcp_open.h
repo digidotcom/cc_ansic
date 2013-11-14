@@ -170,12 +170,12 @@ enum edp_keepalive{
 
     edp_keepalive = GET_PACKET_DATA_POINTER(edp_header, PACKET_EDP_HEADER_SIZE);
     message_store_be16(edp_header, type, type);
-	{
-		uint16_t const keepalive_size16 = (uint16_t) keepalive_size;
+    {
+        uint16_t const keepalive_size16 = (uint16_t) keepalive_size;
 
-		ASSERT(keepalive_size <= UINT16_MAX);
-		message_store_be16(edp_header, length, keepalive_size16);
-	}
+        ASSERT(keepalive_size <= UINT16_MAX);
+        message_store_be16(edp_header, length, keepalive_size16);
+    }
     message_store_be16(edp_keepalive, interval, value);
 
 
@@ -573,9 +573,9 @@ static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 
     {
         size_t const len = connector_ptr->edp_data.config.cloud_url_length + prefix_length;
-		uint16_t const len16 = (uint16_t) len;
+        uint16_t const len16 = (uint16_t) len;
 
-		ASSERT(len <= UINT16_MAX);
+        ASSERT(len <= UINT16_MAX);
         message_store_be16(edp_cloud_url, url_length, len16);
     }
 
@@ -633,12 +633,12 @@ static connector_status_t send_password(connector_data_t * const connector_ptr)
 
     message_store_u8(edp_password, opcode, SECURITY_OPER_PASSWORD);
 
-	{
-		uint16_t const length16 = (uint16_t) connector_ptr->edp_data.config.password_length;
+    {
+        uint16_t const length16 = (uint16_t) connector_ptr->edp_data.config.password_length;
 
-		ASSERT(connector_ptr->edp_data.config.password_length <= UINT16_MAX);
-		message_store_be16(edp_password, password_length, length16);
-	}
+        ASSERT(connector_ptr->edp_data.config.password_length <= UINT16_MAX);
+        message_store_be16(edp_password, password_length, length16);
+    }
     edp_password += record_bytes(edp_password);
 
     memcpy(edp_password, connector_ptr->edp_data.config.password, connector_ptr->edp_data.config.password_length);
@@ -1044,13 +1044,13 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
         break;
 #if (CONNECTOR_VERSION >= 0x02010000)
     case edp_security_receive_device_id:
-    	result = receive_device_id(connector_ptr);
+        result = receive_device_id(connector_ptr);
         if (result == connector_working)
         {
-        	connector_ptr->connector_got_device_id = connector_true;
+            connector_ptr->connector_got_device_id = connector_true;
             edp_set_edp_state(connector_ptr, edp_security_send_device_cloud_url);
         }
-    	break;
+        break;
 #endif
     case edp_facility_process:
         /* Should not be here since active state should not be open state. */

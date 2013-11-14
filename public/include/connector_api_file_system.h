@@ -82,7 +82,7 @@ typedef int32_t connector_file_offset_t;
  * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
-#define	CONNECTOR_FILE_O_RDONLY	0
+#define CONNECTOR_FILE_O_RDONLY 0
 
 /**
  * Open for writing only.
@@ -90,7 +90,7 @@ typedef int32_t connector_file_offset_t;
  * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
-#define	CONNECTOR_FILE_O_WRONLY	1
+#define CONNECTOR_FILE_O_WRONLY 1
 
 /**
  * Open for reading and writing.
@@ -98,7 +98,7 @@ typedef int32_t connector_file_offset_t;
  * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
-#define	CONNECTOR_FILE_O_RDWR	2
+#define CONNECTOR_FILE_O_RDWR   2
 
 /**
  * File offset shall be set to the end of the file prior to each write.
@@ -106,7 +106,7 @@ typedef int32_t connector_file_offset_t;
  * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
-#define	CONNECTOR_FILE_O_APPEND	0x0008
+#define CONNECTOR_FILE_O_APPEND 0x0008
 
 /**
  * Create file, if does not exist.
@@ -114,7 +114,7 @@ typedef int32_t connector_file_offset_t;
  * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
-#define	CONNECTOR_FILE_O_CREAT	0x0200
+#define CONNECTOR_FILE_O_CREAT  0x0200
 
 /**
  *
@@ -124,7 +124,7 @@ typedef int32_t connector_file_offset_t;
  * @see connector_file_system_open_t
  * @see connector_request_id_file_system_open callback
  */
-#define	CONNECTOR_FILE_O_TRUNC	0x0400
+#define CONNECTOR_FILE_O_TRUNC  0x0400
 /**
 * @}
 */
@@ -162,9 +162,9 @@ typedef struct
 */
 typedef enum
 {
-     connector_file_system_seek_set,    		    /**<  Seek file position relative to start-of-file */
-     connector_file_system_seek_cur,    		    /**<  Seek file position relative to current position */
-     connector_file_system_seek_end     		    /**<  Seek file position relative to end-of-file */
+     connector_file_system_seek_set,        /**<  Seek file position relative to start-of-file */
+     connector_file_system_seek_cur,        /**<  Seek file position relative to current position */
+     connector_file_system_seek_end         /**<  Seek file position relative to end-of-file */
 
 } connector_file_system_seek_origin_t;
 /**
@@ -181,8 +181,8 @@ typedef enum
 */
 typedef struct
 {
-   void * user_context;                    		    /**< Holds user context */
-   void * errnum;                          		    /**< Application defined error token */
+   void * user_context;                        /**< Holds user context */
+   void * errnum;                              /**< Application defined error token */
 
    void * CONST handle;                             /**< Application defined file handle */
    connector_file_offset_t CONST requested_offset;  /**< Requested file offset */
@@ -229,10 +229,10 @@ typedef struct
 */
 typedef struct
 {
-    void * user_context;                    	    /**< Holds user context */
-    void * errnum;                          	    /**< Application defined error token */
+    void * user_context;                            /**< Holds user context */
+    void * errnum;                                  /**< Application defined error token */
 
-    void * CONST handle;                          	/**< Application defined file handle */
+    void * CONST handle;                            /**< Application defined file handle */
     connector_file_offset_t CONST length_in_bytes;  /**< File length in bytes to truncate to */
 
 } connector_file_system_truncate_t;
@@ -416,7 +416,7 @@ typedef struct
 
     struct
     {
-    	connector_file_system_hash_algorithm_t CONST requested; /**< requested hash algorithm */
+        connector_file_system_hash_algorithm_t CONST requested; /**< requested hash algorithm */
         connector_file_system_hash_algorithm_t actual;          /**< actual hash algorithm to use for the all regular files in the directory */
     } hash_algorithm;                           /**< requested and actual hash algorithm */
 

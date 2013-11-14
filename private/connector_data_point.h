@@ -206,8 +206,8 @@ static connector_status_t dp_cancel_session(connector_data_t * const connector_p
 
     if (data_point_binary_pending != NULL)
     {
-        connector_bool_t const pending_dp_has_request_id = connector_bool(data_point_binary_pending->request_id != NULL);
-        connector_bool_t const matching_request = connector_bool(pending_dp_has_request_id && *data_point_binary_pending->request_id == *request_id);
+        connector_bool_t const has_request_id = connector_bool(data_point_binary_pending->request_id != NULL);
+        connector_bool_t const matching_request = connector_bool(has_request_id && *data_point_binary_pending->request_id == *request_id);
 
         if (cancel_all || matching_request)
         {

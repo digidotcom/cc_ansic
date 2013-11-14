@@ -517,7 +517,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
 {
     connector_status_t result;
     connector_sm_cli_response_t cli_response;
-	size_t const allowed_bytes = (size_t)session->user.header;
+    size_t const allowed_bytes = (size_t)session->user.header;
 
     if (session->in.data == NULL)
     {
@@ -588,21 +588,21 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 
     /* Callback sms transport close/open so new phone makes effect */
     {
-	    connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;	/* Assume it's SMS transport */
+        connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;    /* Assume it's SMS transport */
         ASSERT(sm_ptr->network.class_id == connector_class_id_network_sms);
-    
-	    if (sm_ptr->network.handle != NULL)
-	    {
-	        connector_callback_status_t callback_status;
-	        connector_request_id_t request_id;
-			connector_network_close_t close_data;
 
-			/* Close */
-			close_data.handle = sm_ptr->network.handle;
-			close_data.status = connector_close_status_device_stopped;
+        if (sm_ptr->network.handle != NULL)
+        {
+            connector_callback_status_t callback_status;
+            connector_request_id_t request_id;
+            connector_network_close_t close_data;
 
-			request_id.network_request = connector_request_id_network_close;
-	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
+            /* Close */
+            close_data.handle = sm_ptr->network.handle;
+            close_data.status = connector_close_status_device_stopped;
+
+            request_id.network_request = connector_request_id_network_close;
+            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
                 ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
@@ -623,46 +623,46 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
         }
         
         if (sm_ptr->network.handle == NULL)
-	    {
-	        connector_callback_status_t callback_status;
-	        connector_request_id_t request_id;
-			connector_network_open_t open_data;
+        {
+            connector_callback_status_t callback_status;
+            connector_request_id_t request_id;
+            connector_network_open_t open_data;
 
-			/* Open */
+            /* Open */
             open_data.device_cloud_url = config_request.phone_number;
             open_data.handle = NULL;
 
-			request_id.network_request = connector_request_id_network_open;
-	        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
-                ASSERT(callback_status != connector_callback_unrecognized);
+            request_id.network_request = connector_request_id_network_open;
+            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
+            ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
                 case connector_callback_continue:
-    	            result = connector_working;
-        	        sm_ptr->network.handle = open_data.handle;
-            	    break;
+                    result = connector_working;
+                    sm_ptr->network.handle = open_data.handle;
+                    break;
 
-	            case  connector_callback_abort:
-	                result = connector_abort;
-    	            goto error;
+                case  connector_callback_abort:
+                    result = connector_abort;
+                    goto error;
 
-	            case connector_callback_unrecognized:
-	                result = connector_unavailable;
-    	            goto error;
+                case connector_callback_unrecognized:
+                    result = connector_unavailable;
+                    goto error;
 
-	            case connector_callback_error:
-	                result = connector_open_error;
-    	            goto error;
+                case connector_callback_error:
+                    result = connector_open_error;
+                    goto error;
 
-	            case connector_callback_busy:
-	                result = connector_pending;
-	                sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
-    	            goto error;
-	        }
+                case connector_callback_busy:
+                    result = connector_pending;
+                    sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
+                    goto error;
+            }
         }
     }
 
-	/* Callback to config.c so user can save the new phone to persistent storage */
+    /* Callback to config.c so user can save the new phone to persistent storage */
 #if !(defined CONNECTOR_CLOUD_PHONE)
     result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
 #endif
@@ -721,8 +721,8 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
 
     if (session->bytes_processed == 0)
     {
-    	size_t target_length =  0;
-    	
+        size_t target_length =  0;
+
         if (session->command == connector_sm_cmd_data)
             target_length = 0x1F & *data_ptr;
 
@@ -773,18 +773,18 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
     }
 
 error:
-	switch (status)
+    switch (status)
     {
         case connector_device_error:
-        	session->error = connector_sm_error_complete;
-        	session->bytes_processed = bytes;
-        	status = connector_working;
+            session->error = connector_sm_error_complete;
+            session->bytes_processed = bytes;
+            status = connector_working;
             break;
 
         case connector_working:
-        	/* Restore pre-processed bytes for segment 0 */
-        	if (session->segments.processed == 0)
-        	    session->bytes_processed = 0;
+            /* Restore pre-processed bytes for segment 0 */
+            if (session->segments.processed == 0)
+                session->bytes_processed = 0;
             break;
 
         default:

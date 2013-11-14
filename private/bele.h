@@ -18,11 +18,11 @@
 /*
  *  Endian-independent byte-extraction macros
  */
-#define	LOW8(x16)      ((uint8_t) (x16))
-#define	HIGH8(x16)      ((uint8_t) (((uint16_t)(x16)) >> 8))
+#define LOW8(x16)      ((uint8_t) (x16))
+#define HIGH8(x16)      ((uint8_t) (((uint16_t)(x16)) >> 8))
 
-#define	LOW16(x32)      ((uint16_t) (x32))
-#define	HIGH16(x32)     ((uint16_t) (((uint32_t)(x32)) >> 16))
+#define LOW16(x32)      ((uint16_t) (x32))
+#define HIGH16(x32)     ((uint16_t) (((uint32_t)(x32)) >> 16))
 
 #define BYTE32_3(x32)   ((uint8_t) (((uint32_t)(x32)) >> 24))
 #define BYTE32_2(x32)   ((uint8_t) (((uint32_t)(x32)) >> 16))
@@ -30,8 +30,8 @@
 #define BYTE32_0(x32)   ((uint8_t)  ((uint32_t)(x32)))
 
 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
-#define	LOW32(x64)      ((uint32_t) (x64))
-#define	HIGH32(x64)     ((uint32_t) (((uint64_t)(x64)) >> 32))
+#define LOW32(x64)      ((uint32_t) (x64))
+#define HIGH32(x64)     ((uint32_t) (((uint64_t)(x64)) >> 32))
 
 #define BYTE64_7(x64)   ((uint8_t) (((uint64_t)(x64)) >> 56))
 #define BYTE64_6(x64)   ((uint8_t) (((uint64_t)(x64)) >> 48))
@@ -56,7 +56,7 @@ static  void StoreBE64(void * const array, uint64_t const val)
 #endif
 
 /*
- *	Endian-independent multi-byte-creation macros
+ *  Endian-independent multi-byte-creation macros
  */
 #define MAKE16(hi8,lo8)     ((uint16_t) (((uint16_t)(((uint16_t) (hi8) ) << 8 )) | ((uint16_t) (lo8))))
 #define MAKE32(hi16,lo16)   ((uint32_t)  (((uint32_t) (((uint32_t)(hi16)) << 16)) | ((uint32_t)(lo16))))
