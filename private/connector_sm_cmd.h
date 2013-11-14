@@ -473,7 +473,9 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
 
         size_t const max_payload = sm_ptr->transport.sm_mtu_tx - record_end(segment);
 
-        if (max_response_packets == 1)
+        if (max_response_packets == 0)
+            max_response_bytes = 0;
+        else if (max_response_packets == 1)
             max_response_bytes = max_payload;
         else
         {
@@ -485,7 +487,7 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
     }
     else
     {
-        session->user.header = NULL;
+        session->user.header = (void *)SIZE_MAX;
     }
 
     {
@@ -515,17 +517,10 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
 {
     connector_status_t result;
     connector_sm_cli_response_t cli_response;
-    size_t const allowed_bytes = (session->user.header != NULL) ? (size_t)session->user.header : SIZE_MAX;
+	size_t const allowed_bytes = (size_t)session->user.header;
 
     if (session->in.data == NULL)
     {
-        if (!allowed_bytes)
-        {
-            sm_set_payload_complete(session);
-            result = connector_working;
-            goto done;
-        }
-
         if (session->in.bytes > allowed_bytes)
             session->in.bytes = allowed_bytes;
 
@@ -573,7 +568,6 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
     }
 
 error:
-done:
     return result;
 }
 #endif
