@@ -58,6 +58,8 @@ BUG FIXES
         
         Completely removed the use of rand() functions. [IC4C-109].
         
+        Fixed failure when sending very large Data Streams.
+        
     v2.0.1
 
         Removed rand_r() which is not C89 compliant.  [IC4C-109]
@@ -123,7 +125,9 @@ KNOWN LIMITATIONS
 
     v2.1.0
 
-        There are not known limitations for this release.
+        If a Data Point contains a string that does not fit in a single
+        message it will not be sent properly. Depending on the transport,
+        the limit is 500 for TCP, 1400 for UDP and 120 for SMS.
 
     v2.0.1
 
