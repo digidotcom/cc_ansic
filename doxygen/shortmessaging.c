@@ -539,8 +539,10 @@
  *
  * The @ref connector_request_id_sm_cli_request callback is the initial call
  * in a @ref cli_cb_sequence.  This callback is triggered by a Device Manager CLI request and it
- * passes the Device Cloud command and arguments to
- * the Application in a connector_sm_cli_request_t data structure.
+ * passes the Device Cloud command and arguments to the Application in a connector_sm_cli_request_t data structure. 
+ * Device Manager sends the CLI request NULL terminated. 
+ * If the CLI request is long enough to be split into several segments, this callback will be called several times. 
+ * The last segment (end of CLI request) can be recognized as it's the only one ending with a NULL ('\0') character.
  *
  * @htmlonly
  * <table class="apitable">
@@ -565,7 +567,7 @@
  *       <li><b><i>transport</i></b>: @endhtmlonly Transport to use: @ref connector_transport_udp or @ref connector_transport_sms. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: An opaque application-defined context.  This pointer is passed to all subsequent
  *                                        callbacks during the CLI sequence for this command.
- *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. </li>
+ *       <li><b><i>buffer</i></b>: Buffer containing the Device Cloud CLI command. Only last segment will be NULL terminated </li>
  *       <li><b><i>bytes_used</i></b>: Number of bytes used for the CLI command in the buffer. </li>
  *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a response
  *                                            is requested for this CLI command.  @ref connector_false if no
@@ -605,9 +607,10 @@
  * @subsection cli_response_length_callback  Response length callback
  *
  * The @ref connector_request_id_sm_cli_response_length callback is the second call
- * in a @ref cli_cb_sequence and used to get the maximum size of CLI response length in bytes.
+ * in a @ref cli_cb_sequence and used to get the desired maximum size of CLI response length in bytes.
  * This callback is made only if the @b response_required was set to @ref connector_true in
- * the initial @ref cli_request_callback call.
+ * the initial @ref cli_request_callback call. The available response length can be later be limited 
+ * if 'maxResponseSize' attribute was specified in the Device Manager CLI request. 
  *
  * Cloud Connector will allocate this memory block to process the ensuing @ref cli_request_callback
  * sequence.
