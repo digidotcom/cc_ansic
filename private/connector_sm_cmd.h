@@ -443,9 +443,17 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
 {
     connector_status_t result = connector_abort;
     char * const cli_command = payload;
-    size_t const cli_bytes = strlen(cli_command) + 1; /* +1 for nul-terminate */
-
+    size_t cli_bytes;
     connector_sm_data_t * sm_ptr = NULL;
+
+    if (SmIsLastData(session->flags))
+    {
+        cli_bytes = strlen(cli_command) + 1; /* +1 for nul-terminate */
+    }
+    else
+    {
+        cli_bytes = bytes;
+    }
 
     switch (session->transport)
     {
