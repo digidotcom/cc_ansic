@@ -542,7 +542,8 @@
  * passes the Device Cloud command and arguments to the application in a connector_sm_cli_request_t data structure. 
  * Device Management sends the CLI request NULL terminated. 
  * If the CLI request is long enough to be split into several segments, this callback will be called several times. 
- * The last segment (end of CLI request) can be recognized as it's the only one ending with a NULL ('\0') character.
+ * The last segment (end of CLI request) has 'more_data' field set to @ref connector_true and it's the only one ending 
+ * with a NULL ('\0') character.
  *
  * @htmlonly
  * <table class="apitable">
@@ -572,6 +573,9 @@
  *       <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if a response
  *                                            is requested for this CLI command.  @ref connector_false if no
  *                                            response required.  @htmlonly </li>
+ *       <li><b><i>more_data</i></b>: Set to @endhtmlonly @ref connector_true @htmlonly if more cli requests are comming (this callback
+ *                                    will be called again) or @endhtmlonly @ref connector_false @htmlonly if this is last chuck
+ *                                    of cli request.
  *     </ul>
  *   </td>
  * </tr>
