@@ -21,11 +21,10 @@
  * @section connect_description Code Flow
  *
  * The routine main() in the platform directory initializes Cloud Connector and
- * registers the application callback.  In the file application.c is the
- * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
- * when a device request is received.
+ * registers the application callback. In file application.c the application-defined callback app_connector_callback()
+ * can be found, this routine calls app_data_service_handler() when a device request is received.
  *
- * A User can use the included python script to send a device request to the device.
+ * A user can use the included python script to send a device request to the device.
  *
  * When Device Cloud sends a device request to the device, app_data_service_handler() is called
  * with @ref connector_request_id_data_service_receive_target to process the target of the request, and
@@ -123,9 +122,9 @@
  * @li public/include
  * @li run/platforms/linux (substitute with your platform)
  *
- * @section python_script2 Using a web Services client to send a device request
+ * @section python_script2 Using a Web Services client to send a device request
  *
- * The sample provides a very basic web services script, written in python, to send a
+ * The sample provides a very basic Web Services script, written in python, to send a
  * data service device request to login.etherios.com using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  * To run the python script:
  *

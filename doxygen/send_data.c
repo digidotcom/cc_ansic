@@ -21,14 +21,13 @@
  * @section connect_description Code Flow
  *
  * The routine main() in the platform directory initializes Cloud Connector and registers the
- * application-defined callback. In the file application.c is the application-defined callback
- * app_connector_callback(), this routine calls app_data_service_handler() when a data service
- * request is received.
+ * application-defined callback. In file application.c the application-defined callback app_connector_callback()
+ * can be found, this routine calls app_data_service_handler() when a data service request is received.
  *
  * The routine application_run() (or application_step()) which is called after initialization calls the routine
  * app_send_put_request() to initiate the data transfer to Device Cloud. This routine initiates the data transfer
- * by calling connector_initiate_action() which provides also the Device Cloud file path where data has to be stored; 
- * once Device Cloud is ready to receive data the app_data_service_handler()
+ * by calling connector_initiate_action() which provides also the Device Cloud file path where data has to be stored. 
+ * Once Device Cloud is ready to receive data, the app_data_service_handler()
  * routine is called. The callback then returns the string "Connector data service sample!\n" back to
  * Device Cloud. This data is @b copied @b into @b the @b callback's @b buffer, by setting more_data to
  * connector_false indicates the only message in this data transfer. If you set more_data to connector_true then
@@ -37,8 +36,8 @@
  * If app_data_service_handler() is called with @ref connector_request_id_data_service_send_response then this
  * indicates a response from Device Cloud (if transport is set to TCP, this callback will be always called).
  * 
- * When the session is completed app_data_service_handler() is called with @ref connector_request_id_data_service_send_status,
- * in that callback the user must check the "status" field of @ref connector_data_service_status_t to determine if the
+ * When the session is completed, app_data_service_handler() is called with @ref connector_request_id_data_service_send_status. 
+ * In that callback the user must check the "status" field of @ref connector_data_service_status_t to determine if the
  * session was completed successfully or not. Also, in this callback all the allocated resources might be freed.
  *
  * @section connect_build Building
@@ -132,9 +131,9 @@
  * You can view the contents of the file which is located in the particular device's test folder.
  *
  *
- * @section python_script1 Using a web Services client to retrieve the file from Device Cloud
+ * @section python_script1 Using a Web Services client to retrieve the file from Device Cloud
  *
- * The sample provides a very basic web services script, written in python, to retrieve test/test.txt
+ * The sample provides a very basic Web Services script, written in python, to retrieve test/test.txt
  * from Device Cloud.
  *
  * Run the python script in the sample:

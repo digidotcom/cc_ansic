@@ -213,15 +213,15 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
 }
 
 /**
- * @brief   Get the Device Cloud Phone Number where to send SMSs (Only used for SMS transport)
+ * @brief   Get the Device Cloud phone number where to send SMSs (Only used for SMS transport)
  *
  * This routine assigns a pointer to the ASCII null-terminated string of
- * Device Cloud Phone Number, this is typically 447786201216 if using world wide long codes or 32075 withing US.
+ * Device Cloud phone number, this is typically 447786201216 if using world wide long codes or 32075 withing US.
  *
- * @param [out] config_phone  Callback returns pointer to memory containing the Phone Number and the length of the Phone Number in bytes.
+ * @param [out] config_phone  Callback returns pointer to memory containing the phone number and the length of the phone number in bytes.
  *
- * @retval connector_callback_continue  The Phone Number was successfully returned.
- * @retval connector_callback_abort     Could not get the Phone Number and abort Cloud Connector.
+ * @retval connector_callback_continue  The phone number was successfully returned.
+ * @retval connector_callback_abort     Could not get the phone number and abort Cloud Connector.
  *
  * @see @ref get_device_cloud_phone API Configuration Callback
  *
@@ -230,7 +230,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
  */
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
-    static char connector_cloud_phone[] = "447786201216";	/* phone number corresponding to login.etherios.com */
+    static char connector_cloud_phone[] = "447786201216"; /* phone number corresponding to login.etherios.com */
 
     config_phone->string = (char *)connector_cloud_phone;
     config_phone->length = sizeof connector_cloud_phone -1;
@@ -239,15 +239,15 @@ static connector_callback_status_t app_get_device_cloud_phone(connector_config_p
 }
 
 /**
- * @brief   Set the Device Cloud Phone Number where to send SMSs (Only used for SMS transport)
+ * @brief   Set the Device Cloud phone number where to send SMSs (Only used for SMS transport)
  *
- * This routine is used to set (not to get) the Device Cloud Phone Number where to send SMSs (Only used for SMS transport)
+ * This routine is used to set (not to get) the Device Cloud phone number where to send SMSs (Only used for SMS transport)
  *
- * @param [in] config_phone  Pointer passed to the Callback containing the Device Cloud Phone Number where to send 
+ * @param [in] config_phone  Pointer passed to the Callback containing the Device Cloud phone number where to send 
  *                SMSs in order to be stored in persistent storage. (Only used for SMS transport).
  *
- * @retval connector_callback_continue  The Phone Number was successfully stored.
- * @retval connector_callback_abort     Could not set the Phone Number and abort Cloud Connector.
+ * @retval connector_callback_continue  The phone number was successfully stored.
+ * @retval connector_callback_abort     Could not set the phone number and abort Cloud Connector.
  *
  * @see @ref set_device_cloud_phone API Configuration Callback
  *

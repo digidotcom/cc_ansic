@@ -685,7 +685,7 @@
  *
  * @endcode
  *
- * @section phone_number Phone Number
+ * @section phone_number Phone number
  *
  * Return the phone number dialed for a WAN connection type.
  * The phone number is a variable length, non null-terminated string.
@@ -2112,9 +2112,9 @@
  *
  * @endcode
  *
- * @section get_device_cloud_phone Device Cloud Phone Number (Get)
+ * @section get_device_cloud_phone Device Cloud phone number (Get)
  *
- * Returns Device Cloud Phone Number where to send SMSs (Only used for SMS transport).
+ * Returns Device Cloud phone number where to send SMSs (Only used for SMS transport).
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_get_device_cloud_phone() in config.c.
@@ -2141,8 +2141,8 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
  *          <dl>
  *              <dt><i>string</i></dt>
- *              <dd> - Callback returns the pointer to the Device Cloud Phone Number where to send SMSs (Only used for SMS transport).</dd>
- *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud Phone Number. Maximum is 64 bytes.</dd>
+ *              <dd> - Callback returns the pointer to the Device Cloud phone number where to send SMSs (Only used for SMS transport).</dd>
+ *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud phone number. Maximum is 64 bytes.</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -2150,11 +2150,11 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully returned Device Cloud Phone Number</td>
+ * <td>Callback successfully returned Device Cloud phone number</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to get Device Cloud Phone Number and callback aborted Cloud Connector</td>
+ * <td>Callback was unable to get Device Cloud phone number and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -2172,7 +2172,7 @@
  *
  *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_get_device_cloud_phone)
  *     {
- *         // Return pointer to Device Cloud Phone Number.
+ *         // Return pointer to Device Cloud phone number.
  *         connector_config_pointer_string_t * const config_phone = data;
  *
  *         config_phone->string = (char *)connector_cloud_phone;
@@ -2183,9 +2183,9 @@
  *
  * @endcode
  *
- * @section set_device_cloud_phone Device Cloud Phone Number (Set)
+ * @section set_device_cloud_phone Device Cloud phone number (Set)
  *
- * This config callback is used to set (not to get) the Device Cloud Phone Number where to send SMSs (Only used for SMS transport).
+ * This config callback is used to set (not to get) the Device Cloud phone number where to send SMSs (Only used for SMS transport).
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_set_device_cloud_phone() in config.c.
@@ -2212,9 +2212,9 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
  *          <dl>
  *              <dt><i>string</i></dt>
- *              <dd> - Pointer passed to the Callback containing the Device Cloud Phone Number where to send SMSs in order to 
+ *              <dd> - Pointer passed to the Callback containing the Device Cloud phone number where to send SMSs in order to 
  *              </dd>  be stored in persistent storage. (Only used for SMS transport)
- *              <dt><i>length</i></dt><dd> - Number of bytes of Device Cloud Phone Number passed. Maximum is 64 bytes.</dd>
+ *              <dt><i>length</i></dt><dd> - Number of bytes of Device Cloud phone number passed. Maximum is 64 bytes.</dd>
  *          </dl>
  * </td>
  * </tr>
@@ -2222,11 +2222,11 @@
  * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
- * <td>Callback successfully set Device Cloud Phone Number</td>
+ * <td>Callback successfully set Device Cloud phone number</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
- * <td>Callback was unable to set Device Cloud Phone Number and callback aborted Cloud Connector</td>
+ * <td>Callback was unable to set Device Cloud phone number and callback aborted Cloud Connector</td>
  * </tr>
  * </table>
  * @endhtmlonly
@@ -2260,7 +2260,7 @@
  * @endcode
  *
  *
- * @section device_cloud_service_id Device Cloud Phone service-id
+ * @section device_cloud_service_id Device Cloud phone service-id
  *
  * Return Device Cloud service-id (if required) used during SMS transport.
  *
@@ -2289,7 +2289,7 @@
  * <td> Pointer to @endhtmlonly connector_config_pointer_string_t @htmlonly:
  *          <dl>
  *              <dt><i>string</i></dt>
- *              <dd> - Callback returns the pointer to Device Cloud Phone Number service-id (if required) used during SMS transport.</dd>
+ *              <dd> - Callback returns the pointer to Device Cloud phone number service-id (if required) used during SMS transport.</dd>
  *              <dt><i>length</i></dt><dd> - Callback returns number of bytes of Device Cloud service-id. Maximum is 64 bytes.</dd>
  *          </dl>
  * </td>

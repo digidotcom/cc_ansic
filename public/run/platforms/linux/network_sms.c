@@ -103,7 +103,7 @@ done:
  *
  * @param data @ref connector_network_open_t
  *  <ul>
- *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud Phone number 
+ *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud phone number 
  *                                        where to send SMSs.</li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,

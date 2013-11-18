@@ -4,13 +4,13 @@
  *
  * @section secsmintroduction Introduction
  *
- * Short Messaging (SM) provides an alternative transport for communicating with the cloud and is 
+ * Short Messaging (SM) provides an alternative transport for communicating with the Cloud and is 
  * typically used only when data usage is costly and guaranteed data delivery is unnecessary. SM 
  * uses UDP or SMS as a transport rather than TCP transport normally used in device-to-cloud communications.
  *
  * TCP communication includes overhead to establish, maintain, and close connections as well as 
  * overhead to ensure delivery and integrity. The communication is reliable and can be 
- * @ref network_ssl_callbacks "secured". Most cloud communications discussed in this guide leverage
+ * @ref network_ssl_callbacks "secured". Most Cloud communications discussed in this guide leverage
  * standard TCP communications.
  * 
  * SM communicates over UDP or SMS and therefore does not incur the TCP connection overhead. 
@@ -95,19 +95,19 @@
  *   <td>Yes</td>
  * </tr>
  * <tr>
- *   <td>Cloud to Connector Device ID Provisioning</td>
+ *   <td>Cloud to Connector Device ID provisioning</td>
  *   <td>Yes</td>
  *   <td>No</td>
  *   <td>No</td>
  * </tr>
  * <tr>
- *   <td>Cloud to Connector phone number Provisioning</td>
+ *   <td>Cloud to Connector phone number provisioning</td>
  *   <td>No</td>
  *   <td>No</td>
  *   <td>Yes</td>
  * </tr>
  * <tr>
- *   <td>Connector to Cloud phone number Provisioning</td>
+ *   <td>Connector to Cloud phone number provisioning</td>
  *   <td>No</td>
  *   <td>No</td>
  *   <td>No</td>
@@ -139,7 +139,7 @@
  * and then shut down if no instructions are queued.
  *
  * In these two examples, minimizing network traffic is essential.  In the latter example,
- * shutting power as soon as possible is critical.
+ * shutting off power as soon as possible is critical.
  *
  * The system requirements of your application will have radical effects on your SM design.
  * You can always optimize the power consumption, or network traffic, but this
@@ -158,7 +158,7 @@
  * you will have to timeout and re-send the data.  This adds complexity to your Cloud
  * Connector application.
  *
- * Now consider your @ref web_services Application that pulls this data from Device Cloud.
+ * Now consider your @ref web_services application that pulls this data from Device Cloud.
  * What happens if the data sent from the last sample was received by Device Cloud, but the
  * acknowledgment was lost?  Now your data is duplicated on Device Cloud and your
  * @ref web_services application will need to handle this case.
@@ -172,7 +172,7 @@
  * <b>Punching through Ethernet Firewalls for SM over UDP transport</b>
  *
  * Considering most devices are deployed behind an Ethernet Firewall, Device Cloud is incapable of
- * initiating an SM over UDP message exchange.  All @ref web_services "web service" SM over UDP requests are queued
+ * initiating an SM over UDP message exchange.  All @ref web_services "Web Services" SM over UDP requests are queued
  * on Device Cloud, waiting for a Cloud Connector message.
  *
  * Cloud Connector @b must @b always @b initiate SM over UDP exchanges.  A key component of
@@ -181,24 +181,24 @@
  *
  * If Cloud Connector has no pending message to send, the application can @ref initiate_ping_to_cloud.
  *
- * @section smsectioninitialconfig Short Messaging required initial configuration on the Device Cloud
+ * @section smsectioninitialconfig Short Messaging requires initial configuration on Device Cloud
  *
  * In order to use SM protocol, some initial configuration steps are required on the server in addition to the
  * ones required for TCP transport like @ref add_your_device_to_the_cloud "Adding your Device to Device Cloud". 
  *
  * If initial configuration steps are not done, none of the features described in following chapters will work:
  *      -# Initial configuration on the cloud for UDP transport: \n 
- *         It's required to enable this transport using @ref sm_upd_enable_dm "Device Manager" or through 
+ *         It's required to enable this transport using @ref sm_upd_enable_dm "Device Management" or through 
  *         @ref sm_upd_enable_ws "Web Services". \n
- *         UDP transport allows an option for "Battery-backed" applications that, if desired, has to be enabled on the
- *         server using @ref sm_udp_enable_battery_dm "Device Manager" or through @ref sm_udp_enable_battery_ws "Web Services".
- *      -# Initial configuration on the cloud for SMS transport: \n 
+ *         UDP transport allows an option for "Battery-backed" applications, that if desired, has to be enabled on the
+ *         server using @ref sm_udp_enable_battery_dm "Device Management" or through @ref sm_udp_enable_battery_ws "Web Services".
+ *      -# Initial configuration on the Cloud for SMS transport: \n 
  *         It's required to enable this transport by providing your device's phone number. This way Device Cloud 
  *         can match incoming SMS messages to a registered Device ID.\n
- *         This configuration can be done using @ref sm_sms_enable_dm "Device Manager" or through 
- *         @ref sm_sms_enable_ws "web Services".
+ *         This configuration can be done using @ref sm_sms_enable_dm "Device Management" or through 
+ *         @ref sm_sms_enable_ws "Web Services".
  *
- * @subsection sm_upd_enable_dm Enable UDP transport using Device Manager
+ * @subsection sm_upd_enable_dm Enable UDP transport using Device Management
  *
  * Log into your Device Cloud account and click on your device (described in the @ref connector_login "Getting Started Section").
  * It's not required that the device's status indicate 'Connected' (that only represents the TCP transport status). 
@@ -214,7 +214,7 @@
  *
  * @image html cloud_sm_udp_configure_enable.png
  *
- * To learn more about Device Cloud UDP configuration using Device Manager, see SM/UDP Chapter in the
+ * To learn more about Device Cloud UDP configuration using Device Management, see SM/UDP chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device Cloud User's Guide</a>@endhtmlonly.
  *
  * @subsection sm_upd_enable_ws Enable UDP transport using Web Services
@@ -231,23 +231,23 @@
  * python EnableUDP.py myusername mypassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA true
  * @endcode
  *
- * To learn more about Device Cloud UDP configuration using web Services, see SM/UDP Chapter in the
+ * To learn more about Device Cloud UDP configuration using Web Services, see SM/UDP chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008/index.html">Device Cloud Programming Guide</a>@endhtmlonly.
  *
- * @subsection sm_udp_enable_battery_dm Enable "Battery-backed" SM applications for UDP transport using Device Manager
+ * @subsection sm_udp_enable_battery_dm Enable "Battery-backed" SM applications for UDP transport using Device Management
  *
  * Follow the same steps described in @ref sm_upd_enable_dm and click on
  * the 'Battery Operated Mode' checkbox additionally.
  *
  * @image html cloud_sm_udp_configure_enable_battery.png
  *
- * To learn more about Device Cloud UDP "Battery-backed" SM applications, see the "Battery operated mode" Subchapter in the 
- * SM/UDP Chapter in the@htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device 
+ * To learn more about Device Cloud UDP "Battery-backed" SM applications, see the "Battery operated mode" subchapter in the 
+ * SM/UDP chapter in the@htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device 
  * Cloud User's Guide</a>@endhtmlonly.
  *
- * @subsection sm_udp_enable_battery_ws Enable "Battery-backed" SM applications for UDP transport using web Services
+ * @subsection sm_udp_enable_battery_ws Enable "Battery-backed" SM applications for UDP transport using Web Services
  *
- * A web service script written in python is provided to Enable (or Disable) "Battery Operated Mode" option for UDP 
+ * A Web Service script written in python is provided to Enable (or Disable) "Battery Operated Mode" option for UDP 
  * transport for a device using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  *
  * Execute EnableUDP_Battery.py python script located in @a @b /connector/tools/python directory as follows:
@@ -259,10 +259,10 @@
  * python EnableUDP_Battery.py myusername mypassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA true
  * @endcode
  *
- * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Manager
+ * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Management
  *
  * Log into your Device Cloud account and click on your device (described in the @ref connector_login "Getting Started Section").
- * It's not required that the device's status indicate 'Connected' (that only represents the TCP transport status). 
+ * It's not required that the device's status indicates that it is 'Connected' (that only represents the TCP transport status). 
  * Select the device to configure.
  *
  * @image html cloud_device_connected.png
@@ -271,32 +271,32 @@
  *
  * @image html cloud_sm_sms_configure.png
  *
- * Then type your device's Phone Number in the 'Phone Number' textbox.
+ * Then type your device's phone number in the 'Phone Number' textbox.
  *
  * You can optionally type your device's ICCID number in the 'ID' textbox.
  *
  * @image html cloud_sm_sms_configure_enable.png
  *
- * To learn more about Device Cloud SMS configuration using Device Manager, see SMS Chapter in the
+ * To learn more about Device Cloud SMS configuration using Device Management, see SMS chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90001150/index.html">Device Cloud User's Guide</a>@endhtmlonly.
  *
  * @subsection sm_sms_enable_ws Enable/Configure SMS transport using Web Services
  *
- * A web service script written in python is provided to Configure (and hence enable SMS transport) your device's phone number using
+ * A Web Service script written in python is provided to Configure (and hence enable SMS transport) your device's phone number using
  * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  * It will first try to find current phone configuration for the device-id to update it. If no entry is found, a new entry is created 
  * with the provided device's phone number.
  *
  * Execute ProvisionSMS.py python script located in @a @b /connector/tools/python directory as follows:
  * @code
- * python ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Device ID> <Device Phone Number>
+ * python ProvisionSMS.py <Username> <Password> <Device Cloud URL> <Device ID> <Device phone Number>
  * @endcode
  * For example:
  * @code
  * python ProvisionSMS.py myusername mypassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA 54123456789
  * @endcode
  * 
- * To learn more about Device Cloud SMS configuration using web Services, see SMS Chapter in the
+ * To learn more about Device Cloud SMS configuration using Web Services, see SMS chapter in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008/index.html">Device Cloud Programming Guide</a>@endhtmlonly.
  *
  * @section smsectionexamples Short Messaging Features
@@ -305,7 +305,7 @@
  *      -# @ref initiate_ping_to_cloud "Initiate Ping" to Device Cloud. Especially useful for UDP transport 
  *                                     to open the Firewall between Cloud Connector and Device Cloud
  *      -# @ref data_service "Data transfer" between Cloud Connector and Device Cloud
- *      -# @ref cli_support "Command Line Interface" support for Device Manager
+ *      -# @ref cli_support "Command Line Interface" support for Device Management
  *      -# @ref sm_connect "Request Connection" from Device Cloud to start the Cloud Connector TCP transport
  *
  * An additional major feature is available for @ref sm_udp_enable_battery_dm "Battery-backed" SM applications over UDP:
@@ -322,7 +322,7 @@
  *
  * A device can send a @ref initiate_ping_to_cloud "Ping request to Device Cloud" at any
  * time. It is especially useful for UDP transport to open a hole in a firewall and let Device Cloud know that the 
- * Application is ready to receive pending or queued messages.
+ * application is ready to receive pending or queued messages.
  *
  * @subsection initiate_ping_to_cloud  Initiate Ping Device Cloud
  *
@@ -457,7 +457,7 @@
  * @endhtmlonly
  *
  * @note The response code connector_sm_ping_status_success will only be received if the @ref initiate_ping_to_cloud request has the 
- * @b response_required set to @ref connector_true and a ping response has been received from the cloud. 
+ * @b response_required set to @ref connector_true and a ping response has been received from the Cloud.
  *
  * @see @ref initiate_ping_to_cloud
  *
@@ -465,10 +465,10 @@
  * @section pending_data  Pending Data Available (Only used for UDP transport)
  *
  * Cloud Connector will make a @ref connector_request_id_sm_more_data @ref connector_callback_t "callback"
- * to notify the application that additional SM UPD messages are pending.   Applications should
+ * to notify the application that additional SM UPD messages are pending. Applications should
  * call @ref initiate_ping_to_cloud to retrieve pending messages from Device Cloud.
  *
- * This callback is geared towards @ref sm_udp_enable_battery_dm "Battery-backed" Applications.   This callback
+ * This callback is geared towards @ref sm_udp_enable_battery_dm "Battery-backed" applications.   This callback
  * can be used to re-trigger a timer which initiates a power down sequence.  When this callback occurs, the
  * timer should be reset, extending the time before shutdown.
  *
@@ -524,7 +524,7 @@
  * @section cli_support Command Line Interface Support
  *
  * Cloud Connector includes support for a Command Line Interface (CLI) support to be displayed on the Device
- * Cloud Device Manager CLI.
+ * Cloud Device Management CLI.
  *
  * @subsection cli_cb_sequence CLI Callback Sequence
  * The following SM callbacks are made (in sequence) to support an individual CLI request:
@@ -538,9 +538,9 @@
  * @subsection cli_request_callback  CLI request callback
  *
  * The @ref connector_request_id_sm_cli_request callback is the initial call
- * in a @ref cli_cb_sequence.  This callback is triggered by a Device Manager CLI request and it
- * passes the Device Cloud command and arguments to the Application in a connector_sm_cli_request_t data structure. 
- * Device Manager sends the CLI request NULL terminated. 
+ * in a @ref cli_cb_sequence.  This callback is triggered by a Device Management CLI request and it
+ * passes the Device Cloud command and arguments to the application in a connector_sm_cli_request_t data structure. 
+ * Device Management sends the CLI request NULL terminated. 
  * If the CLI request is long enough to be split into several segments, this callback will be called several times. 
  * The last segment (end of CLI request) can be recognized as it's the only one ending with a NULL ('\0') character.
  *
@@ -610,7 +610,7 @@
  * in a @ref cli_cb_sequence and used to get the desired maximum size of CLI response length in bytes.
  * This callback is made only if the @b response_required was set to @ref connector_true in
  * the initial @ref cli_request_callback call. The available response length can be later be limited 
- * if 'maxResponseSize' attribute was specified in the Device Manager CLI request. 
+ * if 'maxResponseSize' attribute was specified in the Device Management CLI request. 
  *
  * Cloud Connector will allocate this memory block to process the ensuing @ref cli_request_callback
  * sequence.
@@ -801,14 +801,14 @@
  *
  * @subsection sm_connect Request TCP start
  *
- * Requests the Cloud Connector to start it's TCP transport.  This request will
+ * Requests the Cloud Connector to start its TCP transport.  This request will
  * be handled in the Cloud Connector private layer will start the TCP.
  *
  * Once the TCP transport @ref network_tcp_start "is started", devices can make use of
  * the TCP features like @ref firmware_download, @ref rci_service, or reliable
  * @ref data_point or @ref data_service over a @ref connector_transport_tcp "TCP transport".
  *
- * The following @ref web_services example shows how to request a device to start it's TCP service:
+ * The following @ref web_services example shows how to request a device to start its TCP service:
  *
  * @code
  *    <sci_request version="1.0">
@@ -852,7 +852,7 @@
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
  * to notify an application that a response was received with no known associated request.  The reason
  * for this is either the session  @ref CONNECTOR_SM_TIMEOUT "timed-out", or the transport was
- * @ref connector_initiate_stop_request_t "terminated" and the Message context lost.
+ * @ref connector_initiate_stop_request_t "terminated" and the message context lost.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -907,7 +907,7 @@
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
  * Cloud Connector will make a Ping Request @ref connector_request_id_sm_ping_request "callback" to
- * notify an Application that a ping was received.  This callback is informational only and no action
+ * notify an application that a ping was received.  This callback is informational only and no action
  * is necessary.
   *
  * @htmlonly
@@ -954,24 +954,24 @@
  * @endhtmlonly
  *
  * @note The @b response_required member is passing information on to the application.  There is no required
- * action necessary from the Cloud Connector Application, regardless of the value for @b response_required.
+ * action necessary from the Cloud Connector application, regardless of the value for @b response_required.
  *
  *
  *
  * @subsection config_request_from_cloud  Device Cloud Config Notification
  *
  * Cloud Connector will make a Config Request @ref connector_request_id_sm_config_request "callback" to
- * notify an Application that an SMS configuration (Provisioning) message was received.  This callback 
+ * notify an application that an SMS configuration (Provisioning) message was received.  This callback 
  * is mainly informative as following steps have already been done:
  *     -# At configuration layer: @ref set_device_cloud_phone has been called to let the user a chance 
  *        to store the new server phone number in persistent storage.
  *     -# At SMS transport layer: @ref app_network_sms_close() and app_network_sms_open() callbacks in network_sms.c
  *        have been called so the new phone can be immediately established.
  *
- * In order to send SMS messages to the cloud from the device, it's required that the device has properly 
- * configured the cloud phone number. If it's known forehand, it has to be configured through 
+ * In order to send SMS messages to the Cloud from the device, it's required that the device has properly 
+ * configured the Cloud phone number. If it's known forehand, it has to be configured through 
  * @ref CONNECTOR_CLOUD_PHONE define or @ref get_device_cloud_phone callback. 
- * If it's not known forehand, an SMSs provisioning message must arrive first from the cloud so it's configured automatically.
+ * If it's not known forehand, an SMSs provisioning message must arrive first from the Cloud so it's configured automatically.
  *
  *
  * @htmlonly
@@ -1020,7 +1020,7 @@
  * @endhtmlonly
  *
  * @note The @b response_required member is passing information on to the application.  There is no required
- * action necessary from the Cloud Connector Application, regardless of the value for @b response_required.
+ * action necessary from the Cloud Connector application, regardless of the value for @b response_required.
  *
  *
  * @htmlinclude terminate.html

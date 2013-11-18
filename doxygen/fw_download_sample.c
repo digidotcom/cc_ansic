@@ -146,11 +146,11 @@
  * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * Firmware downloads can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
- * or by issuing a web services call.  See @ref services "here" for more information on
- * web service calls.
+ * Firmware downloads can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Management</a>
+ * or by issuing a Web Services call.  See @ref services "here" for more information on
+ * Web Service calls.
  *
- * @subsection fw_gui Firmware Download using Device Manager
+ * @subsection fw_gui Firmware Download using Device Management
  *
  * Log on to Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
@@ -173,14 +173,14 @@
  * device.  The application prints out the target, code size and checksum of the
  * downloaded image.
  *
- * @subsection fw_python Using a web Services client to query a device for target information and perform a Firmware Download
+ * @subsection fw_python Using a Web Services client to query a device for target information and perform a Firmware Download
  *
- * The sample provides two web services scripts, written in python, to simulate a
+ * The sample provides two Web Services scripts, written in python, to simulate a
  * firmware download and to query a device for firmware target information using
  * @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  *
  *
- * To perform a web services Download firmware operation, execute the update_firmware.py python script:
+ * To perform a Web Services "Download firmware" operation, execute the update_firmware.py python script:
  *
  * @code
  * python update_firmware.py <Username> <Password> <Device ID> [<Device Cloud URL>]
@@ -201,7 +201,7 @@
  *
  * @endcode
  *
- * To perform a web services query for a device's firmware target information, execute
+ * To perform a Web Services query for a device's firmware target information, execute
  * the query_firmware.py python script:
  *
  * @code

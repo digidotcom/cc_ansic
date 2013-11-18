@@ -23,14 +23,14 @@
  * a domain name and open a communication socket in this callback. UDP does not guarantee reliable data
  * delivery.
  *
- * The @ref connector_class_id_network_sms transport does not establish a connection. It's very likely that 
- * during this callback the user configures the Device Cloud Phone Number where to send SMSs available through 
- * the data->device_cloud_url parameter. Final implementation has to be done by the user as the way to 
+ * If the @ref connector_class_id_network_sms transport does not establish a connection, it's very likely that 
+ * during this callback the user configures the Device Cloud phone number where to send SMSs available through 
+ * the data->device_cloud_url parameter. Final implementation has to be done by the user as a way to 
  * communicate with the hardware in charge of sending and receiving SMSs is not standard at all. As a 
  * reference, for the linux platform sample, network_sms.c file implements support for @htmlonly <a href="http://wammu.eu/gammu/">Gammu</a>@endhtmlonly, a cellular 
  * manager for mobile phones/modems.
  * @note This callback is called also after an SMS provisioning message arrives from the server to let the user
- * reconfigure the Device Cloud Phone Number if necessary.
+ * reconfigure the Device Cloud phone number if necessary.
  *
  * The callback is responsible of setting up any socket options for TCP and UDP transports.
  *

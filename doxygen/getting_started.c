@@ -46,7 +46,7 @@
  * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_device_cloud", will
  * be used to confirm your compilation and port, respectively.  When complete, your
  * device will be connected to Device Cloud and displayed in the
- * <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>.
+ * <a href="http://www.etherios.com/devicecloud/devicemanager">Device Management</a>.
  *
  * @section step1 Do you have a C89 or C99 compliant compiler?
  *
@@ -569,7 +569,7 @@
  *
  *
  *  -# Navigate to http://login.etherios.com and log on to Device Cloud
- *  -# Click on Device Manager tab.
+ *  -# Click on Device Management tab.
  *  -# Click the Add Devices button to bring up the Add Devices dialog.
  * \n
  * \n  @image html cloud_add_device_button.png

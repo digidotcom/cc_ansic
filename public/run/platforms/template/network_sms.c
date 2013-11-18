@@ -18,11 +18,11 @@
 #include "platform.h"
 
 /**
- * @brief   Open a network to communicate Device Cloud
+ * @brief   Open a network to communicate to Device Cloud
  *
  * @param data @ref connector_network_open_t
  *  <ul>
- *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud Phone number 
+ *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud phone number 
  *                                        where to send SMSs. </li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,
@@ -31,8 +31,8 @@
  *  </li>
  * </ul>
  *
- * @retval connector_callback_continue	The routine has successfully opened a socket and resolved Device Cloud's name.
- * @retval connector_callback_busy 		The routine will be called again to complete open.
+ * @retval connector_callback_continue  The routine has successfully opened a socket and resolved Device Cloud's name.
+ * @retval connector_callback_busy      The routine will be called again to complete open.
  * @retval connector_callback_error     The operation failed, Cloud Connector
  *                                  will exit @ref connector_run "connector_run()" or @ref connector_step "connector_step()".
  * @retval connector_callback_abort     The application aborts Cloud Connector.
@@ -128,7 +128,7 @@ connector_callback_status_t app_network_sms_receive(connector_network_receive_t 
 /**
  * @brief   Close the network
  *
- * This callback requests an application to close it's network handle.
+ * This callback requests an application to close its network handle.
  *
  * @param data @ref connector_network_close_t
  *  <ul>
@@ -139,8 +139,8 @@ connector_callback_status_t app_network_sms_receive(connector_network_receive_t 
  *   </li>
  * </ul>
  *
- * @retval connector_callback_continue	The callback has successfully closed the connection.
- * @retval connector_callback_busy 		The network device is busy, the routine will be called again to complete close.
+ * @retval connector_callback_continue  The callback has successfully closed the connection.
+ * @retval connector_callback_busy      The network device is busy, the routine will be called again to complete close.
  * @retval connector_callback_abort     The application aborts Cloud Connector.
  *
  * @see @ref connector_callback_status_t

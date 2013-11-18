@@ -103,12 +103,12 @@
  * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * File system transfers can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Manager</a>
- * or by issuing a web services call.  See @ref fs_sample_python_script "here" for more information on
+ * File system transfers can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Management</a>
+ * or by issuing a Web Services call.  See @ref fs_sample_python_script "here" for more information on
  * web service calls.
  * <br /><br />
  *
- * @subsection fs_gui Running file system using Device Manager
+ * @subsection fs_gui Running file system using Device Management
  *
  * Log on to Device Cloud at http://login.etherios.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
@@ -133,9 +133,9 @@
  * file folders.
  * <br /><br />
  * 
- * @section fs_sample_python_script Using a web services client to write, read, and list a file
+ * @section fs_sample_python_script Using a Web Services client to write, read, and list a file
  *
- * The sample provides a very basic web services script file_system.py, written in python, to
+ * The sample provides a very basic Web Services script file_system.py, written in python, to
  * write, read, and list a file, using @htmlonly <a href="web_services.html">Web Services</a> @endhtmlonly.
  *
  * The script sends a request to login.etherios.com.  The file "test_file.txt" is created in the

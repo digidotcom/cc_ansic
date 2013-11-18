@@ -317,7 +317,7 @@
  *
  * Log on to @htmlonly <a href="http://login.etherios.com/">Device Cloud</a>@endhtmlonly
  * (described in the @ref connector_login "Getting Started Section").
- * Once you are logged, go to Device Manager tab and click the Refresh button.
+ * Once you are logged, go to Device Management tab and click the Refresh button.
  * The device's status should show a 'green' light indicating the device is connected.
  *
  * @image html cloud_device_connected.png

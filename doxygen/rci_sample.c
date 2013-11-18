@@ -56,7 +56,7 @@
  *     error invalid_length "Invalid Length"
  *
  * # Device Cloud Password
- * # Device Manager uses this devicesecurity setting for password authentication
+ * # Device Management uses this devicesecurity setting for password authentication
  * # Note, as with all password, password type is a write-only field
  * # To include the devicesecurity setting, change devicesecurity.c.optional
  * # to devicesecurity.c and uncomment out the device_security functions in
@@ -219,7 +219,7 @@
  *
  * Log on to @htmlonly <a href="http://login.etherios.com/">Device Cloud</a>@endhtmlonly
  * (described in the @ref connector_login "Getting Started Section").
- * Once you are logged, go to Device Manager tab and click the Refresh button.
+ * Once you are logged, go to Device Management tab and click the Refresh button.
  * The device's status should show as 'Connected'.
  *
  * @image html cloud_device_connected.png

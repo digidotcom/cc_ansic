@@ -7,7 +7,7 @@
  * Applications can communicate to devices through Device Cloud using Web Service
  * requests, which are sent to Device Cloud using the SCI.
  * The diagram below shows how a Web Services Client can send an SCI command to Device Cloud.
- * In this example, the web services call will address Device ID 00409dFFFF010202:
+ * In this example, the Web Services call will address Device ID 00409dFFFF010202:
  *
  * @image html WebServices.jpg
  *
@@ -50,13 +50,13 @@
  * @endhtmlonly
  *
  *
- * To learn more about Device Cloud Web Services, see Chapter SCI (Server Command Interface) in the
+ * To learn more about Device Cloud Web Services, see chapter SCI (Server Command Interface) in the
  * @htmlonly <a href="http://ftp1.digi.com/support/documentation/html/90002008">Web Services Programming Guide</a>@endhtmlonly.
  *
  * @section Sample Web Services Applications
  *
- * Most sample Applications have associated web services client code that demonstrates how
- * a web services client can interact with Device Cloud.  These samples are written using
+ * Most sample Applications have associated Web Services client code that demonstrates how
+ * a Web Services client can interact with Device Cloud.  These samples are written using
  * Python.
  *
  * @htmlinclude terminate.html

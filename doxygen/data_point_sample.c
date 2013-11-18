@@ -9,7 +9,7 @@
  * on the other hand collects these data and the data shows up under Data Streams page inside the Data
  * Service tab.
  *
- * To learn more about Device Cloud Data Streams, see Chapter 12 Device Cloud Data Streams in the
+ * To learn more about Device Cloud Data Streams, see chapter 12 Device Cloud Data Streams in the
  * @htmlonly <a href="http://www.digi.com/support/productdetail?pid=5575">Device Cloud User's Guide</a>@endhtmlonly.
  *
  * @section data_point_location Source Code Location
