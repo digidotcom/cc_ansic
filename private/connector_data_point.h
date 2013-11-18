@@ -34,7 +34,6 @@ typedef struct
             connector_data_point_t const * current_dp;
             size_t bytes_sent;
             size_t bytes_to_send;
-            char * last_entry_ptr;
 
             /*************************************************************************
             ** WARNING: Please don't change the order of the state unless default  **
@@ -52,7 +51,6 @@ typedef struct
                 dp_state_forward_to
             } state;
 
-            connector_bool_t first_point;
         } csv;
 
         struct
@@ -337,8 +335,6 @@ static connector_status_t dp_process_csv(connector_data_t * const connector_ptr,
     dp_info->data.csv.bytes_sent = 0;
     dp_info->data.csv.bytes_to_send = 0;
     dp_info->data.csv.state = dp_state_data;
-    dp_info->data.csv.first_point = connector_true;
-    dp_info->data.csv.last_entry_ptr = NULL;
 
     result = dp_fill_file_path(dp_info, dp_ptr->path, ".csv");
     if (result != connector_working) goto error;
@@ -633,39 +629,23 @@ static size_t dp_process_forward_to(data_point_info_t * const dp_info, char * co
     return bytes_processed;
 }
 
-/* NOTE: Used int for offset instead of size_t, because it can be negative */
-static int dp_update_state(data_point_info_t * const dp_info, char * const buffer)
+static size_t dp_update_state(data_point_info_t * const dp_info, char * const buffer)
 {
-    char next_char = ',';
-    int bytes_offset = sizeof next_char;
-
-    if (dp_info->data.csv.state < dp_state_location) goto next_state;
-
-    if (dp_info->data.csv.first_point)
+    if (dp_info->data.csv.state == dp_state_forward_to)
     {
-        if (dp_info->data.csv.state < dp_state_forward_to) goto next_state;
-
-        dp_info->data.csv.first_point = connector_false;
+        *buffer = '\n';
+        dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
+        dp_info->data.csv.state = dp_state_data;
+    }
+    else
+    {
+        *buffer = ',';
+        dp_info->data.csv.state++;
     }
 
-    dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
-
-    if (dp_info->data.csv.current_dp != NULL)
-        *dp_info->data.csv.last_entry_ptr = '\n';
-    else
-        bytes_offset = 0;
-
-    bytes_offset -= (buffer - dp_info->data.csv.last_entry_ptr); /* cleanup empty data */
-    dp_info->data.csv.state = dp_state_data;
-    goto done;
-
-next_state:
-    dp_info->data.csv.state++;
-    *buffer = next_char;
-
-done:
-    return bytes_offset;
+    return 1;
 }
+
 
 static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * const payload, size_t const total_bytes)
 {
@@ -722,20 +702,24 @@ static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * cons
 
             data_ptr += bytes_copied;
             bytes_remaining -= bytes_copied;
-            dp_info->data.csv.last_entry_ptr = data_ptr;
         }
 
         if (dp_info->data.csv.bytes_to_send == 0)
         {
-            int const bytes_offset = dp_update_state(dp_info, data_ptr);
+            size_t const bytes_offset = dp_update_state(dp_info, data_ptr);
 
             bytes_remaining -= bytes_offset;
             data_ptr += bytes_offset;
 
-            if (dp_info->data.csv.current_dp == NULL) break;
+            if (dp_info->data.csv.current_dp == NULL)
+            {
+                break;
+            }
         }
         else
+        {
             break;
+        }
 
     } while (bytes_remaining > 0);
 
