@@ -160,6 +160,7 @@ typedef struct
     char const * CONST buffer;              /**< buffer contains CLI request */
     size_t CONST bytes_used;                /**< bytes filled in the buffer */
     connector_bool_t CONST response_required; /**< connector_true means response is needed by Device Cloud */
+    connector_bool_t CONST more_data;       /**< connector_true means more request cli to follow */
 } connector_sm_cli_request_t;
 
 /**
@@ -193,7 +194,7 @@ typedef struct
 */
 
 /**
-* @defgroup connector_sm_cli_response_t connector_sm_cli_response_t
+* @defgroup connector_sm_cli_response_length_t connector_sm_cli_response_length_t
 * @brief Data type used to get CLI response
 * @{
 */

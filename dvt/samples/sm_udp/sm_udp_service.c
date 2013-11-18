@@ -162,9 +162,19 @@ static connector_callback_status_t app_process_cli_request(connector_sm_cli_requ
     static client_data_t app_data;
     time_t const cur_time = time(NULL);
 
-    APP_DEBUG("Executing %s.\n", cli_request->buffer);
+    APP_DEBUG("Executing: \"%.*s\".\n", (int)cli_request->bytes_used, (char *)cli_request->buffer);
+
+    if (cli_request->more_data)
+    {
+    	APP_DEBUG("More request chunks arriving !!!\n");
+    }
+    else
+    {
+    	APP_DEBUG("Last request chuck.\n");
+    }
 
     app_data.bytes = snprintf(response_string, sizeof response_string, "Time: %s", ctime(&cur_time));
+    response_string[app_data.bytes-1] = '\0';
     app_data.data_ptr = response_string;
     cli_request->user_context = &app_data;
 
