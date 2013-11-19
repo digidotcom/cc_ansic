@@ -186,6 +186,12 @@ typedef struct
 #define CONNECTOR_SM_MAX_RX_SEGMENTS   1
 #endif
 
+#ifndef CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS
+#define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS   1
+#endif
+
+#define CONNECTOR_MAX_SM_SEGMENTS   (CONNECTOR_SM_MAX_RX_SEGMENTS + CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS)
+
 #ifndef CONNECTOR_SM_MAX_SESSIONS
 #define CONNECTOR_SM_MAX_SESSIONS   4
 #endif
@@ -212,7 +218,7 @@ typedef struct
 typedef connector_sm_session_t named_buffer_type(sm_session);
 
 define_sized_buffer_type(sm_packet, 2 * SM_MAX_MTU);
-define_sized_buffer_type(sm_data_block, CONNECTOR_SM_MAX_RX_SEGMENTS * SM_MAX_MTU);
+define_sized_buffer_type(sm_data_block, CONNECTOR_MAX_SM_SEGMENTS * SM_MAX_MTU);
 
 #endif
 

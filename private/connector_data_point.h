@@ -901,13 +901,11 @@ static connector_callback_status_t dp_handle_length_callback(connector_data_serv
             size_t const max_packet_size = SM_PACKET_SIZE_SMS;
             #endif
             size_t const max_payload_bytes = max_packet_size - (sm_header_bytes + transport_layer_bytes);
-            size_t max_segments = 1;
-
-            #if (defined CONNECTOR_SM_MAX_RX_SEGMENTS)
-            max_segments = CONNECTOR_SM_MAX_RX_SEGMENTS;
+            #if !(defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS)
+            #define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS   1
             #endif
 
-            data_ptr->total_bytes = max_payload_bytes * max_segments;
+            data_ptr->total_bytes = max_payload_bytes * CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS;
             break;
         }
     }

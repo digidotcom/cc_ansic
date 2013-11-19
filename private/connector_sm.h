@@ -142,6 +142,10 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_RX_SEGMENTS bigger than 1"
     #endif
 
+    #if (defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS) && (CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS > 1) && (!defined CONNECTOR_SM_MULTIPART)
+    #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS bigger than 1"
+    #endif
+
     #if (defined CONNECTOR_SM_MAX_RX_SEGMENTS)
     sm_ptr->session.max_segments = CONNECTOR_SM_MAX_RX_SEGMENTS;
     #else
