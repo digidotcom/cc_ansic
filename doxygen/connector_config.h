@@ -383,8 +383,9 @@
 #define CONNECTOR_SM_MAX_RX_SEGMENTS               4
 
 /**
-* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
-* the define below to allocate a buffer to process the @ref connector_initiate_data_point_single requests
+* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined and your application
+* sends Data Points over one of these transports, Cloud Connector will use the define below to allocate
+* a buffer to process the @ref connector_initiate_data_point_single requests
 * that use SMS or UDP. If both are defined, the buffer will be allocated with the maximum value.
 * This define does not affect the number of segments for reception (see @ref CONNECTOR_SM_MAX_RX_SEGMENTS).
 * If not set, Cloud Connector will use the default of 1. User needs to increase this value if they are 
@@ -392,6 +393,7 @@
 * @ref CONNECTOR_SM_MULTIPART must be defined in order to configure define below to a value bigger than 1.
 *
 * @see @ref shortmessaging
+* @see @ref data_point
 * @see @ref CONNECTOR_TRANSPORT_UDP
 * @see @ref CONNECTOR_TRANSPORT_SMS
 */
