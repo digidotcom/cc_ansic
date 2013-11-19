@@ -40,11 +40,13 @@
  *                      - @ref device_cloud_service_id
  *                      - If you are using @c CONNECTOR_DEBUG do not forget to replace @c app_class_to_string() and @c app_class_to_string()
  * functions with the updated version from @c public/run/platforms/linux/config.c.
- *              - If you were using @ref shortmessaging you must check the new API. The structures @ref connector_request_data_point_single_t
- * "connector_request_data_point_single_t", @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t", 
- * @ref connector_request_data_point_single_t "connector_request_data_point_single_t" and @ref connector_request_data_point_single_t 
- * "connector_request_data_point_single_t" now include a new field @c request_id which must be init to @c NULL if your application does 
+ *              - If you were using @ref shortmessaging you must check the new API:
+ *                      - The structures @ref connector_request_data_point_single_t "connector_request_data_point_single_t", 
+ * @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t", @ref connector_request_data_point_single_t "connector_request_data_point_single_t",
+ * and @ref connector_request_data_point_single_t "connector_request_data_point_single_t" now include a new field @c request_id which must be init to @c NULL if your application does 
  * not make use of new @ref connector_initiate_session_cancel feature.
+ *                      - If your application uses @ref CONNECTOR_SM_MULTIPART "Multipart", then you should check the new @ref CONNECTOR_SM_MAX_RX_SEGMENTS parameter.
+ *                      - If your application uses @ref data_point, then you should check the new @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS parameter.
  *      -# Re-build your application.
  *
  * @htmlinclude terminate.html
