@@ -312,7 +312,10 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
         session->segments.processed++;
         if (session->segments.count == session->segments.processed)
         {
-            ASSERT(session->in.bytes == 0);
+            if (session->in.bytes != 0)
+            {
+                connector_debug_printf("ERROR: sm_send_segment: All segments processed but still remaining bytes\n");
+            }
             result = sm_switch_path(connector_ptr, session, SmIsResponse(session->flags) ? connector_sm_state_complete : connector_sm_state_receive_data);
             if (result != connector_working) goto error;
         }
