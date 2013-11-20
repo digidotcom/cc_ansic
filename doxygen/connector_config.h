@@ -373,8 +373,7 @@
 * This define does not affect the number of segments for transmission which is unlimitted, except for
 * Data Points, see @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS. If not set, Cloud Connector will use the 
 * default value of 1. User needs to increase this value if they are planning to use SM to receive larger
-* data. @ref CONNECTOR_SM_MULTIPART must be defined in order to configure define below to 
-* a value bigger than 1.
+* data. @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
 *
 * @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
@@ -388,9 +387,13 @@
 * a buffer to process the @ref connector_initiate_data_point_single requests
 * that use SMS or UDP. If both are defined, the buffer will be allocated with the maximum value.
 * This define does not affect the number of segments for reception (see @ref CONNECTOR_SM_MAX_RX_SEGMENTS).
-* If not set, Cloud Connector will use the default of 1. User needs to increase this value if they are 
-* planning to use SM to send longer more DataPoints in the same action.
-* @ref CONNECTOR_SM_MULTIPART must be defined in order to configure define below to a value bigger than 1.
+* Each Data Point is sent in CSV format (one per line, '\\n' terminated). The default order is:\n\n
+* DATA, TIMESTAMP, QUALITY, DESCRIPTION, LOCATION, DATATYPE, UNITS, FORWARDTO \n\n
+* All fields are sent, even empty ones (i.e.: data,1,,,99)
+* For more information, please refer to the <a href="http://ftp1.digi.com/support/documentation/html/90002008">Device Cloud Programming Guide</a> 
+* section "Data Streams", subsection "CSV".\n
+* If this macro is not defined, Cloud Connector will use the default value of 1.
+* @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
 *
 * @see @ref shortmessaging
 * @see @ref data_point

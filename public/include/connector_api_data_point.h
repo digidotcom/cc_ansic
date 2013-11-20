@@ -273,6 +273,8 @@ typedef struct
 * This data structure is used when the connector_initiate_action() API is called with
 * connector_initiate_data_point_single request id. This structure can be used to send
 * multiple points which are belong to a single stream.
+* 
+* @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
 *
 * @see connector_request_id_data_point_t
 * @see connector_data_point_t

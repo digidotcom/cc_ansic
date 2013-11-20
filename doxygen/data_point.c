@@ -233,7 +233,6 @@
  * @ref connector_request_data_point_single_t "data point" as request_data.
  * The @ref connector_request_data_point_single_t "data point" cannot be a stack variable and can be
  * released/reused only after receiving the response.
- *
  * The connector_initiate_action() is called with the following arguments:
  *
  * @htmlonly
@@ -285,6 +284,7 @@
  * </table>
  * @endhtmlonly
  *
+ * @note If using a @ref shortmessaging transport (SMS or UDP), the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
  *@see connector_data_point_type_t
  *@see connector_data_point_t
  *@see connector_request_data_point_single_t
