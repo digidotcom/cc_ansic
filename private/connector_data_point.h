@@ -649,7 +649,7 @@ static size_t dp_update_state(data_point_info_t * const dp_info, char * const bu
 }
 
 
-static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * const payload, size_t const total_bytes)
+static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * const payload, size_t const total_bytes, connector_transport_t transport)
 {
     size_t bytes_copied = 0;
     char * data_ptr = payload;
@@ -698,7 +698,31 @@ static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * cons
         {
             if (bytes_copied >= bytes_remaining)
             {
-                /* not enough space to send current entry, use the next packet to send the remaining data */
+                #if (defined CONNECTOR_SHORT_MESSAGE)
+                /* For SM transports this is a problem because the buffer where the CSV is
+                 * written is preallocated. If the CSV grows to fill the buffer, then it
+                 * is too late.
+                 */
+                switch (transport)
+                {
+                    #if (defined CONNECTOR_TRANSPORT_UDP)
+                    case connector_transport_udp:
+                    #endif
+                    #if (defined CONNECTOR_TRANSPORT_SMS)
+                    case connector_transport_sms:
+                    #endif
+                        connector_debug_printf("WARNING: Not enough space for processing the CSV DataPoint, increase the value of CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS\n");
+                        ASSERT(connector_false);
+                        break;
+                    #if (defined CONNECTOR_TRANSPORT_TCP)
+                    case connector_transport_tcp:
+                    #endif
+                    case connector_transport_all:
+                        /* For connector_transport_tcp this is not a problem: once the packet is sent,
+                         * this function will be called again to finish the CSV. */
+                        break;
+                }
+                #endif
                 break;
             }
 
@@ -756,7 +780,7 @@ static connector_callback_status_t dp_handle_data_callback(connector_data_servic
             break;
 
         case dp_content_type_csv:
-            data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available);
+            data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available, data_ptr->transport);
             data_ptr->more_data = (dp_info->data.csv.current_dp == NULL) ? connector_false : connector_true;
             break;
     }
