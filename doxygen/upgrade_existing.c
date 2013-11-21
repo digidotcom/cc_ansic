@@ -12,7 +12,7 @@
  * @section BugFixing Upgrade for bug fixing
  *
  * In this upgrade only the @c private folder will be modified and no extra changes are needed in the application
- * nor "public" folder. These changes affect only to the internal behavior of Cloud Connector and do not add nor
+ * or "public" folder. These changes affect only to the internal behavior of Cloud Connector and do not add or
  * remove functionality to the Cloud Connector.
  * To upgrade your @c private folder follow these steps:
  *      -# Back up your existing code.
@@ -23,7 +23,7 @@
  * @section UpgradingAPI Upgrade APIs
  *
  * Version 2.1.0.x not only fixes known bugs but also adds new features like the Device ID autoprovisioning, possibility of
- * cancelling user-initiated SM sessions and the new SM over SMS support, .
+ * canceling user-initiated SM sessions and the new SM over SMS support.
  * To include these features to an existing application, follow these steps:
  *      -# Back up your existing code.
  *      -# Decompress the newer release in a temporal directory.
