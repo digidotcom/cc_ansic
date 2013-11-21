@@ -37,6 +37,9 @@ ENHANCEMENTS
         or not.
         
         Optimization in the SM protocol implementation.
+        
+        Reduce memory usage when CONNECTOR_MSG_MAX_TRANSACTION is set.
+        [IC4C-165]
 
     v2.0.0
 
@@ -55,13 +58,28 @@ BUG FIXES
         
         Fixed known issue in RCI in which a setting was overwritten if
         a setting was set to a string longer than the maximum allowed.
+        [IC4C-180]
         
         Completely removed the use of rand() functions. [IC4C-109].
         
-        Fixed failure when sending very large Data Streams.
+        Fixed failure when sending very large Data Streams. [IC4C-287]
         
         Added macro CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS to allow
-        bigger Data Point uploads in SM transports.
+        bigger Data Point uploads in SM transports. [IC4C-290]
+        
+        CLI request was split in different command lines with multipart
+        messages. [IC4C-285]
+        
+        Argument 'maxResponseSize' for CLI over SM (UDP & SMS) did not
+        work properly. [IC4C-276]
+        
+        Connector was aborted when a "Request Connect" was received
+        in an application with no TCP transport enabled. [IC4C-274]
+        
+        UDP transport did not correctly start if the open or send callbacks
+        returned connector_callback_busy. [IC4C-241] [IC4C-240]
+
+        CONNECTOR_NETWORK_UDP_START macro was not working. [IC4C-204]
         
     v2.0.1
 
