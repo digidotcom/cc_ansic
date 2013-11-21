@@ -81,7 +81,6 @@ def addDevicePhoneNumber(username, password, cloud_url, deviceID, phoneNumber):
     print '\nQuery to get devId from the device...'
     if response.status == 200:
         print("   Correct Response: %d %s\n" % (response.status, response.reason))
-        print("                     %s\n" % (responseBody))
     else:
         print("   Error: %d %s\n%s\n" %(response.status, response.reason, response.msg))
         return False
@@ -119,9 +118,6 @@ def addDevicePhoneNumber(username, password, cloud_url, deviceID, phoneNumber):
     req = "/ws/NetworkInterface"
 
     webservice.putrequest("POST", req)
-
-    print("req: %s\n" % (req))
-    print("message: %s\n" % (message))
 
     # add the authorization string into the HTTP header
     webservice.putheader("Authorization", "Basic %s"%auth)
@@ -186,7 +182,6 @@ def updateDevicePhoneNumber(username, password, cloud_url, deviceID, phoneNumber
     print '\nQuery to get niId from the device...'
     if response.status == 200:
         print("   Correct Response: %d %s\n" % (response.status, response.reason))
-        print("                     %s\n" % (responseBody))
     else:
         print("   Error: %d %s\n%s\n" %(response.status, response.reason, response.msg))
         return False
@@ -199,14 +194,10 @@ def updateDevicePhoneNumber(username, password, cloud_url, deviceID, phoneNumber
     nodelist_niId = dom.getElementsByTagName("niId")
     element_niId = nodelist_niId.item(0)
     if element_niId != None:
-        print("element_niId: %s\n" % element_niId.toxml())
-      
         niId = getText(element_niId)
-        print("niId: %s\n" % niId)
 
     if niId == '0':
         #If niId do not exist, go through devId
-        print("Didn't got niId\n")
         return addDevicePhoneNumber(username, password, cloud_url, deviceID, phoneNumber)         
 
     webservice = httplib.HTTPConnection(cloud_url, 80, timeout=10)
@@ -224,9 +215,6 @@ def updateDevicePhoneNumber(username, password, cloud_url, deviceID, phoneNumber
     req = req % (niId)
 
     webservice.putrequest("PUT", req)
-
-    print("req: %s\n" % (req))
-    print("message: %s\n" % (message))
 
     # add the authorization string into the HTTP header
     webservice.putheader("Authorization", "Basic %s"%auth)
