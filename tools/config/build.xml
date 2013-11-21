@@ -9,7 +9,12 @@
 	<!-- This should be overriden by caller.  Used in the Manifest. -->
 	<property name="version" value="0.0"/>
 
-	<target name="init">
+	<target name="clean">
+		<delete file="${dist.dir}/${jar}"/>    
+		<delete dir="${build.dir}"/>
+	</target>
+
+	<target name="init" depends="clean">
 		<mkdir dir="${build.dir}"/>
 	</target>
 
@@ -35,8 +40,5 @@
 		<mkdir dir="${dist.dir}"/>
 		<copy file="${build.dir}/${jar}" todir="${dist.dir}"/>
 	</target>
-
-	<target name="clean">
-		<delete dir="${build.dir}"/>
-	</target>
 </project>
+
