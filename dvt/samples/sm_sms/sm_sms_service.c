@@ -162,19 +162,16 @@ static connector_callback_status_t app_process_cli_request(connector_sm_cli_requ
     static client_data_t app_data;
     time_t const cur_time = time(NULL);
 
-    char * buf = (char *)cli_request->buffer;
+    APP_DEBUG("Executing: \"%.*s\".\n", (int)cli_request->bytes_used, (char *)cli_request->buffer);
 
-    if (cli_request->buffer[cli_request->bytes_used-1] == '\0')
+    if (cli_request->more_data)
     {
-    	APP_DEBUG("It's NULL terminated. Must be last chuck\n");
+    	APP_DEBUG("More request chunks arriving !!!\n");
     }
     else
     {
-    	APP_DEBUG("It's NOT NULL terminated. More chunks arriving ...\n");
-    	buf[cli_request->bytes_used] = '\0';
+    	APP_DEBUG("Last request chuck.\n");
     }
-
-    APP_DEBUG("Executing %s.\n", cli_request->buffer);
 
     app_data.bytes = snprintf(response_string, sizeof response_string, "Time: %s", ctime(&cur_time));
     response_string[app_data.bytes-1] = '\0';
