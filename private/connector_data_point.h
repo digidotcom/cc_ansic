@@ -722,6 +722,8 @@ static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * cons
                          * this function will be called again to finish the CSV. */
                         break;
                 }
+                #else
+                UNUSED_PARAMETER(transport);
                 #endif
                 break;
             }
