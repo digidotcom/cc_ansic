@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Digi International Inc.,
+ * Copyright (c) 2012 Digi International Inc.,
  * All rights not expressly granted are reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -14,7 +14,6 @@
 #include <bsp.h>
 #include <rtcs.h>
 #include <ipcfg.h>
-#include <select.h>
 #include <errno.h>
 #include <connector_api.h>
 #include <connector_types.h>
@@ -118,37 +117,6 @@ static int app_connect_to_server(int fd, _ip_address const ip_addr)
 	} 
 
     return result;
-}
-
-static int app_is_connect_complete(int fd)
-{
-    int ret = -1;
-    struct timeval timeout = {0};
-    fd_set read_set;
-    fd_set write_set;
-
-    FD_ZERO(&read_set);
-    FD_SET(fd, &read_set);
-    write_set = read_set;
-
-    timeout.tv_sec = 2;
-    /* wait for 2 seconds to connect */
-    if (select(fd+1, &read_set, &write_set, NULL, &timeout) <= 0)
-        goto error;
-
-    /* Check whether the socket is now writable (connection succeeded). */
-    if (FD_ISSET(fd, &write_set))
-    {
-        /* We expect "socket writable" when the connection succeeds. */
-        /* If we also got a "socket readable" we have an error. */
-        if (FD_ISSET(fd, &read_set))
-            goto error;
-
-        ret = 0;
-    }
-
-error:
-    return ret;
 }
 
 static int app_load_certificate_and_key(CYASSL_CTX * const ctx)
@@ -299,13 +267,6 @@ static connector_callback_status_t app_tcp_connect(_ip_address const ip_addr, co
     	APP_DEBUG("app_connect_to_server failed\n");
     	goto error;
     }
-       
-
-    if (app_is_connect_complete(ssl_info.sfd) < 0){
-    	APP_DEBUG("app_is_connect_complete failed\n");
-        goto error;
-    }
-
 
     if (app_ssl_connect(&ssl_info) < 0) {
     	APP_DEBUG("app_ssl_connect failed\n");

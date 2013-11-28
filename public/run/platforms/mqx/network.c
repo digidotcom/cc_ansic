@@ -13,7 +13,6 @@
 #include <bsp.h>
 #include <rtcs.h>
 #include <ipcfg.h>
-#include <select.h>
 #include <errno.h>
 #include <connector_api.h>
 #include <connector_types.h>
@@ -83,9 +82,10 @@ static int set_socket_options(int const fd)
 {
 	#define SOCKET_BUFFER_SIZE 		512
 	#define SOCKET_TIMEOUT_MSEC 	1000000
-	uint_32 option = TRUE;
+	uint_32 option;
 	int retval;
 	
+    option = TRUE;
 	retval = setsockopt(fd, SOL_TCP, OPT_RECEIVE_NOWAIT, &option, sizeof option); 
 	if(retval != RTCS_OK)
 	{
@@ -153,52 +153,11 @@ static connector_callback_status_t app_tcp_connect(int const fd, _ip_address con
     return status;
 }
 
-static connector_callback_status_t app_is_tcp_connect_complete(int const fd)
-{
-    connector_callback_status_t status = connector_callback_busy;
-    struct timeval timeout;
-    fd_set read_set, write_set;
-    int retval;
-
-    FD_ZERO(&read_set);
-    FD_SET(fd, &read_set);
-    write_set = read_set;
-	timeout.tv_sec = 30;
-
-	APP_DEBUG("network_connect: calling select\n");
-
-	retval = select(fd+1, &read_set, &write_set, NULL, &timeout);
-    if (retval <= 0)
-    {
-		APP_DEBUG("app_is_tcp_connect_complete: select on fd %d returned %d\n", fd, retval);
-		status = connector_callback_error;
-    }
-    else if (retval > 0 && FD_ISSET(fd, &write_set))
-    {
-        /* Check whether the socket is now writable (connection succeeded). */
-
-        /* We expect "socket writable" when the connection succeeds. */
-        /* If we also got a "socket readable" we have an error. */
-        if (FD_ISSET(fd, &read_set))
-        {
-            APP_DEBUG("app_is_tcp_connect_complete: FD_ISSET for read, fd %d\n", fd);
-            status = connector_callback_error;
-
-        }
-        else
-        {
-            status = connector_callback_continue;
-        }
-    }
-    return status;
-}
-
 static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
 {
     connector_callback_status_t status = connector_callback_abort;
     static _mqx_int socket_fd = RTCS_SOCKET_ERROR;
 
-    data->handle = &socket_fd;
     if (socket_fd == RTCS_SOCKET_ERROR)
     {
         _ip_address server_ip_addr;
@@ -232,12 +191,8 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         }
     }
     
-    status = app_is_tcp_connect_complete(socket_fd);
-    if (status == connector_callback_continue)
-    {
-         APP_DEBUG("network_connect: 3 way handshake, connected to [%s] server\n", data->device_cloud_url);
-         goto done;
-    }
+    APP_DEBUG("network_connect: 3 way handshake, connected to [%s] server\n", data->device_cloud_url);
+    data->handle = &socket_fd;
 
 done:
     if (status != connector_callback_continue)
