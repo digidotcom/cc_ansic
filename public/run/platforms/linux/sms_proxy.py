@@ -69,7 +69,7 @@ at: %s
 def ListenForConnections():
     global client
 
-    backlog = 5 
+    backlog = 1
     size = 1024 
     
     #for tests, skip sms sent.
@@ -86,12 +86,18 @@ def ListenForConnections():
 
     sms = digisms.Callback(sms_callback)
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-    s.bind((host,port)) 
-    s.listen(backlog) 
     exit1 = 0
     while exit1 == 0: 
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+        s.bind((host,port)) 
+        s.listen(backlog) 
+
         client, address = s.accept() 
+
+        # Close s so nobody can connect until
+        s.close()
+        s = None
+
         print "hello ", address
 
         exit2 = 0
