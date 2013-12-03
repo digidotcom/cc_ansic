@@ -906,7 +906,7 @@ error:
 }
 
 #if (defined CONNECTOR_SHORT_MESSAGE)
-static connector_callback_status_t dp_handle_length_callback(connector_data_service_length_t * const data_ptr)
+static connector_callback_status_t dp_handle_length_callback(connector_data_t * const connector_ptr, connector_data_service_length_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
     data_point_info_t * const dp_info = data_ptr->user_context;
@@ -920,20 +920,44 @@ static connector_callback_status_t dp_handle_length_callback(connector_data_serv
 
         case dp_content_type_csv:
         {
-            size_t const sm_header_bytes = 6;
-            #if (defined CONNECTOR_TRANSPORT_UDP)
-            size_t const transport_layer_bytes = (data_ptr->transport == connector_transport_udp) ? 18 : 10;
-            size_t const max_packet_size = (data_ptr->transport == connector_transport_udp) ? SM_PACKET_SIZE_UDP : SM_PACKET_SIZE_SMS;
-            #else
-            size_t const transport_layer_bytes = 10;
-            size_t const max_packet_size = SM_PACKET_SIZE_SMS;
-            #endif
-            size_t const max_payload_bytes = max_packet_size - (sm_header_bytes + transport_layer_bytes);
+            connector_sm_data_t * sm_ptr = NULL;
+            size_t max_payload_bytes;
+
+            switch (data_ptr->transport)
+            {
+                #if (defined CONNECTOR_TRANSPORT_UDP)
+                case connector_transport_udp:
+                    sm_ptr = &connector_ptr->sm_udp;
+                    break;
+                #endif
+
+                #if (defined CONNECTOR_TRANSPORT_SMS)
+                case connector_transport_sms:
+                    sm_ptr = &connector_ptr->sm_sms;
+                    break;
+                #endif
+
+                default:
+                    ASSERT(connector_false);
+                    break;
+            }
+
+            max_payload_bytes = sm_ptr->transport.sm_mtu_tx - record_end(segment);
+
             #if !(defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS)
             #define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS   1
             #endif
 
-            data_ptr->total_bytes = max_payload_bytes * CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS;
+            if (CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS == 1)
+            {
+                data_ptr->total_bytes = max_payload_bytes;
+            }
+            else
+            {
+                size_t const segment0_overhead_bytes = record_end(segment0) - record_end(segmentn);
+                data_ptr->total_bytes = CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS * max_payload_bytes - segment0_overhead_bytes;
+            }
+
             break;
         }
     }
@@ -965,7 +989,7 @@ static connector_callback_status_t dp_handle_callback(connector_data_t * const c
 
         #if (defined CONNECTOR_SHORT_MESSAGE)
         case connector_request_id_data_service_send_length:
-            status = dp_handle_length_callback(data);
+            status = dp_handle_length_callback(connector_ptr, data);
             break;
         #endif
 
