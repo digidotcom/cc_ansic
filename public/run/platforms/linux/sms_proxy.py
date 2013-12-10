@@ -94,7 +94,7 @@ def ListenForConnections():
 
         client, address = s.accept() 
 
-        # Close s so nobody can connect until
+        # Close s to allow one single connection
         s.close()
         s = None
 
