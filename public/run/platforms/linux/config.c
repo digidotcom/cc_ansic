@@ -76,7 +76,7 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
             struct sockaddr_in * sa = cast_for_alignment(struct sockaddr_in *, &req->ifr_addr);
 
             APP_DEBUG("get_ip_address: %d: Interface name [%s]\tIP Address [%s]\n", i+1, req->ifr_name, inet_ntoa(sa->sin_addr));
-            if (sa->sin_addr.s_addr != htonl(INADDR_LOOPBACK))
+            if (sa->sin_addr.s_addr && sa->sin_addr.s_addr != htonl(INADDR_LOOPBACK))
             {
                 ip_addr = sa->sin_addr;
                 break;
