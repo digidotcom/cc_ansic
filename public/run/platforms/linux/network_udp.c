@@ -139,7 +139,7 @@ static connector_callback_status_t app_udp_connect(int const fd, in_addr_t const
     sin.sin_port   = htons(CONNECTOR_UDP_PORT);
     sin.sin_family = AF_INET;
 
-    if (connect(fd, &sin, sizeof(sin)) < 0)
+    if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0)
     {
         APP_DEBUG("network_udp_open: connect() failed, errno %d\n", errno);
         status = connector_callback_error;
