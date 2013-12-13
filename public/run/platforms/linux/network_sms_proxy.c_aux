@@ -316,6 +316,7 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
          goto done;
     }
 
+error:
     if (status == connector_callback_busy)
     {
         unsigned long elapsed_time;
@@ -330,7 +331,6 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
         }
     }
 
-error:
     if (status == connector_callback_error)
     {
         APP_DEBUG("app_network_sms_open: failed to connect to %s\n", GW_ADDR);
@@ -525,6 +525,10 @@ static connector_callback_status_t app_network_sms_close(connector_network_close
 
     *fd = -1;
 
+    /* Let the proxy close the socket and listen for a new one.
+       Consider that it has a 0 backlog (handles 1 single connection)
+     */
+    usleep(1000000);
     return status;
 }
 
