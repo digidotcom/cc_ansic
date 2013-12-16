@@ -14,6 +14,7 @@
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <sys/socket.h>
 #include <ctype.h>
 #include "connector_config.h"
 #include "connector_debug.h"
