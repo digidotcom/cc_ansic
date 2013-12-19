@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include "connector_api.h"
 #include "platform.h"
-#ifndef ENV_CYGWIN
+#ifdef ENV_LINUX
 #include <linux/reboot.h>
 #include <sys/reboot.h>
 #endif
@@ -139,7 +139,7 @@ static connector_callback_status_t app_os_reboot(void)
     APP_DEBUG("app_os_reboot!\n");
 
     /* Note: we must be running as the superuser to reboot the system */
-#ifndef ENV_CYGWIN
+#ifdef ENV_LINUX
     sync();
     reboot(LINUX_REBOOT_CMD_RESTART);
 #endif
