@@ -32,6 +32,8 @@ static void * connector_run_thread(void * arg)
     APP_DEBUG("connector_run thread exits\n");
 
     pthread_exit(arg);
+
+    return NULL;
 }
 
 static void * application_run_thread(void * arg)
@@ -45,6 +47,8 @@ static void * application_run_thread(void * arg)
     APP_DEBUG("application_run thread exits %d\n", status);
 
     pthread_exit(arg);
+
+    return NULL;
 }
 
 int main (void)

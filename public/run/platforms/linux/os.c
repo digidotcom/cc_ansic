@@ -15,8 +15,10 @@
 #include <unistd.h>
 #include "connector_api.h"
 #include "platform.h"
+#ifdef ENV_LINUX
 #include <linux/reboot.h>
 #include <sys/reboot.h>
+#endif
 #include <sched.h>
 
 #include <stdio.h>
@@ -137,8 +139,10 @@ static connector_callback_status_t app_os_reboot(void)
     APP_DEBUG("app_os_reboot!\n");
 
     /* Note: we must be running as the superuser to reboot the system */
+#ifdef ENV_LINUX
     sync();
     reboot(LINUX_REBOOT_CMD_RESTART);
+#endif
     return connector_callback_continue;
 }
 

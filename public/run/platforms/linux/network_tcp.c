@@ -182,7 +182,7 @@ static connector_callback_status_t app_tcp_connect(int const fd, in_addr_t const
     APP_DEBUG("app_tcp_connect: fd %d\n", fd);
 
 
-    if (connect(fd, &sin, sizeof(sin)) < 0)
+    if (connect(fd, (struct sockaddr *)&sin, sizeof(sin)) < 0)
     {
         int const err = errno;
         switch (err)
@@ -278,7 +278,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
 
     /* Get socket info of connected interface */
     interface_addr_len = sizeof(interface_addr);
-    if (getsockname(fd, &interface_addr, &interface_addr_len))
+    if (getsockname(fd, (struct sockaddr *)&interface_addr, &interface_addr_len))
     {
         APP_DEBUG("network_connect: getsockname error, errno %d\n", errno);
         goto done;
