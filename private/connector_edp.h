@@ -398,6 +398,9 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
 #endif
 #if (defined CONNECTOR_DATA_POINTS)
     case connector_initiate_data_point_single:
+#if (CONNECTOR_VERSION >= 0x02010004)
+    case connector_initiate_data_point_multiple:
+#endif
     case connector_initiate_data_point_binary:
         if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud) goto done;
 
@@ -439,6 +442,11 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             case connector_initiate_data_point_single:
                 result = dp_initiate_data_point_single(request_data);
                 break;
+#if (CONNECTOR_VERSION >= 0x02010004)
+            case connector_initiate_data_point_multiple:
+                result = dp_initiate_data_point_multiple(request_data);
+                break;
+#endif
             case connector_initiate_data_point_binary:
                 result = dp_initiate_data_point_binary(request_data);
                 break;

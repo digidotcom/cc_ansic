@@ -32,7 +32,7 @@
  *                                       v v v v
  *                                    0x01010000
  */
-#define CONNECTOR_VERSION    0x02010001
+#define CONNECTOR_VERSION    0x02010004
 
 #include "connector_config.h"
 
@@ -311,6 +311,7 @@ typedef enum
     #if (defined CONNECTOR_DATA_POINTS)
     connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Device Cloud. */
     connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Device Cloud. */
+    connector_initiate_data_point_multiple,  /**< Initiates the action to send data points of multiple streams to Device Cloud. */
     #endif
 
     connector_initiate_terminate        /**< Terminates and stops Cloud Connector from running. */
@@ -769,6 +770,8 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Pointer to @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t"
  *                      @li @b connector_initiate_data_point_single:
  *                          Pointer to @ref connector_request_data_point_single_t "connector_request_data_point_single_t"
+ *                      @li @b connector_initiate_data_point_multiple:
+ *                          Pointer to @ref connector_request_data_point_multiple_t "connector_request_data_point_multiple_t"
  *                      @li @b connector_initiate_ping_request:
  *                          Pointer to @ref connector_sm_send_ping_request_t "connector_sm_send_ping_request_t"
  *                      @li @b connector_initiate_session_cancel:
