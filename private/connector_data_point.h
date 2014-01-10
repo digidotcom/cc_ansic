@@ -37,6 +37,7 @@ typedef struct
 #if (CONNECTOR_VERSION >= 0x02010004)
             connector_request_data_point_multiple_t const * dp_request_multiple;
 #endif
+            connector_data_stream_t const * current_ds;
             connector_data_point_t const * current_dp;
             size_t bytes_sent;
             size_t bytes_to_send;
@@ -123,7 +124,12 @@ static connector_status_t dp_initiate_data_point_multiple(connector_request_data
         goto error;
     }
 
-    if ((dp_ptr->point == NULL))
+    if ((dp_ptr->stream == NULL))
+    {
+        connector_debug_printf("dp_initiate_data_point_multiple: NULL data stream\n");
+        goto error;
+    }
+    else if ((dp_ptr->stream->point == NULL))
     {
         connector_debug_printf("dp_initiate_data_point_multiple: NULL data point\n");
         goto error;
@@ -409,7 +415,8 @@ static connector_status_t dp_process_csv_multiple(connector_data_t * const conne
 
     dp_info->type = dp_content_type_csv_multiple;
     dp_info->data.csv.dp_request_multiple = dp_ptr;
-    dp_info->data.csv.current_dp = dp_ptr->point;
+    dp_info->data.csv.current_ds = dp_ptr->stream;
+    dp_info->data.csv.current_dp = dp_ptr->stream->point;
     dp_info->data.csv.bytes_sent = 0;
     dp_info->data.csv.bytes_to_send = 0;
     dp_info->data.csv.state = dp_state_data;
@@ -563,8 +570,10 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
 #if (CONNECTOR_VERSION >= 0x02010004)
     else if (dp_info->type == dp_content_type_csv_multiple)
     {
-        ASSERT_GOTO(connector_data_point_type_binary >= dp_ptr->type, done);
-        type = dp_ptr->type;
+        connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
+
+        ASSERT_GOTO(connector_data_point_type_binary >= ds_ptr->type, done);
+        type = ds_ptr->type;
     }
 #endif
     else ASSERT(connector_false);
@@ -712,10 +721,10 @@ static size_t dp_process_type(data_point_info_t * const dp_info, char * const bu
 #if (CONNECTOR_VERSION >= 0x02010004)
     else if (dp_info->type == dp_content_type_csv_multiple)
     {
-        connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
+        connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
 
-        ASSERT_GOTO(connector_data_point_type_binary >= dp_ptr->type, error);
-        bytes_processed = connector_snprintf(buffer, bytes_available, "%s", type_list[dp_ptr->type]);
+        ASSERT_GOTO(connector_data_point_type_binary >= ds_ptr->type, error);
+        bytes_processed = connector_snprintf(buffer, bytes_available, "%s", type_list[ds_ptr->type]);
     }
 #endif
     else ASSERT(connector_false);
@@ -737,9 +746,9 @@ static size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
 #if (CONNECTOR_VERSION >= 0x02010004)
     else if (dp_info->type == dp_content_type_csv_multiple)
     {
-        connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-        if (dp_ptr->unit != NULL)
-            bytes_processed = dp_process_string(dp_ptr->unit, buffer, bytes_available, NULL);
+        connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
+        if (ds_ptr->unit != NULL)
+            bytes_processed = dp_process_string(ds_ptr->unit, buffer, bytes_available, NULL);
     }
 #endif
     else ASSERT(connector_false);
@@ -760,9 +769,9 @@ static size_t dp_process_forward_to(data_point_info_t * const dp_info, char * co
 #if (CONNECTOR_VERSION >= 0x02010004)
     else if (dp_info->type == dp_content_type_csv_multiple)
     {
-        connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-        if (dp_ptr->forward_to != NULL)
-            bytes_processed = dp_process_string(dp_ptr->forward_to, buffer, bytes_available, NULL);
+        connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
+        if (ds_ptr->forward_to != NULL)
+            bytes_processed = dp_process_string(ds_ptr->forward_to, buffer, bytes_available, NULL);
     }
 #endif
 
@@ -773,12 +782,12 @@ static size_t dp_process_forward_to(data_point_info_t * const dp_info, char * co
 static size_t dp_process_stream_id(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
     size_t bytes_processed = 0;
-    connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
+    connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
 
     ASSERT(dp_info->type == dp_content_type_csv_multiple);
 
-    if (dp_ptr->stream_id != NULL)
-        bytes_processed = dp_process_string(dp_ptr->stream_id, buffer, bytes_available, NULL);
+    if (ds_ptr->stream_id != NULL)
+        bytes_processed = dp_process_string(ds_ptr->stream_id, buffer, bytes_available, NULL);
 
     return bytes_processed;
 }
@@ -794,6 +803,14 @@ static size_t dp_update_state(data_point_info_t * const dp_info, char * const bu
     {
         *buffer = '\n';
         dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
+        if ((dp_info->type == dp_content_type_csv_multiple) && (dp_info->data.csv.current_dp == NULL))
+        {
+            dp_info->data.csv.current_ds = dp_info->data.csv.current_ds->next;
+            if (dp_info->data.csv.current_ds != NULL)
+            {
+                dp_info->data.csv.current_dp = dp_info->data.csv.current_ds->point;
+            }
+        }
         dp_info->data.csv.state = dp_state_data;
     }
     else

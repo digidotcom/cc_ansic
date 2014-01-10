@@ -109,11 +109,9 @@ typedef struct
 */
 /**
 * Data structure to make a linked list of data points to send it out in one transaction.
-* When used in connector_request_data_point_single_t, all the data points in a list must belong to single stream.
-* When used in connector_request_data_point_multiple_t, the data points in a list can belong to multiple streams.
-*
+* All the data points in a list must belong to single stream.
 * @see connector_request_data_point_single_t
-* @see connector_request_data_point_multiple_t
+* @see connector_data_stream_t
 * @see connector_data_point_type_t
 */
 typedef struct connector_data_point_t
@@ -235,14 +233,31 @@ typedef struct connector_data_point_t
     char * description; /**< null terminated description string (optional field, set to NULL if not used) */
 
     struct connector_data_point_t * next; /**< Points to next data point, set to NULL if this is the last one. */
-
-    /* Following fields are only used when the struct is used by connector_request_data_point_multiple_t  */
-    char * stream_id; /**<  */
-    char * unit; /**<  */
-    char * forward_to; /**<  */
-    connector_data_point_type_t type; /**<  */
-
 } connector_data_point_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_data_stream_t Data structure for non-binary data streams.
+* @{
+*/
+/**
+* Data structure to make a linked list of data streams to send it out in one transaction.
+* Each stream contains a linked list of data points
+* @see connector_request_data_point_multiple_t
+* @see connector_data_point_type_t
+* @see connector_data_point_t
+*/
+typedef struct connector_data_stream_t
+{
+    char * stream_id;
+    char * unit;
+    char * forward_to;
+    connector_data_point_type_t type;
+    connector_data_point_t * point;
+    struct connector_data_stream_t * next;
+} connector_data_stream_t;
 /**
 * @}
 */
@@ -321,10 +336,9 @@ typedef struct
 * @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
 *
 * @see connector_request_id_data_point_t
-* @see connector_data_point_t
+* @see connector_data_stream_t
 * @see connector_initiate_action
 * @see connector_initiate_data_point_multiple
-* @see connector_data_point_type_t
 */
 typedef struct
 {
@@ -334,7 +348,7 @@ typedef struct
     uint32_t * request_id;              /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
                                              and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
                                              See @connector_initiate_session_cancel*/
-    connector_data_point_t * point;     /**< pointer to list of data points */
+    connector_data_stream_t * stream;   /**< pointer to list of data streams */
     connector_bool_t response_required; /**< set to connector_true if response is needed */
 } connector_request_data_point_multiple_t;
 
