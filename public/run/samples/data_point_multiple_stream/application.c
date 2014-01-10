@@ -20,10 +20,11 @@
 #include "application.h"
 
 extern connector_callback_status_t app_data_point_handler(connector_request_id_data_point_t const request, void  * const data);
-extern void app_update_point(size_t stream_index, void * const points, size_t const index);
-extern connector_status_t app_send_data_point(connector_handle_t handle, void * const points);
-extern void * app_allocate_data_points(size_t const points_count);
-extern void app_free_data_points(void * points);
+extern void app_update_stream(void * const buffer, size_t const stream_index);
+extern void app_update_point(void * const buffer, size_t const stream_index, size_t const point_index);
+extern connector_status_t app_send_data_point(connector_handle_t handle, void * const buffer);
+extern void * app_allocate_data(size_t const stream_count, size_t const point_count);
+extern void app_free_data(void * buffer, size_t const stream_count);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -91,12 +92,14 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 int application_run(connector_handle_t handle)
 {
     connector_status_t status = connector_success;
-    size_t const points_per_message = APP_NUM_STREAMS * APP_NUM_POINTS_PER_STREAM;
-    void * const points = app_allocate_data_points(points_per_message);
-    size_t current_point_index = 0;
+    void * const buffer = app_allocate_data(APP_NUM_STREAMS, APP_NUM_POINTS_PER_STREAM);
+    size_t point_index = 0;
     size_t busy_count = 0;
 
-    if (points == NULL)  goto error;
+    if (buffer == NULL)  goto error;
+
+    for (size_t stream_idx = 0; stream_idx < APP_NUM_STREAMS; stream_idx++)
+        app_update_stream(buffer, stream_idx);
 
     for(;;)
     {
@@ -106,13 +109,14 @@ int application_run(connector_handle_t handle)
         {
             /* Collect a sample for each stream */
             for(size_t stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
-                app_update_point(stream_index, points, current_point_index++);
+                app_update_point(buffer, stream_index, point_index);
+            point_index++;
         }
 
-        if (current_point_index == points_per_message)
+        if (point_index == APP_NUM_POINTS_PER_STREAM)
         {
             /* Now is time to send all collected samples to Device Cloud */
-            status = app_send_data_point(handle, points);
+            status = app_send_data_point(handle, buffer);
 
             switch (status)
             {
@@ -122,19 +126,19 @@ int application_run(connector_handle_t handle)
                 {
                     int const point_delay_in_seconds = 4;
 
-                    if (++busy_count > points_per_message) goto done;
+                    if (++busy_count > APP_NUM_POINTS_PER_STREAM) goto done;
                     APP_DEBUG(".");
                     sleep(point_delay_in_seconds);
                     break;
                 }
 
                 case connector_success:
-                    current_point_index = 0;
+                    point_index = 0;
                     busy_count = 0;
                     break;
 
                 default:
-                    APP_DEBUG("Failed to send data point. status:%d\n", status);
+                    APP_DEBUG("Failed to send data point multiple. status:%d\n", status);
                     goto done;
             }
 
@@ -143,9 +147,9 @@ int application_run(connector_handle_t handle)
     }
 
 done:
-    app_free_data_points(points);
+    app_free_data(buffer, APP_NUM_STREAMS);
 
 error:
-    APP_DEBUG("Data point sample is exited!\n");
+    APP_DEBUG("Data point multiple sample is exited!\n");
     return 1;
 }

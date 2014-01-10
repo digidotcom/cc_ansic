@@ -17,26 +17,38 @@
 
 static connector_bool_t data_points_valid = connector_false;
 
-void * app_allocate_data_points(size_t const points_count)
+void * app_allocate_data(size_t const stream_count, size_t const point_count)
 {
     connector_request_data_point_multiple_t * dp_ptr = malloc(sizeof *dp_ptr);
 
     if (dp_ptr != NULL)
     {
-        size_t index;
-        dp_ptr->point = malloc(points_count * sizeof *dp_ptr->point);
+        dp_ptr->stream = malloc(stream_count * sizeof *dp_ptr->stream);
 
-        if (dp_ptr->point != NULL)
+        if (dp_ptr->stream != NULL)
         {
-            connector_data_point_t * point = dp_ptr->point;
+            connector_data_stream_t * stream = dp_ptr->stream;
 
-            for (index = 1; index < points_count; index++)
+            for (size_t stream_idx = 0; stream_idx < stream_count; stream_idx++)
             {
-                point->next = point + 1;
-                point++;
+                stream->next = stream + 1;
+
+                stream->point = malloc(point_count * sizeof *dp_ptr->stream->point);
+
+                if (stream->point != NULL)
+                {
+                    connector_data_point_t * point = stream->point;
+                    for (size_t point_idx = 0; point_idx < point_count; point_idx++)
+                    {
+						point->next = point + 1;
+                        point++;
+                    }
+		            point->next = NULL;
+                }
+                stream++;
             }
 
-            point->next = NULL;
+            stream->next = NULL;
  
             dp_ptr->user_context = dp_ptr;
             dp_ptr->transport = connector_transport_tcp;
@@ -53,12 +65,18 @@ void * app_allocate_data_points(size_t const points_count)
     return dp_ptr;
 }
 
-void app_free_data_points(connector_request_data_point_multiple_t * dp_ptr)
+void app_free_data(connector_request_data_point_multiple_t * dp_ptr, size_t const stream_count)
 {
     if (dp_ptr != NULL)
     {
-        if (dp_ptr->point != NULL)
-            free(dp_ptr->point);
+        if (dp_ptr->stream != NULL)
+        {
+            for (size_t stream_idx = 0; stream_idx < stream_count; stream_idx++)
+            {
+                connector_data_stream_t * const stream = &dp_ptr->stream[stream_idx];
+                free(stream->point);
+            }
+        }
 
         free(dp_ptr);
     }
@@ -160,10 +178,27 @@ static float app_get_incremental(void)
     return incremental++;
 }
 
-void app_update_point(size_t stream_index, connector_request_data_point_multiple_t * const dp_ptr, size_t const index)
+void app_update_stream(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_idx)
 {
-    connector_data_point_t * const point = dp_ptr->point + index;
+    connector_data_stream_t * const stream = &dp_ptr->stream[stream_idx];
 
+    static char * DataStreams[APP_NUM_STREAMS] = {"cpu_usage", "cpu_temp", "incremental"};
+    static char * DataStreams_units[APP_NUM_STREAMS] = {"%", "Celsius degrees", "Counts"};
+    //static char * DataStreams_forward[APP_NUM_STREAMS] = {"steam1_fw_a,steam1_fw_b", "steam2_fw", "steam3_fw"};
+    static connector_data_point_type_t DataStreams_type[APP_NUM_STREAMS] = { connector_data_point_type_integer, connector_data_point_type_float, connector_data_point_type_integer };
+
+    ASSERT(stream_idx < APP_NUM_STREAMS);
+
+    stream->stream_id = DataStreams[stream_idx];
+    stream->unit = DataStreams_units[stream_idx];
+    //stream->forward_to = DataStreams_forward[stream_idx];
+    stream->type = DataStreams_type[stream_idx];
+}
+
+void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_idx, size_t const point_index)
+{
+    connector_data_point_t * const point = &dp_ptr->stream[stream_idx].point[point_index];
+	
     {
         time_t const current_time = time(NULL);
 
@@ -186,41 +221,30 @@ void app_update_point(size_t stream_index, connector_request_data_point_multiple
     point->quality.type = connector_quality_type_ignore;
 
     {
+        static char * DataPoint_description[APP_NUM_STREAMS] = {"CPU usage", "CPU temperature (random)", "Just an incremental count"};
+        
+        point->description = DataPoint_description[stream_idx];
+    }
 
-        static char * DataStreams[APP_NUM_STREAMS] = {"cpu_usage", "cpu_temp", "incremental"};
-        static char * DataStreams_description[APP_NUM_STREAMS] = {"CPU usage", "CPU temperature (random)", "Just an incremental count"};
-		static char * DataStreams_units[APP_NUM_STREAMS] = {"%", "Celsius degrees", "Counts"};
-	    //static char * DataStreams_forward[APP_NUM_STREAMS] = {"steam1_fw_a,steam1_fw_b", "steam2_fw", "steam3_fw"};
-		static connector_data_point_type_t DataStreams_type[APP_NUM_STREAMS] = { connector_data_point_type_integer, connector_data_point_type_float, connector_data_point_type_integer };
+    point->data.type = connector_data_type_native;
 
-        ASSERT(stream_index < APP_NUM_STREAMS);
+    switch (stream_idx)
+    {
+        case 0:
+            point->data.element.native.int_value = app_get_cpu_usage();
+            break;
 
-        point->stream_id = DataStreams[stream_index];
-        point->description = DataStreams_description[stream_index];
-        point->unit = DataStreams_units[stream_index];
-		//point->forward_to = DataStreams_forward[stream_index];
-        point->type = DataStreams_type[stream_index];
+        case 1:
+            point->data.element.native.float_value = app_get_cpu_temperature();
+            break;
 
-        point->data.type = connector_data_type_native;
-
-        switch (stream_index)
-        {
-            case 0:
-                point->data.element.native.int_value = app_get_cpu_usage();
-                break;
-
-            case 1:
-                point->data.element.native.float_value = app_get_cpu_temperature();
-                break;
-
-            case 2:
-                point->data.element.native.int_value = app_get_incremental();
-                break;
+        case 2:
+            point->data.element.native.int_value = app_get_incremental();
+            break;
             
-			default:
-                ASSERT(0);
-                break;
-        }
+        default:
+            ASSERT(0);
+            break;
     }
 }
 
