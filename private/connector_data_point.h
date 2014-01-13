@@ -36,8 +36,8 @@ typedef struct
             connector_request_data_point_single_t const * dp_request_single;
 #if (CONNECTOR_VERSION >= 0x02010004)
             connector_request_data_point_multiple_t const * dp_request_multiple;
-#endif
             connector_data_stream_t const * current_ds;
+#endif
             connector_data_point_t const * current_dp;
             size_t bytes_sent;
             size_t bytes_to_send;
@@ -803,6 +803,7 @@ static size_t dp_update_state(data_point_info_t * const dp_info, char * const bu
     {
         *buffer = '\n';
         dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
+#if (CONNECTOR_VERSION >= 0x02010004)
         if ((dp_info->type == dp_content_type_csv_multiple) && (dp_info->data.csv.current_dp == NULL))
         {
             dp_info->data.csv.current_ds = dp_info->data.csv.current_ds->next;
@@ -811,6 +812,7 @@ static size_t dp_update_state(data_point_info_t * const dp_info, char * const bu
                 dp_info->data.csv.current_dp = dp_info->data.csv.current_ds->point;
             }
         }
+#endif
         dp_info->data.csv.state = dp_state_data;
     }
     else
