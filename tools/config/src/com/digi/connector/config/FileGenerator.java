@@ -32,11 +32,8 @@ public class FileGenerator {
 
     private final static String COUNT_STRING = "COUNT";
     private final static String OFFSET_STRING = "OFFSET";
-    private final static String STATIC = "static ";
-    private final static String CONST = " const ";
 
-    private final static String CHAR_CONST_STRING = STATIC + "char" + CONST
-            + "*" + CONST;
+    private final static String CHAR_CONST_STRING = "static char CONST * CONST ";
     private final static String ID_T_STRING = "_id_t;\n\n";
     private final static String TYPEDEF_STRUCT = "\ntypedef struct {\n";
 
@@ -50,8 +47,8 @@ public class FileGenerator {
     private final static String RCI_PARSER_DATA = "CONNECTOR_RCI_PARSER_INTERNAL_DATA";
     
     private final static String CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE = "\ntypedef struct {\n" +
-    " connector_remote_group_table_t const * group_table;\n" +
-	" char const * const * error_table;\n" +
+    " connector_remote_group_table_t CONST * group_table;\n" +
+	" char CONST * CONST * error_table;\n" +
 	" unsigned int global_error_count;\n" +
 	" uint32_t firmware_target_zero_version;\n" +
 	"} connector_remote_config_data_t;\n";
@@ -65,11 +62,11 @@ public class FileGenerator {
     "  size_t instances;\n" +
     "  struct {\n" +
     "    size_t count;\n" +
-    "    connector_group_element_t const * const data;\n" +
+    "    connector_group_element_t CONST * CONST data;\n" +
     "  } elements;\n\n" +
     "  struct {\n" +
     "      size_t count;\n" +
-    "     char const * const * description;\n" +
+    "     char CONST * CONST * description;\n" +
     "  } errors;\n" +
     "} connector_group_t;\n";
 
@@ -93,7 +90,7 @@ public class FileGenerator {
     "  unsigned int error_id;\n" +
     "\n" +
     "  union {\n" +
-    "      char const * error_hint;\n" +
+    "      char CONST * error_hint;\n" +
     "      connector_element_value_t * element_value;\n" +
     "  } response;\n" +
     "} connector_remote_config_t;\n";
@@ -103,7 +100,7 @@ public class FileGenerator {
     "} connector_remote_config_cancel_t;\n";
         
     private final static String CONNECTOR_REMOTE_GROUP_TABLE_T = "\ntypedef struct {\n" +
-    "  connector_group_t const * groups;\n" +
+    "  connector_group_t CONST * groups;\n" +
     "  size_t count;\n" +
     "} connector_remote_group_table_t;\n";
     
@@ -242,7 +239,7 @@ public class FileGenerator {
                 
                 fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, headerFile));
                 writeHeaderFile(configData);
-                fileWriter.write(String.format("uint32_t const FIRMWARE_TARGET_ZERO_VERSION = 0x%X;\n\n", ConfigGenerator.getFirmware()));
+                fileWriter.write(String.format("uint32_t CONST FIRMWARE_TARGET_ZERO_VERSION = 0x%X;\n\n", ConfigGenerator.getFirmware()));
                 break;
                 
             case NONE:
@@ -272,10 +269,10 @@ public class FileGenerator {
                 fileWriter.write(String.format("\n#endif /* %s */\n", defineName));
                 break;
             case SOURCE:
-                headerWriter.write(String.format("\n\nextern uint32_t const FIRMWARE_TARGET_ZERO_VERSION;\n"));
+                headerWriter.write(String.format("\n\nextern uint32_t CONST FIRMWARE_TARGET_ZERO_VERSION;\n"));
                 headerWriter.write("extern unsigned int connector_global_error_COUNT;\n\n");
-                headerWriter.write(String.format("extern char const * const %ss[];\n",GLOBAL_RCI_ERROR));
-                headerWriter.write(String.format("extern connector_remote_group_table_t const %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
+                headerWriter.write(String.format("extern char CONST * CONST %ss[];\n",GLOBAL_RCI_ERROR));
+                headerWriter.write(String.format("extern connector_remote_group_table_t CONST %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
                 /* no break */
             case NONE:
                 writeDefineRciErrors(configData);
@@ -478,7 +475,7 @@ public class FileGenerator {
                                         + "    size_t min_length_in_bytes;\n"
                                         + "    size_t max_length_in_bytes;\n"
                                         + "} connector_element_value_string_t;\n";
-                        elementValueStruct += "    char const * string_value;\n";
+                        elementValueStruct += "    char CONST * string_value;\n";
                         isStringDefined = true;
                         optionCount++;
                      }
@@ -594,7 +591,7 @@ public class FileGenerator {
 
     private void writeRemoteAllStrings(ConfigData configData) throws Exception {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            fileWriter.write(String.format("\nchar const %s[] = {\n",
+            fileWriter.write(String.format("\nchar CONST %s[] = {\n",
                     CONNECTOR_REMOTE_ALL_STRING));
         }
         
@@ -699,7 +696,7 @@ public class FileGenerator {
 
     private void writeElementArrays(String group_name, LinkedList<ElementStruct> elements) throws Exception {
         /* write group element structure array */
-        fileWriter.write(String.format("static connector_group_element_t const %s_elements[] = {",
+        fileWriter.write(String.format("static connector_group_element_t CONST %s_elements[] = {",
                                         getDefineString(group_name).toLowerCase()));
 
         for (int element_index = 0; element_index < elements.size(); element_index++) {
@@ -735,7 +732,7 @@ public class FileGenerator {
                 
                 if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE)  staticString = "";
 
-                fileWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
+                fileWriter.write(String.format("%schar CONST * CONST %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
                         
                 /* top-level global errors */
                 errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
@@ -809,7 +806,7 @@ public class FileGenerator {
             if (!groups.isEmpty()) {
                 writeGroupStructures(groups);
 
-                fileWriter.write(String.format("static connector_group_t const connector_%s_groups[] = {", configType));
+                fileWriter.write(String.format("static connector_group_t CONST connector_%s_groups[] = {", configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     GroupStruct group = groups.get(group_index);
@@ -844,7 +841,7 @@ public class FileGenerator {
         String rciGroupString = "static ";
         if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) rciGroupString = "";
         
-        rciGroupString += String.format("connector_remote_group_table_t const %s[] = {\n",
+        rciGroupString += String.format("connector_remote_group_table_t CONST %s[] = {\n",
                                                 CONNECTOR_REMOTE_GROUP_TABLE);
 
         for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
