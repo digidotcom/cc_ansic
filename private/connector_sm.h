@@ -249,7 +249,7 @@ static uint32_t * get_request_id_ptr(connector_initiate_request_t const request,
             request_id = data->request_id;
             break;
         }
-#if (CONNECTOR_VERSION >= 0x02010004)
+#if (CONNECTOR_VERSION >= 0x02020000)
         case connector_initiate_data_point_multiple:
         {
             connector_request_data_point_multiple_t const * const data = request_data;
@@ -453,7 +453,7 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
 #if (defined CONNECTOR_DATA_POINTS)
         case connector_initiate_data_point_binary:
         case connector_initiate_data_point_single:
-#if (CONNECTOR_VERSION >= 0x02010004)
+#if (CONNECTOR_VERSION >= 0x02020000)
         case connector_initiate_data_point_multiple:
 #endif
 #endif
@@ -531,7 +531,7 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                             result = dp_initiate_data_point_single(request_data);
                             goto done_datapoints;
                         }
-#if (CONNECTOR_VERSION >= 0x02010004)
+#if (CONNECTOR_VERSION >= 0x02020000)
                         case connector_initiate_data_point_multiple:
                         {
                             sm_ptr->pending.pending_internal = connector_true;
