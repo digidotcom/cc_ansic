@@ -653,6 +653,7 @@ INPUT                  = ./mainpage.c \
                          ./connect_on_ssl.c \
                          ./data_point.c \
                          ./data_point_sample.c \
+                         ./data_point_multiple_sample.c \
                          ./config_callbacks.c \
                          ./web_services.c \
                          ./data_service.c \
