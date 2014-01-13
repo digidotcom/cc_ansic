@@ -251,12 +251,12 @@ typedef struct connector_data_point_t
 */
 typedef struct connector_data_stream_t
 {
-    char * stream_id;
-    char * unit;
-    char * forward_to;
-    connector_data_point_type_t type;
-    connector_data_point_t * point;
-    struct connector_data_stream_t * next;
+    char * stream_id;                       /**< data stream path name. On the cloud the stream name will be 'device ID'/'stream_id' */
+    char * unit;                            /**< null-terminated unit, optional field, set to NULL if not used */
+    char * forward_to;                      /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
+    connector_data_point_type_t type;       /**< data point content type */     
+    connector_data_point_t * point;         /**< pointer to list of data points */
+    struct connector_data_stream_t * next;  /**< Points to next data stream, set to NULL if this is the last one. */
 } connector_data_stream_t;
 /**
 * @}
@@ -323,6 +323,9 @@ typedef struct
     connector_bool_t response_required; /**< set to connector_true if response is needed */
     connector_data_point_type_t type;   /**< data point content type */
 } connector_request_data_point_single_t;
+/**
+* @}
+*/
 
 /**
 * @defgroup connector_request_data_point_multiple_t  Data points of multiple streams.
@@ -351,7 +354,6 @@ typedef struct
     connector_data_stream_t * stream;   /**< pointer to list of data streams */
     connector_bool_t response_required; /**< set to connector_true if response is needed */
 } connector_request_data_point_multiple_t;
-
 /**
 * @}
 */
