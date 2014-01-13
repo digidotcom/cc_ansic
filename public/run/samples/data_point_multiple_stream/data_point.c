@@ -257,7 +257,7 @@ void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, si
 
 static connector_bool_t app_dp_waiting_for_response = connector_false;
 
-connector_status_t app_send_data_point(connector_handle_t const handle, connector_request_data_point_multiple_t * const dp_ptr)
+connector_status_t app_send_data(connector_handle_t const handle, connector_request_data_point_multiple_t * const dp_ptr)
 {
     connector_status_t status = connector_success;
 

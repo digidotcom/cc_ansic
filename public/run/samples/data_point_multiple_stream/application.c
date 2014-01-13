@@ -22,7 +22,7 @@
 extern connector_callback_status_t app_data_point_handler(connector_request_id_data_point_t const request, void  * const data);
 extern void app_update_stream(void * const buffer, size_t const stream_index);
 extern void app_update_point(void * const buffer, size_t const stream_index, size_t const point_index);
-extern connector_status_t app_send_data_point(connector_handle_t handle, void * const buffer);
+extern connector_status_t app_send_data(connector_handle_t handle, void * const buffer);
 extern void * app_allocate_data(size_t const stream_count, size_t const point_count);
 extern void app_free_data(void * buffer, size_t const stream_count);
 
@@ -116,7 +116,7 @@ int application_run(connector_handle_t handle)
         if (point_index == APP_NUM_POINTS_PER_STREAM)
         {
             /* Now is time to send all collected samples to Device Cloud */
-            status = app_send_data_point(handle, buffer);
+            status = app_send_data(handle, buffer);
 
             switch (status)
             {
