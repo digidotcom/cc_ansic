@@ -48,10 +48,10 @@ public class FileGenerator {
     
     private final static String CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE = "\ntypedef struct {\n" +
     " connector_remote_group_table_t CONST * group_table;\n" +
-	" char CONST * CONST * error_table;\n" +
-	" unsigned int global_error_count;\n" +
-	" uint32_t firmware_target_zero_version;\n" +
-	"} connector_remote_config_data_t;\n";
+    " char CONST * CONST * error_table;\n" +
+    " unsigned int global_error_count;\n" +
+    " uint32_t firmware_target_zero_version;\n" +
+    "} connector_remote_config_data_t;\n";
 
     private final static String CONNECTOR_GROUP_ELEMENT_T = "\ntypedef struct {\n" +
     "    connector_element_access_t access;\n" +
@@ -90,7 +90,7 @@ public class FileGenerator {
     "  unsigned int error_id;\n" +
     "\n" +
     "  union {\n" +
-    "      char CONST * error_hint;\n" +
+    "      char const * error_hint;\n" +
     "      connector_element_value_t * element_value;\n" +
     "  } response;\n" +
     "} connector_remote_config_t;\n";
@@ -225,7 +225,7 @@ public class FileGenerator {
                 fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
                 fileWriter.write(String.format("%s \"connector_api.h\"\n\n", INCLUDE));
                 fileWriter.write(CONNECTOR_CONST_PROTECTION);
-                fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n");
+                fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE\n");
                 fileWriter.write("#define connector_request_id_remote_config_configurations    (connector_request_id_remote_config_t)-1\n\n");
 
                 writeHeaderFile(configData);
@@ -266,7 +266,7 @@ public class FileGenerator {
             case GLOBAL_HEADER:
                 fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE);
                 fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
-                fileWriter.write(String.format("\n#endif /* %s */\n", defineName));
+                fileWriter.write(String.format("\n#endif\n"));
                 break;
             case SOURCE:
                 headerWriter.write(String.format("\n\nextern uint32_t CONST FIRMWARE_TARGET_ZERO_VERSION;\n"));
@@ -293,12 +293,12 @@ public class FileGenerator {
                 
                 switch (ConfigGenerator.fileTypeOption()) {
                 case NONE:
-                    fileWriter.write(String.format("\n#endif /* %s */\n\n", RCI_PARSER_DATA));
+                    fileWriter.write(String.format("\n#endif\n\n"));
                     fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
-                    fileWriter.write(String.format("\n#endif /* %s */\n", defineName));
+                    fileWriter.write(String.format("\n#endif\n"));
                     break;
                 case SOURCE:
-                    headerWriter.write(String.format("\n#endif /* %s */\n", defineName));
+                    headerWriter.write(String.format("\n#endif\n"));
                     break;
                 }
                 
@@ -475,7 +475,7 @@ public class FileGenerator {
                                         + "    size_t min_length_in_bytes;\n"
                                         + "    size_t max_length_in_bytes;\n"
                                         + "} connector_element_value_string_t;\n";
-                        elementValueStruct += "    char CONST * string_value;\n";
+                        elementValueStruct += "    char const * string_value;\n";
                         isStringDefined = true;
                         optionCount++;
                      }
@@ -732,7 +732,7 @@ public class FileGenerator {
                 
                 if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE)  staticString = "";
 
-                fileWriter.write(String.format("%schar CONST * CONST %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
+                fileWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
                         
                 /* top-level global errors */
                 errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
