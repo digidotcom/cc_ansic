@@ -32,7 +32,7 @@
  *                                       v v v v
  *                                    0x01010000
  */
-#define CONNECTOR_VERSION    0x02010004
+#define CONNECTOR_VERSION    0x02020000
 
 #include "connector_config.h"
 
