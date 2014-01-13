@@ -143,7 +143,7 @@ typedef struct connector_data_point_t
         } element;  /**< each data element */
 
     } data;  /**< data in each data point */
- 
+
     struct
     {
         enum
@@ -162,7 +162,7 @@ typedef struct connector_data_point_t
 #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
             connector_time_epoch_whole_t since_epoch_whole;             /**< Time since the Epoch time in milliseconds */
 #endif
-            char * iso8601_string;                                      /**< 
+            char * iso8601_string;                                      /**<
                                                                              A null-terminated local time in ISO 8601 format. Supported format is YYYY-MM-DDThh:mm:ss[.mmm]TZD (eg 2012-03-29T10:05:45-06:00) where:
                                                                              - YYYY = four-digit year.
                                                                              - MM = two-digit month (eg 03=March).
@@ -185,7 +185,7 @@ typedef struct connector_data_point_t
         } value;    /**< Time value data structure */
 
     } time;   /**< Time at the data point is captured */
- 
+
     struct
     {
         enum
@@ -251,10 +251,10 @@ typedef struct connector_data_point_t
 */
 typedef struct connector_data_stream_t
 {
-    char * stream_id;                       /**< data stream path name. On the cloud the stream name will be 'device ID'/'stream_id' */
+    char * stream_id;                       /**< data stream path name. On Device Cloud, the stream name will be 'device ID'/'stream_id' */
     char * unit;                            /**< null-terminated unit, optional field, set to NULL if not used */
     char * forward_to;                      /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
-    connector_data_point_type_t type;       /**< data point content type */     
+    connector_data_point_type_t type;       /**< data point content type */
     connector_data_point_t * point;         /**< pointer to list of data points */
     struct connector_data_stream_t * next;  /**< Points to next data stream, set to NULL if this is the last one. */
 } connector_data_stream_t;
@@ -299,7 +299,7 @@ typedef struct
 * This data structure is used when the connector_initiate_action() API is called with
 * connector_initiate_data_point_single request id. This structure can be used to send
 * multiple points which are belong to a single stream.
-* 
+*
 * @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
 *
 * @see connector_request_id_data_point_t
@@ -335,7 +335,7 @@ typedef struct
 * This data structure is used when the connector_initiate_action() API is called with
 * connector_initiate_data_point_multiple request id. This structure can be used to send
 * multiple points which are belong to multiple streams.
-* 
+*
 * @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
 *
 * @see connector_request_id_data_point_t
@@ -395,9 +395,9 @@ typedef struct
 * @{
 */
 /**
-* The data in the callback with request id connector_request_id_data_point_binary_status, 
+* The data in the callback with request id connector_request_id_data_point_binary_status,
 * connector_request_id_data_point_single_status and connector_request_id_data_point_multiple_status
-* will point to this data structure. The callback is called when session completes either due to error 
+* will point to this data structure. The callback is called when session completes either due to error
 * or the response is not requested.
 *
 * @see connector_request_id_data_point_t

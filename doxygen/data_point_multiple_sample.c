@@ -6,7 +6,7 @@
  *
  * This sample extends @ref data_point_sample by sending data to several different data streams using only one message.
  * This application sends data points periodically to three different data streams: 'cpu_usage, 'cpu_temp' and 'incremental'.
- * Device Cloud (with Data Stream enabled) on the other hand collects these data and the data shows up under Data Streams 
+ * Device Cloud (with Data Stream enabled) on the other hand collects these data and the data shows up under Data Streams
  * page inside the Data Service tab.
  *
  * To learn more about Device Cloud Data Streams, see Device Cloud Data Streams section in the
@@ -29,18 +29,18 @@
  * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
  * when a data service request is received.
  *
- * The routine application_run() (or application_step()) allocates and configures three data streams: 'cpu_usage, 
- * 'cpu_temp' and 'incremental'. Then periodically (once every 2 seconds) calls app_update_point() to 
- * update one data point per data stream (in this sample it is CPU usage, CPU temperature and incremental). 
- * When 5 samples (data points) are collected for each stream (takes 10 seconds), the application calls app_send_data()
+ * The routine application_run() (or application_step()) allocates and configures three data streams: "cpu_usage",
+ * "cpu_temp" and "incremental". Then, once every 2 seconds, it calls app_update_point() to
+ * update one data point per data stream (in this sample: "cpu_usage", "cpu_temp" and "incremental").
+ * When 5 data points are collected for each stream (it takes 10 seconds), the application calls app_send_data()
  * which calls connector_initiate_action() to initiate the actual transfer of the data points. The sample
  * waits for the response before sending the next set of points.
  *
  * If the app_data_point_handler() is called with @ref connector_request_id_data_point_multiple_response
- * then this indicates a response from Device Cloud is received (This callback will only be issued if response 
+ * then this indicates a response from Device Cloud is received (this callback will only be called if response
  * was requested). The @ref connector_request_id_data_point_multiple_status is allways issued indicating the
  * status of the request after it's been completed. This sample uses linux, /proc/stat file
- * to calculate the CPU usage; the CPU temperature is just a float type random number and incremental is just and
+ * to calculate the "CPU usage"; the "CPU temperature" is just a random float number and "incremental" is just an
  * incremental integer.
  *
  * @section connect_build Building

@@ -10,9 +10,9 @@
  *
  * @li @ref binary_point : To send a data point with just value. With this one can send just one point per message.
  * @li @ref single_stream_points : To send several data points of a single stream in one message. User can use this
- * APIs to send timestamp, location, quality, description of each point.
+ * API to send timestamp, location, quality and/or description of each point.
  * @li @ref multiple_stream_points : To send several data points of multiple streams in one message. User can use this
- * APIs to send timestamp, location, quality, description of each point.
+ * API to send timestamp, location, quality and/or description of each point.
  *
  * @note See @ref CONNECTOR_DATA_POINTS to enable and disable data points.
  *
@@ -172,7 +172,7 @@
  * @subsection binary_point_status  Binary data point status
  *
  * Cloud Connector makes @ref connector_request_id_data_point_binary_status "binary data point status"
- * @ref connector_callback_t "callback" 
+ * @ref connector_callback_t "callback"
  *
  * The @ref connector_request_id_data_point_binary_status "binary data point status"
  * @ref connector_callback_t "callback" is called with the following information:
@@ -231,7 +231,7 @@
  *
  * @subsection initiate_single_stream_points Initiate single stream data points
  *
- * The application can send several data points which are belongs to a single data stream by calling
+ * The application can send several data points which belong to a single data stream by calling
  * connector_initiate_action() with @ref connector_initiate_data_point_single "action id" and
  * @ref connector_request_data_point_single_t "action data" as request_data.
  * The @ref connector_request_data_point_single_t "action data" cannot be a stack variable and can be
@@ -416,7 +416,7 @@
  *
  * @subsection initiate_multiple_stream_points Initiate multiple stream data points
  *
- * The application can send several data points which are belongs to multiple data streams by calling
+ * The application can send several data points which belong to multiple data streams by calling
  * connector_initiate_action() with @ref connector_initiate_data_point_multiple "action id" and
  * @ref connector_request_data_point_multiple_t "action data" as request_data.
  * The @ref connector_request_data_point_multiple_t "action data" cannot be a stack variable and can be
