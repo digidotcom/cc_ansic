@@ -31,8 +31,6 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
 
             for (size_t stream_idx = 0; stream_idx < stream_count; stream_idx++)
             {
-                stream->next = stream + 1;
-
                 stream->point = malloc(point_count * sizeof *dp_ptr->stream->point);
 
                 if (stream->point != NULL)
@@ -40,15 +38,24 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
                     connector_data_point_t * point = stream->point;
                     for (size_t point_idx = 0; point_idx < point_count; point_idx++)
                     {
-						point->next = point + 1;
+                        // Chain point to the next one. Null terminate last point
+                        if (point_idx < (point_count-1))
+                            point->next = point + 1;
+                        else
+                            point->next = NULL;
+
                         point++;
                     }
-		            point->next = NULL;
                 }
+
+                // Chain stream to the next one. Null terminate last stream
+                if (stream_idx < (stream_count-1))
+                    stream->next = stream + 1;
+                else
+                    stream->next = NULL;
+
                 stream++;
             }
-
-            stream->next = NULL;
  
             dp_ptr->user_context = dp_ptr;
             dp_ptr->transport = connector_transport_tcp;

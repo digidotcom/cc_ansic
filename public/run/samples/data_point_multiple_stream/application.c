@@ -141,9 +141,9 @@ int application_run(connector_handle_t handle)
                     APP_DEBUG("Failed to send data point multiple. status:%d\n", status);
                     goto done;
             }
-
-            sleep(sample_interval_in_seconds);
         }
+        
+        sleep(sample_interval_in_seconds);
     }
 
 done:
