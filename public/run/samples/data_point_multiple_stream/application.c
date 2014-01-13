@@ -95,10 +95,11 @@ int application_run(connector_handle_t handle)
     void * const buffer = app_allocate_data(APP_NUM_STREAMS, APP_NUM_POINTS_PER_STREAM);
     size_t point_index = 0;
     size_t busy_count = 0;
+    size_t stream_idx = 0;
 
     if (buffer == NULL)  goto error;
 
-    for (size_t stream_idx = 0; stream_idx < APP_NUM_STREAMS; stream_idx++)
+    for (stream_idx = 0; stream_idx < APP_NUM_STREAMS; stream_idx++)
         app_update_stream(buffer, stream_idx);
 
     for(;;)
@@ -107,8 +108,10 @@ int application_run(connector_handle_t handle)
 
         if (status == connector_success)
         {
+            size_t stream_index;
+
             /* Collect a sample for each stream */
-            for(size_t stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
+            for(stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
                 app_update_point(buffer, stream_index, point_index);
             point_index++;
         }

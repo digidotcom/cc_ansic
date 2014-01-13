@@ -15,7 +15,23 @@
 #include "platform.h"
 #include "application.h"
 
+typedef struct
+{
+    unsigned long user;
+    unsigned long nice;
+    unsigned long system;
+    unsigned long idle;
+    unsigned long iowait;
+} stat_cpu_t;
+
+enum data_stream_id {
+    data_stream_cpu_usage,
+    data_stream_cpu_temperature,
+    data_stream_incremental
+};
+
 static connector_bool_t data_points_valid = connector_false;
+static connector_bool_t app_dp_waiting_for_response = connector_false;
 
 void * app_allocate_data(size_t const stream_count, size_t const point_count)
 {
@@ -28,17 +44,20 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
         if (dp_ptr->stream != NULL)
         {
             connector_data_stream_t * stream = dp_ptr->stream;
+            size_t stream_idx;
 
-            for (size_t stream_idx = 0; stream_idx < stream_count; stream_idx++)
+            for (stream_idx = 0; stream_idx < stream_count; stream_idx++)
             {
                 stream->point = malloc(point_count * sizeof *dp_ptr->stream->point);
 
                 if (stream->point != NULL)
                 {
                     connector_data_point_t * point = stream->point;
-                    for (size_t point_idx = 0; point_idx < point_count; point_idx++)
+                    size_t point_idx;
+
+                    for (point_idx = 0; point_idx < point_count; point_idx++)
                     {
-                        // Chain point to the next one. Null terminate last point
+                        /* Chain point to the next one. Null terminate last point */
                         if (point_idx < (point_count-1))
                             point->next = point + 1;
                         else
@@ -48,7 +67,7 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
                     }
                 }
 
-                // Chain stream to the next one. Null terminate last stream
+                /* Chain stream to the next one. Null terminate last stream */
                 if (stream_idx < (stream_count-1))
                     stream->next = stream + 1;
                 else
@@ -56,10 +75,9 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
 
                 stream++;
             }
- 
+
             dp_ptr->user_context = dp_ptr;
             dp_ptr->transport = connector_transport_tcp;
-
             data_points_valid = connector_true;
         }
         else
@@ -78,27 +96,19 @@ void app_free_data(connector_request_data_point_multiple_t * dp_ptr, size_t cons
     {
         if (dp_ptr->stream != NULL)
         {
-            for (size_t stream_idx = 0; stream_idx < stream_count; stream_idx++)
+            size_t stream_idx;
+
+            for (stream_idx = 0; stream_idx < stream_count; stream_idx++)
             {
                 connector_data_stream_t * const stream = &dp_ptr->stream[stream_idx];
+
                 free(stream->point);
             }
         }
-
         free(dp_ptr);
     }
-
     data_points_valid = connector_false;
 }
-
-typedef struct
-{
-    unsigned long user;
-    unsigned long nice;
-    unsigned long system;
-    unsigned long idle;
-    unsigned long iowait;
-} stat_cpu_t;
 
 static connector_bool_t get_cpu_stat(stat_cpu_t * const stat)
 {
@@ -144,7 +154,7 @@ static int app_get_cpu_usage(void)
             int const active_time = user_time + nice_time + system_time + iowait_time;
             int const total_time = active_time + idle_time;
 
-            cpu_usage = (total_time > 0) ? (active_time * 100)/total_time : 0;
+            cpu_usage = (total_time > 0) ? (active_time * 100) / total_time : 0;
         }
 
         last_stat = current_stat; /* use memcpy on the platform where this doesn't work */
@@ -171,7 +181,6 @@ static float app_get_cpu_temperature(void)
 
     /* Use a random float value in 0.0 to 99.99 range */
     cpu_temperature = (float)drand48();
-
     cpu_temperature *= 100;
 
     return cpu_temperature;
@@ -188,24 +197,21 @@ static float app_get_incremental(void)
 void app_update_stream(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_idx)
 {
     connector_data_stream_t * const stream = &dp_ptr->stream[stream_idx];
-
-    static char * DataStreams[APP_NUM_STREAMS] = {"cpu_usage", "cpu_temp", "incremental"};
-    static char * DataStreams_units[APP_NUM_STREAMS] = {"%", "Celsius degrees", "Counts"};
-    //static char * DataStreams_forward[APP_NUM_STREAMS] = {"steam1_fw_a,steam1_fw_b", "steam2_fw", "steam3_fw"};
-    static connector_data_point_type_t DataStreams_type[APP_NUM_STREAMS] = { connector_data_point_type_integer, connector_data_point_type_float, connector_data_point_type_integer };
+    static char * const data_streams[APP_NUM_STREAMS] = {"cpu_usage", "cpu_temp", "incremental"};
+    static char * const data_streams_units[APP_NUM_STREAMS] = {"%", "Celsius degrees", "Counts"};
+    static connector_data_point_type_t const data_streams_type[APP_NUM_STREAMS] = {connector_data_point_type_integer, connector_data_point_type_float, connector_data_point_type_integer};
 
     ASSERT(stream_idx < APP_NUM_STREAMS);
 
-    stream->stream_id = DataStreams[stream_idx];
-    stream->unit = DataStreams_units[stream_idx];
-    //stream->forward_to = DataStreams_forward[stream_idx];
-    stream->type = DataStreams_type[stream_idx];
+    stream->stream_id = data_streams[stream_idx];
+    stream->unit = data_streams_units[stream_idx];
+    stream->type = data_streams_type[stream_idx];
 }
 
 void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_idx, size_t const point_index)
 {
     connector_data_point_t * const point = &dp_ptr->stream[stream_idx].point[point_index];
-	
+
     {
         time_t const current_time = time(NULL);
 
@@ -228,34 +234,32 @@ void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, si
     point->quality.type = connector_quality_type_ignore;
 
     {
-        static char * DataPoint_description[APP_NUM_STREAMS] = {"CPU usage", "CPU temperature (random)", "Just an incremental count"};
-        
-        point->description = DataPoint_description[stream_idx];
+        static char * data_point_description[APP_NUM_STREAMS] = {"CPU usage", "CPU temperature (random)", "Just an incremental count"};
+
+        point->description = data_point_description[stream_idx];
     }
 
     point->data.type = connector_data_type_native;
 
     switch (stream_idx)
     {
-        case 0:
+        case data_stream_cpu_usage:
             point->data.element.native.int_value = app_get_cpu_usage();
             break;
 
-        case 1:
+        case data_stream_cpu_temperature:
             point->data.element.native.float_value = app_get_cpu_temperature();
             break;
 
-        case 2:
+        case data_stream_incremental:
             point->data.element.native.int_value = app_get_incremental();
             break;
-            
+
         default:
             ASSERT(0);
             break;
     }
 }
-
-static connector_bool_t app_dp_waiting_for_response = connector_false;
 
 connector_status_t app_send_data(connector_handle_t const handle, connector_request_data_point_multiple_t * const dp_ptr)
 {
@@ -378,4 +382,3 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
 
     return status;
 }
-
