@@ -294,8 +294,6 @@
  *@see connector_initiate_action()
  *@see @ref single_stream_point_response
  *
- * An example of initiating a single stream data points transfer is shown @ref data_point_sample.
- *
  * @subsection single_stream_point_response  Single stream data point response
  *
  * After calling connector_initiate_action(), Cloud Connector will prepare and send data point request
@@ -474,7 +472,7 @@
  *@see connector_initiate_action()
  *@see @ref multiple_stream_point_response
  *
- * An example of initiating a multiple stream data points transfer is shown @ref data_point_multiple_sample.
+ * An example of initiating a multiple stream data points transfer is shown @ref data_point_sample.
  *
  * @subsection multiple_stream_point_response  Multiple stream data point response
  *
