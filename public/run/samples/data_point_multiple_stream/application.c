@@ -17,13 +17,15 @@
 
 #include "connector_api.h"
 #include "platform.h"
-#include "application.h"
+
+#define APP_NUM_STREAMS          3
+#define APP_POINTS_PER_STREAM    5
 
 extern connector_callback_status_t app_data_point_handler(connector_request_id_data_point_t const request, void  * const data);
-extern void app_update_stream(void * const buffer, size_t const stream_index);
+void app_setup_stream(connector_data_stream_t * stream, char * stream_id, char * units, connector_data_point_type_t const type, char * forward_to);
 extern void app_update_point(void * const buffer, size_t const stream_index, size_t const point_index);
 extern connector_status_t app_send_data(connector_handle_t handle, void * const buffer);
-extern void * app_allocate_data(size_t const stream_count, size_t const point_count);
+extern connector_request_data_point_multiple_t * app_allocate_data(size_t const stream_count, size_t const point_count);
 extern void app_free_data(void * buffer, size_t const stream_count);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
@@ -34,7 +36,7 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
 
     switch (status)
     {
-           /* if either Device Cloud or our application cuts the connection, don't reconnect */
+        /* if either Device Cloud or our application cuts the connection, don't reconnect */
         case connector_close_status_device_terminated:
         case connector_close_status_device_stopped:
         case connector_close_status_abort:
@@ -48,6 +50,46 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
     }
 
     return type;
+}
+
+static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
+{
+    switch (*status)
+    {
+    case connector_tcp_communication_started:
+        APP_DEBUG("connector_tcp_communication_started\n");
+        break;
+    case connector_tcp_keepalive_missed:
+        APP_DEBUG("connector_tcp_keepalive_missed\n");
+        break;
+    case connector_tcp_keepalive_restored:
+        APP_DEBUG("connector_tcp_keepalive_restored\n");
+        break;
+    }
+
+    return connector_callback_continue;
+}
+
+connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    switch (request)
+    {
+        case connector_request_id_status_tcp:
+            status = app_tcp_status(data);
+            break;
+
+        case connector_request_id_status_stop_completed:
+            APP_DEBUG("connector_restore_keepalive\n");
+            break;
+
+        default:
+            APP_DEBUG("Status request not supported in sm_udp: %d\n", request);
+            break;
+    }
+
+    return status;
 }
 
 connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
@@ -92,34 +134,33 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 int application_run(connector_handle_t handle)
 {
     connector_status_t status = connector_success;
-    void * const buffer = app_allocate_data(APP_NUM_STREAMS, APP_NUM_POINTS_PER_STREAM);
+    connector_request_data_point_multiple_t * const data_point_multiple = app_allocate_data(APP_NUM_STREAMS, APP_POINTS_PER_STREAM);
     size_t point_index = 0;
     size_t busy_count = 0;
-    size_t stream_idx = 0;
 
-    if (buffer == NULL)  goto error;
+    if (data_point_multiple == NULL)  goto error;
 
-    for (stream_idx = 0; stream_idx < APP_NUM_STREAMS; stream_idx++)
-        app_update_stream(buffer, stream_idx);
+    app_setup_stream(&data_point_multiple->stream[0], "cpu_usage", "%", connector_data_point_type_integer, NULL);
+    app_setup_stream(&data_point_multiple->stream[1], "cpu_temperature", "Celsius degree", connector_data_point_type_float, NULL);
+    app_setup_stream(&data_point_multiple->stream[2], "incremental", "Counts", connector_data_point_type_integer, NULL);
 
     for(;;)
     {
         int const sample_interval_in_seconds = 2;
 
-        if (status == connector_success)
+        if (point_index < APP_POINTS_PER_STREAM)
         {
             size_t stream_index;
 
             /* Collect a sample for each stream */
             for(stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
-                app_update_point(buffer, stream_index, point_index);
+                app_update_point(data_point_multiple, stream_index, point_index);
             point_index++;
         }
-
-        if (point_index == APP_NUM_POINTS_PER_STREAM)
+        else
         {
-            /* Now is time to send all collected samples to Device Cloud */
-            status = app_send_data(handle, buffer);
+            /* Now it is time to send all collected samples to Device Cloud */
+            status = app_send_data(handle, data_point_multiple);
 
             switch (status)
             {
@@ -127,11 +168,11 @@ int application_run(connector_handle_t handle)
                 case connector_service_busy:
                 case connector_unavailable:
                 {
-                    int const point_delay_in_seconds = 4;
+                    int const retry_delay_in_seconds = 4;
 
-                    if (++busy_count > APP_NUM_POINTS_PER_STREAM) goto done;
+                    if (++busy_count > APP_POINTS_PER_STREAM) goto done;
                     APP_DEBUG(".");
-                    sleep(point_delay_in_seconds);
+                    sleep(retry_delay_in_seconds);
                     break;
                 }
 
@@ -141,16 +182,16 @@ int application_run(connector_handle_t handle)
                     break;
 
                 default:
-                    APP_DEBUG("Failed to send data point multiple. status:%d\n", status);
+                    APP_DEBUG("Failed to send data point multiple. status: %d\n", status);
                     goto done;
             }
         }
-        
+
         sleep(sample_interval_in_seconds);
     }
 
 done:
-    app_free_data(buffer, APP_NUM_STREAMS);
+    app_free_data(data_point_multiple, APP_NUM_STREAMS);
 
 error:
     APP_DEBUG("Data point multiple sample is exited!\n");

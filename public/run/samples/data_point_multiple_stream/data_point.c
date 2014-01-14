@@ -13,7 +13,6 @@
 #include <unistd.h>
 #include "connector_api.h"
 #include "platform.h"
-#include "application.h"
 
 typedef struct
 {
@@ -24,16 +23,10 @@ typedef struct
     unsigned long iowait;
 } stat_cpu_t;
 
-enum data_stream_id {
-    data_stream_cpu_usage,
-    data_stream_cpu_temperature,
-    data_stream_incremental
-};
-
-static connector_bool_t data_points_valid = connector_false;
+static connector_bool_t app_are_data_points_valid = connector_false;
 static connector_bool_t app_dp_waiting_for_response = connector_false;
 
-void * app_allocate_data(size_t const stream_count, size_t const point_count)
+connector_request_data_point_multiple_t * app_allocate_data(size_t const stream_count, size_t const point_count)
 {
     connector_request_data_point_multiple_t * dp_ptr = malloc(sizeof *dp_ptr);
 
@@ -44,21 +37,21 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
         if (dp_ptr->stream != NULL)
         {
             connector_data_stream_t * stream = dp_ptr->stream;
-            size_t stream_idx;
+            size_t stream_index;
 
-            for (stream_idx = 0; stream_idx < stream_count; stream_idx++)
+            for (stream_index = 0; stream_index < stream_count; stream_index++)
             {
                 stream->point = malloc(point_count * sizeof *dp_ptr->stream->point);
 
                 if (stream->point != NULL)
                 {
                     connector_data_point_t * point = stream->point;
-                    size_t point_idx;
+                    size_t point_index;
 
-                    for (point_idx = 0; point_idx < point_count; point_idx++)
+                    for (point_index = 0; point_index < point_count; point_index++)
                     {
-                        /* Chain point to the next one. Null terminate last point */
-                        if (point_idx < (point_count-1))
+                        /* Chain stream to the next one. Last one points to NULL. */
+                        if (point_index < point_count - 1)
                             point->next = point + 1;
                         else
                             point->next = NULL;
@@ -67,8 +60,8 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
                     }
                 }
 
-                /* Chain stream to the next one. Null terminate last stream */
-                if (stream_idx < (stream_count-1))
+                /* Chain stream to the next one. Last one points to NULL. */
+                if (stream_index < stream_count - 1)
                     stream->next = stream + 1;
                 else
                     stream->next = NULL;
@@ -78,7 +71,7 @@ void * app_allocate_data(size_t const stream_count, size_t const point_count)
 
             dp_ptr->user_context = dp_ptr;
             dp_ptr->transport = connector_transport_tcp;
-            data_points_valid = connector_true;
+            app_are_data_points_valid = connector_true;
         }
         else
         {
@@ -96,18 +89,20 @@ void app_free_data(connector_request_data_point_multiple_t * dp_ptr, size_t cons
     {
         if (dp_ptr->stream != NULL)
         {
-            size_t stream_idx;
+            size_t stream_index;
 
-            for (stream_idx = 0; stream_idx < stream_count; stream_idx++)
+            for (stream_index = 0; stream_index < stream_count; stream_index++)
             {
-                connector_data_stream_t * const stream = &dp_ptr->stream[stream_idx];
-
+                connector_data_stream_t * const stream = &dp_ptr->stream[stream_index];
+                /* All points were allocated in one malloc() call, so only one free() is necessary. */
                 free(stream->point);
             }
+            /* All streams were allocated in one malloc() call, so only one free() is necessary. */
+            free(dp_ptr->stream);
         }
         free(dp_ptr);
     }
-    data_points_valid = connector_false;
+    app_are_data_points_valid = connector_false;
 }
 
 static connector_bool_t get_cpu_stat(stat_cpu_t * const stat)
@@ -194,23 +189,17 @@ static float app_get_incremental(void)
     return incremental++;
 }
 
-void app_update_stream(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_idx)
+void app_setup_stream(connector_data_stream_t * stream, char * stream_id, char * units, connector_data_point_type_t const type, char * forward_to)
 {
-    connector_data_stream_t * const stream = &dp_ptr->stream[stream_idx];
-    static char * const data_streams[APP_NUM_STREAMS] = {"cpu_usage", "cpu_temp", "incremental"};
-    static char * const data_streams_units[APP_NUM_STREAMS] = {"%", "Celsius degrees", "Counts"};
-    static connector_data_point_type_t const data_streams_type[APP_NUM_STREAMS] = {connector_data_point_type_integer, connector_data_point_type_float, connector_data_point_type_integer};
-
-    ASSERT(stream_idx < APP_NUM_STREAMS);
-
-    stream->stream_id = data_streams[stream_idx];
-    stream->unit = data_streams_units[stream_idx];
-    stream->type = data_streams_type[stream_idx];
+    stream->stream_id = stream_id;
+    stream->unit = units;
+    stream->type = type;
+    stream->forward_to = forward_to;
 }
 
-void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_idx, size_t const point_index)
+void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_index, size_t const point_index)
 {
-    connector_data_point_t * const point = &dp_ptr->stream[stream_idx].point[point_index];
+    connector_data_point_t * const point = &dp_ptr->stream[stream_index].point[point_index];
 
     {
         time_t const current_time = time(NULL);
@@ -232,26 +221,20 @@ void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, si
     }
 
     point->quality.type = connector_quality_type_ignore;
-
-    {
-        static char * data_point_description[APP_NUM_STREAMS] = {"CPU usage", "CPU temperature (random)", "Just an incremental count"};
-
-        point->description = data_point_description[stream_idx];
-    }
+    point->description = NULL;
 
     point->data.type = connector_data_type_native;
-
-    switch (stream_idx)
+    switch (stream_index)
     {
-        case data_stream_cpu_usage:
+        case 0:
             point->data.element.native.int_value = app_get_cpu_usage();
             break;
 
-        case data_stream_cpu_temperature:
+        case 1:
             point->data.element.native.float_value = app_get_cpu_temperature();
             break;
 
-        case data_stream_incremental:
+        case 2:
             point->data.element.native.int_value = app_get_incremental();
             break;
 
@@ -286,25 +269,13 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    if (!data_points_valid)
-    {
-        APP_DEBUG("Error: Response received [%d], but application timed out\n", request_id);
-        goto error;
-    }
+    ASSERT(app_are_data_points_valid == connector_true);
 
     switch (request_id)
     {
         case connector_request_id_data_point_multiple_response:
         {
             connector_data_point_response_t * const resp_ptr = data;
-            connector_request_data_point_multiple_t * const dp_ptr = resp_ptr->user_context;
-
-            if (dp_ptr == NULL)
-            {
-                APP_DEBUG("Error: Received null context in data point response\n");
-                status = connector_callback_error;
-                goto error;
-            }
 
             app_dp_waiting_for_response = connector_false;
             APP_DEBUG("Received data point response [%d]\n", resp_ptr->response);
@@ -318,14 +289,6 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
         case connector_request_id_data_point_multiple_status:
         {
             connector_data_point_status_t * const status_ptr = data;
-            connector_request_data_point_multiple_t * const dp_ptr = status_ptr->user_context;
-
-            if (dp_ptr == NULL)
-            {
-                APP_DEBUG("Error: Received null context in data point status\n");
-                status = connector_callback_error;
-                goto error;
-            }
 
             app_dp_waiting_for_response = connector_false;
             APP_DEBUG("Received data point status [%d]\n", status_ptr->status);
@@ -335,48 +298,6 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
         default:
             APP_DEBUG("Data point callback: Request not supported: %d\n", request_id);
             status = connector_callback_unrecognized;
-            break;
-    }
-
-error:
-    return status;
-}
-
-static connector_callback_status_t app_tcp_status(connector_tcp_status_t const * const status)
-{
-
-    switch (*status)
-    {
-    case connector_tcp_communication_started:
-        APP_DEBUG("connector_tcp_communication_started\n");
-        break;
-    case connector_tcp_keepalive_missed:
-        APP_DEBUG("connector_tcp_keepalive_missed\n");
-        break;
-    case connector_tcp_keepalive_restored:
-        APP_DEBUG("connector_tcp_keepalive_restored\n");
-        break;
-    }
-
-    return connector_callback_continue;
-}
-
-connector_callback_status_t app_status_handler(connector_request_id_status_t const request, void * const data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-
-    switch (request)
-    {
-        case connector_request_id_status_tcp:
-            status = app_tcp_status(data);
-            break;
-
-        case connector_request_id_status_stop_completed:
-            APP_DEBUG("connector_restore_keepalive\n");
-            break;
-
-        default:
-            APP_DEBUG("Status request not supported in sm_udp: %d\n", request);
             break;
     }
 
