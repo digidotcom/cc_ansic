@@ -61,6 +61,7 @@ typedef struct
 #endif
             } state;
 
+            connector_bool_t first_point;
         } csv;
 
         struct
@@ -383,6 +384,7 @@ static connector_status_t dp_process_csv_single(connector_data_t * const connect
     dp_info->data.csv.bytes_sent = 0;
     dp_info->data.csv.bytes_to_send = 0;
     dp_info->data.csv.state = dp_state_data;
+    dp_info->data.csv.first_point = connector_true;
 
     result = dp_fill_file_path(dp_info, dp_ptr->path, ".csv");
     if (result != connector_working) goto error;
@@ -420,6 +422,7 @@ static connector_status_t dp_process_csv_multiple(connector_data_t * const conne
     dp_info->data.csv.bytes_sent = 0;
     dp_info->data.csv.bytes_to_send = 0;
     dp_info->data.csv.state = dp_state_data;
+    dp_info->data.csv.first_point = connector_true;
 
     result = dp_fill_file_path(dp_info, NULL, ".csv");
     if (result != connector_working) goto error;
@@ -711,6 +714,9 @@ static size_t dp_process_type(data_point_info_t * const dp_info, char * const bu
     char const * const type_list[] = {"INTEGER", "LONG", "FLOAT", "DOUBLE", "STRING", "BINARY"};
     size_t bytes_processed = 0;
 
+    if (dp_info->data.csv.first_point == connector_false)
+        return 0;
+
     if (dp_info->type == dp_content_type_csv_single)
     {
         connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request_single;
@@ -737,6 +743,9 @@ static size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
 {
     size_t bytes_processed = 0;
 
+    if (dp_info->data.csv.first_point == connector_false)
+        return 0;
+
     if (dp_info->type == dp_content_type_csv_single)
     {
         connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request_single;
@@ -759,6 +768,9 @@ static size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
 static size_t dp_process_forward_to(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
     size_t bytes_processed = 0;
+
+    if (dp_info->data.csv.first_point == connector_false)
+        return 0;
 
     if (dp_info->type == dp_content_type_csv_single)
     {
@@ -803,6 +815,7 @@ static size_t dp_update_state(data_point_info_t * const dp_info, char * const bu
     {
         *buffer = '\n';
         dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
+        dp_info->data.csv.first_point = connector_false;
 #if (CONNECTOR_VERSION >= 0x02020000)
         if ((dp_info->type == dp_content_type_csv_multiple) && (dp_info->data.csv.current_dp == NULL))
         {
@@ -810,6 +823,7 @@ static size_t dp_update_state(data_point_info_t * const dp_info, char * const bu
             if (dp_info->data.csv.current_ds != NULL)
             {
                 dp_info->data.csv.current_dp = dp_info->data.csv.current_ds->point;
+                dp_info->data.csv.first_point = connector_true;
             }
         }
 #endif
