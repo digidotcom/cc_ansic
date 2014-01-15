@@ -579,7 +579,7 @@ static size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
         type = ds_ptr->type;
     }
 #endif
-    else ASSERT(connector_false);
+    else ASSERT_GOTO(connector_false, done);
 
     switch (type)
     {
@@ -733,7 +733,10 @@ static size_t dp_process_type(data_point_info_t * const dp_info, char * const bu
         bytes_processed = connector_snprintf(buffer, bytes_available, "%s", type_list[ds_ptr->type]);
     }
 #endif
-    else ASSERT(connector_false);
+    else
+    {
+        ASSERT(connector_false);
+    }
 
 error:
     return bytes_processed;
@@ -760,7 +763,10 @@ static size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
             bytes_processed = dp_process_string(ds_ptr->unit, buffer, bytes_available, NULL);
     }
 #endif
-    else ASSERT(connector_false);
+    else
+    {
+        ASSERT(connector_false);
+    }
 
     return bytes_processed;
 }
