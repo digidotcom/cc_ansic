@@ -8,13 +8,13 @@
 #     TAG
 #     PENDING
 # For example, for creating the 2.1.0.0 release, the following must be executed:
-# 
+#
 #     export TAR_REVISION=C
 #     export ZIP_REVISION=A
 #     export TAG=2.1.0.0
 #     export PENDING=false
 #     ./build_release.sh
-# 
+#
 # The project's taggint scheme is W.X.Y.Z; for Major, Minor, Revision and Build numbers
 # respectively. For example, 2.1.0.0.
 #
@@ -42,6 +42,8 @@ TOOLS_DIR=${BASE_DIR}/tools
 SAMPLES="compile_and_link
          connect_on_ssl
          connect_to_device_cloud
+         data_point
+         data_point_multiple_stream
          device_request
          file_system
          firmware_download
@@ -49,7 +51,7 @@ SAMPLES="compile_and_link
          send_data
          simple_remote_config"
 
-function cleanup () 
+function cleanup ()
 {
     ARCHIVE=${WORKSPACE}/archive
     if [ -d "${ARCHIVE}" ]; then
@@ -73,7 +75,7 @@ function cleanup ()
 
 function build_config_tool ()
 {
-    mkdir -p "${TOOLS_DIR}"  
+    mkdir -p "${TOOLS_DIR}"
     ant -f "${WORKSPACE}/tools/config/build.xml" -Ddist.dir="${TOOLS_DIR}"
 }
 
@@ -108,6 +110,12 @@ mkdir -p "${BASE_DIR}"
 cp -rf private "${BASE_DIR}"
 cp -rf public "${BASE_DIR}"
 cp -rf docs "${BASE_DIR}"
+echo ">> Removing deprecated data_point sample and replacing it with data_point_multiple_stream"
+rm -rf "${BASE_DIR}"/public/run/samples/data_point
+rm -rf "${BASE_DIR}"/public/step/samples/data_point
+mv "${BASE_DIR}"/public/run/samples/data_point_multiple_stream "${BASE_DIR}"/public/run/samples/data_point
+mv "${BASE_DIR}"/public/step/samples/data_point_multiple_stream "${BASE_DIR}"/public/step/samples/data_point
+echo ">> Removing unused directories"
 rm     "${BASE_DIR}/public/run/platforms/linux/network_sms_proxy.c_aux"
 rm -rf "${BASE_DIR}/public/run/platforms/mqx"
 rm -rf "${BASE_DIR}/public/run/platforms/ucos"
@@ -119,7 +127,7 @@ rm -rf "${BASE_DIR}/public/step/platforms/windows"
 released_file=$(find /eng/store/released/90000000/"${GETTING_STARTED_GUIDE_RELEASED}" -name index.html)
 pending_file=$(find /eng/store/pending/90000000/"${GETTING_STARTED_GUIDE}" -name index.html)
 
-if [ -n "${pending_file}" ] 
+if [ -n "${pending_file}" ]
   then
     echo ">> Pulling Getting Started Guide from ${pending_file}"
     cp -f "${pending_file}" "${BASE_DIR}/getting_started.html"
@@ -146,7 +154,7 @@ if [ $TAG != "" ]
 fi
 
 # Don't replace the date in Readme.txt to match today's date!!
-# This was eliminated due to ECO004263 regarding Release Note templaces (see 96000472) 
+# This was eliminated due to ECO004263 regarding Release Note templaces (see 96000472)
 #today=`date +"%B %d, %Y"`
 #echo ">> Setting Release Date to Today (${today}) in ${BASE_DIR}/private/Readme.txt"
 #sed -i 's/_RELEASE_DATE_/'"${today}"'/g' "${BASE_DIR}/private/Readme.txt"
@@ -167,8 +175,8 @@ zip -jvl "${OUTPUT_DIR}/${NOTES_NAME}.zip" "${BASE_DIR}/private/Readme.txt"
 # Create the HTML ZIP
 echo ">> Creating the Documenation tree ${OUTPUT_DIR}/${HTML_NAME}.zip"
 cd "${BASE_DIR}/docs"
-zip -v "${OUTPUT_DIR}/${HTML_NAME}.zip" user_guide.html 
-zip -vr "${OUTPUT_DIR}/${HTML_NAME}.zip" html/ 
+zip -v "${OUTPUT_DIR}/${HTML_NAME}.zip" user_guide.html
+zip -vr "${OUTPUT_DIR}/${HTML_NAME}.zip" html/
 cd "${WORKSPACE}"
 
 # Delete the original directory
@@ -201,7 +209,7 @@ do
   if [[ ${rc} != 0 ]]; then
     echo "++ Failed to build $sample, exiting."
     cleanup
-    exit ${rc} 
+    exit ${rc}
   fi
   cd ../
 done
