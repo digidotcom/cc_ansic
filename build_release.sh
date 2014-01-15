@@ -43,7 +43,7 @@ SAMPLES="compile_and_link
          connect_on_ssl
          connect_to_device_cloud
          data_point
-         data_point_multiple_stream
+         data_point_single
          device_request
          file_system
          firmware_download
@@ -110,11 +110,9 @@ mkdir -p "${BASE_DIR}"
 cp -rf private "${BASE_DIR}"
 cp -rf public "${BASE_DIR}"
 cp -rf docs "${BASE_DIR}"
-echo ">> Removing deprecated data_point sample and replacing it with data_point_multiple_stream"
-rm -rf "${BASE_DIR}"/public/run/samples/data_point
-rm -rf "${BASE_DIR}"/public/step/samples/data_point
-mv "${BASE_DIR}"/public/run/samples/data_point_multiple_stream "${BASE_DIR}"/public/run/samples/data_point
-mv "${BASE_DIR}"/public/step/samples/data_point_multiple_stream "${BASE_DIR}"/public/step/samples/data_point
+echo ">> Removing deprecated data_point_single sample"
+rm -rf "${BASE_DIR}"/public/run/samples/data_point_single
+rm -rf "${BASE_DIR}"/public/step/samples/data_point_single
 echo ">> Removing unused directories"
 rm     "${BASE_DIR}/public/run/platforms/linux/network_sms_proxy.c_aux"
 rm -rf "${BASE_DIR}/public/run/platforms/mqx"
