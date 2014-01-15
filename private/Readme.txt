@@ -19,6 +19,12 @@ SUPPORTED PRODUCTS
 
 ENHANCEMENTS
 
+    v2.2.0
+
+        Data Point API extended to allow sending data points to multiple 
+        different data streams in one message. [IC4C-217]
+        The data_point sample application makes use of new API.
+
     v2.1.0
 
         Full SMS transport support for Short Messaging (SM) protocol.
@@ -53,6 +59,10 @@ ENHANCEMENTS
         UDP.
 
 BUG FIXES
+
+    v2.2.0
+
+        Linux platform compiles under cygwin environment. [IC4C-302]
 
     v2.1.0
         
