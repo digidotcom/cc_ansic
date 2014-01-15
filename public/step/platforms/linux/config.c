@@ -737,6 +737,8 @@ static char const * app_data_point_class_to_string(connector_request_id_data_poi
         enum_to_case(connector_request_id_data_point_binary_status);
         enum_to_case(connector_request_id_data_point_single_response);
         enum_to_case(connector_request_id_data_point_single_status);
+        enum_to_case(connector_request_id_data_point_multiple_response);
+        enum_to_case(connector_request_id_data_point_multiple_status);
     }
     return result;
 }
