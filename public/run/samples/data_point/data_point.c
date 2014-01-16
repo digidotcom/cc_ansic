@@ -175,8 +175,7 @@ static float app_get_cpu_temperature(void)
     float cpu_temperature;
 
     /* Use a random float value in 0.0 to 99.99 range */
-    cpu_temperature = (float)drand48();
-    cpu_temperature *= 100;
+    cpu_temperature = (float)((rand()%10000)/100.0);
 
     return cpu_temperature;
 }
