@@ -43,7 +43,6 @@ SAMPLES="compile_and_link
          connect_on_ssl
          connect_to_device_cloud
          data_point
-         data_point_single
          device_request
          file_system
          firmware_download
