@@ -34,11 +34,16 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 #if __STDC_VERSION__ >= 199901L
     result = vsnprintf(str, size, format, args);
 #else
-    /*************************************************************************
-     * NOTE: Decided to have 64 bytes here considering following assumption  *
-     * 1. In the worst case, only one format specifier will be used.         *
-     * 2. Maximum of 48 bytes are used to represent a single precision value *
-     *************************************************************************/
+    /**************************************************************************************
+    * NOTE: This is an example snprintf() implementation for environments                 *
+    * that do not provide one.                                                            *
+    * The following buffer should hold the longest possible string that can be generated. *
+    * Consider the common case to be only one format specifier at once.                   *
+    * WARNING: If an application is using double Data Point types, this value can be as   *
+    * big as:                                                                             *
+    *                 max_digits = 3 + DBL_MANT_DIG - DBL_MIN_EXP                         *
+    * The above expression evaluates to 1077 in a 64-bit Linux machine for GCC 4.8.1.     *
+    **************************************************************************************/
     #define SAFE_BUFFER_BYTES 64
 
     if (size >= SAFE_BUFFER_BYTES)
@@ -48,14 +53,13 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
     else
     {
         char local_buffer[SAFE_BUFFER_BYTES];
-        size_t const bytes_needed = vsprintf(local_buffer, format, args);
-        result = (bytes_needed < size) ? bytes_needed : size - 1;
-        if (result > 0)
+        ssize_t const bytes_needed = vsprintf(local_buffer, format, args);
+
+        if (bytes_needed < (ssize_t)size)
         {
-            memcpy(str, local_buffer, result);
-            str[result] = '\0';
-            result = bytes_needed;
+            memcpy(str, local_buffer, bytes_needed + 1); /* Don't forget the \0 */
         }
+        result = bytes_needed;
     }
     #undef SAFE_BUFFER_BYTES
 #endif
