@@ -315,7 +315,7 @@ static connector_callback_status_t app_tcp_connect(in_addr_t const ip_addr,
 
     /* Get socket info of connected interface */
     interface_addr_len = sizeof(interface_addr);
-    if (getsockname(ssl_info.sfd, &interface_addr, &interface_addr_len))
+    if (getsockname(ssl_info.sfd, (struct sockaddr *)&interface_addr, &interface_addr_len))
     {
         APP_DEBUG("network_connect: getsockname error, errno %d\n", errno);
         goto done;
