@@ -15,7 +15,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <net/if.h>
-#include <net/if_arp.h>
+#include <sys/socket.h>
 
 #include "connector_config.h"
 #include "connector_api.h"
