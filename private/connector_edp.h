@@ -93,26 +93,6 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
     COND_ELSE_GOTO(result == connector_working, done);
 #endif
 
-#if !(defined CONNECTOR_NETWORK_TCP_START)
-    {
-        connector_config_connect_type_t config_connect;
-
-        result = get_config_connect_status(connector_ptr, connector_request_id_config_network_tcp, &config_connect);
-        COND_ELSE_GOTO(result == connector_working, done);
-
-        connector_ptr->edp_data.connect_type = config_connect.type;
-        connector_ptr->edp_data.stop.auto_connect = connector_bool(config_connect.type == connector_connect_auto);
-    }
-#else
-    ASSERT((CONNECTOR_NETWORK_TCP_START == connector_connect_auto) || (CONNECTOR_NETWORK_TCP_START == connector_connect_manual));
-    if (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
-    {
-        edp_set_active_state(connector_ptr, connector_transport_open);
-    }
-    connector_ptr->edp_data.stop.auto_connect = connector_bool(CONNECTOR_NETWORK_TCP_START == connector_connect_auto);
-#endif
-
-
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
     result = get_config_identity_verification(connector_ptr);
     COND_ELSE_GOTO(result == connector_working, done);
@@ -140,7 +120,6 @@ done:
 
 connector_status_t connector_edp_init(connector_data_t * const connector_ptr)
 {
-
     connector_status_t result = connector_working;
 
     edp_reset_initial_data(connector_ptr);
@@ -520,6 +499,21 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             result = connector_invalid_data;
             goto done;
         }
+
+#if (defined CONNECTOR_TRANSPORT_TCP)
+#if !(defined CONNECTOR_NETWORK_TCP_START)
+        if (connector_ptr->edp_data.connect_type == connector_connect_manual)
+        {
+            result = connector_edp_init(connector_ptr);
+            COND_ELSE_GOTO(result == connector_working, done);
+        }
+#elif (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
+        {
+            result = connector_edp_init(connector_ptr);
+            COND_ELSE_GOTO(result == connector_working, done);
+        }
+#endif
+#endif
         switch (edp_get_active_state(connector_ptr))
         {
         case connector_transport_open:
