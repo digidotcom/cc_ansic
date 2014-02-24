@@ -133,8 +133,8 @@ public class ConfigGenerator {
                         DASH + DIRECTORY_OPTION + "=<directory path>"));
         log(String
                 .format(
-						"\t%-16s \t= optional Device Cloud URL. Default is %s",
-                        DASH + URL_OPTION + "=<device cloud URL>", URL_DEFAULT));
+                        "\t%-16s \t= optional Device Cloud URL. Default is %s",
+                        DASH + URL_OPTION + "=<Device Cloud URL>", URL_DEFAULT));
 
         log(String
                 .format(
@@ -150,7 +150,7 @@ public class ConfigGenerator {
                         DEVICE_TYPE));
         log(String.format("\t%-16s \t= firmware version (i.e. 1.0.0.0)",
                 FIRMWARE_VERSION));
-        log(String.format("\t%-16s \t= The Connector Configration file",
+        log(String.format("\t%-16s \t= The Connector Configuration file",
                 CONFIG_FILENAME));
         System.exit(1);
     }
