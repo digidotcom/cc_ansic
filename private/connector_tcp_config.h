@@ -22,7 +22,7 @@ static connector_status_t get_config_vendor_id(connector_data_t * const connecto
         connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_vendor_id;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_vendor);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_vendor, connector_ptr->context);
 
         switch (status)
         {
@@ -32,7 +32,7 @@ static connector_status_t get_config_vendor_id(connector_data_t * const connecto
                 /* coverity[uninit_use] */
                 if ((config_vendor.id == 0) || (config_vendor.id >= max_vendor_id))
                 {
-                    notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+                    notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
                     result = connector_abort;
                 }
                 else
@@ -65,7 +65,7 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
         connector_callback_status_t status;
 
         request_id.config_request = connector_request_id_config_device_type;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_type);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_type, connector_ptr->context);
 
         switch (status)
         {
@@ -94,7 +94,7 @@ static connector_status_t get_config_device_type(connector_data_t * const connec
 
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -115,7 +115,7 @@ static connector_status_t get_config_keepalive(connector_data_t * const connecto
         connector_request_id_t request_id;
 
         request_id.config_request = config_request;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &keepalive);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &keepalive, connector_ptr->context);
 
         switch (status)
         {
@@ -138,7 +138,7 @@ static connector_status_t get_config_keepalive(connector_data_t * const connecto
                 /* coverity[uninit_use] */
                 if ((keepalive.interval_in_seconds < min_interval) || (keepalive.interval_in_seconds > max_interval))
                 {
-                    notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+                    notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
                     result = connector_abort;
                     goto done;
                 }
@@ -180,7 +180,7 @@ static connector_status_t get_config_wait_count(connector_data_t * const connect
         connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_wait_count;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &wait_count);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &wait_count, connector_ptr->context);
 
         switch (status)
         {
@@ -189,7 +189,7 @@ static connector_status_t get_config_wait_count(connector_data_t * const connect
             if ((wait_count.count < WAIT_COUNT_MIN) ||
                 (wait_count.count > WAIT_COUNT_MAX))
             {
-                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
                 result = connector_abort;
             }
             else
@@ -224,7 +224,7 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
         connector_callback_status_t status;
 
         request_id.config_request = connector_request_id_config_ip_addr;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_ip);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_ip, connector_ptr->context);
 
         switch (status)
         {
@@ -278,7 +278,7 @@ static connector_status_t get_config_ip_addr(connector_data_t * const connector_
 error:
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -298,7 +298,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
         connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_identity_verification;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_identity);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_identity, connector_ptr->context);
 
         switch (status)
         {
@@ -311,7 +311,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
                 connector_ptr->edp_data.config.identity_verification = config_identity.type;
                 break;
             default:
-                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
                 result = connector_abort;
                 break;
             }
@@ -343,7 +343,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
         connector_request_id_t request_id;
 
         request_id.config_request = connector_request_id_config_password;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_password);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_password, connector_ptr->context);
 
         switch (status)
         {
@@ -351,7 +351,7 @@ static connector_status_t get_config_password(connector_data_t * const connector
             /* coverity[uninit_use] */
             if (config_password.string == NULL)
             {
-                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data);
+                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data, connector_ptr->context);
                 result = connector_abort;
             }
             else

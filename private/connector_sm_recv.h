@@ -118,7 +118,7 @@ static connector_status_t sm_more_data_callback(connector_data_t * const connect
 
     cb_data.transport = sm_ptr->network.transport;
     request_id.sm_request = connector_request_id_sm_more_data;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
     result = sm_map_callback_status_to_connector_status(callback_status);
 
     return result;
@@ -511,7 +511,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
     read_data.bytes_used = 0;
 
     request_id.network_request = connector_request_id_network_receive;
-    status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &read_data);
+    status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &read_data, connector_ptr->context);
     ASSERT(status != connector_callback_unrecognized);
     switch (status)
     {

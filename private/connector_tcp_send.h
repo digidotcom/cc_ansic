@@ -120,7 +120,7 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
     send_data.handle = connector_ptr->edp_data.network_handle;
 
     request_id.network_request = connector_request_id_network_send;
-    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &send_data);
+    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &send_data, connector_ptr->context);
     ASSERT(status != connector_callback_unrecognized);
     switch (status)
     {

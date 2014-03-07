@@ -60,7 +60,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
         read_data.bytes_used = 0;
 
 
-        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &read_data);
+        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &read_data, connector_ptr->context);
         ASSERT(status != connector_callback_unrecognized);
         switch (status)
         {
@@ -92,7 +92,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             {
                 if (connector_ptr->edp_data.keepalive.miss_tx_count > 0)
                 {
-                    if (notify_status(connector_ptr->callback, connector_tcp_keepalive_restored) != connector_working)
+                    if (notify_status(connector_ptr->callback, connector_tcp_keepalive_restored, connector_ptr->context) != connector_working)
                         status = connector_callback_abort;
                     connector_ptr->edp_data.keepalive.miss_tx_count = 0;
                 }
@@ -113,7 +113,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
         if (!is_valid_timing_limit(connector_ptr, connector_ptr->edp_data.keepalive.last_tx_received_time, max_timeout))
         {
             /* notify callback we have missing a tx keep alive */
-            if (notify_status(connector_ptr->callback, connector_tcp_keepalive_missed) != connector_working)
+            if (notify_status(connector_ptr->callback, connector_tcp_keepalive_missed, connector_ptr->context) != connector_working)
             {
                 status = connector_callback_abort;
                 goto done;
@@ -122,7 +122,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             if (connector_ptr->edp_data.keepalive.miss_tx_count == GET_WAIT_COUNT(connector_ptr))
             {
                 /* consider a lost connection */
-                if (notify_error_status(connector_ptr->callback, connector_class_id_network_tcp, request_id, connector_keepalive_error) != connector_working)
+                if (notify_error_status(connector_ptr->callback, connector_class_id_network_tcp, request_id, connector_keepalive_error, connector_ptr->context) != connector_working)
                 {
                     status = connector_callback_abort;
                     goto done;

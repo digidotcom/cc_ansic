@@ -175,7 +175,7 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
         {   /* this is optional facility so ask application whether it supports this facility */
             connector_callback_status_t status;
 
-            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_status);
+            status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_status, connector_ptr->context);
             switch (status)
             {
             case connector_callback_busy:
@@ -213,7 +213,7 @@ error:
     if (result != connector_working)
     {
         connector_request_id_t const request_id = connector_supported_service_table[i].request_id;
-        if (notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result) != connector_working)
+        if (notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context) != connector_working)
             result = connector_abort;
     }
 

@@ -160,7 +160,7 @@ static connector_status_t del_facility_data(connector_data_t * const connector_p
     return status;
 }
 
-static connector_status_t notify_status(connector_callback_t const callback, connector_tcp_status_t const status)
+static connector_status_t notify_status(connector_callback_t const callback, connector_tcp_status_t const status, void * const context)
 {
     connector_status_t result;
     connector_request_id_t request_id;
@@ -171,7 +171,7 @@ static connector_status_t notify_status(connector_callback_t const callback, con
     request_id.status_request = connector_request_id_status_tcp;
 
     {
-        connector_callback_status_t const callback_status =  connector_callback(callback, connector_class_id_status, request_id, &tcp_event);
+        connector_callback_status_t const callback_status =  connector_callback(callback, connector_class_id_status, request_id, &tcp_event, context);
 
         switch (callback_status)
         {

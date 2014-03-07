@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status)
+static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status, void * const context)
 {
     connector_status_t result = connector_working;
 
@@ -24,7 +24,7 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
     err_status.status = status;
 
     {
-        connector_callback_status_t const callback_status = connector_callback(callback, connector_class_id_config, request_id, &err_status);
+        connector_callback_status_t const callback_status = connector_callback(callback, connector_class_id_config, request_id, &err_status, context);
         switch (callback_status)
         {
             case connector_callback_continue:
@@ -55,7 +55,7 @@ static connector_status_t get_config_device_id(connector_data_t * const connecto
 
     request_id.config_request = connector_request_id_config_device_id;
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -79,7 +79,7 @@ static connector_status_t get_config_device_id(connector_data_t * const connecto
 
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -98,7 +98,7 @@ static connector_status_t get_config_device_cloud_url(connector_data_t * const c
     request_id.config_request = connector_request_id_config_device_cloud_url;
 
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_url);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_url, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -129,7 +129,7 @@ static connector_status_t get_config_device_cloud_url(connector_data_t * const c
 
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -138,7 +138,7 @@ done:
 }
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_SMS)
+#if !(defined CONNECTOR_TRANSPORT_SMS)
 #if (CONNECTOR_VERSION >= 0x02010000)
 #if !(defined CONNECTOR_CLOUD_PHONE)
 static connector_status_t get_config_device_cloud_phone(connector_data_t * const connector_ptr)
@@ -150,7 +150,7 @@ static connector_status_t get_config_device_cloud_phone(connector_data_t * const
 
     request_id.config_request = connector_request_id_config_get_device_cloud_phone;
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -181,7 +181,7 @@ static connector_status_t get_config_device_cloud_phone(connector_data_t * const
 
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -202,7 +202,7 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
     cloud_phone.string = phone_number; 
     cloud_phone.length = strlen(phone_number);
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -220,7 +220,7 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
 error:
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -238,7 +238,7 @@ static connector_status_t get_config_device_cloud_service_id(connector_data_t * 
 
     request_id.config_request = connector_request_id_config_device_cloud_service_id;
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_service_id);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_service_id, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -264,7 +264,7 @@ static connector_status_t get_config_device_cloud_service_id(connector_data_t * 
 
     if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -288,7 +288,7 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
     connector_request_id_t request_id;
 
     request_id.config_request = connector_request_id_config_connection_type;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_connection);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_connection, connector_ptr->context);
 
     switch (callback_status)
     {
@@ -303,7 +303,7 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
             break;
 
         default:
-            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
             result = connector_abort;
             break;
         }
@@ -338,7 +338,7 @@ static connector_status_t get_config_mac_addr(connector_data_t * const connector
 
         request_id.config_request = connector_request_id_config_mac_addr;
 
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &mac_addr);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &mac_addr, connector_ptr->context);
         switch (callback_status)
         {
         case connector_callback_continue:
@@ -361,7 +361,7 @@ static connector_status_t get_config_mac_addr(connector_data_t * const connector
 
         if (result != connector_working)
         {
-            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
             result = connector_abort;
         }
     }
@@ -380,7 +380,7 @@ static connector_status_t get_config_link_speed(connector_data_t * const connect
 
     request_id.config_request = connector_request_id_config_link_speed;
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_link);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_link, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -410,7 +410,7 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
 
         request_id.config_request = connector_request_id_config_phone_number;
 
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &phone_number);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &phone_number, connector_ptr->context);
         switch (callback_status)
         {
         case connector_callback_continue:
@@ -440,7 +440,7 @@ static connector_status_t get_config_phone_number(connector_data_t * const conne
 
         if (result != connector_working)
         {
-            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
             result = connector_abort;
         }
     }
@@ -464,7 +464,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
     connector_config_device_id_method_t device_id;
 
     request_id.config_request = connector_request_id_config_device_id_method;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -477,7 +477,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
             break;
 
         default:
-            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
             result = connector_abort;
             break;
         }
@@ -558,7 +558,7 @@ static connector_status_t get_config_wan_id(connector_data_t * const connector_p
     request_data.bytes_required = bytes_required;
     request_id.config_request = config_request_id;
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &request_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &request_data, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -591,7 +591,7 @@ static connector_status_t get_config_wan_id(connector_data_t * const connector_p
 
    if (result != connector_working)
     {
-        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result);
+        notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, result, connector_ptr->context);
         result = connector_abort;
     }
 
@@ -612,7 +612,7 @@ static connector_status_t get_config_wan_type(connector_data_t * const connector
 
 
     request_id.config_request = connector_request_id_config_wan_type;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_wan);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_wan, connector_ptr->context);
     switch (callback_status)
     {
     case connector_callback_continue:
@@ -625,7 +625,7 @@ static connector_status_t get_config_wan_type(connector_data_t * const connector
             connector_ptr->wan_type = config_wan.type;
             break;
         default:
-            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+            notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
             result = connector_abort;
             break;
         }

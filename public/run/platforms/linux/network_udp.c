@@ -189,9 +189,11 @@ done:
  *  Callback routine to handle all networking related calls.
  */
 connector_callback_status_t app_network_udp_handler(connector_request_id_network_t const request_id,
-                                                    void * const data)
+                                                    void * const data, void * const context)
 {
     connector_callback_status_t status;
+
+    UNUSED_ARGUMENT(context);
 
     switch (request_id)
     {

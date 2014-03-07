@@ -29,7 +29,7 @@
 #include "chk_config.h"
 #include "bele.h"
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status);
+static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status, void * const context);
 #include "os_intf.h"
 #include "connector_global_config.h"
 
@@ -78,7 +78,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
         connector_request_id_t request_id;
 
         request_id.config_request = config_request_id;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_connect);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_connect, connector_ptr->context);
 
         switch (status)
         {
@@ -89,7 +89,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
             case connector_connect_manual:
                 break;
             default:
-                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range);
+                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
                 result = connector_abort;
                 break;
             }
@@ -258,7 +258,7 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
     stop_request.user_context = user_context;
 
     {
-        connector_callback_status_t const status =  connector_callback(connector_ptr->callback, connector_class_id_status, request_id, &stop_request);
+        connector_callback_status_t const status =  connector_callback(connector_ptr->callback, connector_class_id_status, request_id, &stop_request, connector_ptr->context);
 
         switch (status)
         {
@@ -343,7 +343,7 @@ static void abort_connector(connector_data_t * const connector_ptr)
     }
 }
 
-connector_handle_t connector_init(connector_callback_t const callback)
+connector_handle_t connector_init(connector_callback_t const callback, void * const context)
 {
 
     connector_data_t * connector_handle = NULL;
@@ -361,7 +361,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
 #if (defined CONNECTOR_NO_MALLOC)
         status = malloc_data_buffer(NULL, sizeof *connector_handle, named_buffer_id(connector_data), &handle);
 #else
-        status = malloc_cb(callback, sizeof *connector_handle, &handle);
+        status = malloc_cb(callback, sizeof *connector_handle, &handle, context);
 #endif
 
         COND_ELSE_GOTO(status == connector_working, done);
@@ -370,6 +370,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
     }
 
     connector_handle->callback = callback;
+    connector_handle->context = context;
 
     status = manage_device_id(connector_handle);
     COND_ELSE_GOTO(status == connector_working, error);

@@ -151,9 +151,11 @@ static connector_callback_status_t app_os_reboot(void)
 }
 
 connector_callback_status_t app_os_handler(connector_request_id_os_t const request,
-                                           void * const data)
+                                           void * const data, void * const context)
 {
     connector_callback_status_t status;
+
+    UNUSED_ARGUMENT(context);
 
     switch (request)
     {

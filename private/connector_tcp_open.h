@@ -23,7 +23,7 @@ static connector_status_t connect_to_cloud(connector_data_t * const connector_pt
     open_data.handle = NULL;
 
     request_id.network_request = connector_request_id_network_open;
-    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data);
+    status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data, connector_ptr->context);
     ASSERT(status != connector_callback_unrecognized);
     switch (status)
     {
@@ -504,7 +504,7 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
                 connector_debug_hexvalue("Received Device ID", device_id, DEVICE_ID_LENGTH);
 
                 request_id.config_request = connector_request_id_config_set_device_id;
-                status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
+                status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data, connector_ptr->context);
                 switch (status)
                 {
                 case connector_callback_continue:
@@ -1015,7 +1015,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
                     edp_set_edp_state(connector_ptr, edp_facility_process);
                     edp_set_active_state(connector_ptr, connector_transport_receive);
 
-                    if (notify_status(connector_ptr->callback, connector_tcp_communication_started) != connector_working)
+                    if (notify_status(connector_ptr->callback, connector_tcp_communication_started, connector_ptr->context) != connector_working)
                         result = connector_abort;
 
                }

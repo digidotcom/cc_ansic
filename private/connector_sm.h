@@ -610,7 +610,7 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
         open_data.handle = NULL;
 
         request_id.network_request = connector_request_id_network_open;
-        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
+        status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data, connector_ptr->context);
         ASSERT(status != connector_callback_unrecognized);
         switch (status)
         {
@@ -675,7 +675,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
 
         connector_debug_printf("sm_close_transport: status %d\n", sm_ptr->close.status);
         request_id.network_request = connector_request_id_network_close;
-        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
+        callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data, connector_ptr->context);
         ASSERT(callback_status != connector_callback_unrecognized);
         switch (callback_status)
         {

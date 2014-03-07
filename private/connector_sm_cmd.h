@@ -200,7 +200,7 @@ static connector_callback_status_t sm_inform_data_complete(connector_data_t * co
     #endif
     {
         request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_status : connector_request_id_data_service_receive_status;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &status_info);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &status_info, connector_ptr->context);
     }
 
     return callback_status;
@@ -218,7 +218,7 @@ static connector_callback_status_t sm_inform_cli_complete(connector_data_t * con
     cb_data.user_context = session->user.context;
     cb_data.status = (session->error == connector_sm_error_cancel) ? connector_sm_cli_status_cancel : connector_sm_cli_status_error;
     request_id.sm_request = connector_request_id_sm_cli_status;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context, connector_ptr->context);
     if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_error;
 
@@ -261,7 +261,7 @@ static connector_callback_status_t sm_inform_ping_complete(connector_data_t * co
         }
 
         request_id.sm_request = connector_request_id_sm_ping_response;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
         if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_continue;
     }
@@ -513,7 +513,7 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
 #endif
 
         request_id.sm_request = connector_request_id_sm_cli_request;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request, connector_ptr->context);
         if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
         result = sm_map_callback_status_to_connector_status(callback_status);
@@ -554,7 +554,7 @@ static connector_status_t sm_prepare_cli_response(connector_data_t * const conne
         connector_request_id_t request_id;
 
         request_id.sm_request = connector_request_id_sm_cli_response;
-        status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_response);
+        status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_response, connector_ptr->context);
         if (status == connector_callback_unrecognized)
             status = connector_callback_error;
         ASSERT(cli_response.bytes_available >= cli_response.bytes_used);
@@ -613,7 +613,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
             close_data.status = connector_close_status_device_stopped;
 
             request_id.network_request = connector_request_id_network_close;
-            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
+            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data, connector_ptr->context);
                 ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
@@ -644,7 +644,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
             open_data.handle = NULL;
 
             request_id.network_request = connector_request_id_network_open;
-            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data);
+            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data, connector_ptr->context);
             ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
@@ -686,7 +686,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
         config_request.response_required = SmIsResponseNeeded(session->flags);
 
         request_id.sm_request = connector_request_id_sm_config_request;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &config_request);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &config_request, connector_ptr->context);
         result = sm_map_callback_status_to_connector_status(callback_status);
     }
 error:
@@ -713,7 +713,7 @@ static connector_status_t sm_pass_target_info(connector_data_t * const connector
     cb_data.response_required = SmIsResponseNeeded(session->flags);
 
     request_id.data_service_request = connector_request_id_data_service_receive_target;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
     if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_error; 
     result = sm_map_callback_status_to_connector_status(callback_status);
@@ -774,7 +774,7 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         cb_data.bytes_used = bytes - bytes_pre_processed;
         cb_data.more_data = SmIsNotLastData(session->flags);
         request_id.data_service_request = connector_request_id_data_service_receive_data;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
         if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
         if (callback_status != connector_callback_busy)
@@ -848,7 +848,7 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
         connector_request_id_t request_id;
 
         request_id.data_service_request = connector_request_id_data_service_send_response;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
     }
  
     status = sm_map_callback_status_to_connector_status(callback_status);
@@ -869,7 +869,7 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
     connector_callback_status_t callback_status;
 
     request_id.os_request = connector_request_id_os_reboot;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL, connector_ptr->context);
     /* JIRA IC4C-119 */
     /* ASSERT(callback_status != connector_callback_unrecognized); */
     
@@ -903,7 +903,7 @@ static connector_status_t sm_process_ping_request(connector_data_t * const conne
     cb_data.response_required = SmIsResponseNeeded(session->flags);
 
     request_id.sm_request = connector_request_id_sm_ping_request;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
     if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_continue;
     status = sm_map_callback_status_to_connector_status(callback_status);
@@ -925,7 +925,7 @@ static connector_status_t sm_process_opaque_response(connector_data_t * const co
     cb_data.error = SmIsError(session->flags);
 
     request_id.sm_request = connector_request_id_sm_opaque_response;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
     status = sm_map_callback_status_to_connector_status(callback_status);
 
     return status;

@@ -527,7 +527,7 @@ typedef struct
  * @see connector_callback_status_t
  * @see connector_init()
  */
-typedef connector_callback_status_t (* connector_callback_t) (connector_class_id_t const class_id, connector_request_id_t const request_id, void * const data);
+typedef connector_callback_status_t (* connector_callback_t) (connector_class_id_t const class_id, connector_request_id_t const request_id, void * const data, void * const context);
 /**
 * @}
 */
@@ -559,7 +559,7 @@ typedef connector_callback_status_t (* connector_callback_t) (connector_class_id
  * @see connector_handle_t
  * @see connector_callback_t
  */
-connector_handle_t connector_init(connector_callback_t const callback);
+connector_handle_t connector_init(connector_callback_t const callback, void * const context);
 /**
 * @}
 */

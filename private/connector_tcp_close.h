@@ -57,7 +57,7 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
         connector_debug_printf("tcp_close_cloud: status = %s\n", close_status_to_string(close_data.status));
         request_id.network_request = connector_request_id_network_close;
 
-        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data);
+        status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data, connector_ptr->context);
         ASSERT(status != connector_callback_unrecognized);
         switch (status)
         {

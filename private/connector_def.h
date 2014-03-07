@@ -221,6 +221,7 @@ typedef struct connector_data {
         connector_stop_condition_t condition;
         void * user_context;
     } stop;
+    void * context;
 
 } connector_data_t;
 

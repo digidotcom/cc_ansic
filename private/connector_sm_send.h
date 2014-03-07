@@ -41,7 +41,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
                 connector_request_id_t request_id;
 
                 request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_length : connector_request_id_data_service_receive_reply_length;
-                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+                status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
                 if (status == connector_callback_unrecognized)
                     status = connector_callback_continue;
             }
@@ -62,7 +62,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
             cb_data.total_bytes = 0;
 
             request_id.sm_request = connector_request_id_sm_cli_response_length;
-            status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data);
+            status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
             if (status == connector_callback_unrecognized)
                 status = connector_callback_continue;
             session->in.bytes = cb_data.total_bytes;
@@ -117,7 +117,7 @@ static connector_status_t sm_get_more_request_data(connector_data_t * const conn
             connector_request_id_t request_id;
 
             request_id.data_service_request = connector_request_id_data_service_send_data;
-            status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+            status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
         }
 
         result = sm_map_callback_status_to_connector_status(status);
@@ -156,7 +156,7 @@ static connector_status_t sm_get_more_response_data(connector_data_t * const con
         connector_request_id_t request_id;
 
         request_id.data_service_request = connector_request_id_data_service_receive_reply_data;
-        status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
+        status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
         result = sm_map_callback_status_to_connector_status(status);
     }
 
@@ -296,7 +296,7 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
     send_data.bytes_used = 0;
 
     request_id.network_request = connector_request_id_network_send;
-    status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &send_data);
+    status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &send_data, connector_ptr->context);
     ASSERT(status != connector_callback_unrecognized);
     result = sm_map_callback_status_to_connector_status(status);
     if (status != connector_callback_continue) goto error;

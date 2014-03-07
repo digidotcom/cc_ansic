@@ -51,9 +51,9 @@ static void free_static_data(connector_data_t * const connector_ptr,
 
 
 static connector_callback_status_t connector_callback(connector_callback_t const callback, connector_class_id_t const class_id,  connector_request_id_t const request_id,
-                                                                       void * const data)
+                                                                       void * const data, void * const context)
 {
-    connector_callback_status_t status = callback(class_id, request_id, data);
+    connector_callback_status_t status = callback(class_id, request_id, data, context);
 
     switch (status)
     {
@@ -92,7 +92,7 @@ static connector_status_t get_system_time(connector_data_t * const connector_ptr
 
     /* Call callback to get system up time in second */
     request_id.os_request = connector_request_id_os_system_up_time;
-    status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data);
+    status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data, connector_ptr->context);
     switch (status)
     {
     case connector_callback_continue:
@@ -111,7 +111,7 @@ static connector_status_t get_system_time(connector_data_t * const connector_ptr
 }
 
 #ifndef CONNECTOR_NO_MALLOC
-static connector_status_t malloc_cb(connector_callback_t const callback, size_t const length, void ** ptr)
+static connector_status_t malloc_cb(connector_callback_t const callback, size_t const length, void ** ptr, void * const context)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t status;
@@ -122,13 +122,13 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
     data.size = length;
     data.ptr = *ptr = NULL;
 
-    status = connector_callback(callback, connector_class_id_operating_system, request_id, &data);
+    status = connector_callback(callback, connector_class_id_operating_system, request_id, &data, context);
     switch (status)
     {
     case connector_callback_continue:
         if (data.ptr == NULL)
         {
-            result = (notify_error_status(callback, connector_class_id_operating_system, request_id, connector_invalid_data) == connector_working) ? connector_pending : connector_abort;
+            result = (notify_error_status(callback, connector_class_id_operating_system, request_id, connector_invalid_data, context) == connector_working) ? connector_pending : connector_abort;
         }
         else
         {
@@ -151,7 +151,7 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
 
 static connector_status_t malloc_data(connector_data_t * const connector_ptr, size_t const length, void ** ptr)
 {
-    return malloc_cb(connector_ptr->callback, length, ptr);
+    return malloc_cb(connector_ptr->callback, length, ptr, connector_ptr->context);
 }
 
 static connector_status_t free_data(connector_data_t * const connector_ptr, void * const ptr)
@@ -164,7 +164,7 @@ static connector_status_t free_data(connector_data_t * const connector_ptr, void
     data.ptr = ptr;
 
     {
-        connector_callback_status_t const callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data);
+        connector_callback_status_t const callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data, connector_ptr->context);
         switch (callback_status)
         {
             case connector_callback_continue:
@@ -219,7 +219,7 @@ static connector_status_t yield_process(connector_data_t * const connector_ptr, 
         request_id.os_request = connector_request_id_os_yield;
         data.status = status;
 
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data, connector_ptr->context);
 
         switch (callback_status)
         {
@@ -246,7 +246,7 @@ static connector_status_t connector_reboot(connector_data_t * const connector_pt
 
     /* Device Cloud reboots us */
 
-    status = connector_callback(connector_ptr->callback, class_id, request_id, NULL);
+    status = connector_callback(connector_ptr->callback, class_id, request_id, NULL, connector_ptr->context);
     switch (status)
     {
     case connector_callback_continue:
