@@ -32,7 +32,7 @@ typedef enum {
 
 extern connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                           connector_request_id_t const request_id,
-                                                          void * const data);
+                                                          void * const data, void * const context);
 
 /* Callbacks for this platform */
 extern connector_callback_status_t app_os_handler(connector_request_id_os_t const request,

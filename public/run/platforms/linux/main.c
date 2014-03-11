@@ -59,7 +59,7 @@ int main (void)
     connector_handle_t connector_handle;
 
     APP_DEBUG("Start Cloud Connector for Embedded\n");
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
 
     if (connector_handle != NULL)
     {
