@@ -241,21 +241,18 @@ static connector_callback_status_t app_is_tcp_connect_complete(int const fd)
     return status;
 }
 
-static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data, int instance)
+static connector_callback_status_t app_network_tcp_open(connector_network_open_t * const data)
 {
 #define APP_CONNECT_TIMEOUT 30
 
     static unsigned long connect_time;
-    static int fd1 = -1;
-    static int fd2 = -1;
-    int * fd = instance == 1 ? &fd1 : &fd2;
-
+    static int fd = -1;
     socklen_t interface_addr_len;
 
     connector_callback_status_t status = connector_callback_error;
-    data->handle = fd;
+    data->handle = &fd;
 
-    if (*fd == -1)
+    if (fd == -1)
     {
         in_addr_t ip_addr;
 
@@ -266,28 +263,28 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
             goto done;
         }
 
-        *fd = app_tcp_create_socket();
-        if (*fd == -1)
+        fd = app_tcp_create_socket();
+        if (fd == -1)
         {
             status = connector_callback_error;
             goto done;
         }
 
         app_os_get_system_time(&connect_time);
-        status = app_tcp_connect(*fd, ip_addr);
+        status = app_tcp_connect(fd, ip_addr);
         if (status != connector_callback_continue)
             goto error;
     }
 
     /* Get socket info of connected interface */
     interface_addr_len = sizeof(interface_addr);
-    if (getsockname(*fd, (struct sockaddr *)&interface_addr, &interface_addr_len))
+    if (getsockname(fd, (struct sockaddr *)&interface_addr, &interface_addr_len))
     {
         APP_DEBUG("network_connect: getsockname error, errno %d\n", errno);
         goto done;
     }
 
-    status = app_is_tcp_connect_complete(*fd);
+    status = app_is_tcp_connect_complete(fd);
     if (status == connector_callback_continue)
     {
          APP_DEBUG("app_network_tcp_open: connected to %s\n", data->device_cloud_url);
@@ -314,15 +311,14 @@ error:
         APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", data->device_cloud_url);
         app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
-        if (*fd >= 0)
+        if (fd >= 0)
         {
-            close(*fd);
-            *fd = -1;
+            close(fd);
+            fd = -1;
         }
     }
 
 done:
-
     return status;
 }
 
@@ -331,15 +327,14 @@ done:
  *  Callback routine to handle all networking related calls.
  */
 connector_callback_status_t app_network_tcp_handler(connector_request_id_network_t const request_id,
-                                                    void * const data, void * const context)
+                                                    void * const data)
 {
     connector_callback_status_t status;
-    int * instance = context;
 
     switch (request_id)
     {
     case connector_request_id_network_open:
-        status = app_network_tcp_open(data, *instance);
+        status = app_network_tcp_open(data);
         break;
 
     case connector_request_id_network_send:

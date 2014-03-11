@@ -103,14 +103,14 @@ error:
 }
 
 #define MAC_ADDR_LENGTH     6
-static uint8_t const device_mac_addr_1[MAC_ADDR_LENGTH] = {0x00, 0x04, 0x9D, 0xAB, 0xCD, 0xEF};
-static uint8_t const device_mac_addr_2[MAC_ADDR_LENGTH] = {0x00, 0x04, 0x9D, 0xAB, 0xCD, 0xEE};
+static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac, int instance)
+static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
+#error "Specify device MAC address for LAN connection"
     ASSERT(config_mac->bytes_required == MAC_ADDR_LENGTH);
 
-    config_mac->data = instance == 1? (uint8_t *)device_mac_addr_1 : (uint8_t *)device_mac_addr_2;
+    config_mac->data = (uint8_t *)device_mac_addr;
 
     return connector_callback_continue;
 }
@@ -125,10 +125,10 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
 {
     char proc_path[PATH_MAX];
     char device_id_full_path[PATH_MAX] = {0};
-
+    
     pid_t pid = getpid();
     sprintf(proc_path, "/proc/%d/exe", pid);
-    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1)
+    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1) 
     {
         perror("readlink");
     }
@@ -163,10 +163,10 @@ static connector_callback_status_t app_save_device_id(connector_config_pointer_d
     int bytes_written;
     char proc_path[PATH_MAX];
     char device_id_full_path[PATH_MAX] = {0};
-
+    
     pid_t pid = getpid();
     sprintf(proc_path, "/proc/%d/exe", pid);
-    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1)
+    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1) 
     {
         perror("readlink");
     }
@@ -177,7 +177,7 @@ static connector_callback_status_t app_save_device_id(connector_config_pointer_d
          */
         strcpy(device_id_full_path + strlen(device_id_full_path) - strlen(EXECUTABLE_NAME), DEVICE_ID_FILENAME);
     }
-
+    
     file = fopen(device_id_full_path, "w+");
     bytes_written = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
     ASSERT(bytes_written == sizeof provisioned_device_id);
@@ -190,7 +190,9 @@ static connector_callback_status_t app_save_device_id(connector_config_pointer_d
 #if !(defined CONNECTOR_VENDOR_ID)
 static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
 {
-    static uint32_t const device_vendor_id = 0x030000DB;
+#error  "Specify vendor id"
+
+    static uint32_t const device_vendor_id = 0x00000000;
     config_vendor->id  =  device_vendor_id;
 
     return connector_callback_continue;
@@ -259,7 +261,7 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
 
 /* Service-Id used to communicate with the server through SMS
  * if empty, not shared-code used (default when using long codes)
- * When using shared-codes within US you may need to use "idgp"
+ * When using shared-codes within US you may need to use "idgp" 
  */
 static char connector_cloud_service_id[] = "";  /* empty: No shared-code used */
 
@@ -410,11 +412,11 @@ static unsigned int digit_to_nibble(char const * const string, int * const index
 {
     unsigned int nibble = 0;
     int current;
-
+     
     for (current = *index; current >= 0; current--)
     {
         int const ch = string[current];
-
+         
         if (isxdigit(ch))
         {
             if (isdigit(ch))
@@ -425,25 +427,25 @@ static unsigned int digit_to_nibble(char const * const string, int * const index
         }
     }
     *index = current - 1;
-
+ 
     return nibble;
 }
-
+  
 /* Parse a string with non-digit characters into an array (i.e.: 0123456-78-901234-5 will be stored in {0x01, 0x23, 0x45, 0x67, 0x89, 0x01, 0x23, 0x45}) */
 static int str_to_uint8_array(char const * const str, uint8_t * const array, size_t const array_size)
 {
     int i;
     int const string_length = strlen(str);
     int index = string_length - 1;
-
+ 
     for (i = array_size - 1; i >= 0; i--)
     {
         unsigned int const ls_nibble = digit_to_nibble(str, &index);
         unsigned int const ms_nibble = digit_to_nibble(str, &index);
-
+ 
         array[i] = (ms_nibble << 4) + ls_nibble;
     }
-
+ 
     return 0;
 }
 
@@ -456,7 +458,7 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
      */
     char const app_imei_number_string[APP_IMEI_STRING_LENGTH] = "000000-00-000000-0";
     static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
-
+    
     str_to_uint8_array(app_imei_number_string, app_imei_number, sizeof app_imei_number);
 
     config_imei->data = app_imei_number;
@@ -472,13 +474,13 @@ static connector_callback_status_t app_start_network_tcp(connector_config_connec
 
 static connector_callback_status_t app_start_network_udp(connector_config_connect_type_t * const config_connect)
 {
-    config_connect->type = connector_connect_manual;
+    config_connect->type = connector_connect_auto;
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
 {
-    config_connect->type = connector_connect_manual;
+    config_connect->type = connector_connect_auto;
     return connector_callback_continue;
 }
 
@@ -501,7 +503,7 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
      */
     char const app_esn_hex_string[APP_ESN_HEX_STRING_LENGTH] = "00000000";
     static uint8_t app_esn_hex[APP_ESN_HEX_LENGTH] = {0};
-
+    
     str_to_uint8_array(app_esn_hex_string, app_esn_hex, sizeof app_esn_hex);
     config_esn->data = app_esn_hex;
     ASSERT(config_esn->bytes_required == sizeof app_esn_hex);
@@ -884,12 +886,10 @@ static connector_callback_status_t app_config_error(connector_config_error_statu
 /*
  * Configuration callback routine.
  */
-connector_callback_status_t app_config_handler(connector_request_id_config_t const request_id, void * const data, void * const context)
+connector_callback_status_t app_config_handler(connector_request_id_config_t const request_id, void * const data)
 {
     connector_callback_status_t status;
-    int * instance = context;
 
-    printf("   SP:%s %s\n", __FUNCTION__, app_config_class_to_string(request_id));
 
     switch (request_id)
     {
@@ -902,7 +902,7 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         break;
 
     case connector_request_id_config_mac_addr:
-        status = app_get_mac_addr(data, *instance);
+        status = app_get_mac_addr(data);
         break;
 
 #if !(defined CONNECTOR_VENDOR_ID)
@@ -1067,10 +1067,10 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
          status = app_get_password(data);
          break;
 
-     default:
-         APP_DEBUG("app_config_callback: unknown configuration request= %d\n", request_id);
-         status = connector_callback_unrecognized;
-         break;
+    default:
+        APP_DEBUG("app_config_callback: unknown configuration request= %d\n", request_id);
+        status = connector_callback_unrecognized;
+        break;
     }
 
     return status;
