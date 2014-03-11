@@ -50,7 +50,7 @@ int main (void)
     connector_handle_t connector_handle;
 
     APP_DEBUG("Start Etherios Connector\n");
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle != NULL)
     {
         int ccode;

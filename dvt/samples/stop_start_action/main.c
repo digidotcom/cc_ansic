@@ -111,7 +111,7 @@ static int start_connector_thread(void)
 {
     int ccode = -1;
 
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle != NULL)
     {
         connector_initiate_stop_request_t request_data = {connector_transport_all, connector_stop_immediately, NULL};

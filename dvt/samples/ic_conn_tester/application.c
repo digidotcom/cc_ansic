@@ -75,7 +75,7 @@ int application_step(connector_handle_t handle)
     int result = -1;
     static unsigned long started;
     unsigned long close_cnt, open_fail_cnt, total_missed_ka;
- 
+
     connector_os_status_type_t os_status = (connector_os_status_type_t) -1;
 
     UNUSED_ARGUMENT(handle);

@@ -26,14 +26,14 @@ int __cdecl main(int argc, char **argv)
 		APP_PRINTF("WSAStartup failed: %d\n", WSAGetLastError());
 		goto done;
 	}
-   
+
     if (!application_init(argc, argv))
     {
         goto done;
     }
 
     APP_DEBUG("main: Starting iDigi\n");
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle == NULL)
     {
         APP_DEBUG("main: connector_init() failed\n");
@@ -50,14 +50,14 @@ int __cdecl main(int argc, char **argv)
          * a portion of the users application.
          */
         status = connector_step(connector_handle);
-        if (status != status != connector_success && status != connector_idle && 
+        if (status != status != connector_success && status != connector_idle &&
 			status != connector_working && status != connector_pending && status != connector_active)
         {
             APP_DEBUG("\nmain: connector_step() failed\n");
             break;
         }
         result = application_step(connector_handle);
-        
+
         if (result != 0)
             goto done;
 
@@ -65,7 +65,7 @@ int __cdecl main(int argc, char **argv)
     }
 
 done:
-    if (argc < 3) 
+    if (argc < 3)
     {
         result = 0;
     }

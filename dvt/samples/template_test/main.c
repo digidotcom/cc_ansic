@@ -51,7 +51,7 @@ int main (void)
     connector_handle_t connector_handle;
 
     APP_DEBUG("Start iDigi\n");
-    connector_handle = connector_init((connector_callback_t) connector_callback);
+    connector_handle = connector_init((connector_callback_t) connector_callback, NULL);
     if (connector_handle != NULL)
     {
         APP_DEBUG("This is only testing the template platform\n");

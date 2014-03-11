@@ -92,7 +92,7 @@ int main (void)
         {
             first_time = 0;
             callback = (unsigned long)bad_callback;
-            connector_handle = connector_init((connector_callback_t) callback);
+            connector_handle = connector_init((connector_callback_t) callback, NULL);
         }
         else
         {

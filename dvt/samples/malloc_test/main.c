@@ -181,7 +181,7 @@ int start_connector_thread(void)
 {
     int ccode = -1;
 
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle != NULL)
     {
         ccode = pthread_create(&connector_thread, NULL, connector_run_thread, connector_handle);

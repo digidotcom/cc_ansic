@@ -47,7 +47,7 @@ int main(void){
     // Initialize core stack layers (MAC, ARP, TCP, UDP) and
     // application modules (HTTP, SNMP, etc.)
     StackInit();
-    
+
     DBINIT();
     DEBUG_PRINTF("Program Started.\n");
     connector_handle_t handle = NULL;
@@ -84,7 +84,7 @@ int main(void){
                     free(handle);
                 }
                 // Initialize iDigi Connector.
-                handle = connector_init((connector_callback_t) connector_callback);
+                handle = connector_init((connector_callback_t) connector_callback, NULL);
             }
             // Process next iDigi step.
             status = connector_step(handle);
@@ -848,7 +848,7 @@ connector_callback_status_t connector_callback(connector_class_id_t const class_
                                         size_t * const response_length){
 
     connector_callback_status_t status = connector_callback_continue;
-    
+
     switch(class_id){
         case connector_class_config:
             status = connector_config_callback(request_id.config_request,

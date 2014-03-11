@@ -269,7 +269,7 @@ int main (void)
     APP_DEBUG("main: Starting Etherios Cloud Connector\n");
     get_time(&start_time);
 
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
 
     get_time(&end_time);
     if (connector_handle == NULL)
