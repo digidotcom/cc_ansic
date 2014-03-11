@@ -236,7 +236,7 @@ static connector_status_t dp_inform_status(connector_data_t * const connector_pt
         connector_request_id_t request_id;
 
         request_id.data_point_request = request;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &dp_status);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &dp_status, connector_ptr->context);
         result = dp_callback_status_to_status(callback_status);
     }
 
@@ -1049,7 +1049,7 @@ static connector_callback_status_t dp_handle_response_callback(connector_data_t 
             ASSERT(connector_false);
     }
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data, connector_ptr->context);
     if (callback_status == connector_callback_busy) goto error;
 
 #if (CONNECTOR_VERSION < 0x02010000)
@@ -1114,7 +1114,7 @@ static connector_callback_status_t dp_handle_status_callback(connector_data_t * 
             break;
     }
 
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data, connector_ptr->context);
     if (callback_status == connector_callback_busy) goto error;
 
     if (free_data_buffer(connector_ptr, named_buffer_id(data_point_block), dp_info) != connector_working)

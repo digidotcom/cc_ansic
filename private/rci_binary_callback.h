@@ -147,7 +147,7 @@ static connector_bool_t rci_callback(rci_t * const rci)
     }
     }
 
-    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data);
+    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
 
     switch (rci->callback.status)
     {

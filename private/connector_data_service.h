@@ -51,7 +51,7 @@ static connector_status_t call_ds_receive_callback(connector_data_t * const conn
         case connector_request_id_data_service_receive_status:
         case connector_request_id_data_service_receive_reply_data:
         {
-            connector_callback_status_t const status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, data);
+            connector_callback_status_t const status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, data, connector_ptr->context);
             switch (status)
             {
                 case connector_callback_continue:
@@ -572,7 +572,7 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
         connector_request_id_t request;
 
         request.data_service_request = request_id;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request, cb_data);
+        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request, cb_data, connector_ptr->context);
     }
     #if (defined CONNECTOR_DATA_POINTS)
     else

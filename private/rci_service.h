@@ -201,7 +201,7 @@ static connector_status_t connector_facility_rci_service_init(connector_data_t *
 
         request_id.remote_config_request = (connector_request_id_remote_config_t)connector_request_id_remote_config_configurations;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
-                                             request_id, &connector_rci_config_data);
+                                             request_id, &connector_rci_config_data, connector_ptr->context);
         switch (callback_status)
         {
             case connector_callback_unrecognized:

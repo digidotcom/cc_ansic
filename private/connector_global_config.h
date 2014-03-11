@@ -138,7 +138,7 @@ done:
 }
 #endif
 
-#if !(defined CONNECTOR_TRANSPORT_SMS)
+#if (defined CONNECTOR_TRANSPORT_SMS)
 #if (CONNECTOR_VERSION >= 0x02010000)
 #if !(defined CONNECTOR_CLOUD_PHONE)
 static connector_status_t get_config_device_cloud_phone(connector_data_t * const connector_ptr)
@@ -199,7 +199,7 @@ static connector_status_t set_config_device_cloud_phone(connector_data_t * const
 
     request_id.config_request = connector_request_id_config_set_device_cloud_phone;
 
-    cloud_phone.string = phone_number; 
+    cloud_phone.string = phone_number;
     cloud_phone.length = strlen(phone_number);
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &cloud_phone, connector_ptr->context);

@@ -115,7 +115,7 @@ static connector_status_t confirm_fw_version(connector_firmware_data_t * const f
 
         connector_debug_printf("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)\n", version_number, rci_get_firmware_target_zero_version());
         request_id.firmware_request = connector_request_id_firmware_info;
-        if (notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_bad_version) != connector_working)
+        if (notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_bad_version, connector_ptr->context) != connector_working)
         {
             result = connector_abort;
         }
@@ -139,7 +139,7 @@ static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr
         connector_callback_status_t status;
 
         request_id.firmware_request = fw_request_id;
-        status = connector_callback(connector_ptr->callback, connector_class_id_firmware, request_id, data);
+        status = connector_callback(connector_ptr->callback, connector_class_id_firmware, request_id, data, connector_ptr->context);
 
         if (get_system_time(connector_ptr, &end_time_stamp) != connector_working)
         {
@@ -361,7 +361,7 @@ enum fw_info {
             request_id.firmware_request = connector_request_id_firmware_info;
             connector_debug_printf("process_fw_info_request: description length = %lu + name spec length = %lu\n",
                                     (unsigned long int)fw_ptr->desc_length, (unsigned long int)fw_ptr->spec_length);
-            notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_size);
+            notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_size, connector_ptr->context);
             fw_ptr->desc_length = 0;
             fw_ptr->spec_length = 0;
             result = connector_abort;
@@ -1103,7 +1103,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
                     connector_request_id_t request_id;
 
                     request_id.firmware_request = connector_request_id_firmware_target_count;
-                    notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_range);
+                    notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_range, connector_ptr->context);
                     result = connector_abort;
                     goto done;
                 }

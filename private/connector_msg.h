@@ -1966,7 +1966,7 @@ static connector_status_t msg_init_facility(connector_data_t * const connector_p
             connector_callback_status_t callback_status;
 
             request_id.config_request = connector_request_id_config_max_transaction;
-            callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_max_transaction);
+            callback_status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &config_max_transaction, connector_ptr->context);
             if (callback_status != connector_callback_continue && callback_status != connector_callback_unrecognized)
             {
                 status = connector_abort;

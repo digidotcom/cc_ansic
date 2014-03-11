@@ -249,7 +249,7 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
         {
             connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
-            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range);
+            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range, rci->service_data->connector_ptr->context);
             rci->status = rci_status_error;
             overflow = connector_false;
             connector_debug_printf("Invalid IPv4 \"%s\"\n", string);
