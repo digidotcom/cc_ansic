@@ -94,9 +94,11 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
 
 connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                    connector_request_id_t const request_id,
-                                                   void * const data)
+                                                   void * const data, void * const context)
 {
     connector_callback_status_t   status = connector_callback_unrecognized;
+
+    UNUSED_ARGUMENT(context);
 
     switch (class_id)
     {

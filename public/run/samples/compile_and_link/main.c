@@ -21,7 +21,7 @@ int main (void)
      * Call connector_init() with a NULL callback, we are only verifying that we
      * can compile and link Cloud Connector.
      */
-    (void)connector_init((connector_callback_t)0);
+    (void)connector_init((connector_callback_t)0, NULL);
     return 0;
 }
 
