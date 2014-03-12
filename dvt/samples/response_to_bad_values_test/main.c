@@ -96,7 +96,7 @@ int main (void)
         }
         else
         {
-            connector_handle = connector_init(app_connector_callback);
+            connector_handle = connector_init(app_connector_callback, NULL);
         }
 
         if (connector_handle != NULL)
