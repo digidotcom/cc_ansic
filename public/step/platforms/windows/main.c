@@ -26,7 +26,7 @@ int __cdecl main(int argc, char **argv)
 		goto done;
 	}
     APP_DEBUG("main: Starting iDigi\n");
-    connector_handle = connector_init(app_connector_callback);
+    connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle == NULL)
     {
         APP_DEBUG("main: connector_init() failed\n");
@@ -61,7 +61,7 @@ int __cdecl main(int argc, char **argv)
     }
 
 done:
- 
+
 	WSACleanup();
     return 1;
 }

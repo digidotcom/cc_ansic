@@ -40,6 +40,7 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
     UNUSED_PARAMETER(class_number);
     UNUSED_PARAMETER(request_number);
     UNUSED_PARAMETER(status);
+    UNUSED_PARAMETER(context);
 #endif
     return result;
 }
