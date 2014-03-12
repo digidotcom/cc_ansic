@@ -181,7 +181,7 @@ TESTS = dict((test.name,test) for test in [run_sample, step_sample,
 SAMPLE_TESTS = dict((test.name,test) for test in [run_sample, step_sample])
 
 DVT_TESTS = dict((test.name,test) for test in [malloc_test,
-                                           dvt_test, keepalive_test, 
+                                           dvt_test, keepalive_test,
                                            timing_test, stacksize_test])
 
 ADMIN_TESTS = dict((test.name,test) for test in [admin_test])
@@ -325,7 +325,7 @@ class TestRunner(object):
     def __init__(self, hostname, username, password, mac_address, imei, meid, esn, description, base_dir,
         debug_on=False, cflags='', replace_list=[], update_config_header=False,
         tty=False, gcov=False, test_type=None, test_name=None,
-        config_tool_jar='ConfigGenerator.jar', keystore=None):
+        config_tool_jar='ConfigGenerator.jar', keystore=None, build_only=False):
 
         self.hostname     = hostname
         self.username     = username
@@ -355,6 +355,7 @@ class TestRunner(object):
 
         self.config_tool_jar = config_tool_jar
         self.keystore        = keystore
+        self.build_only      = build_only
 
         response = self.rest_session.get_first('DeviceVendor')
 
@@ -575,7 +576,7 @@ class TestRunner(object):
             if rc == False:
                 raise Exception("Failed to Build from %s." % src_dir)
 
-            if test == 'compile_and_link':
+            if test == 'compile_and_link' or self.build_only == True:
                 self.log.info('Finished Test.', extra=log_extra)
                 return
 
@@ -675,7 +676,7 @@ class TestRunner(object):
                 self.log.error(status[1], extra=log_extra)
 
             # Delete device if it was not previously deleted.
-            if device_location is not None:
+            if device_location is not None and self.build_only == False:
                 if(pid is not None and len(pid)>0):
                     # Check that process is finished
                     retries = 10
@@ -693,14 +694,15 @@ class TestRunner(object):
                 except Exception, e:
                     log.exception(e)
 
-            device_type = device_config['device_type']
-            self.log.info("Deleting RCI Descriptors for %s." % device_type, extra=log_extra)
-            try:
-                self.rest_session.delete('DeviceMetaData',
-                    params={'condition': "dmDeviceType='%s'" % device_type})
-            except Exception, e:
-                log.exception(e)
-            self.log.info("Done.", extra=log_extra)
+            if self.build_only == False:
+                device_type = device_config['device_type']
+                self.log.info("Deleting RCI Descriptors for %s." % device_type, extra=log_extra)
+                try:
+                    self.rest_session.delete('DeviceMetaData',
+                        params={'condition': "dmDeviceType='%s'" % device_type})
+                except Exception, e:
+                    log.exception(e)
+                self.log.info("Done.", extra=log_extra)
 
 
     def remove_sandbox(self, directory):
@@ -842,6 +844,8 @@ def main():
         help='Whether or not to run in a separate TTY session (only useful for Jenkins execution).')
     parser.add_argument('--gcov', action='store_true', dest='gcov', default=False,
         help='Whether or not to run gcov Code coverage.')
+    parser.add_argument('--build_only', action='store_true', dest='build_only', default=False,
+        help='Only build projects, do not run any application.')
 
     args = parser.parse_args()
 
@@ -914,7 +918,7 @@ def main():
                 replace_list=replace_list, tty=args.tty,
                 test_name=args.test_name, test_type=args.test_type,
                 config_tool_jar = config_tool_jar, keystore= keystore,
-                gcov=args.gcov, update_config_header=update_config_header)
+                gcov=args.gcov, update_config_header=update_config_header, build_only=args.build_only)
             runner.run_tests()
 
     log.info("All Tests Completed.")
