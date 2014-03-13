@@ -41,6 +41,50 @@ static connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr,
     return sm_ptr;
 }
 
+#if !(defined CONNECTOR_SM_UDP_MAX_SESSIONS) || !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
+static connector_status_t get_config_sm_max_sessions(connector_data_t * const connector_ptr,
+                                                        connector_request_id_config_t const config_request_id,
+                                                        connector_config_sm_max_sessions_t * const config_max_sessions)
+{
+    connector_status_t result = connector_working;
+
+    ASSERT(config_max_sessions != NULL);
+    ASSERT((config_request_id == connector_request_id_config_sm_udp_max_sessions) ||
+           (config_request_id == connector_request_id_config_sm_sms_max_sessions));
+
+    config_max_sessions->max_sessions = 0;
+
+    {
+        connector_callback_status_t status;
+        connector_request_id_t request_id;
+
+        request_id.config_request = config_request_id;
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_max_sessions, connector_ptr->context);
+
+        switch (status)
+        {
+        case connector_callback_continue:
+            if (config_max_sessions->max_sessions == 0 || config_max_sessions->max_sessions > CONNECTOR_SM_MAX_SESSIONS_LIMIT)
+            {
+                notify_error_status(connector_ptr->callback, connector_class_id_config, request_id, connector_invalid_data_range, connector_ptr->context);
+                result = connector_abort;
+            }
+            break;
+
+        case connector_callback_busy:
+        case connector_callback_abort:
+        case connector_callback_error:
+            result = connector_abort;
+            break;
+
+        case connector_callback_unrecognized:
+            break;
+        }
+    }
+    return result;
+}
+#endif
+
 static connector_status_t sm_initialize(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     connector_status_t result = connector_init_error;
@@ -130,11 +174,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->session.head = NULL;
     sm_ptr->session.tail = NULL;
     sm_ptr->session.current = NULL;
-    #if (defined CONNECTOR_SM_MAX_SESSIONS)
-    sm_ptr->session.max_sessions = CONNECTOR_SM_MAX_SESSIONS;
-    #else
-    sm_ptr->session.max_sessions = 2;
-    #endif
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
 
@@ -180,6 +219,22 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
             result = connector_working;
 #endif
+            if (result == connector_working)
+            {
+#if !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
+                connector_config_sm_max_sessions_t config_max_sessions;
+
+                result = get_config_sm_max_sessions(connector_ptr, connector_request_id_config_sm_udp_max_sessions, &config_max_sessions);
+                ASSERT_GOTO(result == connector_working, error);
+
+                sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
+#else
+#if CONNECTOR_SM_UDP_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
+#error "CONNECTOR_SM_UDP_MAX_SESSIONS over Range"
+#endif
+                sm_ptr->session.max_sessions = CONNECTOR_SM_UDP_MAX_SESSIONS;
+#endif
+            }
             break;
         }
         #endif
@@ -201,6 +256,22 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
             result = connector_working;
 #endif
+            if (result == connector_working)
+            {
+#if !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
+                connector_config_sm_max_sessions_t config_max_sessions;
+
+                result = get_config_sm_max_sessions(connector_ptr, connector_request_id_config_sm_sms_max_sessions, &config_max_sessions);
+                ASSERT_GOTO(result == connector_working, error);
+
+                sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
+#else
+#if CONNECTOR_SM_SMS_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
+#error "CONNECTOR_SM_SMS_MAX_SESSIONS over Range"
+#endif
+                sm_ptr->session.max_sessions = CONNECTOR_SM_SMS_MAX_SESSIONS;
+#endif
+            }
             break;
         }
         #endif
