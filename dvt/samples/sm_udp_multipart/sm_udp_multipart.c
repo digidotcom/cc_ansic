@@ -61,14 +61,14 @@ connector_status_t app_send_ping(connector_handle_t handle)
 connector_status_t app_send_data(connector_handle_t handle)
 {
     static int test_cases = 0;
-    static client_data_t app_data[CONNECTOR_SM_MAX_SESSIONS];
+    static client_data_t app_data[CONNECTOR_SM_UDP_MAX_SESSIONS];
     static connector_bool_t response_needed = connector_true;
     connector_status_t status = connector_no_resource;
-    client_data_t * const app_ptr = &app_data[test_cases % CONNECTOR_SM_MAX_SESSIONS];
+    client_data_t * const app_ptr = &app_data[test_cases % CONNECTOR_SM_UDP_MAX_SESSIONS];
     connector_request_data_service_send_t * const header_ptr = &app_ptr->header;
 
     ASSERT(sm_dvt_random_buffer != NULL);
-    snprintf(app_ptr->file_path, sizeof app_ptr->file_path, "test/sm_udp_mp%d.txt", test_cases  % CONNECTOR_SM_MAX_SESSIONS);
+    snprintf(app_ptr->file_path, sizeof app_ptr->file_path, "test/sm_udp_mp%d.txt", test_cases  % CONNECTOR_SM_UDP_MAX_SESSIONS);
 
     app_ptr->data_ptr = sm_dvt_random_buffer;
     app_ptr->total_bytes = sm_dvt_buffer_size;
@@ -228,7 +228,7 @@ static connector_callback_status_t app_handle_put_request(connector_request_id_d
                 {
                     static size_t timeout_count = 0;
 
-                    if (timeout_count++ > CONNECTOR_SM_MAX_SESSIONS)
+                    if (timeout_count++ > CONNECTOR_SM_UDP_MAX_SESSIONS)
                     {
                         APP_DEBUG("SM Put request timeout error. No response from Device Cloud!");
                         status = connector_callback_abort;
@@ -397,7 +397,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
                 {
                     static size_t timeout_count = 0;
 
-                    if (timeout_count++ > CONNECTOR_SM_MAX_SESSIONS)
+                    if (timeout_count++ > CONNECTOR_SM_UDP_MAX_SESSIONS)
                     {
                         APP_DEBUG("Ping request timeout error. No response from Device Cloud!\n");
                         status = connector_callback_abort;
