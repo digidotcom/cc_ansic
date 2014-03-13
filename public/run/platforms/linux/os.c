@@ -102,6 +102,20 @@ connector_callback_status_t app_os_free(void const * const ptr)
     return connector_callback_continue;
 }
 
+connector_callback_status_t app_os_realloc(connector_os_realloc_t * const realloc_data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    realloc_data->ptr = realloc(realloc_data->ptr, realloc_data->new_size);
+    if (realloc_data->ptr == NULL)
+    {
+        APP_DEBUG("app_os_realloc: could not reallocate memory\n");
+        status = connector_callback_abort;
+    }
+
+    return status;
+}
+
 connector_callback_status_t app_os_get_system_time(unsigned long * const uptime)
 {
     static time_t start_system_up_time;
@@ -168,6 +182,13 @@ connector_callback_status_t app_os_handler(connector_request_id_os_t const reque
         {
             connector_os_free_t * p = data;
             status = app_os_free(p->ptr);
+        }
+        break;
+
+    case connector_request_id_os_realloc:
+        {
+            connector_os_realloc_t * p = data;
+            status = app_os_realloc(p->ptr);
         }
         break;
 
