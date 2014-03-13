@@ -24,7 +24,7 @@
 /* #define CONNECTOR_TRANSPORT_SMS */
 #define CONNECTOR_SM_CLI
 
-#define CONNECTOR_SM_MAX_SESSIONS   8
+#define CONNECTOR_SM_UDP_MAX_SESSIONS   8
 #define CONNECTOR_SM_MULTIPART
 #define CONNECTOR_SM_MAX_RX_SEGMENTS   12
 #define CONNECTOR_SM_TIMEOUT        30  /* In seconds, 0: Wait forever for the complete request/response */
