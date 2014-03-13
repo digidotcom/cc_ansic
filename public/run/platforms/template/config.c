@@ -85,7 +85,7 @@ static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, they
  * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
  * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
- * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a 
+ * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a
  * Device ID and then call function @ref app_save_device_id so the user saves to a non-volatile
  * storage that provisioned Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
  * in this function.
@@ -101,7 +101,7 @@ static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  * @see @ref device_id API Configuration Callback
  */
 static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
-{   
+{
     config_device_id->data = provisioned_device_id;
 
     return connector_callback_continue;
@@ -110,7 +110,7 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
 /**
  * @brief   Save the Cloud Connector's Device ID
  *
- * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id and 
+ * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id and
  * @ref device_id_method is set to @ref connector_device_id_method_manual.
  * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_load_device_id function.
@@ -243,7 +243,7 @@ static connector_callback_status_t app_get_device_cloud_phone(connector_config_p
  *
  * This routine is used to set (not to get) the Device Cloud phone number where to send SMSs (Only used for SMS transport)
  *
- * @param [in] config_phone  Pointer passed to the Callback containing the Device Cloud phone number where to send 
+ * @param [in] config_phone  Pointer passed to the Callback containing the Device Cloud phone number where to send
  *                SMSs in order to be stored in persistent storage. (Only used for SMS transport).
  *
  * @retval connector_callback_continue  The phone number was successfully stored.
@@ -657,10 +657,10 @@ static void get_hex_digit(char str, uint8_t * const value)
  * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
  * @ref connector_wan_type_imei.
  *
- * @param [out] config_imei  Pointer to connector_config_pointer_data_t where callback returns pointer to an 8 bytes array with the 14 digit IMEI plus one check 
+ * @param [out] config_imei  Pointer to connector_config_pointer_data_t where callback returns pointer to an 8 bytes array with the 14 digit IMEI plus one check
  *                           digit encoded in one digit per nibble with most upper nibble being 0.
  *                           For example, "350077-52-323751-3" ESN must be returned as a pointer to a uint8_t array filled with {0x03, 0x50, 0x07, 0x75, 0x23, 0x23, 0x75, 0x13}.
- * 
+ *
  * @retval connector_callback_continue  The IMEI number was successfully returned.
  * @retval connector_callback_abort     Could not get the IMEI number and abort Cloud Connector.
  *
@@ -1098,6 +1098,7 @@ static char const * app_os_class_to_string(connector_request_id_os_t const value
     {
         enum_to_case(connector_request_id_os_malloc);
         enum_to_case(connector_request_id_os_free);
+        enum_to_case(connector_request_id_os_realloc);
         enum_to_case(connector_request_id_os_system_up_time);
         enum_to_case(connector_request_id_os_yield);
         enum_to_case(connector_request_id_os_reboot);

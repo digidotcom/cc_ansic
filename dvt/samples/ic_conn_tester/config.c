@@ -472,6 +472,7 @@ static char const * app_os_class_to_string(connector_os_request_t const value)
     {
         enum_to_case(connector_os_malloc);
         enum_to_case(connector_os_free);
+        enum_to_case(connector_request_id_os_realloc);
         enum_to_case(connector_os_system_up_time);
         enum_to_case(connector_os_yield);
         enum_to_case(connector_os_reboot);

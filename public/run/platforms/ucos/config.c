@@ -24,16 +24,16 @@
 static connector_callback_status_t app_get_ip_address(connector_config_ip_address_t * const config_ip)
 {
     connector_callback_status_t status = connector_callback_abort;
-    
+
     NET_IF_NBR if_nbr = NetIF_GetDflt();
     NET_IP_ADDRS_QTY  addr_ip_tbl_qty;
     NET_IP_ADDR addr_ip_tbl[NET_IP_CFG_IF_MAX_NBR_ADDR];
     static NET_IP_ADDR addr_ip;
     CPU_CHAR addr_ip_str[NET_ASCII_LEN_MAX_ADDR_IP];
     NET_ERR err_net;
-    
+
     addr_ip_tbl_qty = sizeof(addr_ip_tbl) / sizeof(NET_IP_ADDR);
-    
+
     (void)NetIP_GetAddrHost((NET_IF_NBR        ) if_nbr,
                             (NET_IP_ADDR      *)&addr_ip_tbl[0],
                             (NET_IP_ADDRS_QTY *)&addr_ip_tbl_qty,
@@ -54,18 +54,18 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
                                  (CPU_SIZE_T) sizeof(addr_ip_str));
                  break;
     }
-    
+
     NetASCII_IP_to_Str((NET_IP_ADDR) addr_ip_tbl[0],
                        (CPU_CHAR  *) addr_ip_str,
                        (CPU_BOOLEAN) DEF_NO,
                        (NET_ERR   *)&err_net);
     APP_DEBUG("get_ip_address: IP Address: %s\n\n", addr_ip_str);
-    
+
     addr_ip =  NET_UTIL_HOST_TO_NET_32(addr_ip_tbl[0]);
-    
+
     config_ip->ip_address_type = connector_ip_address_ipv4;
     config_ip->address = (uint8_t *)&addr_ip;
-    
+
     return status;
 }
 
@@ -74,10 +74,10 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
     static uint8_t device_mac_addr[NET_IF_ETHER_ADDR_SIZE] = {0};
     NET_IF_NBR if_nbr;
     NET_IF *pif;
-    NET_IF_DATA_802x  *p_if_data;  
-    NET_ERR err_net; 
+    NET_IF_DATA_802x  *p_if_data;
+    NET_ERR err_net;
     connector_callback_status_t status = connector_callback_abort;
-        
+
     if_nbr = NetIF_GetDflt();
 
     pif = NetIF_Get (if_nbr, &err_net);
@@ -88,7 +88,7 @@ connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * c
     NET_UTIL_VAL_COPY(  device_mac_addr,
                         &p_if_data->HW_Addr[0],
                         NET_IF_802x_ADDR_SIZE);
-    
+
     config_mac->data = (uint8_t *)device_mac_addr;
     status = connector_callback_continue;
 
@@ -100,7 +100,7 @@ static connector_callback_status_t app_get_device_id(connector_config_pointer_da
 {
 #if defined(CONNECTOR_CUSTOMIZE_GET_DEVICE_ID_METHOD)
     return app_custom_get_device_id(id, size);
-#else	
+#else
  #define DEVICE_ID_LENGTH    16
 
     static uint8_t device_id[DEVICE_ID_LENGTH] = {0};
@@ -571,6 +571,7 @@ static char const * app_os_class_to_string(connector_request_id_os_t const value
     {
         enum_to_case(connector_request_id_os_malloc);
         enum_to_case(connector_request_id_os_free);
+        enum_to_case(connector_request_id_os_realloc);
         enum_to_case(connector_request_id_os_system_up_time);
         enum_to_case(connector_request_id_os_yield);
         enum_to_case(connector_request_id_os_reboot);
