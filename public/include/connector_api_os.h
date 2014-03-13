@@ -22,8 +22,9 @@
  * The class id for this connector_os_request_t is connector_class_id_operating_system.
  */
 typedef enum {
-    connector_request_id_os_malloc,            /**< Callback used to dynamically allocate memory.. */
+    connector_request_id_os_malloc,            /**< Callback used to dynamically allocate memory. */
     connector_request_id_os_free,              /**< Callback is called to free previous allocated memory. */
+    connector_request_id_os_realloc,           /**< Callback is called to reallocate data in a different size memory position. */
     connector_request_id_os_system_up_time,    /**< Callback is called to return system up time in seconds. It is the time that a device has been up and running. */
     connector_request_id_os_yield,             /**< Callback is called with @ref connector_status_t to relinquish for other task to run when @ref connector_run is used. */
     connector_request_id_os_reboot            /**< Callback is called to reboot the system. */
@@ -57,6 +58,23 @@ typedef struct {
 typedef struct {
     void * CONST ptr;              /**< Pointer to memory to free */
 } connector_os_free_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_os_realloc_t Reallocate memory.
+* @{
+*/
+/**
+* Structure passed to connector_request_id_realloc callback.
+*/
+typedef struct {
+    size_t CONST old_size;   /**< Number of bytes already allocated in "ptr". */
+    size_t CONST new_size;   /**< Number of bytes to be allocated in "ptr". */
+    void * ptr;              /**< Pointer to allocated memory. This field might be changed. */
+} connector_os_realloc_t;
+
 /**
 * @}
 */
