@@ -339,7 +339,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
     #if (!defined CONNECTOR_SM_MULTIPART)
         /* You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_RX_SEGMENTS bigger than 1 */
-        ASSERT_GOTO(sm_ptr->session.max_segments == 0, error);
+        ASSERT_GOTO(sm_ptr->session.max_segments == 1, error);
     #endif
 
 error:
