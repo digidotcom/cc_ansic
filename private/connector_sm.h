@@ -41,7 +41,6 @@ static connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr,
     return sm_ptr;
 }
 
-#if !(defined CONNECTOR_SM_UDP_MAX_SESSIONS) || !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
 static connector_status_t get_config_sm_max_sessions(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_max_sessions_t * const config_max_sessions)
@@ -83,7 +82,6 @@ static connector_status_t get_config_sm_max_sessions(connector_data_t * const co
     }
     return result;
 }
-#endif
 
 static connector_status_t sm_initialize(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
