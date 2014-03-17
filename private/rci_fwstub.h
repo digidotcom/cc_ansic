@@ -153,7 +153,7 @@ enum fw_info {
     connector_status_t status = connector_idle;
     uint8_t const target = message_load_u8(fw_message, target);
 
-    connector_debug_printf("Firmware Facility: process info request\n");
+    connector_debug_line("Firmware Facility: process info request");
     /* parse firmware info request
      *  -----------------
      * |   0    |    1   |
@@ -164,7 +164,7 @@ enum fw_info {
     if (length != MAX_FW_INFO_REQUEST_LENGTH)
     {
         fw_abort_status_t fw_status;
-        connector_debug_printf("process_fw_info_request: invalid message length\n");
+        connector_debug_line("process_fw_info_request: invalid message length");
 
         fw_status.error_status = fw_invalid_msg;
         status = send_fw_abort(fw_ptr, target, fw_error_opcode, fw_status);
@@ -267,7 +267,7 @@ enum fw_download_response {
 
     if (length < record_bytes(fw_download_request))
     {
-        connector_debug_printf("process_fw_download_request: invalid message length\n");
+        connector_debug_line("process_fw_download_request: invalid message length");
         response_status.error_status = fw_invalid_msg;
         status = send_fw_abort(fw_ptr, target_number, fw_error_opcode, response_status);
         goto done;
@@ -387,7 +387,7 @@ static connector_status_t fw_process(connector_data_t * const connector_ptr, voi
     length = message_load_be16(edp_header, length);
     if (length < FW_MESSAGE_HEADER_SIZE)
     {
-        connector_debug_printf("fw_process: invalid packet size %d\n", length);
+        connector_debug_line("fw_process: invalid packet size %d", length);
         goto done;
     }
 
@@ -401,7 +401,7 @@ static connector_status_t fw_process(connector_data_t * const connector_ptr, voi
     {
         fw_abort_status_t  fw_status;
 
-        connector_debug_printf("fw_process: invalid target\n");
+        connector_debug_line("fw_process: invalid target");
 
         fw_status.error_status = fw_invalid_target;
         status = send_fw_abort(fw_ptr, target, fw_error_opcode, fw_status);

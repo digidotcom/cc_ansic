@@ -201,7 +201,7 @@ static connector_bool_t get_string(rci_t * const rci, char const * * string, siz
         *length = value;
         if (*length > CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH)
         {
-            connector_debug_printf("Maximum content size exceeded while getting  a string - wanted %u, had %u\n", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
+            connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
             goto done;
         }
@@ -275,13 +275,13 @@ static connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
                 *index =  attribute_value & BINARY_RCI_ATTRIBUTE_INDEX_MASK;
-                rci_debug_printf("decode_attribute: index = %d\n", *index);
+                connector_debug_line("decode_attribute: index = %d", *index);
                 got_attribute = connector_true;
                 break;
             case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
                 /* Tool doesn't support name and enum attribute */
-                connector_debug_printf("decode_attribute: unsupported attribute type\n");
+                connector_debug_line("decode_attribute: unsupported attribute type");
                 rci->status = rci_status_internal_error;
                 ASSERT(connector_false);
                 break;
@@ -305,7 +305,7 @@ static connector_bool_t has_rci_error(rci_t * const rci, unsigned int data)
 
     if (hasError)
     {
-        connector_debug_printf("has_rci_error: unexpected error set.\n");
+        connector_debug_line("has_rci_error: unexpected error set");
     }
     return hasError;
 }
@@ -444,7 +444,7 @@ static void process_group_id(rci_t * const rci)
                     state_call(rci, rci_parser_state_traverse);
                     break;
                 case connector_remote_action_set:
-                    connector_debug_printf("process_group_id: got set command with no group id specified\n");
+                    connector_debug_line("process_group_id: got set command with no group id specified");
                     rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_group_hint, rci_output_state_group_id);
                     break;
             }
@@ -457,7 +457,7 @@ static void process_group_id(rci_t * const rci)
 
         if (!have_group_id(rci))
         {
-            connector_debug_printf("process_group_id: unrecognized group (mismatch of descriptors) group id = %d.\n", decode_group_id(group_id));
+            connector_debug_line("process_group_id: unrecognized group (mismatch of descriptors) group id = %d", decode_group_id(group_id));
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_group_id);
             ASSERT(connector_false);
             goto done;
@@ -484,7 +484,7 @@ static void process_group_id(rci_t * const rci)
     set_group_index(rci, 1);
     set_rci_traverse_state(rci, rci_traverse_state_group_id);
     state_call(rci, rci_parser_state_traverse);
-    rci_debug_printf("process_group_id: group id = %d\n", get_group_id(rci));
+    connector_debug_line("process_group_id: group id = %d", get_group_id(rci));
 
 done:
     return;
@@ -537,7 +537,7 @@ static void process_field_id(rci_t * const rci)
                         state_call(rci, rci_parser_state_traverse);
                         break;
                     case connector_remote_action_set:
-                        connector_debug_printf("process_field_id: got set command with no field id specified\n");
+                        connector_debug_line("process_field_id: got set command with no field id specified");
                         rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_element_hint, rci_output_state_field_id);
                         break;
                 }
@@ -566,7 +566,7 @@ static void process_field_id(rci_t * const rci)
 
         if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
         {
-            connector_debug_printf("process_field_id: field attribute is not supported\n");
+            connector_debug_line("process_field_id: field attribute is not supported");
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
             goto done;
         }
@@ -580,7 +580,7 @@ static void process_field_id(rci_t * const rci)
 
     if (!have_element_id(rci))
     {
-        connector_debug_printf("process_field_id: unrecognized field id (mismatch of descriptors). element id = %d\n", id);
+        connector_debug_line("process_field_id: unrecognized field id (mismatch of descriptors). element id = %d", id);
         rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
     }
 
@@ -606,7 +606,7 @@ static void process_field_type(rci_t * const rci)
             default:
                 if (element->type != type)
                 {
-                    connector_debug_printf("process_field_type: mismatch field type (type %d) != (actual %d)\n", type, element->type);
+                    connector_debug_line("process_field_type: mismatch field type (type %d) != (actual %d)", type, element->type);
                     rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
                     error = connector_true;
                 }
@@ -802,7 +802,7 @@ static void process_field_value(rci_t * const rci)
 #if (defined RCI_PARSER_USES_ON_OFF) || (defined RCI_PARSER_USES_BOOLEAN)
     if (error)
     {
-        connector_debug_printf("process_field_value: range check error! Descriptor problem!");
+        connector_debug_line("process_field_value: range check error descriptor problem");
         rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
     }
     else
@@ -940,7 +940,7 @@ static void rci_parse_input(rci_t * const rci)
         }
         rci->input.destination++;
 
-        rci_debug_printf("input: %s\n", rci_input_state_t_as_string(rci->input.state));
+        connector_debug_line("input: %s", rci_input_state_t_as_string(rci->input.state));
 
         switch (rci->input.state)
         {
@@ -978,7 +978,7 @@ static void rci_parse_input(rci_t * const rci)
 
             if (rci->input.destination == storage_end)
             {
-                connector_debug_printf("Maximum content size exceeded while parsing - wanted %u, had %u\n", storage_bytes + 1, storage_bytes);
+                connector_debug_line("Maximum content size exceeded while parsing - wanted %u, had %u", storage_bytes + 1, storage_bytes);
                 rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
                 goto done;
             }
@@ -1008,7 +1008,7 @@ static void rci_parse_input(rci_t * const rci)
 
                 if (bytes_wanted >= bytes_have)
                 {
-                    connector_debug_printf("Maximum content size exceeded while storing - wanted %u, had %u\n", bytes_wanted, bytes_have);
+                    connector_debug_line("Maximum content size exceeded while storing - wanted %u, had %u", bytes_wanted, bytes_have);
                     rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
                     goto done;
                 }

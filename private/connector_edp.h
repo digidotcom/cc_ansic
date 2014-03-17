@@ -235,7 +235,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         {
             if (connector_ptr->edp_data.connect_at == 0)
             {
-                connector_debug_printf("Waiting %d second before reconnecting TCP transport\n", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
+                connector_debug_line("Waiting %d second before reconnecting TCP transport", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
                 result = get_system_time(connector_ptr, &connector_ptr->edp_data.connect_at);
                 if (result != connector_working)
                     goto done;
@@ -258,7 +258,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
 
             )
         {
-            connector_debug_printf("connector_edp_step: done with status = %d\n", result);
+            connector_debug_line("connector_edp_step: done with status = %d", result);
             goto done;
         }
 

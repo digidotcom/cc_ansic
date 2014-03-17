@@ -100,7 +100,7 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
         uint8_t  response_code;
         uint8_t * const packet = packet_buffer->buffer;
 
-        connector_debug_printf("Receive Mt version\n");
+        connector_debug_line("Receive Mt version");
         /*
          * MT version response packet format:
          *  ---------------
@@ -129,21 +129,21 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
                 /* Expected MTv2 message types... */
                 case E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP:
                     if (response_code == CLOUD_OVERLOAD_RESPONSE) {
-                        connector_debug_printf("receive_edp_version: MTv2 legacy Cloud responded with overload msg\n");
+                        connector_debug_line("receive_edp_version: MTv2 legacy Cloud responded with overload msg");
                     }
                     else {
-                        connector_debug_printf("receive_edp_version: MTv2 legacy bad version\n");
+                        connector_debug_line("receive_edp_version: MTv2 legacy bad version");
                     }
                     break;
                 case E_MSG_MT2_TYPE_VERSION_BAD:
-                    connector_debug_printf("receive_edp_version: bad version\n");
+                    connector_debug_line("receive_edp_version: bad version");
                     break;
                 case E_MSG_MT2_TYPE_CLOUD_OVERLOAD:
-                    connector_debug_printf("receive_edp_version: Device Cloud responded with overload msg\n");
+                    connector_debug_line("receive_edp_version: Device Cloud responded with overload msg");
                     break;
                 /* Unexpected/unknown MTv2 message types... */
                 default:
-                    connector_debug_printf("receive_edp_version: unknown MTv2 message\n");
+                    connector_debug_line("receive_edp_version: unknown MTv2 message");
             }
             /* mt version error. let's notify user.
              *
@@ -202,10 +202,10 @@ static connector_status_t send_keepalive(connector_data_t * const connector_ptr)
     init_param(2, E_MSG_MT2_TYPE_KA_WAIT,        GET_WAIT_COUNT(connector_ptr));
 #undef  init_param
 
-    connector_debug_printf("Send keepalive params \n");
-    connector_debug_printf("Rx keepalive parameter = %d\n", keepalive_parameters[0].value);
-    connector_debug_printf("Tx keepalive parameter = %d\n", keepalive_parameters[1].value);
-    connector_debug_printf("Wait Count parameter = %d\n", keepalive_parameters[2].value);
+    connector_debug_line("Send keepalive params");
+    connector_debug_line("Rx keepalive parameter = %d", keepalive_parameters[0].value);
+    connector_debug_line("Tx keepalive parameter = %d", keepalive_parameters[1].value);
+    connector_debug_line("Wait Count parameter = %d", keepalive_parameters[2].value);
 
     packet = tcp_get_packet_buffer(connector_ptr, E_MSG_MT2_MSG_NUM, &ptr, NULL);
     if (packet == NULL)
@@ -258,7 +258,7 @@ static connector_status_t receive_protocol_version(connector_data_t * const conn
 
         edp_header = packet_buffer->buffer;
 
-        connector_debug_printf("Receive protocol version\n");
+        connector_debug_line("Receive protocol version");
         /*
          *  version response packet format:
          *  ---------------------------------------
@@ -280,7 +280,7 @@ static connector_status_t receive_protocol_version(connector_data_t * const conn
             if (*response_code != initialization_version_response_acceptable)
             {
                 edp_set_close_status(connector_ptr, connector_close_status_abort);
-                connector_debug_printf("receive_protocol_version:version is not accepted by Device Cloud\n");
+                connector_debug_line("receive_protocol_version:version is not accepted by Device Cloud");
                 edp_set_active_state(connector_ptr, connector_transport_close);
             }
         }
@@ -321,7 +321,7 @@ static connector_status_t send_identity_verification(connector_data_t * const co
     }
 
 
-    connector_debug_printf("Send identity verification\n");
+    connector_debug_line("Send identity verification");
 
     /*
      * packet format:
@@ -447,7 +447,7 @@ static connector_status_t send_device_id(connector_data_t * const connector_ptr)
     ASSERT(connector_ptr->device_id != NULL);
     memcpy((edp_device_id + field_named_data(edp_device_id, id, offset)), connector_ptr->device_id, DEVICE_ID_LENGTH);
 
-    connector_debug_hexvalue("Sending Device ID", connector_ptr->device_id, DEVICE_ID_LENGTH);
+    connector_debug_print_buffer("Sending Device ID", connector_ptr->device_id, DEVICE_ID_LENGTH);
 
     result = tcp_initiate_send_packet(connector_ptr, edp_header, device_id_message_size,
                                 E_MSG_MT2_TYPE_PAYLOAD, tcp_release_packet_buffer,
@@ -501,7 +501,7 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
                 device_id_data.bytes_required = DEVICE_ID_LENGTH;
                 device_id_data.data = device_id;
 
-                connector_debug_hexvalue("Received Device ID", device_id, DEVICE_ID_LENGTH);
+                connector_debug_print_buffer("Received Device ID", device_id, DEVICE_ID_LENGTH);
 
                 request_id.config_request = connector_request_id_config_set_device_id;
                 status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, &device_id_data);
@@ -567,7 +567,7 @@ static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 
     edp_cloud_url = start_ptr;
 
-    connector_debug_printf("Send Device Cloud url = %.*s\n", (int)connector_ptr->edp_data.config.cloud_url_length, connector_ptr->edp_data.config.cloud_url);
+    connector_debug_line("Send Device Cloud url = %.*s", (int)connector_ptr->edp_data.config.cloud_url_length, connector_ptr->edp_data.config.cloud_url);
 
     message_store_u8(edp_cloud_url, opcode, SECURITY_OPER_URL);
 
@@ -691,15 +691,10 @@ static connector_status_t send_vendor_id(connector_data_t * const connector_ptr)
     message_store_u8(edp_vendor_msg, opcode, DISC_OP_VENDOR_ID);
 #if !(defined CONNECTOR_VENDOR_ID)
     message_store_be32(edp_vendor_msg, vendor_id, connector_ptr->edp_data.config.vendor_id);
-#if (defined CONNECTOR_DEBUG)
-    connector_debug_printf("Send vendor id = 0x%08X\n", connector_ptr->edp_data.config.vendor_id);
-#endif
-
+    connector_debug_line("Send vendor id = 0x%08X", connector_ptr->edp_data.config.vendor_id);
 #else
-    {
-        message_store_be32(edp_vendor_msg, vendor_id, CONNECTOR_VENDOR_ID);
-        connector_debug_printf("Send vendor id = 0x%08X\n", CONNECTOR_VENDOR_ID);
-    }
+    message_store_be32(edp_vendor_msg, vendor_id, CONNECTOR_VENDOR_ID);
+    connector_debug_line("Send vendor id = 0x%08X", CONNECTOR_VENDOR_ID);
 #endif
 
     result = tcp_initiate_send_packet(connector_ptr, edp_header,
@@ -762,7 +757,7 @@ static connector_status_t send_device_type(connector_data_t * const connector_pt
     edp_device_type += device_type_header_size;
     memcpy(edp_device_type, connector_device_type, device_type_length);
 
-    connector_debug_printf("Send device type = %.*s\n", (int)device_type_length, connector_device_type);
+    connector_debug_line("Send device type = %.*s", (int)device_type_length, connector_device_type);
 
     result = tcp_initiate_send_packet(connector_ptr, edp_header,
                                 (device_type_header_size + device_type_length),
@@ -801,7 +796,7 @@ static connector_status_t send_complete(connector_data_t * const connector_ptr)
         goto done;
     }
 
-    connector_debug_printf("Send complete\n");
+    connector_debug_line("Send complete");
     message_store_u8(edp_discovery_complete, security_coding, SECURITY_PROTO_NONE);
     message_store_u8(edp_discovery_complete, opcode, DISC_OP_INITCOMPLETE);
 
@@ -893,7 +888,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
         switch (edp_get_edp_state(connector_ptr))
         {
         case edp_communication_send_version:
-            connector_debug_printf("Send MT Version\n");
+            connector_debug_line("Send MT Version");
             result = send_version(connector_ptr, E_MSG_MT2_TYPE_VERSION, EDP_MT_VERSION);
             if (result == connector_working)
             {
@@ -913,7 +908,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
         {
             #define EDP_PROTOCOL_VERSION    0x120
 
-            connector_debug_printf("Send protocol version\n");
+            connector_debug_line("Send protocol version");
             result = send_version(connector_ptr, E_MSG_MT2_TYPE_PAYLOAD, EDP_PROTOCOL_VERSION);
             if (result == connector_working)
             {

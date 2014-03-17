@@ -28,7 +28,7 @@ static char const * close_status_to_string(connector_close_status_t const value)
 
         default:
         {
-            connector_debug_printf("Unknown close status %d\n", value);
+            connector_debug_line("Unknown close status %d", value);
         }
     }
     return result;
@@ -54,7 +54,7 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
         close_data.status = edp_get_close_status(connector_ptr);
         close_data.reconnect = connector_true;
 
-        connector_debug_printf("tcp_close_cloud: status = %s\n", close_status_to_string(close_data.status));
+        connector_debug_line("tcp_close_cloud: status = %s", close_status_to_string(close_data.status));
         request_id.network_request = connector_request_id_network_close;
 
         status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &close_data);
@@ -104,7 +104,7 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
             connector_status_t const status = layer_remove_facilities(connector_ptr, facility_callback_delete);
             if (status != connector_working && status != connector_idle)
             {
-                connector_debug_printf("tcp_close_cloud: layer_remove_facilities failed %d\n", result);
+                connector_debug_line("tcp_close_cloud: layer_remove_facilities failed %d", result);
             }
             edp_set_active_state(connector_ptr, connector_transport_terminate);
             result = (close_status == connector_close_status_device_terminated) ? connector_device_terminated : connector_abort;

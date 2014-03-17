@@ -113,7 +113,7 @@ static connector_status_t confirm_fw_version(connector_firmware_data_t * const f
         connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
         connector_request_id_t request_id;
 
-        connector_debug_printf("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)\n", version_number, rci_get_firmware_target_zero_version());
+        connector_debug_line("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)", version_number, rci_get_firmware_target_zero_version());
         request_id.firmware_request = connector_request_id_firmware_info;
         if (notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_bad_version) != connector_working)
         {
@@ -312,7 +312,7 @@ enum fw_info {
     connector_status_t result = connector_idle;
     uint8_t const target = message_load_u8(fw_message, target);
 
-    connector_debug_printf("Firmware Facility: process info request\n");
+    connector_debug_line("Firmware Facility: process info request");
     /* parse firmware info request
      *  -----------------
      * |   0    |    1   |
@@ -326,7 +326,7 @@ enum fw_info {
     if (length != MAX_FW_INFO_REQUEST_LENGTH)
     {
         fw_abort_status_t fw_status;
-        connector_debug_printf("process_fw_info_request: invalid message length\n");
+        connector_debug_line("process_fw_info_request: invalid message length");
 
         fw_status.error_status = fw_invalid_msg;
         result = send_fw_abort(fw_ptr, target, fw_error_opcode, fw_status);
@@ -359,7 +359,7 @@ enum fw_info {
             connector_request_id_t request_id;
 
             request_id.firmware_request = connector_request_id_firmware_info;
-            connector_debug_printf("process_fw_info_request: description length = %lu + name spec length = %lu\n",
+            connector_debug_line("process_fw_info_request: description length = %lu + name spec length = %lu",
                                     (unsigned long int)fw_ptr->desc_length, (unsigned long int)fw_ptr->spec_length);
             notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_invalid_data_size);
             fw_ptr->desc_length = 0;
@@ -395,7 +395,7 @@ enum fw_info {
         message_store_be32(fw_info, code_size, INT32_C(0));
         fw_info += record_bytes(fw_info);
 
-        connector_debug_printf("firmware description = %d %s %s\n", fw_ptr->desc_length, firmware_info->description, firmware_info->filespec);
+        connector_debug_line("firmware description = %d %s %s", fw_ptr->desc_length, firmware_info->description, firmware_info->filespec);
         if (firmware_info->description != NULL)
         {
             memcpy(fw_info, firmware_info->description, fw_ptr->desc_length);
@@ -484,7 +484,7 @@ enum fw_download_response {
     response_status.user_status = connector_firmware_status_device_error;
     if (length < record_bytes(fw_download_request))
     {
-        connector_debug_printf("process_fw_download_request: invalid message length\n");
+        connector_debug_line("process_fw_download_request: invalid message length");
         abort_opcode = fw_error_opcode;
         response_status.error_status = fw_invalid_msg;
         goto error;
@@ -492,7 +492,7 @@ enum fw_download_response {
 
     if (fw_ptr->update_started == connector_true)
     {
-        connector_debug_printf("process_fw_download_request: cannot start another firmware update target %d\n", download_request.target_number);
+        connector_debug_line("process_fw_download_request: cannot start another firmware update target %d", download_request.target_number);
         goto error;
     }
 
@@ -623,7 +623,7 @@ enum fw_binary_ack {
     {
         fw_abort_status_t fw_status;
 
-        connector_debug_printf("process_fw_binary_block: invalid target or message length\n");
+        connector_debug_line("process_fw_binary_block: invalid target or message length");
         fw_status.error_status = fw_invalid_msg;
         result = send_fw_abort(fw_ptr, download_data.target_number, fw_error_opcode, fw_status);
         goto done;
@@ -675,7 +675,7 @@ static connector_status_t process_fw_abort(connector_firmware_data_t * const fw_
     /* parse firmware download abort */
     if (length != FW_ABORT_HEADER_SIZE)
     {
-        connector_debug_printf("process_fw_abort: invalid message length\n");
+        connector_debug_line("process_fw_abort: invalid message length");
     }
     else if (fw_ptr->update_started)
     {
@@ -768,7 +768,7 @@ enum fw_complete_response {
     {
         fw_abort_status_t  fw_status;
 
-        connector_debug_printf("process_fw_complete: invalid message length, invalid target or no firmware update started\n");
+        connector_debug_line("process_fw_complete: invalid message length, invalid target or no firmware update started");
         fw_status.error_status = fw_invalid_msg;
         result = send_fw_abort(fw_ptr, download_complete.target_number, fw_error_opcode, fw_status);
         goto done;
@@ -817,7 +817,7 @@ static connector_status_t process_target_reset(connector_firmware_data_t * const
     connector_firmware_reset_t firmware_reset;
 
     UNUSED_PARAMETER(length);
-    connector_debug_printf("Firmware Facility: process target reset\n");
+    connector_debug_line("Firmware Facility: process target reset");
 
     firmware_reset.target_number = message_load_u8(fw_message, target);
 
@@ -977,7 +977,7 @@ static connector_status_t fw_process(connector_data_t * const connector_ptr, voi
     length = message_load_be16(edp_header, length);
     if (length < FW_MESSAGE_HEADER_SIZE)
     {
-        connector_debug_printf("fw_process: invalid packet size %d\n", length);
+        connector_debug_line("fw_process: invalid packet size %d", length);
         goto done;
     }
 
@@ -989,7 +989,7 @@ static connector_status_t fw_process(connector_data_t * const connector_ptr, voi
     {
         fw_abort_status_t  fw_status;
 
-        connector_debug_printf("fw_process: invalid target\n");
+        connector_debug_line("fw_process: invalid target");
 
         fw_status.error_status = fw_invalid_target;
         result = send_fw_abort(fw_ptr, target, fw_error_opcode, fw_status);
@@ -1110,7 +1110,7 @@ static connector_status_t connector_facility_firmware_init(connector_data_t * co
             }
             else
             {
-                connector_debug_printf("fw_discovery: No target supported\n");
+                connector_debug_line("fw_discovery: No target supported");
             }
         }
    }

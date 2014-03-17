@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "connector_debug.h"
+
 /**
  * @brief Cloud Connector debug
  *
@@ -36,16 +38,23 @@
  *
  * @see @ref CONNECTOR_DEBUG
  */
-void connector_debug_printf(char const * const format, ...)
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list const args)
 {
-    va_list args;
+    if ((debug == debug_all) || (debug == debug_beg))
+    {
+        /* lock mutex here. */
+        printf("CLOUD: ");
+    }
 
-    va_start(args, format);
     vprintf(format, args);
-    va_end(args);
-    fflush(stdout);
-}
 
+    if ((debug == debug_all) || (debug == debug_end))
+    {
+        /* unlock mutex here */
+        printf("\n");
+        fflush(stdout);
+    }
+}
 
 #else
 /* to avoid ISO C forbids an empty translation unit compiler error */

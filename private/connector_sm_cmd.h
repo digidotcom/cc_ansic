@@ -76,7 +76,7 @@ static void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_statu
             goto done;
 
         case connector_invalid_data_size:
-            connector_debug_printf("WARNING: received a 'connector_invalid_data_size'\n");
+            connector_debug_line("WARNING: received a 'connector_invalid_data_size'");
             break;
         case connector_abort:
         case connector_invalid_response:
@@ -109,7 +109,7 @@ done:
 static size_t sm_get_max_payload_bytes(connector_sm_data_t * const sm_ptr)
 {
     size_t const sm_header_size = 5;
-    
+
     /* This is used for Rx path... */
     size_t const max_payload_bytes = sm_ptr->transport.sm_mtu_rx - sm_header_size;
 
@@ -296,7 +296,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
             break;
 
         default:
-            connector_debug_printf("sm_inform_session_complete: cancelling the session cmd [%d]\n", session->command);
+            connector_debug_line("sm_inform_session_complete: cancelling the session cmd [%d]", session->command);
             callback_status = connector_callback_continue;
             break;
     }
@@ -588,7 +588,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 {
     connector_status_t result = connector_success;
     connector_sm_receive_config_request_t config_request;
-    
+
     ASSERT(SmIsLastData(session->flags));
     config_request.phone_number = payload;
 
@@ -632,7 +632,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
                     break;
             }
         }
-        
+
         if (sm_ptr->network.handle == NULL)
         {
             connector_callback_status_t callback_status;
@@ -715,7 +715,7 @@ static connector_status_t sm_pass_target_info(connector_data_t * const connector
     request_id.data_service_request = connector_request_id_data_service_receive_target;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
     if (callback_status == connector_callback_unrecognized)
-        callback_status = connector_callback_error; 
+        callback_status = connector_callback_error;
     result = sm_map_callback_status_to_connector_status(callback_status);
     session->user.context = cb_data.user_context;
 
@@ -741,33 +741,33 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         if (status != connector_working)
             goto error;
 
-        /* Increase target_length: 
+        /* Increase target_length:
          * It's required for connector_sm_cmd_data to point correctly to actual data,
-         * and will be used for connector_sm_cmd_no_path_data to signal that sm_pass_target_info 
+         * and will be used for connector_sm_cmd_no_path_data to signal that sm_pass_target_info
          * has already been called */
         target_length++;
 
         /* Set pre-processed bytes for segment 0 */
         session->bytes_processed = target_length;
-        
+
         /* Return pending so bytes_processed and session->segments.processed are not incremented */
         status = connector_pending;
         SmSetTargetInPayload(session->flags);
         goto done;
     }
-    
+
     {
         connector_callback_status_t callback_status;
         connector_request_id_t request_id;
         connector_data_service_receive_data_t cb_data;
         size_t bytes_pre_processed =  0;
-        
+
         /* Compute pre-processed bytes for segment 0 */
         if (SmIsTargetInPayload(session->flags) && (session->command == connector_sm_cmd_data))
             bytes_pre_processed = session->bytes_processed;
 
         data_ptr += bytes_pre_processed;
-        
+
         cb_data.transport = session->transport;
         cb_data.user_context = session->user.context;
         cb_data.buffer = data_ptr;
@@ -778,7 +778,7 @@ static connector_status_t sm_process_data_request(connector_data_t * const conne
         if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
         if (callback_status != connector_callback_busy)
-            SmClearTargetInPayload(session->flags);  
+            SmClearTargetInPayload(session->flags);
         status = sm_map_callback_status_to_connector_status(callback_status);
         session->user.context = cb_data.user_context;
     }
@@ -850,7 +850,7 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
         request_id.data_service_request = connector_request_id_data_service_send_response;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data);
     }
- 
+
     status = sm_map_callback_status_to_connector_status(callback_status);
     if (SmIsError(session->flags) && (status != connector_pending))
     {
@@ -872,7 +872,7 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL);
     /* JIRA IC4C-119 */
     /* ASSERT(callback_status != connector_callback_unrecognized); */
-    
+
     result = sm_map_callback_status_to_connector_status(callback_status);
 
     return result;
@@ -1016,7 +1016,7 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
                 edp_set_active_state(connector_ptr, connector_transport_open);
             result = connector_working;
             #else
-            connector_debug_printf("WARNING: received a 'request connect' but TCP transport is not available\n");
+            connector_debug_line("WARNING: received a 'request connect' but TCP transport is not available");
             result = connector_device_error;
             #endif
             break;

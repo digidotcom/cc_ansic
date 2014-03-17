@@ -70,7 +70,7 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     {
         if (print_once)
         {
-            connector_debug_printf("Active %s sessions reached the limit %" PRIsize "\n", client_originated ? "client" : "cloud", active_sessions);
+            connector_debug_line("Active %s sessions reached the limit %" PRIsize, client_originated ? "client" : "cloud", active_sessions);
             print_once = connector_false;
         }
 
@@ -184,7 +184,7 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
     connector_status_t result = connector_working;
     connector_sm_session_t * session = sm_ptr->session.head;
     connector_bool_t cancel_all = connector_bool(request_id == NULL);
-    
+
     while (session != NULL)
     {
         connector_sm_session_t * next_session = NULL;

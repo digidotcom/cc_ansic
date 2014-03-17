@@ -73,7 +73,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
 
             MsgSetStart(service_request->need_data->flags);
 
-            connector_debug_hexvalue("rci_service.request", service_request->have_data->data_ptr, service_request->have_data->length_in_bytes);
+            connector_debug_print_buffer("rci_service.request", service_request->have_data->data_ptr, service_request->have_data->length_in_bytes);
             parser_action = rci_session_start;
         }
 
@@ -97,7 +97,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
             status = connector_working;
             MsgSetLastData(service_request->need_data->flags);
             MsgSetSendNow(service_request->need_data->flags);
-            connector_debug_hexvalue("rci_service.response", service_data->output.data, service_data->output.bytes);
+            connector_debug_print_buffer("rci_service.response", service_data->output.data, service_data->output.bytes);
             service_request->need_data->length_in_bytes = service_data->output.bytes;
             break;
 
@@ -111,7 +111,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
 
         case rci_status_flush_output:
             MsgSetSendNow(service_request->need_data->flags);
-            connector_debug_hexvalue("rci_service.response", service_data->output.data, service_data->output.bytes);
+            connector_debug_print_buffer("rci_service.response", service_data->output.data, service_data->output.bytes);
             service_request->need_data->length_in_bytes = service_data->output.bytes;
             status = connector_active;
             break;

@@ -83,7 +83,7 @@ static connector_bool_t rci_action_session_active(rci_t * const rci)
 
         case rci_status_more_input:
         {
-            connector_debug_hexvalue("rci_binary more request", rci->service_data->input.data, rci->service_data->input.bytes);
+            connector_debug_print_buffer("rci_binary more request", rci->service_data->input.data, rci->service_data->input.bytes);
             rci_set_buffer(&rci->buffer.input, &rci->service_data->input);
             if (!destination_in_storage(rci))
             {
@@ -193,7 +193,7 @@ done:
     case rci_status_busy:
         break;
     case rci_status_more_input:
-        rci_debug_printf("Need more input\n");
+        connector_debug_line("Need more input");
         break;
     case rci_status_flush_output:
         rci.service_data->output.bytes = rci_buffer_used(&rci.buffer.output);

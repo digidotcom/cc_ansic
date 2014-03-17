@@ -21,7 +21,7 @@ static connector_status_t sm_get_user_data_length(connector_data_t * const conne
     switch (session->command)
     {
         case connector_sm_cmd_data:
-        case connector_sm_cmd_no_path_data: 
+        case connector_sm_cmd_no_path_data:
         {
 #if (defined CONNECTOR_DATA_SERVICE)
             connector_data_service_length_t cb_data;
@@ -268,7 +268,7 @@ static connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr,
     #else
     else
     {
-        connector_debug_printf("sm_prepare_segment: Multipart is disabled. Please define CONNECTOR_SM_MULTIPART in connector_config.h.\n");
+        connector_debug_line("sm_prepare_segment: Multipart is disabled. Please define CONNECTOR_SM_MULTIPART in connector_config.h.");
         ASSERT(connector_false);
         result = connector_invalid_data_size;
         goto error;
@@ -312,7 +312,7 @@ static connector_status_t sm_send_segment(connector_data_t * const connector_ptr
         {
             if (session->in.bytes != 0)
             {
-                connector_debug_printf("ERROR: sm_send_segment: All segments processed but still remaining bytes\n");
+                connector_debug_line("ERROR: sm_send_segment: All segments processed but still remaining bytes");
             }
             result = sm_switch_path(connector_ptr, session, SmIsResponse(session->flags) ? connector_sm_state_complete : connector_sm_state_receive_data);
             if (result != connector_working) goto error;

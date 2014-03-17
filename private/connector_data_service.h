@@ -622,7 +622,7 @@ static connector_status_t process_send_request(connector_data_t * const connecto
 
         if (bytes >= service_data->length_in_bytes)
         {
-            connector_debug_printf("process_send_request: required bytes [%" PRIsize "] is more than available [%" PRIsize "]\n", bytes, service_data->length_in_bytes);
+            connector_debug_line("process_send_request: required bytes [%" PRIsize "] is more than available [%" PRIsize "]", bytes, service_data->length_in_bytes);
             goto error;
         }
 

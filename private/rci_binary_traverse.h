@@ -191,7 +191,7 @@ static void rci_traverse_data(rci_t * const rci)
 {
     connector_bool_t done_state = connector_true;
 
-    rci_debug_printf("traverse: %s\n", rci_traverse_state_t_as_string(rci->traverse.state));
+    connector_debug_line("traverse: %s", rci_traverse_state_t_as_string(rci->traverse.state));
 
     switch (rci->traverse.state)
     {

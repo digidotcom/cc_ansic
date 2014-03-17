@@ -428,7 +428,7 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
 #endif
         {
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
-            
+
             ASSERT_GOTO(sm_ptr != NULL, error);
 
             if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
@@ -673,7 +673,7 @@ static connector_status_t sm_close_transport(connector_data_t * const connector_
         close_data.handle = sm_ptr->network.handle;
         close_data.status = sm_ptr->close.status;
 
-        connector_debug_printf("sm_close_transport: status %d\n", sm_ptr->close.status);
+        connector_debug_line("sm_close_transport: status %d", sm_ptr->close.status);
         request_id.network_request = connector_request_id_network_close;
         callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data);
         ASSERT(callback_status != connector_callback_unrecognized);
@@ -885,12 +885,12 @@ static connector_status_t sm_state_machine(connector_data_t * const connector_pt
                 if (sm_ptr->transport.connect_at == 0)
                 {
 #if (defined CONNECTOR_TRANSPORT_UDP) && defined CONNECTOR_TRANSPORT_SMS
-                    connector_debug_printf("Waiting %d second before reconnecting SM transport %s\n",
+                    connector_debug_line("Waiting %d second before reconnecting SM transport %s",
                                  CONNECTOR_TRANSPORT_RECONNECT_AFTER, sm_ptr->network.transport == connector_transport_udp ? "UDP" : "SMS");
 #elif defined CONNECTOR_TRANSPORT_UDP
-                    connector_debug_printf("Waiting %d second before reconnecting SM transport UDP\n", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
+                    connector_debug_line("Waiting %d second before reconnecting SM transport UDP", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
 #else
-                    connector_debug_printf("Waiting %d second before reconnecting SM transport SMS\n", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
+                    connector_debug_line("Waiting %d second before reconnecting SM transport SMS", CONNECTOR_TRANSPORT_RECONNECT_AFTER);
 #endif
                     result = get_system_time(connector_ptr, &sm_ptr->transport.connect_at);
                     if (result != connector_working)

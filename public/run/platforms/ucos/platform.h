@@ -15,9 +15,7 @@
 #include "connector_api.h"
 
 #if (defined CONNECTOR_DEBUG)
-void connector_debug_printf(char const * const format, ...);
-
-#define APP_DEBUG   connector_debug_printf
+#define APP_DEBUG   printf
 #else
 #define APP_DEBUG
 #endif

@@ -95,13 +95,13 @@ static connector_status_t dp_initiate_data_point_single(connector_request_data_p
 
     if (dp_ptr->path == NULL)
     {
-        connector_debug_printf("dp_initiate_data_point_single: NULL data point path\n");
+        connector_debug_line("dp_initiate_data_point_single: NULL data point path");
         goto error;
     }
 
     if ((dp_ptr->point == NULL))
     {
-        connector_debug_printf("dp_initiate_data_point_single: NULL data point\n");
+        connector_debug_line("dp_initiate_data_point_single: NULL data point");
         goto error;
     }
 
@@ -127,12 +127,12 @@ static connector_status_t dp_initiate_data_point_multiple(connector_request_data
 
     if ((dp_ptr->stream == NULL))
     {
-        connector_debug_printf("dp_initiate_data_point_multiple: NULL data stream\n");
+        connector_debug_line("dp_initiate_data_point_multiple: NULL data stream");
         goto error;
     }
     else if ((dp_ptr->stream->point == NULL))
     {
-        connector_debug_printf("dp_initiate_data_point_multiple: NULL data point\n");
+        connector_debug_line("dp_initiate_data_point_multiple: NULL data point");
         goto error;
     }
 
@@ -158,13 +158,13 @@ static connector_status_t dp_initiate_data_point_binary(connector_request_data_p
 
     if (bp_ptr->path == NULL)
     {
-        connector_debug_printf("dp_initiate_data_point_binary: NULL data point path\n");
+        connector_debug_line("dp_initiate_data_point_binary: NULL data point path");
         goto error;
     }
 
     if ((bp_ptr->point == NULL))
     {
-        connector_debug_printf("dp_initiate_data_point_binary: NULL data point\n");
+        connector_debug_line("dp_initiate_data_point_binary: NULL data point");
         goto error;
     }
 
@@ -293,7 +293,7 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
     size_t const available_path_bytes = sizeof dp_info->file_path - 1;
     char const path_prefix[] = "DataPoint/";
     size_t const path_prefix_bytes = sizeof path_prefix - 1;
-    size_t const path_bytes = (path==NULL)?0:strlen(path);	/* Allow NULL path: User responsible of filling each point stream_id */
+    size_t const path_bytes = (path==NULL)?0:strlen(path);  /* Allow NULL path: User responsible of filling each point stream_id */
     size_t const extension_bytes = strlen(extension);
     size_t const full_path_bytes = path_prefix_bytes + path_bytes + extension_bytes;
 
@@ -308,7 +308,7 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
     }
     else
     {
-        connector_debug_printf("dp_fill_file_path [DataPoint/%s.%s]: file path bytes [%" PRIsize "] exceeds the limit [%" PRIsize "]\n", path, extension, full_path_bytes, available_path_bytes);
+        connector_debug_line("dp_fill_file_path [DataPoint/%s.%s]: file path bytes [%" PRIsize "] exceeds the limit [%" PRIsize "]", path, extension, full_path_bytes, available_path_bytes);
         result = connector_invalid_data;
     }
 
@@ -349,7 +349,7 @@ static connector_status_t dp_send_message(connector_data_t * const connector_ptr
             goto done;
 
         default:
-            connector_debug_printf("dp_send_message: connector_initiate_action failed [%d]!\n", result);
+            connector_debug_line("dp_send_message: connector_initiate_action failed [%d]", result);
             break;
     }
 
@@ -364,7 +364,7 @@ static void * dp_create_dp_info(connector_data_t * const connector_ptr, connecto
     *result = malloc_data_buffer(connector_ptr, sizeof(data_point_info_t), named_buffer_id(data_point_block), &ptr);
     if (*result != connector_working)
     {
-        connector_debug_printf("dp_create_dp_info: failed to malloc [%d]!\n", *result);
+        connector_debug_line("dp_create_dp_info: failed to malloc [%d]", *result);
         ptr = NULL;
     }
 
@@ -913,7 +913,7 @@ static size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * cons
                     #if (defined CONNECTOR_TRANSPORT_SMS)
                     case connector_transport_sms:
                     #endif
-                        connector_debug_printf("WARNING: Not enough space for processing the CSV DataPoint, increase the value of CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS\n");
+                        connector_debug_line("WARNING: Not enough space for processing the CSV DataPoint, increase the value of CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS");
                         ASSERT(connector_false);
                         break;
                     #if (defined CONNECTOR_TRANSPORT_TCP)

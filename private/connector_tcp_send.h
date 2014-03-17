@@ -37,7 +37,7 @@ static connector_status_t tcp_initiate_send_packet(connector_data_t * const conn
 
     if (connector_ptr->edp_data.send_packet.total_length > 0)
     {
-        connector_debug_printf("tcp_initiate_send_packet: unable to trigger another send since previous data is still pending\n");
+        connector_debug_line("tcp_initiate_send_packet: unable to trigger another send since previous data is still pending");
         status = connector_pending;
         goto done;
     }
@@ -219,7 +219,7 @@ static uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, u
     else
     {
         if (debug_count == 0)
-           connector_debug_printf("tcp_get packet buffer: send pending\n");
+           connector_debug_line("tcp_get packet buffer: send pending");
 
         debug_count++;
     }
@@ -256,7 +256,7 @@ static connector_status_t tcp_rx_keepalive_process(connector_data_t * const conn
         goto done;
     }
 
-    connector_debug_printf("tcp_rx_keepalive_process: time to send Rx keepalive\n");
+    connector_debug_line("tcp_rx_keepalive_process: time to send Rx keepalive");
 
     status = tcp_initiate_send_packet(connector_ptr, connector_ptr->edp_data.keepalive.send_rx_packet, 0, E_MSG_MT2_TYPE_KA_KEEPALIVE, NULL, NULL);
 
