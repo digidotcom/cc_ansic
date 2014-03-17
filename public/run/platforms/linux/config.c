@@ -553,7 +553,7 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
 #if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
 static connector_callback_status_t app_get_sm_udp_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
 {
-#define APP_MAX_SM_UDP_SESSIONS      6
+#define APP_MAX_SM_UDP_SESSIONS      32
     /*
      * Return max sessions for UDP transport 
      */
@@ -566,7 +566,7 @@ static connector_callback_status_t app_get_sm_udp_max_sessions(connector_config_
 #if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
 static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
 {
-#define APP_MAX_SM_SMS_SESSIONS      6
+#define APP_MAX_SM_SMS_SESSIONS      32
     /*
      * Return max sessions for SMS transport 
      */
@@ -579,7 +579,7 @@ static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_
 #if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)
 static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
 {
-#define APP_MAX_SM_UDP_RX_SEGMENTS      16
+#define APP_MAX_SM_UDP_RX_SEGMENTS      1
     /*
      * Return max rx segments for UDP transport 
      */
@@ -592,7 +592,7 @@ static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_conf
 #if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
 static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
 {
-#define APP_MAX_SM_SMS_RX_SEGMENTS      16
+#define APP_MAX_SM_SMS_RX_SEGMENTS      1
     /*
      * Return max rx segments for SMS transport 
      */
