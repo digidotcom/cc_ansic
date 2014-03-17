@@ -542,6 +542,8 @@ char const * app_config_class_to_string(connector_request_id_config_t const valu
         enum_to_case(connector_request_id_config_password);
         enum_to_case(connector_request_id_config_sm_udp_max_sessions);
         enum_to_case(connector_request_id_config_sm_sms_max_sessions);
+        enum_to_case(connector_request_id_config_sm_udp_max_rx_segments);
+        enum_to_case(connector_request_id_config_sm_sms_max_rx_segments);
     }
     return result;
 }
