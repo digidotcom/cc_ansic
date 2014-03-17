@@ -205,7 +205,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_UDP)
         case connector_transport_udp:
         {
-#if !(defined CONNECTOR_NETWORK_UDP_START)
+            #if !(defined CONNECTOR_NETWORK_UDP_START)
             {
                 connector_config_connect_type_t config_connect;
 
@@ -214,24 +214,24 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
                 sm_ptr->transport.connect_type = config_connect.type;
             }
-#else
-            ASSERT((CONNECTOR_NETWORK_UDP_START == connector_connect_auto) || (CONNECTOR_NETWORK_UDP_START == connector_connect_manual));
-            sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
-            result = connector_working;
-#endif
-#if !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
-            connector_config_sm_max_sessions_t config_max_sessions;
+            #else
+                ASSERT((CONNECTOR_NETWORK_UDP_START == connector_connect_auto) || (CONNECTOR_NETWORK_UDP_START == connector_connect_manual));
+                sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
+                result = connector_working;
+            #endif
+            #if !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
+                connector_config_sm_max_sessions_t config_max_sessions;
 
-            result = get_config_sm_max_sessions(connector_ptr, connector_request_id_config_sm_udp_max_sessions, &config_max_sessions);
-            ASSERT_GOTO(result == connector_working, error);
+                result = get_config_sm_max_sessions(connector_ptr, connector_request_id_config_sm_udp_max_sessions, &config_max_sessions);
+                ASSERT_GOTO(result == connector_working, error);
 
-            sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
-#else
-#if CONNECTOR_SM_UDP_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
-#error "CONNECTOR_SM_UDP_MAX_SESSIONS over Range"
-#endif
+                sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
+            #else
+                #if CONNECTOR_SM_UDP_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
+                    #error "CONNECTOR_SM_UDP_MAX_SESSIONS over Range"
+                #endif
             sm_ptr->session.max_sessions = CONNECTOR_SM_UDP_MAX_SESSIONS;
-#endif
+            #endif
             break;
         }
         #endif
@@ -239,7 +239,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
         {
-#if !(defined CONNECTOR_NETWORK_SMS_START)
+            #if !(defined CONNECTOR_NETWORK_SMS_START)
             {
                 connector_config_connect_type_t config_connect;
 
@@ -248,24 +248,24 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
                 sm_ptr->transport.connect_type = config_connect.type;
             }
-#else
-            ASSERT((CONNECTOR_NETWORK_SMS_START == connector_connect_auto) || (CONNECTOR_NETWORK_SMS_START == connector_connect_manual));
-            sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
-            result = connector_working;
-#endif
-#if !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
-            connector_config_sm_max_sessions_t config_max_sessions;
+            #else
+                ASSERT((CONNECTOR_NETWORK_SMS_START == connector_connect_auto) || (CONNECTOR_NETWORK_SMS_START == connector_connect_manual));
+                sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
+                result = connector_working;
+            #endif
+            #if !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
+                connector_config_sm_max_sessions_t config_max_sessions;
 
-            result = get_config_sm_max_sessions(connector_ptr, connector_request_id_config_sm_sms_max_sessions, &config_max_sessions);
-            ASSERT_GOTO(result == connector_working, error);
+                result = get_config_sm_max_sessions(connector_ptr, connector_request_id_config_sm_sms_max_sessions, &config_max_sessions);
+                ASSERT_GOTO(result == connector_working, error);
 
-            sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
-#else
-#if CONNECTOR_SM_SMS_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
-#error "CONNECTOR_SM_SMS_MAX_SESSIONS over Range"
-#endif
+                sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
+            #else
+                #if CONNECTOR_SM_SMS_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
+                    #error "CONNECTOR_SM_SMS_MAX_SESSIONS over Range"
+                #endif
             sm_ptr->session.max_sessions = CONNECTOR_SM_SMS_MAX_SESSIONS;
-#endif
+            #endif
             break;
         }
         #endif
