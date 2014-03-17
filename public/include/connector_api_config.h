@@ -55,7 +55,9 @@ typedef enum {
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
     connector_request_id_config_password,          /**< Requesting callback to return password for the password identity verification form */
     connector_request_id_config_sm_udp_max_sessions,
-    connector_request_id_config_sm_sms_max_sessions
+    connector_request_id_config_sm_sms_max_sessions,
+    connector_request_id_config_sm_udp_max_rx_segments,
+    connector_request_id_config_sm_sms_max_rx_segments
 } connector_request_id_config_t;
 /**
 * @}
@@ -468,6 +470,10 @@ typedef struct {
 typedef struct {
     size_t max_sessions;
 } connector_config_sm_max_sessions_t;
+
+typedef struct {
+    size_t max_rx_segments;
+} connector_config_sm_max_rx_segments_t;
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_config.h. You should only include connector_api.h in user code."
