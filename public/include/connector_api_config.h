@@ -57,7 +57,9 @@ typedef enum {
     connector_request_id_config_sm_udp_max_sessions,
     connector_request_id_config_sm_sms_max_sessions,
     connector_request_id_config_sm_udp_max_rx_segments,
-    connector_request_id_config_sm_sms_max_rx_segments
+    connector_request_id_config_sm_sms_max_rx_segments,
+    connector_request_id_config_sm_udp_timeout_rx,
+    connector_request_id_config_sm_sms_timeout_rx
 } connector_request_id_config_t;
 /**
 * @}
@@ -474,6 +476,10 @@ typedef struct {
 typedef struct {
     size_t max_rx_segments;
 } connector_config_sm_max_rx_segments_t;
+
+typedef struct {
+    size_t timeout_rx;
+} connector_config_sm_timeout_rx_t;
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_config.h. You should only include connector_api.h in user code."
