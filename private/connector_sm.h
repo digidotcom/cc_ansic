@@ -151,10 +151,13 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     #else
     sm_ptr->session.max_segments = 1;
     #endif
-    #if (defined CONNECTOR_SM_TIMEOUT)
-    sm_ptr->timeout_in_seconds = CONNECTOR_SM_TIMEOUT;
+
+    /* TODO: make it different for UDP and SMS */
+    #if (defined CONNECTOR_SM_TIMEOUT_RX)
+    sm_ptr->timeout_in_seconds_rx = CONNECTOR_SM_TIMEOUT_RX;
     #else
-    sm_ptr->timeout_in_seconds = SM_WAIT_FOREVER;
+    /* TODO: Read from callback */
+    sm_ptr->timeout_in_seconds_rx = SM_WAIT_FOREVER;
     #endif
     sm_ptr->network.handle = NULL;
     sm_ptr->close.status = connector_close_status_device_error;

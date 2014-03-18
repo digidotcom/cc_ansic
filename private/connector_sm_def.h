@@ -188,6 +188,7 @@ typedef struct connector_sm_session_t
         uint8_t count;
         uint8_t processed;
     } segments;
+    unsigned long timeout_in_seconds;  /* 0 means wait forever */
 } connector_sm_session_t;
 
 typedef struct connector_sm_packet_t
@@ -201,7 +202,7 @@ typedef struct connector_sm_packet_t
 typedef struct connector_sm_data_t
 {
     connector_status_t error_code;
-    unsigned long timeout_in_seconds;  /* 0 means wait forever */
+    unsigned long timeout_in_seconds_rx;  /* 0 means wait forever */
 
     struct
     {

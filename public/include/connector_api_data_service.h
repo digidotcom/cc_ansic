@@ -52,6 +52,7 @@ typedef struct
 
     connector_bool_t response_required; /**< set to connector_true if response is needed. If @ref transport is set to @ref connector_transport_tcp
                                              this field is ignored and a response is always received. */
+    unsigned long timeout_in_seconds;   /* 0 means wait forever */
 } connector_request_data_service_send_t;
 /**
 * @}

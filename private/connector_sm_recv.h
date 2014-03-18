@@ -736,17 +736,17 @@ static connector_status_t sm_process_recv_path(connector_data_t * const connecto
     switch (session->sm_state)
     {
         case connector_sm_state_receive_data:
-            if (sm_ptr->timeout_in_seconds != SM_WAIT_FOREVER)
+            if (session->timeout_in_seconds != SM_WAIT_FOREVER)
             {
                 unsigned long current_time = 0;
 
                 result = get_system_time(connector_ptr, &current_time);
                 ASSERT_GOTO(result == connector_working, error);
-                if (current_time > (session->start_time + sm_ptr->timeout_in_seconds))
+                if (current_time > (session->start_time + session->timeout_in_seconds))
                 {
                     session->sm_state = connector_sm_state_error;
                     session->error = connector_sm_error_timeout;
-                    connector_debug_printf("Sm session [%u] timeout... start time:%u, current time:%u\n", session->request_id, session->start_time, current_time);
+                    connector_debug_printf("Sm session [%u (ClientOwned=%u)]  timeout... start time:%u, current time:%u\n", session->request_id, SmIsClientOwned(session->flags), session->start_time, current_time);
                 }
             }
 

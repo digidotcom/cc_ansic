@@ -28,6 +28,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             session->command = connector_sm_cmd_ping;
             response_needed = request->response_required;
             session->sm_state = connector_sm_state_prepare_segment;
+            session->timeout_in_seconds = request->timeout_in_seconds;
             break;
         }
 #if (defined CONNECTOR_DATA_SERVICE)
@@ -50,6 +51,7 @@ static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
                     SmSetDatapoint(session->flags);
             }
             #endif
+            session->timeout_in_seconds = request->timeout_in_seconds;
             break;
         }
 #endif

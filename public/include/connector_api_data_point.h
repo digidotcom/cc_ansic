@@ -286,6 +286,7 @@ typedef struct
     void * point;                   /**< binary data of size specified in bytes_used */
     size_t bytes_used;              /**< number of bytes in the point buffer */
     connector_bool_t response_required;  /**< set to connector_true if response is needed */
+    unsigned long timeout_in_seconds;   /* Only valid for SM. 0 means wait forever */
 } connector_request_data_point_binary_t;
 /**
 * @}
@@ -322,6 +323,7 @@ typedef struct
     connector_data_point_t * point;     /**< pointer to list of data points */
     connector_bool_t response_required; /**< set to connector_true if response is needed */
     connector_data_point_type_t type;   /**< data point content type */
+    unsigned long timeout_in_seconds;   /* Only valid for SM. 0 means wait forever */
 } connector_request_data_point_single_t;
 /**
 * @}
@@ -353,6 +355,7 @@ typedef struct
                                              See @connector_initiate_session_cancel*/
     connector_data_stream_t * stream;   /**< pointer to list of data streams */
     connector_bool_t response_required; /**< set to connector_true if response is needed */
+    unsigned long timeout_in_seconds;   /* Only valid for SM. 0 means wait forever */
 } connector_request_data_point_multiple_t;
 /**
 * @}
