@@ -26,7 +26,7 @@ static unsigned long days = 0, hours = 0, minutes = 0, seconds = 0;
 #endif
 
 #if defined(CONNECTOR_DEBUG)
-void connector_debug_vprintf(debug_t const debug, char const * const format, va_list const args)
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args)
 {
     if ((debug == debug_all) || (debug == debug_beg))
     {

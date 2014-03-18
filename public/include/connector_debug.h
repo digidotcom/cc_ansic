@@ -46,7 +46,7 @@ typedef enum {
  *
  */
 
-void connector_debug_vprintf(debug_t const debug, char const * const format, va_list const args);
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args);
 
 /**
 * @defgroup DEBUG_MACROS User Defined Debug Macros

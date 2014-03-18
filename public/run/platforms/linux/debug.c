@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include "connector_debug.h"
 
-void connector_debug_vprintf(debug_t const debug, char const * const format, va_list const args)
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args)
 {
     if ((debug == debug_all) || (debug == debug_beg))
     {
