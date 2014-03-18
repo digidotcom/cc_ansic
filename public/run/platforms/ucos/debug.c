@@ -20,7 +20,7 @@ void connector_debug_vprintf(debug_t const debug, char const * const format, va_
     if ((debug == debug_all) || (debug == debug_beg))
     {
         /* lock mutex here. */
-        connector_BSP_debug_printf("CLOUD: ");
+        connector_BSP_debug_printf("CC: ");
     }
 
     connector_BSP_debug_vprintf(format, args);

@@ -59,7 +59,7 @@ static void connector_debug_line_end(char const * const format, ...)
 void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
 {
     size_t i;
-    char const * const content = buffer;
+    uint8_t const * const content = buffer;
 
     connector_debug_line_beg("%s:", label);
     for (i = 0; i < length; i++)

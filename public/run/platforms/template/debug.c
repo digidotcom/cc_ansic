@@ -43,7 +43,7 @@ void connector_debug_vprintf(debug_t const debug, char const * const format, va_
     if ((debug == debug_all) || (debug == debug_beg))
     {
         /* lock mutex here. */
-        printf("CLOUD: ");
+        printf("CC: ");
     }
 
     vprintf(format, args);
