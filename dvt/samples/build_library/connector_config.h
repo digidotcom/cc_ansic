@@ -31,7 +31,8 @@
 #define CONNECTOR_SM_MULTIPART
 #define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS   12
 #define CONNECTOR_SM_SMS_MAX_RX_SEGMENTS   12
-#define CONNECTOR_SM_TIMEOUT        0  /* In seconds, 0: Wait forever for the complete request/response */
+#define CONNECTOR_SM_UDP_TIMEOUT_RX        0  /* In seconds, 0: Wait forever for the complete request/response */
+#define CONNECTOR_SM_SMS_TIMEOUT_RX        0  /* In seconds, 0: Wait forever for the complete request/response */
 
 #define CONNECTOR_DATA_POINTS 
 #define FLOATING_POINT_SUPPORTED

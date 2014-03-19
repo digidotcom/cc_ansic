@@ -27,7 +27,8 @@
 #define CONNECTOR_SM_UDP_MAX_SESSIONS   8
 #define CONNECTOR_SM_MULTIPART
 #define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS   12
-#define CONNECTOR_SM_TIMEOUT        30  /* In seconds, 0: Wait forever for the complete request/response */
+#define CONNECTOR_SM_UDP_TIMEOUT_RX        30  /* In seconds, 0: Wait forever for the complete request/response */
+#define CONNECTOR_SM_TIMEOUT_TX CONNECTOR_SM_UDP_TIMEOUT_RX /* Use same timeout as for RX */
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256

@@ -367,6 +367,9 @@ static void * get_data_point_single(dvt_dp_t * dvt_ptr)
 
         dp_ptr->response_required = response_needed;
         response_needed = !response_needed;
+
+        if (dp_ptr->response_required)
+            dp_ptr->timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     }
 
     dp_ptr->user_context = dp_ptr;
@@ -427,6 +430,9 @@ static void * get_data_point_binary(dvt_dp_t * dvt_ptr)
 
         dp_ptr->response_required = response_needed;
         response_needed = !response_needed;
+
+        if (dp_ptr->response_required)
+            dp_ptr->timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     }
 
     dp_ptr->user_context = dp_ptr;

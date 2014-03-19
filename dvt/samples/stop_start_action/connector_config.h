@@ -24,9 +24,6 @@
 /* #define CONNECTOR_TRANSPORT_SMS */
 /* #define CONNECTOR_SM_CLI */
 
-#define CONNECTOR_SM_UDP_MAX_SESSIONS   4
-#define CONNECTOR_SM_TIMEOUT        10  /* In seconds, 0: Wait forever for the complete request/response */
-
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
