@@ -413,6 +413,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
 #endif
 #endif /* (defined CONNECTOR_TRANSPORT_SMS) */
 
+#if (defined CONNECTOR_TRANSPORT_TCP)
 #if !(defined CONNECTOR_NETWORK_TCP_START)
     {
         connector_config_connect_type_t config_connect;
@@ -430,6 +431,7 @@ connector_handle_t connector_init(connector_callback_t const callback)
         edp_set_active_state(connector_handle, connector_transport_open);
     }
     connector_handle->edp_data.stop.auto_connect = connector_bool(CONNECTOR_NETWORK_TCP_START == connector_connect_auto);
+#endif
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
