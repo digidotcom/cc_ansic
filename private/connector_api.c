@@ -145,7 +145,7 @@ enum {
                 wan_string = "MEID";
                 break;
             }
-            connector_debug_hexvalue(wan_string, connector_ptr->wan_id, connector_ptr->wan_id_length);
+            connector_debug_print_buffer(wan_string, connector_ptr->wan_id, connector_ptr->wan_id_length);
         }
 #endif
         memcpy(dst, connector_ptr->wan_id, connector_ptr->wan_id_length);
@@ -274,7 +274,7 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
         }
     }
 
-    connector_debug_printf("connector_stop_callback: %s\n", transport_to_string(transport));
+    connector_debug_line("connector_stop_callback: %s", transport_to_string(transport));
     return result;
 }
 
@@ -317,7 +317,7 @@ static void abort_connector(connector_data_t * const connector_ptr)
 #if (defined CONNECTOR_TRANSPORT_UDP) ||(defined CONNECTOR_TRANSPORT_SMS)
             status = sm_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
             if (status != connector_success)
-                connector_debug_printf("abort_connector: sm_initiate_action returns error %d\n", status);
+                connector_debug_line("abort_connector: sm_initiate_action returns error %d", status);
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
             connector_ptr->sm_udp.close.status = connector_close_status_abort;
@@ -332,7 +332,7 @@ static void abort_connector(connector_data_t * const connector_ptr)
 #if (defined CONNECTOR_TRANSPORT_TCP)
             status = edp_initiate_action(connector_ptr, connector_initiate_terminate, NULL);
             if (status != connector_success)
-                connector_debug_printf("abort_connector: edp_initiate_action returns error %d\n", status);
+                connector_debug_line("abort_connector: edp_initiate_action returns error %d", status);
 
             edp_set_close_status(connector_ptr, connector_close_status_abort);
 #endif
@@ -350,9 +350,9 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     connector_status_t status;
 
 #if (defined CONNECTOR_SW_DESCRIPTION)
-    connector_debug_printf("Cloud Connector v%s %s\n", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
+    connector_debug_line("Cloud Connector v%s %s", CONNECTOR_SW_VERSION, CONNECTOR_SW_DESCRIPTION);
 #else
-    connector_debug_printf("Cloud Connector v%s\n", CONNECTOR_SW_VERSION);
+    connector_debug_line("Cloud Connector v%s", CONNECTOR_SW_VERSION);
 #endif
 
     {
@@ -473,7 +473,7 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
                 connector_ptr->signature = NULL;
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
-                connector_debug_printf("connector_step: free Cloud Connector\n");
+                connector_debug_line("connector_step: free Cloud Connector");
 
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 goto done;

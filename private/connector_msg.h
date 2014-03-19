@@ -395,7 +395,7 @@ static msg_session_t * msg_create_session(connector_data_t * const connector_ptr
 
         if ((max_transactions != unlimited_transactions) && (active_transactions >= max_transactions))
         {
-            connector_debug_printf("msg_create_session: active transactions reached the limit [%d], service id [%d]\n", active_transactions, max_transactions, service_id);
+            connector_debug_line("msg_create_session: active transactions reached the limit [%d], service id [%d]", active_transactions, max_transactions, service_id);
             goto done;
         }
     }
@@ -1680,7 +1680,7 @@ static connector_status_t msg_process_error(connector_data_t * const connector_p
     }
     else
     {
-        connector_debug_printf("msg_process_error: unable to find session id = %d\n", session_id);
+        connector_debug_line("msg_process_error: unable to find session id = %d", session_id);
     }
 
 error:
@@ -1793,7 +1793,7 @@ static connector_status_t msg_process_pending(connector_data_t * const connector
 
         default:
             status = connector_init_error;
-            connector_debug_printf("Failed %X, state%d\n", session, session->current_state);
+            connector_debug_line("Failed %X, state %d", session, session->current_state);
             ASSERT_GOTO(connector_false, done);
             break;
         }
@@ -1840,7 +1840,7 @@ static connector_status_t msg_process(connector_data_t * const connector_ptr, vo
                 break;
 
             default:
-                connector_debug_printf("msg_process: Invalid opcode\n");
+                connector_debug_line("msg_process: Invalid opcode");
                 break;
         }
     }

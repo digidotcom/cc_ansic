@@ -12,36 +12,76 @@
 
 #if (defined CONNECTOR_DEBUG)
 
+#include <stdarg.h>
+#include "connector_debug.h"
+
+#define CALL_DEBUG_VPRINTF(type, format) \
+    do \
+    { \
+        va_list args; \
+ \
+        va_start(args, (format)); \
+        connector_debug_vprintf((type), (format), args); \
+        va_end(args); \
+    } \
+    while (0)
+
+#else
+
+#define CALL_DEBUG_VPRINTF(type, format) UNUSED_PARAMETER(format)
+
+#endif
+
+static void connector_debug_line(char const * const format, ...)
+{
+    CALL_DEBUG_VPRINTF(debug_all, format);
+}
+
+static void connector_debug_line_beg(char const * const format, ...)
+{
+    CALL_DEBUG_VPRINTF(debug_beg, format);
+}
+
+static void connector_debug_line_mid(char const * const format, ...)
+{
+    CALL_DEBUG_VPRINTF(debug_mid, format);
+}
+
+static void connector_debug_line_end(char const * const format, ...)
+{
+    CALL_DEBUG_VPRINTF(debug_end, format);
+}
+
+#if (defined CONNECTOR_DEBUG)
+
 #define enum_to_case(name)  case name:  result = #name;             break
 
-void connector_debug_hexvalue(char * label, uint8_t * buff, size_t length)
+void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
 {
     size_t i;
+    uint8_t const * const content = buffer;
 
-    connector_debug_printf("%s = ", label);
-    for (i=0; i<length; i++)
+    connector_debug_line_beg("%s:", label);
+    for (i = 0; i < length; i++)
     {
-        connector_debug_printf(" %02X", buff[i]);
-        if (i > 0 && (i % 16) == 0)
+        if ((i % 16) == 0)
         {
-            connector_debug_printf("\n%.*s", (strlen(label)+3), " ");
+            connector_debug_line_mid("\n");
         }
+
+        connector_debug_line_mid(" %02X", content[i]);
     }
-    connector_debug_printf("\n");
+    connector_debug_line_end("");
 }
 
 #else
-#define connector_debug_hexvalue(label, start, length)
+#define connector_debug_print_buffer(label, buffer, length)
 
-static void connector_debug_printf(char const * const format, ...)
-{
-    (void) format;
-}
+#define CALL_DEBUG_VPRINTF(type, format) UNUSED_PARAMETER(format)
 
 #endif
 
 #if (defined CONNECTOR_DEBUG)
-
 static char const * transport_to_string(connector_transport_t const value)
 {
     char const * result = NULL;
@@ -61,7 +101,6 @@ static char const * transport_to_string(connector_transport_t const value)
     return result;
 }
 #else
-
 #define transport_to_string(value)       NULL
 #endif
 

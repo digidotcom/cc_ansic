@@ -68,7 +68,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             status = connector_callback_abort;
             /* no break */
         case connector_callback_abort:
-            connector_debug_printf("tcp_receive_buffer: callback returns abort\n");
+            connector_debug_line("tcp_receive_buffer: callback returns abort");
            goto done;
         case connector_callback_busy:
             *length = 0;
@@ -128,7 +128,7 @@ static connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
                     goto done;
                 }
 
-                connector_debug_printf("connector_receive: keepalive fails\n");
+                connector_debug_line("connector_receive: keepalive fails");
                 edp_set_close_status(connector_ptr, connector_close_status_no_keepalive);
                 status = connector_callback_error;
             }
@@ -313,7 +313,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                 case E_MSG_MT2_TYPE_LEGACY_EDP_VER_RESP:
                 case E_MSG_MT2_TYPE_VERSION_BAD:
                 case E_MSG_MT2_TYPE_CLOUD_OVERLOAD:
-                    connector_debug_printf("tcp_receive_packet: unsupported or unexpected error type 0x%x\n", (unsigned) type_val);
+                    connector_debug_line("tcp_receive_packet: unsupported or unexpected error type 0x%x", (unsigned) type_val);
                     edp_set_close_status(connector_ptr, connector_close_status_abort);
                     result = connector_abort;
                     goto done;
@@ -324,7 +324,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                 case E_MSG_MT2_TYPE_KA_WAIT:
                 default:
                     /* Just tell caller we have unexpected packet message */
-                    connector_debug_printf("tcp_receive_packet: unsupported or unexpected error type 0x%x\n", (unsigned) type_val);
+                    connector_debug_line("tcp_receive_packet: unsupported or unexpected error type 0x%x", (unsigned) type_val);
                     break;
              }
 
@@ -353,7 +353,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
                  */
                 if (packet_length != 0)
                 {
-                    connector_debug_printf("connector_get_receive_packet: Invalid payload\n");
+                    connector_debug_line("connector_get_receive_packet: Invalid payload");
                 }
             }
 
@@ -476,7 +476,7 @@ enum {
             ASSERT_GOTO(payload == DISC_OP_PAYLOAD, error);
             ASSERT_GOTO(total_length > PACKET_EDP_PROTOCOL_SIZE, error);
 
-            connector_debug_printf("edp_tcp_receive_process: receive data facility = 0x%04x\n", message_load_be16(edp_protocol, facility));
+            connector_debug_line("edp_tcp_receive_process: receive data facility = 0x%04x", message_load_be16(edp_protocol, facility));
             /* adjust the length for facility process */
             {
                 uint16_t const length = (uint16_t)(total_length - PACKET_EDP_PROTOCOL_SIZE);

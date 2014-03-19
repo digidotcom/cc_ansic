@@ -80,7 +80,7 @@ enum cc_redirect_report {
 
     ASSERT(report_message_length == 0);
 
-    connector_debug_printf("Connection Control: send redirect_report\n");
+    connector_debug_line("Connection Control: send redirect_report");
 
     /* build and send redirect report
      *  ----------------------------------------------------
@@ -139,7 +139,7 @@ done:
 
 static void build_ip_addr(connector_data_t * const connector_ptr, uint8_t * ipv6_addr)
 {
-    connector_debug_hexvalue("Send device IP address", connector_ptr->edp_data.config.ip_addr, (int) connector_ptr->edp_data.config.ip_addr_length);
+    connector_debug_print_buffer("Send device IP address", connector_ptr->edp_data.config.ip_addr, (int) connector_ptr->edp_data.config.ip_addr_length);
 
     if (connector_ptr->edp_data.config.ip_addr_length == CC_IPV6_ADDRESS_LENGTH)
     {
@@ -194,7 +194,7 @@ enum cc_connection_info {
 
     UNUSED_PARAMETER(cc_ptr);
 
-    connector_debug_printf("Connection Control: send connection report\n");
+    connector_debug_line("Connection Control: send connection report");
 
     /* Build Connection report
      *  -------------------------------------------------------
@@ -259,7 +259,7 @@ enum cc_connection_info {
                 memcpy(report_ptr, connector_ptr->mac_addr, MAC_ADDR_LENGTH);
                 report_length += MAC_ADDR_LENGTH;
 
-                connector_debug_hexvalue("Sending MAC address", connector_ptr->mac_addr, MAC_ADDR_LENGTH);
+                connector_debug_print_buffer("Sending MAC address", connector_ptr->mac_addr, MAC_ADDR_LENGTH);
 
                 break;
             }
@@ -271,11 +271,11 @@ enum cc_connection_info {
 
 #if (defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
                 message_store_be32(connection_info, link_speed, CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND);
-                connector_debug_printf("send_connection_report: link_speed = %d\n", CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND);
+                connector_debug_line("send_connection_report: link_speed = %d", CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND);
 
 #else
                 message_store_be32(connection_info, link_speed, connector_ptr->link_speed);
-                connector_debug_printf("send_connection_report: link_speed = %d\n", connector_ptr->link_speed);
+                connector_debug_line("send_connection_report: link_speed = %d", connector_ptr->link_speed);
 #endif
                 report_length += field_named_data(connection_info, link_speed, size);
 
@@ -289,7 +289,7 @@ enum cc_connection_info {
                     size_t length = connector_ptr->phone_dialed_length;
                     char * phone = connector_ptr->phone_dialed;
 #endif
-                    connector_debug_printf("send_connection_report: phone number = %.*s\n", (int)length, phone);
+                    connector_debug_line("send_connection_report: phone number = %.*s", (int)length, phone);
                     memcpy(connection_report+report_length, phone, length);
                     report_length += length;
                     *(connection_report + report_length) = 0x0;
@@ -319,7 +319,7 @@ enum cc_redirect {
     connector_status_t result = connector_working;
     uint8_t * redirect;
 
-    connector_debug_printf("process_redirect:  redirect to new destination\n");
+    connector_debug_line("process_redirect:  redirect to new destination");
     /* Redirect to new destination:
      * The connector will close connection and connect to new destination. If connect
      * to new destination fails, this function will returns SUCCESS to try
@@ -340,7 +340,7 @@ enum cc_redirect {
 
     if (cc_ptr->redirect_count == 0)
     {   /* nothing to redirect */
-        connector_debug_printf("cc_process_redirect: redirect with no url specified\n");
+        connector_debug_line("cc_process_redirect: redirect with no url specified");
         result = connector_idle;
         goto done;
     }
@@ -403,7 +403,7 @@ static connector_status_t cc_process(connector_data_t * const connector_ptr, voi
             result = connector_reboot(connector_ptr);
             break;
         default:
-            connector_debug_printf("connector_cc_process: unsupported opcode %u\n", opcode);
+            connector_debug_line("connector_cc_process: unsupported opcode %u", opcode);
             break;
         }
     }

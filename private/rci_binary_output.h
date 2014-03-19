@@ -252,7 +252,7 @@ static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
             notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range, rci->service_data->connector_ptr->context);
             rci->status = rci_status_error;
             overflow = connector_false;
-            connector_debug_printf("Invalid IPv4 \"%s\"\n", string);
+            connector_debug_line("Invalid IPv4 \"%s\"", string);
             goto done;
         }
 
@@ -595,7 +595,7 @@ static void rci_generate_output(rci_t * const rci)
 
     if ((rci_buffer_remaining(output) != 0))
     {
-        rci_debug_printf("output: %s\n", rci_output_state_t_as_string(rci->output.state));
+        connector_debug_line("output: %s", rci_output_state_t_as_string(rci->output.state));
 
         switch (rci->output.state)
         {
@@ -666,7 +666,7 @@ static void rci_generate_output(rci_t * const rci)
         size_t const bytes = rci_buffer_used(&rci->buffer.output);
         if (bytes > 0)
         {
-            connector_debug_hexvalue("Response", rci->buffer.output.start, bytes);
+            connector_debug_print_buffer("Response", rci->buffer.output.start, bytes);
         }
     }
 #endif

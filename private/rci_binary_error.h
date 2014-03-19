@@ -150,7 +150,7 @@ static void rci_generate_error(rci_t * const rci)
         size_t const bytes = rci_buffer_used(&rci->buffer.output);
         if (bytes > 0)
         {
-            connector_debug_hexvalue("Response", rci->buffer.output.start, bytes);
+            connector_debug_print_buffer("Response", rci->buffer.output.start, bytes);
         }
     }
 #endif

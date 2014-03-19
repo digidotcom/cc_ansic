@@ -12,18 +12,11 @@
 
 #if !(defined RCI_DEBUG)
 
-static void rci_debug_printf(char const * const format, ...)
-{
-    (void) format;
-}
-
 #define rci_input_state_t_as_string(value)      NULL
 #define rci_output_state_t_as_string(value)     NULL
 #define rci_traverse_state_t_as_string(value)     NULL
 
 #else
-
-#define rci_debug_printf    connector_debug_printf
 
 #define enum_to_case(name)  case name:  result = #name;             break
 

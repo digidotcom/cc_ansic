@@ -15,18 +15,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "connector_debug.h"
 
-
-void connector_debug_printf(char const * const format, ...)
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args)
 {
-    va_list args;
+    if ((debug == debug_all) || (debug == debug_beg))
+    {
+        /* lock mutex here. */
+        printf("CC: ");
+    }
 
-    va_start(args, format);
     vprintf(format, args);
-    va_end(args);
-}
-#else
 
+    if ((debug == debug_all) || (debug == debug_end))
+    {
+        /* unlock mutex here */
+        printf("\n");
+        fflush(stdout);
+    }
+}
+
+#else
+/* to avoid ISO C forbids an empty translation unit compiler error */
 typedef int dummy;
 
 #endif

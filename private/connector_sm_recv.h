@@ -46,8 +46,8 @@ static connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_
             sm_ptr->network.recv_packet.processed_bytes = suffix_position + suffix_bytes;
         else
         {
-            connector_debug_printf("sm_verify_sms_preamble: valid_prefix=%d, valid_shared_key=%d, valid_suffix=%d\n", valid_prefix, valid_shared_key, valid_suffix);
-            connector_debug_printf("%s\n",(char *)data_ptr);
+            connector_debug_line("sm_verify_sms_preamble: valid_prefix=%d, valid_shared_key=%d, valid_suffix=%d", valid_prefix, valid_shared_key, valid_suffix);
+            connector_debug_line("%s",(char *)data_ptr);
 
             result = connector_invalid_response;
         }
@@ -69,7 +69,7 @@ static connector_status_t sm_verify_udp_header(connector_sm_data_t * const sm_pt
 
     if (version != SM_UDP_VERSION)
     {
-        connector_debug_printf("sm_verify_udp_header: invalid SM UDP version [%d]\n", version);
+        connector_debug_line("sm_verify_udp_header: invalid SM UDP version [%d]", version);
         result = connector_abort;
         goto error;
     }
@@ -225,8 +225,8 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
         }
         #else
         {
-            connector_debug_printf("Received multipart packet, but multipart is disabled\n");
-            connector_debug_printf("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_RX_SEGMENTS defines\n");
+            connector_debug_line("Received multipart packet, but multipart is disabled");
+            connector_debug_line("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_RX_SEGMENTS defines");
             goto error;
         }
         #endif
@@ -250,7 +250,7 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
     #if !(defined CONNECTOR_COMPRESSION)
     if (header->isCompressed)
     {
-        connector_debug_printf("sm_process_header: Received compressed packet, but compression is disabled!\n");
+        connector_debug_line("sm_process_header: Received compressed packet, but compression is disabled");
         goto error;
     }
     #endif
@@ -260,7 +260,7 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
         header->command = (connector_sm_cmd_t)(header->cmd_status & 0x7F);
         if (header->isPackCmd && (header->command == connector_sm_cmd_pack))
         {
-            connector_debug_printf("sm_process_header: Pack command inside a pack command is not allowed!\n");
+            connector_debug_line("sm_process_header: Pack command inside a pack command is not allowed");
             goto error;
         }
         header->isError = connector_false;
@@ -270,7 +270,7 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
         header->isError = SmIsError(header->cmd_status);
         header->command = connector_sm_cmd_opaque_response;
     }
- 
+
     if (!header->isPackCmd)
     {
         size_t const sm_bytes = recv_ptr->total_bytes - recv_ptr->processed_bytes;
@@ -279,7 +279,7 @@ static connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
         calculated_crc = sm_calculate_crc16(calculated_crc, data_ptr, sm_bytes);
         if(calculated_crc != header->crc16)
         {
-            connector_debug_printf("sm_process_header: crc error!\n");
+            connector_debug_line("sm_process_header: crc error");
             goto error;
         }
 
@@ -322,7 +322,7 @@ static connector_status_t sm_update_session(connector_data_t * const connector_p
         if (header->isRequest)
         {
             if (header->isResponseNeeded) SmSetResponseNeeded(session->flags);
-            /* If the first segment of a multipart SMS that arrived was not segment0, previously stored session->command information is wrong as 
+            /* If the first segment of a multipart SMS that arrived was not segment0, previously stored session->command information is wrong as
              * for multipart messages, type is only included in the 0th segment. Update it here */
             session->command = header->command;
         }
@@ -377,7 +377,7 @@ static connector_status_t sm_update_session(connector_data_t * const connector_p
         }
         else
         {
-            connector_debug_printf("sm_update_session: duplicate segment %d, in id %d\n", header->segment.number, session->request_id);
+            connector_debug_line("sm_update_session: duplicate segment %d, in id %d", header->segment.number, session->request_id);
         }
     }
     else
@@ -433,8 +433,8 @@ static connector_status_t sm_process_packet(connector_data_t * const connector_p
 
         if ((sm_header.segment.count > sm_ptr->session.max_segments) || (sm_header.segment.number >= sm_ptr->session.max_segments))
         {
-            connector_debug_printf("sm_process_packet: Exceeded maximum segments [%" PRIsize "/%" PRIsize "]!\n", sm_header.segment.count, sm_ptr->session.max_segments);
-            connector_debug_printf("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_RX_SEGMENTS defines\n");
+            connector_debug_line("sm_process_packet: Exceeded maximum segments [%" PRIsize "/%" PRIsize "]", sm_header.segment.count, sm_ptr->session.max_segments);
+            connector_debug_line("Review CONNECTOR_SM_MULTIPART and CONNECTOR_SM_MAX_RX_SEGMENTS defines");
             goto error;
         }
 
@@ -541,7 +541,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                         default:
                             goto done;
                     }
-                                                                
+
                     result = sm_decode_segment(connector_ptr, recv_ptr);
 
                     /* Remove sms preamble */
@@ -570,7 +570,7 @@ static connector_status_t sm_receive_data(connector_data_t * const connector_ptr
             break;
 
         default:
-            connector_debug_printf("sm_receive_data: callback returned error [%d]\n", status);
+            connector_debug_line("sm_receive_data: callback returned error [%d]", status);
             result = connector_device_error;
             break;
     }
@@ -634,7 +634,7 @@ static connector_status_t sm_decompress_data(connector_data_t * const connector_
 
             default:
                 status = connector_abort;
-                connector_debug_printf("ZLIB Return value [%d]\n", zret);
+                connector_debug_line("ZLIB Return value [%d]", zret);
                 ASSERT_GOTO(connector_false, error);
                 break;
         }
@@ -746,7 +746,7 @@ static connector_status_t sm_process_recv_path(connector_data_t * const connecto
                 {
                     session->sm_state = connector_sm_state_error;
                     session->error = connector_sm_error_timeout;
-                    connector_debug_printf("Sm session [%u] timeout... start time:%u, current time:%u\n", session->request_id, session->start_time, current_time);
+                    connector_debug_line("Sm session [%u] timeout... start time:%u, current time:%u", session->request_id, session->start_time, current_time);
                 }
             }
 

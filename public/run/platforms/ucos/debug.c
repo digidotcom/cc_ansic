@@ -15,12 +15,25 @@
 #include <connector.h>
 #include <connector_bsp.h>
 
-void connector_debug_printf(char const * const format, ...)
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args)
 {
-    connector_BSP_debug_printf(format);
+    if ((debug == debug_all) || (debug == debug_beg))
+    {
+        /* lock mutex here. */
+        connector_BSP_debug_printf("CC: ");
+    }
+
+    connector_BSP_debug_vprintf(format, args);
+
+    if ((debug == debug_all) || (debug == debug_end))
+    {
+        /* unlock mutex here */
+        connector_BSP_debug_printf("\n");
+    }
 }
+
 #else
- /* to avoid ISO C forbids an empty translation unit compiler error */
+/* to avoid ISO C forbids an empty translation unit compiler error */
 typedef int dummy;
 
 #endif

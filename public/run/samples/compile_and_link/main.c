@@ -66,18 +66,24 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 #if defined(CONNECTOR_DEBUG)
 
-void connector_debug_printf(char const * const format, ...)
+#include "connector_debug.h"
+
+void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args)
 {
-    va_list args;
+    if ((debug == debug_all) || (debug == debug_beg))
+    {
+        /* lock mutex here. */
+        printf("CC: ");
+    }
 
-    va_start(args, format);
     vprintf(format, args);
-    va_end(args);
+
+    if ((debug == debug_all) || (debug == debug_end))
+    {
+        /* unlock mutex here */
+        printf("\n");
+        fflush(stdout);
+    }
 }
-
-
-#else
-
-typedef int dummy;
 
 #endif

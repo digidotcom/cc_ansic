@@ -180,7 +180,7 @@ static connector_status_t edp_layer_get_supported_facilities(connector_data_t * 
             {
             case connector_callback_busy:
                 /* not allowed to returned busy */
-                connector_debug_printf("edp_layer_get_supported_facilities: callback returns connector_callback_busy which is not allowed\n");
+                connector_debug_line("edp_layer_get_supported_facilities: callback returns connector_callback_busy which is not allowed");
                 result = connector_abort;
                 goto error;
             case connector_callback_abort:

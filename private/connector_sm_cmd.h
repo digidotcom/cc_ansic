@@ -76,7 +76,7 @@ static void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_statu
             goto done;
 
         case connector_invalid_data_size:
-            connector_debug_printf("WARNING: received a 'connector_invalid_data_size'\n");
+            connector_debug_line("WARNING: received a 'connector_invalid_data_size'");
             break;
         case connector_abort:
         case connector_invalid_response:
@@ -296,7 +296,7 @@ static connector_status_t sm_inform_session_complete(connector_data_t * const co
             break;
 
         default:
-            connector_debug_printf("sm_inform_session_complete: cancelling the session cmd [%d]\n", session->command);
+            connector_debug_line("sm_inform_session_complete: cancelling the session cmd [%d]", session->command);
             callback_status = connector_callback_continue;
             break;
     }
@@ -1016,7 +1016,7 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
                 edp_set_active_state(connector_ptr, connector_transport_open);
             result = connector_working;
             #else
-            connector_debug_printf("WARNING: received a 'request connect' but TCP transport is not available\n");
+            connector_debug_line("WARNING: received a 'request connect' but TCP transport is not available");
             result = connector_device_error;
             #endif
             break;

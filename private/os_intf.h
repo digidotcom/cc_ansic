@@ -63,16 +63,15 @@ static connector_callback_status_t connector_callback(connector_callback_t const
             break;
 
         case connector_callback_unrecognized:
-            connector_debug_printf("connector_callback : callback returns unrecognized request for request=%d class_id = %d\n",
-                        request_id.config_request, class_id);
+            connector_debug_line("connector_callback : callback returns unrecognized request for request=%d class_id = %d", request_id.config_request, class_id);
             break;
 
         case connector_callback_abort:
-            connector_debug_printf("connector_callback: callback for class id = %d request id = %d returned abort\n", class_id, request_id.config_request);
+            connector_debug_line("connector_callback: callback for class id = %d request id = %d returned abort", class_id, request_id.config_request);
             break;
 
         default:
-            connector_debug_printf("connector_callback: callback for class id = %d request id = %d returned invalid return code %d\n", class_id, request_id.config_request, status);
+            connector_debug_line("connector_callback: callback for class id = %d request id = %d returned invalid return code %d", class_id, request_id.config_request, status);
             status = connector_callback_abort;
             break;
     }
