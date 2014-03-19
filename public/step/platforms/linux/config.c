@@ -605,7 +605,7 @@ static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_conf
 #if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)
 static connector_callback_status_t app_get_sm_udp_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
 {
-#define APP_UDP_RX_TIMEOUT      0 /* In seconds, 0: Wait forever for the complete request/response */
+#define APP_UDP_RX_TIMEOUT      SM_WAIT_FOREVER /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
     /*
      * Return rx_timeout for UDP transport 
      */
@@ -618,7 +618,7 @@ static connector_callback_status_t app_get_sm_udp_rx_timeout(connector_config_sm
 #if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)
 static connector_callback_status_t app_get_sm_sms_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
 {
-#define APP_SMS_RX_TIMEOUT      0 /* In seconds, 0: Wait forever for the complete request/response */
+#define APP_SMS_RX_TIMEOUT      SM_WAIT_FOREVER /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
     /*
      * Return rx_timeout for SMS transport 
      */

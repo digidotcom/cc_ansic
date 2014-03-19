@@ -38,7 +38,6 @@
 #define SM_PACKET_SIZE_SMS_ENCODED ((SM_PACKET_SIZE_SMS/4) * 5)
 #define SM_REQUEST_ID_MASK 0x3FF  /* 10 bits */
 #define SM_DEFAULT_REQUEST_ID 0x01
-#define SM_WAIT_FOREVER     0
 
 /* NOTE: Some of these bits are tied to protocol, so please don't change them
          without referring to SM protocol */
