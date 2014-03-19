@@ -255,10 +255,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
 
-    #if (defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS) && (CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS > 1) && (!defined CONNECTOR_SM_MULTIPART)
-    #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS bigger than 1"
-    #endif
-
 
     /* TODO: make it different for UDP and SMS */
     #if (defined CONNECTOR_SM_TIMEOUT_RX)
@@ -299,10 +295,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
                 sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
             #else
-                #if CONNECTOR_SM_UDP_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
-                    #error "CONNECTOR_SM_UDP_MAX_SESSIONS over Range"
-                #endif
-            sm_ptr->session.max_sessions = CONNECTOR_SM_UDP_MAX_SESSIONS;
+                sm_ptr->session.max_sessions = CONNECTOR_SM_UDP_MAX_SESSIONS;
             #endif
             #if !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)
                 connector_config_sm_max_rx_segments_t config_max_rx_segments;
@@ -312,10 +305,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
                 sm_ptr->session.max_segments = config_max_rx_segments.max_rx_segments;
             #else
-                #if CONNECTOR_SM_UDP_MAX_RX_SEGMENTS > CONNECTOR_SM_MAX_RX_SEGMENTS_LIMIT
-                    #error "CONNECTOR_SM_UDP_MAX_RX_SEGMENTS over Range"
-                #endif
-            sm_ptr->session.max_segments = CONNECTOR_SM_UDP_MAX_RX_SEGMENTS;
+                sm_ptr->session.max_segments = CONNECTOR_SM_UDP_MAX_RX_SEGMENTS;
             #endif
             #if !(defined CONNECTOR_SM_UDP_TIMEOUT_RX)
                 connector_config_sm_timeout_rx_t config_timeout_rx;
@@ -356,10 +346,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
                 sm_ptr->session.max_sessions = config_max_sessions.max_sessions;
             #else
-                #if CONNECTOR_SM_SMS_MAX_SESSIONS > CONNECTOR_SM_MAX_SESSIONS_LIMIT
-                    #error "CONNECTOR_SM_SMS_MAX_SESSIONS over Range"
-                #endif
-            sm_ptr->session.max_sessions = CONNECTOR_SM_SMS_MAX_SESSIONS;
+                sm_ptr->session.max_sessions = CONNECTOR_SM_SMS_MAX_SESSIONS;
             #endif
             #if !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
                 connector_config_sm_max_rx_segments_t config_max_rx_segments;
@@ -369,10 +356,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
                 sm_ptr->session.max_segments = config_max_rx_segments.max_rx_segments;
             #else
-                #if CONNECTOR_SM_SMS_MAX_RX_SEGMENTS > CONNECTOR_SM_MAX_RX_SEGMENTS_LIMIT
-                    #error "CONNECTOR_SM_SMS_MAX_RX_SEGMENTS over Range"
-                #endif
-            sm_ptr->session.max_segments = CONNECTOR_SM_SMS_MAX_RX_SEGMENTS;
+                sm_ptr->session.max_segments = CONNECTOR_SM_SMS_MAX_RX_SEGMENTS;
             #endif
             #if !(defined CONNECTOR_SM_SMS_TIMEOUT_RX)
                 connector_config_sm_timeout_rx_t config_timeout_rx;
@@ -393,7 +377,7 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             break;
     }
 
-    #if (!defined CONNECTOR_SM_MULTIPART)
+    #if !(defined CONNECTOR_SM_MULTIPART)
         /* You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_RX_SEGMENTS bigger than 1 */
         ASSERT_GOTO(sm_ptr->session.max_segments == 1, error);
     #endif
