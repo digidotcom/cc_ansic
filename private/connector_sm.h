@@ -255,14 +255,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
 
-
-    /* TODO: make it different for UDP and SMS */
-    #if (defined CONNECTOR_SM_TIMEOUT_RX)
-    sm_ptr->timeout_in_seconds_rx = CONNECTOR_SM_TIMEOUT_RX;
-    #else
-    /* TODO: Read from callback */
-    sm_ptr->timeout_in_seconds_rx = SM_WAIT_FOREVER;
-    #endif
     sm_ptr->network.handle = NULL;
     sm_ptr->close.status = connector_close_status_device_error;
     sm_ptr->close.callback_needed = connector_true;
