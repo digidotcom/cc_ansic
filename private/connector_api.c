@@ -435,6 +435,10 @@ connector_handle_t connector_init(connector_callback_t const callback)
 #if (defined CONNECTOR_TRANSPORT_TCP)
 #if !(defined CONNECTOR_NETWORK_TCP_START)
     if (connector_handle->edp_data.connect_type == connector_connect_auto)
+    {
+        status = connector_edp_init(connector_handle);
+        COND_ELSE_GOTO(status == connector_working, error);
+    }
 #elif (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
     {
         status = connector_edp_init(connector_handle);
