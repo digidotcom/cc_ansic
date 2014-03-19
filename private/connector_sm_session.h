@@ -113,7 +113,7 @@ static connector_sm_session_t * sm_create_session(connector_data_t * const conne
     }
     else
     {
-        session->timeout_in_seconds = sm_ptr->timeout_in_seconds_rx;
+        session->timeout_in_seconds = sm_ptr->rx_timeout_in_seconds;
         session->sm_state = connector_sm_state_receive_data;
         sm_ptr->session.active_cloud_sessions++;
     }

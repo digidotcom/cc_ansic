@@ -57,9 +57,9 @@ typedef enum {
     connector_request_id_config_sm_udp_max_sessions,    /**< Requesting callback to obtain maximum udp short message sessions at a time. */
     connector_request_id_config_sm_sms_max_sessions,    /**< Requesting callback to obtain maximum sms short message sessions at a time. */
     connector_request_id_config_sm_udp_max_rx_segments, /**< Requesting callback to obtain maximum udp short message segments used per session during message reception */
-    connector_request_id_config_sm_sms_max_rx_segments  /**< Requesting callback to obtain maximum udp short message segments used per session during message reception */
-    connector_request_id_config_sm_udp_timeout_rx,
-    connector_request_id_config_sm_sms_timeout_rx
+    connector_request_id_config_sm_sms_max_rx_segments, /**< Requesting callback to obtain maximum sms short message segments used per session during message reception */
+    connector_request_id_config_sm_udp_rx_timeout,      /**< Requesting callback to obtain udp incoming sessions timeout in seconds. */
+    connector_request_id_config_sm_sms_rx_timeout       /**< Requesting callback to obtain sms incoming sessions timeout in seconds. */
 } connector_request_id_config_t;
 /**
 * @}
@@ -478,8 +478,8 @@ typedef struct {
 } connector_config_sm_max_rx_segments_t;
 
 typedef struct {
-    size_t timeout_rx;
-} connector_config_sm_timeout_rx_t;
+    size_t rx_timeout;
+} connector_config_sm_rx_timeout_t;
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_config.h. You should only include connector_api.h in user code."

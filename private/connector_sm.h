@@ -125,24 +125,24 @@ static connector_status_t get_config_sm_max_rx_segments(connector_data_t * const
     return result;
 }
 
-static connector_status_t get_config_sm_timeout_rx(connector_data_t * const connector_ptr,
+static connector_status_t get_config_sm_rx_timeout(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
-                                                        connector_config_sm_timeout_rx_t * const config_timeout_rx)
+                                                        connector_config_sm_rx_timeout_t * const config_rx_timeout)
 {
     connector_status_t result = connector_working;
 
-    ASSERT(config_timeout_rx != NULL);
-    ASSERT((config_request_id == connector_request_id_config_sm_udp_timeout_rx) ||
-           (config_request_id == connector_request_id_config_sm_sms_timeout_rx));
+    ASSERT(config_rx_timeout != NULL);
+    ASSERT((config_request_id == connector_request_id_config_sm_udp_rx_timeout) ||
+           (config_request_id == connector_request_id_config_sm_sms_rx_timeout));
 
-    config_timeout_rx->timeout_rx = 0;
+    config_rx_timeout->rx_timeout = 0;
 
     {
         connector_callback_status_t status;
         connector_request_id_t request_id;
 
         request_id.config_request = config_request_id;
-        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_timeout_rx, connector_ptr->context);
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_rx_timeout, connector_ptr->context);
 
         switch (status)
         {
@@ -299,15 +299,15 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             #else
                 sm_ptr->session.max_segments = CONNECTOR_SM_UDP_MAX_RX_SEGMENTS;
             #endif
-            #if !(defined CONNECTOR_SM_UDP_TIMEOUT_RX)
-                connector_config_sm_timeout_rx_t config_timeout_rx;
+            #if !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)
+                connector_config_sm_rx_timeout_t config_rx_timeout;
 
-                result = get_config_sm_timeout_rx(connector_ptr, connector_request_id_config_sm_udp_timeout_rx, &config_timeout_rx);
+                result = get_config_sm_rx_timeout(connector_ptr, connector_request_id_config_sm_udp_rx_timeout, &config_rx_timeout);
                 ASSERT_GOTO(result == connector_working, error);
 
-                sm_ptr->timeout_in_seconds_rx = config_timeout_rx.timeout_rx;
+                sm_ptr->rx_timeout_in_seconds = config_rx_timeout.rx_timeout;
             #else
-            sm_ptr->timeout_in_seconds_rx = CONNECTOR_SM_UDP_TIMEOUT_RX;
+                sm_ptr->rx_timeout_in_seconds = CONNECTOR_SM_UDP_RX_TIMEOUT;
             #endif
             break;
         }
@@ -350,15 +350,15 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             #else
                 sm_ptr->session.max_segments = CONNECTOR_SM_SMS_MAX_RX_SEGMENTS;
             #endif
-            #if !(defined CONNECTOR_SM_SMS_TIMEOUT_RX)
-                connector_config_sm_timeout_rx_t config_timeout_rx;
+            #if !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)
+                connector_config_sm_rx_timeout_t config_rx_timeout;
 
-                result = get_config_sm_timeout_rx(connector_ptr, connector_request_id_config_sm_sms_timeout_rx, &config_timeout_rx);
+                result = get_config_sm_rx_timeout(connector_ptr, connector_request_id_config_sm_sms_rx_timeout, &config_rx_timeout);
                 ASSERT_GOTO(result == connector_working, error);
 
-                sm_ptr->timeout_in_seconds_rx = config_timeout_rx.timeout_rx;
+                sm_ptr->rx_timeout_in_seconds = config_rx_timeout.rx_timeout;
             #else
-            sm_ptr->timeout_in_seconds_rx = CONNECTOR_SM_SMS_TIMEOUT_RX;
+                sm_ptr->rx_timeout_in_seconds = CONNECTOR_SM_SMS_RX_TIMEOUT;
             #endif
             break;
         }

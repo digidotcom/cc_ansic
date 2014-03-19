@@ -38,7 +38,7 @@ typedef struct
                                              See @connector_initiate_session_cancel*/
 
     connector_bool_t response_required; /**< set to connector_true if response is needed */
-    unsigned long timeout_in_seconds;   /* 0 means wait forever */
+    unsigned long timeout_in_seconds;   /**< outgoing sessions timeout in seconds. Only valid for SM */
 } connector_sm_send_ping_request_t;
 /**
 * @}

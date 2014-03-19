@@ -1064,8 +1064,8 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_sm_sms_max_sessions);
         enum_to_case(connector_request_id_config_sm_udp_max_rx_segments);
         enum_to_case(connector_request_id_config_sm_sms_max_rx_segments);
-        enum_to_case(connector_request_id_config_sm_udp_timeout_rx);
-        enum_to_case(connector_request_id_config_sm_sms_timeout_rx);
+        enum_to_case(connector_request_id_config_sm_udp_rx_timeout);
+        enum_to_case(connector_request_id_config_sm_sms_rx_timeout);
     }
     return result;
 }
