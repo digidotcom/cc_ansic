@@ -28,6 +28,12 @@
 #define SM_PACKET_SIZE_UDP 1472
 #endif
 
+/* Max configurable value for SM_MAX_SESSIONS_LIMIT */
+#define CONNECTOR_SM_MAX_SESSIONS_LIMIT 256
+
+/* Max configurable value for SM_MAX_RX_SEGMENTS_LIMIT */
+#define CONNECTOR_SM_MAX_RX_SEGMENTS_LIMIT 256
+
 #define SM_PACKET_SIZE_SMS 128
 #define SM_PACKET_SIZE_SMS_ENCODED ((SM_PACKET_SIZE_SMS/4) * 5)
 #define SM_REQUEST_ID_MASK 0x3FF  /* 10 bits */

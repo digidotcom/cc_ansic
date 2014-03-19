@@ -72,10 +72,10 @@ connector_status_t app_send_data(connector_handle_t handle)
     connector_status_t status = connector_no_resource;
     static char const buffer[] = "iDigi sm udp dvt for device data\n";
     static char const file_path[] = "test/sm_udp_neg.txt";
-    static client_data_t app_data[CONNECTOR_SM_MAX_SESSIONS];
+    static client_data_t app_data[CONNECTOR_SM_UDP_MAX_SESSIONS];
     static size_t test_cases = 0;
     static connector_bool_t response_needed = connector_true;
-    client_data_t * const app_ptr = &app_data[test_cases % CONNECTOR_SM_MAX_SESSIONS];
+    client_data_t * const app_ptr = &app_data[test_cases % CONNECTOR_SM_UDP_MAX_SESSIONS];
     connector_request_data_service_send_t * header_ptr = &app_ptr->header;
 
     app_ptr->data_ptr = buffer;

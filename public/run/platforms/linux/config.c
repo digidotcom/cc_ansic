@@ -550,6 +550,58 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     return connector_callback_continue;
 }
 
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
+static connector_callback_status_t app_get_sm_udp_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
+{
+#define APP_MAX_SM_UDP_SESSIONS      32
+    /*
+     * Return max sessions for UDP transport 
+     */
+    config_max_sessions->max_sessions = APP_MAX_SM_UDP_SESSIONS;
+
+    return connector_callback_continue;
+}
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
+static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
+{
+#define APP_MAX_SM_SMS_SESSIONS      32
+    /*
+     * Return max sessions for SMS transport 
+     */
+    config_max_sessions->max_sessions = APP_MAX_SM_SMS_SESSIONS;
+
+    return connector_callback_continue;
+}
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)
+static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
+{
+#define APP_MAX_SM_UDP_RX_SEGMENTS      1
+    /*
+     * Return max rx segments for UDP transport 
+     */
+    config_max_rx_segments->max_rx_segments = APP_MAX_SM_UDP_RX_SEGMENTS;
+
+    return connector_callback_continue;
+}
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
+static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
+{
+#define APP_MAX_SM_SMS_RX_SEGMENTS      1
+    /*
+     * Return max rx segments for SMS transport 
+     */
+    config_max_rx_segments->max_rx_segments = APP_MAX_SM_SMS_RX_SEGMENTS;
+
+    return connector_callback_continue;
+}
+#endif
+
 /* End of Cloud Connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
@@ -613,6 +665,10 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_meid);
         enum_to_case(connector_request_id_config_identity_verification);
         enum_to_case(connector_request_id_config_password);
+        enum_to_case(connector_request_id_config_sm_udp_max_sessions);
+        enum_to_case(connector_request_id_config_sm_sms_max_sessions);
+        enum_to_case(connector_request_id_config_sm_udp_max_rx_segments);
+        enum_to_case(connector_request_id_config_sm_sms_max_rx_segments);
     }
     return result;
 }
@@ -1067,6 +1123,30 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
      case connector_request_id_config_password:
          status = app_get_password(data);
          break;
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
+    case connector_request_id_config_sm_udp_max_sessions:
+        status = app_get_sm_udp_max_sessions(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
+    case connector_request_id_config_sm_sms_max_sessions:
+        status = app_get_sm_sms_max_sessions(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)
+    case connector_request_id_config_sm_udp_max_rx_segments:
+        status = app_get_sm_udp_max_rx_segments(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
+    case connector_request_id_config_sm_sms_max_rx_segments:
+        status = app_get_sm_sms_max_rx_segments(data);
+        break;
+#endif
 
     default:
         APP_DEBUG("app_config_callback: unknown configuration request= %d\n", request_id);
