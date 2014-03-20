@@ -415,8 +415,37 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #endif /* (defined CONNECTOR_TRANSPORT_SMS) */
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
-    status = connector_edp_init(connector_handle);
-    COND_ELSE_GOTO(status == connector_working, error);
+#if !(defined CONNECTOR_NETWORK_TCP_START)
+    {
+        connector_config_connect_type_t config_connect;
+
+        status = get_config_connect_status(connector_handle, connector_request_id_config_network_tcp, &config_connect);
+        COND_ELSE_GOTO(status == connector_working, done);
+
+        connector_handle->edp_data.connect_type = config_connect.type;
+        connector_handle->edp_data.stop.auto_connect = connector_bool(config_connect.type == connector_connect_auto);
+    }
+#else
+    ASSERT((CONNECTOR_NETWORK_TCP_START == connector_connect_auto) || (CONNECTOR_NETWORK_TCP_START == connector_connect_manual));
+    if (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
+    {
+        edp_set_active_state(connector_handle, connector_transport_open);
+    }
+    connector_handle->edp_data.stop.auto_connect = connector_bool(CONNECTOR_NETWORK_TCP_START == connector_connect_auto);
+#endif
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_TCP)
+#if !(defined CONNECTOR_NETWORK_TCP_START)
+    if (connector_handle->edp_data.connect_type == connector_connect_auto)
+#else
+    if (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
+#endif
+    {
+        status = connector_edp_init(connector_handle);
+        COND_ELSE_GOTO(status == connector_working, error);
+    }
+    /* If Manual mode is selected, connector_edp_init will be called when connector_initiate_transport_start is called */
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
