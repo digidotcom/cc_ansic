@@ -31,7 +31,7 @@
 #define GW_PORT		9999		    /* Port number is hardcoded in sms_proxy.py running in ConnectPort X4 Gateway */
 #define GW_ADDR_IN  "10.80.1.213"   /* Gateway running sms_proxy.py in India office */
 #define GW_ADDR_ES  "10.101.2.21"   /* Gateway running sms_proxy.py in Spain office */
-#define GW_ADDR_US  "10.9.16.85"    /* Gateway running sms_proxy.py in US office */
+#define GW_ADDR_US  "10.9.16.86"    /* Gateway running sms_proxy.py in US office */
 
 /* Use by default the US office proxy that uses local call and plain cost. Note that this IP can be overridden by the DVTs
    using the --ansic_sms_proxy_ip option
