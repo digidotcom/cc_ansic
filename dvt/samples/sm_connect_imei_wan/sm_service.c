@@ -43,6 +43,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = NULL;
     request.response_required = connector_true;
+    request.timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     request.request_id = &ping_request_id;
     
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);

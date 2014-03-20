@@ -27,7 +27,8 @@
 #define CONNECTOR_SM_SMS_MAX_SESSIONS   8
 #define CONNECTOR_SM_MULTIPART
 #define CONNECTOR_SM_SMS_MAX_RX_SEGMENTS   4
-#define CONNECTOR_SM_TIMEOUT        0  /* In seconds, 0: Wait forever for the complete request/response */
+#define CONNECTOR_SM_SMS_RX_TIMEOUT        SM_WAIT_FOREVER  /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
+#define CONNECTOR_SM_TIMEOUT_TX CONNECTOR_SM_SMS_RX_TIMEOUT /* Use same timeout as for RX */
 
 #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256

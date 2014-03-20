@@ -27,7 +27,8 @@
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
 #define CONNECTOR_SM_UDP_MAX_SESSIONS   2
-#define CONNECTOR_SM_TIMEOUT        0  /* In seconds, 0: Wait forever for the complete request/response */
+#define CONNECTOR_SM_UDP_RX_TIMEOUT     SM_WAIT_FOREVER  /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
+#define CONNECTOR_SM_TIMEOUT_TX CONNECTOR_SM_UDP_RX_TIMEOUT /* Use same timeout as for RX */
 
 /* #define CONNECTOR_NO_MALLOC */
 #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1

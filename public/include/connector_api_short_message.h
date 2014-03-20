@@ -17,6 +17,8 @@
 
 #define SM_INVALID_REQUEST_ID   UINT32_C(~0x0)
 
+#define SM_WAIT_FOREVER UINT32_C(0x0)
+
 /**
 * @defgroup connector_sm_send_ping_request_t connector_sm_send_ping_request_t
 *
@@ -38,6 +40,7 @@ typedef struct
                                              See @connector_initiate_session_cancel*/
 
     connector_bool_t response_required; /**< set to connector_true if response is needed */
+    unsigned long timeout_in_seconds;   /**< outgoing sessions timeout in seconds. Only valid for SM. Use SM_WAIT_FOREVER to wait forever for the complete request/response */
 } connector_sm_send_ping_request_t;
 /**
 * @}

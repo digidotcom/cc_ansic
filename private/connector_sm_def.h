@@ -38,7 +38,6 @@
 #define SM_PACKET_SIZE_SMS_ENCODED ((SM_PACKET_SIZE_SMS/4) * 5)
 #define SM_REQUEST_ID_MASK 0x3FF  /* 10 bits */
 #define SM_DEFAULT_REQUEST_ID 0x01
-#define SM_WAIT_FOREVER     0
 
 /* NOTE: Some of these bits are tied to protocol, so please don't change them
          without referring to SM protocol */
@@ -194,6 +193,7 @@ typedef struct connector_sm_session_t
         uint8_t count;
         uint8_t processed;
     } segments;
+    unsigned long timeout_in_seconds;
 } connector_sm_session_t;
 
 typedef struct connector_sm_packet_t
@@ -207,7 +207,7 @@ typedef struct connector_sm_packet_t
 typedef struct connector_sm_data_t
 {
     connector_status_t error_code;
-    unsigned long timeout_in_seconds;  /* 0 means wait forever */
+    unsigned long rx_timeout_in_seconds;
 
     struct
     {

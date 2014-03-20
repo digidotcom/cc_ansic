@@ -40,6 +40,7 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &request;
     request.response_required = connector_true;
+    request.timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     request.request_id = NULL;
 
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
@@ -99,6 +100,8 @@ connector_status_t app_send_put_request(connector_handle_t handle, connector_boo
 
     header.option = connector_data_service_send_option_overwrite;
     header.response_required = response_needed;
+    if (header.response_required)
+        headertimeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     header.path = response_needed ? "test/sm_data.txt" : "test/sm_data_noresp.txt";
     header.transport = app_transport;
     header.content_type = file_type;

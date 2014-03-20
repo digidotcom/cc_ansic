@@ -64,6 +64,8 @@ connector_status_t app_send_ping(connector_handle_t handle)
     }
 
     request.response_required = response_needed;
+    if (request.response_required)
+        request.timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     request.request_id = NULL;
 
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
@@ -136,6 +138,8 @@ connector_status_t app_send_data(connector_handle_t handle)
     header.user_context = &app_data; /* will be returned in all subsequent callbacks */
     header.path  = file_path;
     header.response_required = response_needed;
+    if (header.response_required)
+        header.timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     header.request_id = NULL;
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);

@@ -602,6 +602,32 @@ static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_conf
 }
 #endif
 
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)
+static connector_callback_status_t app_get_sm_udp_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
+{
+#define APP_UDP_RX_TIMEOUT SM_WAIT_FOREVER /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
+    /*
+     * Return rx_timeout for UDP transport 
+     */
+    config_rx_timeout->rx_timeout = APP_UDP_RX_TIMEOUT;
+
+    return connector_callback_continue;
+}
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)
+static connector_callback_status_t app_get_sm_sms_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
+{
+#define APP_SMS_RX_TIMEOUT SM_WAIT_FOREVER /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
+    /*
+     * Return rx_timeout for SMS transport 
+     */
+    config_rx_timeout->rx_timeout = APP_SMS_RX_TIMEOUT;
+
+    return connector_callback_continue;
+}
+#endif
+
 /* End of Cloud Connector configuration routines */
 #if (defined CONNECTOR_DEBUG)
 
@@ -669,6 +695,8 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_sm_sms_max_sessions);
         enum_to_case(connector_request_id_config_sm_udp_max_rx_segments);
         enum_to_case(connector_request_id_config_sm_sms_max_rx_segments);
+        enum_to_case(connector_request_id_config_sm_udp_rx_timeout);
+        enum_to_case(connector_request_id_config_sm_sms_rx_timeout);
     }
     return result;
 }
@@ -1145,6 +1173,18 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 #if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
     case connector_request_id_config_sm_sms_max_rx_segments:
         status = app_get_sm_sms_max_rx_segments(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)
+    case connector_request_id_config_sm_udp_rx_timeout:
+        status = app_get_sm_udp_rx_timeout(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)
+    case connector_request_id_config_sm_sms_rx_timeout:
+        status = app_get_sm_sms_rx_timeout(data);
         break;
 #endif
 

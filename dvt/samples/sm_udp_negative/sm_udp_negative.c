@@ -25,6 +25,8 @@ connector_status_t app_send_ping(connector_handle_t handle)
     request.transport = connector_transport_udp;
     request.user_context = &dummy_context;
     request.response_required = request.response_required ? connector_false : connector_true;
+    if (request.response_required)
+        request.timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     request.request_id = &ping_request_id;
 
     status = connector_initiate_action(handle, connector_initiate_ping_request, &request);
@@ -83,6 +85,8 @@ connector_status_t app_send_data(connector_handle_t handle)
     header_ptr->transport = connector_transport_udp;
     header_ptr->option = connector_data_service_send_option_overwrite;
     header_ptr->response_required = response_needed;
+    if (header_ptr->response_required)
+        header_ptr->timeout_in_seconds = CONNECTOR_SM_TIMEOUT_TX;
     header_ptr->path = (test_cases % 3) ? NULL : file_path;
     header_ptr->user_context = app_ptr; /* will be returned in all subsequent callbacks */
     header_ptr->request_id = &app_ptr->request_id;

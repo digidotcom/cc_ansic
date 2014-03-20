@@ -315,13 +315,9 @@ static connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
     return result;
 }
 
-#if (CONNECTOR_VERSION >= 0x02010000)
 static connector_status_t dp_send_message(connector_data_t * const connector_ptr, data_point_info_t * const dp_info,
-                                          connector_transport_t const transport, connector_bool_t const response_needed, uint32_t * request_id)
-#else
-static connector_status_t dp_send_message(connector_data_t * const connector_ptr, data_point_info_t * const dp_info,
-                                          connector_transport_t const transport, connector_bool_t const response_needed)
-#endif
+                                          connector_transport_t const transport, connector_bool_t const response_needed, 
+                                          uint32_t * request_id, unsigned long timeout_in_seconds)
 {
     connector_status_t result;
 
@@ -329,11 +325,10 @@ static connector_status_t dp_send_message(connector_data_t * const connector_ptr
     dp_info->header.user_context = dp_info;
     dp_info->header.path = dp_info->file_path;
     dp_info->header.response_required = response_needed;
+    dp_info->header.timeout_in_seconds = timeout_in_seconds;
     dp_info->header.content_type = NULL;
     dp_info->header.option = connector_data_service_send_option_overwrite;
-#if (CONNECTOR_VERSION >= 0x02010000)
     dp_info->header.request_id = request_id;
-#endif
 
     result = connector_initiate_action(connector_ptr, connector_initiate_send_data, &dp_info->header);
     switch (result)
@@ -388,11 +383,7 @@ static connector_status_t dp_process_csv_single(connector_data_t * const connect
 
     result = dp_fill_file_path(dp_info, dp_ptr->path, ".csv");
     if (result != connector_working) goto error;
-#if (CONNECTOR_VERSION >= 0x02010000)
-    result = dp_send_message(connector_ptr, dp_info, dp_ptr->transport, dp_ptr->response_required, dp_ptr->request_id);
-#else
-    result = dp_send_message(connector_ptr, dp_info, dp_ptr->transport, dp_ptr->response_required);
-#endif
+    result = dp_send_message(connector_ptr, dp_info, dp_ptr->transport, dp_ptr->response_required, dp_ptr->request_id, dp_ptr->timeout_in_seconds);
     if (result == connector_working) goto done;
 
 error:
@@ -426,7 +417,7 @@ static connector_status_t dp_process_csv_multiple(connector_data_t * const conne
 
     result = dp_fill_file_path(dp_info, NULL, ".csv");
     if (result != connector_working) goto error;
-    result = dp_send_message(connector_ptr, dp_info, dp_ptr->transport, dp_ptr->response_required, dp_ptr->request_id);
+    result = dp_send_message(connector_ptr, dp_info, dp_ptr->transport, dp_ptr->response_required, dp_ptr->request_id, dp_ptr->timeout_in_seconds);
     if (result == connector_working) goto done;
 
 error:
@@ -456,11 +447,7 @@ static connector_status_t dp_process_binary(connector_data_t * const connector_p
 
     result = dp_fill_file_path(dp_info, bp_ptr->path, ".bin");
     if (result != connector_working) goto error;
-#if (CONNECTOR_VERSION >= 0x02010000)
-    result = dp_send_message(connector_ptr, dp_info, bp_ptr->transport, bp_ptr->response_required, bp_ptr->request_id);
-#else
-    result = dp_send_message(connector_ptr, dp_info, bp_ptr->transport, bp_ptr->response_required);
-#endif
+    result = dp_send_message(connector_ptr, dp_info, bp_ptr->transport, bp_ptr->response_required, bp_ptr->request_id, bp_ptr->timeout_in_seconds);
     if (result == connector_working) goto done;
 
 error:

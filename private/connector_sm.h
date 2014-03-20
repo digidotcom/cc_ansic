@@ -125,6 +125,44 @@ static connector_status_t get_config_sm_max_rx_segments(connector_data_t * const
     return result;
 }
 
+static connector_status_t get_config_sm_rx_timeout(connector_data_t * const connector_ptr,
+                                                        connector_request_id_config_t const config_request_id,
+                                                        connector_config_sm_rx_timeout_t * const config_rx_timeout)
+{
+    connector_status_t result = connector_working;
+
+    ASSERT(config_rx_timeout != NULL);
+    ASSERT((config_request_id == connector_request_id_config_sm_udp_rx_timeout) ||
+           (config_request_id == connector_request_id_config_sm_sms_rx_timeout));
+
+    config_rx_timeout->rx_timeout = 0;
+
+    {
+        connector_callback_status_t status;
+        connector_request_id_t request_id;
+
+        request_id.config_request = config_request_id;
+        status = connector_callback(connector_ptr->callback, connector_class_id_config, request_id, config_rx_timeout, connector_ptr->context);
+
+        switch (status)
+        {
+        case connector_callback_continue:
+            /* No range check */
+            break;
+
+        case connector_callback_busy:
+        case connector_callback_abort:
+        case connector_callback_error:
+            result = connector_abort;
+            break;
+
+        case connector_callback_unrecognized:
+            break;
+        }
+    }
+    return result;
+}
+
 static connector_status_t sm_initialize(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     connector_status_t result = connector_init_error;
@@ -217,11 +255,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
 
-    #if (defined CONNECTOR_SM_TIMEOUT)
-    sm_ptr->timeout_in_seconds = CONNECTOR_SM_TIMEOUT;
-    #else
-    sm_ptr->timeout_in_seconds = SM_WAIT_FOREVER;
-    #endif
     sm_ptr->network.handle = NULL;
     sm_ptr->close.status = connector_close_status_device_error;
     sm_ptr->close.callback_needed = connector_true;
@@ -266,6 +299,16 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             #else
                 sm_ptr->session.max_segments = CONNECTOR_SM_UDP_MAX_RX_SEGMENTS;
             #endif
+            #if !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)
+                connector_config_sm_rx_timeout_t config_rx_timeout;
+
+                result = get_config_sm_rx_timeout(connector_ptr, connector_request_id_config_sm_udp_rx_timeout, &config_rx_timeout);
+                ASSERT_GOTO(result == connector_working, error);
+
+                sm_ptr->rx_timeout_in_seconds = config_rx_timeout.rx_timeout;
+            #else
+                sm_ptr->rx_timeout_in_seconds = CONNECTOR_SM_UDP_RX_TIMEOUT;
+            #endif
             break;
         }
         #endif
@@ -297,7 +340,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             #else
                 sm_ptr->session.max_sessions = CONNECTOR_SM_SMS_MAX_SESSIONS;
             #endif
-
             #if !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
                 connector_config_sm_max_rx_segments_t config_max_rx_segments;
 
@@ -308,7 +350,16 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             #else
                 sm_ptr->session.max_segments = CONNECTOR_SM_SMS_MAX_RX_SEGMENTS;
             #endif
+            #if !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)
+                connector_config_sm_rx_timeout_t config_rx_timeout;
 
+                result = get_config_sm_rx_timeout(connector_ptr, connector_request_id_config_sm_sms_rx_timeout, &config_rx_timeout);
+                ASSERT_GOTO(result == connector_working, error);
+
+                sm_ptr->rx_timeout_in_seconds = config_rx_timeout.rx_timeout;
+            #else
+                sm_ptr->rx_timeout_in_seconds = CONNECTOR_SM_SMS_RX_TIMEOUT;
+            #endif
             break;
         }
         #endif
@@ -317,6 +368,11 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             ASSERT_GOTO(connector_false, error);
             break;
     }
+
+    #if !(defined CONNECTOR_SM_MULTIPART)
+        /* You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_RX_SEGMENTS bigger than 1 */
+        ASSERT_GOTO(sm_ptr->session.max_segments == 1, error);
+    #endif
 
     #if !(defined CONNECTOR_SM_MULTIPART)
         /* You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_RX_SEGMENTS bigger than 1 */
