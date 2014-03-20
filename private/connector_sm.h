@@ -265,20 +265,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_UDP)
         case connector_transport_udp:
         {
-            #if !(defined CONNECTOR_NETWORK_UDP_START)
-            {
-                connector_config_connect_type_t config_connect;
-
-                result = get_config_connect_status(connector_ptr, connector_request_id_config_network_udp, &config_connect);
-                ASSERT_GOTO(result == connector_working, error);
-
-                sm_ptr->transport.connect_type = config_connect.type;
-            }
-            #else
-                ASSERT((CONNECTOR_NETWORK_UDP_START == connector_connect_auto) || (CONNECTOR_NETWORK_UDP_START == connector_connect_manual));
-                sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
-                result = connector_working;
-            #endif
             #if !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
                 connector_config_sm_max_sessions_t config_max_sessions;
 
@@ -316,20 +302,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
         {
-            #if !(defined CONNECTOR_NETWORK_SMS_START)
-            {
-                connector_config_connect_type_t config_connect;
-
-                result = get_config_connect_status(connector_ptr, connector_request_id_config_network_sms, &config_connect);
-                ASSERT_GOTO(result == connector_working, error);
-
-                sm_ptr->transport.connect_type = config_connect.type;
-            }
-            #else
-                ASSERT((CONNECTOR_NETWORK_SMS_START == connector_connect_auto) || (CONNECTOR_NETWORK_SMS_START == connector_connect_manual));
-                sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
-                result = connector_working;
-            #endif
             #if !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
                 connector_config_sm_max_sessions_t config_max_sessions;
 
@@ -381,26 +353,6 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
 
 error:
     return result;
-}
-
-static connector_status_t connector_sm_init(connector_data_t * const connector_ptr)
-{
-    connector_status_t status;
-
-    connector_ptr->last_request_id = SM_DEFAULT_REQUEST_ID;
-
-    #if (defined CONNECTOR_TRANSPORT_UDP)
-    status = sm_initialize(connector_ptr, connector_transport_udp);
-    ASSERT_GOTO(status == connector_working, error);
-    #endif
-
-    #if (defined CONNECTOR_TRANSPORT_SMS)
-    status = sm_initialize(connector_ptr, connector_transport_sms);
-    ASSERT_GOTO(status == connector_working, error);
-    #endif
-
-error:
-    return status;
 }
 
 #if (CONNECTOR_VERSION >= 0x02010000)
@@ -489,6 +441,9 @@ static connector_status_t sm_initiate_action(connector_handle_t const handle, co
                 default:
                     goto done;
             }
+
+            result = sm_initialize(connector_ptr, *transport_ptr);
+            ASSERT_GOTO(result == connector_working, error);
 
             if (sm_ptr->pending.data != NULL) goto error;
             sm_ptr->pending.data = &sm_ptr->close.stop_condition; /* dummy */

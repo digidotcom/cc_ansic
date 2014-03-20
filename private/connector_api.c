@@ -448,9 +448,61 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     /* If Manual mode is selected, connector_edp_init will be called when connector_initiate_transport_start is called */
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
-    status = connector_sm_init(connector_handle);
-    COND_ELSE_GOTO(status == connector_working, error);
+#if (defined CONNECTOR_SHORT_MESSAGE)
+    connector_handle->last_request_id = SM_DEFAULT_REQUEST_ID;
+
+#if defined CONNECTOR_TRANSPORT_UDP
+    {
+        connector_sm_data_t * const sm_ptr = get_sm_data(connector_handle, connector_transport_udp);
+
+        #if !(defined CONNECTOR_NETWORK_UDP_START)
+        {
+            connector_config_connect_type_t config_connect;
+
+            status = get_config_connect_status(connector_handle, connector_request_id_config_network_udp, &config_connect);
+            ASSERT_GOTO(status == connector_working, error);
+
+            sm_ptr->transport.connect_type = config_connect.type;
+        }
+        #else
+        ASSERT((CONNECTOR_NETWORK_UDP_START == connector_connect_auto) || (CONNECTOR_NETWORK_UDP_START == connector_connect_manual));
+        sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
+        status = connector_working;
+        #endif
+        if (sm_ptr->transport.connect_type == connector_connect_auto)
+        {
+            status = sm_initialize(connector_handle, connector_transport_udp);
+            COND_ELSE_GOTO(status == connector_working, error);
+        }
+    }
+#endif
+
+#if defined CONNECTOR_TRANSPORT_SMS
+    {
+        connector_sm_data_t * const sm_ptr = get_sm_data(connector_handle, connector_transport_sms);
+
+        #if !(defined CONNECTOR_NETWORK_SMS_START)
+        {
+            connector_config_connect_type_t config_connect;
+
+            status = get_config_connect_status(connector_handle, connector_transport_sms, &config_connect);
+            ASSERT_GOTO(status == connector_working, error);
+
+            sm_ptr->transport.connect_type = config_connect.type;
+        }
+        #else
+        ASSERT((CONNECTOR_NETWORK_SMS_START == connector_connect_auto) || (CONNECTOR_NETWORK_SMS_START == connector_connect_manual));
+        sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
+        status = connector_working;
+        #endif
+        if (sm_ptr->transport.connect_type == connector_connect_auto)
+        {
+            status = sm_initialize(connector_handle, connector_transport_udp);
+            COND_ELSE_GOTO(status == connector_working, error);
+        }
+    }
+#endif
+
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_COUNT > 1)
