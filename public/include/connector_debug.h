@@ -28,7 +28,7 @@ typedef enum {
 /**
  * Debug output from Cloud Connector, Writes a formatted string to stdout, expanding the format
  * tags with the value of the argument list arg.  This function behaves exactly as
- * printf() except an additional argument is passed indicating which part of the line is represented.
+ * vprintf() except an additional argument is passed indicating which part of the line is represented.
  *
  * debug_beg: Start of line. A fixed string could be added to each line to distinguish differing
  * types of output or to enable locking of the output until debug_eol is sent (too keep content from
@@ -41,8 +41,8 @@ typedef enum {
  *
  * debug_all: The full message is contained in this one call. Equivalent to calling:
  *
- *      connector_debug_vprintf(debug_sol, format, args);
- *      connector_debug_vprintf(debug_eol, "", args);
+ *      connector_debug_vprintf(debug_beg, format, args);
+ *      connector_debug_vprintf(debug_end, "", args);
  *
  */
 
