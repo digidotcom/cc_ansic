@@ -33,7 +33,7 @@
 
 static void edp_reset_initial_data(connector_data_t * const connector_ptr)
 {
-    edp_set_edp_state(connector_ptr, edp_communication_connect_to_cloud);
+    edp_set_edp_state(connector_ptr, edp_configuration_init);
 
     connector_ptr->edp_data.facilities.current = NULL;
     connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;

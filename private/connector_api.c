@@ -435,19 +435,6 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #endif
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_TCP)
-#if !(defined CONNECTOR_NETWORK_TCP_START)
-    if (connector_handle->edp_data.connect_type == connector_connect_auto)
-#else
-    if (CONNECTOR_NETWORK_TCP_START == connector_connect_auto)
-#endif
-    {
-        status = connector_edp_init(connector_handle);
-        COND_ELSE_GOTO(status == connector_working, error);
-    }
-    /* If Manual mode is selected, connector_edp_init will be called when connector_initiate_transport_start is called */
-#endif
-
 #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_handle->last_request_id = SM_DEFAULT_REQUEST_ID;
 

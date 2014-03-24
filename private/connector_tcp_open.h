@@ -811,6 +811,7 @@ done:
 }
 
 static connector_status_t layer_discovery_facility(connector_data_t * const connector_ptr);
+static connector_status_t connector_edp_init(connector_data_t * const connector_ptr);
 
 static connector_status_t edp_tcp_open_process(connector_data_t * const connector_ptr)
 {
@@ -818,6 +819,17 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
 
     switch (edp_get_edp_state(connector_ptr))
     {
+    case edp_configuration_init:
+        result = connector_edp_init(connector_ptr);
+        switch(result)
+        {
+        case connector_working:
+            edp_set_edp_state(connector_ptr, edp_communication_connect_to_cloud);
+            break;
+        default:
+            break;
+        }
+        break;
     case edp_communication_connect_to_cloud:
         result = connect_to_cloud(connector_ptr, connector_ptr->edp_data.config.cloud_url);
 
@@ -1056,7 +1068,7 @@ static connector_status_t edp_tcp_open_process(connector_data_t * const connecto
 done:
     if (result != connector_idle && result != connector_pending && result != connector_working)
     {
-        if (edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud)
+        if (edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud && edp_get_edp_state(connector_ptr) != edp_configuration_init)
         {
            /* set the close state and make it goes to close connection state */
             edp_set_close_status(connector_ptr, connector_close_status_device_error);

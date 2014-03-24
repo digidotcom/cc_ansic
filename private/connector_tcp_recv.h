@@ -188,8 +188,7 @@ static connector_status_t tcp_receive_packet(connector_data_t * const connector_
 
     *packet = NULL;
 
-    ASSERT_GOTO(edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud, done);
-
+    ASSERT_GOTO(edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud && edp_get_edp_state(connector_ptr) != edp_configuration_init, done);
     /*
      * Read the MT message type.
      *

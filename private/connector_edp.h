@@ -118,16 +118,13 @@ done:
 }
 
 
-connector_status_t connector_edp_init(connector_data_t * const connector_ptr)
+static connector_status_t connector_edp_init(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
     edp_reset_initial_data(connector_ptr);
     connector_ptr->edp_data.facilities.list = NULL;
     connector_ptr->edp_data.facilities.supported_mask = 0;
-
-    edp_set_active_state(connector_ptr, connector_transport_idle);
-    edp_set_initiate_state(connector_ptr, connector_transport_idle);
 
     result = edp_config_init(connector_ptr);
     if (result != connector_working)
@@ -232,10 +229,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         }
         }
 
-        if (result == connector_device_terminated
-            || result == connector_abort
-
-            )
+        if (result == connector_device_terminated || result == connector_abort)
         {
             connector_debug_line("connector_edp_step: done with status = %d", result);
             goto done;
@@ -337,7 +331,10 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
 
 #if (defined CONNECTOR_DATA_SERVICE)
     case connector_initiate_send_data:
-        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud) goto done;
+        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud || edp_get_edp_state(connector_ptr) == edp_configuration_init)
+        {
+            goto done;
+        }
 
         switch (edp_get_active_state(connector_ptr))
         {
@@ -381,7 +378,10 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
     case connector_initiate_data_point_multiple:
 #endif
     case connector_initiate_data_point_binary:
-        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud) goto done;
+        if (edp_get_edp_state(connector_ptr) == edp_communication_connect_to_cloud || edp_get_edp_state(connector_ptr) == edp_configuration_init)
+        {
+            goto done;
+        }
 
         switch (edp_get_active_state(connector_ptr))
         {
@@ -500,20 +500,6 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             goto done;
         }
 
-#if (defined CONNECTOR_TRANSPORT_TCP)
-#if !(defined CONNECTOR_NETWORK_TCP_START)
-        if (connector_ptr->edp_data.connect_type == connector_connect_manual)
-        {
-            result = connector_edp_init(connector_ptr);
-            COND_ELSE_GOTO(result == connector_working, done);
-        }
-#elif (CONNECTOR_NETWORK_TCP_START == connector_connect_manual)
-        {
-            result = connector_edp_init(connector_ptr);
-            COND_ELSE_GOTO(result == connector_working, done);
-        }
-#endif
-#endif
         switch (edp_get_active_state(connector_ptr))
         {
         case connector_transport_open:

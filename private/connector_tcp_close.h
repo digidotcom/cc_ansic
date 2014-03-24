@@ -43,7 +43,7 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
     connector_status_t result = connector_idle;
     connector_close_status_t close_status = edp_get_close_status(connector_ptr);
 
-    if (edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud)
+    if (edp_get_edp_state(connector_ptr) != edp_communication_connect_to_cloud && edp_get_edp_state(connector_ptr) != edp_configuration_init)
     {
         connector_callback_status_t status;
         connector_request_id_t request_id;
@@ -83,8 +83,6 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
                 tcp_send_complete_callback(connector_ptr, connector_abort);
 
         }
-        edp_set_edp_state(connector_ptr, edp_communication_connect_to_cloud);
-
         layer_remove_facilities(connector_ptr, facility_callback_cleanup);
 
         edp_reset_initial_data(connector_ptr);
