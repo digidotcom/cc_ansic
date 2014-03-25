@@ -496,7 +496,6 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     connector_handle->first_running_network = (connector_network_type_t) 0;
 #endif
 
-    connector_handle->signature = connector_signature;
     goto done;
 
 error:
@@ -514,7 +513,6 @@ connector_status_t connector_step(connector_handle_t const handle)
     connector_data_t * const connector_ptr = handle;
 
     ASSERT_GOTO(handle != NULL, done);
-    if (connector_ptr->signature != connector_signature) goto done;
 
     switch (connector_ptr->stop.state)
     {
@@ -539,7 +537,6 @@ connector_status_t connector_step(connector_handle_t const handle)
             if (is_connector_stopped(connector_ptr, connector_close_status_device_terminated))
             {
                 connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
-                connector_ptr->signature = NULL;
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 connector_debug_line("connector_step: free Cloud Connector");
 
@@ -647,8 +644,6 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
     connector_data_t * connector_ptr = (connector_data_t *)handle;
 
     ASSERT_GOTO(handle != NULL, done);
-
-    if (connector_ptr->signature != connector_signature) goto done;
 
     switch (request)
     {

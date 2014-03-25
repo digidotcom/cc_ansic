@@ -157,8 +157,6 @@ struct connector_data;
 
 typedef struct connector_data {
 
-    char const * signature;
-
     uint8_t device_id[DEVICE_ID_LENGTH];
     uint8_t * mac_addr;
     uint8_t * wan_id;
