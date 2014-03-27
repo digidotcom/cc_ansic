@@ -472,7 +472,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         {
             connector_config_connect_type_t config_connect;
 
-            status = get_config_connect_status(connector_handle, connector_transport_sms, &config_connect);
+            status = get_config_connect_status(connector_handle, connector_request_id_config_network_sms, &config_connect);
             ASSERT_GOTO(status == connector_working, error);
 
             sm_ptr->transport.connect_type = config_connect.type;
@@ -484,7 +484,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         #endif
         if (sm_ptr->transport.connect_type == connector_connect_auto)
         {
-            status = sm_initialize(connector_handle, connector_transport_udp);
+            status = sm_initialize(connector_handle, connector_transport_sms);
             COND_ELSE_GOTO(status == connector_working, error);
         }
     }
