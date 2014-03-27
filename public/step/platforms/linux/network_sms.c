@@ -103,8 +103,7 @@ done:
  *
  * @param data @ref connector_network_open_t
  *  <ul>
- *   <li><b><i>device_cloud_url</i></b> - FQDN of Device Cloud. For SMS transport it's the Device Cloud phone number 
- *                                        where to send SMSs.</li>
+ *   <li><b><i>device_cloud.phone</i></b> - For SMS transport it's the Device Cloud phone number where to send SMSs.</li>
  *   <li><b><i>handle</i></b> - This is filled in with the value
  *   of a network handle, passed to subsequent networking calls,
  *   @ref connector_network_handle_t "connector_network_handle_t"
@@ -165,7 +164,7 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
 
     g_sms_handle.state_machine = state_machine;
     strcpy(g_sms_handle.server_telephone, "+");
-    strcat(g_sms_handle.server_telephone, data->device_cloud_url);
+    strcat(g_sms_handle.server_telephone, data->device_cloud.phone);
 
     data->handle = &g_sms_handle;
 

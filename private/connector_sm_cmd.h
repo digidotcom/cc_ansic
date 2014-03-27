@@ -642,7 +642,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
             connector_network_open_t open_data;
 
             /* Open */
-            open_data.device_cloud_url = config_request.phone_number;
+            open_data.device_cloud.phone = config_request.phone_number;
             open_data.handle = NULL;
 
             request_id.network_request = connector_request_id_network_open;

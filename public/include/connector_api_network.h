@@ -43,7 +43,11 @@ typedef enum {
 * Network open data structure for @ref connector_request_id_network_open callback which is called to open and connect to Device Cloud.
 */
 typedef struct  {
-    char const * CONST device_cloud_url;    /**< Pointer to Device Cloud URL. For SMS transport it's the Device cloud Phone Number where to send SMSs  */
+    union
+    {
+        char const * CONST url;    /**< Pointer to Device Cloud URL. Used for TCP and UDP transports */
+        char const * CONST phone;    /**< Pointer to Device Cloud Phone Number where to send SMSs. Used for SMS transport */
+    } device_cloud;
     connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
 /**

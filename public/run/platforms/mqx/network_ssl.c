@@ -413,19 +413,19 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     connector_callback_status_t status;
     _ip_address server_ip_addr;
 
-    if (app_dns_resolve(data->device_cloud_url, &server_ip_addr) == FALSE)
+    if (app_dns_resolve(data->device_cloud.url, &server_ip_addr) == FALSE)
     {
-        APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", data->device_cloud_url);
+        APP_DEBUG("app_network_tcp_open: Can't resolve DNS for %s\n", data->device_cloud.url);
         goto done;
     }
 
     status = app_tcp_connect(server_ip_addr, data);
 
     if (status == connector_callback_continue)
-        APP_DEBUG("network_tcp_open: connected to %s\n", data->device_cloud_url);
+        APP_DEBUG("network_tcp_open: connected to %s\n", data->device_cloud.url);
     else
     if (status == connector_callback_error)
-        APP_DEBUG("network_tcp_open: failed to connect to %s\n", data->device_cloud_url);
+        APP_DEBUG("network_tcp_open: failed to connect to %s\n", data->device_cloud.url);
 
 done:
     return status;

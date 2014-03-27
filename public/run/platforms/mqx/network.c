@@ -162,12 +162,12 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
     {
         _ip_address server_ip_addr;
 
-        if (app_dns_resolve(data->device_cloud_url, &server_ip_addr) == FALSE)
+        if (app_dns_resolve(data->device_cloud.url, &server_ip_addr) == FALSE)
         {
         	goto done;
         }
 
-        APP_DEBUG("network_connect: Resolved IP Address for %s: %d.%d.%d.%d\n", data->device_cloud_url, IPBYTES(server_ip_addr));
+        APP_DEBUG("network_connect: Resolved IP Address for %s: %d.%d.%d.%d\n", data->device_cloud.url, IPBYTES(server_ip_addr));
 
         socket_fd = app_tcp_create_socket();
         if (socket_fd == -1)
@@ -182,7 +182,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
 			goto done;
         }
 
-		APP_DEBUG("Connecting to %s...\n", data->device_cloud_url);
+		APP_DEBUG("Connecting to %s...\n", data->device_cloud.url);
 
         status = app_tcp_connect(socket_fd, server_ip_addr);
         if (status != connector_callback_continue)
@@ -191,7 +191,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
         }
     }
     
-    APP_DEBUG("network_connect: 3 way handshake, connected to [%s] server\n", data->device_cloud_url);
+    APP_DEBUG("network_connect: 3 way handshake, connected to [%s] server\n", data->device_cloud.url);
     data->handle = &socket_fd;
 
 done:
