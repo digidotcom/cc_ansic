@@ -89,12 +89,12 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
          * Check if it's a dotted-notation IP address, if it's a domain name,
          * attempt to resolve it.
          */
-        ip_addr = inet_addr(network_data->device_cloud_url);
+        ip_addr = inet_addr(network_data->device_cloud.url);
         if (ip_addr == INADDR_NONE)
         {
-            if (app_dns_resolve_name(network_data->device_cloud_url, &ip_addr) != 0)
+            if (app_dns_resolve_name(network_data->device_cloud.url, &ip_addr) != 0)
             {
-                APP_DEBUG("network_connect: Can't resolve DNS for %s\n", network_data->device_cloud_url);
+                APP_DEBUG("network_connect: Can't resolve DNS for %s\n", network_data->device_cloud.url);
                 goto done;
             }
         }
@@ -178,12 +178,12 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
             /* If we also got a "socket readable" we have an error. */
             if (FD_ISSET(fd, &read_set))
             {
-                APP_DEBUG("network_connect: error to connect to %s server\n",  network_data->device_cloud_url);
+                APP_DEBUG("network_connect: error to connect to %s server\n",  network_data->device_cloud.url);
                 goto done;
             }
             network_data->handle = &fd;
             rc = connector_callback_continue;
-            APP_DEBUG("network_connect: connected to [%s] server\n", network_data->device_cloud_url);
+            APP_DEBUG("network_connect: connected to [%s] server\n", network_data->device_cloud.url);
         }
     }
 
