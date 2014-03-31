@@ -389,7 +389,6 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #endif
 #endif /* (defined CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP) */
 
-    /* make a copy of the cloud phone */
 #if (defined CONNECTOR_TRANSPORT_SMS)
 #if (defined CONNECTOR_CLOUD_PHONE)
     {
@@ -397,9 +396,6 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         connector_handle->device_cloud_phone = (char *)connector_device_cloud_phone;
         connector_handle->device_cloud_phone_length = sizeof connector_device_cloud_phone -1;
     }
-#else
-    status = get_config_device_cloud_phone(connector_handle);
-    COND_ELSE_GOTO(status == connector_working, error);
 #endif
 
 #if (defined CONNECTOR_CLOUD_SERVICE_ID)
@@ -408,9 +404,6 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         connector_handle->device_cloud_service_id = (char *)connector_device_cloud_service_id;
         connector_handle->device_cloud_service_id_length = sizeof connector_device_cloud_service_id -1;
     }
-#else
-    status = get_config_device_cloud_service_id(connector_handle);
-    COND_ELSE_GOTO(status == connector_working, error);
 #endif
 #endif /* (defined CONNECTOR_TRANSPORT_SMS) */
 
@@ -484,6 +477,15 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         #endif
         if (sm_ptr->transport.connect_type == connector_connect_auto)
         {
+            #if !(defined CONNECTOR_CLOUD_PHONE)
+            status = get_config_device_cloud_phone(connector_handle);
+            COND_ELSE_GOTO(status == connector_working, error);
+            #endif
+            #if !(defined CONNECTOR_CLOUD_SERVICE_ID)
+            status = get_config_device_cloud_service_id(connector_handle);
+            COND_ELSE_GOTO(status == connector_working, error);
+            #endif
+
             status = sm_initialize(connector_handle, connector_transport_sms);
             COND_ELSE_GOTO(status == connector_working, error);
         }
