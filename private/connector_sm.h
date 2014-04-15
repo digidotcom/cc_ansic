@@ -192,13 +192,8 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         #if (defined CONNECTOR_TRANSPORT_SMS)
         case connector_transport_sms:
         {
-            #if (defined CONNECTOR_CLOUD_SERVICE_ID)
-            static uint8_t service_id[] = CONNECTOR_CLOUD_SERVICE_ID;
-            size_t const service_id_length = sizeof service_id -1;
-            #else
-            size_t service_id_length = connector_ptr->device_cloud_service_id_length;
-            char * service_id = connector_ptr->device_cloud_service_id;
-            #endif
+            size_t service_id_length;
+            char * service_id;
 
             #if !(defined CONNECTOR_CLOUD_PHONE)
             result = get_config_device_cloud_phone(connector_ptr);
@@ -208,6 +203,9 @@ static connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
             result = get_config_device_cloud_service_id(connector_ptr);
             COND_ELSE_GOTO(result == connector_working, error);
             #endif
+
+            service_id_length = connector_ptr->device_cloud_service_id_length;
+            service_id = connector_ptr->device_cloud_service_id;
 
             if (service_id_length)
             {
