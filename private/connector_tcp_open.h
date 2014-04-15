@@ -20,7 +20,7 @@ static connector_status_t connect_to_cloud(connector_data_t * const connector_pt
     connector_request_id_t request_id;
 
     open_data.device_cloud.url = cloud_url;
-    open_data.handle = NULL;
+    open_data.handle = connector_ptr->edp_data.network_handle;
 
     request_id.network_request = connector_request_id_network_open;
     status = connector_callback(connector_ptr->callback, connector_class_id_network_tcp, request_id, &open_data, connector_ptr->context);
@@ -42,6 +42,7 @@ static connector_status_t connect_to_cloud(connector_data_t * const connector_pt
         result = connector_open_error;
         break;
     case connector_callback_busy:
+        connector_ptr->edp_data.network_handle = open_data.handle; /* Keep user handle */
         result = connector_pending;
         break;
     }

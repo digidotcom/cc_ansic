@@ -38,9 +38,6 @@
  */
 #define GW_ADDR     GW_ADDR_US      
 
-/* Global structure of connected interface */
-static struct sockaddr_in interface_addr;
-
 static int app_sms_dns_resolve_name(char const * const domain_name, in_addr_t * const ip_addr)
 {
     int ret = -1;
@@ -267,13 +264,24 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
 #define APP_CONNECT_TIMEOUT 30
 
     static unsigned long connect_time;
-    static int fd = -1;
+    int * pfd = NULL;
+    struct sockaddr_in interface_addr;
     socklen_t interface_addr_len;
 
     connector_callback_status_t status = connector_callback_error;
-    data->handle = &fd;
 
-    if (fd == -1)
+    if (data->handle == NULL)
+    {
+        pfd = (int *)malloc(sizeof(int));
+        *pfd = -1;
+        data->handle = pfd;
+    }
+    else
+    {
+        pfd = data->handle;
+    }
+
+    if (*pfd == -1)
     {
         in_addr_t ip_addr;
 
@@ -284,33 +292,33 @@ static connector_callback_status_t app_network_sms_open(connector_network_open_t
             goto done;
         }
 
-        fd = app_sms_create_socket();
-        if (fd == -1)
+        *pfd = app_sms_create_socket();
+        if (*pfd == -1)
         {
             status = connector_callback_error;
             goto done;
         }
 
         app_os_get_system_time(&connect_time);
-        status = app_sms_connect(fd, ip_addr);
+        status = app_sms_connect(*pfd, ip_addr);
         if (status != connector_callback_continue)
             goto error;
     }
 
     /* Get socket info of connected interface */
     interface_addr_len = sizeof(interface_addr);
-    if (getsockname(fd, (struct sockaddr *)&interface_addr, &interface_addr_len))
+    if (getsockname(*pfd, (struct sockaddr *)&interface_addr, &interface_addr_len))
     {
         APP_DEBUG("network_connect: getsockname error, errno %d\n", errno);
         goto done;
     }
 
-    status = app_is_sms_connect_complete(fd);
+    status = app_is_sms_connect_complete(*pfd);
     if (status == connector_callback_continue)
     {
          APP_DEBUG("app_network_sms_open: connected to %s\n", GW_ADDR);
 
-         status = config_server_phone_number(fd, data->device_cloud.phone);
+         status = config_server_phone_number(*pfd, data->device_cloud.phone);
 
          goto done;
     }
@@ -334,10 +342,14 @@ error:
     {
         APP_DEBUG("app_network_sms_open: failed to connect to %s\n", GW_ADDR);
 
-        if (fd >= 0)
+        if (pfd != NULL)
         {
-            close(fd);
-            fd = -1;
+            if (*pfd >= 0)
+            {
+                close(*pfd);
+                *pfd = -1;
+            }
+            free(pfd);
         }
     }
 
@@ -523,6 +535,7 @@ static connector_callback_status_t app_network_sms_close(connector_network_close
         APP_DEBUG("network_sms_close: fd %d\n", *fd);
 
     *fd = -1;
+    free(fd);
 
     /* Let the proxy close the socket and listen for a new one.
        Consider that it has a 0 backlog (handles 1 single connection)

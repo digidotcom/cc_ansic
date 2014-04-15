@@ -38,6 +38,7 @@ static connector_callback_status_t app_network_udp_close(connector_network_close
     }
 
     *fd = -1;
+    free(fd);
 
     return status;
 }
@@ -151,9 +152,18 @@ static connector_callback_status_t app_network_udp_open(connector_network_open_t
 {
     connector_callback_status_t status = connector_callback_continue;
     in_addr_t ip_addr;
-    static int fd = -1;
+    int * pfd = NULL;
 
-    data->handle = &fd;
+    if (data->handle == NULL)
+    {
+        pfd = (int *)malloc(sizeof(int));
+        *pfd = -1;
+        data->handle = pfd;
+    }
+    else
+    {
+        pfd = data->handle;
+    }
 
     status = app_dns_resolve(connector_class_id_network_udp, data->device_cloud.url, &ip_addr);
     if (status != connector_callback_continue)
@@ -162,22 +172,24 @@ static connector_callback_status_t app_network_udp_open(connector_network_open_t
         goto done;
     }
 
-    if (fd == -1)
+    if (*pfd == -1)
     {
-        fd = app_udp_create_socket();
-        if (fd == -1)
+        *pfd = app_udp_create_socket();
+        if (*pfd == -1)
         {
             status = connector_callback_error;
+            free(pfd);
             goto done;
         }
 
-        status = app_udp_connect(fd, ip_addr);
+        status = app_udp_connect(*pfd, ip_addr);
     }
 
-    if ((status == connector_callback_error) && (fd >= 0))
+    if ((status == connector_callback_error) && (*pfd >= 0))
     {
-        close(fd);
-        fd = -1;
+        close(*pfd);
+        *pfd = -1;
+        free(pfd);
     }
 
 done:

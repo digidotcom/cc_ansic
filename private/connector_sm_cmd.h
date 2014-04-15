@@ -643,7 +643,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
 
             /* Open */
             open_data.device_cloud.phone = config_request.phone_number;
-            open_data.handle = NULL;
+            open_data.handle = sm_ptr->network.handle;
 
             request_id.network_request = connector_request_id_network_open;
             callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data, connector_ptr->context);
@@ -668,6 +668,7 @@ static connector_status_t sm_process_config_request(connector_data_t * const con
                     goto error;
 
                 case connector_callback_busy:
+                    sm_ptr->network.handle = open_data.handle; /* Keep user handle */
                     result = connector_pending;
                     sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
                     goto error;
