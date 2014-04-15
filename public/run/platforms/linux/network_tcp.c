@@ -25,18 +25,6 @@
 
 #if defined CONNECTOR_TRANSPORT_TCP
 
-
-/* Global structure of connected interface */
-static struct sockaddr_in interface_addr;
-
-connector_callback_status_t app_get_interface_ip_address(uint8_t ** ip_address, size_t * size)
-{
-    *size       = sizeof(interface_addr.sin_addr.s_addr);
-    *ip_address = (uint8_t *)&interface_addr.sin_addr.s_addr;
-
-    return connector_callback_continue;
-}
-
 static connector_callback_status_t app_network_tcp_close(connector_network_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
@@ -54,6 +42,7 @@ static connector_callback_status_t app_network_tcp_close(connector_network_close
         APP_DEBUG("network_tcp_close: fd %d\n", *fd);
 
     *fd = -1;
+    free(fd);
 
     return status;
 }
@@ -246,13 +235,24 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
 #define APP_CONNECT_TIMEOUT 30
 
     static unsigned long connect_time;
-    static int fd = -1;
+    int * pfd = NULL;
+    struct sockaddr_in interface_addr;
     socklen_t interface_addr_len;
 
     connector_callback_status_t status = connector_callback_error;
-    data->handle = &fd;
 
-    if (fd == -1)
+    if (data->handle == NULL)
+    {
+        pfd = (int *)malloc(sizeof(int));
+        *pfd = -1;
+        data->handle = pfd;
+    }
+    else
+    {
+        pfd = data->handle;
+    }
+
+    if (*pfd == -1)
     {
         in_addr_t ip_addr;
 
@@ -263,28 +263,29 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
             goto done;
         }
 
-        fd = app_tcp_create_socket();
-        if (fd == -1)
+        *pfd = app_tcp_create_socket();
+        if (*pfd == -1)
         {
             status = connector_callback_error;
+            free(pfd);
             goto done;
         }
 
         app_os_get_system_time(&connect_time);
-        status = app_tcp_connect(fd, ip_addr);
+        status = app_tcp_connect(*pfd, ip_addr);
         if (status != connector_callback_continue)
             goto error;
     }
 
     /* Get socket info of connected interface */
     interface_addr_len = sizeof(interface_addr);
-    if (getsockname(fd, (struct sockaddr *)&interface_addr, &interface_addr_len))
+    if (getsockname(*pfd, (struct sockaddr *)&interface_addr, &interface_addr_len))
     {
         APP_DEBUG("network_connect: getsockname error, errno %d\n", errno);
         goto done;
     }
 
-    status = app_is_tcp_connect_complete(fd);
+    status = app_is_tcp_connect_complete(*pfd);
     if (status == connector_callback_continue)
     {
          APP_DEBUG("app_network_tcp_open: connected to %s\n", data->device_cloud.url);
@@ -311,10 +312,14 @@ error:
         APP_DEBUG("app_network_tcp_open: failed to connect to %s\n", data->device_cloud.url);
         app_dns_set_redirected(connector_class_id_network_tcp, 0);
 
-        if (fd >= 0)
+        if (pfd != NULL)
         {
-            close(fd);
-            fd = -1;
+            if (*pfd >= 0)
+            {
+                close(*pfd);
+                *pfd = -1;
+            }
+            free(pfd);
         }
     }
 
