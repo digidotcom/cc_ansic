@@ -66,6 +66,7 @@ static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr
             goto done;
 
         case connector_callback_continue:
+            connector_ptr->edp_data.network_handle = NULL; 
             result = connector_working;
             break;
 

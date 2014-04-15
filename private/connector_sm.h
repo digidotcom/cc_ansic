@@ -753,7 +753,7 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
                 open_data.device_cloud.url = connector_ptr->device_cloud_url;
                 break;
         }
-        open_data.handle = NULL;
+        open_data.handle = sm_ptr->network.handle;
 
         request_id.network_request = connector_request_id_network_open;
         status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data, connector_ptr->context);
@@ -778,6 +778,7 @@ static connector_status_t sm_open_transport(connector_data_t * const connector_p
                 goto error;
 
             case connector_callback_busy:
+                sm_ptr->network.handle = open_data.handle; /* Keep user handle */
                 result = connector_pending;
                 goto error;
         }

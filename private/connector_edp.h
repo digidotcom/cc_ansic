@@ -112,6 +112,7 @@ static connector_status_t edp_config_init(connector_data_t * const connector_ptr
         }
     }
 
+    connector_ptr->edp_data.network_handle = NULL;
 
 done:
     return result;
