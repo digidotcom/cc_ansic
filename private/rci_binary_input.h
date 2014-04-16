@@ -262,8 +262,8 @@ static connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
 #define BINARY_RCI_ATTRIBUTE_TYPE_NORMAL 0x00
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
 #define BINARY_RCI_ATTRIBUTE_TYPE_NAME   0x40
-
-#define BINARY_RCI_ATTRIBUTE_INDEX_MASK 0x1F
+#define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK  0x1F
+#define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK 0x7F80
 
     connector_bool_t got_attribute = connector_false;
     uint32_t attribute_value;
@@ -274,10 +274,32 @@ static connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
         switch (type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
-                *index =  attribute_value & BINARY_RCI_ATTRIBUTE_INDEX_MASK;
+            {
+                if (attribute_value & (~BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK))
+                {
+                    /* attribute is wrapped around the "attribute type" bits (bits 5 and 6)
+                     *
+                     * bit |15| 14 13 12 11 10 9 8 7 | 6 5 | 4 3 2 1 0 |
+                     *     | 1|   index_high         | 0 1 | index_low |
+                     */
+                    uint16_t index_low, index_high;
+
+                    index_low = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
+                    index_high = (attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK) >> 2;
+                    *index = index_high | index_low;
+                }
+                else
+                {
+                    /* attribute output
+                     * bit |7 | 6 5 | 4 3 2 1 0|
+                     *     |x | 0 1 | - index -|
+                     */
+                    *index =  attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
+                }
                 connector_debug_line("decode_attribute: index = %d", *index);
                 got_attribute = connector_true;
                 break;
+            }
             case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
                 /* Tool doesn't support name and enum attribute */

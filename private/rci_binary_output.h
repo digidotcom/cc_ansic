@@ -379,16 +379,32 @@ static connector_bool_t encode_attribute(rci_t * const rci, unsigned int const i
 
     if (index > 1)
     {
-        /* attribute output
-         * bit |7 | 6 5 | 4 3 2 1 0|
-         *     |x | 0 1 | - index -|
-         */
-        #define BINARY_RCI_ATTRIBUTE_INDEX_MAX 31
-        #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
+        #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX                 0x20
+        #define BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_ONE_BYTE     31
+        #define BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_TWO_BYTES    0x1FFF
 
-        ASSERT(index <= BINARY_RCI_ATTRIBUTE_INDEX_MAX);
-        encoding_data = index | BINARY_RCI_ATTRIBUTE_TYPE_INDEX;
+        if (index < BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_ONE_BYTE)
+        {
+            /* attribute output
+             * bit |7 | 6 5 | 4 3 2 1 0|
+             *     |x | 0 1 | - index -|
+             */
+            encoding_data = index | BINARY_RCI_ATTRIBUTE_TYPE_INDEX;
+        }
+        else
+        {
+            /* attribute must be wrapped around the "attribute type" bits (bits 5 and 6)
+             *
+             * bit |15 14 13 12 11 10 9 8 7 | 6 5 | 4 3 2 1 0|
+             *     |       - index -        | 0 1 | - index -|
+             */
+            uint16_t encoding_data_high, encoding_data_low;
 
+            ASSERT(index  < BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_TWO_BYTES);
+            encoding_data_low = index & 0x1F;
+            encoding_data_high = index & (~(0x1F));
+            encoding_data = (encoding_data_high << 2)| BINARY_RCI_ATTRIBUTE_TYPE_INDEX | encoding_data_low;
+        }
         overflow = rci_output_uint32(rci, encoding_data);
     }
 
