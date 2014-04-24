@@ -37,7 +37,7 @@ static connector_status_t tcp_initiate_send_packet(connector_data_t * const conn
 
     if (connector_ptr->edp_data.send_packet.total_length > 0)
     {
-        connector_debug_line("tcp_initiate_send_packet: unable to trigger another send since previous data is still pending");
+        /* connector_debug_line("tcp_initiate_send_packet: unable to trigger another send since previous data is still pending"); */
         status = connector_pending;
         goto done;
     }
