@@ -116,9 +116,9 @@ typedef struct
 */
 typedef struct connector_data_point_t
 {
-    struct
+    struct data
     {
-        enum
+        enum type
         {
             connector_data_type_native, /**< the data value is in native format */
             connector_data_type_text    /**< the data value is in ascii/text format */
@@ -144,7 +144,7 @@ typedef struct connector_data_point_t
 
     } data;  /**< data in each data point */
 
-    struct
+    struct time
     {
         enum
         {
@@ -186,7 +186,7 @@ typedef struct connector_data_point_t
 
     } time;   /**< Time at the data point is captured */
 
-    struct
+    struct location
     {
         enum
         {
@@ -219,7 +219,7 @@ typedef struct connector_data_point_t
 
     } location; /**< location where the data point is captured */
 
-    struct
+    struct quality
     {
         enum
         {
