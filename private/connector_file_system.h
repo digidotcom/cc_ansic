@@ -49,13 +49,13 @@ typedef enum
 typedef struct
 {
     void * user_context;
-    void * errnum;
+    uintptr_t errnum;
 } fs_user_data;
 
 typedef struct
 {
     void * user_context;
-    void * errnum;
+    uintptr_t errnum;
 
     void * handle;
 
@@ -106,7 +106,7 @@ typedef struct
 #define FsSetLsSingleFile(context)  FsBitSet(context->flags, FS_LS_SINGLE_FILE)
 
 #define FsHasInternalError(context) FsIsBitSet(context->flags, FS_ERROR_INTERNAL_FLAG)
-#define FsSetInternalError(context, error) {FsBitSet(context->flags,FS_ERROR_INTERNAL_FLAG); context->errnum=(void *)error;}
+#define FsSetInternalError(context, error) {FsBitSet(context->flags,FS_ERROR_INTERNAL_FLAG); context->errnum=(uintptr_t)error;}
 
 #define FsSessionErrorCalled(context) FsIsBitSet(context->flags, FS_SESSION_ERROR_CALLED)
 #define FsSetSessionErrorCalled(context) FsBitSet(context->flags, FS_SESSION_ERROR_CALLED)
@@ -115,7 +115,7 @@ typedef struct
 #define FsGetState(context)    (context->state)
 
 
-#define FsOperationSuccess(status, context) (status==connector_working && context->errnum==NULL)
+#define FsOperationSuccess(status, context) (status==connector_working && context->errnum==(uintptr_t)NULL)
 
 static void fs_set_service_error(msg_service_request_t * const service_request, connector_session_error_t const session_error)
 {
@@ -289,7 +289,7 @@ static connector_status_t fs_call_user(connector_data_t * const connector_ptr,
     request_id.file_system_request = fs_request_id;
 
     data->user_context = context->user_context;
-    data->errnum = NULL;
+    data->errnum = (uintptr_t)NULL;
 
     callback_status = connector_callback(connector_ptr->callback,
                                          connector_class_id_file_system,
@@ -323,9 +323,9 @@ static connector_status_t fs_call_user(connector_data_t * const connector_ptr,
         case connector_callback_error:
             status = connector_working;
             /* don't overwrite previous errno */
-            if (context->errnum == NULL)
+            if (context->errnum == (uintptr_t)NULL)
             {
-                if (data->errnum  != NULL)
+                if (data->errnum != (uintptr_t)NULL)
                 {
                     /* user returned errno */
                     context->errnum = data->errnum;
@@ -957,7 +957,7 @@ static connector_status_t process_get_close(connector_data_t * const connector_p
         if (status == connector_pending)
         {
             if (context->status == connector_working &&
-                context->errnum == NULL &&
+                context->errnum == (uintptr_t)NULL &&
                 service_data->length_in_bytes > 0)
             {
                 /* Return final data portion, will set last bit later
@@ -977,7 +977,7 @@ static connector_status_t process_get_close(connector_data_t * const connector_p
         goto done;
 
     /* no errors, set last bit and send out last portion of data */
-    if (context->errnum == NULL)
+    if (context->errnum == (uintptr_t)NULL)
     {
         MsgSetLastData(service_data->flags);
         goto done;
@@ -1007,7 +1007,7 @@ static connector_status_t process_file_get_response(connector_data_t * const con
     msg_service_data_t * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if ((context->errnum != NULL) || (FsGetState(context) >= fs_state_closing))
+    if ((context->errnum != (uintptr_t)NULL) || (FsGetState(context) >= fs_state_closing))
     {
         service_data->length_in_bytes = 0;
         goto close_file;
@@ -1118,7 +1118,7 @@ static connector_status_t process_file_response_nodata(connector_data_t * const 
     msg_service_data_t * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if (context->errnum == NULL)
+    if (context->errnum == (uintptr_t)NULL)
     {
         uint8_t * const data_ptr = service_data->data_ptr;
 
@@ -1186,7 +1186,7 @@ static connector_status_t process_file_put_request(connector_data_t * const conn
 {
     connector_status_t status = connector_working;
 
-    if ((context->errnum != NULL) || (FsGetState(context) >= fs_state_closing))
+    if ((context->errnum != (uintptr_t)NULL) || (FsGetState(context) >= fs_state_closing))
         goto close_file;
 
     {
@@ -1472,7 +1472,7 @@ static connector_status_t process_file_ls_request(connector_data_t * const conne
 
     path += FS_OPCODE_BYTES;
 
-    if (context->errnum != NULL)
+    if (context->errnum != (uintptr_t)NULL)
         goto done;
 
     if (parse_file_ls_header(context, service_data->data_ptr, service_data->length_in_bytes) == 0)
@@ -1513,7 +1513,7 @@ static connector_status_t process_file_ls_response(connector_data_t * const conn
     msg_service_data_t    * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if ((context->errnum != NULL) || (FsGetState(context) >= fs_state_closing))
+    if ((context->errnum != (uintptr_t)NULL) || (FsGetState(context) >= fs_state_closing))
     {
        service_data->length_in_bytes = 0;
        goto close_dir;
@@ -1554,7 +1554,7 @@ static connector_status_t process_file_ls_response(connector_data_t * const conn
                 if (status == connector_pending || status == connector_abort)
                     goto done;
 
-                if (status == connector_working && context->errnum != NULL)
+                if (status == connector_working && context->errnum != (uintptr_t)NULL)
                 {
                     if (format_file_error_msg(connector_ptr, service_request, context) == connector_abort)
                     {
@@ -1678,7 +1678,7 @@ static connector_status_t allocate_file_context(connector_data_t * const connect
     context->handle = NULL;
     context->user_context = NULL;
     context->flags = 0;
-    context->errnum = NULL;
+    context->errnum = (uintptr_t)NULL;
     context->state = fs_state_none;
     context->status = connector_working;
 

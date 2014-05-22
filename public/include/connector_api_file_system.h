@@ -141,7 +141,7 @@ typedef int32_t connector_file_offset_t;
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     char const * CONST path;                /**< File path */
     int CONST oflag;                        /**< bitwise-inclusive OR of @ref connector_file_open_flags flags */
@@ -182,7 +182,7 @@ typedef enum
 typedef struct
 {
    void * user_context;                        /**< Holds user context */
-   void * errnum;                              /**< Application defined error token */
+   uintptr_t errnum;                              /**< Application defined error token */
 
    void * CONST handle;                             /**< Application defined file handle */
    connector_file_offset_t CONST requested_offset;  /**< Requested file offset */
@@ -207,7 +207,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     void *  CONST handle;                   /**< Application defined file handle */
     void const * CONST buffer;              /**< A pointer to data to be written to a file */
@@ -230,7 +230,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                            /**< Holds user context */
-    void * errnum;                                  /**< Application defined error token */
+    uintptr_t errnum;                                  /**< Application defined error token */
 
     void * CONST handle;                            /**< Application defined file handle */
     connector_file_offset_t CONST length_in_bytes;  /**< File length in bytes to truncate to */
@@ -252,7 +252,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     void * CONST handle;                    /**< Application defined file handle */
     void * CONST buffer;                    /**< A pointer to memory, where callback writes data */
@@ -276,7 +276,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     void * CONST handle;                    /**< Application defined file or directory handle */
 
@@ -297,7 +297,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     char const * CONST path;                /**< Directory path */
     void * handle;                          /**< Application defined directory handle */
@@ -339,7 +339,7 @@ typedef enum
 typedef struct
 {
     void * user_context;                                /**< Holds user context */
-    void * errnum;                                      /**< Application defined error token */
+    uintptr_t errnum;                                      /**< Application defined error token */
 
     char const * CONST path;                             /**< File path */
     connector_file_system_hash_algorithm_t CONST hash_algorithm;/**< hash algorithm */
@@ -409,7 +409,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                        /**< Holds user context */
-    void * errnum;                              /**< Application defined error token */
+    uintptr_t errnum;                              /**< Application defined error token */
 
     char const * CONST path;                    /**< File path */
     connector_file_system_statbuf_t statbuf;    /**< File status data */
@@ -441,7 +441,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     char const * CONST path;                      /**< Full path */
     connector_file_system_statbuf_t statbuf;   /**< File status data */
@@ -463,7 +463,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     void * CONST handle;                    /**< Application defined directory handle */
     char * CONST entry_name;                /**< A pointer to memory, where callback writes directory entry name */
@@ -486,7 +486,7 @@ typedef struct
 typedef struct
 {
     void * user_context;                    /**< Holds user context */
-    void * errnum;                          /**< Application defined error token */
+    uintptr_t errnum;                          /**< Application defined error token */
 
     char const * CONST path;                /**< File path */
 
@@ -533,7 +533,7 @@ typedef enum
 typedef struct
 {
     void * user_context;               /**< Holds user context*/
-    void * CONST errnum;               /**< Application defined error token */
+    uintptr_t CONST errnum;               /**< Application defined error token */
 
     void  * CONST buffer;              /**< A pointer to memory, where callback writes error description */
     size_t  CONST bytes_available;     /**< Size of a error description buffer */
