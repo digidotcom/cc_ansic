@@ -435,7 +435,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = dir_data;
+            data->handle = (uintptr_t)dir_data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s: %p\n", data->path, (void *) dirp);
@@ -455,7 +455,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
 static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
 
     ASSERT(dir_data != NULL);
     APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
@@ -479,7 +479,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
     struct dirent  * result = NULL;
 
     /* Read next directory entry */
@@ -541,7 +541,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
         APP_DEBUG(", errno %d", errno);
     APP_DEBUG("\n");
 
-    data->handle = (void *) fd;
+    data->handle = fd;
 
     return status;
 }
