@@ -77,7 +77,7 @@ typedef struct
 } app_dir_data_t;
 
 
-static connector_callback_status_t app_process_file_error(void ** const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
@@ -92,7 +92,7 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
 
         default:
             status = connector_callback_error;
-            *error_token = (void *) errnum;
+            *error_token = (uintptr_t)errnum;
             break;
     }
     return status;
