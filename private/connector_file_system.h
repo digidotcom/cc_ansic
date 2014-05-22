@@ -57,7 +57,7 @@ typedef struct
     void * user_context;
     uintptr_t errnum;
 
-    void * handle;
+    uintptr_t handle;
 
     union
     {
@@ -497,7 +497,7 @@ static connector_status_t call_file_opendir_user(connector_data_t * const connec
     connector_file_system_opendir_t data;
 
     data.path = path;
-    data.handle = NULL;
+    data.handle = (uintptr_t)NULL;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -510,7 +510,7 @@ static connector_status_t call_file_opendir_user(connector_data_t * const connec
 
     if (FsOperationSuccess(status, context))
     {
-        if (data.handle != NULL)
+        if (data.handle != (uintptr_t)NULL)
         {
             context->handle = data.handle;
             FsSetState(context, fs_state_open);
@@ -640,7 +640,7 @@ static connector_status_t call_file_open_user(connector_data_t * const connector
 
     data.path  = path;
     data.oflag = oflag;
-    data.handle = NULL;
+    data.handle = (uintptr_t)NULL;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -653,7 +653,7 @@ static connector_status_t call_file_open_user(connector_data_t * const connector
 
     if (FsOperationSuccess(status, context))
     {
-        if (data.handle != NULL)
+        if (data.handle != (uintptr_t)NULL)
         {
             context->handle = data.handle;
             FsSetState(context, fs_state_open);
@@ -1675,7 +1675,7 @@ static connector_status_t allocate_file_context(connector_data_t * const connect
 
     context = ptr;
 
-    context->handle = NULL;
+    context->handle = (uintptr_t)NULL;
     context->user_context = NULL;
     context->flags = 0;
     context->errnum = (uintptr_t)NULL;

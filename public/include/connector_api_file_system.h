@@ -145,7 +145,7 @@ typedef struct
 
     char const * CONST path;                /**< File path */
     int CONST oflag;                        /**< bitwise-inclusive OR of @ref connector_file_open_flags flags */
-    void * handle;                          /**< Application defined file handle */
+    uintptr_t handle;                          /**< Application defined file handle */
 
 } connector_file_system_open_t;
 /**
@@ -184,7 +184,7 @@ typedef struct
    void * user_context;                        /**< Holds user context */
    uintptr_t errnum;                              /**< Application defined error token */
 
-   void * CONST handle;                             /**< Application defined file handle */
+   uintptr_t CONST handle;                             /**< Application defined file handle */
    connector_file_offset_t CONST requested_offset;  /**< Requested file offset */
    connector_file_offset_t resulting_offset;        /**< Resulting file position */
 
@@ -209,7 +209,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     uintptr_t errnum;                          /**< Application defined error token */
 
-    void *  CONST handle;                   /**< Application defined file handle */
+    uintptr_t CONST handle;                   /**< Application defined file handle */
     void const * CONST buffer;              /**< A pointer to data to be written to a file */
     size_t  CONST bytes_available;          /**< Number of bytes to write */
     size_t  bytes_used;                     /**< Number of bytes written to a file */
@@ -232,7 +232,7 @@ typedef struct
     void * user_context;                            /**< Holds user context */
     uintptr_t errnum;                                  /**< Application defined error token */
 
-    void * CONST handle;                            /**< Application defined file handle */
+    uintptr_t CONST handle;                            /**< Application defined file handle */
     connector_file_offset_t CONST length_in_bytes;  /**< File length in bytes to truncate to */
 
 } connector_file_system_truncate_t;
@@ -254,7 +254,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     uintptr_t errnum;                          /**< Application defined error token */
 
-    void * CONST handle;                    /**< Application defined file handle */
+    uintptr_t CONST handle;                    /**< Application defined file handle */
     void * CONST buffer;                    /**< A pointer to memory, where callback writes data */
     size_t CONST bytes_available;           /**< Size of a memory buffer */
     size_t bytes_used;                      /**< Number of bytes read from a file and copied to memory buffer */
@@ -278,7 +278,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     uintptr_t errnum;                          /**< Application defined error token */
 
-    void * CONST handle;                    /**< Application defined file or directory handle */
+    uintptr_t CONST handle;                    /**< Application defined file or directory handle */
 
 } connector_file_system_close_t;
 /**
@@ -300,7 +300,7 @@ typedef struct
     uintptr_t errnum;                          /**< Application defined error token */
 
     char const * CONST path;                /**< Directory path */
-    void * handle;                          /**< Application defined directory handle */
+    uintptr_t handle;                          /**< Application defined directory handle */
 
 } connector_file_system_opendir_t;
 /**
@@ -465,7 +465,7 @@ typedef struct
     void * user_context;                    /**< Holds user context */
     uintptr_t errnum;                          /**< Application defined error token */
 
-    void * CONST handle;                    /**< Application defined directory handle */
+    uintptr_t CONST handle;                    /**< Application defined directory handle */
     char * CONST entry_name;                /**< A pointer to memory, where callback writes directory entry name */
     size_t CONST bytes_available;           /**< Size of a memory buffer for directory entry name */
 
