@@ -121,20 +121,17 @@ static connector_bool_t rci_action_session_lost(rci_t * const rci)
 }
 
 
-static rci_status_t rci_binary(rci_session_t const action, ...)
+static rci_status_t rci_binary(rci_session_t const action, rci_service_data_t * service_data)
 {
     static rci_t rci;
 
     {
         connector_bool_t success;
-        va_list ap;
 
         switch (action)
         {
         case rci_session_start:
-            va_start(ap, action);
-            success = rci_action_session_start(&rci, va_arg(ap, rci_service_data_t *));
-            va_end(ap);
+            success = rci_action_session_start(&rci, service_data);
             break;
 
         case rci_session_active:
