@@ -75,7 +75,7 @@ typedef struct
 } app_dir_data_t;
 
 
-static connector_callback_status_t app_process_file_error(void ** const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
@@ -90,7 +90,7 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
 
         default:
             status = connector_callback_error;
-            *error_token = (void *) errnum;
+            *error_token = errnum;
             break;
     }
     return status;
@@ -412,7 +412,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = dir_data;
+            data->handle = (uintptr_t)data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
@@ -432,7 +432,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
 static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
 
     ASSERT(dir_data != NULL);
     APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
@@ -456,7 +456,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
     struct dirent  * result = NULL;
 
     /* Read next directory entry */
@@ -518,7 +518,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
         APP_DEBUG(", errno %d", errno);
     APP_DEBUG("\n");
 
-    data->handle = (void *) fd;
+    data->handle = fd;
 
     return status;
 }
@@ -772,7 +772,8 @@ static struct
     { "dvt_fs_strerr_retinvalid.test",       1, connector_request_id_file_system_get_error, return_invalid_code},
     { "dvt_fs_strerr_zero_datalen.test",     1, connector_request_id_file_system_get_error, set_zero_datalength},
     
-   { "dvt_fs_strerr_put_abort/file",           1, connector_request_id_file_system_get_error, return_abort},
+ 
+  { "dvt_fs_strerr_put_abort/file",           1, connector_request_id_file_system_get_error, return_abort},
     { "dvt_fs_strerr_put_bad_datalen/file",     1, connector_request_id_file_system_get_error, set_invalid_datalength},
     { "dvt_fs_strerr_put_retinvalid/file",      1, connector_request_id_file_system_get_error, return_invalid_code},
     { "dvt_fs_strerr_put_zero_datalen/file",    1, connector_request_id_file_system_get_error, set_zero_datalength},
@@ -863,7 +864,8 @@ static int dvt_pre_test(connector_request_id_file_system_t const request_id,
                         connector_callback_status_t * status)
 {
     int result = -1;
-    const size_t MAX_DATA_LENGTH= 20000;
+    const size_t MAX_DATA_LENGTH
+= 20000;
 
     test_action_t action = dvt_find_test(request_id, data);
 
@@ -1013,14 +1015,15 @@ static int dvt_pre_test(connector_request_id_file_system_t const request_id,
         case set_io_error_no_errno:
             {
                connector_file_system_read_t * pdata = data;
-               pdata->errnum = NULL;
+               pdata->errnum = (uintptr_t)NULL;
                *status = connector_callback_error;
             }
             break;
 
         case set_null_handle:
              break;
-           
+    
+       
         case set_neg_offset:
             if (request_id == connector_request_id_file_system_lseek)
             {

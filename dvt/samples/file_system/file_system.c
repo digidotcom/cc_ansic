@@ -154,7 +154,7 @@ static void update_error_case(char const * const path)
     dvt_current_state = dvt_fs_state_at_start;
 }
 
-static connector_callback_status_t app_process_file_error(void ** const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
@@ -169,7 +169,7 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
 
         default:
             status = connector_callback_error;
-            *error_token = (void *) errnum;
+            *error_token = errnum;
             break;
     }
     return status;
@@ -503,7 +503,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = dir_data;
+            data->handle = (uintptr_t)dir_data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
@@ -525,7 +525,7 @@ done:
 
 static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
 
     ASSERT(dir_data != NULL);
     APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
@@ -551,7 +551,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
     struct dirent  * result = NULL;
 
     switch (dvt_current_error_case)
@@ -660,7 +660,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
         status = app_process_file_error(&data->errnum, errno);
     }
 
-    data->handle = (void *) fd;
+    data->handle = fd;
 
     return status;
 }

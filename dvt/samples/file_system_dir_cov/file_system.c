@@ -76,7 +76,7 @@ typedef struct
 } app_dir_data_t;
 
 
-static connector_callback_status_t app_process_file_error(void ** const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
@@ -91,7 +91,7 @@ static connector_callback_status_t app_process_file_error(void ** const error_to
 
         default:
             status = connector_callback_error;
-            *error_token = (void *) errnum;
+            *error_token = errnum;
             break;
     }
     return status;
@@ -413,7 +413,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = dir_data;
+            data->handle = (uintptr_t)data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
@@ -433,7 +433,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
 static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
 {
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
 
     ASSERT(dir_data != NULL);
     APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
@@ -457,7 +457,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_dir_data_t * dir_data = data->handle;
+    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
     struct dirent  * result = NULL;
 
     /* Read next directory entry */
@@ -519,7 +519,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
         APP_DEBUG(", errno %d", errno);
     APP_DEBUG("\n");
 
-    data->handle = (void *) fd;
+    data->handle = fd;
 
     return status;
 }
@@ -713,7 +713,8 @@ static struct
     { "dvt_fs_opendir_null_handle",       1, do_cleanup, connector_request_id_file_system_opendir, set_null_handle},
     { "dvt_fs_opendir_io_error",          1, do_cleanup, connector_request_id_file_system_opendir, set_io_error},
     { "dvt_fs_opendir_io_error_no_errno", 1, do_cleanup, connector_request_id_file_system_opendir, set_io_error_no_errno},
-    { "dvt_fs_opendir_busy",              1, no_cleanup, connector_request_id_file_system_opendir, return_busy},    
+    { "dvt_fs_opendir_busy",              1, no_cleanup, connector_request_id_file_system_opendir, return_busy},
+    
  
     { "dvt_fs_readdir_abort",             1, no_cleanup, connector_request_id_file_system_readdir, return_abort},
     { "dvt_fs_readdir_abort2",            2, no_cleanup, connector_request_id_file_system_readdir, return_abort},
@@ -884,7 +885,8 @@ static int dvt_pre_test(connector_request_id_file_system_t const request_id,
                         void * const data,
                         connector_callback_status_t * status)
 {
-    const size_t MAX_DATA_LENGTH= 20000;
+    const size_t MAX_DATA_LENGTH
+= 20000;
     int result = -1;
 
     test_action_t action = dvt_find_test(request_id, data);
@@ -918,7 +920,7 @@ static int dvt_pre_test(connector_request_id_file_system_t const request_id,
         case set_io_error_no_errno:
         {
            connector_file_system_open_t * pdata = data;
-           pdata->errnum = NULL;
+           pdata->errnum = (uintptr_t)NULL;
            *status = connector_callback_error;
         }
         break;
@@ -1010,7 +1012,8 @@ static int dvt_pre_test(connector_request_id_file_system_t const request_id,
                  ASSERT(connector_true);
                  result = 0;
              }
-            break;       
+    
+        break;       
 
         case action_none:
         default:
