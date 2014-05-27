@@ -89,7 +89,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
 
         service_data->input.flags = service_request->have_data->flags;
         service_data->output.flags = service_request->need_data->flags;
-        rci_status = rci_binary(parser_action, service_data);
+        rci_status = rci_binary(connector_ptr, parser_action, service_data);
 
         switch (rci_status)
         {
@@ -128,7 +128,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
     }
     case msg_service_type_error:
     {
-        rci_status_t const rci_status = rci_binary(rci_session_lost, service_data);
+        rci_status_t const rci_status = rci_binary(connector_ptr, rci_session_lost, service_data);
 
         switch (rci_status)
         {
