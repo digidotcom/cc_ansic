@@ -26,10 +26,10 @@ static char const rci_error_content_size_hint[] = "Maximum content size exceeded
 static connector_bool_t destination_in_storage(rci_t const * const rci)
 {
     uint8_t const * const storage_begin = rci->input.storage;
-#if !(defined CONNECTOR_NO_MALLOC)
-    uint8_t const * const storage_end = storage_begin + rci->input.storage_len;
-#else
+#if (defined CONNECTOR_NO_MALLOC)
     uint8_t const * const storage_end = storage_begin + sizeof rci->input.storage;
+#else
+    uint8_t const * const storage_end = storage_begin + rci->input.storage_len;
 #endif
     return ptr_in_range(rci->input.destination, storage_begin, storage_end);
 }
@@ -1027,10 +1027,10 @@ static void rci_parse_input(connector_data_t * const connector_ptr, rci_t * cons
         }
 
         {
-#if !(defined CONNECTOR_NO_MALLOC)
-            size_t const storage_bytes = rci->input.storage_len;
-#else
+#if (defined CONNECTOR_NO_MALLOC)
             size_t const storage_bytes = sizeof rci->input.storage;
+#else
+            size_t const storage_bytes = rci->input.storage_len;
 #endif
             uint8_t const * const storage_end = rci->input.storage + storage_bytes;
 

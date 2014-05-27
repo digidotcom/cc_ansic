@@ -52,7 +52,9 @@ static connector_bool_t rci_action_session_start(connector_data_t * const connec
     set_rci_input_state(rci, rci_input_state_command_id);
     state_call(rci, rci_parser_state_input);
 
-#if !(defined CONNECTOR_NO_MALLOC)
+#if (defined CONNECTOR_NO_MALLOC)
+    UNUSED_PARAMETER(connector_ptr);
+#else
     {
         static char const max_ipv4_value[] = "255.255.255.255";
         size_t const rci_input_start_size = sizeof max_ipv4_value;
@@ -68,8 +70,6 @@ static connector_bool_t rci_action_session_start(connector_data_t * const connec
         }
         rci->input.storage_len = rci_input_start_size;
     }
-#else
-    UNUSED_PARAMETER(connector_ptr);
 #endif
 
     set_rci_error_state(rci, rci_error_state_id);
