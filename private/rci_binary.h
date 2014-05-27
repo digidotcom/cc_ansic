@@ -52,7 +52,9 @@ static connector_bool_t rci_action_session_start(connector_data_t * const connec
     set_rci_input_state(rci, rci_input_state_command_id);
     state_call(rci, rci_parser_state_input);
 
-#if !(defined CONNECTOR_NO_MALLOC)
+#if (defined CONNECTOR_NO_MALLOC)
+    UNUSED_PARAMETER(connector_ptr);
+#else
     {
         static char const max_ipv4_value[] = "255.255.255.255";
         size_t const rci_input_start_size = sizeof max_ipv4_value;
@@ -68,8 +70,6 @@ static connector_bool_t rci_action_session_start(connector_data_t * const connec
         }
         rci->input.storage_len = rci_input_start_size;
     }
-#else
-    UNUSED_PARAMETER(connector_ptr);
 #endif
 
     set_rci_error_state(rci, rci_error_state_id);
@@ -143,7 +143,7 @@ static connector_bool_t rci_action_session_lost(rci_t * const rci)
 
 static rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_session_t const action, rci_service_data_t * service_data)
 {
-    static rci_t rci;
+    rci_t * const rci = connector_ptr->rci;
 
     {
         connector_bool_t success;
@@ -151,15 +151,15 @@ static rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
         switch (action)
         {
         case rci_session_start:
-            success = rci_action_session_start(connector_ptr, &rci, service_data);
+            success = rci_action_session_start(connector_ptr, rci, service_data);
             break;
 
         case rci_session_active:
-            success = rci_action_session_active(&rci);
+            success = rci_action_session_active(rci);
             break;
 
         case rci_session_lost:
-            success = rci_action_session_lost(&rci);
+            success = rci_action_session_lost(rci);
             break;
 
         default:
@@ -170,42 +170,42 @@ static rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
         if (!success) goto done;
     }
 
-    if (pending_rci_callback(&rci))
+    if (pending_rci_callback(rci))
     {
-        connector_remote_config_t * const remote_config = &rci.shared.callback_data;
+        connector_remote_config_t * const remote_config = &rci->shared.callback_data;
 
-        if (!rci_callback(&rci))
+        if (!rci_callback(rci))
             goto done;
 
         if (remote_config->error_id != connector_success)
         {
-            rci_group_error(&rci, remote_config->error_id, remote_config->response.error_hint);
+            rci_group_error(rci, remote_config->error_id, remote_config->response.error_hint);
             goto done;
         }
     }
 
-    switch (rci.parser.state)
+    switch (rci->parser.state)
     {
     case rci_parser_state_input:
-        rci_parse_input(connector_ptr, &rci);
+        rci_parse_input(connector_ptr, rci);
         break;
 
     case rci_parser_state_output:
-        rci_generate_output(&rci);
+        rci_generate_output(rci);
         break;
 
     case rci_parser_state_traverse:
-        rci_traverse_data(&rci);
+        rci_traverse_data(rci);
         break;
 
     case rci_parser_state_error:
-        rci_generate_error(&rci);
+        rci_generate_error(rci);
         break;
     }
 
 done:
 
-    switch (rci.status)
+    switch (rci->status)
     {
     case rci_status_busy:
         break;
@@ -213,17 +213,17 @@ done:
         connector_debug_line("Need more input");
         break;
     case rci_status_flush_output:
-        rci.service_data->output.bytes = rci_buffer_used(&rci.buffer.output);
+        rci->service_data->output.bytes = rci_buffer_used(&rci->buffer.output);
         break;
     case rci_status_complete:
-        rci.service_data->output.bytes = rci_buffer_used(&rci.buffer.output);
+        rci->service_data->output.bytes = rci_buffer_used(&rci->buffer.output);
         /* no break; */
     case rci_status_internal_error:
     case rci_status_error:
-        rci.service_data = NULL;
+        rci->service_data = NULL;
         break;
     }
 
-    return rci.status;
+    return rci->status;
 }
 
