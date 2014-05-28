@@ -413,7 +413,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = (uintptr_t)data;
+            data->handle = (uintptr_t)dir_data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
