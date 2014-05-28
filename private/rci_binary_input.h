@@ -215,7 +215,6 @@ static connector_bool_t get_string(connector_data_t * const connector_ptr, rci_t
         {
             size_t const old_size = rci->input.storage_len;
             size_t const new_size = *length + sizeof "" + sizeof(uint32_t);
-            void * const old_ptr = rci->input.storage;
             connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
 
             switch (connector_status)
