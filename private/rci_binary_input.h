@@ -235,12 +235,7 @@ static connector_bool_t get_string(connector_data_t * const connector_ptr, rci_t
 
             if (!destination_in_storage(rci))
             {
-                size_t i;
-                for (i = 0; i < *length; i++)
-                {
-                  rci->input.storage[i] = data[i];
-                }
-                /*memcpy(rci->input.storage, data, *length);*/
+                memcpy(rci->input.storage, data, *length);
                 data = (char *)rci->input.storage;
             }
 
