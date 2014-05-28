@@ -125,26 +125,26 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
     switch (status)
     {
     case connector_callback_continue:
+        *ptr = data.ptr;
         if (data.ptr == NULL)
         {
             result = (notify_error_status(callback, connector_class_id_operating_system, request_id, connector_invalid_data, context) == connector_working) ? connector_pending : connector_abort;
         }
-        else
-        {
-            *ptr = data.ptr;
-        }
         break;
 
     case connector_callback_busy:
+        *ptr = NULL;
         result = connector_pending;
         break;
 
     case connector_callback_abort:
     case connector_callback_unrecognized:
     case connector_callback_error:
+        *ptr = NULL;
         result = connector_abort;
         break;
     }
+
     return result;
 }
 
@@ -169,26 +169,26 @@ static connector_status_t realloc_data(connector_data_t * const connector_ptr, s
     switch (status)
     {
         case connector_callback_continue:
+            *ptr = data.ptr;
             if (data.ptr == NULL)
             {
                 result = (notify_error_status(connector_ptr->callback, connector_class_id_operating_system, request_id, connector_invalid_data, connector_ptr->context) == connector_working) ? connector_pending : connector_abort;
             }
-            else
-            {
-                *ptr = data.ptr;
-            }
             break;
 
         case connector_callback_busy:
+            *ptr = NULL;
             result = connector_pending;
             break;
 
         case connector_callback_abort:
         case connector_callback_unrecognized:
         case connector_callback_error:
+            *ptr = NULL;
             result = connector_abort;
             break;
     }
+
     return result;
 }
 
