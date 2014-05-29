@@ -128,7 +128,7 @@ static connector_status_t rci_service_callback(connector_data_t * const connecto
     }
     case msg_service_type_error:
     {
-        rci_status_t const rci_status = rci_binary(rci_session_lost);
+        rci_status_t const rci_status = rci_binary(rci_session_lost, service_data);
 
         switch (rci_status)
         {
