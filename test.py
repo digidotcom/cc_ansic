@@ -112,7 +112,7 @@ dvt_tests = {
 #                                     'test_fs_negative.py'),
 #    'reboot_test'                 : ('test_delay_reboot.py',
 #                                     'test_disconnect.py'),
-    'terminate_test'              : ('test_ds_terminate.py',),
+#    'terminate_test'              : ('test_ds_terminate.py',),
 #    'response_to_bad_values_test' : ('test_debug_bad_values.py',),
     'compile_remote_config'       : (),
     'remote_config'               : ('test_brci_descriptors.py',
