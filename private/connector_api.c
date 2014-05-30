@@ -530,10 +530,9 @@ connector_status_t connector_step(connector_handle_t const handle)
             if (is_connector_stopped(connector_ptr, connector_close_status_device_terminated))
             {
                 connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
-                free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
-                connector_debug_line("connector_step: free Cloud Connector");
-
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
+                connector_debug_line("connector_step: free Cloud Connector");
+                free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 goto done;
             }
             break;
