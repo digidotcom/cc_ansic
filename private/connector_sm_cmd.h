@@ -343,10 +343,17 @@ static connector_status_t sm_switch_path(connector_data_t * const connector_ptr,
     }
     else
     {
-        if (SmIsClientOwned(session->flags) && !SmIsError(session->flags)) /* If it is an error, it has already been called by sm_handle_error() */
+        if (!SmIsError(session->flags)) /* If it is an error, it has already been called by sm_handle_error() */
         {
-            session->error = connector_sm_error_complete;
-            result = sm_inform_session_complete(connector_ptr, session);
+            if (SmIsClientOwned(session->flags) || session->command == connector_sm_cmd_data || session->command == connector_sm_cmd_no_path_data)
+            {
+                session->error = connector_sm_error_complete;
+                result = sm_inform_session_complete(connector_ptr, session);
+                if (result != connector_working)
+                {
+                    goto error;
+                }
+            }
         }
 
         session->sm_state = connector_sm_state_complete;
