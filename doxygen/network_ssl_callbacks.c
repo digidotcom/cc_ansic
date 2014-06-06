@@ -21,8 +21,11 @@
  * As far as the top level calls are concerned there is no change between the SSL and non-SSL connection.
  *
  * The CA certificate is stored in public/certificates/ directory. A define APP_SSL_CA_CERT_PATH can be found
- * in platform.h. By default it is set to "../../../certificates/etherios-ca-cert-public.crt".
- *
+ * in platform.h. By default it is set to "../../../certificates/Digi_Int-ca-cert-public.crt".
+ * 
+ * @note the certificate name is correct, Etherios Inc. is a division of Digi International Inc..
+ * @note the certificate is valid for 100 years (until 2109)
+ * 
  * @section ssl_connect Open
  *
  * This callback is called to establish SSL connection between Cloud Connector and Device Cloud.
