@@ -506,15 +506,12 @@ done:
     return result;
 }
 
-STATIC size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr)
+STATIC connector_bool_t string_needs_quotes(char const * const string)
 {
-    size_t bytes_processed = 0;
-    char const delimiters[] = {',', '\n', '\r', ' ', '\t'};
-    connector_bool_t need_quotes = connector_false;
+    char const delimiters[] = {',', '\n', '\r', ' ', '\t', '\"'};
     size_t const delimiters_size = sizeof delimiters;
     size_t index;
-
-    if ((string == NULL) || (string[0] == '\0')) goto done;
+    connector_bool_t need_quotes = connector_false;
 
     for (index = 0; index < delimiters_size; index++)
     {
@@ -525,13 +522,57 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
         }
     }
 
+    return need_quotes;
+}
+
+STATIC size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr)
+{
+    connector_bool_t need_quotes = connector_false;
+    size_t bytes_processed = 0;
+    size_t i;
+    size_t extra_quotes = 0;
+    size_t const max_strlen = bytes_available - 1;
+
+    if ((string == NULL) || (string[0] == '\0'))
     {
-        char * const format = need_quotes ? "\"%s\"" : "%s";
+        goto done;
+    }
 
-        bytes_processed = connector_snprintf(buffer, bytes_available, format, string);
+    need_quotes = string_needs_quotes(string);
 
-        if (bytes_used_ptr != NULL)
-            *bytes_used_ptr = need_quotes ? bytes_processed - 2 : bytes_processed;
+    if (bytes_processed < max_strlen)
+    {
+        if (need_quotes)
+        {
+            buffer[bytes_processed++] = '\"';
+            extra_quotes++;
+        }
+    }
+
+    for (i = 0; string[i] != '\0' && bytes_processed < max_strlen; i++)
+    {
+        if (string[i] == '\"')
+        {
+            buffer[bytes_processed++] = '\"';
+            extra_quotes++;
+        }
+        buffer[bytes_processed++] = string[i];
+    }
+
+    if (bytes_processed < max_strlen)
+    {
+        if (need_quotes)
+        {
+            buffer[bytes_processed++] = '\"';
+            extra_quotes++;
+        }
+    }
+
+    buffer[bytes_processed] = '\0';
+
+    if (bytes_used_ptr != NULL)
+    {
+        *bytes_used_ptr = need_quotes ? bytes_processed - extra_quotes : bytes_processed;
     }
 
 done:
