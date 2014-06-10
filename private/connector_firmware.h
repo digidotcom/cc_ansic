@@ -103,7 +103,7 @@ typedef struct {
 } connector_firmware_data_t;
 
 #if defined CONNECTOR_RCI_SERVICE
-static connector_status_t confirm_fw_version(connector_firmware_data_t * const fw_ptr, uint8_t target_number, connector_firmware_version_t const version)
+STATIC connector_status_t confirm_fw_version(connector_firmware_data_t * const fw_ptr, uint8_t target_number, connector_firmware_version_t const version)
 {
     connector_status_t result = connector_working;
     uint32_t const version_number = FW_VERSION_NUMBER(version);
@@ -124,7 +124,7 @@ static connector_status_t confirm_fw_version(connector_firmware_data_t * const f
 }
 #endif
 
-static connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr,
+STATIC connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr,
                                         connector_request_id_firmware_t const fw_request_id,
                                         void * const data)
 {
@@ -179,7 +179,7 @@ done:
     return result;
 }
 
-static fw_abort_status_t get_abort_status_code(connector_firmware_status_t const status)
+STATIC fw_abort_status_t get_abort_status_code(connector_firmware_status_t const status)
 {
     fw_abort_status_t code;
 
@@ -236,7 +236,7 @@ enum fw_abort {
 
 #define FW_ABORT_HEADER_SIZE    record_bytes(fw_abort)
 
-static connector_status_t send_fw_message(connector_firmware_data_t * const fw_ptr)
+STATIC connector_status_t send_fw_message(connector_firmware_data_t * const fw_ptr)
 {
 
     connector_status_t result;
@@ -247,7 +247,7 @@ static connector_status_t send_fw_message(connector_firmware_data_t * const fw_p
 
 }
 
-static connector_status_t send_fw_abort(connector_firmware_data_t * const fw_ptr, uint8_t const target, uint8_t const msg_opcode, fw_abort_status_t const abort_status)
+STATIC connector_status_t send_fw_abort(connector_firmware_data_t * const fw_ptr, uint8_t const target, uint8_t const msg_opcode, fw_abort_status_t const abort_status)
 {
 
     connector_status_t result;
@@ -433,7 +433,7 @@ done:
     return result;
 }
 
-static connector_status_t process_fw_download_request(connector_firmware_data_t * const fw_ptr, uint8_t * fw_download_request, uint16_t const length)
+STATIC connector_status_t process_fw_download_request(connector_firmware_data_t * const fw_ptr, uint8_t * fw_download_request, uint16_t const length)
 {
 #define FW_STRING_ID_ITEMS  2
 
@@ -570,7 +570,7 @@ done:
     return result;
 }
 
-static connector_status_t process_fw_binary_block(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_binary_block, uint16_t const length)
+STATIC connector_status_t process_fw_binary_block(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_binary_block, uint16_t const length)
 {
 /* Firmware binary block message format:
  *  --------------------------------------------------------
@@ -667,7 +667,7 @@ done:
     return result;
 }
 
-static connector_status_t process_fw_abort(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_abort, uint16_t const length)
+STATIC connector_status_t process_fw_abort(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_abort, uint16_t const length)
 {
 
     connector_status_t result = connector_working;
@@ -720,7 +720,7 @@ static connector_status_t process_fw_abort(connector_firmware_data_t * const fw_
 
 }
 
-static connector_status_t process_fw_complete(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_complete_request, uint16_t const length)
+STATIC connector_status_t process_fw_complete(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_complete_request, uint16_t const length)
 {
 
 /* Firmware download complete message format:
@@ -811,7 +811,7 @@ done:
 
 }
 
-static connector_status_t process_target_reset(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_message, uint16_t const length)
+STATIC connector_status_t process_target_reset(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_message, uint16_t const length)
 {
     connector_status_t result;
     connector_firmware_reset_t firmware_reset;
@@ -826,7 +826,7 @@ static connector_status_t process_target_reset(connector_firmware_data_t * const
     return result;
 }
 
-static connector_status_t send_discovery_packet_callback(connector_data_t * const connector_ptr, uint8_t const * const packet,
+STATIC connector_status_t send_discovery_packet_callback(connector_data_t * const connector_ptr, uint8_t const * const packet,
                                            connector_status_t const send_status, void * const user_data)
 {
     connector_status_t result;
@@ -839,7 +839,7 @@ static connector_status_t send_discovery_packet_callback(connector_data_t * cons
     return result;
 }
 
-static connector_status_t fw_discovery(connector_data_t * const connector_ptr, void * const facility_data,
+STATIC connector_status_t fw_discovery(connector_data_t * const connector_ptr, void * const facility_data,
                                             uint8_t * const packet, unsigned int * receive_timeout)
 {
 /* Firmware target list message format:
@@ -928,7 +928,7 @@ done:
     return result;
 }
 
-static connector_status_t fw_process(connector_data_t * const connector_ptr, void * const facility_data,
+STATIC connector_status_t fw_process(connector_data_t * const connector_ptr, void * const facility_data,
                                           uint8_t * const edp_header, unsigned int * const receive_timeout)
 {
     connector_status_t result = connector_idle;
@@ -1044,12 +1044,12 @@ done:
     return result;
 }
 
-static connector_status_t connector_facility_firmware_delete(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_firmware_delete(connector_data_t * const connector_ptr)
 {
     return del_facility_data(connector_ptr, E_MSG_FAC_FW_NUM);
 }
 
-static connector_status_t connector_facility_firmware_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
+STATIC connector_status_t connector_facility_firmware_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
     connector_status_t result = connector_working;
     connector_firmware_data_t * fw_ptr;

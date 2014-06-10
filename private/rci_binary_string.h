@@ -15,25 +15,25 @@ static uint8_t const * rcistr_data(rcistr_t const * const string)
     return string->data;
 }
 
-static void clear_rcistr(rcistr_t * const string)
+STATIC void clear_rcistr(rcistr_t * const string)
 {
     string->data = NULL;
     string->length = 0;
 }
 
-static connector_bool_t rcistr_valid(rcistr_t const * const string)
+STATIC connector_bool_t rcistr_valid(rcistr_t const * const string)
 {
     return connector_bool((string->data != NULL) && (string->length != 0));
 }
 
-static void adjust_char_pointer(uint8_t * const new_base, uint8_t const * const old_base, uint8_t * * const pointer)
+STATIC void adjust_char_pointer(uint8_t * const new_base, uint8_t const * const old_base, uint8_t * * const pointer)
 {
     size_t const offset = (size_t)(*pointer - old_base);
 
     *pointer = (new_base + offset);
 }
 
-static void adjust_rcistr(uint8_t * const new_base, uint8_t const * const old_base, rcistr_t * const string)
+STATIC void adjust_rcistr(uint8_t * const new_base, uint8_t const * const old_base, rcistr_t * const string)
 {
     uint8_t * pointer = (uint8_t *) string->data;
 

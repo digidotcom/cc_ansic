@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-/* Example of adding a static buffer (single structure) or static buffer array named my_data
+/* Example of adding a STATIC buffer (single structure) or static buffer array named my_data
  *  
  * In os_intf.h: 
  * 1. Add to connector_static_buffer_id_t:
@@ -308,7 +308,7 @@ static struct
 
 #define static_buffer_release(pmap, idx) (*(pmap) &= (~(1 << (idx))))
 
-static int static_buffer_reserve(uint32_t * const pmap, uint32_t const idx)
+STATIC int static_buffer_reserve(uint32_t * const pmap, uint32_t const idx)
 {
     int result = -1;
 
@@ -320,7 +320,7 @@ static int static_buffer_reserve(uint32_t * const pmap, uint32_t const idx)
     return result;
 }
 
-static int static_buffer_get_avail(uint32_t * const pmap, int max_cnt)
+STATIC int static_buffer_get_avail(uint32_t * const pmap, int max_cnt)
 {
     int idx = -1;
     int i;
@@ -363,7 +363,7 @@ static int static_buffer_get_avail(uint32_t * const pmap, int max_cnt)
     status = *ptr != NULL ? connector_working : connector_pending; \
 }
 
-static connector_status_t malloc_static_data(connector_data_t * const connector_ptr, size_t const size, connector_static_buffer_id_t const buffer_id, void ** const ptr)
+STATIC connector_status_t malloc_static_data(connector_data_t * const connector_ptr, size_t const size, connector_static_buffer_id_t const buffer_id, void ** const ptr)
 {
     connector_status_t status = connector_working;
 

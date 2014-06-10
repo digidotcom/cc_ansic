@@ -10,7 +10,7 @@
  * =======================================================================
  */
 /* This function searches for the next valid request_id and leaves it in connector_ptr->last_request_id */
-static connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_pending;
     unsigned long const request_id = connector_ptr->last_request_id;
@@ -43,7 +43,7 @@ error:
     return result;
 }
 
-static connector_sm_session_t * get_sm_session(connector_sm_data_t * const sm_ptr, uint32_t const transcation_id, connector_bool_t const client_originated)
+STATIC connector_sm_session_t * get_sm_session(connector_sm_data_t * const sm_ptr, uint32_t const transcation_id, connector_bool_t const client_originated)
 {
     connector_sm_session_t * session = sm_ptr->session.head;
 
@@ -58,7 +58,7 @@ static connector_sm_session_t * get_sm_session(connector_sm_data_t * const sm_pt
     return session;
 }
 
-static connector_sm_session_t * sm_create_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_bool_t const client_originated)
+STATIC connector_sm_session_t * sm_create_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_bool_t const client_originated)
 {
     connector_sm_session_t * session = NULL;
     void * ptr = NULL;
@@ -133,7 +133,7 @@ done:
     return session;
 }
 
-static connector_status_t sm_delete_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_delete_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_working;
 
@@ -180,7 +180,7 @@ error:
 
 /* If request_id == NULL cancel ALL sessions. Else cancel the SM session whose Request ID matches the one passed as a parameter. */
 #if (CONNECTOR_VERSION >= 0x02010000)
-static connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint32_t const * const request_id)
+STATIC connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint32_t const * const request_id)
 {
     connector_status_t result = connector_working;
     connector_sm_session_t * session = sm_ptr->session.head;
@@ -214,7 +214,7 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
     return result;
 }
 #else
-static connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, void const * const user_context)
+STATIC connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, void const * const user_context)
 {
     connector_status_t result = connector_working;
     connector_sm_session_t * session = sm_ptr->session.head;
@@ -252,7 +252,7 @@ static connector_status_t sm_cancel_session(connector_data_t * const connector_p
     return result;
 }
 #endif
-static connector_status_t sm_process_pending_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_process_pending_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_idle;
 

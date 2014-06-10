@@ -53,7 +53,7 @@ static unsigned int decode_element_id(uint32_t const value)
     return id;
 }
 
-static uint32_t encode_element_id(unsigned int const id)
+STATIC uint32_t encode_element_id(unsigned int const id)
 {
 
     uint32_t value;
@@ -83,7 +83,7 @@ static unsigned int decode_group_id(uint32_t const group_id)
     return id;
 }
 
-static uint32_t encode_group_id(unsigned int const group_id)
+STATIC uint32_t encode_group_id(unsigned int const group_id)
 {
     uint32_t id;
 

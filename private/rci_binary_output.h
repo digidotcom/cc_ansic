@@ -9,14 +9,14 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-static void rci_set_output_error(rci_t * const rci, unsigned int const id, char const * const hint, rci_output_state_t state)
+STATIC void rci_set_output_error(rci_t * const rci, unsigned int const id, char const * const hint, rci_output_state_t state)
 {
     rci_global_error(rci, id, hint);
     set_rci_output_state(rci, state);
     state_call(rci, rci_parser_state_output);
 }
 
-static connector_bool_t rci_output_data(rci_t * const rci, rci_buffer_t * const output, uint8_t const * const data, size_t const bytes)
+STATIC connector_bool_t rci_output_data(rci_t * const rci, rci_buffer_t * const output, uint8_t const * const data, size_t const bytes)
 {
     connector_bool_t const overflow = connector_bool(rci_buffer_remaining(output) < bytes);
 
@@ -33,7 +33,7 @@ static connector_bool_t rci_output_data(rci_t * const rci, rci_buffer_t * const 
     return overflow;
 }
 
-static size_t get_bytes_followed(uint32_t value)
+STATIC size_t get_bytes_followed(uint32_t value)
 {
     /* Bytes needed for the value:
      * 1 byte is 0 to 0x7F
@@ -64,7 +64,7 @@ static size_t get_bytes_followed(uint32_t value)
     return bytes;
 }
 
-static connector_bool_t rci_output_uint32(rci_t * const rci, uint32_t const value)
+STATIC connector_bool_t rci_output_uint32(rci_t * const rci, uint32_t const value)
 {
     connector_bool_t overflow;
     size_t const bytes_follow = get_bytes_followed(value);
@@ -153,7 +153,7 @@ static connector_bool_t rci_output_uint32(rci_t * const rci, uint32_t const valu
     return overflow;
 }
 
-static connector_bool_t rci_output_string(rci_t * const rci, char const * const string, size_t const length)
+STATIC connector_bool_t rci_output_string(rci_t * const rci, char const * const string, size_t const length)
 {
 
     rci_buffer_t * const output = &rci->buffer.output;
@@ -197,7 +197,7 @@ done:
 }
 
 #if defined RCI_PARSER_USES_IPV4
-static connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const string)
+STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const string)
 {
     rci_buffer_t * const output = &rci->buffer.output;
     connector_bool_t overflow = connector_true;
@@ -269,7 +269,7 @@ done:
 }
 #endif
 
-static connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
+STATIC connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
 {
     uint8_t const data = value;
     rci_buffer_t * const output = &rci->buffer.output;
@@ -278,7 +278,7 @@ static connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
 }
 
 #if defined RCI_PARSER_USES_FLOAT
-static connector_bool_t rci_output_float(rci_t * const rci, float const value)
+STATIC connector_bool_t rci_output_float(rci_t * const rci, float const value)
 {
     float const float_value = value;
     uint32_t float_integer;
@@ -294,7 +294,7 @@ static connector_bool_t rci_output_float(rci_t * const rci, float const value)
 #define rci_output_no_value(rci)    rci_output_uint8((rci), BINARY_RCI_NO_VALUE)
 #define rci_output_terminator(rci)  rci_output_uint8((rci), BINARY_RCI_TERMINATOR)
 
-static void rci_output_command_id(rci_t * const rci)
+STATIC void rci_output_command_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t command_id = 0;
@@ -340,7 +340,7 @@ static void rci_output_command_id(rci_t * const rci)
     return;
 }
 
-static void rci_output_group_id(rci_t * const rci)
+STATIC void rci_output_group_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t encoding_data;
@@ -372,7 +372,7 @@ done:
     return;
 }
 
-static connector_bool_t encode_attribute(rci_t * const rci, unsigned int const index)
+STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const index)
 {
     uint32_t encoding_data;
     connector_bool_t overflow = connector_false;
@@ -411,7 +411,7 @@ static connector_bool_t encode_attribute(rci_t * const rci, unsigned int const i
     return overflow;
 }
 
-static void rci_output_group_attribute(rci_t * const rci)
+STATIC void rci_output_group_attribute(rci_t * const rci)
 {
     unsigned int const index = get_group_index(rci);
     connector_bool_t overflow = encode_attribute(rci, index);
@@ -421,7 +421,7 @@ static void rci_output_group_attribute(rci_t * const rci)
 }
 
 
-static void rci_output_field_id(rci_t * const rci)
+STATIC void rci_output_field_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
@@ -455,7 +455,7 @@ done:
 }
 
 
-static void rci_output_field_value(rci_t * const rci)
+STATIC void rci_output_field_value(rci_t * const rci)
 {
     connector_group_element_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
@@ -566,7 +566,7 @@ done:
 
 }
 
-static void rci_output_field_terminator(rci_t * const rci)
+STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
@@ -583,7 +583,7 @@ static void rci_output_field_terminator(rci_t * const rci)
     return;
 }
 
-static void rci_output_group_terminator(rci_t * const rci)
+STATIC void rci_output_group_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
@@ -605,7 +605,7 @@ done:
     return;
 }
 
-static void rci_generate_output(rci_t * const rci)
+STATIC void rci_generate_output(rci_t * const rci)
 {
     rci_buffer_t * const output = &rci->buffer.output;
 

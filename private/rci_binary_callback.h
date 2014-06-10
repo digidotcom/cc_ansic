@@ -12,13 +12,13 @@
 
 #define state_call(rci, value)  ((rci)->parser.state = (value))
 
-static connector_bool_t is_set_command(connector_remote_action_t const action)
+STATIC connector_bool_t is_set_command(connector_remote_action_t const action)
 {
     return connector_bool(action == connector_remote_action_set);
 
 }
 
-static void rci_error(rci_t * const rci, unsigned int const id, char const * const description, char const * const hint)
+STATIC void rci_error(rci_t * const rci, unsigned int const id, char const * const description, char const * const hint)
 {
     rci->shared.callback_data.error_id = id;
     rci->shared.callback_data.response.error_hint = hint;
@@ -43,14 +43,14 @@ static char const * get_rci_group_error(rci_t * const rci, unsigned int const id
 #define get_rci_group_error(rci, id)    ((void) (rci), (void) (id), NULL)
 #endif
 
-static void rci_global_error(rci_t * const rci, unsigned int const id, char const * const hint)
+STATIC void rci_global_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
     char const * const description = get_rci_global_error(rci, id);
 
     rci_error(rci, id, description, hint);
 }
 
-static void rci_group_error(rci_t * const rci, unsigned int const id, char const * const hint)
+STATIC void rci_group_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
     if (id < connector_rci_config_data.global_error_count)
     {
@@ -64,14 +64,14 @@ static void rci_group_error(rci_t * const rci, unsigned int const id, char const
     }
 }
 
-static connector_bool_t pending_rci_callback(rci_t * const rci)
+STATIC connector_bool_t pending_rci_callback(rci_t * const rci)
 {
     connector_bool_t const pending = connector_bool(rci->callback.status == connector_callback_busy);
 
     return pending;
 }
 
-static void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_config_t const remote_config_request)
+STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_config_t const remote_config_request)
 {
     switch (remote_config_request)
     {
@@ -117,7 +117,7 @@ static void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     rci->callback.status = connector_callback_busy;
 }
 
-static connector_bool_t rci_callback(rci_t * const rci)
+STATIC connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
     connector_remote_config_t * remote_config = &rci->shared.callback_data;

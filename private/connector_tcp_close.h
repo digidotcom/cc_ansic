@@ -9,7 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-static connector_status_t layer_remove_facilities(connector_data_t * const connector_ptr, connector_supported_facility_cb_index_t cb_index);
+STATIC connector_status_t layer_remove_facilities(connector_data_t * const connector_ptr, connector_supported_facility_cb_index_t cb_index);
 
 #if (defined CONNECTOR_DEBUG)
 
@@ -38,7 +38,7 @@ static char const * close_status_to_string(connector_close_status_t const value)
 #define close_status_to_string(value)       NULL
 #endif
 
-static connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr)
+STATIC connector_status_t tcp_close_cloud(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_idle;
     connector_close_status_t close_status = edp_get_close_status(connector_ptr);
@@ -117,7 +117,7 @@ done:
     return result;
 }
 
-static connector_status_t edp_close_process(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_close_process(connector_data_t * const connector_ptr)
 {
     connector_status_t result;
 

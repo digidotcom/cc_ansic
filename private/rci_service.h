@@ -16,18 +16,18 @@
 
 #include "rci_binary.h"
 
-static uint32_t rci_get_firmware_target_zero_version(void)
+STATIC uint32_t rci_get_firmware_target_zero_version(void)
 {
     return connector_rci_config_data.firmware_target_zero_version;
 }
 
-static void set_rci_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
+STATIC void set_rci_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
 {
     service_request->error_value = error_code;
     service_request->service_type = msg_service_type_error;
 }
 
-static connector_status_t rci_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+STATIC connector_status_t rci_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_working;
     connector_session_error_t error_status = connector_session_error_none;
@@ -175,19 +175,19 @@ done:
     return status;
 }
 
-static connector_status_t connector_facility_rci_service_cleanup(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_rci_service_cleanup(connector_data_t * const connector_ptr)
 {
     msg_service_id_t const service_id = msg_service_id_brci;
     return msg_cleanup_all_sessions(connector_ptr, service_id);
 }
 
-static connector_status_t connector_facility_rci_service_delete(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_rci_service_delete(connector_data_t * const connector_ptr)
 {
     msg_service_id_t const service_id = msg_service_id_brci;
     return msg_delete_facility(connector_ptr, service_id);
 }
 
-static connector_status_t connector_facility_rci_service_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
+STATIC connector_status_t connector_facility_rci_service_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
     connector_status_t result;
 

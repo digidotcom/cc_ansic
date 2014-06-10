@@ -9,7 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-static connector_status_t sm_get_user_data_length(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_get_user_data_length(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result;
     connector_callback_status_t status = connector_callback_continue;
@@ -88,7 +88,7 @@ error:
 }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-static connector_status_t sm_get_more_request_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_get_more_request_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     uint8_t * dptr = session->in.data;
@@ -136,7 +136,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_get_more_response_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_get_more_response_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     uint8_t * dptr = session->in.data;
@@ -181,7 +181,7 @@ error:
 #endif
 
 #if (defined CONNECTOR_COMPRESSION)
-static connector_status_t sm_compress_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_compress_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status;
     size_t const excluded_header_adler32_footer_bytes = 6;
@@ -246,7 +246,7 @@ error:
 }
 #endif
 
-static connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_prepare_segment(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     size_t const max_payload = sm_ptr->transport.sm_mtu_tx - record_end(segment);
@@ -282,7 +282,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_send_segment(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_send_segment(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_no_resource;
     connector_sm_packet_t * const send_packet = &sm_ptr->network.send_packet;
@@ -328,7 +328,7 @@ error:
 }
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-static connector_status_t sm_encode_segment(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_encode_segment(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     size_t const data_size = 1+(sm_ptr->network.send_packet.total_bytes * 5)/4;
     void * data_ptr = NULL;
@@ -350,7 +350,7 @@ error:
 }
 #endif
 
-static connector_status_t sm_send_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_send_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_working;
     connector_sm_packet_t * const send_ptr = &sm_ptr->network.send_packet;
@@ -535,7 +535,7 @@ done:
     return result;
 }
 
-static connector_status_t sm_process_send_path(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_process_send_path(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
 

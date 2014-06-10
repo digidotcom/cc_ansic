@@ -117,13 +117,13 @@ typedef struct
 
 #define FsOperationSuccess(status, context) (status==connector_working && context->errnum==(uintptr_t)NULL)
 
-static void fs_set_service_error(msg_service_request_t * const service_request, connector_session_error_t const session_error)
+STATIC void fs_set_service_error(msg_service_request_t * const service_request, connector_session_error_t const session_error)
 {
     service_request->error_value = session_error;
     service_request->service_type = msg_service_type_error;
 }
 
-static connector_status_t fs_set_abort(connector_data_t * const connector_ptr,
+STATIC connector_status_t fs_set_abort(connector_data_t * const connector_ptr,
                                    fs_context_t * const context,
                                    connector_request_id_file_system_t const file_request,
                                    connector_status_t const error_status)
@@ -148,7 +148,7 @@ typedef enum
     fs_error_session_canceled
 }fs_error_internal_t;
 
-static void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
+STATIC void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
 {
 
     unsigned long int code = (unsigned long int) data->errnum;
@@ -190,7 +190,7 @@ static void fs_get_internal_error_data(connector_file_system_get_error_t * const
     memcpy(data->buffer, error_data[code].hint, data->bytes_used);
 }
 
-static connector_status_t format_file_error_msg(connector_data_t * const connector_ptr,
+STATIC connector_status_t format_file_error_msg(connector_data_t * const connector_ptr,
                                                 msg_service_request_t * const service_request,
                                                 fs_context_t * const context)
 {
@@ -275,7 +275,7 @@ done:
     return status;
 }
 
-static connector_status_t fs_call_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t fs_call_user(connector_data_t * const connector_ptr,
                                        msg_service_request_t * const service_request,
                                        fs_context_t * const context,
                                        connector_request_id_file_system_t const fs_request_id,
@@ -342,7 +342,7 @@ static connector_status_t fs_call_user(connector_data_t * const connector_ptr,
     return status;
 }
 
-static size_t file_hash_size(connector_file_system_hash_algorithm_t const hash_alg)
+STATIC size_t file_hash_size(connector_file_system_hash_algorithm_t const hash_alg)
 {
     size_t result;
 
@@ -362,7 +362,7 @@ static size_t file_hash_size(connector_file_system_hash_algorithm_t const hash_a
     return result;
 }
 
-static connector_status_t call_file_stat_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_stat_user(connector_data_t * const connector_ptr,
                                               msg_service_request_t * const service_request,
                                               fs_context_t * const context,
                                               char const * const path,
@@ -443,7 +443,7 @@ done:
     return status;
 }
 
-static connector_status_t call_file_stat_dir_entry_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_stat_dir_entry_user(connector_data_t * const connector_ptr,
                                                         msg_service_request_t * const service_request,
                                                         fs_context_t * const context,
                                                         char const * const path)
@@ -488,7 +488,7 @@ done:
 }
 
 
-static connector_status_t call_file_opendir_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_opendir_user(connector_data_t * const connector_ptr,
                                                  msg_service_request_t * const service_request,
                                                  fs_context_t * const context,
                                                  char const * const path)
@@ -529,7 +529,7 @@ done:
 }
 
 /* This function is a custom implementation of GNU/Linux's non-standard strnlen() */
-static int strnlen_(char const * const string, int maxlen)
+STATIC int strnlen_(char const * const string, int maxlen)
 {
     volatile const char *e;
     int n;
@@ -540,7 +540,7 @@ static int strnlen_(char const * const string, int maxlen)
     return n;
 }
 
-static connector_status_t call_file_readdir_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_readdir_user(connector_data_t * const connector_ptr,
                                                  msg_service_request_t * const service_request,
                                                  fs_context_t * const context,
                                                  char * const path,
@@ -575,7 +575,7 @@ done:
     return status;
 }
 
-static connector_status_t call_file_close_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_close_user(connector_data_t * const connector_ptr,
                                                msg_service_request_t * const service_request,
                                                fs_context_t * const context,
                                                connector_request_id_file_system_t const fs_request_id)
@@ -606,7 +606,7 @@ done:
     return status;
 }
 
-static connector_status_t call_file_hash_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_hash_user(connector_data_t * const connector_ptr,
                                               msg_service_request_t * const service_request,
                                               fs_context_t * const context,
                                               char const * const path,
@@ -629,7 +629,7 @@ static connector_status_t call_file_hash_user(connector_data_t * const connector
     return status;
 }
 
-static connector_status_t call_file_open_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_open_user(connector_data_t * const connector_ptr,
                                               msg_service_request_t * const service_request,
                                               fs_context_t * context,
                                               char const * const path,
@@ -674,7 +674,7 @@ done:
     return status;
 }
 
-static connector_status_t call_file_lseek_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_lseek_user(connector_data_t * const connector_ptr,
                                                msg_service_request_t * const service_request,
                                                fs_context_t * const context,
                                                connector_file_offset_t const  offset_in,
@@ -701,7 +701,7 @@ static connector_status_t call_file_lseek_user(connector_data_t * const connecto
 }
 
 
-static connector_status_t call_file_ftruncate_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_ftruncate_user(connector_data_t * const connector_ptr,
                                                    msg_service_request_t * const service_request,
                                                    fs_context_t * const context)
 {
@@ -719,7 +719,7 @@ static connector_status_t call_file_ftruncate_user(connector_data_t * const conn
     return status;
 }
 
-static connector_status_t call_file_rm_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_rm_user(connector_data_t * const connector_ptr,
                                             msg_service_request_t * const service_request,
                                             fs_context_t * const context,
                                             char const * const path)
@@ -736,7 +736,7 @@ static connector_status_t call_file_rm_user(connector_data_t * const connector_p
     return status;
 }
 
-static connector_status_t call_file_read_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_read_user(connector_data_t * const connector_ptr,
                                               msg_service_request_t * const service_request,
                                               fs_context_t * const context,
                                               void   * const buffer,
@@ -774,7 +774,7 @@ done:
     return status;
 }
 
-static connector_status_t call_file_write_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_file_write_user(connector_data_t * const connector_ptr,
                                                msg_service_request_t * const service_request,
                                                fs_context_t * const context,
                                                void const * const buffer,
@@ -818,7 +818,7 @@ done:
     return status;
 }
 
-static size_t parse_file_path(fs_context_t * const context,
+STATIC size_t parse_file_path(fs_context_t * const context,
                               void const * const path_ptr,
                               size_t const buffer_size)
 {
@@ -841,7 +841,7 @@ static size_t parse_file_path(fs_context_t * const context,
     return path_len;
 }
 
-static size_t parse_file_get_header(fs_context_t * const context,
+STATIC size_t parse_file_get_header(fs_context_t * const context,
                                     uint8_t const * const header_ptr,
                                     size_t const buffer_size)
 {
@@ -884,7 +884,7 @@ done:
     return len;
 }
 
-static connector_status_t process_file_get_request(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_get_request(connector_data_t * const connector_ptr,
                                                    msg_service_request_t * const service_request,
                                                    fs_context_t * const context)
 {
@@ -902,7 +902,7 @@ static connector_status_t process_file_get_request(connector_data_t * const conn
     return status;
 }
 
-static connector_status_t set_file_position(connector_data_t * const connector_ptr,
+STATIC connector_status_t set_file_position(connector_data_t * const connector_ptr,
                                             msg_service_request_t * const service_request,
                                             fs_context_t * const context)
 
@@ -938,7 +938,7 @@ done:
     return status;
 }
 
-static connector_status_t process_get_close(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_get_close(connector_data_t * const connector_ptr,
                                             msg_service_request_t * const service_request,
                                             fs_context_t * const context,
                                             connector_request_id_file_system_t close_request)
@@ -1000,7 +1000,7 @@ done:
 }
 
 
-static connector_status_t process_file_get_response(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_get_response(connector_data_t * const connector_ptr,
                                                     msg_service_request_t * const service_request,
                                                     fs_context_t * const context)
 {
@@ -1091,7 +1091,7 @@ done:
     return status;
 }
 
-static connector_status_t process_file_rm_request(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_rm_request(connector_data_t * const connector_ptr,
                                                   msg_service_request_t * const service_request,
                                                   fs_context_t * const context)
 {
@@ -1110,7 +1110,7 @@ done:
     return status;
 }
 
-static connector_status_t process_file_response_nodata(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_response_nodata(connector_data_t * const connector_ptr,
                                                        msg_service_request_t * const service_request,
                                                        fs_context_t * const context,
                                                        fs_opcode_t const opcode)
@@ -1137,7 +1137,7 @@ static connector_status_t process_file_response_nodata(connector_data_t * const 
     return status;
 }
 
-static size_t parse_file_put_header(fs_context_t * const context,
+STATIC size_t parse_file_put_header(fs_context_t * const context,
                                     uint8_t const * const header_ptr,
                                     size_t const buffer_size)
 {
@@ -1180,7 +1180,7 @@ done:
 }
 
 
-static connector_status_t process_file_put_request(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_put_request(connector_data_t * const connector_ptr,
                                                    msg_service_request_t * const service_request,
                                                    fs_context_t * const context)
 {
@@ -1289,7 +1289,7 @@ done:
     return status;
 }
 
-static size_t parse_file_ls_header(fs_context_t * const context,
+STATIC size_t parse_file_ls_header(fs_context_t * const context,
                                    uint8_t const * const header_ptr,
                                    size_t const buffer_size)
 {
@@ -1330,7 +1330,7 @@ static size_t parse_file_ls_header(fs_context_t * const context,
     return len;
 }
 
-static size_t format_file_ls_response_header(connector_file_system_hash_algorithm_t const hash_alg,
+STATIC size_t format_file_ls_response_header(connector_file_system_hash_algorithm_t const hash_alg,
                                              size_t const hash_size,
                                              uint8_t * const data_ptr)
 {
@@ -1359,7 +1359,7 @@ static size_t format_file_ls_response_header(connector_file_system_hash_algorith
     return record_bytes(fs_ls_response_header);
 }
 
-static size_t file_ls_resp_header_size(void)
+STATIC size_t file_ls_resp_header_size(void)
 {
     /*
      * File System Ls request format:
@@ -1380,7 +1380,7 @@ static size_t file_ls_resp_header_size(void)
     return record_bytes(fs_ls_response_file);
 }
 
-static size_t format_file_ls_response(fs_context_t const * context,
+STATIC size_t format_file_ls_response(fs_context_t const * context,
                                       char const * path,
                                       size_t const path_len,
                                       uint8_t * const data_ptr)
@@ -1432,7 +1432,7 @@ static size_t format_file_ls_response(fs_context_t const * context,
     return result;
 }
 
-static connector_status_t file_store_path(fs_context_t * const context,
+STATIC connector_status_t file_store_path(fs_context_t * const context,
                                           char const * const path)
 {
     connector_status_t status = connector_working;
@@ -1462,7 +1462,7 @@ done:
     return status;
 }
 
-static connector_status_t process_file_ls_request(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_ls_request(connector_data_t * const connector_ptr,
                                                   msg_service_request_t * const service_request,
                                                   fs_context_t * const context)
 {
@@ -1506,7 +1506,7 @@ done:
     return status;
 }
 
-static connector_status_t process_file_ls_response(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_file_ls_response(connector_data_t * const connector_ptr,
                                                    msg_service_request_t * const service_request,
                                                    fs_context_t * const context)
 {
@@ -1660,7 +1660,7 @@ done:
     return status;
 }
 
-static connector_status_t allocate_file_context(connector_data_t * const connector_ptr,
+STATIC connector_status_t allocate_file_context(connector_data_t * const connector_ptr,
                                               fs_opcode_t const opcode,
                                               fs_context_t * * const result)
 {
@@ -1692,7 +1692,7 @@ done:
     return status;
 }
 
-static connector_status_t file_system_request_callback(connector_data_t * const connector_ptr,
+STATIC connector_status_t file_system_request_callback(connector_data_t * const connector_ptr,
                                                        msg_service_request_t * const service_request)
 {
     msg_session_t * const session = service_request->session;
@@ -1762,7 +1762,7 @@ done:
     return status;
 }
 
-static connector_status_t file_system_response_callback(connector_data_t * const connector_ptr,
+STATIC connector_status_t file_system_response_callback(connector_data_t * const connector_ptr,
                                                         msg_service_request_t * const service_request)
 {
     msg_session_t * const session = service_request->session;
@@ -1804,7 +1804,7 @@ done:
     return status;
 }
 
-static connector_status_t file_system_free_callback(connector_data_t * const connector_ptr,
+STATIC connector_status_t file_system_free_callback(connector_data_t * const connector_ptr,
                                                     msg_service_request_t * const service_request)
 {
     msg_session_t * const session = service_request->session;
@@ -1819,7 +1819,7 @@ static connector_status_t file_system_free_callback(connector_data_t * const con
     return status;
 }
 
-static connector_status_t call_session_error_user(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_session_error_user(connector_data_t * const connector_ptr,
                                                   msg_service_request_t * const service_request,
                                                   fs_context_t * const context)
 {
@@ -1873,7 +1873,7 @@ done:
 }
 
 
-static connector_status_t file_system_session_error_callback(connector_data_t * const connector_ptr,
+STATIC connector_status_t file_system_session_error_callback(connector_data_t * const connector_ptr,
                                                              msg_service_request_t * const service_request)
 {
     msg_session_t * const session = service_request->session;
@@ -1900,7 +1900,7 @@ done:
 }
 
 
-static connector_status_t file_system_callback(connector_data_t * const connector_ptr,
+STATIC connector_status_t file_system_callback(connector_data_t * const connector_ptr,
                                                msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_abort;
@@ -1936,17 +1936,17 @@ done:
     return status;
 }
 
-static connector_status_t connector_facility_file_system_cleanup(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_file_system_cleanup(connector_data_t * const connector_ptr)
 {
     return msg_cleanup_all_sessions(connector_ptr,  msg_service_id_file);
 }
 
-static connector_status_t connector_facility_file_system_delete(connector_data_t * const data_ptr)
+STATIC connector_status_t connector_facility_file_system_delete(connector_data_t * const data_ptr)
 {
     return msg_delete_facility(data_ptr, msg_service_id_file);
 }
 
-static connector_status_t connector_facility_file_system_init(connector_data_t * const data_ptr, unsigned int const facility_index)
+STATIC connector_status_t connector_facility_file_system_init(connector_data_t * const data_ptr, unsigned int const facility_index)
 {
     return msg_init_facility(data_ptr, facility_index, msg_service_id_file, file_system_callback);
 }

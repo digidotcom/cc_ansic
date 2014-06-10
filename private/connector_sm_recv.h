@@ -10,7 +10,7 @@
  * =======================================================================
  */
 #if (defined CONNECTOR_TRANSPORT_SMS)
-static connector_status_t sm_decode_segment(connector_data_t * const connector_ptr, connector_sm_packet_t * const recv_ptr)
+STATIC connector_status_t sm_decode_segment(connector_data_t * const connector_ptr, connector_sm_packet_t * const recv_ptr)
 {
     size_t const data_size = 1 + ((recv_ptr->total_bytes - recv_ptr->processed_bytes) * 4)/5;
     void * data_ptr = NULL;
@@ -26,7 +26,7 @@ static connector_status_t sm_decode_segment(connector_data_t * const connector_p
     return result;
 }
 
-static connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -58,7 +58,7 @@ static connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
-static connector_status_t sm_verify_udp_header(connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_verify_udp_header(connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_invalid_response;
     connector_sm_packet_t * const recv_ptr = &sm_ptr->network.recv_packet;
@@ -90,7 +90,7 @@ error:
 #endif
 
 #if (defined CONNECTOR_SM_MULTIPART)
-static connector_status_t sm_multipart_allocate(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_multipart_allocate(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status = connector_working;
     size_t const max_payload_bytes = sm_get_max_payload_bytes(sm_ptr);
@@ -109,7 +109,7 @@ error:
 }
 #endif
 
-static connector_status_t sm_more_data_callback(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_more_data_callback(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result;
     connector_request_id_t request_id;
@@ -155,7 +155,7 @@ typedef struct
     uint8_t cmd_status;
 } sm_header_t;
 
-static connector_status_t sm_process_header(connector_sm_packet_t * const recv_ptr, sm_header_t * const header)
+STATIC connector_status_t sm_process_header(connector_sm_packet_t * const recv_ptr, sm_header_t * const header)
 {
     connector_status_t result = connector_invalid_payload_packet;
     uint8_t * data_ptr = &recv_ptr->data[recv_ptr->processed_bytes];
@@ -294,7 +294,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_update_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
+STATIC connector_status_t sm_update_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
                                             sm_header_t * const header, size_t const payload_bytes)
 {
     connector_status_t result = connector_invalid_payload_packet;
@@ -417,7 +417,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_process_packet(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_process_packet(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     sm_header_t sm_header;
     connector_status_t result;
@@ -495,7 +495,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_receive_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_receive_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_pending;
     connector_sm_packet_t * const recv_ptr = &sm_ptr->network.recv_packet;
@@ -582,7 +582,7 @@ done:
 }
 
 #if (defined CONNECTOR_COMPRESSION)
-static connector_status_t sm_decompress_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_decompress_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status = connector_working;
     size_t const max_payload_bytes = sm_get_max_payload_bytes(sm_ptr);
@@ -678,7 +678,7 @@ done:
 }
 #endif
 
-static connector_status_t sm_handle_error(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_handle_error(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_working;
     connector_sm_state_t next_state = connector_sm_state_complete;
@@ -699,7 +699,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_handle_complete(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_handle_complete(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_working;
 
@@ -728,7 +728,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_process_recv_path(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_process_recv_path(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
 

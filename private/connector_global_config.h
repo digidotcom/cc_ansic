@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status, void * const context)
+STATIC connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status, void * const context)
 {
     connector_status_t result = connector_working;
 
@@ -45,7 +45,7 @@ static connector_status_t notify_error_status(connector_callback_t const callbac
     return result;
 }
 
-static connector_status_t get_config_device_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_device_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
@@ -89,7 +89,7 @@ done:
 }
 
 #if !(defined CONNECTOR_CLOUD_URL)
-static connector_status_t get_config_device_cloud_url(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_device_cloud_url(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
@@ -142,7 +142,7 @@ done:
 #if (defined CONNECTOR_TRANSPORT_SMS)
 #if (CONNECTOR_VERSION >= 0x02010000)
 #if !(defined CONNECTOR_CLOUD_PHONE)
-static connector_status_t get_config_device_cloud_phone(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_device_cloud_phone(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
@@ -191,7 +191,7 @@ done:
 }
 
 /* This function will only be called under SMS transport when a 'provisioning' message is received */
-static connector_status_t set_config_device_cloud_phone(connector_data_t * const connector_ptr, char * phone_number)
+STATIC connector_status_t set_config_device_cloud_phone(connector_data_t * const connector_ptr, char * phone_number)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
@@ -230,7 +230,7 @@ error:
 #endif
 
 #if !(defined CONNECTOR_CLOUD_SERVICE_ID)
-static connector_status_t get_config_device_cloud_service_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_device_cloud_service_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
@@ -276,7 +276,7 @@ done:
 #endif
 #endif
 
-static connector_status_t get_config_connection_type(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_connection_type(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -325,7 +325,7 @@ static connector_status_t get_config_connection_type(connector_data_t * const co
     return result;
 }
 
-static connector_status_t get_config_mac_addr(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_mac_addr(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -372,7 +372,7 @@ done:
 }
 
 #if !(defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
-static connector_status_t get_config_link_speed(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_link_speed(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t callback_status;
@@ -400,7 +400,7 @@ static connector_status_t get_config_link_speed(connector_data_t * const connect
 #endif
 
 #if !(defined CONNECTOR_WAN_PHONE_NUMBER_DIALED)
-static connector_status_t get_config_phone_number(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_phone_number(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     if (connector_ptr->phone_dialed == NULL)
@@ -451,7 +451,7 @@ done:
 }
 #endif
 
-static connector_status_t get_config_device_id_method(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_device_id_method(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -502,7 +502,7 @@ static connector_status_t get_config_device_id_method(connector_data_t * const c
 #define MAX_DECIMAL_DIGIT       9
 #define MAX_HEXADECIMAL_DIGIT    0xF
 
-static connector_bool_t check_digit_array(uint8_t * const digits, size_t const length, uint8_t const max_digit)
+STATIC connector_bool_t check_digit_array(uint8_t * const digits, size_t const length, uint8_t const max_digit)
 {
     connector_bool_t isDigit = connector_true;
     size_t i;
@@ -522,7 +522,7 @@ static connector_bool_t check_digit_array(uint8_t * const digits, size_t const l
     return isDigit;
 }
 
-static connector_status_t get_config_wan_id(connector_data_t * const connector_ptr,
+STATIC connector_status_t get_config_wan_id(connector_data_t * const connector_ptr,
                                             connector_request_id_config_t const config_request_id)
 {
     connector_status_t result = connector_working;
@@ -600,7 +600,7 @@ done:
     return result;
 }
 
-static connector_status_t get_config_wan_type(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_wan_type(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 #if (defined CONNECTOR_WAN_TYPE)

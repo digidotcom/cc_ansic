@@ -264,7 +264,7 @@ typedef struct
     void const * pending_service_request;
 } connector_msg_data_t;
 
-static msg_session_t * msg_find_session(connector_msg_data_t const * const msg_ptr, unsigned int const id, connector_bool_t const client_owned)
+STATIC msg_session_t * msg_find_session(connector_msg_data_t const * const msg_ptr, unsigned int const id, connector_bool_t const client_owned)
 {
     msg_session_t * session = msg_ptr->session.head;
 
@@ -311,7 +311,7 @@ static unsigned int msg_find_next_available_id(connector_msg_data_t * const msg_
     return new_id;
 }
 
-static void msg_set_error(msg_session_t * const session, connector_session_error_t const error_code)
+STATIC void msg_set_error(msg_session_t * const session, connector_session_error_t const error_code)
 {
     msg_data_block_t * const dblock = (session->in_dblock != NULL) ? session->in_dblock : session->out_dblock;
     connector_bool_t const client_request_error = connector_bool(MsgIsClientOwned(dblock->status_flag) && MsgIsNotReceiving(dblock->status_flag));
@@ -345,7 +345,7 @@ done:
     return;
 }
 
-static connector_status_t msg_call_service_layer(connector_data_t * const connector_ptr, msg_session_t * const session, msg_service_type_t const type)
+STATIC connector_status_t msg_call_service_layer(connector_data_t * const connector_ptr, msg_session_t * const session, msg_service_type_t const type)
 {
     connector_status_t status = connector_init_error;
     msg_service_request_t * const service_ptr = &session->service_layer_data;
@@ -370,14 +370,14 @@ error:
     return status;
 }
 
-static connector_status_t msg_inform_error(connector_data_t * const connector_ptr, msg_session_t * const session, connector_session_error_t error_code)
+STATIC connector_status_t msg_inform_error(connector_data_t * const connector_ptr, msg_session_t * const session, connector_session_error_t error_code)
 {
     session->service_layer_data.error_value = error_code;
 
     return msg_call_service_layer(connector_ptr, session, msg_service_type_error);
 }
 
-static msg_session_t * msg_create_session(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, unsigned int const service_id,
+STATIC msg_session_t * msg_create_session(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, unsigned int const service_id,
                                           connector_bool_t const client_owned, connector_status_t * const status)
 {
     unsigned int session_id = MSG_INVALID_CLIENT_SESSION;
@@ -502,7 +502,7 @@ done:
     return session;
 }
 
-static connector_status_t msg_delete_session(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_delete_session(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_working;
 
@@ -554,7 +554,7 @@ error:
     return status;
 }
 
-static void msg_default_data_block(msg_data_block_t * dblock, uint32_t const window_size)
+STATIC void msg_default_data_block(msg_data_block_t * dblock, uint32_t const window_size)
 {
     #if (defined CONNECTOR_COMPRESSION)
     dblock->bytes_out = 0;
@@ -568,7 +568,7 @@ static void msg_default_data_block(msg_data_block_t * dblock, uint32_t const win
     MsgClearLastData(dblock->status_flag);
 }
 
-static connector_session_error_t msg_initialize_data_block(msg_session_t * const session, uint32_t const window_size, msg_block_state_t state)
+STATIC connector_session_error_t msg_initialize_data_block(msg_session_t * const session, uint32_t const window_size, msg_block_state_t state)
 {
     connector_session_error_t result = connector_session_error_none;
 
@@ -656,7 +656,7 @@ done:
     return result;
 }
 
-static connector_status_t msg_send_error(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, uint16_t const session_id, connector_session_error_t const error_value, uint8_t const flag)
+STATIC connector_status_t msg_send_error(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, uint16_t const session_id, connector_session_error_t const error_value, uint8_t const flag)
 {
     connector_status_t status = connector_working;
     uint8_t * error_packet;
@@ -683,7 +683,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_send_capabilities(connector_data_t * const connector_ptr, connector_msg_data_t const * const msg_ptr, uint8_t const flag)
+STATIC connector_status_t msg_send_capabilities(connector_data_t * const connector_ptr, connector_msg_data_t const * const msg_ptr, uint8_t const flag)
 {
     connector_status_t status = connector_pending;
     uint8_t * capability_packet = NULL;
@@ -747,7 +747,7 @@ error:
     return status;
 }
 
-static void msg_fill_msg_header(msg_session_t * const session, void * ptr)
+STATIC void msg_fill_msg_header(msg_session_t * const session, void * ptr)
 {
     uint8_t flag = 0;
 
@@ -802,7 +802,7 @@ static void msg_fill_msg_header(msg_session_t * const session, void * ptr)
     }
 }
 
-static connector_status_t msg_send_complete(connector_data_t * const connector_ptr, uint8_t const * const packet, connector_status_t const status, void * const user_data)
+STATIC connector_status_t msg_send_complete(connector_data_t * const connector_ptr, uint8_t const * const packet, connector_status_t const status, void * const user_data)
 {
     connector_status_t return_status = connector_working;
 
@@ -871,7 +871,7 @@ done:
     return return_status;
 }
 
-static connector_status_t msg_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_working;
     uint8_t * buffer;
@@ -907,7 +907,7 @@ error:
 }
 
 #if (defined CONNECTOR_COMPRESSION)
-static connector_status_t msg_compress_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_compress_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_working;
     msg_data_block_t * const dblock = session->out_dblock;
@@ -949,7 +949,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_prepare_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_prepare_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_no_resource;
     msg_data_block_t * const dblock = session->out_dblock;
@@ -973,7 +973,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_process_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_process_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_no_resource;
     msg_data_block_t * const dblock = session->out_dblock;
@@ -1012,7 +1012,7 @@ error:
 
 #else
 
-static connector_status_t msg_prepare_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_prepare_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     uint8_t * msg_buffer;
     connector_status_t status = connector_no_resource;
@@ -1054,7 +1054,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_process_send_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_no_resource;
     msg_data_block_t * const dblock = session->out_dblock;
@@ -1085,7 +1085,7 @@ error:
 
 #endif
 
-static connector_status_t msg_get_service_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_get_service_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_no_resource;
     msg_data_block_t * const dblock = session->out_dblock;
@@ -1116,7 +1116,7 @@ done:
 }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-static connector_bool_t msg_initiate_request(connector_data_t * const connector_ptr, void const * const service_context)
+STATIC connector_bool_t msg_initiate_request(connector_data_t * const connector_ptr, void const * const service_context)
 {
     connector_bool_t success = connector_false;
     connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
@@ -1132,7 +1132,7 @@ error:
     return success;
 }
 
-static connector_status_t msg_handle_pending_request(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, connector_session_error_t const result)
+STATIC connector_status_t msg_handle_pending_request(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, connector_session_error_t const result)
 {
     connector_status_t status = connector_working;
     connector_msg_callback_t * const cb_fn = msg_ptr->service_cb[msg_service_id_data];
@@ -1155,7 +1155,7 @@ static connector_status_t msg_handle_pending_request(connector_data_t * const co
     return status;
 }
 
-static connector_status_t msg_start_session(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr)
+STATIC connector_status_t msg_start_session(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr)
 {
     connector_status_t status = connector_working;
     static connector_bool_t const client_owned = connector_true;
@@ -1174,7 +1174,7 @@ error:
 }
 #endif
 
-static connector_status_t msg_send_ack(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_send_ack(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_pending;
     uint8_t * ack_packet;
@@ -1219,7 +1219,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process_capabilities(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_fac, uint8_t * const ptr)
+STATIC connector_status_t msg_process_capabilities(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_fac, uint8_t * const ptr)
 {
     connector_status_t status = connector_working;
     uint8_t * capability_packet = ptr;
@@ -1259,7 +1259,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_pass_service_data(connector_data_t * const connector_ptr, msg_session_t * const session, void * data, size_t const bytes)
+STATIC connector_status_t msg_pass_service_data(connector_data_t * const connector_ptr, msg_session_t * const session, void * data, size_t const bytes)
 {
     connector_status_t status = connector_working;
     msg_data_block_t * const dblock = session->in_dblock;
@@ -1352,7 +1352,7 @@ error:
 }
 
 #if (defined CONNECTOR_COMPRESSION)
-static connector_status_t msg_process_decompressed_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_process_decompressed_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_working;
     msg_data_block_t * const dblock = session->in_dblock;
@@ -1385,7 +1385,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_decompress_data(connector_data_t * const connector_ptr, msg_session_t * const session)
+STATIC connector_status_t msg_decompress_data(connector_data_t * const connector_ptr, msg_session_t * const session)
 {
     connector_status_t status = connector_working;
     msg_data_block_t * const dblock = session->in_dblock;
@@ -1437,7 +1437,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process_compressed_data(connector_data_t * const connector_ptr, msg_session_t * const session, uint8_t * data, size_t const bytes)
+STATIC connector_status_t msg_process_compressed_data(connector_data_t * const connector_ptr, msg_session_t * const session, uint8_t * data, size_t const bytes)
 {
     connector_status_t status = connector_working;
     msg_data_block_t * const dblock = session->in_dblock;
@@ -1466,7 +1466,7 @@ done:
 }
 #endif
 
-static connector_status_t msg_process_service_data(connector_data_t * const connector_ptr, msg_session_t * const session, uint8_t * msg_data, size_t const frame_bytes, size_t const header_bytes, unsigned const flag)
+STATIC connector_status_t msg_process_service_data(connector_data_t * const connector_ptr, msg_session_t * const session, uint8_t * msg_data, size_t const frame_bytes, size_t const header_bytes, unsigned const flag)
 {
     connector_status_t status = connector_working;
     uint8_t * buffer = msg_data + header_bytes;
@@ -1498,7 +1498,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process_start(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, uint8_t * ptr, uint16_t const length)
+STATIC connector_status_t msg_process_start(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, uint8_t * ptr, uint16_t const length)
 {
     connector_status_t status = connector_working;
     connector_session_error_t result = connector_session_error_none;
@@ -1593,7 +1593,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process_data(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, uint8_t * ptr, uint16_t const length)
+STATIC connector_status_t msg_process_data(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, uint8_t * ptr, uint16_t const length)
 {
     connector_status_t status = connector_working;
     msg_session_t * session;
@@ -1615,7 +1615,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process_ack(connector_msg_data_t * const msg_fac, uint8_t const * ptr)
+STATIC connector_status_t msg_process_ack(connector_msg_data_t * const msg_fac, uint8_t const * ptr)
 {
     msg_session_t * session;
     uint8_t const * const ack_packet = ptr;
@@ -1651,7 +1651,7 @@ done:
     return connector_working;
 }
 
-static connector_status_t msg_process_error(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_fac, uint8_t * const ptr)
+STATIC connector_status_t msg_process_error(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_fac, uint8_t * const ptr)
 {
     connector_status_t status = connector_working;
     uint8_t * const error_packet = ptr;
@@ -1687,7 +1687,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_discovery(connector_data_t * const connector_ptr, void * const facility_data, uint8_t * const packet, unsigned int * const receive_timeout)
+STATIC connector_status_t msg_discovery(connector_data_t * const connector_ptr, void * const facility_data, uint8_t * const packet, unsigned int * const receive_timeout)
 {
     uint8_t const capability_flag = MSG_FLAG_REQUEST;
 
@@ -1697,7 +1697,7 @@ static connector_status_t msg_discovery(connector_data_t * const connector_ptr, 
     return msg_send_capabilities(connector_ptr, facility_data, capability_flag);
 }
 
-static void msg_switch_session(connector_msg_data_t * const msg_ptr, msg_session_t * const session)
+STATIC void msg_switch_session(connector_msg_data_t * const msg_ptr, msg_session_t * const session)
 {
     if (!msg_ptr->session_locked)
     {
@@ -1707,7 +1707,7 @@ static void msg_switch_session(connector_msg_data_t * const msg_ptr, msg_session
     }
 }
 
-static connector_status_t msg_process_pending(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, unsigned int * const receive_timeout)
+STATIC connector_status_t msg_process_pending(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, unsigned int * const receive_timeout)
 {
     connector_status_t status = connector_idle;
 
@@ -1803,7 +1803,7 @@ done:
     return status;
 }
 
-static connector_status_t msg_process(connector_data_t * const connector_ptr, void * const facility_data, uint8_t * const edp_header, unsigned int * const receive_timeout)
+STATIC connector_status_t msg_process(connector_data_t * const connector_ptr, void * const facility_data, uint8_t * const edp_header, unsigned int * const receive_timeout)
 {
     connector_status_t status = connector_idle;
     connector_msg_data_t * const msg_ptr = facility_data;
@@ -1866,7 +1866,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_cleanup_all_sessions(connector_data_t * const connector_ptr, uint16_t const service_id)
+STATIC connector_status_t msg_cleanup_all_sessions(connector_data_t * const connector_ptr, uint16_t const service_id)
 {
     connector_status_t status = connector_working;
     connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
@@ -1900,7 +1900,7 @@ error:
     return status;
 }
 
-static connector_status_t msg_delete_facility(connector_data_t * const connector_ptr, uint16_t const service_id)
+STATIC connector_status_t msg_delete_facility(connector_data_t * const connector_ptr, uint16_t const service_id)
 {
     connector_status_t status = connector_no_resource;
     connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
@@ -1937,7 +1937,7 @@ error:
 }
 
 
-static connector_status_t msg_init_facility(connector_data_t * const connector_ptr, unsigned int const facility_index, uint16_t service_id, connector_msg_callback_t callback)
+STATIC connector_status_t msg_init_facility(connector_data_t * const connector_ptr, unsigned int const facility_index, uint16_t service_id, connector_msg_callback_t callback)
 {
     connector_status_t status = connector_no_resource;
     connector_msg_data_t * msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);

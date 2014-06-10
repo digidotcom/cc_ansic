@@ -93,7 +93,7 @@ enum fw_abort {
 
 #define FW_ABORT_HEADER_SIZE    record_bytes(fw_abort)
 
-static connector_status_t send_fw_message(connector_firmware_data_t * const fw_ptr)
+STATIC connector_status_t send_fw_message(connector_firmware_data_t * const fw_ptr)
 {
 
     connector_status_t status;
@@ -104,7 +104,7 @@ static connector_status_t send_fw_message(connector_firmware_data_t * const fw_p
 
 }
 
-static connector_status_t send_fw_abort(connector_firmware_data_t * const fw_ptr, uint8_t const target, uint8_t const msg_opcode, fw_abort_status_t const abort_status)
+STATIC connector_status_t send_fw_abort(connector_firmware_data_t * const fw_ptr, uint8_t const target, uint8_t const msg_opcode, fw_abort_status_t const abort_status)
 {
 
     connector_status_t status;
@@ -222,7 +222,7 @@ done:
     return status;
 }
 
-static connector_status_t process_fw_download_request(connector_firmware_data_t * const fw_ptr, uint8_t * fw_download_request, uint16_t const length)
+STATIC connector_status_t process_fw_download_request(connector_firmware_data_t * const fw_ptr, uint8_t * fw_download_request, uint16_t const length)
 {
 
 /* Firmware download request message format:
@@ -294,7 +294,7 @@ done:
 }
 
 
-static connector_status_t fw_discovery(connector_data_t * const connector_ptr, void * const facility_data,
+STATIC connector_status_t fw_discovery(connector_data_t * const connector_ptr, void * const facility_data,
                                             uint8_t * const packet, unsigned int * receive_timeout)
 {
 /* Firmware target list message format:
@@ -355,7 +355,7 @@ done:
     return status;
 }
 
-static connector_status_t fw_process(connector_data_t * const connector_ptr, void * const facility_data,
+STATIC connector_status_t fw_process(connector_data_t * const connector_ptr, void * const facility_data,
                                           uint8_t * const edp_header, unsigned int * const receive_timeout)
 {
     connector_status_t status = connector_idle;
@@ -440,12 +440,12 @@ done:
     return status;
 }
 
-static connector_status_t connector_facility_firmware_delete(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_firmware_delete(connector_data_t * const connector_ptr)
 {
     return del_facility_data(connector_ptr, E_MSG_FAC_FW_NUM);
 }
 
-static connector_status_t connector_facility_firmware_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
+STATIC connector_status_t connector_facility_firmware_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
     connector_status_t status = connector_idle;
     connector_firmware_data_t * fw_ptr;

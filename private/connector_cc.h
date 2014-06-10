@@ -49,7 +49,7 @@ typedef struct {
     uint8_t report_code;
 } connector_cc_data_t;
 
-static void cc_init(connector_cc_data_t * const cc_ptr)
+STATIC void cc_init(connector_cc_data_t * const cc_ptr)
 {
     cc_ptr->state = cc_state_redirect_report;
     cc_ptr->report_code = cc_not_redirect;
@@ -57,7 +57,7 @@ static void cc_init(connector_cc_data_t * const cc_ptr)
 
 }
 
-static connector_status_t edp_send_redirect_report(connector_data_t * const connector_ptr, connector_cc_data_t * const cc_ptr)
+STATIC connector_status_t edp_send_redirect_report(connector_data_t * const connector_ptr, connector_cc_data_t * const cc_ptr)
 {
 
 enum cc_redirect_report {
@@ -137,7 +137,7 @@ done:
     return result;
 }
 
-static void build_ip_addr(connector_data_t * const connector_ptr, uint8_t * ipv6_addr)
+STATIC void build_ip_addr(connector_data_t * const connector_ptr, uint8_t * ipv6_addr)
 {
     connector_debug_print_buffer("Send device IP address", connector_ptr->edp_data.config.ip_addr, (int) connector_ptr->edp_data.config.ip_addr_length);
 
@@ -167,7 +167,7 @@ static void build_ip_addr(connector_data_t * const connector_ptr, uint8_t * ipv6
 
 }
 
-static connector_status_t send_connection_report(connector_data_t * const connector_ptr, connector_cc_data_t * const cc_ptr)
+STATIC connector_status_t send_connection_report(connector_data_t * const connector_ptr, connector_cc_data_t * const cc_ptr)
 {
 #define FAC_CC_CLIENTTYPE_REBOOTABLE_DEVICE 2
 
@@ -367,7 +367,7 @@ done:
     return result;
 }
 
-static connector_status_t cc_process(connector_data_t * const connector_ptr, void * const facility_data,
+STATIC connector_status_t cc_process(connector_data_t * const connector_ptr, void * const facility_data,
                                           uint8_t * const packet, unsigned int * const receive_timeout)
 {
     connector_status_t result = connector_idle;
@@ -410,7 +410,7 @@ static connector_status_t cc_process(connector_data_t * const connector_ptr, voi
 
     return result;
 }
-static connector_status_t cc_discovery(connector_data_t * const connector_ptr, void * const facility_data,
+STATIC connector_status_t cc_discovery(connector_data_t * const connector_ptr, void * const facility_data,
                                             uint8_t * const packet, unsigned int * receive_timeout)
 {
     connector_status_t result = connector_idle;
@@ -440,7 +440,7 @@ static connector_status_t cc_discovery(connector_data_t * const connector_ptr, v
     return result;
 }
 
-static connector_status_t connector_facility_cc_cleanup(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_cc_cleanup(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_cc_data_t * const cc_ptr = get_facility_data(connector_ptr, E_MSG_FAC_CC_NUM);
@@ -455,12 +455,12 @@ static connector_status_t connector_facility_cc_cleanup(connector_data_t * const
     return result;
 }
 
-static connector_status_t connector_facility_cc_delete(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_cc_delete(connector_data_t * const connector_ptr)
 {
     return del_facility_data(connector_ptr, E_MSG_FAC_CC_NUM);
 }
 
-static connector_status_t connector_facility_cc_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
+STATIC connector_status_t connector_facility_cc_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
     connector_status_t result = connector_working;
     connector_cc_data_t * cc_ptr;
@@ -492,7 +492,7 @@ done:
     return result;
 }
 
-static connector_status_t edp_redirect_process(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_redirect_process(connector_data_t * const connector_ptr)
 {
 
     connector_status_t result = connector_working;

@@ -18,6 +18,12 @@
 
 #define CONNECTOR_CONST_PROTECTION
 
+#if (defined UNIT_TEST)
+#define STATIC
+#else
+#define STATIC      static
+#endif
+
 /*  WARNING: connector_api.h must be the first connector_* header file
  * to guarantee CONNECTOR_VERSION is properly applied to all files */
 #include "connector_api.h"
@@ -29,13 +35,13 @@
 #include "chk_config.h"
 #include "bele.h"
 
-static connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status, void * const context);
+STATIC connector_status_t notify_error_status(connector_callback_t const callback, connector_class_id_t const class_number, connector_request_id_t const request_number, connector_status_t const status, void * const context);
 #include "os_intf.h"
 #include "connector_global_config.h"
 
-static connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context);
+STATIC connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context);
 #if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
-static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
+STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 #endif
 
 #if (defined CONNECTOR_DATA_POINTS)
@@ -60,7 +66,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
 static char const connector_signature[] = CONNECTOR_SW_VERSION;
 
 #if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
-static connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
+STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_connect_type_t * const config_connect)
 {
@@ -109,7 +115,7 @@ static connector_status_t get_config_connect_status(connector_data_t * const con
 }
 #endif
 
-static connector_status_t get_wan_device_id(connector_data_t * const connector_ptr,
+STATIC connector_status_t get_wan_device_id(connector_data_t * const connector_ptr,
                                             uint8_t * const device_id,
                                             connector_request_id_config_t config_request)
 {
@@ -168,7 +174,7 @@ enum {
 }
 
 
-static connector_status_t manage_device_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t manage_device_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -245,7 +251,7 @@ error:
     return result;
 }
 
-static connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context)
+STATIC connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context)
 {
     connector_status_t result = connector_working;
 
@@ -281,7 +287,7 @@ static connector_status_t connector_stop_callback(connector_data_t * const conne
 
 #define CONNECTOR_IS_STOP(state, value)    ((state) == (value))
 
-static connector_bool_t is_connector_stopped(connector_data_t * const connector_ptr, connector_close_status_t const close_status)
+STATIC connector_bool_t is_connector_stopped(connector_data_t * const connector_ptr, connector_close_status_t const close_status)
 {
     int count = 0;
     connector_transport_state_t wait_state = (close_status == connector_close_status_device_stopped) ? connector_transport_idle : connector_transport_terminate;
@@ -301,7 +307,7 @@ static connector_bool_t is_connector_stopped(connector_data_t * const connector_
     return connector_bool(count == 0);
 }
 
-static void abort_connector(connector_data_t * const connector_ptr)
+STATIC void abort_connector(connector_data_t * const connector_ptr)
 {
     switch (connector_ptr->stop.state)
     {

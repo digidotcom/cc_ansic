@@ -32,22 +32,22 @@
 
 #endif
 
-static void connector_debug_line(char const * const format, ...)
+STATIC void connector_debug_line(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_all, format);
 }
 
-static void connector_debug_line_beg(char const * const format, ...)
+STATIC void connector_debug_line_beg(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_beg, format);
 }
 
-static void connector_debug_line_mid(char const * const format, ...)
+STATIC void connector_debug_line_mid(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_mid, format);
 }
 
-static void connector_debug_line_end(char const * const format, ...)
+STATIC void connector_debug_line_end(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_end, format);
 }

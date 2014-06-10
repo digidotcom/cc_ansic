@@ -23,7 +23,7 @@ static char const rci_error_content_size_hint[] = "Maximum content size exceeded
 #define rci_error_content_size_hint         RCI_NO_HINT
 #endif
 
-static connector_bool_t destination_in_storage(rci_t const * const rci)
+STATIC connector_bool_t destination_in_storage(rci_t const * const rci)
 {
     uint8_t const * const storage_begin = rci->input.storage;
     uint8_t const * const storage_end = storage_begin + sizeof rci->input.storage;
@@ -31,7 +31,7 @@ static connector_bool_t destination_in_storage(rci_t const * const rci)
     return ptr_in_range(rci->input.destination, storage_begin, storage_end);
 }
 
-static size_t get_bytes_to_follow(uint8_t opcode)
+STATIC size_t get_bytes_to_follow(uint8_t opcode)
 {
     size_t bytes_to_read = 0;
 
@@ -67,7 +67,7 @@ static size_t get_bytes_to_follow(uint8_t opcode)
     return bytes_to_read;
 }
 
-static void reset_input_content(rci_t * const rci)
+STATIC void reset_input_content(rci_t * const rci)
 {
     rci->shared.content.data = rci->input.destination;
     rci->shared.content.length = 0;
@@ -76,7 +76,7 @@ static void reset_input_content(rci_t * const rci)
 #define BINARY_RCI_ONE_BYTE_LIMIT_MASK  UINT32_C(0x7F)
 #define BINARY_RCI_HI_BYTE_MASK         UINT32_C(0x1F)
 
-static size_t get_modifier_ber(rci_t * const rci, uint32_t * const value)
+STATIC size_t get_modifier_ber(rci_t * const rci, uint32_t * const value)
 {
 
     uint8_t * const rci_ber = rci->shared.content.data;
@@ -134,7 +134,7 @@ done:
     return bytes_read;
 }
 
-static connector_bool_t get_uint32(rci_t * const rci, uint32_t * const value)
+STATIC connector_bool_t get_uint32(rci_t * const rci, uint32_t * const value)
 {
 
     size_t const bytes = get_modifier_ber(rci, value);
@@ -146,7 +146,7 @@ static connector_bool_t get_uint32(rci_t * const rci, uint32_t * const value)
 }
 
 #if defined RCI_PARSER_USES_FLOAT
-static connector_bool_t get_float(rci_t * const rci, float * const value)
+STATIC connector_bool_t get_float(rci_t * const rci, float * const value)
 {
 
     connector_bool_t value_decoded = connector_false;
@@ -183,7 +183,7 @@ error:
 }
 #endif
 
-static connector_bool_t get_string(rci_t * const rci, char const * * string, size_t * const length)
+STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, size_t * const length)
 {
     connector_bool_t got_string = connector_false;
     uint32_t value;
@@ -228,7 +228,7 @@ done:
 }
 
 #if defined RCI_PARSER_USES_IPV4
-static connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_addr, size_t const length)
+STATIC connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_addr, size_t const length)
 {
     connector_bool_t got_ip = connector_false;
 
@@ -255,7 +255,7 @@ static connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_ad
 }
 #endif
 
-static connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index)
+STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index)
 {
 #define BINARY_RCI_ATTRIBUTE_TYPE_MASK  0x60  /* attr type: [bit 6 and 5] */
 
@@ -313,12 +313,12 @@ static connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
     return got_attribute;
 }
 
-static connector_bool_t has_rci_atribute(unsigned int data)
+STATIC connector_bool_t has_rci_atribute(unsigned int data)
 {
     return connector_bool((data & BINARY_RCI_ATTRIBUTE_BIT) == BINARY_RCI_ATTRIBUTE_BIT);
 }
 
-static connector_bool_t has_rci_error(rci_t * const rci, unsigned int data)
+STATIC connector_bool_t has_rci_error(rci_t * const rci, unsigned int data)
 {
 
     connector_bool_t const hasError = connector_bool((data & BINARY_RCI_ERROR_INDICATOR_BIT) == BINARY_RCI_ERROR_INDICATOR_BIT);
@@ -332,17 +332,17 @@ static connector_bool_t has_rci_error(rci_t * const rci, unsigned int data)
     return hasError;
 }
 
-static connector_bool_t has_rci_terminated(unsigned int data)
+STATIC connector_bool_t has_rci_terminated(unsigned int data)
 {
     return connector_bool(data == BINARY_RCI_TERMINATOR);
 }
 
-static connector_bool_t has_rci_no_value(unsigned int data)
+STATIC connector_bool_t has_rci_no_value(unsigned int data)
 {
     return connector_bool(data == BINARY_RCI_NO_VALUE);
 }
 
-static void process_rci_command(rci_t * const rci)
+STATIC void process_rci_command(rci_t * const rci)
 {
 #define BINARY_RCI_COMMAND_MASK   0x3F
 
@@ -417,7 +417,7 @@ done:
     return;
 }
 
-static void process_command_attribute(rci_t * const rci)
+STATIC void process_command_attribute(rci_t * const rci)
 {
     unsigned int index;
 
@@ -434,7 +434,7 @@ static void process_command_attribute(rci_t * const rci)
 }
 
 
-static void process_group_id(rci_t * const rci)
+STATIC void process_group_id(rci_t * const rci)
 {
     uint32_t group_id;
 
@@ -512,7 +512,7 @@ done:
     return;
 }
 
-static void process_group_attribute(rci_t * const rci)
+STATIC void process_group_attribute(rci_t * const rci)
 {
     if (decode_attribute(rci, &rci->shared.group.index))
     {
@@ -524,7 +524,7 @@ static void process_group_attribute(rci_t * const rci)
     return;
 }
 
-static void process_field_id(rci_t * const rci)
+STATIC void process_field_id(rci_t * const rci)
 {
     unsigned int id = INVALID_ID;
     {
@@ -610,7 +610,7 @@ done:
     return;
 }
 
-static void process_field_type(rci_t * const rci)
+STATIC void process_field_type(rci_t * const rci)
 {
     connector_group_element_t const * const element = get_current_element(rci);
     connector_bool_t error = connector_false;
@@ -645,7 +645,7 @@ done:
     return;
 }
 
-static void process_field_value(rci_t * const rci)
+STATIC void process_field_value(rci_t * const rci)
 {
     connector_group_element_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
@@ -839,7 +839,7 @@ done:
     return;
 }
 
-static void process_field_no_value(rci_t * const rci)
+STATIC void process_field_no_value(rci_t * const rci)
 {
     uint8_t * const rci_ber = rci->shared.content.data;
     uint8_t const modifier_ber = message_load_u8(rci_ber, value);
@@ -949,7 +949,7 @@ static void process_field_no_value(rci_t * const rci)
 
 }
 
-static void rci_parse_input(rci_t * const rci)
+STATIC void rci_parse_input(rci_t * const rci)
 {
     rci_buffer_t * const input = &rci->buffer.input;
 

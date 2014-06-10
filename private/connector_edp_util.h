@@ -31,7 +31,7 @@
 #define edp_set_stop_request(connector_ptr, context)             (connector_ptr)->edp_data.stop.is_set = connector_true; (connector_ptr)->edp_data.stop.user_context = (context)
 #define edp_clear_stop_request(connector_ptr)           (connector_ptr)->edp_data.stop.is_set = connector_false
 
-static void edp_reset_initial_data(connector_data_t * const connector_ptr)
+STATIC void edp_reset_initial_data(connector_data_t * const connector_ptr)
 {
     edp_set_edp_state(connector_ptr, edp_configuration_init);
 
@@ -57,7 +57,7 @@ static void edp_reset_initial_data(connector_data_t * const connector_ptr)
 
 }
 
-static connector_bool_t is_valid_timing_limit(connector_data_t * const connector_ptr, unsigned long const start, unsigned long const limit)
+STATIC connector_bool_t is_valid_timing_limit(connector_data_t * const connector_ptr, unsigned long const start, unsigned long const limit)
 {
     unsigned long elapsed = start;
     connector_bool_t rc = connector_false;
@@ -71,7 +71,7 @@ static connector_bool_t is_valid_timing_limit(connector_data_t * const connector
     return rc;
 }
 
-static void * get_facility_data(connector_data_t * const connector_ptr, uint16_t const facility_num)
+STATIC void * get_facility_data(connector_data_t * const connector_ptr, uint16_t const facility_num)
 {
     connector_facility_t * fac_ptr;
     void * ptr = NULL;
@@ -89,7 +89,7 @@ static void * get_facility_data(connector_data_t * const connector_ptr, uint16_t
     return ptr;
 }
 
-static connector_static_buffer_id_t get_facility_buffer_id(uint16_t const facility_num)
+STATIC connector_static_buffer_id_t get_facility_buffer_id(uint16_t const facility_num)
 {
     connector_static_buffer_id_t id;
 
@@ -110,7 +110,7 @@ static connector_static_buffer_id_t get_facility_buffer_id(uint16_t const facili
     return id;
 }
 
-static connector_status_t add_facility_data(connector_data_t * const connector_ptr, unsigned int const service_index,
+STATIC connector_status_t add_facility_data(connector_data_t * const connector_ptr, unsigned int const service_index,
                                                  uint16_t const facility_num, void ** fac_ptr, size_t const size)
 {
     connector_status_t status;
@@ -140,7 +140,7 @@ static connector_status_t add_facility_data(connector_data_t * const connector_p
     return status;
 }
 
-static connector_status_t del_facility_data(connector_data_t * const connector_ptr, uint16_t const facility_num)
+STATIC connector_status_t del_facility_data(connector_data_t * const connector_ptr, uint16_t const facility_num)
 {
     connector_status_t status = connector_working;
     connector_facility_t * fac_ptr;
@@ -160,7 +160,7 @@ static connector_status_t del_facility_data(connector_data_t * const connector_p
     return status;
 }
 
-static connector_status_t notify_status(connector_callback_t const callback, connector_tcp_status_t const status, void * const context)
+STATIC connector_status_t notify_status(connector_callback_t const callback, connector_tcp_status_t const status, void * const context)
 {
     connector_status_t result;
     connector_request_id_t request_id;
@@ -188,7 +188,7 @@ static connector_status_t notify_status(connector_callback_t const callback, con
     return result;
 }
 
-static void edp_get_device_cloud(connector_data_t * const connector_ptr)
+STATIC void edp_get_device_cloud(connector_data_t * const connector_ptr)
 {
     memcpy(connector_ptr->edp_data.config.cloud_url, connector_ptr->device_cloud_url, connector_ptr->device_cloud_url_length);
     connector_ptr->edp_data.config.cloud_url[connector_ptr->device_cloud_url_length] = 0x0;

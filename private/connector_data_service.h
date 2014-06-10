@@ -26,14 +26,14 @@ typedef struct
     connector_request_id_data_service_t request_type;
 } data_service_context_t;
 
-static void set_data_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
+STATIC void set_data_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
 {
     service_request->error_value = error_code;
     service_request->service_type = msg_service_type_error;
 }
 
 
-static connector_status_t call_ds_receive_callback(connector_data_t * const connector_ptr,
+STATIC connector_status_t call_ds_receive_callback(connector_data_t * const connector_ptr,
                                                    data_service_context_t * const data_service,
                                                    void * const data)
 {
@@ -78,7 +78,7 @@ static connector_status_t call_ds_receive_callback(connector_data_t * const conn
     return result;
 }
 
-static connector_status_t process_ds_receive_target(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_ds_receive_target(connector_data_t * const connector_ptr,
                                                     data_service_context_t * const data_service,
                                                     uint8_t const * const data,
                                                     size_t * const data_length)
@@ -182,7 +182,7 @@ done:
     return result;
 }
 
-static connector_status_t process_ds_receive_data(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_ds_receive_data(connector_data_t * const connector_ptr,
                                                   data_service_context_t * const data_service,
                                                   uint8_t const * const data,
                                                   size_t const data_length,
@@ -202,7 +202,7 @@ static connector_status_t process_ds_receive_data(connector_data_t * const conne
 
     return result;
 }
-static connector_status_t process_data_service_device_request(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_data_service_device_request(connector_data_t * const connector_ptr,
                                                  msg_service_request_t * const service_request)
 {
     connector_status_t result = connector_working;
@@ -304,7 +304,7 @@ done:
     return result;
 }
 
-static connector_status_t process_data_service_device_response(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_data_service_device_response(connector_data_t * const connector_ptr,
                                                                msg_service_request_t * const service_request)
 {
     /* Data Service Device response format:
@@ -402,7 +402,7 @@ done:
 }
 
 
-static connector_status_t process_data_service_device_error(connector_data_t * const connector_ptr,
+STATIC connector_status_t process_data_service_device_error(connector_data_t * const connector_ptr,
                                                        msg_service_request_t * const service_request)
 {
     connector_status_t result = connector_working;
@@ -443,7 +443,7 @@ static connector_status_t process_data_service_device_error(connector_data_t * c
     return result;
 }
 
-static connector_status_t data_service_device_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+STATIC connector_status_t data_service_device_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_working;
 
@@ -489,7 +489,7 @@ static connector_status_t data_service_device_request_callback(connector_data_t 
     return status;
 }
 
-static size_t fill_put_request_header(connector_request_data_service_send_t const * const request, uint8_t * const data)
+STATIC size_t fill_put_request_header(connector_request_data_service_send_t const * const request, uint8_t * const data)
 {
     uint8_t * ptr = data;
 
@@ -560,7 +560,7 @@ static size_t fill_put_request_header(connector_request_data_service_send_t cons
     return (size_t)(ptr - data);
 }
 
-static connector_status_t call_put_request_user(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, connector_request_id_data_service_t const request_id, void * const cb_data)
+STATIC connector_status_t call_put_request_user(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, connector_request_id_data_service_t const request_id, void * const cb_data)
 {
     connector_status_t status = connector_working;
     msg_session_t * const session = service_request->session;
@@ -604,7 +604,7 @@ static connector_status_t call_put_request_user(connector_data_t * const connect
     return status;
 }
 
-static connector_status_t process_send_request(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, data_service_context_t * const ds_ptr)
+STATIC connector_status_t process_send_request(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, data_service_context_t * const ds_ptr)
 {
     connector_status_t status = connector_working;
     msg_service_data_t * const service_data = service_request->need_data;
@@ -654,7 +654,7 @@ done:
     return status;
 }
 
-static connector_status_t process_send_response(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, data_service_context_t * const ds_ptr)
+STATIC connector_status_t process_send_response(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, data_service_context_t * const ds_ptr)
 {
     connector_status_t status = connector_working;
     connector_data_service_send_response_t user_data;
@@ -742,7 +742,7 @@ done:
     return status;
 }
 
-static connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * const cb_context)
+STATIC connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * const cb_context)
 {
     connector_status_t status = connector_working;
     connector_data_service_status_t user_data;
@@ -776,7 +776,7 @@ static connector_status_t process_send_error(connector_data_t * const connector_
     return status;
 }
 
-static connector_status_t data_service_put_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+STATIC connector_status_t data_service_put_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status;
     msg_session_t * const session = service_request->session;
@@ -827,7 +827,7 @@ static connector_status_t data_service_put_request_callback(connector_data_t * c
     return status;
 }
 
-static connector_status_t data_service_put_request_init(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+STATIC connector_status_t data_service_put_request_init(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_working;
     connector_session_error_t result = service_request->error_value;
@@ -877,7 +877,7 @@ done:
     return status;
 }
 
-static connector_status_t data_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+STATIC connector_status_t data_service_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
     connector_status_t status = connector_idle;
     msg_session_t * session;
@@ -928,22 +928,22 @@ done:
     return status;
 }
 
-static connector_status_t connector_facility_data_service_cleanup(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_facility_data_service_cleanup(connector_data_t * const connector_ptr)
 {
     return msg_cleanup_all_sessions(connector_ptr,  msg_service_id_data);
 }
 
-static connector_status_t connector_facility_data_service_delete(connector_data_t * const data_ptr)
+STATIC connector_status_t connector_facility_data_service_delete(connector_data_t * const data_ptr)
 {
     return msg_delete_facility(data_ptr, msg_service_id_data);
 }
 
-static connector_status_t connector_facility_data_service_init(connector_data_t * const data_ptr, unsigned int const facility_index)
+STATIC connector_status_t connector_facility_data_service_init(connector_data_t * const data_ptr, unsigned int const facility_index)
 {
     return msg_init_facility(data_ptr, facility_index, msg_service_id_data, data_service_callback);
 }
 
-static connector_status_t data_service_initiate(connector_data_t * const connector_ptr,  void const * request)
+STATIC connector_status_t data_service_initiate(connector_data_t * const connector_ptr,  void const * request)
 {
     connector_status_t status = connector_invalid_data;
 

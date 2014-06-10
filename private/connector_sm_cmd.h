@@ -9,7 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-static connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     connector_bool_t response_needed;
@@ -68,7 +68,7 @@ error:
     return result;
 }
 
-static void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_status_t * const result)
+STATIC void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_status_t * const result)
 {
     switch (*result)
     {
@@ -108,7 +108,7 @@ done:
 }
 
 #if (defined CONNECTOR_COMPRESSION) || (defined CONNECTOR_SM_MULTIPART)
-static size_t sm_get_max_payload_bytes(connector_sm_data_t * const sm_ptr)
+STATIC size_t sm_get_max_payload_bytes(connector_sm_data_t * const sm_ptr)
 {
     size_t const sm_header_size = 5;
 
@@ -119,7 +119,7 @@ static size_t sm_get_max_payload_bytes(connector_sm_data_t * const sm_ptr)
 }
 #endif
 
-static connector_status_t sm_allocate_user_buffer(connector_data_t * const connector_ptr, sm_data_block_t * const dblock)
+STATIC connector_status_t sm_allocate_user_buffer(connector_data_t * const connector_ptr, sm_data_block_t * const dblock)
 {
     void * ptr = NULL;
     connector_status_t result = connector_working;
@@ -135,7 +135,7 @@ static connector_status_t sm_allocate_user_buffer(connector_data_t * const conne
     return result;
 }
 
-static connector_status_t sm_map_callback_status_to_connector_status(connector_callback_status_t const callback_status)
+STATIC connector_status_t sm_map_callback_status_to_connector_status(connector_callback_status_t const callback_status)
 {
     connector_status_t result;
 
@@ -162,7 +162,7 @@ static connector_status_t sm_map_callback_status_to_connector_status(connector_c
 }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-static connector_callback_status_t sm_inform_data_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_callback_status_t sm_inform_data_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_request_id_t request_id;
     connector_callback_status_t callback_status;
@@ -210,7 +210,7 @@ static connector_callback_status_t sm_inform_data_complete(connector_data_t * co
 #endif
 
 #if (defined CONNECTOR_SM_CLI)
-static connector_callback_status_t sm_inform_cli_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_callback_status_t sm_inform_cli_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_request_id_t request_id;
     connector_callback_status_t callback_status;
@@ -228,7 +228,7 @@ static connector_callback_status_t sm_inform_cli_complete(connector_data_t * con
 }
 #endif
 
-static connector_callback_status_t sm_inform_ping_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_callback_status_t sm_inform_ping_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_callback_status_t callback_status = connector_callback_continue;
 
@@ -271,7 +271,7 @@ static connector_callback_status_t sm_inform_ping_complete(connector_data_t * co
     return callback_status;
 }
 
-static connector_status_t sm_inform_session_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_inform_session_complete(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result;
     connector_callback_status_t callback_status = connector_callback_continue;
@@ -318,7 +318,7 @@ done:
     return result;
 }
 
-static connector_status_t sm_switch_path(connector_data_t * const connector_ptr, connector_sm_session_t * const session, connector_sm_state_t const next_state)
+STATIC connector_status_t sm_switch_path(connector_data_t * const connector_ptr, connector_sm_session_t * const session, connector_sm_state_t const next_state)
 {
     connector_status_t result = connector_working;
 
@@ -363,7 +363,7 @@ error:
     return result;
 }
 
-static void sm_set_payload_process(connector_sm_session_t * const session)
+STATIC void sm_set_payload_process(connector_sm_session_t * const session)
 {
     size_t const zlib_header_bytes = 2;
 
@@ -372,7 +372,7 @@ static void sm_set_payload_process(connector_sm_session_t * const session)
     session->bytes_processed = SmIsCompressed(session->flags) ? zlib_header_bytes : 0;
 }
 
-static void sm_set_payload_complete(connector_sm_session_t * const session)
+STATIC void sm_set_payload_complete(connector_sm_session_t * const session)
 {
     ASSERT(session->bytes_processed <= session->in.bytes);
 
@@ -383,7 +383,7 @@ static void sm_set_payload_complete(connector_sm_session_t * const session)
     #endif
 }
 
-static void sm_set_header_complete(connector_sm_session_t * const session)
+STATIC void sm_set_header_complete(connector_sm_session_t * const session)
 {
     if (session->bytes_processed < session->in.bytes)
         session->sm_state = connector_sm_state_more_data;
@@ -391,7 +391,7 @@ static void sm_set_header_complete(connector_sm_session_t * const session)
         sm_set_payload_complete(session);
 }
 
-static connector_status_t sm_prepare_data_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_prepare_data_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     size_t const path_length_field_bytes = 1;
@@ -432,7 +432,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_prepare_data_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_prepare_data_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t const result = sm_allocate_user_buffer(connector_ptr, &session->in);
 
@@ -448,7 +448,7 @@ static connector_status_t sm_prepare_data_response(connector_data_t * const conn
 }
 
 #if (defined CONNECTOR_SM_CLI)
-static connector_status_t sm_process_cli_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
+STATIC connector_status_t sm_process_cli_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
     connector_status_t result = connector_abort;
     char * const cli_command = payload;
@@ -533,7 +533,7 @@ static connector_status_t sm_process_cli_request(connector_data_t * const connec
     return result;
 }
 
-static connector_status_t sm_prepare_cli_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_prepare_cli_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result;
     connector_sm_cli_response_t cli_response;
@@ -593,7 +593,7 @@ error:
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-static connector_status_t sm_process_config_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
+STATIC connector_status_t sm_process_config_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
     connector_status_t result = connector_success;
     connector_sm_receive_config_request_t config_request;
@@ -705,7 +705,7 @@ error:
 #endif
 
 #if (defined CONNECTOR_DATA_SERVICE)
-static connector_status_t sm_pass_target_info(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * const target_ptr, size_t target_bytes)
+STATIC connector_status_t sm_pass_target_info(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * const target_ptr, size_t target_bytes)
 {
     #define SM_TARGET_MAX_LENGTH    32
     connector_status_t result = connector_working;
@@ -732,7 +732,7 @@ static connector_status_t sm_pass_target_info(connector_data_t * const connector
     return result;
 }
 
-static connector_status_t sm_process_data_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
+STATIC connector_status_t sm_process_data_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
     uint8_t * data_ptr = payload;
     connector_status_t status = connector_working;
@@ -816,7 +816,7 @@ done:
     return status;
 }
 
-static connector_status_t sm_process_data_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
+STATIC connector_status_t sm_process_data_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
     connector_status_t status = connector_working;
     connector_callback_status_t callback_status;
@@ -872,7 +872,7 @@ static connector_status_t sm_process_data_response(connector_data_t * const conn
 }
 #endif
 
-static connector_status_t sm_process_reboot(connector_data_t * const connector_ptr)
+STATIC connector_status_t sm_process_reboot(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_abort;
     connector_request_id_t request_id;
@@ -888,7 +888,7 @@ static connector_status_t sm_process_reboot(connector_data_t * const connector_p
     return result;
 }
 
-static connector_status_t sm_process_ping_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_process_ping_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status;
     connector_callback_status_t const callback_status = sm_inform_ping_complete(connector_ptr, session);
@@ -902,7 +902,7 @@ static connector_status_t sm_process_ping_response(connector_data_t * const conn
     return status;
 }
 
-static connector_status_t sm_process_ping_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_process_ping_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t status;
     connector_request_id_t request_id;
@@ -921,7 +921,7 @@ static connector_status_t sm_process_ping_request(connector_data_t * const conne
     return status;
 }
 
-static connector_status_t sm_process_opaque_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
+STATIC connector_status_t sm_process_opaque_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * payload, size_t const bytes)
 {
     connector_status_t status;
     connector_request_id_t request_id;
@@ -941,7 +941,7 @@ static connector_status_t sm_process_opaque_response(connector_data_t * const co
     return status;
 }
 
-static connector_status_t sm_prepare_payload(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_prepare_payload(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     connector_status_t (* prepare_fn) (connector_data_t * const connector_ptr, connector_sm_session_t * const session) = NULL;
@@ -979,7 +979,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_pass_user_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * payload, size_t const bytes)
+STATIC connector_status_t sm_pass_user_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * payload, size_t const bytes)
 {
     connector_status_t result = connector_abort;
     connector_sm_state_t next_state = connector_sm_state_send_data;
@@ -1095,7 +1095,7 @@ static connector_status_t sm_pass_user_data(connector_data_t * const connector_p
     return result;
 }
 
-static connector_status_t sm_process_payload(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+STATIC connector_status_t sm_process_payload(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
     uint8_t * data_ptr;

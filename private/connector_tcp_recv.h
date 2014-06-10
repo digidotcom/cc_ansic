@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static connector_buffer_t * tcp_new_receive_packet(connector_data_t * const connector_ptr)
+STATIC connector_buffer_t * tcp_new_receive_packet(connector_data_t * const connector_ptr)
 {
     connector_buffer_t * buffer_ptr;
     connector_buffer_t * packet = NULL;
@@ -27,7 +27,7 @@ static connector_buffer_t * tcp_new_receive_packet(connector_data_t * const conn
     return packet;
 }
 
-static void tcp_release_receive_packet(connector_data_t * const connector_ptr, connector_buffer_t const * const packet)
+STATIC void tcp_release_receive_packet(connector_data_t * const connector_ptr, connector_buffer_t const * const packet)
 {
     ASSERT(packet != NULL);
 
@@ -43,7 +43,7 @@ static void tcp_release_receive_packet(connector_data_t * const connector_ptr, c
 }
 
 
-static connector_callback_status_t tcp_receive_buffer(connector_data_t * const connector_ptr, uint8_t  * const buffer, size_t * const length)
+STATIC connector_callback_status_t tcp_receive_buffer(connector_data_t * const connector_ptr, uint8_t  * const buffer, size_t * const length)
 {
     connector_callback_status_t status;
     connector_request_id_t request_id;
@@ -143,7 +143,7 @@ done:
 }
 
 
-static connector_callback_status_t tcp_receive_data_status(connector_data_t * const connector_ptr)
+STATIC connector_callback_status_t tcp_receive_data_status(connector_data_t * const connector_ptr)
 {
     connector_callback_status_t status = connector_callback_continue;
 
@@ -174,7 +174,7 @@ done:
 }
 
 
-static connector_status_t tcp_receive_packet(connector_data_t * const connector_ptr, connector_buffer_t ** packet)
+STATIC connector_status_t tcp_receive_packet(connector_data_t * const connector_ptr, connector_buffer_t ** packet)
 {
     enum {
         receive_packet_init,
@@ -416,9 +416,9 @@ done:
     return result;
 }
 
-static connector_status_t layer_facility_process(connector_data_t * const connector_ptr);
+STATIC connector_status_t layer_facility_process(connector_data_t * const connector_ptr);
 
-static connector_status_t edp_tcp_receive_process(connector_data_t * connector_ptr)
+STATIC connector_status_t edp_tcp_receive_process(connector_data_t * connector_ptr)
 {
 enum {
     facility_receive_message,

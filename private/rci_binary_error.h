@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static void rci_output_error_id(rci_t * const rci)
+STATIC void rci_output_error_id(rci_t * const rci)
 {
 
     connector_remote_config_t const * const response = &rci->shared.callback_data;
@@ -47,7 +47,7 @@ static void rci_output_error_id(rci_t * const rci)
     }
 }
 
-static void rci_output_error_description(rci_t * const rci)
+STATIC void rci_output_error_description(rci_t * const rci)
 {
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
     char const * const description = rci->error.description+1;
@@ -63,7 +63,7 @@ static void rci_output_error_description(rci_t * const rci)
         set_rci_error_state(rci, rci_error_state_hint);
 }
 
-static void rci_output_error_hint(rci_t * const rci)
+STATIC void rci_output_error_hint(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config_ = &rci->shared.callback_data;
     size_t const description_length = (remote_config_->response.error_hint == NULL) ? 0 : strlen(remote_config_->response.error_hint);
@@ -76,7 +76,7 @@ static void rci_output_error_hint(rci_t * const rci)
 }
 
 
-static void rci_generate_error(rci_t * const rci)
+STATIC void rci_generate_error(rci_t * const rci)
 {
     rci_buffer_t * const output = &rci->buffer.output;
 

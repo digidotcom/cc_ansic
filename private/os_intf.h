@@ -39,18 +39,18 @@ typedef enum
 } connector_static_buffer_id_t;
 
 #ifdef CONNECTOR_NO_MALLOC
-static connector_status_t malloc_static_data(connector_data_t * const connector_ptr,
+STATIC connector_status_t malloc_static_data(connector_data_t * const connector_ptr,
                                                   size_t const size,
                                                   connector_static_buffer_id_t const buffer_id,
                                                   void ** const ptr);
 
-static void free_static_data(connector_data_t * const connector_ptr,
+STATIC void free_static_data(connector_data_t * const connector_ptr,
                                  connector_static_buffer_id_t const buffer_id,
                                  void * const ptr);
 #endif
 
 
-static connector_callback_status_t connector_callback(connector_callback_t const callback, connector_class_id_t const class_id,  connector_request_id_t const request_id,
+STATIC connector_callback_status_t connector_callback(connector_callback_t const callback, connector_class_id_t const class_id,  connector_request_id_t const request_id,
                                                                        void * const data, void * const context)
 {
     connector_callback_status_t status = callback(class_id, request_id, data, context);
@@ -80,7 +80,7 @@ static connector_callback_status_t connector_callback(connector_callback_t const
 }
 
 
-static connector_status_t get_system_time(connector_data_t * const connector_ptr, unsigned long * const uptime)
+STATIC connector_status_t get_system_time(connector_data_t * const connector_ptr, unsigned long * const uptime)
 {
     connector_status_t result = connector_abort;
     connector_callback_status_t status;
@@ -110,7 +110,7 @@ static connector_status_t get_system_time(connector_data_t * const connector_ptr
 }
 
 #ifndef CONNECTOR_NO_MALLOC
-static connector_status_t malloc_cb(connector_callback_t const callback, size_t const length, void ** ptr, void * const context)
+STATIC connector_status_t malloc_cb(connector_callback_t const callback, size_t const length, void ** ptr, void * const context)
 {
     connector_status_t result = connector_working;
     connector_callback_status_t status;
@@ -148,12 +148,12 @@ static connector_status_t malloc_cb(connector_callback_t const callback, size_t 
     return result;
 }
 
-static connector_status_t malloc_data(connector_data_t * const connector_ptr, size_t const length, void ** ptr)
+STATIC connector_status_t malloc_data(connector_data_t * const connector_ptr, size_t const length, void ** ptr)
 {
     return malloc_cb(connector_ptr->callback, length, ptr, connector_ptr->context);
 }
 
-static connector_status_t free_data(connector_data_t * const connector_ptr, void * const ptr)
+STATIC connector_status_t free_data(connector_data_t * const connector_ptr, void * const ptr)
 {
     connector_status_t result = connector_working;
     connector_request_id_t request_id;
@@ -179,7 +179,7 @@ static connector_status_t free_data(connector_data_t * const connector_ptr, void
 #endif
 
 
-static connector_status_t malloc_data_buffer(connector_data_t * const connector_ptr, size_t const length, connector_static_buffer_id_t id, void ** ptr)
+STATIC connector_status_t malloc_data_buffer(connector_data_t * const connector_ptr, size_t const length, connector_static_buffer_id_t id, void ** ptr)
 {
     connector_status_t status;
 
@@ -192,7 +192,7 @@ static connector_status_t malloc_data_buffer(connector_data_t * const connector_
     return status;
 }
 
-static connector_status_t free_data_buffer(connector_data_t * const connector_ptr, connector_static_buffer_id_t id, void * const ptr)
+STATIC connector_status_t free_data_buffer(connector_data_t * const connector_ptr, connector_static_buffer_id_t id, void * const ptr)
 {
     connector_status_t status = connector_working;
 
@@ -206,7 +206,7 @@ static connector_status_t free_data_buffer(connector_data_t * const connector_pt
     return status;
 }
 
-static connector_status_t yield_process(connector_data_t * const connector_ptr, connector_status_t const status)
+STATIC connector_status_t yield_process(connector_data_t * const connector_ptr, connector_status_t const status)
 {
     connector_status_t result = connector_working;
 
@@ -233,7 +233,7 @@ static connector_status_t yield_process(connector_data_t * const connector_ptr, 
     return result;
 }
 
-static connector_status_t connector_reboot(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_reboot(connector_data_t * const connector_ptr)
 {
     connector_status_t result;
 

@@ -22,7 +22,7 @@
 
 #define tcp_is_send_active(connector_ptr)   connector_bool(connector_ptr->edp_data.send_packet.total_length > 0)
 
-static connector_status_t tcp_initiate_send_packet(connector_data_t * const connector_ptr, uint8_t * const edp_header,
+STATIC connector_status_t tcp_initiate_send_packet(connector_data_t * const connector_ptr, uint8_t * const edp_header,
                                                     size_t const length, uint16_t const type,
                                                     send_complete_cb_t send_complete_cb, void * const user_data)
 {
@@ -77,7 +77,7 @@ done:
     return status;
 }
 
-static connector_status_t tcp_initiate_send_facility_packet(connector_data_t * const connector_ptr, uint8_t * const edp_header,
+STATIC connector_status_t tcp_initiate_send_facility_packet(connector_data_t * const connector_ptr, uint8_t * const edp_header,
                                                              size_t const length, uint16_t const facility,
                                                              send_complete_cb_t send_complete_cb, void * const user_data)
 {
@@ -108,7 +108,7 @@ static connector_status_t tcp_initiate_send_facility_packet(connector_data_t * c
                                 user_data);
 }
 
-static connector_callback_status_t tcp_send_buffer(connector_data_t * const connector_ptr, uint8_t * const buffer, size_t * const length)
+STATIC connector_callback_status_t tcp_send_buffer(connector_data_t * const connector_ptr, uint8_t * const buffer, size_t * const length)
 {
     connector_callback_status_t status;
     connector_network_send_t send_data;
@@ -151,7 +151,7 @@ static connector_callback_status_t tcp_send_buffer(connector_data_t * const conn
     return status;
 }
 
-static connector_status_t tcp_release_packet_buffer(connector_data_t * const connector_ptr, uint8_t const * const packet, connector_status_t const status, void * const user_data)
+STATIC connector_status_t tcp_release_packet_buffer(connector_data_t * const connector_ptr, uint8_t const * const packet, connector_status_t const status, void * const user_data)
 {
     /* this is called when the Connector is done sending or after tcp_get_packet_buffer()
      * is called to release connector_ptr->edp_data.send_packet.packet_buffer.buffer.
@@ -171,7 +171,7 @@ static connector_status_t tcp_release_packet_buffer(connector_data_t * const con
 static unsigned int debug_count = 0;
 #endif
 
-static uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, uint16_t const facility, uint8_t ** data_ptr, size_t * data_length)
+STATIC uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, uint16_t const facility, uint8_t ** data_ptr, size_t * data_length)
 {
 #define MIN_EDP_MESSAGE_SIZE    (PACKET_EDP_HEADER_SIZE +CLOUD_URL_LENGTH)
     uint8_t * packet = NULL;
@@ -237,7 +237,7 @@ static uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, u
     return packet;
 }
 
-static connector_status_t tcp_rx_keepalive_process(connector_data_t * const connector_ptr)
+STATIC connector_status_t tcp_rx_keepalive_process(connector_data_t * const connector_ptr)
 {
    connector_status_t status = connector_idle;
 
@@ -264,7 +264,7 @@ done:
     return status;
 }
 
-static connector_status_t tcp_send_complete_callback(connector_data_t * const connector_ptr, connector_status_t status)
+STATIC connector_status_t tcp_send_complete_callback(connector_data_t * const connector_ptr, connector_status_t status)
 {
     connector_status_t result = connector_working;
     send_complete_cb_t callback = connector_ptr->edp_data.send_packet.complete_cb;
@@ -279,7 +279,7 @@ static connector_status_t tcp_send_complete_callback(connector_data_t * const co
     return result;
 }
 
-static connector_status_t edp_tcp_send_process(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_tcp_send_process(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_idle;
 

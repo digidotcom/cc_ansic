@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static void traverse_rci_command(rci_t * const rci)
+STATIC void traverse_rci_command(rci_t * const rci)
 {
     trigger_rci_callback(rci, connector_request_id_remote_config_action_start);
 
@@ -18,7 +18,7 @@ static void traverse_rci_command(rci_t * const rci)
     state_call(rci, rci_parser_state_output);
 
 }
-static void traverse_group_id(rci_t * const rci)
+STATIC void traverse_group_id(rci_t * const rci)
 {
     trigger_rci_callback(rci, connector_request_id_remote_config_group_start);
 
@@ -26,7 +26,7 @@ static void traverse_group_id(rci_t * const rci)
     state_call(rci, rci_parser_state_output);
 }
 
-static void traverse_element_id(rci_t * const rci)
+STATIC void traverse_element_id(rci_t * const rci)
 {
 
     connector_group_element_t const * const element = get_current_element(rci);
@@ -45,7 +45,7 @@ done:
     return;
 }
 
-static void traverse_element_end(rci_t * const rci)
+STATIC void traverse_element_end(rci_t * const rci)
 {
     trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
 
@@ -53,7 +53,7 @@ static void traverse_element_end(rci_t * const rci)
     state_call(rci, rci_parser_state_output);
 }
 
-static void traverse_group_end(rci_t * const rci)
+STATIC void traverse_group_end(rci_t * const rci)
 {
     trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
     set_rci_output_state(rci, rci_output_state_group_terminator);
@@ -61,7 +61,7 @@ static void traverse_group_end(rci_t * const rci)
 
 }
 
-static connector_bool_t traverse_all_elements(rci_t * const rci)
+STATIC connector_bool_t traverse_all_elements(rci_t * const rci)
 {
     connector_bool_t done = connector_false;
 
@@ -90,7 +90,7 @@ static connector_bool_t traverse_all_elements(rci_t * const rci)
     return done;
 }
 
-static connector_bool_t traverse_all_group_instances(rci_t * const rci)
+STATIC connector_bool_t traverse_all_group_instances(rci_t * const rci)
 {
     connector_bool_t done = connector_false;
 
@@ -123,7 +123,7 @@ static connector_bool_t traverse_all_group_instances(rci_t * const rci)
     return done;
 }
 
-static connector_bool_t traverse_all_groups(rci_t * const rci)
+STATIC connector_bool_t traverse_all_groups(rci_t * const rci)
 {
     connector_bool_t done = connector_false;
 
@@ -187,7 +187,7 @@ static connector_bool_t traverse_all_groups(rci_t * const rci)
     return done;
 }
 
-static void rci_traverse_data(rci_t * const rci)
+STATIC void rci_traverse_data(rci_t * const rci)
 {
     connector_bool_t done_state = connector_true;
 

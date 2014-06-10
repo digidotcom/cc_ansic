@@ -15,7 +15,7 @@
 #include "connector_sm_send.h"
 #include "connector_sm_recv.h"
 
-static connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr, connector_transport_t const transport)
+STATIC connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     connector_sm_data_t * sm_ptr = NULL;
 
@@ -41,7 +41,7 @@ static connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr,
     return sm_ptr;
 }
 
-static connector_status_t get_config_sm_max_sessions(connector_data_t * const connector_ptr,
+STATIC connector_status_t get_config_sm_max_sessions(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_max_sessions_t * const config_max_sessions)
 {
@@ -83,7 +83,7 @@ static connector_status_t get_config_sm_max_sessions(connector_data_t * const co
     return result;
 }
 
-static connector_status_t get_config_sm_max_rx_segments(connector_data_t * const connector_ptr,
+STATIC connector_status_t get_config_sm_max_rx_segments(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
 {
@@ -125,7 +125,7 @@ static connector_status_t get_config_sm_max_rx_segments(connector_data_t * const
     return result;
 }
 
-static connector_status_t get_config_sm_rx_timeout(connector_data_t * const connector_ptr,
+STATIC connector_status_t get_config_sm_rx_timeout(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_rx_timeout_t * const config_rx_timeout)
 {
@@ -163,7 +163,7 @@ static connector_status_t get_config_sm_rx_timeout(connector_data_t * const conn
     return result;
 }
 
-static connector_status_t sm_initialize(connector_data_t * const connector_ptr, connector_transport_t const transport)
+STATIC connector_status_t sm_initialize(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     connector_status_t result = connector_init_error;
     connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, transport);
@@ -377,7 +377,7 @@ error:
 
 #if (CONNECTOR_VERSION >= 0x02010000)
 /* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
-static uint32_t * get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data)
+STATIC uint32_t * get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data)
 {
     uint32_t * request_id;
     switch (request)
@@ -432,7 +432,7 @@ static uint32_t * get_request_id_ptr(connector_initiate_request_t const request,
 }
 #endif
 
-static connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
+STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
 {
     connector_status_t result = connector_service_busy;
     connector_data_t * const connector_ptr = (connector_data_t *)handle;
@@ -724,7 +724,7 @@ error:
     return result;
 }
 
-static void sm_init_network_packet(connector_sm_packet_t * const packet, void * const ptr)
+STATIC void sm_init_network_packet(connector_sm_packet_t * const packet, void * const ptr)
 {
     packet->data = ptr;
     packet->total_bytes = 0;
@@ -732,7 +732,7 @@ static void sm_init_network_packet(connector_sm_packet_t * const packet, void * 
     packet->pending_session = NULL;
 }
 
-static connector_status_t sm_open_transport(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_open_transport(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result;
 
@@ -802,7 +802,7 @@ error:
     return result;
 }
 
-static connector_status_t sm_close_transport(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_close_transport(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = sm_cancel_session(connector_ptr, sm_ptr, NULL);
 
@@ -886,7 +886,7 @@ done:
     return result;
 }
 
-static connector_status_t sm_state_machine(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
+STATIC connector_status_t sm_state_machine(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_idle;
     size_t iterations = 2;
@@ -1064,14 +1064,14 @@ done:
 }
 
 #if (defined CONNECTOR_TRANSPORT_UDP)
-static connector_status_t connector_udp_step(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_udp_step(connector_data_t * const connector_ptr)
 {
     return sm_state_machine(connector_ptr, &connector_ptr->sm_udp);
 }
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-static connector_status_t connector_sms_step(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_sms_step(connector_data_t * const connector_ptr)
 {
     return sm_state_machine(connector_ptr, &connector_ptr->sm_sms);
 }

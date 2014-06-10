@@ -39,7 +39,7 @@
 #include "layer.h"
 
 
-static connector_status_t edp_config_init(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -119,7 +119,7 @@ done:
 }
 
 
-static connector_status_t connector_edp_init(connector_data_t * const connector_ptr)
+STATIC connector_status_t connector_edp_init(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 

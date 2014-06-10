@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-static connector_status_t connect_to_cloud(connector_data_t * const connector_ptr, char const * cloud_url)
+STATIC connector_status_t connect_to_cloud(connector_data_t * const connector_ptr, char const * cloud_url)
 {
     connector_status_t result = connector_working;
 
@@ -50,7 +50,7 @@ static connector_status_t connect_to_cloud(connector_data_t * const connector_pt
     return result;
 }
 
-static connector_status_t send_version(connector_data_t * connector_ptr, uint16_t const type, uint32_t const version)
+STATIC connector_status_t send_version(connector_data_t * connector_ptr, uint16_t const type, uint32_t const version)
 {
 enum edp_version {
     field_define(edp_version, version, uint32_t),
@@ -85,7 +85,7 @@ enum edp_version {
     return result;
 }
 
-static connector_status_t receive_edp_version(connector_data_t * const connector_ptr)
+STATIC connector_status_t receive_edp_version(connector_data_t * const connector_ptr)
 {
 #define CLOUD_OVERLOAD_RESPONSE    0x02
 
@@ -159,7 +159,7 @@ static connector_status_t receive_edp_version(connector_data_t * const connector
     return result;
 }
 
-static size_t build_keepalive_param(uint8_t * const edp_header, uint16_t const type, uint16_t const value)
+STATIC size_t build_keepalive_param(uint8_t * const edp_header, uint16_t const type, uint16_t const value)
 {
 enum edp_keepalive{
     field_define(edp_keepalive, interval, uint16_t),
@@ -183,7 +183,7 @@ enum edp_keepalive{
     return (PACKET_EDP_HEADER_SIZE + keepalive_size); /* return count of bytes added to buffer */
 }
 
-static connector_status_t send_keepalive(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
 
@@ -238,7 +238,7 @@ done:
     return result;
 }
 
-static connector_status_t receive_protocol_version(connector_data_t * const connector_ptr)
+STATIC connector_status_t receive_protocol_version(connector_data_t * const connector_ptr)
 {
     enum {
         initialization_version_response_acceptable,
@@ -293,7 +293,7 @@ static connector_status_t receive_protocol_version(connector_data_t * const conn
     return result;
 }
 
-static connector_status_t send_identity_verification(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_identity_verification(connector_data_t * const connector_ptr)
 {
     /* The security operations other than encryption... */
     #define SECURITY_OPER_IDENT_FORM     UINT32_C(0x80)
@@ -365,7 +365,7 @@ done:
 }
 
 #if (CONNECTOR_VERSION >= 0x02010000)
-static connector_status_t send_provisioning(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_provisioning(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_PROVISION_ID      0x89
     #define PROVISION_ID_LENGTH             4
@@ -413,7 +413,7 @@ static connector_status_t send_provisioning(connector_data_t * const connector_p
 }
 #endif
 
-static connector_status_t send_device_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_device_id(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_DEVICE_ID      0x81
 
@@ -458,7 +458,7 @@ done:
 }
 
 #if (CONNECTOR_VERSION >= 0x02010000)
-static connector_status_t receive_device_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t receive_device_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result;
     connector_buffer_t * packet_buffer;
@@ -532,7 +532,7 @@ static connector_status_t receive_device_id(connector_data_t * const connector_p
 }
 #endif
 
-static connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_cloud_url(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_URL            UINT32_C(0x86)
 
@@ -600,7 +600,7 @@ done:
     return result;
 }
 
-static connector_status_t send_password(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_password(connector_data_t * const connector_ptr)
 {
     #define SECURITY_OPER_PASSWORD            0x88
 
@@ -658,7 +658,7 @@ done:
     return result;
 }
 
-static connector_status_t send_vendor_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_vendor_id(connector_data_t * const connector_ptr)
 {
     /*
      * packet format:
@@ -707,7 +707,7 @@ done:
     return result;
 }
 
-static connector_status_t send_device_type(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_device_type(connector_data_t * const connector_ptr)
 {
     /*
      * packet format:
@@ -769,7 +769,7 @@ done:
     return result;
 }
 
-static connector_status_t send_complete(connector_data_t * const connector_ptr)
+STATIC connector_status_t send_complete(connector_data_t * const connector_ptr)
 {
     /*
      * packet format:
@@ -811,10 +811,10 @@ done:
     return result;
 }
 
-static connector_status_t layer_discovery_facility(connector_data_t * const connector_ptr);
-static connector_status_t connector_edp_init(connector_data_t * const connector_ptr);
+STATIC connector_status_t layer_discovery_facility(connector_data_t * const connector_ptr);
+STATIC connector_status_t connector_edp_init(connector_data_t * const connector_ptr);
 
-static connector_status_t edp_tcp_open_process(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_idle;
 

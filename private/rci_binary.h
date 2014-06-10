@@ -23,7 +23,7 @@
 #include "rci_binary_traverse.h"
 #include "rci_binary_error.h"
 
-static connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_data_t * service_data)
+STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_data_t * service_data)
 {
     ASSERT(rci->service_data == NULL);
     rci->service_data = service_data;
@@ -57,7 +57,7 @@ static connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     return connector_true;
 }
 
-static connector_bool_t rci_action_session_active(rci_t * const rci)
+STATIC connector_bool_t rci_action_session_active(rci_t * const rci)
 {
     connector_bool_t success = connector_true;
 
@@ -107,7 +107,7 @@ static connector_bool_t rci_action_session_active(rci_t * const rci)
     return success;
 }
 
-static connector_bool_t rci_action_session_lost(rci_t * const rci)
+STATIC connector_bool_t rci_action_session_lost(rci_t * const rci)
 {
     trigger_rci_callback(rci, connector_request_id_remote_config_session_cancel);
     {
@@ -121,7 +121,7 @@ static connector_bool_t rci_action_session_lost(rci_t * const rci)
 }
 
 
-static rci_status_t rci_binary(rci_session_t const action, rci_service_data_t * service_data)
+STATIC rci_status_t rci_binary(rci_session_t const action, rci_service_data_t * service_data)
 {
     static rci_t rci;
 

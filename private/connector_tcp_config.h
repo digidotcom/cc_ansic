@@ -12,7 +12,7 @@
 
 
 #if !(defined CONNECTOR_VENDOR_ID)
-static connector_status_t get_config_vendor_id(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_vendor_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_config_vendor_id_t config_vendor;
@@ -55,7 +55,7 @@ static connector_status_t get_config_vendor_id(connector_data_t * const connecto
 #endif
 
 #if !(defined CONNECTOR_DEVICE_TYPE)
-static connector_status_t get_config_device_type(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_device_type(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_config_pointer_string_t device_type;
@@ -104,7 +104,7 @@ done:
 #endif
 
 #if !(defined CONNECTOR_RX_KEEPALIVE_IN_SECONDS) || !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)
-static connector_status_t get_config_keepalive(connector_data_t * const connector_ptr, connector_request_id_config_t const config_request)
+STATIC connector_status_t get_config_keepalive(connector_data_t * const connector_ptr, connector_request_id_config_t const config_request)
 {
     connector_status_t result = connector_working;
     connector_config_keepalive_t keepalive;
@@ -170,7 +170,7 @@ done:
 #endif
 
 #if !(defined CONNECTOR_WAIT_COUNT)
-static connector_status_t get_config_wait_count(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_wait_count(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_config_wait_count_t wait_count;
@@ -211,7 +211,7 @@ static connector_status_t get_config_wait_count(connector_data_t * const connect
 #endif
 
 
-static connector_status_t get_config_ip_addr(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_ip_addr(connector_data_t * const connector_ptr)
 {
 #define CC_IPV6_ADDRESS_LENGTH 16
 #define CC_IPV4_ADDRESS_LENGTH 4
@@ -287,7 +287,7 @@ done:
 }
 
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
-static connector_status_t get_config_identity_verification(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_identity_verification(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_config_identity_verification_t config_identity;
@@ -332,7 +332,7 @@ static connector_status_t get_config_identity_verification(connector_data_t * co
 }
 #endif
 
-static connector_status_t get_config_password(connector_data_t * const connector_ptr)
+STATIC connector_status_t get_config_password(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     connector_config_pointer_string_t config_password;

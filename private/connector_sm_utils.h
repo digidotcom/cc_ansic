@@ -48,7 +48,7 @@ static uint16_t const crc_table[] =
 
 #define SmCRC16(crcval, newchar) crcval = ((crcval) >> 8) ^ crc_table[((crcval) ^ (newchar)) & 0x00ff]
 
-static uint16_t sm_calculate_crc16(uint16_t crc, uint8_t const * const data, size_t const bytes)
+STATIC uint16_t sm_calculate_crc16(uint16_t crc, uint8_t const * const data, size_t const bytes)
 {
     size_t i;
 
@@ -97,7 +97,7 @@ static unsigned long const pow85[] =
     85*85*85*85, 85*85*85, 85*85, 85, 1
 };
 
-static int sm_encode85(uint8_t * dest, size_t dest_len, uint8_t const * const src, size_t const src_len)
+STATIC int sm_encode85(uint8_t * dest, size_t dest_len, uint8_t const * const src, size_t const src_len)
 {
     uint8_t buf[5];
     uint32_t tuple = 0;
@@ -166,7 +166,7 @@ static int sm_encode85(uint8_t * dest, size_t dest_len, uint8_t const * const sr
     return dest_count;
 }
 
-static int sm_decode85(uint8_t * dest, size_t dest_len, uint8_t const * const src, size_t const src_len)
+STATIC int sm_decode85(uint8_t * dest, size_t dest_len, uint8_t const * const src, size_t const src_len)
 {
     unsigned long tuple = 0;
     int c;

@@ -78,7 +78,7 @@ static connector_facility_service_t const connector_supported_service_table[] = 
 static size_t const connector_facility_count = asizeof(connector_supported_service_table);
 
 
-static connector_status_t layer_remove_facilities(connector_data_t * const connector_ptr, connector_supported_facility_cb_index_t cb_index)
+STATIC connector_status_t layer_remove_facilities(connector_data_t * const connector_ptr, connector_supported_facility_cb_index_t cb_index)
 {
     connector_status_t result = connector_idle;
     size_t i;
@@ -110,7 +110,7 @@ static connector_status_t layer_remove_facilities(connector_data_t * const conne
 
 
 
-static connector_status_t layer_discovery_facility(connector_data_t * const connector_ptr)
+STATIC connector_status_t layer_discovery_facility(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_idle;
     connector_facility_t * fac_ptr;
@@ -149,7 +149,7 @@ static connector_status_t layer_discovery_facility(connector_data_t * const conn
 }
 
 
-static connector_status_t edp_layer_get_supported_facilities(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_layer_get_supported_facilities(connector_data_t * const connector_ptr)
 {
 #define NUMBER_FACILITY_PER_BYTE CHAR_BIT
     connector_status_t result = connector_working;
@@ -221,7 +221,7 @@ done:
     return result;
 }
 
-static connector_status_t edp_layer_initialize_facilities(connector_data_t * const connector_ptr)
+STATIC connector_status_t edp_layer_initialize_facilities(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
     size_t  i;
@@ -249,7 +249,7 @@ done:
     return result;
 }
 
-static connector_status_t layer_facility_process(connector_data_t * const connector_ptr)
+STATIC connector_status_t layer_facility_process(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_idle;
     connector_facility_t * fac_ptr;
