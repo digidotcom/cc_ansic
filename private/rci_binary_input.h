@@ -667,8 +667,9 @@ done:
     return;
 }
 
-static void process_field_value(connector_data_t * const connector_ptr, rci_t * const rci)
+static void process_field_value(rci_t * const rci)
 {
+    connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
     connector_group_element_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
 
@@ -864,7 +865,7 @@ done:
     return;
 }
 
-static void process_field_no_value(connector_data_t * const connector_ptr, rci_t * const rci)
+static void process_field_no_value(rci_t * const rci)
 {
     uint8_t * const rci_ber = rci->shared.content.data;
     uint8_t const modifier_ber = message_load_u8(rci_ber, value);
@@ -969,12 +970,12 @@ static void process_field_no_value(connector_data_t * const connector_ptr, rci_t
     else
     {
         set_rci_input_state(rci, rci_input_state_field_value);
-        process_field_value(connector_ptr, rci);
+        process_field_value(rci);
     }
 
 }
 
-static void rci_parse_input(connector_data_t * const connector_ptr, rci_t * const rci)
+static void rci_parse_input(rci_t * const rci)
 {
     rci_buffer_t * const input = &rci->buffer.input;
 
@@ -1010,10 +1011,10 @@ static void rci_parse_input(connector_data_t * const connector_ptr, rci_t * cons
                 process_field_type(rci);
                 break;
             case rci_input_state_field_no_value:
-                process_field_no_value(connector_ptr, rci);
+                process_field_no_value(rci);
                 break;
             case rci_input_state_field_value:
-                process_field_value(connector_ptr, rci);
+                process_field_value(rci);
                 break;
             case rci_input_state_done:
                 ASSERT(rci->input.state != rci_input_state_done);
@@ -1048,6 +1049,7 @@ static void rci_parse_input(connector_data_t * const connector_ptr, rci_t * cons
             {
                 if (rci->input.storage != NULL)
                 {
+                    connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
                     connector_status_t const connector_status = free_data(connector_ptr, rci->input.storage);
                     switch (connector_status)
                     {

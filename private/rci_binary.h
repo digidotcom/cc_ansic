@@ -23,7 +23,7 @@
 #include "rci_binary_traverse.h"
 #include "rci_binary_error.h"
 
-static connector_bool_t rci_action_session_start(connector_data_t * const connector_ptr, rci_t * const rci, rci_service_data_t * service_data)
+static connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_data_t * service_data)
 {
     ASSERT(rci->service_data == NULL);
     rci->service_data = service_data;
@@ -58,6 +58,7 @@ static connector_bool_t rci_action_session_start(connector_data_t * const connec
     {
         static char const max_ipv4_value[] = "255.255.255.255";
         size_t const rci_input_start_size = sizeof max_ipv4_value;
+        connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
         connector_status_t const connector_status = malloc_data(connector_ptr, rci_input_start_size, (void **)&rci->input.storage);
 
         switch (connector_status)
@@ -141,7 +142,7 @@ static connector_bool_t rci_action_session_lost(rci_t * const rci)
 }
 
 
-static rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_session_t const action, rci_service_data_t * service_data)
+static rci_status_t rci_binary(rci_session_t const action, rci_service_data_t * service_data)
 {
     static rci_t rci;
 
@@ -151,7 +152,7 @@ static rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
         switch (action)
         {
         case rci_session_start:
-            success = rci_action_session_start(connector_ptr, &rci, service_data);
+            success = rci_action_session_start(&rci, service_data);
             break;
 
         case rci_session_active:
@@ -187,7 +188,7 @@ static rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
     switch (rci.parser.state)
     {
     case rci_parser_state_input:
-        rci_parse_input(connector_ptr, &rci);
+        rci_parse_input(&rci);
         break;
 
     case rci_parser_state_output:
