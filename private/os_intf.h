@@ -125,32 +125,71 @@ STATIC connector_status_t malloc_cb(connector_callback_t const callback, size_t 
     switch (status)
     {
     case connector_callback_continue:
+        *ptr = data.ptr;
         if (data.ptr == NULL)
         {
             result = (notify_error_status(callback, connector_class_id_operating_system, request_id, connector_invalid_data, context) == connector_working) ? connector_pending : connector_abort;
         }
-        else
-        {
-            *ptr = data.ptr;
-        }
         break;
 
     case connector_callback_busy:
+        *ptr = NULL;
         result = connector_pending;
         break;
 
     case connector_callback_abort:
     case connector_callback_unrecognized:
     case connector_callback_error:
+        *ptr = NULL;
         result = connector_abort;
         break;
     }
+
     return result;
 }
 
 STATIC connector_status_t malloc_data(connector_data_t * const connector_ptr, size_t const length, void ** ptr)
 {
     return malloc_cb(connector_ptr->callback, length, ptr, connector_ptr->context);
+}
+
+static connector_status_t realloc_data(connector_data_t * const connector_ptr, size_t const old_length, size_t const new_length, void ** ptr)
+{
+    connector_status_t result = connector_working;
+    connector_callback_status_t status;
+    connector_os_realloc_t data;
+    connector_request_id_t request_id;
+
+    request_id.os_request = connector_request_id_os_realloc;
+    data.old_size = old_length;
+    data.new_size = new_length;
+    data.ptr = *ptr;
+
+    status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, &data, connector_ptr->context);
+    switch (status)
+    {
+        case connector_callback_continue:
+            *ptr = data.ptr;
+            if (data.ptr == NULL)
+            {
+                result = (notify_error_status(connector_ptr->callback, connector_class_id_operating_system, request_id, connector_invalid_data, connector_ptr->context) == connector_working) ? connector_pending : connector_abort;
+            }
+            break;
+
+        case connector_callback_busy:
+            *ptr = NULL;
+            result = connector_pending;
+            break;
+
+        case connector_callback_abort:
+        case connector_callback_unrecognized:
+        case connector_callback_error:
+            *ptr = NULL;
+            result = connector_abort;
+            break;
+    }
+
+    return result;
 }
 
 STATIC connector_status_t free_data(connector_data_t * const connector_ptr, void * const ptr)

@@ -52,6 +52,27 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     set_rci_input_state(rci, rci_input_state_command_id);
     state_call(rci, rci_parser_state_input);
 
+#if (defined CONNECTOR_NO_MALLOC)
+    UNUSED_PARAMETER(connector_ptr);
+#else
+    {
+        static char const max_ipv4_value[] = "255.255.255.255";
+        size_t const rci_input_start_size = sizeof max_ipv4_value;
+        connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+        connector_status_t const connector_status = malloc_data(connector_ptr, rci_input_start_size, (void **)&rci->input.storage);
+
+        switch (connector_status)
+        {
+            case connector_working:
+                break;
+            default:
+                ASSERT(connector_status == connector_working);
+                break;
+        }
+        rci->input.storage_len = rci_input_start_size;
+    }
+#endif
+
     set_rci_error_state(rci, rci_error_state_id);
 
     return connector_true;

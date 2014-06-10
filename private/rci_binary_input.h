@@ -26,8 +26,11 @@ static char const rci_error_content_size_hint[] = "Maximum content size exceeded
 STATIC connector_bool_t destination_in_storage(rci_t const * const rci)
 {
     uint8_t const * const storage_begin = rci->input.storage;
+#if (defined CONNECTOR_NO_MALLOC)
     uint8_t const * const storage_end = storage_begin + sizeof rci->input.storage;
-
+#else
+    uint8_t const * const storage_end = storage_begin + rci->input.storage_len;
+#endif
     return ptr_in_range(rci->input.destination, storage_begin, storage_end);
 }
 
@@ -199,13 +202,32 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
         ASSERT(value <= size_max);
 #endif
         *length = value;
-        if (*length > CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH)
+#if (defined CONNECTOR_NO_MALLOC)
+        if (*length > sizeof rci->input.storage)
         {
+            UNUSED_PARAMETER(connector_ptr);
             connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
             goto done;
         }
+#else
+        if (*length > rci->input.storage_len)
+        {
+            size_t const old_size = rci->input.storage_len;
+            size_t const new_size = *length + sizeof "" + sizeof(uint32_t);
+            connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
 
+            switch (connector_status)
+            {
+                case connector_working:
+                    rci->input.storage_len = new_size;
+                    break;
+                default:
+                    connector_debug_line("Not enough memory for string, wanted %" PRIsize, new_size);
+                    goto done;
+            }
+        }
+#endif
         if (bytes == (ber_bytes + *length))
         {
             char * data = (char *)(rci->shared.content.data + ber_bytes);
@@ -647,6 +669,7 @@ done:
 
 STATIC void process_field_value(rci_t * const rci)
 {
+    connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
     connector_group_element_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
 
@@ -682,7 +705,7 @@ STATIC void process_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_DATETIME
     case connector_element_type_datetime:
 #endif
-        if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
+        if (!get_string(connector_ptr, rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
         {
             goto done;
         }
@@ -726,8 +749,11 @@ STATIC void process_field_value(rci_t * const rci)
             uint8_t ip3 = BYTE32_1(ip_addr);
             uint8_t ip4 = BYTE32_0(ip_addr);
 
+#if (defined CONNECTOR_NO_MALLOC)
             ASSERT(size_avail <= sizeof rci->input.storage);
-
+#else
+            ASSERT(size_avail <= rci->input.storage_len);
+#endif
             size_written = connector_snprintf(data, size_avail, "%d.%d.%d.%d", ip1, ip2, ip3, ip4);
 
             ASSERT(size_written < (int)size_avail);
@@ -991,11 +1017,16 @@ STATIC void rci_parse_input(rci_t * const rci)
                 process_field_value(rci);
                 break;
             case rci_input_state_done:
+                ASSERT(rci->input.state != rci_input_state_done);
                 break;
         }
 
         {
+#if (defined CONNECTOR_NO_MALLOC)
             size_t const storage_bytes = sizeof rci->input.storage;
+#else
+            size_t const storage_bytes = rci->input.storage_len;
+#endif
             uint8_t const * const storage_end = rci->input.storage + storage_bytes;
 
             if (rci->input.destination == storage_end)
@@ -1014,6 +1045,24 @@ STATIC void rci_parse_input(rci_t * const rci)
         if (MsgIsLastData(rci->service_data->input.flags))
         {
             set_rci_input_state(rci, rci_input_state_done);
+#if !(defined CONNECTOR_NO_MALLOC)
+            {
+                if (rci->input.storage != NULL)
+                {
+                    connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+                    connector_status_t const connector_status = free_data(connector_ptr, rci->input.storage);
+                    switch (connector_status)
+                    {
+                        case connector_working:
+                            rci->input.storage = NULL;
+                            rci->input.storage_len = 0;
+                            break;
+                        default:
+                            goto done;
+                    }
+                }
+            }
+#endif
             state_call(rci, rci_parser_state_traverse);
         }
         else
@@ -1023,7 +1072,11 @@ STATIC void rci_parse_input(rci_t * const rci)
 
             if (ptr_in_buffer(old_base, &rci->buffer.input))
             {
+#if (defined CONNECTOR_NO_MALLOC)
                 size_t const storage_bytes = sizeof rci->input.storage;
+#else
+                size_t const storage_bytes = rci->input.storage_len;
+#endif
                 uint8_t const * const storage_end = rci->input.storage + storage_bytes;
                 size_t const bytes_wanted = (size_t)(rci->buffer.input.end - old_base);
                 size_t const bytes_have = (size_t)(storage_end - new_base);

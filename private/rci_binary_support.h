@@ -259,7 +259,12 @@ typedef struct
         rci_input_state_t state;
         unsigned int flag;
         uint8_t * destination;
+#if (defined CONNECTOR_NO_MALLOC)
         uint8_t storage[CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH + sizeof nul + sizeof(uint32_t)];
+#else
+        uint8_t * storage;
+        size_t storage_len;
+#endif
     } input;
 
     struct {
