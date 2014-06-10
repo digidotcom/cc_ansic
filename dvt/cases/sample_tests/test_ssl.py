@@ -11,8 +11,8 @@ DISCONNECT_REQUEST = \
     </disconnect>
 </sci_request>"""
 
-good_ca_cert_src = './dvt/cases/test_files/etherios-ca-cert-public.crt'
-good_ca_cert_dst = './public/certificates/etherios-ca-cert-public.crt'
+good_ca_cert_src = './dvt/cases/test_files/Digi_Int-ca-cert-public.crt'
+good_ca_cert_dst = './public/certificates/Digi_Int-ca-cert-public.crt'
 bad_ca_cert_src  = './dvt/cases/test_files/intruder-ca-cert.crt'
 
 class SSLTestCase(ic_testcase.TestCase):

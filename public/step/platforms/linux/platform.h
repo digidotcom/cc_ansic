@@ -64,6 +64,6 @@ extern connector_callback_status_t app_status_handler(connector_request_id_statu
                                                       void * const data);
 
 #if !(defined APP_SSL_CA_CERT_PATH)
-#define APP_SSL_CA_CERT_PATH   "../../../../public/certificates/etherios-ca-cert-public.crt"
+#define APP_SSL_CA_CERT_PATH   "../../../../public/certificates/Digi_Int-ca-cert-public.crt"
 #endif
 #endif
