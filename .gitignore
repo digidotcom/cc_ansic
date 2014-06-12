@@ -40,3 +40,5 @@ public/*/samples/*/connector
 dvt/samples/*/connector
 dvt/samples/*/connector.stats
 dvt/samples/*/Makefile
+
+unit_tests/test
