@@ -108,16 +108,7 @@ connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
     ASSERT(*ptr != NULL);
     if (*ptr != NULL)
     {
-#if 0
-        size_t i;
-        uint8_t * thisPtr = *ptr;
-        for (i=0; i<size; i++)
-        {
-            *(thisPtr + i) = 0xCD;
-        }
-#else
         memset(*ptr, 0xCD, size);
-#endif
         status = connector_callback_continue;
         add_malloc_ptr(*ptr, size);
     }
@@ -134,6 +125,19 @@ connector_callback_status_t app_os_free(void * const ptr)
         free_malloc_ptr(ptr);
         free(ptr);
     }
+    return connector_callback_continue;
+}
+
+connector_callback_status_t app_os_realloc(connector_os_realloc_t * const realloc_data)
+{
+    void * reallocated_ptr = NULL;
+
+    app_os_malloc(realloc_data->new_size, &reallocated_ptr);
+    ASSERT(reallocated_ptr != NULL);
+    memcpy(reallocated_ptr, realloc_data->ptr, realloc_data->old_size);
+    app_os_free(realloc_data->ptr);
+    realloc_data->ptr = reallocated_ptr;
+
     return connector_callback_continue;
 }
 
@@ -190,6 +194,13 @@ connector_callback_status_t app_os_handler(connector_request_id_os_t const reque
         {
             connector_os_free_t * p = data;
             status = app_os_free(p->ptr);
+        }
+        break;
+
+    case connector_request_id_os_realloc:
+        {
+            connector_os_realloc_t * realloc_data = data;
+            status = app_os_realloc(realloc_data);
         }
         break;
 
