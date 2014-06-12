@@ -539,10 +539,7 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
     size_t extra_quotes = 0;
     size_t const max_strlen = bytes_available - 1;
 
-    if ((string == NULL) || (string[0] == '\0'))
-    {
-        goto done;
-    }
+    ASSERT(string != NULL);
 
     need_quotes = string_needs_quotes(string);
 
@@ -581,7 +578,6 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
         *bytes_used_ptr = need_quotes ? bytes_processed - extra_quotes : bytes_processed;
     }
 
-done:
     return bytes_processed;
 }
 
