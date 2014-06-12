@@ -508,17 +508,23 @@ done:
 
 STATIC connector_bool_t string_needs_quotes(char const * const string)
 {
-    char const delimiters[] = {',', '\n', '\r', ' ', '\t', '\"'};
-    size_t const delimiters_size = sizeof delimiters;
-    size_t index;
     connector_bool_t need_quotes = connector_false;
+    size_t index;
 
-    for (index = 0; index < delimiters_size; index++)
+    for (index = 0; !need_quotes && string[index] != '\0'; index++)
     {
-        if (strchr(string, delimiters[index]) != NULL)
+        switch(string[index])
         {
-            need_quotes = connector_true;
-            break;
+            case ' ':
+            case ',':
+            case '\"':
+            case '\t':
+            case '\n':
+            case '\r':
+                need_quotes = connector_true;
+                break;
+            default:
+                break;
         }
     }
 

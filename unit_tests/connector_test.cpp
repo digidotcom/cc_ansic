@@ -6,21 +6,78 @@ extern "C"
 #include "connector_api.h"
 
 size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr);
+connector_bool_t string_needs_quotes(char const * const string);
 
 }
 
-TEST_GROUP(connector_test)
+TEST_GROUP(string_needs_quotes) {};
+
+TEST(string_needs_quotes, NoQuotes)
 {
-    void setup()
-    {
-    }
+    char const string[] = "NoQuotesForThis";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_false, need_quotes);
+}
 
-    void teardown()
-    {
-    }
-};
+TEST(string_needs_quotes, QuotesForSpaced)
+{
+    char const string[] = "S p a c e d";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
 
-TEST(connector_test, testNoSpaces)
+TEST(string_needs_quotes, QuotesForTabulators)
+{
+    char const string[] = "\tTabulatedNeedsQuotes";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
+
+TEST(string_needs_quotes, QuotesForDoubleQuotes)
+{
+    char const string[] = "\"What?-Beethoven\"";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
+
+TEST(string_needs_quotes, NoQuotesForSingleQuotes)
+{
+    char const string[] = "'What?-Beethoven'";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_false, need_quotes);
+}
+
+TEST(string_needs_quotes, QuotesForCommas)
+{
+    char const string[] = "C,S,V";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
+
+TEST(string_needs_quotes, QuotesForCarriageReturn)
+{
+    char const string[] = "C\rS\rV";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
+
+TEST(string_needs_quotes, QuotesForNewLine)
+{
+    char const string[] = "C\nS\nV";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
+
+TEST(string_needs_quotes, QuotesForCrLf)
+{
+    char const string[] = "C\r\nS\r\nV";
+    connector_bool_t const need_quotes = string_needs_quotes(string);
+    CHECK_EQUAL(connector_true, need_quotes);
+}
+
+TEST_GROUP(dp_process_string_test) {};
+
+TEST(dp_process_string_test, testNoSpaces)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -34,7 +91,7 @@ TEST(connector_test, testNoSpaces)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testSpaced)
+TEST(dp_process_string_test, testSpaced)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -48,7 +105,7 @@ TEST(connector_test, testSpaced)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testCommas)
+TEST(dp_process_string_test, testCommas)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -62,7 +119,7 @@ TEST(connector_test, testCommas)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testCarriage)
+TEST(dp_process_string_test, testCarriage)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -76,7 +133,7 @@ TEST(connector_test, testCarriage)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testQuotes)
+TEST(dp_process_string_test, testQuotes)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -90,7 +147,7 @@ TEST(connector_test, testQuotes)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testMixed)
+TEST(dp_process_string_test, testMixed)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -104,7 +161,7 @@ TEST(connector_test, testMixed)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testNotEnoughSize)
+TEST(dp_process_string_test, testNotEnoughSize)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -118,7 +175,7 @@ TEST(connector_test, testNotEnoughSize)
     STRCMP_EQUAL(expected_string, buffer);
 }
 
-TEST(connector_test, testNotEnoughSizeQuoted)
+TEST(dp_process_string_test, testNotEnoughSizeQuoted)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
@@ -137,3 +194,4 @@ TEST(connector_test, testNotEnoughSizeQuoted)
     CHECK_EQUAL(3, bytes_copied);
     STRCMP_EQUAL(second_expected_string, buffer);
 }
+
