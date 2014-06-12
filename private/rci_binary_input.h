@@ -215,6 +215,7 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
         {
             size_t const old_size = rci->input.storage_len;
             size_t const new_size = *length + sizeof "" + sizeof(uint32_t);
+            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
             connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
 
             switch (connector_status)
@@ -669,7 +670,6 @@ done:
 
 STATIC void process_field_value(rci_t * const rci)
 {
-    connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
     connector_group_element_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
 
@@ -705,7 +705,7 @@ STATIC void process_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_DATETIME
     case connector_element_type_datetime:
 #endif
-        if (!get_string(connector_ptr, rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
+        if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
         {
             goto done;
         }
