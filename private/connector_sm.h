@@ -658,7 +658,7 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
 #if (defined CONNECTOR_DATA_POINTS)
                     switch (request)
                     {
-                        case connector_initiate_data_point_multiple:
+                        case connector_initiate_data_point:
                         {
                             sm_ptr->pending.pending_internal = connector_true;
                             result = dp_initiate_data_point(request_data);
