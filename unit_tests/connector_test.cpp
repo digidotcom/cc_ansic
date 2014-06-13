@@ -5,7 +5,7 @@ extern "C"
 {
 #include "connector_api.h"
 
-size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr);
+size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk);
 connector_bool_t string_needs_quotes(char const * const string);
 
 }
@@ -85,7 +85,7 @@ TEST(dp_process_string_test, testNoSpaces)
     char expected_string[] = "No_spaces_string";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(bytes_copied, bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -99,7 +99,7 @@ TEST(dp_process_string_test, testEmpty)
     char expected_string[] = "";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(bytes_copied, bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -113,7 +113,7 @@ TEST(dp_process_string_test, testSpaced)
     char expected_string[] = "\"s p a c e s\"";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(strlen(expected_string), bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -127,7 +127,7 @@ TEST(dp_process_string_test, testCommas)
     char expected_string[] = "\"c,o,m,m,a,s\"";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(strlen(expected_string), bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -141,7 +141,7 @@ TEST(dp_process_string_test, testCarriage)
     char expected_string[] = "\"C\rA\nR\nR\nI\r \tAbulator\"";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(strlen(expected_string), bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -155,7 +155,7 @@ TEST(dp_process_string_test, testQuotes)
     char expected_string[] = "\"\"\"Q\"\"u\"\"o\"\"t\"\"e\"\"s\"";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(strlen(expected_string), bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -169,7 +169,7 @@ TEST(dp_process_string_test, testMixed)
     char expected_string[] = "\"M i,x \"\" E\nD\r \"";
     char buffer[] = "Fight procrastination... tomorrow!";
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(string), bytes_copied);
     CHECK_EQUAL(strlen(expected_string), bytes_processed);
     STRCMP_EQUAL(expected_string, buffer);
@@ -183,7 +183,7 @@ TEST(dp_process_string_test, testNotEnoughSize)
     char expected_string[] = "str";
     char buffer[4];
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(expected_string), bytes_processed);
     CHECK_EQUAL(bytes_copied, bytes_copied);
     STRCMP_EQUAL(expected_string, buffer);
@@ -193,19 +193,19 @@ TEST(dp_process_string_test, testNotEnoughSizeQuoted)
 {
     size_t bytes_processed;
     size_t bytes_copied = 0;
-    char string[] = "s,tring";
+    char string[] = "s,tr";
     char first_expected_string[] = "\"s,";
-    char second_expected_string[] = "tri";
+    char second_expected_string[] = "tr\"";
     char buffer[4];
 
-    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(string, buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_true);
     CHECK_EQUAL(strlen(first_expected_string), bytes_processed);
     CHECK_EQUAL(2, bytes_copied);
     STRCMP_EQUAL(first_expected_string, buffer);
 
-    bytes_processed = dp_process_string(&string[bytes_copied], buffer, sizeof buffer, &bytes_copied);
+    bytes_processed = dp_process_string(&string[bytes_copied], buffer, sizeof buffer, &bytes_copied, string_needs_quotes(string), connector_false);
     CHECK_EQUAL(strlen(second_expected_string), bytes_processed);
-    CHECK_EQUAL(3, bytes_copied);
     STRCMP_EQUAL(second_expected_string, buffer);
+    CHECK_EQUAL(2, bytes_copied);
 }
 
