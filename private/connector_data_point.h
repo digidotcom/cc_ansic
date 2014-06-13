@@ -540,25 +540,42 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
 
     ASSERT(string != NULL);
 
-    if (need_quotes && first_chunk && bytes_processed < max_strlen)
+    if (need_quotes && first_chunk)
     {
-        buffer[bytes_processed++] = '\"';
+        if (bytes_processed < max_strlen)
+        {
+            buffer[bytes_processed] = '\"';
+        }
+        bytes_processed++;
         extra_quotes++;
     }
 
-    for (i = 0; string[i] != '\0' && bytes_processed < max_strlen; i++)
+    for (i = 0; string[i] != '\0'; i++)
     {
         if (string[i] == '\"')
         {
-            buffer[bytes_processed++] = '\"';
+            if (bytes_processed < max_strlen)
+            {
+                buffer[bytes_processed] = '\"';
+            }
+            bytes_processed++;
             extra_quotes++;
         }
-        buffer[bytes_processed++] = string[i];
+
+        if (bytes_processed < max_strlen)
+        {
+            buffer[bytes_processed] = string[i];
+        }
+        bytes_processed++;
     }
 
-    if (need_quotes && bytes_processed < max_strlen)
+    if (need_quotes)
     {
-        buffer[bytes_processed++] = '\"';
+        if (bytes_processed < max_strlen)
+        {
+            buffer[bytes_processed] = '\"';
+        }
+        bytes_processed++;
         extra_quotes++;
     }
 
@@ -566,6 +583,7 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
 
     if (bytes_used_ptr != NULL)
     {
+        printf("bytes_processed %d\nextra_quotes %d\n", (int) bytes_processed, (int)extra_quotes);
         *bytes_used_ptr = bytes_processed - extra_quotes;
     }
 
