@@ -26,9 +26,9 @@ typedef struct
 static connector_bool_t app_are_data_points_valid = connector_false;
 static connector_bool_t app_dp_waiting_for_response = connector_false;
 
-connector_request_data_point_multiple_t * app_allocate_data(size_t const stream_count, size_t const point_count)
+connector_request_data_point_t * app_allocate_data(size_t const stream_count, size_t const point_count)
 {
-    connector_request_data_point_multiple_t * dp_ptr = malloc(sizeof *dp_ptr);
+    connector_request_data_point_t * dp_ptr = malloc(sizeof *dp_ptr);
 
     if (dp_ptr != NULL)
     {
@@ -83,7 +83,7 @@ connector_request_data_point_multiple_t * app_allocate_data(size_t const stream_
     return dp_ptr;
 }
 
-void app_free_data(connector_request_data_point_multiple_t * dp_ptr, size_t const stream_count)
+void app_free_data(connector_request_data_point_t * dp_ptr, size_t const stream_count)
 {
     if (dp_ptr != NULL)
     {
@@ -196,7 +196,7 @@ void app_setup_stream(connector_data_stream_t * stream, char * stream_id, char *
     stream->forward_to = forward_to;
 }
 
-void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, size_t const stream_index, size_t const point_index)
+void app_update_point(connector_request_data_point_t * const dp_ptr, size_t const stream_index, size_t const point_index)
 {
     connector_data_point_t * const point = &dp_ptr->stream[stream_index].point[point_index];
 
@@ -243,7 +243,7 @@ void app_update_point(connector_request_data_point_multiple_t * const dp_ptr, si
     }
 }
 
-connector_status_t app_send_data(connector_handle_t const handle, connector_request_data_point_multiple_t * const dp_ptr)
+connector_status_t app_send_data(connector_handle_t const handle, connector_request_data_point_t * const dp_ptr)
 {
     connector_status_t status = connector_success;
 
@@ -255,7 +255,7 @@ connector_status_t app_send_data(connector_handle_t const handle, connector_requ
     }
 
     app_dp_waiting_for_response = connector_true;
-    status = connector_initiate_action(handle, connector_initiate_data_point_multiple, dp_ptr);
+    status = connector_initiate_action(handle, connector_initiate_data_point, dp_ptr);
     APP_DEBUG("Data point message sent, status[%d]\n", status);
     if (status != connector_success)
         app_dp_waiting_for_response = connector_false;
@@ -272,7 +272,7 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
 
     switch (request_id)
     {
-        case connector_request_id_data_point_multiple_response:
+        case connector_request_id_data_point_response:
         {
             connector_data_point_response_t * const resp_ptr = data;
 
@@ -285,7 +285,7 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
             break;
         }
 
-        case connector_request_id_data_point_multiple_status:
+        case connector_request_id_data_point_status:
         {
             connector_data_point_status_t * const status_ptr = data;
 
