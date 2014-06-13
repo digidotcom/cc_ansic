@@ -531,9 +531,8 @@ STATIC connector_bool_t string_needs_quotes(char const * const string)
     return need_quotes;
 }
 
-STATIC size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr)
+STATIC size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)
 {
-    connector_bool_t need_quotes = connector_false;
     size_t bytes_processed = 0;
     size_t i;
     size_t extra_quotes = 0;
@@ -541,15 +540,10 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
 
     ASSERT(string != NULL);
 
-    need_quotes = string_needs_quotes(string);
-
-    if (bytes_processed < max_strlen)
+    if (need_quotes && first_chunk && bytes_processed < max_strlen)
     {
-        if (need_quotes)
-        {
-            buffer[bytes_processed++] = '\"';
-            extra_quotes++;
-        }
+        buffer[bytes_processed++] = '\"';
+        extra_quotes++;
     }
 
     for (i = 0; string[i] != '\0' && bytes_processed < max_strlen; i++)
@@ -562,20 +556,17 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
         buffer[bytes_processed++] = string[i];
     }
 
-    if (bytes_processed < max_strlen)
+    if (need_quotes && bytes_processed < max_strlen)
     {
-        if (need_quotes)
-        {
-            buffer[bytes_processed++] = '\"';
-            extra_quotes++;
-        }
+        buffer[bytes_processed++] = '\"';
+        extra_quotes++;
     }
 
     buffer[bytes_processed] = '\0';
 
     if (bytes_used_ptr != NULL)
     {
-        *bytes_used_ptr = need_quotes ? bytes_processed - extra_quotes : bytes_processed;
+        *bytes_used_ptr = bytes_processed - extra_quotes;
     }
 
     return bytes_processed;
@@ -627,14 +618,21 @@ STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
         case connector_data_point_type_string:
         {
             size_t bytes_copied = 0;
+            connector_bool_t const need_quotes = string_needs_quotes(dp_ptr->data.element.native.string_value);
+            connector_bool_t const first_chunk = connector_bool(dp_info->data.csv.bytes_sent == 0);
+            char * const start_of_string = dp_ptr->data.element.native.string_value;
+            unsigned int const bytes_sent = dp_info->data.csv.bytes_sent;
+            char * const string_to_send = start_of_string + bytes_sent;
 
-            if (dp_info->data.csv.bytes_sent == 0)
-                dp_info->data.csv.bytes_to_send = strlen(dp_ptr->data.element.native.string_value);
+            if (first_chunk)
+            {
+                dp_info->data.csv.bytes_to_send = strlen(start_of_string);
+            }
 
-            bytes_processed = dp_process_string(&dp_ptr->data.element.native.string_value[dp_info->data.csv.bytes_sent], buffer, bytes_available, &bytes_copied);
+            bytes_processed = dp_process_string(string_to_send, buffer, bytes_available, &bytes_copied, need_quotes, first_chunk);
 
             dp_info->data.csv.bytes_to_send -= bytes_copied;
-            dp_info->data.csv.bytes_sent = (dp_info->data.csv.bytes_to_send > 0) ? dp_info->data.csv.bytes_sent + bytes_copied : 0;
+            dp_info->data.csv.bytes_sent = dp_info->data.csv.bytes_to_send > 0 ? dp_info->data.csv.bytes_sent + bytes_copied : 0;
             break;
         }
 
@@ -704,7 +702,12 @@ STATIC size_t dp_process_description(data_point_info_t * const dp_info, char * c
     size_t bytes_processed = 0;
 
     if (dp_ptr->description != 0)
-        bytes_processed = dp_process_string(dp_ptr->description, buffer, bytes_available, NULL);
+    {
+        connector_bool_t const needs_quotes = string_needs_quotes(dp_ptr->description);
+        connector_bool_t const first_chunk = connector_true;
+
+        bytes_processed = dp_process_string(dp_ptr->description, buffer, bytes_available, NULL, needs_quotes, first_chunk);
+    }
 
     return bytes_processed;
 }
@@ -783,14 +786,24 @@ STATIC size_t dp_process_unit(data_point_info_t * const dp_info, char * const bu
     {
         connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request_single;
         if (request->unit != NULL)
-            bytes_processed = dp_process_string(request->unit, buffer, bytes_available, NULL);
+        {
+            connector_bool_t const needs_quotes = connector_false;
+            connector_bool_t const first_chunk = connector_true;
+
+            bytes_processed = dp_process_string(request->unit, buffer, bytes_available, NULL, needs_quotes, first_chunk);
+        }
     }
 #if (CONNECTOR_VERSION >= 0x02020000)
     else if (dp_info->type == dp_content_type_csv_multiple)
     {
         connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
         if (ds_ptr->unit != NULL)
-            bytes_processed = dp_process_string(ds_ptr->unit, buffer, bytes_available, NULL);
+        {
+            connector_bool_t const needs_quotes = connector_false;
+            connector_bool_t const first_chunk = connector_true;
+
+            bytes_processed = dp_process_string(ds_ptr->unit, buffer, bytes_available, NULL, needs_quotes, first_chunk);
+        }
     }
 #endif
     else
@@ -812,14 +825,24 @@ STATIC size_t dp_process_forward_to(data_point_info_t * const dp_info, char * co
     {
         connector_request_data_point_single_t const * request = dp_info->data.csv.dp_request_single;
         if (request->forward_to != NULL)
-            bytes_processed = dp_process_string(request->forward_to, buffer, bytes_available, NULL);
+        {
+            connector_bool_t const needs_quotes = connector_false;
+            connector_bool_t const first_chunk = connector_true;
+
+            bytes_processed = dp_process_string(request->forward_to, buffer, bytes_available, NULL, needs_quotes, first_chunk);
+        }
     }
 #if (CONNECTOR_VERSION >= 0x02020000)
     else if (dp_info->type == dp_content_type_csv_multiple)
     {
         connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
         if (ds_ptr->forward_to != NULL)
-            bytes_processed = dp_process_string(ds_ptr->forward_to, buffer, bytes_available, NULL);
+        {
+            connector_bool_t const needs_quotes = connector_false;
+            connector_bool_t const first_chunk = connector_true;
+
+            bytes_processed = dp_process_string(ds_ptr->forward_to, buffer, bytes_available, NULL, needs_quotes, first_chunk);
+        }
     }
 #endif
 
@@ -835,7 +858,12 @@ STATIC size_t dp_process_stream_id(data_point_info_t * const dp_info, char * con
     ASSERT(dp_info->type == dp_content_type_csv_multiple);
 
     if (ds_ptr->stream_id != NULL)
-        bytes_processed = dp_process_string(ds_ptr->stream_id, buffer, bytes_available, NULL);
+    {
+        connector_bool_t const needs_quotes = connector_false;
+        connector_bool_t const first_chunk = connector_true;
+
+        bytes_processed = dp_process_string(ds_ptr->stream_id, buffer, bytes_available, NULL, needs_quotes, first_chunk);
+    }
 
     return bytes_processed;
 }
