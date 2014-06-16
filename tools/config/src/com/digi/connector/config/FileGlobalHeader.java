@@ -14,7 +14,7 @@ public class FileGlobalHeader extends FileGenerator {
     
 	public FileGlobalHeader(String directoryPath) throws IOException {
 		
-		super(directoryPath,fileType);
+		super(directoryPath,HEADER_FILENAME,fileType);
         for (Element.ElementType type : Element.ElementType.values()) {
             type.set();
         }
@@ -55,9 +55,7 @@ public class FileGlobalHeader extends FileGenerator {
             fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
            
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, generatedFile));
-            if (generatedFile.length() > 0) ConfigGenerator.log(String.format("\t%s%s", filePath, headerFile));
-
+            ConfigGenerator.log(String.format("File created:\n\t%s%s",  filePath, generatedFile));
 
         } catch (IOException e) {
             throw new IOException(e.getMessage());
@@ -65,7 +63,6 @@ public class FileGlobalHeader extends FileGenerator {
 
         finally {
             fileWriter.close();
-            if (headerWriter != null) headerWriter.close();
         }
 
     }

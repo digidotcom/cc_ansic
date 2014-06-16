@@ -1,20 +1,48 @@
 package com.digi.connector.config;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 
 import com.digi.connector.config.ConfigGenerator.FileType;
+import com.digi.connector.config.Element.ElementType;
+
 
 public class FileNone extends FileGenerator {
 
+	private static String COPYRIGHT = "/*\n"
+			 +" * Copyright (c) 2013 Digi International Inc.,\n"
+			 +" * All rights not expressly granted are reserved.\n"
+			 +" *\n"
+			 +" * This Source Code Form is subject to the terms of the Mozilla Public\n"
+			 +" * License, v. 2.0. If a copy of the MPL was not distributed with this file,\n"
+			 +" * You can obtain one at http://mozilla.org/MPL/2.0/.\n"
+			 +" *\n"
+			 +" * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343\n"
+			 +" * =======================================================================\n"
+			 +" */\n";
+	private static String HANDLER = "\nconnector_callback_status_t app_remote_config_handler" 
+			 +"(connector_request_id_remote_config_t const request_id, void * const data)\n{\n"
+			 +"    UNUSED_PARAMETER(data);\n"
+			 +"    UNUSED_PARAMETER(request_id);\n\n"
+			 +"    return connector_callback_continue;\n}\n";
+    protected final static String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
+    protected final static String RETURN_CONTINUE = "    return connector_callback_continue;\n}\n";
+
     private static FileType fileType = FileType.NONE;
+    private BufferedWriter functionWriter = null;
+    private String functionFile = "";
     
 	public FileNone(String directoryPath) throws IOException {
 		
-		super(directoryPath,fileType);	
+		super(directoryPath,HEADER_FILENAME,fileType);	
+		functionFile = "remote_config_cb.c";
+        functionWriter = new BufferedWriter(new FileWriter(filePath + functionFile));
+        functionWriter.write(COPYRIGHT);
 
 	}
     public void writeHeaderComment(BufferedWriter bufferWriter) throws IOException {
@@ -86,10 +114,13 @@ public class FileNone extends FileGenerator {
             fileWriter.write(String.format("\n#endif\n\n"));
             fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
+            
+            /*Write function file */
+            writeFunctionFile(configData, functionWriter);
+            
                        
             ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, generatedFile));
-            if (generatedFile.length() > 0) ConfigGenerator.log(String.format("\t%s%s", filePath, headerFile));
-
+            if (generatedFile.length() > 0) ConfigGenerator.log(String.format("\t%s%s", filePath, functionFile));
 
         } catch (IOException e) {
             throw new IOException(e.getMessage());
@@ -97,10 +128,126 @@ public class FileNone extends FileGenerator {
 
         finally {
             fileWriter.close();
-            if (headerWriter != null) headerWriter.close();
+            functionWriter.close();
         }
 
     }
+    
+    private String UNUSED(String parameter) {
+        return "UNUSED_PARAMETER(" + parameter + ");\n";
+    }
+
+    
+    private void writeFunctionFile(ConfigData configData, BufferedWriter bufferWriter) throws Exception
+    {
+        functionWriter.write(String.format("%s \"%s\"", INCLUDE, HEADER_FILENAME));
+        functionWriter.write(CONNECTOR_GLOBAL_HEADER);
+        functionWriter.write(String.format("%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
+        functionWriter.write(HANDLER);
+    	
+    	String session_function = setFunction("rci_session_start_cb(" + RCI_INFO_T + ")",null);
+    	session_function += setFunction("rci_session_end_cb(" + RCI_INFO_T + ")",null);
+        bufferWriter.write(session_function);
+        for (GroupType type : GroupType.values()) {
+	        LinkedList<Group> groups = null;
+
+	        configType = type.toString().toLowerCase();
+	        groups = configData.getConfigGroup(configType);
+
+	        if (!groups.isEmpty()) {
+
+	            for (Group group : groups) {
+	            	String group_function = setFunction(String.format("rci_%s_%s_start(%s)",configType,group.getName(),RCI_INFO_T),null);
+	            	group_function += setFunction(String.format("rci_%s_%s_end(%s)",configType,group.getName(),RCI_INFO_T),null);
+	            	bufferWriter.write(group_function);
+		            for (Element element : group.getElements()) {
+		                String element_function ="";
+		                String FType = "";
+		                String value = "";
+		                switch(ElementType.toElementType(element.getType())){
+		                    case UINT32:
+		                    	if(element.getMin()!=null)
+		                    		value += "*value = " + element.getMin();
+		                    	else
+		                    		value += "*value = 123";
+		                    	FType += "uint32_t";
+		                        break;
+		                    case HEX32:
+		                    case X_HEX32:
+		                    	value += "*value = 0x20101010";
+		                    	FType += "uint32_t";
+		                        break;
+		                    case INT32:
+		                    	if(element.getMin()!=null)
+		                    		value += "*value = " + element.getMin();
+		                    	else
+		                    		value += "*value = 15";
+		                    	FType += "int32_t";
+		                        break;
+		                    case FLOAT:
+		                    	value += "*value = 1.2";
+		                    	FType += "float";
+		                        break;
+		                    case ON_OFF:
+		                    	value += "*value = connector_on";
+		                    	FType += "connector_on_off_t";
+		                        break;
+		                    case ENUM:
+		                    	ValueStruct first_value = element.getValues().get(0);
+		                    	value += "*value = connector_" + group.getName() + "_" + element.getName() + "_" + first_value.getName();
+		                    	FType += String.format("connector_%s_%s_%s_id_t",configType,group.getName(),element.getName());
+		                        break;
+		                    case IPV4:
+		                    case FQDNV4:
+		                    case FQDNV6:
+		                    	value += "*value = \"192.168.1.1\"";
+		                    	FType += "char const *";
+		                        break;
+		                    case DATETIME:
+		                    	value += "*value = \"2002-05-30T09:30:10-0600\";";
+		                    	FType += "char const *";
+		                        break;
+		                    case STRING:
+		                    case MULTILINE_STRING:
+		                    	value += "*value = \"String\"";
+		                    case PASSWORD:
+		                    	FType += "char const *";
+		                        break;
+		                    case BOOLEAN:
+		                    	value += "*value = connector_true";
+		                    	FType += "connector_bool_t";
+		                        break;
+	                        default:
+	                            break;
+		                }
+		                if(!(ElementType.toElementType(element.getType()).toValue() == 3/*PASSWORD*/)){
+
+		            	element_function += setFunction(String.format("rci_%s_%s_%s_get(%s, %s * const value)"
+	                    	    ,configType,group.getName(),element.getName(),RCI_INFO_T,FType),value);
+
+		                }
+		                if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+		                	element_function += setFunction(String.format("rci_%s_%s_%s_set(%s, %s const value)"
+				                	 ,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
+			            }
+		            	bufferWriter.write(element_function);
+		            }//No more elements
+         
+	            }//No more groups
+	        }
+        }//No more group types
+
+    }
+    private String setFunction (String parameter,String value){
+    	String function = CONNECTOR_CALLBACK_STATUS + parameter + "\n{\n    ";
+        function += UNUSED("info") + PRINTF;
+        if(value != null){
+        	function += "    " + value + ";\n";
+        }
+        function += RETURN_CONTINUE;
+    	return  function;
+    }
+    
 
   
 }

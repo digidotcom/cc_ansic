@@ -13,7 +13,6 @@ public abstract class FileGenerator {
     protected static String TOOL_NAME = "RCI Generator";
 
     protected final static String HEADER_FILENAME = "remote_config.h";
-    protected static String SOURCE_NAME = "rci_config";
 
     protected final static String CONNECTOR_PREFIX = "connector";
     protected final static String DEFINE = "#define ";
@@ -144,14 +143,13 @@ public abstract class FileGenerator {
 
     protected String filePath = "";
     protected String generatedFile = "";
-    protected String headerFile = "";
+
     protected BufferedWriter fileWriter;
-    protected BufferedWriter headerWriter = null;
-    private String configType;
+    protected String configType;
     private int prevRemoteStringLength;
     private Boolean isFirstRemoteString;
 
-    public FileGenerator(String directoryPath,ConfigGenerator.FileType fileType) throws IOException {
+    public FileGenerator(String directoryPath,String file_name,ConfigGenerator.FileType fileType) throws IOException {
         
         if (directoryPath != null) {
             filePath = directoryPath;
@@ -159,15 +157,8 @@ public abstract class FileGenerator {
             if (!directoryPath.endsWith("/")) filePath += '/';
         }
         
-        if(fileType == ConfigGenerator.FileType.SOURCE)
-        {
-            generatedFile = SOURCE_NAME + ".c";
-            headerFile = SOURCE_NAME + ".h";
-        }
-        else
-        {
-            generatedFile = HEADER_FILENAME;
-        }
+        generatedFile = file_name;
+
         fileWriter = new BufferedWriter(new FileWriter(filePath + generatedFile));
         
         writeHeaderComment(fileWriter);
@@ -866,9 +857,8 @@ public abstract class FileGenerator {
     protected void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
 
         String index_string = "";
-        if(bufferWriter == headerWriter)
+        if(bufferWriter == FileSource.getHeaderWriter())
         {
-            bufferWriter = headerWriter;
             index_string = "_INDEX";
             fileWriter.write(String.format("unsigned int %s_%s = %s_%s%s;\n\n", GLOBAL_ERROR, COUNT_STRING, GLOBAL_ERROR, COUNT_STRING, index_string));
         }
@@ -877,7 +867,7 @@ public abstract class FileGenerator {
 
         bufferWriter.write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
 
-        writeErrorHeader(1, " " + GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
+        writeErrorHeader(1,GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
 
         String endString = String.format(" %s_%s%s", GLOBAL_ERROR, COUNT_STRING, index_string);
         
@@ -934,7 +924,7 @@ public abstract class FileGenerator {
                     if (index++ == 0) {
                         /*Set start index to the global count */
                         String startIndexString = COUNT_STRING;
-                        if(bufferWriter == headerWriter){
+                        if(bufferWriter == FileSource.getHeaderWriter()){
                             startIndexString += "_INDEX";
                             enumString += " = " + GLOBAL_ERROR + "_" + startIndexString;
                         }
@@ -1060,7 +1050,7 @@ public abstract class FileGenerator {
         return (String.format("%s_element_%s_%s", CONNECTOR_PREFIX, type_name, element_name));
     }
 
-    private String getAccess(String access) {
+    protected String getAccess(String access) {
         if (access == null) {
             return "read_write";
         }

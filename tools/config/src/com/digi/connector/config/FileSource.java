@@ -12,14 +12,20 @@ import com.digi.connector.config.ConfigGenerator.FileType;
 public class FileSource extends FileGenerator {
 
     private static FileType fileType = FileType.SOURCE;
+    private static String SOURCE_NAME = "rci_config";
+    
+    private static BufferedWriter headerWriter = null;
+    private String headerFile = "";
 
+    
 	public FileSource(String directoryPath) throws IOException {
 		
-		super(directoryPath,fileType);
+		super(directoryPath,SOURCE_NAME+ ".c",fileType);
         /* Need to create a header file + source file
          * fileWriter is source file writer. 
          * So we need to create local header file.
          */
+        headerFile = SOURCE_NAME + ".h";
         headerWriter = new BufferedWriter(new FileWriter(filePath + headerFile));
         writeHeaderComment(headerWriter);
 
@@ -97,6 +103,10 @@ public class FileSource extends FileGenerator {
             if (headerWriter != null) headerWriter.close();
         }
 
+    }
+    
+    public static BufferedWriter getHeaderWriter(){
+    	return headerWriter;
     }
     
 }
