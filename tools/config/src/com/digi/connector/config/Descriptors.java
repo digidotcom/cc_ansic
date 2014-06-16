@@ -1,6 +1,8 @@
 package com.digi.connector.config;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,7 +38,7 @@ public class Descriptors {
 
     public Descriptors(final String username, final String password,
                        final String vendorId, final String deviceType, 
-                       final long version) {
+                       final long version) throws IOException  {
         this.username = username;
         this.password = password;
         this.deviceType = deviceType;
@@ -64,8 +66,8 @@ public class Descriptors {
             deleteDescriptors();
         } else {
             int id = 1;
-            for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
-                LinkedList<GroupStruct> groups = null;
+            for (GroupType type : GroupType.values()) {
+                LinkedList<Group> groups = null;
 
                 String configType = type.toString().toLowerCase();
                 
@@ -138,10 +140,10 @@ public class Descriptors {
         return descriptor;
     }
 
-    private void sendDescriptors(String config_type, LinkedList<GroupStruct> groups, ConfigData configData, int id) throws Exception {
+    private void sendDescriptors(String config_type, LinkedList<Group> groups, ConfigData configData, int id) throws Exception {
         String desc = SETTING_DESCRIPTOR_DESCRIPTION;
 
-        if (config_type.equalsIgnoreCase(ConfigData.ConfigType.STATE.toString()))
+        if (config_type.equalsIgnoreCase(GroupType.STATE.toString()))
             desc = STATE_DESCRIPTOR_DESCRIPTION;
 
         String query_descriptors = String.format("<descriptor element=\"query_%s\" desc=\"Retrieve %s\" format=\"all_%ss_groups\"\n",
@@ -174,17 +176,17 @@ public class Descriptors {
 
         set_descriptors += "</descriptor>";
 
-        for (GroupStruct group : groups) {
+        for (Group group : groups) {
             query_descriptors += group.toString(groups.indexOf(group));
             
             query_descriptors += String.format("<attr name=\"index\" desc=\"%s\" type=\"int32\" min=\"1\" max=\"%d\" />",
                                                     group.getDescription(), group.getInstances());
                 
-            for (ElementStruct element : group.getElements()) {
+            for (Element element : group.getElements()) {
 
                 query_descriptors += element.toString(group.getElements().indexOf(element));
                 
-                if (ElementStruct.ElementType.toElementType(element.getType()) == ElementStruct.ElementType.ENUM) {
+                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
 
                     for (ValueStruct value : element.getValues()) {
                         query_descriptors += value.toString(element.getValues().indexOf(value));
@@ -216,8 +218,8 @@ public class Descriptors {
     private void sendRciDescriptors(ConfigData configData) throws IOException {
         String descriptors = RCI_DESCRIPTORS;
 
-        for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
-            LinkedList<GroupStruct> groups = null;
+        for (GroupType type : GroupType.values()) {
+            LinkedList<Group> groups = null;
 
             String configType = type.toString().toLowerCase();
 
@@ -414,6 +416,23 @@ public class Descriptors {
         message += "</DeviceMetaData>";
 
         ConfigGenerator.debug_log(message);
+
+        try {
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
+	        String message2 = "<DeviceMetaData>";
+	        message2 += tagMessageSegment("dvVendorId", vendorId);
+	        message2 += tagMessageSegment("dmDeviceType", deviceType);
+	        message2 += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
+	        message2 += tagMessageSegment("dmName", descName);
+	        message2 += tagMessageSegment("dmData", buffer);
+	        message2 += "</DeviceMetaData>";
+
+			fileWriter.write(message2);
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 
         String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
         if (responseCode != 0)

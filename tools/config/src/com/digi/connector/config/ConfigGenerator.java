@@ -1,5 +1,7 @@
 package com.digi.connector.config;
 
+/*import java.io.BufferedReader;
+import java.io.InputStreamReader;*/
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +71,6 @@ public class ConfigGenerator {
         }
         
     }
-
     
     private static void usage() {
         String className = ConfigGenerator.class.getName();
@@ -163,14 +164,13 @@ public class ConfigGenerator {
           System.out.println("Couldn't get Console instance, maybe you're running this from within an IDE?");
           System.exit(1);
       }
-      
+
       char passwordArray[] = console.readPassword("Enter password: ");
-      
+
       if (passwordArray.length == 0) {
           log("You must enter a password.\nPlease try again!");
           System.exit(1);
       }
-      
       password = new String(passwordArray);
 
     }
@@ -410,7 +410,7 @@ public class ConfigGenerator {
         try {
             new ConfigGenerator(args);
 
-            if (deleteDescriptor) {
+            if (deleteDescriptorOption()) {
                 /* descriptor constructor for arguments */
                 Descriptors descriptors = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
@@ -444,10 +444,15 @@ public class ConfigGenerator {
             
             /* Generate H and C files */
             debug_log("Start generating files");
-            FileGenerator fileGenerator = new FileGenerator(directoryPath);
-            fileGenerator.generateFile(configData);
 
-            if (fileTypeOption() != FileType.GLOBAL_HEADER) { 
+
+            switch(fileTypeOption())
+            {
+            case NONE:
+                FileNone fileNone = new FileNone(directoryPath);
+
+                fileNone.generateFile(configData);
+
                 /* descriptor constructor for arguments */
                 Descriptors descriptors = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
@@ -455,7 +460,26 @@ public class ConfigGenerator {
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
                 descriptors.processDescriptors(configData);
+                break;
+
+            case SOURCE:
+                FileSource fileSource = new FileSource(directoryPath);
+                fileSource.generateFile(configData);
+                /* descriptor constructor for arguments */
+                Descriptors descriptorsSource = new Descriptors(username, password,
+                        vendorId, deviceType, fwVersion);
+
+                /* Generate and upload descriptors */
+                debug_log("Start Generating/loading descriptors");
+                descriptorsSource.processDescriptors(configData);
+                break;
+
+            case GLOBAL_HEADER:
+                FileGlobalHeader fileGlobalHeader = new FileGlobalHeader(directoryPath);
+                fileGlobalHeader.generateFile(configData);
+                break;
             }
+
             
             log("\nDone.\n");
             System.exit(0);

@@ -16,7 +16,7 @@ public class Parser {
     private static String token;
     private static int groupLineNumber;
     private static int elementLineNumber;
-    private static LinkedList<GroupStruct> groupConfig;
+    private static LinkedList<Group> groupConfig;
 
     
     public static void processFile(String fileName, ConfigData configData) throws IOException, NullPointerException {
@@ -50,12 +50,12 @@ public class Parser {
                     String nameStr = getName();
 
                     /* make sure group name doesn't exist in setting and state config */
-                    for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
+                    for (GroupType type : GroupType.values()) {
 
                         String typeName = type.toString().toLowerCase();
-                        LinkedList<GroupStruct> typeGroups = configData.getConfigGroup(typeName);
+                        LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
-                        for (GroupStruct group : typeGroups) {
+                        for (Group group : typeGroups) {
                             if (group.getName().equals(nameStr)) {
                                 /* duplicate */
                                 String desc = "name";
@@ -78,7 +78,7 @@ public class Parser {
                         groupInstances = tokenScanner.getTokenInt();
                     }
 
-                    GroupStruct theGroup = new GroupStruct(nameStr, groupInstances, getDescription(), getLongDescription());
+                    Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
 
                     isReadToken = true;
                     /*
@@ -94,7 +94,7 @@ public class Parser {
                         }
                         
                         if (token.equalsIgnoreCase("element")) {
-                            ElementStruct element = processElement();
+                            Element element = processElement();
 
                             try{
                                 element.validate();
@@ -176,6 +176,10 @@ public class Parser {
             return m.matches();
         }
     }
+    public static String ChangeBadCharacters(String s){
+        s = s.replaceAll("[^a-zA-Z_0-9]", "_");
+        return s;
+    }
 
     private static String getName() throws Exception {
         String name = tokenScanner.getToken(); // tokenScanner.next();
@@ -187,7 +191,10 @@ public class Parser {
             throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
         }
         else if (!checkAlphaCharacters(name)) {
-            throw new Exception("Invalid character in the name: " + name);
+            name=ChangeBadCharacters(name);
+            if(!checkAlphaCharacters(name)){
+                throw new Exception("Invalid character in the name: " + name);
+            }
         }
         return name;
     }
@@ -253,7 +260,7 @@ public class Parser {
             throw new Exception("Missing access!");
 
         }
-        ElementStruct.AccessType.toAccessType(access);
+        Element.AccessType.toAccessType(access);
 
         return access;
     }
@@ -269,13 +276,13 @@ public class Parser {
         return mvalue;
     }
 
-    private static final ElementStruct processElement() throws Exception {
+    private static final Element processElement() throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
          * description] type <type> [min <min>] [max <max>] [access <access>]
          * [units <unit>]
          */
-        ElementStruct element = new ElementStruct(getName(), getDescription(), getLongDescription());
+        Element element = new Element(getName(), getDescription(), getLongDescription());
         
         elementLineNumber = tokenScanner.getLineNumber();
         try {
