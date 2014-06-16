@@ -49,8 +49,9 @@ public class FileNone extends FileGenerator {
             writeRciErrorEnumHeader(configData);
             writeGlobalErrorEnumHeader(configData, fileWriter);
 
-           
             writeGroupTypeAndErrorEnum(configData,fileWriter);
+
+            writePrototypes(configData,fileWriter);
 
            /* writeRciErrorEnumHeader(configData);                
             writeGlobalErrorEnumHeader(configData,fileWriter);*/

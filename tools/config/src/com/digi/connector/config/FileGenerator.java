@@ -6,21 +6,22 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
+import com.digi.connector.config.Element.ElementType;
 
 public abstract class FileGenerator {
 
-	protected static String TOOL_NAME = "RCI Generator";
+    protected static String TOOL_NAME = "RCI Generator";
 
-	protected final static String HEADER_FILENAME = "remote_config.h";
-	protected static String SOURCE_NAME = "rci_config";
+    protected final static String HEADER_FILENAME = "remote_config.h";
+    protected static String SOURCE_NAME = "rci_config";
 
-	protected final static String CONNECTOR_PREFIX = "connector";
-	protected final static String DEFINE = "#define ";
-	protected final static String INCLUDE = "#include ";
-	protected final static String ERROR = "error";
+    protected final static String CONNECTOR_PREFIX = "connector";
+    protected final static String DEFINE = "#define ";
+    protected final static String INCLUDE = "#include ";
+    protected final static String ERROR = "error";
 
-	protected final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
-	protected final static String FLOAT_HEADER = "\"float.h\"\n";
+    protected final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
+    protected final static String FLOAT_HEADER = "\"float.h\"\n";
 
     protected final static String TYPEDEF_ENUM = "typedef enum {\n";
 
@@ -40,6 +41,8 @@ public abstract class FileGenerator {
 
     /* Do not change these (if you do, you also need to update connector_remote.h */
     protected final static String RCI_PARSER_USES = "RCI_PARSER_USES_";
+    protected final static String RCI_INFO_T = "rci_info_t * const info";
+    protected final static String RCI_FUNCTION_T = "(rci_function_t)";
     
     protected final static String RCI_PARSER_USES_ERROR_DESCRIPTIONS = RCI_PARSER_USES + "ERROR_DESCRIPTIONS\n";
     protected final static String RCI_PARSER_USES_STRINGS = RCI_PARSER_USES + "STRINGS\n";
@@ -50,13 +53,27 @@ public abstract class FileGenerator {
     protected final static String CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE = "\ntypedef struct {\n" +
     " connector_remote_group_table_t CONST * group_table;\n" +
     " char CONST * CONST * error_table;\n" +
-    " unsigned int global_error_count;\n" +
-    " uint32_t firmware_target_zero_version;\n" +
+    " unsigned int CONST global_error_count;\n" +
+    " uint32_t CONST firmware_target_zero_version;\n" +
+    " uint32_t CONST vendor_id;\n" +
+    " char const * CONST device_type;\n" +
+    " rci_function_t session_start_cb; /* TBD */\n" +
+    " rci_function_t session_end_cb; /* TBD */\n" +
     "} connector_remote_config_data_t;\n";
+
+    protected final static String CONNECTOR_RCI_INFO = "\ntypedef struct rci_data {\n" +
+    " unsigned int group_index;\n" +
+    " connector_remote_action_t action;\n" +
+    " connector_remote_group_type_t group_type;\n" +
+    " char const * error_hint;\n" +
+    " void * user_context;\n" +
+    "} rci_info_t;\n";
 
     protected final static String CONNECTOR_GROUP_ELEMENT_T = "\ntypedef struct {\n" +
     "    connector_element_access_t access;\n" +
     "    connector_element_value_type_t type;\n" +
+    "    rci_function_t set_cb;\n" +
+    "    rci_function_t get_cb;\n" +
     "} connector_group_element_t;\n";
 
     protected final static String CONNECTOR_GROUP_T = "\ntypedef struct {\n" +
@@ -69,6 +86,8 @@ public abstract class FileGenerator {
     "      size_t count;\n" +
     "      char CONST * CONST * description;\n" +
     "  } errors;\n\n" +
+    "  rci_function_t start_cb;\n" +
+    "  rci_function_t end_cb;\n" +
     "} connector_group_t;\n";
 
     protected final static String CONNECTOR_REMOTE_GROUP_T = "\ntypedef struct {\n" +
@@ -215,6 +234,94 @@ public abstract class FileGenerator {
         return string;
     }
     
+    protected void writePrototypes(ConfigData configData,BufferedWriter bufferWriter) throws Exception{
+
+        String session_prototype = CONNECTOR_CALLBACK_STATUS;
+        session_prototype += "rci_session_start_cb(" + RCI_INFO_T + ");";
+        session_prototype += CONNECTOR_CALLBACK_STATUS;
+        session_prototype += "rci_session_end_cb(" + RCI_INFO_T + ");\n";
+        bufferWriter.write(session_prototype);
+
+        for (GroupType type : GroupType.values()) {
+	        LinkedList<Group> groups = null;
+
+	        configType = type.toString().toLowerCase();
+	        groups = configData.getConfigGroup(configType);
+
+	        if (!groups.isEmpty()) {
+
+	            for (Group group : groups) {
+	                String group_prototype = CONNECTOR_CALLBACK_STATUS;
+		            group_prototype += String.format("rci_%s_%s_start(%s);",configType,group.getName(),RCI_INFO_T);
+		            group_prototype += CONNECTOR_CALLBACK_STATUS;
+		            group_prototype += String.format("rci_%s_%s_end(%s);\n",configType,group.getName(),RCI_INFO_T);
+		            bufferWriter.write(group_prototype);
+
+		            for (Element element : group.getElements()) {
+		                String protoType = "";
+		                switch(ElementType.toElementType(element.getType())){
+		                    case UINT32:
+		                    case HEX32:
+		                    case X_HEX32:
+		                        protoType += "uint32_t";
+		                        break;
+		                    case INT32:
+		                        protoType += "int32_t";
+		                        break;
+		                    case FLOAT:
+		                        protoType += "float";
+		                        break;
+		                    case ON_OFF:
+		                        protoType += "connector_on_off_t";
+		                        break;
+		                    case ENUM:
+		                        protoType += String.format("connector_%s_%s_%s_id_t",configType,group.getName(),element.getName());
+		                        break;
+		                    case IPV4:
+		                    case FQDNV4:
+		                    case FQDNV6:
+		                    case DATETIME:
+		                    case STRING:
+		                    case MULTILINE_STRING:
+		                    case PASSWORD:
+		                        protoType += "char const *";
+		                        break;
+		                    case BOOLEAN:
+		                        protoType += "connector_bool_t";
+		                        break;
+	                        default:
+	                            break;
+	                }
+		                String element_prototype ="";
+
+		                switch(ElementType.toElementType(element.getType())){
+		                    case PASSWORD:
+			                    element_prototype += String.format("\n%srci_%s_%s_%s_get    NULL"
+			                    	    ,DEFINE,configType,group.getName(),element.getName());
+			                    break;
+			                default:
+			                    element_prototype += String.format("%srci_%s_%s_%s_get(%s, %s * const value);"
+			                    	    ,CONNECTOR_CALLBACK_STATUS,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+			                    break;
+		                }
+
+		                if(getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+
+		                    element_prototype += String.format("\n%srci_%s_%s_%s_set    NULL \n"
+		                    	    ,DEFINE,configType,group.getName(),element.getName());
+		                }
+		                else{
+			                element_prototype += String.format("%srci_%s_%s_%s_set(%s, %s const value);\n"
+			                	 ,CONNECTOR_CALLBACK_STATUS,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+			                }
+		                bufferWriter.write(element_prototype);
+		            }
+		        }
+	        }
+	    }
+        /*TODO*///bufferWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
+    }
+
     private void writeElementValueStruct() throws IOException {
 
         String headerString = "";
@@ -396,7 +503,9 @@ public abstract class FileGenerator {
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
         writeElementValueStruct();
-        
+
+        fileWriter.write(CONNECTOR_RCI_INFO);
+        fileWriter.write("\ntypedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);\n");
         fileWriter.write(CONNECTOR_GROUP_ELEMENT_T);
         fileWriter.write(CONNECTOR_GROUP_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_T);
@@ -524,7 +633,18 @@ public abstract class FileGenerator {
 
             element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
 
-            element_string += String.format("   %s", getElementDefine("type", element.getType()));
+            element_string += String.format("   %s,\n", getElementDefine("type", element.getType()));
+
+            if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+	            element_string += String.format("   %srci_%s_%s_set, %s",RCI_FUNCTION_T, getDefineString(group_name).toLowerCase(),
+	            		element.getName(),COMMENTED(" cast is mandatory"));
+            }
+            else{
+                element_string +="   NULL,\n";
+            }
+
+            element_string += String.format("   %srci_%s_%s_get %s", RCI_FUNCTION_T,getDefineString(group_name).toLowerCase(),
+            		element.getName(),COMMENTED(" cast is mandatory"));
 
             element_string += "\n }";
 
@@ -631,18 +751,25 @@ public abstract class FileGenerator {
                     define_name = getDefineString(group.getName() + "_elements");
                     String group_string = String.format("\n { %s", COMMENTED(group.getName()));
 
-                    group_string += String.format("   %d ,\n", group.getInstances())
+                    group_string += String.format("   %d ,%s", group.getInstances(),COMMENTED(" instances "))
                                   + String.format("   { asizeof(%s),\n", define_name.toLowerCase())
                                   + String.format("     %s\n   },\n", define_name.toLowerCase());
                     if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                         define_name = getDefineString(group.getName() + "_errors");
 
                         group_string += String.format("   { asizeof(%s),\n", define_name.toLowerCase())
-                                        + String.format("     %s\n   }\n }\n", define_name.toLowerCase());
+                                        + String.format("     %s\n   }", define_name.toLowerCase());
 
                     } else {
                         group_string += "   { 0,\n     NULL\n   }";
                     }
+
+                    group_string +=  String.format(", %s",COMMENTED(" errors"))
+                    			   + String.format("   %srci_%s_start,%s" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase()
+                  		  			,COMMENTED(" start callback"))
+                  		  		   + String.format("   %srci_%s_end %s }\n" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase()
+                  				  	,COMMENTED(" end callback"));
+                    
 
                     if (group_index < (groups.size() - 1)) {
                         group_string += ",";
@@ -700,16 +827,42 @@ public abstract class FileGenerator {
 
             bufferWriter.write(error_string);
         }
+
+    }
+
+    protected void writeErrorHeader(String type,int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+
+        for (String key : errorMap.keySet()) {
+            String error_string = enumDefine + "_" + key;
+
+            switch(type){
+                case "rci":
+                    if (errorIndex == 1) error_string += " = 1," + COMMENTED(" Protocol defined ");
+                    else error_string += ",\n";
+                    errorIndex++;
+                    break;
+                case "global":
+                    if (errorIndex == 1) error_string += "," +  COMMENTED(" User defined (global errors) ");
+                    else error_string += ",\n";
+                    errorIndex++;
+                    break;
+                default:
+                    error_string += ",\n";
+                    break;
+            }
+            bufferWriter.write(error_string);
+        }
+
     }
 
     protected void writeRciErrorEnumHeader(ConfigData configData) throws IOException {
 
     /* write typedef enum for rci errors */
         fileWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
-        writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), fileWriter);
+        writeErrorHeader(configData.getRciGlobalErrorsIndex()," " + GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), fileWriter);
         fileWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + GLOBAL_RCI_ERROR + ID_T_STRING);     
     }
-    
+
     protected void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
 
         String index_string = "";
@@ -724,7 +877,7 @@ public abstract class FileGenerator {
 
         bufferWriter.write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
 
-        writeErrorHeader(1, GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
+        writeErrorHeader(1, " " + GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
 
         String endString = String.format(" %s_%s%s", GLOBAL_ERROR, COUNT_STRING, index_string);
         
@@ -769,6 +922,9 @@ public abstract class FileGenerator {
             if (!group.getErrors().isEmpty()) {
                 bufferWriter.write(TYPEDEF_ENUM);
 
+                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors(), bufferWriter);
+                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
+
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
 
@@ -780,11 +936,15 @@ public abstract class FileGenerator {
                         String startIndexString = COUNT_STRING;
                         if(bufferWriter == headerWriter){
                             startIndexString += "_INDEX";
+                            enumString += " = " + GLOBAL_ERROR + "_" + startIndexString;
                         }
-                        enumString += " = " + GLOBAL_ERROR + "_" + startIndexString;
-
+                        else{
+                            enumString += ", " + COMMENTED(" User defined (group errors)");
+                        }
                     }
+                    else{
                     enumString += ",\n";
+                    }
 
                     bufferWriter.write(enumString);
                 }
@@ -836,8 +996,7 @@ public abstract class FileGenerator {
     }
 
     private String endEnumString(String group_name) {
-        return (getEnumString(group_name) + "_" + COUNT_STRING + "\n}"
-                + getEnumString(group_name) + ID_T_STRING);
+        return ("}"+ getEnumString(group_name) + ID_T_STRING);
     }
 
     private String getDefineString(String define_name) {
