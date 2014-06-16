@@ -25,7 +25,7 @@ extern connector_callback_status_t app_data_point_handler(connector_request_id_d
 void app_setup_stream(connector_data_stream_t * stream, char * stream_id, char * units, connector_data_point_type_t const type, char * forward_to);
 extern void app_update_point(void * const buffer, size_t const stream_index, size_t const point_index);
 extern connector_status_t app_send_data(connector_handle_t handle, void * const buffer);
-extern connector_request_data_point_multiple_t * app_allocate_data(size_t const stream_count, size_t const point_count);
+extern connector_request_data_point_t * app_allocate_data(size_t const stream_count, size_t const point_count);
 extern void app_free_data(void * buffer, size_t const stream_count);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
@@ -136,19 +136,19 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 int application_step(connector_handle_t handle)
 {
     connector_status_t status = connector_success;
-    static connector_request_data_point_multiple_t * data_point_multiple = NULL;
+    static connector_request_data_point_t * data_point = NULL;
     static size_t point_index = 0;
     static size_t busy_count = 0;
     static int app_wait = 0;
 
-    if (data_point_multiple == NULL)
+    if (data_point == NULL)
     {
         /* This function is reentrant. Allocate only once. */
-        data_point_multiple = app_allocate_data(APP_NUM_STREAMS, APP_POINTS_PER_STREAM);
-        ASSERT(data_point_multiple != NULL);
-        app_setup_stream(&data_point_multiple->stream[0], "cpu_usage", "%", connector_data_point_type_integer, NULL);
-        app_setup_stream(&data_point_multiple->stream[1], "cpu_temperature", "Celsius degree", connector_data_point_type_float, NULL);
-        app_setup_stream(&data_point_multiple->stream[2], "incremental", "Counts", connector_data_point_type_integer, NULL);
+        data_point = app_allocate_data(APP_NUM_STREAMS, APP_POINTS_PER_STREAM);
+        ASSERT(data_point != NULL);
+        app_setup_stream(&data_point->stream[0], "cpu_usage", "%", connector_data_point_type_integer, NULL);
+        app_setup_stream(&data_point->stream[1], "cpu_temperature", "Celsius degree", connector_data_point_type_float, NULL);
+        app_setup_stream(&data_point->stream[2], "incremental", "Counts", connector_data_point_type_integer, NULL);
 
     }
 
@@ -174,7 +174,7 @@ int application_step(connector_handle_t handle)
             if (app_wait == 0)
             {
                 for(stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
-                    app_update_point(data_point_multiple, stream_index, point_index);
+                    app_update_point(data_point, stream_index, point_index);
                 point_index++;
                 app_wait = 2;
             }
@@ -182,7 +182,7 @@ int application_step(connector_handle_t handle)
         else
         {
             /* Now it is time to send all collected samples to Device Cloud */
-            status = app_send_data(handle, data_point_multiple);
+            status = app_send_data(handle, data_point);
 
             switch (status)
             {
@@ -209,7 +209,7 @@ int application_step(connector_handle_t handle)
     }
 
 done:
-    app_free_data(data_point_multiple, APP_NUM_STREAMS);
+    app_free_data(data_point, APP_NUM_STREAMS);
 
     return 0;
 }

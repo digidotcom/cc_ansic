@@ -383,22 +383,13 @@ STATIC uint32_t * get_request_id_ptr(connector_initiate_request_t const request,
     switch (request)
     {
 #if (defined CONNECTOR_DATA_POINTS)
-        case connector_initiate_data_point_single:
+        case connector_initiate_data_point:
         {
-            connector_request_data_point_single_t const * const data = request_data;
+            connector_request_data_point_t const * const data = request_data;
 
             request_id = data->request_id;
             break;
         }
-#if (CONNECTOR_VERSION >= 0x02020000)
-        case connector_initiate_data_point_multiple:
-        {
-            connector_request_data_point_multiple_t const * const data = request_data;
-
-            request_id = data->request_id;
-            break;
-        }
-#endif
         case connector_initiate_data_point_binary:
         {
             connector_request_data_point_binary_t const * const data = request_data;
@@ -596,10 +587,7 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
 #endif
 #if (defined CONNECTOR_DATA_POINTS)
         case connector_initiate_data_point_binary:
-        case connector_initiate_data_point_single:
-#if (CONNECTOR_VERSION >= 0x02020000)
-        case connector_initiate_data_point_multiple:
-#endif
+        case connector_initiate_data_point:
 #endif
         {
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
@@ -635,8 +623,9 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
                     }
 #if (CONNECTOR_VERSION >= 0x02010000)
                     request_id = get_request_id_ptr(request, request_data);
-                    /* dp_initiate_data_point_single/multiple/binary() convert a connector_initiate_data_point_single/multiple/binary
-                     * to a connector_initiate_send_data, but we want that that "hidden" connector_initiate_send_data
+                    /* dp_initiate_data_point() and dp_initiate_data_point_binary() convert a connector_initiate_data_point or  
+                     * connector_initiate_data_point_binary to a connector_initiate_send_data,
+                     * but we want that that "hidden" connector_initiate_send_data
                      * use the same request_id, which has been already set by dp_send_message().
                      * */
                     if (sm_ptr->pending.pending_internal)
@@ -669,20 +658,12 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
 #if (defined CONNECTOR_DATA_POINTS)
                     switch (request)
                     {
-                        case connector_initiate_data_point_single:
+                        case connector_initiate_data_point:
                         {
                             sm_ptr->pending.pending_internal = connector_true;
-                            result = dp_initiate_data_point_single(request_data);
+                            result = dp_initiate_data_point(request_data);
                             goto done_datapoints;
                         }
-#if (CONNECTOR_VERSION >= 0x02020000)
-                        case connector_initiate_data_point_multiple:
-                        {
-                            sm_ptr->pending.pending_internal = connector_true;
-                            result = dp_initiate_data_point_multiple(request_data);
-                            goto done_datapoints;
-                        }
-#endif
                         case connector_initiate_data_point_binary:
                         {
                             sm_ptr->pending.pending_internal = connector_true;

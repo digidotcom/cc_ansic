@@ -33,10 +33,8 @@ typedef enum
 {
     connector_request_id_data_point_binary_response,    /**< Cloud response to a binary data point request */
     connector_request_id_data_point_binary_status,      /**< reason to complete the binary data point session */
-    connector_request_id_data_point_single_response,    /**< Cloud response to a single stream data point request */
-    connector_request_id_data_point_single_status,      /**< reason to complete the single stream session */
-    connector_request_id_data_point_multiple_response,  /**< Cloud response to a multiple stream data point request */
-    connector_request_id_data_point_multiple_status     /**< reason to complete the multiple stream session */
+    connector_request_id_data_point_response,           /**< Cloud response to a data point request */
+    connector_request_id_data_point_status              /**< reason to complete the data point session */
 } connector_request_id_data_point_t;
 /**
 * @}
@@ -110,7 +108,7 @@ typedef struct
 /**
 * Data structure to make a linked list of data points to send it out in one transaction.
 * All the data points in a list must belong to single stream.
-* @see connector_request_data_point_single_t
+* @see connector_request_data_point_t
 * @see connector_data_stream_t
 * @see connector_data_point_type_t
 */
@@ -245,7 +243,7 @@ typedef struct connector_data_point_t
 /**
 * Data structure to make a linked list of data streams to send it out in one transaction.
 * Each stream contains a linked list of data points
-* @see connector_request_data_point_multiple_t
+* @see connector_request_data_point_t
 * @see connector_data_point_type_t
 * @see connector_data_point_t
 */
@@ -293,49 +291,12 @@ typedef struct
 */
 
 /**
-* @defgroup connector_request_data_point_single_t  Data points of a stream.
+* @defgroup connector_request_data_point_t  Data points of multiple streams.
 * @{
 */
 /**
 * This data structure is used when the connector_initiate_action() API is called with
-* connector_initiate_data_point_single request id. This structure can be used to send
-* multiple points which are belong to a single stream.
-*
-* @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
-*
-* @see connector_request_id_data_point_t
-* @see connector_data_point_t
-* @see connector_initiate_action
-* @see connector_initiate_data_point_single
-* @see connector_data_point_type_t
-*/
-typedef struct
-{
-    connector_transport_t transport;    /**< transport method to use */
-    void * user_context;                /**< user context to be passed back in response */
-
-    uint32_t * request_id;              /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
-                                             and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
-                                             See @connector_initiate_session_cancel*/
-    char * path;                        /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
-    char * unit;                        /**< null-terminated unit, optional field, set to NULL if not used */
-    char * forward_to;                  /**< comma separated list of streams to replicate data points to (a null-terminated optional field, set to NULL if not used) */
-    connector_data_point_t * point;     /**< pointer to list of data points */
-    connector_bool_t response_required; /**< set to connector_true if response is needed */
-    connector_data_point_type_t type;   /**< data point content type */
-    unsigned long timeout_in_seconds;   /**< outgoing sessions timeout in seconds. Only valid for SM. Use SM_WAIT_FOREVER to wait forever for the complete request/response */
-} connector_request_data_point_single_t;
-/**
-* @}
-*/
-
-/**
-* @defgroup connector_request_data_point_multiple_t  Data points of multiple streams.
-* @{
-*/
-/**
-* This data structure is used when the connector_initiate_action() API is called with
-* connector_initiate_data_point_multiple request id. This structure can be used to send
+* connector_initiate_data_point request id. This structure can be used to send
 * multiple points which are belong to multiple streams.
 *
 * @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
@@ -343,7 +304,7 @@ typedef struct
 * @see connector_request_id_data_point_t
 * @see connector_data_stream_t
 * @see connector_initiate_action
-* @see connector_initiate_data_point_multiple
+* @see connector_initiate_data_point
 */
 typedef struct
 {
@@ -356,7 +317,7 @@ typedef struct
     connector_data_stream_t * stream;   /**< pointer to list of data streams */
     connector_bool_t response_required; /**< set to connector_true if response is needed */
     unsigned long timeout_in_seconds;   /**< outgoing sessions timeout in seconds. Only valid for SM. Use SM_WAIT_FOREVER to wait forever for the complete request/response */
-} connector_request_data_point_multiple_t;
+} connector_request_data_point_t;
 /**
 * @}
 */
@@ -367,12 +328,12 @@ typedef struct
 */
 /**
 * The data in the callback with request id connector_request_id_data_point_binary_response and
-* connector_request_id_data_point_single_response will point to this data structure. The callback
+* connector_request_id_data_point_response will point to this data structure. The callback
 * is called when the Connector receives a response from Device Cloud.
 *
 * @see connector_request_id_data_point_t
 * @see connector_initiate_data_point_binary
-* @see connector_initiate_data_point_single
+* @see connector_initiate_data_point
 */
 typedef struct
 {
@@ -398,15 +359,14 @@ typedef struct
 * @{
 */
 /**
-* The data in the callback with request id connector_request_id_data_point_binary_status,
-* connector_request_id_data_point_single_status and connector_request_id_data_point_multiple_status
-* will point to this data structure. The callback is called when session completes either due to error
+* The data in the callback with request id connector_request_id_data_point_binary_status
+* and connector_request_id_data_point_status will point to this data structure.
+* The callback is called when session completes either due to error
 * or the response is not requested.
 *
 * @see connector_request_id_data_point_t
 * @see connector_initiate_data_point_binary
-* @see connector_initiate_data_point_single
-* @see connector_initiate_data_point_multiple
+* @see connector_initiate_data_point
 */
 typedef struct
 {

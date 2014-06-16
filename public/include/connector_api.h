@@ -310,8 +310,7 @@ typedef enum
 
     #if (defined CONNECTOR_DATA_POINTS)
     connector_initiate_data_point_binary,  /**< Initiates the action to send a binary data point to Device Cloud. */
-    connector_initiate_data_point_single,  /**< Initiates the action to send data points of a stream to Device Cloud. */
-    connector_initiate_data_point_multiple,  /**< Initiates the action to send data points of multiple streams to Device Cloud. */
+    connector_initiate_data_point,         /**< Initiates the action to send data points to Device Cloud. */
     #endif
 
     connector_initiate_terminate        /**< Terminates and stops Cloud Connector from running. */
@@ -747,8 +746,8 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_data_point_binary:
  *                          Initiates the action to send a binary data point to Device Cloud.
  *
- *                      @li @b connector_initiate_data_point_single:
- *                          Initiates the action to send data points which are belongs to a single stream on Device Cloud.
+ *                      @li @b connector_initiate_data_point:
+ *                          Initiates the action to send data points to Device Cloud.
  *
  *                      @li @b connector_initiate_ping_request:
  *                          Sends status message to the Device Cloud.  Supported for
@@ -768,10 +767,8 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                          Pointer to @ref connector_initiate_stop_request_t "connector_initiate_stop_request_t"
  *                      @li @b connector_initiate_data_point_binary:
  *                          Pointer to @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t"
- *                      @li @b connector_initiate_data_point_single:
- *                          Pointer to @ref connector_request_data_point_single_t "connector_request_data_point_single_t"
- *                      @li @b connector_initiate_data_point_multiple:
- *                          Pointer to @ref connector_request_data_point_multiple_t "connector_request_data_point_multiple_t"
+ *                      @li @b connector_initiate_data_point:
+ *                          Pointer to @ref connector_request_data_point_t "connector_request_data_point_t"
  *                      @li @b connector_initiate_ping_request:
  *                          Pointer to @ref connector_sm_send_ping_request_t "connector_sm_send_ping_request_t"
  *                      @li @b connector_initiate_session_cancel:
