@@ -193,9 +193,9 @@ public class FileNone extends FileGenerator {
 		                    	FType += "connector_on_off_t";
 		                        break;
 		                    case ENUM:
-		                    	ValueStruct first_value = element.getValues().get(0);
-		                    	value += "*value = connector_" + group.getName() + "_" + element.getName() + "_" + first_value.getName();
-		                    	FType += String.format("connector_%s_%s_%s_id_t",configType,group.getName(),element.getName());
+		                        ValueStruct first_value = element.getValues().get(0);
+		                        value += "*value = connector_" + configType + "_" + group.getName() + "_" + element.getName() + "_" + first_value.getName();
+		                        FType += String.format("connector_%s_%s_%s_id_t",configType,group.getName(),element.getName());
 		                        break;
 		                    case IPV4:
 		                    case FQDNV4:
