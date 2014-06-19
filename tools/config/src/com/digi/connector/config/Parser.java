@@ -50,22 +50,18 @@ public class Parser {
                     String nameStr = getName();
 
                     /* make sure group name doesn't exist in setting and state config */
-                    for (GroupType type : GroupType.values()) {
 
-                        String typeName = type.toString().toLowerCase();
-                        LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
+                    String typeName = groupType.toString().toLowerCase();
+                    LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
-                        for (Group group : typeGroups) {
-                            if (group.getName().equals(nameStr)) {
-                                /* duplicate */
-                                String desc = "name";
-                                if (!typeName.equalsIgnoreCase(groupType)) {
-                                    desc += String.format(" (group name must be unique in both %s and %s)", groupType, typeName); 
-                                }
-                                throw new Exception("Duplicate <group> " + desc + ": " + nameStr);
-                            }
+                    for (Group group : typeGroups) {
+                        if (group.getName().equals(nameStr)) {
+                            /* duplicate */
+                            String desc = "name";
+                            throw new Exception("Duplicate <group> " + desc + ": " + nameStr);
                         }
                     }
+
                     groupConfig = configData.getConfigGroup(groupType);
 
                     
