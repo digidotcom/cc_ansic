@@ -29,6 +29,9 @@ public class ConfigGenerator {
     private final static String URL_OPTION = "url";
     private final static String URL_DEFAULT = "login.etherios.com";
 
+    private final static String USE_NAMES = "usenames";
+    private final static String USE_NAMES_DEFAULT = "none";
+
     public final static String DASH = "-";
 
     public final static String USERNAME = "username";
@@ -50,6 +53,7 @@ public class ConfigGenerator {
     private static boolean noErrorDescription;
     private static boolean verboseOption;
     private static FileType fileType = FileType.NONE;
+    private static UseNames useNames = UseNames.NONE;
     private static boolean deleteDescriptor;
 
     public enum FileType {
@@ -72,6 +76,26 @@ public class ConfigGenerator {
         
     }
     
+    public enum UseNames {
+        NONE,
+        GROUPS,
+        ELEMENTS,
+        ALL;
+
+        public static UseNames toUseNames(String str) throws Exception {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (Exception e) {
+                log("Available use names:");
+                for (UseNames useNames : UseNames.values()) {
+                    log(String.format("\t%s",useNames.toString()));
+                }
+                throw new Exception("Invalid use name: " + str);
+            }
+        }
+
+    }
+
     private static void usage() {
         String className = ConfigGenerator.class.getName();
 
@@ -136,6 +160,10 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= optional Device Cloud URL. Default is %s",
                         DASH + URL_OPTION + "=<Device Cloud URL>", URL_DEFAULT));
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior,adding ASCIIZ names. Default is %s.",
+                        DASH + USE_NAMES + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
 
         log(String
                 .format(
@@ -205,8 +233,12 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(FILE_TYPE_OPTION)) {
                     fileType = FileType.toFileType(keys[1]);
-                    
-                } else {
+
+                } else if (keys[0].equals(USE_NAMES)) {
+                    useNames = UseNames.toUseNames(keys[1]);
+
+                }
+                else {
                     throw new Exception("Invalid Option: " + keys[0]);
                 }
 
@@ -397,6 +429,10 @@ public class ConfigGenerator {
         return fileType;
     }
     
+    public static UseNames useNamesOption() {
+        return useNames;
+    }
+
     public static boolean deleteDescriptorOption() {
         return deleteDescriptor;
     }
@@ -424,7 +460,6 @@ public class ConfigGenerator {
             
             /* parse file */
             debug_log("Start reading filename: " + filename);
-
             ConfigData configData = new ConfigData();
 
             if (fileTypeOption() != FileType.GLOBAL_HEADER) {

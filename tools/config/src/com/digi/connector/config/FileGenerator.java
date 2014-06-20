@@ -68,27 +68,6 @@ public abstract class FileGenerator {
     " void * user_context;\n" +
     "} rci_info_t;\n";
 
-    protected final static String CONNECTOR_GROUP_ELEMENT_T = "\ntypedef struct {\n" +
-    "    connector_element_access_t access;\n" +
-    "    connector_element_value_type_t type;\n" +
-    "    rci_function_t set_cb;\n" +
-    "    rci_function_t get_cb;\n" +
-    "} connector_group_element_t;\n";
-
-    protected final static String CONNECTOR_GROUP_T = "\ntypedef struct {\n" +
-    "  size_t instances;\n" +
-    "  struct {\n" +
-    "      size_t count;\n" +
-    "      connector_group_element_t CONST * CONST data;\n" +
-    "  } elements;\n\n" +
-    "  struct {\n" +
-    "      size_t count;\n" +
-    "      char CONST * CONST * description;\n" +
-    "  } errors;\n\n" +
-    "  rci_function_t start_cb;\n" +
-    "  rci_function_t end_cb;\n" +
-    "} connector_group_t;\n";
-
     protected final static String CONNECTOR_REMOTE_GROUP_T = "\ntypedef struct {\n" +
     "  connector_remote_group_type_t type;\n" +
     "  unsigned int id;\n" +
@@ -497,8 +476,9 @@ public abstract class FileGenerator {
 
         fileWriter.write(CONNECTOR_RCI_INFO);
         fileWriter.write("\ntypedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);\n");
-        fileWriter.write(CONNECTOR_GROUP_ELEMENT_T);
-        fileWriter.write(CONNECTOR_GROUP_T);
+
+        writeGroupElementStructs(configData);
+
         fileWriter.write(CONNECTOR_REMOTE_GROUP_T);
         fileWriter.write(CONNECTOR_REMOTE_ELEMENT_T);
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
@@ -506,6 +486,77 @@ public abstract class FileGenerator {
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
 
     }
+
+    private void writeGroupElementStructs(ConfigData configData) throws IOException {
+
+        String name_g="";
+        String name_e="";
+        int max_len=0;
+        int max_len_el=0;
+
+        try {
+            for (GroupType type : GroupType.values()) {
+
+                String typeName = type.toString().toLowerCase();
+	            LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
+
+	            for (Group group : typeGroups) {
+	                if(max_len<group.getName().length())
+	                {
+	                    max_len=group.getName().length();
+	                }
+	                for (Element element : group.getElements()) {
+	                    if(max_len_el<element.getName().length())
+	                    {
+	                        max_len_el=element.getName().length();
+	                    }
+	                }
+	            }
+	        }
+        } catch (Exception e) {
+            ConfigGenerator.log(e.toString());
+        }
+
+        switch(ConfigGenerator.useNamesOption()){
+            case NONE:
+                break;
+            case ELEMENTS:
+                name_e = String.format("    char name[%d];\n",max_len_el + 1);
+                break;
+            case GROUPS:
+                name_g = String.format("  char name[%d];\n",max_len + 1);
+                break;
+            case ALL:
+                name_e = String.format("    char name[%d];\n",max_len_el + 1);
+                name_g = String.format("  char name[%d];\n",max_len + 1);
+                break;
+        }
+
+        fileWriter.write(String.format("\ntypedef struct {\n" +
+                "%s" +
+                "  size_t instances;\n" +
+                "  struct {\n" +
+                "      size_t count;\n" +
+                "      connector_group_element_t CONST * CONST data;\n" +
+                "  } elements;\n\n" +
+                "  struct {\n" +
+                "      size_t count;\n" +
+                "      char CONST * CONST * description;\n" +
+                "  } errors;\n\n" +
+                "  rci_function_t start_cb;\n" +
+                "  rci_function_t end_cb;\n" +
+                "} connector_group_t;\n",name_g));
+
+        fileWriter.write(String.format("\ntypedef struct {\n" +
+                "%s" +
+                "    connector_element_access_t access;\n" +
+                "    connector_element_value_type_t type;\n" +
+                "    rci_function_t set_cb;\n" +
+                "    rci_function_t get_cb;\n" +
+                "} connector_group_element_t;\n",name_e));
+
+    }
+
     protected void writeRemoteAllStrings(ConfigData configData) throws Exception {
         if (!ConfigGenerator.excludeErrorDescription()) {
             fileWriter.write(String.format("\nchar CONST %s[] = {\n",
@@ -618,9 +669,13 @@ public abstract class FileGenerator {
 
         for (int element_index = 0; element_index < elements.size(); element_index++) {
             Element element = elements.get(element_index);
-
-            String element_string = String.format("\n { %s", COMMENTED(element.getName()));
-
+            String element_string = "";
+            if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.NONE || ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.GROUPS){
+                element_string = String.format("\n { %s", COMMENTED(element.getName()));
+            }
+            else{
+                element_string = String.format("\n { %s,\n", getCharUsename(element.getName()));
+            }
 
             element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
 
@@ -740,7 +795,14 @@ public abstract class FileGenerator {
                     Group group = groups.get(group_index);
 
                     define_name = getDefineString(group.getName() + "_elements");
-                    String group_string = String.format("\n { %s", COMMENTED(group.getName()));
+                    String group_string = "";
+
+                    if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.NONE || ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ELEMENTS){
+                        group_string = String.format("\n { %s", COMMENTED(group.getName()));
+                    }
+                    else{
+                        group_string = String.format("\n { %s,\n", getCharUsename(group.getName()));
+                    }
 
                     group_string += String.format("   %d ,%s", group.getInstances(),COMMENTED(" instances "))
                                   + String.format("   { asizeof(%s),\n", define_name.toLowerCase())
@@ -850,7 +912,7 @@ public abstract class FileGenerator {
 
     /* write typedef enum for rci errors */
         fileWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
-        writeErrorHeader(configData.getRciGlobalErrorsIndex()," " + GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), fileWriter);
+        writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), fileWriter);
         fileWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + GLOBAL_RCI_ERROR + ID_T_STRING);     
     }
 
@@ -1039,6 +1101,22 @@ public abstract class FileGenerator {
         }
 
         return quote_char;
+    }
+private String getCharUsename(String string) throws Exception {
+
+        String quote_char = "";
+        char[] characters = string.toCharArray();
+
+        int length = characters.length;
+
+        for (int i=0; i < length; i++)
+        {
+            quote_char += "\'" + characters[i] + "\',";
+        }
+        quote_char +="\'\\0\'";
+
+        return quote_char;
+
     }
 
     private String getRemoteString(String define_name) {
