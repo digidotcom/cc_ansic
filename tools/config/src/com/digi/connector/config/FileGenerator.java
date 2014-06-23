@@ -520,14 +520,12 @@ public abstract class FileGenerator {
         switch(ConfigGenerator.useNamesOption()){
             case NONE:
                 break;
+            case ALL:
             case ELEMENTS:
                 name_e = String.format("    char name[%d];\n",max_len_el + 1);
-                break;
+                if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ELEMENTS)
+                    break;
             case GROUPS:
-                name_g = String.format("  char name[%d];\n",max_len + 1);
-                break;
-            case ALL:
-                name_e = String.format("    char name[%d];\n",max_len_el + 1);
                 name_g = String.format("  char name[%d];\n",max_len + 1);
                 break;
         }
@@ -674,7 +672,7 @@ public abstract class FileGenerator {
                 element_string = String.format("\n { %s", COMMENTED(element.getName()));
             }
             else{
-                element_string = String.format("\n { %s,\n", getCharUsename(element.getName()));
+                element_string = String.format("\n { \"%s\",\n", element.getName());
             }
 
             element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
@@ -801,7 +799,7 @@ public abstract class FileGenerator {
                         group_string = String.format("\n { %s", COMMENTED(group.getName()));
                     }
                     else{
-                        group_string = String.format("\n { %s,\n", getCharUsename(group.getName()));
+                        group_string = String.format("\n { \"%s\",\n", group.getName());
                     }
 
                     group_string += String.format("   %d ,%s", group.getInstances(),COMMENTED(" instances "))
@@ -1101,22 +1099,6 @@ public abstract class FileGenerator {
         }
 
         return quote_char;
-    }
-private String getCharUsename(String string) throws Exception {
-
-        String quote_char = "";
-        char[] characters = string.toCharArray();
-
-        int length = characters.length;
-
-        for (int i=0; i < length; i++)
-        {
-            quote_char += "\'" + characters[i] + "\',";
-        }
-        quote_char +="\'\\0\'";
-
-        return quote_char;
-
     }
 
     private String getRemoteString(String define_name) {
