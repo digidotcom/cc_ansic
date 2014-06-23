@@ -532,6 +532,14 @@ public abstract class FileGenerator {
 
         fileWriter.write(String.format("\ntypedef struct {\n" +
                 "%s" +
+                "    connector_element_access_t access;\n" +
+                "    connector_element_value_type_t type;\n" +
+                "    rci_function_t set_cb;\n" +
+                "    rci_function_t get_cb;\n" +
+                "} connector_group_element_t;\n",name_e));
+
+        fileWriter.write(String.format("\ntypedef struct {\n" +
+                "%s" +
                 "  size_t instances;\n" +
                 "  struct {\n" +
                 "      size_t count;\n" +
@@ -544,14 +552,6 @@ public abstract class FileGenerator {
                 "  rci_function_t start_cb;\n" +
                 "  rci_function_t end_cb;\n" +
                 "} connector_group_t;\n",name_g));
-
-        fileWriter.write(String.format("\ntypedef struct {\n" +
-                "%s" +
-                "    connector_element_access_t access;\n" +
-                "    connector_element_value_type_t type;\n" +
-                "    rci_function_t set_cb;\n" +
-                "    rci_function_t get_cb;\n" +
-                "} connector_group_element_t;\n",name_e));
 
     }
 
@@ -690,7 +690,7 @@ public abstract class FileGenerator {
             element_string += String.format("   %srci_%s_%s_get %s", RCI_FUNCTION_T,getDefineString(group_name).toLowerCase(),
             		element.getName(),COMMENTED(" cast is mandatory"));
 
-            element_string += "\n }";
+            element_string += " }";
 
             if (element_index < (elements.size() - 1)) {
                 element_string += ",";
