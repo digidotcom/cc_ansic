@@ -16,9 +16,9 @@
 
 #include "rci_binary.h"
 
-STATIC uint32_t rci_get_firmware_target_zero_version(void)
+STATIC uint32_t rci_get_firmware_target_zero_version(connector_data_t * const connector_ptr)
 {
-    return connector_rci_config_data.firmware_target_zero_version;
+    return connector_ptr->rci_data.firmware_target_zero_version;
 }
 
 STATIC void set_rci_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
@@ -190,42 +190,35 @@ STATIC connector_status_t connector_facility_rci_service_delete(connector_data_t
 STATIC connector_status_t connector_facility_rci_service_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
     connector_status_t result;
-
     msg_service_id_t const service_id = msg_service_id_brci;
+    connector_request_id_t request_id;
+    connector_callback_status_t callback_status;
+    connector_remote_config_data_t rci_data;
 
-#if (defined connector_request_id_remote_config_configurations)
+    request_id.remote_config_request = connector_request_id_remote_config_configurations;
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
+                                         request_id, &rci_data, connector_ptr->context);
+    switch (callback_status)
     {
+        case connector_callback_unrecognized:
+            result = connector_idle;
+            goto done;
 
-        connector_request_id_t request_id;
-        connector_callback_status_t callback_status;
+        case connector_callback_continue:
+            ASSERT(rci_data.group_table != NULL);
+            if (rci_data.global_error_count < connector_rci_error_COUNT)
+                rci_data.global_error_count = connector_rci_error_COUNT;
+            connector_ptr->rci_data = rci_data;
+            break;
 
-        request_id.remote_config_request = (connector_request_id_remote_config_t)connector_request_id_remote_config_configurations;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
-                                             request_id, &connector_rci_config_data, connector_ptr->context);
-        switch (callback_status)
-        {
-            case connector_callback_unrecognized:
-                result = connector_idle;
-                goto done;
-
-            case connector_callback_continue:
-                ASSERT(connector_rci_config_data.group_table != NULL);
-                if (connector_rci_config_data.global_error_count < connector_rci_error_COUNT) connector_rci_config_data.global_error_count = connector_rci_error_COUNT;
-                break;
-
-            default:
-                result = connector_abort;
-                goto done;
-
-        }
+        default:
+            result = connector_abort;
+            goto done;
 
     }
-#endif
 
     result = msg_init_facility(connector_ptr, facility_index, service_id, rci_service_callback);
 
-#if (defined connector_request_id_remote_config_configurations)
 done:
-#endif
     return result;
 }

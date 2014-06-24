@@ -27,7 +27,8 @@
 
 static connector_group_t const * get_current_group(rci_t const * const rci)
 {
-    connector_remote_group_table_t const * const table = (connector_rci_config_data.group_table + rci->shared.callback_data.group.type);
+    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
+    connector_remote_group_table_t const * const table = rci_data->group_table + rci->shared.callback_data.group.type;
     unsigned int const group_id = get_group_id(rci);
 
     ASSERT(have_group_id(rci));

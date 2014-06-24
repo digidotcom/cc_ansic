@@ -209,6 +209,10 @@ typedef struct connector_data {
     connector_edp_data_t edp_data;
 #endif
 
+#if (defined CONNECTOR_RCI_SERVICE)
+    connector_remote_config_data_t rci_data;
+#endif
+
     struct {
         enum {
             connector_state_running,
