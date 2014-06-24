@@ -108,12 +108,12 @@ STATIC connector_status_t confirm_fw_version(connector_firmware_data_t * const f
     connector_status_t result = connector_working;
     uint32_t const version_number = FW_VERSION_NUMBER(version);
 
-    if (target_number == 0 && version_number != rci_get_firmware_target_zero_version())
+    if (target_number == 0 && version_number != rci_get_firmware_target_zero_version(fw_ptr->connector_ptr))
     {
         connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
         connector_request_id_t request_id;
 
-        connector_debug_line("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)", version_number, rci_get_firmware_target_zero_version());
+        connector_debug_line("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)", version_number, rci_get_firmware_target_zero_version(fw_ptr->connector_ptr));
         request_id.firmware_request = connector_request_id_firmware_info;
         if (notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_bad_version, connector_ptr->context) != connector_working)
         {
