@@ -16,8 +16,6 @@
 
 extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request_id,
                                                   void * const data);
-extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
-                                                      void * const data);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -43,6 +41,20 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
     return type;
 }
 
+static connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data)
+{
+    if (request_id == connector_request_id_remote_config_configurations)
+    {
+        connector_remote_config_data_t * const remote_configuration = data;
+        *remote_configuration = rci_desc_data;
+    }
+    else
+    {
+        printf("unknown request %d\n", request_id);
+    }
+
+    return connector_callback_continue;
+}
 
 connector_callback_status_t app_connector_callback(connector_class_id_t const class_id,
                                                    connector_request_id_t const request_id,
@@ -68,7 +80,6 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         break;
     case connector_class_id_remote_config:
         status = app_remote_config_handler(request_id.remote_config_request, data);
-        status = connector_callback_continue;
         break;
     case connector_class_id_status:
         status = app_status_handler(request_id.status_request, data);
