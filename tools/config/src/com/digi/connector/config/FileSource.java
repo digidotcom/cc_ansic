@@ -72,20 +72,20 @@ public class FileSource extends FileGenerator {
             headerWriter.write(String.format("extern connector_remote_group_table_t CONST %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
 
             /* Write Define Errors Macros */
-            writeDefineRciErrors(configData);
+            writeDefineRciErrors(configData, fileWriter);
 
-            writeDefineGroupErrors(configData);
+            writeDefineGroupErrors(configData, fileWriter);
 
-            writeDefineGlobalErrors(configData);
+            writeDefineGlobalErrors(configData, fileWriter);
 
             /* write remote all strings in source file */
-            writeRemoteAllStrings(configData);
+            writeRemoteAllStrings(configData, fileWriter);
 
             /* write connector_rci_errors[] */
-            writeGlobalErrorStructures(configData);
+            writeGlobalErrorStructures(configData, fileWriter);
 
             /* write structures in source file */
-            writeAllStructures(configData);
+            writeAllStructures(configData, fileWriter);
 
             headerWriter.write(String.format("\n#endif\n"));
  

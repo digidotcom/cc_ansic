@@ -49,7 +49,7 @@ public class FileGlobalHeader extends FileGenerator {
 
             writeDefinesAndStructures(configData);
             
-            writeRciErrorEnumHeader(configData);
+            writeRciErrorEnumHeader(configData, fileWriter);
     
             fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE);
             fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);

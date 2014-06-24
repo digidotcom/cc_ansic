@@ -25,11 +25,14 @@ public class FileNone extends FileGenerator {
 			 +" * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343\n"
 			 +" * =======================================================================\n"
 			 +" */\n";
-	private static String HANDLER = "\nconnector_callback_status_t app_remote_config_handler" 
-			 +"(connector_request_id_remote_config_t const request_id, void * const data)\n{\n"
-			 +"    UNUSED_PARAMETER(data);\n"
-			 +"    UNUSED_PARAMETER(request_id);\n\n"
-			 +"    return connector_callback_continue;\n}\n";
+
+	private static String RCI_DATA = "\nconnector_remote_config_data_t rci_desc_data = {\n" +
+		"    connector_group_table,\n"+
+		"    connector_rci_errors,\n"+
+		"    connector_rci_error_COUNT,\n"+
+		"    FIRMWARE_TARGET_ZERO_VERSION\n"+
+		"};\n";
+
     protected final static String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
     protected final static String RETURN_CONTINUE = "    return connector_callback_continue;\n}\n";
 
@@ -74,44 +77,13 @@ public class FileNone extends FileGenerator {
             writeDefinesAndStructures(configData);
             
             /* Write all group enum in H file */
-            writeRciErrorEnumHeader(configData);
+            writeRciErrorEnumHeader(configData, fileWriter);
             writeGlobalErrorEnumHeader(configData, fileWriter);
 
             writeGroupTypeAndErrorEnum(configData,fileWriter);
 
             writePrototypes(configData,fileWriter);
 
-           /* writeRciErrorEnumHeader(configData);                
-            writeGlobalErrorEnumHeader(configData,fileWriter);*/
-            
-            /*
-             * Start writing:
-             * 1. all #define for all strings from user's groups 
-             * 2. all #define for all RCI and user's global errors 
-             * 3. all strings in connector_remote_all_strings[]
-             */
-            fileWriter.write(String.format("\n\n#if defined %s\n", RCI_PARSER_DATA));
-            fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE \n\n");
-            
-            fileWriter.write(String.format("#define FIRMWARE_TARGET_ZERO_VERSION  0x%X\n\n",ConfigGenerator.getFirmware()));
-
-            /* Write Define Errors Macros */
-            writeDefineRciErrors(configData);
-            
-            writeDefineGroupErrors(configData);
-
-            writeDefineGlobalErrors(configData);
-            
-            /* write remote all strings in source file */
-            writeRemoteAllStrings(configData);
-            
-            /* write connector_rci_errors[] */
-            writeGlobalErrorStructures(configData);
-
-            /* write structures in source file */
-            writeAllStructures(configData);
-            
-            fileWriter.write(String.format("\n#endif\n\n"));
             fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
             
@@ -141,10 +113,35 @@ public class FileNone extends FileGenerator {
     private void writeFunctionFile(ConfigData configData, BufferedWriter bufferWriter) throws Exception
     {
         functionWriter.write(String.format("%s \"%s\"", INCLUDE, HEADER_FILENAME));
-        functionWriter.write(CONNECTOR_GLOBAL_HEADER);
-        functionWriter.write(String.format("%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
-        functionWriter.write(HANDLER);
-    	
+        functionWriter.write(String.format("\n%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
+        /*
+         * Start writing:
+         * 1. all #define for all strings from user's groups
+         * 2. all #define for all RCI and user's global errors
+         * 3. all strings in connector_remote_all_strings[]
+         */
+        functionWriter.write("\n\n#define CONST const \n");
+
+        functionWriter.write(String.format("#define FIRMWARE_TARGET_ZERO_VERSION  0x%X\n\n",ConfigGenerator.getFirmware()));
+
+        /* Write Define Errors Macros */
+        writeDefineRciErrors(configData,functionWriter);
+
+        writeDefineGroupErrors(configData,functionWriter);
+
+        writeDefineGlobalErrors(configData,functionWriter);
+
+        /* write remote all strings in source file */
+        writeRemoteAllStrings(configData,functionWriter);
+
+        /* write connector_rci_errors[] */
+        writeGlobalErrorStructures(configData,functionWriter);
+
+        /* write structures in source file */
+        writeAllStructures(configData,functionWriter);
+
+        functionWriter.write(RCI_DATA);
+
     	String session_function = setFunction("rci_session_start_cb(" + RCI_INFO_T + ")",null);
     	session_function += setFunction("rci_session_end_cb(" + RCI_INFO_T + ")",null);
         bufferWriter.write(session_function);

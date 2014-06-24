@@ -97,7 +97,7 @@ public abstract class FileGenerator {
     "  void * user_context;\n" +
     "} connector_remote_config_cancel_t;\n";
         
-    protected final static String CONNECTOR_REMOTE_GROUP_TABLE_T = "\ntypedef struct {\n" +
+    protected final static String CONNECTOR_REMOTE_GROUP_TABLE_T = "\ntypedef struct connector_remote_group_table {\n" +
     "  connector_group_t CONST * groups;\n" +
     "  size_t count;\n" +
     "} connector_remote_group_table_t;\n\n";
@@ -289,7 +289,7 @@ public abstract class FileGenerator {
 		        }
 	        }
 	    }
-        /*TODO*///bufferWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
+        bufferWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
     }
 
     private void writeElementValueStruct() throws IOException {
@@ -555,13 +555,13 @@ public abstract class FileGenerator {
 
     }
 
-    protected void writeRemoteAllStrings(ConfigData configData) throws Exception {
+    protected void writeRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            fileWriter.write(String.format("\nchar CONST %s[] = {\n",
+            bufferWriter.write(String.format("\nchar CONST %s[] = {\n",
                     CONNECTOR_REMOTE_ALL_STRING));
         }
         
-        writeRciErrorsRemoteAllStrings(configData);
+        writeRciErrorsRemoteAllStrings(configData, bufferWriter);
 
         for (GroupType type : GroupType.values()) {
             LinkedList<Group> theConfig = null;
@@ -571,17 +571,17 @@ public abstract class FileGenerator {
             theConfig = configData.getConfigGroup(configType);
 
             if (!theConfig.isEmpty()) {
-                writeGroupRemoteAllStrings(theConfig);
+                writeGroupRemoteAllStrings(theConfig, bufferWriter);
             }
         }
-        writeErrorsRemoteAllStrings(configData);
+        writeErrorsRemoteAllStrings(configData, bufferWriter);
 
         if (!ConfigGenerator.excludeErrorDescription()) {
-            fileWriter.write("\n};\n\n"); // end of CONNECTOR_REMOTE_ALL_STRING
+            bufferWriter.write("\n};\n\n"); // end of CONNECTOR_REMOTE_ALL_STRING
         }
     }
 
-    protected void writeDefineGroupErrors(ConfigData configData) throws Exception {
+    protected void writeDefineGroupErrors(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
         for (GroupType type : GroupType.values()) {
             String defineName = null;
             LinkedList<Group> groups = null;
@@ -603,7 +603,7 @@ public abstract class FileGenerator {
                         /* define name string index for each error in the group
                          * #define [group name + ERROR + error name]
                          */
-                        fileWriter.write(getDefineStringIndex(defineName, errorMap.get(key), ConfigGenerator.FileType.SOURCE));
+                        bufferWriter.write(getDefineStringIndex(defineName, errorMap.get(key), ConfigGenerator.FileType.SOURCE));
                     }
                 }
             }
@@ -611,58 +611,58 @@ public abstract class FileGenerator {
 
     }
 
-    private void writeGroupRemoteAllStrings(LinkedList<Group> groups) throws Exception {
+    private void writeGroupRemoteAllStrings(LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
         for (Group group : groups) {
             if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 for (String key : errorMap.keySet()) {
-                    fileWriter.write(getCharString(errorMap.get(key)));
+                    bufferWriter.write(getCharString(errorMap.get(key)));
                 }
             }
         }
     }
 
-    private void writeDefineErrors(String prefixName, LinkedHashMap<String, String> errorMap, ConfigGenerator.FileType fileType) throws IOException {
+    private void writeDefineErrors(String prefixName, LinkedHashMap<String, String> errorMap, ConfigGenerator.FileType fileType,BufferedWriter bufferWriter) throws IOException {
         for (String key : errorMap.keySet()) {
             String defineName = prefixName.toUpperCase() + "_" + key.toUpperCase();
             /* define name string index for each error */
-            fileWriter.write(getDefineStringIndex(defineName, errorMap.get(key), fileType));
+            bufferWriter.write(getDefineStringIndex(defineName, errorMap.get(key), fileType));
         }
     }
 
-    protected void writeDefineGlobalErrors(ConfigData configData) throws IOException {
+    protected void writeDefineGlobalErrors(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_ERROR, configData.getUserGlobalErrors(), ConfigGenerator.FileType.SOURCE);
+            writeDefineErrors(GLOBAL_ERROR, configData.getUserGlobalErrors(), ConfigGenerator.FileType.SOURCE,bufferWriter);
         }
     }
 
-    protected void writeDefineRciErrors(ConfigData configData) throws IOException {
+    protected void writeDefineRciErrors(ConfigData configData,BufferedWriter bufferWriter) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE);
+            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE,bufferWriter);
         }
     }
     
-    private void writeLinkedHashMapStrings(LinkedHashMap<String, String> stringMap) throws IOException {
+    private void writeLinkedHashMapStrings(LinkedHashMap<String, String> stringMap,BufferedWriter bufferWriter) throws IOException {
         for (String key : stringMap.keySet()) {
-            fileWriter.write(getCharString(stringMap.get(key)));
+            bufferWriter.write(getCharString(stringMap.get(key)));
         }
     }
 
-    private void writeErrorsRemoteAllStrings(ConfigData configData) throws IOException {
+    private void writeErrorsRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getUserGlobalErrors());
+            writeLinkedHashMapStrings(configData.getUserGlobalErrors(),bufferWriter);
         }
     }
 
-    private void writeRciErrorsRemoteAllStrings(ConfigData configData) throws IOException {
+    private void writeRciErrorsRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getRciGlobalErrors());
+            writeLinkedHashMapStrings(configData.getRciGlobalErrors(),bufferWriter);
         }
     }
 
-    private void writeElementArrays(String group_name, LinkedList<Element> elements) throws Exception {
+    private void writeElementArrays(String group_name, LinkedList<Element> elements, BufferedWriter bufferWriter) throws Exception {
         /* write group element structure array */
-        fileWriter.write(String.format("static connector_group_element_t CONST %s_elements[] = {",
+        bufferWriter.write(String.format("static connector_group_element_t CONST %s_elements[] = {",
                                         getDefineString(group_name).toLowerCase()));
 
         for (int element_index = 0; element_index < elements.size(); element_index++) {
@@ -696,13 +696,13 @@ public abstract class FileGenerator {
                 element_string += ",";
             }
 
-            fileWriter.write(element_string);
+            bufferWriter.write(element_string);
         }
-        fileWriter.write("\n};\n\n");
+        bufferWriter.write("\n};\n\n");
 
     }
 
-    protected void writeGlobalErrorStructures(ConfigData configData) throws IOException {
+    protected void writeGlobalErrorStructures(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
         
         if (!ConfigGenerator.excludeErrorDescription()) {
             int errorCount = configData.getRciGlobalErrors().size()
@@ -713,68 +713,68 @@ public abstract class FileGenerator {
                 
                 if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE)  staticString = "";
 
-                fileWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
+                bufferWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
                         
                 /* top-level global errors */
                 errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR,
-                             configData.getRciGlobalErrors());
+                             configData.getRciGlobalErrors(),  bufferWriter);
 
                 /* group global errors */
                 errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR,
-                             configData.getUserGlobalErrors());
+                             configData.getUserGlobalErrors(), bufferWriter);
 
-                fileWriter.write("};\n\n");
+                bufferWriter.write("};\n\n");
             }
         }
     }
 
-    private int writeErrorStructures(int errorCount, String defineName, LinkedHashMap<String, String> errorMap) throws IOException {
+    private int writeErrorStructures(int errorCount, String defineName, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
         
         for (String key : errorMap.keySet()) {
-            fileWriter.write(getRemoteString(defineName.toUpperCase() + "_" + key));
+            bufferWriter.write(getRemoteString(defineName.toUpperCase() + "_" + key));
             errorCount--;
             if (errorCount > 0) {
-                fileWriter.write(",");
+                bufferWriter.write(",");
             }
-            fileWriter.write(COMMENTED(key));
+            bufferWriter.write(COMMENTED(key));
         }
 
         return errorCount;
     }
 
-    private void writeErrorStructures(String error_name, LinkedHashMap<String, String> localErrors) throws IOException {
+    private void writeErrorStructures(String error_name, LinkedHashMap<String, String> localErrors , BufferedWriter bufferWriter) throws IOException {
         
         if (!ConfigGenerator.excludeErrorDescription()) {
             String define_name;
 
             if (!localErrors.isEmpty()) {
                 define_name = getDefineString(error_name + "_" + ERROR);
-                fileWriter.write(CHAR_CONST_STRING + define_name.toLowerCase() + "s[] = {\n");
+                bufferWriter.write(CHAR_CONST_STRING + define_name.toLowerCase() + "s[] = {\n");
 
                 /* local local errors */
                 define_name = getDefineString(error_name + "_" + ERROR);
                 int error_count = localErrors.size();
-                writeErrorStructures(error_count, define_name, localErrors);
+                writeErrorStructures(error_count, define_name, localErrors, bufferWriter);
 
-                fileWriter.write("};\n\n");
+                bufferWriter.write("};\n\n");
             }
         }
     }
 
-    private void writeGroupStructures(LinkedList<Group> groups) throws Exception {
+    private void writeGroupStructures(LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
         
         for (int group_index = 0; group_index < groups.size(); group_index++) {
             Group group = groups.get(group_index);
 
             /* write element structure */
-            writeElementArrays(group.getName(), group.getElements());
+            writeElementArrays(group.getName(), group.getElements(), bufferWriter);
 
-            writeErrorStructures(group.getName(), group.getErrors());
+            writeErrorStructures(group.getName(), group.getErrors(), bufferWriter);
         }
 
     }
 
-    protected void writeAllStructures(ConfigData configData) throws Exception {
+    protected void writeAllStructures(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
         String define_name;
 
         for (GroupType type : GroupType.values()) {
@@ -785,9 +785,9 @@ public abstract class FileGenerator {
             groups = configData.getConfigGroup(configType);
 
             if (!groups.isEmpty()) {
-                writeGroupStructures(groups);
+                writeGroupStructures(groups, bufferWriter);
 
-                fileWriter.write(String.format("static connector_group_t CONST connector_%s_groups[] = {", configType));
+                bufferWriter.write(String.format("static connector_group_t CONST connector_%s_groups[] = {", configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
@@ -826,9 +826,9 @@ public abstract class FileGenerator {
                         group_string += ",";
                     }
 
-                    fileWriter.write(group_string);
+                    bufferWriter.write(group_string);
                 }
-                fileWriter.write("\n};\n\n");
+                bufferWriter.write("\n};\n\n");
             }
         }
 
@@ -861,7 +861,7 @@ public abstract class FileGenerator {
         }
         rciGroupString += "\n};\n\n";
 
-        fileWriter.write(rciGroupString);
+        bufferWriter.write(rciGroupString);
     }
 
     protected void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
@@ -906,12 +906,12 @@ public abstract class FileGenerator {
 
     }
 
-    protected void writeRciErrorEnumHeader(ConfigData configData) throws IOException {
+    protected void writeRciErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter ) throws IOException {
 
     /* write typedef enum for rci errors */
-        fileWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
-        writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), fileWriter);
-        fileWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + GLOBAL_RCI_ERROR + ID_T_STRING);     
+        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
+        writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), bufferWriter);
+        bufferWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + GLOBAL_RCI_ERROR + ID_T_STRING);     
     }
 
     protected void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
