@@ -517,9 +517,7 @@ STATIC connector_status_t sm_process_cli_request(connector_data_t * const connec
         cli_request.buffer = cli_command;
         cli_request.bytes_used = cli_bytes;
         cli_request.response_required = SmIsResponseNeeded(session->flags);
-#if (CONNECTOR_VERSION >= 0x02010000)
         cli_request.more_data = SmIsNotLastData(session->flags);
-#endif
 
         request_id.sm_request = connector_request_id_sm_cli_request;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cli_request, connector_ptr->context);

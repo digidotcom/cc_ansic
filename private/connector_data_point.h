@@ -199,7 +199,6 @@ STATIC connector_status_t dp_inform_status(connector_data_t * const connector_pt
     return result;
 }
 
-#if (CONNECTOR_VERSION >= 0x02010000)
 STATIC connector_status_t dp_cancel_session(connector_data_t * const connector_ptr, void const * const session, uint32_t const * const request_id)
 {
     connector_status_t status = connector_working;
@@ -241,7 +240,6 @@ STATIC connector_status_t dp_cancel_session(connector_data_t * const connector_p
 done:
     return status;
 }
-#endif
 
 STATIC connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, char const * const path, char const * const extension)
 {
@@ -946,11 +944,6 @@ STATIC connector_callback_status_t dp_handle_response_callback(connector_data_t 
 
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_point, request_id, &user_data, connector_ptr->context);
     if (callback_status == connector_callback_busy) goto error;
-
-#if (CONNECTOR_VERSION < 0x02010000)
-    if (free_data_buffer(connector_ptr, named_buffer_id(data_point_block), dp_info) != connector_working)
-        callback_status = connector_callback_abort;
-#endif
 
 error:
     return callback_status;

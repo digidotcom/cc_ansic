@@ -375,7 +375,6 @@ error:
     return result;
 }
 
-#if (CONNECTOR_VERSION >= 0x02010000)
 /* Return request_data's request_id field. This varies depending on the request. If this can't be done, set request_id to NULL */
 STATIC uint32_t * get_request_id_ptr(connector_initiate_request_t const request, void const * const request_data)
 {
@@ -421,7 +420,6 @@ STATIC uint32_t * get_request_id_ptr(connector_initiate_request_t const request,
 
     return request_id;
 }
-#endif
 
 STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, connector_initiate_request_t const request, void const * const request_data)
 {
@@ -558,9 +556,7 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
             break;
 
         case connector_initiate_session_cancel:
-#if (CONNECTOR_VERSION >= 0x02010000)
         case connector_initiate_session_cancel_all:
-#endif
         {
             connector_sm_data_t * const sm_ptr = get_sm_data(connector_ptr, *transport_ptr);
 
@@ -613,15 +609,12 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
                 case connector_transport_receive:
                 case connector_transport_redirect:
                 {
-#if (CONNECTOR_VERSION >= 0x02010000)
                     uint32_t * request_id = NULL;
-#endif
                     if (sm_ptr->close.stop_condition == connector_wait_sessions_complete)
                     {
                         result = connector_unavailable;
                         goto error;
                     }
-#if (CONNECTOR_VERSION >= 0x02010000)
                     request_id = get_request_id_ptr(request, request_data);
                     /* dp_initiate_data_point() and dp_initiate_data_point_binary() convert a connector_initiate_data_point or  
                      * connector_initiate_data_point_binary to a connector_initiate_send_data,
@@ -653,7 +646,6 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         if (request_id != NULL)
                             *request_id = sm_ptr->pending.request_id;
                     }
-#endif
 
 #if (defined CONNECTOR_DATA_POINTS)
                     switch (request)
