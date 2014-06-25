@@ -470,10 +470,7 @@ enum fw_download_response {
     /* Parse firmware download request. Then, call the callback
      * with these values and send download request response.
      */
-#if (CONNECTOR_VERSION >= 0x02010000)
     download_request.code_size = message_load_be32(fw_download_request, code_size);
-#endif
-
     string_id_length = (size_t)(length - record_bytes(fw_download_request));
 
     {

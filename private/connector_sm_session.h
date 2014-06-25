@@ -179,7 +179,6 @@ error:
 }
 
 /* If request_id == NULL cancel ALL sessions. Else cancel the SM session whose Request ID matches the one passed as a parameter. */
-#if (CONNECTOR_VERSION >= 0x02010000)
 STATIC connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint32_t const * const request_id)
 {
     connector_status_t result = connector_working;
@@ -213,45 +212,7 @@ STATIC connector_status_t sm_cancel_session(connector_data_t * const connector_p
 #endif
     return result;
 }
-#else
-STATIC connector_status_t sm_cancel_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, void const * const user_context)
-{
-    connector_status_t result = connector_working;
-    connector_sm_session_t * session = sm_ptr->session.head;
-    connector_bool_t cancel_all = connector_bool(user_context == NULL);
 
-    while (session != NULL)
-    {
-        connector_status_t status;
-        connector_sm_session_t * next_session = NULL;
-
-        if (cancel_all || (session->user.context == user_context))
-        {
-            if (session->user.context != NULL)
-            {
-                session->error = connector_sm_error_cancel;
-                status = sm_inform_session_complete(connector_ptr, session);
-                if (status != connector_working)
-                    result = connector_abort;
-            }
-
-            next_session = session->next;
-            status = sm_delete_session(connector_ptr, sm_ptr, session);
-            if (status != connector_working)
-            {
-                result = connector_abort;
-                break;
-            }
-            if (!cancel_all)
-                break;
-        }
-
-        session = next_session;
-    }
-
-    return result;
-}
-#endif
 STATIC connector_status_t sm_process_pending_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
     connector_status_t result = connector_idle;
@@ -294,20 +255,14 @@ STATIC connector_status_t sm_process_pending_data(connector_data_t * const conne
         case connector_initiate_session_cancel:
         {
             connector_sm_cancel_request_t const * const request = sm_ptr->pending.data;
-#if (CONNECTOR_VERSION >= 0x02010000)
             result = sm_cancel_session(connector_ptr, sm_ptr, &request->request_id);
-#else
-            result = sm_cancel_session(connector_ptr, sm_ptr, request->user_context);
-#endif
             break;
         }
-#if (CONNECTOR_VERSION >= 0x02010000)
         case connector_initiate_session_cancel_all:
         {
             result = sm_cancel_session(connector_ptr, sm_ptr, NULL);
             break;
         }
-#endif
         default:
         {
             connector_bool_t const client_originated = connector_true;

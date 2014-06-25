@@ -468,7 +468,6 @@ STATIC connector_status_t data_service_device_request_callback(connector_data_t 
     case msg_service_type_free:
         {
             msg_session_t * const session = service_request->session;
-#if (CONNECTOR_VERSION >= 0x02010000)
             if (session->error == connector_session_error_none)
             {
                 /* If there is no error, call the user to inform that session is done */
@@ -476,7 +475,6 @@ STATIC connector_status_t data_service_device_request_callback(connector_data_t 
                 if (status != connector_working)
                     break;
             }
-#endif
             status = free_data_buffer(connector_ptr, named_buffer_id(msg_service), session->service_context);
             break;
         }
@@ -802,7 +800,6 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
 
         case msg_service_type_free:
             {
-#if (CONNECTOR_VERSION >= 0x02010000)
                 msg_session_t * const session = service_request->session;
                 if (session->error == connector_session_error_none)
                 {
@@ -811,7 +808,6 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
                     if (status != connector_working)
                         break;
                 }
-#endif
                 if (ds_ptr != NULL)
                     status = free_data_buffer(connector_ptr, named_buffer_id(put_request), ds_ptr);
                 else
