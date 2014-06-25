@@ -105,39 +105,39 @@ public class FileNone extends FileGenerator {
     
     private void writeFunctionFile(ConfigData configData, BufferedWriter bufferWriter) throws Exception
     {
-        functionWriter.write(String.format("%s \"%s\"", INCLUDE, HEADER_FILENAME));
-        functionWriter.write(String.format("\n%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
+        bufferWriter.write(String.format("%s \"%s\"", INCLUDE, HEADER_FILENAME));
+        bufferWriter.write(String.format("\n%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
         /*
          * Start writing:
          * 1. all #define for all strings from user's groups
          * 2. all #define for all RCI and user's global errors
          * 3. all strings in connector_remote_all_strings[]
          */
-        functionWriter.write("\n\n#define CONST const \n");
+        bufferWriter.write("\n\n#define CONST const \n");
 
-        functionWriter.write(String.format("#define FIRMWARE_TARGET_ZERO_VERSION  0x%X\n\n",ConfigGenerator.getFirmware()));
+        bufferWriter.write(String.format("#define FIRMWARE_TARGET_ZERO_VERSION  0x%X\n\n",ConfigGenerator.getFirmware()));
 
         /* Write Define Errors Macros */
-        writeDefineRciErrors(configData,functionWriter);
+        writeDefineRciErrors(configData,bufferWriter);
 
-        writeDefineGroupErrors(configData,functionWriter);
+        writeDefineGroupErrors(configData,bufferWriter);
 
-        writeDefineGlobalErrors(configData,functionWriter);
+        writeDefineGlobalErrors(configData,bufferWriter);
 
         /* write remote all strings in source file */
-        writeRemoteAllStrings(configData,functionWriter);
+        writeRemoteAllStrings(configData,bufferWriter);
 
         /* write connector_rci_errors[] */
-        writeGlobalErrorStructures(configData,functionWriter);
+        writeGlobalErrorStructures(configData,bufferWriter);
 
         /* write structures in source file */
-        writeAllStructures(configData,functionWriter);
+        writeAllStructures(configData,bufferWriter);
 
-        functionWriter.write(String.format("\nconnector_remote_config_data_t rci_desc_data = {\n" +
+        bufferWriter.write(String.format("\nconnector_remote_config_data_t rci_desc_data = {\n" +
 		"    connector_group_table,\n"+
 		"    connector_rci_errors,\n"+
 		"    connector_rci_error_COUNT,\n"+
-		"    FIRMWARE_TARGET_ZERO_VERSION\n"+
+		"    FIRMWARE_TARGET_ZERO_VERSION,\n"+
 		"    %s,\n"+
 		"    \"%s\"\n"+
 		"};\n", Descriptors.vendorId(),Descriptors.deviceType()));
