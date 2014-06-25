@@ -484,25 +484,25 @@ public class ConfigGenerator {
             switch(fileTypeOption())
             {
             case NONE:
-                FileNone fileNone = new FileNone(directoryPath);
-
-                fileNone.generateFile(configData);
-
                 /* descriptor constructor for arguments */
                 Descriptors descriptors = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
-                
+
+                FileNone fileNone = new FileNone(directoryPath);
+                fileNone.generateFile(configData);
+
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
                 descriptors.processDescriptors(configData);
                 break;
 
             case SOURCE:
-                FileSource fileSource = new FileSource(directoryPath);
-                fileSource.generateFile(configData);
                 /* descriptor constructor for arguments */
                 Descriptors descriptorsSource = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
+
+                FileSource fileSource = new FileSource(directoryPath);
+                fileSource.generateFile(configData);
 
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");

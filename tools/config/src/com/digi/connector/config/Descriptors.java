@@ -30,8 +30,8 @@ public class Descriptors {
 
     private final String username;
     private final String password;
-    private final String deviceType;
-    private String vendorId;
+    private static String deviceType;
+    private static String vendorId;
     private final long fwVersion;
     private Boolean callDeleteFlag;
     private int responseCode;
@@ -41,11 +41,11 @@ public class Descriptors {
                        final long version) throws IOException  {
         this.username = username;
         this.password = password;
-        this.deviceType = deviceType;
+        Descriptors.deviceType = deviceType;
         this.fwVersion = version;
 
         validateUrlName();
-        this.vendorId = vendorId;
+        Descriptors.vendorId = vendorId;
         if (vendorId == null) getVendorId();
         else {
             if (vendorId.startsWith("0x")) {
@@ -85,6 +85,7 @@ public class Descriptors {
             }
 
             sendRciDescriptors(configData);
+            ConfigGenerator.log("\nDescriptors were uploaded successfully.");
         }
     }
 
@@ -178,10 +179,10 @@ public class Descriptors {
 
         for (Group group : groups) {
             query_descriptors += group.toString(groups.indexOf(group));
-            
+
             query_descriptors += String.format("<attr name=\"index\" desc=\"%s\" type=\"int32\" min=\"1\" max=\"%d\" />",
                                                     group.getDescription(), group.getInstances());
-                
+
             for (Element element : group.getElements()) {
 
                 query_descriptors += element.toString(group.getElements().indexOf(element));
@@ -458,6 +459,19 @@ public class Descriptors {
 
         ConfigGenerator.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
         ConfigGenerator.debug_log(response);
+    }
+
+    public static String vendorId(){
+        try{
+            return String.format("0x%X", Long.parseLong(vendorId));
+        }
+        catch (NumberFormatException nfe){
+            return vendorId;
+        }
+    }
+
+    public static String deviceType(){
+        return deviceType;
     }
 
 }

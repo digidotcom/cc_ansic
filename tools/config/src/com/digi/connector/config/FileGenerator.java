@@ -680,15 +680,13 @@ public abstract class FileGenerator {
             element_string += String.format("   %s,\n", getElementDefine("type", element.getType()));
 
             if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-	            element_string += String.format("   %srci_%s_%s_set, %s",RCI_FUNCTION_T, getDefineString(group_name).toLowerCase(),
-	            		element.getName(),COMMENTED(" cast is mandatory"));
+	            element_string += String.format("   %srci_%s_%s_set,\n",RCI_FUNCTION_T, getDefineString(group_name).toLowerCase(),element.getName());
             }
             else{
                 element_string +="   NULL,\n";
             }
 
-            element_string += String.format("   %srci_%s_%s_get %s", RCI_FUNCTION_T,getDefineString(group_name).toLowerCase(),
-            		element.getName(),COMMENTED(" cast is mandatory"));
+            element_string += String.format("   %srci_%s_%s_get\n", RCI_FUNCTION_T,getDefineString(group_name).toLowerCase(),element.getName());
 
             element_string += " }";
 
@@ -816,10 +814,8 @@ public abstract class FileGenerator {
                     }
 
                     group_string +=  String.format(", %s",COMMENTED(" errors"))
-                    			   + String.format("   %srci_%s_start,%s" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase()
-                  		  			,COMMENTED(" start callback"))
-                  		  		   + String.format("   %srci_%s_end %s }\n" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase()
-                  				  	,COMMENTED(" end callback"));
+                                + String.format("   %srci_%s_start,\n" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase())
+                                + String.format("   %srci_%s_end\n }\n" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase());
                     
 
                     if (group_index < (groups.size() - 1)) {

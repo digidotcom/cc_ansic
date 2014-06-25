@@ -26,13 +26,6 @@ public class FileNone extends FileGenerator {
 			 +" * =======================================================================\n"
 			 +" */\n";
 
-	private static String RCI_DATA = "\nconnector_remote_config_data_t rci_desc_data = {\n" +
-		"    connector_group_table,\n"+
-		"    connector_rci_errors,\n"+
-		"    connector_rci_error_COUNT,\n"+
-		"    FIRMWARE_TARGET_ZERO_VERSION\n"+
-		"};\n";
-
     protected final static String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
     protected final static String RETURN_CONTINUE = "    return connector_callback_continue;\n}\n";
 
@@ -140,7 +133,14 @@ public class FileNone extends FileGenerator {
         /* write structures in source file */
         writeAllStructures(configData,functionWriter);
 
-        functionWriter.write(RCI_DATA);
+        functionWriter.write(String.format("\nconnector_remote_config_data_t rci_desc_data = {\n" +
+		"    connector_group_table,\n"+
+		"    connector_rci_errors,\n"+
+		"    connector_rci_error_COUNT,\n"+
+		"    FIRMWARE_TARGET_ZERO_VERSION\n"+
+		"    %s,\n"+
+		"    \"%s\"\n"+
+		"};\n", Descriptors.vendorId(),Descriptors.deviceType()));
 
     	String session_function = setFunction("rci_session_start_cb(" + RCI_INFO_T + ")",null);
     	session_function += setFunction("rci_session_end_cb(" + RCI_INFO_T + ")",null);
