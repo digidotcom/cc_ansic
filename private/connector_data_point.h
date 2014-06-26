@@ -443,7 +443,7 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
 {
     size_t bytes_processed = 0;
     size_t i;
-    size_t extra_quotes = 0;
+    size_t extra_chars = 0;
     size_t const max_strlen = bytes_available - 1;
 
     ASSERT(string != NULL);
@@ -455,7 +455,7 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
             buffer[bytes_processed] = '\"';
         }
         bytes_processed++;
-        extra_quotes++;
+        extra_chars++;
     }
 
     for (i = 0; string[i] != '\0'; i++)
@@ -467,7 +467,7 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
                 buffer[bytes_processed] = '\\';
             }
             bytes_processed++;
-            extra_quotes++;
+            extra_chars++;
         }
 
         if (bytes_processed < max_strlen)
@@ -484,14 +484,14 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
             buffer[bytes_processed] = '\"';
         }
         bytes_processed++;
-        extra_quotes++;
+        extra_chars++;
     }
 
     buffer[bytes_processed] = '\0';
 
     if (bytes_used_ptr != NULL)
     {
-        *bytes_used_ptr = bytes_processed - extra_quotes;
+        *bytes_used_ptr = bytes_processed - extra_chars;
     }
 
     return bytes_processed;
