@@ -464,7 +464,7 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
         {
             if (bytes_processed < max_strlen)
             {
-                buffer[bytes_processed] = '\"';
+                buffer[bytes_processed] = '\\';
             }
             bytes_processed++;
             extra_quotes++;
@@ -491,7 +491,6 @@ STATIC size_t dp_process_string(char * const string, char * const buffer, size_t
 
     if (bytes_used_ptr != NULL)
     {
-        printf("bytes_processed %d\nextra_quotes %d\n", (int) bytes_processed, (int)extra_quotes);
         *bytes_used_ptr = bytes_processed - extra_quotes;
     }
 
