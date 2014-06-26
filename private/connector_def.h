@@ -49,6 +49,8 @@
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
 
+#define FW_VERSION_NUMBER(version)  (MAKE32_4(version.major, version.minor, version.revision, version.build))
+
 #if !(defined CONNECTOR_TRANSPORT_RECONNECT_AFTER)
 #define CONNECTOR_TRANSPORT_RECONNECT_AFTER     30
 #endif

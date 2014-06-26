@@ -16,11 +16,6 @@
 
 #include "rci_binary.h"
 
-STATIC uint32_t rci_get_firmware_target_zero_version(connector_data_t * const connector_ptr)
-{
-    return connector_ptr->rci_data.firmware_target_zero_version;
-}
-
 STATIC void set_rci_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
 {
     service_request->error_value = error_code;
@@ -187,6 +182,52 @@ STATIC connector_status_t connector_facility_rci_service_delete(connector_data_t
     return msg_delete_facility(connector_ptr, service_id);
 }
 
+#if (defined CONNECTOR_DEBUG)
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
+STATIC uint32_t get_fw_target_zero_version(connector_data_t const * const connector_ptr)
+{
+    connector_status_t status;
+    connector_request_id_t request;
+    connector_firmware_info_t target_zero_data;
+
+    request.firmware_request = connector_request_id_firmware_info;
+
+    target_zero_data.target_number = 0;
+    target_zero_data.version.major = 0;
+    target_zero_data.version.minor = 0;
+    target_zero_data.version.revision = 0;
+    target_zero_data.version.build = 0;
+    target_zero_data.description = NULL;
+    target_zero_data.filespec = NULL;
+
+    status = connector_callback(connector_ptr->callback, connector_class_id_firmware, request, &target_zero_data, connector_ptr->context);
+    switch (status)
+    {
+        case connector_success:
+            break;
+        default:
+            ASSERT(status == connector_success);
+            break;
+    }
+
+    return FW_VERSION_NUMBER(target_zero_data.version);
+}
+#endif
+
+STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, char const * const device_type, uint32_t const vendor_id, uint32_t const fw_target_zero_version)
+{
+    char const * const reported_device_type = connector_ptr->edp_data.config.device_type;
+    uint32_t const reported_vendor_id = connector_ptr->edp_data.config.vendor_id;
+#if (defined CONNECTOR_FIRMWARE_SERVICE)
+    uint32_t const reported_fw_target_zero_version = get_fw_target_zero_version(connector_ptr);
+
+    ASSERT(fw_target_zero_version == reported_fw_target_zero_version);
+#endif
+    ASSERT(strcmp(device_type, reported_device_type) == 0);
+    ASSERT(vendor_id == reported_vendor_id);
+}
+#endif
+
 STATIC connector_status_t connector_facility_rci_service_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
     connector_status_t result;
@@ -216,6 +257,10 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
             goto done;
 
     }
+
+#if (defined CONNECTOR_DEBUG)
+    validate_rci_tuple(connector_ptr, rci_data.device_type, rci_data.vendor_id, rci_data.firmware_target_zero_version);
+#endif
 
     result = msg_init_facility(connector_ptr, facility_index, service_id, rci_service_callback);
 

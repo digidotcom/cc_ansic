@@ -81,8 +81,6 @@ enum fw_target_list{
     record_end(fw_target_list)
 };
 
-#define FW_VERSION_NUMBER(version)  (MAKE32_4(version.major, version.minor, version.revision, version.build))
-
 static size_t const target_list_header_size = field_named_data(fw_target_list, opcode, size);
 static size_t const target_list_size = record_bytes(fw_target_list);
 
@@ -101,28 +99,6 @@ typedef struct {
     uint8_t response_buffer[FW_MESSAGE_RESPONSE_MAX_SIZE + PACKET_EDP_FACILITY_SIZE];
     uint8_t target_count;
 } connector_firmware_data_t;
-
-#if defined CONNECTOR_RCI_SERVICE
-STATIC connector_status_t confirm_fw_version(connector_firmware_data_t * const fw_ptr, uint8_t target_number, connector_firmware_version_t const version)
-{
-    connector_status_t result = connector_working;
-    uint32_t const version_number = FW_VERSION_NUMBER(version);
-
-    if (target_number == 0 && version_number != rci_get_firmware_target_zero_version(fw_ptr->connector_ptr))
-    {
-        connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
-        connector_request_id_t request_id;
-
-        connector_debug_line("confirm_fw_version: 0x%X != FIRMWARE_TARGET_ZERO_VERSION (0x%X)", version_number, rci_get_firmware_target_zero_version(fw_ptr->connector_ptr));
-        request_id.firmware_request = connector_request_id_firmware_info;
-        if (notify_error_status(connector_ptr->callback, connector_class_id_firmware, request_id, connector_bad_version, connector_ptr->context) != connector_working)
-        {
-            result = connector_abort;
-        }
-    }
-    return result;
-}
-#endif
 
 STATIC connector_status_t get_fw_config(connector_firmware_data_t * const fw_ptr,
                                         connector_request_id_firmware_t const fw_request_id,
@@ -345,12 +321,7 @@ enum fw_info {
         {
             goto done;
         }
-#if defined CONNECTOR_RCI_SERVICE
-        else
-        {
-           result = confirm_fw_version(fw_ptr, firmware_info->target_number, firmware_info->version);
-        }
-#endif
+
         fw_ptr->desc_length = strlen(firmware_info->description);
         fw_ptr->spec_length = strlen(firmware_info->filespec);
 
@@ -896,12 +867,6 @@ STATIC connector_status_t fw_discovery(connector_data_t * const connector_ptr, v
             result = get_fw_config(fw_ptr, connector_request_id_firmware_info, &firmware_info);
             if (result == connector_working)
             {
-
-#if defined CONNECTOR_RCI_SERVICE
-                /* coverity[uninit_use] */
-                result = confirm_fw_version(fw_ptr, firmware_info.target_number, firmware_info.version);
-                if (result != connector_working) goto error;
-#endif
                 message_store_u8(fw_target_list, target, firmware_info.target_number);
                 message_store_be32(fw_target_list, version, FW_VERSION_NUMBER(firmware_info.version));
 

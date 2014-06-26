@@ -97,6 +97,8 @@ typedef struct connector_remote_config_data {
     char const * const * error_table;
     unsigned int global_error_count;
     uint32_t firmware_target_zero_version;
+    uint32_t vendor_id;
+    char const * device_type;
 } connector_remote_config_data_t;
 
 #endif
