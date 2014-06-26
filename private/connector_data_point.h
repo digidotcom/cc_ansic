@@ -509,7 +509,7 @@ STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
         goto done;
     }
 
-    ASSERT_GOTO(connector_data_point_type_binary >= ds_ptr->type, done);
+    ASSERT_GOTO(connector_data_point_type_geojson >= ds_ptr->type, done);
 
     switch (ds_ptr->type)
     {
@@ -524,6 +524,8 @@ STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
 #endif
 
         case connector_data_point_type_string:
+        case connector_data_point_type_json:
+        case connector_data_point_type_geojson:
         {
             size_t bytes_copied = 0;
             connector_bool_t const need_quotes = string_needs_quotes(dp_ptr->data.element.native.string_value);
@@ -553,7 +555,6 @@ STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
             bytes_processed = connector_snprintf(buffer, bytes_available, "%lf", dp_ptr->data.element.native.double_value);
             break;
 #endif
-
         default:
             ASSERT_GOTO(connector_false, done);
             break;
@@ -652,11 +653,11 @@ STATIC size_t dp_process_location(data_point_info_t * const dp_info, char * cons
 
 STATIC size_t dp_process_type(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
 {
-    char const * const type_list[] = {"INTEGER", "LONG", "FLOAT", "DOUBLE", "STRING", "BINARY"};
+    char const * const type_list[] = {"INTEGER", "LONG", "FLOAT", "DOUBLE", "STRING", "BINARY", "JSON", "GEOJSON"};
     connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
     size_t bytes_processed = 0;
 
-    ASSERT_GOTO(connector_data_point_type_binary >= ds_ptr->type, error);
+    ASSERT_GOTO(connector_data_point_type_geojson >= ds_ptr->type, error);
 
     if (dp_info->data.csv.first_point == connector_false)
         return 0;

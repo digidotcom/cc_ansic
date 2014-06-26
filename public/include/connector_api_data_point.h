@@ -56,7 +56,9 @@ typedef enum
     connector_data_point_type_float,     /**< a network (big endian) 32-bit IEEE754 floating point */
     connector_data_point_type_double,    /**< a network (big endian) 64-bit IEEE754 floating point */
     connector_data_point_type_string,    /**< an UTF-8 encoding (ASCII compatible) */
-    connector_data_point_type_binary     /**< binary data */
+    connector_data_point_type_binary,     /**< binary data */
+    connector_data_point_type_json,
+    connector_data_point_type_geojson
 } connector_data_point_type_t;
 /**
 * @}
