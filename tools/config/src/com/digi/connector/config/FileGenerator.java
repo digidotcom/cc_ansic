@@ -127,6 +127,7 @@ public abstract class FileGenerator {
     protected String configType;
     private int prevRemoteStringLength;
     private Boolean isFirstRemoteString;
+    protected String prefix;
 
     public FileGenerator(String directoryPath,String file_name,ConfigGenerator.FileType fileType) throws IOException {
         
@@ -139,9 +140,10 @@ public abstract class FileGenerator {
         generatedFile = file_name;
 
         fileWriter = new BufferedWriter(new FileWriter(filePath + generatedFile));
-        
+
         writeHeaderComment(fileWriter);
         isFirstRemoteString = true;
+        prefix = ConfigGenerator.getPrefix();
     }
 
     abstract void writeHeaderComment(BufferedWriter bufferWriter) throws IOException;
@@ -207,9 +209,9 @@ public abstract class FileGenerator {
     protected void writePrototypes(ConfigData configData,BufferedWriter bufferWriter) throws Exception{
 
         String session_prototype = CONNECTOR_CALLBACK_STATUS;
-        session_prototype += "rci_session_start_cb(" + RCI_INFO_T + ");";
+        session_prototype += prefix + "rci_session_start_cb(" + RCI_INFO_T + ");";
         session_prototype += CONNECTOR_CALLBACK_STATUS;
-        session_prototype += "rci_session_end_cb(" + RCI_INFO_T + ");\n";
+        session_prototype += prefix + "rci_session_end_cb(" + RCI_INFO_T + ");\n";
         bufferWriter.write(session_prototype);
 
         for (GroupType type : GroupType.values()) {
@@ -222,9 +224,9 @@ public abstract class FileGenerator {
 
 	            for (Group group : groups) {
 	                String group_prototype = CONNECTOR_CALLBACK_STATUS;
-		            group_prototype += String.format("rci_%s_%s_start(%s);",configType,group.getName(),RCI_INFO_T);
+		            group_prototype += String.format("%srci_%s_%s_start(%s);",prefix,configType,group.getName(),RCI_INFO_T);
 		            group_prototype += CONNECTOR_CALLBACK_STATUS;
-		            group_prototype += String.format("rci_%s_%s_end(%s);\n",configType,group.getName(),RCI_INFO_T);
+		            group_prototype += String.format("%srci_%s_%s_end(%s);\n",prefix,configType,group.getName(),RCI_INFO_T);
 		            bufferWriter.write(group_prototype);
 
 		            for (Element element : group.getElements()) {
@@ -245,7 +247,7 @@ public abstract class FileGenerator {
 		                        protoType += "connector_on_off_t";
 		                        break;
 		                    case ENUM:
-		                        protoType += String.format("connector_%s_%s_%s_id_t",configType,group.getName(),element.getName());
+		                        protoType += String.format("%sconnector_%s_%s_%s_id_t",prefix,configType,group.getName(),element.getName());
 		                        break;
 		                    case IPV4:
 		                    case FQDNV4:
@@ -266,23 +268,23 @@ public abstract class FileGenerator {
 
 		                switch(ElementType.toElementType(element.getType())){
 		                    case PASSWORD:
-			                    element_prototype += String.format("\n%srci_%s_%s_%s_get    NULL"
-			                    	    ,DEFINE,configType,group.getName(),element.getName());
+                                element_prototype += String.format("\n%s%srci_%s_%s_%s_get    NULL"
+                                    ,DEFINE,prefix,configType,group.getName(),element.getName());
 			                    break;
 			                default:
-			                    element_prototype += String.format("%srci_%s_%s_%s_get(%s, %s * const value);"
-			                    	    ,CONNECTOR_CALLBACK_STATUS,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+			                    element_prototype += String.format("%s%srci_%s_%s_%s_get(%s, %s * const value);"
+                                    ,CONNECTOR_CALLBACK_STATUS,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
 			                    break;
 		                }
 
 		                if(getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
 
-		                    element_prototype += String.format("\n%srci_%s_%s_%s_set    NULL \n"
-		                    	    ,DEFINE,configType,group.getName(),element.getName());
+		                    element_prototype += String.format("\n%s%srci_%s_%s_%s_set    NULL \n"
+                                ,DEFINE,prefix,configType,group.getName(),element.getName());
 		                }
 		                else{
-			                element_prototype += String.format("%srci_%s_%s_%s_set(%s, %s const value);\n"
-			                	 ,CONNECTOR_CALLBACK_STATUS,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+			                element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s const value);\n"
+                                ,CONNECTOR_CALLBACK_STATUS,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
 			                }
 		                bufferWriter.write(element_prototype);
 		            }
@@ -662,8 +664,8 @@ public abstract class FileGenerator {
 
     private void writeElementArrays(String group_name, LinkedList<Element> elements, BufferedWriter bufferWriter) throws Exception {
         /* write group element structure array */
-        bufferWriter.write(String.format("static connector_group_element_t CONST %s_elements[] = {",
-                                        getDefineString(group_name).toLowerCase()));
+        bufferWriter.write(String.format("static connector_group_element_t CONST %s%s_elements[] = {",
+                                        prefix,getDefineString(group_name).toLowerCase()));
 
         for (int element_index = 0; element_index < elements.size(); element_index++) {
             Element element = elements.get(element_index);
@@ -680,13 +682,13 @@ public abstract class FileGenerator {
             element_string += String.format("   %s,\n", getElementDefine("type", element.getType()));
 
             if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-	            element_string += String.format("   %srci_%s_%s_set,\n",RCI_FUNCTION_T, getDefineString(group_name).toLowerCase(),element.getName());
+	            element_string += String.format("   %s%srci_%s_%s_set,\n",RCI_FUNCTION_T,prefix, getDefineString(group_name).toLowerCase(),element.getName());
             }
             else{
                 element_string +="   NULL,\n";
             }
 
-            element_string += String.format("   %srci_%s_%s_get\n", RCI_FUNCTION_T,getDefineString(group_name).toLowerCase(),element.getName());
+            element_string += String.format("   %s%srci_%s_%s_get\n", RCI_FUNCTION_T,prefix,getDefineString(group_name).toLowerCase(),element.getName());
 
             element_string += " }";
 
@@ -747,7 +749,7 @@ public abstract class FileGenerator {
 
             if (!localErrors.isEmpty()) {
                 define_name = getDefineString(error_name + "_" + ERROR);
-                bufferWriter.write(CHAR_CONST_STRING + define_name.toLowerCase() + "s[] = {\n");
+                bufferWriter.write(CHAR_CONST_STRING + prefix + define_name.toLowerCase() + "s[] = {\n");
 
                 /* local local errors */
                 define_name = getDefineString(error_name + "_" + ERROR);
@@ -785,7 +787,7 @@ public abstract class FileGenerator {
             if (!groups.isEmpty()) {
                 writeGroupStructures(groups, bufferWriter);
 
-                bufferWriter.write(String.format("static connector_group_t CONST connector_%s_groups[] = {", configType));
+                bufferWriter.write(String.format("static connector_group_t CONST %sconnector_%s_groups[] = {", prefix, configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
@@ -801,21 +803,21 @@ public abstract class FileGenerator {
                     }
 
                     group_string += String.format("   %d ,%s", group.getInstances(),COMMENTED(" instances "))
-                                  + String.format("   { asizeof(%s),\n", define_name.toLowerCase())
-                                  + String.format("     %s\n   },\n", define_name.toLowerCase());
+                                  + String.format("   { asizeof(%s%s),\n", prefix, define_name.toLowerCase())
+                                  + String.format("     %s%s\n   },\n", prefix, define_name.toLowerCase());
                     if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                         define_name = getDefineString(group.getName() + "_errors");
 
-                        group_string += String.format("   { asizeof(%s),\n", define_name.toLowerCase())
-                                        + String.format("     %s\n   }", define_name.toLowerCase());
+                        group_string += String.format("   { asizeof(%s%s),\n", prefix, define_name.toLowerCase())
+                                        + String.format("     %s%s\n   }", prefix, define_name.toLowerCase());
 
                     } else {
                         group_string += "   { 0,\n     NULL\n   }";
                     }
 
                     group_string +=  String.format(", %s",COMMENTED(" errors"))
-                                + String.format("   %srci_%s_start,\n" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase())
-                                + String.format("   %srci_%s_end\n }\n" , RCI_FUNCTION_T,getDefineString(group.getName()).toLowerCase());
+                                + String.format("   %s%srci_%s_start,\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase())
+                                + String.format("   %s%srci_%s_end\n }\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase());
                     
 
                     if (group_index < (groups.size() - 1)) {
@@ -847,8 +849,8 @@ public abstract class FileGenerator {
 
             rciGroupString += " {";
             if (!groups.isEmpty()) {
-                rciGroupString += String.format(" connector_%s_groups,\n   asizeof(connector_%s_groups)\n }",
-                                                   configType, configType);
+                rciGroupString += String.format(" %sconnector_%s_groups,\n   asizeof(%sconnector_%s_groups)\n }",
+                                                   prefix,configType,prefix, configType);
 
             } else {
                 rciGroupString += "NULL,\n 0\n }";
@@ -891,7 +893,7 @@ public abstract class FileGenerator {
                 else error_string += ",\n";
                 errorIndex++;
             } else {
-                 error_string += ",\n";
+                error_string += ",\n";
             }
             bufferWriter.write(error_string);
         }
@@ -903,7 +905,7 @@ public abstract class FileGenerator {
     /* write typedef enum for rci errors */
         bufferWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
         writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), bufferWriter);
-        bufferWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + GLOBAL_RCI_ERROR + ID_T_STRING);     
+        bufferWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + prefix  + GLOBAL_RCI_ERROR + ID_T_STRING);
     }
 
     protected void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
@@ -926,7 +928,7 @@ public abstract class FileGenerator {
         if (configData.getUserGlobalErrors().isEmpty()) {
             endString += " = " + enumName;
         }
-        endString += "\n} " + GLOBAL_ERROR + ID_T_STRING;
+        endString += "\n} " + prefix + GLOBAL_ERROR + ID_T_STRING;
         
         bufferWriter.write(endString);
         
@@ -1014,7 +1016,7 @@ public abstract class FileGenerator {
 
 	            for (Group group : groups) {
 	                /* add each group enum */
-	                group_enum_string += getEnumString(group.getName()) + ",\n";
+                    group_enum_string += getEnumString(group.getName()) + ",\n";
 	            }
 
 	            /* write group enum buffer to fileWriter */
@@ -1038,7 +1040,12 @@ public abstract class FileGenerator {
     }
 
     private String endEnumString(String group_name) {
-        return ("}"+ getEnumString(group_name) + ID_T_STRING);
+        String str = "} " + prefix + CONNECTOR_PREFIX + "_" + configType;
+        if(group_name!=null)
+            str += "_" + group_name;
+        str +=ID_T_STRING;
+
+        return str;
     }
 
     private String getDefineString(String define_name) {

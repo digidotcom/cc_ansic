@@ -32,6 +32,8 @@ public class ConfigGenerator {
     private final static String USE_NAMES = "usenames";
     private final static String USE_NAMES_DEFAULT = "none";
 
+    public final static String PREFIX = "prefix";
+
     public final static String DASH = "-";
 
     public final static String USERNAME = "username";
@@ -54,6 +56,7 @@ public class ConfigGenerator {
     private static boolean verboseOption;
     private static FileType fileType = FileType.NONE;
     private static UseNames useNames = UseNames.NONE;
+    private static String prefix = "";
     private static boolean deleteDescriptor;
 
     public enum FileType {
@@ -122,7 +125,13 @@ public class ConfigGenerator {
                 + "] ["
                 + DASH
                 + URL_OPTION
-                + "] "
+                + "] ["
+                + DASH
+                + USE_NAMES
+                + "] ["
+                + DASH
+                + PREFIX
+                +"] "
                 + String.format("<\"%s\"[:\"%s\"]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
                         CONFIG_FILENAME));
@@ -164,7 +173,10 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= optional behavior,adding ASCIIZ names. Default is %s.",
                         DASH + USE_NAMES + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
-
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior,adding a prefix to the structures.",
+                        DASH + PREFIX + "=<prefix>"));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -181,6 +193,7 @@ public class ConfigGenerator {
                 FIRMWARE_VERSION));
         log(String.format("\t%-16s \t= The Connector Configuration file",
                 CONFIG_FILENAME));
+
         System.exit(1);
     }
 
@@ -233,6 +246,9 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(FILE_TYPE_OPTION)) {
                     fileType = FileType.toFileType(keys[1]);
+
+                } else if (keys[0].equals(PREFIX)) {
+                    prefix = keys[1] + "_";
 
                 } else if (keys[0].equals(USE_NAMES)) {
                     useNames = UseNames.toUseNames(keys[1]);
@@ -359,6 +375,7 @@ public class ConfigGenerator {
             case 4:
                 filename = arg;
                 argumentLog += " " + arg;
+
                 break;
                 
             default:
@@ -374,6 +391,11 @@ public class ConfigGenerator {
     public static long getFirmware() {
         return fwVersion;
     }
+
+    public static String getPrefix() {
+        return prefix;
+    }
+
     public static String getArgumentLogString() {
         return argumentLog;
     }
@@ -440,7 +462,7 @@ public class ConfigGenerator {
     public static String filename() {
         return filename;
     }
-    
+
     public static void main(String[] args) {
         
         try {
@@ -494,6 +516,7 @@ public class ConfigGenerator {
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
                 descriptors.processDescriptors(configData);
+
                 break;
 
             case SOURCE:

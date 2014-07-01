@@ -154,8 +154,8 @@ public class FileNone extends FileGenerator {
 	        if (!groups.isEmpty()) {
 
 	            for (Group group : groups) {
-	            	String group_function = setFunction(String.format("rci_%s_%s_start(%s)",configType,group.getName(),RCI_INFO_T),null);
-	            	group_function += setFunction(String.format("rci_%s_%s_end(%s)",configType,group.getName(),RCI_INFO_T),null);
+	                String group_function = setFunction(String.format("%srci_%s_%s_start(%s)",prefix,configType,group.getName(),RCI_INFO_T),null);
+	                group_function += setFunction(String.format("%srci_%s_%s_end(%s)",prefix,configType,group.getName(),RCI_INFO_T),null);
 	            	bufferWriter.write(group_function);
 		            for (Element element : group.getElements()) {
 		                String element_function ="";
@@ -192,7 +192,7 @@ public class FileNone extends FileGenerator {
 		                    case ENUM:
 		                        ValueStruct first_value = element.getValues().get(0);
 		                        value += "*value = connector_" + configType + "_" + group.getName() + "_" + element.getName() + "_" + first_value.getName();
-		                        FType += String.format("connector_%s_%s_%s_id_t",configType,group.getName(),element.getName());
+		                        FType += String.format("%sconnector_%s_%s_%s_id_t",prefix,configType,group.getName(),element.getName());
 		                        break;
 		                    case IPV4:
 		                    case FQDNV4:
@@ -218,14 +218,12 @@ public class FileNone extends FileGenerator {
 	                            break;
 		                }
 		                if(!(ElementType.toElementType(element.getType()).toValue() == 3/*PASSWORD*/)){
-
-		            	element_function += setFunction(String.format("rci_%s_%s_%s_get(%s, %s * const value)"
-	                    	    ,configType,group.getName(),element.getName(),RCI_INFO_T,FType),value);
-
+		                    element_function += setFunction(String.format("%srci_%s_%s_%s_get(%s, %s * const value)"
+                                ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),value);
 		                }
 		                if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-		                	element_function += setFunction(String.format("rci_%s_%s_%s_set(%s, %s const value)"
-				                	 ,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
+		                    element_function += setFunction(String.format("%srci_%s_%s_%s_set(%s, %s const value)"
+                                ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
 			            }
 		            	bufferWriter.write(element_function);
 		            }//No more elements
@@ -235,6 +233,7 @@ public class FileNone extends FileGenerator {
         }//No more group types
 
     }
+
     private String setFunction (String parameter,String value){
     	String function = CONNECTOR_CALLBACK_STATUS + parameter + "\n{\n    ";
         function += UNUSED("info") + PRINTF;
@@ -244,7 +243,5 @@ public class FileNone extends FileGenerator {
         function += RETURN_CONTINUE;
     	return  function;
     }
-    
 
-  
 }
