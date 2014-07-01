@@ -882,20 +882,16 @@ public abstract class FileGenerator {
         for (String key : errorMap.keySet()) {
             String error_string = enumDefine + "_" + key;
 
-            switch(type){
-                case "rci":
-                    if (errorIndex == 1) error_string += " = 1," + COMMENTED(" Protocol defined ");
-                    else error_string += ",\n";
-                    errorIndex++;
-                    break;
-                case "global":
-                    if (errorIndex == 1) error_string += "," +  COMMENTED(" User defined (global errors) ");
-                    else error_string += ",\n";
-                    errorIndex++;
-                    break;
-                default:
-                    error_string += ",\n";
-                    break;
+            if(type.equalsIgnoreCase("rci")){
+                if (errorIndex == 1) error_string += " = 1," + COMMENTED(" Protocol defined ");
+                else error_string += ",\n";
+                errorIndex++;
+            } else if(type.equalsIgnoreCase("global")){
+                if (errorIndex == 1) error_string += "," +  COMMENTED(" User defined (global errors) ");
+                else error_string += ",\n";
+                errorIndex++;
+            } else {
+                 error_string += ",\n";
             }
             bufferWriter.write(error_string);
         }

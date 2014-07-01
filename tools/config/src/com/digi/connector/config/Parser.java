@@ -208,7 +208,7 @@ public class Parser {
                     .lastIndexOf("\""));
 
             if (description.length() > MAX_DESCRIPTION_LENGTH) {
-                throw new Exception("desciption > maximum length "
+                throw new Exception("description > maximum length "
                         + MAX_DESCRIPTION_LENGTH);
             }
 

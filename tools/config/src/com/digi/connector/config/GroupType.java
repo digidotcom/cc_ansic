@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class GroupType {
 
-    private static final Map<String, GroupType> TYPE_MAP = new LinkedHashMap<>();
-    private static final List<GroupType> TYPE_LIST = new ArrayList<>();
+    private static final Map<String, GroupType> TYPE_MAP = new LinkedHashMap<String, GroupType>();
+    private static final List<GroupType> TYPE_LIST = new ArrayList<GroupType>();
 
     public static final GroupType SETTING = build(0,"SETTING");
     public static final GroupType STATE = build(1,"STATE");
