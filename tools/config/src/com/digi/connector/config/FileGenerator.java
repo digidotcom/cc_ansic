@@ -956,11 +956,11 @@ public abstract class FileGenerator {
                         if(value.getName().equalsIgnoreCase(""))
                             previousempty = true;
                         else if(previousempty){
-                            bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replace(" ", "_")) + " = " + i + ",\n");
+                            bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replaceAll("[^a-zA-Z_0-9]", "_")) + " = " + i + ",\n");
                             previousempty = false;
                         }
                         else
-                            bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replace(" ", "_")) + ",\n");
+                            bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replaceAll("[^a-zA-Z_0-9]", "_")) + ",\n");
                         i = i+1;
                     }
                     /* done typedef enum for value */

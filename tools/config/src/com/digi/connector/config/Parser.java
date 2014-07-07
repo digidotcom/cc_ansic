@@ -187,12 +187,14 @@ public class Parser {
         if (name.length() > MAX_NAME_LENGTH) {
             throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
         }
-        else if (!checkAlphaCharacters(name)) {
+        /* Now the descriptor can contain no alphanumeric chars,
+         * and the enums will replace them with "_"
+           else if (!checkAlphaCharacters(name)) {
             name=ChangeBadCharacters(name);
             if(!checkAlphaCharacters(name)){
                 throw new Exception("Invalid character in the name: " + name);
             }
-        }
+        }*/
         return name;
     }
 
@@ -210,13 +212,6 @@ public class Parser {
 
             if (name.length() > MAX_NAME_LENGTH) {
                 throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
-            }
-
-            else if (!checkAlphaCharacters(name)) {
-                name=ChangeBadCharacters(name);
-                if(!checkAlphaCharacters(name)){
-                    throw new Exception("Invalid character in the name: " + name);
-                }
             }
         }
         return name;

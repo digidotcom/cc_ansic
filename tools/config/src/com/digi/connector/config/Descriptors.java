@@ -180,8 +180,8 @@ public class Descriptors {
         for (Group group : groups) {
             query_descriptors += group.toString(groups.indexOf(group));
 
-            query_descriptors += String.format("<attr name=\"index\" desc=\"%s\" type=\"int32\" min=\"1\" max=\"%d\" />",
-                                                    group.getDescription(), group.getInstances());
+            query_descriptors += String.format("<attr name=\"index\" desc=\"item number\" type=\"int32\" min=\"1\" max=\"%d\" />",
+                                                    group.getInstances());
 
             for (Element element : group.getElements()) {
 
@@ -433,7 +433,6 @@ public class Descriptors {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
         String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
         if (responseCode != 0)
