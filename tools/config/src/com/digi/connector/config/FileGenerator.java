@@ -950,8 +950,18 @@ public abstract class FileGenerator {
                     /* write typedef enum for value */
                     bufferWriter.write(TYPEDEF_ENUM);
 
+                    boolean previousempty = false;
+                    int i = 0;
                     for (ValueStruct value : element.getValues()) {
-                        bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName()) + ",\n");
+                        if(value.getName().equalsIgnoreCase(""))
+                            previousempty = true;
+                        else if(previousempty){
+                            bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replace(" ", "_")) + " = " + i + ",\n");
+                            previousempty = false;
+                        }
+                        else
+                            bufferWriter.write(getEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replace(" ", "_")) + ",\n");
+                        i = i+1;
                     }
                     /* done typedef enum for value */
                     bufferWriter.write(endEnumString(group.getName() + "_" + element.getName()));

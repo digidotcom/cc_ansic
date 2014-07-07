@@ -41,6 +41,7 @@ public class Element {
         IPV4(false, 13),
         FQDNV4(true, 14),
         FQDNV6(true, 15),
+        MAC_ADDR(false, 21),
         DATETIME(false, 22);
 
         /* special type since string cannot start 0x (zero) */

@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 public class Parser {
 
-    private final static int MAX_DESCRIPTION_LENGTH = 40;
-    private final static int MAX_NAME_LENGTH = 40;
+    private final static int MAX_DESCRIPTION_LENGTH = 200;
+    private final static int MAX_NAME_LENGTH = 200;
 
     // PRIVATE variables
     private static TokenScanner tokenScanner;
@@ -162,7 +162,7 @@ public class Parser {
         return message + ": " + str;
     }
 
-    private final static Pattern ALPHACHARACTERS = Pattern.compile("\\w+");
+    private final static Pattern ALPHACHARACTERS = Pattern.compile("(\\w*\\s*)*");
 
     public static boolean checkAlphaCharacters(String s) {
         if (s == null) {
@@ -172,8 +172,9 @@ public class Parser {
             return m.matches();
         }
     }
+
     public static String ChangeBadCharacters(String s){
-        s = s.replaceAll("[^a-zA-Z_0-9]", "_");
+        s = s.replaceAll("[^a-zA-Z_0-9\\s]", "_");
         return s;
     }
 
@@ -190,6 +191,32 @@ public class Parser {
             name=ChangeBadCharacters(name);
             if(!checkAlphaCharacters(name)){
                 throw new Exception("Invalid character in the name: " + name);
+            }
+        }
+        return name;
+    }
+
+    private static String getQuotedName() throws Exception {
+
+        String name = null;
+        if (tokenScanner.hasToken("\\\".*")) {
+            name = tokenScanner.getTokenInLine("\\\".*?\\\"");
+            if (name == null) {
+                throw new Exception("Missing name!");
+            }
+
+            name = name.substring(1, name
+                    .lastIndexOf("\""));
+
+            if (name.length() > MAX_NAME_LENGTH) {
+                throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
+            }
+
+            else if (!checkAlphaCharacters(name)) {
+                name=ChangeBadCharacters(name);
+                if(!checkAlphaCharacters(name)){
+                    throw new Exception("Invalid character in the name: " + name);
+                }
             }
         }
         return name;
@@ -307,8 +334,10 @@ public class Parser {
                      * Parse Value for element with enum type syntax for parsing
                      * value: value <name> [description] [help description]
                      */
-                    element.addValue(getName(), getDescription(), getLongDescription());
-                    
+                    if (tokenScanner.hasToken("\\\".*"))
+                        element.addValue(getQuotedName(), getDescription(), getLongDescription());
+                    else
+                        element.addValue(getName(), getDescription(), getLongDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                     

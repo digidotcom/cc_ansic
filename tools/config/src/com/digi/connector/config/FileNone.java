@@ -191,7 +191,7 @@ public class FileNone extends FileGenerator {
 		                        break;
 		                    case ENUM:
 		                        ValueStruct first_value = element.getValues().get(0);
-		                        value += "*value = connector_" + configType + "_" + group.getName() + "_" + element.getName() + "_" + first_value.getName();
+		                        value += "*value = connector_" + configType + "_" + group.getName() + "_" + element.getName() + "_" + first_value.getName().replace(" ", "_");
 		                        FType += String.format("%sconnector_%s_%s_%s_id_t",prefix,configType,group.getName(),element.getName());
 		                        break;
 		                    case IPV4:
