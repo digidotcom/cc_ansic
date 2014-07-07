@@ -1,6 +1,7 @@
 package com.digi.connector.converter;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import com.digi.connector.converter.ParserXML;
 
@@ -12,7 +13,7 @@ public class XMLtoRCIConverter {
 	private final static String DASH = "-";
 
 	/*args variables*/
-    private static String filename;
+    private static ArrayList<String> fileNames = new ArrayList<String>();
     private static String directoryPath;
     private static String fileOut;
 
@@ -81,8 +82,8 @@ public class XMLtoRCIConverter {
 	
 	            } else {
 	            	if(arg.endsWith(".xml") && new File(arg).isFile()){
-	            		filename = arg;
-	            		argCount++;
+                        fileNames.add(arg);
+                        argCount++;
 	            	}
 	            	else
 	            		throw new Exception ("Invalid input file: " + arg);
@@ -93,7 +94,7 @@ public class XMLtoRCIConverter {
             usage();
         }
 
-        if (argCount != 1 ) {
+        if (argCount < 1 ) {
             log("Missing arguments!");
             usage();
         }
@@ -105,7 +106,7 @@ public class XMLtoRCIConverter {
         try {
             new XMLtoRCIConverter(args);
 
-            ParserXML.processFile(filename,directoryPath,fileOut);
+            ParserXML.processFile(fileNames,directoryPath,fileOut);
             
             log("\nDone.\n");
             System.exit(0);

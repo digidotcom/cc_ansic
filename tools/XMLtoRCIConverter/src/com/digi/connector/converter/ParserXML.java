@@ -1,7 +1,13 @@
 package com.digi.connector.converter;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -12,10 +18,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
 
 
 public class ParserXML{
 
+    private static File PrettyFile;
     private static NodeList nodeList;
     private static int len;
     private static String groupType;
@@ -24,7 +34,7 @@ public class ParserXML{
     private static String attrMax;
     private static BufferedWriter rciWriter = null;
 
-    public static void processFile(String fileName,String directoryPath,String fileOut) throws IOException, NullPointerException {
+    public static void processFile(ArrayList<String> fileNames,String directoryPath,String fileOut) throws IOException, NullPointerException {
 
         String filePath="";
         try {
@@ -41,13 +51,22 @@ public class ParserXML{
             else
                 filePath += "config.rci";
 
-        	File XmlFile = new File(fileName);
-        	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        	Document doc = dBuilder.parse(XmlFile);
-        	doc.getDocumentElement().normalize();
             rciWriter = new BufferedWriter(new FileWriter(filePath));
-        	parseFile(doc);
+
+            for(int i=0;i<fileNames.size();i++){
+
+                /* ParserXML needs pretty XML, we will create an aux file, and finally delete it */
+                String pretty = "pretty_" + fileNames.get(i).substring(fileNames.get(i).lastIndexOf("/")+1);
+                prettyPrint(fileNames.get(i),pretty);
+
+                PrettyFile = new File(pretty);
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document docpretty = dBuilder.parse(PrettyFile);
+                docpretty.getDocumentElement().normalize();
+
+                parseFile(docpretty);
+            }
             XMLtoRCIConverter.log("File generated: " + filePath);
 
         } catch (Exception e) {
@@ -55,9 +74,28 @@ public class ParserXML{
         }
         finally {
             rciWriter.close();
+            PrettyFile.delete();
         }
-
     }
+
+    public static final void prettyPrint(String fileName,String outxml) throws Exception {
+        /*Open the doc*/
+        File XmlFile = new File(fileName);
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(XmlFile);
+        doc.getDocumentElement().normalize();
+        /*Transform it */
+        Transformer tf = TransformerFactory.newInstance().newTransformer();
+        tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        tf.setOutputProperty(OutputKeys.INDENT, "yes");
+        Writer out = new StringWriter();
+        tf.transform(new DOMSource(doc), new StreamResult(out));
+        /*save it in a new file */
+        BufferedWriter prettyWriter = new BufferedWriter(new FileWriter(outxml));
+        prettyWriter.write(out.toString());
+        prettyWriter.close();
+	}
 
     private static void parseFile(Document doc) throws Exception {
 
