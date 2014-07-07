@@ -16,15 +16,12 @@ import java.io.IOException;
 
 public class ParserXML{
 
-	private final static int MAX_DESCRIPTION_LENGTH = 40; /* same value as in ConfigGenerator-Parser.java */
-
     private static NodeList nodeList;
     private static int len;
     private static String groupType;
     private static String groupName;
     private static String groupDesc;
     private static String attrMax;
-    private static String helpDesc;
     private static BufferedWriter rciWriter = null;
 
     public static void processFile(String fileName,String directoryPath,String fileOut) throws IOException, NullPointerException {
@@ -93,7 +90,7 @@ public class ParserXML{
                             int number_elements = (e.getChildNodes().getLength()-1)/2;
                             if(number_elements == 0)
                             	//throw new Exception("XML Error: Group " + groupName + " with No element specified");
-                            	rciWriter.write(String.format("\n# TODO_empty_group %s %s %s\n",groupType,groupName,groupDesc,helpDesc));
+                            	rciWriter.write(String.format("\n# TODO_empty_group %s %s %s\n",groupType,groupName,groupDesc));
                             /*for each element or error */
                             for(int m=0; m<number_elements;m++){
                                 j=j+1;
@@ -102,12 +99,12 @@ public class ParserXML{
                                 
                                 if(e.getTagName().equalsIgnoreCase("attr")){
                                     writeGroupAttr(e);
-                                    rciWriter.write(String.format("\n%s %s %s %s %s\n",groupType,groupName,attrMax,groupDesc,helpDesc));
+                                    rciWriter.write(String.format("\n%s %s %s %s\n",groupType,groupName,attrMax,groupDesc));
                                 }
                                 else{
                                     /*If the group doesn't have <attr */
                                     if(m == 0)
-                                        rciWriter.write(String.format("\n%s %s %s\n",groupType,groupName,groupDesc,helpDesc));
+                                        rciWriter.write(String.format("\n%s %s %s\n",groupType,groupName,groupDesc));
                                     if(e.getTagName().equalsIgnoreCase("error_descriptor"))
                                         writeGroupError(e);
                                     else if(e.getTagName().equalsIgnoreCase("element")){
@@ -206,18 +203,8 @@ public class ParserXML{
 
                 if(attrname.equalsIgnoreCase("element"))
                 	groupName = attrval;
-                else if(attrname.equalsIgnoreCase("desc")){
-                    if(attrval.length() > MAX_DESCRIPTION_LENGTH){
-                    	int cut = attrval.lastIndexOf(" ", MAX_DESCRIPTION_LENGTH);
-                    	helpDesc = "\"" +attrval.substring(cut+1) + "\"";
-                    	groupDesc = "\"" + attrval.substring(0,cut) + "\"";
-                    }
-                    else {
-                    	groupDesc = "\"" + attrval + "\"";
-                    	helpDesc ="";
-                    }
-                }
-
+                else if(attrname.equalsIgnoreCase("desc"))
+                    groupDesc = "\"" + attrval + "\"";
             }
     	}
     }
@@ -250,7 +237,6 @@ public class ParserXML{
         String attrval;
         String eName = "";
    	 	String eDesc = "";
-        String eHelpDesc = "";
    	 	String eType = "";
    	 	String eAccess = "";
    	 	String eMax = "";
@@ -280,20 +266,12 @@ public class ParserXML{
                     eMin = " min " + attrval;
                 else if(attrname.equalsIgnoreCase("units"))
                     eUnits =" units \"" + attrval + "\"";
-                else if(attrname.equalsIgnoreCase("desc")){
-                    if(attrval.length() > MAX_DESCRIPTION_LENGTH){
-                    	int cut = attrval.lastIndexOf(" ", MAX_DESCRIPTION_LENGTH);
-                    	eHelpDesc = " \"" +attrval.substring(cut+1) + "\"";
-                    	eDesc = "\"" + attrval.substring(0,cut) + "\"";
-                    }
-                    else {
+                else if(attrname.equalsIgnoreCase("desc"))
                     	eDesc ="\"" + attrval + "\"" ;
-                    }
-                }
             }
             if(eDesc.equalsIgnoreCase("\"\""))
             	eDesc ="\"TODO_empty_desc\"" ;
-            rciWriter.write(String.format("    element %s %s%s %s%s%s%s%s\n",eName,eDesc,eHelpDesc,eType,eAccess,eMin,eMax,eUnits));     
+            rciWriter.write(String.format("    element %s %s %s%s%s%s%s\n",eName,eDesc,eType,eAccess,eMin,eMax,eUnits));
         }
     }
     
