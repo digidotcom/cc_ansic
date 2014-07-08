@@ -10,6 +10,8 @@ import com.digi.connector.config.Element.ElementType;
 
 public abstract class FileGenerator {
 
+	protected boolean future_feature = ConfigGenerator.usePrototypes();
+
     protected static String TOOL_NAME = "RCI Generator";
 
     protected final static String HEADER_FILENAME = "remote_config.h";
@@ -256,6 +258,7 @@ public abstract class FileGenerator {
 		                    case STRING:
 		                    case MULTILINE_STRING:
 		                    case PASSWORD:
+		                    case MAC_ADDR:
 		                        protoType += "char const *";
 		                        break;
 		                    case BOOLEAN:
@@ -291,7 +294,6 @@ public abstract class FileGenerator {
 		        }
 	        }
 	    }
-        bufferWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
     }
 
     private void writeElementValueStruct() throws IOException {
@@ -535,10 +537,12 @@ public abstract class FileGenerator {
         fileWriter.write(String.format("\ntypedef struct {\n" +
                 "%s" +
                 "    connector_element_access_t access;\n" +
-                "    connector_element_value_type_t type;\n" +
-                "    rci_function_t set_cb;\n" +
-                "    rci_function_t get_cb;\n" +
-                "} connector_group_element_t;\n",name_e));
+                "    connector_element_value_type_t type;\n",name_e));
+if(future_feature){
+	    fileWriter.write("    rci_function_t set_cb;\n" +
+                "    rci_function_t get_cb;\n");
+}
+		fileWriter.write("} connector_group_element_t;\n");
 
         fileWriter.write(String.format("\ntypedef struct {\n" +
                 "%s" +
@@ -550,10 +554,12 @@ public abstract class FileGenerator {
                 "  struct {\n" +
                 "      size_t count;\n" +
                 "      char CONST * CONST * description;\n" +
-                "  } errors;\n\n" +
-                "  rci_function_t start_cb;\n" +
-                "  rci_function_t end_cb;\n" +
-                "} connector_group_t;\n",name_g));
+                "  } errors;\n\n",name_g));
+if(future_feature){
+		fileWriter.write("  rci_function_t start_cb;\n" +
+                "  rci_function_t end_cb;\n");
+}
+		fileWriter.write("} connector_group_t;\n");
 
     }
 
@@ -678,7 +684,7 @@ public abstract class FileGenerator {
             }
 
             element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
-
+if(future_feature){
             element_string += String.format("   %s,\n", getElementDefine("type", element.getType()));
 
             if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
@@ -689,7 +695,10 @@ public abstract class FileGenerator {
             }
 
             element_string += String.format("   %s%srci_%s_%s_get\n", RCI_FUNCTION_T,prefix,getDefineString(group_name).toLowerCase(),element.getName());
-
+}
+else{
+			element_string += String.format("   %s\n", getElementDefine("type", element.getType()));
+}
             element_string += " }";
 
             if (element_index < (elements.size() - 1)) {
@@ -814,12 +823,15 @@ public abstract class FileGenerator {
                     } else {
                         group_string += "   { 0,\n     NULL\n   }";
                     }
+if(future_feature){
+                    group_string +=  String.format(", %s",COMMENTED(" errors"));
 
-                    group_string +=  String.format(", %s",COMMENTED(" errors"))
-                                + String.format("   %s%srci_%s_start,\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase())
+                    group_string += String.format("   %s%srci_%s_start,\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase())
                                 + String.format("   %s%srci_%s_end\n }\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase());
-                    
-
+}
+else{
+					group_string +=  String.format(" %s}\n",COMMENTED(" errors"));
+}
                     if (group_index < (groups.size() - 1)) {
                         group_string += ",";
                     }
@@ -1050,7 +1062,13 @@ public abstract class FileGenerator {
     }
 
     private String endEnumString(String group_name) {
-        String str = "} " + prefix + CONNECTOR_PREFIX + "_" + configType;
+        /*Add _COUNT */
+        String str = " " + CONNECTOR_PREFIX + "_" + configType;
+        if(group_name!=null)
+           str += "_" + group_name;
+        str += "_" + COUNT_STRING +"\n";
+
+        str += "} " + prefix + CONNECTOR_PREFIX + "_" + configType;
         if(group_name!=null)
             str += "_" + group_name;
         str +=ID_T_STRING;

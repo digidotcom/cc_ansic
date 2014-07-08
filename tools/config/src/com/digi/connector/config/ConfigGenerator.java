@@ -2,6 +2,7 @@ package com.digi.connector.config;
 
 /*import java.io.BufferedReader;
 import java.io.InputStreamReader;*/
+
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class ConfigGenerator {
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
+    private final static String PROTOTYPES = "use_prototypes";
 
     private final static String FILE_TYPE_OPTION = "type";
 
@@ -58,6 +60,7 @@ public class ConfigGenerator {
     private static UseNames useNames = UseNames.NONE;
     private static String prefix = "";
     private static boolean deleteDescriptor;
+    private static boolean prototypes;
 
     public enum FileType {
         NONE,
@@ -266,6 +269,8 @@ public class ConfigGenerator {
                 deleteDescriptor = true;
             } else if (option.equals(HELP_OPTION)) {
                 usage();
+            } else if (option.equals(PROTOTYPES)) {
+                prototypes = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
             } else {
@@ -437,6 +442,10 @@ public class ConfigGenerator {
         return noErrorDescription;
     }
 
+    public static boolean usePrototypes() {
+        return prototypes;
+    }
+
     public static void log(Object aObject) {
         System.out.println(String.valueOf(aObject));
     }
@@ -479,7 +488,7 @@ public class ConfigGenerator {
                 log("\nDescriptors deleted.\n");
                 System.exit(0);
             }
-            
+
             /* parse file */
             debug_log("Start reading filename: " + filename);
             ConfigData configData = new ConfigData();
@@ -492,7 +501,7 @@ public class ConfigGenerator {
                     throw new IOException("No groups specified in file: "
                             + filename);
                 }
-    
+
                 debug_log("Number of setting groups: "
                         + configData.getSettingGroups().size());
                 debug_log("Number of state groups: "
@@ -556,6 +565,5 @@ public class ConfigGenerator {
             System.exit(1);
         }
     }
-
 
 }

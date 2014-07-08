@@ -36,7 +36,7 @@ public class FileNone extends FileGenerator {
 	public FileNone(String directoryPath) throws IOException {
 		
 		super(directoryPath,HEADER_FILENAME,fileType);	
-		functionFile = "remote_config_cb.c";
+		functionFile = "remote_config.c";
         functionWriter = new BufferedWriter(new FileWriter(filePath + functionFile));
         functionWriter.write(COPYRIGHT);
 
@@ -75,8 +75,10 @@ public class FileNone extends FileGenerator {
 
             writeGroupTypeAndErrorEnum(configData,fileWriter);
 
+if(future_feature)
             writePrototypes(configData,fileWriter);
 
+            fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
             fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
             
@@ -106,6 +108,9 @@ public class FileNone extends FileGenerator {
     private void writeFunctionFile(ConfigData configData, BufferedWriter bufferWriter) throws Exception
     {
         bufferWriter.write(String.format("%s \"%s\"", INCLUDE, HEADER_FILENAME));
+        bufferWriter.write(String.format("%s", CONNECTOR_GLOBAL_HEADER));
+
+if(future_feature)
         bufferWriter.write(String.format("\n%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
         /*
          * Start writing:
@@ -142,9 +147,16 @@ public class FileNone extends FileGenerator {
 		"    \"%s\"\n"+
 		"};\n", Descriptors.vendorId(),Descriptors.deviceType()));
 
+if(future_feature){
+		writeFunctionsCB(configData,bufferWriter);
+}
+    }
+
+    private void writeFunctionsCB(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
     	String session_function = setFunction("rci_session_start_cb(" + RCI_INFO_T + ")",null);
     	session_function += setFunction("rci_session_end_cb(" + RCI_INFO_T + ")",null);
         bufferWriter.write(session_function);
+
         for (GroupType type : GroupType.values()) {
 	        LinkedList<Group> groups = null;
 
@@ -210,6 +222,10 @@ public class FileNone extends FileGenerator {
 		                    case PASSWORD:
 		                    	FType += "char const *";
 		                        break;
+		                    case MAC_ADDR:
+		                        value += "*value = \"00049D:ABCDEF\"";
+		                        FType += "char const *";
+		                        break;
 		                    case BOOLEAN:
 		                    	value += "*value = connector_true";
 		                    	FType += "connector_bool_t";
@@ -231,7 +247,6 @@ public class FileNone extends FileGenerator {
 	            }//No more groups
 	        }
         }//No more group types
-
     }
 
     private String setFunction (String parameter,String value){
