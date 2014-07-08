@@ -131,134 +131,36 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
     connector_remote_config_t * remote_config = &rci->shared.callback_data;
-    unsigned int const element = remote_config->element.id;
-    unsigned int const group = remote_config->group.id;
-    unsigned int const group_type = remote_config->group.type;
-    connector_remote_action_t const action = remote_config->action;
-    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
-    connector_remote_group_table_t const * const connector_group_table = rci_data->group_table;
-    rci_function_t cb_function = NULL;
+    connector_remote_config_cancel_t remote_cancel;
+    void * callback_data = NULL;
 
-    switch(rci->callback.request.remote_config_request)
+    switch (rci->callback.request.remote_config_request)
     {
-        case connector_request_id_remote_config_group_start:
-            cb_function = connector_group_table[group_type].groups[group].start_cb;
-            break;
-        case connector_request_id_remote_config_group_end:
-            cb_function = connector_group_table[group_type].groups[group].end_cb;
-            break;
-        case connector_request_id_remote_config_group_process:
-        {
-            switch (action)
-            {
-                case connector_remote_action_set:
-                    cb_function = connector_group_table[group_type].groups[group].elements.data[element].set_cb;
-                    break;
-                case connector_remote_action_query:
-                    cb_function = connector_group_table[group_type].groups[group].elements.data[element].get_cb;
-                    break;
-            }
-            break;
-        }
-        case connector_request_id_remote_config_session_start:
-        case connector_request_id_remote_config_session_end:
-        case connector_request_id_remote_config_session_cancel:
-        case connector_request_id_remote_config_action_start:
-        case connector_request_id_remote_config_action_end:
-        case connector_request_id_remote_config_configurations:
-            rci->callback.status = connector_callback_continue;
-            break;
+    case connector_request_id_remote_config_session_start:
+    case connector_request_id_remote_config_session_end:
+    case connector_request_id_remote_config_action_start:
+    case connector_request_id_remote_config_action_end:
+    case connector_request_id_remote_config_group_start:
+    case connector_request_id_remote_config_group_end:
+    case connector_request_id_remote_config_group_process:
+    {
+        remote_config->error_id = connector_success;
+        callback_data = remote_config;
+        break;
     }
 
-    if (cb_function != NULL)
+    case connector_request_id_remote_config_session_cancel:
     {
-        switch(rci->callback.request.remote_config_request)
-        {
-            case connector_request_id_remote_config_group_start:
-            case connector_request_id_remote_config_group_end:
-                rci->callback.status = cb_function(NULL);
-                break;
-            case connector_request_id_remote_config_group_process:
-            {
-                switch (action)
-                {
-                    case connector_remote_action_set:
-                    {
-                        switch (connector_group_table[group_type].groups[group].elements.data[element].type)
-                        {
-                            case connector_element_type_string:
-                            case connector_element_type_multiline_string:
-                            case connector_element_type_password:
-                            case connector_element_type_ipv4:
-                            case connector_element_type_fqdnv4:
-                            case connector_element_type_datetime:
-                                rci->callback.status = cb_function(NULL, &remote_config->element.value->string_value);
-                                break;
-                            case connector_element_type_int32:
-                                rci->callback.status = cb_function(NULL, &remote_config->element.value->signed_integer_value);
-                                break;
-                            case connector_element_type_uint32:
-                            case connector_element_type_0x_hex32:
-                                rci->callback.status = cb_function(NULL, &remote_config->element.value->unsigned_integer_value);
-                                break;
-
-                            case connector_element_type_enum:
-                                rci->callback.status = cb_function(NULL, &remote_config->element.value->enum_value);
-                                break;
-                            case connector_element_type_on_off:
-                                rci->callback.status = cb_function(NULL, &remote_config->element.value->on_off_value);
-                                break;
-                            case connector_element_type_boolean:
-                                rci->callback.status = cb_function(NULL, &remote_config->element.value->boolean_value);
-                                break;
-                            default:
-                                rci->callback.status = cb_function(NULL);
-                                break;
-                        }
-                        break;
-                    }
-                    case connector_remote_action_query:
-                    {
-                        switch (connector_group_table[group_type].groups[group].elements.data[element].type)
-                        {
-                            case connector_element_type_string:
-                            case connector_element_type_multiline_string:
-                            case connector_element_type_password:
-                            case connector_element_type_ipv4:
-                            case connector_element_type_fqdnv4:
-                            case connector_element_type_datetime:
-                                rci->callback.status = cb_function(NULL, &remote_config->response.element_value->string_value);
-                                break;
-                            case connector_element_type_int32:
-                                rci->callback.status = cb_function(NULL, &remote_config->response.element_value->signed_integer_value);
-                                break;
-                            case connector_element_type_uint32:
-                            case connector_element_type_0x_hex32:
-                                rci->callback.status = cb_function(NULL, &remote_config->response.element_value->unsigned_integer_value);
-                                break;
-
-                            case connector_element_type_enum:
-                                rci->callback.status = cb_function(NULL, &remote_config->response.element_value->enum_value);
-                                break;
-                            case connector_element_type_on_off:
-                                rci->callback.status = cb_function(NULL, &remote_config->response.element_value->on_off_value);
-                                break;
-                            case connector_element_type_boolean:
-                                rci->callback.status = cb_function(NULL, &remote_config->response.element_value->boolean_value);
-                                break;
-                            default:
-                                rci->callback.status = cb_function(NULL);
-                                break;
-                        }
-                        break;
-                    }
-                }
-                break;
-            }
-            default:
-                break;
-        }
+        remote_cancel.user_context = remote_config->user_context;
+        callback_data =  &remote_cancel;
+        break;
     }
+    case connector_request_id_remote_config_configurations:
+        ASSERT(rci->callback.request.remote_config_request != connector_request_id_remote_config_configurations);
+        break;
+    }
+
+    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
 
     switch (rci->callback.status)
     {
@@ -269,20 +171,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
     case connector_callback_continue:
         callback_complete = connector_true;
-#if 0
-        if (response_data->error_id != connector_success)
-        {
-            switch (rci->callback.request.remote_config_request)
-            {
-            case connector_request_id_remote_config_session_end:
-                callback_complete = connector_false;
-                rci->status = rci_status_internal_error;
-                break;
-            default:
-                break;
-            }
-        }
-#endif
         break;
 
     case connector_callback_busy:
