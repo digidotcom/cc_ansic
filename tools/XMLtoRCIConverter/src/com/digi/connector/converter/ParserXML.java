@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 public class ParserXML{
 
-    private static File PrettyFile;
     private static NodeList nodeList;
     private static int len;
     private static String groupType;
@@ -59,13 +58,14 @@ public class ParserXML{
                 String pretty = "pretty_" + fileNames.get(i).substring(fileNames.get(i).lastIndexOf("/")+1);
                 prettyPrint(fileNames.get(i),pretty);
 
-                PrettyFile = new File(pretty);
+                File PrettyFile = new File(pretty);
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 Document docpretty = dBuilder.parse(PrettyFile);
                 docpretty.getDocumentElement().normalize();
 
                 parseFile(docpretty);
+                PrettyFile.delete();
             }
             XMLtoRCIConverter.log("File generated: " + filePath);
 
@@ -74,7 +74,6 @@ public class ParserXML{
         }
         finally {
             rciWriter.close();
-            PrettyFile.delete();
         }
     }
 
