@@ -13,11 +13,13 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -53,19 +55,15 @@ public class ParserXML{
             rciWriter = new BufferedWriter(new FileWriter(filePath));
 
             for(int i=0;i<fileNames.size();i++){
+                InputSource is = prettyPrint(fileNames.get(i));
 
-                /* ParserXML needs pretty XML, we will create an aux file, and finally delete it */
-                String pretty = "pretty_" + fileNames.get(i).substring(fileNames.get(i).lastIndexOf("/")+1);
-                prettyPrint(fileNames.get(i),pretty);
-
-                File PrettyFile = new File(pretty);
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document docpretty = dBuilder.parse(PrettyFile);
+                Document docpretty = dBuilder.parse(is);
                 docpretty.getDocumentElement().normalize();
 
                 parseFile(docpretty);
-                PrettyFile.delete();
+
             }
             XMLtoRCIConverter.log("File generated: " + filePath);
 
@@ -77,7 +75,7 @@ public class ParserXML{
         }
     }
 
-    public static final void prettyPrint(String fileName,String outxml) throws Exception {
+    public static final InputSource prettyPrint(String fileName) throws Exception {
         /*Open the doc*/
         File XmlFile = new File(fileName);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -90,10 +88,9 @@ public class ParserXML{
         tf.setOutputProperty(OutputKeys.INDENT, "yes");
         Writer out = new StringWriter();
         tf.transform(new DOMSource(doc), new StreamResult(out));
-        /*save it in a new file */
-        BufferedWriter prettyWriter = new BufferedWriter(new FileWriter(outxml));
-        prettyWriter.write(out.toString());
-        prettyWriter.close();
+        /*save it in a buffer */
+        InputSource is = new InputSource(new StringReader(out.toString()));
+        return is;
 	}
 
     private static void parseFile(Document doc) throws Exception {

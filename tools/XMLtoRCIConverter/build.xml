@@ -5,7 +5,7 @@
 	<property name="class.dir" location="${build.dir}/classes"/>
 	<property name="dist.dir" location="dist"/>
 	<property name="src.dir" location="src"/>
-	<property name="jar" value="RCIConverter.jar"/>
+	<property name="jar" value="XMLtoRCIConverter.jar"/>
 	<!-- This should be overriden by caller.  Used in the Manifest. -->
 	<property name="version" value="0.0"/>
 
@@ -27,7 +27,7 @@
 		<jar destfile="${build.dir}/${jar}">
 			<fileset dir="${class.dir}"/>
 			<manifest>
-				<attribute name="Main-Class" value="com.digi.connector.config.RCIConverter"/>
+				<attribute name="Main-Class" value="com.digi.connector.converter.XMLtoRCIConverter"/>
 				<attribute name="Implementation-Vendor" value="Digi International"/>
 				<attribute name="Implementation-Title" value="RCI Converter"/>
 				<attribute name="Implementation-Version" value="${version}"/>
