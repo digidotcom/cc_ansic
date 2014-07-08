@@ -25,6 +25,7 @@ public class ConfigGenerator {
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
     private final static String PROTOTYPES = "use_prototypes";
+    private final static String SAVE_DESCRIPTORS = "saveDescriptors";
 
     private final static String FILE_TYPE_OPTION = "type";
 
@@ -61,6 +62,7 @@ public class ConfigGenerator {
     private static String prefix = "";
     private static boolean deleteDescriptor;
     private static boolean prototypes;
+    private static boolean saveDescriptor;
 
     public enum FileType {
         NONE,
@@ -271,6 +273,8 @@ public class ConfigGenerator {
                 usage();
             } else if (option.equals(PROTOTYPES)) {
                 prototypes = true;
+            } else if (option.equals(SAVE_DESCRIPTORS)) {
+                saveDescriptor = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
             } else {
@@ -466,6 +470,10 @@ public class ConfigGenerator {
 
     public static boolean deleteDescriptorOption() {
         return deleteDescriptor;
+    }
+
+    public static boolean saveDescriptorOption() {
+        return saveDescriptor;
     }
 
     public static String filename() {

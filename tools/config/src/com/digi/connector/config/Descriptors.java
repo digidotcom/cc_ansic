@@ -417,22 +417,23 @@ public class Descriptors {
         message += "</DeviceMetaData>";
 
         ConfigGenerator.debug_log(message);
+        if(ConfigGenerator.saveDescriptorOption()){
+	        try {
+	            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
+		        String message2 = "<DeviceMetaData>";
+		        message2 += tagMessageSegment("dvVendorId", vendorId);
+		        message2 += tagMessageSegment("dmDeviceType", deviceType);
+		        message2 += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
+		        message2 += tagMessageSegment("dmName", descName);
+		        message2 += tagMessageSegment("dmData", buffer);
+		        message2 += "</DeviceMetaData>";
 
-        try {
-            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
-	        String message2 = "<DeviceMetaData>";
-	        message2 += tagMessageSegment("dvVendorId", vendorId);
-	        message2 += tagMessageSegment("dmDeviceType", deviceType);
-	        message2 += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
-	        message2 += tagMessageSegment("dmName", descName);
-	        message2 += tagMessageSegment("dmData", buffer);
-	        message2 += "</DeviceMetaData>";
-
-			fileWriter.write(message2);
-			fileWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+				fileWriter.write(message2);
+				fileWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
 
         String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
         if (responseCode != 0)
