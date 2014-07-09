@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class ParserXML{
 
     private static NodeList nodeList;
+    private static int j;
     private static int len;
     private static String groupType;
     private static String groupName;
@@ -38,6 +39,7 @@ public class ParserXML{
     public static void processFile(ArrayList<String> fileNames,String directoryPath,String fileOut) throws IOException, NullPointerException {
 
         String filePath="";
+
         try {
             if (directoryPath != null) {
                 filePath = directoryPath;
@@ -69,6 +71,9 @@ public class ParserXML{
 
         } catch (Exception e) {
             e.printStackTrace();
+            File file = new File(filePath);
+            file.delete();
+            System.exit(1);
         }
         finally {
             rciWriter.close();
@@ -100,7 +105,7 @@ public class ParserXML{
         /*len = number of tags of the xml*/
         len = nodeList.getLength();
 
-        for (int j=0; j < len; j++){
+        for (j=0; j < len; j++){
     	   
             e = (Element)nodeList.item(j);
             /*search <query descriptor> tag  */
@@ -113,87 +118,76 @@ public class ParserXML{
                     e = (Element)nodeList.item(j);
                     if(e.getTagName().equalsIgnoreCase("descriptor"))
                         readGroupType(e);
-	
+
                     int number_groups = (e.getChildNodes().getLength()-1)/2;
-                    /*for each group */
-                    for(int n=0; n<number_groups;n++){
-                        j=j+1;
-                        e = (Element)nodeList.item(j);
-                        if(e.getTagName().equalsIgnoreCase("descriptor")){
-                            readGroupName(e);
-                            int number_elements = (e.getChildNodes().getLength()-1)/2;
-                            if(number_elements == 0)
-                            	//throw new Exception("XML Error: Group " + groupName + " with No element specified");
-                            	rciWriter.write(String.format("\n# TODO_empty_group %s %s %s\n",groupType,groupName,groupDesc));
-                            /*for each element or error */
-                            for(int m=0; m<number_elements;m++){
-                                j=j+1;
-                                e = (Element)nodeList.item(j);
-                                /*check if the group has <attr tag */
-                                
-                                if(e.getTagName().equalsIgnoreCase("attr")){
-                                    writeGroupAttr(e);
-                                    rciWriter.write(String.format("\n%s %s %s %s\n",groupType,groupName,attrMax,groupDesc));
-                                }
-                                else{
-                                    /*If the group doesn't have <attr */
-                                    if(m == 0)
-                                        rciWriter.write(String.format("\n%s %s %s\n",groupType,groupName,groupDesc));
-                                    if(e.getTagName().equalsIgnoreCase("error_descriptor"))
-                                        writeGroupError(e);
-                                    else if(e.getTagName().equalsIgnoreCase("element")){
-                                        writeGroupElement(e);
-                                        int number_values = (e.getChildNodes().getLength()-1)/2;
-                                        for(int v=0; v<number_values;v++){
-                                            j=j+1;
-                                            e = (Element)nodeList.item(j);
-                                            if(e.getTagName().equalsIgnoreCase("value")){
-                                                writeElementValue(e);
-                                            }
-                                            else{
-                                                throw new Exception("XML Error: Missing \"value\" tag at : " + j );  	        			  
-                                            }
-                                        }//no more values
-                                    }
-                                    else
-                                        throw new Exception("XML Error: Missing \"element\" tag at : " + j );  
-                                }
-                            }//no more elements/errors
-                        }
-                        else
-                            throw new Exception("XML Error: Missing \"descriptor\" tag at : " + j );
-                    }//no more groups
+                    parseGroups(e,number_groups);
+
                 }//no more types
             }//end query_descriptor
-            else if(e.getTagName().equalsIgnoreCase("error_descriptor")){
-                writeGlobalError(e);
-            }
         }
     }
 
-    private static void writeGlobalError(Element e) throws IOException{
+    private static void parseGroups(Element e, int number_groups) throws Exception {
 
-        NamedNodeMap nodeMap;
-        String attrname;
-        String attrval;
-        String globalErrorName = "";
-   	 	String globalErrorDesc = "";
-        Node node;
-    	nodeMap = e.getAttributes();
+        for(int n=0; n<number_groups;n++){
+            j=j+1;
+            e = (Element)nodeList.item(j);
+            if(e.getTagName().equalsIgnoreCase("descriptor")){
+                readGroupName(e);
+                int number_elements = (e.getChildNodes().getLength()-1)/2;
 
-    	if (nodeMap != null){
-	        for (int i=0; i<nodeMap.getLength(); i++){
-	            node = nodeMap.item(i);
-	            attrname = node.getNodeName();
-	            attrval = node.getNodeValue();
-	            if (attrname.equalsIgnoreCase("desc")) {
-	                globalErrorName = attrval.replace(" ", "_").toLowerCase();
-	                globalErrorDesc = "\"" + attrval + "\"" ;
-	            }
-	        }
-	        rciWriter.write(String.format("globalerror %s %s\n",globalErrorName,globalErrorDesc));
-    	}
-    }
+                if(number_elements == 0)
+                    rciWriter.write(String.format("\n# TODO_empty_group %s %s %s\n",groupType,groupName,groupDesc));
+
+                parseElements(e,number_elements);
+            }
+            else
+                throw new Exception("XML Error: Invalid tag at : " + e.getTagName());
+        }
+	}
+
+	private static void parseElements(Element e,int number_elements) throws Exception {
+
+        for(int m=0; m<number_elements;m++){
+            j=j+1;
+            e = (Element)nodeList.item(j);
+            /*check if the group has <attr tag */
+
+            if(e.getTagName().equalsIgnoreCase("attr")){
+                writeGroupAttr(e);
+                rciWriter.write(String.format("\n%s %s %s %s\n",groupType,groupName,attrMax,groupDesc));
+            }
+            else{
+                /*If the group doesn't have <attr */
+                if(m == 0)
+                    rciWriter.write(String.format("\n%s %s %s\n",groupType,groupName,groupDesc));
+                if(e.getTagName().equalsIgnoreCase("error_descriptor"))
+                    writeGroupError(e);
+                else if(e.getTagName().equalsIgnoreCase("element")){
+                    writeGroupElement(e);
+
+                    int number_values = (e.getChildNodes().getLength()-1)/2;
+                    parseValues(e,number_values);
+                }
+                else
+                    throw new Exception("XML Error: Invalid tag : " + e.getTagName());
+            }
+        }
+	}
+
+	private static void parseValues(Element e,int number_values) throws Exception {
+
+        for(int v=0; v<number_values;v++){
+            j=j+1;
+            e = (Element)nodeList.item(j);
+            if(e.getTagName().equalsIgnoreCase("value")){
+                writeElementValue(e);
+            }
+            else{
+                throw new Exception("XML Error: Invalid tag : " + e.getTagName());
+            }
+        }
+	}
 
     private static void readGroupType(Element e){
 
