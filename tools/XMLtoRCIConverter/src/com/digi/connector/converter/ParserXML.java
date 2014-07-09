@@ -64,6 +64,7 @@ public class ParserXML{
                 Document docpretty = dBuilder.parse(is);
                 docpretty.getDocumentElement().normalize();
 
+                rciWriter.write("\n#File: " + fileNames.get(i) + "\n");
                 parseFile(docpretty);
 
             }
