@@ -45,13 +45,11 @@ public class FileGlobalHeader extends FileGenerator {
             fileWriter.write(CONNECTOR_GLOBAL_HEADER);
             fileWriter.write(CONNECTOR_CONST_PROTECTION);
             fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE\n");
-            fileWriter.write("#define connector_request_id_remote_config_configurations    (connector_request_id_remote_config_t)-1\n\n");
 
             writeDefinesAndStructures(configData);
             
             writeRciErrorEnumHeader(configData, fileWriter);
     
-            fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE);
             fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
            
