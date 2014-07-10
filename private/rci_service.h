@@ -216,15 +216,37 @@ STATIC uint32_t get_fw_target_zero_version(connector_data_t const * const connec
 
 STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, char const * const device_type, uint32_t const vendor_id, uint32_t const fw_target_zero_version)
 {
-    char const * const reported_device_type = connector_ptr->edp_data.config.device_type;
+#if (defined CONNECTOR_VENDOR_ID)
+    uint32_t const reported_vendor_id = CONNECTOR_VENDOR_ID;
+#else
     uint32_t const reported_vendor_id = connector_ptr->edp_data.config.vendor_id;
+#endif
+#if (defined CONNECTOR_DEVICE_TYPE)
+    char const * const reported_device_type = CONNECTOR_DEVICE_TYPE;
+#else
+    char const * const reported_device_type = connector_ptr->edp_data.config.device_type;
+#endif
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
     uint32_t const reported_fw_target_zero_version = get_fw_target_zero_version(connector_ptr);
 
-    ASSERT(fw_target_zero_version == reported_fw_target_zero_version);
+    if (fw_target_zero_version != reported_fw_target_zero_version)
+    {
+        connector_debug_line("RCI: Using a descriptor for a different FW version (0x%x instead of 0x%x)", reported_fw_target_zero_version, fw_target_zero_version);
+        ASSERT(fw_target_zero_version == reported_fw_target_zero_version);
+    }
 #endif
-    ASSERT(strcmp(device_type, reported_device_type) == 0);
-    ASSERT(vendor_id == reported_vendor_id);
+    if (strcmp(device_type, reported_device_type) != 0)
+    {
+        connector_debug_line("RCI: Using a descriptor for a different Device Type ('%s' instead of '%s')", reported_device_type, device_type);
+        ASSERT(strcmp(device_type, reported_device_type) == 0);
+    }
+
+    if (vendor_id != reported_vendor_id)
+    {
+        connector_debug_line("RCI: Using a descriptor for a different Vendor ID (0x%x instead of 0x%x)", reported_vendor_id, vendor_id);
+        ASSERT(vendor_id == reported_vendor_id);
+    }
+
 }
 #endif
 
