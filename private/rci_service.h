@@ -235,6 +235,7 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
         ASSERT(fw_target_zero_version == reported_fw_target_zero_version);
     }
 #else
+    UNUSED_PARAMETER(connector_ptr);
     UNUSED_PARAMETER(fw_target_zero_version);
 #endif
     if (strcmp(device_type, reported_device_type) != 0)
