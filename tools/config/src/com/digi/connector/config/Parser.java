@@ -3,6 +3,9 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
@@ -201,18 +204,18 @@ public class Parser {
             if(count < 0)
                 throw new Exception("Invalid Math Expression, missing '('");
 
-            /*erase the parentheses */
-            ex = ex.replace("(", "").replace(")", "");
-            /* now we have the expresion a+b+c...*/
-            String [] exArray = ex.split("\\+");
-            for (String sum : exArray) {
-                try{
-                    result = result + Integer.parseInt(sum);
-                } catch (NumberFormatException e) {
-                    throw new IOException("Not an integer in the Math expression");
-                }
+            ScriptEngineManager mgr = new ScriptEngineManager();
+            ScriptEngine engine = mgr.getEngineByName("js");
+            /*eval returns an Object that is a Double */
+            try{
+                result = ((Double) engine.eval(ex)).intValue();
             }
+            catch (Exception e){
+                throw new Exception("Bad Expression");
+            }
+
         }
+        System.out.println(result);
         return result;
     }
 
