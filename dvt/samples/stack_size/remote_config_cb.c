@@ -203,6 +203,14 @@ static connector_callback_status_t app_process_session_cancel(connector_remote_c
     return status;
 }
 
+static connector_callback_status_t app_process_remote_configuration(connector_remote_config_data_t * const rci_desc)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    *rci_desc = rci_desc_data;
+    return status;
+}
+
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
                                                       void * const data)
 {
@@ -234,8 +242,8 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
     case connector_request_id_remote_config_session_cancel:
         status = app_process_session_cancel(data);
         break;
-    default:
-        APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request_id);
+    case connector_request_id_remote_config_configurations:
+        status = app_process_remote_configuration(data);
         break;
     }
 

@@ -9,310 +9,427 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
+#include  "remote_config.h"
 
-#include <malloc.h>
-#include "connector_types.h"
 #include "connector_api.h"
-#include "connector_config.h"
-#include "remote_config.h"
-#include "platform.h"
-#include <string.h>
 
-int32_t init_signed = 0;
-uint32_t init_unsigned = 1;
-float init_float = 0.1;
-char * init_string = "default\0";
-char * init_ipv4 = "0.0.0.0\0";
-char * init_fqdnv4 = "login.etherios.com\0";
-char * init_datetime = "2012-12-21T00:00:00Z\0";
 
-void * ptr = 0;
 
-#define arrplen(a) sizeof(a)/sizeof(setting_data_t)
+#define CONST const 
+#define FIRMWARE_TARGET_ZERO_VERSION  0x1000000
 
-typedef struct {
-    void ** group_data;
-    unsigned int group_id;
-    unsigned int index;
-    unsigned int capacity;
-    unsigned int count;
-} setting_data_t;
+#define CONNECTOR_RCI_ERROR_BAD_COMMAND (connector_remote_all_strings+0)
+#define CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR (connector_remote_all_strings+12)
+#define SETTING_SERIAL_ERROR_INVALID_BAUD (connector_remote_all_strings+30)
+#define SETTING_SERIAL_ERROR_INVALID_DATABITS (connector_remote_all_strings+49)
+#define SETTING_SERIAL_ERROR_INVALID_PARITY (connector_remote_all_strings+67)
+#define SETTING_SERIAL_ERROR_INVALID_XBREAK (connector_remote_all_strings+83)
+#define SETTING_SERIAL_ERROR_INVALID_DATABITS_PARITY (connector_remote_all_strings+106)
+#define SETTING_ETHERNET_ERROR_INVALID_DUPLEX (connector_remote_all_strings+150)
+#define SETTING_ETHERNET_ERROR_INVALID_IP (connector_remote_all_strings+182)
+#define SETTING_ETHERNET_ERROR_INVALID_SUBNET (connector_remote_all_strings+201)
+#define SETTING_ETHERNET_ERROR_INVALID_GATEWAY (connector_remote_all_strings+221)
+#define SETTING_ETHERNET_ERROR_INVALID_DNS (connector_remote_all_strings+245)
+#define SETTING_DEVICE_INFO_ERROR_INVALID_LENGTH (connector_remote_all_strings+265)
+#define SETTING_SYSTEM_ERROR_INVALID_LENGTH (connector_remote_all_strings+280)
+#define STATE_GPS_STATS_ERROR_INVALID_LAT (connector_remote_all_strings+295)
+#define STATE_GPS_STATS_ERROR_INVALID_LONG (connector_remote_all_strings+318)
+#define STATE_DEVICE_STATE_ERROR_INVALID_INTEGER (connector_remote_all_strings+342)
+#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+364)
+#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+374)
+#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+384)
 
-typedef struct {
-    setting_data_t ** setting_data;
-    unsigned int capacity;
-    unsigned int count;
-} rci_data_t;
-
-rci_data_t rci_data[] = {
-    { // setting data
-        NULL,
-        0,
-        0
-    },
-    { // state data
-        NULL,
-        0,
-        0
-    }
+char CONST connector_remote_all_strings[] = {
+ 11,'B','a','d',' ','c','o','m','m','a','n','d',
+ 17,'B','a','d',' ','c','o','n','f','i','g','u','r','a','t','i','o','n',
+ 18,'I','n','v','a','l','i','d',' ','b','a','u','d',' ','r','a','t','e',' ',
+ 17,'I','n','v','a','l','i','d',' ','d','a','t','a',' ','b','i','t','s',
+ 15,' ','I','n','v','a','l','i','d',' ','p','a','r','i','t','y',
+ 22,'I','n','v','a','l','i','d',' ','x','b','r','e','a','k',' ','s','e','t','t','i','n','g',
+ 43,'I','n','v','a','l','i','d',' ','c','o','m','b','i','n','a','t','i','o','n',' ','o','f',' ','d','a','t','a',' ','b','i','t','s',' ','a','n','d',' ','p','a','r','i','t','y',
+ 31,'I','n','v','a','l','i','d',' ','e','t','h','e','r','n','e','t',' ','d','u','p','l','e','x',' ','s','e','t','t','i','n','g',
+ 18,'I','n','v','a','l','i','d',' ','I','P',' ','a','d','d','r','e','s','s',
+ 19,'I','n','v','a','l','i','d',' ','s','u','b','n','e','t',' ','m','a','s','k',
+ 23,'I','n','v','a','l','i','d',' ','g','a','t','e','w','a','y',' ','a','d','d','r','e','s','s',
+ 19,'I','n','v','a','l','i','d',' ','D','N','S',' ','a','d','d','r','e','s','s',
+ 14,'i','n','v','a','l','i','d',' ','l','e','n','g','t','h',
+ 14,'I','n','v','a','l','i','d',' ','L','e','n','g','t','h',
+ 22,'I','n','v','a','l','i','d',' ','l','a','t','i','t','u','d','e',' ','v','a','l','u','e',
+ 23,'I','n','v','a','l','i','d',' ','l','o','n','g','i','t','u','d','e',' ','v','a','l','u','e',
+ 21,'I','n','v','a','l','i','d',' ','i','n','t','e','g','e','r',' ','v','a','l','u','e',
+ 9,'L','o','a','d',' ','f','a','i','l',
+ 9,'S','a','v','e',' ','f','a','i','l',
+ 19,'I','n','s','u','f','f','i','c','i','e','n','t',' ','m','e','m','o','r','y'
 };
 
-typedef struct {
-    void * group_context;
-} remote_group_session_t;
+static char const * const connector_rci_errors[] = {
+ CONNECTOR_RCI_ERROR_BAD_COMMAND, /*bad_command*/
+ CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR, /*bad_descriptor*/
+ CONNECTOR_GLOBAL_ERROR_LOAD_FAIL, /*load_fail*/
+ CONNECTOR_GLOBAL_ERROR_SAVE_FAIL, /*save_fail*/
+ CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL /*memory_fail*/
+};
 
-void * get_setting_data(connector_remote_config_t * const remote_config,
-    const void * def, int length);
-void add_setting_data(connector_remote_config_t * const remote_config,
-    const void * data, int length);
+static connector_group_element_t CONST setting_serial_elements[] = {
+ {  /*baud*/
+   connector_element_access_read_write,
+   connector_element_type_enum
+ },
+ {  /*parity*/
+   connector_element_access_read_write,
+   connector_element_type_enum
+ },
+ {  /*databits*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*xbreak*/
+   connector_element_access_read_write,
+   connector_element_type_on_off
+ },
+ {  /*txbytes*/
+   connector_element_access_read_only,
+   connector_element_type_uint32
+ }
+};
 
-void * get_setting_data(connector_remote_config_t * const remote_config,
-    const void * def, int length){
+static char CONST * CONST setting_serial_errors[] = {
+ SETTING_SERIAL_ERROR_INVALID_BAUD, /*invalid_baud*/
+ SETTING_SERIAL_ERROR_INVALID_DATABITS, /*invalid_databits*/
+ SETTING_SERIAL_ERROR_INVALID_PARITY, /*invalid_parity*/
+ SETTING_SERIAL_ERROR_INVALID_XBREAK, /*invalid_xbreak*/
+ SETTING_SERIAL_ERROR_INVALID_DATABITS_PARITY /*invalid_databits_parity*/
+};
 
-    unsigned int group_id = remote_config->group.id;
-    unsigned int index = remote_config->group.index;
-    unsigned int element_id = remote_config->element.id;
+static connector_group_element_t CONST setting_ethernet_elements[] = {
+ {  /*ip*/
+   connector_element_access_read_write,
+   connector_element_type_ipv4
+ },
+ {  /*subnet*/
+   connector_element_access_read_write,
+   connector_element_type_ipv4
+ },
+ {  /*gateway*/
+   connector_element_access_read_write,
+   connector_element_type_ipv4
+ },
+ {  /*dhcp*/
+   connector_element_access_read_write,
+   connector_element_type_boolean
+ },
+ {  /*dns*/
+   connector_element_access_read_write,
+   connector_element_type_fqdnv4
+ },
+ {  /*duplex*/
+   connector_element_access_read_write,
+   connector_element_type_enum
+ }
+};
 
-    rci_data_t * r_data = &rci_data[remote_config->group.type];
+static char CONST * CONST setting_ethernet_errors[] = {
+ SETTING_ETHERNET_ERROR_INVALID_DUPLEX, /*invalid_duplex*/
+ SETTING_ETHERNET_ERROR_INVALID_IP, /*invalid_ip*/
+ SETTING_ETHERNET_ERROR_INVALID_SUBNET, /*invalid_subnet*/
+ SETTING_ETHERNET_ERROR_INVALID_GATEWAY, /*invalid_gateway*/
+ SETTING_ETHERNET_ERROR_INVALID_DNS /*invalid_dns*/
+};
 
-    // Check to see if the setting data already exists.
-    if(r_data->setting_data != NULL && group_id < r_data->capacity){
-        // Note: Unfortunately if there are indexed groups, the rci_data_t
-        // structure does not provide direct access, so we first lookup the
-        // data by group id, if there is a data mistmatch, we increment until
-        // we find the data.
-        // This can be enhanced by nesting a struct inside setting_data_t,
-        // separating out indexed data, but that would complicate things a bit
-        // more, so we have this instead.
-        unsigned int i;
-        for(i = group_id; i < r_data->capacity; i++){
-            setting_data_t * s_data = r_data->setting_data[i];
-            // If setting data is null, it hasn't been initialized yet.
-            // If the encountered group id exceeds the one we're looking for
-            // break out.
-            if(s_data == NULL || s_data->group_id > group_id) break;
-            if(s_data->group_id == group_id &&
-               s_data->index == index &&
-               element_id < s_data->count &&
-               s_data->group_data[element_id] != NULL){
-                return s_data->group_data[element_id];
-            }
-        }
-    }
+static connector_group_element_t CONST setting_device_stats_elements[] = {
+ {  /*curtime*/
+   connector_element_access_read_write,
+   connector_element_type_datetime
+ },
+ {  /*signed_integer*/
+   connector_element_access_read_write,
+   connector_element_type_int32
+ }
+};
 
-    // Data doesn't exist, add it, note: if this fails to store data,
-    // we could enter infinite recursion, so be careful when modifying
-    // add_setting_data.
-    add_setting_data(remote_config, def, length);
-    return get_setting_data(remote_config, def, length);
+static connector_group_element_t CONST setting_device_info_elements[] = {
+ {  /*product*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ },
+ {  /*model*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ },
+ {  /*company*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ },
+ {  /*desc*/
+   connector_element_access_read_write,
+   connector_element_type_multiline_string
+ },
+ {  /*syspwd*/
+   connector_element_access_read_write,
+   connector_element_type_password
+ }
+};
+
+static char CONST * CONST setting_device_info_errors[] = {
+ SETTING_DEVICE_INFO_ERROR_INVALID_LENGTH /*invalid_length*/
+};
+
+static connector_group_element_t CONST setting_state_test_elements[] = {
+ {  /*test1*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*test2*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*test3*/
+   connector_element_access_read_write,
+   connector_element_type_int32
+ },
+ {  /*test4*/
+   connector_element_access_read_write,
+   connector_element_type_int32
+ },
+ {  /*test5*/
+   connector_element_access_read_write,
+   connector_element_type_password
+ },
+ {  /*test6*/
+   connector_element_access_read_write,
+   connector_element_type_password
+ },
+ {  /*test7*/
+   connector_element_access_read_write,
+   connector_element_type_fqdnv4
+ },
+ {  /*test8*/
+   connector_element_access_read_write,
+   connector_element_type_fqdnv4
+ },
+ {  /*test9*/
+   connector_element_access_read_write,
+   connector_element_type_fqdnv6
+ },
+ {  /*test10*/
+   connector_element_access_read_write,
+   connector_element_type_fqdnv6
+ },
+ {  /*test11*/
+   connector_element_access_read_write,
+   connector_element_type_hex32
+ },
+ {  /*test12*/
+   connector_element_access_read_write,
+   connector_element_type_hex32
+ },
+ {  /*test13*/
+   connector_element_access_read_write,
+   connector_element_type_0x_hex32
+ },
+ {  /*test14*/
+   connector_element_access_read_write,
+   connector_element_type_0x_hex32
+ },
+ {  /*test15*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ }
+};
+
+static connector_group_element_t CONST setting_system_elements[] = {
+ {  /*description*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ },
+ {  /*contact*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ },
+ {  /*location*/
+   connector_element_access_read_write,
+   connector_element_type_string
+ }
+};
+
+static char CONST * CONST setting_system_errors[] = {
+ SETTING_SYSTEM_ERROR_INVALID_LENGTH /*invalid_length*/
+};
+
+static connector_group_element_t CONST setting_devicesecurity_elements[] = {
+ {  /*identityVerificationForm*/
+   connector_element_access_read_write,
+   connector_element_type_enum
+ },
+ {  /*password*/
+   connector_element_access_read_write,
+   connector_element_type_password
+ }
+};
+
+static connector_group_t CONST connector_setting_groups[] = {
+ {  /*serial*/
+   2 , /* instances */
+   { asizeof(setting_serial_elements),
+     setting_serial_elements
+   },
+   { asizeof(setting_serial_errors),
+     setting_serial_errors
+   }  /* errors*/
+}
+,
+ {  /*ethernet*/
+   1 , /* instances */
+   { asizeof(setting_ethernet_elements),
+     setting_ethernet_elements
+   },
+   { asizeof(setting_ethernet_errors),
+     setting_ethernet_errors
+   }  /* errors*/
+}
+,
+ {  /*device_stats*/
+   1 , /* instances */
+   { asizeof(setting_device_stats_elements),
+     setting_device_stats_elements
+   },
+   { 0,
+     NULL
+   }  /* errors*/
+}
+,
+ {  /*device_info*/
+   1 , /* instances */
+   { asizeof(setting_device_info_elements),
+     setting_device_info_elements
+   },
+   { asizeof(setting_device_info_errors),
+     setting_device_info_errors
+   }  /* errors*/
+}
+,
+ {  /*state_test*/
+   1 , /* instances */
+   { asizeof(setting_state_test_elements),
+     setting_state_test_elements
+   },
+   { 0,
+     NULL
+   }  /* errors*/
+}
+,
+ {  /*system*/
+   1 , /* instances */
+   { asizeof(setting_system_elements),
+     setting_system_elements
+   },
+   { asizeof(setting_system_errors),
+     setting_system_errors
+   }  /* errors*/
+}
+,
+ {  /*devicesecurity*/
+   1 , /* instances */
+   { asizeof(setting_devicesecurity_elements),
+     setting_devicesecurity_elements
+   },
+   { 0,
+     NULL
+   }  /* errors*/
 }
 
-void add_setting_data(connector_remote_config_t * const remote_config,
-    const void * data, int length){
+};
 
-    unsigned int group_id = remote_config->group.id;
-    unsigned int index = remote_config->group.index;
-    unsigned int element_id = remote_config->element.id;
+static connector_group_element_t CONST state_debug_info_elements[] = {
+ {  /*version*/
+   connector_element_access_read_only,
+   connector_element_type_0x_hex32
+ },
+ {  /*stacksize*/
+   connector_element_access_read_only,
+   connector_element_type_hex32
+ }
+};
 
-    rci_data_t * r_data = &rci_data[remote_config->group.type];
+static connector_group_element_t CONST state_gps_stats_elements[] = {
+ {  /*latitude*/
+   connector_element_access_read_only,
+   connector_element_type_float
+ },
+ {  /*longitude*/
+   connector_element_access_read_only,
+   connector_element_type_float
+ }
+};
 
-    // Init setting data if not set.
-    //APP_DEBUG("Setting Data for %d:%d.\n", group_id, element_id);
-    if(r_data->setting_data == NULL){
-        r_data->setting_data = (setting_data_t **)malloc(10*sizeof(setting_data_t));
-        r_data->capacity = 10;
-    }
+static char CONST * CONST state_gps_stats_errors[] = {
+ STATE_GPS_STATS_ERROR_INVALID_LAT, /*invalid_lat*/
+ STATE_GPS_STATS_ERROR_INVALID_LONG /*invalid_long*/
+};
 
-    // If group id extends size of setting_data grow it.
-    if(r_data->count == r_data->capacity){ // resize array
-        r_data->capacity = r_data->capacity + 10;
-        int new_size = r_data->count * sizeof(setting_data_t);
-        r_data->setting_data = (setting_data_t **)realloc(r_data->setting_data, new_size);
-    }
+static connector_group_element_t CONST state_device_state_elements[] = {
+ {  /*system_up_time*/
+   connector_element_access_read_only,
+   connector_element_type_uint32
+ },
+ {  /*signed_integer*/
+   connector_element_access_read_write,
+   connector_element_type_int32
+ }
+};
 
-    // Init group data if not set.
-    setting_data_t * s_data = NULL;
-    unsigned int i;
-    for(i = group_id; i < r_data->count; i++){
-        s_data = r_data->setting_data[i];
-        if(s_data != NULL &&
-            s_data->group_id == group_id &&
-            s_data->index == index){
-            // Found setting data;
-            break;
-        }
-        else{
-            s_data = NULL;
-        }
-    }
+static char CONST * CONST state_device_state_errors[] = {
+ STATE_DEVICE_STATE_ERROR_INVALID_INTEGER /*invalid_integer*/
+};
 
-    // Allocate Setting Data if not found.
-    if(s_data == NULL){
-        s_data =(setting_data_t *)malloc(sizeof(setting_data_t));
-        r_data->setting_data[i] = s_data;
-        r_data->count = r_data->count + 1;
-        s_data->group_id = group_id;
-        s_data->index = index;
-        s_data->group_data = (void **)malloc(10*sizeof(ptr));
-        s_data->capacity = 10;
-        s_data->count = 0;
-    }
-
-    while(s_data->count == s_data->capacity ||
-        element_id >= s_data->capacity){ // resize array
-        s_data->capacity += 10;
-        unsigned int new_size = s_data->capacity * sizeof(ptr);
-        s_data->group_data = (void **)realloc(s_data->group_data, new_size);
-    }
-
-    void * data_ptr = malloc(length + 1);
-    memcpy(data_ptr, data, length);
-    s_data->group_data[element_id] = data_ptr;
-    s_data->count += 1;
+static connector_group_t CONST connector_state_groups[] = {
+ {  /*debug_info*/
+   1 , /* instances */
+   { asizeof(state_debug_info_elements),
+     state_debug_info_elements
+   },
+   { 0,
+     NULL
+   }  /* errors*/
+}
+,
+ {  /*gps_stats*/
+   1 , /* instances */
+   { asizeof(state_gps_stats_elements),
+     state_gps_stats_elements
+   },
+   { asizeof(state_gps_stats_errors),
+     state_gps_stats_errors
+   }  /* errors*/
+}
+,
+ {  /*device_state*/
+   1 , /* instances */
+   { asizeof(state_device_state_elements),
+     state_device_state_elements
+   },
+   { asizeof(state_device_state_errors),
+     state_device_state_errors
+   }  /* errors*/
 }
 
-static connector_callback_status_t app_rci_group_process(connector_remote_config_t * const remote_config);
+};
 
-static connector_callback_status_t app_rci_group_get(connector_remote_config_t * const remote_config);
-
-static connector_callback_status_t app_rci_group_set(connector_remote_config_t * const remote_config);
-
-
-
-static connector_callback_status_t app_rci_group_process(connector_remote_config_t * const remote_config)
-{
-
-    if(remote_config->action == connector_remote_action_query){
-        return app_rci_group_get(remote_config);
-    }
-    else{
-        return app_rci_group_set(remote_config);
-    }
-}
-
-static connector_callback_status_t app_rci_group_get(connector_remote_config_t * const remote_config)
-{
-    void * data;
-
-    switch(remote_config->element.type){
-        case connector_element_type_string:
-        case connector_element_type_multiline_string:
-        case connector_element_type_password:
-            data = get_setting_data(remote_config, init_string,
-                sizeof(char)*(strlen(init_string) + 1));
-            remote_config->response.element_value->string_value = data;
-            break;
-        case connector_element_type_int32:
-            data = get_setting_data(remote_config, &init_signed, sizeof(int32_t));
-            remote_config->response.element_value->signed_integer_value = *(int32_t *)data;
-            break;
-        case connector_element_type_uint32:
-        case connector_element_type_hex32:
-        case connector_element_type_0x_hex32:
-            data = get_setting_data(remote_config, &init_unsigned,
-                sizeof(uint32_t));
-            remote_config->response.element_value->unsigned_integer_value = *(uint32_t *)data;
-            break;
-        case connector_element_type_float:
-            data = get_setting_data(remote_config, &init_float, sizeof(float));
-            remote_config->response.element_value->float_value = init_float;
-            break;
-        case connector_element_type_enum:
-        case connector_element_type_on_off:
-        case connector_element_type_boolean:
-            data = get_setting_data(remote_config, &init_unsigned, sizeof(uint32_t));
-            remote_config->response.element_value->unsigned_integer_value = *(uint32_t *)data;
-            break;
-        case connector_element_type_ipv4:
-            data = get_setting_data(remote_config, init_ipv4,
-                sizeof(char)*(strlen(init_ipv4)+1));
-            remote_config->response.element_value->string_value = data;
-            break;
-        case connector_element_type_fqdnv4:
-        case connector_element_type_fqdnv6:
-            data =  get_setting_data(remote_config, init_fqdnv4,
-                sizeof(char)*(strlen(init_fqdnv4)+1));
-            remote_config->response.element_value->string_value = data;
-            break;
-        case connector_element_type_datetime:
-            data = get_setting_data(remote_config, init_datetime,
-                sizeof(char)*(strlen(init_datetime)+1));
-            remote_config->response.element_value->string_value = data;
-            break;
-        default:
-            APP_DEBUG("Unknown Type.\n");
-    }
-
-    return connector_callback_continue;
-}
-
-static connector_callback_status_t app_rci_group_set(connector_remote_config_t * const remote_config)
-{
-
-    switch(remote_config->element.type){
-        case connector_element_type_string:
-        case connector_element_type_multiline_string:
-        case connector_element_type_password:
-        case connector_element_type_ipv4:
-        case connector_element_type_fqdnv4:
-        case connector_element_type_fqdnv6:
-        case connector_element_type_datetime:
-            add_setting_data(remote_config, remote_config->element.value->string_value,
-                sizeof(char)*(strlen(remote_config->element.value->string_value)+1));
-            break;
-        case connector_element_type_int32:
-            add_setting_data(remote_config,
-                &remote_config->element.value->signed_integer_value,
-                sizeof(remote_config->element.value->signed_integer_value));
-            break;
-        case connector_element_type_uint32:
-        case connector_element_type_hex32:
-        case connector_element_type_0x_hex32:
-            add_setting_data(remote_config,
-                &remote_config->element.value->unsigned_integer_value,
-                sizeof(remote_config->element.value->unsigned_integer_value));
-            break;
-        case connector_element_type_float:
-            add_setting_data(remote_config,
-                &remote_config->element.value->float_value,
-                sizeof(remote_config->element.value->float_value));
-            break;
-        case connector_element_type_enum:
-        case connector_element_type_on_off:
-        case connector_element_type_boolean:
-            add_setting_data(remote_config,
-                &remote_config->element.value->boolean_value,
-                sizeof(remote_config->element.value->boolean_value));
-            break;
-    }
+static connector_remote_group_table_t CONST connector_group_table[] = {
+ { connector_setting_groups,
+   asizeof(connector_setting_groups)
+ },
+ { connector_state_groups,
+   asizeof(connector_state_groups)
+ }
+};
 
 
-    return connector_callback_continue;
-}
-
-connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
-                                                      void * const data)
-{
-    connector_callback_status_t status = connector_callback_continue;
-
-    switch(request_id){
-        case connector_request_id_remote_config_session_start:
-        case connector_request_id_remote_config_action_start:
-        case connector_request_id_remote_config_group_start:
-        case connector_request_id_remote_config_group_end:
-        case connector_request_id_remote_config_action_end:
-        case connector_request_id_remote_config_session_end:
-        case connector_request_id_remote_config_session_cancel:
-            // do nothing here.
-            break;
-        case connector_request_id_remote_config_group_process:
-            status = app_rci_group_process(data);
-            break;
-        default:
-            APP_DEBUG("Request Unknown: %d.\n", request_id);
-            ASSERT(0);
-            break;
-    }
-
-    return status;
-}
+connector_remote_config_data_t rci_desc_data = {
+    connector_group_table,
+    connector_rci_errors,
+    connector_rci_error_COUNT,
+    FIRMWARE_TARGET_ZERO_VERSION,
+    0x30000DB,
+    "Linux Application"
+};
