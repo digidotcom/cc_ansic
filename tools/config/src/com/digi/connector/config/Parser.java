@@ -2,8 +2,6 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Parser {
 
@@ -72,6 +70,9 @@ public class Parser {
 
                     if (tokenScanner.hasTokenInt()) {
                         groupInstances = tokenScanner.getTokenInt();
+                    }
+                    else if (tokenScanner.hasToken("\\(.*")){
+                        groupInstances = getMathExpression();
                     }
 
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
@@ -162,22 +163,6 @@ public class Parser {
         return message + ": " + str;
     }
 
-    private final static Pattern ALPHACHARACTERS = Pattern.compile("(\\w*\\s*)*");
-
-    public static boolean checkAlphaCharacters(String s) {
-        if (s == null) {
-            return false;
-        } else {
-            Matcher m = ALPHACHARACTERS.matcher(s);
-            return m.matches();
-        }
-    }
-
-    public static String ChangeBadCharacters(String s){
-        s = s.replaceAll("[^a-zA-Z_0-9\\s]", "_");
-        return s;
-    }
-
     private static String getName() throws Exception {
         String name = tokenScanner.getToken(); // tokenScanner.next();
 
@@ -189,13 +174,46 @@ public class Parser {
         }
         /* Now the descriptor can contain no alphanumeric chars,
          * and the enums will replace them with "_"
-           else if (!checkAlphaCharacters(name)) {
-            name=ChangeBadCharacters(name);
             if(!checkAlphaCharacters(name)){
                 throw new Exception("Invalid character in the name: " + name);
             }
         }*/
         return name;
+    }
+
+    private static int getMathExpression() throws Exception {
+
+        String ex = null;
+        int result = 0;
+
+        if (tokenScanner.hasToken("\\(.*")) {
+            ex = tokenScanner.getToken();
+            int count = ex.replace(")", "").length() - ex.replace("(", "").length();
+
+            /*read Tokens till we have the same number of '(' and ')' in the expression */
+            while(count > 0){
+                if(tokenScanner.hasToken("\\\".*"))
+                    throw new Exception("Invalid Math Expression, missing ')'");
+                ex += tokenScanner.getToken();
+                count = ex.replace(")", "").length() - ex.replace("(", "").length();
+            }
+
+            if(count < 0)
+                throw new Exception("Invalid Math Expression, missing '('");
+
+            /*erase the parentheses */
+            ex = ex.replace("(", "").replace(")", "");
+            /* now we have the expresion a+b+c...*/
+            String [] exArray = ex.split("\\+");
+            for (String sum : exArray) {
+                try{
+                    result = result + Integer.parseInt(sum);
+                } catch (NumberFormatException e) {
+                    throw new IOException("Not an integer in the Math expression");
+                }
+            }
+        }
+        return result;
     }
 
     private static String getQuotedName() throws Exception {
@@ -284,12 +302,16 @@ public class Parser {
     }
 
     private static String getMinMax() throws Exception {
-        String mvalue = tokenScanner.getToken();
+        String mvalue = null;
+
+        if (tokenScanner.hasToken("\\(.*"))
+            mvalue = Integer.toString(getMathExpression());
+        else
+            mvalue = tokenScanner.getToken();
 
         if (mvalue == null) {
             throw new Exception("Missing min or max value");
         }
-        
 
         return mvalue;
     }
