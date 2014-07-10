@@ -234,6 +234,8 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
         connector_debug_line("RCI: Using a descriptor for a different FW version (0x%x instead of 0x%x)", reported_fw_target_zero_version, fw_target_zero_version);
         ASSERT(fw_target_zero_version == reported_fw_target_zero_version);
     }
+#else
+    UNUSED_PARAMETER(fw_target_zero_version);
 #endif
     if (strcmp(device_type, reported_device_type) != 0)
     {
