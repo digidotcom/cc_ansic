@@ -71,6 +71,9 @@ public class Parser {
                     if (tokenScanner.hasTokenInt()) {
                         groupInstances = tokenScanner.getTokenInt();
                     }
+                    else if (tokenScanner.hasToken("\\(.*")){
+                        groupInstances = getMathExpression();
+                    }
 
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
 
@@ -178,6 +181,41 @@ public class Parser {
         return name;
     }
 
+    private static int getMathExpression() throws Exception {
+
+        String ex = null;
+        int result = 0;
+
+        if (tokenScanner.hasToken("\\(.*")) {
+            ex = tokenScanner.getToken();
+            int count = ex.replace(")", "").length() - ex.replace("(", "").length();
+
+            /*read Tokens till we have the same number of '(' and ')' in the expression */
+            while(count > 0){
+                if(tokenScanner.hasToken("\\\".*"))
+                    throw new Exception("Invalid Math Expression, missing ')'");
+                ex += tokenScanner.getToken();
+                count = ex.replace(")", "").length() - ex.replace("(", "").length();
+            }
+
+            if(count < 0)
+                throw new Exception("Invalid Math Expression, missing '('");
+
+            /*erase the parentheses */
+            ex = ex.replace("(", "").replace(")", "");
+            /* now we have the expresion a+b+c...*/
+            String [] exArray = ex.split("\\+");
+            for (String sum : exArray) {
+                try{
+                    result = result + Integer.parseInt(sum);
+                } catch (NumberFormatException e) {
+                    throw new IOException("Not an integer in the Math expression");
+                }
+            }
+        }
+        return result;
+    }
+
     private static String getQuotedName() throws Exception {
 
         String name = null;
@@ -264,7 +302,12 @@ public class Parser {
     }
 
     private static String getMinMax() throws Exception {
-        String mvalue = tokenScanner.getToken();
+        String mvalue = null;
+
+        if (tokenScanner.hasToken("\\(.*"))
+            mvalue = Integer.toString(getMathExpression());
+        else
+            mvalue = tokenScanner.getToken();
 
         if (mvalue == null) {
             throw new Exception("Missing min or max value");
