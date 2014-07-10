@@ -1158,6 +1158,7 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
         enum_to_case(connector_request_id_remote_config_action_end);
         enum_to_case(connector_request_id_remote_config_session_end);
         enum_to_case(connector_request_id_remote_config_session_cancel);
+        enum_to_case(connector_request_id_remote_config_configurations);
     }
     return result;
 }
