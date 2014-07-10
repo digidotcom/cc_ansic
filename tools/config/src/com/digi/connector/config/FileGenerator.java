@@ -50,17 +50,6 @@ public abstract class FileGenerator {
     protected final static String RCI_PARSER_USES_UNSIGNED_INTEGER = RCI_PARSER_USES + "UNSIGNED_INTEGER\n";
     
     protected final static String RCI_PARSER_DATA = "CONNECTOR_RCI_PARSER_INTERNAL_DATA";
-    
-    protected final static String CONNECTOR_REMOTE_CONFIG_DATA_STRUCTURE = "\ntypedef struct {\n" +
-    " connector_remote_group_table_t CONST * group_table;\n" +
-    " char CONST * CONST * error_table;\n" +
-    " unsigned int CONST global_error_count;\n" +
-    " uint32_t CONST firmware_target_zero_version;\n" +
-    " uint32_t CONST vendor_id;\n" +
-    " char const * CONST device_type;\n" +
-    " rci_function_t session_start_cb; /* TBD */\n" +
-    " rci_function_t session_end_cb; /* TBD */\n" +
-    "} connector_remote_config_data_t;\n";
 
     protected final static String CONNECTOR_RCI_INFO = "\ntypedef struct rci_data {\n" +
     " unsigned int group_index;\n" +
