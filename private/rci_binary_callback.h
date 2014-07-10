@@ -27,32 +27,39 @@ STATIC void rci_error(rci_t * const rci, unsigned int const id, char const * con
 }
 
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
-#define get_rci_global_error(rci, id)   connector_rci_config_data.error_table[(id) - connector_rci_error_OFFSET]
 static char const * get_rci_group_error(rci_t * const rci, unsigned int const id)
 {
     connector_group_t const * const group = get_current_group(rci);
-    unsigned int const index = (id - connector_rci_config_data.global_error_count);
+    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
+    unsigned int const index = (id - rci_data->global_error_count);
 
-    ASSERT(id >= connector_rci_config_data.global_error_count);
+    ASSERT(id >= rci_data->global_error_count);
     ASSERT(index < group->errors.count);
 
     return group->errors.description[index];
 }
 #else
-#define get_rci_global_error(rci, id)   ((void) (rci), (void) (id), NULL)
-#define get_rci_group_error(rci, id)    ((void) (rci), (void) (id), NULL)
+static char const * get_rci_group_error(rci_t * const rci, unsigned int const id)
+{
+    UNUSED_PARAMETER(rci);
+    UNUSED_PARAMETER(id);
+    return NULL;
+}
 #endif
 
 STATIC void rci_global_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
-    char const * const description = get_rci_global_error(rci, id);
+    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
+    char const * const description = rci_data->error_table[id] - connector_rci_error_OFFSET;
 
     rci_error(rci, id, description, hint);
 }
 
 STATIC void rci_group_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
-    if (id < connector_rci_config_data.global_error_count)
+    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
+
+    if (id < rci_data->global_error_count)
     {
         rci_global_error(rci, id, hint);
     }
@@ -111,6 +118,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
+    case connector_request_id_remote_config_configurations:
+        ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
+        break;
     }
 
     rci->callback.request.remote_config_request = remote_config_request;
@@ -145,6 +155,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         callback_data =  &remote_cancel;
         break;
     }
+    case connector_request_id_remote_config_configurations:
+        ASSERT(rci->callback.request.remote_config_request != connector_request_id_remote_config_configurations);
+        break;
     }
 
     rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
@@ -158,20 +171,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
     case connector_callback_continue:
         callback_complete = connector_true;
-#if 0
-        if (response_data->error_id != connector_success)
-        {
-            switch (rci->callback.request.remote_config_request)
-            {
-            case connector_request_id_remote_config_session_end:
-                callback_complete = connector_false;
-                rci->status = rci_status_internal_error;
-                break;
-            default:
-                break;
-            }
-        }
-#endif
         break;
 
     case connector_callback_busy:

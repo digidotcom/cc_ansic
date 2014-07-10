@@ -93,6 +93,11 @@ enum fw_abort {
 
 #define FW_ABORT_HEADER_SIZE    record_bytes(fw_abort)
 
+STATIC uint32_t rci_get_firmware_target_zero_version(connector_data_t const * const connector_ptr)
+{
+    return connector_ptr->rci_data.firmware_target_zero_version;
+}
+
 STATIC connector_status_t send_fw_message(connector_firmware_data_t * const fw_ptr)
 {
 
@@ -198,7 +203,7 @@ enum fw_info {
 
         message_store_u8(fw_info, opcode, fw_info_response_opcode);
         message_store_u8(fw_info, target, 0);
-        message_store_be32(fw_info, version, rci_get_firmware_target_zero_version());
+        message_store_be32(fw_info, version, rci_get_firmware_target_zero_version(connector_ptr));
         message_store_be32(fw_info, code_size, FW_NO_CODE_SIZE);
         fw_info += record_bytes(fw_info);
 
@@ -344,7 +349,7 @@ enum fw_target_list {
             uint8_t const target_number = 0; /* one target only */
 
             message_store_u8(fw_target_list, target, target_number);
-            message_store_be32(fw_target_list, version, rci_get_firmware_target_zero_version());
+            message_store_be32(fw_target_list, version, rci_get_firmware_target_zero_version(connector_ptr));
         }
 
         status = tcp_initiate_send_facility_packet(connector_ptr, edp_header, record_bytes(fw_target_list),

@@ -10,31 +10,6 @@
  * =======================================================================
  */
 
-#if (defined connector_request_id_remote_config_configurations)
-static connector_remote_config_data_t connector_rci_config_data = {
-        NULL, NULL, connector_rci_error_COUNT, 0
-};
-
-#else
-typedef struct {
-    connector_remote_group_table_t const * group_table;
-    char const * const * error_table;
-    unsigned int global_error_count;
-    uint32_t firmware_target_zero_version;
-} connector_remote_config_data_t;
-
-static connector_remote_config_data_t const connector_rci_config_data = {
-        connector_group_table,
-#if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
-        connector_rci_errors,
-#else
-        NULL,
-#endif
-        connector_global_error_COUNT,
-        FIRMWARE_TARGET_ZERO_VERSION
-};
-#endif
-
 #define BINARY_RCI_FIELD_LOWER_ID_MASK UINT32_C(0x3F)
 #define BINARY_RCI_FIELD_MIDDLE_ID_MASK UINT32_C(0x380)
 #define BINARY_RCI_FIELD_MIDDLE_BIT_ID_MASK UINT32_C(0x800)

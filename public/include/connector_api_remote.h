@@ -15,6 +15,7 @@
 
 #if (defined CONNECTOR_RCI_SERVICE)
 #include "connector_types.h"
+
 /**
 * @defgroup connector_request_id_remote_config_t Remote Configuration Request IDs
 * @{
@@ -34,8 +35,9 @@ typedef enum {
     connector_request_id_remote_config_session_end,    /**< inform callback to end remote configuration request
                                                             Callback may start writing data into NVRAM for set remote configuration request.
                                                             Callback should end and release any resources used when it's done. */
-    connector_request_id_remote_config_session_cancel  /**< Requesting callback to abort and cancel any query or set remote configuration request.
+    connector_request_id_remote_config_session_cancel,  /**< Requesting callback to abort and cancel any query or set remote configuration request.
                                                             Callback should stop and release any resources used */
+    connector_request_id_remote_config_configurations
 } connector_request_id_remote_config_t;
 /**
 * @}
@@ -89,6 +91,15 @@ typedef enum {
 /**
 * @}
 */
+
+typedef struct connector_remote_config_data {
+    struct connector_remote_group_table const * group_table;
+    char const * const * error_table;
+    unsigned int global_error_count;
+    uint32_t firmware_target_zero_version;
+    uint32_t vendor_id;
+    char const * device_type;
+} connector_remote_config_data_t;
 
 #endif
 

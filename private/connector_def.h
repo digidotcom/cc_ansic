@@ -49,6 +49,8 @@
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
 #define MIN_RECEIVE_TIMEOUT_IN_SECONDS  0
 
+#define FW_VERSION_NUMBER(version)  (MAKE32_4(version.major, version.minor, version.revision, version.build))
+
 #if !(defined CONNECTOR_TRANSPORT_RECONNECT_AFTER)
 #define CONNECTOR_TRANSPORT_RECONNECT_AFTER     30
 #endif
@@ -207,6 +209,10 @@ typedef struct connector_data {
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
     connector_edp_data_t edp_data;
+#endif
+
+#if (defined CONNECTOR_RCI_SERVICE)
+    connector_remote_config_data_t rci_data;
 #endif
 
     struct {

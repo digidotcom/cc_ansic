@@ -1,5 +1,8 @@
 package com.digi.connector.config;
 
+/*import java.io.BufferedReader;
+import java.io.InputStreamReader;*/
+
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +24,18 @@ public class ConfigGenerator {
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
+    private final static String PROTOTYPES = "use_prototypes";
+    private final static String SAVE_DESCRIPTORS = "saveDescriptors";
 
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String URL_OPTION = "url";
     private final static String URL_DEFAULT = "login.etherios.com";
+
+    private final static String USE_NAMES = "usenames";
+    private final static String USE_NAMES_DEFAULT = "none";
+
+    public final static String PREFIX = "prefix";
 
     public final static String DASH = "-";
 
@@ -48,7 +58,11 @@ public class ConfigGenerator {
     private static boolean noErrorDescription;
     private static boolean verboseOption;
     private static FileType fileType = FileType.NONE;
+    private static UseNames useNames = UseNames.NONE;
+    private static String prefix = "";
     private static boolean deleteDescriptor;
+    private static boolean prototypes;
+    private static boolean saveDescriptor;
 
     public enum FileType {
         NONE,
@@ -69,8 +83,27 @@ public class ConfigGenerator {
         }
         
     }
-
     
+    public enum UseNames {
+        NONE,
+        GROUPS,
+        ELEMENTS,
+        ALL;
+
+        public static UseNames toUseNames(String str) throws Exception {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (Exception e) {
+                log("Available use names:");
+                for (UseNames useNames : UseNames.values()) {
+                    log(String.format("\t%s",useNames.toString()));
+                }
+                throw new Exception("Invalid use name: " + str);
+            }
+        }
+
+    }
+
     private static void usage() {
         String className = ConfigGenerator.class.getName();
 
@@ -97,7 +130,13 @@ public class ConfigGenerator {
                 + "] ["
                 + DASH
                 + URL_OPTION
-                + "] "
+                + "] ["
+                + DASH
+                + USE_NAMES
+                + "] ["
+                + DASH
+                + PREFIX
+                +"] "
                 + String.format("<\"%s\"[:\"%s\"]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
                         CONFIG_FILENAME));
@@ -135,7 +174,14 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= optional Device Cloud URL. Default is %s",
                         DASH + URL_OPTION + "=<Device Cloud URL>", URL_DEFAULT));
-
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior,adding ASCIIZ names. Default is %s.",
+                        DASH + USE_NAMES + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior,adding a prefix to the structures.",
+                        DASH + PREFIX + "=<prefix>"));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -152,6 +198,7 @@ public class ConfigGenerator {
                 FIRMWARE_VERSION));
         log(String.format("\t%-16s \t= The Connector Configuration file",
                 CONFIG_FILENAME));
+
         System.exit(1);
     }
 
@@ -163,14 +210,13 @@ public class ConfigGenerator {
           System.out.println("Couldn't get Console instance, maybe you're running this from within an IDE?");
           System.exit(1);
       }
-      
+
       char passwordArray[] = console.readPassword("Enter password: ");
-      
+
       if (passwordArray.length == 0) {
           log("You must enter a password.\nPlease try again!");
           System.exit(1);
       }
-      
       password = new String(passwordArray);
 
     }
@@ -205,8 +251,15 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(FILE_TYPE_OPTION)) {
                     fileType = FileType.toFileType(keys[1]);
-                    
-                } else {
+
+                } else if (keys[0].equals(PREFIX)) {
+                    prefix = keys[1] + "_";
+
+                } else if (keys[0].equals(USE_NAMES)) {
+                    useNames = UseNames.toUseNames(keys[1]);
+
+                }
+                else {
                     throw new Exception("Invalid Option: " + keys[0]);
                 }
 
@@ -218,6 +271,10 @@ public class ConfigGenerator {
                 deleteDescriptor = true;
             } else if (option.equals(HELP_OPTION)) {
                 usage();
+            } else if (option.equals(PROTOTYPES)) {
+                prototypes = true;
+            } else if (option.equals(SAVE_DESCRIPTORS)) {
+                saveDescriptor = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
             } else {
@@ -327,6 +384,7 @@ public class ConfigGenerator {
             case 4:
                 filename = arg;
                 argumentLog += " " + arg;
+
                 break;
                 
             default:
@@ -342,6 +400,11 @@ public class ConfigGenerator {
     public static long getFirmware() {
         return fwVersion;
     }
+
+    public static String getPrefix() {
+        return prefix;
+    }
+
     public static String getArgumentLogString() {
         return argumentLog;
     }
@@ -383,6 +446,10 @@ public class ConfigGenerator {
         return noErrorDescription;
     }
 
+    public static boolean usePrototypes() {
+        return prototypes;
+    }
+
     public static void log(Object aObject) {
         System.out.println(String.valueOf(aObject));
     }
@@ -397,20 +464,28 @@ public class ConfigGenerator {
         return fileType;
     }
     
+    public static UseNames useNamesOption() {
+        return useNames;
+    }
+
     public static boolean deleteDescriptorOption() {
         return deleteDescriptor;
+    }
+
+    public static boolean saveDescriptorOption() {
+        return saveDescriptor;
     }
 
     public static String filename() {
         return filename;
     }
-    
+
     public static void main(String[] args) {
         
         try {
             new ConfigGenerator(args);
 
-            if (deleteDescriptor) {
+            if (deleteDescriptorOption()) {
                 /* descriptor constructor for arguments */
                 Descriptors descriptors = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
@@ -421,10 +496,9 @@ public class ConfigGenerator {
                 log("\nDescriptors deleted.\n");
                 System.exit(0);
             }
-            
+
             /* parse file */
             debug_log("Start reading filename: " + filename);
-
             ConfigData configData = new ConfigData();
 
             if (fileTypeOption() != FileType.GLOBAL_HEADER) {
@@ -435,7 +509,7 @@ public class ConfigGenerator {
                     throw new IOException("No groups specified in file: "
                             + filename);
                 }
-    
+
                 debug_log("Number of setting groups: "
                         + configData.getSettingGroups().size());
                 debug_log("Number of state groups: "
@@ -444,18 +518,43 @@ public class ConfigGenerator {
             
             /* Generate H and C files */
             debug_log("Start generating files");
-            FileGenerator fileGenerator = new FileGenerator(directoryPath);
-            fileGenerator.generateFile(configData);
 
-            if (fileTypeOption() != FileType.GLOBAL_HEADER) { 
+
+            switch(fileTypeOption())
+            {
+            case NONE:
                 /* descriptor constructor for arguments */
                 Descriptors descriptors = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
-                
+
+                FileNone fileNone = new FileNone(directoryPath);
+                fileNone.generateFile(configData);
+
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
                 descriptors.processDescriptors(configData);
+
+                break;
+
+            case SOURCE:
+                /* descriptor constructor for arguments */
+                Descriptors descriptorsSource = new Descriptors(username, password,
+                        vendorId, deviceType, fwVersion);
+
+                FileSource fileSource = new FileSource(directoryPath);
+                fileSource.generateFile(configData);
+
+                /* Generate and upload descriptors */
+                debug_log("Start Generating/loading descriptors");
+                descriptorsSource.processDescriptors(configData);
+                break;
+
+            case GLOBAL_HEADER:
+                FileGlobalHeader fileGlobalHeader = new FileGlobalHeader(directoryPath);
+                fileGlobalHeader.generateFile(configData);
+                break;
             }
+
             
             log("\nDone.\n");
             System.exit(0);
@@ -474,6 +573,5 @@ public class ConfigGenerator {
             System.exit(1);
         }
     }
-
 
 }

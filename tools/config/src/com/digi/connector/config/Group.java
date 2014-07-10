@@ -6,16 +6,16 @@ import java.util.LinkedList;
 
 import javax.naming.NamingException;
 
-public class GroupStruct {
+public class Group {
 
     private final String name;
     private final int instances;
     private final String description;
     private final String helpDescription;
-    private final LinkedList<ElementStruct> elements;
+    private final LinkedList<Element> elements;
     private final LinkedHashMap<String, String> errorMap;
 
-    public GroupStruct(String name, int count, String description,
+    public Group(String name, int count, String description,
             String helpDescription) throws IOException {
         if (count <= 0) {
             throw new IOException("Invalid instance count for the group: "
@@ -30,7 +30,7 @@ public class GroupStruct {
         this.instances = count;
         this.description = description;
         this.helpDescription = helpDescription;
-        elements = new LinkedList<ElementStruct>();
+        elements = new LinkedList<Element>();
         errorMap = new LinkedHashMap<String, String>();
     }
 
@@ -62,7 +62,7 @@ public class GroupStruct {
         return instances;
     }
 
-    public LinkedList<ElementStruct> getElements() {
+    public LinkedList<Element> getElements() {
         return elements;
     }
 
@@ -70,9 +70,9 @@ public class GroupStruct {
         return errorMap;
     }
 
-    public void addElement(ElementStruct theElement) throws NamingException {
+    public void addElement(Element theElement) throws NamingException {
 
-        for (ElementStruct element : elements) {
+        for (Element element : elements) {
             if (element.getName().equals(theElement.getName())) {
                 throw new NamingException("Duplicate <element>: "
                         + theElement.getName());
@@ -96,7 +96,6 @@ public class GroupStruct {
         if (elements.isEmpty()) {
             throw new Exception("No element specified");
         }
-        
     }
 
 }

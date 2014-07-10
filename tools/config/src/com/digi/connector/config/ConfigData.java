@@ -1,5 +1,6 @@
 package com.digi.connector.config;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,57 +11,31 @@ import java.util.Map;
 public class ConfigData {
 
     /* user setting and state groups */
-    private ArrayList<LinkedList<GroupStruct>> groupList;
+    private ArrayList<LinkedList<Group>> groupList;
 
     private RciStrings userGlobalErrors = new RciStrings();
 
     /* user global error */
     private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
 
-    private RciStrings rciGlobalErrors = new RciGlobalErrors();
+    private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
+        "bad_descriptor", "Bad configuration"};
 
-    public enum ConfigType {
-        SETTING(0), STATE(1);
+    private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
-        private int index;
-        private final static int configTypeCount = 2;
-
-        private ConfigType(int index) {
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public static int getConfigTypeCount() {
-            return configTypeCount;
-        }
-
-        public static ConfigType toConfigType(String str) throws Exception {
-            if (str == null) {
-                throw new Exception("Missing setting or state keyword!");
-            }
-            try {
-                return valueOf(str.toUpperCase());
-            } catch (Exception e) {
-                throw new Exception("Invalid setting or state keyword: " + str);
-            }
-        }
-    }
 
     public ConfigData() throws Exception {
-        groupList = new ArrayList<LinkedList<GroupStruct>>();
+        groupList = new ArrayList<LinkedList<Group>>();
 
-        ConfigType type;
-        LinkedList<GroupStruct> groups;
+        GroupType type;
+        LinkedList<Group> groups;
 
-        type = ConfigType.toConfigType("setting");
-        groups = new LinkedList<GroupStruct>();
+        type = GroupType.toGroupType("setting");
+        groups = new LinkedList<Group>();
         groupList.add(type.getIndex(), groups);
 
-        type = ConfigType.toConfigType("state");
-        groups = new LinkedList<GroupStruct>();
+        type = GroupType.toGroupType("state");
+        groups = new LinkedList<Group>();
         groupList.add(type.getIndex(), groups);
 
         int index = 1;
@@ -70,18 +45,18 @@ public class ConfigData {
          rciErrorMap.put(userGlobalErrors, index);
     }
 
-    public LinkedList<GroupStruct> getSettingGroups() throws Exception {
+    public LinkedList<Group> getSettingGroups() throws Exception {
         return getConfigGroup("setting");
     }
 
-    public LinkedList<GroupStruct> getStateGroups() throws Exception {
+    public LinkedList<Group> getStateGroups() throws Exception {
         return getConfigGroup("state");
     }
 
-    public LinkedList<GroupStruct> getConfigGroup(String type) throws Exception {
-        ConfigType groupType = ConfigType.toConfigType(type);
+    public LinkedList<Group> getConfigGroup(String type) throws Exception {
+        GroupType groupType = GroupType.toGroupType(type);
 
-        LinkedList<GroupStruct> config = groupList.get(groupType.getIndex());
+        LinkedList<Group> config = groupList.get(groupType.getIndex());
 
         return config;
     }
@@ -127,4 +102,5 @@ public class ConfigData {
 
         return size;
     }
+
 }

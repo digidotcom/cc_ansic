@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ElementStruct {
+public class Element {
 
     private final static int INT32_MIN_VALUE = -2147483648;
     private final static int INT32_MAX_VALUE = 2147483647;
@@ -13,7 +13,7 @@ public class ElementStruct {
 
     private final static String BAD_MISSING_MIN_VALUE = "Bad or missing min value!";
     private final static String BAD_MISSING_MAX_VALUE = "Bad or missing max value!";
-    
+
     private final String name;
     private final String description;
     private final String helpDescription;
@@ -41,6 +41,7 @@ public class ElementStruct {
         IPV4(false, 13),
         FQDNV4(true, 14),
         FQDNV6(true, 15),
+        MAC_ADDR(false, 21),
         DATETIME(false, 22);
 
         /* special type since string cannot start 0x (zero) */
@@ -91,7 +92,7 @@ public class ElementStruct {
             }
 
         }
-        
+
     }
 
     public enum AccessType {
@@ -107,7 +108,7 @@ public class ElementStruct {
         }
     }
 
-    public ElementStruct(String name, String description, String helpDescription) throws IOException {
+    public Element(String name, String description, String helpDescription) throws IOException {
         this.name = name;
         
         if (description == null) {
@@ -143,7 +144,7 @@ public class ElementStruct {
             descriptor += String.format(" units=\"%s\"", units);
 
         descriptor += String.format(" bin_id=\"%d\"", id);
-        
+
         try {
 
             if (ElementType.toElementType(type) == ElementType.ENUM)
@@ -327,9 +328,9 @@ public class ElementStruct {
                 break;
 
             default:
-                long minValue = (etype == ElementStruct.ElementType.INT32) ? INT32_MIN_VALUE
+                long minValue = (etype == Element.ElementType.INT32) ? INT32_MIN_VALUE
                         : 0;
-                long maxValue = (etype == ElementStruct.ElementType.INT32) ? INT32_MAX_VALUE
+                long maxValue = (etype == Element.ElementType.INT32) ? INT32_MAX_VALUE
                         : UINT32_MAX_VALUE;
 
                 if (min != null) {
@@ -348,7 +349,7 @@ public class ElementStruct {
 
                 }
 
-                if (etype != ElementStruct.ElementType.INT32) {
+                if (etype != Element.ElementType.INT32) {
                     if ((minValue < 0) || (maxValue < 0)) {
                         throw new Exception(
                                 "Invalid min or max value for type: "

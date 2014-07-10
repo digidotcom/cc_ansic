@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 public class Parser {
 
-    private final static int MAX_DESCRIPTION_LENGTH = 40;
-    private final static int MAX_NAME_LENGTH = 40;
+    private final static int MAX_DESCRIPTION_LENGTH = 200;
+    private final static int MAX_NAME_LENGTH = 200;
 
     // PRIVATE variables
     private static TokenScanner tokenScanner;
@@ -16,7 +16,7 @@ public class Parser {
     private static String token;
     private static int groupLineNumber;
     private static int elementLineNumber;
-    private static LinkedList<GroupStruct> groupConfig;
+    private static LinkedList<Group> groupConfig;
 
     
     public static void processFile(String fileName, ConfigData configData) throws IOException, NullPointerException {
@@ -50,22 +50,18 @@ public class Parser {
                     String nameStr = getName();
 
                     /* make sure group name doesn't exist in setting and state config */
-                    for (ConfigData.ConfigType type : ConfigData.ConfigType.values()) {
 
-                        String typeName = type.toString().toLowerCase();
-                        LinkedList<GroupStruct> typeGroups = configData.getConfigGroup(typeName);
+                    String typeName = groupType.toString().toLowerCase();
+                    LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
-                        for (GroupStruct group : typeGroups) {
-                            if (group.getName().equals(nameStr)) {
-                                /* duplicate */
-                                String desc = "name";
-                                if (!typeName.equalsIgnoreCase(groupType)) {
-                                    desc += String.format(" (group name must be unique in both %s and %s)", groupType, typeName); 
-                                }
-                                throw new Exception("Duplicate <group> " + desc + ": " + nameStr);
-                            }
+                    for (Group group : typeGroups) {
+                        if (group.getName().equals(nameStr)) {
+                            /* duplicate */
+                            String desc = "name";
+                            throw new Exception("Duplicate <group> " + desc + ": " + nameStr);
                         }
                     }
+
                     groupConfig = configData.getConfigGroup(groupType);
 
                     
@@ -78,7 +74,7 @@ public class Parser {
                         groupInstances = tokenScanner.getTokenInt();
                     }
 
-                    GroupStruct theGroup = new GroupStruct(nameStr, groupInstances, getDescription(), getLongDescription());
+                    Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
 
                     isReadToken = true;
                     /*
@@ -94,7 +90,7 @@ public class Parser {
                         }
                         
                         if (token.equalsIgnoreCase("element")) {
-                            ElementStruct element = processElement();
+                            Element element = processElement();
 
                             try{
                                 element.validate();
@@ -166,7 +162,7 @@ public class Parser {
         return message + ": " + str;
     }
 
-    private final static Pattern ALPHACHARACTERS = Pattern.compile("\\w+");
+    private final static Pattern ALPHACHARACTERS = Pattern.compile("(\\w*\\s*)*");
 
     public static boolean checkAlphaCharacters(String s) {
         if (s == null) {
@@ -175,6 +171,11 @@ public class Parser {
             Matcher m = ALPHACHARACTERS.matcher(s);
             return m.matches();
         }
+    }
+
+    public static String ChangeBadCharacters(String s){
+        s = s.replaceAll("[^a-zA-Z_0-9\\s]", "_");
+        return s;
     }
 
     private static String getName() throws Exception {
@@ -186,8 +187,32 @@ public class Parser {
         if (name.length() > MAX_NAME_LENGTH) {
             throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
         }
-        else if (!checkAlphaCharacters(name)) {
-            throw new Exception("Invalid character in the name: " + name);
+        /* Now the descriptor can contain no alphanumeric chars,
+         * and the enums will replace them with "_"
+           else if (!checkAlphaCharacters(name)) {
+            name=ChangeBadCharacters(name);
+            if(!checkAlphaCharacters(name)){
+                throw new Exception("Invalid character in the name: " + name);
+            }
+        }*/
+        return name;
+    }
+
+    private static String getQuotedName() throws Exception {
+
+        String name = null;
+        if (tokenScanner.hasToken("\\\".*")) {
+            name = tokenScanner.getTokenInLine("\\\".*?\\\"");
+            if (name == null) {
+                throw new Exception("Missing name!");
+            }
+
+            name = name.substring(1, name
+                    .lastIndexOf("\""));
+
+            if (name.length() > MAX_NAME_LENGTH) {
+                throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
+            }
         }
         return name;
     }
@@ -205,7 +230,7 @@ public class Parser {
                     .lastIndexOf("\""));
 
             if (description.length() > MAX_DESCRIPTION_LENGTH) {
-                throw new Exception("desciption > maximum length "
+                throw new Exception("description > maximum length "
                         + MAX_DESCRIPTION_LENGTH);
             }
 
@@ -253,7 +278,7 @@ public class Parser {
             throw new Exception("Missing access!");
 
         }
-        ElementStruct.AccessType.toAccessType(access);
+        Element.AccessType.toAccessType(access);
 
         return access;
     }
@@ -269,13 +294,13 @@ public class Parser {
         return mvalue;
     }
 
-    private static final ElementStruct processElement() throws Exception {
+    private static final Element processElement() throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
          * description] type <type> [min <min>] [max <max>] [access <access>]
          * [units <unit>]
          */
-        ElementStruct element = new ElementStruct(getName(), getDescription(), getLongDescription());
+        Element element = new Element(getName(), getDescription(), getLongDescription());
         
         elementLineNumber = tokenScanner.getLineNumber();
         try {
@@ -304,8 +329,10 @@ public class Parser {
                      * Parse Value for element with enum type syntax for parsing
                      * value: value <name> [description] [help description]
                      */
-                    element.addValue(getName(), getDescription(), getLongDescription());
-                    
+                    if (tokenScanner.hasToken("\\\".*"))
+                        element.addValue(getQuotedName(), getDescription(), getLongDescription());
+                    else
+                        element.addValue(getName(), getDescription(), getLongDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                     
