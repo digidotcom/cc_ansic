@@ -845,6 +845,11 @@ STATIC void process_field_value(rci_t * const rci)
         break;
     }
 #endif
+#if defined RCI_PARSER_USES_MAC_ADDR
+    case connector_element_type_mac_addr:
+        ASSERT(0);
+        break;
+#endif
     }
 
 #if (defined RCI_PARSER_USES_ON_OFF) || (defined RCI_PARSER_USES_BOOLEAN)
@@ -958,6 +963,11 @@ STATIC void process_field_no_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_BOOLEAN
         case connector_element_type_boolean:
             rci->shared.value.boolean_value = connector_false;
+            break;
+#endif
+#if defined RCI_PARSER_USES_MAC_ADDR
+        case connector_element_type_mac_addr:
+            ASSERT(0);
             break;
 #endif
         }

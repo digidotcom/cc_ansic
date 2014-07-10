@@ -558,6 +558,11 @@ STATIC void rci_output_field_value(rci_t * const rci)
         overflow = rci_output_uint32(rci, rci->shared.value.boolean_value);
         break;
 #endif
+#if defined RCI_PARSER_USES_MAC_ADDR
+    case connector_element_type_mac_addr:
+        ASSERT(0);
+        break;
+#endif
     }
 
 done:
