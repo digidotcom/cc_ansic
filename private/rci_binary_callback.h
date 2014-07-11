@@ -90,6 +90,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
         rci->shared.callback_data.group.id = get_group_id(rci);
         rci->shared.callback_data.group.index = get_group_index(rci);
+#if (defined RCI_PARSER_USES_GROUP_NAMES)
+        rci->shared.callback_data.group.name = get_current_group(rci)->name;
+#endif
         break;
 
     case connector_request_id_remote_config_group_end:
@@ -107,6 +110,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
             connector_group_element_t const * const element = get_current_element(rci);
 
             rci->shared.callback_data.element.type = element->type;
+#if (defined RCI_PARSER_USES_ELEMENT_NAMES)
+            rci->shared.callback_data.element.name = element->name;
+#endif
         }
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
@@ -126,21 +132,26 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     connector_remote_config_t * remote_config = &rci->shared.callback_data;
     connector_remote_config_cancel_t remote_cancel;
     void * callback_data = NULL;
+    connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
 
-    switch (rci->callback.request.remote_config_request)
+    switch (remote_config_request)
     {
     case connector_request_id_remote_config_session_start:
+#if (defined RCI_PARSER_USES_GROUP_NAMES)
+        rci->shared.callback_data.group.name = NULL;
+#endif
+#if (defined RCI_PARSER_USES_ELEMENT_NAMES)
+        rci->shared.callback_data.element.name = NULL;
+#endif
     case connector_request_id_remote_config_session_end:
     case connector_request_id_remote_config_action_start:
     case connector_request_id_remote_config_action_end:
     case connector_request_id_remote_config_group_start:
     case connector_request_id_remote_config_group_end:
     case connector_request_id_remote_config_group_process:
-    {
         remote_config->error_id = connector_success;
         callback_data = remote_config;
         break;
-    }
 
     case connector_request_id_remote_config_session_cancel:
     {
@@ -149,7 +160,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         break;
     }
     case connector_request_id_remote_config_configurations:
-        ASSERT(rci->callback.request.remote_config_request != connector_request_id_remote_config_configurations);
+        ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
         break;
     }
 
@@ -176,6 +187,34 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         break;
     }
 
+#if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
+    if (callback_complete)
+    {
+        switch (remote_config_request)
+        {
+            case connector_request_id_remote_config_group_end:
+#if (defined RCI_PARSER_USES_GROUP_NAMES)
+                rci->shared.callback_data.group.name = NULL;
+#endif
+                break;
+            case connector_request_id_remote_config_group_process:
+#if (defined RCI_PARSER_USES_ELEMENT_NAMES)
+                rci->shared.callback_data.element.name = NULL;
+#endif
+                break;
+            case connector_request_id_remote_config_session_start:
+                break;
+            case connector_request_id_remote_config_session_end:
+            case connector_request_id_remote_config_action_start:
+            case connector_request_id_remote_config_action_end:
+            case connector_request_id_remote_config_group_start:
+            case connector_request_id_remote_config_session_cancel:
+            case connector_request_id_remote_config_configurations:
+                break;
+        }
+
+    }
+#endif
     return callback_complete;
 }
 
