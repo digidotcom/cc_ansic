@@ -59,18 +59,6 @@ public abstract class FileGenerator {
     " void * user_context;\n" +
     "} rci_info_t;\n";
 
-    protected final static String CONNECTOR_REMOTE_GROUP_T = "\ntypedef struct {\n" +
-    "  connector_remote_group_type_t type;\n" +
-    "  unsigned int id;\n" +
-    "  unsigned int index;\n" +
-    "} connector_remote_group_t;\n";
-    	
-    protected final static String CONNECTOR_REMOTE_ELEMENT_T = "\ntypedef struct {\n" +
-    "  unsigned int id;\n" +
-    "  connector_element_value_type_t type;\n" +
-    "  connector_element_value_t * value;\n" +
-    "} connector_remote_element_t;\n";
-
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "  connector_remote_action_t CONST action;\n" +
@@ -472,8 +460,31 @@ public abstract class FileGenerator {
 
         writeGroupElementStructs(configData);
 
-        fileWriter.write(CONNECTOR_REMOTE_GROUP_T);
-        fileWriter.write(CONNECTOR_REMOTE_ELEMENT_T);
+        String const_name = "";
+        if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ALL || ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.GROUPS){
+            const_name = "  char const * name;\n";
+            fileWriter.write("\n"+ DEFINE + "RCI_PARSER_USES_GROUP_NAMES\n");
+        }
+        fileWriter.write(String.format("\ntypedef struct {\n" +
+            "  connector_remote_group_type_t type;\n" +
+            "  unsigned int id;\n" +
+            "  unsigned int index;\n" +
+            "%s" +
+            "} connector_remote_group_t;\n", const_name));
+
+        if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ALL || ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ELEMENTS){
+            const_name = "  char const * name;\n";
+            fileWriter.write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
+        }
+        else
+            const_name = "";
+        fileWriter.write(String.format("\ntypedef struct {\n" +
+            "  unsigned int id;\n" +
+            "  connector_element_value_type_t type;\n" +
+            "  connector_element_value_t * value;\n" +
+            "%s" +
+            "} connector_remote_element_t;\n",const_name));
+
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
