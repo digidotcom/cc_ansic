@@ -111,6 +111,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
+    case connector_request_id_remote_config_configurations:
+        ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
+        break;
     }
 
     rci->callback.request.remote_config_request = remote_config_request;
