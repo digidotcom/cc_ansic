@@ -27,39 +27,32 @@ STATIC void rci_error(rci_t * const rci, unsigned int const id, char const * con
 }
 
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
+#define get_rci_global_error(rci, id)   rci->service_data->connector_ptr->rci_data.error_table[(id) - connector_rci_error_OFFSET]
 static char const * get_rci_group_error(rci_t * const rci, unsigned int const id)
 {
     connector_group_t const * const group = get_current_group(rci);
-    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
-    unsigned int const index = (id - rci_data->global_error_count);
+    unsigned int const index = (id - rci->service_data->connector_ptr->rci_data.global_error_count);
 
-    ASSERT(id >= rci_data->global_error_count);
+    ASSERT(id >= rci->service_data->connector_ptr->rci_data.global_error_count);
     ASSERT(index < group->errors.count);
 
     return group->errors.description[index];
 }
 #else
-static char const * get_rci_group_error(rci_t * const rci, unsigned int const id)
-{
-    UNUSED_PARAMETER(rci);
-    UNUSED_PARAMETER(id);
-    return NULL;
-}
+#define get_rci_global_error(rci, id)   ((void) (rci), (void) (id), NULL)
+#define get_rci_group_error(rci, id)    ((void) (rci), (void) (id), NULL)
 #endif
 
 STATIC void rci_global_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
-    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
-    char const * const description = rci_data->error_table[id] - connector_rci_error_OFFSET;
+    char const * const description = get_rci_global_error(rci, id);
 
     rci_error(rci, id, description, hint);
 }
 
 STATIC void rci_group_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
-    connector_remote_config_data_t const * const rci_data = &rci->service_data->connector_ptr->rci_data;
-
-    if (id < rci_data->global_error_count)
+    if (id < rci->service_data->connector_ptr->rci_data.global_error_count)
     {
         rci_global_error(rci, id, hint);
     }
@@ -117,9 +110,6 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         }
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
-        break;
-    case connector_request_id_remote_config_configurations:
-        ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
         break;
     }
 
