@@ -141,7 +141,7 @@ if(future_feature)
         bufferWriter.write(String.format("\nconnector_remote_config_data_t rci_desc_data = {\n" +
 		"    connector_group_table,\n"+
 		"    connector_rci_errors,\n"+
-		"    connector_rci_error_COUNT,\n"+
+		"    connector_global_error_COUNT,\n"+
 		"    FIRMWARE_TARGET_ZERO_VERSION,\n"+
 		"    %s,\n"+
 		"    \"%s\"\n"+
