@@ -278,6 +278,36 @@ STATIC connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_ad
 }
 #endif
 
+#if defined RCI_PARSER_USES_MAC_ADDR
+#define SIZEOF_MAC_ADDR 6
+STATIC connector_bool_t get_mac_address(rci_t * const rci, char * const mac_addr, size_t const length)
+{
+    connector_bool_t got_mac = connector_false;
+
+    uint8_t * rci_ber_u32 = rci->shared.content.data;
+    uint8_t const bytes_read = message_load_u8(rci_ber_u32, opcode);
+    uint8_t ber_bytes = 1;
+
+    rci->shared.content.length++;
+
+    if (rci->shared.content.length == (size_t)(bytes_read + ber_bytes))
+    {
+        ASSERT(bytes_read == SIZEOF_MAC_ADDR);
+        ASSERT(length == bytes_read);
+
+        {
+            char * data = (char *)(rci->shared.content.data + ber_bytes);
+            memcpy(mac_addr, data, length);
+        }
+
+        reset_input_content(rci);
+        got_mac = connector_true;
+    }
+
+    return got_mac;
+}
+#endif
+
 STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index)
 {
 #define BINARY_RCI_ATTRIBUTE_TYPE_MASK  0x60  /* attr type: [bit 6 and 5] */
@@ -767,6 +797,42 @@ STATIC void process_field_value(rci_t * const rci)
     }
 #endif
 
+#if defined RCI_PARSER_USES_MAC_ADDR
+    case connector_element_type_mac_addr:
+    {
+        char mac_addr[SIZEOF_MAC_ADDR];
+
+        if (!get_mac_address(rci, mac_addr, sizeof mac_addr))
+        {
+            goto done;
+        }
+
+        {
+            #define MAX_MAC_VALUE "FF:FF:FF:FF:FF:FF"
+
+            char * const data = (char *)rci->input.storage;
+            size_t const size_avail = sizeof MAX_MAC_VALUE;
+            int size_written = 0;
+
+#if (defined CONNECTOR_NO_MALLOC)
+            ASSERT(size_avail <= sizeof rci->input.storage);
+#else
+            ASSERT(size_avail <= rci->input.storage_len);
+#endif
+            size_written = connector_snprintf(data, size_avail, "%02x:%02x:%02x:%02x:%02x:%02x", 
+                               mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
+
+            ASSERT(size_written < (int)size_avail);
+            ASSERT_GOTO(size_written > 0, done);
+
+            rci->shared.value.string_value = data;
+
+            #undef MAX_MAC_VALUE
+        }
+        break;
+    }
+#endif
+
 #if (defined RCI_PARSER_USES_UNSIGNED_INTEGER)
 
 
@@ -845,11 +911,6 @@ STATIC void process_field_value(rci_t * const rci)
         break;
     }
 #endif
-#if defined RCI_PARSER_USES_MAC_ADDR
-    case connector_element_type_mac_addr:
-        ASSERT(0);
-        break;
-#endif
     }
 
 #if (defined RCI_PARSER_USES_ON_OFF) || (defined RCI_PARSER_USES_BOOLEAN)
@@ -913,6 +974,10 @@ STATIC void process_field_no_value(rci_t * const rci)
     #if defined RCI_PARSER_USES_IPV4
         case connector_element_type_ipv4:
     #endif
+
+    #if defined RCI_PARSER_USES_MAC_ADDR
+        case connector_element_type_mac_addr:
+    #endif
             rci->shared.value.string_value = (char *)rci->input.storage;
             rci->input.storage[0] = (uint8_t)nul;
             break;
@@ -963,11 +1028,6 @@ STATIC void process_field_no_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_BOOLEAN
         case connector_element_type_boolean:
             rci->shared.value.boolean_value = connector_false;
-            break;
-#endif
-#if defined RCI_PARSER_USES_MAC_ADDR
-        case connector_element_type_mac_addr:
-            ASSERT(0);
             break;
 #endif
         }

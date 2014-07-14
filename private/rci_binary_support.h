@@ -109,7 +109,8 @@ enum
     rci_field_type_ip4,
     rci_field_type_fqdnv4,
     rci_field_type_fqdnv6,
-    rci_field_type_datetime = 0x16
+    rci_field_type_mac_addr = 0x15,
+    rci_field_type_datetime
 };
 
 enum {
