@@ -197,11 +197,29 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
         uint16_t value;
     } keepalive_parameters[3];
 
-#define init_param(i, t, v) keepalive_parameters[i].type = (t); keepalive_parameters[i].value = (v)
-    init_param(0, E_MSG_MT2_TYPE_KA_RX_INTERVAL, GET_RX_KEEPALIVE_INTERVAL(connector_ptr));
-    init_param(1, E_MSG_MT2_TYPE_KA_TX_INTERVAL, GET_TX_KEEPALIVE_INTERVAL(connector_ptr));
-    init_param(2, E_MSG_MT2_TYPE_KA_WAIT,        GET_WAIT_COUNT(connector_ptr));
-#undef  init_param
+#if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)
+    result = get_config_keepalive(connector_ptr, connector_request_id_config_tx_keepalive);
+    COND_ELSE_GOTO(result == connector_working, done);
+#endif
+
+#if !(defined CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
+    result = get_config_keepalive(connector_ptr, connector_request_id_config_rx_keepalive);
+    COND_ELSE_GOTO(result == connector_working, done);
+#endif
+
+#if !(defined CONNECTOR_WAIT_COUNT)
+    result = get_config_wait_count(connector_ptr);
+    COND_ELSE_GOTO(result == connector_working, done);
+#endif
+
+    keepalive_parameters[0].type = E_MSG_MT2_TYPE_KA_RX_INTERVAL;
+    keepalive_parameters[0].value = GET_RX_KEEPALIVE_INTERVAL(connector_ptr);
+
+    keepalive_parameters[1].type = E_MSG_MT2_TYPE_KA_TX_INTERVAL;
+    keepalive_parameters[1].value = GET_TX_KEEPALIVE_INTERVAL(connector_ptr);
+
+    keepalive_parameters[2].type = E_MSG_MT2_TYPE_KA_WAIT;
+    keepalive_parameters[2].value = GET_WAIT_COUNT(connector_ptr);
 
     connector_debug_line("Send keepalive params");
     connector_debug_line("Rx keepalive parameter = %d", keepalive_parameters[0].value);
