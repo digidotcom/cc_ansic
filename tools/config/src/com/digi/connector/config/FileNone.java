@@ -35,8 +35,9 @@ public class FileNone extends FileGenerator {
     
 	public FileNone(String directoryPath) throws IOException {
 		
-		super(directoryPath,HEADER_FILENAME,fileType);	
+		super(directoryPath,HEADER_FILENAME,fileType);
 		functionFile = "remote_config.c";
+		super.checkPreviousBuild(filePath + functionFile);
         functionWriter = new BufferedWriter(new FileWriter(filePath + functionFile));
         functionWriter.write(COPYRIGHT);
 

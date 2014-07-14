@@ -26,6 +26,7 @@ public class FileSource extends FileGenerator {
          * So we need to create local header file.
          */
         headerFile = SOURCE_NAME + ".h";
+        super.checkPreviousBuild(filePath + headerFile);
         headerWriter = new BufferedWriter(new FileWriter(filePath + headerFile));
         writeHeaderComment(headerWriter);
 

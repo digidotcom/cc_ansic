@@ -1,8 +1,10 @@
 package com.digi.connector.config;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -118,12 +120,29 @@ public abstract class FileGenerator {
         
         generatedFile = file_name;
 
+        checkPreviousBuild(filePath + generatedFile);
+
         fileWriter = new BufferedWriter(new FileWriter(filePath + generatedFile));
 
         writeHeaderComment(fileWriter);
         isFirstRemoteString = true;
         prefix = ConfigGenerator.getPrefix();
     }
+
+    protected void checkPreviousBuild(String new_path) throws IOException {
+
+        File new_file = new File(new_path);
+        int i = 0;
+
+        while(new_file.isFile()){
+            i++;
+            new_file = new File(new_path + "_bkp_" + i );
+        }
+        if(i>0){
+            Files.copy(new File(new_path).toPath(), new_file.toPath());
+            ConfigGenerator.log("Existing file " + new_path + " saved as: " + new_path + "_bkp_" + i);
+        }
+	}
 
     abstract void writeHeaderComment(BufferedWriter bufferWriter) throws IOException;
     abstract void generateFile(ConfigData configData) throws Exception;
