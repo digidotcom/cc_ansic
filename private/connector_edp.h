@@ -78,21 +78,6 @@ STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr
     COND_ELSE_GOTO(result == connector_working, done);
 #endif
 
-#if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)
-    result = get_config_keepalive(connector_ptr, connector_request_id_config_tx_keepalive);
-    COND_ELSE_GOTO(result == connector_working, done);
-#endif
-
-#if !(defined CONNECTOR_RX_KEEPALIVE_IN_SECONDS)
-    result = get_config_keepalive(connector_ptr, connector_request_id_config_rx_keepalive);
-    COND_ELSE_GOTO(result == connector_working, done);
-#endif
-
-#if !(defined CONNECTOR_WAIT_COUNT)
-    result = get_config_wait_count(connector_ptr);
-    COND_ELSE_GOTO(result == connector_working, done);
-#endif
-
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
     result = get_config_identity_verification(connector_ptr);
     COND_ELSE_GOTO(result == connector_working, done);
