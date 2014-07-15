@@ -84,6 +84,9 @@ public class Descriptors {
                 id += 2;
             }
 
+            sendRebootDescriptor();
+            sendDoCommandDescriptor();
+            sendSetFactoryDefaultDescriptor();
             sendRciDescriptors(configData);
             ConfigGenerator.log("\nDescriptors were uploaded successfully.");
         }
@@ -139,6 +142,34 @@ public class Descriptors {
         }
 
         return descriptor;
+    }
+
+    private void sendRebootDescriptor() throws Exception {
+
+        String reboot_descriptor = "<descriptor element=\"reboot\" desc=\"Reboot the device\" bin_id=\"7\" >";
+        reboot_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Reboot failed\" />";
+        reboot_descriptor +=       "</descriptor>\n";        
+
+        uploadDescriptor("descriptor/reboot", reboot_descriptor);
+    }
+
+    private void sendDoCommandDescriptor() throws Exception {
+
+        String do_command_descriptor = "<descriptor element=\"do_command\" bin_id=\"6\" > ";
+        do_command_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Invalid arguments\" />";
+        do_command_descriptor +=       "  <attr name=\"target\" type=\"string\" desc=\"The subsystem that the command is forwarded\" bin_id=\"0\" />";
+        do_command_descriptor +=       "</descriptor>";
+
+        uploadDescriptor("descriptor/do_command", do_command_descriptor);
+    }
+
+    private void sendSetFactoryDefaultDescriptor() throws Exception {
+
+        String set_factory_default_descriptor = "<descriptor element=\"set_factory_default\" desc=\"Set device configuration to factory defaults\" bin_id=\"8\" >";
+        set_factory_default_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Set Factory Default failed\" />";
+        set_factory_default_descriptor +=       "</descriptor>\n";        
+
+        uploadDescriptor("descriptor/set_factory_default", set_factory_default_descriptor);
     }
 
     private void sendDescriptors(String config_type, LinkedList<Group> groups, ConfigData configData, int id) throws Exception {
@@ -237,6 +268,10 @@ public class Descriptors {
                                + String.format("<descriptor element=\"set_%s\" dscr_avail=\"true\" />\n", configType);
             }
         }
+
+        descriptors += String.format("<descriptor element=\"reboot\" dscr_avail=\"true\" />\n");
+        descriptors += String.format("<descriptor element=\"do_command\" dscr_avail=\"true\" />\n");
+        descriptors += String.format("<descriptor element=\"set_factory_default\" dscr_avail=\"true\" />\n");
 
         descriptors += getErrorDescriptors(configData.getRciGlobalErrorsIndex(), configData.getRciGlobalErrors()) 
                        + "</descriptor>";
