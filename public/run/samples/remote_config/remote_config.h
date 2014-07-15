@@ -36,6 +36,7 @@
 #define RCI_PARSER_USES_BOOLEAN
 #define RCI_PARSER_USES_IPV4
 #define RCI_PARSER_USES_FQDNV4
+#define RCI_PARSER_USES_MAC_ADDR
 #define RCI_PARSER_USES_DATETIME
 #define RCI_PARSER_USES_UNSIGNED_INTEGER
 #define RCI_PARSER_USES_STRINGS
@@ -58,7 +59,8 @@ typedef enum {
     connector_element_type_boolean,
     connector_element_type_ipv4,
     connector_element_type_fqdnv4,
-    connector_element_type_datetime = 22
+    connector_element_type_mac_addr = 21,
+    connector_element_type_datetime
 } connector_element_value_type_t;
 
 typedef struct {
@@ -225,6 +227,7 @@ typedef enum {
  connector_setting_ethernet_gateway,
  connector_setting_ethernet_dhcp,
  connector_setting_ethernet_dns,
+ connector_setting_ethernet_mac,
  connector_setting_ethernet_duplex,
  connector_setting_ethernet_COUNT
 } connector_setting_ethernet_id_t;

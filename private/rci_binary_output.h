@@ -269,6 +269,89 @@ done:
 }
 #endif
 
+#if defined RCI_PARSER_USES_MAC_ADDR
+#define SIZEOF_MAC_ADDR 6
+STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * const string)
+{
+    rci_buffer_t * const output = &rci->buffer.output;
+    connector_bool_t overflow = connector_true;
+    size_t const avail_bytes = rci_buffer_remaining(output);
+
+    if (avail_bytes < SIZEOF_MAC_ADDR)
+    {
+        goto done;
+    }
+    else
+    {
+        char mac_addr[SIZEOF_MAC_ADDR] =  {0};
+        char * p_mac_addr = mac_addr;
+        int colon_count = 0;
+        size_t i;
+        size_t length = strlen(string);
+        char aux_string[3] = {'\0', '\0', '\0'}; /* Two chars plus terminator. */
+
+        size_t index = 0;
+
+        for (i = 0; i < length; i++)
+        {
+            if (index > sizeof(aux_string) - 1)
+                break;
+
+            if (string[i] != ':')
+            {
+                aux_string[index++] = string[i];
+            }
+
+            if (string[i] == ':' || i == (length -1))
+            {
+                long int val;
+                char * endptr;
+
+                val = strtol(aux_string, &endptr, 16);
+                if (endptr == NULL || *endptr != '\0' || val < 0 || val > 255)
+                {
+                    break;
+                }
+
+                *p_mac_addr++ = (char)(val & 0xFF);
+                colon_count++;
+                index = 0;
+                memset(aux_string, '\0', sizeof aux_string);
+            }
+        }
+        if (colon_count != SIZEOF_MAC_ADDR)
+        {
+            connector_request_id_t request_id;
+            request_id.remote_config_request = connector_request_id_remote_config_group_process;
+            notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range, rci->service_data->connector_ptr->context);
+            rci->status = rci_status_error;
+            overflow = connector_false;
+            connector_debug_line("Invalid mac_addr \"%s\"", string);
+            goto done;
+        }
+
+        {
+            uint8_t * rci_ber = rci_buffer_position(output);
+            size_t i;
+
+            *rci_ber++ = (uint8_t)SIZEOF_MAC_ADDR;
+            rci_buffer_advance(output, 1);
+
+            for (i = 0; i < SIZEOF_MAC_ADDR; i++)
+            {
+                *rci_ber++ = mac_addr[i];
+                rci_buffer_advance(output, 1);
+            }
+        }
+
+        overflow = connector_false;
+    }
+
+done:
+    return overflow;
+}
+#endif
+
 STATIC connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
 {
     uint8_t const data = value;
@@ -558,9 +641,11 @@ STATIC void rci_output_field_value(rci_t * const rci)
         overflow = rci_output_uint32(rci, rci->shared.value.boolean_value);
         break;
 #endif
+
 #if defined RCI_PARSER_USES_MAC_ADDR
     case connector_element_type_mac_addr:
-        ASSERT(0);
+        ASSERT(rci->shared.value.string_value != NULL);
+        overflow = rci_output_mac_addr(rci, rci->shared.value.string_value);
         break;
 #endif
     }

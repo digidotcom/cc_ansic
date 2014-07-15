@@ -116,6 +116,10 @@ static connector_group_element_t CONST setting_ethernet_elements[] = {
    connector_element_access_read_write,
    connector_element_type_fqdnv4
  },
+ {  /*mac*/
+   connector_element_access_read_write,
+   connector_element_type_mac_addr
+ },
  {  /*duplex*/
    connector_element_access_read_write,
    connector_element_type_enum
@@ -315,7 +319,7 @@ static connector_remote_group_table_t CONST connector_group_table[] = {
 connector_remote_config_data_t rci_desc_data = {
     connector_group_table,
     connector_rci_errors,
-    connector_rci_error_COUNT,
+    connector_global_error_COUNT,
     FIRMWARE_TARGET_ZERO_VERSION,
     0x30000DB,
     "Linux Application"

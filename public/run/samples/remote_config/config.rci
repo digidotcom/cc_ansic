@@ -31,6 +31,7 @@ group setting ethernet "Ethernet interface"
     element gateway "Gateway" type ipv4
     element dhcp "DHCP" type boolean  
     element dns "DNS" type fqdnv4 max 127
+    element mac "mac address" type mac_addr
     element duplex "Duplex" type enum  
         value auto  "Automatic"
         value half  "Half"

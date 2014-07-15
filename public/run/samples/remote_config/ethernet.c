@@ -24,7 +24,9 @@
 
 #define ETHERNET_IPV4_STRING_LENGTH 16
 #define ETHERNET_DNS_FQDN_LENGTH    128
+#define ETHERNET_MAC_ADDR_STRING_LENGTH 18 /* Represented in DC as XX:XX:XX:XX:XX:XX */
 
+#define SIZEOF_MAC_ADDR 6
 
 typedef struct {
     in_addr_t ip_address;
@@ -34,6 +36,7 @@ typedef struct {
     char dns[ETHERNET_DNS_FQDN_LENGTH];
 
     connector_bool_t dhcp_enabled;
+    uint8_t mac[SIZEOF_MAC_ADDR];
 } ethernet_config_data_t;
 
 typedef struct {
@@ -43,94 +46,10 @@ typedef struct {
     char dns[ETHERNET_DNS_FQDN_LENGTH];
     connector_setting_ethernet_duplex_id_t  duplex;
     connector_bool_t dhcp_enabled;
+    char mac[ETHERNET_MAC_ADDR_STRING_LENGTH];
 } ethernet_connector_data_t;
 
-ethernet_config_data_t ethernet_config_data = {0, 0, 0, connector_setting_ethernet_duplex_auto, "\0", connector_true};
-
-int ethernet_configuration_init(void)
-{
-    #define MAX_INTERFACES      5
-
-    int             fd = -1;
-    int             status=-1;
-    char            *buf = malloc(MAX_INTERFACES*sizeof(struct ifreq));
-    struct ifconf   conf;
-
-    ethernet_config_data_t * const ethernet_ptr = &ethernet_config_data;
-
-    if (buf == NULL)
-    {
-        APP_DEBUG("get_ip_address malloc failed\n");
-        goto error;
-    }
-
-    conf.ifc_len = MAX_INTERFACES*sizeof(struct ifreq);
-    conf.ifc_buf = buf;
-
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
-    if(fd == -1)
-    {
-        perror("socket");
-        goto error;
-    }
-
-    if( ioctl(fd, SIOCGIFCONF , &conf) == -1)
-    {
-        APP_DEBUG("get_ip_address: Error using ioctl SIOCGIFCONF.\n");
-        goto error;
-    }
-
-    {
-        unsigned int entries = conf.ifc_len / sizeof(struct ifreq);
-        unsigned int i;
-
-        APP_DEBUG("get_ip_address: Looking for current device IP address: found [%d] entries\n", entries);
-
-        if (entries == 0)
-        {
-            goto error;
-        }
-        for( i = 0; i < entries; i++)
-        {
-            struct ifreq * req = &conf.ifc_req[i];
-            struct sockaddr_in * const sa = cast_for_alignment(struct sockaddr_in *, &req->ifr_addr);
-
-            APP_DEBUG("get_ip_address: %d: Interface name [%s]\tIP Address [%s]\n", i+1, req->ifr_name, inet_ntoa(sa->sin_addr));
-            if (sa->sin_addr.s_addr != htonl(INADDR_LOOPBACK))
-            {
-                ethernet_ptr->ip_address = sa->sin_addr.s_addr;
-                status = 0;
-                break;
-            }
-        }
-
-        {
-            struct ifreq * req = &conf.ifc_req[i];
-            struct sockaddr_in * const sa = cast_for_alignment(struct sockaddr_in *, &req->ifr_addr);
-
-            if( ioctl(fd, SIOCGIFNETMASK , req) == -1)
-            {
-                perror("get_ip_address: Error using ioctl SIOCGIFNETMASK");
-                status = -1;
-                goto error;
-            }
-
-            APP_DEBUG("get_ip_address: IP Address [%s]\n", inet_ntoa(sa->sin_addr));
-            ethernet_ptr->subnet = sa->sin_addr.s_addr;
-        }
-    }
-
-error:
-    if (fd != -1)
-    {
-        close(fd);
-    }
-    if (buf != NULL)
-    {
-        free(buf);
-    }
-    return status;
-}
+ethernet_config_data_t ethernet_config_data = {0, 0, 0, connector_setting_ethernet_duplex_auto, "\0", connector_true, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 void ethernet_get_ip_address(unsigned char ** addr, size_t * size)
 {
@@ -163,6 +82,8 @@ connector_callback_status_t app_ethernet_group_init(connector_remote_config_t * 
     memcpy(ethernet_ptr->dns, ethernet_config_data.dns, sizeof ethernet_ptr->dns);
     ethernet_ptr->dhcp_enabled = ethernet_config_data.dhcp_enabled;
     ethernet_ptr->duplex = ethernet_config_data.duplex;
+
+    sprintf(ethernet_ptr->mac, "%02X:%02X:%02X:%02X:%02X:%02X", ethernet_config_data.mac[0], ethernet_config_data.mac[1], ethernet_config_data.mac[2], ethernet_config_data.mac[3], ethernet_config_data.mac[4], ethernet_config_data.mac[5]);
 
 done:
     session_ptr->group_context = ethernet_ptr;
@@ -214,6 +135,11 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * c
         remote_config->response.element_value->string_value = config_data[remote_config->element.id];
         break;
     }
+
+    case connector_setting_ethernet_mac:
+        ASSERT(remote_config->element.type == connector_element_type_mac_addr);
+        remote_config->response.element_value->string_value = ethernet_ptr->mac;
+        break;
 
     default:
         ASSERT(0);
@@ -285,6 +211,18 @@ connector_callback_status_t app_ethernet_group_set(connector_remote_config_t * c
         config_data[remote_config->element.id].data[length] = '\0';
         break;
     }
+
+    case connector_setting_ethernet_mac:
+        ASSERT(remote_config->element.type == connector_element_type_mac_addr);
+
+        length = strlen(remote_config->element.value->string_value);
+
+        ASSERT(length <= sizeof ethernet_ptr->mac);
+        memcpy(ethernet_ptr->mac, remote_config->element.value->string_value, length);
+        ethernet_ptr->mac[length] = '\0';
+
+        break;
+
     default:
         ASSERT(0);
         break;
@@ -298,6 +236,7 @@ connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * c
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = remote_config->user_context;
     ethernet_connector_data_t * ethernet_ptr = NULL;
+    uint8_t mac[SIZEOF_MAC_ADDR];
 
     /* save the data */
 
@@ -336,6 +275,15 @@ connector_callback_status_t app_ethernet_group_end(connector_remote_config_t * c
         ethernet_config_data.dhcp_enabled = ethernet_ptr->dhcp_enabled;
         ethernet_config_data.duplex = ethernet_ptr->duplex;
 
+        if (SIZEOF_MAC_ADDR == sscanf(ethernet_ptr->mac,"%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]))
+        {
+            ethernet_config_data.mac[0] = mac[0];
+            ethernet_config_data.mac[1] = mac[1];
+            ethernet_config_data.mac[2] = mac[2];
+            ethernet_config_data.mac[3] = mac[3];
+            ethernet_config_data.mac[4] = mac[4];
+            ethernet_config_data.mac[5] = mac[5];
+        }
     }
 
 done:
