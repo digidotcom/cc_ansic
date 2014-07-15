@@ -61,6 +61,10 @@ public abstract class FileGenerator {
     " void * user_context;\n" +
     "} rci_info_t;\n";
 
+    protected final static String RCI_COMMAND_REBOOT = "\n#define RCI_COMMAND_REBOOT\n";
+    protected final static String RCI_COMMAND_DO_COMMAND = "\n#define RCI_COMMAND_DO_COMMAND\n";
+    protected final static String RCI_COMMAND_SET_FACTORY_DEFAULT = "\n#define RCI_SET_FACTORY_DEFAULT\n";
+
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "  connector_remote_action_t CONST action;\n" +
@@ -73,7 +77,7 @@ public abstract class FileGenerator {
     "      connector_element_value_t * element_value;\n" +
     "  } response;\n" +
     "} connector_remote_config_t;\n";
-    	
+
     protected final static String CONNECTOR_REMOTE_CONFIG_CANCEL_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "} connector_remote_config_cancel_t;\n";
@@ -470,6 +474,14 @@ public abstract class FileGenerator {
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
 
         writeDefineOptionHeader(configData);
+
+        if(configData.rebootSet())
+            fileWriter.write(RCI_COMMAND_REBOOT);
+        if(configData.doCommandSet())
+            fileWriter.write(RCI_COMMAND_DO_COMMAND);
+        if(configData.factoryDefaultSet())
+            fileWriter.write(RCI_COMMAND_SET_FACTORY_DEFAULT);
+
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
         writeElementValueStruct();

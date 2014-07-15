@@ -84,10 +84,15 @@ public class Descriptors {
                 id += 2;
             }
 
-            sendRebootDescriptor();
-            sendDoCommandDescriptor();
-            sendSetFactoryDefaultDescriptor();
+            if(configData.rebootSet())
+                sendRebootDescriptor();
+            if(configData.doCommandSet())
+                sendDoCommandDescriptor();
+            if(configData.factoryDefaultSet())
+                sendSetFactoryDefaultDescriptor();
+
             sendRciDescriptors(configData);
+
             ConfigGenerator.log("\nDescriptors were uploaded successfully.");
         }
     }
@@ -137,7 +142,6 @@ public class Descriptors {
                 descriptor += String.format("desc=\"%s\" ", errorMap.get(errorName));
             
             descriptor += "/>\n";
-                
             errorId++;
         }
 
@@ -269,12 +273,15 @@ public class Descriptors {
             }
         }
 
-        descriptors += String.format("<descriptor element=\"reboot\" dscr_avail=\"true\" />\n");
-        descriptors += String.format("<descriptor element=\"do_command\" dscr_avail=\"true\" />\n");
-        descriptors += String.format("<descriptor element=\"set_factory_default\" dscr_avail=\"true\" />\n");
+        if(configData.rebootSet())
+            descriptors += String.format("<descriptor element=\"reboot\" dscr_avail=\"true\" />\n");
+        if(configData.doCommandSet())
+            descriptors += String.format("<descriptor element=\"do_command\" dscr_avail=\"true\" />\n");
+        if(configData.factoryDefaultSet())
+            descriptors += String.format("<descriptor element=\"set_factory_default\" dscr_avail=\"true\" />\n");
 
         descriptors += getErrorDescriptors(configData.getRciGlobalErrorsIndex(), configData.getRciGlobalErrors()) 
-                       + "</descriptor>";
+                     + "</descriptor>";
 
         uploadDescriptor("descriptor", descriptors);
     }
@@ -494,6 +501,12 @@ public class Descriptors {
 
         ConfigGenerator.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
         ConfigGenerator.debug_log(response);
+        /* prevent error HTTP/1.1 429 Too Many Requests */
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String vendorId(){
