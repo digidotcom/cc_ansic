@@ -63,7 +63,7 @@ public abstract class FileGenerator {
 
     protected final static String RCI_COMMAND_REBOOT = "\n#define RCI_COMMAND_REBOOT\n";
     protected final static String RCI_COMMAND_DO_COMMAND = "\n#define RCI_COMMAND_DO_COMMAND\n";
-    protected final static String RCI_COMMAND_SET_FACTORY_DEFAULT = "\n#define RCI_SET_FACTORY_DEFAULT\n";
+    protected final static String RCI_COMMAND_SET_FACTORY_DEFAULT = "\n#define RCI_COMMAND_SET_FACTORY_DEFAULT\n";
 
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
