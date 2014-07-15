@@ -656,6 +656,23 @@ done:
 
 }
 
+STATIC void rci_output_do_command_payload(rci_t * const rci)
+{
+    connector_bool_t overflow = connector_false;
+
+    if (rci->do_command.response_string != NULL)
+    {
+        overflow = rci_output_string(rci, rci->do_command.response_string, strlen(rci->do_command.response_string));
+    }
+    else
+    {
+        overflow = rci_output_uint8(rci, 0x00);
+    }
+
+    if (!overflow)
+        set_rci_output_state(rci, rci_output_state_group_terminator);
+}
+
 STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
@@ -701,7 +718,9 @@ STATIC void rci_generate_output(rci_t * const rci)
 
     if ((rci_buffer_remaining(output) != 0))
     {
+#ifdef RCI_DBG
         connector_debug_line("output: %s", rci_output_state_t_as_string(rci->output.state));
+#endif
 
         switch (rci->output.state)
         {
@@ -725,6 +744,10 @@ STATIC void rci_generate_output(rci_t * const rci)
                 rci_output_field_value(rci);
                 break;
 
+            case rci_output_state_do_command_payload:
+                rci_output_do_command_payload(rci);
+                break;
+
             case rci_output_state_field_terminator:
                 rci_output_field_terminator(rci);
                 break;
@@ -737,7 +760,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 
                 if (get_rci_input_state(rci) == rci_input_state_done)
                 {
-                    trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
+                    trigger_rci_callback(rci, connector_request_id_remote_config_session_end, connector_false);
                     set_rci_output_state(rci, rci_output_state_done);
                 }
                 else

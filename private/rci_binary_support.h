@@ -117,7 +117,11 @@ enum {
     rci_command_query_setting = 1,
     rci_command_set_setting,
     rci_command_query_state,
-    rci_command_set_state
+    rci_command_set_state,
+    rci_command_query_descriptor,
+    rci_command_do_command,
+    rci_command_reboot,
+    rci_command_set_factory_default
 };
 
 typedef enum
@@ -177,6 +181,7 @@ typedef enum
     rci_input_state_field_type,
     rci_input_state_field_no_value,
     rci_input_state_field_value,
+    rci_input_state_do_command_payload,
     rci_input_state_done
 } rci_input_state_t;
 
@@ -189,6 +194,7 @@ typedef enum
     rci_output_state_field_value,
     rci_output_state_field_terminator,
     rci_output_state_group_terminator,
+    rci_output_state_do_command_payload,
     rci_output_state_response_done,
     rci_output_state_done
 } rci_output_state_t;
@@ -203,7 +209,8 @@ typedef enum
     rci_traverse_state_group_end,
     rci_traverse_state_all_groups,
     rci_traverse_state_all_group_instances,
-    rci_traverse_state_all_elements
+    rci_traverse_state_all_elements,
+    rci_traverse_state_do_command_payload
 } rci_traverse_state_t;
 
 typedef enum
@@ -240,6 +247,7 @@ typedef struct
     struct {
         connector_request_id_t request;
         connector_callback_status_t status;
+        connector_bool_t do_command_callback;
     } callback;
 
     struct {
@@ -250,6 +258,11 @@ typedef struct
     struct {
         rci_parser_state_t state;
     } parser;
+
+    struct {
+        char target[DO_COMMAND_TARGET_MAX_LEN + 1]; /* TODO: limit to the rci do_command descriptor max for attributte */
+        char const * response_string;
+    } do_command;
 
     struct {
         rci_traverse_state_t state;
