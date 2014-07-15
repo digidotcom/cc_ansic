@@ -285,7 +285,7 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
     {
         char mac_addr[SIZEOF_MAC_ADDR] =  {0};
         char * p_mac_addr = mac_addr;
-        int dot_count = 0;
+        int colon_count = 0;
         size_t i;
         size_t length = strlen(string);
         char aux_string[3] = {'\0', '\0', '\0'}; /* Two chars plus terminator. */
@@ -314,12 +314,12 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
                 }
 
                 *p_mac_addr++ = (char)(val & 0xFF);
-                dot_count++;
+                colon_count++;
                 index = 0;
                 memset(aux_string, '\0', sizeof aux_string);
             }
         }
-        if (dot_count != SIZEOF_MAC_ADDR)
+        if (colon_count != SIZEOF_MAC_ADDR)
         {
             connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
