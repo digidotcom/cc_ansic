@@ -20,25 +20,31 @@
 
 #define CONNECTOR_RCI_ERROR_BAD_COMMAND (connector_remote_all_strings+0)
 #define CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR (connector_remote_all_strings+12)
-#define SETTING_SERIAL_ERROR_INVALID_BAUD (connector_remote_all_strings+30)
-#define SETTING_SERIAL_ERROR_INVALID_DATABITS (connector_remote_all_strings+49)
-#define SETTING_SERIAL_ERROR_INVALID_PARITY (connector_remote_all_strings+67)
-#define SETTING_SERIAL_ERROR_INVALID_XBREAK (connector_remote_all_strings+83)
-#define SETTING_SERIAL_ERROR_INVALID_DATABITS_PARITY (connector_remote_all_strings+106)
-#define SETTING_ETHERNET_ERROR_INVALID_DUPLEX (connector_remote_all_strings+150)
-#define SETTING_ETHERNET_ERROR_INVALID_IP (connector_remote_all_strings+182)
-#define SETTING_ETHERNET_ERROR_INVALID_SUBNET (connector_remote_all_strings+201)
-#define SETTING_ETHERNET_ERROR_INVALID_GATEWAY (connector_remote_all_strings+221)
-#define SETTING_ETHERNET_ERROR_INVALID_DNS (connector_remote_all_strings+245)
-#define SETTING_DEVICE_TIME_ERROR_INVALID_TIME (connector_remote_all_strings+265)
-#define STATE_DEVICE_STATE_ERROR_INVALID_INTEGER (connector_remote_all_strings+278)
-#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+300)
-#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+310)
-#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+320)
+#define CONNECTOR_RCI_ERROR_REBOOT_FAILED (connector_remote_all_strings+30)
+#define CONNECTOR_RCI_ERROR_INVALID_ARGUMENTS (connector_remote_all_strings+44)
+#define CONNECTOR_RCI_ERROR_SET_FACTORY_DEFAULT_FAILED (connector_remote_all_strings+62)
+#define SETTING_SERIAL_ERROR_INVALID_BAUD (connector_remote_all_strings+89)
+#define SETTING_SERIAL_ERROR_INVALID_DATABITS (connector_remote_all_strings+108)
+#define SETTING_SERIAL_ERROR_INVALID_PARITY (connector_remote_all_strings+126)
+#define SETTING_SERIAL_ERROR_INVALID_XBREAK (connector_remote_all_strings+142)
+#define SETTING_SERIAL_ERROR_INVALID_DATABITS_PARITY (connector_remote_all_strings+165)
+#define SETTING_ETHERNET_ERROR_INVALID_DUPLEX (connector_remote_all_strings+209)
+#define SETTING_ETHERNET_ERROR_INVALID_IP (connector_remote_all_strings+241)
+#define SETTING_ETHERNET_ERROR_INVALID_SUBNET (connector_remote_all_strings+260)
+#define SETTING_ETHERNET_ERROR_INVALID_GATEWAY (connector_remote_all_strings+280)
+#define SETTING_ETHERNET_ERROR_INVALID_DNS (connector_remote_all_strings+304)
+#define SETTING_DEVICE_TIME_ERROR_INVALID_TIME (connector_remote_all_strings+324)
+#define STATE_DEVICE_STATE_ERROR_INVALID_INTEGER (connector_remote_all_strings+337)
+#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+359)
+#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+369)
+#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+379)
 
 char CONST connector_remote_all_strings[] = {
  11,'B','a','d',' ','c','o','m','m','a','n','d',
  17,'B','a','d',' ','c','o','n','f','i','g','u','r','a','t','i','o','n',
+ 13,'R','e','b','o','o','t',' ','f','a','i','l','e','d',
+ 17,'I','n','v','a','l','i','d',' ','a','r','g','u','m','e','n','t','s',
+ 26,'S','e','t',' ','F','a','c','t','o','r','y',' ','D','e','f','a','u','l','t',' ','f','a','i','l','e','d',
  18,'I','n','v','a','l','i','d',' ','b','a','u','d',' ','r','a','t','e',' ',
  17,'I','n','v','a','l','i','d',' ','d','a','t','a',' ','b','i','t','s',
  15,' ','I','n','v','a','l','i','d',' ','p','a','r','i','t','y',
@@ -59,6 +65,9 @@ char CONST connector_remote_all_strings[] = {
 static char const * const connector_rci_errors[] = {
  CONNECTOR_RCI_ERROR_BAD_COMMAND, /*bad_command*/
  CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR, /*bad_descriptor*/
+ CONNECTOR_RCI_ERROR_REBOOT_FAILED, /*reboot_failed*/
+ CONNECTOR_RCI_ERROR_INVALID_ARGUMENTS, /*invalid_arguments*/
+ CONNECTOR_RCI_ERROR_SET_FACTORY_DEFAULT_FAILED, /*set_factory_default_failed*/
  CONNECTOR_GLOBAL_ERROR_LOAD_FAIL, /*load_fail*/
  CONNECTOR_GLOBAL_ERROR_SAVE_FAIL, /*save_fail*/
  CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL /*memory_fail*/
@@ -321,6 +330,6 @@ connector_remote_config_data_t rci_desc_data = {
     connector_rci_errors,
     connector_global_error_COUNT,
     FIRMWARE_TARGET_ZERO_VERSION,
-    0x30000DB,
+    0x200416D,
     "Linux Application"
 };
