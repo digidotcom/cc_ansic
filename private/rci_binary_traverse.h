@@ -45,6 +45,7 @@ done:
     return;
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
 STATIC void traverse_command_do_command(rci_t * const rci)
 {
     trigger_rci_callback(rci, rci_command_callback_do_command, 0);
@@ -74,6 +75,7 @@ STATIC void traverse_command_set_factory_default(rci_t * const rci)
 
     return;
 }
+#endif
 
 STATIC void traverse_element_end(rci_t * const rci)
 {
@@ -266,6 +268,7 @@ STATIC void rci_traverse_data(rci_t * const rci)
         case rci_traverse_state_group_end:
             traverse_group_end(rci);
             break;
+#if (defined RCI_LEGACY_COMMANDS)
         case rci_traverse_state_command_do_command:
             traverse_command_do_command(rci);
             break;
@@ -275,6 +278,7 @@ STATIC void rci_traverse_data(rci_t * const rci)
         case rci_traverse_state_command_set_factory_default:
             traverse_command_set_factory_default(rci);
             break;
+#endif
     }
 
     if (done_state)

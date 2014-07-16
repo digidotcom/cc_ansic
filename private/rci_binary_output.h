@@ -395,6 +395,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
             }
             break;
 
+#if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
             rci_output_uint32(rci, rci->command.command_id | 0x40); /* Command has attribute */
             rci_output_uint8(rci, 0x01); /* Attribute type (normal) with count encoded 01 */
@@ -410,6 +411,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
 
             set_rci_output_state(rci, rci_output_state_group_terminator);
             break;
+#endif
     }
 
     return;
@@ -648,6 +650,7 @@ done:
 
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
 STATIC void rci_output_do_command_payload(rci_t * const rci)
 {
     connector_bool_t overflow = connector_false;
@@ -664,6 +667,7 @@ STATIC void rci_output_do_command_payload(rci_t * const rci)
     if (!overflow)
         set_rci_output_state(rci, rci_output_state_group_terminator);
 }
+#endif
 
 STATIC void rci_output_field_terminator(rci_t * const rci)
 {
@@ -736,9 +740,11 @@ STATIC void rci_generate_output(rci_t * const rci)
                 rci_output_field_value(rci);
                 break;
 
+#if (defined RCI_LEGACY_COMMANDS)
             case rci_output_state_do_command_payload:
                 rci_output_do_command_payload(rci);
                 break;
+#endif
 
             case rci_output_state_field_terminator:
                 rci_output_field_terminator(rci);

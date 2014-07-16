@@ -81,6 +81,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
         case rci_command_callback_set_query_setting_state:
             break;
 
+#if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
             /* Provide request */
             rci->shared.callback_data.element.value = &rci->shared.value;
@@ -90,9 +91,10 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
 
          case rci_command_callback_reboot:
          case rci_command_callback_set_factory_default:
+#endif
             goto done;
     }
-	
+
     switch (remote_config_request)
     {
     case connector_request_id_remote_config_session_cancel:
@@ -157,13 +159,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
     switch (rci->callback.rci_command_callback)
     {
-        case rci_command_callback_do_command:
-        case rci_command_callback_reboot:
-        case rci_command_callback_set_factory_default:
-            remote_config->error_id = connector_success;
-            callback_data = remote_config;
-            break;
-
         case rci_command_callback_set_query_setting_state:
             switch (remote_config_request)
             {
@@ -195,6 +190,15 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 break;
             }
             break;            
+
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_callback_do_command:
+        case rci_command_callback_reboot:
+        case rci_command_callback_set_factory_default:
+            remote_config->error_id = connector_success;
+            callback_data = remote_config;
+            break;
+#endif
     }
 
     switch (rci->callback.rci_command_callback)
@@ -203,6 +207,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
             break;
 
+#if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
         {
             connector_callback_status_t const status = app_process_do_command(rci->command.do_command.target, remote_config->element.value->string_value, &rci->command.do_command.response_string);
@@ -263,6 +268,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             }
             break;
         }
+#endif
     }
 
     switch (rci->callback.status)

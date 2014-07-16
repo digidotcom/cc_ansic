@@ -10,7 +10,9 @@
  * =======================================================================
  */
 
+#if (defined RCI_LEGACY_COMMANDS)
 connector_callback_status_t app_process_do_command(char const * const target, char const * const request_payload, char const * * response_payload);
 connector_callback_status_t app_process_set_factory_default(void);
+#endif
 
 

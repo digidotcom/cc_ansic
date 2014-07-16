@@ -396,12 +396,14 @@ STATIC connector_bool_t has_rci_no_value(unsigned int data)
     return connector_bool(data == BINARY_RCI_NO_VALUE);
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
 STATIC void rci_invalid_arguments_error(rci_t * const rci)
 {
     rci_global_error(rci, connector_rci_error_invalid_arguments, RCI_NO_HINT);
     set_rci_command_error(rci);
     state_call(rci, rci_parser_state_error);
 }
+#endif
 
 STATIC void process_rci_command(rci_t * const rci)
 {
@@ -453,6 +455,7 @@ STATIC void process_rci_command(rci_t * const rci)
             case rci_command_query_state:
                 rci->shared.callback_data.action = connector_remote_action_query;
                 break;
+#if (defined RCI_LEGACY_COMMANDS)
             case rci_command_do_command:
             {
                 size_t attribute_len;
@@ -562,6 +565,7 @@ STATIC void process_rci_command(rci_t * const rci)
                 state_call(rci, rci_parser_state_traverse);
                 goto done;                
             }
+#endif
             default:
                 /* unsupported command.
                  * Just go to error state for returning error message.
@@ -1165,6 +1169,7 @@ STATIC void process_field_no_value(rci_t * const rci)
 
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
 STATIC void process_do_command_payload(rci_t * const rci)
 {
     if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
@@ -1181,6 +1186,7 @@ STATIC void process_do_command_payload(rci_t * const rci)
 done:
     return;
 }
+#endif
 
 STATIC void rci_parse_input(rci_t * const rci)
 {
@@ -1225,9 +1231,11 @@ STATIC void rci_parse_input(rci_t * const rci)
             case rci_input_state_field_value:
                 process_field_value(rci);
                 break;
+#if (defined RCI_LEGACY_COMMANDS)
             case rci_input_state_do_command_payload:
                 process_do_command_payload(rci);
                 break;
+#endif
             case rci_input_state_done:
                 ASSERT(rci->input.state != rci_input_state_done);
                 break;
