@@ -45,7 +45,7 @@ done:
     return;
 }
 
-STATIC void traverse_do_command_payload(rci_t * const rci)
+STATIC void traverse_command_do_command(rci_t * const rci)
 {
     trigger_rci_callback(rci, rci_command_callback_do_command, 0);
     set_rci_output_state(rci, rci_output_state_command_id);
@@ -55,7 +55,17 @@ STATIC void traverse_do_command_payload(rci_t * const rci)
     return;
 }
 
-STATIC void traverse_set_factory_default(rci_t * const rci)
+STATIC void traverse_command_reboot(rci_t * const rci)
+{
+    trigger_rci_callback(rci, rci_command_callback_reboot, 0);
+    set_rci_output_state(rci, rci_output_state_command_id);
+    set_rci_traverse_state(rci, rci_traverse_state_none);
+    state_call(rci, rci_parser_state_output);
+
+    return;
+}
+
+STATIC void traverse_command_set_factory_default(rci_t * const rci)
 {
     trigger_rci_callback(rci, rci_command_callback_set_factory_default, 0);
     set_rci_output_state(rci, rci_output_state_command_id);
@@ -256,11 +266,14 @@ STATIC void rci_traverse_data(rci_t * const rci)
         case rci_traverse_state_group_end:
             traverse_group_end(rci);
             break;
-        case rci_traverse_state_do_command_payload:
-            traverse_do_command_payload(rci);
+        case rci_traverse_state_command_do_command:
+            traverse_command_do_command(rci);
             break;
-        case rci_traverse_state_set_factory_default:
-            traverse_set_factory_default(rci);
+        case rci_traverse_state_command_reboot:
+            traverse_command_reboot(rci);
+            break;
+        case rci_traverse_state_command_set_factory_default:
+            traverse_command_set_factory_default(rci);
             break;
     }
 

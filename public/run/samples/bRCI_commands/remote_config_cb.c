@@ -204,8 +204,8 @@ connector_callback_status_t app_process_do_command(char const * const target, ch
     connector_callback_status_t status = connector_callback_continue;
 
     APP_DEBUG("app_process_do_command for target '%s':\n", target);
-    APP_DEBUG("request_payload len=%d\n",strlen(request_payload));
-    APP_DEBUG("request_payload='%s'\n",request_payload);
+    APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
+    APP_DEBUG("request_payload='%s'\n", request_payload);
 
     if (!strcmp(target, "echo"))
     {
@@ -223,6 +223,19 @@ connector_callback_status_t app_process_do_command(char const * const target, ch
     else if (!strcmp(target, "error"))
     {
         status = connector_callback_error;
+    }
+    else if (!strcmp(target, "busy"))
+    {
+        static int i = 0;
+
+        if (i++ < 2) 
+        {
+            status = connector_callback_busy;
+        }
+        else
+        {
+            *response_payload = "I returned busy twice";
+        }
     }
     else
     {

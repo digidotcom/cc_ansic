@@ -404,6 +404,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
             set_rci_output_state(rci, rci_output_state_do_command_payload);
             break;
 
+        case rci_command_callback_reboot:
         case rci_command_callback_set_factory_default:
             rci_output_uint32(rci, rci->command.command_id);
 

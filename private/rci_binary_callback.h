@@ -88,6 +88,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
             rci->command.do_command.response_string = NULL;
             goto done;
 
+         case rci_command_callback_reboot:
          case rci_command_callback_set_factory_default:
             goto done;
     }
@@ -157,6 +158,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     switch (rci->callback.rci_command_callback)
     {
         case rci_command_callback_do_command:
+        case rci_command_callback_reboot:
         case rci_command_callback_set_factory_default:
             remote_config->error_id = connector_success;
             callback_data = remote_config;
@@ -208,6 +210,32 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             {
                 /* TODO: do_command error */
                 rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
+                set_rci_command_error(rci);
+                state_call(rci, rci_parser_state_error);
+
+                rci->callback.status = connector_callback_continue;
+            }
+            else
+            {
+                rci->callback.status = status;
+            }
+            break;
+        }
+        case rci_command_callback_reboot:
+        {
+            connector_callback_status_t status = connector_callback_continue;
+            connector_request_id_t request_id;
+            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+
+            connector_class_id_t class_id = connector_class_id_operating_system;
+            request_id.os_request = connector_request_id_os_reboot;
+
+            /* Device Cloud reboots us */
+
+            status = connector_callback(connector_ptr->callback, class_id, request_id, NULL, connector_ptr->context);
+            if (status == connector_callback_error) 
+            {
+                rci_global_error(rci, connector_rci_error_reboot_failed, RCI_NO_HINT);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
 

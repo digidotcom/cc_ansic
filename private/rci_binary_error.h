@@ -112,6 +112,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         break;
 
                     case rci_command_callback_do_command:
+                    case rci_command_callback_reboot:
                     case rci_command_callback_set_factory_default:
                         trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
                         break;

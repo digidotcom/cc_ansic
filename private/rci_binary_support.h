@@ -210,8 +210,9 @@ typedef enum
     rci_traverse_state_all_groups,
     rci_traverse_state_all_group_instances,
     rci_traverse_state_all_elements,
-    rci_traverse_state_do_command_payload,
-    rci_traverse_state_set_factory_default
+    rci_traverse_state_command_do_command,
+    rci_traverse_state_command_reboot,
+    rci_traverse_state_command_set_factory_default
 } rci_traverse_state_t;
 
 typedef enum
@@ -233,6 +234,7 @@ typedef enum
 {
     rci_command_callback_set_query_setting_state,
     rci_command_callback_do_command,
+    rci_command_callback_reboot,
     rci_command_callback_set_factory_default
 } rci_command_callback_t;
 

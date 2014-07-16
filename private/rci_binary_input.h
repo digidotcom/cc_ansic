@@ -453,31 +453,6 @@ STATIC void process_rci_command(rci_t * const rci)
             case rci_command_query_state:
                 rci->shared.callback_data.action = connector_remote_action_query;
                 break;
-            case rci_command_reboot:
-            {
-                connector_status_t reboot_ret;
-
-                set_rci_input_state(rci, rci_input_state_done);
-                set_rci_traverse_state(rci, rci_traverse_state_none);
-                set_rci_output_state(rci, rci_output_state_response_done);
-
-                reboot_ret = connector_reboot(rci->service_data->connector_ptr);
-                if (reboot_ret == connector_working)
-                {
-                    rci_output_uint32(rci, command);
-                    rci_output_uint8(rci, BINARY_RCI_TERMINATOR);
-                                        
-                    state_call(rci, rci_parser_state_output);
-                }
-                else
-                {
-                    rci_global_error(rci, connector_rci_error_reboot_failed, RCI_NO_HINT);
-                    set_rci_command_error(rci);
-                    state_call(rci, rci_parser_state_error);
-                }
-                
-                goto done;
-            }
             case rci_command_do_command:
             {
                 size_t attribute_len;
@@ -573,10 +548,17 @@ STATIC void process_rci_command(rci_t * const rci)
                 state_call(rci, rci_parser_state_input);
                 goto done;
             }
+            case rci_command_reboot:
+            {
+                set_rci_input_state(rci, rci_input_state_done);
+                set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
+                state_call(rci, rci_parser_state_traverse);
+                goto done;                
+            }
             case rci_command_set_factory_default:
             {
                 set_rci_input_state(rci, rci_input_state_done);
-                set_rci_traverse_state(rci, rci_traverse_state_set_factory_default);
+                set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);
                 state_call(rci, rci_parser_state_traverse);
                 goto done;                
             }
@@ -1191,7 +1173,7 @@ STATIC void process_do_command_payload(rci_t * const rci)
     }
 
     {
-        set_rci_traverse_state(rci, rci_traverse_state_do_command_payload);
+        set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
         state_call(rci, rci_parser_state_traverse);
     }
     set_rci_input_state(rci, rci_input_state_done);
