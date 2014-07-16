@@ -12,7 +12,7 @@
 
 STATIC void traverse_rci_command(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_action_start, connector_false);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_action_start);
 
     set_rci_output_state(rci, rci_output_state_command_id);
     state_call(rci, rci_parser_state_output);
@@ -20,7 +20,7 @@ STATIC void traverse_rci_command(rci_t * const rci)
 }
 STATIC void traverse_group_id(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_group_start, connector_false);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_start);
 
     set_rci_output_state(rci, rci_output_state_group_id);
     state_call(rci, rci_parser_state_output);
@@ -37,7 +37,7 @@ STATIC void traverse_element_id(rci_t * const rci)
         goto done;
     }
 
-    trigger_rci_callback(rci, connector_request_id_remote_config_group_process, connector_false);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_process);
     set_rci_output_state(rci, rci_output_state_field_id);
     state_call(rci, rci_parser_state_output);
 
@@ -47,8 +47,18 @@ done:
 
 STATIC void traverse_do_command_payload(rci_t * const rci)
 {
-    trigger_rci_callback(rci, 0 /* TODO */, connector_true);
-    set_rci_output_state(rci, rci_output_state_do_command_payload);
+    trigger_rci_callback(rci, rci_command_callback_do_command, 0);
+    set_rci_output_state(rci, rci_output_state_command_id);
+    set_rci_traverse_state(rci, rci_traverse_state_none);
+    state_call(rci, rci_parser_state_output);
+
+    return;
+}
+
+STATIC void traverse_set_factory_default(rci_t * const rci)
+{
+    trigger_rci_callback(rci, rci_command_callback_set_factory_default, 0);
+    set_rci_output_state(rci, rci_output_state_command_id);
     set_rci_traverse_state(rci, rci_traverse_state_none);
     state_call(rci, rci_parser_state_output);
 
@@ -57,7 +67,7 @@ STATIC void traverse_do_command_payload(rci_t * const rci)
 
 STATIC void traverse_element_end(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_group_end, connector_false);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_end);
 
     set_rci_output_state(rci, rci_output_state_field_terminator);
     state_call(rci, rci_parser_state_output);
@@ -65,7 +75,7 @@ STATIC void traverse_element_end(rci_t * const rci)
 
 STATIC void traverse_group_end(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_action_end, connector_false);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_action_end);
     set_rci_output_state(rci, rci_output_state_group_terminator);
     state_call(rci, rci_parser_state_output);
 
@@ -248,6 +258,9 @@ STATIC void rci_traverse_data(rci_t * const rci)
             break;
         case rci_traverse_state_do_command_payload:
             traverse_do_command_payload(rci);
+            break;
+        case rci_traverse_state_set_factory_default:
+            traverse_set_factory_default(rci);
             break;
     }
 

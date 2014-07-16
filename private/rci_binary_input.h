@@ -429,6 +429,8 @@ STATIC void process_rci_command(rci_t * const rci)
 
         command &= BINARY_RCI_COMMAND_MASK;
 
+        rci->command.command_id = command;
+
         switch (command)
         {
             case rci_command_set_setting:
@@ -475,7 +477,6 @@ STATIC void process_rci_command(rci_t * const rci)
                 }
                 
                 goto done;
-                break;
             }
             case rci_command_do_command:
             {
@@ -551,8 +552,8 @@ STATIC void process_rci_command(rci_t * const rci)
 #endif
 
                     ASSERT(attribute_len <= DO_COMMAND_TARGET_MAX_LEN);
-                    memcpy(rci->do_command.target, attribute_string, attribute_len);
-                    rci->do_command.target[attribute_len] = '\0';
+                    memcpy(rci->command.do_command.target, attribute_string, attribute_len);
+                    rci->command.do_command.target[attribute_len] = '\0';
 
                     /* Advance attribute_string */
                     rci_buffer_advance(&rci->buffer.input, attribute_len);
@@ -563,11 +564,6 @@ STATIC void process_rci_command(rci_t * const rci)
                     goto done;
                 }
 
-                rci_output_uint32(rci, command | 0x40); /* Command has attribute */
-                rci_output_uint8(rci, 0x01); /* Attribute type (normal) with count encoded 01 */
-                rci_output_uint8(rci, 0x00); /* Attribute binId=0 (target) */
-                rci_output_string(rci, attribute_string, attribute_len); /* Attribute text */
-
                 /* Adjust input buffer (rci_parse_input will advand one possition for the command) */
                 rci->buffer.input.current--;
                 rci->shared.content.length = 0;
@@ -576,39 +572,13 @@ STATIC void process_rci_command(rci_t * const rci)
                 set_rci_input_state(rci, rci_input_state_do_command_payload);
                 state_call(rci, rci_parser_state_input);
                 goto done;
-                break;
             }
             case rci_command_set_factory_default:
             {
-                connector_status_t set_factory_default_ret;
-
                 set_rci_input_state(rci, rci_input_state_done);
-                set_rci_traverse_state(rci, rci_traverse_state_none);
-                set_rci_output_state(rci, rci_output_state_response_done);
-
-#if 0
-                /* TODO: user callback */
-                set_factory_default_ret = connector_set_factory_default(rci->service_data->connector_ptr);
-#else
-                printf("Calling set_factory_default\n");
-                set_factory_default_ret = connector_working;
-#endif
-                if (set_factory_default_ret == connector_working)
-                {
-                    rci_output_uint32(rci, command);
-                    rci_output_uint8(rci, BINARY_RCI_TERMINATOR);
-                                        
-                    state_call(rci, rci_parser_state_output);
-                }
-                else
-                {
-                    rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
-                    set_rci_command_error(rci);
-                    state_call(rci, rci_parser_state_error);
-                }
-                
-                goto done;
-                break;
+                set_rci_traverse_state(rci, rci_traverse_state_set_factory_default);
+                state_call(rci, rci_parser_state_traverse);
+                goto done;                
             }
             default:
                 /* unsupported command.

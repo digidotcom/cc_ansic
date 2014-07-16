@@ -220,10 +220,23 @@ connector_callback_status_t app_process_do_command(char const * const target, ch
     else if (!strcmp(target, "no answer"))
     {
     }
+    else if (!strcmp(target, "error"))
+    {
+        status = connector_callback_error;
+    }
     else
     {
         *response_payload = "not supported command";
     }
+
+    return status;
+}
+
+connector_callback_status_t app_process_set_factory_default(void)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    APP_DEBUG("app_process_set_factory_default\n");
 
     return status;
 }

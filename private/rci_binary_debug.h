@@ -73,6 +73,7 @@ static char const * rci_traverse_state_t_as_string(rci_traverse_state_t const va
         enum_to_case(rci_traverse_state_all_group_instances);
         enum_to_case(rci_traverse_state_all_elements);
         enum_to_case(rci_traverse_state_do_command_payload);
+        enum_to_case(rci_traverse_state_set_factory_default);
     }
     return result;
 }

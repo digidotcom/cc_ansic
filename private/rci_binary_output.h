@@ -380,44 +380,35 @@ STATIC connector_bool_t rci_output_float(rci_t * const rci, float const value)
 STATIC void rci_output_command_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-    uint32_t command_id = 0;
+    connector_bool_t overflow;
 
-    switch (rci->shared.callback_data.group.type)
+    switch (rci->callback.rci_command_callback)
     {
-        case connector_remote_group_setting:
-            switch (rci->shared.callback_data.action)
+        case rci_command_callback_set_query_setting_state:
+            overflow = rci_output_uint32(rci, rci->command.command_id);
+            if (!overflow)
             {
-            case connector_remote_action_set:
-                command_id = rci_command_set_setting;
-                break;
-            case connector_remote_action_query:
-                command_id = rci_command_query_setting;
-                break;
+                if (remote_config->error_id != connector_success)
+                    state_call(rci, rci_parser_state_error);
+                else
+                    state_call(rci, rci_parser_state_traverse);
             }
             break;
-        case connector_remote_group_state:
-            switch (rci->shared.callback_data.action)
-            {
-            case connector_remote_action_set:
-                command_id = rci_command_set_state;
-                break;
-            case connector_remote_action_query:
-                command_id = rci_command_query_state;
-                break;
-            }
+
+        case rci_command_callback_do_command:
+            rci_output_uint32(rci, rci->command.command_id | 0x40); /* Command has attribute */
+            rci_output_uint8(rci, 0x01); /* Attribute type (normal) with count encoded 01 */
+            rci_output_uint8(rci, 0x00); /* Attribute binId=0 (target) */
+            rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target)); /* Attribute text */
+
+            set_rci_output_state(rci, rci_output_state_do_command_payload);
             break;
-    }
 
-    {
-        connector_bool_t const overflow = rci_output_uint32(rci, command_id);
+        case rci_command_callback_set_factory_default:
+            rci_output_uint32(rci, rci->command.command_id);
 
-        if (!overflow)
-        {
-            if (remote_config->error_id != connector_success)
-                state_call(rci, rci_parser_state_error);
-            else
-                state_call(rci, rci_parser_state_traverse);
-        }
+            set_rci_output_state(rci, rci_output_state_group_terminator);
+            break;
     }
 
     return;
@@ -660,9 +651,9 @@ STATIC void rci_output_do_command_payload(rci_t * const rci)
 {
     connector_bool_t overflow = connector_false;
 
-    if (rci->do_command.response_string != NULL)
+    if (rci->command.do_command.response_string != NULL)
     {
-        overflow = rci_output_string(rci, rci->do_command.response_string, strlen(rci->do_command.response_string));
+        overflow = rci_output_string(rci, rci->command.do_command.response_string, strlen(rci->command.do_command.response_string));
     }
     else
     {
@@ -760,7 +751,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 
                 if (get_rci_input_state(rci) == rci_input_state_done)
                 {
-                    trigger_rci_callback(rci, connector_request_id_remote_config_session_end, connector_false);
+                    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
                     set_rci_output_state(rci, rci_output_state_done);
                 }
                 else
