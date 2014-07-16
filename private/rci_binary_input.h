@@ -458,10 +458,6 @@ STATIC void process_rci_command(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
             case rci_command_do_command:
             {
-                size_t attribute_len;
-                const char * attribute_string;
-                size_t ber_bytes;
-
                 if (!has_attribute)
                 {
                     rci_invalid_arguments_error(rci);
@@ -512,42 +508,12 @@ STATIC void process_rci_command(rci_t * const rci)
                     rci_buffer_advance(&rci->buffer.input, 1);
                 }
 
-                /* Parse target attribute */
-                rci->shared.content.data = rci->input.destination = rci->buffer.input.current;
-                rci->shared.content.length = rci_buffer_remaining(&rci->buffer.input);
-
-                ber_bytes = get_modifier_ber(rci, &attribute_len);
-
-                if (ber_bytes && rci_buffer_remaining(&rci->buffer.input) > (ber_bytes + attribute_len) )
-                {
-                    /* Advance attribute_len */
-                    rci->buffer.input.current += ber_bytes;
-
-                    attribute_string = (const char *)rci->buffer.input.current;
-#ifdef RCI_DBG
-                    connector_debug_line("attribute_len=%d\n", attribute_len);
-                    connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
-#endif
-
-                    ASSERT(attribute_len <= RCI_DO_COMMAND_TARGET_MAX_LEN);
-                    memcpy(rci->command.do_command.target, attribute_string, attribute_len);
-                    rci->command.do_command.target[attribute_len] = '\0';
-
-                    /* Advance attribute_string */
-                    rci_buffer_advance(&rci->buffer.input, attribute_len);
-                }
-                else
-                {
-                    rci_invalid_arguments_error(rci);
-                    goto done;
-                }
-
                 /* Adjust input buffer (rci_parse_input will advand one possition for the command) */
                 rci->buffer.input.current--;
                 rci->shared.content.length = 0;
 
-                /* Get the do_command payload using the state machine */
-                set_rci_input_state(rci, rci_input_state_do_command_payload);
+                set_rci_input_state(rci, rci_input_state_do_command_target);
+
                 state_call(rci, rci_parser_state_input);
                 goto done;
             }
@@ -1170,6 +1136,31 @@ STATIC void process_field_no_value(rci_t * const rci)
 }
 
 #if (defined RCI_LEGACY_COMMANDS)
+STATIC void process_do_command_target(rci_t * const rci)
+{
+    const char * attribute_string;
+    size_t attribute_len;
+
+    if (!get_string(rci, &attribute_string, &attribute_len))
+    {
+        goto done;
+    }
+
+#ifdef RCI_DBG
+    connector_debug_line("attribute_len=%d\n", attribute_len);
+    connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
+#endif
+
+    ASSERT(attribute_len <= RCI_DO_COMMAND_TARGET_MAX_LEN);
+    memcpy(rci->command.do_command.target, attribute_string, attribute_len);
+    rci->command.do_command.target[attribute_len] = '\0';
+
+    set_rci_input_state(rci, rci_input_state_do_command_payload);
+
+done:
+    return;
+}
+
 STATIC void process_do_command_payload(rci_t * const rci)
 {
     if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
@@ -1232,6 +1223,9 @@ STATIC void rci_parse_input(rci_t * const rci)
                 process_field_value(rci);
                 break;
 #if (defined RCI_LEGACY_COMMANDS)
+            case rci_input_state_do_command_target:
+                process_do_command_target(rci);
+                break;
             case rci_input_state_do_command_payload:
                 process_do_command_payload(rci);
                 break;

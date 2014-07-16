@@ -184,6 +184,7 @@ typedef enum
     rci_input_state_field_no_value,
     rci_input_state_field_value,
 #if (defined RCI_LEGACY_COMMANDS)
+    rci_input_state_do_command_target,
     rci_input_state_do_command_payload,
 #endif
     rci_input_state_done
