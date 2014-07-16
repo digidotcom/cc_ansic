@@ -529,7 +529,7 @@ STATIC void process_rci_command(rci_t * const rci)
                     connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
 #endif
 
-                    ASSERT(attribute_len <= DO_COMMAND_TARGET_MAX_LEN);
+                    ASSERT(attribute_len <= RCI_DO_COMMAND_TARGET_MAX_LEN);
                     memcpy(rci->command.do_command.target, attribute_string, attribute_len);
                     rci->command.do_command.target[attribute_len] = '\0';
 

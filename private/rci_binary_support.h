@@ -285,7 +285,7 @@ typedef struct
 #if (defined RCI_LEGACY_COMMANDS)
         struct 
         {
-            char target[DO_COMMAND_TARGET_MAX_LEN + 1];
+            char target[RCI_DO_COMMAND_TARGET_MAX_LEN + 1];
             char const * response_string;
         } do_command;
 #endif
