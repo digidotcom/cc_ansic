@@ -65,6 +65,7 @@ public class Descriptors {
         if (ConfigGenerator.deleteDescriptorOption()) {
             deleteDescriptors();
         } else {
+            ConfigGenerator.log("\nProcessing Descriptors, please wait...");
             int id = 1;
             for (GroupType type : GroupType.values()) {
                 LinkedList<Group> groups = null;
@@ -84,12 +85,11 @@ public class Descriptors {
                 id += 2;
             }
 
-            if(configData.rebootSet())
+            if(ConfigGenerator.rciLegacyEnabled()){
                 sendRebootDescriptor();
-            if(configData.doCommandSet())
                 sendDoCommandDescriptor();
-            if(configData.factoryDefaultSet())
                 sendSetFactoryDefaultDescriptor();
+            }
 
             sendRciDescriptors(configData);
 
@@ -273,12 +273,13 @@ public class Descriptors {
             }
         }
 
-        if(configData.rebootSet())
+        if(ConfigGenerator.rciLegacyEnabled()){
             descriptors += String.format("<descriptor element=\"reboot\" dscr_avail=\"true\" />\n");
-        if(configData.doCommandSet())
+
             descriptors += String.format("<descriptor element=\"do_command\" dscr_avail=\"true\" />\n");
-        if(configData.factoryDefaultSet())
+
             descriptors += String.format("<descriptor element=\"set_factory_default\" dscr_avail=\"true\" />\n");
+        }
 
         descriptors += getErrorDescriptors(configData.getRciGlobalErrorsIndex(), configData.getRciGlobalErrors()) 
                      + "</descriptor>";

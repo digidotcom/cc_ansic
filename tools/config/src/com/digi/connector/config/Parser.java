@@ -129,19 +129,6 @@ public class Parser {
                     tokenScanner.skipCommentLine();
                     isReadToken = true;
                     
-                } else if (token.equalsIgnoreCase("RCI_COMMAND_REBOOT")) {
-                    configData.addRCIGroupError("reboot_failed", "Reboot failed");
-                    isReadToken = true;
-
-                } else if (token.equalsIgnoreCase("RCI_COMMAND_DO_COMMAND")) {
-                    configData.addRCIGroupError("invalid_arguments", "Invalid arguments");
-                    configData.addRCIGroupError("do_command_failed", "Do Command failed");
-                    isReadToken = true;
-
-                } else if (token.equalsIgnoreCase("RCI_COMMAND_SET_FACTORY_DEFAULT")) {
-                    configData.addRCIGroupError("set_factory_default_failed", "Set Factory Default failed");
-                    isReadToken = true;
-
                 } else {
                     throw new Exception("Unrecognized keyword: " + token);
                 }

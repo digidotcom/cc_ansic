@@ -26,6 +26,7 @@ public class ConfigGenerator {
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
     private final static String PROTOTYPES = "use_prototypes";
     private final static String SAVE_DESCRIPTORS = "saveDescriptors";
+    private final static String RCI_LEGACY_COMMANDS = "rci_legacy_commands";
 
     private final static String FILE_TYPE_OPTION = "type";
 
@@ -63,6 +64,7 @@ public class ConfigGenerator {
     private static boolean deleteDescriptor;
     private static boolean prototypes;
     private static boolean saveDescriptor;
+    private static boolean rci_legacy;
 
     public enum FileType {
         NONE,
@@ -275,6 +277,8 @@ public class ConfigGenerator {
                 prototypes = true;
             } else if (option.equals(SAVE_DESCRIPTORS)) {
                 saveDescriptor = true;
+            } else if (option.equals(RCI_LEGACY_COMMANDS)) {
+                rci_legacy = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
             } else {
@@ -450,6 +454,10 @@ public class ConfigGenerator {
         return prototypes;
     }
 
+    public static boolean rciLegacyEnabled() {
+        return rci_legacy;
+    }
+
     public static void log(Object aObject) {
         System.out.println(String.valueOf(aObject));
     }
@@ -500,6 +508,16 @@ public class ConfigGenerator {
             /* parse file */
             debug_log("Start reading filename: " + filename);
             ConfigData configData = new ConfigData();
+
+            if(rci_legacy){
+                debug_log("rci legacy commands enable");
+                configData.addRCIGroupError("reboot_failed", "Reboot failed");
+
+                configData.addRCIGroupError("invalid_arguments", "Invalid arguments");
+                configData.addRCIGroupError("do_command_failed", "Do Command failed");
+
+                configData.addRCIGroupError("set_factory_default_failed", "Set Factory Default failed");
+            }
 
             if (fileTypeOption() != FileType.GLOBAL_HEADER) {
                 Parser.processFile(filename, configData);

@@ -61,9 +61,7 @@ public abstract class FileGenerator {
     " void * user_context;\n" +
     "} rci_info_t;\n";
 
-    protected final static String RCI_COMMAND_REBOOT = "\n#define RCI_COMMAND_REBOOT\n";
-    protected final static String RCI_COMMAND_DO_COMMAND = "\n#define RCI_COMMAND_DO_COMMAND\n";
-    protected final static String RCI_COMMAND_SET_FACTORY_DEFAULT = "\n#define RCI_COMMAND_SET_FACTORY_DEFAULT\n";
+    protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
 
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
@@ -475,12 +473,8 @@ public abstract class FileGenerator {
 
         writeDefineOptionHeader(configData);
 
-        if(configData.rebootSet())
-            fileWriter.write(RCI_COMMAND_REBOOT);
-        if(configData.doCommandSet())
-            fileWriter.write(RCI_COMMAND_DO_COMMAND);
-        if(configData.factoryDefaultSet())
-            fileWriter.write(RCI_COMMAND_SET_FACTORY_DEFAULT);
+        if(ConfigGenerator.rciLegacyEnabled())
+            fileWriter.write(RCI_LEGACY_DEFINE);
 
         writeOnOffBooleanEnum();
         writeElementTypeEnum();

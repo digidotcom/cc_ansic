@@ -21,8 +21,6 @@ public class ConfigData {
     private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
         "bad_descriptor", "Bad configuration"};
 
-    private boolean reboot, do_command, factory;
-
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
 
@@ -73,12 +71,6 @@ public class ConfigData {
         if ((rciGlobalErrors.size() > 0) && (rciGlobalErrors.getStrings().containsKey(name))) {
             throw new Exception("Duplicate RCI_COMMAND");
         }
-        if(name.equalsIgnoreCase("reboot_failed"))
-            reboot = true;
-        else if(name.equalsIgnoreCase("invalid_arguments"))
-            do_command = true;
-        else if(name.equalsIgnoreCase("set_factory_default_failed"))
-            factory = true;
 
         rciGlobalErrors.addStrings(name, description);
     }
@@ -119,18 +111,6 @@ public class ConfigData {
                 + userGlobalErrors.size();
 
         return size;
-    }
-
-    public boolean rebootSet(){
-        return reboot;
-    }
-
-    public boolean doCommandSet(){
-        return do_command;
-    }
-
-    public boolean factoryDefaultSet(){
-        return factory;
     }
 
 }
