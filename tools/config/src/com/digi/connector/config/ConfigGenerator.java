@@ -27,6 +27,7 @@ public class ConfigGenerator {
     private final static String PROTOTYPES = "use_prototypes";
     private final static String SAVE_DESCRIPTORS = "saveDescriptors";
     private final static String RCI_LEGACY_COMMANDS = "rci_legacy_commands";
+    private final static String RCI_DC_TARGET_MAX = "rci_dc_target_max";
 
     private final static String FILE_TYPE_OPTION = "type";
 
@@ -65,6 +66,7 @@ public class ConfigGenerator {
     private static boolean prototypes;
     private static boolean saveDescriptor;
     private static boolean rci_legacy;
+    private static int rci_dc_target_max = 0;
 
     public enum FileType {
         NONE,
@@ -260,6 +262,12 @@ public class ConfigGenerator {
                 } else if (keys[0].equals(USE_NAMES)) {
                     useNames = UseNames.toUseNames(keys[1]);
 
+                } else if (keys[0].equals(RCI_DC_TARGET_MAX)) {
+                    try{
+                        rci_dc_target_max = Integer.parseInt(keys[1]);
+                    } catch (NumberFormatException e) {
+                        throw new IOException("-rci_dc_target_max expect an integer value");
+                    }
                 }
                 else {
                     throw new Exception("Invalid Option: " + keys[0]);
@@ -517,6 +525,9 @@ public class ConfigGenerator {
                 configData.addRCIGroupError("do_command_failed", "Do Command failed");
 
                 configData.addRCIGroupError("set_factory_default_failed", "Set Factory Default failed");
+
+                if(rci_dc_target_max != 0)
+                    configData.setDoCommandMaxLen(rci_dc_target_max);
             }
 
             if (fileTypeOption() != FileType.GLOBAL_HEADER) {

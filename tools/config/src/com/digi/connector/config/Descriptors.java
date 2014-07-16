@@ -161,7 +161,8 @@ public class Descriptors {
 
         String do_command_descriptor = "<descriptor element=\"do_command\" bin_id=\"6\" > ";
         do_command_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Invalid arguments\" />";
-        do_command_descriptor +=       "  <attr name=\"target\" type=\"string\" desc=\"The subsystem that the command is forwarded\" bin_id=\"0\" />";
+        do_command_descriptor +=       "  <attr name=\"target\" type=\"string\" min=\"1\" max=\"" + ConfigData.DoCommandMaxLen()
+                              + "\" desc=\"The subsystem that the command is forwarded\" bin_id=\"0\" />";
         do_command_descriptor +=       "</descriptor>";
 
         uploadDescriptor("descriptor/do_command", do_command_descriptor);

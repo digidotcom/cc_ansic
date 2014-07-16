@@ -23,6 +23,8 @@ public class ConfigData {
 
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
+    private static int doCommandMaxLen = 50;
+
 
     public ConfigData() throws Exception {
         groupList = new ArrayList<LinkedList<Group>>();
@@ -112,5 +114,16 @@ public class ConfigData {
 
         return size;
     }
+
+    public void setDoCommandMaxLen(int len) throws Exception{
+        if(len>0)
+            doCommandMaxLen = len;
+        else throw new Exception("Invalid do_command_max_len");
+    }
+
+	public static int DoCommandMaxLen() {
+
+		return doCommandMaxLen;
+	}
 
 }

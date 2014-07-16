@@ -473,8 +473,10 @@ public abstract class FileGenerator {
 
         writeDefineOptionHeader(configData);
 
-        if(ConfigGenerator.rciLegacyEnabled())
+        if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(RCI_LEGACY_DEFINE);
+            fileWriter.write(String.format("%sRCI_DO_COMMAND_TARGET_MAX_LEN %d\n", DEFINE,ConfigData.DoCommandMaxLen()));
+        }
 
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
