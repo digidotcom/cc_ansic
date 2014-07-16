@@ -20,24 +20,25 @@ public class ConfigGenerator {
 
     private final static String NO_DESC_OPTION = "nodesc";
     private final static String HELP_OPTION = "help";
+    private final static String HIDDEN_HELP_OPTION = "hidden_help";
     private final static String VERBOSE_OPTION = "verbose";
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
-    private final static String PROTOTYPES = "use_prototypes";
-    private final static String SAVE_DESCRIPTORS = "saveDescriptors";
-    private final static String RCI_LEGACY_COMMANDS = "rci_legacy_commands";
-    private final static String RCI_DC_TARGET_MAX = "rci_dc_target_max";
+    private final static String PROTOTYPES_OPTION = "use_prototypes";
+    private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
+    private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
+    private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_target_max";
 
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String URL_OPTION = "url";
     private final static String URL_DEFAULT = "login.etherios.com";
 
-    private final static String USE_NAMES = "usenames";
+    private final static String USE_NAMES_OPTION = "usenames";
     private final static String USE_NAMES_DEFAULT = "none";
 
-    public final static String PREFIX = "prefix";
+    public final static String PREFIX_OPTION = "prefix";
 
     public final static String DASH = "-";
 
@@ -67,6 +68,8 @@ public class ConfigGenerator {
     private static boolean saveDescriptor;
     private static boolean rci_legacy;
     private static int rci_dc_target_max = 0;
+
+    private static boolean hidden_help;
 
     public enum FileType {
         NONE,
@@ -136,10 +139,10 @@ public class ConfigGenerator {
                 + URL_OPTION
                 + "] ["
                 + DASH
-                + USE_NAMES
+                + USE_NAMES_OPTION
                 + "] ["
                 + DASH
-                + PREFIX
+                + PREFIX_OPTION
                 +"] "
                 + String.format("<\"%s\"[:\"%s\"]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
@@ -181,11 +184,11 @@ public class ConfigGenerator {
         log(String
                 .format(
                         "\t%-16s \t= optional behavior,adding ASCIIZ names. Default is %s.",
-                        DASH + USE_NAMES + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
+                        DASH + USE_NAMES_OPTION + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
         log(String
                 .format(
                         "\t%-16s \t= optional behavior,adding a prefix to the structures.",
-                        DASH + PREFIX + "=<prefix>"));
+                        DASH + PREFIX_OPTION + "=<prefix>"));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -202,6 +205,36 @@ public class ConfigGenerator {
                 FIRMWARE_VERSION));
         log(String.format("\t%-16s \t= The Connector Configuration file",
                 CONFIG_FILENAME));
+        if(hidden_help){
+            log("Hidden Options:");
+            log(String.format("\t%-16s \t= show this extra message", DASH
+                    + HIDDEN_HELP_OPTION));
+
+            log(String
+                    .format(
+                            "\t%-16s \t= Choose the output Type. Default is none.",
+                            DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
+            log(String
+                    .format(
+                            "\t%-16s \t= delete current Descriptors in Device Cloud",
+                            DASH + DELETE_DESCRIPTOR_OPTION));
+            log(String
+                    .format(
+                            "\t%-16s \t= save a local copy of the Descriptors that the tool uploads to Device Cloud",
+                            DASH + SAVE_DESCRIPTORS_OPTION));
+            log(String
+                    .format(
+                            "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
+                            DASH + RCI_LEGACY_COMMANDS_OPTION));
+            log(String
+                    .format(
+                            "\t%-16s \t= optional max value for target rci do_command, default is %d",
+                            DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.DoCommandMaxLen()));
+            log(String
+                    .format(
+                            "\t%-16s \t= optional behaviour for future features using prototypes",
+                            DASH + PROTOTYPES_OPTION));
+        }
 
         System.exit(1);
     }
@@ -256,13 +289,13 @@ public class ConfigGenerator {
                 } else if (keys[0].equals(FILE_TYPE_OPTION)) {
                     fileType = FileType.toFileType(keys[1]);
 
-                } else if (keys[0].equals(PREFIX)) {
+                } else if (keys[0].equals(PREFIX_OPTION)) {
                     prefix = keys[1] + "_";
 
-                } else if (keys[0].equals(USE_NAMES)) {
+                } else if (keys[0].equals(USE_NAMES_OPTION)) {
                     useNames = UseNames.toUseNames(keys[1]);
 
-                } else if (keys[0].equals(RCI_DC_TARGET_MAX)) {
+                } else if (keys[0].equals(RCI_DC_TARGET_MAX_OPTION)) {
                     try{
                         rci_dc_target_max = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
@@ -281,11 +314,14 @@ public class ConfigGenerator {
                 deleteDescriptor = true;
             } else if (option.equals(HELP_OPTION)) {
                 usage();
-            } else if (option.equals(PROTOTYPES)) {
+            } else if (option.equals(HIDDEN_HELP_OPTION)) {
+                hidden_help = true;
+                usage();
+            } else if (option.equals(PROTOTYPES_OPTION)) {
                 prototypes = true;
-            } else if (option.equals(SAVE_DESCRIPTORS)) {
+            } else if (option.equals(SAVE_DESCRIPTORS_OPTION)) {
                 saveDescriptor = true;
-            } else if (option.equals(RCI_LEGACY_COMMANDS)) {
+            } else if (option.equals(RCI_LEGACY_COMMANDS_OPTION)) {
                 rci_legacy = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
