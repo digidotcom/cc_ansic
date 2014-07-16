@@ -714,7 +714,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 
     if ((rci_buffer_remaining(output) != 0))
     {
-#ifdef RCI_DBG
+#if (defined RCI_DEBUG)
         connector_debug_line("output: %s", rci_output_state_t_as_string(rci->output.state));
 #endif
 

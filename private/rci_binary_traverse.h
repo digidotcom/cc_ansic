@@ -224,7 +224,7 @@ STATIC void rci_traverse_data(rci_t * const rci)
 {
     connector_bool_t done_state = connector_true;
 
-#ifdef RCI_DBG
+#if (defined RCI_DEBUG)
     connector_debug_line("traverse: %s", rci_traverse_state_t_as_string(rci->traverse.state));
 #endif
 

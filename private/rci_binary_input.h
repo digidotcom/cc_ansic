@@ -1146,7 +1146,7 @@ STATIC void process_do_command_target(rci_t * const rci)
         goto done;
     }
 
-#ifdef RCI_DBG
+#if (defined RCI_DEBUG)
     connector_debug_line("attribute_len=%d\n", attribute_len);
     connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
 #endif
@@ -1192,7 +1192,7 @@ STATIC void rci_parse_input(rci_t * const rci)
         }
         rci->input.destination++;
 
-#ifdef RCI_DBG
+#if (defined RCI_DEBUG)
         connector_debug_line("input: %s", rci_input_state_t_as_string(rci->input.state));
 #endif
 
