@@ -114,6 +114,7 @@ typedef enum {
  connector_rci_error_bad_descriptor,
  connector_rci_error_reboot_failed,
  connector_rci_error_invalid_arguments,
+ connector_rci_error_do_command_failed,
  connector_rci_error_set_factory_default_failed,
  connector_rci_error_COUNT
 } connector_rci_error_id_t;
@@ -139,6 +140,7 @@ typedef enum {
  connector_setting_system_error_bad_descriptor,
  connector_setting_system_error_reboot_failed,
  connector_setting_system_error_invalid_arguments,
+ connector_setting_system_error_do_command_failed,
  connector_setting_system_error_set_factory_default_failed,
  connector_setting_system_error_load_fail, /* User defined (global errors) */
  connector_setting_system_error_save_fail,

@@ -135,6 +135,7 @@ public class Parser {
 
                 } else if (token.equalsIgnoreCase("RCI_COMMAND_DO_COMMAND")) {
                     configData.addRCIGroupError("invalid_arguments", "Invalid arguments");
+                    configData.addRCIGroupError("do_command_failed", "Do Command failed");
                     isReadToken = true;
 
                 } else if (token.equalsIgnoreCase("RCI_COMMAND_SET_FACTORY_DEFAULT")) {

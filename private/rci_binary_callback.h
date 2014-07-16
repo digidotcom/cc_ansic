@@ -208,8 +208,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             connector_callback_status_t const status = app_process_do_command(rci->command.do_command.target, remote_config->element.value->string_value, &rci->command.do_command.response_string);
             if (status == connector_callback_error) 
             {
-                /* TODO: do_command error */
-                rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
+                rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
 
