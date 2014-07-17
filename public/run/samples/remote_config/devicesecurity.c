@@ -36,6 +36,13 @@ connector_callback_status_t app_device_security_group_init(connector_remote_conf
 
     ASSERT(session_ptr != NULL);
 
+#ifdef SKIP_SKIP
+    remote_config->skip = connector_true;
+#endif
+#ifdef SKIP_ERROR_ID
+    remote_config->error_id = connector_rci_error_not_available;
+#endif
+
     ptr = malloc(sizeof *device_security_ptr);
     if (ptr == NULL)
     {

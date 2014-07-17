@@ -139,6 +139,9 @@ typedef struct {
   connector_remote_group_t CONST group;
   connector_remote_element_t CONST element;
   unsigned int error_id;
+#ifdef SKIP_SKIP
+  connector_bool_t skip;
+#endif
 
   union {
       char const * error_hint;
@@ -158,7 +161,9 @@ typedef struct connector_remote_group_table {
 
 typedef enum {
  connector_rci_error_OFFSET = 1,
- connector_rci_error_bad_command =  connector_rci_error_OFFSET,
+/* SKIP_ERROR_ID */
+ connector_rci_error_not_available =  connector_rci_error_OFFSET,
+ connector_rci_error_bad_command,
  connector_rci_error_bad_descriptor,
  connector_rci_error_COUNT
 } connector_rci_error_id_t;
@@ -201,7 +206,8 @@ typedef enum {
 } connector_setting_serial_id_t;
 
 typedef enum {
- connector_setting_serial_error_bad_command = 1, /* Protocol defined */
+ connector_setting_serial_error_not_available = 1, /* Protocol defined */
+ connector_setting_serial_error_bad_command,
  connector_setting_serial_error_bad_descriptor,
  connector_setting_serial_error_load_fail, /* User defined (global errors) */
  connector_setting_serial_error_save_fail,
@@ -233,7 +239,8 @@ typedef enum {
 } connector_setting_ethernet_id_t;
 
 typedef enum {
- connector_setting_ethernet_error_bad_command = 1, /* Protocol defined */
+ connector_setting_ethernet_error_not_available = 1, /* Protocol defined */
+ connector_setting_ethernet_error_bad_command,
  connector_setting_ethernet_error_bad_descriptor,
  connector_setting_ethernet_error_load_fail, /* User defined (global errors) */
  connector_setting_ethernet_error_save_fail,
@@ -252,7 +259,8 @@ typedef enum {
 } connector_setting_device_time_id_t;
 
 typedef enum {
- connector_setting_device_time_error_bad_command = 1, /* Protocol defined */
+ connector_setting_device_time_error_not_available = 1, /* Protocol defined */
+ connector_setting_device_time_error_bad_command,
  connector_setting_device_time_error_bad_descriptor,
  connector_setting_device_time_error_load_fail, /* User defined (global errors) */
  connector_setting_device_time_error_save_fail,
@@ -306,7 +314,8 @@ typedef enum {
 } connector_state_device_state_id_t;
 
 typedef enum {
- connector_state_device_state_error_bad_command = 1, /* Protocol defined */
+ connector_state_device_state_error_not_available = 1, /* Protocol defined */
+ connector_state_device_state_error_bad_command,
  connector_state_device_state_error_bad_descriptor,
  connector_state_device_state_error_load_fail, /* User defined (global errors) */
  connector_state_device_state_error_save_fail,

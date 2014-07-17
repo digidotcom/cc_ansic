@@ -18,25 +18,27 @@
 #define CONST const 
 #define FIRMWARE_TARGET_ZERO_VERSION  0x1000000
 
-#define CONNECTOR_RCI_ERROR_BAD_COMMAND (connector_remote_all_strings+0)
-#define CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR (connector_remote_all_strings+12)
-#define SETTING_SERIAL_ERROR_INVALID_BAUD (connector_remote_all_strings+30)
-#define SETTING_SERIAL_ERROR_INVALID_DATABITS (connector_remote_all_strings+49)
-#define SETTING_SERIAL_ERROR_INVALID_PARITY (connector_remote_all_strings+67)
-#define SETTING_SERIAL_ERROR_INVALID_XBREAK (connector_remote_all_strings+83)
-#define SETTING_SERIAL_ERROR_INVALID_DATABITS_PARITY (connector_remote_all_strings+106)
-#define SETTING_ETHERNET_ERROR_INVALID_DUPLEX (connector_remote_all_strings+150)
-#define SETTING_ETHERNET_ERROR_INVALID_IP (connector_remote_all_strings+182)
-#define SETTING_ETHERNET_ERROR_INVALID_SUBNET (connector_remote_all_strings+201)
-#define SETTING_ETHERNET_ERROR_INVALID_GATEWAY (connector_remote_all_strings+221)
-#define SETTING_ETHERNET_ERROR_INVALID_DNS (connector_remote_all_strings+245)
-#define SETTING_DEVICE_TIME_ERROR_INVALID_TIME (connector_remote_all_strings+265)
-#define STATE_DEVICE_STATE_ERROR_INVALID_INTEGER (connector_remote_all_strings+278)
-#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+300)
-#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+310)
-#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+320)
+#define CONNECTOR_RCI_ERROR_NOT_AVAILABLE (connector_remote_all_strings+0)
+#define CONNECTOR_RCI_ERROR_BAD_COMMAND (connector_remote_all_strings+28)
+#define CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR (connector_remote_all_strings+40)
+#define SETTING_SERIAL_ERROR_INVALID_BAUD (connector_remote_all_strings+58)
+#define SETTING_SERIAL_ERROR_INVALID_DATABITS (connector_remote_all_strings+77)
+#define SETTING_SERIAL_ERROR_INVALID_PARITY (connector_remote_all_strings+95)
+#define SETTING_SERIAL_ERROR_INVALID_XBREAK (connector_remote_all_strings+111)
+#define SETTING_SERIAL_ERROR_INVALID_DATABITS_PARITY (connector_remote_all_strings+134)
+#define SETTING_ETHERNET_ERROR_INVALID_DUPLEX (connector_remote_all_strings+178)
+#define SETTING_ETHERNET_ERROR_INVALID_IP (connector_remote_all_strings+210)
+#define SETTING_ETHERNET_ERROR_INVALID_SUBNET (connector_remote_all_strings+229)
+#define SETTING_ETHERNET_ERROR_INVALID_GATEWAY (connector_remote_all_strings+249)
+#define SETTING_ETHERNET_ERROR_INVALID_DNS (connector_remote_all_strings+273)
+#define SETTING_DEVICE_TIME_ERROR_INVALID_TIME (connector_remote_all_strings+293)
+#define STATE_DEVICE_STATE_ERROR_INVALID_INTEGER (connector_remote_all_strings+306)
+#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+328)
+#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+338)
+#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+348)
 
 char CONST connector_remote_all_strings[] = {
+ 27,'G','r','o','u','p','/','E','l','e','m','e','n','t',' ','n','o','t',' ','a','v','a','i','l','a','b','l','e',
  11,'B','a','d',' ','c','o','m','m','a','n','d',
  17,'B','a','d',' ','c','o','n','f','i','g','u','r','a','t','i','o','n',
  18,'I','n','v','a','l','i','d',' ','b','a','u','d',' ','r','a','t','e',' ',
@@ -57,6 +59,7 @@ char CONST connector_remote_all_strings[] = {
 };
 
 static char const * const connector_rci_errors[] = {
+ CONNECTOR_RCI_ERROR_NOT_AVAILABLE, /*not_available*/
  CONNECTOR_RCI_ERROR_BAD_COMMAND, /*bad_command*/
  CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR, /*bad_descriptor*/
  CONNECTOR_GLOBAL_ERROR_LOAD_FAIL, /*load_fail*/

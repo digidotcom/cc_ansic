@@ -428,6 +428,26 @@ STATIC void rci_output_group_id(rci_t * const rci)
         goto done;
     }
 
+    if (rci->shared.callback_data.action == connector_remote_action_query && 
+#ifdef SKIP_SKIP
+                remote_config->skip == 1
+#endif
+#ifdef SKIP_ERROR_ID
+                rci->output.skip == 1
+#endif
+       )
+    {
+        printf("rci_output_group_id: Skip group!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+        invalidate_element_id(rci);
+
+        rci->traverse.process_state = rci_traverse_process_group;
+        set_rci_traverse_state(rci, rci_traverse_state_all_groups);
+        state_call(rci, rci_parser_state_traverse);
+
+        goto done;
+    }
+
     encoding_data = encode_group_id(get_group_id(rci));
 
     if (get_group_index(rci) > 1)
@@ -505,6 +525,20 @@ STATIC void rci_output_field_id(rci_t * const rci)
     if (!have_element_id(rci))
     {
         state_call(rci, rci_parser_state_error);
+        goto done;
+    }
+
+#ifdef SKIP_SKIP
+    if (remote_config->skip == 1)
+#endif
+#ifdef SKIP_ERROR_ID
+    if (rci->output.skip == 1)
+#endif
+    {
+        printf("rci_output_group_id: Skip element!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+        state_call(rci, rci_parser_state_traverse);
+
         goto done;
     }
 
