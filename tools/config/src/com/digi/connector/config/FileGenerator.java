@@ -386,7 +386,18 @@ public abstract class FileGenerator {
                 }
             }
         }
-        
+
+        if(ConfigGenerator.rciLegacyEnabled() && !isStringDefined) {
+            /* if not defined yet then define it */
+            structString += TYPEDEF_STRUCT
+                            + "    size_t min_length_in_bytes;\n"
+                            + "    size_t max_length_in_bytes;\n"
+                            + "} connector_element_value_string_t;\n";
+            elementValueStruct += "    char const * string_value;\n";
+            isStringDefined = true;
+            optionCount++;
+        }
+
         headerString += structString;
         
         if (optionCount > 1) {
