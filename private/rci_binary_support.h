@@ -122,9 +122,9 @@ typedef enum {
     rci_command_set_setting,
     rci_command_query_state,
     rci_command_set_state,
-    rci_command_query_descriptor,
+    rci_command_query_descriptor
 #if (defined RCI_LEGACY_COMMANDS)
-    rci_command_do_command,
+    ,rci_command_do_command,
     rci_command_reboot,
     rci_command_set_factory_default
 #endif
@@ -220,9 +220,9 @@ typedef enum
     rci_traverse_state_group_end,
     rci_traverse_state_all_groups,
     rci_traverse_state_all_group_instances,
-    rci_traverse_state_all_elements,
+    rci_traverse_state_all_elements
 #if (defined RCI_LEGACY_COMMANDS)
-    rci_traverse_state_command_do_command,
+    ,rci_traverse_state_command_do_command,
     rci_traverse_state_command_reboot,
     rci_traverse_state_command_set_factory_default
 #endif
@@ -245,9 +245,9 @@ typedef enum
 
 typedef enum
 {
-    rci_command_callback_set_query_setting_state,
+    rci_command_callback_set_query_setting_state
 #if (defined RCI_LEGACY_COMMANDS)
-    rci_command_callback_do_command,
+    ,rci_command_callback_do_command,
     rci_command_callback_reboot,
     rci_command_callback_set_factory_default
 #endif
