@@ -62,6 +62,7 @@ public abstract class FileGenerator {
     "} rci_info_t;\n";
 
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
+    protected final static String RCI_ERROR_NOT_AVAILABLE = "\n#define connector_rci_error_not_available ((unsigned int)~0)\n";
 
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
@@ -483,6 +484,8 @@ public abstract class FileGenerator {
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
 
         writeDefineOptionHeader(configData);
+
+        fileWriter.write(RCI_ERROR_NOT_AVAILABLE);
 
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(RCI_LEGACY_DEFINE);

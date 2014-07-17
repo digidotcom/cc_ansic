@@ -290,6 +290,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         if (remote_config->error_id == connector_rci_error_not_available)
         {
             rci->output.skip = connector_true;
+            remote_config->error_id = connector_success;
         }
 #endif
         break;

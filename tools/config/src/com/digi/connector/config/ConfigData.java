@@ -19,7 +19,6 @@ public class ConfigData {
     private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
 
     private final static String[] rciGlobalErrorStrings = { 
-        "not_available", "Group/Element not available",
         "bad_command", "Bad command",
         "bad_descriptor", "Bad configuration"};
 
