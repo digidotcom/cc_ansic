@@ -280,7 +280,7 @@ STATIC connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_ad
 
 #if defined RCI_PARSER_USES_MAC_ADDR
 #define SIZEOF_MAC_ADDR 6
-STATIC connector_bool_t get_mac_address(rci_t * const rci, char * const mac_addr, size_t const length)
+STATIC connector_bool_t get_mac_address(rci_t * const rci, uint8_t * const mac_addr, size_t const length)
 {
     connector_bool_t got_mac = connector_false;
 
@@ -884,7 +884,7 @@ STATIC void process_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_MAC_ADDR
     case connector_element_type_mac_addr:
     {
-        char mac_addr[SIZEOF_MAC_ADDR];
+        uint8_t mac_addr[SIZEOF_MAC_ADDR];
 
         if (!get_mac_address(rci, mac_addr, sizeof mac_addr))
         {
