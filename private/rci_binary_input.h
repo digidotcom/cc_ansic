@@ -23,12 +23,6 @@ static char const rci_error_content_size_hint[] = "Maximum content size exceeded
 #define rci_error_content_size_hint         RCI_NO_HINT
 #endif
 
-#define BINARY_RCI_ATTRIBUTE_TYPE_MASK  0x60  /* attr type: [bit 6 and 5] */
-
-#define BINARY_RCI_ATTRIBUTE_TYPE_NORMAL 0x00
-#define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
-#define BINARY_RCI_ATTRIBUTE_TYPE_NAME   0x40
-
 STATIC connector_bool_t destination_in_storage(rci_t const * const rci)
 {
     uint8_t const * const storage_begin = rci->input.storage;
@@ -478,7 +472,7 @@ STATIC void process_rci_command(rci_t * const rci)
                     uint8_t attribute_count = *rci->buffer.input.current;
 
                     if (((attribute_count & BINARY_RCI_ATTRIBUTE_TYPE_MASK) != BINARY_RCI_ATTRIBUTE_TYPE_NORMAL) ||
-                        ((attribute_count & ~BINARY_RCI_ATTRIBUTE_TYPE_MASK) != 1 /* Only one attribute */ ))
+                        ((attribute_count & ~BINARY_RCI_ATTRIBUTE_TYPE_MASK) != RCI_DO_COMMAND_ATTRIBUTE_COUNT))
                     {
                         rci_invalid_arguments_error(rci);
                         goto done;
@@ -498,7 +492,7 @@ STATIC void process_rci_command(rci_t * const rci)
                 {
                     uint8_t attribute_id = *rci->buffer.input.current;
 
-                    if (attribute_id != 0 /* 'target' attribute is bin_id 0 */ )
+                    if (attribute_id != RCI_DO_COMMAND_TARGET_BIN_ID)
                     {
                         rci_invalid_arguments_error(rci);
                         goto done;

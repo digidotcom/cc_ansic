@@ -397,10 +397,10 @@ STATIC void rci_output_command_id(rci_t * const rci)
 
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
-            rci_output_uint32(rci, rci->command.command_id | 0x40); /* Command has attribute */
-            rci_output_uint8(rci, 0x01); /* Attribute type (normal) with count encoded 01 */
-            rci_output_uint8(rci, 0x00); /* Attribute binId=0 (target) */
-            rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target)); /* Attribute text */
+            rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
+            rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | RCI_DO_COMMAND_ATTRIBUTE_COUNT);
+            rci_output_uint8(rci, RCI_DO_COMMAND_TARGET_BIN_ID);
+            rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target));
 
             set_rci_output_state(rci, rci_output_state_do_command_payload);
             break;
