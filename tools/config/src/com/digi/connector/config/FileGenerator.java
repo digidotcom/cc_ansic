@@ -61,6 +61,8 @@ public abstract class FileGenerator {
     " void * user_context;\n" +
     "} rci_info_t;\n";
 
+    protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
+
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "  connector_remote_action_t CONST action;\n" +
@@ -73,7 +75,7 @@ public abstract class FileGenerator {
     "      connector_element_value_t * element_value;\n" +
     "  } response;\n" +
     "} connector_remote_config_t;\n";
-    	
+
     protected final static String CONNECTOR_REMOTE_CONFIG_CANCEL_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "} connector_remote_config_cancel_t;\n";
@@ -470,6 +472,12 @@ public abstract class FileGenerator {
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
 
         writeDefineOptionHeader(configData);
+
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write(RCI_LEGACY_DEFINE);
+            fileWriter.write(String.format("%sRCI_DO_COMMAND_TARGET_MAX_LEN %d\n", DEFINE,ConfigData.DoCommandMaxLen()));
+        }
+
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
         writeElementValueStruct();

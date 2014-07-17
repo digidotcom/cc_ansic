@@ -380,44 +380,38 @@ STATIC connector_bool_t rci_output_float(rci_t * const rci, float const value)
 STATIC void rci_output_command_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-    uint32_t command_id = 0;
+    connector_bool_t overflow;
 
-    switch (rci->shared.callback_data.group.type)
+    switch (rci->callback.rci_command_callback)
     {
-        case connector_remote_group_setting:
-            switch (rci->shared.callback_data.action)
+        case rci_command_callback_set_query_setting_state:
+            overflow = rci_output_uint32(rci, rci->command.command_id);
+            if (!overflow)
             {
-            case connector_remote_action_set:
-                command_id = rci_command_set_setting;
-                break;
-            case connector_remote_action_query:
-                command_id = rci_command_query_setting;
-                break;
+                if (remote_config->error_id != connector_success)
+                    state_call(rci, rci_parser_state_error);
+                else
+                    state_call(rci, rci_parser_state_traverse);
             }
             break;
-        case connector_remote_group_state:
-            switch (rci->shared.callback_data.action)
-            {
-            case connector_remote_action_set:
-                command_id = rci_command_set_state;
-                break;
-            case connector_remote_action_query:
-                command_id = rci_command_query_state;
-                break;
-            }
+
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_callback_do_command:
+            rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
+            rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | RCI_DO_COMMAND_ATTRIBUTE_COUNT);
+            rci_output_uint8(rci, RCI_DO_COMMAND_TARGET_BIN_ID);
+            rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target));
+
+            set_rci_output_state(rci, rci_output_state_do_command_payload);
             break;
-    }
 
-    {
-        connector_bool_t const overflow = rci_output_uint32(rci, command_id);
+        case rci_command_callback_reboot:
+        case rci_command_callback_set_factory_default:
+            rci_output_uint32(rci, rci->command.command_id);
 
-        if (!overflow)
-        {
-            if (remote_config->error_id != connector_success)
-                state_call(rci, rci_parser_state_error);
-            else
-                state_call(rci, rci_parser_state_traverse);
-        }
+            set_rci_output_state(rci, rci_output_state_group_terminator);
+            break;
+#endif
     }
 
     return;
@@ -656,6 +650,25 @@ done:
 
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
+STATIC void rci_output_do_command_payload(rci_t * const rci)
+{
+    connector_bool_t overflow = connector_false;
+
+    if (rci->command.do_command.response_string != NULL)
+    {
+        overflow = rci_output_string(rci, rci->command.do_command.response_string, strlen(rci->command.do_command.response_string));
+    }
+    else
+    {
+        overflow = rci_output_uint8(rci, 0x00);
+    }
+
+    if (!overflow)
+        set_rci_output_state(rci, rci_output_state_group_terminator);
+}
+#endif
+
 STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
@@ -701,7 +714,9 @@ STATIC void rci_generate_output(rci_t * const rci)
 
     if ((rci_buffer_remaining(output) != 0))
     {
+#if (defined RCI_DEBUG)
         connector_debug_line("output: %s", rci_output_state_t_as_string(rci->output.state));
+#endif
 
         switch (rci->output.state)
         {
@@ -725,6 +740,12 @@ STATIC void rci_generate_output(rci_t * const rci)
                 rci_output_field_value(rci);
                 break;
 
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_output_state_do_command_payload:
+                rci_output_do_command_payload(rci);
+                break;
+#endif
+
             case rci_output_state_field_terminator:
                 rci_output_field_terminator(rci);
                 break;
@@ -737,7 +758,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 
                 if (get_rci_input_state(rci) == rci_input_state_done)
                 {
-                    trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
+                    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
                     set_rci_output_state(rci, rci_output_state_done);
                 }
                 else

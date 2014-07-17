@@ -33,6 +33,10 @@ static char const * rci_input_state_t_as_string(rci_input_state_t const value)
         enum_to_case(rci_input_state_field_type);
         enum_to_case(rci_input_state_field_no_value);
         enum_to_case(rci_input_state_field_value);
+#if (defined RCI_LEGACY_COMMANDS)
+        enum_to_case(rci_input_state_do_command_target);
+        enum_to_case(rci_input_state_do_command_payload);
+#endif
         enum_to_case(rci_input_state_done);
     }
     return result;
@@ -50,6 +54,9 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
         enum_to_case(rci_output_state_field_value);
         enum_to_case(rci_output_state_field_terminator);
         enum_to_case(rci_output_state_group_terminator);
+#if (defined RCI_LEGACY_COMMANDS)
+        enum_to_case(rci_output_state_do_command_payload);
+#endif
         enum_to_case(rci_output_state_response_done);
         enum_to_case(rci_output_state_done);
     }
@@ -70,6 +77,11 @@ static char const * rci_traverse_state_t_as_string(rci_traverse_state_t const va
         enum_to_case(rci_traverse_state_all_groups);
         enum_to_case(rci_traverse_state_all_group_instances);
         enum_to_case(rci_traverse_state_all_elements);
+#if (defined RCI_LEGACY_COMMANDS)
+        enum_to_case(rci_traverse_state_command_do_command);
+        enum_to_case(rci_traverse_state_command_reboot);
+        enum_to_case(rci_traverse_state_command_set_factory_default);
+#endif
     }
     return result;
 }

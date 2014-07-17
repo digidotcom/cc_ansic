@@ -12,7 +12,7 @@
 
 STATIC void traverse_rci_command(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_action_start);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_action_start);
 
     set_rci_output_state(rci, rci_output_state_command_id);
     state_call(rci, rci_parser_state_output);
@@ -20,7 +20,7 @@ STATIC void traverse_rci_command(rci_t * const rci)
 }
 STATIC void traverse_group_id(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_group_start);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_start);
 
     set_rci_output_state(rci, rci_output_state_group_id);
     state_call(rci, rci_parser_state_output);
@@ -37,7 +37,7 @@ STATIC void traverse_element_id(rci_t * const rci)
         goto done;
     }
 
-    trigger_rci_callback(rci, connector_request_id_remote_config_group_process);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_process);
     set_rci_output_state(rci, rci_output_state_field_id);
     state_call(rci, rci_parser_state_output);
 
@@ -45,9 +45,41 @@ done:
     return;
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
+STATIC void traverse_command_do_command(rci_t * const rci)
+{
+    trigger_rci_callback(rci, rci_command_callback_do_command, connector_request_id_remote_config_session_start);
+    set_rci_output_state(rci, rci_output_state_command_id);
+    set_rci_traverse_state(rci, rci_traverse_state_none);
+    state_call(rci, rci_parser_state_output);
+
+    return;
+}
+
+STATIC void traverse_command_reboot(rci_t * const rci)
+{
+    trigger_rci_callback(rci, rci_command_callback_reboot, connector_request_id_remote_config_session_start);
+    set_rci_output_state(rci, rci_output_state_command_id);
+    set_rci_traverse_state(rci, rci_traverse_state_none);
+    state_call(rci, rci_parser_state_output);
+
+    return;
+}
+
+STATIC void traverse_command_set_factory_default(rci_t * const rci)
+{
+    trigger_rci_callback(rci, rci_command_callback_set_factory_default, connector_request_id_remote_config_session_start);
+    set_rci_output_state(rci, rci_output_state_command_id);
+    set_rci_traverse_state(rci, rci_traverse_state_none);
+    state_call(rci, rci_parser_state_output);
+
+    return;
+}
+#endif
+
 STATIC void traverse_element_end(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_end);
 
     set_rci_output_state(rci, rci_output_state_field_terminator);
     state_call(rci, rci_parser_state_output);
@@ -55,7 +87,7 @@ STATIC void traverse_element_end(rci_t * const rci)
 
 STATIC void traverse_group_end(rci_t * const rci)
 {
-    trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
+    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_action_end);
     set_rci_output_state(rci, rci_output_state_group_terminator);
     state_call(rci, rci_parser_state_output);
 
@@ -192,7 +224,9 @@ STATIC void rci_traverse_data(rci_t * const rci)
 {
     connector_bool_t done_state = connector_true;
 
+#if (defined RCI_DEBUG)
     connector_debug_line("traverse: %s", rci_traverse_state_t_as_string(rci->traverse.state));
+#endif
 
     switch (rci->traverse.state)
     {
@@ -234,6 +268,17 @@ STATIC void rci_traverse_data(rci_t * const rci)
         case rci_traverse_state_group_end:
             traverse_group_end(rci);
             break;
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_traverse_state_command_do_command:
+            traverse_command_do_command(rci);
+            break;
+        case rci_traverse_state_command_reboot:
+            traverse_command_reboot(rci);
+            break;
+        case rci_traverse_state_command_set_factory_default:
+            traverse_command_set_factory_default(rci);
+            break;
+#endif
     }
 
     if (done_state)

@@ -23,6 +23,8 @@ public class ConfigData {
 
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
+    private static int doCommandMaxLen = 50;
+
 
     public ConfigData() throws Exception {
         groupList = new ArrayList<LinkedList<Group>>();
@@ -65,6 +67,16 @@ public class ConfigData {
         return userGlobalErrors.getStrings();
     }
 
+    public void addRCIGroupError(String name, String description)
+            throws Exception {
+
+        if ((rciGlobalErrors.size() > 0) && (rciGlobalErrors.getStrings().containsKey(name))) {
+            throw new Exception("Duplicate RCI_COMMAND");
+        }
+
+        rciGlobalErrors.addStrings(name, description);
+    }
+
     public void addUserGroupError(String name, String description)
             throws Exception {
 
@@ -102,5 +114,16 @@ public class ConfigData {
 
         return size;
     }
+
+    public void setDoCommandMaxLen(int len) throws Exception{
+        if(len>0)
+            doCommandMaxLen = len;
+        else throw new Exception("Invalid do_command_max_len");
+    }
+
+	public static int DoCommandMaxLen() {
+
+		return doCommandMaxLen;
+	}
 
 }

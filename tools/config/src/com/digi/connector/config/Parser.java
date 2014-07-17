@@ -2,8 +2,6 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Parser {
 
@@ -162,22 +160,6 @@ public class Parser {
         return message + ": " + str;
     }
 
-    private final static Pattern ALPHACHARACTERS = Pattern.compile("(\\w*\\s*)*");
-
-    public static boolean checkAlphaCharacters(String s) {
-        if (s == null) {
-            return false;
-        } else {
-            Matcher m = ALPHACHARACTERS.matcher(s);
-            return m.matches();
-        }
-    }
-
-    public static String ChangeBadCharacters(String s){
-        s = s.replaceAll("[^a-zA-Z_0-9\\s]", "_");
-        return s;
-    }
-
     private static String getName() throws Exception {
         String name = tokenScanner.getToken(); // tokenScanner.next();
 
@@ -189,8 +171,6 @@ public class Parser {
         }
         /* Now the descriptor can contain no alphanumeric chars,
          * and the enums will replace them with "_"
-           else if (!checkAlphaCharacters(name)) {
-            name=ChangeBadCharacters(name);
             if(!checkAlphaCharacters(name)){
                 throw new Exception("Invalid character in the name: " + name);
             }
@@ -289,7 +269,6 @@ public class Parser {
         if (mvalue == null) {
             throw new Exception("Missing min or max value");
         }
-        
 
         return mvalue;
     }

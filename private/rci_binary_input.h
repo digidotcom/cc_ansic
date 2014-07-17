@@ -310,11 +310,6 @@ STATIC connector_bool_t get_mac_address(rci_t * const rci, char * const mac_addr
 
 STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index)
 {
-#define BINARY_RCI_ATTRIBUTE_TYPE_MASK  0x60  /* attr type: [bit 6 and 5] */
-
-#define BINARY_RCI_ATTRIBUTE_TYPE_NORMAL 0x00
-#define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
-#define BINARY_RCI_ATTRIBUTE_TYPE_NAME   0x40
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK  0x1F
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK 0x7F80
 
@@ -395,6 +390,15 @@ STATIC connector_bool_t has_rci_no_value(unsigned int data)
     return connector_bool(data == BINARY_RCI_NO_VALUE);
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
+STATIC void rci_invalid_arguments_error(rci_t * const rci)
+{
+    rci_global_error(rci, connector_rci_error_invalid_arguments, RCI_NO_HINT);
+    set_rci_command_error(rci);
+    state_call(rci, rci_parser_state_error);
+}
+#endif
+
 STATIC void process_rci_command(rci_t * const rci)
 {
 #define BINARY_RCI_COMMAND_MASK   0x3F
@@ -421,6 +425,8 @@ STATIC void process_rci_command(rci_t * const rci)
 
         command &= BINARY_RCI_COMMAND_MASK;
 
+        rci->command.command_id = command;
+
         switch (command)
         {
             case rci_command_set_setting:
@@ -443,10 +449,88 @@ STATIC void process_rci_command(rci_t * const rci)
             case rci_command_query_state:
                 rci->shared.callback_data.action = connector_remote_action_query;
                 break;
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_do_command:
+            {
+                if (!has_attribute)
+                {
+                    rci_invalid_arguments_error(rci);
+                    goto done;
+                }
+
+                /* Advance command */
+                rci_buffer_advance(&rci->buffer.input, 1);
+
+                /* Parse attribute count */
+                if (!rci_buffer_remaining(&rci->buffer.input))
+                {
+                    rci_invalid_arguments_error(rci);
+                    goto done;
+                }
+                else
+                {
+                    uint8_t attribute_count = *rci->buffer.input.current;
+
+                    if (((attribute_count & BINARY_RCI_ATTRIBUTE_TYPE_MASK) != BINARY_RCI_ATTRIBUTE_TYPE_NORMAL) ||
+                        ((attribute_count & ~BINARY_RCI_ATTRIBUTE_TYPE_MASK) != RCI_DO_COMMAND_ATTRIBUTE_COUNT))
+                    {
+                        rci_invalid_arguments_error(rci);
+                        goto done;
+                    }
+
+                    /* Advance attribute count */
+                    rci_buffer_advance(&rci->buffer.input, 1);
+                }
+
+                /* Parse attribute id */
+                if (!rci_buffer_remaining(&rci->buffer.input))
+                {
+                    rci_invalid_arguments_error(rci);
+                    goto done;
+                }
+                else
+                {
+                    uint8_t attribute_id = *rci->buffer.input.current;
+
+                    if (attribute_id != RCI_DO_COMMAND_TARGET_BIN_ID)
+                    {
+                        rci_invalid_arguments_error(rci);
+                        goto done;
+                    }
+
+                    /* Advance attribute id */
+                    rci_buffer_advance(&rci->buffer.input, 1);
+                }
+
+                /* Adjust input buffer (rci_parse_input will advand one possition for the command) */
+                rci->buffer.input.current--;
+                rci->shared.content.length = 0;
+
+                set_rci_input_state(rci, rci_input_state_do_command_target);
+
+                state_call(rci, rci_parser_state_input);
+                goto done;
+            }
+            case rci_command_reboot:
+            {
+                set_rci_input_state(rci, rci_input_state_done);
+                set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
+                state_call(rci, rci_parser_state_traverse);
+                goto done;                
+            }
+            case rci_command_set_factory_default:
+            {
+                set_rci_input_state(rci, rci_input_state_done);
+                set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);
+                state_call(rci, rci_parser_state_traverse);
+                goto done;                
+            }
+#endif
             default:
                 /* unsupported command.
                  * Just go to error state for returning error message.
                  */
+                connector_debug_line("unsupported rci command: %d\n", command);
                 rci_global_error(rci, connector_rci_error_bad_command, RCI_NO_HINT);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
@@ -1045,6 +1129,50 @@ STATIC void process_field_no_value(rci_t * const rci)
 
 }
 
+#if (defined RCI_LEGACY_COMMANDS)
+STATIC void process_do_command_target(rci_t * const rci)
+{
+    const char * attribute_string;
+    size_t attribute_len;
+
+    if (!get_string(rci, &attribute_string, &attribute_len))
+    {
+        goto done;
+    }
+
+#if (defined RCI_DEBUG)
+    connector_debug_line("attribute_len=%d\n", attribute_len);
+    connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
+#endif
+
+    ASSERT(attribute_len <= RCI_DO_COMMAND_TARGET_MAX_LEN);
+    memcpy(rci->command.do_command.target, attribute_string, attribute_len);
+    rci->command.do_command.target[attribute_len] = '\0';
+
+    set_rci_input_state(rci, rci_input_state_do_command_payload);
+
+done:
+    return;
+}
+
+STATIC void process_do_command_payload(rci_t * const rci)
+{
+    if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
+    {
+        goto done;
+    }
+
+    {
+        set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
+        state_call(rci, rci_parser_state_traverse);
+    }
+    set_rci_input_state(rci, rci_input_state_done);
+
+done:
+    return;
+}
+#endif
+
 STATIC void rci_parse_input(rci_t * const rci)
 {
     rci_buffer_t * const input = &rci->buffer.input;
@@ -1058,7 +1186,9 @@ STATIC void rci_parse_input(rci_t * const rci)
         }
         rci->input.destination++;
 
+#if (defined RCI_DEBUG)
         connector_debug_line("input: %s", rci_input_state_t_as_string(rci->input.state));
+#endif
 
         switch (rci->input.state)
         {
@@ -1086,6 +1216,14 @@ STATIC void rci_parse_input(rci_t * const rci)
             case rci_input_state_field_value:
                 process_field_value(rci);
                 break;
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_input_state_do_command_target:
+                process_do_command_target(rci);
+                break;
+            case rci_input_state_do_command_payload:
+                process_do_command_payload(rci);
+                break;
+#endif
             case rci_input_state_done:
                 ASSERT(rci->input.state != rci_input_state_done);
                 break;
