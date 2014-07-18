@@ -250,6 +250,14 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 #endif
 
+/**
+*  An unsigned integer type with the property that any valid pointer to
+*  void can be converted to this type, then converted back to pointer
+*  to void, and the result will compare equal to the original pointer.
+*  This is used mainly for filesystem's handles and errnums.
+*/
+typedef void * uintptr_t;
+
 #ifndef SIZE_MAX
 /**
 *  size_t maximum value.
