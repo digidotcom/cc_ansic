@@ -41,10 +41,6 @@
 #define RCI_PARSER_USES_UNSIGNED_INTEGER
 #define RCI_PARSER_USES_STRINGS
 
-#ifdef SKIP_ERROR_ID
-#define connector_rci_error_not_available ((unsigned int)~0)
-#endif
-
 typedef enum {
     connector_off,
     connector_on
@@ -164,6 +160,9 @@ typedef struct connector_remote_group_table {
 
 
 typedef enum {
+#ifdef SKIP_ERROR_ID
+ connector_rci_error_not_available = -1,
+#endif
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,

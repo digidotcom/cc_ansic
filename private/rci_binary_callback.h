@@ -287,7 +287,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     case connector_callback_continue:
         callback_complete = connector_true;
 #ifdef SKIP_ERROR_ID
-        if (remote_config->error_id == connector_rci_error_not_available)
+        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available)
         {
             rci->output.skip = connector_true;
             remote_config->error_id = connector_success;

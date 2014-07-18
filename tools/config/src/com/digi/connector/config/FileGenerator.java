@@ -62,7 +62,7 @@ public abstract class FileGenerator {
     "} rci_info_t;\n";
 
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
-    protected final static String RCI_ERROR_NOT_AVAILABLE = "\n#define connector_rci_error_not_available ((unsigned int)~0)\n";
+    protected final static String RCI_ERROR_NOT_AVAILABLE = "connector_rci_error_not_available = -1,\n";
 
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
@@ -484,8 +484,6 @@ public abstract class FileGenerator {
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
 
         writeDefineOptionHeader(configData);
-
-        fileWriter.write(RCI_ERROR_NOT_AVAILABLE);
 
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(RCI_LEGACY_DEFINE);
@@ -956,7 +954,7 @@ else{
     protected void writeRciErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter ) throws IOException {
 
     /* write typedef enum for rci errors */
-        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
+        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + RCI_ERROR_NOT_AVAILABLE + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
         writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), bufferWriter);
         bufferWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + prefix  + GLOBAL_RCI_ERROR + ID_T_STRING);
     }
