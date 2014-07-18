@@ -428,6 +428,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
         goto done;
     }
 
+#if ((defined SKIP_SKIP) || (defined SKIP_ERROR_ID))
     if (rci->shared.callback_data.action == connector_remote_action_query && 
 #ifdef SKIP_SKIP
                 remote_config->skip == 1
@@ -447,6 +448,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
 
         goto done;
     }
+#endif
 
     encoding_data = encode_group_id(get_group_id(rci));
 
@@ -528,6 +530,7 @@ STATIC void rci_output_field_id(rci_t * const rci)
         goto done;
     }
 
+#if ((defined SKIP_SKIP) || (defined SKIP_ERROR_ID))
 #ifdef SKIP_SKIP
     if (remote_config->skip == 1)
 #endif
@@ -541,6 +544,7 @@ STATIC void rci_output_field_id(rci_t * const rci)
 
         goto done;
     }
+#endif
 
     {
         /* output field id */
