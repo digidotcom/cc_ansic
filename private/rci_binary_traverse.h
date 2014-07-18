@@ -179,31 +179,33 @@ STATIC connector_bool_t traverse_all_groups(rci_t * const rci)
             }
             else
             {
-
-                size_t const id = get_group_id(rci) + 1;
-
-                if (id == table->count)
+                connector_group_t const * const group =  get_current_group(rci);
+                if (group->instances > 1 && group->instances > get_group_index(rci))
                 {
-                    /* done all groups */
-                    traverse_group_end(rci);
-                    done = connector_true;
+                    /* next instances */
+                    increment_group_index(rci);
+
+                    traverse_group_id(rci);
+                    rci->traverse.process_state = rci_traverse_process_element;
                 }
                 else
                 {
-                    connector_group_t const * const group =  get_current_group(rci);
-                    if (group->instances > 1 && group->instances > get_group_index(rci))
+                    size_t const id = get_group_id(rci) + 1;
+                    if (id == table->count)
                     {
-                        /* next instances */
-                        increment_group_index(rci);
+                        /* done all groups */
+                        traverse_group_end(rci);
+                        done = connector_true;
                     }
                     else
                     {
                         /* next group */
                         increment_group_id(rci);
                         set_group_index(rci, 1);
+
+                        traverse_group_id(rci);
+                        rci->traverse.process_state = rci_traverse_process_element;
                     }
-                    traverse_group_id(rci);
-                    rci->traverse.process_state = rci_traverse_process_element;
                 }
             }
             break;
