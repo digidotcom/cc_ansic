@@ -206,7 +206,14 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     switch (rci->callback.rci_command_callback)
     {
         case rci_command_callback_set_query_setting_state:
-            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+            if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
+            {
+                rci->callback.status = connector_callback_continue;
+            }
+            else
+            {
+                rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+            }
             break;
 
 #if (defined RCI_LEGACY_COMMANDS)

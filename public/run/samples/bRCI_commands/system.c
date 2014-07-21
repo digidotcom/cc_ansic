@@ -64,13 +64,6 @@ connector_callback_status_t app_system_group_get(connector_remote_config_t * con
     remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
-    printf("3. system_ptr=%p\n",(void*)system_ptr);
-    /* TODO: Try to avoid that private call element get for skipped groups. */
-    if (system_ptr == NULL)
-    {
-        goto done;
-    }
-
     switch (remote_config->element.id)
     {
     case connector_setting_system_contact:
@@ -87,7 +80,6 @@ connector_callback_status_t app_system_group_get(connector_remote_config_t * con
         break;
     }
 
-done:
     return status;
 }
 
