@@ -53,15 +53,6 @@ connector_callback_status_t app_serial_group_init(connector_remote_config_t * co
 
     ASSERT(session_ptr != NULL);
 
-//printf("app_serial_group_init index=%d!!!!!!!!!!!!!!\n", group_index);
-//if (remote_config->group.index == 2)
-#ifdef SKIP_SKIP
-        remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-        remote_config->error_id = connector_rci_error_not_available;
-#endif
-
     ptr = malloc(sizeof *serial_ptr);
     if (ptr == NULL)
     {

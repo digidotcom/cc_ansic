@@ -18,8 +18,7 @@ public class ConfigData {
     /* user global error */
     private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
 
-    private final static String[] rciGlobalErrorStrings = { 
-        "bad_command", "Bad command",
+    private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
         "bad_descriptor", "Bad configuration"};
 
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);

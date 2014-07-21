@@ -35,13 +35,6 @@ connector_callback_status_t app_device_time_group_init(connector_remote_config_t
 
     ASSERT(session_ptr != NULL);
 
-#ifdef SKIP_SKIP
-    remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-    remote_config->error_id = connector_rci_error_not_available;
-#endif
-
     ftime(&device_time_config_data.current_time);
 
     session_ptr->group_context = &device_time_config_data;

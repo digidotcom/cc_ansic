@@ -66,14 +66,6 @@ connector_callback_status_t app_ethernet_group_init(connector_remote_config_t * 
 
     ASSERT(session_ptr != NULL);
 
-#if 0
-#ifdef SKIP_SKIP
-    remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-    remote_config->error_id = connector_rci_error_not_available;
-#endif
-#endif
 
     ptr = malloc(sizeof *ethernet_ptr);
     if (ptr == NULL)
@@ -116,34 +108,16 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * c
     {
     case connector_setting_ethernet_dhcp:
         ASSERT(remote_config->element.type == connector_element_type_boolean);
-#ifdef SKIP_SKIP
-        remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-        remote_config->error_id = connector_rci_error_not_available;
-#endif
         remote_config->response.element_value->boolean_value = ethernet_ptr->dhcp_enabled;
         break;
 
     case connector_setting_ethernet_dns:
         ASSERT(remote_config->element.type == connector_element_type_fqdnv4);
-#ifdef SKIP_SKIP
-        remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-        remote_config->error_id = connector_rci_error_not_available;
-#endif
         remote_config->response.element_value->string_value = ethernet_ptr->dns;
         break;
 
     case connector_setting_ethernet_duplex:
         ASSERT(remote_config->element.type == connector_element_type_enum);
-#ifdef SKIP_SKIP
-        remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-        remote_config->error_id = connector_rci_error_not_available;
-#endif
         remote_config->response.element_value->enum_value = ethernet_ptr->duplex;
         break;
 
@@ -153,12 +127,6 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * c
     {
         char * config_data[3];
 
-#ifdef SKIP_SKIP
-        remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-        remote_config->error_id = connector_rci_error_not_available;
-#endif
         config_data[0] = ethernet_ptr->ip_address;
         config_data[1] = ethernet_ptr->subnet;
         config_data[2] = ethernet_ptr->gateway;
@@ -170,12 +138,6 @@ connector_callback_status_t app_ethernet_group_get(connector_remote_config_t * c
 
     case connector_setting_ethernet_mac:
         ASSERT(remote_config->element.type == connector_element_type_mac_addr);
-#ifdef SKIP_SKIP
-        remote_config->skip = connector_true;
-#endif
-#ifdef SKIP_ERROR_ID
-        remote_config->error_id = connector_rci_error_not_available;
-#endif
         remote_config->response.element_value->string_value = ethernet_ptr->mac;
         break;
 

@@ -139,9 +139,6 @@ typedef struct {
   connector_remote_group_t CONST group;
   connector_remote_element_t CONST element;
   unsigned int error_id;
-#ifdef SKIP_SKIP
-  connector_bool_t skip;
-#endif
 
   union {
       char const * error_hint;
@@ -160,9 +157,6 @@ typedef struct connector_remote_group_table {
 
 
 typedef enum {
-#ifdef SKIP_ERROR_ID
- connector_rci_error_not_available = -1,
-#endif
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,
