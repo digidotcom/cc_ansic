@@ -550,7 +550,8 @@ STATIC void rci_output_field_value(rci_t * const rci)
     switch (rci->shared.callback_data.action)
     {
         case connector_remote_action_set:
-            overflow = rci_output_no_value(rci);
+            if (!rci->output.group_skip && !rci->output.element_skip)
+                overflow = rci_output_no_value(rci);
             goto done;
 
         case connector_remote_action_query:

@@ -290,7 +290,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     case connector_callback_continue:
         callback_complete = connector_true;
 
-        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available && rci->shared.callback_data.action == connector_remote_action_query)
+        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available)
         {
             if (remote_config_request == connector_request_id_remote_config_group_process)
                 rci->output.element_skip = connector_true;

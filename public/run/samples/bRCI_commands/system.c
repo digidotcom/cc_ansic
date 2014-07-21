@@ -91,11 +91,6 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
 
     char * src_ptr = NULL;
 
-    if (system_ptr == NULL)
-    {
-        goto done;
-    }
-
     switch (remote_config->element.id)
     {
     case connector_setting_system_contact:
@@ -119,7 +114,6 @@ connector_callback_status_t app_system_group_set(connector_remote_config_t * con
         src_ptr[length] = '\0';
     }
 
-done:
     return status;
 }
 
