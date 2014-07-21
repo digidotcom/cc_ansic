@@ -81,7 +81,7 @@ static connector_remote_group_table_t CONST connector_group_table[] = {
 connector_remote_config_data_t rci_desc_data = {
     connector_group_table,
     connector_rci_errors,
-    connector_rci_error_COUNT,
+    connector_global_error_COUNT,
     FIRMWARE_TARGET_ZERO_VERSION,
     0x30000DB,
     "Linux Application"
