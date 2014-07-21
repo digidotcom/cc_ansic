@@ -173,8 +173,10 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_action_start:
             case connector_request_id_remote_config_action_end:
             case connector_request_id_remote_config_group_start:
+                rci->output.group_skip = connector_false;
             case connector_request_id_remote_config_group_end:
             case connector_request_id_remote_config_group_process:
+                rci->output.element_skip = connector_false;
                 remote_config->error_id = connector_success;
                 callback_data = remote_config;
                 break;
@@ -204,7 +206,14 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     switch (rci->callback.rci_command_callback)
     {
         case rci_command_callback_set_query_setting_state:
-            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+            if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
+            {
+                rci->callback.status = connector_callback_continue;
+            }
+            else
+            {
+                rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+            }
             break;
 
 #if (defined RCI_LEGACY_COMMANDS)
@@ -280,6 +289,15 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
     case connector_callback_continue:
         callback_complete = connector_true;
+
+        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available)
+        {
+            if (remote_config_request == connector_request_id_remote_config_group_process)
+                rci->output.element_skip = connector_true;
+            else if (remote_config_request == connector_request_id_remote_config_group_start)
+                rci->output.group_skip = connector_true;
+        }
+        remote_config->error_id = connector_success;
         break;
 
     case connector_callback_busy:

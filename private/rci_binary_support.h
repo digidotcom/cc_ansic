@@ -316,6 +316,8 @@ typedef struct
     struct {
         rcistr_t content;
         rci_output_state_t state;
+        connector_bool_t group_skip;
+        connector_bool_t element_skip;
     } output;
 
     struct {

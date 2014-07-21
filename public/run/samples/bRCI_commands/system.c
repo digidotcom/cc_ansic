@@ -35,6 +35,14 @@ connector_callback_status_t app_system_group_init(connector_remote_config_t * co
 
     void * ptr;
 
+    /* Skip reporting 'system' group index 2 */
+    if (remote_config->group.index == 2)
+    {
+        remote_config->error_id = connector_rci_error_not_available; 
+        session_ptr->group_context = NULL;
+        goto done;
+    }
+
     ptr = malloc(sizeof *system_ptr);
     if (ptr == NULL)
     {
@@ -115,6 +123,11 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
     remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
 
+    if (system_ptr == NULL)
+    {
+        goto done;
+    }
+
     if (remote_config->action == connector_remote_action_set)
     {
         /* save data */
@@ -123,6 +136,7 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
 
     free(system_ptr);
 
+done:
     return status;
 }
 

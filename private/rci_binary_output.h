@@ -434,7 +434,10 @@ STATIC void rci_output_group_id(rci_t * const rci)
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
     {
-        connector_bool_t const overflow = rci_output_uint32(rci, encoding_data);
+        connector_bool_t overflow = connector_false;
+        
+        if (!rci->output.group_skip && !rci->output.element_skip)
+            overflow = rci_output_uint32(rci, encoding_data);
 
         if (!overflow)
         {
@@ -482,7 +485,8 @@ STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const i
             encoding_data_high = index & (~(0x1F));
             encoding_data = (encoding_data_high << 2)| BINARY_RCI_ATTRIBUTE_TYPE_INDEX | encoding_data_low;
         }
-        overflow = rci_output_uint32(rci, encoding_data);
+        if (!rci->output.group_skip && !rci->output.element_skip)
+            overflow = rci_output_uint32(rci, encoding_data);
     }
 
     return overflow;
@@ -515,7 +519,10 @@ STATIC void rci_output_field_id(rci_t * const rci)
         if (remote_config->error_id != connector_success) id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
 
         {
-            connector_bool_t const overflow = rci_output_uint32(rci, id);
+            connector_bool_t overflow = connector_false;
+
+            if (!rci->output.group_skip && !rci->output.element_skip)
+                overflow = rci_output_uint32(rci, id);
 
             if (overflow) goto done;
 
@@ -543,11 +550,17 @@ STATIC void rci_output_field_value(rci_t * const rci)
     switch (rci->shared.callback_data.action)
     {
         case connector_remote_action_set:
-            overflow = rci_output_no_value(rci);
+            if (!rci->output.group_skip && !rci->output.element_skip)
+                overflow = rci_output_no_value(rci);
             goto done;
 
         case connector_remote_action_query:
             break;
+    }
+
+    if (rci->output.group_skip || rci->output.element_skip)
+    {
+        goto done;
     }
 
     switch (type)
@@ -673,7 +686,11 @@ STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
-    connector_bool_t const overflow = rci_output_terminator(rci);
+    connector_bool_t overflow = connector_false;
+    
+    if (!rci->output.group_skip && !rci->output.element_skip)
+        overflow = rci_output_terminator(rci);
+
     if (!overflow)
     {
         invalidate_element_id(rci);
