@@ -108,6 +108,7 @@ typedef struct connector_remote_group_table {
 
 
 typedef enum {
+ connector_rci_error_not_available = -1,
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,
