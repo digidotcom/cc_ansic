@@ -428,35 +428,16 @@ STATIC void rci_output_group_id(rci_t * const rci)
         goto done;
     }
 
-#if ((defined SKIP_SKIP) || (defined SKIP_ERROR_ID))
-    if (rci->shared.callback_data.action == connector_remote_action_query && 
-#ifdef SKIP_SKIP
-                remote_config->skip == 1
-#endif
-#ifdef SKIP_ERROR_ID
-                rci->output.skip == 1
-#endif
-       )
-    {
-        printf("rci_output_group_id: Skip group!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-
-        invalidate_element_id(rci);
-
-        rci->traverse.process_state = rci_traverse_process_group;
-        set_rci_traverse_state(rci, rci_traverse_state_all_groups);
-        state_call(rci, rci_parser_state_traverse);
-
-        goto done;
-    }
-#endif
-
     encoding_data = encode_group_id(get_group_id(rci));
 
     if (get_group_index(rci) > 1)
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
     {
-        connector_bool_t const overflow = rci_output_uint32(rci, encoding_data);
+        connector_bool_t overflow = connector_false;
+        
+        if (!rci->output.group_skip && !rci->output.element_skip)
+            overflow = rci_output_uint32(rci, encoding_data);
 
         if (!overflow)
         {
@@ -504,7 +485,8 @@ STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const i
             encoding_data_high = index & (~(0x1F));
             encoding_data = (encoding_data_high << 2)| BINARY_RCI_ATTRIBUTE_TYPE_INDEX | encoding_data_low;
         }
-        overflow = rci_output_uint32(rci, encoding_data);
+        if (!rci->output.group_skip && !rci->output.element_skip)
+            overflow = rci_output_uint32(rci, encoding_data);
     }
 
     return overflow;
@@ -530,22 +512,6 @@ STATIC void rci_output_field_id(rci_t * const rci)
         goto done;
     }
 
-#if ((defined SKIP_SKIP) || (defined SKIP_ERROR_ID))
-#ifdef SKIP_SKIP
-    if (remote_config->skip == 1)
-#endif
-#ifdef SKIP_ERROR_ID
-    if (rci->output.skip == 1)
-#endif
-    {
-        printf("rci_output_group_id: Skip element!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-
-        state_call(rci, rci_parser_state_traverse);
-
-        goto done;
-    }
-#endif
-
     {
         /* output field id */
         uint32_t id =  encode_element_id(get_element_id(rci));
@@ -553,7 +519,10 @@ STATIC void rci_output_field_id(rci_t * const rci)
         if (remote_config->error_id != connector_success) id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
 
         {
-            connector_bool_t const overflow = rci_output_uint32(rci, id);
+            connector_bool_t overflow = connector_false;
+
+            if (!rci->output.group_skip && !rci->output.element_skip)
+                overflow = rci_output_uint32(rci, id);
 
             if (overflow) goto done;
 
@@ -586,6 +555,11 @@ STATIC void rci_output_field_value(rci_t * const rci)
 
         case connector_remote_action_query:
             break;
+    }
+
+    if (rci->output.group_skip || rci->output.element_skip)
+    {
+        goto done;
     }
 
     switch (type)
@@ -711,7 +685,11 @@ STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
-    connector_bool_t const overflow = rci_output_terminator(rci);
+    connector_bool_t overflow = connector_false;
+    
+    if (!rci->output.group_skip && !rci->output.element_skip)
+        overflow = rci_output_terminator(rci);
+
     if (!overflow)
     {
         invalidate_element_id(rci);

@@ -75,7 +75,7 @@ static char CONST * CONST setting_system_errors[] = {
 
 static connector_group_t CONST connector_setting_groups[] = {
  {  /*system*/
-   1 , /* instances */
+   2 , /* instances */
    { asizeof(setting_system_elements),
      setting_system_elements
    },
@@ -99,7 +99,7 @@ static connector_group_element_t CONST state_gps_stats_elements[] = {
 
 static connector_group_t CONST connector_state_groups[] = {
  {  /*gps_stats*/
-   1 , /* instances */
+   2 , /* instances */
    { asizeof(state_gps_stats_elements),
      state_gps_stats_elements
    },

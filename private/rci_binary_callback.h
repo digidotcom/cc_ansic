@@ -173,15 +173,11 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_action_start:
             case connector_request_id_remote_config_action_end:
             case connector_request_id_remote_config_group_start:
+                rci->output.group_skip = connector_false;
             case connector_request_id_remote_config_group_end:
             case connector_request_id_remote_config_group_process:
+                rci->output.element_skip = connector_false;
                 remote_config->error_id = connector_success;
-#ifdef SKIP_SKIP
-                remote_config->skip = connector_false;
-#endif
-#ifdef SKIP_ERROR_ID
-                rci->output.skip = connector_false;
-#endif
                 callback_data = remote_config;
                 break;
 
@@ -286,13 +282,15 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
     case connector_callback_continue:
         callback_complete = connector_true;
-#ifdef SKIP_ERROR_ID
-        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available)
+
+        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available && rci->shared.callback_data.action == connector_remote_action_query)
         {
-            rci->output.skip = connector_true;
-            remote_config->error_id = connector_success;
+            if (remote_config_request == connector_request_id_remote_config_group_process)
+                rci->output.element_skip = connector_true;
+            else if (remote_config_request == connector_request_id_remote_config_group_start)
+                rci->output.group_skip = connector_true;
         }
-#endif
+        remote_config->error_id = connector_success;
         break;
 
     case connector_callback_busy:

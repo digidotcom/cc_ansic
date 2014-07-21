@@ -30,9 +30,17 @@ connector_callback_status_t app_gps_stats_group_get(connector_remote_config_t * 
     switch (remote_config->element.id)
     {
     case connector_state_gps_stats_latitude:
+
+        /* Skip reporting 'latitude' element for 'gps_stats' group index 2 */
+        /* if (remote_config->group.index == 2) remote_config->error_id = connector_rci_error_not_available; */
+
         remote_config->response.element_value->string_value = gps_data.latitude;
         break;
     case connector_state_gps_stats_longitude:
+
+        /* Skip reporting 'longitude' element for 'gps_stats' group index 2 */
+        if (remote_config->group.index == 2) remote_config->error_id = connector_rci_error_not_available;
+
         remote_config->response.element_value->string_value = gps_data.longitude;
         break;
     default:
