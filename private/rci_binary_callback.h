@@ -297,7 +297,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             else if (remote_config_request == connector_request_id_remote_config_group_start)
                 rci->output.group_skip = connector_true;
         }
-        remote_config->error_id = connector_success;
         break;
 
     case connector_callback_busy:
