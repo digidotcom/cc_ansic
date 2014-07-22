@@ -290,12 +290,23 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     case connector_callback_continue:
         callback_complete = connector_true;
 
-        if (remote_config->error_id == (unsigned int)connector_rci_error_not_available)
+        if ((connector_rci_error_id_t)remote_config->error_id == connector_rci_error_not_available)
         {
-            if (remote_config_request == connector_request_id_remote_config_group_process)
-                rci->output.element_skip = connector_true;
-            else if (remote_config_request == connector_request_id_remote_config_group_start)
-                rci->output.group_skip = connector_true;
+            switch (remote_config_request)
+            {
+                case connector_request_id_remote_config_group_process:
+                    rci->output.element_skip = connector_true;
+                    break;
+
+                case connector_request_id_remote_config_group_start:
+                    rci->output.group_skip = connector_true;
+                    break;
+
+                default:
+                    /* Invalid error_id for this callback */
+                    ASSERT(0);
+                    break;
+            }
 
             remote_config->error_id = connector_success;
         }
