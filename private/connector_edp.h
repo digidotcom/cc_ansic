@@ -159,30 +159,12 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
             break;
 
         case connector_transport_send:
+            result = edp_tcp_send_process(connector_ptr);
+            edp_set_active_state(connector_ptr, connector_transport_receive);
+            break;
         case connector_transport_receive:
-
-            switch (edp_get_active_state(connector_ptr))
-            {
-                case connector_transport_send:
-                    result = edp_tcp_send_process(connector_ptr);
-
-                    if (edp_get_active_state(connector_ptr) == connector_transport_send)
-                    {
-                        edp_set_active_state(connector_ptr, connector_transport_receive);
-                    }
-                   break;
-                case connector_transport_receive:
-                    result = edp_tcp_receive_process(connector_ptr);
-
-                    if (edp_get_active_state(connector_ptr) == connector_transport_receive)
-                    {
-                        edp_set_active_state(connector_ptr, connector_transport_send);
-                    }
-                    break;
-                default:
-                    break;
-            }
-
+            result = edp_tcp_receive_process(connector_ptr);
+            edp_set_active_state(connector_ptr, connector_transport_send);
             break;
         case connector_transport_close:
         case connector_transport_terminate:
