@@ -137,7 +137,7 @@ enum {
 
 #if (defined CONNECTOR_DEBUG)
         {
-            char * wan_string = NULL;
+            char const * wan_string = NULL;
 
             switch (connector_ptr->wan_type)
             {
@@ -399,7 +399,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #if (defined CONNECTOR_CLOUD_PHONE)
     {
         static char const connector_device_cloud_phone[]= CONNECTOR_CLOUD_PHONE;
-        connector_handle->device_cloud_phone = (char *)connector_device_cloud_phone;
+        connector_handle->device_cloud_phone = connector_device_cloud_phone;
         connector_handle->device_cloud_phone_length = sizeof connector_device_cloud_phone -1;
     }
 #endif
@@ -407,7 +407,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #if (defined CONNECTOR_CLOUD_SERVICE_ID)
     {
         static char const connector_device_cloud_service_id[]= CONNECTOR_CLOUD_SERVICE_ID;
-        connector_handle->device_cloud_service_id = (char *)connector_device_cloud_service_id;
+        connector_handle->device_cloud_service_id = connector_device_cloud_service_id;
         connector_handle->device_cloud_service_id_length = sizeof connector_device_cloud_service_id -1;
     }
 #endif

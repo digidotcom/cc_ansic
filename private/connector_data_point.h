@@ -82,12 +82,12 @@ STATIC connector_status_t dp_initiate_data_point(connector_request_data_point_t 
         goto error;
     }
 
-    if ((dp_ptr->stream == NULL))
+    if (dp_ptr->stream == NULL)
     {
         connector_debug_line("dp_initiate_data_point: NULL data stream");
         goto error;
     }
-    else if ((dp_ptr->stream->point == NULL))
+    else if (dp_ptr->stream->point == NULL)
     {
         connector_debug_line("dp_initiate_data_point: NULL data point");
         goto error;

@@ -164,13 +164,13 @@ typedef struct connector_data {
     uint8_t * wan_id;
     size_t wan_id_length;
 
-    char * device_cloud_url;
+    char const * device_cloud_url;
     size_t device_cloud_url_length;
 
-    char * device_cloud_phone;
+    char const * device_cloud_phone;
     size_t device_cloud_phone_length;
 
-    char * device_cloud_service_id;
+    char const * device_cloud_service_id;
     size_t device_cloud_service_id_length;
 
     connector_connection_type_t connection_type;
@@ -182,7 +182,7 @@ typedef struct connector_data {
 #endif
 
 #if !(defined CONNECTOR_WAN_PHONE_NUMBER_DIALED)
-    char * phone_dialed;
+    char const * phone_dialed;
     size_t phone_dialed_length;
 #endif
 

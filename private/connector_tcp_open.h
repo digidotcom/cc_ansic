@@ -748,7 +748,7 @@ STATIC connector_status_t send_device_type(connector_data_t * const connector_pt
     static const char connector_device_type[] = CONNECTOR_DEVICE_TYPE;
     size_t device_type_length  = sizeof connector_device_type-1;
 #else
-    char * connector_device_type = connector_ptr->edp_data.config.device_type;
+    char const * const connector_device_type = connector_ptr->edp_data.config.device_type;
     size_t const device_type_length = connector_ptr->edp_data.config.device_type_length;
 #endif
 

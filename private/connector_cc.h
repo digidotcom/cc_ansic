@@ -287,7 +287,7 @@ enum cc_connection_info {
                     size_t const length = sizeof phone -1;
 #else
                     size_t length = connector_ptr->phone_dialed_length;
-                    char * phone = connector_ptr->phone_dialed;
+                    char const * const phone = connector_ptr->phone_dialed;
 #endif
                     connector_debug_line("send_connection_report: phone number = %.*s", (int)length, phone);
                     memcpy(connection_report+report_length, phone, length);

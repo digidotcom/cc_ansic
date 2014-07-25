@@ -142,7 +142,7 @@ typedef struct connector_edp_data {
 #endif
 
 #if !(defined CONNECTOR_DEVICE_TYPE)
-        char * device_type;
+        char const * device_type;
         size_t device_type_length;
 #endif
 
@@ -156,7 +156,7 @@ typedef struct connector_edp_data {
         connector_identity_verification_t identity_verification;
 #endif
 
-        char * password;
+        char const * password;
         size_t password_length;
 
 #if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)

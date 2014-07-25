@@ -193,7 +193,7 @@ STATIC connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
         case connector_transport_sms:
         {
             size_t service_id_length;
-            char * service_id;
+            char const * service_id;
 
             #if !(defined CONNECTOR_CLOUD_PHONE)
             result = get_config_device_cloud_phone(connector_ptr);
