@@ -44,7 +44,7 @@ STATIC connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             #if (defined CONNECTOR_DATA_POINTS)
             if (request->path != NULL)
             {
-                if (strncmp(request->path, dp4d_path_prefix, dp4d_path_prefix_strlen) == 0)
+                if (strncmp(request->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
                 {
                     char * const modifiable_path = (char *)request->path; /* Discarding "const" qualifier */
 
