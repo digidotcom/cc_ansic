@@ -856,7 +856,7 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
 
     #if (defined CONNECTOR_DATA_POINTS)
     {
-        if (strncmp(ds_ptr->header->path, internal_dp4d_keyword, internal_dp4d_keyword_strlen) == 0)
+        if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
         {
             char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
 
