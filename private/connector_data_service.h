@@ -852,7 +852,6 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     ds_ptr->header = send_ptr;
     ds_ptr->callback_context = send_ptr->user_context;
     ds_ptr->request_type = connector_request_id_data_service_send_data;
-    ds_ptr->dp_request = connector_false;
     session->service_context = ds_ptr;
 
     #if (defined CONNECTOR_DATA_POINTS)
@@ -875,6 +874,8 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
             ds_ptr->dp_request = connector_false;
         }
     }
+    #else
+    ds_ptr->dp_request = connector_false;
     #endif
 
     goto done;
