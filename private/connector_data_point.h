@@ -245,7 +245,7 @@ STATIC connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
 {
     connector_status_t result;
     size_t const available_path_bytes = sizeof dp_info->file_path - 1;
-    char const path_prefix[] = "DataPoint/";
+    static char const path_prefix[] = "_DP_PATH_/";
     size_t const path_prefix_bytes = sizeof path_prefix - 1;
     size_t const path_bytes = (path==NULL)?0:strlen(path);  /* Allow NULL path: User responsible of filling each point stream_id */
     size_t const extension_bytes = strlen(extension);
