@@ -852,15 +852,25 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     ds_ptr->header = send_ptr;
     ds_ptr->callback_context = send_ptr->user_context;
     ds_ptr->request_type = connector_request_id_data_service_send_data;
-    ds_ptr->dp_request = connector_false;
     session->service_context = ds_ptr;
 
     #if (defined CONNECTOR_DATA_POINTS)
     {
-        char const data_point_prefix[] = "DataPoint/";
+        if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
+        {
+            char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
 
-        ds_ptr->dp_request = connector_bool(!strncmp(ds_ptr->header->path, data_point_prefix, strlen(data_point_prefix)));
+            memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
+
+            ds_ptr->dp_request = connector_true;
+        }
+        else
+        {
+            ds_ptr->dp_request = connector_false;
+        }
     }
+    #else
+    ds_ptr->dp_request = connector_false;
     #endif
 
     goto done;

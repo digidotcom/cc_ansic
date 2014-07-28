@@ -67,6 +67,11 @@ typedef struct
 
 } data_point_info_t;
 
+static char const internal_dp4d_path[] = "_DP_PATH_/";
+static unsigned int const internal_dp4d_path_strlen = sizeof internal_dp4d_path - 1;
+static char const dp4d_path_prefix[] = "DataPoint/";
+static unsigned int const dp4d_path_prefix_strlen = sizeof dp4d_path_prefix - 1;
+
 static connector_request_data_point_t const * data_point_pending = NULL;
 static connector_request_data_point_binary_t const * data_point_binary_pending = NULL;
 
@@ -245,18 +250,18 @@ STATIC connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
 {
     connector_status_t result;
     size_t const available_path_bytes = sizeof dp_info->file_path - 1;
-    char const path_prefix[] = "DataPoint/";
-    size_t const path_prefix_bytes = sizeof path_prefix - 1;
-    size_t const path_bytes = (path==NULL)?0:strlen(path);  /* Allow NULL path: User responsible of filling each point stream_id */
+    size_t const path_bytes = path == NULL ? 0 : strlen(path);  /* Allow NULL path: User responsible of filling each point stream_id */
     size_t const extension_bytes = strlen(extension);
-    size_t const full_path_bytes = path_prefix_bytes + path_bytes + extension_bytes;
+    size_t const full_path_bytes = internal_dp4d_path_strlen + path_bytes + extension_bytes;
 
     if (full_path_bytes < available_path_bytes)
     {
-        strncpy(dp_info->file_path, path_prefix, path_prefix_bytes);
+        strncpy(dp_info->file_path, internal_dp4d_path, internal_dp4d_path_strlen);
         if (path_bytes)
-            strncpy(&dp_info->file_path[path_prefix_bytes], path, path_bytes);
-        strncpy(&dp_info->file_path[path_prefix_bytes + path_bytes], extension, extension_bytes);
+        {
+            strncpy(&dp_info->file_path[internal_dp4d_path_strlen], path, path_bytes);
+        }
+        strncpy(&dp_info->file_path[internal_dp4d_path_strlen + path_bytes], extension, extension_bytes);
         dp_info->file_path[full_path_bytes] = '\0';
         result = connector_working;
     }

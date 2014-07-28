@@ -38,17 +38,20 @@ STATIC connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
 
             session->user.context = request->user_context;
             session->user.header = request->path;
-            session->command = (request->path != NULL) ? connector_sm_cmd_data : connector_sm_cmd_no_path_data;
+            session->command = request->path != NULL ? connector_sm_cmd_data : connector_sm_cmd_no_path_data;
             response_needed = request->response_required;
             session->sm_state = connector_sm_state_get_total_length;
             #if (defined CONNECTOR_DATA_POINTS)
             if (request->path != NULL)
             {
-                char const dp_prefix[] = "DataPoint/";
-                size_t const dp_prefix_bytes = sizeof dp_prefix - 1;
+                if (strncmp(request->path, dp4d_path_prefix, dp4d_path_prefix_strlen) == 0)
+                {
+                    char * const modifiable_path = (char *)request->path; /* Discarding "const" qualifier */
 
-                if (!strncmp(request->path, dp_prefix, dp_prefix_bytes))
+                    memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
+
                     SmSetDatapoint(session->flags);
+                }
             }
             #endif
             session->timeout_in_seconds = request->timeout_in_seconds;
