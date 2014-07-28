@@ -144,7 +144,9 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
 
     while (result == connector_idle)
     {
-        switch (edp_get_active_state(connector_ptr))
+        connector_transport_state_t const edp_current_active_state = edp_get_active_state(connector_ptr);
+
+        switch (edp_current_active_state)
         {
         case connector_transport_idle:
             if (connector_ptr->edp_data.stop.auto_connect)
@@ -160,11 +162,17 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
 
         case connector_transport_send:
             result = edp_tcp_send_process(connector_ptr);
-            edp_set_active_state(connector_ptr, connector_transport_receive);
+            if (edp_get_active_state(connector_ptr) == edp_current_active_state)
+            {
+                edp_set_active_state(connector_ptr, connector_transport_receive);
+            }
             break;
         case connector_transport_receive:
             result = edp_tcp_receive_process(connector_ptr);
-            edp_set_active_state(connector_ptr, connector_transport_send);
+            if (edp_get_active_state(connector_ptr) == edp_current_active_state)
+            {
+                edp_set_active_state(connector_ptr, connector_transport_send);
+            }
             break;
         case connector_transport_close:
         case connector_transport_terminate:
