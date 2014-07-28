@@ -44,14 +44,9 @@ STATIC connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_pt
             #if (defined CONNECTOR_DATA_POINTS)
             if (request->path != NULL)
             {
-                static char const dp_prefix[] = "_DP_PATH_/";
-                size_t const dp_prefix_bytes = sizeof dp_prefix - 1;
-
-                if (strncmp(request->path, dp_prefix, dp_prefix_bytes) == 0)
+                if (strncmp(request->path, dp4d_path_prefix, dp4d_path_prefix_strlen) == 0)
                 {
                     char * const modifiable_path = (char *)request->path; /* Discarding "const" qualifier */
-                    static char const dp4d_path_prefix[] = "DataPoint/";
-                    unsigned int const dp4d_path_prefix_strlen = sizeof dp4d_path_prefix - 1;
 
                     memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
 

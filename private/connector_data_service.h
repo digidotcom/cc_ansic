@@ -856,14 +856,9 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
 
     #if (defined CONNECTOR_DATA_POINTS)
     {
-        static char const internal_dp4d_keyword[] = "_DP_PATH_/";
-        unsigned int const internal_dp4d_keyword_strlen = sizeof internal_dp4d_keyword - 1;
-
         if (strncmp(ds_ptr->header->path, internal_dp4d_keyword, internal_dp4d_keyword_strlen) == 0)
         {
             char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
-            static char const dp4d_path_prefix[] = "DataPoint/";
-            unsigned int const dp4d_path_prefix_strlen = sizeof dp4d_path_prefix - 1;
 
             memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
 
