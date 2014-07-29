@@ -87,4 +87,7 @@
 #if !(defined CONNECTOR_RCI_SERVICE)
     #error "You must define CONNECTOR_RCI_SERVICE in order to enable CONNECTOR_ENHANCED_SERVICES"
 #endif
+#if (defined CONNECTOR_NO_MALLOC)
+    #error "CONNECTOR_ENHANCED_SERVICES are not available for CONNECTOR_NO_MALLOC version"
+#endif
 #endif
