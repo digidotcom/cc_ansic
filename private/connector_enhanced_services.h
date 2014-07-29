@@ -101,24 +101,24 @@ STATIC connector_status_t connector_enhs_step(connector_data_t * const connector
 
                 if (item->sample_at == 0)
                 {
-                    item->sample_at += item->sampling_interval;
+                    item->sample_at = now + item->sampling_interval;
                 }
 
                 if (item->report_at == 0)
                 {
-                    item->report_at += item->reporting_interval;
+                    item->report_at = now + item->reporting_interval * 60;
                 }
 
                 if (now >= item->sample_at)
                 {
                     enhs_process_path(connector_ptr, item->path);
-                    item->sample_at += item->sampling_interval;
+                    item->sample_at = now + item->sampling_interval;
                 }
 
                 if (now >= item->report_at)
                 {
                     enhs_info->csv.status = ENHS_CSV_STATUS_READY_TO_SEND;
-                    item->report_at += item->reporting_interval;
+                    item->report_at = now + item->reporting_interval * 60;
                 }
             }
             break;
