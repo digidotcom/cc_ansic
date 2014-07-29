@@ -48,6 +48,10 @@ STATIC connector_status_t get_config_connect_status(connector_data_t * const con
 #include "connector_data_point.h"
 #endif
 
+#if (defined CONNECTOR_ENHANCED_SERVICES)
+#include "connector_enhanced_services.h"
+#endif
+
 #if (defined CONNECTOR_TRANSPORT_TCP)
 #include "connector_edp.h"
 #endif
@@ -495,6 +499,25 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     connector_handle->first_running_network = (connector_network_type_t) 0;
 #endif
 
+#if (defined CONNECTOR_ENHANCED_SERVICES)
+    {
+        int i;
+
+        connector_handle->enhs.info.csv.data = NULL;
+
+        for (i = 0; i < asizeof(connector_handle->enhs.metrics); i++)
+        {
+            struct enhs_metrics * const item = &connector_handle->enhs.metrics[i];
+
+            item->path[0] = '\0';
+            item->report_at = 0;
+            item->reporting_interval = 0;
+            item->sample_at = 0;
+            item->sampling_interval = 0;
+        }
+    }
+#endif
+
     goto done;
 
 error:
@@ -596,6 +619,10 @@ connector_status_t connector_step(connector_handle_t const handle)
 
 #undef next_network
     }
+#endif
+
+#if (defined CONNECTOR_ENHANCED_SERVICES)
+    connector_enhs_step(connector_ptr);
 #endif
 
 error:

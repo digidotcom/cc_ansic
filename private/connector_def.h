@@ -215,6 +215,40 @@ typedef struct connector_data {
     connector_remote_config_data_t rci_data;
 #endif
 
+#if (defined CONNECTOR_ENHANCED_SERVICES)
+#define MAX_STREAM_ID_LEN               32
+#define ENHANCED_SERVICES_MAX_METRICS   8 /* TODO: This should be defined in remote_config.h */
+
+    struct {
+        struct enhs_info {
+            struct {
+                char string[32];
+                unsigned int len;
+            } stream_id;
+
+            struct {
+                char * data;
+                unsigned int total_size;
+                unsigned int free_bytes;
+                enum {
+                    ENHS_CSV_STATUS_PROCESSING,
+                    ENHS_CSV_STATUS_READY_TO_SEND,
+                    ENHS_CSV_STATUS_SENDING,
+                    ENHS_CSV_STATUS_SENT
+                } status;
+            } csv;
+        } info;
+
+        struct enhs_metrics {
+            char path[MAX_STREAM_ID_LEN];
+            unsigned long sample_at;
+            unsigned long sampling_interval;
+            unsigned long report_at;
+            unsigned long reporting_interval;
+        } metrics[ENHANCED_SERVICES_MAX_METRICS];
+    } enhs;
+#endif
+
     struct {
         enum {
             connector_state_running,
