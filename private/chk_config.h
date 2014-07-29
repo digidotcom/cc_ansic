@@ -77,3 +77,14 @@
     #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS bigger than 1"
 #endif
 
+#if (defined CONNECTOR_ENHANCED_SERVICES)
+#if !(defined CONNECTOR_DATA_POINTS)
+    #error "You must define CONNECTOR_DATA_POINTS in order to enable CONNECTOR_ENHANCED_SERVICES"
+#endif
+#if !(defined CONNECTOR_DATA_SERVICE)
+    #error "You must define CONNECTOR_DATA_SERVICE in order to enable CONNECTOR_ENHANCED_SERVICES"
+#endif
+#if !(defined CONNECTOR_RCI_SERVICE)
+    #error "You must define CONNECTOR_RCI_SERVICE in order to enable CONNECTOR_ENHANCED_SERVICES"
+#endif
+#endif

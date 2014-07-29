@@ -14,7 +14,12 @@
 
 #include "remote_config.h"
 
+#if (defined CONNECTOR_ENHANCED_SERVICES)
+#include "connector_enhanced_services_rci.h"
+#endif
+
 #include "rci_binary.h"
+
 
 STATIC void set_rci_service_error(msg_service_request_t * const service_request, connector_session_error_t const error_code)
 {
