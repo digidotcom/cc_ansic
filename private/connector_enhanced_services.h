@@ -88,7 +88,7 @@ STATIC connector_status_t connector_enhs_step(connector_data_t * const connector
     {
         case ENHS_CSV_STATUS_PROCESSING:
         {
-            int i;
+            size_t i;
 
             for (i = 0; i < asizeof(connector_ptr->enhs.metrics); i++)
             {
@@ -176,6 +176,7 @@ STATIC connector_callback_status_t enhs_handle_response_callback(connector_data_
 {
     connector_callback_status_t const status = connector_callback_continue;
 
+    UNUSED_PARAMETER(connector_ptr);
     connector_debug_line("enhs_handle_response_callback, response %d", data_ptr->response);
     return status;
 }

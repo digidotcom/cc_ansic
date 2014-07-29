@@ -501,7 +501,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 
 #if (defined CONNECTOR_ENHANCED_SERVICES)
     {
-        int i;
+        size_t i;
 
         connector_handle->enhs.info.csv.data = NULL;
 

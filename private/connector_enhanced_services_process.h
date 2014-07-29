@@ -10,6 +10,8 @@
  * =======================================================================
  */
 
+#include <time.h> /* TODO: Remove this header */
+
 typedef struct enhs_info enhs_info_t;
 
 typedef union {
@@ -160,7 +162,7 @@ STATIC void enhs_process_item(connector_data_t * const connector_ptr, enhs_item_
     enhs_info_t * const enhs_info = &connector_ptr->enhs.info;
     enhs_query_fn_t const function = element->getter;
     enhs_value_type_t const type = element->type;
-    connector_bool_t item_present;
+    connector_bool_t item_present = connector_false;
     enhs_item_value_t value;
 
     ASSERT(function != NULL);
@@ -199,6 +201,7 @@ STATIC void enhs_process_item(connector_data_t * const connector_ptr, enhs_item_
         case ENHS_TYPE_NONE:
         {
             connector_debug_line("Fatal error, type not set");
+            ASSERT(type != ENHS_TYPE_NONE);
             break;
         }
     }
