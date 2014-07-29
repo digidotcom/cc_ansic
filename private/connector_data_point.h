@@ -204,6 +204,7 @@ STATIC connector_status_t dp_inform_status(connector_data_t * const connector_pt
     return result;
 }
 
+#if (defined CONNECTOR_SHORT_MESSAGE)
 STATIC connector_status_t dp_cancel_session(connector_data_t * const connector_ptr, void const * const session, uint32_t const * const request_id)
 {
     connector_status_t status = connector_working;
@@ -245,6 +246,7 @@ STATIC connector_status_t dp_cancel_session(connector_data_t * const connector_p
 done:
     return status;
 }
+#endif
 
 STATIC connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, char const * const path, char const * const extension)
 {
@@ -444,7 +446,7 @@ STATIC connector_bool_t string_needs_quotes(char const * const string)
     return need_quotes;
 }
 
-STATIC size_t dp_process_string(char * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)
+STATIC size_t dp_process_string(char const * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)
 {
     size_t bytes_processed = 0;
     size_t i;
