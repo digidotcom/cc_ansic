@@ -585,7 +585,7 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
 #if (defined CONNECTOR_DEVICE_HEALTH)
         case connector_send_data_initiator_enhanced_services:
         {
-            dev_health_handle_callback(connector_ptr, request_id, cb_data);
+            callback_status = dev_health_handle_callback(connector_ptr, request_id, cb_data);
             break;
         }
 #endif
