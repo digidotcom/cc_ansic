@@ -304,7 +304,23 @@ public class Descriptors {
                 if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
 
                     for (ValueStruct value : element.getValues()) {
-                        query_descriptors += value.toString(element.getValues().indexOf(value));
+                        if (!useBinIdLog)
+                            query_descriptors += value.toString(element.getValues().indexOf(value));
+                        else {
+                            String BinIdKey = String.format("group_%s_%s_%s_%s_bin_id", config_type, group.getName(), element.getName(), value.getName());
+                            int value_id = getBinId(bin_id_reader, BinIdKey);
+
+                            if (value_id == -1) {
+                                ConfigGenerator.log("BinIdKey not found: " + BinIdKey + " !!!!!!");
+                                /* TODO: error handling */
+                            }
+
+                            query_descriptors += value.toString(value_id);
+                        }
+
+
+                        if (createBinIdLog)
+                            createBinIdLogBuffer += String.format("group_%s_%s_%s_%s_bin_id=%d\n", config_type, group.getName(), element.getName(), value.getName(), element.getValues().indexOf(value));
                     }
 
                     query_descriptors += "</element>\n";
