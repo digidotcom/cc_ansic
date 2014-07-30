@@ -27,6 +27,8 @@ public class ConfigGenerator {
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
     private final static String PROTOTYPES_OPTION = "use_prototypes";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
+    private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
+    private final static String USE_BIN_ID_LOG_OPTION = "useBinIdLog";
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
     private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_target_max";
 
@@ -66,6 +68,8 @@ public class ConfigGenerator {
     private static boolean deleteDescriptor;
     private static boolean prototypes;
     private static boolean saveDescriptor;
+    private static boolean createBinIdLog;
+    private static boolean useBinIdLog;
     private static boolean rci_legacy;
     private static int rci_dc_target_max = 0;
 
@@ -224,6 +228,14 @@ public class ConfigGenerator {
                             DASH + SAVE_DESCRIPTORS_OPTION));
             log(String
                     .format(
+                            "\t%-16s \t= create bin_id log",
+                            DASH + CREATE_BIN_ID_LOG_OPTION));
+            log(String
+                    .format(
+                            "\t%-16s \t= use bin_id log",
+                            DASH + USE_BIN_ID_LOG_OPTION));
+            log(String
+                    .format(
                             "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
                             DASH + RCI_LEGACY_COMMANDS_OPTION));
             log(String
@@ -321,6 +333,10 @@ public class ConfigGenerator {
                 prototypes = true;
             } else if (option.equals(SAVE_DESCRIPTORS_OPTION)) {
                 saveDescriptor = true;
+            } else if (option.equals(CREATE_BIN_ID_LOG_OPTION)) {
+                createBinIdLog = true;
+            } else if (option.equals(USE_BIN_ID_LOG_OPTION)) {
+                useBinIdLog = true;
             } else if (option.equals(RCI_LEGACY_COMMANDS_OPTION)) {
                 rci_legacy = true;
             } else if (option.isEmpty()) {
@@ -526,6 +542,14 @@ public class ConfigGenerator {
 
     public static boolean saveDescriptorOption() {
         return saveDescriptor;
+    }
+
+    public static boolean createBinIdLogOption() {
+        return createBinIdLog;
+    }
+
+    public static boolean useBinIdLogOption() {
+        return useBinIdLog;
     }
 
     public static String filename() {
