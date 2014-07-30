@@ -19,7 +19,7 @@ static unsigned int const enhs_path_strlen = sizeof enhs_path - 1;
 typedef struct {
     char const * p_csv;
     unsigned int bytes_available;
-    connector_request_data_service_send_t const * send_request;
+    connector_request_data_service_send_t send_request;
 } enhs_data_push_t;
 
 typedef struct enhs_metrics enhs_metrics_t;
@@ -28,18 +28,16 @@ STATIC connector_status_t enhs_send_metrics(connector_data_t * const connector_p
 {
     connector_status_t status;
     enhs_info_t * const enhs_info = &connector_ptr->enhs.info;
-    connector_request_data_service_send_t * send_request = NULL;
     enhs_data_push_t * enhs_data_push = NULL;
+    connector_request_data_service_send_t * send_request = NULL;
     unsigned int const csv_len = enhs_info->csv.total_size - enhs_info->csv.free_bytes - 1; /* Skip the last '\n' */
 
-    status = malloc_data(connector_ptr, sizeof *send_request, (void * *)&send_request);
-    ASSERT_GOTO(status == connector_working, done);
     status = malloc_data(connector_ptr, sizeof *enhs_data_push, (void * *)&enhs_data_push);
     ASSERT_GOTO(status == connector_working, done);
 
     enhs_data_push->p_csv = enhs_info->csv.data;
     enhs_data_push->bytes_available = csv_len;
-    enhs_data_push->send_request = send_request;
+    send_request = &enhs_data_push->send_request;
 
     send_request->user_context = enhs_data_push;
     send_request->content_type = "";
@@ -54,13 +52,9 @@ STATIC connector_status_t enhs_send_metrics(connector_data_t * const connector_p
 done:
     if (status != connector_success)
     {
-        if (send_request != NULL)
-        {
-            free_data(connector_ptr, send_request);
-        }
         if (enhs_data_push != NULL)
         {
-            free_data(connector_ptr, send_request);
+            free_data(connector_ptr, enhs_data_push);
         }
     }
     return status;
@@ -152,19 +146,19 @@ error:
 STATIC connector_callback_status_t enhs_handle_data_callback(connector_data_service_send_data_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_error;
-    enhs_data_push_t * const enhs_data = data_ptr->user_context;
+    enhs_data_push_t * const enhs_data_push = data_ptr->user_context;
     unsigned int bytes_used;
 
-    ASSERT_GOTO(enhs_data != NULL, error);
+    ASSERT_GOTO(enhs_data_push != NULL, error);
 
-    bytes_used = MIN_VALUE(data_ptr->bytes_available, enhs_data->bytes_available);
+    bytes_used = MIN_VALUE(data_ptr->bytes_available, enhs_data_push->bytes_available);
 
-    memcpy(data_ptr->buffer, enhs_data->p_csv, bytes_used);
+    memcpy(data_ptr->buffer, enhs_data_push->p_csv, bytes_used);
     data_ptr->bytes_used = bytes_used;
-    data_ptr->more_data = connector_bool(enhs_data->bytes_available);
+    data_ptr->more_data = connector_bool(enhs_data_push->bytes_available);
 
-    enhs_data->p_csv += bytes_used;
-    enhs_data->bytes_available -= bytes_used;
+    enhs_data_push->p_csv += bytes_used;
+    enhs_data_push->bytes_available -= bytes_used;
 
     status = connector_callback_continue;
 
@@ -184,12 +178,10 @@ STATIC connector_callback_status_t enhs_handle_response_callback(connector_data_
 STATIC connector_callback_status_t enhs_handle_status_callback(connector_data_t * const connector_ptr, connector_data_service_status_t * const data_ptr)
 {
     connector_callback_status_t const status = connector_callback_continue;
-    enhs_data_push_t * const enhs_data_push_info = data_ptr->user_context;
-    connector_request_data_service_send_t const * const send_request = enhs_data_push_info->send_request;
+    enhs_data_push_t * const enhs_data_push = data_ptr->user_context;
 
     connector_debug_line("enhs_handle_status_callback, status %d", data_ptr->status);
-    free(enhs_data_push_info);
-    free((void *)send_request);
+    free_data(connector_ptr, enhs_data_push);
     connector_ptr->enhs.info.csv.status = ENHS_CSV_STATUS_SENT;
 
     return status;
