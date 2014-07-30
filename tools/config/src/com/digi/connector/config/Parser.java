@@ -3,6 +3,9 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
@@ -70,6 +73,9 @@ public class Parser {
 
                     if (tokenScanner.hasTokenInt()) {
                         groupInstances = tokenScanner.getTokenInt();
+                    }
+                    else if (tokenScanner.hasToken("\\(.*")){
+                        groupInstances = getMathExpression();
                     }
 
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
@@ -178,6 +184,41 @@ public class Parser {
         return name;
     }
 
+    private static int getMathExpression() throws Exception {
+
+        String ex = null;
+        int result = 0;
+
+        if (tokenScanner.hasToken("\\(.*")) {
+            ex = tokenScanner.getToken();
+            int count = ex.replace(")", "").length() - ex.replace("(", "").length();
+
+            /*read Tokens till we have the same number of '(' and ')' in the expression */
+            while(count > 0){
+                if(tokenScanner.hasToken("\\\".*"))
+                    throw new Exception("Invalid Math Expression, missing ')'");
+                ex += tokenScanner.getToken();
+                count = ex.replace(")", "").length() - ex.replace("(", "").length();
+            }
+
+            if(count < 0)
+                throw new Exception("Invalid Math Expression, missing '('");
+
+            ScriptEngineManager mgr = new ScriptEngineManager();
+            ScriptEngine engine = mgr.getEngineByName("js");
+            /*eval returns an Object that is a Double */
+            try{
+                result = ((Double) engine.eval(ex)).intValue();
+            }
+            catch (Exception e){
+                throw new Exception("Bad Expression");
+            }
+
+        }
+        System.out.println(result);
+        return result;
+    }
+
     private static String getQuotedName() throws Exception {
 
         String name = null;
@@ -264,7 +305,12 @@ public class Parser {
     }
 
     private static String getMinMax() throws Exception {
-        String mvalue = tokenScanner.getToken();
+        String mvalue = null;
+
+        if (tokenScanner.hasToken("\\(.*"))
+            mvalue = Integer.toString(getMathExpression());
+        else
+            mvalue = tokenScanner.getToken();
 
         if (mvalue == null) {
             throw new Exception("Missing min or max value");
