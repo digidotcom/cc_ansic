@@ -1,13 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
+#include <time.h>
 #include "connector_api.h"
 
 /* #define DEBUG */
-
-typedef char const * json_t;
-typedef char const * geojson_t;
 
 #if !(defined UNUSED_ARGUMENT)
 #define UNUSED_ARGUMENT(a)  (void)(a)
@@ -18,6 +15,13 @@ typedef char const * geojson_t;
 #else
 #define PRINT_FUNCTION_NAME()
 #endif
+
+uint32_t cc_dev_health_get_posix_time(void)
+{
+    time_t const posix_time = time(NULL);
+
+    return posix_time;
+}
 
 connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value)
 {
@@ -56,7 +60,7 @@ unsigned int cc_dev_health_get_mobile_instances(void)
     return 1;
 }
 
-connector_bool_t cc_dev_health_get_mobile_module(unsigned int const index, json_t * const value)
+connector_bool_t cc_dev_health_get_mobile_module(unsigned int const index, connector_geojson_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -186,7 +190,7 @@ connector_bool_t cc_dev_health_get_mobile_temperature(unsigned int const index, 
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_sim0(unsigned int const index, json_t * const value)
+connector_bool_t cc_dev_health_get_mobile_sim0(unsigned int const index, connector_geojson_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -269,7 +273,7 @@ unsigned int cc_dev_health_get_wifi_instances(void)
     return 1;
 }
 
-connector_bool_t cc_dev_health_get_wifi_radio(unsigned int const index, json_t * const value)
+connector_bool_t cc_dev_health_get_wifi_radio(unsigned int const index, connector_geojson_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -409,7 +413,7 @@ connector_bool_t cc_dev_health_get_system_bigbuf_used(unsigned int const index, 
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, geojson_t * const value)
+connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, connector_geojson_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -417,5 +421,3 @@ connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, geojso
     *value = "{\"type\": \"Point\",\"coordinates\": [-102.3046875, 36.1733569352216]}";
     return connector_true;
 }
-
-

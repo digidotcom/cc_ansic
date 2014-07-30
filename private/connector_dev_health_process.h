@@ -10,8 +10,6 @@
  * =======================================================================
  */
 
-#include <time.h> /* TODO: Remove this header */
-
 #define ENHS_REALLOC_SIZE       256
 
 typedef struct dev_health_info dev_health_info_t;
@@ -118,12 +116,11 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
     }
 }
 
-STATIC void process_csv_timestamp(connector_data_t * const connector_ptr, char * const csv)
+STATIC void process_csv_timestamp(char * const csv)
 {
-    time_t const timestamp = time(NULL);
+    uint32_t timestamp = cc_dev_health_get_posix_time();
 
-    UNUSED_PARAMETER(connector_ptr); /* TODO: implement callback for getting timestamp */
-    sprintf(csv, "%s,%ld000", csv, timestamp); /* Timestamp is in milliseconds */
+    sprintf(csv, "%s,%" PRIu32 "000", csv, timestamp); /* Timestamp is in milliseconds */
 }
 
 STATIC void process_csv_stream_category(char * const csv)
@@ -144,7 +141,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     char * const stream_id = dev_health_info->stream_id.string;
 
     process_csv_data(temp_csv, value, type);
-    process_csv_timestamp(connector_ptr, temp_csv);
+    process_csv_timestamp(temp_csv);
     process_csv_stream_category(temp_csv);
     process_csv_stream_id(temp_csv, stream_id);
 
