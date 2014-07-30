@@ -66,11 +66,6 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
     connector_status_t status;
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
 
-    if (connector_ptr->dev_health.info.csv.data == NULL)
-    {
-        dev_health_setup_csv_data(connector_ptr);
-    }
-
     status = get_system_time(connector_ptr, &now);
     if (status != connector_working)
     {
@@ -89,6 +84,8 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
         case DEV_HEALTH_CSV_STATUS_PROCESSING:
         {
             size_t i;
+
+            dev_health_setup_csv_data(connector_ptr);
 
             for (i = 0; i < asizeof(connector_ptr->dev_health.metrics); i++)
             {
@@ -143,7 +140,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
         case DEV_HEALTH_CSV_STATUS_SENDING:
             break;
         case DEV_HEALTH_CSV_STATUS_SENT:
-            dev_health_teardown_csv_data(connector_ptr);
+            connector_ptr->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
             break;
     }
 

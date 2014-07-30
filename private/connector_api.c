@@ -355,7 +355,6 @@ STATIC void abort_connector(connector_data_t * const connector_ptr)
 
 connector_handle_t connector_init(connector_callback_t const callback, void * const context)
 {
-
     connector_data_t * connector_handle = NULL;
     connector_status_t status;
 
@@ -504,6 +503,8 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         size_t i;
 
         connector_handle->dev_health.info.csv.data = NULL;
+        connector_handle->dev_health.info.csv.total_size = 0;
+        connector_handle->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
 
         for (i = 0; i < asizeof(connector_handle->dev_health.metrics); i++)
         {
@@ -561,6 +562,12 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 connector_debug_line("connector_step: free Cloud Connector");
+#if (defined CONNECTOR_DEVICE_HEALTH)
+                if (connector_ptr->dev_health.info.csv.data != NULL)
+                {
+                    dev_health_teardown_csv_data(connector_ptr);
+                }
+#endif
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 goto done;
             }

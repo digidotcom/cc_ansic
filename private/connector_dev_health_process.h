@@ -25,24 +25,28 @@ static connector_status_t dev_health_setup_csv_data(connector_data_t * const con
 {
     dev_health_info_t * dev_health_info = &connector_ptr->dev_health.info;
     static char const csv_header[] = "#DATA,TIMESTAMP,STREAMCATEGORY,STREAMID\n";
-    unsigned int const total_bytes = 256;
     connector_status_t status = connector_working;
-
-    status = malloc_data(connector_ptr, total_bytes, (void * *)&dev_health_info->csv.data);
-    ASSERT_GOTO(status == connector_working, done);
 
     if (dev_health_info->csv.data == NULL)
     {
-        connector_debug_line("Error while allocating memory for CSV data");
-        status = free_data(connector_ptr, dev_health_info);
+        unsigned int const total_bytes = 256;
+        void * allocated_memory;
+
+        status = malloc_data(connector_ptr, total_bytes, &allocated_memory);
         ASSERT_GOTO(status == connector_working, done);
-        dev_health_info = NULL;
-        status = connector_no_resource;
-        goto done;
+
+        if (allocated_memory == NULL)
+        {
+            connector_debug_line("Error while allocating memory for CSV data");
+            status = connector_no_resource;
+            goto done;
+        }
+        dev_health_info->csv.data = allocated_memory;
+        dev_health_info->csv.total_size = total_bytes;
     }
-    dev_health_info->csv.total_size = total_bytes;
+
     strcpy(dev_health_info->csv.data, csv_header);
-    dev_health_info->csv.free_bytes = total_bytes - sizeof csv_header;
+    dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
     dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
 
 done:
