@@ -245,6 +245,7 @@ typedef struct connector_data {
             unsigned long report_at;
             unsigned long reporting_interval;
         } metrics[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+        unsigned int last_check;
     } dev_health;
 #endif
 

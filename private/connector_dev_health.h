@@ -75,8 +75,14 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
     if (status != connector_working)
     {
         connector_debug_line("Error while getting system uptime");
-        goto error;
+        goto done;
     }
+
+    if (now == connector_ptr->dev_health.last_check)
+    {
+        goto done;
+    }
+    connector_ptr->dev_health.last_check = now;
 
     switch (dev_health_info->csv.status)
     {
@@ -87,6 +93,9 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
             for (i = 0; i < asizeof(connector_ptr->dev_health.metrics); i++)
             {
                 dev_health_metrics_t * const item = &connector_ptr->dev_health.metrics[i];
+                unsigned int const seconds_in_a_minute = 60;
+                unsigned int const sampling_interval = item->sampling_interval;
+                unsigned int const reporting_interval = item->reporting_interval * seconds_in_a_minute;
 
                 if (item->path[0] == '\0')
                 {
@@ -95,24 +104,24 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 
                 if (item->sample_at == 0)
                 {
-                    item->sample_at = now + item->sampling_interval;
+                    item->sample_at = now + sampling_interval;
                 }
 
                 if (item->report_at == 0)
                 {
-                    item->report_at = now + item->reporting_interval * 60;
+                    item->report_at = now + reporting_interval;
                 }
 
                 if (now >= item->sample_at)
                 {
                     dev_health_process_path(connector_ptr, item->path);
-                    item->sample_at = now + item->sampling_interval;
+                    item->sample_at = now + sampling_interval;
                 }
 
                 if (now >= item->report_at)
                 {
                     dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_READY_TO_SEND;
-                    item->report_at = now + item->reporting_interval * 60;
+                    item->report_at = now + reporting_interval;
                 }
             }
             break;
@@ -138,7 +147,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
             break;
     }
 
-error:
+done:
     return status;
 }
 
