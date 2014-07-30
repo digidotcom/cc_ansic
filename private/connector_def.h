@@ -217,12 +217,11 @@ typedef struct connector_data {
 
 #if (defined CONNECTOR_ENHANCED_SERVICES)
 #define MAX_STREAM_ID_LEN               32
-#define ENHANCED_SERVICES_MAX_METRICS   8 /* TODO: This should be defined in remote_config.h */
 
     struct {
         struct enhs_info {
             struct {
-                char string[32];
+                char string[MAX_STREAM_ID_LEN];
                 unsigned int len;
             } stream_id;
 

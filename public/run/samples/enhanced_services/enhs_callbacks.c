@@ -61,7 +61,7 @@ connector_bool_t cc_enhs_get_mobile_module(unsigned int const index, json_t * co
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
+    *value = "{\"modem_id\": \"<modem id>\",\"cell_id\": \"<cell ID>\",\"network\": \"verizon,at&t,...\",\"sims\": 2,\"active_sim\": 1}";
     return connector_true;
 }
 
@@ -191,7 +191,7 @@ connector_bool_t cc_enhs_get_mobile_sim0(unsigned int const index, json_t * cons
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
+    *value = "{\"iccid\": \"<iccid>\",\"imsi\": \"<imsi>\",\"phone_num\": \"<phone number>\"}";
     return connector_true;
 }
 
@@ -274,7 +274,7 @@ connector_bool_t cc_enhs_get_wifi_radio(unsigned int const index, json_t * const
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
+    *value = "{\"mode\": \"<client_or_access_point>\",\"ssid\": \"<ssid>\",\"channel\": <channel_number>,\"protocol\": \"<protocol_B_G_N_A)\"}";
     return connector_true;
 }
 

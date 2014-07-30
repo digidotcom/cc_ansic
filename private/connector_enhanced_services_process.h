@@ -12,6 +12,8 @@
 
 #include <time.h> /* TODO: Remove this header */
 
+#define ENHS_REALLOC_SIZE       256
+
 typedef struct enhs_info enhs_info_t;
 
 typedef union {
@@ -63,7 +65,7 @@ done:
 STATIC connector_status_t enhs_reallocate_csv_data(connector_data_t * const connector_ptr, enhs_info_t * const enhs_info)
 {
     unsigned int const old_size = enhs_info->csv.total_size;
-    unsigned int const additional_size = 128;
+    unsigned int const additional_size = ENHS_REALLOC_SIZE;
     unsigned int const new_size = old_size + additional_size;
     connector_status_t const status = realloc_data(connector_ptr, old_size, new_size, (void * *) &enhs_info->csv.data);
 
@@ -103,7 +105,7 @@ STATIC void process_csv_data(char * const csv, enhs_item_value_t const * const v
         case ENHS_TYPE_GEOJSON:
         {
             connector_bool_t const needs_quotes = string_needs_quotes(value->string);
-            unsigned int const temp_csv_size = 128;
+            unsigned int const temp_csv_size = ENHS_REALLOC_SIZE;
             dp_process_string(value->string, csv, temp_csv_size, NULL, needs_quotes, connector_true);
             break;
         }
@@ -136,7 +138,7 @@ STATIC void process_csv_stream_id(char * const csv, char const * const stream_id
 STATIC void add_item_to_csv(connector_data_t * const connector_ptr, enhs_item_value_t const * const value, enhs_value_type_t const type)
 {
     enhs_info_t * const enhs_info = &connector_ptr->enhs.info;
-    char temp_csv[128];
+    char temp_csv[ENHS_REALLOC_SIZE];
     unsigned int temp_csv_strlen;
     char * const stream_id = enhs_info->stream_id.string;
 
