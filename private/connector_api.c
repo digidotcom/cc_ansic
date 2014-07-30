@@ -44,7 +44,7 @@ STATIC connector_status_t connector_stop_callback(connector_data_t * const conne
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 #endif
 
-#if (defined CONNECTOR_DATA_POINTS)
+#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_ENHANCED_SERVICES)
 #include "connector_data_point.h"
 #endif
 

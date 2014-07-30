@@ -10,6 +10,94 @@
  * =======================================================================
  */
 
+/* Functions string_needs_quotes() and dp_process_string() are used by Enhanced Services support
+ * compile them even if CONNECTOR_DATA_POINTS is not defined
+ */
+STATIC connector_bool_t string_needs_quotes(char const * const string)
+{
+    connector_bool_t need_quotes = connector_false;
+    size_t index;
+
+    for (index = 0; !need_quotes && string[index] != '\0'; index++)
+    {
+        switch(string[index])
+        {
+            case ' ':
+            case ',':
+            case '\"':
+            case '\t':
+            case '\n':
+            case '\r':
+                need_quotes = connector_true;
+                break;
+            default:
+                break;
+        }
+    }
+
+    return need_quotes;
+}
+
+STATIC size_t dp_process_string(char const * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)
+{
+    size_t bytes_processed = 0;
+    size_t i;
+    size_t extra_chars = 0;
+    size_t const max_strlen = bytes_available - 1;
+
+    ASSERT(string != NULL);
+
+    if (need_quotes && first_chunk)
+    {
+        if (bytes_processed < max_strlen)
+        {
+            buffer[bytes_processed] = '\"';
+        }
+        bytes_processed++;
+        extra_chars++;
+    }
+
+    for (i = 0; string[i] != '\0'; i++)
+    {
+        if (string[i] == '\"')
+        {
+            if (bytes_processed < max_strlen)
+            {
+                buffer[bytes_processed] = '\\';
+            }
+            bytes_processed++;
+            extra_chars++;
+        }
+
+        if (bytes_processed < max_strlen)
+        {
+            buffer[bytes_processed] = string[i];
+        }
+        bytes_processed++;
+    }
+
+    if (need_quotes)
+    {
+        if (bytes_processed < max_strlen)
+        {
+            buffer[bytes_processed] = '\"';
+        }
+        bytes_processed++;
+        extra_chars++;
+    }
+
+    buffer[bytes_processed] = '\0';
+
+    if (bytes_used_ptr != NULL)
+    {
+        *bytes_used_ptr = bytes_processed - extra_chars;
+    }
+
+    return bytes_processed;
+}
+
+#if (defined CONNECTOR_DATA_POINTS)
+
 typedef struct
 {
     #if (defined CONNECTOR_TRANSPORT_TCP)
@@ -419,89 +507,6 @@ STATIC connector_status_t dp_process_request(connector_data_t * const connector_
 
 done:
     return result;
-}
-
-STATIC connector_bool_t string_needs_quotes(char const * const string)
-{
-    connector_bool_t need_quotes = connector_false;
-    size_t index;
-
-    for (index = 0; !need_quotes && string[index] != '\0'; index++)
-    {
-        switch(string[index])
-        {
-            case ' ':
-            case ',':
-            case '\"':
-            case '\t':
-            case '\n':
-            case '\r':
-                need_quotes = connector_true;
-                break;
-            default:
-                break;
-        }
-    }
-
-    return need_quotes;
-}
-
-STATIC size_t dp_process_string(char const * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)
-{
-    size_t bytes_processed = 0;
-    size_t i;
-    size_t extra_chars = 0;
-    size_t const max_strlen = bytes_available - 1;
-
-    ASSERT(string != NULL);
-
-    if (need_quotes && first_chunk)
-    {
-        if (bytes_processed < max_strlen)
-        {
-            buffer[bytes_processed] = '\"';
-        }
-        bytes_processed++;
-        extra_chars++;
-    }
-
-    for (i = 0; string[i] != '\0'; i++)
-    {
-        if (string[i] == '\"')
-        {
-            if (bytes_processed < max_strlen)
-            {
-                buffer[bytes_processed] = '\\';
-            }
-            bytes_processed++;
-            extra_chars++;
-        }
-
-        if (bytes_processed < max_strlen)
-        {
-            buffer[bytes_processed] = string[i];
-        }
-        bytes_processed++;
-    }
-
-    if (need_quotes)
-    {
-        if (bytes_processed < max_strlen)
-        {
-            buffer[bytes_processed] = '\"';
-        }
-        bytes_processed++;
-        extra_chars++;
-    }
-
-    buffer[bytes_processed] = '\0';
-
-    if (bytes_used_ptr != NULL)
-    {
-        *bytes_used_ptr = bytes_processed - extra_chars;
-    }
-
-    return bytes_processed;
 }
 
 STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
@@ -1107,3 +1112,4 @@ STATIC connector_callback_status_t dp_handle_callback(connector_data_t * const c
 
     return status;
 }
+#endif

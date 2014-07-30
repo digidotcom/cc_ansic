@@ -78,9 +78,6 @@
 #endif
 
 #if (defined CONNECTOR_ENHANCED_SERVICES)
-#if !(defined CONNECTOR_DATA_POINTS)
-    #error "You must define CONNECTOR_DATA_POINTS in order to enable CONNECTOR_ENHANCED_SERVICES"
-#endif
 #if !(defined CONNECTOR_DATA_SERVICE)
     #error "You must define CONNECTOR_DATA_SERVICE in order to enable CONNECTOR_ENHANCED_SERVICES"
 #endif
@@ -89,5 +86,11 @@
 #endif
 #if (defined CONNECTOR_NO_MALLOC)
     #error "CONNECTOR_ENHANCED_SERVICES are not available for CONNECTOR_NO_MALLOC version"
+#endif
+#if !(defined CONNECTOR_HAS_64_BIT_INTEGERS)
+    #error "You must define CONNECTOR_HAS_64_BIT_INTEGERS in order to enable CONNECTOR_ENHANCED_SERVICES"
+#endif
+#if !(defined FLOATING_POINT_SUPPORTED)
+    #error "You must define FLOATING_POINT_SUPPORTED in order to enable CONNECTOR_ENHANCED_SERVICES"
 #endif
 #endif
