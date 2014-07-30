@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-STATIC connector_callback_status_t enhs_rci_set(enhs_metrics_t * const metrics_item, connector_remote_config_t const * const remote_config)
+STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_t * const metrics_item, connector_remote_config_t const * const remote_config)
 {
     connector_callback_status_t const status = connector_callback_continue;
 
@@ -43,7 +43,7 @@ STATIC connector_callback_status_t enhs_rci_set(enhs_metrics_t * const metrics_i
     return status;
 }
 
-STATIC connector_callback_status_t enhs_rci_query(enhs_metrics_t const * const metrics_item, connector_remote_config_t * const remote_config)
+STATIC connector_callback_status_t enhs_rci_query(dev_health_metrics_t const * const metrics_item, connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t const status = connector_callback_continue;
 
@@ -94,7 +94,7 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
         {
             connector_remote_config_t * const remote_config = data;
             unsigned int const group_index = remote_config->group.index - 1;
-            enhs_metrics_t * const metrics_item = &connector_ptr->enhs.metrics[group_index];
+            dev_health_metrics_t * const metrics_item = &connector_ptr->dev_health.metrics[group_index];
 
             switch (remote_config->action)
             {

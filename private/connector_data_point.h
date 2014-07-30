@@ -156,9 +156,9 @@ typedef struct
 } data_point_info_t;
 
 static char const internal_dp4d_path[] = "_DP_PATH_/";
-static unsigned int const internal_dp4d_path_strlen = sizeof internal_dp4d_path - 1;
+static size_t const internal_dp4d_path_strlen = sizeof internal_dp4d_path - 1;
 static char const dp4d_path_prefix[] = "DataPoint/";
-static unsigned int const dp4d_path_prefix_strlen = sizeof dp4d_path_prefix - 1;
+static size_t const dp4d_path_prefix_strlen = sizeof dp4d_path_prefix - 1;
 
 static connector_request_data_point_t const * data_point_pending = NULL;
 static connector_request_data_point_binary_t const * data_point_binary_pending = NULL;

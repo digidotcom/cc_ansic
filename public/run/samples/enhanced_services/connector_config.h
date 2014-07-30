@@ -22,8 +22,8 @@
 #define CONNECTOR_TRANSPORT_TCP
 /* #define CONNECTOR_TRANSPORT_UDP */
 /* #define CONNECTOR_TRANSPORT_SMS */
-#define CONNECTOR_ENHANCED_SERVICES
-#define ENHANCED_SERVICES_MAX_METRICS   8 /* TODO: This should be defined in remote_config.h */
+#define CONNECTOR_DEVICE_HEALTH
+#define CONNECTOR_DEVICE_HEALTH_MAX_METRICS   8 /* TODO: This should be defined in remote_config.h */
 #define CONNECTOR_HAS_64_BIT_INTEGERS
 #define FLOATING_POINT_SUPPORTED
 

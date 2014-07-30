@@ -44,12 +44,12 @@ STATIC connector_status_t connector_stop_callback(connector_data_t * const conne
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 #endif
 
-#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_ENHANCED_SERVICES)
+#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_DEVICE_HEALTH)
 #include "connector_data_point.h"
 #endif
 
-#if (defined CONNECTOR_ENHANCED_SERVICES)
-#include "connector_enhanced_services.h"
+#if (defined CONNECTOR_DEVICE_HEALTH)
+#include "connector_dev_health.h"
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
@@ -499,15 +499,15 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     connector_handle->first_running_network = (connector_network_type_t) 0;
 #endif
 
-#if (defined CONNECTOR_ENHANCED_SERVICES)
+#if (defined CONNECTOR_DEVICE_HEALTH)
     {
         size_t i;
 
-        connector_handle->enhs.info.csv.data = NULL;
+        connector_handle->dev_health.info.csv.data = NULL;
 
-        for (i = 0; i < asizeof(connector_handle->enhs.metrics); i++)
+        for (i = 0; i < asizeof(connector_handle->dev_health.metrics); i++)
         {
-            struct enhs_metrics * const item = &connector_handle->enhs.metrics[i];
+            struct dev_health_metrics * const item = &connector_handle->dev_health.metrics[i];
 
             item->path[0] = '\0';
             item->report_at = 0;
@@ -621,8 +621,8 @@ connector_status_t connector_step(connector_handle_t const handle)
     }
 #endif
 
-#if (defined CONNECTOR_ENHANCED_SERVICES)
-    connector_enhs_step(connector_ptr);
+#if (defined CONNECTOR_DEVICE_HEALTH)
+    connector_dev_health_step(connector_ptr);
 #endif
 
 error:

@@ -215,13 +215,13 @@ typedef struct connector_data {
     connector_remote_config_data_t rci_data;
 #endif
 
-#if (defined CONNECTOR_ENHANCED_SERVICES)
-#define MAX_STREAM_ID_LEN               32
+#if (defined CONNECTOR_DEVICE_HEALTH)
+#define DEV_HEALTH_MAX_STREAM_ID_LEN               32
 
     struct {
-        struct enhs_info {
+        struct dev_health_info {
             struct {
-                char string[MAX_STREAM_ID_LEN];
+                char string[DEV_HEALTH_MAX_STREAM_ID_LEN];
                 unsigned int len;
             } stream_id;
 
@@ -230,22 +230,22 @@ typedef struct connector_data {
                 unsigned int total_size;
                 unsigned int free_bytes;
                 enum {
-                    ENHS_CSV_STATUS_PROCESSING,
-                    ENHS_CSV_STATUS_READY_TO_SEND,
-                    ENHS_CSV_STATUS_SENDING,
-                    ENHS_CSV_STATUS_SENT
+                    DEV_HEALTH_CSV_STATUS_PROCESSING,
+                    DEV_HEALTH_CSV_STATUS_READY_TO_SEND,
+                    DEV_HEALTH_CSV_STATUS_SENDING,
+                    DEV_HEALTH_CSV_STATUS_SENT
                 } status;
             } csv;
         } info;
 
-        struct enhs_metrics {
-            char path[MAX_STREAM_ID_LEN];
+        struct dev_health_metrics {
+            char path[DEV_HEALTH_MAX_STREAM_ID_LEN];
             unsigned long sample_at;
             unsigned long sampling_interval;
             unsigned long report_at;
             unsigned long reporting_interval;
-        } metrics[ENHANCED_SERVICES_MAX_METRICS];
-    } enhs;
+        } metrics[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+    } dev_health;
 #endif
 
     struct {

@@ -23,7 +23,7 @@ typedef enum {
 #if (defined CONNECTOR_DATA_POINTS)
     ,connector_send_data_initiator_data_point
 #endif
-#if (defined CONNECTOR_ENHANCED_SERVICES)
+#if (defined CONNECTOR_DEVICE_HEALTH)
     ,connector_send_data_initiator_enhanced_services
 #endif
 } connector_send_data_initiator_t;
@@ -582,10 +582,10 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
             break;
         }
 #endif
-#if (defined CONNECTOR_ENHANCED_SERVICES)
+#if (defined CONNECTOR_DEVICE_HEALTH)
         case connector_send_data_initiator_enhanced_services:
         {
-            enhs_handle_callback(connector_ptr, request_id, cb_data);
+            dev_health_handle_callback(connector_ptr, request_id, cb_data);
             break;
         }
 #endif
@@ -874,7 +874,7 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     ds_ptr->request_type = connector_request_id_data_service_send_data;
     session->service_context = ds_ptr;
 
-    #if !(defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_ENHANCED_SERVICES)
+    #if !(defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DEVICE_HEALTH)
     ds_ptr->request_initiator = connector_send_data_initiator_user;
     #endif
 
@@ -890,8 +890,8 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     }
     #endif
 
-    #if (defined CONNECTOR_ENHANCED_SERVICES)
-    if (strncmp(ds_ptr->header->path, enhs_path, enhs_path_strlen) == 0)
+    #if (defined CONNECTOR_DEVICE_HEALTH)
+    if (strncmp(ds_ptr->header->path, dev_health_path, dev_health_path_strlen) == 0)
     {
         ds_ptr->request_initiator = connector_send_data_initiator_enhanced_services;
         goto done;

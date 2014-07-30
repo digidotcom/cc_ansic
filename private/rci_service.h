@@ -14,8 +14,8 @@
 
 #include "remote_config.h"
 
-#if (defined CONNECTOR_ENHANCED_SERVICES)
-#include "connector_enhanced_services_rci.h"
+#if (defined CONNECTOR_DEVICE_HEALTH)
+#include "connector_dev_health_rci.h"
 #endif
 
 #include "rci_binary.h"

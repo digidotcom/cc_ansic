@@ -19,7 +19,7 @@ typedef char const * geojson_t;
 #define PRINT_FUNCTION_NAME()
 #endif
 
-connector_bool_t cc_enhs_get_net_latency_min(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -29,7 +29,7 @@ connector_bool_t cc_enhs_get_net_latency_min(unsigned int const index, int32_t *
 }
 
 
-connector_bool_t cc_enhs_get_net_latency_avg(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_net_latency_avg(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -39,7 +39,7 @@ connector_bool_t cc_enhs_get_net_latency_avg(unsigned int const index, int32_t *
 }
 
 
-connector_bool_t cc_enhs_get_net_latency_max(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_net_latency_max(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -49,24 +49,24 @@ connector_bool_t cc_enhs_get_net_latency_max(unsigned int const index, int32_t *
 }
 
 
-unsigned int enhs_get_mobile_instances(void)
+unsigned int cc_dev_health_get_mobile_instances(void)
 {
     PRINT_FUNCTION_NAME();
 
     return 1;
 }
 
-connector_bool_t cc_enhs_get_mobile_module(unsigned int const index, json_t * const value)
+connector_bool_t cc_dev_health_get_mobile_module(unsigned int const index, json_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"modem_id\": \"<modem id>\",\"cell_id\": \"<cell ID>\",\"network\": \"verizon,at&t,...\",\"sims\": 2,\"active_sim\": 1}";
+    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
     return connector_true;
 }
 
 
-connector_bool_t cc_enhs_get_mobile_status(unsigned int const index, char const * * const value)
+connector_bool_t cc_dev_health_get_mobile_status(unsigned int const index, char const * * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -76,7 +76,7 @@ connector_bool_t cc_enhs_get_mobile_status(unsigned int const index, char const 
 }
 
 
-connector_bool_t cc_enhs_get_mobile_rssi(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_rssi(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -86,7 +86,7 @@ connector_bool_t cc_enhs_get_mobile_rssi(unsigned int const index, int32_t * con
 }
 
 
-connector_bool_t cc_enhs_get_mobile_ecio(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_ecio(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -96,7 +96,7 @@ connector_bool_t cc_enhs_get_mobile_ecio(unsigned int const index, int32_t * con
 }
 
 
-connector_bool_t cc_enhs_get_mobile_rsrp(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_rsrp(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -106,7 +106,7 @@ connector_bool_t cc_enhs_get_mobile_rsrp(unsigned int const index, int32_t * con
 }
 
 
-connector_bool_t cc_enhs_get_mobile_rsrq(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_rsrq(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -116,7 +116,7 @@ connector_bool_t cc_enhs_get_mobile_rsrq(unsigned int const index, int32_t * con
 }
 
 
-connector_bool_t cc_enhs_get_mobile_sinr(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_sinr(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -126,7 +126,7 @@ connector_bool_t cc_enhs_get_mobile_sinr(unsigned int const index, int32_t * con
 }
 
 
-connector_bool_t cc_enhs_get_mobile_snr(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_snr(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -136,7 +136,7 @@ connector_bool_t cc_enhs_get_mobile_snr(unsigned int const index, int32_t * cons
 }
 
 
-connector_bool_t cc_enhs_get_mobile_registration(unsigned int const index, char const * * const value)
+connector_bool_t cc_dev_health_get_mobile_registration(unsigned int const index, char const * * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -146,7 +146,7 @@ connector_bool_t cc_enhs_get_mobile_registration(unsigned int const index, char 
 }
 
 
-connector_bool_t cc_enhs_get_mobile_lac(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_lac(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -156,7 +156,7 @@ connector_bool_t cc_enhs_get_mobile_lac(unsigned int const index, int32_t * cons
 }
 
 
-connector_bool_t cc_enhs_get_mobile_tac(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_tac(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -166,7 +166,7 @@ connector_bool_t cc_enhs_get_mobile_tac(unsigned int const index, int32_t * cons
 }
 
 
-connector_bool_t cc_enhs_get_mobile_session(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_session(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -176,7 +176,7 @@ connector_bool_t cc_enhs_get_mobile_session(unsigned int const index, int32_t * 
 }
 
 
-connector_bool_t cc_enhs_get_mobile_temperature(unsigned int const index, float * const value)
+connector_bool_t cc_dev_health_get_mobile_temperature(unsigned int const index, float * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -186,17 +186,17 @@ connector_bool_t cc_enhs_get_mobile_temperature(unsigned int const index, float 
 }
 
 
-connector_bool_t cc_enhs_get_mobile_sim0(unsigned int const index, json_t * const value)
+connector_bool_t cc_dev_health_get_mobile_sim0(unsigned int const index, json_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"iccid\": \"<iccid>\",\"imsi\": \"<imsi>\",\"phone_num\": \"<phone number>\"}";
+    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
     return connector_true;
 }
 
 
-connector_bool_t cc_enhs_get_mobile_sim0_status(unsigned int const index, char const * * const value)
+connector_bool_t cc_dev_health_get_mobile_sim0_status(unsigned int const index, char const * * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -205,14 +205,14 @@ connector_bool_t cc_enhs_get_mobile_sim0_status(unsigned int const index, char c
     return connector_true;
 }
 
-unsigned int enhs_get_eth_instances(void)
+unsigned int cc_dev_health_get_eth_instances(void)
 {
     PRINT_FUNCTION_NAME();
 
     return 4;
 }
 
-connector_bool_t cc_enhs_get_eth_tx_bytes(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_tx_bytes(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -222,7 +222,7 @@ connector_bool_t cc_enhs_get_eth_tx_bytes(unsigned int const index, uint64_t * c
 }
 
 
-connector_bool_t cc_enhs_get_eth_tx_packets(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_tx_packets(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -232,7 +232,7 @@ connector_bool_t cc_enhs_get_eth_tx_packets(unsigned int const index, uint64_t *
 }
 
 
-connector_bool_t cc_enhs_get_eth_rx_bytes(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_rx_bytes(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -242,7 +242,7 @@ connector_bool_t cc_enhs_get_eth_rx_bytes(unsigned int const index, uint64_t * c
 }
 
 
-connector_bool_t cc_enhs_get_eth_rx_packets(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_rx_packets(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -252,7 +252,7 @@ connector_bool_t cc_enhs_get_eth_rx_packets(unsigned int const index, uint64_t *
 }
 
 
-connector_bool_t cc_enhs_get_eth_dropped_packets(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_dropped_packets(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -262,24 +262,24 @@ connector_bool_t cc_enhs_get_eth_dropped_packets(unsigned int const index, uint6
 }
 
 
-unsigned int enhs_get_wifi_instances(void)
+unsigned int cc_dev_health_get_wifi_instances(void)
 {
     PRINT_FUNCTION_NAME();
 
     return 1;
 }
 
-connector_bool_t cc_enhs_get_wifi_radio(unsigned int const index, json_t * const value)
+connector_bool_t cc_dev_health_get_wifi_radio(unsigned int const index, json_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"mode\": \"<client_or_access_point>\",\"ssid\": \"<ssid>\",\"channel\": <channel_number>,\"protocol\": \"<protocol_B_G_N_A)\"}";
+    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
     return connector_true;
 }
 
 
-connector_bool_t cc_enhs_get_wifi_status(unsigned int const index, char const * * const value)
+connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char const * * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -289,7 +289,7 @@ connector_bool_t cc_enhs_get_wifi_status(unsigned int const index, char const * 
 }
 
 
-connector_bool_t cc_enhs_get_wifi_rssi(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_wifi_rssi(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -299,7 +299,7 @@ connector_bool_t cc_enhs_get_wifi_rssi(unsigned int const index, int32_t * const
 }
 
 
-connector_bool_t cc_enhs_get_wifi_rate(unsigned int const index, float * const value)
+connector_bool_t cc_dev_health_get_wifi_rate(unsigned int const index, float * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -309,7 +309,7 @@ connector_bool_t cc_enhs_get_wifi_rate(unsigned int const index, float * const v
 }
 
 
-connector_bool_t cc_enhs_get_wifi_clients(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_wifi_clients(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -320,7 +320,7 @@ connector_bool_t cc_enhs_get_wifi_clients(unsigned int const index, int32_t * co
 
 
 
-connector_bool_t cc_enhs_get_system_mem_free(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_free(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -330,7 +330,7 @@ connector_bool_t cc_enhs_get_system_mem_free(unsigned int const index, uint64_t 
 }
 
 
-connector_bool_t cc_enhs_get_system_mem_used(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_used(unsigned int const index, uint64_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -340,7 +340,7 @@ connector_bool_t cc_enhs_get_system_mem_used(unsigned int const index, uint64_t 
 }
 
 
-connector_bool_t cc_enhs_get_system_reboots(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_reboots(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -350,7 +350,7 @@ connector_bool_t cc_enhs_get_system_reboots(unsigned int const index, int32_t * 
 }
 
 
-connector_bool_t cc_enhs_get_system_msg_free(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_msg_free(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -360,7 +360,7 @@ connector_bool_t cc_enhs_get_system_msg_free(unsigned int const index, int32_t *
 }
 
 
-connector_bool_t cc_enhs_get_system_msg_min(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_msg_min(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -370,7 +370,7 @@ connector_bool_t cc_enhs_get_system_msg_min(unsigned int const index, int32_t * 
 }
 
 
-connector_bool_t cc_enhs_get_system_buf_free(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_buf_free(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -380,7 +380,7 @@ connector_bool_t cc_enhs_get_system_buf_free(unsigned int const index, int32_t *
 }
 
 
-connector_bool_t cc_enhs_get_system_buf_used(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_buf_used(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -390,7 +390,7 @@ connector_bool_t cc_enhs_get_system_buf_used(unsigned int const index, int32_t *
 }
 
 
-connector_bool_t cc_enhs_get_system_bigbuf_free(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_bigbuf_free(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -400,7 +400,7 @@ connector_bool_t cc_enhs_get_system_bigbuf_free(unsigned int const index, int32_
 }
 
 
-connector_bool_t cc_enhs_get_system_bigbuf_used(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_bigbuf_used(unsigned int const index, int32_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
@@ -409,7 +409,7 @@ connector_bool_t cc_enhs_get_system_bigbuf_used(unsigned int const index, int32_
     return connector_true;
 }
 
-connector_bool_t cc_enhs_get_gps_location(unsigned int const index, geojson_t * const value)
+connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, geojson_t * const value)
 {
     UNUSED_ARGUMENT(index);
 
