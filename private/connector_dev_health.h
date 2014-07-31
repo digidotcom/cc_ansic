@@ -130,7 +130,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
             if (status == connector_success)
             {
                 dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_SENDING;
-                printf("Sending *%s*\n", dev_health_info->csv.data);
+                /*connector_debug_line("Sending *%s*", dev_health_info->csv.data);*/
             }
             else
             {
