@@ -43,7 +43,7 @@ static int get_executable_path(char * const path, unsigned int max_size)
 done:
     return error;
 }
-connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size)
+connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, size_t array_size)
 {
     connector_callback_status_t status = connector_callback_continue;
     char dev_health_path[PATH_MAX] = {0};
@@ -67,7 +67,7 @@ connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config
     else
     {
         /* File does not exist */
-        unsigned int i;
+        size_t i;
 
         for (i = 0; i < array_size; i++)
         {
@@ -80,7 +80,7 @@ connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config
     return status;
 }
 
-connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size)
+connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, size_t array_size)
 {
     connector_callback_status_t status = connector_callback_continue;
     char dev_health_path[PATH_MAX] = {0};

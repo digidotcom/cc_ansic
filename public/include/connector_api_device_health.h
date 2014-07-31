@@ -22,8 +22,8 @@ typedef struct {
     unsigned long reporting_interval;
 } dev_health_metrics_config_t;
 
-connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size);
-connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size);
+connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, size_t array_size);
+connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, size_t array_size);
 
 uint32_t cc_dev_health_get_posix_time(void);
 connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value);
