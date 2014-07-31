@@ -216,8 +216,6 @@ typedef struct connector_data {
 #endif
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
-#define DEV_HEALTH_MAX_STREAM_ID_LEN               32
-
     struct {
         struct dev_health_info {
             struct {
@@ -238,13 +236,14 @@ typedef struct connector_data {
             } csv;
         } info;
 
-        struct dev_health_metrics {
-            char path[DEV_HEALTH_MAX_STREAM_ID_LEN];
-            unsigned long sample_at;
-            unsigned long sampling_interval;
-            unsigned long report_at;
-            unsigned long reporting_interval;
-        } metrics[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+        struct {
+            dev_health_metrics_config_t config[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+            struct {
+                unsigned long sample_at;
+                unsigned long report_at;
+            } times[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+        } metrics;
+
         unsigned int last_check;
     } dev_health;
 #endif

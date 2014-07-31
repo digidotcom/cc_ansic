@@ -500,21 +500,22 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
     {
-        size_t i;
+        connector_callback_status_t const status = cc_dev_health_load_metrics(connector_handle->dev_health.metrics.config, asizeof(connector_handle->dev_health.metrics.config));
+        unsigned int i;
 
         connector_handle->dev_health.info.csv.data = NULL;
         connector_handle->dev_health.info.csv.total_size = 0;
         connector_handle->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
 
-        for (i = 0; i < asizeof(connector_handle->dev_health.metrics); i++)
+        if (status != connector_callback_continue)
         {
-            struct dev_health_metrics * const item = &connector_handle->dev_health.metrics[i];
+            goto error;
+        }
 
-            item->path[0] = '\0';
-            item->report_at = 0;
-            item->reporting_interval = 0;
-            item->sample_at = 0;
-            item->sampling_interval = 0;
+        for (i = 0; i < asizeof(connector_handle->dev_health.metrics.times); i++)
+        {
+            connector_handle->dev_health.metrics.times[i].report_at = 0;
+            connector_handle->dev_health.metrics.times[i].sample_at = 0;
         }
     }
 #endif
@@ -563,9 +564,18 @@ connector_status_t connector_step(connector_handle_t const handle)
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 connector_debug_line("connector_step: free Cloud Connector");
 #if (defined CONNECTOR_DEVICE_HEALTH)
-                if (connector_ptr->dev_health.info.csv.data != NULL)
                 {
-                    dev_health_teardown_csv_data(connector_ptr);
+                    connector_callback_status_t const status = cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
+
+                    if (status != connector_callback_continue)
+                    {
+                        connector_debug_line("WARNING: failed to save Device Health metrics, status %d", status);
+                    }
+                    if (connector_ptr->dev_health.info.csv.data != NULL)
+                    {
+                        dev_health_teardown_csv_data(connector_ptr);
+                    }
+
                 }
 #endif
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);

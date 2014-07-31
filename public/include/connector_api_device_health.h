@@ -14,6 +14,17 @@
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
 
+#define DEV_HEALTH_MAX_STREAM_ID_LEN               32
+
+typedef struct {
+    char path[DEV_HEALTH_MAX_STREAM_ID_LEN];
+    unsigned long sampling_interval;
+    unsigned long reporting_interval;
+} dev_health_metrics_config_t;
+
+connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size);
+connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size);
+
 uint32_t cc_dev_health_get_posix_time(void);
 connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_net_latency_avg(unsigned int const index, int32_t * const value);
