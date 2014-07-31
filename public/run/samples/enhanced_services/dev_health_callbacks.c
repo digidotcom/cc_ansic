@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
+#include <unistd.h>
 #include "connector_api.h"
 
 /* #define DEBUG */
@@ -15,6 +16,91 @@
 #else
 #define PRINT_FUNCTION_NAME()
 #endif
+
+#define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
+
+static int get_executable_path(char * const path, unsigned int max_size)
+{
+    pid_t pid = getpid();
+    ssize_t error;
+    static char const executable_name[] = "connector";
+    char proc_path[PATH_MAX] = {0};
+
+    sprintf(proc_path, "/proc/%d/exe", pid);
+    error = readlink(proc_path, path, max_size);
+
+    if (error == -1)
+    {
+        perror("readlink");
+        goto done;
+    }
+    else
+    {
+        char * const end_of_path = path + strlen(path) - (sizeof executable_name - 1);
+        *end_of_path = '\0';
+    }
+
+done:
+    return error;
+}
+connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, size_t array_size)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    char dev_health_path[PATH_MAX] = {0};
+
+    get_executable_path(dev_health_path, sizeof dev_health_path);
+    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
+
+    if (access(dev_health_path, F_OK) != -1)
+    {
+        FILE *file;
+        unsigned int bytes_read;
+
+        file = fopen(dev_health_path, "r");
+        bytes_read = fread(metrics_array, sizeof metrics_array[0], array_size, file);
+        if (bytes_read == (sizeof metrics_array[0]) * array_size)
+        {
+            printf("Error while reading %s\n", dev_health_path);
+        }
+        fclose(file);
+    }
+    else
+    {
+        /* File does not exist */
+        size_t i;
+
+        for (i = 0; i < array_size; i++)
+        {
+            metrics_array[i].path[0] = '\0';
+            metrics_array[i].reporting_interval = 0;
+            metrics_array[i].sampling_interval = 0;
+        }
+    }
+
+    return status;
+}
+
+connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, size_t array_size)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    char dev_health_path[PATH_MAX] = {0};
+    FILE *file;
+    unsigned int bytes_read;
+
+    get_executable_path(dev_health_path, sizeof dev_health_path);
+    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
+
+    file = fopen(dev_health_path, "w");
+    bytes_read = fwrite(metrics_array, sizeof metrics_array[0], array_size, file);
+    if (bytes_read == (sizeof metrics_array[0]) * array_size)
+    {
+        printf("Error while reading %s\n", dev_health_path);
+    }
+    fclose(file);
+
+    return status;
+}
+
 
 uint32_t cc_dev_health_get_posix_time(void)
 {
@@ -421,3 +507,5 @@ connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, connec
     *value = "{\"type\": \"Point\",\"coordinates\": [-102.3046875, 36.1733569352216]}";
     return connector_true;
 }
+
+

@@ -22,8 +22,6 @@ typedef struct {
     connector_request_data_service_send_t send_request;
 } dev_health_data_push_t;
 
-typedef struct dev_health_metrics dev_health_metrics_t;
-
 STATIC connector_status_t dev_health_send_metrics(connector_data_t * const connector_ptr)
 {
     connector_status_t status;
@@ -87,38 +85,40 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 
             dev_health_setup_csv_data(connector_ptr);
 
-            for (i = 0; i < asizeof(connector_ptr->dev_health.metrics); i++)
+            for (i = 0; i < asizeof(connector_ptr->dev_health.metrics.config); i++)
             {
-                dev_health_metrics_t * const item = &connector_ptr->dev_health.metrics[i];
-                unsigned int const seconds_in_a_minute = 60;
-                unsigned int const sampling_interval = item->sampling_interval;
-                unsigned int const reporting_interval = item->reporting_interval * seconds_in_a_minute;
+                dev_health_metrics_config_t * const item = &connector_ptr->dev_health.metrics.config[i];
+                unsigned long const seconds_in_a_minute = 60;
+                unsigned long const sampling_interval = item->sampling_interval;
+                unsigned long const reporting_interval = item->reporting_interval * seconds_in_a_minute;
+                unsigned long * const sample_at = &connector_ptr->dev_health.metrics.times[i].sample_at;
+                unsigned long * const report_at = &connector_ptr->dev_health.metrics.times[i].report_at;
 
                 if (item->path[0] == '\0')
                 {
                     continue;
                 }
 
-                if (item->sample_at == 0)
+                if (*sample_at == 0)
                 {
-                    item->sample_at = now + sampling_interval;
+                    *sample_at = now + sampling_interval;
                 }
 
-                if (item->report_at == 0)
+                if (*report_at == 0)
                 {
-                    item->report_at = now + reporting_interval;
+                    *report_at = now + reporting_interval;
                 }
 
-                if (now >= item->sample_at)
+                if (now >= *sample_at)
                 {
                     dev_health_process_path(connector_ptr, item->path);
-                    item->sample_at = now + sampling_interval;
+                    *sample_at = now + sampling_interval;
                 }
 
-                if (now >= item->report_at)
+                if (now >= *report_at)
                 {
                     dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_READY_TO_SEND;
-                    item->report_at = now + reporting_interval;
+                    *report_at = now + reporting_interval;
                 }
             }
             break;

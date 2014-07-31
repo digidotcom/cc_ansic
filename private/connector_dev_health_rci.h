@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_t * const metrics_item, connector_remote_config_t const * const remote_config)
+STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_config_t * const metrics_item, connector_remote_config_t const * const remote_config)
 {
     connector_callback_status_t const status = connector_callback_continue;
 
@@ -24,13 +24,11 @@ STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_t * const met
         case connector_setting_enhanced_services_sampling_interval:
         {
             metrics_item->sampling_interval = remote_config->element.value->unsigned_integer_value;
-            metrics_item->sample_at = 0;
             break;
         }
         case connector_setting_enhanced_services_reporting_interval:
         {
             metrics_item->reporting_interval = remote_config->element.value->unsigned_integer_value;
-            metrics_item->report_at = 0;
             break;
         }
         default:
@@ -43,7 +41,7 @@ STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_t * const met
     return status;
 }
 
-STATIC connector_callback_status_t enhs_rci_query(dev_health_metrics_t const * const metrics_item, connector_remote_config_t * const remote_config)
+STATIC connector_callback_status_t enhs_rci_query(dev_health_metrics_config_t const * const metrics_item, connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t const status = connector_callback_continue;
 
@@ -76,7 +74,8 @@ STATIC connector_callback_status_t enhs_rci_query(dev_health_metrics_t const * c
 
 STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const connector_ptr, connector_request_id_remote_config_t const request_id, void * const data)
 {
-    connector_callback_status_t const status = connector_callback_continue;
+    connector_remote_config_t * const remote_config = data;
+    connector_callback_status_t status = connector_callback_continue;
 
     switch (request_id)
     {
@@ -85,27 +84,41 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
         case connector_request_id_remote_config_group_start:
         case connector_request_id_remote_config_group_end:
         case connector_request_id_remote_config_action_start:
-        case connector_request_id_remote_config_action_end:
         case connector_request_id_remote_config_session_cancel:
         case connector_request_id_remote_config_configurations:
             break;
 
         case connector_request_id_remote_config_group_process:
         {
-            connector_remote_config_t * const remote_config = data;
             unsigned int const group_index = remote_config->group.index - 1;
-            dev_health_metrics_t * const metrics_item = &connector_ptr->dev_health.metrics[group_index];
+            dev_health_metrics_config_t * const metrics_config_item = &connector_ptr->dev_health.metrics.config[group_index];
 
             switch (remote_config->action)
             {
                 case connector_remote_action_set:
                 {
-                    enhs_rci_set(metrics_item, remote_config);
+                    enhs_rci_set(metrics_config_item, remote_config);
                     break;
                 }
                 case connector_remote_action_query:
                 {
-                    enhs_rci_query(metrics_item, remote_config);
+                    enhs_rci_query(metrics_config_item, remote_config);
+                    break;
+                }
+            }
+            break;
+        }
+        case connector_request_id_remote_config_action_end:
+        {
+            switch (remote_config->action)
+            {
+                case connector_remote_action_set:
+                {
+                    status = cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
+                    break;
+                }
+                case connector_remote_action_query:
+                {
                     break;
                 }
             }
