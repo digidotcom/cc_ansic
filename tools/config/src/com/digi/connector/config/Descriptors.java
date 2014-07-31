@@ -179,16 +179,14 @@ public class Descriptors {
     }
 
     private int getBinId(BufferedReader bin_id_reader, String BinIdKey) throws IOException {
-        int id = -1;
-
         String respLine;
         String[] keys = null;
+        int id = -1;
         boolean found = false;
 
         respLine = bin_id_reader.readLine();
 
-        while (respLine != null && !found)
-        {
+        while (respLine != null && !found) {
 
             ConfigGenerator.debug_log(respLine);
 
@@ -196,10 +194,8 @@ public class Descriptors {
 
             if (keys.length == 2) 
             {
-                ConfigGenerator.debug_log("comparing " + BinIdKey + " with " + keys[0]);
                 if (keys[0].equals(BinIdKey))
                 {
-                    ConfigGenerator.debug_log("OK. bin_id= " + keys[1]);
                     found = true;
                     continue;
                 }
@@ -209,9 +205,7 @@ public class Descriptors {
         } 
 
         if (found == true)
-        {
              id = Integer.parseInt(keys[1]);
-        }
 
         return id;
     }
@@ -257,9 +251,7 @@ public class Descriptors {
         set_descriptors += "</descriptor>";
 
         if (useBinIdLog)
-        {
             bin_id_reader = new BufferedReader(new FileReader("bin_id_" + config_type + ".log"));
-        }
 
         for (Group group : groups) {
             if (!useBinIdLog)
@@ -345,7 +337,7 @@ public class Descriptors {
         uploadDescriptor("descriptor/query_" + config_type, query_descriptors);
         uploadDescriptor("descriptor/set_" + config_type, set_descriptors);
 
-        if (createBinIdLog){
+        if (createBinIdLog) {
             try {
                 BufferedWriter fileWriter = new BufferedWriter(new FileWriter("bin_id_" + config_type + ".log"));
 
@@ -358,9 +350,7 @@ public class Descriptors {
          }
 
         if (useBinIdLog)
-        {
             bin_id_reader.close();
-        }
     }
 
     private void sendRciDescriptors(ConfigData configData) throws IOException {
