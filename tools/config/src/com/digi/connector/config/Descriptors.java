@@ -269,8 +269,8 @@ public class Descriptors {
                 int group_id = getBinId(bin_id_reader, BinIdKey);
 
                 if (group_id == -1) {
-                    ConfigGenerator.log("BinIdKey not found: " + BinIdKey + " !!!!!!");
-                    /* TODO: error handling */
+                    ConfigGenerator.log("Fatal: BinIdKey not found: " + BinIdKey + " !!!!!!");
+                    return;
                 }
 
                 query_descriptors += group.toString(group_id);
@@ -291,8 +291,8 @@ public class Descriptors {
                     int element_id = getBinId(bin_id_reader, BinIdKey);
 
                     if (element_id == -1) {
-                        ConfigGenerator.log("BinIdKey not found: " + BinIdKey + " !!!!!!");
-                        /* TODO: error handling */
+                        ConfigGenerator.log("Fatal: BinIdKey not found: " + BinIdKey + " !!!!!!");
+                        return;
                     }
 
                     query_descriptors += element.toString(element_id);
@@ -311,8 +311,8 @@ public class Descriptors {
                             int value_id = getBinId(bin_id_reader, BinIdKey);
 
                             if (value_id == -1) {
-                                ConfigGenerator.log("BinIdKey not found: " + BinIdKey + " !!!!!!");
-                                /* TODO: error handling */
+                                ConfigGenerator.log("Fatal: BinIdKey not found: " + BinIdKey + " !!!!!!");
+                                return;
                             }
 
                             query_descriptors += value.toString(value_id);
