@@ -501,7 +501,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #if (defined CONNECTOR_DEVICE_HEALTH)
     {
         connector_callback_status_t const status = cc_dev_health_load_metrics(connector_handle->dev_health.metrics.config, asizeof(connector_handle->dev_health.metrics.config));
-        size_t i;
+        unsigned int i;
 
         connector_handle->dev_health.info.csv.data = NULL;
         connector_handle->dev_health.info.csv.total_size = 0;
