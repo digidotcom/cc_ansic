@@ -26,7 +26,7 @@ connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config
 connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, size_t array_size);
 
 char * cc_dev_health_malloc_string(size_t size);
-void cc_dev_health_free_string(char * string);
+void cc_dev_health_free_string(char const * const string);
 
 uint32_t cc_dev_health_get_posix_time(void);
 connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value);

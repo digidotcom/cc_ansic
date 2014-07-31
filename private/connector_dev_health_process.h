@@ -113,7 +113,7 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
             connector_bool_t const needs_quotes = string_needs_quotes(value->string);
             unsigned int const temp_csv_size = ENHS_REALLOC_SIZE;
             dp_process_string(value->string, csv, temp_csv_size, NULL, needs_quotes, connector_true);
-            cc_dev_health_free_string((char *)value->string);
+            cc_dev_health_free_string(value->string);
             break;
         }
         case DEV_HEALTH_TYPE_NONE:

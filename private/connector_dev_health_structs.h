@@ -71,18 +71,22 @@ STATIC unsigned int count_special_chars(char const * const string)
     return escaped_chars;
 }
 
-STATIC void escape_string(char * * string)
+STATIC void escape_string(char * * const string)
 {
-    unsigned int escape_chars = count_special_chars(*string);
+    unsigned int escape_chars;
+
+    ASSERT(*string != NULL);
+    escape_chars = count_special_chars(*string);
 
     if (escape_chars)
     {
         unsigned int const new_size = strlen(*string) + escape_chars + 1;
-        char * string_scaped = cc_dev_health_malloc_string(new_size);
+        char * string_escaped = cc_dev_health_malloc_string(new_size);
 
-        dp_process_string(*string, string_scaped, new_size, NULL, connector_false, connector_true);
+        ASSERT(string_escaped != NULL);
+        dp_process_string(*string, string_escaped, new_size, NULL, connector_false, connector_true);
         cc_dev_health_free_string(*string);
-        *string = string_scaped;
+        *string = string_escaped;
     }
 }
 
@@ -107,6 +111,10 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(unsigned int const 
         cc_dev_health_get_mobile_module_network(index, &network);
         cc_dev_health_get_mobile_module_sims(index, &sims);
         cc_dev_health_get_mobile_module_active_sim(index, &active_sim);
+
+        ASSERT(modem_id != NULL);
+        ASSERT(cell_id != NULL);
+        ASSERT(network != NULL);
 
         escape_string(&modem_id);
         escape_string(&cell_id);
@@ -140,9 +148,14 @@ STATIC connector_bool_t cc_dev_health_get_mobile_sim0_json(unsigned int const in
         int json_size;
 
         ASSERT(sim0_json != NULL);
+
         cc_dev_health_get_sim0_iccid(index, &iccid);
         cc_dev_health_get_sim0_imsi(index, &imsi);
         cc_dev_health_get_sim0_phone_num(index, &phone_num);
+
+        ASSERT(iccid != NULL);
+        ASSERT(imsi != NULL);
+        ASSERT(phone_num != NULL);
 
         escape_string(&iccid);
         escape_string(&imsi);
@@ -178,14 +191,18 @@ STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(unsigned int const ind
 
         ASSERT(radio_json != NULL);
 
-        escape_string(&mode);
-        escape_string(&ssid);
-        escape_string(&protocol);
-
         cc_dev_health_get_wifi_radio_mode(index, &mode);
         cc_dev_health_get_wifi_radio_ssid(index, &ssid);
         cc_dev_health_get_wifi_radio_protocol(index, &protocol);
         cc_dev_health_get_wifi_radio_channel(index, &channel);
+
+        ASSERT(mode != NULL);
+        ASSERT(ssid != NULL);
+        ASSERT(protocol != NULL);
+
+        escape_string(&mode);
+        escape_string(&ssid);
+        escape_string(&protocol);
 
         json_size = sprintf(radio_json, radio_json_format, mode, ssid, channel, protocol);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */

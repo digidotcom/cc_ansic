@@ -108,9 +108,9 @@ char * cc_dev_health_malloc_string(size_t size)
     return malloc(size);
 }
 
-void cc_dev_health_free_string(char * string)
+void cc_dev_health_free_string(char const * const string)
 {
-    free(string);
+    free((void *)string);
 }
 
 uint32_t cc_dev_health_get_posix_time(void)
