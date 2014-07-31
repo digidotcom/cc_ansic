@@ -130,16 +130,18 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
             if (status == connector_success)
             {
                 dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_SENDING;
+                printf("Sending *%s*\n", dev_health_info->csv.data);
             }
             else
             {
-                connector_debug_line("Enhanced Services: couldn't send metrics, reasong %d, retrying", status);
+                connector_debug_line("Enhanced Services: couldn't send metrics, reason %d, retrying", status);
             }
             break;
         }
         case DEV_HEALTH_CSV_STATUS_SENDING:
             break;
         case DEV_HEALTH_CSV_STATUS_SENT:
+            connector_ptr->dev_health.info.csv.free_bytes = connector_ptr->dev_health.info.csv.total_size;
             connector_ptr->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
             break;
     }
