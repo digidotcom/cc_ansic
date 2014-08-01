@@ -215,6 +215,39 @@ typedef struct connector_data {
     connector_remote_config_data_t rci_data;
 #endif
 
+#if (defined CONNECTOR_DEVICE_HEALTH)
+    struct {
+        struct dev_health_info {
+            struct {
+                char string[DEV_HEALTH_MAX_STREAM_ID_LEN];
+                unsigned int len;
+            } stream_id;
+
+            struct {
+                char * data;
+                unsigned int total_size;
+                unsigned int free_bytes;
+                enum {
+                    DEV_HEALTH_CSV_STATUS_PROCESSING,
+                    DEV_HEALTH_CSV_STATUS_READY_TO_SEND,
+                    DEV_HEALTH_CSV_STATUS_SENDING,
+                    DEV_HEALTH_CSV_STATUS_SENT
+                } status;
+            } csv;
+        } info;
+
+        struct {
+            dev_health_metrics_config_t config[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+            struct {
+                unsigned long sample_at;
+                unsigned long report_at;
+            } times[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
+        } metrics;
+
+        unsigned int last_check;
+    } dev_health;
+#endif
+
     struct {
         enum {
             connector_state_running,

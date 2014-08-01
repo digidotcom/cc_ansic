@@ -18,11 +18,21 @@ typedef enum
     data_service_opcode_device_response
 } data_service_opcode_t;
 
+typedef enum {
+    connector_send_data_initiator_user
+#if (defined CONNECTOR_DATA_POINTS)
+    ,connector_send_data_initiator_data_point
+#endif
+#if (defined CONNECTOR_DEVICE_HEALTH)
+    ,connector_send_data_initiator_enhanced_services
+#endif
+} connector_send_data_initiator_t;
+
 typedef struct
 {
     void * callback_context;
     connector_request_data_service_send_t const * header;
-    connector_bool_t dp_request;
+    connector_send_data_initiator_t request_initiator;
     connector_request_id_data_service_t request_type;
 } data_service_context_t;
 
@@ -231,7 +241,6 @@ STATIC connector_status_t process_data_service_device_request(connector_data_t *
             data_service = ptr;
             session->service_context = data_service;
             data_service->callback_context = NULL;
-            data_service->dp_request = connector_false;
             data_service->request_type = connector_request_id_data_service_receive_target;
         }
     }
@@ -392,7 +401,6 @@ STATIC connector_status_t process_data_service_device_response(connector_data_t 
 
     if (!device_request.more_data)
     {
-        data_service->dp_request = connector_true;
         MsgSetLastData(service_data->flags);
     }
     service_data->length_in_bytes = device_request.bytes_used + header_length;
@@ -565,19 +573,31 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
     data_service_context_t * const context = (session != NULL) ? session->service_context : NULL;
     connector_callback_status_t callback_status = connector_callback_continue;
 
-    if ((context == NULL) || (context->dp_request == connector_false))
+    switch (context->request_initiator)
     {
-        connector_request_id_t request;
+#if (defined CONNECTOR_DATA_POINTS)
+        case connector_send_data_initiator_data_point:
+        {
+            callback_status = dp_handle_callback(connector_ptr, request_id, cb_data);
+            break;
+        }
+#endif
+#if (defined CONNECTOR_DEVICE_HEALTH)
+        case connector_send_data_initiator_enhanced_services:
+        {
+            callback_status = dev_health_handle_callback(connector_ptr, request_id, cb_data);
+            break;
+        }
+#endif
+        case connector_send_data_initiator_user:
+        {
+            connector_request_id_t request;
 
-        request.data_service_request = request_id;
-        callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request, cb_data, connector_ptr->context);
+            request.data_service_request = request_id;
+            callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request, cb_data, connector_ptr->context);
+            break;
+        }
     }
-    #if (defined CONNECTOR_DATA_POINTS)
-    else
-    {
-        callback_status = dp_handle_callback(connector_ptr, request_id, cb_data);
-    }
-    #endif
 
     switch (callback_status)
     {
@@ -854,24 +874,31 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     ds_ptr->request_type = connector_request_id_data_service_send_data;
     session->service_context = ds_ptr;
 
-    #if (defined CONNECTOR_DATA_POINTS)
-    {
-        if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
-        {
-            char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
-
-            memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
-
-            ds_ptr->dp_request = connector_true;
-        }
-        else
-        {
-            ds_ptr->dp_request = connector_false;
-        }
-    }
-    #else
-    ds_ptr->dp_request = connector_false;
+    #if !(defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DEVICE_HEALTH)
+    ds_ptr->request_initiator = connector_send_data_initiator_user;
     #endif
+
+    #if (defined CONNECTOR_DATA_POINTS)
+    if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
+    {
+        char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
+
+        memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
+
+        ds_ptr->request_initiator = connector_send_data_initiator_data_point;
+        goto done;
+    }
+    #endif
+
+    #if (defined CONNECTOR_DEVICE_HEALTH)
+    if (strncmp(ds_ptr->header->path, dev_health_path, dev_health_path_strlen) == 0)
+    {
+        ds_ptr->request_initiator = connector_send_data_initiator_enhanced_services;
+        goto done;
+    }
+    #endif
+
+    ds_ptr->request_initiator = connector_send_data_initiator_user;
 
     goto done;
 
