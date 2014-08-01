@@ -184,25 +184,18 @@ public class Descriptors {
         int id = -1;
         boolean found = false;
 
-        respLine = bin_id_reader.readLine();
-
-        while (respLine != null && !found) {
+        do {
+            respLine = bin_id_reader.readLine();
+            if (respLine == null)
+                break;
 
             ConfigGenerator.debug_log(respLine);
 
             keys = respLine.split("=", 2);
 
-            if (keys.length == 2) 
-            {
-                if (keys[0].equals(BinIdKey))
-                {
-                    found = true;
-                    continue;
-                }
-            }
-
-            respLine = bin_id_reader.readLine();
-        } 
+            if (keys.length == 2 && keys[0].equals(BinIdKey))
+                found = true;
+        } while (!found);
 
         if (found == true)
              id = Integer.parseInt(keys[1]);
