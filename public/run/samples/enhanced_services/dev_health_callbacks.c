@@ -102,6 +102,16 @@ connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config
 }
 
 
+char * cc_dev_health_malloc_string(size_t size)
+{
+    return malloc(size);
+}
+
+void cc_dev_health_free_string(char const * const string)
+{
+    free((void *)string);
+}
+
 uint32_t cc_dev_health_get_posix_time(void)
 {
     time_t const posix_time = time(NULL);
@@ -143,25 +153,76 @@ unsigned int cc_dev_health_get_mobile_instances(void)
 {
     PRINT_FUNCTION_NAME();
 
-    return 1;
+    return 2;
 }
 
-connector_bool_t cc_dev_health_get_mobile_module(unsigned int const index, connector_geojson_t * const value)
+#define MAX_STRING  64
+
+void cc_dev_health_get_mobile_module_modem_id(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "My \"Modem\" \\ID\\");
+}
+
+void cc_dev_health_get_mobile_module_cell_id(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "My Cell ID");
+}
+
+void cc_dev_health_get_mobile_module_network(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "AT&T");
+}
+
+void cc_dev_health_get_mobile_module_sims(unsigned int const index, unsigned int * const value)
 {
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
+    *value = 2;
+}
+
+void cc_dev_health_get_mobile_module_active_sim(unsigned int const index, unsigned int * const value)
+{
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    *value = 1;
+}
+
+connector_bool_t cc_dev_health_mobile_module_present(unsigned int const index)
+{
+    UNUSED_ARGUMENT(index);
+    PRINT_FUNCTION_NAME();
     return connector_true;
 }
 
-
-connector_bool_t cc_dev_health_get_mobile_status(unsigned int const index, char const * * const value)
+connector_bool_t cc_dev_health_get_mobile_sim0_present(unsigned int const index)
 {
+    UNUSED_ARGUMENT(index);
+    PRINT_FUNCTION_NAME();
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_status(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "Status";
+    strcpy(*value, "Status");
     return connector_true;
 }
 
@@ -226,12 +287,13 @@ connector_bool_t cc_dev_health_get_mobile_snr(unsigned int const index, int32_t 
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_registration(unsigned int const index, char const * * const value)
+connector_bool_t cc_dev_health_get_mobile_registration(unsigned int const index, char * * const value)
 {
+    *value = cc_dev_health_malloc_string(MAX_STRING);
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "Registration";
+    strcpy(*value, "Registration");
     return connector_true;
 }
 
@@ -275,23 +337,40 @@ connector_bool_t cc_dev_health_get_mobile_temperature(unsigned int const index, 
     return connector_true;
 }
 
-
-connector_bool_t cc_dev_health_get_mobile_sim0(unsigned int const index, connector_geojson_t * const value)
+void cc_dev_health_get_sim0_iccid(unsigned int const index, char * * const value)
 {
+    *value = cc_dev_health_malloc_string(MAX_STRING);
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
-    return connector_true;
+    strcpy(*value, "My ICCID");
 }
 
-
-connector_bool_t cc_dev_health_get_mobile_sim0_status(unsigned int const index, char const * * const value)
+void cc_dev_health_get_sim0_imsi(unsigned int const index, char * * const value)
 {
+    *value = cc_dev_health_malloc_string(MAX_STRING);
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "sim0 status";
+    strcpy(*value, "My IMSI");
+}
+
+void cc_dev_health_get_sim0_phone_num(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "My Phone Num");
+}
+
+connector_bool_t cc_dev_health_get_mobile_sim0_status(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "sim0 status");
     return connector_true;
 }
 
@@ -359,22 +438,57 @@ unsigned int cc_dev_health_get_wifi_instances(void)
     return 1;
 }
 
-connector_bool_t cc_dev_health_get_wifi_radio(unsigned int const index, connector_geojson_t * const value)
+connector_bool_t cc_dev_health_get_wifi_radio_present(unsigned int const index)
 {
     UNUSED_ARGUMENT(index);
-
-    PRINT_FUNCTION_NAME();
-    *value = "{\"topic\" : \"battery\",\"status\": \"reset\"}";
     return connector_true;
 }
 
+void cc_dev_health_get_wifi_radio_mode(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
 
-connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char const * * const value)
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "client");
+}
+
+void cc_dev_health_get_wifi_radio_ssid(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "SSID");
+}
+
+void cc_dev_health_get_wifi_radio_channel(unsigned int const index, unsigned int * const value)
 {
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "wifi status";
+    *value = 3;
+}
+
+void cc_dev_health_get_wifi_radio_protocol(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "Wifi Protocol");
+}
+
+
+connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(index);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "wifi status");
     return connector_true;
 }
 
@@ -499,13 +613,24 @@ connector_bool_t cc_dev_health_get_system_bigbuf_used(unsigned int const index, 
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, connector_geojson_t * const value)
+connector_bool_t cc_dev_health_get_gps_location_present(unsigned int const index)
+{
+    UNUSED_ARGUMENT(index);
+    return connector_true;
+}
+
+void cc_dev_health_get_gps_location_latitude(unsigned int const index, float * const value)
 {
     UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
-    *value = "{\"type\": \"Point\",\"coordinates\": [-102.3046875, 36.1733569352216]}";
-    return connector_true;
+    *value = -26.47;
 }
 
+void cc_dev_health_get_gps_location_longitude(unsigned int const index, float * const value)
+{
+    UNUSED_ARGUMENT(index);
 
+    PRINT_FUNCTION_NAME();
+    *value = 60.27;
+}

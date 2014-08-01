@@ -28,6 +28,7 @@ STATIC connector_bool_t string_needs_quotes(char const * const string)
             case '\t':
             case '\n':
             case '\r':
+            case '\\':
                 need_quotes = connector_true;
                 break;
             default:
@@ -59,7 +60,7 @@ STATIC size_t dp_process_string(char const * const string, char * const buffer, 
 
     for (i = 0; string[i] != '\0'; i++)
     {
-        if (string[i] == '\"')
+        if (string[i] == '\"' || string[i] == '\\')
         {
             if (bytes_processed < max_strlen)
             {

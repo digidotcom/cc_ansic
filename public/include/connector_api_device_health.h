@@ -25,6 +25,9 @@ typedef struct {
 connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size);
 connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size);
 
+char * cc_dev_health_malloc_string(size_t size);
+void cc_dev_health_free_string(char const * const string);
+
 uint32_t cc_dev_health_get_posix_time(void);
 connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_net_latency_avg(unsigned int const index, int32_t * const value);
@@ -32,21 +35,32 @@ connector_bool_t cc_dev_health_get_net_latency_max(unsigned int const index, int
 
 unsigned int cc_dev_health_get_mobile_instances(void);
 
-connector_bool_t cc_dev_health_get_mobile_module(unsigned int const index, connector_json_t * const value);
-connector_bool_t cc_dev_health_get_mobile_status(unsigned int const index, char const * * const value);
+void cc_dev_health_get_mobile_module_modem_id(unsigned int const index, char * * const value);
+void cc_dev_health_get_mobile_module_cell_id(unsigned int const index, char * * const value);
+void cc_dev_health_get_mobile_module_network(unsigned int const index, char * * const value);
+void cc_dev_health_get_mobile_module_sims(unsigned int const index, unsigned int * const value);
+void cc_dev_health_get_mobile_module_active_sim(unsigned int const index, unsigned int * const value);
+
+void cc_dev_health_get_sim0_iccid(unsigned int const index, char * * const value);
+void cc_dev_health_get_sim0_imsi(unsigned int const index, char * * const value);
+void cc_dev_health_get_sim0_phone_num(unsigned int const index, char * * const value);
+
+connector_bool_t cc_dev_health_mobile_module_present(unsigned int const index);
+connector_bool_t cc_dev_health_get_mobile_sim0_present(unsigned int const index);
+
+connector_bool_t cc_dev_health_get_mobile_status(unsigned int const index, char * * const value);
 connector_bool_t cc_dev_health_get_mobile_rssi(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_ecio(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_rsrp(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_rsrq(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_sinr(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_snr(unsigned int const index, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_registration(unsigned int const index, char const * * const value);
+connector_bool_t cc_dev_health_get_mobile_registration(unsigned int const index, char * * const value);
 connector_bool_t cc_dev_health_get_mobile_lac(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_tac(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_session(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_temperature(unsigned int const index, float * const value);
-connector_bool_t cc_dev_health_get_mobile_sim0(unsigned int const index, connector_json_t * const value);
-connector_bool_t cc_dev_health_get_mobile_sim0_status(unsigned int const index, char const * * const value);
+connector_bool_t cc_dev_health_get_mobile_sim0_status(unsigned int const index, char * * const value);
 
 unsigned int cc_dev_health_get_eth_instances(void);
 
@@ -58,8 +72,13 @@ connector_bool_t cc_dev_health_get_eth_dropped_packets(unsigned int const index,
 
 unsigned int cc_dev_health_get_wifi_instances(void);
 
-connector_bool_t cc_dev_health_get_wifi_radio(unsigned int const index, connector_json_t * const value);
-connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char const * * const value);
+void cc_dev_health_get_wifi_radio_mode(unsigned int const index, char * * const value);
+void cc_dev_health_get_wifi_radio_ssid(unsigned int const index, char * * const value);
+void cc_dev_health_get_wifi_radio_channel(unsigned int const index, unsigned int * const value);
+void cc_dev_health_get_wifi_radio_protocol(unsigned int const index, char * * const value);
+connector_bool_t cc_dev_health_get_wifi_radio_present(unsigned int const index);
+
+connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char * * const value);
 connector_bool_t cc_dev_health_get_wifi_rssi(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_wifi_rate(unsigned int const index, float * const value);
 connector_bool_t cc_dev_health_get_wifi_clients(unsigned int const index, int32_t * const value);
@@ -74,7 +93,9 @@ connector_bool_t cc_dev_health_get_system_buf_used(unsigned int const index, int
 connector_bool_t cc_dev_health_get_system_bigbuf_free(unsigned int const index, int32_t * const value);
 connector_bool_t cc_dev_health_get_system_bigbuf_used(unsigned int const index, int32_t * const value);
 
-connector_bool_t cc_dev_health_get_gps_location(unsigned int const index, connector_json_t * const value);
+void cc_dev_health_get_gps_location_latitude(unsigned int const index, float * const value);
+void cc_dev_health_get_gps_location_longitude(unsigned int const index, float * const value);
+connector_bool_t cc_dev_health_get_gps_location_present(unsigned int const index);
 
 #endif
 

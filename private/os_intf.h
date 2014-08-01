@@ -109,7 +109,7 @@ STATIC connector_status_t get_system_time(connector_data_t * const connector_ptr
     return result;
 }
 
-#ifndef CONNECTOR_NO_MALLOC
+#if !(defined CONNECTOR_NO_MALLOC)
 STATIC connector_status_t malloc_cb(connector_callback_t const callback, size_t const length, void ** ptr, void * const context)
 {
     connector_status_t result = connector_working;
@@ -235,7 +235,7 @@ STATIC connector_status_t free_data_buffer(connector_data_t * const connector_pt
 {
     connector_status_t status = connector_working;
 
-#ifndef CONNECTOR_NO_MALLOC
+#if !(defined CONNECTOR_NO_MALLOC)
     UNUSED_PARAMETER(id);
     status = free_data(connector_ptr, ptr);
 #else

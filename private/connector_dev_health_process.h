@@ -43,11 +43,14 @@ static connector_status_t dev_health_setup_csv_data(connector_data_t * const con
         }
         dev_health_info->csv.data = allocated_memory;
         dev_health_info->csv.total_size = total_bytes;
+        dev_health_info->csv.free_bytes = total_bytes;
     }
-
-    strcpy(dev_health_info->csv.data, csv_header);
-    dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
-    dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
+    else if (dev_health_info->csv.free_bytes == dev_health_info->csv.total_size)
+    {
+        strcpy(dev_health_info->csv.data, csv_header);
+        dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
+        dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
+    }
 
 done:
     return status;
@@ -110,6 +113,7 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
             connector_bool_t const needs_quotes = string_needs_quotes(value->string);
             unsigned int const temp_csv_size = ENHS_REALLOC_SIZE;
             dp_process_string(value->string, csv, temp_csv_size, NULL, needs_quotes, connector_true);
+            cc_dev_health_free_string(value->string);
             break;
         }
         case DEV_HEALTH_TYPE_NONE:
@@ -188,15 +192,7 @@ STATIC void dev_health_process_item(connector_data_t * const connector_ptr, dev_
             break;
         }
         case DEV_HEALTH_TYPE_STRING:
-        {
-            item_present = function(index, &value.string);
-            break;
-        }
         case DEV_HEALTH_TYPE_JSON:
-        {
-            item_present = function(index, &value.string);
-            break;
-        }
         case DEV_HEALTH_TYPE_GEOJSON:
         {
             item_present = function(index, &value.string);
