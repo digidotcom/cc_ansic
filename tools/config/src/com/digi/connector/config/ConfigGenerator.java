@@ -545,7 +545,7 @@ public class ConfigGenerator {
     }
 
     public static boolean createBinIdLogOption() {
-        return createBinIdLog;
+        return createBinIdLog && !useBinIdLog;
     }
 
     public static boolean useBinIdLogOption() {
