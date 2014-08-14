@@ -215,7 +215,6 @@ public class Parser {
             }
 
         }
-        System.out.println(result);
         return result;
     }
 

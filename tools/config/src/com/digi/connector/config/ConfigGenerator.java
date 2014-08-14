@@ -27,6 +27,7 @@ public class ConfigGenerator {
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
     private final static String PROTOTYPES_OPTION = "use_prototypes";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
+    private final static String NO_UPLOAD_OPTION = "noUpload";
     private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
     private final static String USE_BIN_ID_LOG_OPTION = "useBinIdLog";
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
@@ -68,6 +69,7 @@ public class ConfigGenerator {
     private static boolean deleteDescriptor;
     private static boolean prototypes;
     private static boolean saveDescriptor;
+    private static boolean noUpload;
     private static boolean createBinIdLog;
     private static boolean useBinIdLog;
     private static boolean rci_legacy;
@@ -228,6 +230,11 @@ public class ConfigGenerator {
                             DASH + SAVE_DESCRIPTORS_OPTION));
             log(String
                     .format(
+                            "\t%-16s \t= No upload Descriptors to Device Cloud.If this option and -vendor are set,you don't" +
+                            " need to use a valid username:password.",
+                            DASH + NO_UPLOAD_OPTION));
+            log(String
+                    .format(
                             "\t%-16s \t= create bin_id log",
                             DASH + CREATE_BIN_ID_LOG_OPTION));
             log(String
@@ -333,6 +340,8 @@ public class ConfigGenerator {
                 prototypes = true;
             } else if (option.equals(SAVE_DESCRIPTORS_OPTION)) {
                 saveDescriptor = true;
+            } else if (option.equals(NO_UPLOAD_OPTION)) {
+                noUpload = true;
             } else if (option.equals(CREATE_BIN_ID_LOG_OPTION)) {
                 createBinIdLog = true;
             } else if (option.equals(USE_BIN_ID_LOG_OPTION)) {
@@ -531,7 +540,7 @@ public class ConfigGenerator {
     public static FileType fileTypeOption() {
         return fileType;
     }
-    
+
     public static UseNames useNamesOption() {
         return useNames;
     }
@@ -542,6 +551,10 @@ public class ConfigGenerator {
 
     public static boolean saveDescriptorOption() {
         return saveDescriptor;
+    }
+
+    public static boolean noUploadOption() {
+        return noUpload;
     }
 
     public static boolean createBinIdLogOption() {
@@ -621,7 +634,8 @@ public class ConfigGenerator {
 
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
-                descriptors.processDescriptors(configData);
+                if(!noUpload)
+					descriptors.processDescriptors(configData);
 
                 break;
 
@@ -635,7 +649,8 @@ public class ConfigGenerator {
 
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
-                descriptorsSource.processDescriptors(configData);
+                if(!noUpload)
+                    descriptorsSource.processDescriptors(configData);
                 break;
 
             case GLOBAL_HEADER:

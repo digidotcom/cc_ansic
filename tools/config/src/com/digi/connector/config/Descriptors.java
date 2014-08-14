@@ -45,7 +45,9 @@ public class Descriptors {
         Descriptors.deviceType = deviceType;
         this.fwVersion = version;
 
-        validateUrlName();
+        if(!ConfigGenerator.noUploadOption())
+            validateUrlName();
+
         Descriptors.vendorId = vendorId;
         if (vendorId == null) getVendorId();
         else {
