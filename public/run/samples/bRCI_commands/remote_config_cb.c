@@ -65,6 +65,7 @@ static connector_callback_status_t app_process_session_start(connector_remote_co
     session_ptr = ptr;
     session_ptr->group = NULL;
     session_ptr->group_context = NULL;
+    session_ptr->buf_ptr = NULL;
 
 done:
     remote_config->user_context = ptr;
@@ -73,11 +74,19 @@ done:
 
 static connector_callback_status_t app_process_session_end(connector_remote_config_t * const remote_config)
 {
+    remote_group_session_t * const session_ptr = remote_config->user_context;
+
     APP_DEBUG("app_process_session_end\n");
 
-    if (remote_config->user_context != NULL)
+    if (session_ptr != NULL)
     {
-        free(remote_config->user_context);
+        if (session_ptr->buf_ptr != NULL)
+        {
+            free(session_ptr->buf_ptr);
+            session_ptr->buf_ptr = NULL;
+        }
+
+        free(session_ptr);
     }
     return connector_callback_continue;
 }
@@ -186,6 +195,14 @@ static connector_callback_status_t app_process_session_cancel(connector_remote_c
 
         if (group_ptr != NULL && group_ptr->cancel_cb != NULL)
             group_ptr->cancel_cb(remote_config);
+
+
+        if (session_ptr->buf_ptr != NULL)
+        {
+            free(session_ptr->buf_ptr);
+            session_ptr->buf_ptr = NULL;
+        }
+
         free(session_ptr);
     }
     return status;
@@ -199,9 +216,10 @@ static connector_callback_status_t app_process_remote_configuration(connector_re
     return status;
 }
 
-connector_callback_status_t app_process_do_command(char const * const target, char const * const request_payload, char const * * response_payload)
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const target, char const * const request_payload, char const * * response_payload)
 {
     connector_callback_status_t status = connector_callback_continue;
+    remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
 
     APP_DEBUG("app_process_do_command for target '%s':\n", target);
     APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
@@ -235,6 +253,22 @@ connector_callback_status_t app_process_do_command(char const * const target, ch
         else
         {
             *response_payload = "I returned busy twice";
+        }
+    }
+    else if (!strcmp(target, "user_alloc"))
+    {
+        #define USER_ALLOCATED_MEM "user allocated memory answer"
+
+        char * user_allocated_mem = malloc(sizeof (USER_ALLOCATED_MEM));
+
+        if (user_allocated_mem != NULL)
+        {
+            memcpy(user_allocated_mem, USER_ALLOCATED_MEM, sizeof (USER_ALLOCATED_MEM));
+
+            /* Update session so buffer is freed in the session_end callback */
+            session_ptr->buf_ptr = user_allocated_mem;
+
+            *response_payload = user_allocated_mem;
         }
     }
     else
