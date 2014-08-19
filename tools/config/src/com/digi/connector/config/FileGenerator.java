@@ -488,6 +488,10 @@ public abstract class FileGenerator {
             fileWriter.write(RCI_LEGACY_DEFINE);
             fileWriter.write(String.format("%sRCI_DO_COMMAND_TARGET_MAX_LEN %d\n", DEFINE,ConfigData.DoCommandMaxLen()));
         }
+        if(ConfigGenerator.deviceHealthOption()){
+            fileWriter.write("\n" + DEFINE + "CONNECTOR_DEVICE_HEALTH \n");
+            fileWriter.write(DEFINE + "CONNECTOR_DEVICE_HEALTH_MAX_METRICS 8 \n");
+        }
 
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
