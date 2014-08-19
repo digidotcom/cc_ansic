@@ -83,7 +83,6 @@ static connector_callback_status_t app_process_session_end(connector_remote_conf
         if (session_ptr->buf_ptr != NULL)
         {
             free(session_ptr->buf_ptr);
-            session_ptr->buf_ptr = NULL;
         }
 
         free(session_ptr);
@@ -200,7 +199,6 @@ static connector_callback_status_t app_process_session_cancel(connector_remote_c
         if (session_ptr->buf_ptr != NULL)
         {
             free(session_ptr->buf_ptr);
-            session_ptr->buf_ptr = NULL;
         }
 
         free(session_ptr);
