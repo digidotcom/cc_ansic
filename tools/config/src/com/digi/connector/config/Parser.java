@@ -9,7 +9,7 @@ import javax.script.ScriptEngineManager;
 public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
-    private final static int MAX_NAME_LENGTH = 200;
+    private final static int MAX_NAME_LENGTH = 40;
 
     // PRIVATE variables
     private static TokenScanner tokenScanner;
