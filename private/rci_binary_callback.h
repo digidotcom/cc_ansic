@@ -228,7 +228,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
         {
-            connector_callback_status_t const status = app_process_do_command(rci->command.do_command.target, remote_config->element.value->string_value, &rci->command.do_command.response_string);
+            connector_callback_status_t const status = app_process_do_command(callback_data, rci->command.do_command.target, remote_config->element.value->string_value, &rci->command.do_command.response_string);
             if (status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);

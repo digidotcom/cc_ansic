@@ -15,7 +15,7 @@
 #define RCI_DO_COMMAND_ATTRIBUTE_COUNT 1
 #define RCI_DO_COMMAND_TARGET_BIN_ID 0     /* 'target' attribute is bin_id=0 in the uploaded descriptor */
 
-connector_callback_status_t app_process_do_command(char const * const target, char const * const request_payload, char const * * response_payload);
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const target, char const * const request_payload, char const * * response_payload);
 connector_callback_status_t app_process_set_factory_default(void);
 #endif
 

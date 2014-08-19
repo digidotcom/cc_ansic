@@ -30,6 +30,7 @@ typedef struct remote_group_table {
 typedef struct {
     remote_group_table_t * group;
     void * group_context;
+    char * buf_ptr;
 } remote_group_session_t;
 
 extern connector_callback_status_t app_gps_stats_group_get(connector_remote_config_t * const remote_config);
