@@ -134,24 +134,24 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(unsigned int const 
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_sim0_json(unsigned int const index, connector_json_t * const value)
+STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(unsigned int const index, connector_json_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_get_mobile_sim0_present(index);
+    connector_bool_t const present = cc_dev_health_get_mobile_net_present(index);
 
     if (present)
     {
-        char * const sim0_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char sim0_json_format[] = "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}";
+        char * const sim_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
+        static const char sim_json_format[] = "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}";
         char * iccid = NULL;
         char * imsi = NULL;
         char * phone_num = NULL;
         int json_size;
 
-        ASSERT(sim0_json != NULL);
+        ASSERT(sim_json != NULL);
 
-        cc_dev_health_get_sim0_iccid(index, &iccid);
-        cc_dev_health_get_sim0_imsi(index, &imsi);
-        cc_dev_health_get_sim0_phone_num(index, &phone_num);
+        cc_dev_health_get_mobile_net_sim_iccid(index, &iccid);
+        cc_dev_health_get_mobile_net_sim_imsi(index, &imsi);
+        cc_dev_health_get_mobile_net_sim_phone_num(index, &phone_num);
 
         ASSERT(iccid != NULL);
         ASSERT(imsi != NULL);
@@ -161,7 +161,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_sim0_json(unsigned int const in
         escape_string(&imsi);
         escape_string(&phone_num);
 
-        json_size = sprintf(sim0_json, sim0_json_format, iccid, imsi, phone_num);
+        json_size = sprintf(sim_json, sim_json_format, iccid, imsi, phone_num);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -169,7 +169,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_sim0_json(unsigned int const in
         cc_dev_health_free_string(imsi);
         cc_dev_health_free_string(phone_num);
 
-        *value = sim0_json;
+        *value = sim_json;
     }
 
     return present;
@@ -270,9 +270,78 @@ static dev_health_path_group_t const dev_health_net_latency =
     }
 };
 
+static const dev_health_item_t dev_health_net_transactions_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_transactions_count};
+
+static dev_health_item_t const * const dev_health_net_transactions_elements[] =
+{
+    &dev_health_net_transactions_count,
+};
+
+static dev_health_path_group_t const dev_health_net_transactions =
+{
+    "transactions",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                dev_health_net_transactions_elements,
+                asizeof(dev_health_net_transactions_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_net_drop_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_drop_count};
+
+static dev_health_item_t const * const dev_health_net_drop_elements[] =
+{
+    &dev_health_net_drop_count
+};
+
+static dev_health_path_group_t const dev_health_net_drop =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                dev_health_net_drop_elements,
+                asizeof(dev_health_net_drop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_net_oos_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_oos_count};
+
+static dev_health_item_t const * const dev_health_net_oos_elements[] =
+{
+    &dev_health_net_oos_count,
+};
+
+static dev_health_path_group_t const dev_health_net_oos =
+{
+    "oos",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                dev_health_net_oos_elements,
+                asizeof(dev_health_net_oos_elements)
+            }
+        }
+    }
+};
+
 static dev_health_path_group_t const * const dev_health_net_levels[] =
 {
-    &dev_health_net_latency
+    &dev_health_net_latency,
+    &dev_health_net_transactions,
+    &dev_health_net_drop,
+    &dev_health_net_oos
 };
 
 static dev_health_path_group_t const dev_health_root_group_net =
@@ -290,39 +359,85 @@ static dev_health_path_group_t const dev_health_root_group_net =
     }
 };
 
-static const dev_health_item_t dev_health_mobile_module = {"module", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_module_json};
-static const dev_health_item_t dev_health_mobile_status = {"status", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_status};
-static const dev_health_item_t dev_health_mobile_rssi = {"rssi", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_rssi};
-static const dev_health_item_t dev_health_mobile_ecio = {"ecio", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_ecio};
-static const dev_health_item_t dev_health_mobile_rsrp = {"rsrp", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_rsrp};
-static const dev_health_item_t dev_health_mobile_rsrq = {"rsrq", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_rsrq};
-static const dev_health_item_t dev_health_mobile_sinr = {"sinr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_sinr};
-static const dev_health_item_t dev_health_mobile_snr = {"snr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_snr};
-static const dev_health_item_t dev_health_mobile_registration = {"registration", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_registration};
-static const dev_health_item_t dev_health_mobile_lac = {"lac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_lac};
-static const dev_health_item_t dev_health_mobile_tac = {"tac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_tac};
-static const dev_health_item_t dev_health_mobile_session = {"session", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_session};
-static const dev_health_item_t dev_health_mobile_temperature = {"temperature", DEV_HEALTH_TYPE_FLOAT, (dev_health_query_fn_t)cc_dev_health_get_mobile_temperature};
-static const dev_health_item_t dev_health_mobile_sim0 = {"sim0", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_sim0_json};
-static const dev_health_item_t dev_health_mobile_sim0_status = {"sim0_status", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_sim0_status};
+/**************/
 
-static dev_health_item_t const * const dev_health_mobile_elements[] =
+unsigned int cc_dev_health_get_mobile_net_instances(void)
+{
+    return 2;
+}
+
+static const dev_health_item_t dev_health_mobile_module = {"module", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_module_json};
+
+static dev_health_item_t const * const dev_health_mobile_module_elements[] =
 {
     &dev_health_mobile_module,
-    &dev_health_mobile_status,
-    &dev_health_mobile_rssi,
-    &dev_health_mobile_ecio,
-    &dev_health_mobile_rsrp,
-    &dev_health_mobile_rsrq,
-    &dev_health_mobile_sinr,
-    &dev_health_mobile_snr,
-    &dev_health_mobile_registration,
-    &dev_health_mobile_lac,
-    &dev_health_mobile_tac,
-    &dev_health_mobile_session,
-    &dev_health_mobile_temperature,
-    &dev_health_mobile_sim0,
-    &dev_health_mobile_sim0_status
+};
+
+static const dev_health_item_t dev_health_mobile_net_status = {"status", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_status};
+static const dev_health_item_t dev_health_mobile_net_rssi = {"rssi", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rssi};
+static const dev_health_item_t dev_health_mobile_net_ecio = {"ecio", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_ecio};
+static const dev_health_item_t dev_health_mobile_net_rsrp = {"rsrp", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rsrp};
+static const dev_health_item_t dev_health_mobile_net_rsrq = {"rsrq", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rsrq};
+static const dev_health_item_t dev_health_mobile_net_sinr = {"sinr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_sinr};
+static const dev_health_item_t dev_health_mobile_net_snr = {"snr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_snr};
+static const dev_health_item_t dev_health_mobile_net_registration = {"registration", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_registration};
+static const dev_health_item_t dev_health_mobile_net_lac = {"lac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_lac};
+static const dev_health_item_t dev_health_mobile_net_tac = {"tac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_tac};
+static const dev_health_item_t dev_health_mobile_net_session = {"session", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_session};
+static const dev_health_item_t dev_health_mobile_net_temperature = {"temperature", DEV_HEALTH_TYPE_FLOAT, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_temperature};
+static const dev_health_item_t dev_health_mobile_net_sim = {"sim", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_sim_json};
+
+static dev_health_item_t const * const dev_health_mobile_net_elements[] =
+{
+    &dev_health_mobile_net_status,
+    &dev_health_mobile_net_rssi,
+    &dev_health_mobile_net_ecio,
+    &dev_health_mobile_net_rsrp,
+    &dev_health_mobile_net_rsrq,
+    &dev_health_mobile_net_sinr,
+    &dev_health_mobile_net_snr,
+    &dev_health_mobile_net_registration,
+    &dev_health_mobile_net_lac,
+    &dev_health_mobile_net_tac,
+    &dev_health_mobile_net_session,
+    &dev_health_mobile_net_temperature,
+    &dev_health_mobile_net_sim
+};
+
+static dev_health_path_group_t const dev_health_mobile_module_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_module_elements,
+                asizeof(dev_health_mobile_module_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_group =
+{
+    "net",
+    cc_dev_health_get_mobile_net_instances,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_elements,
+                asizeof(dev_health_mobile_net_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const * const dev_health_mobile_levels[] =
+{
+    &dev_health_mobile_module_group,
+    &dev_health_mobile_net_group
 };
 
 static dev_health_path_group_t const dev_health_root_group_mobile =
@@ -330,23 +445,28 @@ static dev_health_path_group_t const dev_health_root_group_mobile =
     "mobile",
     cc_dev_health_get_mobile_instances,
     {
-        ITEMS,
+        SUBGROUPS,
         {
             {
-                dev_health_mobile_elements,
-                asizeof(dev_health_mobile_elements)
+                (dev_health_item_t const * const *)dev_health_mobile_levels,
+                asizeof(dev_health_mobile_levels)
             }
         }
     }
 };
+/**************/
 
 static const dev_health_item_t dev_health_eth_tx_bytes = {"bytes", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_tx_bytes};
 static const dev_health_item_t dev_health_eth_tx_packets = {"packets", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_tx_packets};
+static const dev_health_item_t dev_health_eth_tx_dropped = {"dropped", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_tx_dropped};
+static const dev_health_item_t dev_health_eth_tx_overruns = {"overruns", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_tx_overruns};
 
 static dev_health_item_t const * const dev_health_eth_tx_elements[] =
 {
     &dev_health_eth_tx_bytes,
-    &dev_health_eth_tx_packets
+    &dev_health_eth_tx_packets,
+    &dev_health_eth_tx_dropped,
+    &dev_health_eth_tx_overruns
 };
 
 static dev_health_path_group_t const dev_health_eth_tx =
@@ -366,11 +486,13 @@ static dev_health_path_group_t const dev_health_eth_tx =
 
 static const dev_health_item_t dev_health_eth_rx_bytes = {"bytes", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_rx_bytes};
 static const dev_health_item_t dev_health_eth_rx_packets = {"packets", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_rx_packets};
+static const dev_health_item_t dev_health_eth_rx_dropped = {"dropped", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_rx_dropped};
 
 static dev_health_item_t const * const dev_health_eth_rx_elements[] =
 {
     &dev_health_eth_rx_bytes,
-    &dev_health_eth_rx_packets
+    &dev_health_eth_rx_packets,
+    &dev_health_eth_rx_dropped
 };
 
 static dev_health_path_group_t const dev_health_eth_rx =
@@ -388,23 +510,25 @@ static dev_health_path_group_t const dev_health_eth_rx =
     }
 };
 
-static const dev_health_item_t dev_health_eth_dropped_packets = {"packets", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_dropped_packets};
+static const dev_health_item_t dev_health_eth_link_down_count = {"down_count", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_link_down_count};
+static const dev_health_item_t dev_health_eth_link_down_duration = {"down_duration", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_link_down_duration};
 
-static dev_health_item_t const * const dev_health_eth_dropped_elements[] =
+static dev_health_item_t const * const dev_health_eth_link_elements[] =
 {
-    &dev_health_eth_dropped_packets
+    &dev_health_eth_link_down_duration,
+    &dev_health_eth_link_down_duration
 };
 
-static dev_health_path_group_t const dev_health_eth_dropped =
+static dev_health_path_group_t const dev_health_eth_link =
 {
-    "dropped",
+    "link",
     NULL,
     {
         ITEMS,
         {
             {
-                dev_health_eth_dropped_elements,
-                asizeof(dev_health_eth_dropped_elements)
+                dev_health_eth_link_elements,
+                asizeof(dev_health_eth_link_elements)
             }
         }
     }
@@ -414,7 +538,7 @@ static dev_health_path_group_t const * const dev_health_eth_levels[] =
 {
     &dev_health_eth_tx,
     &dev_health_eth_rx,
-    &dev_health_eth_dropped
+    &dev_health_eth_link
 };
 
 static dev_health_path_group_t const dev_health_root_group_eth =
@@ -509,12 +633,12 @@ static dev_health_path_group_t const dev_health_system_reboots =
 };
 
 static const dev_health_item_t dev_health_system_msg_free = {"free", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_msg_free};
-static const dev_health_item_t dev_health_system_mem_min = {"min", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_msg_min};
+static const dev_health_item_t dev_health_system_msg_min = {"min", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_msg_min};
 
 static dev_health_item_t const * const dev_health_system_msg_elements[] =
 {
     &dev_health_system_msg_free,
-    &dev_health_system_mem_min
+    &dev_health_system_msg_min
 };
 
 static dev_health_path_group_t const dev_health_system_msg =
