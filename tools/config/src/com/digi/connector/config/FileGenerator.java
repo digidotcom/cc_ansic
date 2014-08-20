@@ -122,7 +122,8 @@ public abstract class FileGenerator {
         
         generatedFile = file_name;
 
-        checkPreviousBuild(filePath + generatedFile);
+        if(!ConfigGenerator.noBackupOption())
+            checkPreviousBuild(filePath + generatedFile);
 
         fileWriter = new BufferedWriter(new FileWriter(filePath + generatedFile));
 

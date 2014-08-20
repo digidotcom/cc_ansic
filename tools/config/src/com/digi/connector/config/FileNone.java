@@ -37,7 +37,10 @@ public class FileNone extends FileGenerator {
 		
 		super(directoryPath,HEADER_FILENAME,fileType);
 		functionFile = "remote_config.c";
-		super.checkPreviousBuild(filePath + functionFile);
+
+		if(!ConfigGenerator.noBackupOption())
+		    super.checkPreviousBuild(filePath + functionFile);
+
         functionWriter = new BufferedWriter(new FileWriter(filePath + functionFile));
         functionWriter.write(COPYRIGHT);
 
