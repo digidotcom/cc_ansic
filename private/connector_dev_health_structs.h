@@ -10,7 +10,7 @@
  * =======================================================================
  */
 
-typedef connector_bool_t (* dev_health_query_fn_t)(unsigned int const index, void * const value);
+typedef connector_bool_t (* dev_health_query_fn_t)(connector_indexes_t const * const indexes, void * const value);
 typedef unsigned int (* dev_health_get_instances_fn_t)(void);
 
 typedef enum {
@@ -90,9 +90,9 @@ STATIC void escape_string(char * * const string)
     }
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_module_json(unsigned int const index, connector_json_t * const value)
+STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_mobile_module_present(index);
+    connector_bool_t const present = cc_dev_health_mobile_module_present(indexes);
 
     if (present)
     {
@@ -106,11 +106,11 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(unsigned int const 
         int json_size;
 
         ASSERT(module_json != NULL);
-        cc_dev_health_get_mobile_module_modem_id(index, &modem_id);
-        cc_dev_health_get_mobile_module_cell_id(index, &cell_id);
-        cc_dev_health_get_mobile_module_network(index, &network);
-        cc_dev_health_get_mobile_module_sims(index, &sims);
-        cc_dev_health_get_mobile_module_active_sim(index, &active_sim);
+        cc_dev_health_get_mobile_module_modem_id(indexes, &modem_id);
+        cc_dev_health_get_mobile_module_cell_id(indexes, &cell_id);
+        cc_dev_health_get_mobile_module_network(indexes, &network);
+        cc_dev_health_get_mobile_module_sims(indexes, &sims);
+        cc_dev_health_get_mobile_module_active_sim(indexes, &active_sim);
 
         ASSERT(modem_id != NULL);
         ASSERT(cell_id != NULL);
@@ -134,9 +134,9 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(unsigned int const 
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(unsigned int const index, connector_json_t * const value)
+STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_get_mobile_net_present(index);
+    connector_bool_t const present = cc_dev_health_get_mobile_net_present(indexes);
 
     if (present)
     {
@@ -149,9 +149,9 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(unsigned int const
 
         ASSERT(sim_json != NULL);
 
-        cc_dev_health_get_mobile_net_sim_iccid(index, &iccid);
-        cc_dev_health_get_mobile_net_sim_imsi(index, &imsi);
-        cc_dev_health_get_mobile_net_sim_phone_num(index, &phone_num);
+        cc_dev_health_get_mobile_net_sim_iccid(indexes, &iccid);
+        cc_dev_health_get_mobile_net_sim_imsi(indexes, &imsi);
+        cc_dev_health_get_mobile_net_sim_phone_num(indexes, &phone_num);
 
         ASSERT(iccid != NULL);
         ASSERT(imsi != NULL);
@@ -175,9 +175,9 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(unsigned int const
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(unsigned int const index, connector_geojson_t * const value)
+STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t const * const indexes, connector_geojson_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_get_wifi_radio_present(index);
+    connector_bool_t const present = cc_dev_health_get_wifi_radio_present(indexes);
 
     if (present)
     {
@@ -191,10 +191,10 @@ STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(unsigned int const ind
 
         ASSERT(radio_json != NULL);
 
-        cc_dev_health_get_wifi_radio_mode(index, &mode);
-        cc_dev_health_get_wifi_radio_ssid(index, &ssid);
-        cc_dev_health_get_wifi_radio_protocol(index, &protocol);
-        cc_dev_health_get_wifi_radio_channel(index, &channel);
+        cc_dev_health_get_wifi_radio_mode(indexes, &mode);
+        cc_dev_health_get_wifi_radio_ssid(indexes, &ssid);
+        cc_dev_health_get_wifi_radio_protocol(indexes, &protocol);
+        cc_dev_health_get_wifi_radio_channel(indexes, &channel);
 
         ASSERT(mode != NULL);
         ASSERT(ssid != NULL);
@@ -218,9 +218,9 @@ STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(unsigned int const ind
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_gps_location_geojson(unsigned int const index, connector_geojson_t * const value)
+STATIC connector_bool_t cc_dev_health_get_gps_location_geojson(connector_indexes_t const * const indexes, connector_geojson_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_get_gps_location_present(index);
+    connector_bool_t const present = cc_dev_health_get_gps_location_present(indexes);
 
     if (present)
     {
@@ -231,8 +231,8 @@ STATIC connector_bool_t cc_dev_health_get_gps_location_geojson(unsigned int cons
         int json_size;
 
         ASSERT(location_json != NULL);
-        cc_dev_health_get_gps_location_latitude(index, &latitude);
-        cc_dev_health_get_gps_location_longitude(index, &longitude);
+        cc_dev_health_get_gps_location_latitude(indexes, &latitude);
+        cc_dev_health_get_gps_location_longitude(indexes, &longitude);
 
         json_size = sprintf(location_json, gps_location_json_format, latitude, longitude);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
