@@ -471,7 +471,11 @@ enum {
             uint8_t const payload = message_load_u8(edp_protocol, payload);
 
             /* currently we don't support any other security protocol */
-            ASSERT_GOTO(sec_code == SECURITY_PROTO_NONE, error);
+            if (sec_code != SECURITY_PROTO_NONE)
+            {
+                /* This occurs when a bad EDP password has been used to authenticate */
+                return connector_open_error;
+            }
             ASSERT_GOTO(payload == DISC_OP_PAYLOAD, error);
             ASSERT_GOTO(total_length > PACKET_EDP_PROTOCOL_SIZE, error);
 
@@ -481,7 +485,6 @@ enum {
                 uint16_t const length = (uint16_t)(total_length - PACKET_EDP_PROTOCOL_SIZE);
                 message_store_be16(edp_header, length, length);
             }
-
         }
 
         if (message_load_be16(edp_header, type) == E_MSG_MT2_TYPE_PAYLOAD)
