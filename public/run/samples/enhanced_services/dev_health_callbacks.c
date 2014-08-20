@@ -43,13 +43,14 @@ static int get_executable_path(char * const path, unsigned int max_size)
 done:
     return error;
 }
+
 connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size)
 {
     connector_callback_status_t status = connector_callback_continue;
     char dev_health_path[PATH_MAX] = {0};
 
     get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_FILENAME "_");
+    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
 
     if (access(dev_health_path, F_OK) != -1)
     {
