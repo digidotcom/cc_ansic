@@ -28,28 +28,6 @@ public class Parser {
             token = null;
             isReadToken = true;
 
-            /*check and add enhanced_services setting group */
-            if(ConfigGenerator.deviceHealthOption()){
-                groupConfig = configData.getConfigGroup("setting");
-                Group es_Group = new Group("enhanced_services", 8, "Health data reporting configuration", null);
-
-                Element[] es_elements = new Element[3];
-
-                es_elements[0] = new Element("path","Requested Data Stream path",null);
-                es_elements[0].setType("string");
-                es_elements[0].setMax("32");
-
-                es_elements[1] = new Element("sampling_interval ","Sampling interval", "Path query rate in seconds");
-                es_elements[1].setType("uint32");
-
-                es_elements[2] = new Element("reporting_interval", "Reporting interval", "Path report rate in minutes");
-                es_elements[2].setType("uint32");
-
-                for(int i =0;i<3;i++){
-                    es_Group.addElement(es_elements[i]);
-                }
-                groupConfig.add(es_Group);
-            }
             /* first use a Scanner to get each word */
             while (!isReadToken || tokenScanner.hasToken()) {
                 if (isReadToken) {
@@ -160,6 +138,29 @@ public class Parser {
                 } else {
                     throw new Exception("Unrecognized keyword: " + token);
                 }
+            }
+
+            /*check and add enhanced_services setting group */
+            if(ConfigGenerator.deviceHealthOption()){
+                groupConfig = configData.getConfigGroup("setting");
+                Group es_Group = new Group("enhanced_services", 8, "Health data reporting configuration", null);
+
+                Element[] es_elements = new Element[3];
+
+                es_elements[0] = new Element("path","Requested Data Stream path",null);
+                es_elements[0].setType("string");
+                es_elements[0].setMax("32");
+
+                es_elements[1] = new Element("sampling_interval ","Sampling interval", "Path query rate in seconds");
+                es_elements[1].setType("uint32");
+
+                es_elements[2] = new Element("reporting_interval", "Reporting interval", "Path report rate in minutes");
+                es_elements[2].setType("uint32");
+
+                for(int i =0;i<3;i++){
+                    es_Group.addElement(es_elements[i]);
+                }
+                groupConfig.add(es_Group);
             }
         } catch (NullPointerException e) {
             ConfigGenerator.log("Parser NullPointerException");
