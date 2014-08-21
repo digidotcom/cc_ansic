@@ -33,7 +33,6 @@ STATIC connector_status_t dev_health_send_metrics(connector_data_t * const conne
     status = malloc_data(connector_ptr, sizeof *dev_health_data_push, (void * *)&dev_health_data_push);
     ASSERT_GOTO(status == connector_working, done);
 
-    printf("Uploading *%s*\n", dev_health_info->csv.data);
     dev_health_data_push->p_csv = dev_health_info->csv.data;
     dev_health_data_push->bytes_available = csv_len;
     send_request = &dev_health_data_push->send_request;
