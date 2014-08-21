@@ -245,7 +245,7 @@ STATIC void dev_health_process_group_items(connector_data_t * const connector_pt
     for (i = 0; i < array_size; i++)
     {
         dev_health_item_t const * const item = items_array[i];
-        unsigned int const name_len = strlen(item->name);
+        size_t const name_len = item->name_len;
 
         if (handle_all || strncmp(path, item->name, name_len) == 0)
         {
@@ -268,7 +268,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
     for (i = 0; i < array_size; i++)
     {
         dev_health_path_group_t const * const subgroup = subgroups_array[i];
-        unsigned int const name_len = strlen(subgroup->name);
+        size_t const name_len = subgroup->name_len;
         char const * const remaining_path = get_remaining_path(path);
         connector_bool_t const multi_instance = subgroup->multi_instance != NULL ? connector_true : connector_false;
 
@@ -401,7 +401,7 @@ STATIC void dev_health_process_path(connector_data_t * const connector_ptr, char
     for(i = 0; i < asizeof(dev_health_root_groups); i++)
     {
         dev_health_path_group_t const * const root_group = dev_health_root_groups[i];
-        unsigned int const name_len = strlen(root_group->name);
+        size_t const name_len = root_group->name_len;
 
         if (strncmp(path, root_group->name, name_len) == 0)
         {
