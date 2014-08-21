@@ -490,8 +490,10 @@ public abstract class FileGenerator {
             fileWriter.write(String.format("%sRCI_DO_COMMAND_TARGET_MAX_LEN %d\n", DEFINE,ConfigData.DoCommandMaxLen()));
         }
         if(ConfigGenerator.deviceHealthOption()){
-            fileWriter.write("\n" + DEFINE + "CONNECTOR_DEVICE_HEALTH \n");
-            fileWriter.write(DEFINE + "CONNECTOR_DEVICE_HEALTH_MAX_METRICS 8 \n");
+            fileWriter.write("\n#if !(defined CONNECTOR_DEVICE_HEALTH)\n" +
+                    "#error \"RCI descriptor generated with Device Health Reporting " +
+                    "support but CONNECTOR_DEVICE_HEALTH is not defined in connector_config.h\" \n"+
+                    "#endif\n");
         }
 
         writeOnOffBooleanEnum();

@@ -151,7 +151,7 @@ public class Parser {
                 es_elements[0].setType("string");
                 es_elements[0].setMax("32");
 
-                es_elements[1] = new Element("sampling_interval ","Sampling interval", "Path query rate in seconds");
+                es_elements[1] = new Element("sampling_interval", "Sampling interval", "Path query rate in seconds");
                 es_elements[1].setType("uint32");
 
                 es_elements[2] = new Element("reporting_interval", "Reporting interval", "Path report rate in minutes");
