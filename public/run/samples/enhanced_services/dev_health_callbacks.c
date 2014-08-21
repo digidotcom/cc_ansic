@@ -16,7 +16,7 @@
 #define PRINT_INDEXES()         do{printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);}while(0)
 #else
 #define PRINT_FUNCTION_NAME()
-#define PRINT_INDEXES()
+#define PRINT_INDEXES()         UNUSED_ARGUMENT(indexes)
 #endif
 
 #define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
