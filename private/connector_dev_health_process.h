@@ -247,7 +247,7 @@ STATIC void dev_health_process_group_items(connector_data_t * const connector_pt
         dev_health_item_t const * const item = items_array[i];
         unsigned int const name_len = strlen(item->name);
 
-        if (handle_all || (name_len != 0 && strncmp(path, item->name, name_len) == 0))
+        if (handle_all || strncmp(path, item->name, name_len) == 0)
         {
             dev_health_process_item(connector_ptr, item, upper_index, lower_index);
         }
@@ -274,7 +274,10 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
 
         if (multi_instance)
         {
-            if (handle_all)
+            char const * const remaining_path = get_remaining_path(path);
+            connector_bool_t const handle_all_instances = remaining_path[0] == '\0' ? connector_true : connector_false;
+
+            if (handle_all_instances)
             {
                 unsigned int current_instance;
                 unsigned int const instances = subgroup->multi_instance();
