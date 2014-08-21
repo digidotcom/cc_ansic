@@ -907,6 +907,451 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_group =
     }
 };
 
+static const dev_health_item_t dev_health_mobile_net_3g_rxbytes = {"rxbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_rxbytes};
+static dev_health_item_t const * const dev_health_mobile_net_3g_rxbytes_elements[] =
+{
+    &dev_health_mobile_net_3g_rxbytes
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_rxbytes_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_rxbytes_elements,
+                asizeof(dev_health_mobile_net_3g_rxbytes_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_txbytes = {"txbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_txbytes};
+static dev_health_item_t const * const dev_health_mobile_net_3g_txbytes_elements[] =
+{
+    &dev_health_mobile_net_3g_txbytes
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_txbytes_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_txbytes_elements,
+                asizeof(dev_health_mobile_net_3g_txbytes_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_losspercent = {"losspercent", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_losspercent};
+static dev_health_item_t const * const dev_health_mobile_net_3g_losspercent_elements[] =
+{
+    &dev_health_mobile_net_3g_losspercent
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_losspercent_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_losspercent_elements,
+                asizeof(dev_health_mobile_net_3g_losspercent_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_uptime = {"uptime", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_uptime};
+static dev_health_item_t const * const dev_health_mobile_net_3g_uptime_elements[] =
+{
+    &dev_health_mobile_net_3g_uptime
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_uptime_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_uptime_elements,
+                asizeof(dev_health_mobile_net_3g_uptime_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_latency_min = {"min", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_latency_min};
+static const dev_health_item_t dev_health_mobile_net_3g_latency_avg = {"avg", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_latency_avg};
+static const dev_health_item_t dev_health_mobile_net_3g_latency_max = {"max", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_latency_max};
+
+static dev_health_item_t const * const dev_health_mobile_net_3g_latency_elements[] =
+{
+    &dev_health_mobile_net_3g_latency_min,
+    &dev_health_mobile_net_3g_latency_avg,
+    &dev_health_mobile_net_3g_latency_max
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_latency_group =
+{
+    "latency",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_latency_elements,
+                asizeof(dev_health_mobile_net_3g_latency_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_transactions_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_transactions_count};
+static dev_health_item_t const * const dev_health_mobile_net_3g_transactions_elements[] =
+{
+    &dev_health_mobile_net_3g_transactions_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_transactions_group =
+{
+    "transactions",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_transactions_elements,
+                asizeof(dev_health_mobile_net_3g_transactions_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_fdrop_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_fdrop_count};
+static dev_health_item_t const * const dev_health_mobile_net_3g_fdrop_elements[] =
+{
+    &dev_health_mobile_net_3g_fdrop_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_fdrop_group =
+{
+    "fdrop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_fdrop_elements,
+                asizeof(dev_health_mobile_net_3g_fdrop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_drop_count = {"drop/count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_drop_count};
+static dev_health_item_t const * const dev_health_mobile_net_3g_drop_elements[] =
+{
+    &dev_health_mobile_net_3g_drop_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_drop_group =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_drop_elements,
+                asizeof(dev_health_mobile_net_3g_drop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_3g_oos_count = {"oos/count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_3g_oos_count};
+static dev_health_item_t const * const dev_health_mobile_net_3g_oos_elements[] =
+{
+    &dev_health_mobile_net_3g_oos_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_oos_group =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_oos_elements,
+                asizeof(dev_health_mobile_net_3g_oos_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const * const dev_health_mobile_net_3g_subgroups[] =
+{
+    &dev_health_mobile_net_3g_rxbytes_group,
+    &dev_health_mobile_net_3g_txbytes_group,
+    &dev_health_mobile_net_3g_losspercent_group,
+    &dev_health_mobile_net_3g_uptime_group,
+    &dev_health_mobile_net_3g_latency_group,
+    &dev_health_mobile_net_3g_transactions_group,
+    &dev_health_mobile_net_3g_fdrop_group,
+    &dev_health_mobile_net_3g_drop_group,
+    &dev_health_mobile_net_3g_oos_group
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_3g_group =
+{
+    "3g",
+    NULL,
+    {
+        SUBGROUPS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_3g_subgroups,
+                asizeof(dev_health_mobile_net_3g_subgroups)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_rxbytes = {"rxbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_rxbytes};
+static dev_health_item_t const * const dev_health_mobile_net_4g_rxbytes_elements[] =
+{
+    &dev_health_mobile_net_4g_rxbytes
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_rxbytes_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_rxbytes_elements,
+                asizeof(dev_health_mobile_net_4g_rxbytes_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_txbytes = {"txbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_txbytes};
+static dev_health_item_t const * const dev_health_mobile_net_4g_txbytes_elements[] =
+{
+    &dev_health_mobile_net_4g_txbytes
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_txbytes_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_txbytes_elements,
+                asizeof(dev_health_mobile_net_4g_txbytes_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_losspercent = {"losspercent", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_losspercent};
+static dev_health_item_t const * const dev_health_mobile_net_4g_losspercent_elements[] =
+{
+    &dev_health_mobile_net_4g_losspercent
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_losspercent_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_losspercent_elements,
+                asizeof(dev_health_mobile_net_4g_losspercent_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_uptime = {"uptime", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_uptime};
+static dev_health_item_t const * const dev_health_mobile_net_4g_uptime_elements[] =
+{
+    &dev_health_mobile_net_4g_uptime
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_uptime_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_uptime_elements,
+                asizeof(dev_health_mobile_net_4g_uptime_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_latency_min = {"min", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_latency_min};
+static const dev_health_item_t dev_health_mobile_net_4g_latency_avg = {"avg", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_latency_avg};
+static const dev_health_item_t dev_health_mobile_net_4g_latency_max = {"max", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_latency_max};
+
+static dev_health_item_t const * const dev_health_mobile_net_4g_latency_elements[] =
+{
+    &dev_health_mobile_net_4g_latency_min,
+    &dev_health_mobile_net_4g_latency_avg,
+    &dev_health_mobile_net_4g_latency_max
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_latency_group =
+{
+    "latency",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_latency_elements,
+                asizeof(dev_health_mobile_net_4g_latency_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_transactions_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_transactions_count};
+static dev_health_item_t const * const dev_health_mobile_net_4g_transactions_elements[] =
+{
+    &dev_health_mobile_net_4g_transactions_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_transactions_group =
+{
+    "transactions",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_transactions_elements,
+                asizeof(dev_health_mobile_net_4g_transactions_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_fdrop_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_fdrop_count};
+static dev_health_item_t const * const dev_health_mobile_net_4g_fdrop_elements[] =
+{
+    &dev_health_mobile_net_4g_fdrop_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_fdrop_group =
+{
+    "fdrop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_fdrop_elements,
+                asizeof(dev_health_mobile_net_4g_fdrop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_drop_count = {"drop/count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_drop_count};
+static dev_health_item_t const * const dev_health_mobile_net_4g_drop_elements[] =
+{
+    &dev_health_mobile_net_4g_drop_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_drop_group =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_drop_elements,
+                asizeof(dev_health_mobile_net_4g_drop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_4g_oos_count = {"oos/count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_4g_oos_count};
+static dev_health_item_t const * const dev_health_mobile_net_4g_oos_elements[] =
+{
+    &dev_health_mobile_net_4g_oos_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_oos_group =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_oos_elements,
+                asizeof(dev_health_mobile_net_4g_oos_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const * const dev_health_mobile_net_4g_subgroups[] =
+{
+    &dev_health_mobile_net_4g_rxbytes_group,
+    &dev_health_mobile_net_4g_txbytes_group,
+    &dev_health_mobile_net_4g_losspercent_group,
+    &dev_health_mobile_net_4g_uptime_group,
+    &dev_health_mobile_net_4g_latency_group,
+    &dev_health_mobile_net_4g_transactions_group,
+    &dev_health_mobile_net_4g_fdrop_group,
+    &dev_health_mobile_net_4g_drop_group,
+    &dev_health_mobile_net_4g_oos_group
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_4g_group =
+{
+    "4g",
+    NULL,
+    {
+        SUBGROUPS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_4g_subgroups,
+                asizeof(dev_health_mobile_net_4g_subgroups)
+            }
+        }
+    }
+};
+
+
 static dev_health_path_group_t const * const dev_health_mobile_net_subgroups[] =
 {
     &dev_health_mobile_net_cell_id_group,
@@ -922,7 +1367,9 @@ static dev_health_path_group_t const * const dev_health_mobile_net_subgroups[] =
     &dev_health_mobile_net_tac_group,
     &dev_health_mobile_net_session_group,
     &dev_health_mobile_net_info_group,
-    &dev_health_mobile_net_2g_group
+    &dev_health_mobile_net_2g_group,
+    &dev_health_mobile_net_3g_group,
+    &dev_health_mobile_net_4g_group
 };
 
 static dev_health_path_group_t const dev_health_mobile_module_group =

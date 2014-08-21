@@ -481,6 +481,204 @@ connector_bool_t cc_dev_health_get_mobile_net_2g_uptime(connector_indexes_t cons
     return connector_true;
 }
 
+connector_bool_t cc_dev_health_get_mobile_net_3g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_3g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_4g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
 connector_bool_t cc_dev_health_get_mobile_temperature(connector_indexes_t const * const indexes, float * const value)
 {
     PRINT_FUNCTION_NAME();
