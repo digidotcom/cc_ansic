@@ -359,13 +359,6 @@ static dev_health_path_group_t const dev_health_root_group_net =
     }
 };
 
-/**************/
-
-unsigned int cc_dev_health_get_mobile_net_instances(void)
-{
-    return 2;
-}
-
 static const dev_health_item_t dev_health_mobile_module = {"module", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_module_json};
 
 static dev_health_item_t const * const dev_health_mobile_module_elements[] =
@@ -454,7 +447,6 @@ static dev_health_path_group_t const dev_health_root_group_mobile =
         }
     }
 };
-/**************/
 
 static const dev_health_item_t dev_health_eth_tx_bytes = {"bytes", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_tx_bytes};
 static const dev_health_item_t dev_health_eth_tx_packets = {"packets", DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_eth_tx_packets};

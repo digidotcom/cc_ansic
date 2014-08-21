@@ -44,6 +44,7 @@ connector_bool_t cc_dev_health_get_net_oos_count(connector_indexes_t const * con
 
 
 unsigned int cc_dev_health_get_mobile_instances(void);
+unsigned int cc_dev_health_get_mobile_net_instances(void);
 
 void cc_dev_health_get_mobile_module_modem_id(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_mobile_module_cell_id(connector_indexes_t const * const indexes, char * * const value);

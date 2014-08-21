@@ -185,6 +185,13 @@ unsigned int cc_dev_health_get_mobile_instances(void)
     return 2;
 }
 
+unsigned int cc_dev_health_get_mobile_net_instances(void)
+{
+    PRINT_FUNCTION_NAME();
+
+    return 2;
+}
+
 #define MAX_STRING  64
 
 void cc_dev_health_get_mobile_module_modem_id(connector_indexes_t const * const indexes, char * * const value)
