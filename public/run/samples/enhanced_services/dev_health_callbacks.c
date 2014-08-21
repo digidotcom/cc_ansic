@@ -14,9 +14,11 @@
 #if (defined DEBUG)
 #define PRINT_FUNCTION_NAME()   do{printf("Function: %s\n", __FUNCTION__);}while(0)
 #define PRINT_INDEXES()         do{printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);}while(0)
+#define PRINT_TECH()            do{printf("Mobile tech %dG\n", (int)tech + 2);}while(0)
 #else
 #define PRINT_FUNCTION_NAME()
 #define PRINT_INDEXES()         UNUSED_ARGUMENT(indexes)
+#define PRINT_TECH()            UNUSED_ARGUMENT(tech)
 #endif
 
 #define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
@@ -382,298 +384,112 @@ connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const 
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+
+connector_bool_t cc_dev_health_get_mobile_net_rxbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_txbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_latency_min(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_latency_avg(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_latency_max(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_transactions_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_fdrop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_losspercent(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_drop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_oos_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_uptime(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
     PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_TECH();
 
     *value = 32;
     return connector_true;

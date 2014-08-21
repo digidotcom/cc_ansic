@@ -27,6 +27,12 @@ typedef struct {
     unsigned int lower;
 } connector_indexes_t;
 
+typedef enum {
+  NETWORK_TECH_2G,
+  NETWORK_TECH_3G,
+  NETWORK_TECH_4G
+} mobile_network_tech_t;
+
 connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size);
 connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size);
 
@@ -75,41 +81,17 @@ connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const * const indexes, int32_t * const value);
 
-connector_bool_t cc_dev_health_get_mobile_net_2g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_txbytes(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_latency_min(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_latency_max(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_losspercent(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_drop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_oos_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_2g_uptime(connector_indexes_t const * const indexes, int32_t * const value);
-
-connector_bool_t cc_dev_health_get_mobile_net_3g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_txbytes(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_latency_min(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_latency_max(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_losspercent(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_drop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_oos_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_3g_uptime(connector_indexes_t const * const indexes, int32_t * const value);
-
-connector_bool_t cc_dev_health_get_mobile_net_4g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_txbytes(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_latency_min(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_latency_max(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_losspercent(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_drop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_oos_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_4g_uptime(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_rxbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_txbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_latency_min(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_latency_avg(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_latency_max(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_transactions_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_fdrop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_losspercent(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_drop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_oos_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_uptime(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
 
 unsigned int cc_dev_health_get_eth_instances(void);
 

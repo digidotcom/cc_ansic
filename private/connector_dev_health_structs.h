@@ -685,6 +685,171 @@ static dev_health_path_group_t const dev_health_mobile_net_info_group =
     }
 };
 
+static connector_bool_t cc_dev_health_get_mobile_net_2g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_rxbytes(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_txbytes(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_min(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_avg(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_max(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_transactions_count(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_fdrop_count(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_losspercent(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_drop_count(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_oos_count(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_2g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_uptime(indexes, NETWORK_TECH_2G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_rxbytes(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_txbytes(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_min(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_avg(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_max(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_transactions_count(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_fdrop_count(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_losspercent(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_drop_count(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_oos_count(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_3g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_uptime(indexes, NETWORK_TECH_3G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_rxbytes(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_txbytes(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_min(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_avg(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_latency_max(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_transactions_count(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_fdrop_count(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_losspercent(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_drop_count(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_oos_count(indexes, NETWORK_TECH_4G, value);
+}
+
+static connector_bool_t cc_dev_health_get_mobile_net_4g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    return cc_dev_health_get_mobile_net_uptime(indexes, NETWORK_TECH_4G, value);
+}
+
 static const dev_health_item_t dev_health_mobile_net_2g_rxbytes = {"rxbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_rxbytes};
 static dev_health_item_t const * const dev_health_mobile_net_2g_rxbytes_elements[] =
 {
