@@ -46,31 +46,34 @@ connector_bool_t cc_dev_health_get_net_oos_count(connector_indexes_t const * con
 unsigned int cc_dev_health_get_mobile_instances(void);
 unsigned int cc_dev_health_get_mobile_net_instances(void);
 
+void cc_dev_health_get_mobile_module_imei(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_mobile_module_modem_id(connector_indexes_t const * const indexes, char * * const value);
-void cc_dev_health_get_mobile_module_cell_id(connector_indexes_t const * const indexes, char * * const value);
-void cc_dev_health_get_mobile_module_network(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_mobile_module_sims(connector_indexes_t const * const indexes, unsigned int * const value);
-void cc_dev_health_get_mobile_module_active_sim(connector_indexes_t const * const indexes, unsigned int * const value);
 
 void cc_dev_health_get_mobile_net_info_iccid(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_mobile_net_info_imsi(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_mobile_net_info_phone_num(connector_indexes_t const * const indexes, char * * const value);
 
-connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const * const indexes);
-connector_bool_t cc_dev_health_get_mobile_net_present(connector_indexes_t const * const indexes);
+void cc_dev_health_get_mobile_net_status_registration(connector_indexes_t const * const indexes, char * * const value);
+void cc_dev_health_get_mobile_net_status_attachment(connector_indexes_t const * const indexes, char * * const value);
 
-connector_bool_t cc_dev_health_get_mobile_net_status(connector_indexes_t const * const indexes, char * * const value);
+connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const * const indexes);
+connector_bool_t cc_dev_health_get_mobile_net_info_present(connector_indexes_t const * const indexes);
+
+connector_bool_t cc_dev_health_get_mobile_temperature(connector_indexes_t const * const indexes, float * const value);
+connector_bool_t cc_dev_health_get_mobile_status(connector_indexes_t const * const indexes, char * * const value);
+connector_bool_t cc_dev_health_get_mobile_active_sim(connector_indexes_t const * const indexes, unsigned int * const value);
+connector_bool_t cc_dev_health_get_mobile_net_cell_id(connector_indexes_t const * const indexes, char * * const value);
+connector_bool_t cc_dev_health_get_mobile_net_network(connector_indexes_t const * const indexes, char * * const value);
 connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_ecio(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_rsrp(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_rsrq(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_sinr(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_snr(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_registration(connector_indexes_t const * const indexes, char * * const value);
 connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_mobile_net_temperature(connector_indexes_t const * const indexes, float * const value);
 
 unsigned int cc_dev_health_get_eth_instances(void);
 

@@ -97,36 +97,29 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
     if (present)
     {
         char * const module_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char module_json_format[] = "{\"modem_id\":\"%s\",\"cell_id\":\"%s\", \"network\":\"%s\",\"sims\":%u,\"active_sim\":%u}";
+        static const char module_json_format[] = "{\"modem_id\":\"%s\",\"imei\":\"%s\",\"sims\":%u}";
         char * modem_id = NULL;
-        char * cell_id = NULL;
-        char * network = NULL;
+        char * imei = NULL;
         unsigned int sims;
-        unsigned int active_sim;
         int json_size;
 
         ASSERT(module_json != NULL);
         cc_dev_health_get_mobile_module_modem_id(indexes, &modem_id);
-        cc_dev_health_get_mobile_module_cell_id(indexes, &cell_id);
-        cc_dev_health_get_mobile_module_network(indexes, &network);
+        cc_dev_health_get_mobile_module_imei(indexes, &imei);
         cc_dev_health_get_mobile_module_sims(indexes, &sims);
-        cc_dev_health_get_mobile_module_active_sim(indexes, &active_sim);
 
         ASSERT(modem_id != NULL);
-        ASSERT(cell_id != NULL);
-        ASSERT(network != NULL);
+        ASSERT(imei != NULL);
 
         escape_string(&modem_id);
-        escape_string(&cell_id);
-        escape_string(&network);
+        escape_string(&imei);
 
-        json_size = sprintf(module_json, module_json_format, modem_id, cell_id, network, sims, active_sim);
+        json_size = sprintf(module_json, module_json_format, modem_id, imei, sims);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
         cc_dev_health_free_string(modem_id);
-        cc_dev_health_free_string(cell_id);
-        cc_dev_health_free_string(network);
+        cc_dev_health_free_string(imei);
 
         *value = module_json;
     }
@@ -134,9 +127,44 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
     return present;
 }
 
+STATIC connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_indexes_t const * const indexes, connector_json_t * const value)
+{
+    connector_bool_t const present = cc_dev_health_mobile_module_present(indexes);
+
+    if (present)
+    {
+        char * const net_status_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
+        static char const net_status_json_format[] = "{\"registration\":\"%s\",\"attachment\":\"%s\"}";
+        char * registration = NULL;
+        char * attachment = NULL;
+        int json_size;
+
+        ASSERT(net_status_json != NULL);
+        cc_dev_health_get_mobile_net_status_registration(indexes, &registration);
+        cc_dev_health_get_mobile_net_status_attachment(indexes, &attachment);
+
+        ASSERT(registration != NULL);
+        ASSERT(attachment != NULL);
+
+        escape_string(&registration);
+        escape_string(&attachment);
+
+        json_size = sprintf(net_status_json, net_status_json_format, registration, attachment);
+        UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
+        ASSERT(json_size <= JSON_MAX_SIZE);
+
+        cc_dev_health_free_string(registration);
+        cc_dev_health_free_string(attachment);
+
+        *value = net_status_json;
+    }
+
+    return present;
+}
+
 STATIC connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_get_mobile_net_present(indexes);
+    connector_bool_t const present = cc_dev_health_get_mobile_net_info_present(indexes);
 
     if (present)
     {
@@ -366,34 +394,57 @@ static dev_health_item_t const * const dev_health_mobile_module_elements[] =
     &dev_health_mobile_module,
 };
 
-static const dev_health_item_t dev_health_mobile_net_status = {"status", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_status};
+static const dev_health_item_t dev_health_mobile_temperature = {"temperature", DEV_HEALTH_TYPE_FLOAT, (dev_health_query_fn_t)cc_dev_health_get_mobile_temperature};
+
+static dev_health_item_t const * const dev_health_mobile_temperature_elements[] =
+{
+    &dev_health_mobile_temperature,
+};
+
+static const dev_health_item_t dev_health_mobile_status = {"status", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_status};
+
+static dev_health_item_t const * const dev_health_mobile_status_elements[] =
+{
+    &dev_health_mobile_status,
+};
+
+static const dev_health_item_t dev_health_mobile_active_sim = {"status", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_active_sim};
+
+static dev_health_item_t const * const dev_health_mobile_active_sim_elements[] =
+{
+    &dev_health_mobile_active_sim,
+};
+
+static const dev_health_item_t dev_health_mobile_net_cell_id = {"cell_id", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_cell_id};
+static const dev_health_item_t dev_health_mobile_net_network = {"network", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_network};
+
 static const dev_health_item_t dev_health_mobile_net_rssi = {"rssi", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rssi};
 static const dev_health_item_t dev_health_mobile_net_ecio = {"ecio", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_ecio};
 static const dev_health_item_t dev_health_mobile_net_rsrp = {"rsrp", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rsrp};
 static const dev_health_item_t dev_health_mobile_net_rsrq = {"rsrq", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rsrq};
 static const dev_health_item_t dev_health_mobile_net_sinr = {"sinr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_sinr};
 static const dev_health_item_t dev_health_mobile_net_snr = {"snr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_snr};
-static const dev_health_item_t dev_health_mobile_net_registration = {"registration", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_registration};
+
+static const dev_health_item_t dev_health_mobile_net_status = {"status", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_status_json};
 static const dev_health_item_t dev_health_mobile_net_lac = {"lac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_lac};
 static const dev_health_item_t dev_health_mobile_net_tac = {"tac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_tac};
 static const dev_health_item_t dev_health_mobile_net_session = {"session", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_session};
-static const dev_health_item_t dev_health_mobile_net_temperature = {"temperature", DEV_HEALTH_TYPE_FLOAT, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_temperature};
 static const dev_health_item_t dev_health_mobile_net_info = {"info", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_info_json};
 
 static dev_health_item_t const * const dev_health_mobile_net_elements[] =
 {
-    &dev_health_mobile_net_status,
+    &dev_health_mobile_net_cell_id,
+    &dev_health_mobile_net_network,
     &dev_health_mobile_net_rssi,
     &dev_health_mobile_net_ecio,
     &dev_health_mobile_net_rsrp,
     &dev_health_mobile_net_rsrq,
     &dev_health_mobile_net_sinr,
     &dev_health_mobile_net_snr,
-    &dev_health_mobile_net_registration,
+    &dev_health_mobile_net_status,
     &dev_health_mobile_net_lac,
     &dev_health_mobile_net_tac,
     &dev_health_mobile_net_session,
-    &dev_health_mobile_net_temperature,
     &dev_health_mobile_net_info
 };
 
@@ -407,6 +458,51 @@ static dev_health_path_group_t const dev_health_mobile_module_group =
             {
                 (dev_health_item_t const * const *)dev_health_mobile_module_elements,
                 asizeof(dev_health_mobile_module_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const dev_health_mobile_temperature_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_temperature_elements,
+                asizeof(dev_health_mobile_temperature_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const dev_health_mobile_status_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_status_elements,
+                asizeof(dev_health_mobile_status_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const dev_health_mobile_active_sim_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_active_sim_elements,
+                asizeof(dev_health_mobile_active_sim_elements)
             }
         }
     }
@@ -430,6 +526,9 @@ static dev_health_path_group_t const dev_health_mobile_net_group =
 static dev_health_path_group_t const * const dev_health_mobile_levels[] =
 {
     &dev_health_mobile_module_group,
+    &dev_health_mobile_temperature_group,
+    &dev_health_mobile_status_group,
+    &dev_health_mobile_active_sim_group,
     &dev_health_mobile_net_group
 };
 
