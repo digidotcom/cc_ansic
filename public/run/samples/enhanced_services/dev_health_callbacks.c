@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "connector_api.h"
 
- /*#define DEBUG*/
+/*#define DEBUG*/
 
 #if !(defined UNUSED_ARGUMENT)
 #define UNUSED_ARGUMENT(a)  (void)(a)
@@ -13,12 +13,12 @@
 
 #if (defined DEBUG)
 #define PRINT_FUNCTION_NAME()   do{printf("Function: %s\n", __FUNCTION__);}while(0)
-#define PRINT_INDEXES()         do{printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);}while(0)
-#define PRINT_TECH()            do{printf("Mobile tech %dG\n", (int)tech + 2);}while(0)
+#define PRINT_INDEXES(i)         do{printf("Mobile %d Net %d\n", (i)->upper, (i)->lower);}while(0)
+#define PRINT_TECH(t)            do{printf("Mobile tech %dG\n", (int)(t) + 2);}while(0)
 #else
 #define PRINT_FUNCTION_NAME()
-#define PRINT_INDEXES()         UNUSED_ARGUMENT(indexes)
-#define PRINT_TECH()            UNUSED_ARGUMENT(tech)
+#define PRINT_INDEXES(i)         UNUSED_ARGUMENT((i))
+#define PRINT_TECH(t)            UNUSED_ARGUMENT((t))
 #endif
 
 #define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
@@ -260,7 +260,7 @@ connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const *
 connector_bool_t cc_dev_health_get_mobile_net_info_present(connector_indexes_t const * const indexes)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
     return connector_true;
 }
 
@@ -269,7 +269,7 @@ connector_bool_t cc_dev_health_get_mobile_status(connector_indexes_t const * con
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     strcpy(*value, "Status");
     return connector_true;
@@ -279,7 +279,7 @@ connector_bool_t cc_dev_health_get_mobile_status(connector_indexes_t const * con
 connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -289,7 +289,7 @@ connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_ecio(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -299,7 +299,7 @@ connector_bool_t cc_dev_health_get_mobile_net_ecio(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_rsrp(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -309,7 +309,7 @@ connector_bool_t cc_dev_health_get_mobile_net_rsrp(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_rsrq(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -319,7 +319,7 @@ connector_bool_t cc_dev_health_get_mobile_net_rsrq(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_sinr(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -329,7 +329,7 @@ connector_bool_t cc_dev_health_get_mobile_net_sinr(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_snr(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -358,7 +358,7 @@ void cc_dev_health_get_mobile_net_status_attachment(connector_indexes_t const * 
 connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -368,7 +368,7 @@ connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -378,7 +378,7 @@ connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 32;
     return connector_true;
@@ -388,8 +388,8 @@ connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const 
 connector_bool_t cc_dev_health_get_mobile_net_rxbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -398,8 +398,8 @@ connector_bool_t cc_dev_health_get_mobile_net_rxbytes(connector_indexes_t const 
 connector_bool_t cc_dev_health_get_mobile_net_txbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -408,8 +408,8 @@ connector_bool_t cc_dev_health_get_mobile_net_txbytes(connector_indexes_t const 
 connector_bool_t cc_dev_health_get_mobile_net_latency_min(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -418,8 +418,8 @@ connector_bool_t cc_dev_health_get_mobile_net_latency_min(connector_indexes_t co
 connector_bool_t cc_dev_health_get_mobile_net_latency_avg(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -428,8 +428,8 @@ connector_bool_t cc_dev_health_get_mobile_net_latency_avg(connector_indexes_t co
 connector_bool_t cc_dev_health_get_mobile_net_latency_max(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -438,8 +438,8 @@ connector_bool_t cc_dev_health_get_mobile_net_latency_max(connector_indexes_t co
 connector_bool_t cc_dev_health_get_mobile_net_transactions_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -448,8 +448,8 @@ connector_bool_t cc_dev_health_get_mobile_net_transactions_count(connector_index
 connector_bool_t cc_dev_health_get_mobile_net_fdrop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -458,8 +458,8 @@ connector_bool_t cc_dev_health_get_mobile_net_fdrop_count(connector_indexes_t co
 connector_bool_t cc_dev_health_get_mobile_net_losspercent(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -468,8 +468,8 @@ connector_bool_t cc_dev_health_get_mobile_net_losspercent(connector_indexes_t co
 connector_bool_t cc_dev_health_get_mobile_net_drop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -478,8 +478,8 @@ connector_bool_t cc_dev_health_get_mobile_net_drop_count(connector_indexes_t con
 connector_bool_t cc_dev_health_get_mobile_net_oos_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -488,8 +488,8 @@ connector_bool_t cc_dev_health_get_mobile_net_oos_count(connector_indexes_t cons
 connector_bool_t cc_dev_health_get_mobile_net_uptime(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
-    PRINT_TECH();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
 
     *value = 32;
     return connector_true;
@@ -498,7 +498,7 @@ connector_bool_t cc_dev_health_get_mobile_net_uptime(connector_indexes_t const *
 connector_bool_t cc_dev_health_get_mobile_temperature(connector_indexes_t const * const indexes, float * const value)
 {
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     *value = 25.3;
     return connector_true;
@@ -508,7 +508,7 @@ void cc_dev_health_get_mobile_net_info_iccid(connector_indexes_t const * const i
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     strcpy(*value, "My ICCID");
 }
@@ -517,7 +517,7 @@ void cc_dev_health_get_mobile_net_info_imsi(connector_indexes_t const * const in
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     strcpy(*value, "My IMSI");
 }
@@ -527,7 +527,7 @@ void cc_dev_health_get_mobile_net_info_phone_num(connector_indexes_t const * con
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
     PRINT_FUNCTION_NAME();
-    PRINT_INDEXES();
+    PRINT_INDEXES(indexes);
 
     strcpy(*value, "My Phone Num");
 }
