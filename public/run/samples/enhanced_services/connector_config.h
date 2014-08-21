@@ -23,7 +23,7 @@
 /* #define CONNECTOR_TRANSPORT_UDP */
 /* #define CONNECTOR_TRANSPORT_SMS */
 #define CONNECTOR_DEVICE_HEALTH
-#define CONNECTOR_DEVICE_HEALTH_MAX_METRICS   8 /* TODO: This should be defined in remote_config.h */
+
 #define CONNECTOR_HAS_64_BIT_INTEGERS
 #define FLOATING_POINT_SUPPORTED
 
