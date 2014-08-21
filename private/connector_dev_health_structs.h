@@ -134,24 +134,24 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(connector_indexes_t const * const indexes, connector_json_t * const value)
+STATIC connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
     connector_bool_t const present = cc_dev_health_get_mobile_net_present(indexes);
 
     if (present)
     {
-        char * const sim_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char sim_json_format[] = "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}";
+        char * const net_info_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
+        static const char net_info_json_format[] = "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}";
         char * iccid = NULL;
         char * imsi = NULL;
         char * phone_num = NULL;
         int json_size;
 
-        ASSERT(sim_json != NULL);
+        ASSERT(net_info_json != NULL);
 
-        cc_dev_health_get_mobile_net_sim_iccid(indexes, &iccid);
-        cc_dev_health_get_mobile_net_sim_imsi(indexes, &imsi);
-        cc_dev_health_get_mobile_net_sim_phone_num(indexes, &phone_num);
+        cc_dev_health_get_mobile_net_info_iccid(indexes, &iccid);
+        cc_dev_health_get_mobile_net_info_imsi(indexes, &imsi);
+        cc_dev_health_get_mobile_net_info_phone_num(indexes, &phone_num);
 
         ASSERT(iccid != NULL);
         ASSERT(imsi != NULL);
@@ -161,7 +161,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(connector_indexes_
         escape_string(&imsi);
         escape_string(&phone_num);
 
-        json_size = sprintf(sim_json, sim_json_format, iccid, imsi, phone_num);
+        json_size = sprintf(net_info_json, net_info_json_format, iccid, imsi, phone_num);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -169,7 +169,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_sim_json(connector_indexes_
         cc_dev_health_free_string(imsi);
         cc_dev_health_free_string(phone_num);
 
-        *value = sim_json;
+        *value = net_info_json;
     }
 
     return present;
@@ -385,7 +385,7 @@ static const dev_health_item_t dev_health_mobile_net_lac = {"lac", DEV_HEALTH_TY
 static const dev_health_item_t dev_health_mobile_net_tac = {"tac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_tac};
 static const dev_health_item_t dev_health_mobile_net_session = {"session", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_session};
 static const dev_health_item_t dev_health_mobile_net_temperature = {"temperature", DEV_HEALTH_TYPE_FLOAT, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_temperature};
-static const dev_health_item_t dev_health_mobile_net_sim = {"sim", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_sim_json};
+static const dev_health_item_t dev_health_mobile_net_info = {"info", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_info_json};
 
 static dev_health_item_t const * const dev_health_mobile_net_elements[] =
 {
@@ -401,7 +401,7 @@ static dev_health_item_t const * const dev_health_mobile_net_elements[] =
     &dev_health_mobile_net_tac,
     &dev_health_mobile_net_session,
     &dev_health_mobile_net_temperature,
-    &dev_health_mobile_net_sim
+    &dev_health_mobile_net_info
 };
 
 static dev_health_path_group_t const dev_health_mobile_module_group =

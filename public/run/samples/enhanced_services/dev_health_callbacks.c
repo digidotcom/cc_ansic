@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "connector_api.h"
 
- #define DEBUG
+ /*#define DEBUG*/
 
 #if !(defined UNUSED_ARGUMENT)
 #define UNUSED_ARGUMENT(a)  (void)(a)
@@ -13,8 +13,10 @@
 
 #if (defined DEBUG)
 #define PRINT_FUNCTION_NAME()   do{printf("Function: %s\n", __FUNCTION__);}while(0)
+#define PRINT_INDEXES()         do{printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);}while(0)
 #else
 #define PRINT_FUNCTION_NAME()
+#define PRINT_INDEXES()
 #endif
 
 #define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
@@ -43,14 +45,13 @@ static int get_executable_path(char * const path, unsigned int max_size)
 done:
     return error;
 }
-
 connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size)
 {
     connector_callback_status_t status = connector_callback_continue;
     char dev_health_path[PATH_MAX] = {0};
 
     get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
+    strcat(dev_health_path, DEVICE_HEALTH_FILENAME "_");
 
     if (access(dev_health_path, F_OK) != -1)
     {
@@ -239,7 +240,7 @@ connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const *
 connector_bool_t cc_dev_health_get_mobile_net_present(connector_indexes_t const * const indexes)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
     return connector_true;
 }
 
@@ -248,7 +249,7 @@ connector_bool_t cc_dev_health_get_mobile_net_status(connector_indexes_t const *
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     strcpy(*value, "Status");
     return connector_true;
@@ -258,7 +259,7 @@ connector_bool_t cc_dev_health_get_mobile_net_status(connector_indexes_t const *
 connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -268,7 +269,7 @@ connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_ecio(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -278,7 +279,7 @@ connector_bool_t cc_dev_health_get_mobile_net_ecio(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_rsrp(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -288,7 +289,7 @@ connector_bool_t cc_dev_health_get_mobile_net_rsrp(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_rsrq(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -298,7 +299,7 @@ connector_bool_t cc_dev_health_get_mobile_net_rsrq(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_sinr(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -308,7 +309,7 @@ connector_bool_t cc_dev_health_get_mobile_net_sinr(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_mobile_net_snr(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -319,7 +320,7 @@ connector_bool_t cc_dev_health_get_mobile_net_registration(connector_indexes_t c
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     strcpy(*value, "Registration");
     return connector_true;
@@ -329,7 +330,7 @@ connector_bool_t cc_dev_health_get_mobile_net_registration(connector_indexes_t c
 connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -339,7 +340,7 @@ connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -349,7 +350,7 @@ connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 32;
     return connector_true;
@@ -359,36 +360,36 @@ connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const 
 connector_bool_t cc_dev_health_get_mobile_net_temperature(connector_indexes_t const * const indexes, float * const value)
 {
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     *value = 25.3;
     return connector_true;
 }
 
-void cc_dev_health_get_mobile_net_sim_iccid(connector_indexes_t const * const indexes, char * * const value)
+void cc_dev_health_get_mobile_net_info_iccid(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     strcpy(*value, "My ICCID");
 }
 
-void cc_dev_health_get_mobile_net_sim_imsi(connector_indexes_t const * const indexes, char * * const value)
+void cc_dev_health_get_mobile_net_info_imsi(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     strcpy(*value, "My IMSI");
 }
 
-void cc_dev_health_get_mobile_net_sim_phone_num(connector_indexes_t const * const indexes, char * * const value)
+void cc_dev_health_get_mobile_net_info_phone_num(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
     PRINT_FUNCTION_NAME();
-    printf("Mobile %d Net %d\n", indexes->upper, indexes->lower);
+    PRINT_INDEXES();
 
     strcpy(*value, "My Phone Num");
 }

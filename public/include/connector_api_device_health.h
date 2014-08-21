@@ -51,9 +51,9 @@ void cc_dev_health_get_mobile_module_network(connector_indexes_t const * const i
 void cc_dev_health_get_mobile_module_sims(connector_indexes_t const * const indexes, unsigned int * const value);
 void cc_dev_health_get_mobile_module_active_sim(connector_indexes_t const * const indexes, unsigned int * const value);
 
-void cc_dev_health_get_mobile_net_sim_iccid(connector_indexes_t const * const indexes, char * * const value);
-void cc_dev_health_get_mobile_net_sim_imsi(connector_indexes_t const * const indexes, char * * const value);
-void cc_dev_health_get_mobile_net_sim_phone_num(connector_indexes_t const * const indexes, char * * const value);
+void cc_dev_health_get_mobile_net_info_iccid(connector_indexes_t const * const indexes, char * * const value);
+void cc_dev_health_get_mobile_net_info_imsi(connector_indexes_t const * const indexes, char * * const value);
+void cc_dev_health_get_mobile_net_info_phone_num(connector_indexes_t const * const indexes, char * * const value);
 
 connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const * const indexes);
 connector_bool_t cc_dev_health_get_mobile_net_present(connector_indexes_t const * const indexes);
