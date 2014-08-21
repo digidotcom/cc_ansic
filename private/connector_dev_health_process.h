@@ -247,7 +247,7 @@ STATIC void dev_health_process_group_items(connector_data_t * const connector_pt
         dev_health_item_t const * const item = items_array[i];
         unsigned int const name_len = strlen(item->name);
 
-        if (handle_all || strncmp(path, item->name, name_len) == 0)
+        if (handle_all || (name_len != 0 && strncmp(path, item->name, name_len) == 0))
         {
             dev_health_process_item(connector_ptr, item, upper_index, lower_index);
         }
@@ -263,13 +263,13 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
     unsigned int stream_id_len = dev_health_info->stream_id.len;
     char * const p_stream_id_end = &dev_health_info->stream_id.string[stream_id_len];
     unsigned int i;
+    connector_bool_t const handle_all = path[0] == '\0' ? connector_true : connector_false;
 
     for (i = 0; i < array_size; i++)
     {
         dev_health_path_group_t const * const subgroup = subgroups_array[i];
         unsigned int const name_len = strlen(subgroup->name);
         char const * const remaining_path = get_remaining_path(path);
-        connector_bool_t const handle_all = remaining_path[0] == '\0' ? connector_true : connector_false;
         connector_bool_t const multi_instance = subgroup->multi_instance != NULL ? connector_true : connector_false;
 
         if (multi_instance)
@@ -289,7 +289,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
                     *p_stream_id_end = '\0';
                 }
             }
-            else if (strncmp(path, subgroup->name, name_len) == 0)
+            else if (name_len != 0 && strncmp(path, subgroup->name, name_len) == 0)
             {
                 unsigned long int const single_instance = strtoul(remaining_path, NULL, 10);
                 char const * const updated_remaining_path = get_remaining_path(remaining_path);
@@ -298,7 +298,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
                 {
                     dev_health_info->stream_id.len = sprintf(dev_health_info->stream_id.string, "%s/%s/%lu", dev_health_info->stream_id.string, subgroup->name, single_instance);
                 }
-                dev_health_process_next_group(connector_ptr, upper_index, single_instance, subgroup, updated_remaining_path); /* recursion */
+                dev_health_process_next_group(connector_ptr, upper_index, single_instance, subgroup, updated_remaining_path);
                 *p_stream_id_end = '\0';
             }
         }
@@ -309,7 +309,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
                 dev_health_info->stream_id.len = sprintf(dev_health_info->stream_id.string, "%s/%s", dev_health_info->stream_id.string, subgroup->name);
             }
 
-            if (handle_all || strncmp(path, subgroup->name, name_len) == 0)
+            if (handle_all || (name_len != 0 && strncmp(path, subgroup->name, name_len) == 0))
             {
                 unsigned int const lower_index_0 = 0;
 

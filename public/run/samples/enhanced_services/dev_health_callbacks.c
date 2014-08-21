@@ -51,7 +51,7 @@ connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config
     char dev_health_path[PATH_MAX] = {0};
 
     get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_FILENAME "_");
+    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
 
     if (access(dev_health_path, F_OK) != -1)
     {
@@ -382,6 +382,104 @@ connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const 
     return connector_true;
 }
 
+connector_bool_t cc_dev_health_get_mobile_net_2g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_txbytes(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_losspercent(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_uptime(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES();
+
+    *value = 32;
+    return connector_true;
+}
 
 connector_bool_t cc_dev_health_get_mobile_temperature(connector_indexes_t const * const indexes, float * const value)
 {

@@ -388,64 +388,541 @@ static dev_health_path_group_t const dev_health_root_group_net =
 };
 
 static const dev_health_item_t dev_health_mobile_module = {"module", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_module_json};
-
 static dev_health_item_t const * const dev_health_mobile_module_elements[] =
 {
-    &dev_health_mobile_module,
+    &dev_health_mobile_module
 };
 
 static const dev_health_item_t dev_health_mobile_temperature = {"temperature", DEV_HEALTH_TYPE_FLOAT, (dev_health_query_fn_t)cc_dev_health_get_mobile_temperature};
-
 static dev_health_item_t const * const dev_health_mobile_temperature_elements[] =
 {
-    &dev_health_mobile_temperature,
+    &dev_health_mobile_temperature
 };
 
 static const dev_health_item_t dev_health_mobile_status = {"status", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_status};
-
 static dev_health_item_t const * const dev_health_mobile_status_elements[] =
 {
-    &dev_health_mobile_status,
+    &dev_health_mobile_status
 };
 
 static const dev_health_item_t dev_health_mobile_active_sim = {"status", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_active_sim};
-
 static dev_health_item_t const * const dev_health_mobile_active_sim_elements[] =
 {
-    &dev_health_mobile_active_sim,
+    &dev_health_mobile_active_sim
 };
 
+
 static const dev_health_item_t dev_health_mobile_net_cell_id = {"cell_id", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_cell_id};
+static dev_health_item_t const * const dev_health_mobile_net_cell_id_elements[] =
+{
+    &dev_health_mobile_net_cell_id
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_cell_id_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_cell_id_elements,
+                asizeof(dev_health_mobile_net_cell_id_elements)
+            }
+        }
+    }
+};
+
 static const dev_health_item_t dev_health_mobile_net_network = {"network", DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_network};
+static dev_health_item_t const * const dev_health_mobile_net_network_elements[] =
+{
+    &dev_health_mobile_net_network
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_network_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_network_elements,
+                asizeof(dev_health_mobile_net_network_elements)
+            }
+        }
+    }
+};
 
 static const dev_health_item_t dev_health_mobile_net_rssi = {"rssi", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rssi};
+static dev_health_item_t const * const dev_health_mobile_net_rssi_elements[] =
+{
+    &dev_health_mobile_net_rssi
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_rssi_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_rssi_elements,
+                asizeof(dev_health_mobile_net_rssi_elements)
+            }
+        }
+    }
+};
+
 static const dev_health_item_t dev_health_mobile_net_ecio = {"ecio", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_ecio};
+static dev_health_item_t const * const dev_health_mobile_net_ecio_elements[] =
+{
+    &dev_health_mobile_net_ecio
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_ecio_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_ecio_elements,
+                asizeof(dev_health_mobile_net_ecio_elements)
+            }
+        }
+    }
+};
+
 static const dev_health_item_t dev_health_mobile_net_rsrp = {"rsrp", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rsrp};
+static dev_health_item_t const * const dev_health_mobile_net_rsrp_elements[] =
+{
+    &dev_health_mobile_net_rsrp
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_rsrp_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_rsrp_elements,
+                asizeof(dev_health_mobile_net_rsrp_elements)
+            }
+        }
+    }
+};
+
 static const dev_health_item_t dev_health_mobile_net_rsrq = {"rsrq", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_rsrq};
+static dev_health_item_t const * const dev_health_mobile_net_rsrq_elements[] =
+{
+    &dev_health_mobile_net_rsrq
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_rsrq_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_rsrq_elements,
+                asizeof(dev_health_mobile_net_rsrq_elements)
+            }
+        }
+    }
+};
+
 static const dev_health_item_t dev_health_mobile_net_sinr = {"sinr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_sinr};
+static dev_health_item_t const * const dev_health_mobile_net_sinr_elements[] =
+{
+    &dev_health_mobile_net_sinr
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_sinr_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_sinr_elements,
+                asizeof(dev_health_mobile_net_sinr_elements)
+            }
+        }
+    }
+};
+
 static const dev_health_item_t dev_health_mobile_net_snr = {"snr", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_snr};
+static dev_health_item_t const * const dev_health_mobile_net_snr_elements[] =
+{
+    &dev_health_mobile_net_snr
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_snr_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_snr_elements,
+                asizeof(dev_health_mobile_net_snr_elements)
+            }
+        }
+    }
+};
 
 static const dev_health_item_t dev_health_mobile_net_status = {"status", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_status_json};
-static const dev_health_item_t dev_health_mobile_net_lac = {"lac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_lac};
-static const dev_health_item_t dev_health_mobile_net_tac = {"tac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_tac};
-static const dev_health_item_t dev_health_mobile_net_session = {"session", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_session};
-static const dev_health_item_t dev_health_mobile_net_info = {"info", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_info_json};
-
-static dev_health_item_t const * const dev_health_mobile_net_elements[] =
+static dev_health_item_t const * const dev_health_mobile_net_status_elements[] =
 {
-    &dev_health_mobile_net_cell_id,
-    &dev_health_mobile_net_network,
-    &dev_health_mobile_net_rssi,
-    &dev_health_mobile_net_ecio,
-    &dev_health_mobile_net_rsrp,
-    &dev_health_mobile_net_rsrq,
-    &dev_health_mobile_net_sinr,
-    &dev_health_mobile_net_snr,
-    &dev_health_mobile_net_status,
-    &dev_health_mobile_net_lac,
-    &dev_health_mobile_net_tac,
-    &dev_health_mobile_net_session,
+    &dev_health_mobile_net_status
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_status_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_status_elements,
+                asizeof(dev_health_mobile_net_status_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_lac = {"lac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_lac};
+static dev_health_item_t const * const dev_health_mobile_net_lac_elements[] =
+{
+    &dev_health_mobile_net_lac
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_lac_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_lac_elements,
+                asizeof(dev_health_mobile_net_lac_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_tac = {"tac", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_tac};
+static dev_health_item_t const * const dev_health_mobile_net_tac_elements[] =
+{
+    &dev_health_mobile_net_tac
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_tac_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_tac_elements,
+                asizeof(dev_health_mobile_net_tac_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_session = {"session", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_session};
+static dev_health_item_t const * const dev_health_mobile_net_session_elements[] =
+{
+    &dev_health_mobile_net_session
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_session_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_session_elements,
+                asizeof(dev_health_mobile_net_session_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_info = {"info", DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_info_json};
+static dev_health_item_t const * const dev_health_mobile_net_info_elements[] =
+{
     &dev_health_mobile_net_info
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_info_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_info_elements,
+                asizeof(dev_health_mobile_net_info_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_rxbytes = {"rxbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_rxbytes};
+static dev_health_item_t const * const dev_health_mobile_net_2g_rxbytes_elements[] =
+{
+    &dev_health_mobile_net_2g_rxbytes
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_rxbytes_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_rxbytes_elements,
+                asizeof(dev_health_mobile_net_2g_rxbytes_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_txbytes = {"txbytes", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_txbytes};
+static dev_health_item_t const * const dev_health_mobile_net_2g_txbytes_elements[] =
+{
+    &dev_health_mobile_net_2g_txbytes
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_txbytes_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_txbytes_elements,
+                asizeof(dev_health_mobile_net_2g_txbytes_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_losspercent = {"losspercent", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_losspercent};
+static dev_health_item_t const * const dev_health_mobile_net_2g_losspercent_elements[] =
+{
+    &dev_health_mobile_net_2g_losspercent
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_losspercent_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_losspercent_elements,
+                asizeof(dev_health_mobile_net_2g_losspercent_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_uptime = {"uptime", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_uptime};
+static dev_health_item_t const * const dev_health_mobile_net_2g_uptime_elements[] =
+{
+    &dev_health_mobile_net_2g_uptime
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_uptime_group =
+{
+    "",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_uptime_elements,
+                asizeof(dev_health_mobile_net_2g_uptime_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_latency_min = {"min", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_latency_min};
+static const dev_health_item_t dev_health_mobile_net_2g_latency_avg = {"avg", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_latency_avg};
+static const dev_health_item_t dev_health_mobile_net_2g_latency_max = {"max", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_latency_max};
+
+static dev_health_item_t const * const dev_health_mobile_net_2g_latency_elements[] =
+{
+    &dev_health_mobile_net_2g_latency_min,
+    &dev_health_mobile_net_2g_latency_avg,
+    &dev_health_mobile_net_2g_latency_max
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_latency_group =
+{
+    "latency",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_latency_elements,
+                asizeof(dev_health_mobile_net_2g_latency_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_transactions_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_transactions_count};
+static dev_health_item_t const * const dev_health_mobile_net_2g_transactions_elements[] =
+{
+    &dev_health_mobile_net_2g_transactions_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_transactions_group =
+{
+    "transactions",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_transactions_elements,
+                asizeof(dev_health_mobile_net_2g_transactions_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_fdrop_count = {"count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_fdrop_count};
+static dev_health_item_t const * const dev_health_mobile_net_2g_fdrop_elements[] =
+{
+    &dev_health_mobile_net_2g_fdrop_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_fdrop_group =
+{
+    "fdrop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_fdrop_elements,
+                asizeof(dev_health_mobile_net_2g_fdrop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_drop_count = {"drop/count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_drop_count};
+static dev_health_item_t const * const dev_health_mobile_net_2g_drop_elements[] =
+{
+    &dev_health_mobile_net_2g_drop_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_drop_group =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_drop_elements,
+                asizeof(dev_health_mobile_net_2g_drop_elements)
+            }
+        }
+    }
+};
+
+static const dev_health_item_t dev_health_mobile_net_2g_oos_count = {"oos/count", DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_2g_oos_count};
+static dev_health_item_t const * const dev_health_mobile_net_2g_oos_elements[] =
+{
+    &dev_health_mobile_net_2g_oos_count
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_oos_group =
+{
+    "drop",
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_oos_elements,
+                asizeof(dev_health_mobile_net_2g_oos_elements)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const * const dev_health_mobile_net_2g_subgroups[] =
+{
+    &dev_health_mobile_net_2g_rxbytes_group,
+    &dev_health_mobile_net_2g_txbytes_group,
+    &dev_health_mobile_net_2g_losspercent_group,
+    &dev_health_mobile_net_2g_uptime_group,
+    &dev_health_mobile_net_2g_latency_group,
+    &dev_health_mobile_net_2g_transactions_group,
+    &dev_health_mobile_net_2g_fdrop_group,
+    &dev_health_mobile_net_2g_drop_group,
+    &dev_health_mobile_net_2g_oos_group
+};
+
+static dev_health_path_group_t const dev_health_mobile_net_2g_group =
+{
+    "2g",
+    NULL,
+    {
+        SUBGROUPS,
+        {
+            {
+                (dev_health_item_t const * const *)dev_health_mobile_net_2g_subgroups,
+                asizeof(dev_health_mobile_net_2g_subgroups)
+            }
+        }
+    }
+};
+
+static dev_health_path_group_t const * const dev_health_mobile_net_subgroups[] =
+{
+    &dev_health_mobile_net_cell_id_group,
+    &dev_health_mobile_net_network_group,
+    &dev_health_mobile_net_rssi_group,
+    &dev_health_mobile_net_ecio_group,
+    &dev_health_mobile_net_rsrp_group,
+    &dev_health_mobile_net_rsrq_group,
+    &dev_health_mobile_net_sinr_group,
+    &dev_health_mobile_net_snr_group,
+    &dev_health_mobile_net_status_group,
+    &dev_health_mobile_net_lac_group,
+    &dev_health_mobile_net_tac_group,
+    &dev_health_mobile_net_session_group,
+    &dev_health_mobile_net_info_group,
+    &dev_health_mobile_net_2g_group
 };
 
 static dev_health_path_group_t const dev_health_mobile_module_group =
@@ -513,11 +990,11 @@ static dev_health_path_group_t const dev_health_mobile_net_group =
     "net",
     cc_dev_health_get_mobile_net_instances,
     {
-        ITEMS,
+        SUBGROUPS,
         {
             {
-                (dev_health_item_t const * const *)dev_health_mobile_net_elements,
-                asizeof(dev_health_mobile_net_elements)
+                (dev_health_item_t const * const *)dev_health_mobile_net_subgroups,
+                asizeof(dev_health_mobile_net_subgroups)
             }
         }
     }

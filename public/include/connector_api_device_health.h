@@ -14,7 +14,7 @@
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
 
-#define DEV_HEALTH_MAX_STREAM_ID_LEN               32
+#define DEV_HEALTH_MAX_STREAM_ID_LEN               64
 
 typedef struct {
     char path[DEV_HEALTH_MAX_STREAM_ID_LEN];
@@ -74,6 +74,18 @@ connector_bool_t cc_dev_health_get_mobile_net_snr(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const * const indexes, int32_t * const value);
+
+connector_bool_t cc_dev_health_get_mobile_net_2g_rxbytes(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_txbytes(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_latency_min(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_latency_avg(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_latency_max(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_transactions_count(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_fdrop_count(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_losspercent(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_drop_count(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_oos_count(connector_indexes_t const * const indexes, int32_t * const value);
+connector_bool_t cc_dev_health_get_mobile_net_2g_uptime(connector_indexes_t const * const indexes, int32_t * const value);
 
 unsigned int cc_dev_health_get_eth_instances(void);
 
