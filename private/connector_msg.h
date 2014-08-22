@@ -262,7 +262,6 @@ typedef struct
     } session;
     unsigned int last_assigned_id;
     struct {
-        void const * current;
         void const * user;
         void const * internal;
     } pending_service_request;
@@ -1157,20 +1156,15 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
 {
     connector_status_t status = connector_working;
     connector_msg_callback_t * const cb_fn = msg_ptr->service_cb[msg_service_id_data];
+    void const * * pending_request = NULL;
 
     if (msg_ptr->pending_service_request.user != NULL)
     {
-        msg_ptr->pending_service_request.current = msg_ptr->pending_service_request.user;
-        msg_ptr->pending_service_request.user = NULL;
+        pending_request = &msg_ptr->pending_service_request.user;
     }
     else if (msg_ptr->pending_service_request.internal != NULL)
     {
-        msg_ptr->pending_service_request.current = msg_ptr->pending_service_request.internal;
-        msg_ptr->pending_service_request.internal = NULL;
-    }
-    else
-    {
-        msg_ptr->pending_service_request.current = NULL;
+        pending_request = &msg_ptr->pending_service_request.internal;
     }
 
     if (cb_fn != NULL)
@@ -1180,14 +1174,14 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         service_data.session = session;
         service_data.service_type = msg_service_type_pending_request;
         service_data.error_value = result;
-        service_data.have_data = (void *)msg_ptr->pending_service_request.current;
+        service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
 
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
             status = msg_delete_session(connector_ptr, msg_ptr, session);
     }
 
-    msg_ptr->pending_service_request.current = NULL;
+    *pending_request = NULL;
 
     return status;
 }
@@ -1929,7 +1923,7 @@ STATIC connector_status_t msg_cleanup_all_sessions(connector_data_t * const conn
     }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-    if (msg_ptr->pending_service_request.current != NULL)
+    if (msg_ptr->pending_service_request.user != NULL || msg_ptr->pending_service_request.user != NULL)
     {
         status = msg_handle_pending_requests(connector_ptr, msg_ptr, NULL, connector_session_error_cancel);
     }
