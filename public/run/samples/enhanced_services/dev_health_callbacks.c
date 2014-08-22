@@ -257,6 +257,14 @@ connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const *
     return connector_true;
 }
 
+
+connector_bool_t cc_dev_health_mobile_module_net_status_present(connector_indexes_t const * const indexes)
+{
+    UNUSED_ARGUMENT(indexes);
+    PRINT_FUNCTION_NAME();
+    return connector_true;
+}
+
 connector_bool_t cc_dev_health_get_mobile_net_info_present(connector_indexes_t const * const indexes)
 {
     PRINT_FUNCTION_NAME();

@@ -131,7 +131,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
 
 STATIC connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
-    connector_bool_t const present = cc_dev_health_mobile_module_present(indexes);
+    connector_bool_t const present = cc_dev_health_mobile_module_net_status_present(indexes);
 
     if (present)
     {
