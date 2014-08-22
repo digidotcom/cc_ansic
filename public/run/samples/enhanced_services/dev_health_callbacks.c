@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "connector_api.h"
 
-/* #define DEBUG */
+/*#define DEBUG*/
 
 #if !(defined UNUSED_ARGUMENT)
 #define UNUSED_ARGUMENT(a)  (void)(a)
@@ -13,8 +13,12 @@
 
 #if (defined DEBUG)
 #define PRINT_FUNCTION_NAME()   do{printf("Function: %s\n", __FUNCTION__);}while(0)
+#define PRINT_INDEXES(i)         do{printf("Mobile %d Net %d\n", (i)->upper, (i)->lower);}while(0)
+#define PRINT_TECH(t)            do{printf("Mobile tech %dG\n", (int)(t) + 2);}while(0)
 #else
 #define PRINT_FUNCTION_NAME()
+#define PRINT_INDEXES(i)         UNUSED_ARGUMENT((i))
+#define PRINT_TECH(t)            UNUSED_ARGUMENT((t))
 #endif
 
 #define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
@@ -119,9 +123,9 @@ uint32_t cc_dev_health_get_posix_time(void)
     return posix_time;
 }
 
-connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_net_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -129,9 +133,9 @@ connector_bool_t cc_dev_health_get_net_latency_min(unsigned int const index, int
 }
 
 
-connector_bool_t cc_dev_health_get_net_latency_avg(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_net_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -139,9 +143,36 @@ connector_bool_t cc_dev_health_get_net_latency_avg(unsigned int const index, int
 }
 
 
-connector_bool_t cc_dev_health_get_net_latency_max(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_net_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_net_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_net_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_net_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -156,222 +187,357 @@ unsigned int cc_dev_health_get_mobile_instances(void)
     return 2;
 }
 
+unsigned int cc_dev_health_get_mobile_net_instances(void)
+{
+    PRINT_FUNCTION_NAME();
+
+    return 2;
+}
+
 #define MAX_STRING  64
 
-void cc_dev_health_get_mobile_module_modem_id(unsigned int const index, char * * const value)
+void cc_dev_health_get_mobile_module_modem_id(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "My \"Modem\" \\ID\\");
 }
 
-void cc_dev_health_get_mobile_module_cell_id(unsigned int const index, char * * const value)
+void cc_dev_health_get_mobile_module_imei(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "123456-789-0");
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_cell_id(connector_indexes_t const * const indexes, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "My Cell ID");
+    return connector_true;
 }
 
-void cc_dev_health_get_mobile_module_network(unsigned int const index, char * * const value)
+connector_bool_t cc_dev_health_get_mobile_net_network(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "AT&T");
+    return connector_true;
 }
 
-void cc_dev_health_get_mobile_module_sims(unsigned int const index, unsigned int * const value)
+void cc_dev_health_get_mobile_module_sims(connector_indexes_t const * const indexes, unsigned int * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 2;
 }
 
-void cc_dev_health_get_mobile_module_active_sim(unsigned int const index, unsigned int * const value)
+connector_bool_t cc_dev_health_get_mobile_active_sim(connector_indexes_t const * const indexes, unsigned int * const value)
 {
-    UNUSED_ARGUMENT(index);
-
+    UNUSED_ARGUMENT(indexes);
     PRINT_FUNCTION_NAME();
     *value = 1;
+    return connector_true;
 }
 
-connector_bool_t cc_dev_health_mobile_module_present(unsigned int const index)
+connector_bool_t cc_dev_health_mobile_module_present(connector_indexes_t const * const indexes)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
     PRINT_FUNCTION_NAME();
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_sim0_present(unsigned int const index)
+
+connector_bool_t cc_dev_health_mobile_module_net_status_present(connector_indexes_t const * const indexes)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
     PRINT_FUNCTION_NAME();
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_status(unsigned int const index, char * * const value)
+connector_bool_t cc_dev_health_get_mobile_net_info_present(connector_indexes_t const * const indexes)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_status(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     strcpy(*value, "Status");
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_rssi(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_ecio(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_ecio(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_rsrp(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_rsrp(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_rsrq(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_rsrq(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_sinr(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_sinr(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_snr(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_snr(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_registration(unsigned int const index, char * * const value)
+void cc_dev_health_get_mobile_net_status_registration(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
-    strcpy(*value, "Registration");
-    return connector_true;
+    strcpy(*value, "<Registration>");
+}
+
+void cc_dev_health_get_mobile_net_status_attachment(connector_indexes_t const * const indexes, char * * const value)
+{
+    *value = cc_dev_health_malloc_string(MAX_STRING);
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    strcpy(*value, "<Attachment>");
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_lac(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_lac(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_tac(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_tac(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_session(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_mobile_net_session(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 32;
     return connector_true;
 }
 
 
-connector_bool_t cc_dev_health_get_mobile_temperature(unsigned int const index, float * const value)
+connector_bool_t cc_dev_health_get_mobile_net_rxbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_txbytes(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_latency_min(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_latency_avg(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_latency_max(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_transactions_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_fdrop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_losspercent(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_drop_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_oos_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_net_uptime(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+    PRINT_TECH(tech);
+
+    *value = 32;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_mobile_temperature(connector_indexes_t const * const indexes, float * const value)
+{
+    PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     *value = 25.3;
     return connector_true;
 }
 
-void cc_dev_health_get_sim0_iccid(unsigned int const index, char * * const value)
+void cc_dev_health_get_mobile_net_info_iccid(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     strcpy(*value, "My ICCID");
 }
 
-void cc_dev_health_get_sim0_imsi(unsigned int const index, char * * const value)
+void cc_dev_health_get_mobile_net_info_imsi(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
-
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     strcpy(*value, "My IMSI");
 }
 
-void cc_dev_health_get_sim0_phone_num(unsigned int const index, char * * const value)
+void cc_dev_health_get_mobile_net_info_phone_num(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
 
     PRINT_FUNCTION_NAME();
+    PRINT_INDEXES(indexes);
+
     strcpy(*value, "My Phone Num");
-}
-
-connector_bool_t cc_dev_health_get_mobile_sim0_status(unsigned int const index, char * * const value)
-{
-    *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
-
-    PRINT_FUNCTION_NAME();
-    strcpy(*value, "sim0 status");
-    return connector_true;
 }
 
 unsigned int cc_dev_health_get_eth_instances(void)
@@ -381,9 +547,9 @@ unsigned int cc_dev_health_get_eth_instances(void)
     return 4;
 }
 
-connector_bool_t cc_dev_health_get_eth_tx_bytes(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_tx_bytes(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
@@ -391,39 +557,72 @@ connector_bool_t cc_dev_health_get_eth_tx_bytes(unsigned int const index, uint64
 }
 
 
-connector_bool_t cc_dev_health_get_eth_tx_packets(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_tx_packets(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
     return connector_true;
 }
 
-
-connector_bool_t cc_dev_health_get_eth_rx_bytes(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_tx_dropped(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
     return connector_true;
 }
 
-
-connector_bool_t cc_dev_health_get_eth_rx_packets(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_tx_overruns(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
     return connector_true;
 }
 
-
-connector_bool_t cc_dev_health_get_eth_dropped_packets(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_eth_rx_bytes(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 64;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_eth_rx_packets(connector_indexes_t const * const indexes, uint64_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 64;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_eth_rx_dropped(connector_indexes_t const * const indexes, uint64_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 64;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_eth_link_down_count(connector_indexes_t const * const indexes, uint64_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 64;
+    return connector_true;
+}
+
+connector_bool_t cc_dev_health_get_eth_link_down_duration(connector_indexes_t const * const indexes, uint64_t * const value)
+{
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
@@ -438,54 +637,54 @@ unsigned int cc_dev_health_get_wifi_instances(void)
     return 1;
 }
 
-connector_bool_t cc_dev_health_get_wifi_radio_present(unsigned int const index)
+connector_bool_t cc_dev_health_get_wifi_radio_present(connector_indexes_t const * const indexes)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
     return connector_true;
 }
 
-void cc_dev_health_get_wifi_radio_mode(unsigned int const index, char * * const value)
+void cc_dev_health_get_wifi_radio_mode(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "client");
 }
 
-void cc_dev_health_get_wifi_radio_ssid(unsigned int const index, char * * const value)
+void cc_dev_health_get_wifi_radio_ssid(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "SSID");
 }
 
-void cc_dev_health_get_wifi_radio_channel(unsigned int const index, unsigned int * const value)
+void cc_dev_health_get_wifi_radio_channel(connector_indexes_t const * const indexes, unsigned int * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 3;
 }
 
-void cc_dev_health_get_wifi_radio_protocol(unsigned int const index, char * * const value)
+void cc_dev_health_get_wifi_radio_protocol(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
 
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "Wifi Protocol");
 }
 
 
-connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char * * const value)
+connector_bool_t cc_dev_health_get_wifi_status(connector_indexes_t const * const indexes, char * * const value)
 {
     *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     strcpy(*value, "wifi status");
@@ -493,9 +692,9 @@ connector_bool_t cc_dev_health_get_wifi_status(unsigned int const index, char * 
 }
 
 
-connector_bool_t cc_dev_health_get_wifi_rssi(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_wifi_rssi(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -503,9 +702,9 @@ connector_bool_t cc_dev_health_get_wifi_rssi(unsigned int const index, int32_t *
 }
 
 
-connector_bool_t cc_dev_health_get_wifi_rate(unsigned int const index, float * const value)
+connector_bool_t cc_dev_health_get_wifi_rate(connector_indexes_t const * const indexes, float * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 1.159;
@@ -513,9 +712,9 @@ connector_bool_t cc_dev_health_get_wifi_rate(unsigned int const index, float * c
 }
 
 
-connector_bool_t cc_dev_health_get_wifi_clients(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_wifi_clients(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -524,9 +723,9 @@ connector_bool_t cc_dev_health_get_wifi_clients(unsigned int const index, int32_
 
 
 
-connector_bool_t cc_dev_health_get_system_mem_free(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_free(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
@@ -534,9 +733,9 @@ connector_bool_t cc_dev_health_get_system_mem_free(unsigned int const index, uin
 }
 
 
-connector_bool_t cc_dev_health_get_system_mem_used(unsigned int const index, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_used(connector_indexes_t const * const indexes, uint64_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 64;
@@ -544,9 +743,9 @@ connector_bool_t cc_dev_health_get_system_mem_used(unsigned int const index, uin
 }
 
 
-connector_bool_t cc_dev_health_get_system_reboots(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_reboots(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -554,9 +753,9 @@ connector_bool_t cc_dev_health_get_system_reboots(unsigned int const index, int3
 }
 
 
-connector_bool_t cc_dev_health_get_system_msg_free(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_msg_free(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -564,9 +763,9 @@ connector_bool_t cc_dev_health_get_system_msg_free(unsigned int const index, int
 }
 
 
-connector_bool_t cc_dev_health_get_system_msg_min(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_msg_min(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -574,9 +773,9 @@ connector_bool_t cc_dev_health_get_system_msg_min(unsigned int const index, int3
 }
 
 
-connector_bool_t cc_dev_health_get_system_buf_free(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_buf_free(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -584,9 +783,9 @@ connector_bool_t cc_dev_health_get_system_buf_free(unsigned int const index, int
 }
 
 
-connector_bool_t cc_dev_health_get_system_buf_used(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_buf_used(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -594,9 +793,9 @@ connector_bool_t cc_dev_health_get_system_buf_used(unsigned int const index, int
 }
 
 
-connector_bool_t cc_dev_health_get_system_bigbuf_free(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_bigbuf_free(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
@@ -604,32 +803,32 @@ connector_bool_t cc_dev_health_get_system_bigbuf_free(unsigned int const index, 
 }
 
 
-connector_bool_t cc_dev_health_get_system_bigbuf_used(unsigned int const index, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_bigbuf_used(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 32;
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_gps_location_present(unsigned int const index)
+connector_bool_t cc_dev_health_get_gps_location_present(connector_indexes_t const * const indexes)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
     return connector_true;
 }
 
-void cc_dev_health_get_gps_location_latitude(unsigned int const index, float * const value)
+void cc_dev_health_get_gps_location_latitude(connector_indexes_t const * const indexes, float * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = -26.47;
 }
 
-void cc_dev_health_get_gps_location_longitude(unsigned int const index, float * const value)
+void cc_dev_health_get_gps_location_longitude(connector_indexes_t const * const indexes, float * const value)
 {
-    UNUSED_ARGUMENT(index);
+    UNUSED_ARGUMENT(indexes);
 
     PRINT_FUNCTION_NAME();
     *value = 60.27;

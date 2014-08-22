@@ -30,8 +30,3 @@ group setting system "System"
 group state gps_stats "GPS"
     element latitude "Latitude" type string access read_only
     element longitude "Longitude" type string access read_only
-
-group setting enhanced_services 8 "Health data reporting configuration"
-    element path "Requested Data Stream path" type string max 32
-    element sampling_interval "Sampling interval" "Path query rate in seconds" type uint32
-    element reporting_interval "Reporting interval" "Path report rate in minutes" type uint32

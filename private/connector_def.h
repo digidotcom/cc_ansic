@@ -216,6 +216,8 @@ typedef struct connector_data {
 #endif
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
+#define CONNECTOR_DEVICE_HEALTH_MAX_METRICS 8
+
     struct {
         struct dev_health_info {
             struct {
