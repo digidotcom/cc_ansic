@@ -138,29 +138,29 @@ STATIC void process_csv_stream_type(char * const csv, dev_health_value_type_t co
     switch (type)
     {
         case DEV_HEALTH_TYPE_INT32:
-            stream_type_string = "INTEGER";
+            stream_type_string = ",INTEGER";
             break;
         case DEV_HEALTH_TYPE_UINT64:
-            stream_type_string = "LONG";
+            stream_type_string = ",LONG";
             break;
         case DEV_HEALTH_TYPE_FLOAT:
-            stream_type_string = "FLOAT";
+            stream_type_string = ",FLOAT";
             break;
         case DEV_HEALTH_TYPE_STRING:
-            stream_type_string = "STRING";
+            stream_type_string = ",STRING";
             break;
         case DEV_HEALTH_TYPE_JSON:
-            stream_type_string = "JSON";
+            stream_type_string = ",JSON";
             break;
         case DEV_HEALTH_TYPE_GEOJSON:
-            stream_type_string = "GEOJSON";
+            stream_type_string = ",GEOJSON";
             break;
         case DEV_HEALTH_TYPE_NONE:
             ASSERT(type != DEV_HEALTH_TYPE_NONE);
             break;
     }
 
-    sprintf(csv, "%s,%s", csv, stream_type_string);
+    strcat(csv, stream_type_string);
 }
 
 STATIC void process_csv_stream_category(char * const csv)
