@@ -24,7 +24,7 @@ typedef union {
 static connector_status_t dev_health_setup_csv_data(connector_data_t * const connector_ptr)
 {
     dev_health_info_t * dev_health_info = &connector_ptr->dev_health.info;
-    static char const csv_header[] = "#DATA,TIMESTAMP,STREAMCATEGORY,STREAMID\n";
+    static char const csv_header[] = "#DATA,TIMESTAMP,STREAMTYPE,STREAMCATEGORY,STREAMID\n";
     connector_status_t status = connector_working;
 
     if (dev_health_info->csv.data == NULL)
@@ -131,6 +131,38 @@ STATIC void process_csv_timestamp(char * const csv)
     sprintf(csv, "%s,%" PRIu32 "000", csv, timestamp); /* Timestamp is in milliseconds */
 }
 
+STATIC void process_csv_stream_type(char * const csv, dev_health_value_type_t const type)
+{
+    char const * stream_type_string = NULL;
+
+    switch (type)
+    {
+        case DEV_HEALTH_TYPE_INT32:
+            stream_type_string = "INTEGER";
+            break;
+        case DEV_HEALTH_TYPE_UINT64:
+            stream_type_string = "LONG";
+            break;
+        case DEV_HEALTH_TYPE_FLOAT:
+            stream_type_string = "FLOAT";
+            break;
+        case DEV_HEALTH_TYPE_STRING:
+            stream_type_string = "STRING";
+            break;
+        case DEV_HEALTH_TYPE_JSON:
+            stream_type_string = "JSON";
+            break;
+        case DEV_HEALTH_TYPE_GEOJSON:
+            stream_type_string = "GEOJSON";
+            break;
+        case DEV_HEALTH_TYPE_NONE:
+            ASSERT(type != DEV_HEALTH_TYPE_NONE);
+            break;
+    }
+
+    sprintf(csv, "%s,%s", csv, stream_type_string);
+}
+
 STATIC void process_csv_stream_category(char * const csv)
 {
     strcat(csv, ",metrics");
@@ -150,6 +182,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
 
     process_csv_data(temp_csv, value, type);
     process_csv_timestamp(temp_csv);
+    process_csv_stream_type(temp_csv, type);
     process_csv_stream_category(temp_csv);
     process_csv_stream_id(temp_csv, stream_id);
 
@@ -274,7 +307,6 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
 
         if (multi_instance)
         {
-            char const * const remaining_path = get_remaining_path(path);
             connector_bool_t const handle_all_instances = remaining_path[0] == '\0' ? connector_true : connector_false;
 
             if (handle_all_instances)
@@ -304,6 +336,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
                 dev_health_process_next_group(connector_ptr, upper_index, single_instance, subgroup, updated_remaining_path);
                 *p_stream_id_end = '\0';
             }
+            break;
         }
         else
         {
