@@ -979,10 +979,32 @@ STATIC connector_status_t connector_facility_data_service_init(connector_data_t 
 STATIC connector_status_t data_service_initiate(connector_data_t * const connector_ptr,  void const * request)
 {
     connector_status_t status = connector_invalid_data;
+    msg_request_initiator_t initiator = MSG_REQUEST_USER;
 
     ASSERT_GOTO(request != NULL, error);
+#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_DEVICE_HEALTH)
+    {
+        connector_request_data_service_send_t const * const data_service_send = request;
+        char const * const path = data_service_send->path;
+        #if (defined CONNECTOR_DATA_POINTS)
+        connector_bool_t const request_is_data_point = connector_bool(strncmp(path, internal_dp4d_path, internal_dp4d_path_strlen) == 0);
+        #else
+        connector_bool_t const request_is_data_point = connector_false;
+        #endif
+        #if (defined CONNECTOR_DEVICE_HEALTH)
+        connector_bool_t const request_is_device_health = connector_bool(strncmp(path, dev_health_path, dev_health_path_strlen) == 0);
+        #else
+        connector_bool_t const request_is_device_health = connector_false;
+        #endif
 
-    status = msg_initiate_request(connector_ptr, request) == connector_true ? connector_success : connector_service_busy;
+        if (request_is_data_point || request_is_device_health)
+        {
+            initiator = MSG_REQUEST_INTERNAL;
+        }
+    }
+#endif
+
+    status = msg_initiate_request(connector_ptr, request, initiator) == connector_true ? connector_success : connector_service_busy;
 
 error:
     return status;

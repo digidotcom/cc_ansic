@@ -261,7 +261,10 @@ typedef struct
         msg_session_t * current;
     } session;
     unsigned int last_assigned_id;
-    void const * pending_service_request;
+    struct {
+        void const * user;
+        void const * internal;
+    } pending_service_request;
 } connector_msg_data_t;
 
 STATIC msg_session_t * msg_find_session(connector_msg_data_t const * const msg_ptr, unsigned int const id, connector_bool_t const client_owned)
@@ -1116,26 +1119,53 @@ done:
 }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-STATIC connector_bool_t msg_initiate_request(connector_data_t * const connector_ptr, void const * const service_context)
+typedef enum {
+    MSG_REQUEST_USER,
+    MSG_REQUEST_INTERNAL
+} msg_request_initiator_t;
+
+STATIC connector_bool_t msg_initiate_request(connector_data_t * const connector_ptr, void const * const service_context, msg_request_initiator_t initiator)
 {
     connector_bool_t success = connector_false;
     connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
 
     ASSERT_GOTO(msg_ptr != NULL, error);
-    if (msg_ptr->pending_service_request == NULL)
+    switch (initiator)
     {
-        msg_ptr->pending_service_request = service_context;
-        success = connector_true;
+        case MSG_REQUEST_USER:
+            if (msg_ptr->pending_service_request.user == NULL)
+            {
+                msg_ptr->pending_service_request.user = service_context;
+                success = connector_true;
+            }
+            break;
+        case MSG_REQUEST_INTERNAL:
+            if (msg_ptr->pending_service_request.internal == NULL)
+            {
+                msg_ptr->pending_service_request.internal = service_context;
+                success = connector_true;
+            }
+            break;
     }
 
 error:
     return success;
 }
 
-STATIC connector_status_t msg_handle_pending_request(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, connector_session_error_t const result)
+STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, msg_session_t * const session, connector_session_error_t const result)
 {
     connector_status_t status = connector_working;
     connector_msg_callback_t * const cb_fn = msg_ptr->service_cb[msg_service_id_data];
+    void const * * pending_request = NULL;
+
+    if (msg_ptr->pending_service_request.user != NULL)
+    {
+        pending_request = &msg_ptr->pending_service_request.user;
+    }
+    else if (msg_ptr->pending_service_request.internal != NULL)
+    {
+        pending_request = &msg_ptr->pending_service_request.internal;
+    }
 
     if (cb_fn != NULL)
     {
@@ -1143,15 +1173,16 @@ STATIC connector_status_t msg_handle_pending_request(connector_data_t * const co
 
         service_data.session = session;
         service_data.service_type = msg_service_type_pending_request;
-        service_data.have_data = (void *)msg_ptr->pending_service_request;
         service_data.error_value = result;
+        service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
 
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
             status = msg_delete_session(connector_ptr, msg_ptr, session);
     }
 
-    msg_ptr->pending_service_request = NULL;
+    *pending_request = NULL;
+
     return status;
 }
 
@@ -1166,7 +1197,7 @@ STATIC connector_status_t msg_start_session(connector_data_t * const connector_p
     {
         connector_session_error_t const result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_request);
 
-        status = msg_handle_pending_request(connector_ptr, msg_ptr, session, result);
+        status = msg_handle_pending_requests(connector_ptr, msg_ptr, session, result);
     }
 
 error:
@@ -1714,7 +1745,7 @@ STATIC connector_status_t msg_process_pending(connector_data_t * const connector
     if (msg_ptr->session_locked) goto done;
 
 #if (defined CONNECTOR_DATA_SERVICE)
-    if (msg_ptr->pending_service_request != NULL)
+    if (msg_ptr->pending_service_request.user != NULL || msg_ptr->pending_service_request.internal != NULL)
     {
         status = msg_start_session(connector_ptr, msg_ptr);
         if (status != connector_working) goto done;
@@ -1892,8 +1923,10 @@ STATIC connector_status_t msg_cleanup_all_sessions(connector_data_t * const conn
     }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-    if (msg_ptr->pending_service_request != NULL)
-        status = msg_handle_pending_request(connector_ptr, msg_ptr, NULL, connector_session_error_cancel);
+    if (msg_ptr->pending_service_request.user != NULL || msg_ptr->pending_service_request.user != NULL)
+    {
+        status = msg_handle_pending_requests(connector_ptr, msg_ptr, NULL, connector_session_error_cancel);
+    }
 #endif
 
 error:
