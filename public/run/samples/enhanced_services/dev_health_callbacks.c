@@ -665,7 +665,7 @@ connector_bool_t cc_dev_health_get_wifi_clients(connector_indexes_t const * cons
 
 
 
-connector_bool_t cc_dev_health_get_system_mem_free(connector_indexes_t const * const indexes, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_avaiable(connector_indexes_t const * const indexes, uint64_t * const value)
 {
     UNUSED_ARGUMENT(indexes);
 
@@ -725,7 +725,7 @@ connector_bool_t cc_dev_health_get_system_buf_free(connector_indexes_t const * c
 }
 
 
-connector_bool_t cc_dev_health_get_system_buf_used(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_buf_min(connector_indexes_t const * const indexes, int32_t * const value)
 {
     UNUSED_ARGUMENT(indexes);
 
@@ -745,7 +745,7 @@ connector_bool_t cc_dev_health_get_system_bigbuf_free(connector_indexes_t const 
 }
 
 
-connector_bool_t cc_dev_health_get_system_bigbuf_used(connector_indexes_t const * const indexes, int32_t * const value)
+connector_bool_t cc_dev_health_get_system_bigbuf_min(connector_indexes_t const * const indexes, int32_t * const value)
 {
     UNUSED_ARGUMENT(indexes);
 

@@ -1681,12 +1681,12 @@ static dev_health_path_group_t const dev_health_root_group_wifi =
     }
 };
 
-static const dev_health_item_t dev_health_system_mem_free = {"free", sizeof "free" - 1, DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_system_mem_free};
+static const dev_health_item_t dev_health_system_mem_available = {"available", sizeof "available" - 1, DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_system_mem_avaiable};
 static const dev_health_item_t dev_health_system_mem_used = {"used", sizeof "used" - 1, DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_system_mem_used};
 
 static dev_health_item_t const * const dev_health_system_mem_elements[] =
 {
-    &dev_health_system_mem_free,
+    &dev_health_system_mem_available,
     &dev_health_system_mem_used
 };
 
@@ -1756,12 +1756,12 @@ static dev_health_path_group_t const dev_health_system_msg =
 };
 
 static const dev_health_item_t dev_health_system_buf_free = {"free", sizeof "free" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_buf_free};
-static const dev_health_item_t dev_health_system_buf_used = {"used", sizeof "used" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_buf_used};
+static const dev_health_item_t dev_health_system_buf_min = {"min", sizeof "min" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_buf_min};
 
 static dev_health_item_t const * const dev_health_system_buf_elements[] =
 {
     &dev_health_system_buf_free,
-    &dev_health_system_buf_used
+    &dev_health_system_buf_min
 };
 
 static dev_health_path_group_t const dev_health_system_buf =
@@ -1781,12 +1781,12 @@ static dev_health_path_group_t const dev_health_system_buf =
 };
 
 static const dev_health_item_t dev_health_system_bigbuf_free = {"free", sizeof "free" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_bigbuf_free};
-static const dev_health_item_t dev_health_system_bigbuf_used = {"used", sizeof "used" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_bigbuf_used};
+static const dev_health_item_t dev_health_system_bigbuf_min = {"min", sizeof "min" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_bigbuf_min};
 
 static dev_health_item_t const * const dev_health_system_bigbuf_elements[] =
 {
     &dev_health_system_bigbuf_free,
-    &dev_health_system_bigbuf_used
+    &dev_health_system_bigbuf_min
 };
 
 static dev_health_path_group_t const dev_health_system_bigbuf =
@@ -1805,19 +1805,43 @@ static dev_health_path_group_t const dev_health_system_bigbuf =
     }
 };
 
+static const dev_health_item_t dev_health_system_cpu_used = {"used", sizeof "used" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_system_cpu_used};
+
+static dev_health_item_t const * const dev_health_system_cpu_elements[] =
+{
+    &dev_health_system_cpu_used
+};
+
+static dev_health_path_group_t const dev_health_system_cpu =
+{
+    "cpu",
+    sizeof "cpu" - 1,
+    NULL,
+    {
+        ITEMS,
+        {
+            {
+                dev_health_system_cpu_elements,
+                asizeof(dev_health_system_cpu_elements)
+            }
+        }
+    }
+};
+
 static dev_health_path_group_t const * const dev_health_system_groups[] =
 {
     &dev_health_system_mem,
     &dev_health_system_reboots,
     &dev_health_system_msg,
     &dev_health_system_buf,
-    &dev_health_system_bigbuf
+    &dev_health_system_bigbuf,
+    &dev_health_system_cpu
 };
 
 static dev_health_path_group_t const dev_health_root_group_system =
 {
-    "system",
-    sizeof "system" - 1,
+    "sys",
+    sizeof "sys" - 1,
     NULL,
     {
         SUBGROUPS,
