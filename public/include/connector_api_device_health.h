@@ -122,9 +122,6 @@ connector_bool_t cc_dev_health_get_system_buf_used(connector_indexes_t const * c
 connector_bool_t cc_dev_health_get_system_bigbuf_free(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_system_bigbuf_used(connector_indexes_t const * const indexes, int32_t * const value);
 
-void cc_dev_health_get_gps_location_latitude(connector_indexes_t const * const indexes, float * const value);
-void cc_dev_health_get_gps_location_longitude(connector_indexes_t const * const indexes, float * const value);
-connector_bool_t cc_dev_health_get_gps_location_present(connector_indexes_t const * const indexes);
 
 #endif
 

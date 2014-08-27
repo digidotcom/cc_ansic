@@ -754,24 +754,11 @@ connector_bool_t cc_dev_health_get_system_bigbuf_used(connector_indexes_t const 
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_gps_location_present(connector_indexes_t const * const indexes)
+connector_bool_t cc_dev_health_get_system_cpu_used(connector_indexes_t const * const indexes, int32_t * const value)
 {
     UNUSED_ARGUMENT(indexes);
+
+    PRINT_FUNCTION_NAME();
+    *value = 32;
     return connector_true;
-}
-
-void cc_dev_health_get_gps_location_latitude(connector_indexes_t const * const indexes, float * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = -26.47;
-}
-
-void cc_dev_health_get_gps_location_longitude(connector_indexes_t const * const indexes, float * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 60.27;
 }

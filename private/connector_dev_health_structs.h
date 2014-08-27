@@ -248,33 +248,6 @@ STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t co
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_gps_location_geojson(connector_indexes_t const * const indexes, connector_geojson_t * const value)
-{
-    connector_bool_t const present = cc_dev_health_get_gps_location_present(indexes);
-
-    if (present)
-    {
-        char * const location_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char gps_location_json_format[] = "{\"type\":\"Point\",\"coordinates\":[%f,%f]}";
-        float latitude;
-        float longitude;
-        int json_size;
-
-        ASSERT(location_json != NULL);
-        cc_dev_health_get_gps_location_latitude(indexes, &latitude);
-        cc_dev_health_get_gps_location_longitude(indexes, &longitude);
-
-        json_size = sprintf(location_json, gps_location_json_format, latitude, longitude);
-        UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
-        ASSERT(json_size <= JSON_MAX_SIZE);
-
-        *value = location_json;
-    }
-
-    return present;
-}
-
-
 static const dev_health_item_t dev_health_mobile_module = {"module", sizeof "module" - 1, DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_module_json};
 static dev_health_item_t const * const dev_health_mobile_module_elements[] =
 {
@@ -1857,34 +1830,10 @@ static dev_health_path_group_t const dev_health_root_group_system =
     }
 };
 
-static const dev_health_item_t dev_health_gps_location = {"location", sizeof "location" - 1, DEV_HEALTH_TYPE_GEOJSON, (dev_health_query_fn_t)cc_dev_health_get_gps_location_geojson};
-
-static dev_health_item_t const * const dev_health_gps_elements[] =
-{
-    &dev_health_gps_location
-};
-
-static dev_health_path_group_t const dev_health_root_group_gps =
-{
-    "gps",
-    sizeof "gps" - 1,
-    NULL,
-    {
-        ITEMS,
-        {
-            {
-                dev_health_gps_elements,
-                asizeof(dev_health_gps_elements)
-            }
-        }
-    }
-};
-
 static dev_health_path_group_t const * const dev_health_root_groups[] =
 {
     &dev_health_root_group_mobile,
     &dev_health_root_group_eth,
     &dev_health_root_group_wifi,
-    &dev_health_root_group_system,
-    &dev_health_root_group_gps
+    &dev_health_root_group_system
 };
