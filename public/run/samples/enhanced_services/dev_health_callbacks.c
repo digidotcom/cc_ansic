@@ -123,63 +123,6 @@ uint32_t cc_dev_health_get_posix_time(void)
     return posix_time;
 }
 
-connector_bool_t cc_dev_health_get_net_latency_min(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 32;
-    return connector_true;
-}
-
-
-connector_bool_t cc_dev_health_get_net_latency_avg(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 32;
-    return connector_true;
-}
-
-
-connector_bool_t cc_dev_health_get_net_latency_max(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_net_transactions_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_net_drop_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 32;
-    return connector_true;
-}
-
-connector_bool_t cc_dev_health_get_net_oos_count(connector_indexes_t const * const indexes, int32_t * const value)
-{
-    UNUSED_ARGUMENT(indexes);
-
-    PRINT_FUNCTION_NAME();
-    *value = 32;
-    return connector_true;
-}
-
-
 unsigned int cc_dev_health_get_mobile_instances(void)
 {
     PRINT_FUNCTION_NAME();

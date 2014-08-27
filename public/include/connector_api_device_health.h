@@ -40,14 +40,6 @@ char * cc_dev_health_malloc_string(size_t size);
 void cc_dev_health_free_string(char const * const string);
 
 uint32_t cc_dev_health_get_posix_time(void);
-connector_bool_t cc_dev_health_get_net_latency_min(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_net_latency_avg(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_net_latency_max(connector_indexes_t const * const indexes, int32_t * const value);
-
-connector_bool_t cc_dev_health_get_net_transactions_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_net_drop_count(connector_indexes_t const * const indexes, int32_t * const value);
-connector_bool_t cc_dev_health_get_net_oos_count(connector_indexes_t const * const indexes, int32_t * const value);
-
 
 unsigned int cc_dev_health_get_mobile_instances(void);
 unsigned int cc_dev_health_get_mobile_net_instances(void);

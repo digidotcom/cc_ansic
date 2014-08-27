@@ -274,125 +274,6 @@ STATIC connector_bool_t cc_dev_health_get_gps_location_geojson(connector_indexes
     return present;
 }
 
-static const dev_health_item_t dev_health_net_latency_min = {"min", sizeof "min" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_latency_min};
-static const dev_health_item_t dev_health_net_latency_avg = {"avg", sizeof "avg" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_latency_avg};
-static const dev_health_item_t dev_health_net_latency_max = {"max", sizeof "max" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_latency_max};
-
-static dev_health_item_t const * const dev_health_net_latency_elements[] =
-{
-    &dev_health_net_latency_min,
-    &dev_health_net_latency_avg,
-    &dev_health_net_latency_max
-};
-
-static dev_health_path_group_t const dev_health_net_latency =
-{
-    "latency",
-    sizeof "latency" - 1,
-    NULL,
-    {
-        ITEMS,
-        {
-            {
-                dev_health_net_latency_elements,
-                asizeof(dev_health_net_latency_elements)
-            }
-        }
-    }
-};
-
-static const dev_health_item_t dev_health_net_transactions_count = {"count", sizeof "count" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_transactions_count};
-
-static dev_health_item_t const * const dev_health_net_transactions_elements[] =
-{
-    &dev_health_net_transactions_count,
-};
-
-static dev_health_path_group_t const dev_health_net_transactions =
-{
-    "transactions",
-    sizeof "transactions" - 1,
-    NULL,
-    {
-        ITEMS,
-        {
-            {
-                dev_health_net_transactions_elements,
-                asizeof(dev_health_net_transactions_elements)
-            }
-        }
-    }
-};
-
-static const dev_health_item_t dev_health_net_drop_count = {"count", sizeof "count" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_drop_count};
-
-static dev_health_item_t const * const dev_health_net_drop_elements[] =
-{
-    &dev_health_net_drop_count
-};
-
-static dev_health_path_group_t const dev_health_net_drop =
-{
-    "drop",
-    sizeof "drop" - 1,
-    NULL,
-    {
-        ITEMS,
-        {
-            {
-                dev_health_net_drop_elements,
-                asizeof(dev_health_net_drop_elements)
-            }
-        }
-    }
-};
-
-static const dev_health_item_t dev_health_net_oos_count = {"count", sizeof "count" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_net_oos_count};
-
-static dev_health_item_t const * const dev_health_net_oos_elements[] =
-{
-    &dev_health_net_oos_count,
-};
-
-static dev_health_path_group_t const dev_health_net_oos =
-{
-    "oos",
-    sizeof "oos" - 1,
-    NULL,
-    {
-        ITEMS,
-        {
-            {
-                dev_health_net_oos_elements,
-                asizeof(dev_health_net_oos_elements)
-            }
-        }
-    }
-};
-
-static dev_health_path_group_t const * const dev_health_net_levels[] =
-{
-    &dev_health_net_latency,
-    &dev_health_net_transactions,
-    &dev_health_net_drop,
-    &dev_health_net_oos
-};
-
-static dev_health_path_group_t const dev_health_root_group_net =
-{
-    "net",
-    sizeof "net" - 1,
-    NULL,
-    {
-        SUBGROUPS,
-        {
-            {
-                (dev_health_item_t const * const *)dev_health_net_levels,
-                asizeof(dev_health_net_levels)
-            }
-        }
-    }
-};
 
 static const dev_health_item_t dev_health_mobile_module = {"module", sizeof "module" - 1, DEV_HEALTH_TYPE_JSON, (dev_health_query_fn_t)cc_dev_health_get_mobile_module_json};
 static dev_health_item_t const * const dev_health_mobile_module_elements[] =
@@ -2001,7 +1882,6 @@ static dev_health_path_group_t const dev_health_root_group_gps =
 
 static dev_health_path_group_t const * const dev_health_root_groups[] =
 {
-    &dev_health_root_group_net,
     &dev_health_root_group_mobile,
     &dev_health_root_group_eth,
     &dev_health_root_group_wifi,
