@@ -419,7 +419,7 @@ static dev_health_item_t const * const dev_health_mobile_active_sim_elements[] =
 };
 
 
-static const dev_health_item_t dev_health_mobile_net_cell_id = {"cell_id", sizeof "cell_id" - 1, DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_cell_id};
+static const dev_health_item_t dev_health_mobile_net_cell_id = {"cell_id", sizeof "cell_id" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_net_cell_id};
 static dev_health_item_t const * const dev_health_mobile_net_cell_id_elements[] =
 {
     &dev_health_mobile_net_cell_id

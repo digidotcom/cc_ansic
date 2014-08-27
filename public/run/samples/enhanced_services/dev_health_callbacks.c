@@ -214,13 +214,12 @@ void cc_dev_health_get_mobile_module_imei(connector_indexes_t const * const inde
     strcpy(*value, "123456-789-0");
 }
 
-connector_bool_t cc_dev_health_get_mobile_net_cell_id(connector_indexes_t const * const indexes, char * * const value)
+connector_bool_t cc_dev_health_get_mobile_net_cell_id(connector_indexes_t const * const indexes, int32_t * const value)
 {
-    *value = cc_dev_health_malloc_string(MAX_STRING);
-    UNUSED_ARGUMENT(indexes);
-
     PRINT_FUNCTION_NAME();
-    strcpy(*value, "My Cell ID");
+    PRINT_INDEXES(indexes);
+
+    *value = 32;
     return connector_true;
 }
 
