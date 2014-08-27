@@ -24,7 +24,7 @@ typedef union {
 static connector_status_t dev_health_setup_csv_data(connector_data_t * const connector_ptr)
 {
     dev_health_info_t * dev_health_info = &connector_ptr->dev_health.info;
-    static char const csv_header[] = "#DATA,TIMESTAMP,STREAMTYPE,STREAMCATEGORY,STREAMID\n";
+    static char const csv_header[] = "#DATA,TIMESTAMP,STREAMTYPE,STREAMID\n";
     connector_status_t status = connector_working;
 
     if (dev_health_info->csv.data == NULL)
@@ -163,14 +163,9 @@ STATIC void process_csv_stream_type(char * const csv, dev_health_value_type_t co
     strcat(csv, stream_type_string);
 }
 
-STATIC void process_csv_stream_category(char * const csv)
-{
-    strcat(csv, ",metrics");
-}
-
 STATIC void process_csv_stream_id(char * const csv, char const * const stream_id)
 {
-    sprintf(csv, "%s,%s\n", csv, stream_id);
+    sprintf(csv, "%s,metrics/%s\n", csv, stream_id);
 }
 
 STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_item_value_t const * const value, dev_health_value_type_t const type)
@@ -183,7 +178,6 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     process_csv_data(temp_csv, value, type);
     process_csv_timestamp(temp_csv);
     process_csv_stream_type(temp_csv, type);
-    process_csv_stream_category(temp_csv);
     process_csv_stream_id(temp_csv, stream_id);
 
     temp_csv_strlen = strlen(temp_csv);
