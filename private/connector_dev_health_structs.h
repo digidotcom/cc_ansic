@@ -205,7 +205,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t const * const indexes, connector_geojson_t * const value)
+STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
     connector_bool_t const present = cc_dev_health_get_wifi_radio_present(indexes);
 
