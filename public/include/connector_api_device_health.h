@@ -60,7 +60,6 @@ connector_bool_t cc_dev_health_mobile_module_net_status_present(connector_indexe
 connector_bool_t cc_dev_health_get_mobile_net_info_present(connector_indexes_t const * const indexes);
 
 connector_bool_t cc_dev_health_get_mobile_temperature(connector_indexes_t const * const indexes, float * const value);
-connector_bool_t cc_dev_health_get_mobile_status(connector_indexes_t const * const indexes, char * * const value);
 connector_bool_t cc_dev_health_get_mobile_active_sim(connector_indexes_t const * const indexes, unsigned int * const value);
 connector_bool_t cc_dev_health_get_mobile_net_cell_id(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_network(connector_indexes_t const * const indexes, char * * const value);

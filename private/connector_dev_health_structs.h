@@ -260,12 +260,6 @@ static dev_health_item_t const * const dev_health_mobile_temperature_elements[] 
     &dev_health_mobile_temperature
 };
 
-static const dev_health_item_t dev_health_mobile_status = {"status", sizeof "status" - 1, DEV_HEALTH_TYPE_STRING, (dev_health_query_fn_t)cc_dev_health_get_mobile_status};
-static dev_health_item_t const * const dev_health_mobile_status_elements[] =
-{
-    &dev_health_mobile_status
-};
-
 static const dev_health_item_t dev_health_mobile_active_sim = {"active_sim", sizeof "active_sim" - 1, DEV_HEALTH_TYPE_INT32, (dev_health_query_fn_t)cc_dev_health_get_mobile_active_sim};
 static dev_health_item_t const * const dev_health_mobile_active_sim_elements[] =
 {
@@ -1473,22 +1467,6 @@ static dev_health_path_group_t const dev_health_mobile_temperature_group =
     }
 };
 
-static dev_health_path_group_t const dev_health_mobile_status_group =
-{
-    "",
-    sizeof "" - 1,
-    NULL,
-    {
-        ITEMS,
-        {
-            {
-                (dev_health_item_t const * const *)dev_health_mobile_status_elements,
-                asizeof(dev_health_mobile_status_elements)
-            }
-        }
-    }
-};
-
 static dev_health_path_group_t const dev_health_mobile_active_sim_group =
 {
     "",
@@ -1525,7 +1503,6 @@ static dev_health_path_group_t const * const dev_health_mobile_levels[] =
 {
     &dev_health_mobile_module_group,
     &dev_health_mobile_temperature_group,
-    &dev_health_mobile_status_group,
     &dev_health_mobile_active_sim_group,
     &dev_health_mobile_net_group
 };

@@ -214,18 +214,6 @@ connector_bool_t cc_dev_health_get_mobile_net_info_present(connector_indexes_t c
     return connector_true;
 }
 
-connector_bool_t cc_dev_health_get_mobile_status(connector_indexes_t const * const indexes, char * * const value)
-{
-    *value = cc_dev_health_malloc_string(MAX_STRING);
-
-    PRINT_FUNCTION_NAME();
-    PRINT_INDEXES(indexes);
-
-    strcpy(*value, "Status");
-    return connector_true;
-}
-
-
 connector_bool_t cc_dev_health_get_mobile_net_rssi(connector_indexes_t const * const indexes, int32_t * const value)
 {
     PRINT_FUNCTION_NAME();
