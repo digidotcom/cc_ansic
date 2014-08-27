@@ -1584,7 +1584,7 @@ static const dev_health_item_t dev_health_eth_link_down_duration = {"down_durati
 
 static dev_health_item_t const * const dev_health_eth_link_elements[] =
 {
-    &dev_health_eth_link_down_duration,
+    &dev_health_eth_link_down_count,
     &dev_health_eth_link_down_duration
 };
 
