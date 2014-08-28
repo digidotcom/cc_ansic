@@ -658,7 +658,7 @@ public class ConfigGenerator {
 
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
-                if(!noUpload)
+                if(!noUpload || saveDescriptor)
 					descriptors.processDescriptors(configData);
 
                 break;
@@ -673,7 +673,7 @@ public class ConfigGenerator {
 
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
-                if(!noUpload)
+                if(!noUpload || saveDescriptor)
                     descriptorsSource.processDescriptors(configData);
                 break;
 

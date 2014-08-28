@@ -96,7 +96,10 @@ public class Descriptors {
 
             sendRciDescriptors(configData);
 
-            ConfigGenerator.log("\nDescriptors were uploaded successfully.");
+            if(!ConfigGenerator.noUploadOption())
+                ConfigGenerator.log("\nDescriptors were uploaded successfully.");
+            if(ConfigGenerator.saveDescriptorOption())
+                ConfigGenerator.log("\nDescriptors were saved successfully.");
         }
     }
 
@@ -541,7 +544,9 @@ public class Descriptors {
     }
 
     private void uploadDescriptor(String descName, String buffer) {
-        ConfigGenerator.debug_log("Uploading description:" + descName);
+
+        if(!ConfigGenerator.noUploadOption())
+            ConfigGenerator.debug_log("Uploading descriptor:" + descName);
 
         if (callDeleteFlag) {
             deleteDescriptors();
@@ -574,36 +579,37 @@ public class Descriptors {
 				e.printStackTrace();
 			}
         }
+        if(!ConfigGenerator.noUploadOption()){
+	        String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
+	        if (responseCode != 0)
+	        {
+	            ConfigGenerator.debug_log("Response from " + ConfigGenerator.getUrlName());
+	            switch (responseCode)
+	            {
+	                case 401:
+	                    ConfigGenerator.log("Unauthorized: verify username and password are valid\n");
+	                    break;
 
-        String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
-        if (responseCode != 0)
-        {
-            ConfigGenerator.debug_log("Response from " + ConfigGenerator.getUrlName());
-            switch (responseCode)
-            {
-                case 401:
-                    ConfigGenerator.log("Unauthorized: verify username and password are valid\n");
-                    break;
+	                case 403:
+	                    ConfigGenerator.log("Forbidden: Uploading " + descName + " failed, verify that vendor ID is valid and is owned by your account.\n");
+	                    break;
 
-                case 403:
-                    ConfigGenerator.log("Forbidden: Uploading " + descName + " failed, verify that vendor ID is valid and is owned by your account.\n");
-                    break;
+	                default:
+	                    ConfigGenerator.log("Response status: " + response);
+	                    break;
+	            }
 
-                default:
-                    ConfigGenerator.log("Response status: " + response);
-                    break;
-            }
+	            System.exit(1);
+	        }
 
-            System.exit(1);
-        }
-
-        ConfigGenerator.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
-        ConfigGenerator.debug_log(response);
-        /* prevent error HTTP/1.1 429 Too Many Requests */
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+	        ConfigGenerator.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
+	        ConfigGenerator.debug_log(response);
+	        /* prevent error HTTP/1.1 429 Too Many Requests */
+	        try {
+	            Thread.sleep(1000);
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
         }
     }
 
