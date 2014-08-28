@@ -199,7 +199,10 @@ STATIC void dev_health_process_item(connector_data_t * const connector_ptr, dev_
     dev_health_value_type_t const type = element->type;
     dev_health_item_value_t value;
     connector_bool_t item_present = connector_false;
-    connector_indexes_t const indexes = {upper_index, lower_index};
+    connector_indexes_t indexes;
+
+    indexes.upper = upper_index;
+    indexes.lower = lower_index;
 
     ASSERT(function != NULL);
     switch (type)
