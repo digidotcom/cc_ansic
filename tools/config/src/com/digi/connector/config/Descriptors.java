@@ -548,7 +548,7 @@ public class Descriptors {
         if(!ConfigGenerator.noUploadOption())
             ConfigGenerator.debug_log("Uploading descriptor:" + descName);
 
-        if (callDeleteFlag) {
+        if (callDeleteFlag && !ConfigGenerator.noUploadOption()) {
             deleteDescriptors();
             callDeleteFlag = false;
         }
