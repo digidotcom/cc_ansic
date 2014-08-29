@@ -1286,7 +1286,7 @@ STATIC void rci_parse_input(rci_t * const rci)
                 size_t const storage_bytes = rci->input.storage_len;
 #endif
                 uint8_t const * const storage_end = rci->input.storage + storage_bytes;
-                size_t const bytes_wanted = (size_t)(rci->buffer.input.end - old_base);
+                size_t const bytes_wanted = rci->shared.content.length;
                 size_t const bytes_have = (size_t)(storage_end - new_base);
 
                 if (bytes_wanted >= bytes_have)
