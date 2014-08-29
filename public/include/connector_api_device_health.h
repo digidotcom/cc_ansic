@@ -41,8 +41,8 @@ void cc_dev_health_free_string(char const * const string);
 
 uint32_t cc_dev_health_get_posix_time(void);
 
-unsigned int cc_dev_health_get_mobile_instances(void);
-unsigned int cc_dev_health_get_mobile_net_instances(void);
+unsigned int cc_dev_health_get_mobile_instances(unsigned int const upper_index);
+unsigned int cc_dev_health_get_mobile_net_instances(unsigned int const upper_index);
 
 void cc_dev_health_get_mobile_module_imei(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_mobile_module_modem_id(connector_indexes_t const * const indexes, char * * const value);
@@ -85,7 +85,7 @@ connector_bool_t cc_dev_health_get_mobile_net_drop_count(connector_indexes_t con
 connector_bool_t cc_dev_health_get_mobile_net_oos_count(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
 connector_bool_t cc_dev_health_get_mobile_net_uptime(connector_indexes_t const * const indexes, mobile_network_tech_t tech, int32_t * const value);
 
-unsigned int cc_dev_health_get_eth_instances(void);
+unsigned int cc_dev_health_get_eth_instances(unsigned int const upper_index);
 
 connector_bool_t cc_dev_health_get_eth_tx_bytes(connector_indexes_t const * const indexes, uint64_t * const value);
 connector_bool_t cc_dev_health_get_eth_tx_packets(connector_indexes_t const * const indexes, uint64_t * const value);
@@ -98,7 +98,7 @@ connector_bool_t cc_dev_health_get_eth_rx_dropped(connector_indexes_t const * co
 connector_bool_t cc_dev_health_get_eth_link_down_count(connector_indexes_t const * const indexes, uint64_t * const value);
 connector_bool_t cc_dev_health_get_eth_link_down_duration(connector_indexes_t const * const indexes, uint64_t * const value);
 
-unsigned int cc_dev_health_get_wifi_instances(void);
+unsigned int cc_dev_health_get_wifi_instances(unsigned int const upper_index);
 
 void cc_dev_health_get_wifi_radio_mode(connector_indexes_t const * const indexes, char * * const value);
 void cc_dev_health_get_wifi_radio_ssid(connector_indexes_t const * const indexes, char * * const value);

@@ -123,16 +123,18 @@ uint32_t cc_dev_health_get_posix_time(void)
     return posix_time;
 }
 
-unsigned int cc_dev_health_get_mobile_instances(void)
+unsigned int cc_dev_health_get_mobile_instances(unsigned int const upper_index)
 {
     PRINT_FUNCTION_NAME();
+    UNUSED_ARGUMENT(upper_index);
 
     return 2;
 }
 
-unsigned int cc_dev_health_get_mobile_net_instances(void)
+unsigned int cc_dev_health_get_mobile_net_instances(unsigned int const upper_index)
 {
     PRINT_FUNCTION_NAME();
+    UNUSED_ARGUMENT(upper_index);
 
     return 2;
 }
@@ -470,9 +472,10 @@ void cc_dev_health_get_mobile_net_info_phone_num(connector_indexes_t const * con
     strcpy(*value, "My Phone Num");
 }
 
-unsigned int cc_dev_health_get_eth_instances(void)
+unsigned int cc_dev_health_get_eth_instances(unsigned int const upper_index)
 {
     PRINT_FUNCTION_NAME();
+    UNUSED_ARGUMENT(upper_index);
 
     return 4;
 }
@@ -560,9 +563,10 @@ connector_bool_t cc_dev_health_get_eth_link_down_duration(connector_indexes_t co
 }
 
 
-unsigned int cc_dev_health_get_wifi_instances(void)
+unsigned int cc_dev_health_get_wifi_instances(unsigned int const upper_index)
 {
     PRINT_FUNCTION_NAME();
+    UNUSED_ARGUMENT(upper_index);
 
     return 1;
 }

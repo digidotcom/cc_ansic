@@ -214,7 +214,7 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
         if (*length > rci->input.storage_len)
         {
             size_t const old_size = rci->input.storage_len;
-            size_t const new_size = *length + sizeof "" + sizeof(uint32_t);
+            size_t const new_size = *length + sizeof "" + ber_bytes;
             connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
             connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
 
@@ -1286,7 +1286,7 @@ STATIC void rci_parse_input(rci_t * const rci)
                 size_t const storage_bytes = rci->input.storage_len;
 #endif
                 uint8_t const * const storage_end = rci->input.storage + storage_bytes;
-                size_t const bytes_wanted = (size_t)(rci->buffer.input.end - old_base);
+                size_t const bytes_wanted = rci->shared.content.length;
                 size_t const bytes_have = (size_t)(storage_end - new_base);
 
                 if (bytes_wanted >= bytes_have)
