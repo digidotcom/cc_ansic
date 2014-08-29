@@ -214,7 +214,7 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
         if (*length > rci->input.storage_len)
         {
             size_t const old_size = rci->input.storage_len;
-            size_t const new_size = *length + sizeof "" + sizeof(uint32_t);
+            size_t const new_size = *length + sizeof "" + ber_bytes;
             connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
             connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
 
