@@ -11,7 +11,7 @@
  */
 
 typedef connector_bool_t (* dev_health_query_fn_t)(connector_indexes_t const * const indexes, void * const value);
-typedef unsigned int (* dev_health_get_instances_fn_t)(void);
+typedef unsigned int (* dev_health_get_instances_fn_t)(unsigned int upper_index);
 
 typedef enum {
     DEV_HEALTH_TYPE_NONE,

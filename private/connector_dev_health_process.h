@@ -309,7 +309,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
             if (handle_all_instances)
             {
                 unsigned int current_instance;
-                unsigned int const instances = subgroup->multi_instance();
+                unsigned int const instances = subgroup->multi_instance(upper_index);
 
                 for (current_instance = 0; current_instance < instances; current_instance++)
                 {
@@ -388,7 +388,7 @@ STATIC void dev_health_process_root_group(connector_data_t * const connector_ptr
     if (handle_all)
     {
         unsigned long int current_instance;
-        unsigned long int const total_instances = multi_instance ? root_group->multi_instance() : 1;
+        unsigned long int const total_instances = multi_instance ? root_group->multi_instance(0) : 1;
 
         for (current_instance = 0; current_instance < total_instances; current_instance++)
         {
