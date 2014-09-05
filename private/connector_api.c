@@ -639,7 +639,24 @@ connector_status_t connector_step(connector_handle_t const handle)
 #endif
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
-    connector_dev_health_step(connector_ptr);
+    {
+        connector_transport_state_t const edp_current_active_state = edp_get_active_state(connector_ptr);
+
+        switch (edp_current_active_state)
+        {
+            case connector_transport_idle:
+                break;
+            case connector_transport_open:
+            case connector_transport_send:
+            case connector_transport_receive:
+            case connector_transport_close:
+            case connector_transport_terminate:
+            case connector_transport_redirect:
+            case connector_transport_wait_for_reconnect:
+                connector_dev_health_step(connector_ptr);
+                break;
+        }
+    }
 #endif
 
 error:
