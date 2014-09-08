@@ -15,6 +15,7 @@
 #include <stdarg.h>
 #include "connector_debug.h"
 
+#if !(defined CALL_DEBUG_VPRINTF)
 #define CALL_DEBUG_VPRINTF(type, format) \
     do \
     { \
@@ -25,6 +26,7 @@
         va_end(args); \
     } \
     while (0)
+#endif
 
 #else
 
@@ -56,6 +58,10 @@ STATIC void connector_debug_line_end(char const * const format, ...)
 
 #define enum_to_case(name)  case name:  result = #name;             break
 
+#if !(defined CONNECTOR_DEBUG_NEW_LINE_STR)
+#define CONNECTOR_DEBUG_NEW_LINE_STR	"\n"
+#endif
+
 void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
 {
     size_t i;
@@ -66,7 +72,7 @@ void connector_debug_print_buffer(char const * const label, void const * const b
     {
         if ((i % 16) == 0)
         {
-            connector_debug_line_mid("\n");
+            connector_debug_line_mid(CONNECTOR_DEBUG_NEW_LINE_STR);
         }
 
         connector_debug_line_mid(" %02X", content[i]);
