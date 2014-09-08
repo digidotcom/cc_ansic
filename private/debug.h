@@ -15,6 +15,7 @@
 #include <stdarg.h>
 #include "connector_debug.h"
 
+#if !(defined CALL_DEBUG_VPRINTF)
 #define CALL_DEBUG_VPRINTF(type, format) \
     do \
     { \
@@ -25,6 +26,7 @@
         va_end(args); \
     } \
     while (0)
+#endif
 
 #else
 
