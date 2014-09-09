@@ -30,6 +30,10 @@
 
 #else
 
+#if (defined CALL_DEBUG_VPRINTF)
+#undef CALL_DEBUG_VPRINTF
+#endif
+
 #define CALL_DEBUG_VPRINTF(type, format) UNUSED_PARAMETER(format)
 
 #endif
