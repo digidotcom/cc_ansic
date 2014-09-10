@@ -274,7 +274,8 @@ def generate_id(rest_session, method="mac", mac_address=None, imei=None, meid=No
         else:
             TestRunner.log.info("Error Creating Device. %s" % response.content,
                 extra={'description' : '', 'test' : '', 'device_id' : device_id})
-
+            TestRunner.log.info("Trying to remove Device %s before continuing" % device_id, extra={'description' : '', 'test' : '', 'device_id' : device_id})
+            rest_session.delete("DeviceCore?condition=devConnectwareId='%s'" % (device_id))
     # If here, we couldn't provision a device, raise Exception.
     raise Exception("Failed to Provision a Device.")
 
