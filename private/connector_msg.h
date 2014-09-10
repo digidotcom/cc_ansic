@@ -1174,14 +1174,17 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         service_data.session = session;
         service_data.service_type = msg_service_type_pending_request;
         service_data.error_value = result;
-        service_data.have_data = (void *)*pending_request;
+        service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
 
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
             status = msg_delete_session(connector_ptr, msg_ptr, session);
     }
 
-    *pending_request = NULL;
+    if (pending_request != NULL)
+    {
+        *pending_request = NULL;
+    }
 
     return status;
 }
