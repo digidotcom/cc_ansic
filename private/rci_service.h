@@ -243,7 +243,7 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
     UNUSED_PARAMETER(connector_ptr);
     UNUSED_PARAMETER(fw_target_zero_version);
 #endif
-    if (strcmp(device_type, reported_device_type) != 0)
+    if (device_type == NULL || strcmp(device_type, reported_device_type) != 0)
     {
         connector_debug_line("RCI: Using a descriptor for a different Device Type ('%s' instead of '%s')", reported_device_type, device_type);
         ASSERT(strcmp(device_type, reported_device_type) == 0);
@@ -254,7 +254,6 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
         connector_debug_line("RCI: Using a descriptor for a different Vendor ID (0x%x instead of 0x%x)", reported_vendor_id, vendor_id);
         ASSERT(vendor_id == reported_vendor_id);
     }
-
 }
 #endif
 
