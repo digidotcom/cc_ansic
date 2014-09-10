@@ -266,6 +266,13 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
     connector_callback_status_t callback_status;
     connector_remote_config_data_t rci_data;
 
+    rci_data.device_type = NULL;
+    rci_data.vendor_id = 0;
+    rci_data.firmware_target_zero_version = 0;
+    rci_data.error_table = NULL;
+    rci_data.global_error_count = 0;
+    rci_data.group_table = NULL;
+
     request_id.remote_config_request = connector_request_id_remote_config_configurations;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
                                          request_id, &rci_data, connector_ptr->context);
@@ -277,6 +284,9 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
 
         case connector_callback_continue:
             ASSERT(rci_data.group_table != NULL);
+            ASSERT(rci_data.vendor_id != 0x00);
+            ASSERT(rci_data.device_type != NULL);
+            ASSERT(rci_data.error_table != NULL);
             if (rci_data.global_error_count < connector_rci_error_COUNT)
                 rci_data.global_error_count = connector_rci_error_COUNT;
             connector_ptr->rci_data = rci_data;
