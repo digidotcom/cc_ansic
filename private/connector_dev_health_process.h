@@ -93,12 +93,12 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
     {
         case DEV_HEALTH_TYPE_INT32:
         {
-            sprintf(csv, "%d", value->int32);
+            sprintf(csv, "%" PRId32, value->int32);
             break;
         }
         case DEV_HEALTH_TYPE_UINT64:
         {
-            sprintf(csv, "%lu", value->uint64);
+            sprintf(csv, "%" PRIu64, value->uint64);
             break;
         }
         case DEV_HEALTH_TYPE_FLOAT:

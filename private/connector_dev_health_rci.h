@@ -19,6 +19,7 @@ STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_config_t * co
         case connector_setting_enhanced_services_path:
         {
             strncpy(metrics_item->path, remote_config->element.value->string_value, sizeof metrics_item->path);
+            metrics_item->path[sizeof metrics_item->path - 1] = '\0';
             break;
         }
         case connector_setting_enhanced_services_sampling_interval:
