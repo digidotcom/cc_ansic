@@ -172,11 +172,10 @@ error:
     return status;
 }
 
-STATIC connector_callback_status_t dev_health_handle_response_callback(connector_data_t * const connector_ptr, connector_data_service_send_response_t * const data_ptr)
+STATIC connector_callback_status_t dev_health_handle_response_callback(connector_data_service_send_response_t * const data_ptr)
 {
     connector_callback_status_t const status = connector_callback_continue;
 
-    UNUSED_PARAMETER(connector_ptr);
     connector_debug_line("dev_health_handle_response_callback, response %d", data_ptr->response);
     return status;
 }
@@ -195,7 +194,7 @@ STATIC connector_callback_status_t dev_health_handle_status_callback(connector_d
 
 
 #if (defined CONNECTOR_SHORT_MESSAGE)
-STATIC connector_callback_status_t dev_health_handle_length_callback(connector_data_t * const connector_ptr, connector_data_service_length_t * const data_ptr)
+STATIC connector_callback_status_t dev_health_handle_length_callback(connector_data_service_length_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
     dev_health_data_push_t * const dev_health = data_ptr->user_context;
@@ -219,7 +218,7 @@ STATIC connector_callback_status_t dev_health_handle_callback(connector_data_t *
             break;
 
         case connector_request_id_data_service_send_response:
-            status = dev_health_handle_response_callback(connector_ptr, data);
+            status = dev_health_handle_response_callback(data);
             break;
 
         case connector_request_id_data_service_send_status:
@@ -228,7 +227,7 @@ STATIC connector_callback_status_t dev_health_handle_callback(connector_data_t *
 
         #if (defined CONNECTOR_SHORT_MESSAGE)
         case connector_request_id_data_service_send_length:
-            status = dev_health_handle_length_callback(connector_ptr, data);
+            status = dev_health_handle_length_callback(data);
             break;
         #endif
 
