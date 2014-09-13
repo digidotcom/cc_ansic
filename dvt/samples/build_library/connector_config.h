@@ -72,7 +72,8 @@ enum {
     connector_setting_enhanced_services,
     connector_setting_enhanced_services_path,
     connector_setting_enhanced_services_reporting_interval,
-    connector_setting_enhanced_services_sampling_interval
+    connector_setting_enhanced_services_sampling_interval,
+    connector_setting_enhanced_services_COUNT
 };
 /* TODO: This enum is for tricking coverity build, the enhanced services should be solved in a different way to be able to build in a library */
 
