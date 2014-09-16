@@ -215,6 +215,9 @@ typedef struct connector_data {
     connector_remote_config_data_t rci_data;
 #endif
 
+#if (defined CONNECTOR_DATA_POINTS)
+    connector_bool_t process_csv;
+#endif
 #if (defined CONNECTOR_DEVICE_HEALTH)
 #define CONNECTOR_DEVICE_HEALTH_MAX_METRICS 8
 
