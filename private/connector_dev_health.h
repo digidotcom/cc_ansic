@@ -82,6 +82,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
         case DEV_HEALTH_CSV_STATUS_PROCESSING:
         {
             size_t i;
+            dev_health_root_t root_group;
 
             dev_health_setup_csv_data(connector_ptr);
 
@@ -122,12 +123,8 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 }
             }
 
-            for (i = 0; i < 4; i++)
+            for (root_group = 0; root_group < dev_health_root_COUNT; root_group++)
             {
-                #define ETHERNET_INDEX  0
-                #define MOBILE_INDEX    1
-                #define WIFI_INDEX      2
-                #define SYSTEM_INDEX    3
                 static const char * paths[] = {"eth", "mobile", "wifi", "sys"};
                 dev_health_simple_metric_t * item = NULL;
                 unsigned long const seconds_in_a_minute = 60;
@@ -136,26 +133,29 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 unsigned long * sample_at;
                 unsigned long * report_at;
 
-                switch (i)
+                switch (root_group)
                 {
-                    case ETHERNET_INDEX:
+                    case dev_health_root_eth:
                         item = &connector_ptr->dev_health.simple_metrics.config.eth;
                         break;
-                    case MOBILE_INDEX:
+                    case dev_health_root_mobile:
                         item = &connector_ptr->dev_health.simple_metrics.config.mobile;
                         break;
-                    case WIFI_INDEX:
+                    case dev_health_root_wifi:
                         item = &connector_ptr->dev_health.simple_metrics.config.wifi;
                         break;
-                    case SYSTEM_INDEX:
+                    case dev_health_root_sys:
                         item = &connector_ptr->dev_health.simple_metrics.config.sys;
+                        break;
+                    case dev_health_root_COUNT:
+                        ASSERT_GOTO(root_group < dev_health_root_COUNT, done);
                         break;
                 }
 
                 sampling_interval = item->sampling_interval;
                 reporting_interval = item->reporting_interval * seconds_in_a_minute;
-                sample_at = &connector_ptr->dev_health.metrics.times[i].sample_at;
-                report_at = &connector_ptr->dev_health.metrics.times[i].report_at;
+                sample_at = &connector_ptr->dev_health.metrics.times[root_group].sample_at;
+                report_at = &connector_ptr->dev_health.metrics.times[root_group].report_at;
 
                 if (item->on == connector_false)
                 {
@@ -174,7 +174,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 
                 if (now >= *sample_at)
                 {
-                    dev_health_process_path(connector_ptr, paths[i]);
+                    dev_health_process_path(connector_ptr, paths[root_group]);
                     *sample_at = now + sampling_interval;
                 }
 

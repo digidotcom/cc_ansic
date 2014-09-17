@@ -157,6 +157,16 @@ struct connector_data;
 #include "connector_sm_def.h"
 #endif
 
+#if (defined CONNECTOR_DEVICE_HEALTH)
+typedef enum {
+    dev_health_root_eth,
+    dev_health_root_mobile,
+    dev_health_root_wifi,
+    dev_health_root_sys,
+    dev_health_root_COUNT
+} dev_health_root_t;
+#endif
+
 typedef struct connector_data {
 
     uint8_t device_id[DEVICE_ID_LENGTH];
@@ -251,7 +261,7 @@ typedef struct connector_data {
             struct {
                 unsigned long sample_at;
                 unsigned long report_at;
-            } times[4];
+            } times[dev_health_root_COUNT];
         } simple_metrics;
         unsigned int last_check;
     } dev_health;
