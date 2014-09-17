@@ -15,7 +15,7 @@
 #define CONNECTOR_LITTLE_ENDIAN
 #define CONNECTOR_DEBUG
 #define CONNECTOR_FIRMWARE_SERVICE
-#define CONNECTOR_COMPRESSION
+#define CONNECTOR_COMPRESSION 
 #define CONNECTOR_DATA_SERVICE
 #define CONNECTOR_FILE_SYSTEM
 #define CONNECTOR_RCI_SERVICE
@@ -68,13 +68,35 @@
 #define CONNECTOR_DEVICE_HEALTH
 #define CONNECTOR_HAS_64_BIT_INTEGERS
 
-enum {
-    connector_setting_enhanced_services,
-    connector_setting_enhanced_services_path,
-    connector_setting_enhanced_services_reporting_interval,
-    connector_setting_enhanced_services_sampling_interval,
-    connector_setting_enhanced_services_COUNT
-};
+typedef enum {
+ connector_setting_enhanced_services_path,
+ connector_setting_enhanced_services_sampling_interval,
+ connector_setting_enhanced_services_reporting_interval,
+ connector_setting_enhanced_services_COUNT
+} connector_setting_enhanced_services_id_t;
+
+typedef enum {
+ connector_setting_simple_enhanced_services_eth_on,
+ connector_setting_simple_enhanced_services_eth_sampling,
+ connector_setting_simple_enhanced_services_eth_reporting,
+ connector_setting_simple_enhanced_services_mobile_on,
+ connector_setting_simple_enhanced_services_mobile_sampling,
+ connector_setting_simple_enhanced_services_mobile_reporting,
+ connector_setting_simple_enhanced_services_wifi_on,
+ connector_setting_simple_enhanced_services_wifi_sampling,
+ connector_setting_simple_enhanced_services_wifi_reporting,
+ connector_setting_simple_enhanced_services_sys_on,
+ connector_setting_simple_enhanced_services_sys_sampling,
+ connector_setting_simple_enhanced_services_sys_reporting,
+ connector_setting_simple_enhanced_services_COUNT
+} connector_setting_simple_enhanced_services_id_t;
+
+typedef enum {
+ connector_setting_enhanced_services,
+ connector_setting_simple_enhanced_services,
+ connector_setting_COUNT
+} connector_setting_id_t;
+
 /* TODO: This enum is for tricking coverity build, the enhanced services should be solved in a different way to be able to build in a library */
 
 #endif

@@ -23,6 +23,19 @@ typedef struct {
 } dev_health_metrics_config_t;
 
 typedef struct {
+    connector_bool_t on;
+    unsigned long sampling_interval;
+    unsigned long reporting_interval;
+} dev_health_simple_metric_t;
+
+typedef struct {
+    dev_health_simple_metric_t eth;
+    dev_health_simple_metric_t mobile;
+    dev_health_simple_metric_t wifi;
+    dev_health_simple_metric_t sys;
+} dev_health_simple_metrics_config_t;
+
+typedef struct {
     unsigned int upper;
     unsigned int lower;
 } connector_indexes_t;
@@ -35,6 +48,9 @@ typedef enum {
 
 connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size);
 connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size);
+
+connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_metrics_config_t * const simple_metrics);
+connector_callback_status_t cc_dev_health_simple_config_save(dev_health_simple_metrics_config_t const * const simple_metrics);
 
 char * cc_dev_health_malloc_string(size_t size);
 void cc_dev_health_free_string(char const * const string);
@@ -111,7 +127,7 @@ connector_bool_t cc_dev_health_get_wifi_rssi(connector_indexes_t const * const i
 connector_bool_t cc_dev_health_get_wifi_rate(connector_indexes_t const * const indexes, float * const value);
 connector_bool_t cc_dev_health_get_wifi_clients(connector_indexes_t const * const indexes, int32_t * const value);
 
-connector_bool_t cc_dev_health_get_system_mem_avaiable(connector_indexes_t const * const indexes, uint64_t * const value);
+connector_bool_t cc_dev_health_get_system_mem_available(connector_indexes_t const * const indexes, uint64_t * const value);
 connector_bool_t cc_dev_health_get_system_mem_used(connector_indexes_t const * const indexes, uint64_t * const value);
 connector_bool_t cc_dev_health_get_system_reboots(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_system_msg_free(connector_indexes_t const * const indexes, int32_t * const value);

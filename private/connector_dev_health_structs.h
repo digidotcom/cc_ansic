@@ -1658,7 +1658,7 @@ static dev_health_path_group_t const dev_health_root_group_wifi =
     }
 };
 
-static const dev_health_item_t dev_health_system_mem_available = {"available", sizeof "available" - 1, DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_system_mem_avaiable};
+static const dev_health_item_t dev_health_system_mem_available = {"available", sizeof "available" - 1, DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_system_mem_available};
 static const dev_health_item_t dev_health_system_mem_used = {"used", sizeof "used" - 1, DEV_HEALTH_TYPE_UINT64, (dev_health_query_fn_t)cc_dev_health_get_system_mem_used};
 
 static dev_health_item_t const * const dev_health_system_mem_elements[] =
