@@ -1,6 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import javax.script.ScriptEngine;
@@ -231,10 +232,10 @@ public class Parser {
             ScriptEngine engine = mgr.getEngineByName("js");
             /*eval returns an Object that is a Double */
             try{
-                result = ((Double) engine.eval(ex)).intValue();
+                result = new BigDecimal(engine.eval(ex).toString()).intValue();
             }
             catch (Exception e){
-                throw new Exception("Bad Expression");
+                throw new Exception("Bad Expression " + e);
             }
 
         }

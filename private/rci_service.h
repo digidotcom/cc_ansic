@@ -243,7 +243,7 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
     UNUSED_PARAMETER(connector_ptr);
     UNUSED_PARAMETER(fw_target_zero_version);
 #endif
-    if (strcmp(device_type, reported_device_type) != 0)
+    if (device_type == NULL || strcmp(device_type, reported_device_type) != 0)
     {
         connector_debug_line("RCI: Using a descriptor for a different Device Type ('%s' instead of '%s')", reported_device_type, device_type);
         ASSERT(strcmp(device_type, reported_device_type) == 0);
@@ -254,7 +254,6 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
         connector_debug_line("RCI: Using a descriptor for a different Vendor ID (0x%x instead of 0x%x)", reported_vendor_id, vendor_id);
         ASSERT(vendor_id == reported_vendor_id);
     }
-
 }
 #endif
 
@@ -265,6 +264,13 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
     connector_request_id_t request_id;
     connector_callback_status_t callback_status;
     connector_remote_config_data_t rci_data;
+
+    rci_data.device_type = NULL;
+    rci_data.vendor_id = 0;
+    rci_data.firmware_target_zero_version = 0;
+    rci_data.error_table = NULL;
+    rci_data.global_error_count = 0;
+    rci_data.group_table = NULL;
 
     request_id.remote_config_request = connector_request_id_remote_config_configurations;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
@@ -277,6 +283,9 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
 
         case connector_callback_continue:
             ASSERT(rci_data.group_table != NULL);
+            ASSERT(rci_data.vendor_id != 0x00);
+            ASSERT(rci_data.device_type != NULL);
+            ASSERT(rci_data.error_table != NULL);
             if (rci_data.global_error_count < connector_rci_error_COUNT)
                 rci_data.global_error_count = connector_rci_error_COUNT;
             connector_ptr->rci_data = rci_data;

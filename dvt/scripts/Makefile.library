@@ -34,8 +34,11 @@ CFLAGS += -Wmissing-parameter-type -Wstrict-prototypes -Wformat-security
 CFLAGS += -Wformat-y2k -Wold-style-definition -Wcast-align -Wformat-nonliteral 
 CFLAGS += -Wpadded -Wredundant-decls -Wvariadic-macros
 CFLAGS += -Wall -Werror -Wextra -pedantic
-CFLAGS += -Wno-error=padded -Wno-error=format-nonliteral -Wno-unused-function -Wno-missing-field-initializers
-# CFLAGS += -Wconversion 
+CFLAGS += -Wno-error=padded -Wno-unused-function -Wno-missing-field-initializers
+
+ifeq ($(DFLAGS),-m32)
+CFLAGS += -Wno-error=format
+endif
 
 # Use ANSIC 89
 CFLAGS +=-std=c89

@@ -570,9 +570,10 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
 {
     connector_status_t status = connector_working;
     msg_session_t * const session = service_request->session;
-    data_service_context_t * const context = (session != NULL) ? session->service_context : NULL;
+    data_service_context_t * const context = session != NULL ? session->service_context : NULL;
     connector_callback_status_t callback_status = connector_callback_continue;
 
+    ASSERT_GOTO(context != NULL, done);
     switch (context->request_initiator)
     {
 #if (defined CONNECTOR_DATA_POINTS)
@@ -618,7 +619,7 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
             status = connector_abort;
             break;
     }
-
+done:
     return status;
 }
 

@@ -93,12 +93,12 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
     {
         case DEV_HEALTH_TYPE_INT32:
         {
-            sprintf(csv, "%d", value->int32);
+            sprintf(csv, "%" PRId32, value->int32);
             break;
         }
         case DEV_HEALTH_TYPE_UINT64:
         {
-            sprintf(csv, "%lu", value->uint64);
+            sprintf(csv, "%" PRIu64, value->uint64);
             break;
         }
         case DEV_HEALTH_TYPE_FLOAT:
@@ -186,6 +186,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     {
         connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
         ASSERT(status == connector_working);
+        UNUSED_VARIABLE(status); /* To silent non-debug version */
     }
 
     dev_health_info->csv.free_bytes -= temp_csv_strlen;

@@ -1181,7 +1181,10 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
             status = msg_delete_session(connector_ptr, msg_ptr, session);
     }
 
-    *pending_request = NULL;
+    if (pending_request != NULL)
+    {
+        *pending_request = NULL;
+    }
 
     return status;
 }
@@ -1923,7 +1926,7 @@ STATIC connector_status_t msg_cleanup_all_sessions(connector_data_t * const conn
     }
 
 #if (defined CONNECTOR_DATA_SERVICE)
-    if (msg_ptr->pending_service_request.user != NULL || msg_ptr->pending_service_request.user != NULL)
+    if (msg_ptr->pending_service_request.user != NULL || msg_ptr->pending_service_request.internal != NULL)
     {
         status = msg_handle_pending_requests(connector_ptr, msg_ptr, NULL, connector_session_error_cancel);
     }
