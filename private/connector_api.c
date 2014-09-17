@@ -500,7 +500,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
     {
-        connector_callback_status_t const status = cc_dev_health_load_metrics(connector_handle->dev_health.metrics.config, asizeof(connector_handle->dev_health.metrics.config));
+        connector_callback_status_t status = cc_dev_health_load_metrics(connector_handle->dev_health.metrics.config, asizeof(connector_handle->dev_health.metrics.config));
         unsigned int i;
 
         connector_handle->dev_health.info.csv.data = NULL;
@@ -516,6 +516,18 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         {
             connector_handle->dev_health.metrics.times[i].report_at = 0;
             connector_handle->dev_health.metrics.times[i].sample_at = 0;
+        }
+
+        status  = cc_dev_health_simple_config_load(&connector_handle->dev_health.simple_metrics.config);
+        if (status != connector_callback_continue)
+        {
+            goto error;
+        }
+
+        for (i = 0; i < asizeof(connector_handle->dev_health.simple_metrics.times); i++)
+        {
+            connector_handle->dev_health.simple_metrics.times[i].report_at = 0;
+            connector_handle->dev_health.simple_metrics.times[i].sample_at = 0;
         }
     }
 #endif

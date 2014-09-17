@@ -144,7 +144,7 @@ public class Parser {
             /*check and add enhanced_services setting group */
             if(ConfigGenerator.deviceHealthOption()){
                 groupConfig = configData.getConfigGroup("setting");
-                Group es_Group = new Group("enhanced_services", 8, "Health data reporting configuration", null);
+                Group es_Group = new Group("enhanced_services", 8, "Advanced Health data reporting configuration", null);
 
                 Element[] es_elements = new Element[3];
 
@@ -162,6 +162,50 @@ public class Parser {
                     es_Group.addElement(es_elements[i]);
                 }
                 groupConfig.add(es_Group);
+                
+                Group simple_es_Group = new Group("simple_enhanced_services", 1, "Simple Health data reporting configuration", null);
+                Element[] simple_es_elements = new Element[3 * 4];
+                
+                simple_es_elements[0] = new Element("eth_on", "Ethernet Metrics", null);
+                simple_es_elements[0].setType("on_off");
+                
+                simple_es_elements[1] = new Element("eth_sampling", "Ethernet Sampling interval (seconds)", null);
+                simple_es_elements[1].setType("uint32");
+                
+                simple_es_elements[2] = new Element("eth_reporting", "Ethernet Reporting interval (minutes)", null);
+                simple_es_elements[2].setType("uint32");
+                
+                simple_es_elements[3] = new Element("mobile_on", "Mobile Metrics", null);
+                simple_es_elements[3].setType("on_off");
+                
+                simple_es_elements[4] = new Element("mobile_sampling", "Mobile Sampling interval (seconds)", null);
+                simple_es_elements[4].setType("uint32");
+                
+                simple_es_elements[5] = new Element("mobile_reporting", "Mobile Reporting interval (minutes)", null);
+                simple_es_elements[5].setType("uint32");
+                
+                simple_es_elements[6] = new Element("wifi_on", "WiFi Metrics", null);
+                simple_es_elements[6].setType("on_off");
+                
+                simple_es_elements[7] = new Element("wifi_sampling", "WiFi Sampling interval (seconds)", null);
+                simple_es_elements[7].setType("uint32");
+                
+                simple_es_elements[8] = new Element("wifi_reporting", "WiFi Reporting interval (minutes)", null);
+                simple_es_elements[8].setType("uint32");
+                
+                simple_es_elements[9] = new Element("sys_on", "System Metrics", null);
+                simple_es_elements[9].setType("on_off");
+                
+                simple_es_elements[10] = new Element("sys_sampling", "System Sampling interval (seconds)", null);
+                simple_es_elements[10].setType("uint32");
+                
+                simple_es_elements[11] = new Element("sys_reporting", "System Reporting interval (minutes)", null);
+                simple_es_elements[11].setType("uint32");
+                
+                for(int i = 0; i < 3 * 4; i++) {
+                    simple_es_Group.addElement(simple_es_elements[i]);
+                }
+                groupConfig.add(simple_es_Group);
             }
         } catch (NullPointerException e) {
             ConfigGenerator.log("Parser NullPointerException");

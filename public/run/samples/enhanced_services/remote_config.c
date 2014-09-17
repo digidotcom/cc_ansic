@@ -76,6 +76,57 @@ static connector_group_element_t CONST setting_enhanced_services_elements[] = {
  }
 };
 
+static connector_group_element_t CONST setting_simple_enhanced_services_elements[] = {
+ {  /*eth_on*/
+   connector_element_access_read_write,
+   connector_element_type_on_off
+ },
+ {  /*eth_sampling*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*eth_reporting*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*mobile_on*/
+   connector_element_access_read_write,
+   connector_element_type_on_off
+ },
+ {  /*mobile_sampling*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*mobile_reporting*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*wifi_on*/
+   connector_element_access_read_write,
+   connector_element_type_on_off
+ },
+ {  /*wifi_sampling*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*wifi_reporting*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*sys_on*/
+   connector_element_access_read_write,
+   connector_element_type_on_off
+ },
+ {  /*sys_sampling*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*sys_reporting*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ }
+};
+
 static connector_group_t CONST connector_setting_groups[] = {
  {  /*system*/
    1 , /* instances */
@@ -91,6 +142,16 @@ static connector_group_t CONST connector_setting_groups[] = {
    8 , /* instances */
    { asizeof(setting_enhanced_services_elements),
      setting_enhanced_services_elements
+   },
+   { 0,
+     NULL
+   }  /* errors*/
+}
+,
+ {  /*simple_enhanced_services*/
+   1 , /* instances */
+   { asizeof(setting_simple_enhanced_services_elements),
+     setting_simple_enhanced_services_elements
    },
    { 0,
      NULL
@@ -138,6 +199,6 @@ connector_remote_config_data_t rci_desc_data = {
     connector_rci_errors,
     connector_global_error_COUNT,
     FIRMWARE_TARGET_ZERO_VERSION,
-    0x30000DB,
+    0x30002AD,
     "Linux Application"
 };
