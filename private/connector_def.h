@@ -246,6 +246,13 @@ typedef struct connector_data {
             } times[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
         } metrics;
 
+        struct {
+            dev_health_simple_metrics_config_t config;
+            struct {
+                unsigned long sample_at;
+                unsigned long report_at;
+            } times[4];
+        } simple_metrics;
         unsigned int last_check;
     } dev_health;
 #endif

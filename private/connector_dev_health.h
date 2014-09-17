@@ -121,6 +121,69 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                     *report_at = now + reporting_interval;
                 }
             }
+
+            for (i = 0; i < 4; i++)
+            {
+                #define ETHERNET_INDEX  0
+                #define MOBILE_INDEX    1
+                #define WIFI_INDEX      2
+                #define SYSTEM_INDEX    3
+                static const char * paths[] = {"eth", "mobile", "wifi", "sys"};
+                dev_health_simple_metric_t * item = NULL;
+                unsigned long const seconds_in_a_minute = 60;
+                unsigned long sampling_interval;
+                unsigned long reporting_interval;
+                unsigned long * sample_at;
+                unsigned long * report_at;
+
+                switch (i)
+                {
+                    case ETHERNET_INDEX:
+                        item = &connector_ptr->dev_health.simple_metrics.config.eth;
+                        break;
+                    case MOBILE_INDEX:
+                        item = &connector_ptr->dev_health.simple_metrics.config.mobile;
+                        break;
+                    case WIFI_INDEX:
+                        item = &connector_ptr->dev_health.simple_metrics.config.wifi;
+                        break;
+                    case SYSTEM_INDEX:
+                        item = &connector_ptr->dev_health.simple_metrics.config.sys;
+                        break;
+                }
+
+                sampling_interval = item->sampling_interval;
+                reporting_interval = item->reporting_interval * seconds_in_a_minute;
+                sample_at = &connector_ptr->dev_health.metrics.times[i].sample_at;
+                report_at = &connector_ptr->dev_health.metrics.times[i].report_at;
+
+                if (item->on == connector_false)
+                {
+                    continue;
+                }
+
+                if (*sample_at == 0)
+                {
+                    *sample_at = now + sampling_interval;
+                }
+
+                if (*report_at == 0)
+                {
+                    *report_at = now + reporting_interval;
+                }
+
+                if (now >= *sample_at)
+                {
+                    dev_health_process_path(connector_ptr, paths[i]);
+                    *sample_at = now + sampling_interval;
+                }
+
+                if (now >= *report_at)
+                {
+                    dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_READY_TO_SEND;
+                    *report_at = now + reporting_interval;
+                }
+            }
             break;
         }
         case DEV_HEALTH_CSV_STATUS_READY_TO_SEND:
@@ -176,7 +239,7 @@ STATIC connector_callback_status_t dev_health_handle_response_callback(connector
 {
     connector_callback_status_t const status = connector_callback_continue;
 
-    connector_debug_line("dev_health_handle_response_callback, response %d", data_ptr->response);
+    connector_debug_line("dev_health_handle_response_callback, response %d '%s'", data_ptr->response, data_ptr->hint);
     return status;
 }
 
