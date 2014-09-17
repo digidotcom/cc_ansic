@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "connector_api.h"
 
-/*#define DEBUG*/
+#define DEBUG
 
 #if !(defined UNUSED_ARGUMENT)
 #define UNUSED_ARGUMENT(a)  (void)(a)
@@ -718,7 +718,7 @@ connector_bool_t cc_dev_health_get_wifi_clients(connector_indexes_t const * cons
 
 
 
-connector_bool_t cc_dev_health_get_system_mem_avaiable(connector_indexes_t const * const indexes, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_available(connector_indexes_t const * const indexes, uint64_t * const value)
 {
     UNUSED_ARGUMENT(indexes);
 
