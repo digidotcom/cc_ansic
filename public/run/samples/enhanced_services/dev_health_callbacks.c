@@ -29,13 +29,14 @@ static int get_executable_path(char * const path, unsigned int max_size)
     pid_t pid = getpid();
     ssize_t error;
     static char const executable_name[] = "connector";
-    char proc_path[PATH_MAX] = {0};
+    char proc_path[PATH_MAX];
 
     sprintf(proc_path, "/proc/%d/exe", pid);
     error = readlink(proc_path, path, max_size);
 
     if (error == -1)
     {
+        path[0] = '\0';
         perror("readlink");
         goto done;
     }
@@ -51,7 +52,7 @@ done:
 connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size)
 {
     connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX] = {0};
+    char dev_health_path[PATH_MAX];
 
     get_executable_path(dev_health_path, sizeof dev_health_path);
     strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
@@ -88,7 +89,7 @@ connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config
 connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size)
 {
     connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX] = {0};
+    char dev_health_path[PATH_MAX];
     FILE *file;
     unsigned int bytes_read;
 
@@ -109,7 +110,7 @@ connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config
 connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_metrics_config_t * const simple_metrics)
 {
     connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX] = {0};
+    char dev_health_path[PATH_MAX];
 
     get_executable_path(dev_health_path, sizeof dev_health_path);
     strcat(dev_health_path, DEVICE_HEALTH_SIMPLE_FILENAME);
@@ -149,7 +150,7 @@ connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_m
 connector_callback_status_t cc_dev_health_simple_config_save(dev_health_simple_metrics_config_t const * const simple_metrics)
 {
     connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX] = {0};
+    char dev_health_path[PATH_MAX];
     FILE *file;
     unsigned int bytes_read;
 
