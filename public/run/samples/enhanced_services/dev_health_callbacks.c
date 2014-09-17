@@ -22,6 +22,7 @@
 #endif
 
 #define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
+#define DEVICE_HEALTH_SIMPLE_FILENAME  "dev_health_simple.cfg"
 
 static int get_executable_path(char * const path, unsigned int max_size)
 {
@@ -105,6 +106,66 @@ connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config
     return status;
 }
 
+connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_metrics_config_t * const simple_metrics)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    char dev_health_path[PATH_MAX] = {0};
+
+    get_executable_path(dev_health_path, sizeof dev_health_path);
+    strcat(dev_health_path, DEVICE_HEALTH_SIMPLE_FILENAME);
+
+    if (access(dev_health_path, F_OK) != -1)
+    {
+        FILE *file;
+        unsigned int bytes_read;
+
+        file = fopen(dev_health_path, "r");
+        bytes_read = fread(simple_metrics, sizeof *simple_metrics, 1, file);
+        if (bytes_read == sizeof *simple_metrics)
+        {
+            printf("Error while reading %s\n", dev_health_path);
+        }
+        fclose(file);
+    }
+    else
+    {
+        simple_metrics->eth.on = connector_false;
+        simple_metrics->eth.reporting_interval = 0;
+        simple_metrics->eth.sampling_interval = 0;
+        simple_metrics->mobile.on = connector_false;
+        simple_metrics->mobile.reporting_interval = 0;
+        simple_metrics->mobile.sampling_interval = 0;
+        simple_metrics->wifi.on = connector_false;
+        simple_metrics->wifi.reporting_interval = 0;
+        simple_metrics->wifi.sampling_interval = 0;
+        simple_metrics->sys.on = connector_false;
+        simple_metrics->sys.reporting_interval = 0;
+        simple_metrics->sys.sampling_interval = 0;
+    }
+
+    return status;
+}
+
+connector_callback_status_t cc_dev_health_simple_config_save(dev_health_simple_metrics_config_t const * const simple_metrics)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    char dev_health_path[PATH_MAX] = {0};
+    FILE *file;
+    unsigned int bytes_read;
+
+    get_executable_path(dev_health_path, sizeof dev_health_path);
+    strcat(dev_health_path, DEVICE_HEALTH_SIMPLE_FILENAME);
+
+    file = fopen(dev_health_path, "w");
+    bytes_read = fwrite(simple_metrics, sizeof *simple_metrics, 1, file);
+    if (bytes_read == sizeof *simple_metrics)
+    {
+        printf("Error while reading %s\n", dev_health_path);
+    }
+    fclose(file);
+
+    return status;
+}
 
 char * cc_dev_health_malloc_string(size_t size)
 {
