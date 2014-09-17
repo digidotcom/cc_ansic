@@ -100,16 +100,6 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                     continue;
                 }
 
-                if (*sample_at == 0)
-                {
-                    *sample_at = now + sampling_interval;
-                }
-
-                if (*report_at == 0)
-                {
-                    *report_at = now + reporting_interval;
-                }
-
                 if (now >= *sample_at)
                 {
                     dev_health_process_path(connector_ptr, item->path);
@@ -160,16 +150,6 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 if (item->on == connector_false)
                 {
                     continue;
-                }
-
-                if (*sample_at == 0)
-                {
-                    *sample_at = now + sampling_interval;
-                }
-
-                if (*report_at == 0)
-                {
-                    *report_at = now + reporting_interval;
                 }
 
                 if (now >= *sample_at)

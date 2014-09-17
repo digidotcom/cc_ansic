@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "connector_api.h"
 
-#define DEBUG
+/* #define DEBUG */
 
 #if !(defined UNUSED_ARGUMENT)
 #define UNUSED_ARGUMENT(a)  (void)(a)
