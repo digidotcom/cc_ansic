@@ -81,6 +81,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
     {
         case DEV_HEALTH_CSV_STATUS_PROCESSING:
         {
+#define CC_FIRST_DEVICE_REPORTING_TIME    15
             size_t i;
             dev_health_root_t root_group;
 
@@ -98,6 +99,16 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 if (item->path[0] == '\0')
                 {
                     continue;
+                }
+
+                if (*sample_at == 0)
+                {
+               		*sample_at = CC_FIRST_DEVICE_REPORTING_TIME;
+                }
+
+                if (*report_at == 0)
+                {
+                	*report_at = CC_FIRST_DEVICE_REPORTING_TIME;
                 }
 
                 if (now >= *sample_at)
@@ -150,6 +161,16 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 if (item->on == connector_false)
                 {
                     continue;
+                }
+
+                if (*sample_at == 0)
+                {
+               		*sample_at = CC_FIRST_DEVICE_REPORTING_TIME;
+                }
+
+                if (*report_at == 0)
+                {
+                	*report_at = CC_FIRST_DEVICE_REPORTING_TIME;
                 }
 
                 if (now >= *sample_at)
