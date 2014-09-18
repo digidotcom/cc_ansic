@@ -1835,6 +1835,6 @@ static dev_health_path_group_t const * const dev_health_root_groups[] =
 {
     &dev_health_root_group_mobile,
     &dev_health_root_group_eth,
-    &dev_health_root_group_wifi,
+    /*&dev_health_root_group_wifi,*/ /* TODO: IC4C-402 */
     &dev_health_root_group_system
 };

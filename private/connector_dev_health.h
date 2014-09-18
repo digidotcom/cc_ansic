@@ -126,7 +126,8 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 
             for (root_group = 0; root_group < dev_health_root_COUNT; root_group++)
             {
-                static const char * paths[] = {"eth", "mobile", "wifi", "sys"};
+                /*static const char * paths[] = {"eth", "mobile", "wifi", "sys"};*/ /* TODO: IC4C-402 */
+                static const char * paths[] = {"eth", "mobile", "sys"};
                 dev_health_simple_metric_t * item = NULL;
                 unsigned long const seconds_in_a_minute = 60;
                 unsigned long sampling_interval;
@@ -142,9 +143,11 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                     case dev_health_root_mobile:
                         item = &connector_ptr->dev_health.simple_metrics.config.mobile;
                         break;
+                    /*
                     case dev_health_root_wifi:
                         item = &connector_ptr->dev_health.simple_metrics.config.wifi;
                         break;
+                    */ /* TODO: IC4C-402 */
                     case dev_health_root_sys:
                         item = &connector_ptr->dev_health.simple_metrics.config.sys;
                         break;

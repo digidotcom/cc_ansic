@@ -161,7 +161,7 @@ struct connector_data;
 typedef enum {
     dev_health_root_eth,
     dev_health_root_mobile,
-    dev_health_root_wifi,
+    /*dev_health_root_wifi,*/ /* TODO: IC4C-402 */
     dev_health_root_sys,
     dev_health_root_COUNT
 } dev_health_root_t;

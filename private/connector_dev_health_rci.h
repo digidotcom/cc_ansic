@@ -81,7 +81,7 @@ STATIC connector_callback_status_t simple_enhs_rci_set(dev_health_simple_metric_
     {
         case connector_setting_simple_enhanced_services_eth_on:
         case connector_setting_simple_enhanced_services_mobile_on:
-        case connector_setting_simple_enhanced_services_wifi_on:
+        /*case connector_setting_simple_enhanced_services_wifi_on:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_on:
         {
             simple_metrics->on = remote_config->element.value->on_off_value;
@@ -89,7 +89,7 @@ STATIC connector_callback_status_t simple_enhs_rci_set(dev_health_simple_metric_
         }
         case connector_setting_simple_enhanced_services_eth_sampling:
         case connector_setting_simple_enhanced_services_mobile_sampling:
-        case connector_setting_simple_enhanced_services_wifi_sampling:
+        /*case connector_setting_simple_enhanced_services_wifi_sampling:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_sampling:
         {
             simple_metrics->sampling_interval = remote_config->element.value->unsigned_integer_value;
@@ -97,7 +97,7 @@ STATIC connector_callback_status_t simple_enhs_rci_set(dev_health_simple_metric_
         }
         case connector_setting_simple_enhanced_services_eth_reporting:
         case connector_setting_simple_enhanced_services_mobile_reporting:
-        case connector_setting_simple_enhanced_services_wifi_reporting:
+        /*case connector_setting_simple_enhanced_services_wifi_reporting:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_reporting:
         {
             simple_metrics->reporting_interval = remote_config->element.value->unsigned_integer_value;
@@ -121,7 +121,7 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
     {
         case connector_setting_simple_enhanced_services_eth_on:
         case connector_setting_simple_enhanced_services_mobile_on:
-        case connector_setting_simple_enhanced_services_wifi_on:
+        /*case connector_setting_simple_enhanced_services_wifi_on:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_on:
         {
             remote_config->response.element_value->on_off_value = simple_metrics->on ? connector_on : connector_off;
@@ -129,7 +129,7 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
         }
         case connector_setting_simple_enhanced_services_eth_sampling:
         case connector_setting_simple_enhanced_services_mobile_sampling:
-        case connector_setting_simple_enhanced_services_wifi_sampling:
+        /*case connector_setting_simple_enhanced_services_wifi_sampling:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_sampling:
         {
             remote_config->response.element_value->unsigned_integer_value = simple_metrics->sampling_interval;
@@ -137,7 +137,7 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
         }
         case connector_setting_simple_enhanced_services_eth_reporting:
         case connector_setting_simple_enhanced_services_mobile_reporting:
-        case connector_setting_simple_enhanced_services_wifi_reporting:
+        /*case connector_setting_simple_enhanced_services_wifi_reporting:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_reporting:
         {
             remote_config->response.element_value->unsigned_integer_value = simple_metrics->reporting_interval;
@@ -209,11 +209,14 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
                         case connector_setting_simple_enhanced_services_mobile_reporting:
                             simple_metrics_config = &connector_ptr->dev_health.simple_metrics.config.mobile;
                             break;
+                        /* TODO: IC4C-402 */
+                        /*
                         case connector_setting_simple_enhanced_services_wifi_on:
                         case connector_setting_simple_enhanced_services_wifi_sampling:
                         case connector_setting_simple_enhanced_services_wifi_reporting:
                             simple_metrics_config = &connector_ptr->dev_health.simple_metrics.config.wifi;
                             break;
+                        */
                         case connector_setting_simple_enhanced_services_sys_on:
                         case connector_setting_simple_enhanced_services_sys_sampling:
                         case connector_setting_simple_enhanced_services_sys_reporting:
