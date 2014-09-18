@@ -66,50 +66,50 @@ static connector_group_element_t CONST setting_enhanced_services_elements[] = {
    connector_element_access_read_write,
    connector_element_type_string
  },
- {  /*sampling_interval*/
+ {  /*sample_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*reporting_interval*/
+ {  /*report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  }
 };
 
 static connector_group_element_t CONST setting_simple_enhanced_services_elements[] = {
- {  /*eth_on*/
+ {  /*eth_metrics*/
    connector_element_access_read_write,
    connector_element_type_on_off
  },
- {  /*eth_sampling*/
+ {  /*eth_sample_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*eth_reporting*/
+ {  /*eth_report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*mobile_on*/
+ {  /*mobile_metrics*/
    connector_element_access_read_write,
    connector_element_type_on_off
  },
- {  /*mobile_sampling*/
+ {  /*mobile_sample_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*mobile_reporting*/
+ {  /*mobile_report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*sys_on*/
+ {  /*sys_metrics*/
    connector_element_access_read_write,
    connector_element_type_on_off
  },
- {  /*sys_sampling*/
+ {  /*sys_sample_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*sys_reporting*/
+ {  /*sys_report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  }
