@@ -164,7 +164,7 @@ public class Parser {
                 groupConfig.add(es_Group);
                 
                 Group simple_es_Group = new Group("simple_enhanced_services", 1, "Simple Health data reporting configuration", null);
-                Element[] simple_es_elements = new Element[3 * 4];
+                Element[] simple_es_elements = new Element[3 * 3];
                 
                 simple_es_elements[0] = new Element("eth_on", "Ethernet Metrics", null);
                 simple_es_elements[0].setType("on_off");
@@ -183,26 +183,27 @@ public class Parser {
                 
                 simple_es_elements[5] = new Element("mobile_reporting", "Mobile Reporting interval (minutes)", null);
                 simple_es_elements[5].setType("uint32");
+                /* TODO: IC4C-402 */
+                /*
+                simple_es_elements[] = new Element("wifi_on", "WiFi Metrics", null);
+                simple_es_elements[].setType("on_off");
                 
-                simple_es_elements[6] = new Element("wifi_on", "WiFi Metrics", null);
+                simple_es_elements[] = new Element("wifi_sampling", "WiFi Sampling interval (seconds)", null);
+                simple_es_elements[].setType("uint32");
+                
+                simple_es_elements[] = new Element("wifi_reporting", "WiFi Reporting interval (minutes)", null);
+                simple_es_elements[].setType("uint32");
+                */
+                simple_es_elements[6] = new Element("sys_on", "System Metrics", null);
                 simple_es_elements[6].setType("on_off");
                 
-                simple_es_elements[7] = new Element("wifi_sampling", "WiFi Sampling interval (seconds)", null);
+                simple_es_elements[7] = new Element("sys_sampling", "System Sampling interval (seconds)", null);
                 simple_es_elements[7].setType("uint32");
                 
-                simple_es_elements[8] = new Element("wifi_reporting", "WiFi Reporting interval (minutes)", null);
+                simple_es_elements[8] = new Element("sys_reporting", "System Reporting interval (minutes)", null);
                 simple_es_elements[8].setType("uint32");
                 
-                simple_es_elements[9] = new Element("sys_on", "System Metrics", null);
-                simple_es_elements[9].setType("on_off");
-                
-                simple_es_elements[10] = new Element("sys_sampling", "System Sampling interval (seconds)", null);
-                simple_es_elements[10].setType("uint32");
-                
-                simple_es_elements[11] = new Element("sys_reporting", "System Reporting interval (minutes)", null);
-                simple_es_elements[11].setType("uint32");
-                
-                for(int i = 0; i < 3 * 4; i++) {
+                for(int i = 0; i < simple_es_elements.length; i++) {
                     simple_es_Group.addElement(simple_es_elements[i]);
                 }
                 groupConfig.add(simple_es_Group);
