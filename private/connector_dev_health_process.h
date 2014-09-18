@@ -113,7 +113,6 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
             connector_bool_t const needs_quotes = string_needs_quotes(value->string);
             unsigned int const temp_csv_size = ENHS_REALLOC_SIZE;
             dp_process_string(value->string, csv, temp_csv_size, NULL, needs_quotes, connector_true);
-            cc_dev_health_free_string(value->string);
             break;
         }
         case DEV_HEALTH_TYPE_NONE:
@@ -227,6 +226,7 @@ STATIC void dev_health_process_item(connector_data_t * const connector_ptr, dev_
         case DEV_HEALTH_TYPE_JSON:
         case DEV_HEALTH_TYPE_GEOJSON:
         {
+            value.string = NULL;
             item_present = function(&indexes, &value.string);
             break;
         }
@@ -245,6 +245,26 @@ STATIC void dev_health_process_item(connector_data_t * const connector_ptr, dev_
         dev_health_info->stream_id.len = sprintf(stream_id, "%s/%s", stream_id, element->name);
 
         add_item_to_csv(connector_ptr, &value, type);
+    }
+
+    switch (type)
+    {
+        case DEV_HEALTH_TYPE_INT32:
+        case DEV_HEALTH_TYPE_UINT64:
+        case DEV_HEALTH_TYPE_FLOAT:
+            break;
+        case DEV_HEALTH_TYPE_STRING:
+        case DEV_HEALTH_TYPE_JSON:
+        case DEV_HEALTH_TYPE_GEOJSON:
+            if (value.string != NULL)
+            {
+                cc_dev_health_free_string(value.string);
+            }
+            break;
+        case DEV_HEALTH_TYPE_NONE:
+            connector_debug_line("Fatal error, type not set");
+            ASSERT(type != DEV_HEALTH_TYPE_NONE);
+            break;
     }
 }
 
