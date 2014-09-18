@@ -24,12 +24,12 @@ STATIC connector_callback_status_t enhs_rci_set(dev_health_metrics_config_t * co
         }
         case connector_setting_enhanced_services_sample_rate:
         {
-            metrics_item->sampling_interval = remote_config->element.value->unsigned_integer_value;
+            metrics_item->sample_rate = remote_config->element.value->unsigned_integer_value;
             break;
         }
         case connector_setting_enhanced_services_report_rate:
         {
-            metrics_item->reporting_interval = remote_config->element.value->unsigned_integer_value;
+            metrics_item->report_rate = remote_config->element.value->unsigned_integer_value;
             break;
         }
         default:
@@ -55,12 +55,12 @@ STATIC connector_callback_status_t enhs_rci_query(dev_health_metrics_config_t co
         }
         case connector_setting_enhanced_services_sample_rate:
         {
-            remote_config->response.element_value->unsigned_integer_value = metrics_item->sampling_interval;
+            remote_config->response.element_value->unsigned_integer_value = metrics_item->sample_rate;
             break;
         }
         case connector_setting_enhanced_services_report_rate:
         {
-            remote_config->response.element_value->unsigned_integer_value = metrics_item->reporting_interval;
+            remote_config->response.element_value->unsigned_integer_value = metrics_item->report_rate;
             break;
         }
         default:
@@ -84,7 +84,7 @@ STATIC connector_callback_status_t simple_enhs_rci_set(dev_health_simple_metric_
         /*case connector_setting_simple_enhanced_services_wifi_metrics:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_metrics:
         {
-            simple_metrics->on = remote_config->element.value->on_off_value;
+            simple_metrics->metrics = remote_config->element.value->on_off_value;
             break;
         }
         case connector_setting_simple_enhanced_services_eth_sample_rate:
@@ -92,7 +92,7 @@ STATIC connector_callback_status_t simple_enhs_rci_set(dev_health_simple_metric_
         /*case connector_setting_simple_enhanced_services_wifi_sample_rate:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_sample_rate:
         {
-            simple_metrics->sampling_interval = remote_config->element.value->unsigned_integer_value;
+            simple_metrics->sample_rate = remote_config->element.value->unsigned_integer_value;
             break;
         }
         case connector_setting_simple_enhanced_services_eth_report_rate:
@@ -100,7 +100,7 @@ STATIC connector_callback_status_t simple_enhs_rci_set(dev_health_simple_metric_
         /*case connector_setting_simple_enhanced_services_wifi_report_rate:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_report_rate:
         {
-            simple_metrics->reporting_interval = remote_config->element.value->unsigned_integer_value;
+            simple_metrics->report_rate = remote_config->element.value->unsigned_integer_value;
             break;
         }
         default:
@@ -124,7 +124,7 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
         /*case connector_setting_simple_enhanced_services_wifi_metrics:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_metrics:
         {
-            remote_config->response.element_value->on_off_value = simple_metrics->on ? connector_on : connector_off;
+            remote_config->response.element_value->on_off_value = simple_metrics->metrics ? connector_on : connector_off;
             break;
         }
         case connector_setting_simple_enhanced_services_eth_sample_rate:
@@ -132,7 +132,7 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
         /*case connector_setting_simple_enhanced_services_wifi_sample_rate:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_sample_rate:
         {
-            remote_config->response.element_value->unsigned_integer_value = simple_metrics->sampling_interval;
+            remote_config->response.element_value->unsigned_integer_value = simple_metrics->sample_rate;
             break;
         }
         case connector_setting_simple_enhanced_services_eth_report_rate:
@@ -140,7 +140,7 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
         /*case connector_setting_simple_enhanced_services_wifi_report_rate:*/ /* TODO: IC4C-402 */
         case connector_setting_simple_enhanced_services_sys_report_rate:
         {
-            remote_config->response.element_value->unsigned_integer_value = simple_metrics->reporting_interval;
+            remote_config->response.element_value->unsigned_integer_value = simple_metrics->report_rate;
             break;
         }
         default:

@@ -18,14 +18,14 @@
 
 typedef struct {
     char path[DEV_HEALTH_MAX_STREAM_ID_LEN];
-    unsigned long sampling_interval;
-    unsigned long reporting_interval;
+    unsigned long sample_rate;
+    unsigned long report_rate;
 } dev_health_metrics_config_t;
 
 typedef struct {
-    connector_bool_t on;
-    unsigned long sampling_interval;
-    unsigned long reporting_interval;
+    connector_bool_t metrics;
+    unsigned long sample_rate;
+    unsigned long report_rate;
 } dev_health_simple_metric_t;
 
 typedef struct {

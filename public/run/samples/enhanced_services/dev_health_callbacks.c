@@ -78,8 +78,8 @@ connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config
         for (i = 0; i < array_size; i++)
         {
             metrics_array[i].path[0] = '\0';
-            metrics_array[i].reporting_interval = 0;
-            metrics_array[i].sampling_interval = 0;
+            metrics_array[i].sample_rate = 0;
+            metrics_array[i].report_rate = 0;
         }
     }
 
@@ -130,20 +130,20 @@ connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_m
     }
     else
     {
-        simple_metrics->eth.on = connector_false;
-        simple_metrics->eth.reporting_interval = 0;
-        simple_metrics->eth.sampling_interval = 0;
-        simple_metrics->mobile.on = connector_false;
-        simple_metrics->mobile.reporting_interval = 0;
-        simple_metrics->mobile.sampling_interval = 0;
+        simple_metrics->eth.metrics = connector_false;
+        simple_metrics->eth.report_rate = 0;
+        simple_metrics->eth.sample_rate = 0;
+        simple_metrics->mobile.metrics = connector_false;
+        simple_metrics->mobile.report_rate = 0;
+        simple_metrics->mobile.sample_rate = 0;
         /*
-        simple_metrics->wifi.on = connector_false;
-        simple_metrics->wifi.reporting_interval = 0;
-        simple_metrics->wifi.sampling_interval = 0;
+        simple_metrics->wifi.metrics = connector_false;
+        simple_metrics->wifi.report_rate = 0;
+        simple_metrics->wifi.sample_rate = 0;
         */ /* TODO: IC4C-402 */
-        simple_metrics->sys.on = connector_false;
-        simple_metrics->sys.reporting_interval = 0;
-        simple_metrics->sys.sampling_interval = 0;
+        simple_metrics->sys.metrics = connector_false;
+        simple_metrics->sys.report_rate = 0;
+        simple_metrics->sys.sample_rate = 0;
     }
 
     return status;
