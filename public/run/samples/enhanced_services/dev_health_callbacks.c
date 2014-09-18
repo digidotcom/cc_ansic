@@ -136,9 +136,11 @@ connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_m
         simple_metrics->mobile.on = connector_false;
         simple_metrics->mobile.reporting_interval = 0;
         simple_metrics->mobile.sampling_interval = 0;
+        /*
         simple_metrics->wifi.on = connector_false;
         simple_metrics->wifi.reporting_interval = 0;
         simple_metrics->wifi.sampling_interval = 0;
+        */ /* TODO: IC4C-402 */
         simple_metrics->sys.on = connector_false;
         simple_metrics->sys.reporting_interval = 0;
         simple_metrics->sys.sampling_interval = 0;

@@ -31,7 +31,7 @@ typedef struct {
 typedef struct {
     dev_health_simple_metric_t eth;
     dev_health_simple_metric_t mobile;
-    dev_health_simple_metric_t wifi;
+    /*dev_health_simple_metric_t wifi;*/ /* TODO: IC4C-402 */
     dev_health_simple_metric_t sys;
 } dev_health_simple_metrics_config_t;
 
