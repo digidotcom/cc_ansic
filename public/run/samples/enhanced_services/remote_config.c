@@ -101,18 +101,6 @@ static connector_group_element_t CONST setting_simple_enhanced_services_elements
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*wifi_on*/
-   connector_element_access_read_write,
-   connector_element_type_on_off
- },
- {  /*wifi_sampling*/
-   connector_element_access_read_write,
-   connector_element_type_uint32
- },
- {  /*wifi_reporting*/
-   connector_element_access_read_write,
-   connector_element_type_uint32
- },
  {  /*sys_on*/
    connector_element_access_read_write,
    connector_element_type_on_off
