@@ -657,14 +657,14 @@ connector_status_t connector_step(connector_handle_t const handle)
         switch (edp_current_active_state)
         {
             case connector_transport_idle:
-                break;
             case connector_transport_open:
-            case connector_transport_send:
-            case connector_transport_receive:
             case connector_transport_close:
             case connector_transport_terminate:
             case connector_transport_redirect:
             case connector_transport_wait_for_reconnect:
+                break;
+            case connector_transport_send:
+            case connector_transport_receive:
                 connector_dev_health_step(connector_ptr);
                 break;
         }
