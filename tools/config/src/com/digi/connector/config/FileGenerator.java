@@ -2,9 +2,12 @@ package com.digi.connector.config;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -142,8 +145,18 @@ public abstract class FileGenerator {
             new_file = new File(new_path + "_bkp_" + i );
         }
         if(i>0){
-            Files.copy(new File(new_path).toPath(), new_file.toPath());
-            ConfigGenerator.log("Existing file " + new_path + " saved as: " + new_path + "_bkp_" + i);
+            String dest = new_path + "_bkp_" + i;
+            InputStream in = new FileInputStream(new_path);
+            OutputStream out = new FileOutputStream(dest);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+
+            ConfigGenerator.log("Existing file " + new_path + " saved as: " + dest);
         }
 	}
 
