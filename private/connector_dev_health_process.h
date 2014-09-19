@@ -45,7 +45,8 @@ static connector_status_t dev_health_setup_csv_data(connector_data_t * const con
         dev_health_info->csv.total_size = total_bytes;
         dev_health_info->csv.free_bytes = total_bytes;
     }
-    else if (dev_health_info->csv.free_bytes == dev_health_info->csv.total_size)
+    
+    if (dev_health_info->csv.free_bytes == dev_health_info->csv.total_size)
     {
         strcpy(dev_health_info->csv.data, csv_header);
         dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
