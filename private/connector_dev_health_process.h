@@ -29,7 +29,7 @@ static connector_status_t dev_health_setup_csv_data(connector_data_t * const con
 
     if (dev_health_info->csv.data == NULL)
     {
-        unsigned int const total_bytes = 256;
+        unsigned int const total_bytes = ENHS_REALLOC_SIZE;
         void * allocated_memory;
 
         status = malloc_data(connector_ptr, total_bytes, &allocated_memory);
