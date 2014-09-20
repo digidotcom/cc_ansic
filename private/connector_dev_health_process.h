@@ -180,7 +180,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     process_csv_stream_type(temp_csv, type);
     process_csv_stream_id(temp_csv, stream_id);
 
-    temp_csv_size = strlen(temp_csv + sizeof "");
+    temp_csv_size = strlen(temp_csv) + sizeof "";
 
     if (temp_csv_size > dev_health_info->csv.free_bytes)
     {
