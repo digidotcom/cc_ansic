@@ -309,7 +309,7 @@ STATIC void dev_health_process_group_items(connector_data_t * const connector_pt
 
 STATIC void dev_health_process_next_group(connector_data_t * connector_ptr, unsigned int upper_index, unsigned int const lower_index, dev_health_path_group_t const * const group, char const * const path);
 
-STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsigned int upper_index, dev_health_path_group_t const * const * const subgroups_array, unsigned int const array_size, char const * const path)
+STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsigned int upper_index, unsigned int lower_index, dev_health_path_group_t const * const * const subgroups_array, unsigned int const array_size, char const * const path)
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
     unsigned int stream_id_len = dev_health_info->stream_id.len;
@@ -352,7 +352,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
                 {
                     dev_health_info->stream_id.len = sprintf(dev_health_info->stream_id.string, "%s/%s/%lu", dev_health_info->stream_id.string, subgroup->name, single_instance);
                 }
-                dev_health_process_next_group(connector_ptr, upper_index, single_instance, subgroup, updated_remaining_path);
+                dev_health_process_next_group(connector_ptr, upper_index, lower_index, subgroup, updated_remaining_path);
                 *p_stream_id_end = '\0';
             }
             break;
@@ -366,9 +366,7 @@ STATIC void dev_health_process_subgroups(connector_data_t * connector_ptr, unsig
 
             if (handle_all || (name_len != 0 && strncmp(path, subgroup->name, name_len) == 0))
             {
-                unsigned int const lower_index_0 = 0;
-
-                dev_health_process_next_group(connector_ptr, upper_index, lower_index_0, subgroup, remaining_path); /* recursion */
+                dev_health_process_next_group(connector_ptr, upper_index, lower_index, subgroup, remaining_path); /* recursion */
                 *p_stream_id_end = '\0';
             }
         }
@@ -395,7 +393,7 @@ STATIC void dev_health_process_next_group(connector_data_t * connector_ptr, unsi
             unsigned int const array_size = group->child.data.subgroups.size;
 
             /* Calls us recursively until "type" is "ITEM"*/
-            dev_health_process_subgroups(connector_ptr, upper_index, subgroups_array, array_size, path);
+            dev_health_process_subgroups(connector_ptr, upper_index, lower_index, subgroups_array, array_size, path);
             break;
         }
     }
