@@ -128,7 +128,7 @@ connector_bool_t cc_dev_health_get_wifi_rate(connector_indexes_t const * const i
 connector_bool_t cc_dev_health_get_wifi_clients(connector_indexes_t const * const indexes, int32_t * const value);
 
 connector_bool_t cc_dev_health_get_system_mem_available(connector_indexes_t const * const indexes, uint64_t * const value);
-connector_bool_t cc_dev_health_get_system_mem_used(connector_indexes_t const * const indexes, uint64_t * const value);
+connector_bool_t cc_dev_health_get_system_mem_free(connector_indexes_t const * const indexes, uint64_t * const value);
 connector_bool_t cc_dev_health_get_system_reboots(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_system_msg_free(connector_indexes_t const * const indexes, int32_t * const value);
 connector_bool_t cc_dev_health_get_system_msg_min(connector_indexes_t const * const indexes, int32_t * const value);

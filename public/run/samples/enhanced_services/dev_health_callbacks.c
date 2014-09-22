@@ -731,7 +731,7 @@ connector_bool_t cc_dev_health_get_system_mem_available(connector_indexes_t cons
 }
 
 
-connector_bool_t cc_dev_health_get_system_mem_used(connector_indexes_t const * const indexes, uint64_t * const value)
+connector_bool_t cc_dev_health_get_system_mem_free(connector_indexes_t const * const indexes, uint64_t * const value)
 {
     UNUSED_ARGUMENT(indexes);
 
