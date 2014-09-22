@@ -28,13 +28,13 @@ STATIC connector_status_t dev_health_send_metrics(connector_data_t * const conne
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
     dev_health_data_push_t * dev_health_data_push = NULL;
     connector_request_data_service_send_t * send_request = NULL;
-    unsigned int const csv_len = dev_health_info->csv.total_size - dev_health_info->csv.free_bytes - 1; /* Skip the last '\n' */
+    char const * const next_header = strstr(dev_health_info->csv.next_header + sizeof csv_header - 1, csv_header);
 
     status = malloc_data(connector_ptr, sizeof *dev_health_data_push, (void * *)&dev_health_data_push);
     ASSERT_GOTO(status == connector_working, done);
 
-    dev_health_data_push->p_csv = dev_health_info->csv.data;
-    dev_health_data_push->bytes_available = csv_len;
+    dev_health_data_push->p_csv = dev_health_info->csv.next_header;
+    dev_health_data_push->bytes_available = next_header != NULL ? next_header - dev_health_info->csv.next_header : (unsigned int)strlen(dev_health_data_push->p_csv);
     send_request = &dev_health_data_push->send_request;
 
     send_request->user_context = dev_health_data_push;
@@ -46,7 +46,7 @@ STATIC connector_status_t dev_health_send_metrics(connector_data_t * const conne
     send_request->transport = connector_transport_tcp;
 
     status = connector_initiate_action(connector_ptr, connector_initiate_send_data, send_request);
-
+    dev_health_info->csv.next_header = next_header;
 done:
     if (status != connector_success)
     {
@@ -87,7 +87,10 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
             size_t i;
             dev_health_root_t root_group;
 
-            dev_health_setup_csv_data(connector_ptr);
+            if (connector_ptr->dev_health.info.csv.data == NULL)
+            {
+                dev_health_allocate_csv_data(connector_ptr);
+            }
 
             for (i = 0; i < asizeof(connector_ptr->dev_health.metrics.config); i++)
             {
@@ -190,6 +193,11 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                     *report_at = now + reporting_interval;
                 }
             }
+
+            if (dev_health_info->csv.status == DEV_HEALTH_CSV_STATUS_READY_TO_SEND)
+            {
+                dev_health_info->csv.next_header = dev_health_info->csv.data;
+            }
             break;
         }
         case DEV_HEALTH_CSV_STATUS_READY_TO_SEND:
@@ -209,8 +217,15 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
         case DEV_HEALTH_CSV_STATUS_SENDING:
             break;
         case DEV_HEALTH_CSV_STATUS_SENT:
-            connector_ptr->dev_health.info.csv.free_bytes = connector_ptr->dev_health.info.csv.total_size;
-            connector_ptr->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
+            if (dev_health_info->csv.next_header != NULL)
+            {
+                dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_READY_TO_SEND;
+            }
+            else
+            {
+                dev_health_reset_csv_data(&connector_ptr->dev_health.info);
+                connector_ptr->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
+            }
             break;
     }
 

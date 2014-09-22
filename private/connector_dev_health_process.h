@@ -21,52 +21,7 @@ typedef union {
     char const * string;
 } dev_health_item_value_t;
 
-static connector_status_t dev_health_setup_csv_data(connector_data_t * const connector_ptr)
-{
-    dev_health_info_t * dev_health_info = &connector_ptr->dev_health.info;
-    static char const csv_header[] = "#DATA,TIMESTAMP,STREAMTYPE,STREAMID\n";
-    connector_status_t status = connector_working;
-
-    if (dev_health_info->csv.data == NULL)
-    {
-        unsigned int const total_bytes = ENHS_REALLOC_SIZE;
-        void * allocated_memory;
-
-        status = malloc_data(connector_ptr, total_bytes, &allocated_memory);
-        ASSERT_GOTO(status == connector_working, done);
-
-        if (allocated_memory == NULL)
-        {
-            connector_debug_line("Error while allocating memory for CSV data");
-            status = connector_no_resource;
-            goto done;
-        }
-        dev_health_info->csv.data = allocated_memory;
-        dev_health_info->csv.total_size = total_bytes;
-        dev_health_info->csv.free_bytes = total_bytes;
-    }
-    
-    if (dev_health_info->csv.free_bytes == dev_health_info->csv.total_size)
-    {
-        strcpy(dev_health_info->csv.data, csv_header);
-        dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
-        dev_health_info->csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
-    }
-
-done:
-    return status;
-}
-
-STATIC connector_status_t dev_health_teardown_csv_data(connector_data_t * const connector_ptr)
-{
-    connector_status_t status;
-
-    status = free_data(connector_ptr, connector_ptr->dev_health.info.csv.data);
-    ASSERT_GOTO(status == connector_working, done);
-    connector_ptr->dev_health.info.csv.data = NULL;
-done:
-    return status;
-}
+STATIC char const csv_header[] = "#DATA,TIMESTAMP,STREAMTYPE,STREAMID\n";
 
 STATIC connector_status_t dev_health_reallocate_csv_data(connector_data_t * const connector_ptr)
 {
@@ -84,6 +39,70 @@ STATIC connector_status_t dev_health_reallocate_csv_data(connector_data_t * cons
     dev_health_info->csv.total_size = new_size;
     dev_health_info->csv.free_bytes += additional_size;
 
+done:
+    return status;
+}
+
+STATIC void add_csv_header(connector_data_t * const connector_ptr)
+{
+    dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
+
+    if (dev_health_info->csv.free_bytes < sizeof csv_header)
+    {
+        connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
+        ASSERT_GOTO(status == connector_working, done);
+        UNUSED_VARIABLE(status); /* To silent non-debug version */
+    }
+
+    strcat(dev_health_info->csv.data, csv_header);
+    dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
+done:
+    return;
+}
+
+STATIC void dev_health_reset_csv_data(dev_health_info_t * const dev_health_info)
+{
+    dev_health_info->csv.data_points_count = 0;
+    dev_health_info->csv.data[0] = '\0';
+    dev_health_info->csv.free_bytes = dev_health_info->csv.total_size;
+}
+
+STATIC connector_status_t dev_health_allocate_csv_data(connector_data_t * const connector_ptr)
+{
+    dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
+    connector_status_t status = connector_working;
+    unsigned int const total_bytes = ENHS_REALLOC_SIZE;
+    void * allocated_memory;
+
+    status = malloc_data(connector_ptr, total_bytes, &allocated_memory);
+    ASSERT_GOTO(status == connector_working, done);
+
+    if (allocated_memory == NULL)
+    {
+        connector_debug_line("Error while allocating memory for CSV data");
+        status = connector_no_resource;
+        goto done;
+    }
+    dev_health_info->csv.data = allocated_memory;
+    dev_health_info->csv.total_size = total_bytes;
+    dev_health_reset_csv_data(dev_health_info);
+
+done:
+    return status;
+}
+
+STATIC connector_status_t dev_health_teardown_csv_data(connector_data_t * const connector_ptr)
+{
+    connector_status_t status;
+
+    status = free_data(connector_ptr, connector_ptr->dev_health.info.csv.data);
+    if (status != connector_working)
+    {
+        ASSERT(status == connector_working);
+        goto done;
+    }
+
+    connector_ptr->dev_health.info.csv.data = NULL;
 done:
     return status;
 }
@@ -168,12 +187,19 @@ STATIC void process_csv_stream_id(char * const csv, char const * const stream_id
     sprintf(csv, "%s,metrics/%s\n", csv, stream_id);
 }
 
+#define MAX_DATA_POINTS_PER_REQUEST 250
+
 STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_item_value_t const * const value, dev_health_value_type_t const type)
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
     char temp_csv[ENHS_REALLOC_SIZE];
     unsigned int temp_csv_size;
     char * const stream_id = dev_health_info->stream_id.string;
+
+    if (dev_health_info->csv.data_points_count % MAX_DATA_POINTS_PER_REQUEST == 0)
+    {
+        add_csv_header(connector_ptr);
+    }
 
     process_csv_data(temp_csv, value, type);
     process_csv_timestamp(temp_csv);
@@ -190,6 +216,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     }
 
     dev_health_info->csv.free_bytes -= temp_csv_size;
+    dev_health_info->csv.data_points_count += 1;
     strcat(dev_health_info->csv.data, temp_csv);
 }
 
