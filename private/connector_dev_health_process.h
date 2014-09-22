@@ -193,7 +193,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
     char temp_csv[ENHS_REALLOC_SIZE];
-    unsigned int temp_csv_size;
+    unsigned int temp_csv_strlen;
     char * const stream_id = dev_health_info->stream_id.string;
 
     if (dev_health_info->csv.data_points_count % MAX_DATA_POINTS_PER_REQUEST == 0)
@@ -206,16 +206,16 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     process_csv_stream_type(temp_csv, type);
     process_csv_stream_id(temp_csv, stream_id);
 
-    temp_csv_size = strlen(temp_csv) + sizeof "";
+    temp_csv_strlen = strlen(temp_csv);
 
-    if (temp_csv_size > dev_health_info->csv.free_bytes)
+    if (temp_csv_strlen + sizeof "" > dev_health_info->csv.free_bytes)
     {
         connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
         ASSERT(status == connector_working);
         UNUSED_VARIABLE(status); /* To silent non-debug version */
     }
 
-    dev_health_info->csv.free_bytes -= temp_csv_size;
+    dev_health_info->csv.free_bytes -= temp_csv_strlen;
     dev_health_info->csv.data_points_count += 1;
     strcat(dev_health_info->csv.data, temp_csv);
 }
