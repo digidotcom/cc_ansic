@@ -237,8 +237,10 @@ typedef struct connector_data {
 
             struct {
                 char * data;
+                char const * next_header;
                 unsigned int total_size;
                 unsigned int free_bytes;
+                unsigned int data_points_count;
                 enum {
                     DEV_HEALTH_CSV_STATUS_PROCESSING,
                     DEV_HEALTH_CSV_STATUS_READY_TO_SEND,
