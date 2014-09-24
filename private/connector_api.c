@@ -577,12 +577,21 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_debug_line("connector_step: free Cloud Connector");
 #if (defined CONNECTOR_DEVICE_HEALTH)
                 {
-                    connector_callback_status_t const status = cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
+                    connector_callback_status_t status;
+
+                    status = cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
 
                     if (status != connector_callback_continue)
                     {
                         connector_debug_line("WARNING: failed to save Device Health metrics, status %d", status);
                     }
+
+                    status = cc_dev_health_simple_config_save(&connector_ptr->dev_health.simple_metrics.config);
+                    if (status != connector_callback_continue)
+                    {
+                        connector_debug_line("WARNING: failed to save Device Simple Health metrics, status %d", status);
+                    }
+
                     if (connector_ptr->dev_health.info.csv.data != NULL)
                     {
                         dev_health_teardown_csv_data(connector_ptr);
