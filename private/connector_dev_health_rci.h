@@ -153,20 +153,32 @@ STATIC connector_callback_status_t simple_enhs_rci_query(dev_health_simple_metri
     return status;
 }
 
-STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const connector_ptr, connector_request_id_remote_config_t const request_id, void * const data)
+STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const connector_ptr, connector_request_id_t const request, void * const data)
 {
     connector_remote_config_t * const remote_config = data;
     connector_callback_status_t status = connector_callback_continue;
+    connector_request_id_remote_config_t request_id = request.remote_config_request;
 
     switch (request_id)
     {
         case connector_request_id_remote_config_session_start:
         case connector_request_id_remote_config_session_end:
-        case connector_request_id_remote_config_group_start:
-        case connector_request_id_remote_config_group_end:
         case connector_request_id_remote_config_action_start:
         case connector_request_id_remote_config_session_cancel:
         case connector_request_id_remote_config_configurations:
+            status = connector_callback(connector_ptr->callback, connector_class_id_remote_config, request, data, connector_ptr->context);
+            break;
+        case connector_request_id_remote_config_group_start:
+        case connector_request_id_remote_config_group_end:
+            switch (remote_config->group.id)
+            {
+                case connector_setting_enhanced_services:
+                case connector_setting_simple_enhanced_services:
+                    break;
+                default:
+                    status = connector_callback(connector_ptr->callback, connector_class_id_remote_config, request, data, connector_ptr->context);
+                    break;
+            }
             break;
 
         case connector_request_id_remote_config_group_process:
@@ -243,6 +255,7 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
                     break;
                 }
                 default:
+                    status = connector_callback(connector_ptr->callback, connector_class_id_remote_config, request, data, connector_ptr->context);
                     break;
             }
             break;
@@ -257,7 +270,7 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
                     {
                         case connector_remote_action_set:
                         {
-                            status = cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
+                            cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
                             break;
                         }
                         case connector_remote_action_query:
@@ -273,7 +286,7 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
                     {
                         case connector_remote_action_set:
                         {
-                            status = cc_dev_health_simple_config_save(&connector_ptr->dev_health.simple_metrics.config);
+                            cc_dev_health_simple_config_save(&connector_ptr->dev_health.simple_metrics.config);
                             break;
                         }
                         case connector_remote_action_query:
@@ -286,6 +299,7 @@ STATIC connector_callback_status_t enhs_rci_handler(connector_data_t * const con
                 default:
                     break;
             }
+            status = connector_callback(connector_ptr->callback, connector_class_id_remote_config, request, data, connector_ptr->context);
             break;
         }
     }

@@ -213,15 +213,10 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             else
             {
 #if (defined CONNECTOR_DEVICE_HEALTH)
-                if (remote_config->group.id == connector_setting_enhanced_services || remote_config->group.id == connector_setting_simple_enhanced_services)
-                {
-                    rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request.remote_config_request, callback_data);
-                }
-                else
+                rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
+#else
+                rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
 #endif
-                {
-                    rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
-                }
             }
             break;
 
