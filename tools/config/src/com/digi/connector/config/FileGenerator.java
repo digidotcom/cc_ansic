@@ -215,7 +215,20 @@ public abstract class FileGenerator {
         int value = -1;
        
         for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
+            if(ConfigGenerator.rciParserOption()){
+                if (!isFirstEnum) {
+                    enumString += ",\n";
+                }
+                isFirstEnum = false;
+
+                enumString += "    connector_element_type_" + type.toName().toLowerCase();
+
+                if (type.toValue() != (value +1)) {
+                    enumString += String.format(" = %d", type.toValue());
+                }
+                value = type.toValue();
+            }
+            else if (type.isSet()) {
                 if (!isFirstEnum) {
                     enumString += ",\n";
                 }
@@ -335,6 +348,7 @@ public abstract class FileGenerator {
         String headerString = "";
         String structString = "";
         String elementValueStruct = "";
+        String defineElementString = "";
         
         int optionCount = 0;
 
@@ -355,6 +369,8 @@ public abstract class FileGenerator {
                             + "   uint32_t max_value;\n"
                             + "} connector_element_value_unsigned_integer_t;\n";
                         elementValueStruct += "    uint32_t unsigned_integer_value;\n";
+                        if(ConfigGenerator.rciParserOption())
+                            defineElementString += "#define UNSIGNED_INTEGER_VALUE\n";
                         isUnsignedIntegerDefined = true;
                         optionCount++;
                     }
@@ -366,6 +382,8 @@ public abstract class FileGenerator {
                                     + "   int32_t max_value;\n"
                                     + "} connector_element_value_signed_integer_t;\n";
                     elementValueStruct += "    int32_t signed_integer_value;\n";
+                    if(ConfigGenerator.rciParserOption())
+                        defineElementString += "#define SIGNED_INTEGER_VALUE\n";
                     optionCount++;
                     break;
                     
@@ -375,6 +393,8 @@ public abstract class FileGenerator {
                         isEnumValueStructDefined = true;
                     }
                     elementValueStruct += "    unsigned int enum_value;\n";
+                    if(ConfigGenerator.rciParserOption())
+                        defineElementString += "#define ENUM_VALUE\n";
                     optionCount++;
                     break;
                     
@@ -384,6 +404,8 @@ public abstract class FileGenerator {
                                     + "    float max_value;\n"
                                     + "} connector_element_value_float_t;\n";
                     elementValueStruct += "    float float_value;\n";
+                    if(ConfigGenerator.rciParserOption())
+                        defineElementString += "#define FLOAT_VALUE\n";
                     optionCount++;
                     break;
                     
@@ -394,6 +416,8 @@ public abstract class FileGenerator {
                         isEnumValueStructDefined = true;
                     }
                     elementValueStruct += "    connector_on_off_t  on_off_value;\n";
+                    if(ConfigGenerator.rciParserOption())
+                        defineElementString += "#define ON_OFF_VALUE\n";
                     optionCount++;
                     break;
                     
@@ -404,6 +428,8 @@ public abstract class FileGenerator {
                         isEnumValueStructDefined = true;
                     }
                     elementValueStruct += "    connector_bool_t  boolean_value;\n";
+                    if(ConfigGenerator.rciParserOption())
+                        defineElementString += "#define BOOLEAN_VALUE\n";
                     optionCount++;
                     break;
                     
@@ -415,6 +441,8 @@ public abstract class FileGenerator {
                                         + "    size_t max_length_in_bytes;\n"
                                         + "} connector_element_value_string_t;\n";
                         elementValueStruct += "    char const * string_value;\n";
+                        if(ConfigGenerator.rciParserOption())
+                            defineElementString += "#define STRING_VALUE\n";
                         isStringDefined = true;
                         optionCount++;
                     }
@@ -441,9 +469,11 @@ public abstract class FileGenerator {
         } else {
             headerString += "\n\ntypedef struct {\n";
         }
-        
+
         headerString += elementValueStruct + "} connector_element_value_t;\n";
-        
+
+        if(ConfigGenerator.rciParserOption())
+            headerString += defineElementString;
         fileWriter.write(headerString);
     }
 
@@ -616,10 +646,11 @@ public abstract class FileGenerator {
 
     private void writeGroupElementStructs(ConfigData configData) throws IOException {
 
-        String name_g="";
-        String name_e="";
-        int max_len=0;
-        int max_len_el=0;
+        String name_g = "";
+        String name_e = "";
+        int max_len = 0;
+        int max_len_el = 0;
+        int max_len_enum = 0;
 
         try {
             for (GroupType type : GroupType.values()) {
@@ -628,20 +659,41 @@ public abstract class FileGenerator {
 	            LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
 	            for (Group group : typeGroups) {
-	                if(max_len<group.getName().length())
+	                if(max_len < group.getName().length())
 	                {
-	                    max_len=group.getName().length();
+	                    max_len = group.getName().length();
 	                }
 	                for (Element element : group.getElements()) {
-	                    if(max_len_el<element.getName().length())
+	                    if(max_len_el< element.getName().length())
 	                    {
-	                        max_len_el=element.getName().length();
+	                        max_len_el = element.getName().length();
+	                    }
+	                    if (ConfigGenerator.rciParserOption() && Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM){
+	                        for (ValueStruct value : element.getValues()) {
+	                            if(max_len_enum < value.getName().length())
+	                            {
+	                                max_len_enum = value.getName().length();
+	                            }
+	                        }
 	                    }
 	                }
 	            }
 	        }
         } catch (Exception e) {
             ConfigGenerator.log(e.toString());
+        }
+        /*if no enums found, disable enumNames option */
+        if(max_len_enum == 0)
+            ConfigGenerator.setRciParser(false);
+        else
+            max_len_enum ++; /* '/0'*/
+        max_len ++;
+        max_len_el ++;
+
+        if (ConfigGenerator.rciParserOption()){
+            fileWriter.write(String.format("\ntypedef struct {\n" +
+                    "    char name[%d];\n" +
+                    "} connector_element_enum_t;\n", max_len_enum));
         }
 
         switch(ConfigGenerator.useNamesOption()){
@@ -661,10 +713,19 @@ public abstract class FileGenerator {
                 "%s" +
                 "    connector_element_access_t access;\n" +
                 "    connector_element_value_type_t type;\n",name_e));
+
 if(future_feature){
 	    fileWriter.write("    rci_function_t set_cb;\n" +
                 "    rci_function_t get_cb;\n");
 }
+
+		if(ConfigGenerator.rciParserOption()){
+			fileWriter.write("    struct {\n"+
+				    "        size_t count;\n"+
+				    "        connector_element_enum_t CONST * CONST data;\n"+
+				    "    } enums;\n");
+		}
+
 		fileWriter.write("} connector_group_element_t;\n");
 
         fileWriter.write(String.format("\ntypedef struct {\n" +
@@ -791,8 +852,35 @@ if(future_feature){
         }
     }
 
+    private void writeEnumArrays(String group_name, LinkedList<Element> elements, BufferedWriter bufferWriter) throws Exception{
+
+        for (int element_index = 0; element_index < elements.size(); element_index++) {
+
+            Element element = elements.get(element_index);
+            if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM){
+                boolean first = true;
+                String define_name = getDefineString(group_name + "_" + element.getName() + "_enum");
+                bufferWriter.write(String.format("static connector_element_enum_t CONST %s%s[] = {\n",
+                        prefix,define_name.toLowerCase()));
+                for (ValueStruct value : element.getValues()) {
+                    if(first){
+                        bufferWriter.write(String.format("    {\"%s\"}",value.getName()));
+                        first = false;
+                    }
+                    else
+                        bufferWriter.write(String.format(",\n    {\"%s\"}",value.getName()));
+                }
+                bufferWriter.write("\n};\n\n");
+            }
+        }
+    }
+
     private void writeElementArrays(String group_name, LinkedList<Element> elements, BufferedWriter bufferWriter) throws Exception {
         /* write group element structure array */
+        if (ConfigGenerator.rciParserOption()){
+            writeEnumArrays(group_name, elements, bufferWriter);
+        }
+
         bufferWriter.write(String.format("static connector_group_element_t CONST %s%s_elements[] = {",
                                         prefix,getDefineString(group_name).toLowerCase()));
 
@@ -807,21 +895,33 @@ if(future_feature){
             }
 
             element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
+            element_string += String.format("   %s", getElementDefine("type", element.getType()));
+
 if(future_feature){
-            element_string += String.format("   %s,\n", getElementDefine("type", element.getType()));
 
             if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-	            element_string += String.format("   %s%srci_%s_%s_set,\n",RCI_FUNCTION_T,prefix, getDefineString(group_name).toLowerCase(),element.getName());
+	            element_string += String.format(",\n   %s%srci_%s_%s_set,\n",RCI_FUNCTION_T,prefix, getDefineString(group_name).toLowerCase(),element.getName());
             }
             else{
-                element_string +="   NULL,\n";
+                element_string +=",\n   NULL,\n";
             }
 
-            element_string += String.format("   %s%srci_%s_%s_get\n", RCI_FUNCTION_T,prefix,getDefineString(group_name).toLowerCase(),element.getName());
+            element_string += String.format("   %s%srci_%s_%s_get", RCI_FUNCTION_T,prefix,getDefineString(group_name).toLowerCase(),element.getName());
 }
-else{
-			element_string += String.format("   %s\n", getElementDefine("type", element.getType()));
-}
+
+	if(ConfigGenerator.rciParserOption()){
+		 if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM){
+			String define_name = getDefineString(group_name + "_" + element.getName() + "_enum");
+			element_string += String.format(",\n   { asizeof(%s%s),\n", prefix, define_name.toLowerCase())
+				    + String.format("     %s%s\n   }\n", prefix, define_name.toLowerCase());
+		 }
+		 else {
+			 element_string += ",\n   { 0,\n     NULL\n   }\n";
+		 }
+	}
+	else{
+		element_string +="\n";
+	}
             element_string += " }";
 
             if (element_index < (elements.size() - 1)) {

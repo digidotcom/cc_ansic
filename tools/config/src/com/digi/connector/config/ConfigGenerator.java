@@ -33,6 +33,7 @@ public class ConfigGenerator {
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
     private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_attribute_max_len";
     private final static String NO_BACKUP_OPTION = "noBackup";
+    private final static String RCI_PARSER_OPTION = "rci_parser";
 
     private final static String FILE_TYPE_OPTION = "type";
 
@@ -76,6 +77,7 @@ public class ConfigGenerator {
     private static boolean rci_legacy;
     private static int rci_dc_attribute_max_len = 0;
     private static boolean noBackup;
+    private static boolean rciParser;
 
     private static boolean hidden_help;
 
@@ -265,6 +267,10 @@ public class ConfigGenerator {
                     .format(
                             "\t%-16s \t= optional behaviour for future features using prototypes",
                             DASH + PROTOTYPES_OPTION));
+            log(String
+                    .format(
+                            "\t%-16s \t= Defines and enums names to work with RCI Parser.",
+                            DASH + RCI_PARSER_OPTION));
          }
 
         System.exit(1);
@@ -362,6 +368,8 @@ public class ConfigGenerator {
                 rci_legacy = true;
             } else if (option.equals(NO_BACKUP_OPTION)) {
                 noBackup = true;
+            } else if (option.equals(RCI_PARSER_OPTION)) {
+                rciParser = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
             } else {
@@ -583,6 +591,14 @@ public class ConfigGenerator {
         return useBinIdLog;
     }
 
+
+    public static boolean rciParserOption() {
+        return rciParser;
+    }
+
+	public static void setRciParser(boolean b) {
+		rciParser = b;
+	}
     public static String filename() {
         return filename;
     }
