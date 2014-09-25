@@ -100,6 +100,10 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 unsigned long sampling_interval;
                 unsigned long * sample_at;
                 unsigned long * report_at;
+                if (reporting_interval == 0)
+                {
+                    break;
+                }
 
                 switch (root_group)
                 {
@@ -121,7 +125,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 sample_at = &connector_ptr->dev_health.simple_metrics.sample_at[root_group];
                 report_at = &connector_ptr->dev_health.simple_metrics.report_at;
 
-                if (item->metrics == connector_false)
+                if (item->metrics == connector_false || item->sample_rate == 0)
                 {
                     continue;
                 }
