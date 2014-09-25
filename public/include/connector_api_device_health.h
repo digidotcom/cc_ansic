@@ -17,22 +17,15 @@
 #define DEV_HEALTH_MAX_STREAM_ID_LEN               64
 
 typedef struct {
-    char path[DEV_HEALTH_MAX_STREAM_ID_LEN];
-    unsigned long sample_rate;
-    unsigned long report_rate;
-} dev_health_metrics_config_t;
-
-typedef struct {
     connector_bool_t metrics;
     unsigned long sample_rate;
-    unsigned long report_rate;
 } dev_health_simple_metric_t;
 
 typedef struct {
     dev_health_simple_metric_t eth;
     dev_health_simple_metric_t mobile;
-    /*dev_health_simple_metric_t wifi;*/ /* TODO: IC4C-402 */
     dev_health_simple_metric_t sys;
+    unsigned long report_rate;
 } dev_health_simple_metrics_config_t;
 
 typedef struct {
@@ -45,9 +38,6 @@ typedef enum {
   NETWORK_TECH_3G,
   NETWORK_TECH_4G
 } mobile_network_tech_t;
-
-connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size);
-connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size);
 
 connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_metrics_config_t * const simple_metrics);
 connector_callback_status_t cc_dev_health_simple_config_save(dev_health_simple_metrics_config_t const * const simple_metrics);
