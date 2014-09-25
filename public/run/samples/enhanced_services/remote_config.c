@@ -61,31 +61,16 @@ static char CONST * CONST setting_system_errors[] = {
  SETTING_SYSTEM_ERROR_INVALID_LENGTH /*invalid_length*/
 };
 
-static connector_group_element_t CONST setting_enhanced_services_elements[] = {
- {  /*path*/
-   connector_element_access_read_write,
-   connector_element_type_string
- },
- {  /*sample_rate*/
-   connector_element_access_read_write,
-   connector_element_type_uint32
- },
+static connector_group_element_t CONST setting_simple_enhanced_services_elements[] = {
  {  /*report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
- }
-};
-
-static connector_group_element_t CONST setting_simple_enhanced_services_elements[] = {
+ },
  {  /*eth_metrics*/
    connector_element_access_read_write,
    connector_element_type_on_off
  },
  {  /*eth_sample_rate*/
-   connector_element_access_read_write,
-   connector_element_type_uint32
- },
- {  /*eth_report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  },
@@ -97,19 +82,11 @@ static connector_group_element_t CONST setting_simple_enhanced_services_elements
    connector_element_access_read_write,
    connector_element_type_uint32
  },
- {  /*mobile_report_rate*/
-   connector_element_access_read_write,
-   connector_element_type_uint32
- },
  {  /*sys_metrics*/
    connector_element_access_read_write,
    connector_element_type_on_off
  },
  {  /*sys_sample_rate*/
-   connector_element_access_read_write,
-   connector_element_type_uint32
- },
- {  /*sys_report_rate*/
    connector_element_access_read_write,
    connector_element_type_uint32
  }
@@ -123,16 +100,6 @@ static connector_group_t CONST connector_setting_groups[] = {
    },
    { asizeof(setting_system_errors),
      setting_system_errors
-   }  /* errors*/
-}
-,
- {  /*enhanced_services*/
-   8 , /* instances */
-   { asizeof(setting_enhanced_services_elements),
-     setting_enhanced_services_elements
-   },
-   { 0,
-     NULL
    }  /* errors*/
 }
 ,
@@ -187,6 +154,6 @@ connector_remote_config_data_t rci_desc_data = {
     connector_rci_errors,
     connector_global_error_COUNT,
     FIRMWARE_TARGET_ZERO_VERSION,
-    0x30002AD,
+    0x2001A56,
     "Linux Application"
 };
