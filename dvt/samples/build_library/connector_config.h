@@ -69,27 +69,17 @@
 #define CONNECTOR_HAS_64_BIT_INTEGERS
 
 typedef enum {
- connector_setting_enhanced_services_path,
- connector_setting_enhanced_services_sample_rate,
- connector_setting_enhanced_services_report_rate,
- connector_setting_enhanced_services_COUNT
-} connector_setting_enhanced_services_id_t;
-
-typedef enum {
+ connector_setting_simple_enhanced_services_report_rate,
  connector_setting_simple_enhanced_services_eth_metrics,
  connector_setting_simple_enhanced_services_eth_sample_rate,
- connector_setting_simple_enhanced_services_eth_report_rate,
  connector_setting_simple_enhanced_services_mobile_metrics,
  connector_setting_simple_enhanced_services_mobile_sample_rate,
- connector_setting_simple_enhanced_services_mobile_report_rate,
  connector_setting_simple_enhanced_services_sys_metrics,
  connector_setting_simple_enhanced_services_sys_sample_rate,
- connector_setting_simple_enhanced_services_sys_report_rate,
  connector_setting_simple_enhanced_services_COUNT
 } connector_setting_simple_enhanced_services_id_t;
 
 typedef enum {
- connector_setting_enhanced_services,
  connector_setting_simple_enhanced_services,
  connector_setting_COUNT
 } connector_setting_id_t;

@@ -144,66 +144,38 @@ public class Parser {
             /*check and add enhanced_services setting group */
             if(ConfigGenerator.deviceHealthOption()){
                 groupConfig = configData.getConfigGroup("setting");
-                Group es_Group = new Group("enhanced_services", 8, "Advanced Health data reporting configuration", null);
-
-                Element[] es_elements = new Element[3];
-
-                es_elements[0] = new Element("path","Requested Data Stream path",null);
-                es_elements[0].setType("string");
-                es_elements[0].setMax("32");
-
-                es_elements[1] = new Element("sample_rate", "Sampling rate", "Path query rate in seconds");
-                es_elements[1].setType("uint32");
-
-                es_elements[2] = new Element("report_rate", "Reporting rate", "Path report rate in minutes");
-                es_elements[2].setType("uint32");
-
-                for(int i =0;i<3;i++){
-                    es_Group.addElement(es_elements[i]);
-                }
-                groupConfig.add(es_Group);
-                
                 Group simple_es_Group = new Group("simple_enhanced_services", 1, "Simple Health data reporting configuration", null);
-                Element[] simple_es_elements = new Element[3 * 3];
+                Element[] simple_es_elements = new Element[2 * 3 + 1];
+                int i = 0;
                 
-                simple_es_elements[0] = new Element("eth_metrics", "Ethernet Metrics", null);
-                simple_es_elements[0].setType("on_off");
+                simple_es_elements[i] = new Element("report_rate", "Global reporting interval (minutes)", null);
+                simple_es_elements[i].setType("uint32");
                 
-                simple_es_elements[1] = new Element("eth_sample_rate", "Ethernet Sampling interval (seconds)", null);
-                simple_es_elements[1].setType("uint32");
+                i++;
+                simple_es_elements[i] = new Element("eth_metrics", "Ethernet Metrics", null);
+                simple_es_elements[i].setType("on_off");
                 
-                simple_es_elements[2] = new Element("eth_report_rate", "Ethernet Reporting interval (minutes)", null);
-                simple_es_elements[2].setType("uint32");
+                i++;
+                simple_es_elements[i] = new Element("eth_sample_rate", "Ethernet Sampling interval (seconds)", null);
+                simple_es_elements[i].setType("uint32");
                 
-                simple_es_elements[3] = new Element("mobile_metrics", "Mobile Metrics", null);
-                simple_es_elements[3].setType("on_off");
+                i++;
+                simple_es_elements[i] = new Element("mobile_metrics", "Mobile Metrics", null);
+                simple_es_elements[i].setType("on_off");
                 
-                simple_es_elements[4] = new Element("mobile_sample_rate", "Mobile Sampling interval (seconds)", null);
-                simple_es_elements[4].setType("uint32");
+                i++;
+                simple_es_elements[i] = new Element("mobile_sample_rate", "Mobile Sampling interval (seconds)", null);
+                simple_es_elements[i].setType("uint32");
                 
-                simple_es_elements[5] = new Element("mobile_report_rate", "Mobile Reporting interval (minutes)", null);
-                simple_es_elements[5].setType("uint32");
-                /* TODO: IC4C-402 */
-                /*
-                simple_es_elements[] = new Element("wifi_metrics", "WiFi Metrics", null);
-                simple_es_elements[].setType("on_off");
+                i++;
+                simple_es_elements[i] = new Element("sys_metrics", "System Metrics", null);
+                simple_es_elements[i].setType("on_off");
                 
-                simple_es_elements[] = new Element("wifi_sample_rate", "WiFi Sampling interval (seconds)", null);
-                simple_es_elements[].setType("uint32");
-                
-                simple_es_elements[] = new Element("wifi_report_rate", "WiFi Reporting interval (minutes)", null);
-                simple_es_elements[].setType("uint32");
-                */
-                simple_es_elements[6] = new Element("sys_metrics", "System Metrics", null);
-                simple_es_elements[6].setType("on_off");
-                
-                simple_es_elements[7] = new Element("sys_sample_rate", "System Sampling interval (seconds)", null);
-                simple_es_elements[7].setType("uint32");
-                
-                simple_es_elements[8] = new Element("sys_report_rate", "System Reporting interval (minutes)", null);
-                simple_es_elements[8].setType("uint32");
-                
-                for(int i = 0; i < simple_es_elements.length; i++) {
+                i++;
+                simple_es_elements[i] = new Element("sys_sample_rate", "System Sampling interval (seconds)", null);
+                simple_es_elements[i].setType("uint32");
+
+                for(i = 0; i < simple_es_elements.length; i++) {
                     simple_es_Group.addElement(simple_es_elements[i]);
                 }
                 groupConfig.add(simple_es_Group);

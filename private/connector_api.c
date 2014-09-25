@@ -500,8 +500,8 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
     {
-        connector_callback_status_t status = cc_dev_health_load_metrics(connector_handle->dev_health.metrics.config, asizeof(connector_handle->dev_health.metrics.config));
         unsigned int i;
+        connector_callback_status_t const status  = cc_dev_health_simple_config_load(&connector_handle->dev_health.simple_metrics.config);
 
         connector_handle->dev_health.info.csv.data = NULL;
         connector_handle->dev_health.info.csv.total_size = 0;
@@ -512,23 +512,11 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
             goto error;
         }
 
-        for (i = 0; i < asizeof(connector_handle->dev_health.metrics.times); i++)
+        for (i = 0; i < asizeof(connector_handle->dev_health.simple_metrics.sample_at); i++)
         {
-            connector_handle->dev_health.metrics.times[i].report_at = 0;
-            connector_handle->dev_health.metrics.times[i].sample_at = 0;
+            connector_handle->dev_health.simple_metrics.sample_at[i] = 0;
         }
-
-        status  = cc_dev_health_simple_config_load(&connector_handle->dev_health.simple_metrics.config);
-        if (status != connector_callback_continue)
-        {
-            goto error;
-        }
-
-        for (i = 0; i < asizeof(connector_handle->dev_health.simple_metrics.times); i++)
-        {
-            connector_handle->dev_health.simple_metrics.times[i].report_at = 0;
-            connector_handle->dev_health.simple_metrics.times[i].sample_at = 0;
-        }
+        connector_handle->dev_health.simple_metrics.report_at = 0;
     }
 #endif
 
@@ -577,16 +565,8 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_debug_line("connector_step: free Cloud Connector");
 #if (defined CONNECTOR_DEVICE_HEALTH)
                 {
-                    connector_callback_status_t status;
+                    connector_callback_status_t const status = cc_dev_health_simple_config_save(&connector_ptr->dev_health.simple_metrics.config);
 
-                    status = cc_dev_health_save_metrics(connector_ptr->dev_health.metrics.config, asizeof(connector_ptr->dev_health.metrics.config));
-
-                    if (status != connector_callback_continue)
-                    {
-                        connector_debug_line("WARNING: failed to save Device Health metrics, status %d", status);
-                    }
-
-                    status = cc_dev_health_simple_config_save(&connector_ptr->dev_health.simple_metrics.config);
                     if (status != connector_callback_continue)
                     {
                         connector_debug_line("WARNING: failed to save Device Simple Health metrics, status %d", status);

@@ -161,7 +161,6 @@ struct connector_data;
 typedef enum {
     dev_health_root_eth,
     dev_health_root_mobile,
-    /*dev_health_root_wifi,*/ /* TODO: IC4C-402 */
     dev_health_root_sys,
     dev_health_root_COUNT
 } dev_health_root_t;
@@ -226,8 +225,6 @@ typedef struct connector_data {
 #endif
 
 #if (defined CONNECTOR_DEVICE_HEALTH)
-#define CONNECTOR_DEVICE_HEALTH_MAX_METRICS 8
-
     struct {
         struct dev_health_info {
             struct {
@@ -251,19 +248,9 @@ typedef struct connector_data {
         } info;
 
         struct {
-            dev_health_metrics_config_t config[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
-            struct {
-                unsigned long sample_at;
-                unsigned long report_at;
-            } times[CONNECTOR_DEVICE_HEALTH_MAX_METRICS];
-        } metrics;
-
-        struct {
             dev_health_simple_metrics_config_t config;
-            struct {
-                unsigned long sample_at;
-                unsigned long report_at;
-            } times[dev_health_root_COUNT];
+            unsigned long report_at;
+            unsigned long sample_at[dev_health_root_COUNT];
         } simple_metrics;
         unsigned int last_check;
     } dev_health;

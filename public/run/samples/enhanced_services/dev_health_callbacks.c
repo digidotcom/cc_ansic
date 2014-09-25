@@ -49,63 +49,6 @@ static int get_executable_path(char * const path, unsigned int max_size)
 done:
     return error;
 }
-connector_callback_status_t cc_dev_health_load_metrics(dev_health_metrics_config_t * const metrics_array, unsigned int array_size)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX];
-
-    get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
-
-    if (access(dev_health_path, F_OK) != -1)
-    {
-        FILE *file;
-        unsigned int bytes_read;
-
-        file = fopen(dev_health_path, "r");
-        bytes_read = fread(metrics_array, sizeof metrics_array[0], array_size, file);
-        if (bytes_read == (sizeof metrics_array[0]) * array_size)
-        {
-            printf("Error while reading %s\n", dev_health_path);
-        }
-        fclose(file);
-    }
-    else
-    {
-        /* File does not exist */
-        unsigned int i;
-
-        for (i = 0; i < array_size; i++)
-        {
-            metrics_array[i].path[0] = '\0';
-            metrics_array[i].sample_rate = 0;
-            metrics_array[i].report_rate = 0;
-        }
-    }
-
-    return status;
-}
-
-connector_callback_status_t cc_dev_health_save_metrics(dev_health_metrics_config_t const * const metrics_array, unsigned int array_size)
-{
-    connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX];
-    FILE *file;
-    unsigned int bytes_read;
-
-    get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_FILENAME);
-
-    file = fopen(dev_health_path, "w");
-    bytes_read = fwrite(metrics_array, sizeof metrics_array[0], array_size, file);
-    if (bytes_read == (sizeof metrics_array[0]) * array_size)
-    {
-        printf("Error while reading %s\n", dev_health_path);
-    }
-    fclose(file);
-
-    return status;
-}
 
 connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_metrics_config_t * const simple_metrics)
 {
@@ -131,19 +74,12 @@ connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_m
     else
     {
         simple_metrics->eth.metrics = connector_false;
-        simple_metrics->eth.report_rate = 0;
         simple_metrics->eth.sample_rate = 0;
         simple_metrics->mobile.metrics = connector_false;
-        simple_metrics->mobile.report_rate = 0;
         simple_metrics->mobile.sample_rate = 0;
-        /*
-        simple_metrics->wifi.metrics = connector_false;
-        simple_metrics->wifi.report_rate = 0;
-        simple_metrics->wifi.sample_rate = 0;
-        */ /* TODO: IC4C-402 */
         simple_metrics->sys.metrics = connector_false;
-        simple_metrics->sys.report_rate = 0;
         simple_metrics->sys.sample_rate = 0;
+        simple_metrics->report_rate = 0;
     }
 
     return status;
