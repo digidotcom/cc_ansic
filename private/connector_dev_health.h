@@ -97,9 +97,10 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 dev_health_simple_metric_t * item = NULL;
                 unsigned long const seconds_in_a_minute = 60;
                 unsigned long const reporting_interval = connector_ptr->dev_health.simple_metrics.config.report_rate * seconds_in_a_minute;
+                unsigned long * const sample_at = &connector_ptr->dev_health.simple_metrics.sample_at[root_group];
+                unsigned long * const report_at = &connector_ptr->dev_health.simple_metrics.report_at;
                 unsigned long sampling_interval;
-                unsigned long * sample_at;
-                unsigned long * report_at;
+
                 if (reporting_interval == 0)
                 {
                     break;
@@ -122,8 +123,6 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                 }
 
                 sampling_interval = item->sample_rate;
-                sample_at = &connector_ptr->dev_health.simple_metrics.sample_at[root_group];
-                report_at = &connector_ptr->dev_health.simple_metrics.report_at;
 
                 if (item->metrics == connector_false || item->sample_rate == 0)
                 {
