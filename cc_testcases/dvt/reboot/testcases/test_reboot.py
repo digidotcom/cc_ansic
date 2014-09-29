@@ -25,7 +25,7 @@ class ConnectionTestCase(cc_testcase.TestCase):
     def test_disconnect(self):
 
         """ Sends disconnect request to given device and verifies that
-        the device disconnects and reconnects to an iDigi server.
+        the device disconnects and reconnects with Device Cloud server.
         """
 
         self.log.info("***** Beginning Disconnect Test *****")
@@ -61,7 +61,8 @@ class ConnectionTestCase(cc_testcase.TestCase):
     def test_disconnect_correct(self):
 
         """ Sends disconnect request to given device and verifies that
-        the device disconnects and reconnects to an iDigi server.
+        the device disconnects and reconnects with Device Cloud server,
+        using the Python API to manage Device Cloud.
         """
 
         self.log.info("***** Beginning Disconnect Test *****")
@@ -95,7 +96,8 @@ class ConnectionTestCase(cc_testcase.TestCase):
     def test_disconnect_loop(self):
 
         """ Sends disconnect request to given device and verifies that
-        the device disconnects and reconnects to an Cloud Server.
+        the device disconnects and reconnects with Device Cloud server
+        several times to verify the process repeatability.
         """
 
         self.log.info("***** Beginning Disconnect Loop Test *****")
@@ -168,7 +170,7 @@ class ConnectionTestCase(cc_testcase.TestCase):
     def test_reboot(self):
 
         """ Sends reboot request to given device and verifies that
-        the device disconnects and reconnects to an iDigi server.
+        the device disconnects and reconnects with Device Cloud server.
         """
 
         self.log.info("***** Beginning Reboot Test *****")
@@ -200,7 +202,8 @@ class ConnectionTestCase(cc_testcase.TestCase):
     def test_reboot_correct(self):
 
         """ Sends reboot request to given device and verifies that
-        the device disconnects and reconnects to an iDigi server.
+        the device disconnects and reconnects with Device Cloud server,
+        using the Python API to manage Device Cloud.
         """
 
         self.log.info("***** Beginning Reboot Test *****")
