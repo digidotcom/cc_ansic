@@ -55,7 +55,7 @@ STATIC void add_csv_header(connector_data_t * const connector_ptr)
     }
 
     strcat(dev_health_info->csv.data, csv_header);
-    dev_health_info->csv.free_bytes = dev_health_info->csv.total_size - sizeof csv_header;
+    dev_health_info->csv.free_bytes -= sizeof csv_header;
 done:
     return;
 }
