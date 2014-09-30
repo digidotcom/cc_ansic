@@ -29,13 +29,16 @@ STATIC connector_status_t dev_health_reallocate_csv_data(connector_data_t * cons
     unsigned int const old_size = dev_health_info->csv.total_size;
     unsigned int const additional_size = ENHS_REALLOC_SIZE;
     unsigned int const new_size = old_size + additional_size;
+    void * const old_ptr = dev_health_info->csv.data;
     connector_status_t const status = realloc_data(connector_ptr, old_size, new_size, (void * *) &dev_health_info->csv.data);
 
-    ASSERT_GOTO(status == connector_working, done);
     if (dev_health_info->csv.data == NULL)
     {
         connector_debug_line("Error when reallocating CSV buffer from %d to %d", dev_health_info->csv.total_size, new_size);
+        dev_health_info->csv.data = old_ptr;
+        goto done;
     }
+
     dev_health_info->csv.total_size = new_size;
     dev_health_info->csv.free_bytes += additional_size;
 
@@ -50,8 +53,11 @@ STATIC void add_csv_header(connector_data_t * const connector_ptr)
     if (dev_health_info->csv.free_bytes < sizeof csv_header)
     {
         connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
-        ASSERT_GOTO(status == connector_working, done);
-        UNUSED_VARIABLE(status); /* To silent non-debug version */
+        if (status != connector_working)
+        {
+            connector_debug_line("Realloc for CSV failed, header NOT added");
+            goto done;
+        }
     }
 
     strcat(dev_health_info->csv.data, csv_header);
@@ -211,13 +217,18 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     if (temp_csv_strlen + sizeof "" > dev_health_info->csv.free_bytes)
     {
         connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
-        ASSERT(status == connector_working);
-        UNUSED_VARIABLE(status); /* To silent non-debug version */
+        if (status != connector_working)
+        {
+            connector_debug_line("Realloc for CSV failed, %s sample NOT added", stream_id);
+            goto done;
+        }
     }
 
     dev_health_info->csv.free_bytes -= temp_csv_strlen;
     dev_health_info->csv.data_points_count += 1;
     strcat(dev_health_info->csv.data, temp_csv);
+done:
+    return;
 }
 
 STATIC void dev_health_process_item(connector_data_t * const connector_ptr, dev_health_item_t const * const element, unsigned int const upper_index, unsigned int const lower_index)
