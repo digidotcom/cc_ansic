@@ -46,13 +46,14 @@ done:
     return status;
 }
 
-STATIC void add_csv_header(connector_data_t * const connector_ptr)
+STATIC connector_status_t add_csv_header(connector_data_t * const connector_ptr)
 {
+    connector_status_t status = connector_working;
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
 
     if (dev_health_info->csv.free_bytes < sizeof csv_header)
     {
-        connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
+        status = dev_health_reallocate_csv_data(connector_ptr);
         if (status != connector_working)
         {
             connector_debug_line("Realloc for CSV failed, header NOT added");
@@ -63,7 +64,7 @@ STATIC void add_csv_header(connector_data_t * const connector_ptr)
     strcat(dev_health_info->csv.data, csv_header);
     dev_health_info->csv.free_bytes -= sizeof csv_header;
 done:
-    return;
+    return status;
 }
 
 STATIC void dev_health_reset_csv_data(dev_health_info_t * const dev_health_info)
@@ -201,10 +202,15 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
     char temp_csv[ENHS_REALLOC_SIZE];
     unsigned int temp_csv_strlen;
     char * const stream_id = dev_health_info->stream_id.string;
+    connector_status_t status;
 
     if (dev_health_info->csv.data_points_count % MAX_DATA_POINTS_PER_REQUEST == 0)
     {
-        add_csv_header(connector_ptr);
+        status = add_csv_header(connector_ptr);
+        if (status != connector_working)
+        {
+            goto done;
+        }
     }
 
     process_csv_data(temp_csv, value, type);
@@ -216,7 +222,7 @@ STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_i
 
     if (temp_csv_strlen + sizeof "" > dev_health_info->csv.free_bytes)
     {
-        connector_status_t const status = dev_health_reallocate_csv_data(connector_ptr);
+        status = dev_health_reallocate_csv_data(connector_ptr);
         if (status != connector_working)
         {
             connector_debug_line("Realloc for CSV failed, %s sample NOT added", stream_id);
