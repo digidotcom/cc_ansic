@@ -13,7 +13,7 @@
 #include "connector_dev_health_structs.h"
 #include "connector_dev_health_process.h"
 
-static char const dev_health_path[] = "DataPoint/metrics.csv";
+static char const dev_health_path[] = "metrics.txt";
 static size_t const dev_health_path_strlen = sizeof dev_health_path - 1;
 
 typedef struct {
@@ -60,6 +60,7 @@ done:
 
 STATIC connector_status_t connector_dev_health_step(connector_data_t * const connector_ptr)
 {
+#define SECONDS_IN_A_MINUTE 60
     unsigned long now;
     connector_status_t status;
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
@@ -80,11 +81,12 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 #endif
             dev_health_root_t root_group;
 
-            if (now >= connector_ptr->dev_health.last_check)
+            if (now >= connector_ptr->dev_health.last_check + SECONDS_IN_A_MINUTE)
             {
                 goto done;
             }
             connector_ptr->dev_health.last_check = now;
+
 
             if (connector_ptr->dev_health.info.csv.data == NULL)
             {
@@ -95,8 +97,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
             {
                 static const char * paths[] = {"eth", "mobile", "sys"};
                 dev_health_simple_metric_t * item = NULL;
-                unsigned long const seconds_in_a_minute = 60;
-                unsigned long const reporting_interval = connector_ptr->dev_health.simple_metrics.config.report_rate * seconds_in_a_minute;
+                unsigned long const reporting_interval = connector_ptr->dev_health.simple_metrics.config.report_rate * SECONDS_IN_A_MINUTE;
                 unsigned long * const sample_at = &connector_ptr->dev_health.simple_metrics.sample_at[root_group];
                 unsigned long * const report_at = &connector_ptr->dev_health.simple_metrics.report_at;
                 unsigned long sampling_interval;
@@ -122,7 +123,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
                         break;
                 }
 
-                sampling_interval = item->sample_rate;
+                sampling_interval = item->sample_rate * SECONDS_IN_A_MINUTE;
 
                 if (item->metrics == connector_false || item->sample_rate == 0)
                 {
