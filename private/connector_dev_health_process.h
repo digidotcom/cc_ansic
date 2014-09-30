@@ -14,6 +14,9 @@
 #define CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE            256
 #endif
 
+#define MAX_DEVICE_HEALTH_CSV_ENTRY                     256
+#define MAX_DATA_POINTS_PER_REQUEST                     250
+
 typedef struct dev_health_info dev_health_info_t;
 
 typedef union {
@@ -140,7 +143,7 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
         case DEV_HEALTH_TYPE_GEOJSON:
         {
             connector_bool_t const needs_quotes = string_needs_quotes(value->string);
-            unsigned int const temp_csv_size = CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE;
+            unsigned int const temp_csv_size = MAX_DEVICE_HEALTH_CSV_ENTRY;
             dp_process_string(value->string, csv, temp_csv_size, NULL, needs_quotes, connector_true);
             break;
         }
@@ -196,12 +199,10 @@ STATIC void process_csv_stream_id(char * const csv, char const * const stream_id
     sprintf(csv, "%s,metrics/%s\n", csv, stream_id);
 }
 
-#define MAX_DATA_POINTS_PER_REQUEST 250
-
 STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_item_value_t const * const value, dev_health_value_type_t const type)
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
-    char temp_csv[CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE];
+    char temp_csv[MAX_DEVICE_HEALTH_CSV_ENTRY];
     unsigned int temp_csv_strlen;
     char * const stream_id = dev_health_info->stream_id.string;
     connector_status_t status;
