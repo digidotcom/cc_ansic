@@ -13,7 +13,7 @@
 #include "connector_dev_health_structs.h"
 #include "connector_dev_health_process.h"
 
-static char const dev_health_path[] = "metrics.txt";
+static char const dev_health_path[] = "DataPoint/metrics.csv";
 static size_t const dev_health_path_strlen = sizeof dev_health_path - 1;
 
 typedef struct {
