@@ -156,7 +156,7 @@ public class Parser {
                 simple_es_elements[i].setType("on_off");
                 
                 i++;
-                simple_es_elements[i] = new Element("eth_sample_rate", "Ethernet Sampling interval (seconds)", null);
+                simple_es_elements[i] = new Element("eth_sample_rate", "Ethernet Sampling interval (minutes)", null);
                 simple_es_elements[i].setType("uint32");
                 
                 i++;
@@ -164,7 +164,7 @@ public class Parser {
                 simple_es_elements[i].setType("on_off");
                 
                 i++;
-                simple_es_elements[i] = new Element("mobile_sample_rate", "Mobile Sampling interval (seconds)", null);
+                simple_es_elements[i] = new Element("mobile_sample_rate", "Mobile Sampling interval (minutes)", null);
                 simple_es_elements[i].setType("uint32");
                 
                 i++;
@@ -172,7 +172,7 @@ public class Parser {
                 simple_es_elements[i].setType("on_off");
                 
                 i++;
-                simple_es_elements[i] = new Element("sys_sample_rate", "System Sampling interval (seconds)", null);
+                simple_es_elements[i] = new Element("sys_sample_rate", "System Sampling interval (minutes)", null);
                 simple_es_elements[i].setType("uint32");
 
                 for(i = 0; i < simple_es_elements.length; i++) {
