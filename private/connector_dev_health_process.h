@@ -10,7 +10,9 @@
  * =======================================================================
  */
 
-#define CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE       256
+#if !(defined CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE)
+#define CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE            256
+#endif
 
 typedef struct dev_health_info dev_health_info_t;
 
