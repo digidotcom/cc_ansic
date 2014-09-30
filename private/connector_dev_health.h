@@ -71,12 +71,6 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
         goto done;
     }
 
-    if (now == connector_ptr->dev_health.last_check)
-    {
-        goto done;
-    }
-    connector_ptr->dev_health.last_check = now;
-
     switch (dev_health_info->csv.status)
     {
         case DEV_HEALTH_CSV_STATUS_PROCESSING:
@@ -85,6 +79,12 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 #define DEVICE_HEALTH_FIRST_REPORT_AT    0
 #endif
             dev_health_root_t root_group;
+
+            if (now >= connector_ptr->dev_health.last_check)
+            {
+                goto done;
+            }
+            connector_ptr->dev_health.last_check = now;
 
             if (connector_ptr->dev_health.info.csv.data == NULL)
             {
