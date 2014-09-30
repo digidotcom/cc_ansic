@@ -10,7 +10,12 @@
  * =======================================================================
  */
 
-#define ENHS_REALLOC_SIZE       256
+#if !(defined CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE)
+#define CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE            256
+#endif
+
+#define MAX_DEVICE_HEALTH_CSV_ENTRY                     256
+#define MAX_DATA_POINTS_PER_REQUEST                     250
 
 typedef struct dev_health_info dev_health_info_t;
 
@@ -27,7 +32,7 @@ STATIC connector_status_t dev_health_reallocate_csv_data(connector_data_t * cons
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
     unsigned int const old_size = dev_health_info->csv.total_size;
-    unsigned int const additional_size = ENHS_REALLOC_SIZE;
+    unsigned int const additional_size = CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE;
     unsigned int const new_size = old_size + additional_size;
     void * const old_ptr = dev_health_info->csv.data;
     connector_status_t const status = realloc_data(connector_ptr, old_size, new_size, (void * *) &dev_health_info->csv.data);
@@ -78,7 +83,7 @@ STATIC connector_status_t dev_health_allocate_csv_data(connector_data_t * const 
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
     connector_status_t status = connector_working;
-    unsigned int const total_bytes = ENHS_REALLOC_SIZE;
+    unsigned int const total_bytes = CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE;
     void * allocated_memory;
 
     status = malloc_data(connector_ptr, total_bytes, &allocated_memory);
@@ -138,7 +143,7 @@ STATIC void process_csv_data(char * const csv, dev_health_item_value_t const * c
         case DEV_HEALTH_TYPE_GEOJSON:
         {
             connector_bool_t const needs_quotes = string_needs_quotes(value->string);
-            unsigned int const temp_csv_size = ENHS_REALLOC_SIZE;
+            unsigned int const temp_csv_size = MAX_DEVICE_HEALTH_CSV_ENTRY;
             dp_process_string(value->string, csv, temp_csv_size, NULL, needs_quotes, connector_true);
             break;
         }
@@ -194,12 +199,10 @@ STATIC void process_csv_stream_id(char * const csv, char const * const stream_id
     sprintf(csv, "%s,metrics/%s\n", csv, stream_id);
 }
 
-#define MAX_DATA_POINTS_PER_REQUEST 250
-
 STATIC void add_item_to_csv(connector_data_t * const connector_ptr, dev_health_item_value_t const * const value, dev_health_value_type_t const type)
 {
     dev_health_info_t * const dev_health_info = &connector_ptr->dev_health.info;
-    char temp_csv[ENHS_REALLOC_SIZE];
+    char temp_csv[MAX_DEVICE_HEALTH_CSV_ENTRY];
     unsigned int temp_csv_strlen;
     char * const stream_id = dev_health_info->stream_id.string;
     connector_status_t status;
