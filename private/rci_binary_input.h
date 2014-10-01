@@ -1285,28 +1285,32 @@ STATIC void rci_parse_input(rci_t * const rci)
 
             if (ptr_in_buffer(old_base, &rci->buffer.input))
             {
-#if (defined CONNECTOR_NO_MALLOC)
-                size_t const storage_bytes = sizeof rci->input.storage;
-#else
-                size_t const storage_bytes = rci->input.storage_len;
-#endif
-                uint8_t const * const storage_end = rci->input.storage + storage_bytes;
                 size_t const bytes_wanted = rci->shared.content.length;
-                size_t const bytes_have = (size_t)(storage_end - new_base);
-
-                if (bytes_wanted >= bytes_have)
+                
+                if (bytes_wanted != 0)
                 {
-                    connector_debug_line("Maximum content size exceeded while storing - wanted %u, had %u", bytes_wanted, bytes_have);
-                    rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
-                    goto done;
+#if (defined CONNECTOR_NO_MALLOC)
+                    size_t const storage_bytes = sizeof rci->input.storage;
+#else
+                    size_t const storage_bytes = rci->input.storage_len;
+#endif
+                    uint8_t const * const storage_end = rci->input.storage + storage_bytes;
+                    size_t const bytes_have = (size_t)(storage_end - new_base);
+
+                    if (bytes_wanted >= bytes_have)
+                    {
+                        connector_debug_line("Maximum content size exceeded while storing - wanted %u, had %u", bytes_wanted, bytes_have);
+                        rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+                        goto done;
+                    }
+
+                    memcpy(new_base, old_base, bytes_wanted);
+
+                    adjust_rcistr(new_base, old_base, &rci->shared.content);
+                    rci->input.destination = new_base + bytes_wanted;
                 }
-
-                memcpy(new_base, old_base, bytes_wanted);
-
-                adjust_rcistr(new_base, old_base, &rci->shared.content);
-                rci->input.destination = new_base + bytes_wanted;
             }
-
+            
             rci->status = rci_status_more_input;
         }
     }
