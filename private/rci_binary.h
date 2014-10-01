@@ -110,6 +110,7 @@ STATIC connector_bool_t rci_action_session_active(rci_t * const rci)
             if (!destination_in_storage(rci))
             {
                 rci->input.destination = rci_buffer_position(&rci->buffer.input);
+                reset_input_content(rci);
             }
             rci->status = rci_status_busy;
             break;
