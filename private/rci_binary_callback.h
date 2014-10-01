@@ -331,8 +331,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         if (destination_in_storage(rci))
         {
             rci->input.destination = rci->buffer.input.current;
+            reset_input_content(rci);
         }
-        
+
 #if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
         switch (remote_config_request)
         {

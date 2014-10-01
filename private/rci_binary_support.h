@@ -365,3 +365,4 @@ typedef struct
 #define clear_rci_command_error(rci)        (rci)->error.command_error = connector_false;
 
 STATIC connector_bool_t destination_in_storage(rci_t const * const rci);
+STATIC void reset_input_content(rci_t * const rci);
