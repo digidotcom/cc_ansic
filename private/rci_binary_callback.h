@@ -326,9 +326,14 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         break;
     }
 
-#if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
     if (callback_complete)
     {
+        if (destination_in_storage(rci))
+        {
+            rci->input.destination = rci->buffer.input.current;
+        }
+        
+#if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
         switch (remote_config_request)
         {
             case connector_request_id_remote_config_group_end:
@@ -351,9 +356,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_configurations:
                 break;
         }
-
-    }
 #endif
+    }
+
     return callback_complete;
 }
 
