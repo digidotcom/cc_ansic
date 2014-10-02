@@ -194,6 +194,7 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 
     if (ber_bytes > 0)
     {
+        size_t const new_size = ber_bytes + value + sizeof "";
         size_t const bytes = rci->shared.content.length;
 #if defined CONNECTOR_DEBUG
         size_t const size_max = SIZE_MAX;
@@ -203,7 +204,7 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 #endif
         *length = value;
 #if (defined CONNECTOR_NO_MALLOC)
-        if (*length > sizeof rci->input.storage)
+        if (new_size > sizeof rci->input.storage)
         {
             UNUSED_PARAMETER(connector_ptr);
             connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
@@ -211,11 +212,9 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
             goto done;
         }
 #else
-        if (*length > rci->input.storage_len)
+        if (new_size > rci->input.storage_len)
         {
             size_t const old_size = rci->input.storage_len;
-            uint8_t group_terminator[] = {0xE1};
-            size_t const new_size = *length + sizeof "" + ber_bytes + 2 * sizeof group_terminator;
             connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
             connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
 
