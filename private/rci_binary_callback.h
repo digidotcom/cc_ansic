@@ -189,8 +189,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             }
             case connector_request_id_remote_config_configurations:
                 ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
-                callback_complete = connector_false;
-                goto done;
+                break;
             }
             break;            
 
@@ -361,7 +360,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #endif
     }
 
-done:
     return callback_complete;
 }
 
