@@ -34,7 +34,7 @@ STATIC connector_status_t dev_health_send_metrics(connector_data_t * const conne
     ASSERT_GOTO(status == connector_working, done);
 
     dev_health_data_push->p_csv = dev_health_info->csv.next_header;
-    dev_health_data_push->bytes_available = next_header != NULL ? next_header - dev_health_info->csv.next_header : (unsigned int)strlen(dev_health_data_push->p_csv);
+    dev_health_data_push->bytes_available = next_header != NULL ? (unsigned int)(next_header - dev_health_info->csv.next_header) : (unsigned int)strlen(dev_health_data_push->p_csv);
     send_request = &dev_health_data_push->send_request;
 
     send_request->user_context = dev_health_data_push;
