@@ -18,7 +18,7 @@ static size_t const dev_health_path_strlen = sizeof dev_health_path - 1;
 
 typedef struct {
     char const * p_csv;
-    unsigned int bytes_available;
+    size_t bytes_available;
     connector_request_data_service_send_t send_request;
 } dev_health_data_push_t;
 
@@ -34,7 +34,7 @@ STATIC connector_status_t dev_health_send_metrics(connector_data_t * const conne
     ASSERT_GOTO(status == connector_working, done);
 
     dev_health_data_push->p_csv = dev_health_info->csv.next_header;
-    dev_health_data_push->bytes_available = next_header != NULL ? next_header - dev_health_info->csv.next_header : (unsigned int)strlen(dev_health_data_push->p_csv);
+    dev_health_data_push->bytes_available = next_header != NULL ? (size_t)(next_header - dev_health_info->csv.next_header) : strlen(dev_health_data_push->p_csv);
     send_request = &dev_health_data_push->send_request;
 
     send_request->user_context = dev_health_data_push;
