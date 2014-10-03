@@ -117,7 +117,6 @@ typedef enum
     msg_state_compress,
     msg_state_send_data,
     msg_state_wait_send_complete,
-    msg_state_wait_ack,
     msg_state_receive,
     msg_state_decompress,
     msg_state_process_decompressed,
@@ -860,7 +859,7 @@ STATIC connector_status_t msg_send_complete(connector_data_t * const connector_p
             #endif
 
             session->service_layer_data.need_data->data_ptr = NULL;
-            session->current_state = MsgIsAckPending(dblock->status_flag) == connector_true ? msg_state_wait_ack : session->saved_state;
+            session->current_state = session->saved_state;
 
             break;
 
@@ -1674,9 +1673,11 @@ STATIC connector_status_t msg_process_ack(connector_msg_data_t * const msg_fac, 
 
         if (dblock->available_window > 0)
         {
-            MsgClearAckPending(dblock->status_flag);
-            if (session->current_state == msg_state_wait_ack)
+        	if (MsgIsAckPending(dblock->status_flag))
+        	{
+                MsgClearAckPending(dblock->status_flag);
                 session->current_state = session->saved_state;
+            }
         }
     }
 
@@ -1777,17 +1778,23 @@ STATIC connector_status_t msg_process_pending(connector_data_t * const connector
         switch (session->current_state)
         {
         case msg_state_init:
-        case msg_state_wait_ack:
         case msg_state_receive:
         case msg_state_wait_send_complete:
             msg_switch_session(msg_ptr, session);
             break;
 
         case msg_state_get_data:
-            session->saved_state = msg_state_get_data;
-            status = msg_get_service_data(connector_ptr, session);
-            if (status == connector_pending)
-                msg_switch_session(msg_ptr, session);
+        	if ((session->out_dblock != NULL) && MsgIsAckPending(session->out_dblock->status_flag))
+        	{
+        		msg_switch_session(msg_ptr, session);
+        	}
+        	else
+        	{
+                session->saved_state = msg_state_get_data;
+                status = msg_get_service_data(connector_ptr, session);
+                if (status == connector_pending)
+                    msg_switch_session(msg_ptr, session);
+        	}
             break;
 
         case msg_state_send_data:
