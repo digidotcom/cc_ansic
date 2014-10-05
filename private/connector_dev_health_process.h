@@ -190,8 +190,8 @@ STATIC void process_csv_stream_type(char * const csv, dev_health_value_type_t co
             ASSERT(type != DEV_HEALTH_TYPE_NONE);
             break;
     }
-
-    strcat(csv, stream_type_string);
+	if (stream_type_string != NULL)
+	    strcat(csv, stream_type_string);
 }
 
 STATIC void process_csv_stream_id(char * const csv, char const * const stream_id)
