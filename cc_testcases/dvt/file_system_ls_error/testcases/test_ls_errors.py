@@ -28,7 +28,7 @@ class FileSystemErrorTestCase(cc_testcase.TestCase):
         self.verify_file_list("./testharness/libraries/ansic", errorExpected=True, errorString="Invalid argument") # dvt_fs_error_ls_middle
         self.verify_file_list("./testharness/sares/ExceptionLibrary", errorExpected=True, errorString="Connection timed out") # dvt_fs_error_ls_timeout
         file_list, dir_list = self.verify_file_list("./testharness/test_files", hashAlgo="md5",errorExpected=False) # dvt_fs_error_ls_invalid_hash
-        self.assertTrue(file_list[0]["@hash"] == "00000000000000000000000000000000")
+        self.assertFalse("hash" in file_list[0]) # Hash is none, so it's not reported
 
     def verify_file_list(self, path, errorExpected, hashAlgo="none", errorString=""):
         lsRequest = \
