@@ -568,6 +568,7 @@ STATIC void msg_default_data_block(msg_data_block_t * dblock, uint32_t const win
     dblock->total_bytes = 0;
     MsgSetStart(dblock->status_flag);
     MsgClearLastData(dblock->status_flag);
+    MsgClearAckPending(dblock->status_flag);
 }
 
 STATIC connector_session_error_t msg_initialize_data_block(msg_session_t * const session, uint32_t const window_size, msg_block_state_t state)
