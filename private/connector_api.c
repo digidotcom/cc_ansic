@@ -517,6 +517,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
             connector_handle->dev_health.simple_metrics.sample_at[i] = 0;
         }
         connector_handle->dev_health.simple_metrics.report_at = 0;
+        connector_handle->dev_health.last_check = 0;
     }
 #endif
 

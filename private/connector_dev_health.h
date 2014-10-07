@@ -79,9 +79,11 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 #if !(defined DEVICE_HEALTH_FIRST_REPORT_AT)
 #define DEVICE_HEALTH_FIRST_REPORT_AT    0
 #endif
+            unsigned long const elapsed_seconds = now - connector_ptr->dev_health.last_check;
+            connector_bool_t const first_check = connector_ptr->dev_health.last_check == 0 ? connector_true : connector_false;
             dev_health_root_t root_group;
 
-            if (now >= connector_ptr->dev_health.last_check + SECONDS_IN_A_MINUTE)
+            if (elapsed_seconds < SECONDS_IN_A_MINUTE && !first_check)
             {
                 goto done;
             }
