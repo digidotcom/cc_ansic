@@ -187,11 +187,12 @@ STATIC void process_csv_stream_type(char * const csv, dev_health_value_type_t co
             stream_type_string = ",GEOJSON";
             break;
         case DEV_HEALTH_TYPE_NONE:
-            ASSERT(type != DEV_HEALTH_TYPE_NONE);
+            ASSERT_GOTO(type != DEV_HEALTH_TYPE_NONE, done);
             break;
     }
-	if (stream_type_string != NULL)
-	    strcat(csv, stream_type_string);
+    strcat(csv, stream_type_string);
+done:
+	return;
 }
 
 STATIC void process_csv_stream_id(char * const csv, char const * const stream_id)
