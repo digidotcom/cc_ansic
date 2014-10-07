@@ -81,7 +81,7 @@ STATIC connector_status_t connector_dev_health_step(connector_data_t * const con
 #endif
             dev_health_root_t root_group;
 
-            if (now >= connector_ptr->dev_health.last_check + SECONDS_IN_A_MINUTE)
+            if (now < connector_ptr->dev_health.last_check + SECONDS_IN_A_MINUTE && connector_ptr->dev_health.last_check != 0)
             {
                 goto done;
             }
