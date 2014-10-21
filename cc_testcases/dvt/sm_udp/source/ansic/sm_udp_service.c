@@ -346,7 +346,18 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
             connector_sm_cli_status_t * const status_ptr = data;
 
-            APP_DEBUG("Received CLI status %s\n", (status_ptr->status == connector_sm_cli_status_cancel) ? "cancel" : "error");
+            switch (status_ptr->status)
+            {
+                case connector_sm_cli_status_success:
+                    APP_DEBUG("Received CLI status: success\n");
+                    break;
+                case connector_sm_cli_status_cancel:
+                    APP_DEBUG("Received CLI status: cancel\n");
+                    break;
+                case connector_sm_cli_status_error:
+                    APP_DEBUG("Received CLI status: error\n");
+                    break;
+            }
             break;
         }
 
