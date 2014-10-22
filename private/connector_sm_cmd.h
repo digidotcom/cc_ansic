@@ -221,7 +221,24 @@ STATIC connector_callback_status_t sm_inform_cli_complete(connector_data_t * con
 
     cb_data.transport = session->transport;
     cb_data.user_context = session->user.context;
-    cb_data.status = (session->error == connector_sm_error_cancel) ? connector_sm_cli_status_cancel : connector_sm_cli_status_error;
+    switch (session->error)
+    {
+        case connector_sm_error_complete:
+            cb_data.status = connector_sm_cli_status_success;
+            break;
+        case connector_sm_error_cancel:
+            cb_data.status = connector_sm_cli_status_cancel;
+            break;
+        case connector_sm_error_timeout:
+        case connector_sm_error_no_resource:
+        case connector_sm_error_none:
+        case connector_sm_error_in_request:
+        case connector_sm_error_unavailable:
+        case connector_sm_error_unknown:
+            cb_data.status = connector_sm_cli_status_error;
+            break;
+    }
+
     request_id.sm_request = connector_request_id_sm_cli_status;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
     if (callback_status == connector_callback_unrecognized)
@@ -341,14 +358,50 @@ STATIC connector_status_t sm_switch_path(connector_data_t * const connector_ptr,
         SmClearMultiPart(session->flags);
         SmSetResponse(session->flags);
         session->segments.processed = 0;
-        if (session->command == connector_sm_cmd_data || session->command == connector_sm_cmd_no_path_data)
-            SmClearResponseNeeded(session->flags); /* After the response is sent, inform the user that the session is completed */
+        switch(session->command)
+        {
+            case connector_sm_cmd_ping:
+            case connector_sm_cmd_connect:
+            case connector_sm_cmd_reboot:
+            case connector_sm_cmd_pack:
+            case connector_sm_cmd_pad:
+            case connector_sm_cmd_config:
+            case connector_sm_cmd_opaque_response:
+                break;
+            case connector_sm_cmd_data:
+            case connector_sm_cmd_no_path_data:
+            case connector_sm_cmd_cli:
+                SmClearResponseNeeded(session->flags); /* After the response is sent, inform the user that the session is completed */
+                break;
+        }
     }
     else
     {
         if (!SmIsError(session->flags)) /* If it is an error, it has already been called by sm_handle_error() */
         {
-            if (SmIsClientOwned(session->flags) || session->command == connector_sm_cmd_data || session->command == connector_sm_cmd_no_path_data)
+            connector_bool_t inform_user = connector_bool(SmIsClientOwned(session->flags));
+
+            if (!inform_user)
+            {
+                switch(session->command)
+                {
+                    case connector_sm_cmd_ping:
+                    case connector_sm_cmd_connect:
+                    case connector_sm_cmd_reboot:
+                    case connector_sm_cmd_pack:
+                    case connector_sm_cmd_pad:
+                    case connector_sm_cmd_config:
+                    case connector_sm_cmd_opaque_response:
+                        break;
+                    case connector_sm_cmd_data:
+                    case connector_sm_cmd_no_path_data:
+                    case connector_sm_cmd_cli:
+                        inform_user = connector_true;
+                        break;
+                }
+            }
+
+            if (inform_user)
             {
                 session->error = connector_sm_error_complete;
                 result = sm_inform_session_complete(connector_ptr, session);

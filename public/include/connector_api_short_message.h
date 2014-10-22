@@ -240,6 +240,7 @@ typedef struct
 
     enum
     {
+        connector_sm_cli_status_success,
         connector_sm_cli_status_cancel, /**< cancelled by the user */
         connector_sm_cli_status_error   /**< error occurred while preparing the response */
     } CONST status; /**< CLI session termination reason */
