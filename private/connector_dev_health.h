@@ -46,13 +46,16 @@ STATIC connector_status_t dev_health_send_metrics(connector_data_t * const conne
     send_request->transport = connector_transport_tcp;
 
     status = connector_initiate_action(connector_ptr, connector_initiate_send_data, send_request);
-    dev_health_info->csv.next_header = next_header;
 done:
     if (status != connector_success)
     {
         if (dev_health_data_push != NULL)
         {
             free_data(connector_ptr, dev_health_data_push);
+        }
+        else
+        {
+            dev_health_info->csv.next_header = next_header;
         }
     }
     return status;
