@@ -229,7 +229,7 @@ typedef struct
     msg_service_data_t * need_data;
     msg_service_data_t * have_data;
     connector_session_error_t error_value;
-    connector_send_data_initiator_t request_initiator;
+    connector_send_data_initiator_t send_data_initiator;
 } msg_service_request_t;
 
 typedef struct msg_session_t
@@ -1187,7 +1187,7 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         service_data.service_type = msg_service_type_pending_request;
         service_data.error_value = result;
         service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
-        service_data.request_initiator = connector_send_data_initiator_unknown;
+        service_data.send_data_initiator = connector_send_data_initiator_unknown;
 
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
@@ -1198,7 +1198,7 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         {
             msg_service_request_t * const session_service_data = &session->service_layer_data;
 
-            session_service_data->request_initiator = service_data.request_initiator;
+            session_service_data->send_data_initiator = service_data.send_data_initiator;
         }
 
     }
