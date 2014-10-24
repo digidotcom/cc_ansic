@@ -847,9 +847,9 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     #endif
 
     #if (defined CONNECTOR_DATA_POINTS)
-    if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
+    if (strncmp(send_ptr->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
     {
-        char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
+        char * const modifiable_path = (char *)send_ptr->path; /* Discarding "const" qualifier */
 
         memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
 
@@ -858,7 +858,7 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     #endif
 
     #if (defined CONNECTOR_DEVICE_HEALTH)
-    if (strncmp(ds_ptr->header->path, dev_health_path, dev_health_path_strlen) == 0)
+    if (strncmp(send_ptr->header->path, dev_health_path, dev_health_path_strlen) == 0)
     {
         service_request->send_data_initiator = connector_send_data_initiator_enhanced_services;
     }
