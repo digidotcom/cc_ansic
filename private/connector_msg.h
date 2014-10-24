@@ -1705,7 +1705,6 @@ STATIC connector_status_t msg_process_ack(connector_msg_data_t * const msg_fac, 
         	if (MsgIsAckPending(dblock->status_flag))
         	{
                 MsgClearAckPending(dblock->status_flag);
-                session->current_state = session->saved_state;
             }
         }
     }
