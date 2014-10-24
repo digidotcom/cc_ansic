@@ -211,6 +211,19 @@ typedef struct
     unsigned int flags;
 } msg_service_data_t;
 
+#if (defined CONNECTOR_DATA_SERVICE)
+typedef enum {
+    connector_send_data_initiator_user,
+#if (defined CONNECTOR_DATA_POINTS)
+    connector_send_data_initiator_data_point,
+#endif
+#if (defined CONNECTOR_DEVICE_HEALTH)
+    connector_send_data_initiator_enhanced_services,
+#endif
+    connector_send_data_initiator_unknown
+} connector_send_data_initiator_t;
+#endif
+
 typedef struct
 {
     void * session;
@@ -218,6 +231,9 @@ typedef struct
     msg_service_data_t * need_data;
     msg_service_data_t * have_data;
     connector_session_error_t error_value;
+#if (defined CONNECTOR_DATA_SERVICE)
+    connector_send_data_initiator_t send_data_initiator;
+#endif
 } msg_service_request_t;
 
 typedef struct msg_session_t
@@ -1175,10 +1191,22 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         service_data.service_type = msg_service_type_pending_request;
         service_data.error_value = result;
         service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
-
+#if (defined CONNECTOR_DATA_SERVICE)
+        service_data.send_data_initiator = connector_send_data_initiator_unknown;
+#endif
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
+        {
             status = msg_delete_session(connector_ptr, msg_ptr, session);
+        }
+#if (defined CONNECTOR_DATA_SERVICE)
+        else if (session != NULL)
+        {
+            msg_service_request_t * const session_service_data = &session->service_layer_data;
+
+            session_service_data->send_data_initiator = service_data.send_data_initiator;
+        }
+#endif
     }
 
     if (pending_request != NULL)
