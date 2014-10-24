@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <time.h>
 #include <unistd.h>
-#include "connector_api.h"
+#include "health_metrics_api.h"
 
 /* #define DEBUG */
 
@@ -21,89 +22,50 @@
 #define PRINT_TECH(t)            UNUSED_ARGUMENT((t))
 #endif
 
-#define DEVICE_HEALTH_FILENAME  "dev_health.cfg"
-#define DEVICE_HEALTH_SIMPLE_FILENAME  "dev_health_simple.cfg"
-
-static int get_executable_path(char * const path, unsigned int max_size)
+void hm_print_line(char const * const format, ...)
 {
-    pid_t pid = getpid();
-    ssize_t error;
-    static char const executable_name[] = "connector";
-    char proc_path[PATH_MAX];
+    va_list args;
 
-    sprintf(proc_path, "/proc/%d/exe", pid);
-    error = readlink(proc_path, path, max_size);
+    printf("HealthMetrics: ");
 
-    if (error == -1)
-    {
-        path[0] = '\0';
-        perror("readlink");
-        goto done;
-    }
-    else
-    {
-        char * const end_of_path = path + strlen(path) - (sizeof executable_name - 1);
-        *end_of_path = '\0';
-    }
+    va_start(args, (format));
+    vprintf(format, args);
+    va_end(args);
 
-done:
-    return error;
+    printf("\n");
+
+    fflush(stdout);
 }
 
-connector_callback_status_t cc_dev_health_simple_config_load(dev_health_simple_metrics_config_t * const simple_metrics)
+int hm_realloc_data(size_t const old_length, size_t const new_length, void ** ptr)
 {
-    connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX];
+    void * const old_ptr = *ptr;
 
-    get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_SIMPLE_FILENAME);
-
-    if (access(dev_health_path, F_OK) != -1)
+    UNUSED_ARGUMENT(old_length);
+    *ptr = realloc(old_ptr, new_length);
+    if (*ptr == NULL)
     {
-        FILE *file;
-        unsigned int bytes_read;
-
-        file = fopen(dev_health_path, "r");
-        bytes_read = fread(simple_metrics, sizeof *simple_metrics, 1, file);
-        if (bytes_read == sizeof *simple_metrics)
-        {
-            printf("Error while reading %s\n", dev_health_path);
-        }
-        fclose(file);
+        free(old_ptr);
     }
-    else
-    {
-        simple_metrics->eth.metrics = connector_false;
-        simple_metrics->eth.sample_rate = 0;
-        simple_metrics->mobile.metrics = connector_false;
-        simple_metrics->mobile.sample_rate = 0;
-        simple_metrics->sys.metrics = connector_false;
-        simple_metrics->sys.sample_rate = 0;
-        simple_metrics->report_rate = 0;
-    }
-
-    return status;
+    return 0;
 }
 
-connector_callback_status_t cc_dev_health_simple_config_save(dev_health_simple_metrics_config_t const * const simple_metrics)
+int hm_malloc_data(size_t const length, void ** ptr)
 {
-    connector_callback_status_t status = connector_callback_continue;
-    char dev_health_path[PATH_MAX];
-    FILE *file;
-    unsigned int bytes_read;
+    *ptr = malloc(length);
+    return 0;
+}
 
-    get_executable_path(dev_health_path, sizeof dev_health_path);
-    strcat(dev_health_path, DEVICE_HEALTH_SIMPLE_FILENAME);
+int hm_free_data(void * const ptr)
+{
+    free(ptr);
+    return 0;
+}
 
-    file = fopen(dev_health_path, "w");
-    bytes_read = fwrite(simple_metrics, sizeof *simple_metrics, 1, file);
-    if (bytes_read == sizeof *simple_metrics)
-    {
-        printf("Error while reading %s\n", dev_health_path);
-    }
-    fclose(file);
-
-    return status;
+int hm_get_system_time(unsigned long * const uptime)
+{
+    *uptime = time(NULL);
+    return 0;
 }
 
 char * cc_dev_health_malloc_string(size_t size)

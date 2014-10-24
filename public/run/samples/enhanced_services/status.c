@@ -44,14 +44,13 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
 {
     connector_callback_status_t status = connector_callback_continue;
 
-
     switch (request)
     {
     case connector_request_id_status_tcp:
         status = app_tcp_status(data);
         break;
     case connector_request_id_status_stop_completed:
-        APP_DEBUG("app_status_handle: connector_request_id_status_stop_completed\n");
+        APP_DEBUG("app_status_handler connector_request_id_status_stop_completed\n");
         break;
     default:
         /* unsupported */
