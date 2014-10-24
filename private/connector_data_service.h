@@ -18,21 +18,10 @@ typedef enum
     data_service_opcode_device_response
 } data_service_opcode_t;
 
-typedef enum {
-    connector_send_data_initiator_user
-#if (defined CONNECTOR_DATA_POINTS)
-    ,connector_send_data_initiator_data_point
-#endif
-#if (defined CONNECTOR_DEVICE_HEALTH)
-    ,connector_send_data_initiator_enhanced_services
-#endif
-} connector_send_data_initiator_t;
-
 typedef struct
 {
     void * callback_context;
     connector_request_data_service_send_t const * header;
-    connector_send_data_initiator_t request_initiator;
     connector_request_id_data_service_t request_type;
 } data_service_context_t;
 
@@ -569,24 +558,15 @@ STATIC size_t fill_put_request_header(connector_request_data_service_send_t cons
 STATIC connector_status_t call_put_request_user(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, connector_request_id_data_service_t const request_id, void * const cb_data)
 {
     connector_status_t status = connector_working;
-    msg_session_t * const session = service_request->session;
-    data_service_context_t * const context = session != NULL ? session->service_context : NULL;
+    connector_send_data_initiator_t const request_initiator = service_request->send_data_initiator;
     connector_callback_status_t callback_status = connector_callback_continue;
 
-    ASSERT_GOTO(context != NULL, done);
-    switch (context->request_initiator)
+    switch (request_initiator)
     {
 #if (defined CONNECTOR_DATA_POINTS)
         case connector_send_data_initiator_data_point:
         {
             callback_status = dp_handle_callback(connector_ptr, request_id, cb_data);
-            break;
-        }
-#endif
-#if (defined CONNECTOR_DEVICE_HEALTH)
-        case connector_send_data_initiator_enhanced_services:
-        {
-            callback_status = dev_health_handle_callback(connector_ptr, request_id, cb_data);
             break;
         }
 #endif
@@ -598,6 +578,9 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
             callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request, cb_data, connector_ptr->context);
             break;
         }
+        case connector_send_data_initiator_unknown:
+            ASSERT_GOTO(request_initiator != connector_send_data_initiator_unknown, done);
+            break;
     }
 
     switch (callback_status)
@@ -852,6 +835,21 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     connector_request_data_service_send_t * send_ptr = (void *)service_request->have_data;
     data_service_context_t * ds_ptr = NULL;
 
+    #if !(defined CONNECTOR_DATA_POINTS)
+    service_request->send_data_initiator = connector_send_data_initiator_user;
+    #endif
+
+    #if (defined CONNECTOR_DATA_POINTS)
+    if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
+    {
+        char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
+
+        memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
+
+        service_request->send_data_initiator = connector_send_data_initiator_data_point;
+    }
+    #endif
+
     if (send_ptr != NULL)
     {
         void * ptr;
@@ -874,32 +872,6 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     ds_ptr->callback_context = send_ptr->user_context;
     ds_ptr->request_type = connector_request_id_data_service_send_data;
     session->service_context = ds_ptr;
-
-    #if !(defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DEVICE_HEALTH)
-    ds_ptr->request_initiator = connector_send_data_initiator_user;
-    #endif
-
-    #if (defined CONNECTOR_DATA_POINTS)
-    if (strncmp(ds_ptr->header->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
-    {
-        char * const modifiable_path = (char *)ds_ptr->header->path; /* Discarding "const" qualifier */
-
-        memcpy(modifiable_path, dp4d_path_prefix, dp4d_path_prefix_strlen);
-
-        ds_ptr->request_initiator = connector_send_data_initiator_data_point;
-        goto done;
-    }
-    #endif
-
-    #if (defined CONNECTOR_DEVICE_HEALTH)
-    if (strncmp(ds_ptr->header->path, dev_health_path, dev_health_path_strlen) == 0)
-    {
-        ds_ptr->request_initiator = connector_send_data_initiator_enhanced_services;
-        goto done;
-    }
-    #endif
-
-    ds_ptr->request_initiator = connector_send_data_initiator_user;
 
     goto done;
 
@@ -983,7 +955,7 @@ STATIC connector_status_t data_service_initiate(connector_data_t * const connect
     msg_request_initiator_t initiator = MSG_REQUEST_USER;
 
     ASSERT_GOTO(request != NULL, error);
-#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_DEVICE_HEALTH)
+#if (defined CONNECTOR_DATA_POINTS)
     {
         connector_request_data_service_send_t const * const data_service_send = request;
         char const * const path = data_service_send->path;
@@ -991,11 +963,6 @@ STATIC connector_status_t data_service_initiate(connector_data_t * const connect
         connector_bool_t const request_is_data_point = connector_bool(strncmp(path, internal_dp4d_path, internal_dp4d_path_strlen) == 0);
         #else
         connector_bool_t const request_is_data_point = connector_false;
-        #endif
-        #if (defined CONNECTOR_DEVICE_HEALTH)
-        connector_bool_t const request_is_device_health = connector_bool(strncmp(path, dev_health_path, dev_health_path_strlen) == 0);
-        #else
-        connector_bool_t const request_is_device_health = connector_false;
         #endif
 
         if (request_is_data_point || request_is_device_health)
@@ -1010,5 +977,3 @@ STATIC connector_status_t data_service_initiate(connector_data_t * const connect
 error:
     return status;
 }
-
-

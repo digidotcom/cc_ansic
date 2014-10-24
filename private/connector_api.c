@@ -44,12 +44,8 @@ STATIC connector_status_t connector_stop_callback(connector_data_t * const conne
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 #endif
 
-#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_DEVICE_HEALTH)
+#if (defined CONNECTOR_DATA_POINTS)
 #include "connector_data_point.h"
-#endif
-
-#if (defined CONNECTOR_DEVICE_HEALTH)
-#include "connector_dev_health.h"
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
@@ -497,30 +493,6 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #if (defined CONNECTOR_TRANSPORT_COUNT > 1)
     connector_handle->first_running_network = (connector_network_type_t) 0;
 #endif
-
-#if (defined CONNECTOR_DEVICE_HEALTH)
-    {
-        unsigned int i;
-        connector_callback_status_t const status  = cc_dev_health_simple_config_load(&connector_handle->dev_health.simple_metrics.config);
-
-        connector_handle->dev_health.info.csv.data = NULL;
-        connector_handle->dev_health.info.csv.total_size = 0;
-        connector_handle->dev_health.info.csv.status = DEV_HEALTH_CSV_STATUS_PROCESSING;
-
-        if (status != connector_callback_continue)
-        {
-            goto error;
-        }
-
-        for (i = 0; i < asizeof(connector_handle->dev_health.simple_metrics.sample_at); i++)
-        {
-            connector_handle->dev_health.simple_metrics.sample_at[i] = 0;
-        }
-        connector_handle->dev_health.simple_metrics.report_at = 0;
-        connector_handle->dev_health.last_check = 0;
-    }
-#endif
-
     goto done;
 
 error:
@@ -564,22 +536,6 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 connector_debug_line("connector_step: free Cloud Connector");
-#if (defined CONNECTOR_DEVICE_HEALTH)
-                {
-                    connector_callback_status_t const status = cc_dev_health_simple_config_save(&connector_ptr->dev_health.simple_metrics.config);
-
-                    if (status != connector_callback_continue)
-                    {
-                        connector_debug_line("WARNING: failed to save Device Simple Health metrics, status %d", status);
-                    }
-
-                    if (connector_ptr->dev_health.info.csv.data != NULL)
-                    {
-                        dev_health_teardown_csv_data(connector_ptr);
-                    }
-
-                }
-#endif
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 goto done;
             }
@@ -637,27 +593,6 @@ connector_status_t connector_step(connector_handle_t const handle)
         connector_ptr->first_running_network = (result == connector_idle) ? next_network(first_network_checked): current_network;
 
 #undef next_network
-    }
-#endif
-
-#if (defined CONNECTOR_DEVICE_HEALTH)
-    {
-        connector_transport_state_t const edp_current_active_state = edp_get_active_state(connector_ptr);
-
-        switch (edp_current_active_state)
-        {
-            case connector_transport_idle:
-            case connector_transport_open:
-            case connector_transport_close:
-            case connector_transport_terminate:
-            case connector_transport_redirect:
-            case connector_transport_wait_for_reconnect:
-                break;
-            case connector_transport_send:
-            case connector_transport_receive:
-                connector_dev_health_step(connector_ptr);
-                break;
-        }
     }
 #endif
 

@@ -157,15 +157,6 @@ struct connector_data;
 #include "connector_sm_def.h"
 #endif
 
-#if (defined CONNECTOR_DEVICE_HEALTH)
-typedef enum {
-    dev_health_root_eth,
-    dev_health_root_mobile,
-    dev_health_root_sys,
-    dev_health_root_COUNT
-} dev_health_root_t;
-#endif
-
 typedef struct connector_data {
 
     uint8_t device_id[DEVICE_ID_LENGTH];
@@ -222,38 +213,6 @@ typedef struct connector_data {
 
 #if (defined CONNECTOR_RCI_SERVICE)
     connector_remote_config_data_t rci_data;
-#endif
-
-#if (defined CONNECTOR_DEVICE_HEALTH)
-    struct {
-        struct dev_health_info {
-            struct {
-                char string[DEV_HEALTH_MAX_STREAM_ID_LEN];
-                unsigned int len;
-            } stream_id;
-
-            struct {
-                char * data;
-                char const * next_header;
-                unsigned int total_size;
-                unsigned int free_bytes;
-                unsigned int data_points_count;
-                enum {
-                    DEV_HEALTH_CSV_STATUS_PROCESSING,
-                    DEV_HEALTH_CSV_STATUS_READY_TO_SEND,
-                    DEV_HEALTH_CSV_STATUS_SENDING,
-                    DEV_HEALTH_CSV_STATUS_SENT
-                } status;
-            } csv;
-        } info;
-
-        struct {
-            dev_health_simple_metrics_config_t config;
-            unsigned long report_at;
-            unsigned long sample_at[dev_health_root_COUNT];
-        } simple_metrics;
-        unsigned int last_check;
-    } dev_health;
 #endif
 
     struct {
