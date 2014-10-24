@@ -858,7 +858,7 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     #endif
 
     #if (defined CONNECTOR_DEVICE_HEALTH)
-    if (strncmp(send_ptr->header->path, dev_health_path, dev_health_path_strlen) == 0)
+    if (strncmp(send_ptr->path, dev_health_path, dev_health_path_strlen) == 0)
     {
         service_request->send_data_initiator = connector_send_data_initiator_enhanced_services;
     }
