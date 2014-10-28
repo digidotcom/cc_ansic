@@ -478,7 +478,7 @@ connector_status_t app_start_test_case_datapoints_loop(connector_handle_t handle
     /* Initialize settings */
     connector_status_t status = connector_init_error;
 
-    for(size_t i=0;i<numberOfLoops;i++)
+    for(int i=0;i<(int)numberOfLoops;i++)
     {
         /* Initialize settings */
         status = connector_init_error;
