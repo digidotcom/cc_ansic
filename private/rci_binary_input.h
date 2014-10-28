@@ -574,9 +574,9 @@ STATIC void process_command_attribute(rci_t * const rci)
 STATIC void process_group_id(rci_t * const rci)
 {
     uint32_t group_id;
-    size_t const bytes = get_modifier_ber(rci, &group_id);
+    size_t const group_length = get_modifier_ber(rci, &group_id);
 
-    if (!bytes)
+    if (group_length == 0)
     {
         goto done;
     }
@@ -585,7 +585,7 @@ STATIC void process_group_id(rci_t * const rci)
 
     ASSERT_GOTO(!has_rci_error(rci, group_id), done);
 
-    if (has_rci_terminated(group_id) && bytes == 1)
+    if (has_rci_terminated(group_id) && group_length == 1)
     {
         if (have_group_id(rci))
         {
