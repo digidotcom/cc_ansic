@@ -108,6 +108,15 @@ class ConnectionTestCase(cc_testcase.TestCase):
             self.log.info("%s Datapoints verified successfully....OK" % numberDataPointsUploaded)
 
 
+        # Remove DataStream
+        result,response = self.cloudHandler.removeDataStream(self.device_id, "incremental")
+        if( not result):
+            self.log.warning("Error removing the DataStream: %s" % response.content)
+        else:
+            self.log.info("DataStream was successfully removed!")
+
+
+
     def sendErrorAndCleanDataStream(self, message):
 
         result,response = self.cloudHandler.removeDataStream(self.device_id, "incremental")

@@ -429,10 +429,15 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
                 }
                 #else
                 {
-                    char *value = malloc (sizeof (long) * 3);
+                    #define LONG_SIZE (sizeof(long) * 3)
+
+                    char *value = malloc (LONG_SIZE);
+                    /* Reset the memory allocated to 0 */
+                    memset(value, 0, LONG_SIZE);
+
 
                     point->data.type = connector_data_type_text;
-                    snprintf(value, sizeof value, "%ld", mrand48());
+                    snprintf(value, LONG_SIZE, "%ld", mrand48());
                     point->data.element.text = value;
                 }
                 #endif
