@@ -574,19 +574,18 @@ STATIC void process_command_attribute(rci_t * const rci)
 STATIC void process_group_id(rci_t * const rci)
 {
     uint32_t group_id;
-    rci_buffer_t * const input = &rci->buffer.input;
-    size_t const remainign = rci_buffer_remaining(input);
+    size_t const group_length = get_modifier_ber(rci, &group_id);
 
-    if (!get_uint32(rci, &group_id))
+    if (group_length == 0)
     {
         goto done;
     }
 
+    reset_input_content(rci);
+
     ASSERT_GOTO(!has_rci_error(rci, group_id), done);
 
-    /* Note: this fixes IC4C-404, but might bring consequences in other places such
-     * as what happens when the request is chopped in more than one packet. */
-    if (has_rci_terminated(group_id) && remainign < 2)
+    if (has_rci_terminated(group_id) && group_length == 1)
     {
         if (have_group_id(rci))
         {
