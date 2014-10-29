@@ -13,7 +13,7 @@ class ConnectionTestCase(cc_testcase.TestCase):
         self.log.info("***** Beginning DataPoints loop Test *****")
 
 
-        for loop in range(0,50):
+        for loop in range(0,25):
 
             # Wait until the group of DataPoints are sent
             result, line, readBuffer = self.deviceHandler.readUntilPattern ( pattern="END LOOP ----------------------------------------", timeout=60)
@@ -74,38 +74,68 @@ class ConnectionTestCase(cc_testcase.TestCase):
 
 
             numberDataPointsUploaded = len(datapointList)
+            retryCounter = 0
+            message = ""
 
-            # Get the last DataPoints uploaded from Device Cloud
-            result,datapointListFromDeviceCloud,requestResponse = self.cloudHandler.getDataPoints(self.device_id, "incremental", size=numberDataPointsUploaded, order="descending")
+            # Try to get the DataPoints with a retry system due to sometimes device cloud returns an error
+            while ( retryCounter < 3 ):
+                verificationResult = True
+                retryCounter+=1;
 
-            datapointListFromDeviceCloud.reverse()
+                # Get the last DataPoints uploaded from Device Cloud
+                result,datapointListFromDeviceCloud,requestResponse = self.cloudHandler.getDataPoints(self.device_id, "incremental", size=numberDataPointsUploaded, order="descending")
 
-            self.log.info("Verify if DataPoints uploaded in loop %s match with the readed from Device Cloud..." % loop)
+                if ( not result ):
+                    message = "Error getting the DataPoints from device cloud: %s" % requestResponse.content
+                    self.log.error(message)
+                    time.sleep(1)
+                    continue # Go to the next loop
 
-            for index in range(0,numberDataPointsUploaded-1):
+                datapointListFromDeviceCloud.reverse()
 
-                eachDatapointFromDeviceCloud = datapointListFromDeviceCloud[index]
-                eachDatapointUploaded = datapointList[index]
+                self.log.info("Verify if DataPoints uploaded in loop %s match with the readed from Device Cloud..." % loop)
 
-                # Verify the Data
-                if ( eachDatapointFromDeviceCloud.data != eachDatapointUploaded["data"] ):
-                    self.sendErrorAndCleanDataStream("DataPoint data does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" %
-                        (eachDatapointFromDeviceCloud.data, eachDatapointUploaded["data"], eachDatapointUploaded, eachDatapointFromDeviceCloud) )
+                for index in range(0,numberDataPointsUploaded-1):
+                    # Get DataPoint readed from console and DataPoint from Device Cloud
+                    eachDatapointFromDeviceCloud = datapointListFromDeviceCloud[index]
+                    eachDatapointUploaded = datapointList[index]
 
-                # Verify the Quality
-                if ( eachDatapointFromDeviceCloud.quality != eachDatapointUploaded["quality"] ):
-                    self.sendErrorAndCleanDataStream("DataPoint quality does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" %
-                        (eachDatapointFromDeviceCloud.quality, eachDatapointUploaded["quality"], eachDatapointUploaded, eachDatapointFromDeviceCloud) )
+                    # Verify the Data
+                    if ( eachDatapointFromDeviceCloud.data != eachDatapointUploaded["data"] ):
+                        message = "DataPoint data does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.data, eachDatapointUploaded["data"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                        self.log.warning(message)
+                        verificationResult = False
+                        break
+
+                    # Verify the Quality
+                    if ( eachDatapointFromDeviceCloud.quality != eachDatapointUploaded["quality"] ):
+                        message = "DataPoint quality does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.quality, eachDatapointUploaded["quality"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                        self.log.warning(message)
+                        verificationResult = False
+                        break
+
+                    # Verify the location
+                    if ( eachDatapointFromDeviceCloud.location != eachDatapointUploaded["location"] ):
+                        message = "DataPoint location does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.location, eachDatapointUploaded["location"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                        self.log.warning(message)
+                        verificationResult = False
+                        break
 
 
-                # Verify the location
-                if ( eachDatapointFromDeviceCloud.location != eachDatapointUploaded["location"] ):
-                    self.sendErrorAndCleanDataStream("DataPoint location does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" %
-                        (eachDatapointFromDeviceCloud.location, eachDatapointUploaded["location"], eachDatapointUploaded, eachDatapointFromDeviceCloud) )
+                # All DataPoints were verified
+                if ( verificationResult ):
+                    message = "%s Datapoints verified successfully....OK" % (numberDataPointsUploaded)
+                    break
+                else:
+                    self.log.info("Retry system to verify the data from Device Cloud...(%s)" % retryCounter)
+                    time.sleep(1)
 
 
-
-            self.log.info("%s Datapoints verified successfully....OK" % numberDataPointsUploaded)
+            # Show the test result
+            if ( verificationResult ):
+                self.log.info(message)
+            else:
+                self.sendErrorAndCleanDataStream(message)
 
 
         # Remove DataStream

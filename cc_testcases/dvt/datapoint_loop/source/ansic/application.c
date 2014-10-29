@@ -147,7 +147,7 @@ int application_run(connector_handle_t handlerForConnector)
 
     APP_DEBUG("****************************** INIT application.c\n");
 
-    size_t const numberOfLoops = 50;
+    size_t const numberOfLoops = 25;
     size_t const numberPointsPerStream = 200;
     size_t const numberStreams = 1;
 
