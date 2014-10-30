@@ -100,8 +100,9 @@ typedef enum {
     edp_discovery_send_device_type,
     edp_discovery_facility,
     edp_discovery_send_complete,
-    edp_facility_process
-
+    edp_connected,
+    edp_facility_process,
+    edp_state_send_in_progress
 } connector_edp_state_t;
 
 typedef enum {
@@ -175,7 +176,10 @@ typedef struct connector_edp_data {
     struct {
         connector_transport_state_t initiate;
         connector_transport_state_t active;
-        connector_edp_state_t edp;
+        struct {
+            connector_edp_state_t current;
+            connector_edp_state_t next;
+        }edp;
     } state;
 
     struct {

@@ -909,9 +909,9 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
     case edp_discovery_send_device_type:
     case edp_discovery_facility:
     case edp_discovery_send_complete:
+    case edp_state_send_in_progress:
+    case edp_connected:
     {
-        connector_edp_state_t next_state = edp_get_edp_state(connector_ptr);
-
         switch (edp_get_edp_state(connector_ptr))
         {
         case edp_communication_send_version:
@@ -919,7 +919,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_version(connector_ptr, E_MSG_MT2_TYPE_VERSION, EDP_MT_VERSION);
             if (result == connector_working)
             {
-                next_state = edp_communication_receive_version_response;
+                edp_set_next_edp_state(connector_ptr, edp_communication_receive_version_response);
             }
             break;
 
@@ -927,7 +927,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_keepalive(connector_ptr);
             if (result == connector_working)
             {
-                next_state =  edp_initialization_send_protocol_version;
+                edp_set_next_edp_state(connector_ptr, edp_initialization_send_protocol_version);
             }
             break;
 
@@ -939,7 +939,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_version(connector_ptr, E_MSG_MT2_TYPE_PAYLOAD, EDP_PROTOCOL_VERSION);
             if (result == connector_working)
             {
-                next_state =  edp_initialization_receive_protocol_version;
+                edp_set_next_edp_state(connector_ptr, edp_initialization_receive_protocol_version);
             }
             break;
         }
@@ -947,7 +947,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_identity_verification(connector_ptr);
             if (result == connector_working)
             {
-                next_state =  edp_security_send_device_id;
+                edp_set_next_edp_state(connector_ptr, edp_security_send_device_id);
             }
             break;
         case edp_security_send_device_id:
@@ -956,7 +956,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
                 result = send_device_id(connector_ptr);
                 if (result == connector_working)
                 {
-                    next_state = edp_security_send_device_cloud_url;
+                    edp_set_next_edp_state(connector_ptr, edp_security_send_device_cloud_url);
                 }
             }
             else
@@ -964,7 +964,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
                 result = send_provisioning(connector_ptr);
                 if (result == connector_working)
                 {
-                    next_state = edp_security_receive_device_id;
+                    edp_set_next_edp_state(connector_ptr, edp_security_receive_device_id);
                 }
             }
             break;
@@ -973,9 +973,9 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             if (result == connector_working)
             {
 #if (defined CONNECTOR_IDENTITY_VERIFICATION)
-                next_state = (CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_password) ? edp_security_send_password : edp_discovery_send_vendor_id;
+                edp_set_next_edp_state(connector_ptr, (CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_password) ? edp_security_send_password : edp_discovery_send_vendor_id);
 #else
-                next_state = (connector_ptr->edp_data.config.identity_verification == connector_identity_verification_password) ? edp_security_send_password : edp_discovery_send_vendor_id;
+                edp_set_next_edp_state(connector_ptr, (connector_ptr->edp_data.config.identity_verification == connector_identity_verification_password) ? edp_security_send_password : edp_discovery_send_vendor_id);
 #endif
             }
             break;
@@ -984,7 +984,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_password(connector_ptr);
             if (result == connector_working)
             {
-                next_state =  edp_discovery_send_vendor_id;
+                edp_set_next_edp_state(connector_ptr, edp_discovery_send_vendor_id);
             }
             break;
 
@@ -992,7 +992,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_vendor_id(connector_ptr);
             if (result == connector_working)
             {
-                next_state =  edp_discovery_send_device_type;
+                edp_set_next_edp_state(connector_ptr, edp_discovery_send_device_type);
             }
             break;
 
@@ -1000,7 +1000,7 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = send_device_type(connector_ptr);
             if (result == connector_working)
             {
-                next_state =  edp_discovery_facility;
+                edp_set_next_edp_state(connector_ptr, edp_discovery_facility);
             }
             break;
         case edp_discovery_facility:
@@ -1008,14 +1008,30 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
 
             if (result == connector_working)
             {
-                next_state = edp_discovery_send_complete;
+                edp_set_next_edp_state(connector_ptr, edp_discovery_send_complete);
             }
             break;
 
         case edp_discovery_send_complete:
             result = send_complete(connector_ptr);
+            if (result == connector_working)
+            {
+                edp_set_next_edp_state(connector_ptr, edp_connected);
+            }
             break;
+        case edp_connected:
+        {
+            edp_set_edp_state(connector_ptr, edp_facility_process);
+            edp_set_active_state(connector_ptr, connector_transport_receive);
 
+            if (notify_status(connector_ptr->callback, connector_tcp_communication_started, connector_ptr->context) != connector_working)
+            {
+                result = connector_abort;
+            }
+            break;
+        }
+        case edp_state_send_in_progress:
+            break;
         default:
             break;
         }
@@ -1025,18 +1041,11 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             result = edp_tcp_send_process(connector_ptr);
             if (result == connector_working)
             {
-                if (edp_get_edp_state(connector_ptr) == edp_discovery_send_complete)
-                {
-                    /* we are connected and EDP communication is fully established. */
-                    edp_set_edp_state(connector_ptr, edp_facility_process);
-                    edp_set_active_state(connector_ptr, connector_transport_receive);
-
-                    if (notify_status(connector_ptr->callback, connector_tcp_communication_started, connector_ptr->context) != connector_working)
-                        result = connector_abort;
-
-               }
-
-                edp_set_edp_state(connector_ptr, next_state);
+                edp_set_edp_state(connector_ptr, edp_get_next_edp_state(connector_ptr));
+            }
+            else if (result == connector_pending)
+            {
+                edp_set_edp_state(connector_ptr, edp_state_send_in_progress);
             }
         }
 

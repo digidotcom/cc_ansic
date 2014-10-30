@@ -16,11 +16,10 @@
 #define edp_set_initiate_state(connector_ptr, value)  (connector_ptr)->edp_data.state.initiate = (value)
 #define edp_get_initiate_state(connector_ptr)         (connector_ptr)->edp_data.state.initiate
 
-/* #define edp_get_error(connector_ptr)                (connector_ptr)->edp_data.error_code
-#define edp_set_error(connector_ptr, error)         (connector_ptr)->edp_data.error_code = (error) */
-
-#define edp_get_edp_state(connector_ptr)            (connector_ptr)->edp_data.state.edp
-#define edp_set_edp_state(connector_ptr, value)     (connector_ptr)->edp_data.state.edp = (value)
+#define edp_get_edp_state(connector_ptr)                (connector_ptr)->edp_data.state.edp.current
+#define edp_get_next_edp_state(connector_ptr)           (connector_ptr)->edp_data.state.edp.next
+#define edp_set_edp_state(connector_ptr, value)         (connector_ptr)->edp_data.state.edp.current = (value)
+#define edp_set_next_edp_state(connector_ptr, value)    (connector_ptr)->edp_data.state.edp.next = (value)
 
 #define edp_get_close_status(connector_ptr)                (connector_ptr)->edp_data.close_status
 #define edp_set_close_status(connector_ptr, value)         (connector_ptr)->edp_data.close_status = (value)
@@ -34,6 +33,7 @@
 STATIC void edp_reset_initial_data(connector_data_t * const connector_ptr)
 {
     edp_set_edp_state(connector_ptr, edp_configuration_init);
+    edp_set_next_edp_state(connector_ptr, edp_configuration_init);
 
     connector_ptr->edp_data.facilities.current = NULL;
     connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
