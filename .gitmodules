@@ -1,0 +1,3 @@
+[submodule "cc_testharness"]
+	path = cc_testharness
+	url = ssh://git@stash.digi.com/cc/cc_testharness.git
