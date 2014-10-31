@@ -66,6 +66,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
             }
 
             device_request = ptr;
+            device_request->response_data = NULL;
             target_data->user_context = ptr;
         }
     }
@@ -77,7 +78,6 @@ static connector_callback_status_t app_process_device_request_target(connector_d
             /* If it is a known target, fill the test structure */
             APP_DEBUG("Target data: %s\n", target_data->target);
             device_request->length_in_bytes = 0;
-            device_request->response_data = NULL;
             device_request->target = device_request_targets[i];
             goto done;
         }
@@ -343,7 +343,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                 free(device_request);
             }
             else{
-                APP_DEBUG("NULL POINTER in internal device_request structure!!!");
+                APP_DEBUG("NULL POINTER in internal device_request structure!!!\n");
             }
             break;
         case connector_request_id_data_service_receive_reply_data:
