@@ -203,3 +203,15 @@ TEST(dp_process_string_test, testNotEnoughSizeQuoted)
     CHECK_EQUAL(strlen("\"s,tr\""), bytes_processed);
 }
 
+TEST(dp_process_string_test, testBufferOverrun)
+{
+    size_t bytes_processed;
+    size_t bytes_copied = 0;
+    char string[] = "Just a simple string, except for that comma, nothing special";
+    char buffer[128];
+
+    memset(buffer, '*', sizeof buffer);
+    bytes_processed = dp_process_string(string, buffer, 5, &bytes_copied, string_needs_quotes(string), connector_true);
+
+    CHECK(buffer[bytes_processed] != '\0');
+}
