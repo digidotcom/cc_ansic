@@ -87,8 +87,6 @@ STATIC size_t dp_process_string(char const * const string, char * const buffer, 
         extra_chars++;
     }
 
-    buffer[bytes_processed] = '\0';
-
     if (bytes_used_ptr != NULL)
     {
         *bytes_used_ptr = bytes_processed - extra_chars;
