@@ -26,7 +26,7 @@
  *
  * The routine main() in the platform directory initializes Cloud Connector and
  * registers the application-defined callback. In the file application.c is the
- * application-defined callback app_connector_callback(), this routine calls app_data_service_handler()
+ * application-defined callback app_connector_callback(), this routine calls app_data_point_handler()
  * when a data service request is received.
  *
  * The routine application_run() (or application_step()) allocates and configures three data streams: "cpu_usage",
