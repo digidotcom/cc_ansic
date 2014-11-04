@@ -382,9 +382,12 @@ STATIC void rci_output_command_id(rci_t * const rci)
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     connector_bool_t overflow;
 
-    switch (rci->callback.rci_command_callback)
+    switch (rci->command.command_id)
     {
-        case rci_command_callback_set_query_setting_state:
+        case rci_command_set_setting:
+        case rci_command_query_setting:
+        case rci_command_set_state:
+        case rci_command_query_state:
             overflow = rci_output_uint32(rci, rci->command.command_id);
             if (!overflow)
             {
@@ -396,22 +399,33 @@ STATIC void rci_output_command_id(rci_t * const rci)
             break;
 
 #if (defined RCI_LEGACY_COMMANDS)
-        case rci_command_callback_do_command:
+        case rci_command_do_command:
             rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
             rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | RCI_DO_COMMAND_ATTRIBUTE_COUNT);
             rci_output_uint8(rci, RCI_DO_COMMAND_TARGET_BIN_ID);
             rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target));
 
             set_rci_output_state(rci, rci_output_state_do_command_payload);
+
+            set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
+
+            state_call(rci, rci_parser_state_traverse);
+
             break;
 
-        case rci_command_callback_reboot:
-        case rci_command_callback_set_factory_default:
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
             rci_output_uint32(rci, rci->command.command_id);
 
             set_rci_output_state(rci, rci_output_state_group_terminator);
+
+            set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);
+
+            state_call(rci, rci_parser_state_traverse);
             break;
 #endif
+        default:
+            ASSERT(0);
     }
 
     return;
@@ -678,7 +692,14 @@ STATIC void rci_output_do_command_payload(rci_t * const rci)
     }
 
     if (!overflow)
+    {
         set_rci_output_state(rci, rci_output_state_group_terminator);
+
+        set_rci_traverse_state(rci, rci_traverse_state_none);
+
+        state_call(rci, rci_parser_state_input);
+    }
+
 }
 #endif
 

@@ -512,19 +512,8 @@ STATIC void process_rci_command(rci_t * const rci)
                 goto done;
             }
             case rci_command_reboot:
-            {
-                set_rci_input_state(rci, rci_input_state_done);
-                set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
-                state_call(rci, rci_parser_state_traverse);
-                goto done;                
-            }
             case rci_command_set_factory_default:
-            {
-                set_rci_input_state(rci, rci_input_state_done);
-                set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);
-                state_call(rci, rci_parser_state_traverse);
-                goto done;                
-            }
+                break;
 #endif
             default:
                 /* unsupported command.
@@ -587,6 +576,24 @@ STATIC void process_group_id(rci_t * const rci)
 
     if (has_rci_terminated(group_id) && group_length == 1)
     {
+#if (defined RCI_LEGACY_COMMANDS)
+        switch (rci->command.command_id)
+        {
+            case rci_command_do_command:
+            case rci_command_reboot:
+            case rci_command_set_factory_default:
+            {
+                set_rci_input_state(rci, rci_input_state_command_id);
+
+                set_rci_traverse_state(rci, rci_traverse_state_group_end);
+                state_call(rci, rci_parser_state_traverse);
+                goto done;
+            }
+            default:
+                break;
+        }
+#endif
+
         if (have_group_id(rci))
         {
             /* not 1st group */
@@ -1166,10 +1173,10 @@ STATIC void process_do_command_payload(rci_t * const rci)
     }
 
     {
-        set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
+        set_rci_traverse_state(rci, rci_traverse_state_command_id);
         state_call(rci, rci_parser_state_traverse);
     }
-    set_rci_input_state(rci, rci_input_state_done);
+    set_rci_input_state(rci, rci_input_state_group_id);
 
 done:
     return;
