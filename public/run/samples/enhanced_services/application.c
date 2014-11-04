@@ -22,6 +22,7 @@
 
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
 extern connector_status_t app_send_put_request(connector_handle_t handle);
+extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -109,6 +110,10 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
         status = app_status_handler(request_id.status_request, data);
         break;
 
+    case connector_class_id_remote_config:
+        status = app_remote_config_handler(request_id.remote_config_request, data);
+        break;
+
     default:
         /* not supported */
         break;
@@ -116,11 +121,13 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     return status;
 }
 
-static health_metrics_data_t health_metrics_data;
-static health_metrics_config_t health_metrics_config;
+extern health_metrics_config_t health_metrics_config;
+
+connector_bool_t tcp_transport_started = connector_false;
 
 int application_run(connector_handle_t handle)
 {
+    static health_metrics_data_t health_metrics_data;
     int return_status = 0;
 
     health_metrics_config.eth.metrics = connector_true;
@@ -131,6 +138,11 @@ int application_run(connector_handle_t handle)
     health_metrics_config.sys.sample_rate = 1;
 
     health_metrics_config.report_rate = 1;
+
+    while(!tcp_transport_started)
+    {
+        sleep(1);
+    }
 
     for (;;)
     {
