@@ -959,13 +959,9 @@ STATIC connector_status_t data_service_initiate(connector_data_t * const connect
     {
         connector_request_data_service_send_t const * const data_service_send = request;
         char const * const path = data_service_send->path;
-        #if (defined CONNECTOR_DATA_POINTS)
         connector_bool_t const request_is_data_point = connector_bool(strncmp(path, internal_dp4d_path, internal_dp4d_path_strlen) == 0);
-        #else
-        connector_bool_t const request_is_data_point = connector_false;
-        #endif
 
-        if (request_is_data_point || request_is_device_health)
+        if (request_is_data_point)
         {
             initiator = MSG_REQUEST_INTERNAL;
         }
