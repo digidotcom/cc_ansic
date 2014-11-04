@@ -201,6 +201,7 @@ STATIC connector_status_t process_ds_receive_data(connector_data_t * const conne
 
     return result;
 }
+
 STATIC connector_status_t process_data_service_device_request(connector_data_t * const connector_ptr,
                                                  msg_service_request_t * const service_request)
 {
@@ -403,7 +404,6 @@ STATIC connector_status_t process_data_service_device_error(connector_data_t * c
                                                        msg_service_request_t * const service_request)
 {
     connector_status_t result = connector_working;
-
     msg_session_t * const session = service_request->session;
     data_service_context_t * const data_service = session->service_context;
     connector_data_service_status_t device_request;
@@ -464,10 +464,13 @@ STATIC connector_status_t data_service_device_request_callback(connector_data_t 
 
     case msg_service_type_free:
         {
-            msg_session_t * const session = service_request->session;
-            if (session->error == connector_session_error_none)
+            msg_session_t const * const session = service_request->session;
+            data_service_context_t const * const data_service = session->service_context;
+            connector_request_id_data_service_t const last_user_request = data_service->request_type;
+
+            if (last_user_request != connector_request_id_data_service_receive_status)
             {
-                /* If there is no error, call the user to inform that session is done */
+                /* Always call the user to inform that session is done */
                 status = process_data_service_device_error(connector_ptr, service_request);
                 if (status != connector_working)
                     break;
@@ -647,6 +650,7 @@ STATIC connector_status_t process_send_request(connector_data_t * const connecto
     }
 
     status = call_put_request_user(connector_ptr, service_request, connector_request_id_data_service_send_data, &user_data);
+
     if (status == connector_working)
     {
         service_data->flags = 0;
@@ -755,6 +759,8 @@ STATIC connector_status_t process_send_error(connector_data_t * const connector_
 {
     connector_status_t status = connector_working;
     connector_data_service_status_t user_data;
+    msg_session_t * const session = service_request->session;
+    data_service_context_t * const data_service = session->service_context;
 
     user_data.transport = connector_transport_tcp;
     user_data.user_context = cb_context;
@@ -780,7 +786,8 @@ STATIC connector_status_t process_send_error(connector_data_t * const connector_
             break;
     }
 
-    status = call_put_request_user(connector_ptr, service_request, connector_request_id_data_service_send_status, &user_data);
+    data_service->request_type = connector_request_id_data_service_send_status;
+    status = call_put_request_user(connector_ptr, service_request, data_service->request_type, &user_data);
 
     return status;
 }
@@ -811,10 +818,13 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
 
         case msg_service_type_free:
             {
-                msg_session_t * const session = service_request->session;
-                if (session->error == connector_session_error_none)
+                msg_session_t const * const session = service_request->session;
+                data_service_context_t const * const data_service = session->service_context;
+                connector_request_id_data_service_t const last_user_request = data_service->request_type;
+
+                if (last_user_request != connector_request_id_data_service_send_status)
                 {
-                    /* If there is no error, call the user to inform that session is done */
+                    /* Always call the user to inform that session is done */
                     status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
                     if (status != connector_working)
                         break;
