@@ -174,7 +174,7 @@ class PutRequestDvtTestCase(cc_testcase.TestCase):
 
         # Initialize vars
         target = "test_put_request_timeout"
-        payload = generateRandomString(5000)
+        payload = generateRandomString(50000)
 
         # Initiate action on device
         self.sendDeviceRequestToInitiateAction(target, payload)

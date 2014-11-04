@@ -273,7 +273,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                 static int timeout_counter = 0;
                 timeout_counter++;
 
-                if ( timeout_counter > 2)
+                if ( timeout_counter > 10)
                 {
                     if( (timeout_counter % 5000000) == 0 )
                     {
@@ -281,6 +281,11 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                     }
                     status = connector_callback_busy;
                     goto done;
+                }
+                else
+                {
+                    /* We send some data chunks before start with the busy state */
+                    APP_DEBUG("test_put_request_timeout: process the call, waiting for start the busy state...\n");
                 }
 
             }
