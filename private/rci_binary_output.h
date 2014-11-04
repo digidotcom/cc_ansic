@@ -414,6 +414,14 @@ STATIC void rci_output_command_id(rci_t * const rci)
             break;
 
         case rci_command_reboot:
+            rci_output_uint32(rci, rci->command.command_id);
+
+            set_rci_output_state(rci, rci_output_state_group_terminator);
+
+            set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
+
+            state_call(rci, rci_parser_state_traverse);
+            break;
         case rci_command_set_factory_default:
             rci_output_uint32(rci, rci->command.command_id);
 
