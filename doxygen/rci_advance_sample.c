@@ -154,7 +154,7 @@
  * Run @ref rci_tool to generate remote_config.h:
  * @code
  *
- *   java -jar /connector/tools/ConfigGenerator.jar username:password "Linux Application" 1.0.0.0 config.rci
+ *   java -jar /connector/tools/ConfigGenerator.jar username:password -url=login.etherios.com "Linux Application" 1.0.0.0 config.rci
  *
  * @endcode
  * @note To run the above line you need to have Java Runtime Environment installed in your system. If you
