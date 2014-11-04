@@ -294,7 +294,7 @@ class PutRequestDvtTestCase(cc_testcase.TestCase):
         """
 
         # We do it several times to verify that the archive process is ok
-        dataChunkSize = 5 # This is the chunk size
+        dataChunkSize = 500 # This is the chunk size
         filePath = "%s/test/test_archive.txt" % self.device_id
 
         for i in range(1,20):
@@ -361,16 +361,33 @@ class PutRequestDvtTestCase(cc_testcase.TestCase):
 
     def verifyFileContent(self, filePath, expectedContent, historic=False):
 
-        # Get File from Device Cloud
-        if ( historic ):
-            result,fileContent,requestResponse = self.cloudHandler.downloadFileHistoryFromServer(filePath)
-        else:
-            result,fileContent,requestResponse = self.cloudHandler.downloadFileFromServer(filePath)
+        maxRetries = 3
+        counter = 0
+        verificationResult = False
+        message = ""
 
-        if(not result):
-            self.log.error("Response Error: %s" % requestResponse.content)
+        while ( counter < maxRetries ):
+            counter += 1
 
-        if ( fileContent != expectedContent ):
-            self.fail("File content is not the expected: Received '%s'\n , Expected '%s'" % (fileContent, expectedContent) )
-        else:
-            self.log.info("File content matches with the expected (total length %d)!!!" % len(fileContent))
+            # Get File from Device Cloud
+            if ( historic ):
+                result,fileContent,requestResponse = self.cloudHandler.downloadFileHistoryFromServer(filePath)
+            else:
+                result,fileContent,requestResponse = self.cloudHandler.downloadFileFromServer(filePath)
+
+            if(not result):
+                self.log.error("Response Error: %s" % requestResponse.content)
+
+            if ( fileContent != expectedContent ):
+                message = "File content is not the expected: Received '%s'\n , Expected '%s'" % (fileContent, expectedContent)
+                self.log.warning( message )
+                time.sleep(1)
+                continue
+            else:
+                self.log.info("File content matches with the expected (total length %d)!!!" % len(fileContent))
+                verificationResult = True
+                break
+
+
+        if ( not verificationResult ):
+            self.fail( message )

@@ -181,15 +181,16 @@ class PutRequestDvtTestCase(cc_testcase.TestCase):
 
 
         # Wait until the send process is finished
-        result, line, readBuffer = self.deviceHandler.readUntilPattern ( pattern="Data service error:", timeout=80)
-        if( result ):
+        result, line, readBuffer = self.deviceHandler.readUntilPattern ( pattern="Data service error:", timeout=180)
+        if( not result ):
             self.fail("Console feedback readed!!")
 
         # Verify that the busy message is in the console feedback
-        if ( readBuffer.find("test_put_request_timeout: return a busy state...") == -1 ):
+        numberBusyMessages = readBuffer.findAll("test_put_request_timeout: return a busy state...")
+        if ( len(numberBusyMessages) < 6 ):
             self.fail("We didn't found the expected busy message in the console feedback")
         else:
-            self.log.info("Found the expected busy message in the console feedback")
+            self.log.info("Found the expected busy messages (%d) in the console feedback" % len(numberBusyMessages))
 
         # Verify file content uploaded on Device Cloud
         filePath = "%s/test/test_overwrite.txt" % self.device_id
@@ -225,18 +226,36 @@ class PutRequestDvtTestCase(cc_testcase.TestCase):
 
 
 
+
     def verifyFileContent(self, filePath, expectedContent, historic=False):
 
-        # Get File from Device Cloud
-        if ( historic ):
-            result,fileContent,requestResponse = self.cloudHandler.downloadFileHistoryFromServer(filePath)
-        else:
-            result,fileContent,requestResponse = self.cloudHandler.downloadFileFromServer(filePath)
+        maxRetries = 3
+        counter = 0
+        verificationResult = False
+        message = ""
 
-        if(not result):
-            self.log.error("Response Error: %s" % requestResponse.content)
+        while ( counter < maxRetries ):
+            counter += 1
 
-        if ( fileContent != expectedContent ):
-            self.fail("File content is not the expected: Received '%s'\n , Expected '%s'" % (fileContent, expectedContent) )
-        else:
-            self.log.info("File content matches with the expected (total length %d)!!!" % len(fileContent))
+            # Get File from Device Cloud
+            if ( historic ):
+                result,fileContent,requestResponse = self.cloudHandler.downloadFileHistoryFromServer(filePath)
+            else:
+                result,fileContent,requestResponse = self.cloudHandler.downloadFileFromServer(filePath)
+
+            if(not result):
+                self.log.error("Response Error: %s" % requestResponse.content)
+
+            if ( fileContent != expectedContent ):
+                message = "File content is not the expected: Received '%s'\n , Expected '%s'" % (fileContent, expectedContent)
+                self.log.warning( message )
+                time.sleep(1)
+                continue
+            else:
+                self.log.info("File content matches with the expected (total length %d)!!!" % len(fileContent))
+                verificationResult = True
+                break
+
+
+        if ( not verificationResult ):
+            self.fail( message )
