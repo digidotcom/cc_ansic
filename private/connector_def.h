@@ -224,6 +224,9 @@ typedef struct connector_data {
     connector_remote_config_data_t rci_data;
 #endif
 
+#if (defined CONNECTOR_DATA_POINTS)
+    connector_bool_t process_csv;
+#endif
 #if (defined CONNECTOR_DEVICE_HEALTH)
     struct {
         struct dev_health_info {

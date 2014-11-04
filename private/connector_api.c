@@ -521,6 +521,10 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     }
 #endif
 
+#if (defined CONNECTOR_DATA_POINTS)
+    connector_handle->process_csv = connector_true;
+#endif
+
     goto done;
 
 error:

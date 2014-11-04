@@ -481,23 +481,24 @@ done:
 STATIC connector_status_t dp_process_request(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     connector_status_t result = connector_idle;
-    static connector_bool_t process_csv = connector_true;
 
-    if (process_csv)
+    if (connector_ptr->process_csv)
     {
         if ((data_point_pending != NULL) && (data_point_pending->transport == transport))
         {
             result = dp_process_csv(connector_ptr, data_point_pending);
             if (result != connector_pending)
             {
-                process_csv = connector_false;
+                connector_ptr->process_csv = connector_false;
                 data_point_pending = NULL;
                 goto done;
             }
         }
     }
     else
-        process_csv = connector_true;
+    {
+        connector_ptr->process_csv = connector_true;
+    }
 
     if ((data_point_binary_pending != NULL) && (data_point_binary_pending->transport == transport))
     {
