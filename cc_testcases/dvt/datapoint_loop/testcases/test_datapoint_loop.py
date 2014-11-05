@@ -95,7 +95,7 @@ class ConnectionTestCase(cc_testcase.TestCase):
 
                 self.log.info("Verify if DataPoints uploaded in loop %s match with the readed from Device Cloud..." % loop)
 
-                for index in range(0,numberDataPointsUploaded-1):
+                for index in range(0,numberDataPointsUploaded):
                     # Get DataPoint readed from console and DataPoint from Device Cloud
                     eachDatapointFromDeviceCloud = datapointListFromDeviceCloud[index]
                     eachDatapointUploaded = datapointList[index]
