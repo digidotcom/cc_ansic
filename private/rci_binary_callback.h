@@ -91,8 +91,8 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
 
          case rci_command_callback_reboot:
          case rci_command_callback_set_factory_default:
-#endif
             goto done;
+#endif
     }
 
     switch (remote_config_request)
@@ -144,7 +144,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
         break;
     }
 
+#if (defined RCI_LEGACY_COMMANDS)
 done:
+#endif
     rci->callback.request.remote_config_request = remote_config_request;
     rci->callback.status = connector_callback_busy;
 }
