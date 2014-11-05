@@ -56,6 +56,14 @@ typedef struct rci_data {
 
 typedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);
 
+typedef enum {
+    connector_remote_legacy_action_set = connector_remote_action_set,
+    connector_remote_legacy_action_query = connector_remote_action_query,
+    connector_remote_legacy_action_do_command,
+    connector_remote_legacy_action_reboot,
+    connector_remote_legacy_action_set_factory_def
+} connector_remote_legacy_action_t;
+
 typedef struct {
     connector_element_access_t access;
     connector_element_value_type_t type;

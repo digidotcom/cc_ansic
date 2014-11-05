@@ -506,13 +506,18 @@ STATIC void process_rci_command(rci_t * const rci)
                 rci->buffer.input.current--;
                 rci->shared.content.length = 0;
 
+                rci->shared.callback_data.action = connector_remote_legacy_action_do_command;
+
                 set_rci_input_state(rci, rci_input_state_do_command_target);
 
                 state_call(rci, rci_parser_state_input);
                 goto done;
             }
             case rci_command_reboot:
+                rci->shared.callback_data.action = connector_remote_legacy_action_reboot;
+                break;
             case rci_command_set_factory_default:
+                rci->shared.callback_data.action = connector_remote_legacy_action_set_factory_def;
                 break;
 #endif
             default:

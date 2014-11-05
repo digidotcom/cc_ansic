@@ -92,17 +92,15 @@ static connector_callback_status_t app_process_session_end(connector_remote_conf
 
 static connector_callback_status_t app_process_action_start(connector_remote_config_t * const remote_config)
 {
-    APP_DEBUG("app_process_action_start\n");
+    APP_DEBUG("app_process_action_start: action=%d\n", remote_config->action);
 
-    UNUSED_ARGUMENT(remote_config);
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_process_action_end(connector_remote_config_t * const remote_config)
 {
-    APP_DEBUG("app_process_action_end\n");
+    APP_DEBUG("app_process_action_end: action=%d\n", remote_config->action);
 
-    UNUSED_ARGUMENT(remote_config);
     return connector_callback_continue;
 }
 
