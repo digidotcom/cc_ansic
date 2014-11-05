@@ -410,7 +410,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
             set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
 
             state_call(rci, rci_parser_state_traverse);
-
             break;
 
         case rci_command_reboot:
@@ -422,6 +421,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
 
             state_call(rci, rci_parser_state_traverse);
             break;
+
         case rci_command_set_factory_default:
             rci_output_uint32(rci, rci->command.command_id);
 
@@ -432,10 +432,12 @@ STATIC void rci_output_command_id(rci_t * const rci)
             state_call(rci, rci_parser_state_traverse);
             break;
 #endif
-        default:
-            ASSERT(0);
+
+        case rci_command_query_descriptor:
+            ASSERT_GOTO(connector_false, done);
     }
 
+done:
     return;
 }
 
