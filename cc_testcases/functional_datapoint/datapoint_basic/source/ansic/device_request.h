@@ -15,6 +15,7 @@ typedef struct test_thread_arguments {
     unsigned int numberOfLoops;
     unsigned int numberPointsPerStream;
     unsigned int numberStreams;
+    char * streamIdentifier;
     char * valueType;
     unsigned int length_bytes;
 } test_thread_arguments_t;

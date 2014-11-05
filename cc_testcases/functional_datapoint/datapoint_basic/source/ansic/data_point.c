@@ -206,13 +206,98 @@ void app_show_datastreams(connector_request_data_point_t * dp_ptr)
                         connector_data_point_t point = stream->point[point_index];
 
                         /* Print the DataPoint info */
-                        APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%d'\n",
+                        switch ( stream->type )
+                        {
+                            case connector_data_point_type_integer:
+                                APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%d'\n",
+                                    point.location.value.text.latitude,
+                                    point.location.value.text.longitude,
+                                    point.location.value.text.elevation,
+                                    (int)point.quality.value,
+                                    point.description,
+                                    point.data.element.native.int_value);
+                                break;
+
+                            case connector_data_point_type_float:
+                                #if (defined FLOATING_POINT_SUPPORTED)
+                                    APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%f'\n",
                                         point.location.value.text.latitude,
                                         point.location.value.text.longitude,
                                         point.location.value.text.elevation,
                                         (int)point.quality.value,
                                         point.description,
-                                        point.data.element.native.int_value);
+                                        point.data.element.native.float_value);
+                                #else
+                                    APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: 's'\n",
+                                        point.location.value.text.latitude,
+                                        point.location.value.text.longitude,
+                                        point.location.value.text.elevation,
+                                        (int)point.quality.value,
+                                        point.description,
+                                        point.data.element.text);
+                                #endif
+                                break;
+                            case connector_data_point_type_double:
+                                #if (defined FLOATING_POINT_SUPPORTED)
+                                    APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%f'\n",
+                                        point.location.value.text.latitude,
+                                        point.location.value.text.longitude,
+                                        point.location.value.text.elevation,
+                                        (int)point.quality.value,
+                                        point.description,
+                                        point.data.element.native.double_value);
+                                #else
+                                    APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%s' \n",
+                                        point.location.value.text.latitude,
+                                        point.location.value.text.longitude,
+                                        point.location.value.text.elevation,
+                                        (int)point.quality.value,
+                                        point.description,
+                                        point.data.element.text);
+                                #endif
+                                break;
+                            case connector_data_point_type_long:
+                                #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                                    APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%" PRId64 "' \n",
+                                        point.location.value.text.latitude,
+                                        point.location.value.text.longitude,
+                                        point.location.value.text.elevation,
+                                        (int)point.quality.value,
+                                        point.description,
+                                        point.data.element.native.long_value);
+                                #else
+                                    APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%s' \n",
+                                        point.location.value.text.latitude,
+                                        point.location.value.text.longitude,
+                                        point.location.value.text.elevation,
+                                        (int)point.quality.value,
+                                        point.description,
+                                        point.data.element.text);
+                                #endif
+                                break;
+                            case connector_data_point_type_string:
+                                APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%s' \n",
+                                    point.location.value.text.latitude,
+                                    point.location.value.text.longitude,
+                                    point.location.value.text.elevation,
+                                    (int)point.quality.value,
+                                    point.description,
+                                    point.data.element.native.string_value);
+                                break;
+                            default:
+                                APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: 'XX'\n",
+                                    point.location.value.text.latitude,
+                                    point.location.value.text.longitude,
+                                    point.location.value.text.elevation,
+                                    (int)point.quality.value,
+                                    point.description);
+                                break;
+
+                        }
+
+
+                            
+
                     }
                 }
 
@@ -332,7 +417,7 @@ done:
 /*********** DATASTREAM STRUCTURE ************/
 /*********************************************/
 
-connector_request_data_point_t * generateDataStreamStructure(size_t const numberStreams, size_t const numberPointsPerStream, connector_data_point_type_t const datapoints_type)
+connector_request_data_point_t * generateDataStreamStructure(size_t const numberStreams, size_t const numberPointsPerStream, char * streamIdentifier, connector_data_point_type_t const datapoints_type)
 {
 
     /************ COMMON */
@@ -347,119 +432,169 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
     data_point_structure->user_context = (void *)data_point_structure;
 
 
+//     char *description = malloc (sizeof (char) * 40);
+//     sprintf(description, "this is the description with index %d", (int)point_index);
+//     point->description = description;
 
 
 
-    /************* CREATE DATASTREAM */
-    /* Configure the DataStream with the settings */
-    app_setup_stream(&data_point_structure->stream[0],
-                     "incremental", /* char * stream_id: string to identify the DataStream */
-                     "Counts", /* char * units: string to identify the units of the samples */
-//                      connector_data_point_type_integer, /* connector_data_point_type_t data_type: internal type for the samples */
-                     datapoints_type,
-                     NULL); /* char * forward_to: string to save the datastream to forward the samples */
+    /************* CREATE DATASTREAMS */
+    for( size_t stream_index = 0; stream_index<numberStreams; stream_index++ )
+    {
+        /* Configure the DataStream with the settings */
+        app_setup_stream(&data_point_structure->stream[stream_index],
+                        streamIdentifier, /* char * stream_id: string to identify the DataStream */
+                        "Counts", /* char * units: string to identify the units of the samples */
+                        datapoints_type, /* connector_data_point_type_t data_type: internal type for the samples */
+                        NULL); /* char * forward_to: string to save the datastream to forward the samples */
+    }
 
 
     /************* GENERATE DATAPOINTS */
     /* Setup the values for each DataPoint */
     size_t point_index = 0;
-    size_t stream_index = 0;
 
-
-    while( point_index < numberPointsPerStream )
+    for( size_t stream_index = 0;stream_index<numberStreams;stream_index++ )
     {
-        /* Get the pointer to the DataPoint */
-        connector_data_point_t * const point = &data_point_structure->stream[stream_index].point[point_index];
-
-        /* Set the timestamp in the DataPoint */
+        while( point_index < numberPointsPerStream )
         {
-            time_t const current_time = time(NULL);
+            /* Get the pointer to the DataPoint */
+            connector_data_point_t * const point = &data_point_structure->stream[stream_index].point[point_index];
 
-            point->time.source = connector_time_local_epoch_fractional;
-            point->time.value.since_epoch_fractional.seconds = current_time;
-            point->time.value.since_epoch_fractional.milliseconds = 0;
+            /* Set the timestamp in the DataPoint */
+            {
+                time_t const current_time = time(NULL);
+
+                point->time.source = connector_time_local_epoch_fractional;
+                point->time.value.since_epoch_fractional.seconds = current_time;
+                point->time.value.since_epoch_fractional.milliseconds = 0;
+            }
+
+
+
+            /* Set the location coordinates */
+            {
+                /* Generate random coordinates */
+                char *latitude_str = app_get_random_coordinate(connector_false);
+                char *longitude_str = app_get_random_coordinate(connector_true);
+                char *elevation_str = app_get_random_coordinate(connector_true);
+
+                point->location.type = connector_location_type_text;
+                point->location.value.text.latitude = latitude_str;
+                point->location.value.text.longitude = longitude_str;
+                point->location.value.text.elevation = elevation_str;
+            }
+
+            /* Set the quality of the sample */
+            point->quality.type = connector_quality_type_native; /* connector_quality_type_native (integer) or connector_quality_type_ignore*/
+            if ( point->quality.type == connector_quality_type_native )
+            {
+                int quality_value = app_get_random_integer(2147483647); /* 2147483647 Maximun Integer */
+                point->quality.value = quality_value;
+            }
+
+            /* Set the point description */
+            /*point->description = NULL;*/
+            char *description = malloc (sizeof (char) * 40);
+            sprintf(description, "this is the description with index %d", (int)point_index);
+            point->description = description;
+
+
+            /* Set the data type */
+            point->data.type = connector_data_type_native;
+
+            /* Fill the value of the point */
+            switch ( data_point_structure->stream[stream_index].type)
+            {
+                case connector_data_point_type_integer:
+                    point->data.element.native.int_value = app_get_incremental();
+                    break;
+
+                case connector_data_point_type_float:
+                    #if (defined FLOATING_POINT_SUPPORTED)
+                    {
+                        point->data.element.native.float_value = (float)drand48();
+                    }
+                    #else
+                    {
+                        static char value[APP_MAX_POINTS][sizeof(float) * 2];
+
+                        point->data.type = connector_data_type_text;
+                        snprintf(value[test_case], sizeof value[test_case], "%f", (float)drand48()); /* this also requires floating point, works for DVT */
+                        point->data.element.text = value[test_case];
+                    }
+                    #endif
+                    break;
+
+                case connector_data_point_type_double:
+                    #if (defined FLOATING_POINT_SUPPORTED)
+                    {
+                        point->data.element.native.double_value = drand48();
+                    }
+                    #else
+                    {
+                        static char value[APP_MAX_POINTS][sizeof(double) * 2];
+
+                        point->data.type = connector_data_type_text;
+                        snprintf(value[test_case], sizeof value[test_case], "%lf", drand48()); /* this also requires floating point, works for DVT */
+                        point->data.element.text = value[test_case];
+                    }
+                    #endif
+                    break;
+
+                case connector_data_point_type_long:
+                    #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                    {
+                        /* function return signed long integers, uniformly distributed over the interval [-2**31,2**31] */
+                        point->data.element.native.long_value = mrand48();
+                    }
+                    #else
+                    {
+                        #define LONG_SIZE (sizeof(long) * 3)
+
+                        char *value = malloc (LONG_SIZE);
+                        /* Reset the memory allocated to 0 */
+                        memset(value, 0, LONG_SIZE);
+
+
+                        point->data.type = connector_data_type_text;
+                        snprintf(value, LONG_SIZE, "%ld", mrand48());
+                        point->data.element.text = value;
+                    }
+                    #endif
+                    break;
+
+                case connector_data_point_type_string:
+                    #define TEST_STRING_PATTERNS 6
+                    {
+                    static int index = 0;
+                    static char * value[TEST_STRING_PATTERNS] = {
+                                            "long string 300 chars...............................................................................1...................................................................................................2...................................................................................................3...................................................................................................",
+                        "Hello World!",
+                        "c,o,m,m,a",
+//                         "line\nfeed",
+                        "t\ta\tb",
+                        "\"quote\"",
+                        "s p a c e"};
+
+                    point->data.element.native.string_value = value[index];
+
+                    index++;
+                    index = index % TEST_STRING_PATTERNS;
+                    }
+
+                    break;
+
+                default:
+                    APP_DEBUG("ERROR: generateDataStreamStructure(), Unknown DataPoint type...\n");
+                    ASSERT(0);
+                    break;
+            }
+
+
+            point_index++;
+
         }
-
-
-
-        /* Set the location coordinates */
-        {
-            /* Generate random coordinates */
-            char *latitude_str = app_get_random_coordinate(connector_false);
-            char *longitude_str = app_get_random_coordinate(connector_true);
-            char *elevation_str = app_get_random_coordinate(connector_true);
-
-            point->location.type = connector_location_type_text;
-            point->location.value.text.latitude = latitude_str;
-            point->location.value.text.longitude = longitude_str;
-            point->location.value.text.elevation = elevation_str;
-        }
-
-        /* Set the quality of the sample */
-        point->quality.type = connector_quality_type_native; /* connector_quality_type_native (integer) or connector_quality_type_ignore*/
-        if ( point->quality.type == connector_quality_type_native )
-        {
-            int quality_value = app_get_random_integer(2147483647); /* 2147483647 Maximun Integer */
-            point->quality.value = quality_value;
-        }
-
-        /* Set the point description */
-        /*point->description = NULL;*/
-        char *description = malloc (sizeof (char) * 40);
-        sprintf(description, "this is the description with index %d", (int)point_index);
-        point->description = description;
-
-
-        /* Set the data type */
-        point->data.type = connector_data_type_native;
-
-        /* Fill the value of the point */
-        switch ( data_point_structure->stream[stream_index].type)
-        {
-            case connector_data_point_type_integer:
-                point->data.element.native.int_value = app_get_incremental();
-                break;
-
-            case connector_data_point_type_float:
-                point->data.element.native.float_value = app_get_random_float(1000.99);
-                break;
-
-            case connector_data_point_type_double:
-                point->data.element.native.float_value = app_get_random_float(1000.99);
-                break;
-
-            case connector_data_point_type_long:
-                #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
-                {
-                    /* function return signed long integers, uniformly distributed over the interval [-2**31,2**31] */
-                    point->data.element.native.long_value = mrand48();
-
-                }
-                #else
-                {
-                    #define LONG_SIZE (sizeof(long) * 3)
-
-                    char *value = malloc (LONG_SIZE);
-                    /* Reset the memory allocated to 0 */
-                    memset(value, 0, LONG_SIZE);
-
-
-                    point->data.type = connector_data_type_text;
-                    snprintf(value, LONG_SIZE, "%ld", mrand48());
-                    point->data.element.text = value;
-                }
-                #endif
-                break;
-
-            default:
-                APP_DEBUG("ERROR: generateDataStreamStructure(), Unknown DataPoint type...\n");
-                ASSERT(0);
-                break;
-        }
-
-
-        point_index++;
-
     }
 
 
@@ -484,6 +619,7 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
 /*************************************************/
 // connector_status_t app_start_test_case_datapoints_loop(size_t const numberOfLoops, size_t const numberStreams, size_t const numberPointsPerStream){
 void * app_start_test_case_datapoints_loop(void * args){
+
     /* Initialize settings */
     connector_status_t status = connector_init_error;
     /* Parse the passed arguments structure */
@@ -514,6 +650,22 @@ void * app_start_test_case_datapoints_loop(void * args){
     {
         datapoints_type = connector_data_point_type_integer;
     }
+    else if(strcmp(test_arguments->valueType, "Float") == 0)
+    {
+        datapoints_type = connector_data_point_type_float;
+    }
+    else if(strcmp(test_arguments->valueType, "Double") == 0)
+    {
+        datapoints_type = connector_data_point_type_double;
+    }
+    else if(strcmp(test_arguments->valueType, "Long") == 0)
+    {
+        datapoints_type = connector_data_point_type_long;
+    }
+    else if(strcmp(test_arguments->valueType, "String") == 0)
+    {
+        datapoints_type = connector_data_point_type_string;
+    }
     else
     {
         datapoints_type = connector_data_point_type_geojson;
@@ -528,8 +680,10 @@ void * app_start_test_case_datapoints_loop(void * args){
 
         APP_DEBUG("BEGIN LOOP %d of %d ----------------------------------------\n",i,test_arguments->numberOfLoops);
 
+//         char * streamIdentifier = "pruebanumero";
+
         /* Generate and fill a DataStream/DataPoint structure */
-        connector_request_data_point_t * const data_point_structure = generateDataStreamStructure(test_arguments->numberStreams, test_arguments->numberPointsPerStream, datapoints_type);
+        connector_request_data_point_t * const data_point_structure = generateDataStreamStructure(test_arguments->numberStreams, test_arguments->numberPointsPerStream, test_arguments->streamIdentifier, datapoints_type);
 
 
         while( status != connector_success)
@@ -570,7 +724,7 @@ void * app_start_test_case_datapoints_loop(void * args){
         }
 
 
-        sleep(15);
+        sleep(2);
     }
 
 
@@ -581,6 +735,11 @@ void * app_start_test_case_datapoints_loop(void * args){
         {
             APP_DEBUG("Free test_arguments->valueType...\n");
             free(test_arguments->valueType);
+        }
+        if ( test_arguments->streamIdentifier != NULL )
+        {
+            APP_DEBUG("Free test_arguments->streamIdentifier...\n");
+            free(test_arguments->streamIdentifier);
         }
         APP_DEBUG("Free test_arguments...\n");
         free(test_arguments);

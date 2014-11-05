@@ -45,10 +45,8 @@ typedef struct parsed_payload{
 
 
 /* Auxiliar functions to manage the payload */
-// parsed_payload_t * getParsedPayload(const char * payload, char delimiter);
 int split (char *str, char c, char ***arr);
-// char** getParsedPayload(char * payload, char delimiter);
-void freeQueue(parsed_payload_t * queue);
+
 
 
 
@@ -136,7 +134,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         if (!receive_data->more_data)
         {
             /* ONLY FOR DEBUG */
-            APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", device_request->length_in_bytes, device_request->payload, device_request->target);
+            APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", (unsigned int)device_request->length_in_bytes, device_request->payload, device_request->target);
 //             APP_DEBUG("Total Payload received with length = \"%d\" for %s\n", device_request->length_in_bytes, device_request->target);
         }
     }
@@ -224,7 +222,9 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
 
 
-
+/****************************************************/
+/****** MANAGE ALL CALLBACKS FROM DATA SERVICE ******/
+/****************************************************/
 connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id, void * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
@@ -248,23 +248,16 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
             if(device_request->target != NULL){
                 /* If the target is supported, manage the payload and do the corresponding action */
 
-                    /* Create a string null terminated to process the payload */
-                    char * payload = malloc( sizeof(char) * (device_request->length_in_bytes + 1) );
-                    memcpy(payload, device_request->payload, device_request->length_in_bytes);
-                    payload[device_request->length_in_bytes] = '\0';
+                /* Create a string null terminated to process the payload */
+                char * payload = malloc( sizeof(char) * (device_request->length_in_bytes + 1) );
+                memcpy(payload, device_request->payload, device_request->length_in_bytes);
+                payload[device_request->length_in_bytes] = '\0';
 
-//                     printf("Payload before the split: '%s'\n", payload);
-
-                    /* Split the payload into the arguments */
-                    char **arguments = NULL;
-                    char delimiter = ';';
-                    int numberOfArguments = 0;
-                    numberOfArguments = split(payload, delimiter, &arguments);
-
-//                     printf("found %d tokens.\n", numberOfArguments);
-// 
-//                     for (int i = 0; i < numberOfArguments; i++)
-//                         printf("string #%d: %s\n", i, arguments[i]);
+                /* Split the payload into the arguments */
+                char **arguments = NULL;
+                char delimiter = ';';
+                int numberOfArguments = 0;
+                numberOfArguments = split(payload, delimiter, &arguments);
 
 
                 /* Test cases from test_put_request_positive.py */
@@ -275,21 +268,26 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                     unsigned int numberStreams = atoi(arguments[1]); /* Obtain an Integer from a char[] */
                     unsigned int numberPointsPerStream = atoi(arguments[2]); /* Obtain an Integer from a char[] */
                     char const * valueType = arguments[3];
+                    char const * streamIdentifier = arguments[4];
 
 
                     /* Execute the TEST_CASE in a new thread **********************/
                     /* Create internal structure to save the test arguments */
-                    test_thread_arguments_t * arguments = malloc(sizeof(test_thread_arguments_t));
-                    arguments->numberOfLoops = numberOfLoops;
-                    arguments->numberPointsPerStream = numberPointsPerStream;
-                    arguments->numberStreams = numberStreams;
-                    arguments->valueType = malloc( (sizeof(char) * strlen(valueType)) + 1);
-                    sprintf(arguments->valueType, "%s", valueType);
-                    arguments->length_bytes = strlen(valueType);
+                    test_thread_arguments_t * test_arguments = malloc(sizeof(test_thread_arguments_t));
+                    test_arguments->numberOfLoops = numberOfLoops;
+                    test_arguments->numberPointsPerStream = numberPointsPerStream;
+                    test_arguments->numberStreams = numberStreams;
+                    /* Clone the value type */
+                    test_arguments->valueType = malloc( (sizeof(char) * strlen(valueType)) + 1);
+                    sprintf(test_arguments->valueType, "%s", valueType);
+                    /* Clone the stream identifier */
+                    test_arguments->streamIdentifier = malloc( (sizeof(char) * strlen(streamIdentifier)) + 1);
+                    sprintf(test_arguments->streamIdentifier, "%s", streamIdentifier);
+
 
                     /* Create a new thread to execute the test case with the arguments */
                     pthread_t test_case_thread;
-                    int ccode = pthread_create(&test_case_thread, NULL, app_start_test_case_datapoints_loop, (void *)arguments);
+                    int ccode = pthread_create(&test_case_thread, NULL, app_start_test_case_datapoints_loop, (void *)test_arguments);
                     if (ccode != 0)
                     {
                         APP_DEBUG("thread_create() app_start_test_case_datapoints_loop on data_point.c %d\n", ccode);
@@ -297,7 +295,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
 
                 }
 
-                /* Release the memory allocated for the queue */
+                /* Free the memory allocated for the arguments */
                 for (int i = 0; i < numberOfArguments; i++)
                     free(arguments[i]);
                 free(arguments);
@@ -411,48 +409,3 @@ int split (char *str, char c, char ***arr)
 
     return count;
 }
-
-
-
-
-
-
-void freeQueue(parsed_payload_t * queue){
-
-    parsed_payload_t * auxiliar = queue;
-
-    while(auxiliar != NULL){
-        parsed_payload_t * next = auxiliar->next;
-        free(auxiliar->element);
-        free(auxiliar);
-        auxiliar = next;
-    }
-    //free(queue);
-    queue = NULL;
-}
-
-
-// void freeQueue(parsed_payload_t * queue){
-// 
-//     if ( queue != NULL )
-//     {
-//         /* Free recursive list */
-//         freeQueue(queue->next);
-//         if ( queue->next != NULL )
-//         {
-//             free(queue->next);
-//         }
-// 
-//         /* Free element */
-//         if ( queue->element != NULL )
-//         {
-//             free(queue->element);
-//         }
-//     }
-// 
-//     return;
-// 
-// 
-// }
-
-

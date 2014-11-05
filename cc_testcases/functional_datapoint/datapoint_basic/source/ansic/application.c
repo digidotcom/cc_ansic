@@ -191,6 +191,10 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
 int application_run(connector_handle_t handle)
 {
+    /* Generate entropy for random values, only one call per run */
+    srand(((unsigned int)time(NULL)));
+    srand48(((unsigned int)time(NULL)));
+
     /* Save in a Global var the Cloud Connector instance */
     CLOUD_HANDLER = handle;
 
