@@ -855,6 +855,10 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
 
         service_request->send_data_initiator = connector_send_data_initiator_data_point;
     }
+	else
+	{
+        service_request->send_data_initiator = connector_send_data_initiator_user;
+	}
     #endif
 
     #if (defined CONNECTOR_DEVICE_HEALTH)
