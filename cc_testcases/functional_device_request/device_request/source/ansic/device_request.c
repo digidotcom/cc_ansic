@@ -145,7 +145,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
     if (!receive_data->more_data)
     {
         device_request->bytes_sent = 0;
-        APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", device_request->length_in_bytes, device_request->response_data, device_request->target);
+        APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", (unsigned int)device_request->length_in_bytes, device_request->response_data, device_request->target);
     }
     goto done;
 
