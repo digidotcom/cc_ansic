@@ -139,7 +139,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         {
             /* ONLY FOR DEBUG */
             /*APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", (unsigned int)device_request->length_in_bytes, device_request->payload, device_request->target);*/
-            APP_DEBUG("Total Payload received with length = \"%d\" for %s\n", device_request->length_in_bytes, device_request->target);
+            APP_DEBUG("Total Payload received with length = \"%d\" for %s\n", (unsigned int)device_request->length_in_bytes, device_request->target);
         }
     }
     else
