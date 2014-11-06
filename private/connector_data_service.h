@@ -466,9 +466,9 @@ STATIC connector_status_t data_service_device_request_callback(connector_data_t 
         {
             msg_session_t const * const session = service_request->session;
             data_service_context_t const * const data_service = session->service_context;
-            connector_request_id_data_service_t const last_user_request = data_service->request_type;
+            connector_request_id_data_service_t const previous_request = data_service->request_type;
 
-            if (last_user_request != connector_request_id_data_service_receive_status)
+            if (previous_request != connector_request_id_data_service_receive_status)
             {
                 /* Always call the user to inform that session is done */
                 status = process_data_service_device_error(connector_ptr, service_request);
@@ -820,9 +820,9 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
             {
                 msg_session_t const * const session = service_request->session;
                 data_service_context_t const * const data_service = session->service_context;
-                connector_request_id_data_service_t const last_user_request = data_service->request_type;
+                connector_request_id_data_service_t const previous_request = data_service->request_type;
 
-                if (last_user_request != connector_request_id_data_service_send_status)
+                if (previous_request != connector_request_id_data_service_send_status)
                 {
                     /* Always call the user to inform that session is done */
                     status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
