@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include "connector_api.h"
 #include "platform.h"
+/* Import zlib to use the crc32() function */
+#include <zlib.h>
 
 #include "device_request.h"
 
@@ -24,6 +26,14 @@ extern connector_handle_t CLOUD_HANDLER;
 
 static connector_bool_t app_dp_waiting_for_response = connector_false;
 
+
+
+
+/**************************************************************************/
+/******** FUNCTIONS TO ALLOCATE MEMORY FOR THE DATAPOINT STRUCTURE ********/
+/**************************************************************************/
+
+/* Function to allocate all memory needed by N DataStreams wth N DataPoints */
 connector_request_data_point_t * app_allocate_datastreams_memory(size_t const stream_count, size_t const point_count)
 {
     connector_request_data_point_t * dp_ptr = malloc(sizeof *dp_ptr);
@@ -80,6 +90,17 @@ connector_request_data_point_t * app_allocate_datastreams_memory(size_t const st
     return dp_ptr;
 }
 
+
+
+
+
+
+
+
+
+/***********************************************************/
+/******** FUNCTIONS TO FREE THE DATAPOINT STRUCTURE ********/
+/***********************************************************/
 
 /* Free all reserved memory in the DataStreams/DataPoints structure */
 void app_free_datastreams_memory(connector_request_data_point_t * dp_ptr)
@@ -141,9 +162,7 @@ void app_free_datastreams_memory(connector_request_data_point_t * dp_ptr)
                     if( point.location.value.text.elevation != NULL )
                         { free(point.location.value.text.elevation); }
 
-
                 }
-
 
                 /* All points were allocated in one malloc() call, so only one free() is necessary. */
                 free(stream->point);
@@ -156,8 +175,444 @@ void app_free_datastreams_memory(connector_request_data_point_t * dp_ptr)
 
 }
 
+/* Free all reserved memory in the DataStreams/DataPoints structure */
+void app_free_binary_datastream_memory(connector_request_data_point_binary_t * dp_ptr)
+{
+    APP_DEBUG("Freeing the memory from the DataStreams structure.....\n");
+    if (dp_ptr == NULL) goto done;
+
+    if (dp_ptr->path != NULL)
+    {
+        free(dp_ptr->path);
+        dp_ptr->path = NULL;
+    }
+
+    if (dp_ptr->point != NULL)
+    {
+        free(dp_ptr->point);
+        dp_ptr->point = NULL;
+    }
+
+    free(dp_ptr);
+
+done:
+    return;
+}
 
 
+
+
+
+
+
+/************************************/
+/******** AUXILIAR FUNCTIONS ********/
+/************************************/
+
+void app_setup_stream(connector_data_stream_t * stream, char * stream_id, char * units, connector_data_point_type_t const type, char * forward_to)
+{
+    stream->stream_id = stream_id;
+    stream->unit = units;
+    stream->type = type;
+    stream->forward_to = forward_to;
+}
+
+
+static float app_get_incremental(void)
+{
+    static int incremental = 0;
+
+    return incremental++;
+}
+
+
+
+float app_get_random_float(float const max_float)
+{
+    float randomFloat = ( rand() / (float)(RAND_MAX) ) * max_float;
+
+    return randomFloat;
+}
+
+
+char * app_get_random_coordinate(connector_bool_t negative)
+{
+    /* Obtain a random coordinate */
+    float number = app_get_random_float(99.99);
+
+    if (negative)
+    {/* Set coordinate in the opposite side */
+        number = number * -1.0;
+    }
+
+    /* Allocate memory for each number */
+    int max_size = 7;
+    char *coordinate = malloc (sizeof (char) * max_size);
+
+    /* Convert the float on a char[] */
+    sprintf(coordinate, "%4.1f", number);
+
+    return coordinate;
+}
+
+
+int app_get_random_integer(int const max_integer)
+{
+    int randomInteger = rand() % max_integer;
+    return randomInteger;
+}
+
+
+
+
+
+
+
+
+
+
+/*********************************************/
+/*********** DATASTREAM STRUCTURE ************/
+/*********************************************/
+
+/* Function to generate a fully DataStream/DataPoint structure */
+connector_request_data_point_t * generateDataStreamStructure(size_t const numberStreams, size_t const numberPointsPerStream, char * streamIdentifier, connector_data_point_type_t const datapoints_type)
+{
+
+    /************ COMMON */
+    /* Create structure to save the DataStreams with its DataPoints */
+    connector_request_data_point_t * data_point_structure = app_allocate_datastreams_memory(numberStreams, numberPointsPerStream);
+    if (data_point_structure == NULL)
+    {/* Initialization was failed */
+        return data_point_structure;
+    }
+
+    /* Save inside the user context var the pointer to the structure */
+    data_point_structure->user_context = (void *)data_point_structure;
+
+
+
+    /************* CREATE DATASTREAMS */
+    for( size_t stream_index = 0; stream_index<numberStreams; stream_index++ )
+    {
+        /* Configure the DataStream with the settings */
+        app_setup_stream(&data_point_structure->stream[stream_index],
+                        streamIdentifier, /* char * stream_id: string to identify the DataStream */
+                        "Counts", /* char * units: string to identify the units of the samples */
+                        datapoints_type, /* connector_data_point_type_t data_type: internal type for the samples */
+                        NULL); /* char * forward_to: string to save the datastream to forward the samples */
+    }
+
+
+    /************* GENERATE DATAPOINTS */
+    /* Setup the values for each DataPoint */
+    size_t point_index = 0;
+
+    for( size_t stream_index = 0;stream_index<numberStreams;stream_index++ )
+    {
+        while( point_index < numberPointsPerStream )
+        {
+            /* Get the pointer to the DataPoint */
+            connector_data_point_t * const point = &data_point_structure->stream[stream_index].point[point_index];
+
+            /* Set the timestamp in the DataPoint */
+            {
+                time_t const current_time = time(NULL);
+
+                point->time.source = connector_time_local_epoch_fractional;
+                point->time.value.since_epoch_fractional.seconds = current_time;
+                point->time.value.since_epoch_fractional.milliseconds = 0;
+            }
+
+
+
+            /* Set the location coordinates */
+            {
+                /* Generate random coordinates */
+                char *latitude_str = app_get_random_coordinate(connector_false);
+                char *longitude_str = app_get_random_coordinate(connector_true);
+                char *elevation_str = app_get_random_coordinate(connector_true);
+
+                point->location.type = connector_location_type_text;
+                point->location.value.text.latitude = latitude_str;
+                point->location.value.text.longitude = longitude_str;
+                point->location.value.text.elevation = elevation_str;
+            }
+
+            /* Set the quality of the sample */
+            point->quality.type = connector_quality_type_native; /* connector_quality_type_native (integer) or connector_quality_type_ignore*/
+            if ( point->quality.type == connector_quality_type_native )
+            {
+                int quality_value = app_get_random_integer(2147483647); /* 2147483647 Maximun Integer */
+                point->quality.value = quality_value;
+            }
+
+            /* Set the point description */
+            /*point->description = NULL;*/
+            char *description = malloc (sizeof (char) * 40);
+            sprintf(description, "this is the description with index %d", (int)point_index);
+            point->description = description;
+
+
+            /* Set the data type */
+            point->data.type = connector_data_type_native;
+
+            /* Fill the value of the point */
+            switch ( data_point_structure->stream[stream_index].type)
+            {
+                case connector_data_point_type_integer:
+                    point->data.element.native.int_value = app_get_incremental();
+                    break;
+
+                case connector_data_point_type_float:
+                    #if (defined FLOATING_POINT_SUPPORTED)
+                    {
+                        point->data.element.native.float_value = (float)drand48();
+                    }
+                    #else
+                    {
+                        static char value[APP_MAX_POINTS][sizeof(float) * 2];
+
+                        point->data.type = connector_data_type_text;
+                        snprintf(value[test_case], sizeof value[test_case], "%f", (float)drand48()); /* this also requires floating point, works for DVT */
+                        point->data.element.text = value[test_case];
+                    }
+                    #endif
+                    break;
+
+                case connector_data_point_type_double:
+                    #if (defined FLOATING_POINT_SUPPORTED)
+                    {
+                        point->data.element.native.double_value = drand48();
+                    }
+                    #else
+                    {
+                        static char value[APP_MAX_POINTS][sizeof(double) * 2];
+
+                        point->data.type = connector_data_type_text;
+                        snprintf(value[test_case], sizeof value[test_case], "%lf", drand48()); /* this also requires floating point, works for DVT */
+                        point->data.element.text = value[test_case];
+                    }
+                    #endif
+                    break;
+
+                case connector_data_point_type_long:
+                    #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                    {
+                        /* function return signed long integers, uniformly distributed over the interval [-2**31,2**31] */
+                        point->data.element.native.long_value = mrand48();
+                    }
+                    #else
+                    {
+                        #define LONG_SIZE (sizeof(long) * 3)
+
+                        char *value = malloc (LONG_SIZE);
+                        /* Reset the memory allocated to 0 */
+                        memset(value, 0, LONG_SIZE);
+
+
+                        point->data.type = connector_data_type_text;
+                        snprintf(value, LONG_SIZE, "%ld", mrand48());
+                        point->data.element.text = value;
+                    }
+                    #endif
+                    break;
+
+                case connector_data_point_type_string:
+                    #define TEST_STRING_PATTERNS 6
+                    {
+                    static int index = 0;
+                    static char * value[TEST_STRING_PATTERNS] = {
+                        "long string 300 chars...............................................................................1...................................................................................................2...................................................................................................3...................................................................................................",
+                        "Hello World!",
+                        "c,o,m,m,a",
+//                         "line\nfeed",
+                        "t\ta\tb",
+                        "\"quote\"",
+                        "s p a c e"};
+
+                    point->data.element.native.string_value = value[index];
+
+                    index++;
+                    index = index % TEST_STRING_PATTERNS;
+                    }
+
+                    break;
+
+                default:
+                    APP_DEBUG("ERROR: generateDataStreamStructure(), Unknown DataPoint type...\n");
+                    ASSERT(0);
+                    break;
+            }
+
+
+            point_index++;
+
+        }
+    }
+
+
+
+
+    /* return DataPoints structure */
+    return data_point_structure;
+}
+
+
+
+
+
+/* Function to generate a fully Binary DataStream/DataPoint structure */
+connector_request_data_point_binary_t * generateBinaryDataStreamStructure(char * streamIdentifier)
+{
+
+    /************ COMMON */
+    /* Create structure to save the DataStreams with its DataPoints */
+    connector_request_data_point_binary_t * data_point_structure = malloc(sizeof(connector_request_data_point_binary_t));
+
+    if (data_point_structure == NULL)
+    {/* Initialization was failed */
+        APP_DEBUG("app_send_data_point: Failed to malloc dp_ptr\n");
+        goto error;
+    }
+
+    /* Save inside the user context var the pointer to the structure */
+    data_point_structure->user_context = (void *)data_point_structure;
+    /* Set the transport */
+    data_point_structure->transport = connector_transport_tcp;
+
+
+    /************* SETUP DATASTREAM */
+    /* Clone the Stream Identifier */
+    data_point_structure->path = malloc( (sizeof(char) * strlen(streamIdentifier)) + 1);
+    sprintf(data_point_structure->path, "%s", streamIdentifier);
+
+
+    /************* GENERATE DATAPOINT */
+    /* Fill the value of the point */
+    size_t const rand_bytes = (rand() % 16384) + 1;
+    unsigned char * data_ptr = malloc(rand_bytes);
+
+    if (data_ptr != NULL)
+    {
+        size_t i;
+
+        for (i = 0; i < rand_bytes; i++)
+            data_ptr[i] = rand() % UCHAR_MAX;
+
+        /* Save the bytes used in the data */
+        data_point_structure->bytes_used = rand_bytes;
+        APP_DEBUG("get_binary_point: rand_bytes %" PRIsize " bytes\n", rand_bytes);
+    }
+    else
+    {
+        APP_DEBUG("get_binary_point: Failed to malloc binary point %" PRIsize " bytes\n", rand_bytes);
+        goto error;
+    }
+
+    /* Save the data */
+    data_point_structure->point = data_ptr;
+
+    goto done;
+
+error:
+    app_free_binary_datastream_memory(data_point_structure);
+    data_point_structure = NULL;
+
+done:
+    APP_DEBUG("Binary DataPoint structure generated...\n");
+    /* return DataPoints structure */
+    return data_point_structure;
+}
+
+
+
+
+
+
+
+
+
+
+/******************************************************************/
+/*********** FUNCTIONS TO SEND THE DATAPOINT STRUCTURE ************/
+/******************************************************************/
+
+/* Function to send to Device Cloud the Data Stream with the DataPoints */
+connector_status_t app_send_datastreams(connector_handle_t const handle, connector_request_data_point_t * const dp_ptr)
+{
+    APP_DEBUG("Data point app: starting to send data...\n");
+    connector_status_t status = connector_success;
+
+    if (app_dp_waiting_for_response)
+    {
+        APP_DEBUG("Data point app: waiting for a response...\n");
+        status = connector_service_busy;
+        goto done;
+    }
+
+    app_dp_waiting_for_response = connector_true;
+
+    /* Start the action for a DataPoint */
+    status = connector_initiate_action(handle, connector_initiate_data_point, dp_ptr);
+
+
+    APP_DEBUG("Data point message sent, status[%d]\n", status);
+    if (status != connector_success)
+        app_dp_waiting_for_response = connector_false;
+
+done:
+    return status;
+}
+
+
+
+/* Function to send to Device Cloud the Data Stream with the DataPoints */
+connector_status_t app_send_binary_datastreams(connector_handle_t const handle, connector_request_data_point_binary_t * const dp_ptr)
+{
+    APP_DEBUG("Data point app: starting to send binary data...\n");
+    connector_status_t status = connector_success;
+
+    if (app_dp_waiting_for_response)
+    {
+        APP_DEBUG("Data point app: waiting for a response...\n");
+        status = connector_service_busy;
+        goto done;
+    }
+
+    app_dp_waiting_for_response = connector_true;
+
+    /* Start the action for a Binary DataPoint */
+    status = connector_initiate_action(handle, connector_initiate_data_point_binary, dp_ptr);
+
+
+    APP_DEBUG("Data point message sent, status[%d]\n", status);
+    if (status != connector_success)
+        app_dp_waiting_for_response = connector_false;
+
+done:
+    return status;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/************************************************************/
+/******** FUNCTIONS TO PRINT THE DATAPOINT STRUCTURE ********/
+/************************************************************/
+
+/* Function to print by console the DataStream/DataPoint structure */
 void app_show_datastreams(connector_request_data_point_t * dp_ptr)
 {
 
@@ -296,7 +751,6 @@ void app_show_datastreams(connector_request_data_point_t * dp_ptr)
                         }
 
 
-                            
 
                     }
                 }
@@ -310,298 +764,27 @@ void app_show_datastreams(connector_request_data_point_t * dp_ptr)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void app_setup_stream(connector_data_stream_t * stream, char * stream_id, char * units, connector_data_point_type_t const type, char * forward_to)
+/* Function to print by console the Binary DataStream/DataPoint structure */
+void app_show_binary_datastream(connector_request_data_point_binary_t * dp_ptr)
 {
-    stream->stream_id = stream_id;
-    stream->unit = units;
-    stream->type = type;
-    stream->forward_to = forward_to;
-}
 
-
-static float app_get_incremental(void)
-{
-    static int incremental = 0;
-
-    return incremental++;
-}
-
-
-
-float app_get_random_float(float const max_float)
-{
-    float randomFloat = ( rand() / (float)(RAND_MAX) ) * max_float;
-
-    return randomFloat;
-}
-
-
-char * app_get_random_coordinate(connector_bool_t negative)
-{
-    /* Obtain a random coordinate */
-    float number = app_get_random_float(99.99);
-
-    if (negative)
-    {/* Set coordinate in the opposite side */
-        number = number * -1.0;
-    }
-
-    /* Allocate memory for each number */
-    int max_size = 7;
-    char *coordinate = malloc (sizeof (char) * max_size);
-
-    /* Convert the float on a char[] */
-    sprintf(coordinate, "%4.1f", number);
-
-    return coordinate;
-}
-
-
-int app_get_random_integer(int const max_integer)
-{
-    int randomInteger = rand() % max_integer;
-    return randomInteger;
-}
-
-
-
-/* Function to send to Device Cloud the Data Stream with the DataPoints */
-connector_status_t app_send_datastreams(connector_handle_t const handle, connector_request_data_point_t * const dp_ptr)
-{
-    APP_DEBUG("Data point app: starting to send data...\n");
-    connector_status_t status = connector_success;
-
-    if (app_dp_waiting_for_response)
+    if (dp_ptr != NULL)
     {
-        APP_DEBUG("Data point app: waiting for a response...\n");
-        status = connector_service_busy;
-        goto done;
-    }
 
-    app_dp_waiting_for_response = connector_true;
-    status = connector_initiate_action(handle, connector_initiate_data_point, dp_ptr);
-    APP_DEBUG("Data point message sent, status[%d]\n", status);
-    if (status != connector_success)
-        app_dp_waiting_for_response = connector_false;
+        APP_DEBUG("[Datastream] ID: '%s' -- UNITS: 'BINARY'\n", dp_ptr->path);
 
-done:
-    return status;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-/*********************************************/
-/*********** DATASTREAM STRUCTURE ************/
-/*********************************************/
-
-connector_request_data_point_t * generateDataStreamStructure(size_t const numberStreams, size_t const numberPointsPerStream, char * streamIdentifier, connector_data_point_type_t const datapoints_type)
-{
-
-    /************ COMMON */
-    /* Create structure to save the DataStreams with its DataPoints */
-    connector_request_data_point_t * data_point_structure = app_allocate_datastreams_memory(numberStreams, numberPointsPerStream);
-    if (data_point_structure == NULL)
-    {/* Initialization was failed */
-        return data_point_structure;
-    }
-
-    /* Save inside the user context var the pointer to the structure */
-    data_point_structure->user_context = (void *)data_point_structure;
-
-
-//     char *description = malloc (sizeof (char) * 40);
-//     sprintf(description, "this is the description with index %d", (int)point_index);
-//     point->description = description;
-
-
-
-    /************* CREATE DATASTREAMS */
-    for( size_t stream_index = 0; stream_index<numberStreams; stream_index++ )
-    {
-        /* Configure the DataStream with the settings */
-        app_setup_stream(&data_point_structure->stream[stream_index],
-                        streamIdentifier, /* char * stream_id: string to identify the DataStream */
-                        "Counts", /* char * units: string to identify the units of the samples */
-                        datapoints_type, /* connector_data_point_type_t data_type: internal type for the samples */
-                        NULL); /* char * forward_to: string to save the datastream to forward the samples */
-    }
-
-
-    /************* GENERATE DATAPOINTS */
-    /* Setup the values for each DataPoint */
-    size_t point_index = 0;
-
-    for( size_t stream_index = 0;stream_index<numberStreams;stream_index++ )
-    {
-        while( point_index < numberPointsPerStream )
+        if (dp_ptr->point != NULL)
         {
-            /* Get the pointer to the DataPoint */
-            connector_data_point_t * const point = &data_point_structure->stream[stream_index].point[point_index];
+            /* We can not show the binary data, then we calculate the crc32 of the data */
+            uLong crc = crc32(0L, Z_NULL, 0);
 
-            /* Set the timestamp in the DataPoint */
-            {
-                time_t const current_time = time(NULL);
+            crc = crc32(crc, (unsigned char *)dp_ptr->point, (unsigned int)dp_ptr->bytes_used);
 
-                point->time.source = connector_time_local_epoch_fractional;
-                point->time.value.since_epoch_fractional.seconds = current_time;
-                point->time.value.since_epoch_fractional.milliseconds = 0;
-            }
-
-
-
-            /* Set the location coordinates */
-            {
-                /* Generate random coordinates */
-                char *latitude_str = app_get_random_coordinate(connector_false);
-                char *longitude_str = app_get_random_coordinate(connector_true);
-                char *elevation_str = app_get_random_coordinate(connector_true);
-
-                point->location.type = connector_location_type_text;
-                point->location.value.text.latitude = latitude_str;
-                point->location.value.text.longitude = longitude_str;
-                point->location.value.text.elevation = elevation_str;
-            }
-
-            /* Set the quality of the sample */
-            point->quality.type = connector_quality_type_native; /* connector_quality_type_native (integer) or connector_quality_type_ignore*/
-            if ( point->quality.type == connector_quality_type_native )
-            {
-                int quality_value = app_get_random_integer(2147483647); /* 2147483647 Maximun Integer */
-                point->quality.value = quality_value;
-            }
-
-            /* Set the point description */
-            /*point->description = NULL;*/
-            char *description = malloc (sizeof (char) * 40);
-            sprintf(description, "this is the description with index %d", (int)point_index);
-            point->description = description;
-
-
-            /* Set the data type */
-            point->data.type = connector_data_type_native;
-
-            /* Fill the value of the point */
-            switch ( data_point_structure->stream[stream_index].type)
-            {
-                case connector_data_point_type_integer:
-                    point->data.element.native.int_value = app_get_incremental();
-                    break;
-
-                case connector_data_point_type_float:
-                    #if (defined FLOATING_POINT_SUPPORTED)
-                    {
-                        point->data.element.native.float_value = (float)drand48();
-                    }
-                    #else
-                    {
-                        static char value[APP_MAX_POINTS][sizeof(float) * 2];
-
-                        point->data.type = connector_data_type_text;
-                        snprintf(value[test_case], sizeof value[test_case], "%f", (float)drand48()); /* this also requires floating point, works for DVT */
-                        point->data.element.text = value[test_case];
-                    }
-                    #endif
-                    break;
-
-                case connector_data_point_type_double:
-                    #if (defined FLOATING_POINT_SUPPORTED)
-                    {
-                        point->data.element.native.double_value = drand48();
-                    }
-                    #else
-                    {
-                        static char value[APP_MAX_POINTS][sizeof(double) * 2];
-
-                        point->data.type = connector_data_type_text;
-                        snprintf(value[test_case], sizeof value[test_case], "%lf", drand48()); /* this also requires floating point, works for DVT */
-                        point->data.element.text = value[test_case];
-                    }
-                    #endif
-                    break;
-
-                case connector_data_point_type_long:
-                    #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
-                    {
-                        /* function return signed long integers, uniformly distributed over the interval [-2**31,2**31] */
-                        point->data.element.native.long_value = mrand48();
-                    }
-                    #else
-                    {
-                        #define LONG_SIZE (sizeof(long) * 3)
-
-                        char *value = malloc (LONG_SIZE);
-                        /* Reset the memory allocated to 0 */
-                        memset(value, 0, LONG_SIZE);
-
-
-                        point->data.type = connector_data_type_text;
-                        snprintf(value, LONG_SIZE, "%ld", mrand48());
-                        point->data.element.text = value;
-                    }
-                    #endif
-                    break;
-
-                case connector_data_point_type_string:
-                    #define TEST_STRING_PATTERNS 6
-                    {
-                    static int index = 0;
-                    static char * value[TEST_STRING_PATTERNS] = {
-                                            "long string 300 chars...............................................................................1...................................................................................................2...................................................................................................3...................................................................................................",
-                        "Hello World!",
-                        "c,o,m,m,a",
-//                         "line\nfeed",
-                        "t\ta\tb",
-                        "\"quote\"",
-                        "s p a c e"};
-
-                    point->data.element.native.string_value = value[index];
-
-                    index++;
-                    index = index % TEST_STRING_PATTERNS;
-                    }
-
-                    break;
-
-                default:
-                    APP_DEBUG("ERROR: generateDataStreamStructure(), Unknown DataPoint type...\n");
-                    ASSERT(0);
-                    break;
-            }
-
-
-            point_index++;
-
+            APP_DEBUG("[DataPoint] Data crc32_DEC: '%lu' -- Data crc32_HEX: '%08lX'\n", crc, crc);
         }
+
     }
 
-
-
-
-    /* return DataPoints structure */
-    return data_point_structure;
 }
 
 
@@ -611,25 +794,15 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
 
 
 
-
-
-
-/*************************************************/
-/**************** STARTED FUNCTION ***************/
-/*************************************************/
-// connector_status_t app_start_test_case_datapoints_loop(size_t const numberOfLoops, size_t const numberStreams, size_t const numberPointsPerStream){
+/*****************************************************/
+/**************** TEST_CASES FUNCTIONS ***************/
+/*****************************************************/
 void * app_start_test_case_datapoints_loop(void * args){
 
     /* Initialize settings */
     connector_status_t status = connector_init_error;
     /* Parse the passed arguments structure */
     test_thread_arguments_t * test_arguments = (test_thread_arguments_t *) args;
-
-//     APP_DEBUG("TYPE OF ELEMENTS: '%.*s'\n", test_arguments->length_bytes,test_arguments->valueType);
-
-
-//     APP_DEBUG("TYPE OF ELEMENTS string : '%s'\n", test_arguments->valueType);
-
 
     /* Obtain the value type of the datapoints */
 //     typedef enum
@@ -666,6 +839,10 @@ void * app_start_test_case_datapoints_loop(void * args){
     {
         datapoints_type = connector_data_point_type_string;
     }
+    else if(strcmp(test_arguments->valueType, "Binary") == 0)
+    {
+        datapoints_type = connector_data_point_type_binary;
+    }
     else
     {
         datapoints_type = connector_data_point_type_geojson;
@@ -680,7 +857,6 @@ void * app_start_test_case_datapoints_loop(void * args){
 
         APP_DEBUG("BEGIN LOOP %d of %d ----------------------------------------\n",i,test_arguments->numberOfLoops);
 
-//         char * streamIdentifier = "pruebanumero";
 
         /* Generate and fill a DataStream/DataPoint structure */
         connector_request_data_point_t * const data_point_structure = generateDataStreamStructure(test_arguments->numberStreams, test_arguments->numberPointsPerStream, test_arguments->streamIdentifier, datapoints_type);
@@ -724,7 +900,7 @@ void * app_start_test_case_datapoints_loop(void * args){
         }
 
 
-        sleep(2);
+        sleep(15);
     }
 
 
@@ -768,6 +944,135 @@ done:
 
 
 
+
+
+
+/*************************************************/
+/**************** STARTED FUNCTION ***************/
+/*************************************************/
+void * app_start_test_case_binary_datapoints_loop(void * args){
+
+    /* Initialize settings */
+    connector_status_t status = connector_init_error;
+    /* Parse the passed arguments structure */
+    test_thread_arguments_t * test_arguments = (test_thread_arguments_t *) args;
+
+
+
+    if(strcmp(test_arguments->valueType, "Binary") != 0)
+    {
+        APP_DEBUG("ERROR: app_start_test_case_binary_datapoints_loop(), Unknown DataPoint type...\n");
+        ASSERT(0);
+    }
+
+
+    for(unsigned int i=1;i<=test_arguments->numberOfLoops;i++)
+    {
+        /* Initialize settings */
+        status = connector_init_error;
+        size_t busy_count = 0;
+
+        APP_DEBUG("BEGIN LOOP %d of %d ----------------------------------------\n",i,test_arguments->numberOfLoops);
+
+
+        /* Generate and fill a DataStream/DataPoint structure */
+        connector_request_data_point_binary_t * const data_point_structure = generateBinaryDataStreamStructure( test_arguments->streamIdentifier );
+
+
+        while( status != connector_success)
+        {
+            int const sample_interval_in_seconds = 2;
+
+            /* Now it is time to send all collected samples to Device Cloud */
+            status = app_send_binary_datastreams(CLOUD_HANDLER, data_point_structure);
+
+            switch (status)
+            {
+                case connector_init_error:
+                case connector_service_busy:
+                case connector_unavailable:
+                {
+                    APP_DEBUG("Busy to send data point. status: %d\n", status);
+                    int const retry_delay_in_seconds = 4;
+
+                    if (++busy_count > 5) goto done;
+                    APP_DEBUG(".");
+                    sleep(retry_delay_in_seconds);
+                    break;
+                }
+
+                case connector_success:
+                    APP_DEBUG("Success to send data point. status: %d\n", status);
+                    busy_count = 0;
+                    break;
+
+                default:
+                    APP_DEBUG("Failed to send data point. status: %d\n", status);
+                    status = connector_init_error;
+                    goto done;
+            }
+
+            sleep(sample_interval_in_seconds);
+
+        }
+
+
+        sleep(5);
+    }
+
+
+    /* Free the memory for the arguments passed */
+    if ( test_arguments != NULL )
+    {
+        if ( test_arguments->valueType != NULL )
+        {
+            APP_DEBUG("Free test_arguments->valueType...\n");
+            free(test_arguments->valueType);
+        }
+        if ( test_arguments->streamIdentifier != NULL )
+        {
+            APP_DEBUG("Free test_arguments->streamIdentifier...\n");
+            free(test_arguments->streamIdentifier);
+        }
+        APP_DEBUG("Free test_arguments...\n");
+        free(test_arguments);
+    }
+
+
+done:
+
+    APP_DEBUG("Finished the Thread for app_start_test_case_datapoints_loop()\n");
+    return NULL;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /***************************************************/
 /* COMMON FUNCTION TO MANAGE THE DATAPOINT SERVICE */
 /***************************************************/
@@ -777,6 +1082,7 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
 
     switch (request_id)
     {
+        /* Callback for standard DataPoint */
         case connector_request_id_data_point_response:
         {
             connector_data_point_response_t * const resp_ptr = data;
@@ -789,7 +1095,7 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
             }
             break;
         }
-
+        /* Callback for standard DataPoint */
         case connector_request_id_data_point_status:
         {
             connector_data_point_status_t * const status_ptr = data;
@@ -810,12 +1116,67 @@ connector_callback_status_t app_data_point_handler(connector_request_id_data_poi
             break;
         }
 
+
+
+        /* Callback for Binary DataPoint */
+        case connector_request_id_data_point_binary_response:
+        {
+            connector_data_point_response_t * const resp_ptr = data;
+            connector_request_data_point_binary_t * const data_point_structure = resp_ptr->user_context;
+
+            if (data_point_structure == NULL)
+            {
+                APP_DEBUG("Error: Received null Binary DataPoint response context\n");
+                status = connector_callback_error;
+                goto done;
+            }
+
+
+            app_dp_waiting_for_response = connector_false;
+            APP_DEBUG("Received data point response [%d]\n", resp_ptr->response);
+            if (resp_ptr->hint != NULL)
+            {
+                APP_DEBUG("Hint: %s\n", resp_ptr->hint);
+            }
+            break;
+
+
+
+        }
+        /* Callback for Binary DataPoint */
+        case connector_request_id_data_point_binary_status:
+        {
+            connector_data_point_status_t * const status_ptr = data;
+            connector_request_data_point_binary_t * const data_point_structure = status_ptr->user_context;
+
+            if (data_point_structure == NULL)
+            {
+                APP_DEBUG("Error: Received null binary dp status context\n");
+                status = connector_callback_error;
+                goto done;
+            }
+
+            app_dp_waiting_for_response = connector_false;
+            APP_DEBUG("Received data point status [%d]\n", status_ptr->status);
+
+            /* Print the DataStreams/DataPoints sent to Device Cloud */
+            app_show_binary_datastream(status_ptr->user_context); /* Pointer to DataStreams Structure */
+
+            /* Free memory from the data structure */
+            app_free_binary_datastream_memory(status_ptr->user_context); /* Pointer to Binary DataStream Structure */
+
+
+            APP_DEBUG("END LOOP ----------------------------------------\n\n");
+            break;
+        }
+
+
         default:
             APP_DEBUG("Data point callback: Request not supported: %d\n", request_id);
             status = connector_callback_unrecognized;
             break;
     }
 
-
+done:
     return status;
 }

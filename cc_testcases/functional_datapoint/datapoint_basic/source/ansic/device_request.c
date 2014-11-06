@@ -23,6 +23,8 @@
 
 /* Import the test functions to execute in the test cases list */
 extern void * app_start_test_case_datapoints_loop(void * args);
+extern void * app_start_test_case_binary_datapoints_loop(void * args);
+
 
 
 /* Internal test structure to save and manage the device request */
@@ -35,7 +37,8 @@ typedef struct device_request_handle {
 /* List of known targets for this test case */
 static char * const device_request_targets[] = {
     "Data point",
-    "test_datapoint_send_datastream_with_datapoints"
+    "test_datapoint_send_datastream_with_datapoints",
+    "test_datapoint_send_binary_datapoint"
 };
 /* Internal test structure to create a list of arguments obtained from the device request payload */
 typedef struct parsed_payload{
@@ -220,8 +223,6 @@ static connector_callback_status_t app_process_device_request_status(connector_d
 
 
 
-
-
 /****************************************************/
 /****** MANAGE ALL CALLBACKS FROM DATA SERVICE ******/
 /****************************************************/
@@ -294,6 +295,35 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                     }
 
                 }
+                else if(strcmp(device_request->target, "test_datapoint_send_binary_datapoint") == 0)
+                {
+                    /* If the target is Data point, we know that there are 2 elements in the string */
+                    unsigned int numberOfLoops = atoi(arguments[0]); /* Obtain an Integer from a char[] */
+                    char const * valueType = arguments[1];
+                    char const * streamIdentifier = arguments[2];
+
+
+                    /* Execute the TEST_CASE in a new thread **********************/
+                    /* Create internal structure to save the test arguments */
+                    test_thread_arguments_t * test_arguments = malloc(sizeof(test_thread_arguments_t));
+                    test_arguments->numberOfLoops = numberOfLoops;
+                    /* Clone the value type */
+                    test_arguments->valueType = malloc( (sizeof(char) * strlen(valueType)) + 1);
+                    sprintf(test_arguments->valueType, "%s", valueType);
+                    /* Clone the stream identifier */
+                    test_arguments->streamIdentifier = malloc( (sizeof(char) * strlen(streamIdentifier)) + 1);
+                    sprintf(test_arguments->streamIdentifier, "%s", streamIdentifier);
+
+
+                    /* Create a new thread to execute the test case with the arguments */
+                    pthread_t test_case_thread;
+                    int ccode = pthread_create(&test_case_thread, NULL, app_start_test_case_binary_datapoints_loop, (void *)test_arguments);
+                    if (ccode != 0)
+                    {
+                        APP_DEBUG("thread_create() app_start_test_case_binary_datapoints_loop on data_point.c %d\n", ccode);
+                    }
+
+                }
 
                 /* Free the memory allocated for the arguments */
                 for (int i = 0; i < numberOfArguments; i++)
@@ -338,16 +368,6 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
  *  On error -1 is returned, check errno
  *  On success size of array is returned, which may be 0 on an empty string
  *  or 1 if no delim was found.
- *
- *  You could rewrite this to return the char ** array instead and upon NULL
- *  know it's an allocation problem but I did the triple array here.  Note that
- *  upon the hitting two delim's in a row "foo,,bar" the array would be:
- *  { "foo", NULL, "bar" }
- *
- *  You need to define the semantics of a trailing delim Like "foo," is that a
- *  2 count array or an array of one?  I choose the two count with the second entry
- *  set to NULL since it's valueless.
- *  Modifies str so make a copy if this is a problem
  */
 int split (char *str, char c, char ***arr)
 {
