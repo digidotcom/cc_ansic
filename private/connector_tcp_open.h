@@ -1024,11 +1024,12 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             edp_set_edp_state(connector_ptr, edp_facility_process);
             edp_set_active_state(connector_ptr, connector_transport_receive);
 
-            if (notify_status(connector_ptr->callback, connector_tcp_communication_started, connector_ptr->context) != connector_working)
+            result = notify_status(connector_ptr->callback, connector_tcp_communication_started, connector_ptr->context);
+            if (result != connector_working)
             {
                 result = connector_abort;
             }
-            break;
+            goto done;
         }
         case edp_state_send_in_progress:
             break;
@@ -1039,13 +1040,22 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
         if (result == connector_working || result == connector_idle || result == connector_pending)
         {
             result = edp_tcp_send_process(connector_ptr);
-            if (result == connector_working)
+
+            switch (result)
             {
-                edp_set_edp_state(connector_ptr, edp_get_next_edp_state(connector_ptr));
-            }
-            else if (result == connector_pending)
-            {
-                edp_set_edp_state(connector_ptr, edp_state_send_in_progress);
+                case connector_idle:
+                    /* This means that no data is pending to be sent. */
+                    result = connector_abort;
+                    ASSERT_GOTO(result != connector_idle, done);
+                    break;
+                case connector_working:
+                    edp_set_edp_state(connector_ptr, edp_get_next_edp_state(connector_ptr));
+                    break;
+                case connector_pending:
+                    edp_set_edp_state(connector_ptr, edp_state_send_in_progress);
+                    break;
+                default:
+                    break;
             }
         }
 
