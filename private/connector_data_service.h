@@ -760,7 +760,7 @@ STATIC connector_status_t process_send_error(connector_data_t * const connector_
     connector_status_t status = connector_working;
     connector_data_service_status_t user_data;
     msg_session_t * const session = service_request->session;
-    data_service_context_t * const data_service = session->service_context;
+    connector_bool_t const session_created = connector_bool(session != NULL);
 
     user_data.transport = connector_transport_tcp;
     user_data.user_context = cb_context;
@@ -786,8 +786,17 @@ STATIC connector_status_t process_send_error(connector_data_t * const connector_
             break;
     }
 
-    data_service->request_type = connector_request_id_data_service_send_status;
-    status = call_put_request_user(connector_ptr, service_request, data_service->request_type, &user_data);
+    if (!session_created)
+    {
+        status = call_put_request_user(connector_ptr, service_request, connector_request_id_data_service_send_status, &user_data);
+    }
+    else
+    {
+        data_service_context_t * const data_service = session->service_context;
+
+        data_service->request_type = connector_request_id_data_service_send_status;
+        status = call_put_request_user(connector_ptr, service_request, data_service->request_type, &user_data);
+    }
 
     return status;
 }
