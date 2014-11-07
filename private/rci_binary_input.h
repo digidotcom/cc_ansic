@@ -85,7 +85,8 @@ STATIC size_t get_modifier_ber(rci_t * const rci, uint32_t * const value)
     uint8_t * const rci_ber = rci->shared.content.data;
     uint8_t const modifier_ber = message_load_u8(rci_ber, value);
 
-    size_t bytes_read = ++rci->shared.content.length;
+    size_t bytes_read;
+    rci->shared.content.length++;
 
     {
         /* we have modifier BEF */
