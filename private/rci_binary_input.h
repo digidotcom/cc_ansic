@@ -309,18 +309,19 @@ STATIC connector_bool_t get_mac_address(rci_t * const rci, uint8_t * const mac_a
 }
 #endif
 
-STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index)
+STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * type, unsigned int * value)
 {
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK  0x1F
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK 0x7F80
+#define BINARY_RCI_ATTRIBUTE_TYPE_NORMAL_COUNT_MASK 0x0F
 
     connector_bool_t got_attribute = connector_false;
     uint32_t attribute_value;
 
     if (get_uint32(rci, &attribute_value))
     {
-        unsigned int type = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_MASK;
-        switch (type)
+        *type = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_MASK;
+        switch (*type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
             {
@@ -335,7 +336,7 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
 
                     index_low = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
                     index_high = (attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK) >> 2;
-                    *index = index_high | index_low;
+                    *value = index_high | index_low;
                 }
                 else
                 {
@@ -343,19 +344,31 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * index
                      * bit |7 | 6 5 | 4 3 2 1 0|
                      *     |x | 0 1 | - index -|
                      */
-                    *index =  attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
+                    *value =  attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
                 }
-                connector_debug_line("decode_attribute: index = %d", *index);
+                connector_debug_line("decode_attribute: index = %d", *value);
                 got_attribute = connector_true;
                 break;
             }
             case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
-            case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
                 /* Tool doesn't support name and enum attribute */
                 connector_debug_line("decode_attribute: unsupported attribute type");
                 rci->status = rci_status_internal_error;
                 ASSERT(connector_false);
                 break;
+
+            case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
+            {
+                /* attribute output
+                 * bit |7 | 6 5 | 4 3 2 1 0|
+                 *     |x | 0 0 | x - cnt -|
+                 */
+                *value =  attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_NORMAL_COUNT_MASK;
+
+                connector_debug_line("decode_attribute: count = %d", *value);
+                got_attribute = connector_true;
+                break;
+            }
         }
     }
 
@@ -427,6 +440,7 @@ STATIC void process_rci_command(rci_t * const rci)
         command &= BINARY_RCI_COMMAND_MASK;
 
         rci->command.command_id = (rci_command_t)command;
+        rci->command.attribute_count = 0;
 
         switch (command)
         {
@@ -551,17 +565,89 @@ done:
 
 STATIC void process_command_attribute(rci_t * const rci)
 {
-    unsigned int index;
+    unsigned int type, value;
 
-    if (decode_attribute(rci, &index))
+    if (decode_attribute(rci, &type, &value))
     {
-        /* We don't support command attribute; so just ignore it. */
+        switch (type)
+        {
+            case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
+                /* We don't support command attribute; so just ignore it. */
+                set_rci_input_state(rci, rci_input_state_group_id);
+
+                set_rci_traverse_state(rci, rci_traverse_state_command_id);
+                state_call(rci, rci_parser_state_traverse);
+
+            case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+                ASSERT(connector_false);
+                break;
+
+            case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
+
+                rci->command.attribute_count = value;
+                rci->command.attribute_processed = 0;
+
+                ASSERT(rci->command.attribute_count > 0);
+                ASSERT(rci->command.attribute_count <= MAX_COMMAND_NORMAL_ATTRIBUTES);
+
+                set_rci_input_state(rci, rci_input_state_normal_attribute_id);
+                break;
+        }
+    }
+
+    return;
+}
+
+STATIC void process_normal_attribute_id(rci_t * const rci)
+{
+    unsigned int attribute_id;
+    if (get_uint32(rci, &attribute_id))
+    {
+#if (defined RCI_DEBUG)
+        connector_debug_line("attribute_id=%d\n", attribute_id);
+#endif
+
+        rci->command.attribute[rci->command.attribute_processed].id = attribute_id;
+
+        set_rci_input_state(rci, rci_input_state_normal_attribute_value);
+    }
+}
+
+STATIC void process_normal_attribute_value(rci_t * const rci)
+{
+    const char * attribute_string;
+    size_t attribute_len;
+
+
+    if (!get_string(rci, &attribute_string, &attribute_len))
+    {
+        goto done;
+    }
+
+#if (defined RCI_DEBUG)
+    connector_debug_line("attribute_len=%d\n", attribute_len);
+    connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
+#endif
+
+    ASSERT(attribute_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
+    memcpy(rci->command.attribute[rci->command.attribute_processed].value, attribute_string, attribute_len);
+    rci->command.attribute[rci->command.attribute_processed].value[attribute_len] = '\0';
+
+    rci->command.attribute_processed++;
+
+    if (rci->command.attribute_processed == rci->command.attribute_count)
+    {
         set_rci_input_state(rci, rci_input_state_group_id);
 
         set_rci_traverse_state(rci, rci_traverse_state_command_id);
         state_call(rci, rci_parser_state_traverse);
     }
+    else
+    {
+        set_rci_input_state(rci, rci_input_state_normal_attribute_id);
+    }
 
+done:
     return;
 }
 
@@ -673,11 +759,22 @@ done:
 
 STATIC void process_group_attribute(rci_t * const rci)
 {
-    if (decode_attribute(rci, &rci->shared.group.index))
+    unsigned int type;
+
+    if (decode_attribute(rci, &type, &rci->shared.group.index))
     {
-        set_rci_input_state(rci, rci_input_state_field_id);
-        set_rci_traverse_state(rci, rci_traverse_state_group_id);
-        state_call(rci, rci_parser_state_traverse);
+        switch (type)
+        {
+            case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
+                set_rci_input_state(rci, rci_input_state_field_id);
+                set_rci_traverse_state(rci, rci_traverse_state_group_id);
+                state_call(rci, rci_parser_state_traverse);
+                break;
+            case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+            case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
+                ASSERT(connector_false);
+                break;
+        }
     }
 
     return;
@@ -1173,7 +1270,7 @@ STATIC void process_do_command_target(rci_t * const rci)
     connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
 #endif
 
-    ASSERT(attribute_len <= RCI_DO_COMMAND_TARGET_MAX_LEN);
+    ASSERT(attribute_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
     memcpy(rci->command.do_command.target, attribute_string, attribute_len);
     rci->command.do_command.target[attribute_len] = '\0';
 
@@ -1225,6 +1322,12 @@ STATIC void rci_parse_input(rci_t * const rci)
                 break;
             case rci_input_state_command_attribute:
                 process_command_attribute(rci);
+                break;
+            case rci_input_state_normal_attribute_id:
+                process_normal_attribute_id(rci);
+                break;
+            case rci_input_state_normal_attribute_value:
+                process_normal_attribute_value(rci);
                 break;
             case rci_input_state_group_id:
                 process_group_id(rci);

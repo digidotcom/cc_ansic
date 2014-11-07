@@ -500,7 +500,7 @@ public abstract class FileGenerator {
 
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(RCI_LEGACY_DEFINE);
-            fileWriter.write(String.format("%sRCI_DO_COMMAND_TARGET_MAX_LEN %d\n", DEFINE,ConfigData.DoCommandMaxLen()));
+            fileWriter.write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE,ConfigData.AttributeMaxLen()));
         }
         if(ConfigGenerator.deviceHealthOption()){
             fileWriter.write("\n#if !(defined CONNECTOR_DEVICE_HEALTH)\n" +

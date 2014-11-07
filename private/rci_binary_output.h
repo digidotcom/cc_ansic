@@ -388,7 +388,17 @@ STATIC void rci_output_command_id(rci_t * const rci)
         case rci_command_query_setting:
         case rci_command_set_state:
         case rci_command_query_state:
-            overflow = rci_output_uint32(rci, rci->command.command_id);
+            overflow = rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
+            overflow |= rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
+            {
+                uint8_t i;
+                for (i = 0; i < rci->command.attribute_count; i++)
+                {
+                    overflow |= rci_output_uint8(rci, rci->command.attribute[i].id);
+                    overflow |= rci_output_string(rci, rci->command.attribute[i].value, strlen(rci->command.attribute[i].value));
+                }
+            }
+
             if (!overflow)
             {
                 if (remote_config->error_id != connector_success)

@@ -23,7 +23,7 @@ public class ConfigData {
 
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
-    private static int doCommandMaxLen = 50;
+    private static int CommandsAttributeMaxLen = 50;
 
 
     public ConfigData() throws Exception {
@@ -115,15 +115,14 @@ public class ConfigData {
         return size;
     }
 
-    public void setDoCommandMaxLen(int len) throws Exception{
+    public void setAttributeMaxLen(int len) throws Exception{
         if(len>0)
-            doCommandMaxLen = len;
-        else throw new Exception("Invalid do_command_max_len");
+            CommandsAttributeMaxLen = len;
+        else throw new Exception("Invalid CommandsAttributeMaxLen");
     }
 
-	public static int DoCommandMaxLen() {
+	public static int AttributeMaxLen() {
 
-		return doCommandMaxLen;
+		return CommandsAttributeMaxLen;
 	}
-
 }

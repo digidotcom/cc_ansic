@@ -167,7 +167,7 @@ public class Descriptors {
 
         String do_command_descriptor = "<descriptor element=\"do_command\" bin_id=\"6\" > ";
         do_command_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Invalid arguments\" />";
-        do_command_descriptor +=       "  <attr name=\"target\" type=\"string\" max=\"" + ConfigData.DoCommandMaxLen()
+        do_command_descriptor +=       "  <attr name=\"target\" type=\"string\" max=\"" + ConfigData.AttributeMaxLen()
                               + "\" desc=\"The subsystem that the command is forwarded\" bin_id=\"0\" />";
         do_command_descriptor +=       "</descriptor>";
 
@@ -223,6 +223,8 @@ public class Descriptors {
         
         /* setup query command descriptor */
         query_descriptors += String.format(" bin_id=\"%d\">\n", id)
+                           + "  <attr name=\"source\" type=\"string\" max=\"" + ConfigData.AttributeMaxLen() + "\" desc=\"Query source\" bin_id=\"0\" />"
+                           + "  <attr name=\"compare_to\" type=\"string\" max=\"" + ConfigData.AttributeMaxLen() + "\" desc=\"Query compare_to\" bin_id=\"1\" />"
                            + String.format("<format_define name=\"all_%ss_groups\">\n", config_type);
 
         /*

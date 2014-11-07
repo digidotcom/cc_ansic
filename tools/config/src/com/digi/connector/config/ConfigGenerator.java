@@ -31,7 +31,7 @@ public class ConfigGenerator {
     private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
     private final static String USE_BIN_ID_LOG_OPTION = "useBinIdLog";
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
-    private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_target_max";
+    private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_attribute_max_len";
     private final static String DEVICE_HEALTH_OPTION = "device_health";
     private final static String NO_BACKUP_OPTION = "noBackup";
 
@@ -75,7 +75,7 @@ public class ConfigGenerator {
     private static boolean createBinIdLog;
     private static boolean useBinIdLog;
     private static boolean rci_legacy;
-    private static int rci_dc_target_max = 0;
+    private static int rci_dc_attribute_max_len = 0;
     private static boolean device_health;
     private static boolean noBackup;
 
@@ -251,8 +251,8 @@ public class ConfigGenerator {
                             DASH + RCI_LEGACY_COMMANDS_OPTION));
             log(String
                     .format(
-                            "\t%-16s \t= optional max value for target rci do_command, default is %d",
-                            DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.DoCommandMaxLen()));
+                            "\t%-16s \t= optional max value for commands attribute len, default is %d",
+                            DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
             log(String
                     .format(
                             "\t%-16s \t= optional behaviour for future features using prototypes",
@@ -328,9 +328,9 @@ public class ConfigGenerator {
 
                 } else if (keys[0].equals(RCI_DC_TARGET_MAX_OPTION)) {
                     try{
-                        rci_dc_target_max = Integer.parseInt(keys[1]);
+                        rci_dc_attribute_max_len = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
-                        throw new IOException("-rci_dc_target_max expect an integer value");
+                        throw new IOException("-rci_dc_attribute_max_len expect an integer value");
                     }
                 }
                 else {
@@ -623,9 +623,10 @@ public class ConfigGenerator {
 
                 configData.addRCIGroupError("set_factory_default_failed", "Set Factory Default failed");
 
-                if(rci_dc_target_max != 0)
-                    configData.setDoCommandMaxLen(rci_dc_target_max);
             }
+
+            if(rci_dc_attribute_max_len != 0)
+                configData.setAttributeMaxLen(rci_dc_attribute_max_len);
 
             if (fileTypeOption() != FileType.GLOBAL_HEADER) {
                 Parser.processFile(filename, configData);

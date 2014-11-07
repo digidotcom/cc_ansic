@@ -18,6 +18,8 @@
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
 #define BINARY_RCI_ATTRIBUTE_TYPE_NAME   0x40
 
+#define MAX_COMMAND_NORMAL_ATTRIBUTES 2
+
 #define BINARY_RCI_NO_VALUE        UINT32_C(0xE0)
 #define BINARY_RCI_TERMINATOR      UINT32_C(0xE1)
 
@@ -181,6 +183,8 @@ typedef enum
 {
     rci_input_state_command_id,
     rci_input_state_command_attribute,
+    rci_input_state_normal_attribute_id,
+    rci_input_state_normal_attribute_value,
     rci_input_state_group_id,
     rci_input_state_group_attribute,
     rci_input_state_field_id,
@@ -286,11 +290,19 @@ typedef struct
 
     struct {
         rci_command_t command_id;
+        uint8_t attribute_count;
+        uint8_t attribute_processed;
+
+        struct 
+        {
+            uint8_t id;
+            char value[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
+        } attribute[MAX_COMMAND_NORMAL_ATTRIBUTES];
 
 #if (defined RCI_LEGACY_COMMANDS)
         struct 
         {
-            char target[RCI_DO_COMMAND_TARGET_MAX_LEN + 1];
+            char target[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
             char const * response_string;
         } do_command;
 #endif
