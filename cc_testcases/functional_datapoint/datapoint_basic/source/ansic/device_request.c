@@ -29,9 +29,9 @@ extern void * app_start_test_case_binary_datapoints_loop(void * args);
 
 /* Internal test structure to save and manage the device request */
 typedef struct device_request_handle {
-    char * payload;                       // Contains the data that will be sent in the response
-    char const * target;                  // Contains the target
-    size_t length_in_bytes;               // Stores the received target
+    char * payload;                       /* Contains the data that will be sent in the response */
+    char const * target;                  /* Contains the target */
+    size_t length_in_bytes;               /* Stores the received target */
 } device_request_handle_t;
 
 /* List of known targets for this test case */
@@ -137,8 +137,8 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
         if (!receive_data->more_data)
         {
             /* ONLY FOR DEBUG */
-            APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", (unsigned int)device_request->length_in_bytes, device_request->payload, device_request->target);
-//             APP_DEBUG("Total Payload received with length = \"%d\" for %s\n", device_request->length_in_bytes, device_request->target);
+            /* APP_DEBUG("Total Payload received = \"%.*s\" for %s\n", (unsigned int)device_request->length_in_bytes, device_request->payload, device_request->target); */
+            APP_DEBUG("Total Payload received with length = \"%d\" for %s\n", device_request->length_in_bytes, device_request->target);
         }
     }
     else
@@ -167,7 +167,7 @@ static connector_callback_status_t app_process_device_request_response(connector
 
     if(device_request->target == NULL)
     {
-        // If the target isn't supported, sends the message below
+        /* If the target isn't supported, sends the message below */
         static char const unsupported_target_text[] = "Target is not supported";
         buffer = unsupported_target_text;
         bytes_used = sizeof unsupported_target_text -1;
@@ -264,7 +264,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                 /* Test cases from test_put_request_positive.py */
                 if(strcmp(device_request->target, "test_datapoint_send_datastream_with_datapoints") == 0)
                 {
-                    /* If the target is Data point, we know that there are 2 elements in the string */
+                    /* If the target is Data point, we know that there are 5 elements in the string */
                     unsigned int numberOfLoops = atoi(arguments[0]); /* Obtain an Integer from a char[] */
                     unsigned int numberStreams = atoi(arguments[1]); /* Obtain an Integer from a char[] */
                     unsigned int numberPointsPerStream = atoi(arguments[2]); /* Obtain an Integer from a char[] */
@@ -297,7 +297,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                 }
                 else if(strcmp(device_request->target, "test_datapoint_send_binary_datapoint") == 0)
                 {
-                    /* If the target is Data point, we know that there are 2 elements in the string */
+                    /* If the target is Data point, we know that there are 3 elements in the string */
                     unsigned int numberOfLoops = atoi(arguments[0]); /* Obtain an Integer from a char[] */
                     char const * valueType = arguments[1];
                     char const * streamIdentifier = arguments[2];
@@ -324,6 +324,7 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                     }
 
                 }
+
 
                 /* Free the memory allocated for the arguments */
                 for (int i = 0; i < numberOfArguments; i++)

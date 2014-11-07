@@ -131,7 +131,7 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
 
 
-    def test_09_datapoint_send_one_datastream_with_one_datapoints_type_string(self):
+    def test_09_datapoint_send_one_datastream_with_one_datapoint_type_string(self):
         """ Upload to Device Cloud one DataStream with only one DataPoint, it is String type.
         Verifies the uploaded DataPoints with the DataPoints sent by the target.
         """
@@ -159,7 +159,63 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
 
 
-    def test_11_datapoint_send_binary_datapoint(self):
+    def test_11_datapoint_send_one_datastream_with_one_datapoints_type_json(self):
+        """ Upload to Device Cloud one DataStream with only one DataPoint, it is JSON type.
+        Verifies the uploaded DataPoints with the DataPoints sent by the target.
+        """
+        dataStreamID = "test_one_datastream_type_json"
+        dataStreamNumber = 1
+        dataPointNumber = 1
+        valueType = "JSON"
+        numberOfLoops = 10
+
+        self.sendInstructionsAndVerifyDatapoints(dataStreamID, dataStreamNumber, dataPointNumber, valueType, numberOfLoops)
+
+
+
+    def test_12_datapoint_send_one_datastream_with_several_datapoints_type_json(self):
+        """ Upload to Device Cloud one DataStream with several DataPoints, all of them are JSON type.
+        Verifies the uploaded DataPoints with the DataPoints sent by the target.
+        """
+        dataStreamID = "test_one_datastream_type_json"
+        dataStreamNumber = 1
+        valueType = "JSON"
+        numberOfLoops = 1
+
+        for dataPointNumber in range(50,251,50):
+            self.sendInstructionsAndVerifyDatapoints(dataStreamID, dataStreamNumber, dataPointNumber, valueType, numberOfLoops)
+
+
+
+    def test_13_datapoint_send_one_datastream_with_one_datapoints_type_geojson(self):
+        """ Upload to Device Cloud one DataStream with only one DataPoint, it is GeoJSON type.
+        Verifies the uploaded DataPoints with the DataPoints sent by the target.
+        """
+        dataStreamID = "test_one_datastream_type_geojson"
+        dataStreamNumber = 1
+        dataPointNumber = 1
+        valueType = "GeoJSON"
+        numberOfLoops = 10
+
+        self.sendInstructionsAndVerifyDatapoints(dataStreamID, dataStreamNumber, dataPointNumber, valueType, numberOfLoops)
+
+
+
+    def test_14_datapoint_send_one_datastream_with_several_datapoints_type_geojson(self):
+        """ Upload to Device Cloud one DataStream with several DataPoints, all of them are GeoJSON type.
+        Verifies the uploaded DataPoints with the DataPoints sent by the target.
+        """
+        dataStreamID = "test_one_datastream_type_geojson"
+        dataStreamNumber = 1
+        valueType = "GeoJSON"
+        numberOfLoops = 1
+
+        for dataPointNumber in range(50,251,50):
+            self.sendInstructionsAndVerifyDatapoints(dataStreamID, dataStreamNumber, dataPointNumber, valueType, numberOfLoops)
+
+
+
+    def test_15_datapoint_send_binary_datapoint(self):
         """ Upload to Device Cloud one DataStream with one DataPoint in Binary mode.
         Verifies the uploaded DataPoint with the DataPoint sent by the target.
         """
@@ -268,12 +324,13 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
             if ( not result ):
                 message = "Error getting the DataPoints from device cloud: %s" % requestResponse.content
                 self.log.error(message)
+                verificationResult = False
                 time.sleep(1)
                 continue # Go to the next loop
 
             datapointListFromDeviceCloud.reverse()
 
-            self.log.info("Verify if DataPoints uploaded in match with the readed from Device Cloud...")
+            self.log.info("Verify if DataPoints uploaded from device match with the readed from Device Cloud...")
 
             for index in range(0,numberDataPointsUploaded):
                 # Get DataPoint readed from console and DataPoint from Device Cloud
@@ -343,7 +400,7 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
             datapointListFromDeviceCloud.reverse()
 
-            self.log.info("Verify if DataPoints uploaded in match with the readed from Device Cloud...")
+            self.log.info("Verify if DataPoints uploaded from device match with the readed from Device Cloud...")
 
             for index in range(0,numberDataPointsUploaded):
                 # Get DataPoint readed from console and DataPoint from Device Cloud

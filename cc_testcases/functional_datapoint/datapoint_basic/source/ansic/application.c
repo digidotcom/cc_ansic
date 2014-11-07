@@ -148,47 +148,6 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
 
 
-
-// int application_run(connector_handle_t handlerForConnector)
-// {
-//     /* Generate entropy for random values, only one call per run */
-//     srand(((unsigned int)time(NULL)));
-// 
-//     sleep(20);
-// 
-//     APP_DEBUG("****************************** INIT application.c\n");
-// 
-//     size_t const numberOfLoops = 1;
-//     size_t const numberPointsPerStream = 200;
-//     size_t const numberStreams = 1;
-// 
-//     /* Launch the test case to send DataPoints */
-//     connector_status_t status = app_start_test_case_datapoints_loop(handlerForConnector, numberOfLoops, numberStreams, numberPointsPerStream);
-// 
-//     switch (status)
-//     {
-//         case connector_init_error:
-//         case connector_service_busy:
-//         case connector_unavailable:
-//         {
-//             APP_DEBUG("Data point sample is exited! ERROR\n");
-//             return 1;
-//         }
-//         case connector_success:
-//         {
-//             APP_DEBUG("Data point sample is exited! DONE\n");
-//             return 0;
-//         }
-//         default:
-//         {
-//             APP_DEBUG("Data point sample is exited! UNKNOWN\n");
-//             return 1;
-//         }
-//     }
-// 
-// 
-// }
-
 int application_run(connector_handle_t handle)
 {
     /* Generate entropy for random values, only one call per run */
