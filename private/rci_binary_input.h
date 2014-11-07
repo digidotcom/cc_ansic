@@ -507,13 +507,18 @@ STATIC void process_rci_command(rci_t * const rci)
                 rci->buffer.input.current--;
                 rci->shared.content.length = 0;
 
+                rci->shared.callback_data.action = connector_remote_action_do_command;
+
                 set_rci_input_state(rci, rci_input_state_do_command_target);
 
                 state_call(rci, rci_parser_state_input);
                 goto done;
             }
             case rci_command_reboot:
+                rci->shared.callback_data.action = connector_remote_action_reboot;
+                break;
             case rci_command_set_factory_default:
+                rci->shared.callback_data.action = connector_remote_action_set_factory_def;
                 break;
 #endif
             default:
@@ -617,6 +622,12 @@ STATIC void process_group_id(rci_t * const rci)
                     connector_debug_line("process_group_id: got set command with no group id specified");
                     rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_group_hint, rci_output_state_group_id);
                     break;
+#if (defined RCI_LEGACY_COMMANDS)
+                case connector_remote_action_do_command:
+                case connector_remote_action_reboot:
+                case connector_remote_action_set_factory_def:
+                    ASSERT_GOTO(0, done);
+#endif
             }
             goto done;
         }
@@ -710,6 +721,12 @@ STATIC void process_field_id(rci_t * const rci)
                         connector_debug_line("process_field_id: got set command with no field id specified");
                         rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_element_hint, rci_output_state_field_id);
                         break;
+#if (defined RCI_LEGACY_COMMANDS)
+                    case connector_remote_action_do_command:
+                    case connector_remote_action_reboot:
+                    case connector_remote_action_set_factory_def:
+                        ASSERT_GOTO(0, done);
+#endif
                 }
             }
             else

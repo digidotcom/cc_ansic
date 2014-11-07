@@ -46,6 +46,14 @@ typedef struct {
     char const * string_value;
 } connector_element_value_t;
 
+typedef enum {
+    connector_remote_action_set,
+    connector_remote_action_query,
+    connector_remote_action_do_command,
+    connector_remote_action_reboot,
+    connector_remote_action_set_factory_def
+} connector_remote_action_t;
+
 typedef struct rci_data {
  unsigned int group_index;
  connector_remote_action_t action;

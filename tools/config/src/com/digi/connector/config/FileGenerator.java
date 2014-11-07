@@ -513,6 +513,17 @@ public abstract class FileGenerator {
         writeElementTypeEnum();
         writeElementValueStruct();
 
+        fileWriter.write("\ntypedef enum {\n" +
+                         "    connector_remote_action_set,\n" +
+                         "    connector_remote_action_query,\n");
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write("    connector_remote_action_do_command,\n" +
+                             "    connector_remote_action_reboot,\n" +
+                             "    connector_remote_action_set_factory_def\n");
+        }
+        fileWriter.write("} connector_remote_action_t;\n");
+
+
         fileWriter.write(CONNECTOR_RCI_INFO);
         fileWriter.write("\ntypedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);\n");
 

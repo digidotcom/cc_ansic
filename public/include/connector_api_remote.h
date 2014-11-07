@@ -43,22 +43,6 @@ typedef enum {
 * @}
 */
 
-
-/**
- * @defgroup connector_remote_action_t Cloud Connector remote configuration action types
- * @{
- */
-/**
- * Remote request action types
- */
-typedef enum {
-    connector_remote_action_set,    /**< Set remote configuration */
-    connector_remote_action_query   /**< Query remote configuration */
-} connector_remote_action_t;
-/**
- * @}
- */
-
 /**
  * @defgroup connector_remote_group_type_t Cloud Connector remote configuration types
  * @{
