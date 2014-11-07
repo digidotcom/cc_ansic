@@ -425,7 +425,7 @@ STATIC void process_rci_command(rci_t * const rci)
 
         command &= BINARY_RCI_COMMAND_MASK;
 
-        rci->command.command_id = command;
+        rci->command.command_id = (rci_command_t)command;
 
         switch (command)
         {
