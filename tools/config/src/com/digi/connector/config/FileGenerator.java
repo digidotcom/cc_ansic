@@ -64,14 +64,6 @@ public abstract class FileGenerator {
     " void * user_context;\n" +
     "} rci_info_t;\n";
 
-    protected final static String CONNECTOR_LEGACY_ACTION = "\ntypedef enum {\n" +
-    "    connector_remote_legacy_action_set = connector_remote_action_set,\n" +
-    "    connector_remote_legacy_action_query = connector_remote_action_query,\n" +
-    "    connector_remote_legacy_action_do_command,\n" +
-    "    connector_remote_legacy_action_reboot,\n" +
-    "    connector_remote_legacy_action_set_factory_def\n" +
-    "} connector_remote_legacy_action_t;\n";
-
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
     protected final static String RCI_ERROR_NOT_AVAILABLE = "connector_rci_error_not_available = -1,\n";
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
@@ -521,11 +513,19 @@ public abstract class FileGenerator {
         writeElementTypeEnum();
         writeElementValueStruct();
 
+        fileWriter.write("\ntypedef enum {\n" +
+                         "    connector_remote_action_set,\n" +
+                         "    connector_remote_action_query,\n");
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write("    connector_remote_action_do_command,\n" +
+                             "    connector_remote_action_reboot,\n" +
+                             "    connector_remote_action_set_factory_def\n");
+        }
+        fileWriter.write("} connector_remote_action_t;\n");
+
+
         fileWriter.write(CONNECTOR_RCI_INFO);
         fileWriter.write("\ntypedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);\n");
-
-        if(ConfigGenerator.rciLegacyEnabled())
-            fileWriter.write(CONNECTOR_LEGACY_ACTION);
 
         writeGroupElementStructs(configData);
 

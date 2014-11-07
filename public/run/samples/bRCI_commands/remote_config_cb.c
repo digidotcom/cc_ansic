@@ -92,14 +92,35 @@ static connector_callback_status_t app_process_session_end(connector_remote_conf
 
 static connector_callback_status_t app_process_action_start(connector_remote_config_t * const remote_config)
 {
-    APP_DEBUG("app_process_action_start: action=%d\n", remote_config->action);
+    APP_DEBUG("app_process_action_start: ");
+
+    switch(remote_config->action)
+    {
+        case connector_remote_action_set:
+            APP_DEBUG("connector_remote_action_set\n");
+            break;
+        case connector_remote_action_query:
+            APP_DEBUG("connector_remote_action_query\n");
+            break;
+        case connector_remote_action_do_command:
+            APP_DEBUG("connector_remote_action_do_command\n");
+            break;
+        case connector_remote_action_reboot:
+            APP_DEBUG("connector_remote_action_reboot\n");
+            break;
+        case connector_remote_action_set_factory_def:
+            APP_DEBUG("connector_remote_action_set_factory_def\n");
+            break;
+    }
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_process_action_end(connector_remote_config_t * const remote_config)
 {
-    APP_DEBUG("app_process_action_end: action=%d\n", remote_config->action);
+    APP_DEBUG("app_process_action_end\n");
+
+    UNUSED_ARGUMENT(remote_config);
 
     return connector_callback_continue;
 }

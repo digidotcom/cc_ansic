@@ -580,6 +580,12 @@ STATIC void rci_output_field_value(rci_t * const rci)
 
         case connector_remote_action_query:
             break;
+#if (defined RCI_LEGACY_COMMANDS)
+        case connector_remote_action_do_command:
+        case connector_remote_action_reboot:
+        case connector_remote_action_set_factory_def:
+            ASSERT_GOTO(0, done);
+#endif
     }
 
     if (rci->output.group_skip || rci->output.element_skip)
