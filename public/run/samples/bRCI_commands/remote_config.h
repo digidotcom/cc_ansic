@@ -98,6 +98,7 @@ typedef struct {
 typedef struct {
   char const * source;
   char const * compare_to;
+  char const * target;
 } connector_remote_attribute_t;
 
 typedef struct {

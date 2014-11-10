@@ -36,7 +36,6 @@ static char const * rci_input_state_t_as_string(rci_input_state_t const value)
         enum_to_case(rci_input_state_field_no_value);
         enum_to_case(rci_input_state_field_value);
 #if (defined RCI_LEGACY_COMMANDS)
-        enum_to_case(rci_input_state_do_command_target);
         enum_to_case(rci_input_state_do_command_payload);
 #endif
         enum_to_case(rci_input_state_done);

@@ -380,7 +380,47 @@ STATIC connector_bool_t rci_output_float(rci_t * const rci, float const value)
 STATIC void rci_output_command_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-    connector_bool_t overflow;
+    connector_bool_t overflow = connector_false;
+
+
+    switch (rci->command.command_id)
+    {
+        case rci_command_set_setting:
+        case rci_command_set_state:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
+#endif
+            overflow = rci_output_uint32(rci, rci->command.command_id);
+            break;
+
+        case rci_command_query_setting:
+        case rci_command_query_state:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_do_command:
+#endif
+            if (rci->command.attribute_count == 0)
+            {
+                overflow = rci_output_uint32(rci, rci->command.command_id);
+            }
+            else
+            {
+                overflow = rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
+                overflow |= rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
+                {
+                    uint8_t i;
+                    for (i = 0; i < rci->command.attribute_count; i++)
+                    {
+                        overflow |= rci_output_uint8(rci, rci->command.attribute[i].id);
+                        overflow |= rci_output_string(rci, rci->command.attribute[i].value, strlen(rci->command.attribute[i].value));
+                    }
+                }
+            }
+            break;
+         case rci_command_query_descriptor:
+            ASSERT_GOTO(connector_false, done);
+    }
+
 
     switch (rci->command.command_id)
     {
@@ -388,17 +428,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
         case rci_command_query_setting:
         case rci_command_set_state:
         case rci_command_query_state:
-            overflow = rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
-            overflow |= rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
-            {
-                uint8_t i;
-                for (i = 0; i < rci->command.attribute_count; i++)
-                {
-                    overflow |= rci_output_uint8(rci, rci->command.attribute[i].id);
-                    overflow |= rci_output_string(rci, rci->command.attribute[i].value, strlen(rci->command.attribute[i].value));
-                }
-            }
-
             if (!overflow)
             {
                 if (remote_config->error_id != connector_success)
@@ -410,11 +439,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
 
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
-            rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
-            rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | RCI_DO_COMMAND_ATTRIBUTE_COUNT);
-            rci_output_uint8(rci, RCI_DO_COMMAND_TARGET_BIN_ID);
-            rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target));
-
             set_rci_output_state(rci, rci_output_state_do_command_payload);
 
             set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
@@ -423,8 +447,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
             break;
 
         case rci_command_reboot:
-            rci_output_uint32(rci, rci->command.command_id);
-
             set_rci_output_state(rci, rci_output_state_group_terminator);
 
             set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
@@ -433,8 +455,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
             break;
 
         case rci_command_set_factory_default:
-            rci_output_uint32(rci, rci->command.command_id);
-
             set_rci_output_state(rci, rci_output_state_group_terminator);
 
             set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);

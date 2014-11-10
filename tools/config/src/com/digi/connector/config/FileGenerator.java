@@ -67,11 +67,6 @@ public abstract class FileGenerator {
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
     protected final static String RCI_ERROR_NOT_AVAILABLE = "connector_rci_error_not_available = -1,\n";
 
-    protected final static String CONNECTOR_REMOTE_ATTRIBUTE_T = "\ntypedef struct {\n" +
-    "  char const * source;\n" +
-    "  char const * compare_to;\n" +
-    "} connector_remote_attribute_t;\n";
-
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "  connector_remote_action_t CONST action;\n" +
@@ -563,7 +558,14 @@ public abstract class FileGenerator {
             "%s" +
             "} connector_remote_element_t;\n",const_name));
 
-        fileWriter.write(CONNECTOR_REMOTE_ATTRIBUTE_T);
+        fileWriter.write("\ntypedef struct {\n" +
+                         "  char const * source;\n" +
+                         "  char const * compare_to;\n");
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write("  char const * target;\n");
+        }
+        fileWriter.write("} connector_remote_attribute_t;\n");
+
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);

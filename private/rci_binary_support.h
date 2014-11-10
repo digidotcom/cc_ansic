@@ -130,9 +130,13 @@ typedef enum {
 #endif
 } rci_command_t;
 
-typedef enum {
-    rci_command_attribute_source,         /* 'source' attribute is bin_id=0 in the uploaded descriptor */
-    rci_command_attribute_compare_to,     /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor */
+typedef enum
+{ 
+    rci_command_attribute_source = 0,         /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
+#if (defined RCI_LEGACY_COMMANDS)
+    rci_command_attribute_target = 0,         /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
+#endif
+    rci_command_attribute_compare_to = 1,     /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
     rci_command_attribute_count
 } rci_command_attribute_t;
 
@@ -196,7 +200,6 @@ typedef enum
     rci_input_state_field_no_value,
     rci_input_state_field_value,
 #if (defined RCI_LEGACY_COMMANDS)
-    rci_input_state_do_command_target,
     rci_input_state_do_command_payload,
 #endif
     rci_input_state_done
@@ -299,14 +302,13 @@ typedef struct
 
         struct 
         {
-            unsigned int id;
+            rci_command_attribute_t id;
             char value[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
         } attribute[rci_command_attribute_count];
 
 #if (defined RCI_LEGACY_COMMANDS)
         struct 
         {
-            char target[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
             char const * response_string;
         } do_command;
 #endif

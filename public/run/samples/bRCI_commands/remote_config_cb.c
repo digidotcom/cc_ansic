@@ -241,10 +241,11 @@ static connector_callback_status_t app_process_remote_configuration(connector_re
     return status;
 }
 
-connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const target, char const * const request_payload, char const * * response_payload)
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const request_payload, char const * * response_payload)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
+    char const * target = remote_config->attribute.target;
 
     APP_DEBUG("app_process_do_command for target '%s':\n", target);
     APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
