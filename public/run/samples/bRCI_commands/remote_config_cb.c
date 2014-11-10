@@ -101,6 +101,14 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
             break;
         case connector_remote_action_query:
             APP_DEBUG("connector_remote_action_query\n");
+            if (remote_config->attribute.source != NULL)
+            {
+                APP_DEBUG("source='%s'\n", remote_config->attribute.source);
+            }
+            if (remote_config->attribute.compare_to != NULL)
+            {
+                APP_DEBUG("compare_to='%s'\n", remote_config->attribute.compare_to);
+            }
             break;
         case connector_remote_action_do_command:
             APP_DEBUG("connector_remote_action_do_command\n");

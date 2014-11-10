@@ -588,7 +588,7 @@ STATIC void process_command_attribute(rci_t * const rci)
                 rci->command.attribute_processed = 0;
 
                 ASSERT(rci->command.attribute_count > 0);
-                ASSERT(rci->command.attribute_count <= MAX_COMMAND_NORMAL_ATTRIBUTES);
+                ASSERT(rci->command.attribute_count <= rci_command_attribute_count);
 
                 set_rci_input_state(rci, rci_input_state_normal_attribute_id);
                 break;

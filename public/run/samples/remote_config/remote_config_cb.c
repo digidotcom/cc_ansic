@@ -70,8 +70,21 @@ static connector_callback_status_t app_process_session_end(connector_remote_conf
 
 static connector_callback_status_t app_process_action_start(connector_remote_config_t * const remote_config)
 {
-    UNUSED_ARGUMENT(remote_config);
     APP_DEBUG("app_process_action_start\n");
+
+    if (remote_config->action == connector_remote_action_query)
+    {
+        APP_DEBUG("connector_remote_action_query\n");
+        if (remote_config->attribute.source != NULL)
+        {
+            APP_DEBUG("source='%s'\n", remote_config->attribute.source);
+        }
+        if (remote_config->attribute.compare_to != NULL)
+        {
+            APP_DEBUG("compare_to='%s'\n", remote_config->attribute.compare_to);
+        }
+    }
+
     return connector_callback_continue;
 }
 

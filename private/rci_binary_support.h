@@ -18,8 +18,6 @@
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
 #define BINARY_RCI_ATTRIBUTE_TYPE_NAME   0x40
 
-#define MAX_COMMAND_NORMAL_ATTRIBUTES 2
-
 #define BINARY_RCI_NO_VALUE        UINT32_C(0xE0)
 #define BINARY_RCI_TERMINATOR      UINT32_C(0xE1)
 
@@ -131,6 +129,12 @@ typedef enum {
     rci_command_set_factory_default
 #endif
 } rci_command_t;
+
+typedef enum {
+    rci_command_attribute_source,         /* 'source' attribute is bin_id=0 in the uploaded descriptor */
+    rci_command_attribute_compare_to,     /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor */
+    rci_command_attribute_count
+} rci_command_attribute_t;
 
 typedef enum
 {
@@ -290,14 +294,14 @@ typedef struct
 
     struct {
         rci_command_t command_id;
-        uint8_t attribute_count;
-        uint8_t attribute_processed;
+        unsigned int attribute_count;
+        unsigned int attribute_processed;
 
         struct 
         {
-            uint8_t id;
+            unsigned int id;
             char value[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
-        } attribute[MAX_COMMAND_NORMAL_ATTRIBUTES];
+        } attribute[rci_command_attribute_count];
 
 #if (defined RCI_LEGACY_COMMANDS)
         struct 

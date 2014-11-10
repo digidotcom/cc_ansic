@@ -23,7 +23,7 @@ public class ConfigData {
 
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
-    private static int CommandsAttributeMaxLen = 50;
+    private static int CommandsAttributeMaxLen = 20;
 
 
     public ConfigData() throws Exception {
