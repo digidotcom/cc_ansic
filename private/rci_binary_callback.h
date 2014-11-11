@@ -120,13 +120,13 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
                 {
                     switch (rci->command.attribute[i].id.query)
                     {
-                        case rci_query_command_attribute_source:
+                        case rci_query_command_attribute_id_source:
                             rci->shared.callback_data.attribute.source = rci->command.attribute[i].value;
                             break;
-                        case rci_query_command_attribute_compare_to:
+                        case rci_query_command_attribute_id_compare_to:
                             rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value;
                             break;
-                        case rci_query_command_attribute_count:
+                        case rci_query_command_attribute_id_count:
                             ASSERT_GOTO(0, done);
                             break;
                     }
@@ -141,10 +141,10 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
                 {
                     switch (rci->command.attribute[i].id.do_command)
                     {
-                        case rci_do_command_attribute_target:
+                        case rci_do_command_attribute_id_target:
                             rci->shared.callback_data.attribute.target = rci->command.attribute[i].value;
                             break;
-                        case rci_do_command_attribute_count:
+                        case rci_do_command_attribute_id_count:
                             ASSERT_GOTO(0, done);
                             break;
                     }

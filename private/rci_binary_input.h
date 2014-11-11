@@ -540,14 +540,14 @@ STATIC void process_command_attribute(rci_t * const rci)
                 switch (rci->shared.callback_data.action)
                 {
                     case connector_remote_action_query:
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_command_attribute_count, done);
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_command_attribute_id_count, done);
                         break;
                     case connector_remote_action_set:
                         ASSERT_GOTO(0, done);
                         break;
 #if (defined RCI_LEGACY_COMMANDS)
                     case connector_remote_action_do_command:
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_do_command_attribute_count, done);
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_do_command_attribute_id_count, done);
                         break;
                     case connector_remote_action_reboot:
                     case connector_remote_action_set_factory_def:
