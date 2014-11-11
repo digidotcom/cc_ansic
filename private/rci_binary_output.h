@@ -406,10 +406,17 @@ STATIC void rci_output_command_id(rci_t * const rci)
             else
             {
                 overflow = rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
-                if (!overflow)
+                if (overflow)
                 {
-                    overflow |= rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
-                }
+                    goto done;
+                }                    
+
+                overflow = rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
+                if (overflow)
+                {
+                    goto done;
+                }                    
+                else
                 {
                     uint8_t i;
                     for (i = 0; i < rci->command.attribute_count && overflow == connector_false; i++)
