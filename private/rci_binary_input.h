@@ -524,6 +524,7 @@ STATIC void process_command_attribute(rci_t * const rci)
 
                 set_rci_traverse_state(rci, rci_traverse_state_command_id);
                 state_call(rci, rci_parser_state_traverse);
+                break;
 
             case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
                 ASSERT(connector_false);

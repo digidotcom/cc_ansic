@@ -106,6 +106,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
 #if (defined RCI_LEGACY_COMMANDS)
         rci->shared.callback_data.attribute.target = NULL;
 #endif
+        break;
     case connector_request_id_remote_config_session_end:
         break;
     case connector_request_id_remote_config_action_start:
