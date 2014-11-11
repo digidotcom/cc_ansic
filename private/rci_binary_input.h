@@ -540,14 +540,14 @@ STATIC void process_command_attribute(rci_t * const rci)
                 switch (rci->shared.callback_data.action)
                 {
                     case connector_remote_action_query:
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_command_attribute_compare_to + 1, done);
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_command_attribute_count, done);
                         break;
                     case connector_remote_action_set:
                         ASSERT_GOTO(0, done);
                         break;
 #if (defined RCI_LEGACY_COMMANDS)
                     case connector_remote_action_do_command:
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_command_attribute_target + 1, done);
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_do_command_attribute_count, done);
                         break;
                     case connector_remote_action_reboot:
                     case connector_remote_action_set_factory_def:
@@ -574,7 +574,7 @@ STATIC void process_normal_attribute_id(rci_t * const rci)
         connector_debug_line("attribute_id=%d\n", attribute_id);
 #endif
 
-        rci->command.attribute[rci->command.attribute_processed].id = attribute_id;
+        rci->command.attribute[rci->command.attribute_processed].id.val = attribute_id;
 
         set_rci_input_state(rci, rci_input_state_normal_attribute_value);
     }
@@ -604,11 +604,13 @@ STATIC void process_normal_attribute_value(rci_t * const rci)
 
     if (rci->command.attribute_processed == rci->command.attribute_count)
     {
+#if (defined RCI_LEGACY_COMMANDS)
         if (rci->command.command_id == rci_command_do_command)
         {
             set_rci_input_state(rci, rci_input_state_do_command_payload);
         }
         else
+#endif
         {
             set_rci_input_state(rci, rci_input_state_group_id);
 

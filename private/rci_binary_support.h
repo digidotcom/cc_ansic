@@ -132,12 +132,29 @@ typedef enum {
 
 typedef enum
 { 
-    rci_command_attribute_source = 0,         /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
+    rci_query_command_attribute_source = 0,         /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
+    rci_query_command_attribute_compare_to = 1,     /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
+    rci_query_command_attribute_count
+} rci_query_command_attribute_t;
+
 #if (defined RCI_LEGACY_COMMANDS)
-    rci_command_attribute_target = 0,         /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
+typedef enum
+{ 
+    rci_do_command_attribute_target = 0,         /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
+    rci_do_command_attribute_count
+} rci_do_command_attribute_t;
+#else
+#define rci_do_command_attribute_count 0
 #endif
-    rci_command_attribute_compare_to = 1,     /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
-    rci_command_attribute_count
+
+
+typedef union
+{
+    unsigned int val;
+    rci_query_command_attribute_t query;
+#if (defined RCI_LEGACY_COMMANDS)
+    rci_do_command_attribute_t do_command;
+#endif
 } rci_command_attribute_t;
 
 typedef enum
@@ -304,7 +321,7 @@ typedef struct
         {
             rci_command_attribute_t id;
             char value[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
-        } attribute[rci_command_attribute_count];
+        } attribute[MAX_VALUE((unsigned int)rci_query_command_attribute_count, (unsigned int)rci_do_command_attribute_count)];
 
 #if (defined RCI_LEGACY_COMMANDS)
         struct 

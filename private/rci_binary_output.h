@@ -414,7 +414,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
                     uint8_t i;
                     for (i = 0; i < rci->command.attribute_count && overflow == connector_false; i++)
                     {
-                        overflow |= rci_output_uint8(rci, rci->command.attribute[i].id);
+                        overflow |= rci_output_uint8(rci, rci->command.attribute[i].id.val);
                         overflow |= rci_output_string(rci, rci->command.attribute[i].value, strlen(rci->command.attribute[i].value));
                     }
                 }
