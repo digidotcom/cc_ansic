@@ -556,7 +556,7 @@ STATIC void process_command_attribute(rci_t * const rci)
 #endif
                 }
 
-                set_rci_input_state(rci, rci_input_state_normal_attribute_id);
+                set_rci_input_state(rci, rci_input_state_command_normal_attribute_id);
                 break;
         }
     }
@@ -565,7 +565,7 @@ done:
     return;
 }
 
-STATIC void process_normal_attribute_id(rci_t * const rci)
+STATIC void process_command_normal_attribute_id(rci_t * const rci)
 {
     unsigned int attribute_id;
     if (get_uint32(rci, &attribute_id))
@@ -576,11 +576,11 @@ STATIC void process_normal_attribute_id(rci_t * const rci)
 
         rci->command.attribute[rci->command.attribute_processed].id.val = attribute_id;
 
-        set_rci_input_state(rci, rci_input_state_normal_attribute_value);
+        set_rci_input_state(rci, rci_input_state_command_normal_attribute_value);
     }
 }
 
-STATIC void process_normal_attribute_value(rci_t * const rci)
+STATIC void process_command_normal_attribute_value(rci_t * const rci)
 {
     const char * attribute_string;
     size_t attribute_len;
@@ -620,7 +620,7 @@ STATIC void process_normal_attribute_value(rci_t * const rci)
     }
     else
     {
-        set_rci_input_state(rci, rci_input_state_normal_attribute_id);
+        set_rci_input_state(rci, rci_input_state_command_normal_attribute_id);
     }
 
 done:
@@ -1274,11 +1274,11 @@ STATIC void rci_parse_input(rci_t * const rci)
             case rci_input_state_command_attribute:
                 process_command_attribute(rci);
                 break;
-            case rci_input_state_normal_attribute_id:
-                process_normal_attribute_id(rci);
+            case rci_input_state_command_normal_attribute_id:
+                process_command_normal_attribute_id(rci);
                 break;
-            case rci_input_state_normal_attribute_value:
-                process_normal_attribute_value(rci);
+            case rci_input_state_command_normal_attribute_value:
+                process_command_normal_attribute_value(rci);
                 break;
             case rci_input_state_group_id:
                 process_group_id(rci);

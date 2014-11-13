@@ -190,8 +190,8 @@ typedef enum
 {
     rci_input_state_command_id,
     rci_input_state_command_attribute,
-    rci_input_state_normal_attribute_id,
-    rci_input_state_normal_attribute_value,
+    rci_input_state_command_normal_attribute_id,
+    rci_input_state_command_normal_attribute_value,
     rci_input_state_group_id,
     rci_input_state_group_attribute,
     rci_input_state_field_id,

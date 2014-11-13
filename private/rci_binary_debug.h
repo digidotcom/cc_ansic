@@ -27,8 +27,8 @@ static char const * rci_input_state_t_as_string(rci_input_state_t const value)
     {
         enum_to_case(rci_input_state_command_id);
         enum_to_case(rci_input_state_command_attribute);
-        enum_to_case(rci_input_state_normal_attribute_id);
-        enum_to_case(rci_input_state_normal_attribute_value);
+        enum_to_case(rci_input_state_command_normal_attribute_id);
+        enum_to_case(rci_input_state_command_normal_attribute_value);
         enum_to_case(rci_input_state_group_id);
         enum_to_case(rci_input_state_group_attribute);
         enum_to_case(rci_input_state_field_id);
