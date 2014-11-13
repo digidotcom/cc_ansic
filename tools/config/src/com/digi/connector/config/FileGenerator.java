@@ -67,10 +67,18 @@ public abstract class FileGenerator {
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
     protected final static String RCI_ERROR_NOT_AVAILABLE = "connector_rci_error_not_available = -1,\n";
 
-    protected final static String CONNECTOR_REMOTE_ATTRIBUTE_T = "\ntypedef struct {\n" +
-    "  char const * source;\n" +
-    "  char const * compare_to;\n" +
-    "} connector_remote_attribute_t;\n";
+    /* Following enum has to be in syncr. with sendDescriptors() function */
+    protected final static String RCI_QUERY_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
+    "  rci_query_command_attribute_id_source,\n" +      /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
+    "  rci_query_command_attribute_id_compare_to,\n" +  /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
+    "  rci_query_command_attribute_id_count,\n" +
+    "} rci_query_command_attribute_id_t;\n";
+
+    /* Following enum has to be in syncr. with sendDescriptors() function */
+    protected final static String RCI_DO_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
+    "  rci_do_command_attribute_id_target,\n" +      /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
+    "  rci_do_command_attribute_id_count,\n" +
+    "} rci_do_command_attribute_id_t;\n";
 
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
@@ -563,7 +571,20 @@ public abstract class FileGenerator {
             "%s" +
             "} connector_remote_element_t;\n",const_name));
 
-        fileWriter.write(CONNECTOR_REMOTE_ATTRIBUTE_T);
+        fileWriter.write("\ntypedef struct {\n" +
+                         "  char const * source;\n" +
+                         "  char const * compare_to;\n");
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write("  char const * target;\n");
+        }
+        fileWriter.write("} connector_remote_attribute_t;\n");
+
+        fileWriter.write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
+
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write(RCI_DO_COMMAND_ATTRIBUTE_ID_T);
+        }
+
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);

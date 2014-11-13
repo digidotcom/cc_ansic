@@ -472,61 +472,8 @@ STATIC void process_rci_command(rci_t * const rci)
                     rci_invalid_arguments_error(rci);
                     goto done;
                 }
-
-                /* Advance command */
-                rci_buffer_advance(&rci->buffer.input, 1);
-
-                /* Parse attribute count */
-                if (!rci_buffer_remaining(&rci->buffer.input))
-                {
-                    rci_invalid_arguments_error(rci);
-                    goto done;
-                }
-                else
-                {
-                    uint8_t attribute_count = *rci->buffer.input.current;
-
-                    if (((attribute_count & BINARY_RCI_ATTRIBUTE_TYPE_MASK) != BINARY_RCI_ATTRIBUTE_TYPE_NORMAL) ||
-                        ((attribute_count & ~BINARY_RCI_ATTRIBUTE_TYPE_MASK) != RCI_DO_COMMAND_ATTRIBUTE_COUNT))
-                    {
-                        rci_invalid_arguments_error(rci);
-                        goto done;
-                    }
-
-                    /* Advance attribute count */
-                    rci_buffer_advance(&rci->buffer.input, 1);
-                }
-
-                /* Parse attribute id */
-                if (!rci_buffer_remaining(&rci->buffer.input))
-                {
-                    rci_invalid_arguments_error(rci);
-                    goto done;
-                }
-                else
-                {
-                    uint8_t attribute_id = *rci->buffer.input.current;
-
-                    if (attribute_id != RCI_DO_COMMAND_TARGET_BIN_ID)
-                    {
-                        rci_invalid_arguments_error(rci);
-                        goto done;
-                    }
-
-                    /* Advance attribute id */
-                    rci_buffer_advance(&rci->buffer.input, 1);
-                }
-
-                /* Adjust input buffer (rci_parse_input will advand one possition for the command) */
-                rci->buffer.input.current--;
-                rci->shared.content.length = 0;
-
                 rci->shared.callback_data.action = connector_remote_action_do_command;
-
-                set_rci_input_state(rci, rci_input_state_do_command_target);
-
-                state_call(rci, rci_parser_state_input);
-                goto done;
+                break;
             }
             case rci_command_reboot:
                 rci->shared.callback_data.action = connector_remote_action_reboot;
@@ -577,6 +524,7 @@ STATIC void process_command_attribute(rci_t * const rci)
 
                 set_rci_traverse_state(rci, rci_traverse_state_command_id);
                 state_call(rci, rci_parser_state_traverse);
+                break;
 
             case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
                 ASSERT(connector_false);
@@ -588,13 +536,32 @@ STATIC void process_command_attribute(rci_t * const rci)
                 rci->command.attribute_processed = 0;
 
                 ASSERT(rci->command.attribute_count > 0);
-                ASSERT(rci->command.attribute_count <= rci_command_attribute_count);
+
+                switch (rci->shared.callback_data.action)
+                {
+                    case connector_remote_action_query:
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_command_attribute_id_count, done);
+                        break;
+                    case connector_remote_action_set:
+                        ASSERT_GOTO(0, done);
+                        break;
+#if (defined RCI_LEGACY_COMMANDS)
+                    case connector_remote_action_do_command:
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_do_command_attribute_id_count, done);
+                        break;
+                    case connector_remote_action_reboot:
+                    case connector_remote_action_set_factory_def:
+                        ASSERT_GOTO(0, done);
+                        break;
+#endif
+                }
 
                 set_rci_input_state(rci, rci_input_state_normal_attribute_id);
                 break;
         }
     }
 
+done:
     return;
 }
 
@@ -607,7 +574,7 @@ STATIC void process_normal_attribute_id(rci_t * const rci)
         connector_debug_line("attribute_id=%d\n", attribute_id);
 #endif
 
-        rci->command.attribute[rci->command.attribute_processed].id = attribute_id;
+        rci->command.attribute[rci->command.attribute_processed].id.val = attribute_id;
 
         set_rci_input_state(rci, rci_input_state_normal_attribute_value);
     }
@@ -637,10 +604,19 @@ STATIC void process_normal_attribute_value(rci_t * const rci)
 
     if (rci->command.attribute_processed == rci->command.attribute_count)
     {
-        set_rci_input_state(rci, rci_input_state_group_id);
+#if (defined RCI_LEGACY_COMMANDS)
+        if (rci->command.command_id == rci_command_do_command)
+        {
+            set_rci_input_state(rci, rci_input_state_do_command_payload);
+        }
+        else
+#endif
+        {
+            set_rci_input_state(rci, rci_input_state_group_id);
 
-        set_rci_traverse_state(rci, rci_traverse_state_command_id);
-        state_call(rci, rci_parser_state_traverse);
+            set_rci_traverse_state(rci, rci_traverse_state_command_id);
+            state_call(rci, rci_parser_state_traverse);
+        }
     }
     else
     {
@@ -1255,31 +1231,6 @@ STATIC void process_field_no_value(rci_t * const rci)
 }
 
 #if (defined RCI_LEGACY_COMMANDS)
-STATIC void process_do_command_target(rci_t * const rci)
-{
-    const char * attribute_string;
-    size_t attribute_len;
-
-    if (!get_string(rci, &attribute_string, &attribute_len))
-    {
-        goto done;
-    }
-
-#if (defined RCI_DEBUG)
-    connector_debug_line("attribute_len=%d\n", attribute_len);
-    connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
-#endif
-
-    ASSERT(attribute_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
-    memcpy(rci->command.do_command.target, attribute_string, attribute_len);
-    rci->command.do_command.target[attribute_len] = '\0';
-
-    set_rci_input_state(rci, rci_input_state_do_command_payload);
-
-done:
-    return;
-}
-
 STATIC void process_do_command_payload(rci_t * const rci)
 {
     if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
@@ -1348,9 +1299,6 @@ STATIC void rci_parse_input(rci_t * const rci)
                 process_field_value(rci);
                 break;
 #if (defined RCI_LEGACY_COMMANDS)
-            case rci_input_state_do_command_target:
-                process_do_command_target(rci);
-                break;
             case rci_input_state_do_command_payload:
                 process_do_command_payload(rci);
                 break;

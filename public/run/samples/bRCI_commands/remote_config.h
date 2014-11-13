@@ -98,7 +98,19 @@ typedef struct {
 typedef struct {
   char const * source;
   char const * compare_to;
+  char const * target;
 } connector_remote_attribute_t;
+
+typedef enum {
+  rci_query_command_attribute_id_source,
+  rci_query_command_attribute_id_compare_to,
+  rci_query_command_attribute_id_count,
+} rci_query_command_attribute_id_t;
+
+typedef enum {
+  rci_do_command_attribute_id_target,
+  rci_do_command_attribute_id_count,
+} rci_do_command_attribute_id_t;
 
 typedef struct {
   void * user_context;
