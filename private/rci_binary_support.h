@@ -207,6 +207,9 @@ typedef enum
 typedef enum
 {
     rci_output_state_command_id,
+    rci_output_state_command_normal_attribute_count,
+    rci_output_state_command_normal_attribute_id,
+    rci_output_state_command_normal_attribute_value,
     rci_output_state_group_id,
     rci_output_state_group_attribute,
     rci_output_state_field_id,

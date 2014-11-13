@@ -49,6 +49,9 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
     switch (value)
     {
         enum_to_case(rci_output_state_command_id);
+        enum_to_case(rci_output_state_command_normal_attribute_count);
+        enum_to_case(rci_output_state_command_normal_attribute_id);
+        enum_to_case(rci_output_state_command_normal_attribute_value);
         enum_to_case(rci_output_state_group_id);
         enum_to_case(rci_output_state_group_attribute);
         enum_to_case(rci_output_state_field_id);
