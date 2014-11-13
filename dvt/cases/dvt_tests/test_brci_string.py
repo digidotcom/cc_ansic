@@ -39,11 +39,11 @@ QUERY_DESCRIPTOR_STATE = """<query_descriptor><query_state/></query_descriptor>"
 
 SET_SETTING = """<set_setting><%s index="%s"><%s>%s</%s></%s></set_setting>"""
 
-QUERY_SETTING = """<query_setting><%s/></query_setting>"""
+QUERY_SETTING = """<query_setting %s><%s/></query_setting>"""
 
 SET_STATE = """<set_state><%s index="%s"><%s>%s</%s></%s></set_state>"""
 
-QUERY_STATE = """<query_state><%s/></query_state>"""
+QUERY_STATE = """<query_state %s><%s/></query_state>"""
 
 
 
@@ -92,8 +92,7 @@ class Test_brci_string(object):
             assert_equal('1', self.device_core.dpConnectionStatus,
                 "Device %s not connected." % ICPlugin.device_id)
 
-
-    def getSettingValue(self, groupName, settingName, settingType, cache = "false"):
+    def getSettingValueWithAttributes(self, command_attribute, groupName, settingName, settingType, cache = "false"):
         # Use a specific query for setting or state
         if ( settingType == "setting" ):
             getQuery = QUERY_SETTING
@@ -107,7 +106,7 @@ class Test_brci_string(object):
         #               <device id="00000000-00000000-BD34D8FF-FFD8E610"/>
         #           </targets>
         #           <rci_request version="1.1">
-        #               <query_setting>
+        #               <query_setting source="internal_defaults">
         #                   <device_info/>
         #               </query_setting>
         #           </rci_request>
@@ -115,7 +114,7 @@ class Test_brci_string(object):
         # </sci_request>
         rciQuery = RCI_BASE_TEMPLATE % ( cache, # cache
                                          ICPlugin.device_id, # Device ID
-                                         getQuery % groupName) # RCI query
+                                         getQuery % (command_attribute, groupName) ) # RCI query
 
 
         # Send request to server and get the response
@@ -183,7 +182,8 @@ class Test_brci_string(object):
         # Return value for the setting
         return (nodeText.data,xmlResponse)
 
-
+    def getSettingValue(self, groupName, settingName, settingType, cache = "false"):
+        return (self.getSettingValueWithAttributes('', groupName, settingName, settingType, cache))
 
     def setSettingValue(self, groupName, settingName, settingType, newValue, cache = "false"):
         # Escape new setting value to allow all kind of characters
@@ -663,3 +663,35 @@ class Test_brci_string(object):
 
         ## Verify that Device is connected
         #self.ensure_connected()
+
+    def test_command_attributes(self):
+        ''' Verify command attributes '''
+
+        # Verify that Device is connected
+        self.ensure_connected()
+
+        # Initialize arguments
+        groupName = "attibute_feedback"
+        settingType = "setting"
+        cache = "false"
+
+        # Initialize result
+        result = False
+
+        # Get values
+        attributeName = "source"
+        attributeValue = "testSource"     
+        settingName = attributeName
+        Value,xmlResponse = self.getSettingValueWithAttributes('%s="%s"' % (attributeName, attributeValue), groupName, settingName, settingType, cache = cache)
+        log.info("source value is '%s'" % (Value))
+        assert_equal(attributeValue, Value, "Verification attribute '%s' was unsuccessful." % attributeName)
+
+        attributeName = "compare_to"
+        attributeValue = "testCompareTo"     
+        settingName = attributeName
+        Value,xmlResponse = self.getSettingValueWithAttributes('%s="%s"' % (attributeName, attributeValue), groupName, settingName, settingType, cache = cache)
+        log.info("source value is '%s'" % (Value))
+        assert_equal(attributeValue, Value, "Verification attribute '%s' was unsuccessful." % attributeName)
+
+        # Verify that Device is connected
+        self.ensure_connected()

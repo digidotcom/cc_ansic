@@ -199,6 +199,7 @@ def test_query_setting_and_state():
             TestCase('<query_state><device_state></device_state></query_state>',None,'query_state_no_element_2'),
             TestCase('<query_setting><serial><unknownElement/></serial></query_setting>','2007','query_setting_unknown_element'),
             TestCase('<query_state><device_state><unknownElement/></device_state></query_state>','2007','query_state_unknown_element'),
+            TestCase('<query_setting source="current" compare_to="internal_defaults"></query_setting>',None,''),
             ]
 
 
