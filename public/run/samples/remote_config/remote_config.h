@@ -144,6 +144,12 @@ typedef struct {
   char const * compare_to;
 } connector_remote_attribute_t;
 
+typedef enum {
+  rci_query_command_attribute_id_source,
+  rci_query_command_attribute_id_compare_to,
+  rci_query_command_attribute_id_count,
+} rci_query_command_attribute_id_t;
+
 typedef struct {
   void * user_context;
   connector_remote_action_t CONST action;

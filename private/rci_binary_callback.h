@@ -114,24 +114,44 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
         {
             case rci_command_query_setting:
             case rci_command_query_state:
-#if (defined RCI_LEGACY_COMMANDS)
-            case rci_command_do_command:
-#endif
             {
                 unsigned int i;
                 for (i=0; i < rci->command.attribute_count; i++)
                 {
-                    if (rci->command.attribute[i].id == rci_command_attribute_source)
-                        rci->shared.callback_data.attribute.source = rci->command.attribute[i].value;
-                    if (rci->command.attribute[i].id == rci_command_attribute_compare_to)
-                        rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value;
-#if (defined RCI_LEGACY_COMMANDS)
-                    if (rci->command.attribute[i].id == rci_command_attribute_target)
-                        rci->shared.callback_data.attribute.target = rci->command.attribute[i].value;
-#endif
+                    switch (rci->command.attribute[i].id.query)
+                    {
+                        case rci_query_command_attribute_id_source:
+                            rci->shared.callback_data.attribute.source = rci->command.attribute[i].value;
+                            break;
+                        case rci_query_command_attribute_id_compare_to:
+                            rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value;
+                            break;
+                        case rci_query_command_attribute_id_count:
+                            ASSERT_GOTO(0, done);
+                            break;
+                    }
                 }
                 break;
             }
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_do_command:
+            {
+                unsigned int i;
+                for (i=0; i < rci->command.attribute_count; i++)
+                {
+                    switch (rci->command.attribute[i].id.do_command)
+                    {
+                        case rci_do_command_attribute_id_target:
+                            rci->shared.callback_data.attribute.target = rci->command.attribute[i].value;
+                            break;
+                        case rci_do_command_attribute_id_count:
+                            ASSERT_GOTO(0, done);
+                            break;
+                    }
+                }
+                break;
+            }
+#endif
             case rci_command_set_setting:
             case rci_command_set_state:
             case rci_command_query_descriptor:
