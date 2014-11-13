@@ -253,8 +253,11 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
 
     if (!strcmp(target, "echo"))
     {
-        char * my_answer = malloc(strlen(request_payload));
+        char * my_answer = malloc(strlen(request_payload) + 1);
         strcpy(my_answer, request_payload);
+
+        /* Update session so buffer is freed in the session_end callback */
+        session_ptr->buf_ptr = my_answer;
         *response_payload = my_answer;
     }
     else if (!strcmp(target, "ping"))
