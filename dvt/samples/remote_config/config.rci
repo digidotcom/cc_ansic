@@ -53,6 +53,10 @@ group setting device_info  "Device info"
     element desc "Description" type multiline_string access  read_write 
     element syspwd "System password" type password access  read_write  max  64 
     error invalid_length "invalid length" 
+
+group setting attibute_feedback  "Attribute feedback"
+    element source "source" type string access  read_write  min  0 max  20 
+    element compare_to "compare_to" type string access  read_write  min  0 max  20 
    
 group state debug_info "Debug info on IC thread"
     element version "Version" type 0x_hex32 access  read_only 

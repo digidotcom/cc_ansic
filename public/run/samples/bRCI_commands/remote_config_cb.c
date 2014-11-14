@@ -101,6 +101,14 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
             break;
         case connector_remote_action_query:
             APP_DEBUG("connector_remote_action_query\n");
+            if (remote_config->attribute.source != NULL)
+            {
+                APP_DEBUG("source='%s'\n", remote_config->attribute.source);
+            }
+            if (remote_config->attribute.compare_to != NULL)
+            {
+                APP_DEBUG("compare_to='%s'\n", remote_config->attribute.compare_to);
+            }
             break;
         case connector_remote_action_do_command:
             APP_DEBUG("connector_remote_action_do_command\n");
@@ -233,10 +241,11 @@ static connector_callback_status_t app_process_remote_configuration(connector_re
     return status;
 }
 
-connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const target, char const * const request_payload, char const * * response_payload)
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const request_payload, char const * * response_payload)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
+    char const * target = remote_config->attribute.target;
 
     APP_DEBUG("app_process_do_command for target '%s':\n", target);
     APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
@@ -244,8 +253,11 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
 
     if (!strcmp(target, "echo"))
     {
-        char * my_answer = malloc(strlen(request_payload));
+        char * my_answer = malloc(strlen(request_payload) + 1);
         strcpy(my_answer, request_payload);
+
+        /* Update session so buffer is freed in the session_end callback */
+        session_ptr->buf_ptr = my_answer;
         *response_payload = my_answer;
     }
     else if (!strcmp(target, "ping"))

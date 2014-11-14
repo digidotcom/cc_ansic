@@ -194,6 +194,30 @@ static connector_callback_status_t app_rci_group_get(connector_remote_config_t *
 {
     void * data;
 
+    if (remote_config->group.type == connector_remote_group_setting && remote_config->group.id == connector_setting_attibute_feedback)
+    {
+        switch (remote_config->element.id)
+        {
+            case connector_setting_attibute_feedback_source:
+                if (remote_config->attribute.source != NULL)
+                {
+                    remote_config->response.element_value->string_value = remote_config->attribute.source;
+                    return connector_callback_continue;
+                }
+                break;
+            case connector_setting_attibute_feedback_compare_to:
+                if (remote_config->attribute.compare_to != NULL)
+                {
+                    remote_config->response.element_value->string_value = remote_config->attribute.compare_to;
+                    return connector_callback_continue;
+                }
+                break;
+            default:
+                ASSERT(0);
+                break;
+        }
+    }
+
     switch(remote_config->element.type){
         case connector_element_type_string:
         case connector_element_type_multiline_string:

@@ -380,61 +380,264 @@ STATIC connector_bool_t rci_output_float(rci_t * const rci, float const value)
 STATIC void rci_output_command_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-    connector_bool_t overflow;
+    connector_bool_t overflow = connector_false;
+
 
     switch (rci->command.command_id)
     {
         case rci_command_set_setting:
-        case rci_command_query_setting:
         case rci_command_set_state:
-        case rci_command_query_state:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
+#endif
             overflow = rci_output_uint32(rci, rci->command.command_id);
-            if (!overflow)
-            {
-                if (remote_config->error_id != connector_success)
-                    state_call(rci, rci_parser_state_error);
-                else
-                    state_call(rci, rci_parser_state_traverse);
-            }
             break;
 
+        case rci_command_query_setting:
+        case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
-            rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
-            rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | RCI_DO_COMMAND_ATTRIBUTE_COUNT);
-            rci_output_uint8(rci, RCI_DO_COMMAND_TARGET_BIN_ID);
-            rci_output_string(rci, rci->command.do_command.target, strlen(rci->command.do_command.target));
-
-            set_rci_output_state(rci, rci_output_state_do_command_payload);
-
-            set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
-
-            state_call(rci, rci_parser_state_traverse);
+#endif
+            if (rci->command.attribute_count == 0)
+            {
+                overflow = rci_output_uint32(rci, rci->command.command_id);
+            }
+            else
+            {
+                overflow = rci_output_uint32(rci, rci->command.command_id | BINARY_RCI_ATTRIBUTE_BIT);
+            }
             break;
+         case rci_command_query_descriptor:
+            ASSERT_GOTO(connector_false, done);
+    }
 
-        case rci_command_reboot:
-            rci_output_uint32(rci, rci->command.command_id);
+    if (overflow)
+    {
+        goto done;
+    }
 
-            set_rci_output_state(rci, rci_output_state_group_terminator);
+    if (remote_config->error_id != connector_success)
+    {
+        state_call(rci, rci_parser_state_error);
+        goto done;
+    }
 
-            set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
+    if (rci->command.attribute_count > 0)
+    {
+        set_rci_output_state(rci, rci_output_state_command_normal_attribute_count);
+    }
+    else
+    {
+        switch (rci->command.command_id)
+        {
+            case rci_command_set_setting:
+            case rci_command_query_setting:
+            case rci_command_set_state:
+            case rci_command_query_state:
+                state_call(rci, rci_parser_state_traverse);
+                break;
 
-            state_call(rci, rci_parser_state_traverse);
-            break;
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_do_command:
+                set_rci_output_state(rci, rci_output_state_do_command_payload);
 
-        case rci_command_set_factory_default:
-            rci_output_uint32(rci, rci->command.command_id);
+                set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
 
-            set_rci_output_state(rci, rci_output_state_group_terminator);
+                state_call(rci, rci_parser_state_traverse);
+                break;
 
-            set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);
+            case rci_command_reboot:
+                set_rci_output_state(rci, rci_output_state_group_terminator);
 
-            state_call(rci, rci_parser_state_traverse);
-            break;
+                set_rci_traverse_state(rci, rci_traverse_state_command_reboot);
+
+                state_call(rci, rci_parser_state_traverse);
+                break;
+
+            case rci_command_set_factory_default:
+                set_rci_output_state(rci, rci_output_state_group_terminator);
+
+                set_rci_traverse_state(rci, rci_traverse_state_command_set_factory_default);
+
+                state_call(rci, rci_parser_state_traverse);
+                break;
 #endif
 
+            case rci_command_query_descriptor:
+                ASSERT_GOTO(connector_false, done);
+        }
+    }
+
+done:
+    return;
+}
+
+STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
+{
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+    connector_bool_t overflow = connector_false;
+
+
+    switch (rci->command.command_id)
+    {
+        case rci_command_set_setting:
+        case rci_command_set_state:
         case rci_command_query_descriptor:
+
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
+#endif
             ASSERT_GOTO(connector_false, done);
+            break;
+
+        case rci_command_query_setting:
+        case rci_command_query_state:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_do_command:
+#endif
+            overflow = rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
+            break;
+    }
+
+    if (overflow)
+    {
+        goto done;
+    }
+
+    if (remote_config->error_id != connector_success)
+    {
+        state_call(rci, rci_parser_state_error);
+        goto done;
+    }
+
+    rci->command.attribute_processed = 0;
+
+    ASSERT_GOTO(rci->command.attribute_count > 0, done);
+
+    set_rci_output_state(rci, rci_output_state_command_normal_attribute_id);
+
+done:
+    return;
+}
+
+STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
+{
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+    connector_bool_t overflow = connector_false;
+
+
+    switch (rci->command.command_id)
+    {
+        case rci_command_set_setting:
+        case rci_command_set_state:
+        case rci_command_query_descriptor:
+
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
+#endif
+            ASSERT_GOTO(connector_false, done);
+            break;
+
+        case rci_command_query_setting:
+        case rci_command_query_state:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_do_command:
+#endif
+            overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attribute_processed].id.val);
+            break;
+    }
+
+    if (overflow)
+    {
+        goto done;
+    }
+
+    if (remote_config->error_id != connector_success)
+    {
+        state_call(rci, rci_parser_state_error);
+        goto done;
+    }
+
+    set_rci_output_state(rci, rci_output_state_command_normal_attribute_value);
+
+done:
+    return;
+}
+
+STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
+{
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+    connector_bool_t overflow = connector_false;
+
+    switch (rci->command.command_id)
+    {
+        case rci_command_set_setting:
+        case rci_command_set_state:
+        case rci_command_query_descriptor:
+
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
+#endif
+            ASSERT_GOTO(connector_false, done);
+            break;
+
+        case rci_command_query_setting:
+        case rci_command_query_state:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_do_command:
+#endif
+            overflow = rci_output_string(rci, rci->command.attribute[rci->command.attribute_processed].value, strlen(rci->command.attribute[rci->command.attribute_processed].value));
+            break;
+    }
+
+    if (overflow)
+    {
+        goto done;
+    }
+
+    if (remote_config->error_id != connector_success)
+    {
+        state_call(rci, rci_parser_state_error);
+        goto done;
+    }
+
+    rci->command.attribute_processed++;
+
+    if (rci->command.attribute_processed < rci->command.attribute_count)
+    {
+        set_rci_output_state(rci, rci_output_state_command_normal_attribute_id);
+    }
+    else
+    {
+        switch (rci->command.command_id)
+        {
+            case rci_command_query_descriptor:
+            case rci_command_set_setting:
+            case rci_command_set_state:
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_reboot:
+            case rci_command_set_factory_default:
+#endif
+                ASSERT_GOTO(connector_false, done);
+                break;
+            case rci_command_query_setting:
+            case rci_command_query_state:     
+                state_call(rci, rci_parser_state_traverse);
+                break;
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_do_command:
+                set_rci_output_state(rci, rci_output_state_do_command_payload);
+
+                set_rci_traverse_state(rci, rci_traverse_state_command_do_command);
+
+                state_call(rci, rci_parser_state_traverse);
+                break;
+#endif
+        }
     }
 
 done:
@@ -776,6 +979,18 @@ STATIC void rci_generate_output(rci_t * const rci)
         {
             case rci_output_state_command_id:
                 rci_output_command_id(rci);
+                break;
+
+            case rci_output_state_command_normal_attribute_count:
+                rci_output_command_normal_attribute_count(rci);
+                break;
+
+            case rci_output_state_command_normal_attribute_id:
+                rci_output_command_normal_attribute_id(rci);
+                break;
+
+            case rci_output_state_command_normal_attribute_value:
+                rci_output_command_normal_attribute_value(rci);
                 break;
 
             case rci_output_state_group_id:

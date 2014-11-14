@@ -101,8 +101,67 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
         break;
 
     case connector_request_id_remote_config_session_start:
+        rci->shared.callback_data.attribute.source = NULL;
+        rci->shared.callback_data.attribute.compare_to = NULL;
+#if (defined RCI_LEGACY_COMMANDS)
+        rci->shared.callback_data.attribute.target = NULL;
+#endif
+        break;
     case connector_request_id_remote_config_session_end:
+        break;
     case connector_request_id_remote_config_action_start:
+        switch (rci->command.command_id)
+        {
+            case rci_command_query_setting:
+            case rci_command_query_state:
+            {
+                unsigned int i;
+                for (i=0; i < rci->command.attribute_count; i++)
+                {
+                    switch (rci->command.attribute[i].id.query)
+                    {
+                        case rci_query_command_attribute_id_source:
+                            rci->shared.callback_data.attribute.source = rci->command.attribute[i].value;
+                            break;
+                        case rci_query_command_attribute_id_compare_to:
+                            rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value;
+                            break;
+                        case rci_query_command_attribute_id_count:
+                            ASSERT_GOTO(0, done);
+                            break;
+                    }
+                }
+                break;
+            }
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_do_command:
+            {
+                unsigned int i;
+                for (i=0; i < rci->command.attribute_count; i++)
+                {
+                    switch (rci->command.attribute[i].id.do_command)
+                    {
+                        case rci_do_command_attribute_id_target:
+                            rci->shared.callback_data.attribute.target = rci->command.attribute[i].value;
+                            break;
+                        case rci_do_command_attribute_id_count:
+                            ASSERT_GOTO(0, done);
+                            break;
+                    }
+                }
+                break;
+            }
+#endif
+            case rci_command_set_setting:
+            case rci_command_set_state:
+            case rci_command_query_descriptor:
+#if (defined RCI_LEGACY_COMMANDS)
+            case rci_command_reboot:
+            case rci_command_set_factory_default:
+#endif
+                break;
+        }         
+        break;
     case connector_request_id_remote_config_action_end:
         break;
 
@@ -144,9 +203,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
         break;
     }
 
-#if (defined RCI_LEGACY_COMMANDS)
 done:
-#endif
     rci->callback.request.remote_config_request = remote_config_request;
     rci->callback.status = connector_callback_busy;
 }
@@ -226,7 +283,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
         {
-            connector_callback_status_t const status = app_process_do_command(callback_data, rci->command.do_command.target, remote_config->element.value->string_value, &rci->command.do_command.response_string);
+            connector_callback_status_t const status = app_process_do_command(callback_data, remote_config->element.value->string_value, &rci->command.do_command.response_string);
             if (status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
@@ -354,7 +411,14 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 break;
             case connector_request_id_remote_config_session_end:
             case connector_request_id_remote_config_action_start:
+                break;
             case connector_request_id_remote_config_action_end:
+                rci->shared.callback_data.attribute.source = NULL;
+                rci->shared.callback_data.attribute.compare_to = NULL;
+#if (defined RCI_LEGACY_COMMANDS)
+                rci->shared.callback_data.attribute.target = NULL;
+#endif
+                break;
             case connector_request_id_remote_config_group_start:
             case connector_request_id_remote_config_session_cancel:
             case connector_request_id_remote_config_configurations:
