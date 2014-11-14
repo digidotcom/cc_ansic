@@ -500,12 +500,11 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
         case rci_command_do_command:
 #endif
             overflow = rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
+            if (overflow)
+            {
+                goto done;
+            }
             break;
-    }
-
-    if (overflow)
-    {
-        goto done;
     }
 
     if (remote_config->error_id != connector_success)
@@ -549,12 +548,11 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
         case rci_command_do_command:
 #endif
             overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attribute_processed].id.val);
+            if (overflow)
+            {
+                goto done;
+            }
             break;
-    }
-
-    if (overflow)
-    {
-        goto done;
     }
 
     if (remote_config->error_id != connector_success)
@@ -593,12 +591,11 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
         case rci_command_do_command:
 #endif
             overflow = rci_output_string(rci, rci->command.attribute[rci->command.attribute_processed].value, strlen(rci->command.attribute[rci->command.attribute_processed].value));
+            if (overflow)
+            {
+                goto done;
+            }
             break;
-    }
-
-    if (overflow)
-    {
-        goto done;
     }
 
     if (remote_config->error_id != connector_success)
