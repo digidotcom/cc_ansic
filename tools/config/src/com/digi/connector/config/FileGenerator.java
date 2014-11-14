@@ -71,7 +71,7 @@ public abstract class FileGenerator {
     protected final static String RCI_QUERY_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
     "  rci_query_command_attribute_id_source,\n" +      /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
     "  rci_query_command_attribute_id_compare_to,\n" +  /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
-    "  rci_query_command_attribute_id_count,\n" +
+    "  rci_query_command_attribute_id_count\n" +
     "} rci_query_command_attribute_id_t;\n";
 
     /* Following enum has to be in syncr. with sendDescriptors() function */
