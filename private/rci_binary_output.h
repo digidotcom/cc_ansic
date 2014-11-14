@@ -203,8 +203,9 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
     connector_bool_t overflow = connector_true;
     size_t const avail_bytes = rci_buffer_remaining(output);
 
-    if (avail_bytes < sizeof(uint32_t))
+    if (avail_bytes < sizeof(uint32_t) + 1)
     {
+        rci->status = rci_status_flush_output;
         goto done;
     }
     else
@@ -277,8 +278,9 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
     connector_bool_t overflow = connector_true;
     size_t const avail_bytes = rci_buffer_remaining(output);
 
-    if (avail_bytes < SIZEOF_MAC_ADDR)
+    if (avail_bytes < SIZEOF_MAC_ADDR + 1)
     {
+        rci->status = rci_status_flush_output;
         goto done;
     }
     else
