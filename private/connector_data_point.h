@@ -594,7 +594,7 @@ STATIC size_t dp_process_time(data_point_info_t * const dp_info, char * const bu
 
         #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
         case connector_time_local_epoch_whole:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%lld", dp_ptr->time.value.since_epoch_whole.milliseconds);
+            bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRIu64, dp_ptr->time.value.since_epoch_whole.milliseconds);
             break;
         #endif
 
