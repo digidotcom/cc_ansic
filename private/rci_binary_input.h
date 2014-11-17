@@ -532,7 +532,7 @@ STATIC void process_command_attribute(rci_t * const rci)
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
 
                 rci->command.attribute_count = value;
-                rci->command.attribute_processed = 0;
+                rci->command.attributes_processed = 0;
 
                 ASSERT(rci->command.attribute_count > 0);
 
@@ -573,7 +573,7 @@ STATIC void process_command_normal_attribute_id(rci_t * const rci)
         connector_debug_line("attribute_id=%d\n", attribute_id);
 #endif
 
-        rci->command.attribute[rci->command.attribute_processed].id.val = attribute_id;
+        rci->command.attribute[rci->command.attributes_processed].id.val = attribute_id;
 
         set_rci_input_state(rci, rci_input_state_command_normal_attribute_value);
     }
@@ -596,12 +596,12 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
 #endif
 
     ASSERT(attribute_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
-    memcpy(rci->command.attribute[rci->command.attribute_processed].value, attribute_string, attribute_len);
-    rci->command.attribute[rci->command.attribute_processed].value[attribute_len] = '\0';
+    memcpy(rci->command.attribute[rci->command.attributes_processed].value, attribute_string, attribute_len);
+    rci->command.attribute[rci->command.attributes_processed].value[attribute_len] = '\0';
 
-    rci->command.attribute_processed++;
+    rci->command.attributes_processed++;
 
-    if (rci->command.attribute_processed == rci->command.attribute_count)
+    if (rci->command.attributes_processed == rci->command.attribute_count)
     {
 #if (defined RCI_LEGACY_COMMANDS)
         if (rci->command.command_id == rci_command_do_command)

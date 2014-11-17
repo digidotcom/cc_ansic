@@ -300,7 +300,7 @@ typedef struct
     struct {
         rci_command_t command_id;
         unsigned int attribute_count;
-        unsigned int attribute_processed;
+        unsigned int attributes_processed;
 
 #if (defined RCI_LEGACY_COMMANDS)
 #define MAX_ATTRIBUTES MAX_VALUE((unsigned int)rci_query_command_attribute_id_count, (unsigned int)rci_do_command_attribute_id_count)

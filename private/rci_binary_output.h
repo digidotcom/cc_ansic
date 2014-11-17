@@ -513,7 +513,7 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
         goto done;
     }
 
-    rci->command.attribute_processed = 0;
+    rci->command.attributes_processed = 0;
 
     ASSERT_GOTO(rci->command.attribute_count > 0, done);
 
@@ -547,7 +547,7 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attribute_processed].id.val);
+            overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attributes_processed].id.val);
             if (overflow)
             {
                 goto done;
@@ -590,7 +590,7 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            overflow = rci_output_string(rci, rci->command.attribute[rci->command.attribute_processed].value, strlen(rci->command.attribute[rci->command.attribute_processed].value));
+            overflow = rci_output_string(rci, rci->command.attribute[rci->command.attributes_processed].value, strlen(rci->command.attribute[rci->command.attributes_processed].value));
             if (overflow)
             {
                 goto done;
@@ -604,9 +604,9 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
         goto done;
     }
 
-    rci->command.attribute_processed++;
+    rci->command.attributes_processed++;
 
-    if (rci->command.attribute_processed < rci->command.attribute_count)
+    if (rci->command.attributes_processed < rci->command.attribute_count)
     {
         set_rci_output_state(rci, rci_output_state_command_normal_attribute_id);
     }
