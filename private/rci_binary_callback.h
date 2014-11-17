@@ -228,11 +228,13 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_PARSER_USES_ELEMENT_NAMES)
                 rci->shared.callback_data.element.name = NULL;
 #endif
+                /* intentional fall through */
             case connector_request_id_remote_config_session_end:
             case connector_request_id_remote_config_action_start:
             case connector_request_id_remote_config_action_end:
             case connector_request_id_remote_config_group_start:
                 rci->output.group_skip = connector_false;
+                /* intentional fall through */
             case connector_request_id_remote_config_group_end:
             case connector_request_id_remote_config_group_process:
                 rci->output.element_skip = connector_false;
