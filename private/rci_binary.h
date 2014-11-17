@@ -55,8 +55,7 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
 #if (!defined CONNECTOR_NO_MALLOC)
     {
-        static char const max_mac_value[] = "FF:FF:FF:FF:FF:FF";
-        size_t const rci_input_start_size = sizeof max_mac_value;
+        size_t const rci_input_start_size = sizeof "FF:FF:FF:FF:FF:FF";
         connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
         connector_status_t const connector_status = malloc_data(connector_ptr, rci_input_start_size, (void **)&rci->input.storage);
 
