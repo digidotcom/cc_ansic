@@ -645,7 +645,6 @@ done:
 
 STATIC void rci_output_group_id(rci_t * const rci)
 {
-    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t encoding_data;
 
     if (!have_group_id(rci))
@@ -666,12 +665,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
             overflow = rci_output_uint32(rci, encoding_data);
 
         if (!overflow)
-        {
-            if (remote_config->error_id != connector_success)
-                state_call(rci, rci_parser_state_error);
-            else
-                set_rci_output_state(rci, rci_output_state_group_attribute);
-        }
+            set_rci_output_state(rci, rci_output_state_group_attribute);
     }
 
 done:
@@ -720,11 +714,17 @@ STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const i
 
 STATIC void rci_output_group_attribute(rci_t * const rci)
 {
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     unsigned int const index = get_group_index(rci);
     connector_bool_t overflow = encode_attribute(rci, index);
 
     if (!overflow)
-       state_call(rci, rci_parser_state_traverse);
+    {
+        if (remote_config->error_id != connector_success)
+            state_call(rci, rci_parser_state_error);
+        else
+            state_call(rci, rci_parser_state_traverse);
+    }
 }
 
 
