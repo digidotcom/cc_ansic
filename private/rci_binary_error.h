@@ -122,14 +122,17 @@ STATIC void rci_generate_error(rci_t * const rci)
                         }
                         trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
                         break;
-
-                    case connector_request_id_remote_config_group_process:
                     case connector_request_id_remote_config_group_start:
                         {
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
                         }
                         trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_group_end);
+                        break;
+
+                    case connector_request_id_remote_config_group_process:
+                        set_rci_error_state(rci, rci_error_state_id);
+                        state_call(rci, rci_parser_state_traverse);
                         break;
 
                     case connector_request_id_remote_config_session_cancel:

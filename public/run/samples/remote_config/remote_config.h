@@ -158,7 +158,7 @@ typedef struct {
   connector_remote_element_t CONST element;
   unsigned int error_id;
 
-  union {
+  struct {
       char const * error_hint;
       connector_element_value_t * element_value;
   } response;
