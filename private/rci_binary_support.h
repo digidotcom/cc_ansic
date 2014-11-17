@@ -278,7 +278,7 @@ typedef struct
     rcistr_t value;
 } rci_attribute_t;
 
-typedef struct
+typedef struct rci
 {
     rci_service_data_t * service_data;
     rci_status_t status;

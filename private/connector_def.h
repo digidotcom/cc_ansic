@@ -222,6 +222,7 @@ typedef struct connector_data {
 
 #if (defined CONNECTOR_RCI_SERVICE)
     connector_remote_config_data_t rci_data;
+    struct rci * p_rci;
 #endif
 
 #if (defined CONNECTOR_DATA_POINTS)
