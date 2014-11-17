@@ -237,6 +237,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_group_process:
                 rci->output.element_skip = connector_false;
                 remote_config->error_id = connector_success;
+                remote_config->response.error_hint = NULL;
                 callback_data = remote_config;
                 break;
 

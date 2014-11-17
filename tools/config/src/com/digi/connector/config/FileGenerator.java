@@ -88,7 +88,7 @@ public abstract class FileGenerator {
     "  connector_remote_element_t CONST element;\n" +
     "  unsigned int error_id;\n" +
     "\n" +
-    "  union {\n" +
+    "  struct {\n" +
     "      char const * error_hint;\n" +
     "      connector_element_value_t * element_value;\n" +
     "  } response;\n" +
