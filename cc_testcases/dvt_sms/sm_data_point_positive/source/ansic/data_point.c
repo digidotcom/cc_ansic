@@ -222,7 +222,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     ASSERT(tmval != NULL);
                     snprintf(value[type][test_case], sizeof value[type][test_case], "%04d-%02d-%02dT%02d:%02d:%02d",
                              tmval->tm_year+1900, tmval->tm_mon+1, tmval->tm_mday, tmval->tm_hour, tmval->tm_min, tmval->tm_sec);
-                    point->time.value.iso8601_string = value[type][test_case-1];
+                    point->time.value.iso8601_string = value[type][test_case];
                     point->time.source = connector_time_local_iso8601;
                     break;
                 }
