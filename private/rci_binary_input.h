@@ -207,7 +207,6 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 #if (defined CONNECTOR_NO_MALLOC)
         if (new_size > sizeof rci->input.storage)
         {
-            UNUSED_PARAMETER(connector_ptr);
             connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
             goto done;
