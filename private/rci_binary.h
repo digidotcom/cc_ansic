@@ -145,12 +145,12 @@ STATIC connector_bool_t rci_action_session_lost(rci_t * const rci)
 STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_session_t const action, rci_service_data_t * service_data)
 {
 #if (defined CONNECTOR_NO_MALLOC)
-    static rci_t rci;
-    rci_t * p_rci = &rci;
+    static rci_t static_rci_internal_data;
+    rci_t * rci_internal_data = &static_rci_internal_data;
 
     UNUSED_PARAMETER(connector_ptr);
 #else
-    rci_t * p_rci = connector_ptr->p_rci;
+    rci_t * rci_internal_data = connector_ptr->rci_internal_data;
 #endif
 
     {
@@ -159,16 +159,16 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
         switch (action)
         {
         case rci_session_start:
-            if (p_rci == NULL)
+            if (rci_internal_data == NULL)
             {
 
 #if (!defined CONNECTOR_NO_MALLOC)
-                connector_status_t const connector_status = malloc_data(connector_ptr, sizeof *p_rci, (void **)&p_rci);
+                connector_status_t const connector_status = malloc_data(connector_ptr, sizeof *rci_internal_data, (void **)&rci_internal_data);
 
                 switch (connector_status)
                 {
                     case connector_working:
-                        connector_ptr->p_rci = p_rci;
+                        connector_ptr->rci_internal_data = rci_internal_data;
                         break;
                     default:
                         ASSERT(connector_status == connector_working);
@@ -177,18 +177,18 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
 #endif
             }
 
-            ASSERT(p_rci != NULL);
-            success = rci_action_session_start(p_rci, service_data);
+            ASSERT(rci_internal_data != NULL);
+            success = rci_action_session_start(rci_internal_data, service_data);
             break;
 
         case rci_session_active:
-            ASSERT(p_rci != NULL);
-            success = rci_action_session_active(p_rci);
+            ASSERT(rci_internal_data != NULL);
+            success = rci_action_session_active(rci_internal_data);
             break;
 
         case rci_session_lost:
-            ASSERT(p_rci != NULL);
-            success = rci_action_session_lost(p_rci);
+            ASSERT(rci_internal_data != NULL);
+            success = rci_action_session_lost(rci_internal_data);
             break;
 
         default:
@@ -199,42 +199,42 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
         if (!success) goto done;
     }
 
-    if (pending_rci_callback(p_rci))
+    if (pending_rci_callback(rci_internal_data))
     {
-        connector_remote_config_t * const remote_config = &p_rci->shared.callback_data;
+        connector_remote_config_t * const remote_config = &rci_internal_data->shared.callback_data;
 
-        if (!rci_callback(p_rci))
+        if (!rci_callback(rci_internal_data))
             goto done;
 
         if (remote_config->error_id != connector_success)
         {
-            rci_group_error(p_rci, remote_config->error_id, remote_config->response.error_hint);
+            rci_group_error(rci_internal_data, remote_config->error_id, remote_config->response.error_hint);
             goto done;
         }
     }
 
-    switch (p_rci->parser.state)
+    switch (rci_internal_data->parser.state)
     {
     case rci_parser_state_input:
-        rci_parse_input(p_rci);
+        rci_parse_input(rci_internal_data);
         break;
 
     case rci_parser_state_output:
-        rci_generate_output(p_rci);
+        rci_generate_output(rci_internal_data);
         break;
 
     case rci_parser_state_traverse:
-        rci_traverse_data(p_rci);
+        rci_traverse_data(rci_internal_data);
         break;
 
     case rci_parser_state_error:
-        rci_generate_error(p_rci);
+        rci_generate_error(rci_internal_data);
         break;
     }
 
 done:
 
-    switch (p_rci->status)
+    switch (rci_internal_data->status)
     {
     case rci_status_busy:
         break;
@@ -242,17 +242,17 @@ done:
         connector_debug_line("Need more input");
         break;
     case rci_status_flush_output:
-        p_rci->service_data->output.bytes = rci_buffer_used(&p_rci->buffer.output);
+        rci_internal_data->service_data->output.bytes = rci_buffer_used(&rci_internal_data->buffer.output);
         break;
     case rci_status_complete:
-        p_rci->service_data->output.bytes = rci_buffer_used(&p_rci->buffer.output);
+        rci_internal_data->service_data->output.bytes = rci_buffer_used(&rci_internal_data->buffer.output);
         /* no break; */
     case rci_status_internal_error:
     case rci_status_error:
-        p_rci->service_data = NULL;
+        rci_internal_data->service_data = NULL;
         break;
     }
 
-    return p_rci->status;
+    return rci_internal_data->status;
 }
 
