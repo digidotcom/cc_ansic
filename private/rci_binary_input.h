@@ -757,90 +757,88 @@ STATIC void process_group_attribute(rci_t * const rci)
 
 STATIC void process_field_id(rci_t * const rci)
 {
-    unsigned int id = INVALID_ID;
+    uint32_t value;
+
+    if (!get_uint32(rci, &value))
     {
-        uint32_t value;
+        goto done;
+    }
 
-        if (!get_uint32(rci, &value))
+    /* Bit 6  - is Field type present indicator
+     * Bit 10 - is attributes present indicator
+     * Bit 12 - is Error indicator (Should not be set)
+     */
+    ASSERT_GOTO(!has_rci_error(rci, value), done);
+
+    if (has_rci_terminated(value))
+    {
+        if (!have_element_id(rci))
         {
-            goto done;
-        }
-
-        /* Bit 6  - is Field type present indicator
-         * Bit 10 - is attributes present indicator
-         * Bit 12 - is Error indicator (Should not be set)
-         */
-        ASSERT_GOTO(!has_rci_error(rci, value), done);
-
-        if (has_rci_terminated(value))
-        {
-            if (!have_element_id(rci))
+            switch (rci->shared.callback_data.action)
             {
-                switch (rci->shared.callback_data.action)
-                {
-                    case connector_remote_action_query:
-                        /* all fields */
-                        if (is_rci_input_flag(rci,RCI_FLAG_GET_ALL_INSTANCES))
-                            set_rci_traverse_state(rci, rci_traverse_state_all_group_instances);
-                        else
-                            set_rci_traverse_state(rci, rci_traverse_state_all_elements);
+                case connector_remote_action_query:
+                    /* all fields */
+                    if (is_rci_input_flag(rci,RCI_FLAG_GET_ALL_INSTANCES))
+                        set_rci_traverse_state(rci, rci_traverse_state_all_group_instances);
+                    else
+                        set_rci_traverse_state(rci, rci_traverse_state_all_elements);
 
-                        set_rci_input_state(rci, rci_input_state_group_id);
+                    set_rci_input_state(rci, rci_input_state_group_id);
 
-                        state_call(rci, rci_parser_state_traverse);
-                        break;
-                    case connector_remote_action_set:
-                        connector_debug_line("process_field_id: got set command with no field id specified");
-                        rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_element_hint, rci_output_state_field_id);
-                        break;
+                    state_call(rci, rci_parser_state_traverse);
+                    break;
+                case connector_remote_action_set:
+                    connector_debug_line("process_field_id: got set command with no field id specified");
+                    rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_element_hint, rci_output_state_field_id);
+                    break;
 #if (defined RCI_LEGACY_COMMANDS)
-                    case connector_remote_action_do_command:
-                    case connector_remote_action_reboot:
-                    case connector_remote_action_set_factory_def:
-                        ASSERT_GOTO(0, done);
+                case connector_remote_action_do_command:
+                case connector_remote_action_reboot:
+                case connector_remote_action_set_factory_def:
+                    ASSERT_GOTO(0, done);
 #endif
-                }
             }
-            else
-            {
-                /* done with all fields */
-                invalidate_element_id(rci);
-                set_rci_input_state(rci, rci_input_state_group_id);
-
-                set_rci_traverse_state(rci, rci_traverse_state_element_end);
-                state_call(rci, rci_parser_state_traverse);
-            }
-            goto done;
-        }
-
-        if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
-        {
-            set_rci_input_state(rci, rci_input_state_field_type);
         }
         else
         {
-            set_rci_input_state(rci, rci_input_state_field_no_value);
+            /* done with all fields */
+            invalidate_element_id(rci);
+            set_rci_input_state(rci, rci_input_state_group_id);
+
+            set_rci_traverse_state(rci, rci_traverse_state_element_end);
+            state_call(rci, rci_parser_state_traverse);
         }
+        goto done;
+    }
 
-
-        if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
-        {
-            connector_debug_line("process_field_id: field attribute is not supported");
-            rci_set_output_error(rci, connector_rci_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
-            goto done;
-        }
-
-        id = decode_element_id(value);
-
+    if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
+    {
+        set_rci_input_state(rci, rci_input_state_field_type);
+    }
+    else
+    {
+        set_rci_input_state(rci, rci_input_state_field_no_value);
     }
 
 
-    set_element_id(rci, id);
-
-    if (!have_element_id(rci))
+    if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
     {
-        connector_debug_line("process_field_id: unrecognized field id (mismatch of descriptors). element id = %d", id);
-        rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
+        connector_debug_line("process_field_id: field attribute is not supported");
+        rci_set_output_error(rci, connector_rci_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
+        goto done;
+    }
+
+    {
+        unsigned int const id = decode_element_id(value);
+
+        set_element_id(rci, id);
+
+        if (!have_element_id(rci))
+        {
+            connector_debug_line("process_field_id: unrecognized field id (mismatch of descriptors). element id = %d", id);
+            rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
+        }
+
     }
 
 done:
