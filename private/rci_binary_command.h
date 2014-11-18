@@ -11,9 +11,8 @@
  */
 
 #if (defined RCI_LEGACY_COMMANDS)
-
-connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const request_payload, char const * * response_payload);
-connector_callback_status_t app_process_set_factory_default(void);
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const request_payload, char const * * response_payload, void * const context);
+connector_callback_status_t app_process_set_factory_default(void * const context);
 #endif
 
 
