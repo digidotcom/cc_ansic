@@ -42,6 +42,7 @@
 #define BYTE64_1(x64)   ((uint8_t) (((uint64_t)(x64)) >>  8))
 #define BYTE64_0(x64)   ((uint8_t)  ((uint64_t)(x64)))
 
+#if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
 static  void StoreBE64(void * const array, uint64_t const val)
 {
     ((uint8_t *)(array))[0] = BYTE64_7(val);
@@ -53,6 +54,7 @@ static  void StoreBE64(void * const array, uint64_t const val)
     ((uint8_t *)(array))[6] = BYTE64_1(val);
     ((uint8_t *)(array))[7] = BYTE64_0(val);
 }
+#endif
 #endif
 
 /*
