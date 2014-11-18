@@ -72,7 +72,7 @@ enum cc_redirect_report {
     size_t const report_message_length = 0;
     size_t const redirect_report_header_size = record_bytes(redirect_report);
 
-    connector_status_t result = connector_working;
+    connector_status_t result;
     uint8_t * edp_header;
     uint8_t * redirect_report;
     size_t url_length;
@@ -186,7 +186,7 @@ enum cc_connection_info {
     field_define(connection_info, link_speed, uint32_t),
     record_end(connection_info)
 };
-    connector_status_t result = connector_working;
+    connector_status_t result;
     uint8_t * edp_header;
     uint8_t * connection_report;
     size_t avail_length;

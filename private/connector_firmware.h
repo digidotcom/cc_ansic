@@ -285,7 +285,7 @@ enum fw_info {
 #define MAX_FW_INFO_REQUEST_LENGTH  2
 
     connector_data_t * const connector_ptr = fw_ptr->connector_ptr;
-    connector_status_t result = connector_idle;
+    connector_status_t result;
     uint8_t const target = message_load_u8(fw_message, target);
 
     connector_debug_line("Firmware Facility: process info request");
@@ -336,6 +336,7 @@ enum fw_info {
             fw_ptr->desc_length = 0;
             fw_ptr->spec_length = 0;
             result = connector_abort;
+            goto done;
         }
     }
 
@@ -724,7 +725,7 @@ enum fw_complete_response {
     record_end(fw_complete_response)
 };
 
-    connector_status_t result = connector_working;
+    connector_status_t result;
     connector_firmware_download_complete_t download_complete;
 
     download_complete.target_number = message_load_u8(fw_complete_request, target);
@@ -1013,7 +1014,7 @@ STATIC connector_status_t connector_facility_firmware_delete(connector_data_t * 
 
 STATIC connector_status_t connector_facility_firmware_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
     connector_firmware_data_t * fw_ptr;
 
     /* Add firmware access facility to Connector

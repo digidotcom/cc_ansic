@@ -297,7 +297,7 @@ error:
 STATIC connector_status_t sm_update_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
                                             sm_header_t * const header, size_t const payload_bytes)
 {
-    connector_status_t result = connector_invalid_payload_packet;
+    connector_status_t result;
     connector_sm_packet_t * const recv_ptr = &sm_ptr->network.recv_packet;
     connector_bool_t const client_originated = connector_bool(!header->isRequest);
     connector_sm_session_t * session = get_sm_session(sm_ptr, header->request_id, client_originated);
@@ -467,6 +467,7 @@ STATIC connector_status_t sm_process_packet(connector_data_t * const connector_p
 
             ASSERT(sm_bytes >= sm_header.bytes);
             result = sm_update_session(connector_ptr, sm_ptr, &sm_header, payload_bytes);
+            if (result != connector_working) goto error;
         }
 
         if (!sm_header.isPackCmd) break;
@@ -584,7 +585,7 @@ done:
 #if (defined CONNECTOR_COMPRESSION)
 STATIC connector_status_t sm_decompress_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
-    connector_status_t status = connector_working;
+    connector_status_t status;
     size_t const max_payload_bytes = sm_get_max_payload_bytes(sm_ptr);
     uint8_t zlib_header[] = {0x58, 0xC3};
     z_streamp const zlib_ptr = &session->compress.zlib;
@@ -665,7 +666,12 @@ STATIC connector_status_t sm_decompress_data(connector_data_t * const connector_
 
 error:
     zret = inflateEnd(zlib_ptr);
-    ASSERT(zret == Z_OK);
+    if (zret != Z_OK)
+    {
+        status = connector_abort;
+        goto done;
+    }
+    ASSERT_GOTO(zret == Z_OK, done);
 
     if (status != connector_abort)
     {
@@ -680,17 +686,22 @@ done:
 
 STATIC connector_status_t sm_handle_error(connector_data_t * const connector_ptr, connector_sm_session_t * const session)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
     connector_sm_state_t next_state = connector_sm_state_complete;
 
     if (SmIsCloudOwned(session->flags) && SmIsRequest(session->flags))
+    {
         next_state = connector_sm_state_send_data;
+    }
 
     SmSetError(session->flags);
     if (session->user.context != NULL) /* let the user know */
     {
         result = sm_inform_session_complete(connector_ptr, session);
-        if (result != connector_working) goto error;
+        if (result != connector_working)
+        {
+            goto error;
+        }
     }
 
     result = sm_switch_path(connector_ptr, session, next_state);

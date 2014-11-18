@@ -185,7 +185,7 @@ enum edp_keepalive{
 
 STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
 
     uint8_t * ptr;
     uint8_t * packet;
@@ -232,6 +232,11 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
         result = connector_pending;
         goto  done;
     }
+    else
+    {
+        result = connector_working;
+    }
+
     ptr = (uint8_t *)packet;
     start_ptr = ptr;
 

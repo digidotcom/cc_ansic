@@ -41,7 +41,7 @@
 
 STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
 
     if (connector_ptr->device_id_method == connector_device_id_method_manual)
     {
@@ -98,6 +98,7 @@ STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr
     }
 
     connector_ptr->edp_data.network_handle = NULL;
+    result = connector_working;
 
 done:
     return result;
@@ -106,7 +107,7 @@ done:
 
 STATIC connector_status_t connector_edp_init(connector_data_t * const connector_ptr)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
 
     edp_reset_initial_data(connector_ptr);
     connector_ptr->edp_data.facilities.list = NULL;

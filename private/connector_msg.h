@@ -2010,7 +2010,7 @@ error:
 
 STATIC connector_status_t msg_init_facility(connector_data_t * const connector_ptr, unsigned int const facility_index, uint16_t service_id, connector_msg_callback_t callback)
 {
-    connector_status_t status = connector_no_resource;
+    connector_status_t status;
     connector_msg_data_t * msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
 
     if (msg_ptr == NULL)

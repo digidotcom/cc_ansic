@@ -506,14 +506,14 @@ STATIC connector_status_t sm_prepare_data_response(connector_data_t * const conn
 #if (defined CONNECTOR_SM_CLI)
 STATIC connector_status_t sm_process_cli_request(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
-    connector_status_t result = connector_abort;
+    connector_status_t result;
     char * const cli_command = payload;
     size_t cli_bytes;
     connector_sm_data_t * sm_ptr = NULL;
 
     if (SmIsLastData(session->flags))
     {
-        cli_bytes = strlen(cli_command) + 1; /* +1 for nul-terminate */
+        cli_bytes = strlen(cli_command) + sizeof "";
     }
     else
     {
@@ -712,7 +712,6 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
             switch (callback_status)
             {
                 case connector_callback_continue:
-                    result = connector_working;
                     sm_ptr->network.handle = open_data.handle;
                     break;
 
@@ -740,6 +739,10 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
     /* Callback to config.c so user can save the new phone to persistent storage */
 #if !(defined CONNECTOR_CLOUD_PHONE)
     result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
+    if (result != connector_working)
+    {
+        goto error;
+    }
 #endif
 
     /* Callback to user */
@@ -762,7 +765,7 @@ error:
 STATIC connector_status_t sm_pass_target_info(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * const target_ptr, size_t target_bytes)
 {
     #define SM_TARGET_MAX_LENGTH    32
-    connector_status_t result = connector_working;
+    connector_status_t result;
     connector_callback_status_t callback_status;
     connector_request_id_t request_id;
     connector_data_service_receive_target_t cb_data;
@@ -872,7 +875,7 @@ done:
 
 STATIC connector_status_t sm_process_data_response(connector_data_t * const connector_ptr, connector_sm_session_t * const session, void * const payload, size_t const bytes)
 {
-    connector_status_t status = connector_working;
+    connector_status_t status;
     connector_callback_status_t callback_status;
     connector_data_service_send_response_t cb_data;
     char * const text = payload;
@@ -928,7 +931,7 @@ STATIC connector_status_t sm_process_data_response(connector_data_t * const conn
 
 STATIC connector_status_t sm_process_reboot(connector_data_t * const connector_ptr)
 {
-    connector_status_t result = connector_abort;
+    connector_status_t result;
     connector_request_id_t request_id;
     connector_callback_status_t callback_status;
 

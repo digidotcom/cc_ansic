@@ -180,7 +180,7 @@ enum {
 
 STATIC connector_status_t manage_device_id(connector_data_t * const connector_ptr)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
 
     connector_ptr->connector_got_device_id = connector_false;
 
@@ -737,8 +737,6 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 
         {
             connector_transport_t const * const transport = request_data;
-
-            result = connector_unavailable;
 
             if (transport == NULL)
             {

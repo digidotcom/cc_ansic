@@ -612,7 +612,7 @@ STATIC connector_status_t call_file_hash_user(connector_data_t * const connector
                                               char const * const path,
                                               uint8_t * const hash_ptr)
 {
-    connector_status_t status = connector_working;
+    connector_status_t status;
     connector_file_system_hash_t data;
 
     data.bytes_requested = file_hash_size(context->data.d.hash_alg);
