@@ -29,6 +29,9 @@
 /* #define CONNECTOR_NO_MALLOC */
 #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
 
+#define CONNECTOR_HAS_64_BIT_INTEGERS
+#define FLOATING_POINT_SUPPORTED
+
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
 #define CONNECTOR_CLOUD_URL                            "login.etherios.com"

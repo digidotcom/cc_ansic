@@ -99,7 +99,6 @@ static connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
     if (present)
     {
         char * const module_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char module_json_format[] = "{\"modem_id\":\"%s\",\"imei\":\"%s\",\"sims\":%u}";
         char * modem_id = NULL;
         char * imei = NULL;
         unsigned int sims;
@@ -116,7 +115,7 @@ static connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
         escape_string(&modem_id);
         escape_string(&imei);
 
-        json_size = sprintf(module_json, module_json_format, modem_id, imei, sims);
+        json_size = sprintf(module_json, "{\"modem_id\":\"%s\",\"imei\":\"%s\",\"sims\":%u}", modem_id, imei, sims);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -136,7 +135,6 @@ static connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_index
     if (present)
     {
         char * const net_status_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static char const net_status_json_format[] = "{\"registration\":\"%s\",\"attachment\":\"%s\"}";
         char * registration = NULL;
         char * attachment = NULL;
         int json_size;
@@ -151,7 +149,7 @@ static connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_index
         escape_string(&registration);
         escape_string(&attachment);
 
-        json_size = sprintf(net_status_json, net_status_json_format, registration, attachment);
+        json_size = sprintf(net_status_json, "{\"registration\":\"%s\",\"attachment\":\"%s\"}", registration, attachment);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -171,7 +169,6 @@ static connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes
     if (present)
     {
         char * const net_info_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char net_info_json_format[] = "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}";
         char * iccid = NULL;
         char * imsi = NULL;
         char * phone_num = NULL;
@@ -191,7 +188,7 @@ static connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes
         escape_string(&imsi);
         escape_string(&phone_num);
 
-        json_size = sprintf(net_info_json, net_info_json_format, iccid, imsi, phone_num);
+        json_size = sprintf(net_info_json, "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}", iccid, imsi, phone_num);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -212,7 +209,6 @@ static connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t co
     if (present)
     {
         char * const radio_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char radio_json_format[] = "{\"mode\":\"%s\",\"ssid\":\"%s\",\"channel\":%u,\"protocol\":\"%s\"}";
         char * mode = NULL;
         char * ssid = NULL;
         char * protocol = NULL;
@@ -234,7 +230,7 @@ static connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t co
         escape_string(&ssid);
         escape_string(&protocol);
 
-        json_size = sprintf(radio_json, radio_json_format, mode, ssid, channel, protocol);
+        json_size = sprintf(radio_json, "{\"mode\":\"%s\",\"ssid\":\"%s\",\"channel\":%u,\"protocol\":\"%s\"}", mode, ssid, channel, protocol);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 

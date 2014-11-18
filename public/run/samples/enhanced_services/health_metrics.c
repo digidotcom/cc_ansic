@@ -180,7 +180,7 @@ connector_status_t health_metrics_report_step(health_metrics_config_t const * co
                 dev_health_allocate_csv_data(health_metrics_data);
             }
 
-            for (root_group = 0; root_group < dev_health_root_COUNT; root_group++)
+            for (root_group = dev_health_root_eth; root_group < dev_health_root_COUNT; root_group++)
             {
                 static const char * paths[] = {"eth", "mobile", "sys"};
                 dev_health_simple_metric_t const * item = NULL;
@@ -207,7 +207,6 @@ connector_status_t health_metrics_report_step(health_metrics_config_t const * co
                         break;
                     case dev_health_root_COUNT:
                         ASSERT_GOTO(root_group < dev_health_root_COUNT, done);
-                        break;
                 }
 
                 sampling_interval = item->sample_rate * SECONDS_IN_A_MINUTE;

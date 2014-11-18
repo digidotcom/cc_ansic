@@ -52,19 +52,19 @@ connector_callback_status_t app_health_metrics_group_get(connector_remote_config
             remote_config->response.element_value->unsigned_integer_value = health_metrics_config_ptr->report_rate;
             break;
         case connector_setting_simple_enhanced_services_eth_metrics:
-            remote_config->response.element_value->on_off_value = health_metrics_config_ptr->eth.metrics;
+            remote_config->response.element_value->on_off_value = health_metrics_config_ptr->eth.metrics == connector_true ? connector_on : connector_off;
             break;
         case connector_setting_simple_enhanced_services_eth_sample_rate:
             remote_config->response.element_value->unsigned_integer_value = health_metrics_config_ptr->eth.sample_rate;
             break;
         case connector_setting_simple_enhanced_services_mobile_metrics:
-            remote_config->response.element_value->on_off_value = health_metrics_config_ptr->mobile.metrics;
+            remote_config->response.element_value->on_off_value = health_metrics_config_ptr->mobile.metrics == connector_true ? connector_on : connector_off;
             break;
         case connector_setting_simple_enhanced_services_mobile_sample_rate:
             remote_config->response.element_value->unsigned_integer_value = health_metrics_config_ptr->mobile.sample_rate;
             break;
         case connector_setting_simple_enhanced_services_sys_metrics:
-            remote_config->response.element_value->on_off_value = health_metrics_config_ptr->sys.metrics;
+            remote_config->response.element_value->on_off_value = health_metrics_config_ptr->sys.metrics == connector_true ? connector_on : connector_off;
             break;
         case connector_setting_simple_enhanced_services_sys_sample_rate:
             remote_config->response.element_value->unsigned_integer_value = health_metrics_config_ptr->sys.sample_rate;
@@ -89,19 +89,19 @@ connector_callback_status_t app_health_metrics_group_set(connector_remote_config
             health_metrics_config_ptr->report_rate = remote_config->element.value->unsigned_integer_value;
             break;
         case connector_setting_simple_enhanced_services_eth_metrics:
-            health_metrics_config_ptr->eth.metrics = remote_config->element.value->on_off_value;
+            health_metrics_config_ptr->eth.metrics = remote_config->element.value->on_off_value == connector_on ? connector_true : connector_false;
             break;
         case connector_setting_simple_enhanced_services_eth_sample_rate:
             health_metrics_config_ptr->eth.sample_rate = remote_config->element.value->unsigned_integer_value;
             break;
         case connector_setting_simple_enhanced_services_mobile_metrics:
-            health_metrics_config_ptr->mobile.metrics = remote_config->element.value->on_off_value;
+            health_metrics_config_ptr->mobile.metrics = remote_config->element.value->on_off_value == connector_on ? connector_true : connector_false;
             break;
         case connector_setting_simple_enhanced_services_mobile_sample_rate:
             health_metrics_config_ptr->mobile.sample_rate = remote_config->element.value->unsigned_integer_value;
             break;
         case connector_setting_simple_enhanced_services_sys_metrics:
-            health_metrics_config_ptr->sys.metrics = remote_config->element.value->on_off_value;
+            health_metrics_config_ptr->sys.metrics = remote_config->element.value->on_off_value == connector_on ? connector_true : connector_false;
             break;
         case connector_setting_simple_enhanced_services_sys_sample_rate:
             health_metrics_config_ptr->sys.sample_rate = remote_config->element.value->unsigned_integer_value;

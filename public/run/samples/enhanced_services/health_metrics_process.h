@@ -82,9 +82,9 @@ static void dev_health_reset_csv_data(dev_health_info_t * const dev_health_info)
 static int dev_health_allocate_csv_data(health_metrics_data_t * const health_metrics_data)
 {
     dev_health_info_t * const dev_health_info = &health_metrics_data->info;
-    int error = 0;
     unsigned int const total_bytes = CONNECTOR_DEVICE_HEALTH_REALLOC_SIZE;
     void * allocated_memory;
+    int error;
 
     error = hm_malloc_data(total_bytes, &allocated_memory);
     ASSERT_GOTO(error == 0, done);
@@ -188,7 +188,6 @@ static void process_csv_stream_type(char * const csv, dev_health_value_type_t co
             break;
         case DEV_HEALTH_TYPE_NONE:
             ASSERT_GOTO(type != DEV_HEALTH_TYPE_NONE, done);
-            break;
     }
     strcat(csv, stream_type_string);
 done:
