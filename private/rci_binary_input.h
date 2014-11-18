@@ -251,59 +251,56 @@ done:
 }
 
 #if defined RCI_PARSER_USES_IPV4
-STATIC connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_addr, size_t const length)
+STATIC connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_addr, size_t const expected_length)
 {
     connector_bool_t got_ip = connector_false;
+    uint32_t length;
+    size_t const ber_bytes = get_modifier_ber(rci, &length);
 
-    uint8_t * rci_ber_u32 = rci->shared.content.data;
-    uint8_t const bytes_read = message_load_u8(rci_ber_u32, opcode);
+#if (!defined CONNECTOR_DEBUG)
+    UNUSED_PARAMETER(expected_length);
+#endif
 
-    UNUSED_PARAMETER(length);
+    ASSERT_GOTO(length == expected_length, done);
+    ASSERT_GOTO(ber_bytes == 1, done);
 
-    rci->shared.content.length++;
-
-    if (rci->shared.content.length == (size_t)(bytes_read + 1))
+    if (rci->shared.content.length == expected_length + ber_bytes)
     {
-        /* Current, we only support ipv4. */
-        ASSERT(bytes_read == sizeof *ip_addr);
-        ASSERT(length == bytes_read);
+        *ip_addr = LoadBE32(rci->shared.content.data + ber_bytes);
 
-        *ip_addr = message_load_be32(rci_ber_u32, value);
-
-        got_ip = connector_true;
         reset_input_content(rci);
+        got_ip = connector_true;
     }
 
+done:
     return got_ip;
 }
 #endif
 
 #if defined RCI_PARSER_USES_MAC_ADDR
-#define SIZEOF_MAC_ADDR 6
-STATIC connector_bool_t get_mac_address(rci_t * const rci, uint8_t * const mac_addr, size_t const length)
+STATIC connector_bool_t get_mac_address(rci_t * const rci, uint8_t * const mac_addr, size_t const expected_length)
 {
     connector_bool_t got_mac = connector_false;
+    uint32_t length;
+    size_t const ber_bytes = get_modifier_ber(rci, &length);
 
-    uint8_t * rci_ber_u32 = rci->shared.content.data;
-    uint8_t const bytes_read = message_load_u8(rci_ber_u32, opcode);
-    uint8_t ber_bytes = 1;
+#if (!defined CONNECTOR_DEBUG)
+    UNUSED_PARAMETER(expected_length);
+#endif
 
-    rci->shared.content.length++;
+    ASSERT_GOTO(length == expected_length, done);
+    ASSERT_GOTO(ber_bytes == 1, done);
 
-    if (rci->shared.content.length == (size_t)(bytes_read + ber_bytes))
+    if (rci->shared.content.length == expected_length + ber_bytes)
     {
-        ASSERT(bytes_read == SIZEOF_MAC_ADDR);
-        ASSERT(length == bytes_read);
-
-        {
-            char * data = (char *)(rci->shared.content.data + ber_bytes);
-            memcpy(mac_addr, data, length);
-        }
+        uint8_t const * const data = rci->shared.content.data + ber_bytes;
+        memcpy(mac_addr, data, length);
 
         reset_input_content(rci);
         got_mac = connector_true;
     }
 
+done:
     return got_mac;
 }
 #endif
@@ -950,11 +947,8 @@ STATIC void process_field_value(rci_t * const rci)
         }
 
         {
-            #define MAX_IPV4_VALUE "255.255.255.255"
-
             char * const data = (char *)rci->input.storage;
-            size_t const size_avail = sizeof MAX_IPV4_VALUE;
-            int size_written;
+            size_t size_written;
 
             uint8_t ip1 = BYTE32_3(ip_addr);
             uint8_t ip2 = BYTE32_2(ip_addr);
@@ -962,13 +956,15 @@ STATIC void process_field_value(rci_t * const rci)
             uint8_t ip4 = BYTE32_0(ip_addr);
 
 #if (defined CONNECTOR_NO_MALLOC)
-            ASSERT(size_avail <= sizeof rci->input.storage);
+            size_t const size_avail = sizeof rci->input.storage;
 #else
-            ASSERT(size_avail <= rci->input.storage_len);
+            size_t const size_avail = rci->input.storage_len;
 #endif
+            ASSERT(size_avail >= sizeof "255.255.255.255");
+
             size_written = connector_snprintf(data, size_avail, "%d.%d.%d.%d", ip1, ip2, ip3, ip4);
 
-            ASSERT(size_written < (int)size_avail);
+            ASSERT(size_written < size_avail);
             ASSERT_GOTO(size_written > 0, done);
 
             rci->shared.value.string_value = data;
@@ -990,21 +986,20 @@ STATIC void process_field_value(rci_t * const rci)
         }
 
         {
-            #define MAX_MAC_VALUE "FF:FF:FF:FF:FF:FF"
-
             char * const data = (char *)rci->input.storage;
-            size_t const size_avail = sizeof MAX_MAC_VALUE;
-            int size_written = 0;
+            size_t size_written = 0;
 
 #if (defined CONNECTOR_NO_MALLOC)
-            ASSERT(size_avail <= sizeof rci->input.storage);
+            size_t const size_avail = sizeof rci->input.storage;
 #else
-            ASSERT(size_avail <= rci->input.storage_len);
+            size_t const size_avail = rci->input.storage_len;
 #endif
+            ASSERT(size_avail >= sizeof "FF:FF:FF:FF:FF:FF");
+
             size_written = connector_snprintf(data, size_avail, "%02x:%02x:%02x:%02x:%02x:%02x", 
                                mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
 
-            ASSERT(size_written < (int)size_avail);
+            ASSERT(size_written < size_avail);
             ASSERT_GOTO(size_written > 0, done);
 
             rci->shared.value.string_value = data;

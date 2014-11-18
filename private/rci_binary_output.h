@@ -214,7 +214,7 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
         uint8_t * const rci_ber_u32 = rci_buffer_position(output);
         int dot_count = 0;
         size_t i;
-        size_t length = strlen(string);
+        size_t const length = strlen(string);
         char aux_string[4] = {'\0', '\0', '\0', '\0'}; /* Three chars plus terminator. */
 
         size_t index = 0;
@@ -229,7 +229,7 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
                 aux_string[index++] = string[i];
             }
 
-            if (string[i] == '.' || i == (length -1))
+            if (string[i] == '.' || i == length - 1)
             {
                 long int val;
                 char * endptr;
@@ -289,7 +289,7 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
         char * p_mac_addr = mac_addr;
         int colon_count = 0;
         size_t i;
-        size_t length = strlen(string);
+        size_t const length = strlen(string);
         char aux_string[3] = {'\0', '\0', '\0'}; /* Two chars plus terminator. */
 
         size_t index = 0;
@@ -304,7 +304,7 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
                 aux_string[index++] = string[i];
             }
 
-            if (string[i] == ':' || i == (length -1))
+            if (string[i] == ':' || i == length - 1)
             {
                 long int val;
                 char * endptr;
