@@ -85,7 +85,7 @@ STATIC connector_status_t get_config_sm_max_sessions(connector_data_t * const co
 }
 #endif
 
-#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)))
+#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)))
 STATIC connector_status_t get_config_sm_max_rx_segments(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
@@ -129,7 +129,7 @@ STATIC connector_status_t get_config_sm_max_rx_segments(connector_data_t * const
 }
 #endif
 
-#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)))
+#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)))
 STATIC connector_status_t get_config_sm_rx_timeout(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_rx_timeout_t * const config_rx_timeout)
