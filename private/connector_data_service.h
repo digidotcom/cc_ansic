@@ -861,6 +861,24 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
     connector_request_data_service_send_t * send_ptr = (void *)service_request->have_data;
     data_service_context_t * ds_ptr = NULL;
 
+    if (send_ptr != NULL)
+    {
+        void * ptr;
+
+        if ((result != connector_session_error_none) || (session == NULL)) goto error;
+
+        status = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
+        if (status != connector_working)
+            goto error;
+
+        ds_ptr = ptr;
+    }
+    else
+    {
+        status = connector_invalid_data;
+        ASSERT_GOTO(send_ptr != NULL, done);
+    }
+
     #if !(defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DEVICE_HEALTH)
     service_request->send_data_initiator = connector_send_data_initiator_user;
     #endif
@@ -886,24 +904,6 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
         service_request->send_data_initiator = connector_send_data_initiator_enhanced_services;
     }
     #endif
-
-    if (send_ptr != NULL)
-    {
-        void * ptr;
-
-        if ((result != connector_session_error_none) || (session == NULL)) goto error;
-
-        status = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
-        if (status != connector_working)
-            goto error;
-
-        ds_ptr = ptr;
-    }
-    else
-    {
-        status = connector_invalid_data;
-        ASSERT_GOTO(connector_false, done);
-    }
 
     ds_ptr->header = send_ptr;
     ds_ptr->callback_context = send_ptr->user_context;
