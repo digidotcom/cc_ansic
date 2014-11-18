@@ -67,8 +67,6 @@ STATIC connector_status_t get_config_connect_status(connector_data_t * const con
 #define DEVICE_ID_LENGTH 16
 
 
-static char const connector_signature[] = CONNECTOR_SW_VERSION;
-
 #if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
