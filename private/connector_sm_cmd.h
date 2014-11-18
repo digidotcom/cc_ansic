@@ -687,7 +687,6 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
 
                 case connector_callback_continue:
                     sm_ptr->network.handle = NULL;
-                    result = connector_working;
                     break;
 
                 default:

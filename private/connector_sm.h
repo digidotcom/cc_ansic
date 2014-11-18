@@ -41,6 +41,7 @@ STATIC connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr,
     return sm_ptr;
 }
 
+#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)))
 STATIC connector_status_t get_config_sm_max_sessions(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_max_sessions_t * const config_max_sessions)
@@ -82,7 +83,9 @@ STATIC connector_status_t get_config_sm_max_sessions(connector_data_t * const co
     }
     return result;
 }
+#endif
 
+#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)))
 STATIC connector_status_t get_config_sm_max_rx_segments(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
@@ -124,7 +127,9 @@ STATIC connector_status_t get_config_sm_max_rx_segments(connector_data_t * const
     }
     return result;
 }
+#endif
 
+#if ((defined CONNECTOR_TRANSPORT_SMS && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)) || (defined CONNECTOR_TRANSPORT_UDP && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)))
 STATIC connector_status_t get_config_sm_rx_timeout(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_sm_rx_timeout_t * const config_rx_timeout)
@@ -162,6 +167,7 @@ STATIC connector_status_t get_config_sm_rx_timeout(connector_data_t * const conn
     }
     return result;
 }
+#endif
 
 STATIC connector_status_t sm_initialize(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
