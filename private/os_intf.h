@@ -233,12 +233,13 @@ STATIC connector_status_t malloc_data_buffer(connector_data_t * const connector_
 
 STATIC connector_status_t free_data_buffer(connector_data_t * const connector_ptr, connector_static_buffer_id_t id, void * const ptr)
 {
-    connector_status_t status = connector_working;
+    connector_status_t status;
 
 #if !(defined CONNECTOR_NO_MALLOC)
     UNUSED_PARAMETER(id);
     status = free_data(connector_ptr, ptr);
 #else
+    status = connector_working;
     free_static_data(connector_ptr, id, ptr);
 #endif
 
