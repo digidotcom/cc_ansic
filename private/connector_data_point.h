@@ -596,8 +596,9 @@ STATIC size_t dp_process_time(data_point_info_t * const dp_info, char * const bu
         case connector_time_local_epoch_whole:
         {
 #if (defined CONNECTOR_DEBUG)
-            uint64_t const max_int64 = 0x7FFFFFFFFFFFFFFF;
-            ASSERT(dp_ptr->time.value.since_epoch_whole.milliseconds <= max_int64);
+#define MAX_INT64   UINT64_C(0x7FFFFFFFFFFFFFFF)
+            ASSERT(dp_ptr->time.value.since_epoch_whole.milliseconds <= MAX_INT64);
+#undef MAX_INT64
 #endif
             bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRIu64, dp_ptr->time.value.since_epoch_whole.milliseconds);
             break;
