@@ -286,7 +286,8 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_callback_do_command:
         {
-            connector_callback_status_t const status = app_process_do_command(callback_data, remote_config->element.value->string_value, &rci->command.do_command.response_string);
+            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+            connector_callback_status_t const status = app_process_do_command(callback_data, remote_config->element.value->string_value, &rci->command.do_command.response_string, connector_ptr->context);
             if (status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
@@ -329,7 +330,8 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         }
         case rci_command_callback_set_factory_default:
         {
-            connector_callback_status_t const status = app_process_set_factory_default();
+            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+            connector_callback_status_t const status = app_process_set_factory_default(connector_ptr->context);
             if (status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
