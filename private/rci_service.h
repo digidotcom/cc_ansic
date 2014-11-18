@@ -191,7 +191,7 @@ STATIC connector_status_t connector_facility_rci_service_delete(connector_data_t
 #if (defined CONNECTOR_FIRMWARE_SERVICE)
 STATIC uint32_t get_fw_target_zero_version(connector_data_t const * const connector_ptr)
 {
-    connector_status_t status;
+    connector_callback_status_t status;
     connector_request_id_t request;
     connector_firmware_info_t target_zero_data;
 
@@ -208,10 +208,10 @@ STATIC uint32_t get_fw_target_zero_version(connector_data_t const * const connec
     status = connector_callback(connector_ptr->callback, connector_class_id_firmware, request, &target_zero_data, connector_ptr->context);
     switch (status)
     {
-        case connector_success:
+        case connector_callback_continue:
             break;
         default:
-            ASSERT(status == connector_success);
+            ASSERT(status == connector_callback_continue);
             break;
     }
 
