@@ -217,13 +217,9 @@ typedef enum {
 #if (defined CONNECTOR_DATA_POINTS)
     connector_send_data_initiator_data_point,
 #endif
-#if (defined CONNECTOR_DEVICE_HEALTH)
-    connector_send_data_initiator_enhanced_services,
-#endif
     connector_send_data_initiator_unknown
 } connector_send_data_initiator_t;
 #endif
-
 typedef struct
 {
     void * session;

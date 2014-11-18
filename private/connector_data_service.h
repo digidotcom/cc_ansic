@@ -573,13 +573,6 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
             break;
         }
 #endif
-#if (defined CONNECTOR_DEVICE_HEALTH)
-        case connector_send_data_initiator_enhanced_services:
-        {
-            callback_status = dev_health_handle_callback(connector_ptr, request_id, cb_data);
-            break;
-        }
-#endif
         case connector_send_data_initiator_user:
         {
             connector_request_id_t request;
@@ -878,7 +871,7 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
         ASSERT_GOTO(send_ptr != NULL, done);
     }
 
-    #if !(defined CONNECTOR_DATA_POINTS) && !(defined CONNECTOR_DEVICE_HEALTH)
+    #if !(defined CONNECTOR_DATA_POINTS)
     service_request->send_data_initiator = connector_send_data_initiator_user;
     #endif
 
@@ -895,13 +888,6 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
 	{
         service_request->send_data_initiator = connector_send_data_initiator_user;
 	}
-    #endif
-
-    #if (defined CONNECTOR_DEVICE_HEALTH)
-    if (strncmp(send_ptr->path, dev_health_path, dev_health_path_strlen) == 0)
-    {
-        service_request->send_data_initiator = connector_send_data_initiator_enhanced_services;
-    }
     #endif
 
     ds_ptr->header = send_ptr;
@@ -991,7 +977,7 @@ STATIC connector_status_t data_service_initiate(connector_data_t * const connect
     msg_request_initiator_t initiator = MSG_REQUEST_USER;
 
     ASSERT_GOTO(request != NULL, error);
-#if (defined CONNECTOR_DATA_POINTS) || (defined CONNECTOR_DEVICE_HEALTH)
+#if (defined CONNECTOR_DATA_POINTS)
     {
         connector_request_data_service_send_t const * const data_service_send = request;
         char const * const path = data_service_send->path;
@@ -1000,13 +986,8 @@ STATIC connector_status_t data_service_initiate(connector_data_t * const connect
         #else
         connector_bool_t const request_is_data_point = connector_false;
         #endif
-        #if (defined CONNECTOR_DEVICE_HEALTH)
-        connector_bool_t const request_is_device_health = connector_bool(strncmp(path, dev_health_path, dev_health_path_strlen) == 0);
-        #else
-        connector_bool_t const request_is_device_health = connector_false;
-        #endif
 
-        if (request_is_data_point || request_is_device_health)
+        if (request_is_data_point)
         {
             initiator = MSG_REQUEST_INTERNAL;
         }

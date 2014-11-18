@@ -154,6 +154,6 @@ connector_remote_config_data_t rci_desc_data = {
     connector_rci_errors,
     connector_global_error_COUNT,
     FIRMWARE_TARGET_ZERO_VERSION,
-    0x2001A56,
+    0x2001371,
     "Linux Application"
 };

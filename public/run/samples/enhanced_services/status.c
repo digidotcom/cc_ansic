@@ -12,6 +12,8 @@
 #include "connector_api.h"
 #include "platform.h"
 
+extern connector_bool_t tcp_transport_started;
+
 static connector_callback_status_t app_tcp_status(connector_status_tcp_event_t const * const tcp_event)
 {
     /* We don't want to see first missed and restored keepalive debug printf.
@@ -23,6 +25,7 @@ static connector_callback_status_t app_tcp_status(connector_status_tcp_event_t c
     {
     case connector_tcp_communication_started:
         keepalive_missed_count = 0;
+        tcp_transport_started = connector_true;
         APP_DEBUG("connector_tcp_communication_started\n");
         break;
     case connector_tcp_keepalive_missed:
@@ -44,14 +47,13 @@ connector_callback_status_t app_status_handler(connector_request_id_status_t con
 {
     connector_callback_status_t status = connector_callback_continue;
 
-
     switch (request)
     {
     case connector_request_id_status_tcp:
         status = app_tcp_status(data);
         break;
     case connector_request_id_status_stop_completed:
-        APP_DEBUG("app_status_handle: connector_request_id_status_stop_completed\n");
+        APP_DEBUG("app_status_handler connector_request_id_status_stop_completed\n");
         break;
     default:
         /* unsupported */

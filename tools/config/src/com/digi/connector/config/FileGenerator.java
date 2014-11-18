@@ -519,12 +519,6 @@ public abstract class FileGenerator {
 
         fileWriter.write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE,ConfigData.AttributeMaxLen()));
 
-        if(ConfigGenerator.deviceHealthOption()){
-            fileWriter.write("\n#if !(defined CONNECTOR_DEVICE_HEALTH)\n" +
-                    "#error \"RCI descriptor generated with Device Health Reporting " +
-                    "support but CONNECTOR_DEVICE_HEALTH is not defined in connector_config.h\" \n"+
-                    "#endif\n");
-        }
 
         writeOnOffBooleanEnum();
         writeElementTypeEnum();

@@ -10,6 +10,8 @@
  * =======================================================================
  */
 
+#define JSON_MAX_SIZE   128
+
 typedef connector_bool_t (* dev_health_query_fn_t)(connector_indexes_t const * const indexes, void * const value);
 typedef unsigned int (* dev_health_get_instances_fn_t)(unsigned int upper_index);
 
@@ -55,9 +57,7 @@ typedef struct dev_health_path_group {
     } child;
 } dev_health_path_group_t;
 
-#define JSON_MAX_SIZE   128
-
-STATIC unsigned int count_special_chars(char const * const string)
+static unsigned int count_special_chars(char const * const string)
 {
     unsigned int i;
     unsigned int escaped_chars = 0;
@@ -73,7 +73,7 @@ STATIC unsigned int count_special_chars(char const * const string)
     return escaped_chars;
 }
 
-STATIC void escape_string(char * * const string)
+static void escape_string(char * * const string)
 {
     unsigned int escape_chars;
 
@@ -92,14 +92,13 @@ STATIC void escape_string(char * * const string)
     }
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t const * const indexes, connector_json_t * const value)
+static connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
     connector_bool_t const present = cc_dev_health_mobile_module_present(indexes);
 
     if (present)
     {
         char * const module_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char module_json_format[] = "{\"modem_id\":\"%s\",\"imei\":\"%s\",\"sims\":%u}";
         char * modem_id = NULL;
         char * imei = NULL;
         unsigned int sims;
@@ -116,7 +115,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
         escape_string(&modem_id);
         escape_string(&imei);
 
-        json_size = sprintf(module_json, module_json_format, modem_id, imei, sims);
+        json_size = sprintf(module_json, "{\"modem_id\":\"%s\",\"imei\":\"%s\",\"sims\":%u}", modem_id, imei, sims);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -129,14 +128,13 @@ STATIC connector_bool_t cc_dev_health_get_mobile_module_json(connector_indexes_t
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_indexes_t const * const indexes, connector_json_t * const value)
+static connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
     connector_bool_t const present = cc_dev_health_mobile_module_net_status_present(indexes);
 
     if (present)
     {
         char * const net_status_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static char const net_status_json_format[] = "{\"registration\":\"%s\",\"attachment\":\"%s\"}";
         char * registration = NULL;
         char * attachment = NULL;
         int json_size;
@@ -151,7 +149,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_index
         escape_string(&registration);
         escape_string(&attachment);
 
-        json_size = sprintf(net_status_json, net_status_json_format, registration, attachment);
+        json_size = sprintf(net_status_json, "{\"registration\":\"%s\",\"attachment\":\"%s\"}", registration, attachment);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -164,14 +162,13 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_status_json(connector_index
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes_t const * const indexes, connector_json_t * const value)
+static connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
     connector_bool_t const present = cc_dev_health_get_mobile_net_info_present(indexes);
 
     if (present)
     {
         char * const net_info_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char net_info_json_format[] = "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}";
         char * iccid = NULL;
         char * imsi = NULL;
         char * phone_num = NULL;
@@ -191,7 +188,7 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes
         escape_string(&imsi);
         escape_string(&phone_num);
 
-        json_size = sprintf(net_info_json, net_info_json_format, iccid, imsi, phone_num);
+        json_size = sprintf(net_info_json, "{\"iccid\":\"%s\",\"imsi\":\"%s\",\"phone_num\":\"%s\"}", iccid, imsi, phone_num);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 
@@ -205,14 +202,13 @@ STATIC connector_bool_t cc_dev_health_get_mobile_net_info_json(connector_indexes
     return present;
 }
 
-STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t const * const indexes, connector_json_t * const value)
+static connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t const * const indexes, connector_json_t * const value)
 {
     connector_bool_t const present = cc_dev_health_get_wifi_radio_present(indexes);
 
     if (present)
     {
         char * const radio_json = cc_dev_health_malloc_string(JSON_MAX_SIZE);
-        static const char radio_json_format[] = "{\"mode\":\"%s\",\"ssid\":\"%s\",\"channel\":%u,\"protocol\":\"%s\"}";
         char * mode = NULL;
         char * ssid = NULL;
         char * protocol = NULL;
@@ -234,7 +230,7 @@ STATIC connector_bool_t cc_dev_health_get_wifi_radio_json(connector_indexes_t co
         escape_string(&ssid);
         escape_string(&protocol);
 
-        json_size = sprintf(radio_json, radio_json_format, mode, ssid, channel, protocol);
+        json_size = sprintf(radio_json, "{\"mode\":\"%s\",\"ssid\":\"%s\",\"channel\":%u,\"protocol\":\"%s\"}", mode, ssid, channel, protocol);
         UNUSED_VARIABLE(json_size); /* Prevent variable set but not used in non-debug */
         ASSERT(json_size <= JSON_MAX_SIZE);
 

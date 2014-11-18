@@ -32,7 +32,6 @@ public class ConfigGenerator {
     private final static String USE_BIN_ID_LOG_OPTION = "useBinIdLog";
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
     private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_attribute_max_len";
-    private final static String DEVICE_HEALTH_OPTION = "device_health";
     private final static String NO_BACKUP_OPTION = "noBackup";
 
     private final static String FILE_TYPE_OPTION = "type";
@@ -76,7 +75,6 @@ public class ConfigGenerator {
     private static boolean useBinIdLog;
     private static boolean rci_legacy;
     private static int rci_dc_attribute_max_len = 0;
-    private static boolean device_health;
     private static boolean noBackup;
 
     private static boolean hidden_help;
@@ -259,10 +257,6 @@ public class ConfigGenerator {
                             DASH + PROTOTYPES_OPTION));
             log(String
                     .format(
-                            "\t%-16s \t= add setting enhanced_services and support for it.",
-                            DASH + DEVICE_HEALTH_OPTION));
-            log(String
-                    .format(
                             "\t%-16s \t= No backup remote_config.c and .h files.",
                             DASH + NO_BACKUP_OPTION));
         }
@@ -360,8 +354,6 @@ public class ConfigGenerator {
                 useBinIdLog = true;
             } else if (option.equals(RCI_LEGACY_COMMANDS_OPTION)) {
                 rci_legacy = true;
-            } else if (option.equals(DEVICE_HEALTH_OPTION)) {
-                device_health = true;
             } else if (option.equals(NO_BACKUP_OPTION)) {
                 noBackup = true;
             } else if (option.isEmpty()) {
@@ -583,10 +575,6 @@ public class ConfigGenerator {
 
     public static boolean useBinIdLogOption() {
         return useBinIdLog;
-    }
-
-    public static boolean deviceHealthOption() {
-        return device_health;
     }
 
     public static String filename() {

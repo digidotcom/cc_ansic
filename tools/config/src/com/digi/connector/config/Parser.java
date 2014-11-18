@@ -140,46 +140,6 @@ public class Parser {
                     throw new Exception("Unrecognized keyword: " + token);
                 }
             }
-
-            /*check and add enhanced_services setting group */
-            if(ConfigGenerator.deviceHealthOption()){
-                groupConfig = configData.getConfigGroup("setting");
-                Group simple_es_Group = new Group("simple_enhanced_services", 1, "Simple Health data reporting configuration", null);
-                Element[] simple_es_elements = new Element[2 * 3 + 1];
-                int i = 0;
-                
-                simple_es_elements[i] = new Element("report_rate", "Global reporting interval (minutes)", null);
-                simple_es_elements[i].setType("uint32");
-                
-                i++;
-                simple_es_elements[i] = new Element("eth_metrics", "Ethernet Metrics", null);
-                simple_es_elements[i].setType("on_off");
-                
-                i++;
-                simple_es_elements[i] = new Element("eth_sample_rate", "Ethernet Sampling interval (minutes)", null);
-                simple_es_elements[i].setType("uint32");
-                
-                i++;
-                simple_es_elements[i] = new Element("mobile_metrics", "Mobile Metrics", null);
-                simple_es_elements[i].setType("on_off");
-                
-                i++;
-                simple_es_elements[i] = new Element("mobile_sample_rate", "Mobile Sampling interval (minutes)", null);
-                simple_es_elements[i].setType("uint32");
-                
-                i++;
-                simple_es_elements[i] = new Element("sys_metrics", "System Metrics", null);
-                simple_es_elements[i].setType("on_off");
-                
-                i++;
-                simple_es_elements[i] = new Element("sys_sample_rate", "System Sampling interval (minutes)", null);
-                simple_es_elements[i].setType("uint32");
-
-                for(i = 0; i < simple_es_elements.length; i++) {
-                    simple_es_Group.addElement(simple_es_elements[i]);
-                }
-                groupConfig.add(simple_es_Group);
-            }
         } catch (NullPointerException e) {
             ConfigGenerator.log("Parser NullPointerException");
             ConfigGenerator.log(e.toString());

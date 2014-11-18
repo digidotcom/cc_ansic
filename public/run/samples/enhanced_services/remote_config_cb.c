@@ -26,14 +26,12 @@ remote_group_table_t remote_setting_table[] = {
      app_system_group_end,
      app_system_group_cancel
     },
-/* These are device security callbacks in devicesecurity.c
-*    {app_device_security_group_init,
-*     app_device_security_group_set,
-*     app_device_security_group_get,
-*     app_device_security_group_end,
-*     app_device_security_group_cancel
-*    }
-*/
+    {app_health_metrics_group_init,
+     app_health_metrics_group_set,
+     app_health_metrics_group_get,
+     app_health_metrics_group_end,
+     app_health_metrics_group_cancel
+    },
 };
 
 

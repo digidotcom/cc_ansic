@@ -40,11 +40,9 @@ extern connector_callback_status_t app_system_group_get(connector_remote_config_
 extern connector_callback_status_t app_system_group_end(connector_remote_config_t * const remote_config);
 extern void app_system_group_cancel(connector_remote_config_cancel_t * const remote_config);
 
-/* These are device security callbacks in devicesecurity.c
-* extern connector_callback_status_t app_device_security_group_init(connector_remote_config_t * const remote_config);
-* extern connector_callback_status_t app_device_security_group_set(connector_remote_config_t * const remote_config);
-* extern connector_callback_status_t app_device_security_group_get(connector_remote_config_t * const remote_config);
-* extern connector_callback_status_t app_device_security_group_end(connector_remote_config_t * const remote_config);
-* extern void app_device_security_group_cancel(connector_remote_config_cancel_t * const remote_config);
-*/
+extern connector_callback_status_t app_health_metrics_group_init(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_health_metrics_group_set(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_health_metrics_group_get(connector_remote_config_t * const remote_config);
+extern connector_callback_status_t app_health_metrics_group_end(connector_remote_config_t * const remote_config);
+extern void app_health_metrics_group_cancel(connector_remote_config_cancel_t * const remote_config);
 #endif

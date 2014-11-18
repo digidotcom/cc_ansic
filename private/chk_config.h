@@ -76,24 +76,3 @@
 #if (defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS) && (CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS > 1) && (!defined CONNECTOR_SM_MULTIPART)
     #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS bigger than 1"
 #endif
-
-#if (defined CONNECTOR_DEVICE_HEALTH)
-#if !(defined CONNECTOR_TRANSPORT_TCP)
-    #error "You must define CONNECTOR_TRANSPORT_TCP in order to enable CONNECTOR_DEVICE_HEALTH"
-#endif
-#if !(defined CONNECTOR_DATA_SERVICE)
-    #error "You must define CONNECTOR_DATA_SERVICE in order to enable CONNECTOR_DEVICE_HEALTH"
-#endif
-#if !(defined CONNECTOR_RCI_SERVICE)
-    #error "You must define CONNECTOR_RCI_SERVICE in order to enable CONNECTOR_DEVICE_HEALTH"
-#endif
-#if (defined CONNECTOR_NO_MALLOC)
-    #error "CONNECTOR_DEVICE_HEALTH are not available for CONNECTOR_NO_MALLOC version"
-#endif
-#if !(defined CONNECTOR_HAS_64_BIT_INTEGERS)
-    #error "You must define CONNECTOR_HAS_64_BIT_INTEGERS in order to enable CONNECTOR_DEVICE_HEALTH"
-#endif
-#if !(defined FLOATING_POINT_SUPPORTED)
-    #error "You must define FLOATING_POINT_SUPPORTED in order to enable CONNECTOR_DEVICE_HEALTH"
-#endif
-#endif
