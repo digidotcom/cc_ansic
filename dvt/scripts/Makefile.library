@@ -38,6 +38,7 @@ CFLAGS += -Wno-error=padded -Wno-unused-function -Wno-missing-field-initializers
 
 ifeq ($(DFLAGS),-m32)
 CFLAGS += -Wno-error=format
+CFLAGS += -Wno-error=long-long
 endif
 
 # Use ANSIC 89
