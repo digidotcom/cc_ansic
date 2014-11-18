@@ -403,7 +403,7 @@ done:
 STATIC connector_status_t process_data_service_device_error(connector_data_t * const connector_ptr,
                                                        msg_service_request_t * const service_request)
 {
-    connector_status_t result = connector_working;
+    connector_status_t result;
     msg_session_t * const session = service_request->session;
     data_service_context_t * const data_service = session->service_context;
     connector_data_service_status_t device_request;
@@ -590,7 +590,6 @@ STATIC connector_status_t call_put_request_user(connector_data_t * const connect
         }
         case connector_send_data_initiator_unknown:
             ASSERT_GOTO(request_initiator != connector_send_data_initiator_unknown, done);
-            break;
     }
 
     switch (callback_status)
@@ -757,7 +756,7 @@ done:
 
 STATIC connector_status_t process_send_error(connector_data_t * const connector_ptr, msg_service_request_t * const service_request, void * const cb_context)
 {
-    connector_status_t status = connector_working;
+    connector_status_t status;
     connector_data_service_status_t user_data;
     msg_session_t * const session = service_request->session;
     connector_bool_t const session_created = connector_bool(session != NULL);
