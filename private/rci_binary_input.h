@@ -81,58 +81,49 @@ STATIC void reset_input_content(rci_t * const rci)
 
 STATIC size_t get_modifier_ber(rci_t * const rci, uint32_t * const value)
 {
-
     uint8_t * const rci_ber = rci->shared.content.data;
     uint8_t const modifier_ber = message_load_u8(rci_ber, value);
+    size_t const bytes_to_follow = get_bytes_to_follow(modifier_ber) + 1;
+    size_t bytes_read = 0;
 
-    size_t bytes_read;
-    rci->shared.content.length++;
-
+    rci->shared.content.length += 1;
+    if (rci->shared.content.length < bytes_to_follow)
     {
-        /* we have modifier BEF */
-        size_t const bytes_to_follow = get_bytes_to_follow(modifier_ber) +1;
-
-        bytes_read = rci->shared.content.length;
-
-        if (bytes_read < bytes_to_follow)
-        {
-            bytes_read = 0;
-            goto done;
-        }
-
-        switch (bytes_to_follow)
-        {
-            case record_bytes(rci_ber):
-               *value =  (modifier_ber & BINARY_RCI_SIZE_ALTERNATE_FLAG) ? modifier_ber : (modifier_ber & BINARY_RCI_ONE_BYTE_LIMIT_MASK);
-                break;
-            case record_bytes(rci_ber_u8):
-            {
-                uint8_t * const rci_ber_u8 = rci_ber;
-                /* mask of the 1st byte for data value */
-                *value = (modifier_ber & BINARY_RCI_HI_BYTE_MASK) << 8;
-                *value |= message_load_u8(rci_ber_u8, value);
-                break;
-            }
-            case record_bytes(rci_ber_u16):
-            {
-                uint8_t * const rci_ber_u16 = rci_ber;
-                *value = message_load_be16(rci_ber_u16, value);
-                break;
-            }
-            case record_bytes(rci_ber_u32):
-            {
-                uint8_t * const rci_ber_u32 = rci_ber;
-                *value = message_load_be32(rci_ber_u32, value);
-                break;
-            }
-            default:
-                ASSERT(bytes_to_follow == 1);
-                /* NONUM or TRM value */
-                *value = modifier_ber;
-                break;
-        }
-        bytes_read = bytes_to_follow;
+        goto done;
     }
+
+    switch (bytes_to_follow)
+    {
+        case record_bytes(rci_ber):
+           *value =  (modifier_ber & BINARY_RCI_SIZE_ALTERNATE_FLAG) ? modifier_ber : (modifier_ber & BINARY_RCI_ONE_BYTE_LIMIT_MASK);
+            break;
+        case record_bytes(rci_ber_u8):
+        {
+            uint8_t * const rci_ber_u8 = rci_ber;
+            /* mask of the 1st byte for data value */
+            *value = (modifier_ber & BINARY_RCI_HI_BYTE_MASK) << 8;
+            *value |= message_load_u8(rci_ber_u8, value);
+            break;
+        }
+        case record_bytes(rci_ber_u16):
+        {
+            uint8_t * const rci_ber_u16 = rci_ber;
+            *value = message_load_be16(rci_ber_u16, value);
+            break;
+        }
+        case record_bytes(rci_ber_u32):
+        {
+            uint8_t * const rci_ber_u32 = rci_ber;
+            *value = message_load_be32(rci_ber_u32, value);
+            break;
+        }
+        default:
+            ASSERT(bytes_to_follow == 1);
+            /* NONUM or TRM value */
+            *value = modifier_ber;
+            break;
+    }
+    bytes_read = bytes_to_follow;
 
 done:
     return bytes_read;
@@ -154,29 +145,24 @@ STATIC connector_bool_t get_float(rci_t * const rci, float * const value)
 {
 
     connector_bool_t value_decoded = connector_false;
-    uint8_t * rci_ber_u32 = rci->shared.content.data;
+    uint8_t * const rci_ber_u32 = rci->shared.content.data;
     uint8_t const opcode = message_load_u8(rci_ber_u32, opcode);
+    size_t const bytes_to_follow = get_bytes_to_follow(opcode);
+    size_t const bytes_read = rci->shared.content.length++;
 
-    rci->shared.content.length++;
     ASSERT(sizeof(uint32_t) == sizeof(float));
 
+    if (bytes_read < (bytes_to_follow + 1))
     {
-        /* we have modifier BEF */
-        size_t const bytes_to_follow = get_bytes_to_follow(opcode);
-        size_t bytes_read = rci->shared.content.length;
+        goto error;
+    }
 
-        if (bytes_read < (bytes_to_follow + 1))
-        {
-            goto error;
-        }
+    /* Current, we only support single precision float. */
+    ASSERT(bytes_read == record_bytes(rci_ber_u32));
 
-        /* Current, we only support single precision float. */
-        ASSERT(bytes_read == record_bytes(rci_ber_u32));
-
-        {
-            uint32_t float_value = message_load_be32(rci_ber_u32, value);
-            memcpy(value, &float_value, sizeof *value);
-        }
+    {
+        uint32_t const float_value = message_load_be32(rci_ber_u32, value);
+        memcpy(value, &float_value, sizeof *value);
     }
 
     value_decoded = connector_true;
