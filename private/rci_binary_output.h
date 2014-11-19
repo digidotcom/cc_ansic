@@ -1026,7 +1026,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 
                 if (get_rci_input_state(rci) == rci_input_state_done)
                 {
-                    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
+                    trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                     set_rci_output_state(rci, rci_output_state_done);
                 }
                 else

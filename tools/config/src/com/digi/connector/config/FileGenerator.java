@@ -522,6 +522,11 @@ public abstract class FileGenerator {
                          "    connector_request_id_remote_config_session_end,\n" +
                          "    connector_request_id_remote_config_session_cancel,\n" +
                          "    connector_request_id_remote_config_configurations");
+        if(ConfigGenerator.rciLegacyEnabled()){
+            fileWriter.write(",\n    connector_request_id_remote_config_do_command,\n" +
+                             "    connector_request_id_remote_config_reboot,\n" +
+                             "    connector_request_id_remote_config_set_factory_def");
+        }
         fileWriter.write("\n} connector_request_id_remote_config_t;\n");
 
         fileWriter.write("\ntypedef enum {\n" +

@@ -39,7 +39,10 @@ typedef enum {
     connector_request_id_remote_config_action_end,
     connector_request_id_remote_config_session_end,
     connector_request_id_remote_config_session_cancel,
-    connector_request_id_remote_config_configurations
+    connector_request_id_remote_config_configurations,
+    connector_request_id_remote_config_do_command,
+    connector_request_id_remote_config_reboot,
+    connector_request_id_remote_config_set_factory_def
 } connector_request_id_remote_config_t;
 
 typedef enum {

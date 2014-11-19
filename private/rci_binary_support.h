@@ -256,16 +256,6 @@ typedef enum
     rci_error_state_callback
 } rci_error_state_t;
 
-typedef enum
-{
-    rci_command_callback_set_query_setting_state
-#if (defined RCI_LEGACY_COMMANDS)
-    ,rci_command_callback_do_command,
-    rci_command_callback_reboot,
-    rci_command_callback_set_factory_default
-#endif
-} rci_command_callback_t;
-
 typedef struct
 {
     uint8_t * data;
@@ -283,7 +273,6 @@ typedef struct rci
     rci_service_data_t * service_data;
     rci_status_t status;
     struct {
-        rci_command_callback_t rci_command_callback;
         connector_request_id_t request;
         connector_callback_status_t status;
     } callback;
