@@ -12,8 +12,6 @@
 #define CONNECTOR_RCI_PARSER_INTERNAL_DATA
 #define CONNECTOR_CONST_PROTECTION
 
-#include "remote_config.h"
-
 #if (defined CONNECTOR_DEVICE_HEALTH)
 #include "connector_dev_health_rci.h"
 #endif

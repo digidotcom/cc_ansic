@@ -61,7 +61,6 @@ public class FileSource extends FileGenerator {
             /* write include header in the header file */
              String headerDefineName = headerFile.replace('.', '_').toLowerCase();
             headerWriter.write(String.format("#ifndef %s\n#define %s\n\n", headerDefineName, headerDefineName));
-            headerWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, HEADER_FILENAME));
 
             fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, headerFile));
 

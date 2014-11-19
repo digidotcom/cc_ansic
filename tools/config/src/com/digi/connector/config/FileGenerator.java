@@ -103,24 +103,6 @@ public abstract class FileGenerator {
     "  size_t count;\n" +
     "} connector_remote_group_table_t;\n\n";
     
-    protected final static String CONNECTOR_CONST_PROTECTION = "\n#if (defined CONNECTOR_CONST_PROTECTION)\n" +
-    "#define CONST\n" +
-    "#undef CONNECTOR_CONST_PROTECTION\n" +
-    "#else\n" +
-    "#if (defined CONST)\n" +
-    "#define CONNECTOR_CONST_STORAGE CONST\n" +
-    "#undef CONST\n" +
-    "#endif\n" +
-    "#define CONST const\n" +
-    "#endif\n\n";
-    
-    protected final static String CONNECTOR_CONST_PROTECTION_RESTORE = "\n#undef CONST\n" +
-    "#if (defined CONNECTOR_CONST_STORAGE)\n" +
-    "#define CONST CONNECTOR_CONST_STORAGE\n" +
-    "#undef CONNECTOR_CONST_STORAGE\n" +
-    "#endif\n\n";
-
-
     protected String filePath = "";
     protected String generatedFile = "";
 
@@ -529,6 +511,18 @@ public abstract class FileGenerator {
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
         writeElementValueStruct();
+
+        fileWriter.write("\ntypedef enum {\n" +
+                         "    connector_request_id_remote_config_session_start,\n" +
+                         "    connector_request_id_remote_config_action_start,\n" +
+                         "    connector_request_id_remote_config_group_start,\n" +
+                         "    connector_request_id_remote_config_group_process,\n" +
+                         "    connector_request_id_remote_config_group_end,\n" +
+                         "    connector_request_id_remote_config_action_end,\n" +
+                         "    connector_request_id_remote_config_session_end,\n" +
+                         "    connector_request_id_remote_config_session_cancel,\n" +
+                         "    connector_request_id_remote_config_configurations");
+        fileWriter.write("\n} connector_request_id_remote_config_t;\n");
 
         fileWriter.write("\ntypedef enum {\n" +
                          "    connector_remote_action_set,\n" +
