@@ -316,19 +316,19 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         }
         case connector_request_id_remote_config_set_factory_def:
         {
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
-            connector_callback_status_t const status = app_process_set_factory_default(connector_ptr->context);
-            if (status == connector_callback_error) 
+#if (defined CONNECTOR_DEVICE_HEALTH)
+            rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
+#else
+            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+#endif
+
+            if (rci->callback.status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
 
                 rci->callback.status = connector_callback_continue;
-            }
-            else
-            {
-                rci->callback.status = status;
             }
             break;
         }
@@ -386,6 +386,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         }
 
 #if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
+/* TODO */
         switch (remote_config_request)
         {
             case connector_request_id_remote_config_group_end:

@@ -310,11 +310,9 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     return status;
 }
 
-connector_callback_status_t app_process_set_factory_default(void * const context)
+connector_callback_status_t app_process_set_factory_default(void)
 {
     connector_callback_status_t status = connector_callback_continue;
-
-    UNUSED_ARGUMENT(context);
 
     APP_DEBUG("app_process_set_factory_default\n");
 
@@ -362,6 +360,9 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
         break;
     case connector_request_id_remote_config_configurations:
         status = app_process_remote_configuration(data);
+        break;
+    case connector_request_id_remote_config_set_factory_def:
+        status = app_process_set_factory_default();
         break;
     default:
         APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request_id);
