@@ -261,8 +261,8 @@ STATIC connector_bool_t get_ip_address(rci_t * const rci, uint32_t * const ip_ad
     UNUSED_PARAMETER(expected_length);
 #endif
 
-    ASSERT_GOTO(length == expected_length, done);
     ASSERT_GOTO(ber_bytes == 1, done);
+    ASSERT_GOTO(length == expected_length, done);
 
     if (rci->shared.content.length == expected_length + ber_bytes)
     {
@@ -288,8 +288,8 @@ STATIC connector_bool_t get_mac_address(rci_t * const rci, uint8_t * const mac_a
     UNUSED_PARAMETER(expected_length);
 #endif
 
-    ASSERT_GOTO(length == expected_length, done);
     ASSERT_GOTO(ber_bytes == 1, done);
+    ASSERT_GOTO(length == expected_length, done);
 
     if (rci->shared.content.length == expected_length + ber_bytes)
     {
