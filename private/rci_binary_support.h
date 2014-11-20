@@ -306,7 +306,7 @@ typedef struct rci
 #if (defined RCI_LEGACY_COMMANDS)
         struct 
         {
-            char const * response_string;
+            connector_element_value_t response_value;
         } do_command;
 #endif
     } command;

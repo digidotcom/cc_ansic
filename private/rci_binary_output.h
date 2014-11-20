@@ -899,10 +899,11 @@ done:
 STATIC void rci_output_do_command_payload(rci_t * const rci)
 {
     connector_bool_t overflow = connector_false;
+    char const * const response_payload = rci->command.do_command.response_value.string_value;
 
-    if (rci->command.do_command.response_string != NULL)
+    if (response_payload != NULL)
     {
-        overflow = rci_output_string(rci, rci->command.do_command.response_string, strlen(rci->command.do_command.response_string));
+        overflow = rci_output_string(rci, response_payload, strlen(response_payload));
     }
     else
     {

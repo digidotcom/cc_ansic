@@ -139,6 +139,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 #endif
                 break;
         }         
+        rci->shared.callback_data.response.element_value = &rci->shared.value;
         break;
     case connector_request_id_remote_config_action_end:
         break;
@@ -183,8 +184,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     case connector_request_id_remote_config_do_command:
         /* Provide request */
         rci->shared.callback_data.element.value = &rci->shared.value;
-        /* Clear response pointer. User will fill in there it's own response buffer */
-        rci->command.do_command.response_string = NULL;
+        /* Provide response pointer */
+        rci->shared.callback_data.response.element_value = &rci->command.do_command.response_value;
+        rci->shared.callback_data.response.element_value->string_value = NULL;
         goto done;
         break;
 #endif
@@ -272,9 +274,12 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case connector_request_id_remote_config_do_command:
         {
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
-            connector_callback_status_t const status = app_process_do_command(callback_data, remote_config->element.value->string_value, &rci->command.do_command.response_string, connector_ptr->context);
-            if (status == connector_callback_error) 
+#if (defined CONNECTOR_DEVICE_HEALTH)
+            rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
+#else
+            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+#endif
+            if (rci->callback.status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
                 set_rci_command_error(rci);
@@ -282,12 +287,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
                 rci->callback.status = connector_callback_continue;
             }
-            else
-            {
-                rci->callback.status = status;
-            }
             break;
         }
+
         case connector_request_id_remote_config_reboot:
         {
             connector_callback_status_t status = connector_callback_continue;

@@ -241,13 +241,13 @@ static connector_callback_status_t app_process_remote_configuration(connector_re
     return status;
 }
 
-connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const request_payload, char const * * response_payload, void * const context)
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
     char const * target = remote_config->attribute.target;
-
-    UNUSED_ARGUMENT(context);
+    char const * const request_payload = remote_config->element.value->string_value;
+    char const * * response_payload = &remote_config->response.element_value->string_value;
 
     APP_DEBUG("app_process_do_command for target '%s':\n", target);
     APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
@@ -286,20 +286,22 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
             *response_payload = "I returned busy twice";
         }
     }
-    else if (!strcmp(target, "user_alloc"))
+    else if (!strcmp(target, "malloc"))
     {
-        #define USER_ALLOCATED_MEM "user allocated memory answer"
+        #define ALLOCATED_MEM_SIZE 5000
 
-        char * user_allocated_mem = malloc(sizeof (USER_ALLOCATED_MEM));
+        char * allocated_mem = malloc(ALLOCATED_MEM_SIZE + 1);
 
-        if (user_allocated_mem != NULL)
+        if (allocated_mem != NULL)
         {
-            memcpy(user_allocated_mem, USER_ALLOCATED_MEM, sizeof (USER_ALLOCATED_MEM));
+            memset(allocated_mem, '-', ALLOCATED_MEM_SIZE);
+
+            allocated_mem[ALLOCATED_MEM_SIZE] = '\0';
 
             /* Update session so buffer is freed in the session_end callback */
-            session_ptr->buf_ptr = user_allocated_mem;
+            session_ptr->buf_ptr = allocated_mem;
 
-            *response_payload = user_allocated_mem;
+            *response_payload = allocated_mem;
         }
     }
     else
@@ -360,6 +362,9 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
         break;
     case connector_request_id_remote_config_configurations:
         status = app_process_remote_configuration(data);
+        break;
+    case connector_request_id_remote_config_do_command:
+        status = app_process_do_command(data);
         break;
     case connector_request_id_remote_config_set_factory_def:
         status = app_process_set_factory_default();

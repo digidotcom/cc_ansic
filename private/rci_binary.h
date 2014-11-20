@@ -15,7 +15,6 @@
 #include "rci_binary_util.h"
 #include "rci_binary_buffer.h"
 #include "rci_binary_string.h"
-#include "rci_binary_command.h"
 #include "rci_binary_group.h"
 #include "rci_binary_element.h"
 #include "rci_binary_callback.h"
