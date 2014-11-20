@@ -269,22 +269,10 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     switch (remote_config_request)
     {
 #if (defined RCI_LEGACY_COMMANDS)
-        case connector_request_id_remote_config_do_command:
-        {
-            if (rci->callback.status == connector_callback_error) 
-            {
-                rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
-                set_rci_command_error(rci);
-                state_call(rci, rci_parser_state_error);
-
-                rci->callback.status = connector_callback_continue;
-            }
-            break;
-        }
 
         case connector_request_id_remote_config_reboot:
         {
-            if (rci->callback.status == connector_callback_continue) 
+            if (rci->callback.status == connector_callback_continue && remote_config->error_id == connector_success) 
             {
                 connector_request_id_t request_id;
                 connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
@@ -293,26 +281,16 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 request_id.os_request = connector_request_id_os_reboot;
                 rci->callback.status = connector_callback(connector_ptr->callback, class_id, request_id, NULL, connector_ptr->context);
             }
-
-            if (rci->callback.status == connector_callback_error) 
-            {
-                rci_global_error(rci, connector_rci_error_reboot_failed, RCI_NO_HINT);
-                set_rci_command_error(rci);
-                state_call(rci, rci_parser_state_error);
-
-                rci->callback.status = connector_callback_continue;
-            }
-            break;
+            /* intentional fall through */
         }
+        case connector_request_id_remote_config_do_command:
         case connector_request_id_remote_config_set_factory_def:
         {
-            if (rci->callback.status == connector_callback_error) 
+            if (remote_config->error_id != connector_success)
             {
-                rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
+                rci_global_error(rci, remote_config->error_id, remote_config->response.error_hint);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
-
-                rci->callback.status = connector_callback_continue;
             }
             break;
         }

@@ -271,7 +271,8 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     }
     else if (!strcmp(target, "error"))
     {
-        status = connector_callback_error;
+        remote_config->error_id = connector_rci_error_do_command_failed;
+        remote_config->response.error_hint = "do command intentional failure";
     }
     else if (!strcmp(target, "busy"))
     {
@@ -312,20 +313,42 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     return status;
 }
 
-connector_callback_status_t app_process_set_factory_default(void)
+int my_set_factory_default_went_wrong(void)
+{
+    return 0;
+}
+
+connector_callback_status_t app_process_set_factory_default(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
     APP_DEBUG("app_process_set_factory_default\n");
 
+    if (my_set_factory_default_went_wrong())
+    {
+        remote_config->error_id = connector_rci_error_set_factory_default_failed;
+        remote_config->response.error_hint = "can't do that";
+    }
+
     return status;
 }
 
-connector_callback_status_t app_process_reboot(void)
+int do_not_want_to_reboot(void)
+{
+    return 0;
+}
+
+connector_callback_status_t app_process_reboot(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
     APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
+
+    if (do_not_want_to_reboot())
+    {
+        remote_config->error_id = connector_rci_error_reboot_failed;
+        remote_config->response.error_hint = "don't want to reboot";
+    }
 
     return status;
 }
@@ -379,11 +402,11 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
         break;
 
     case connector_request_id_remote_config_set_factory_def:
-        status = app_process_set_factory_default();
+        status = app_process_set_factory_default(data);
         break;
 
     case connector_request_id_remote_config_reboot:
-        status = app_process_reboot();
+        status = app_process_reboot(data);
         break;
 
     default:
