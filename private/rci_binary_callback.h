@@ -253,32 +253,24 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #endif
     }
 
+    if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
+    {
+        rci->callback.status = connector_callback_continue;
+    }
+    else
+    {
+#if (defined CONNECTOR_DEVICE_HEALTH)
+        rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
+#else
+        rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+#endif
+    }
 
     switch (remote_config_request)
     {
-        default:
-            if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
-            {
-                rci->callback.status = connector_callback_continue;
-            }
-            else
-            {
-#if (defined CONNECTOR_DEVICE_HEALTH)
-                rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
-#else
-                rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
-#endif
-            }
-            break;
-
 #if (defined RCI_LEGACY_COMMANDS)
         case connector_request_id_remote_config_do_command:
         {
-#if (defined CONNECTOR_DEVICE_HEALTH)
-            rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
-#else
-            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
-#endif
             if (rci->callback.status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
@@ -292,11 +284,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
         case connector_request_id_remote_config_reboot:
         {
-#if (defined CONNECTOR_DEVICE_HEALTH)
-            rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
-#else
-            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
-#endif
             if (rci->callback.status == connector_callback_continue) 
             {
                 connector_request_id_t request_id;
@@ -319,12 +306,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         }
         case connector_request_id_remote_config_set_factory_def:
         {
-#if (defined CONNECTOR_DEVICE_HEALTH)
-            rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
-#else
-            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
-#endif
-
             if (rci->callback.status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
@@ -336,6 +317,8 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             break;
         }
 #endif
+        default:
+            break;
     }
 
     switch (rci->callback.status)
