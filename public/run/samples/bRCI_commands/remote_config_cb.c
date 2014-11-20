@@ -321,6 +321,15 @@ connector_callback_status_t app_process_set_factory_default(void)
     return status;
 }
 
+connector_callback_status_t app_process_reboot(void)
+{
+    connector_callback_status_t status = connector_callback_error;
+
+    APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
+
+    return status;
+}
+
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
                                                       void * const data)
 {
@@ -360,15 +369,23 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
     case connector_request_id_remote_config_session_cancel:
         status = app_process_session_cancel(data);
         break;
+
     case connector_request_id_remote_config_configurations:
         status = app_process_remote_configuration(data);
         break;
+
     case connector_request_id_remote_config_do_command:
         status = app_process_do_command(data);
         break;
+
     case connector_request_id_remote_config_set_factory_def:
         status = app_process_set_factory_default();
         break;
+
+    case connector_request_id_remote_config_reboot:
+        status = app_process_reboot();
+        break;
+
     default:
         APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request_id);
         break;

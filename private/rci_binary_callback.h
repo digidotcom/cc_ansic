@@ -292,27 +292,28 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
         case connector_request_id_remote_config_reboot:
         {
-            connector_callback_status_t status = connector_callback_continue;
-            connector_request_id_t request_id;
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+#if (defined CONNECTOR_DEVICE_HEALTH)
+            rci->callback.status = enhs_rci_handler(rci->service_data->connector_ptr, rci->callback.request, callback_data);
+#else
+            rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+#endif
+            if (rci->callback.status == connector_callback_continue) 
+            {
+                connector_request_id_t request_id;
+                connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
 
-            connector_class_id_t class_id = connector_class_id_operating_system;
-            request_id.os_request = connector_request_id_os_reboot;
+                connector_class_id_t class_id = connector_class_id_operating_system;
+                request_id.os_request = connector_request_id_os_reboot;
+                rci->callback.status = connector_callback(connector_ptr->callback, class_id, request_id, NULL, connector_ptr->context);
+            }
 
-            /* Device Cloud reboots us */
-
-            status = connector_callback(connector_ptr->callback, class_id, request_id, NULL, connector_ptr->context);
-            if (status == connector_callback_error) 
+            if (rci->callback.status == connector_callback_error) 
             {
                 rci_global_error(rci, connector_rci_error_reboot_failed, RCI_NO_HINT);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
 
                 rci->callback.status = connector_callback_continue;
-            }
-            else
-            {
-                rci->callback.status = status;
             }
             break;
         }
