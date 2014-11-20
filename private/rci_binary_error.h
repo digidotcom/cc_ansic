@@ -133,6 +133,11 @@ STATIC void rci_generate_error(rci_t * const rci)
                         break;
 
                     case connector_request_id_remote_config_group_process:
+#if (defined RCI_LEGACY_COMMANDS)
+                    case connector_request_id_remote_config_do_command:
+                    case connector_request_id_remote_config_reboot:
+                    case connector_request_id_remote_config_set_factory_def:
+#endif
                         set_rci_error_state(rci, rci_error_state_id);
                         state_call(rci, rci_parser_state_traverse);
                         break;
@@ -146,11 +151,6 @@ STATIC void rci_generate_error(rci_t * const rci)
                         break;
                     case connector_request_id_remote_config_configurations:
                         ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
-                        break;
-                    case connector_request_id_remote_config_do_command:
-                    case connector_request_id_remote_config_reboot:
-                    case connector_request_id_remote_config_set_factory_def:
-                        ASSERT(connector_false); /* TODO: not handled yet */
                         break;
                 }
                 break;
