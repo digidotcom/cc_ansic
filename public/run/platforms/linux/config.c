@@ -762,6 +762,11 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
         enum_to_case(connector_request_id_remote_config_session_end);
         enum_to_case(connector_request_id_remote_config_session_cancel);
         enum_to_case(connector_request_id_remote_config_configurations);
+#if (defined RCI_LEGACY_COMMANDS)
+        enum_to_case(connector_request_id_remote_config_do_command);
+        enum_to_case(connector_request_id_remote_config_reboot);
+        enum_to_case(connector_request_id_remote_config_set_factory_def);
+#endif
     }
     return result;
 }
