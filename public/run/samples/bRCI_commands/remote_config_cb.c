@@ -323,7 +323,7 @@ connector_callback_status_t app_process_set_factory_default(void)
 
 connector_callback_status_t app_process_reboot(void)
 {
-    connector_callback_status_t status = connector_callback_error;
+    connector_callback_status_t status = connector_callback_continue;
 
     APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
 
