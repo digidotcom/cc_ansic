@@ -372,7 +372,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         }
 
 #if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
-/* TODO */
         switch (remote_config_request)
         {
             case connector_request_id_remote_config_group_end:
@@ -391,15 +390,15 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_action_start:
                 break;
             case connector_request_id_remote_config_action_end:
-                rci->shared.callback_data.attribute.source = NULL;
-                rci->shared.callback_data.attribute.compare_to = NULL;
-#if (defined RCI_LEGACY_COMMANDS)
-                rci->shared.callback_data.attribute.target = NULL;
-#endif
                 break;
             case connector_request_id_remote_config_group_start:
             case connector_request_id_remote_config_session_cancel:
             case connector_request_id_remote_config_configurations:
+#if (defined RCI_LEGACY_COMMANDS)
+            case connector_request_id_remote_config_do_command:
+            case connector_request_id_remote_config_reboot:
+            case connector_request_id_remote_config_set_factory_def:
+#endif
                 break;
         }
 #endif
