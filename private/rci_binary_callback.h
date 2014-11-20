@@ -177,9 +177,11 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
+
     case connector_request_id_remote_config_configurations:
         ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
         break;
+
 #if (defined RCI_LEGACY_COMMANDS)
     case connector_request_id_remote_config_do_command:
         /* Provide request */
@@ -189,11 +191,12 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         rci->shared.callback_data.response.element_value->string_value = NULL;
         goto done;
         break;
-#endif
+
     case connector_request_id_remote_config_reboot:
     case connector_request_id_remote_config_set_factory_def:
         goto done;
         break;
+#endif
     }
 
 done:
