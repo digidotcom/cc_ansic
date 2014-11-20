@@ -16,6 +16,8 @@
 /* Import zlib to use the crc32() function */
 #include <zlib.h>
 
+#include <signal.h>
+
 #include "device_request.h"
 
 
@@ -23,9 +25,16 @@
 extern connector_handle_t CLOUD_HANDLER;
 
 
-
 static connector_bool_t app_dp_waiting_for_response = connector_false;
 
+
+/* Handler function to manage the system signal */
+connector_bool_t app_stop_execution = connector_false;
+void handler_stop_signal(int signal)
+{
+    APP_DEBUG("Catched the stop execution signal %d!!!!!!!\n", signal);
+    app_stop_execution = connector_true;
+}
 
 
 
@@ -830,13 +839,18 @@ void app_show_binary_datastream(connector_request_data_point_binary_t * dp_ptr)
 
 
 
-
-
-
 /*****************************************************/
 /**************** TEST_CASES FUNCTIONS ***************/
 /*****************************************************/
 void * app_start_test_case_datapoints_loop(void * args){
+
+    /* Reset the stop value */
+    app_stop_execution = connector_false;
+    /* Add listener function for a defined user signal */
+    signal(SIGUSR1,handler_stop_signal);
+
+
+
 
     /* Initialize settings */
     connector_status_t status = connector_init_error;
@@ -887,6 +901,14 @@ void * app_start_test_case_datapoints_loop(void * args){
 
     for(unsigned int i=1;i<=test_arguments->numberOfLoops;i++)
     {
+        /* Check if we must stop the execution */
+        if ( app_stop_execution )
+        {
+            APP_DEBUG("Stop execution flag is set, we stop the execution!!\n");
+            goto free;
+        }
+
+
         /* Initialize settings */
         status = connector_init_error;
         size_t busy_count = 0;
@@ -940,6 +962,7 @@ void * app_start_test_case_datapoints_loop(void * args){
     }
 
 
+free:
     /* Free the memory for the arguments passed */
     if ( test_arguments != NULL )
     {
@@ -988,6 +1011,13 @@ done:
 /*************************************************/
 void * app_start_test_case_binary_datapoints_loop(void * args){
 
+    /* Reset the stop value */
+    app_stop_execution = connector_false;
+    /* Add listener function for a defined user signal */
+    signal(SIGUSR1,handler_stop_signal);
+
+
+
     /* Initialize settings */
     connector_status_t status = connector_init_error;
     /* Parse the passed arguments structure */
@@ -1004,6 +1034,15 @@ void * app_start_test_case_binary_datapoints_loop(void * args){
 
     for(unsigned int i=1;i<=test_arguments->numberOfLoops;i++)
     {
+
+        /* Check if we must stop the execution */
+        if ( app_stop_execution )
+        {
+            APP_DEBUG("Stop execution flag is set, we stop the execution!!\n");
+            goto free;
+        }
+
+
         /* Initialize settings */
         status = connector_init_error;
         size_t busy_count = 0;
@@ -1057,6 +1096,7 @@ void * app_start_test_case_binary_datapoints_loop(void * args){
     }
 
 
+free:
     /* Free the memory for the arguments passed */
     if ( test_arguments != NULL )
     {

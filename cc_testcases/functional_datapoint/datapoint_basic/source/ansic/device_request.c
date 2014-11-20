@@ -15,6 +15,7 @@
 #include "platform.h"
 #include <unistd.h>
 #include <pthread.h>
+#include <signal.h>
 
 #include <string.h>
 #include <errno.h>
@@ -38,7 +39,8 @@ typedef struct device_request_handle {
 static char * const device_request_targets[] = {
     "Data point",
     "test_datapoint_send_datastream_with_datapoints",
-    "test_datapoint_send_binary_datapoint"
+    "test_datapoint_send_binary_datapoint",
+    "test_datapoint_kill_test_thread"
 };
 /* Internal test structure to create a list of arguments obtained from the device request payload */
 typedef struct parsed_payload{
@@ -50,6 +52,9 @@ typedef struct parsed_payload{
 /* Auxiliar functions to manage the payload */
 int split (char *str, char c, char ***arr);
 
+
+/* Test Case Thread pointer */
+pthread_t test_case_thread;
 
 
 
@@ -175,7 +180,7 @@ static connector_callback_status_t app_process_device_request_response(connector
     }
     else
     {
-        static char const request_successful[] = "Launch successful";
+        static char const request_successful[] = "Recognized Action";
         buffer = request_successful;
         bytes_used = sizeof request_successful -1;
     }
@@ -288,7 +293,6 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
 
 
                     /* Create a new thread to execute the test case with the arguments */
-                    pthread_t test_case_thread;
                     int ccode = pthread_create(&test_case_thread, NULL, app_start_test_case_datapoints_loop, (void *)test_arguments);
                     if (ccode != 0)
                     {
@@ -317,7 +321,6 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
 
 
                     /* Create a new thread to execute the test case with the arguments */
-                    pthread_t test_case_thread;
                     int ccode = pthread_create(&test_case_thread, NULL, app_start_test_case_binary_datapoints_loop, (void *)test_arguments);
                     if (ccode != 0)
                     {
@@ -325,12 +328,47 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
                     }
 
                 }
+                else if(strcmp(device_request->target, "test_datapoint_kill_test_thread") == 0)
+                {
+                    /* Sending the signal 0, we verify if the thread is alive */
+                    if ( pthread_kill( test_case_thread, 0) == 0)
+                    {/* Thread is alive */
 
+                        /* Sending the signal for the thread */
+                        int ccode = pthread_kill( test_case_thread, SIGUSR1); /* SIGKILL */
+                        if (ccode != 0)
+                        {
+                            APP_DEBUG("ERROR: thread_kill() test_datapoint_kill_test_thread %d\n", ccode);
+
+                            if ( ccode == ESRCH )
+                            {
+                                APP_DEBUG("ERROR 'ESRCH': No thread could be found corresponding to that specified by the given thread ID.\n");
+                            }
+                            else if ( ccode == EINVAL )
+                            {
+                                APP_DEBUG("ERROR 'EINVAL': The value of the sig argument is an invalid or unsupported signal number.\n");
+                            }
+                        }
+                        else
+                        {
+                            APP_DEBUG("thread_kill() test_datapoint_kill_test_thread successfully killed %d\n", ccode);
+                        }
+                    }
+                    else
+                    { /* Thread is dead */
+                        APP_DEBUG("thread_kill() active test thread is not alive \n");
+                    }
+                }
 
                 /* Free the memory allocated for the arguments */
                 for (int i = 0; i < numberOfArguments; i++)
+                {
                     free(arguments[i]);
-                free(arguments);
+                }
+                if ( arguments != NULL )
+                {
+                    free(arguments);
+                }
                 free(payload);
             }
 

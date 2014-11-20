@@ -220,7 +220,8 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
         Verifies the uploaded DataPoint with the DataPoint sent by the target.
         """
 
-        #for i in range(0,2):
+        testResult = True
+        message = "All tests were executed successfully!"
         dataStreamID = "test_binary_datastream"
         valueType = "Binary"
         numberOfLoops = 10
@@ -241,7 +242,16 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
             # Verify the DataPoints in Device Cloud
             if ( not self.verifyBinaryDataPointInDeviceCloud( dataStreamID, datapointList) ):
-                self.fail("Error with the DataPoints")
+                testResult = False
+                message = "Error verifiying the DataPoints"
+                self.log.error(message)
+                break
+
+        # If we have an error in the verification process we should stop the application on device
+        if ( not testResult ):
+            # Send kill signal for the thread
+            self.log.warning("Send message to stop the active test thread...")
+            self.sendDeviceRequestToInitiateAction("test_datapoint_kill_test_thread", "rrrr;oooo;")
 
 
         # Wait until the group of DataPoints are sent
@@ -261,7 +271,11 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
             self.log.info("DataStream was successfully removed!")
 
 
-
+        # Test result
+        if ( testResult ):
+            self.log.info(message)
+        else:
+            self.fail(message)
 
 
 
@@ -270,6 +284,8 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
     def sendInstructionsAndVerifyDatapoints(self, dataStreamID, dataStreamNumber, dataPointNumber, valueType, numberOfLoops):
 
         # Initialize vars
+        testResult = True
+        message = "All tests were executed successfully!"
         target = "test_datapoint_send_datastream_with_datapoints"
         payload = "%s;%s;%s;%s;%s;" % (numberOfLoops, # Number of loops
                                         dataStreamNumber, # Number of DataStreams
@@ -286,14 +302,25 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
             # Verify the DataPoints in Device Cloud
             if ( not self.verifyDataPointsInDeviceCloud( dataStreamID, datapointList) ):
-                self.fail("Error with the DataPoints")
+                testResult = False
+                message = "Error verifiying the DataPoints"
+                self.log.error(message)
+                break
+
+        # If we have an error in the verification process we should stop the application on device
+        if ( not testResult ):
+            # Send kill signal for the thread
+            self.log.warning("Send message to stop the active test thread...")
+            self.sendDeviceRequestToInitiateAction("test_datapoint_kill_test_thread", "rrrr;oooo;")
 
 
         # Wait until the group of DataPoints are sent
         result, line, readBuffer = self.deviceHandler.readUntilPattern ( pattern="Finished the Thread for", timeout=60)
 
         if ( not result ):
-            self.sendErrorAndCleanDataStream("Console feedback was not readed.....");
+            testResult = False
+            message = "Console feedback for the end of the thread was not readed....."
+            self.log.error(message)
         else:
             self.log.info("Console feedback for the end of the thread execution readed!!")
 
@@ -304,6 +331,14 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
             self.log.warning("Error removing the DataStream: %s" % response.content)
         else:
             self.log.info("DataStream was successfully removed!")
+
+
+        # Test result
+        if ( testResult ):
+            self.log.info(message)
+        else:
+            self.fail(message)
+
 
 
 
@@ -417,6 +452,19 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
                 crc32_hexadecimal = "%08X" % crc32
                 #self.log.info("CRC32 HEX: '%08X'\n" % crc32)
                 #self.log.info("CRC32 DEC: '%s'\n" % crc32)
+
+                # Check Datapoint integrity
+                if ( "data_decimal" not in eachDatapointUploaded or "data_hexadecimal" not in eachDatapointUploaded):
+                    # Missing the data_decimal or data_hexadecimal key
+                    message = "DataPoint data does not match!!!"
+                    if ( "data_decimal" not in eachDatapointUploaded ):
+                        message += "data_decimal missing\n"
+                    else:
+                        message += "data_hexadecimal missing\n"
+                    message += "Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                    self.log.warning(message)
+                    verificationResult = False
+                    break
 
                 # Verify the Data
                 if ( crc32_decimal != eachDatapointUploaded["data_decimal"] or crc32_hexadecimal != eachDatapointUploaded["data_hexadecimal"] ):
@@ -532,16 +580,17 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
 
 
-    def sendDeviceRequestToInitiateAction(self, target, payload, expectedResponse="Launch successful"):
+    def sendDeviceRequestToInitiateAction(self, target, payload, expectedResponse="Recognized Action"):
 
         # Send Device Request to the target to initiate action
+        self.log.info("Sending a device request for target '%s'..." % target)
         status, response = self.cloudHandler.sendDeviceRequest(self.device_id, target, payload)
 
         if(status):
             # Status 200. Checking the received response
             responseText = response.resource["sci_reply"]["data_service"]["device"]["requests"]["device_request"]["#text"]
             if(responseText == expectedResponse):
-                self.log.info("Received the expected response\n")
+                self.log.info("Received the expected response: '%s'\n" % expectedResponse)
             else:
                 self.fail("Received response from device: \"%s\" is not the expected\n" % responseText)
         else:
