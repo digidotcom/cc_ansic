@@ -5,7 +5,7 @@
  * @section data_point_overview Overview
  *
  * The Data Point API is used to send data points to Device Cloud. It can be used to send simple
- * data in binary form, to send several points of a single stream in a message or to send several points of multiple
+ * data in binary form, to send several points of a single stream in a message, or to send several points of multiple
  * streams in the same message.
  *
  * @li @ref binary_point : To send a data point with just value. With this one can send just one point per message.
