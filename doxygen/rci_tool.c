@@ -376,6 +376,9 @@
  * <th>fqdnv6</th>
  * <td>This type accepts either IPv6 address, IPv4 address, or DNS name. </td>
  * </tr><tr>
+ * <th>mac</th>
+ * <td>Valid MAC address. The format is a string of type "XX:XX:XX:XX:XX:XX" where "X" is an hexadecimal number, lower or upper case.</td>
+ * </tr><tr>
  * <th>datetime</th>
  * <td> Date and time type. It's a null-terminated string which contains the ISO 8601 standard for date and
  *      time representation.<br></br>

@@ -383,6 +383,7 @@
  *                      <li>@endhtmlonly @ref connector_element_type_ipv4 @htmlonly</li>
  *                      <li>@endhtmlonly @ref connector_element_type_fqdnv4 @htmlonly</li>
  *                      <li>@endhtmlonly @ref connector_element_type_fqdnv6 @htmlonly</li>
+ *                      <li>@endhtmlonly @ref connector_element_type_mac_addr @htmlonly</li>
  *                      <li>@endhtmlonly @ref connector_element_type_datetime @htmlonly</li>
  *                 </ul></dd>
  *
@@ -548,6 +549,7 @@
  *                          <li>@endhtmlonly @ref connector_element_type_ipv4 @htmlonly</li>
  *                          <li>@endhtmlonly @ref connector_element_type_fqdnv4 @htmlonly</li>
  *                          <li>@endhtmlonly @ref connector_element_type_fqdnv6 @htmlonly</li>
+ *                          <li>@endhtmlonly @ref connector_element_type_mac_addr @htmlonly</li>
  *                          <li>@endhtmlonly @ref connector_element_type_datetime @htmlonly</li>
  *                        </ul>
  *                     </dd>
