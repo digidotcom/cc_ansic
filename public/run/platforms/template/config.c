@@ -303,7 +303,7 @@ static connector_callback_status_t app_get_device_cloud_service_id(connector_con
  * This routine specifies the connection type as @ref connector_connection_type_lan or
  * @ref connector_connection_type_wan.
  *
- * @param [out] config_connection  Pointer to connector_config_connection_type_t where callback writes the connection type,
+ * @param [out] config_connection  Pointer to @ref connector_config_connection_type_t where callback writes the connection type,
  *
  * @retval connector_callback_continue  The connection type was successfully returned.
  * @retval connector_callback_abort     Could not get connection type and abort Cloud Connector.
@@ -328,7 +328,7 @@ static connector_callback_status_t app_get_connection_type(connector_config_conn
  * This routine returns the link speed for WAN connection type. If connection type is LAN,
  * Cloud Connector will not request link speed configuration.
  *
- * @param [out] config_link Pointer to connector_config_link_speed_t where callback writes 4-byte link speed.
+ * @param [out] config_link Pointer to @ref connector_config_link_speed_t where callback writes 4-byte link speed.
  *
  * @retval connector_callback_continue  The link speed was successfully returned.
  * @retval connector_callback_abort     Could not get the link speed and abort Cloud Connector
@@ -352,7 +352,7 @@ static connector_callback_status_t app_get_link_speed(connector_config_link_spee
  * including any dialing prefixes. It's a variable length, non null-terminated string.
  * If connection type is LAN, Cloud Connector will not request phone number.
  *
- * @param [out] config_phone_number  Pointer to connector_config_pointer_string_t where callback writes
+ * @param [out] config_phone_number  Pointer to @ref connector_config_pointer_string_t where callback writes
  *                                   the phone number and the length of the phone number in bytes.
  *
  * @retval connector_callback_continue  The phone number was successfully returned.
@@ -384,7 +384,7 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
  * device is still operational. Keep alive messages are from the prospective of Device Cloud,
  * this keepalive is sent from Device Cloud to the device. The value must be between 5 and 7200 seconds.
  *
- * @param [out] config_keepalive  Pointer to connector_config_keepalive_t where callback writes the keep alive interval in seconds.
+ * @param [out] config_keepalive  Pointer to @ref connector_config_keepalive_t where callback writes the keep alive interval in seconds.
  *
  * @retval connector_callback_continue  The keep alive interval was successfully returned.
  * @retval connector_callback_abort     Could not get the keep alive interval and abort Cloud Connector.
@@ -415,7 +415,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
  * messages are from the prospective of Device Cloud, this keep alive is sent from the
  * device to Device Cloud. The value must be between 5 and 7200 seconds.
  *
- * @param [out] config_keepalive  Pointer to connector_config_keepalive_t where callback writes the keep alive interval in seconds.
+ * @param [out] config_keepalive  Pointer to @ref connector_config_keepalive_t where callback writes the keep alive interval in seconds.
  *
  * @retval connector_callback_continue  The keep alive interval was successfully returned.
  * @retval connector_callback_abort     Could not get the keep alive interval and abort Cloud Connector.
@@ -444,7 +444,7 @@ static connector_callback_status_t app_get_rx_keepalive_interval(connector_confi
  * from Device Cloud will indicate that the connection is considered lost.
  * This value must be between 2 to 64 counts.
  *
- * @param [out] config_wait  Pointer to connector_config_wait_count_t where callback writes the wait count
+ * @param [out] config_wait  Pointer to @ref connector_config_wait_count_t where callback writes the wait count
  *
  * @retval connector_callback_continue  The wait count was successfully returned.
  * @retval connector_callback_abort     Could not get the wait count and abort Cloud Connector.
@@ -475,7 +475,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
  * If firmware update is not supported, callback for connector_class_id_firmware
  * class will not be executed.
  *
- * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if firmware update is supported or
+ * @param [out] config_status  Pointer to @ref connector_config_supported_t where callback writes connector_true if firmware update is supported or
  *                            connector_false  if firmware update is not supported.
  *
  * @retval connector_callback_continue  The firmware update support was successfully returned.
@@ -501,7 +501,7 @@ static connector_callback_status_t app_get_firmware_support(connector_config_sup
  * This routine tells Cloud Connector whether the data service facility is supported or not.
  * If you plan on sending data to/from Device Cloud return connector_true.
  *
- * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if data service is supported or
+ * @param [out] config_status  Pointer to @ref connector_config_supported_t where callback writes connector_true if data service is supported or
  *                            connector_false  if data service is not supported.
  *
  * @retval connector_callback_continue  The data service support was successfully returned.
@@ -528,7 +528,7 @@ static connector_callback_status_t app_get_data_service_support(connector_config
  * This routine tells Cloud Connector whether the file system facility is supported or not.
  * If you plan to access device files from Device Cloud return connector_true.
  *
- * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if file system is supported or
+ * @param [out] config_status  Pointer to @ref connector_config_supported_t where callback writes connector_true if file system is supported or
  *                            connector_false  if file system is not supported.
  *
  * @retval connector_callback_continue  The file system support was successfully returned.
@@ -555,7 +555,7 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
  * This routine tells Cloud Connector whether the remote configuration service is supported or not.
  * If you plan on accessing device data configurations through Device Cloud return connector_true.
  *
- * @param [out] config_status  Pointer to connector_config_supported_t where callback writes connector_true if remote configuration is supported or
+ * @param [out] config_status  Pointer to @ref connector_config_supported_t where callback writes connector_true if remote configuration is supported or
  *                            connector_false  if remote configuration is not supported.
  *
  * @retval connector_callback_continue  The remote configuration support was successfully returned.
@@ -580,7 +580,7 @@ static connector_callback_status_t app_get_remote_configuration_support(connecto
  * This routine tells Cloud Connector the maximum simultaneous transactions for data service, file system, and
  * remote_config to receive messages from  Device Cloud.
  *
- * @param [out] config_max_transaction  Pointer to connector_config_max_transaction_t where callback writes the maximum simultaneous transaction.
+ * @param [out] config_max_transaction  Pointer to @ref connector_config_max_transaction_t where callback writes the maximum simultaneous transaction.
  *                           Writes 0 for unlimited transactions.
  *
  * @retval connector_callback_continue  The maximum simultaneous transactions was successfully returned.
@@ -657,7 +657,7 @@ static void get_hex_digit(char str, uint8_t * const value)
  * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
  * @ref connector_wan_type_imei.
  *
- * @param [out] config_imei  Pointer to connector_config_pointer_data_t where callback returns pointer to an 8 bytes array with the 14 digit IMEI plus one check
+ * @param [out] config_imei  Pointer to @ref connector_config_pointer_data_t where callback returns pointer to an 8 bytes array with the 14 digit IMEI plus one check
  *                           digit encoded in one digit per nibble with most upper nibble being 0.
  *                           For example, "350077-52-323751-3" ESN must be returned as a pointer to a uint8_t array filled with {0x03, 0x50, 0x07, 0x75, 0x23, 0x23, 0x75, 0x13}.
  *
@@ -795,7 +795,7 @@ static connector_callback_status_t app_start_network_sms(connector_config_connec
  * This routine specifies the WAN type as @ref connector_wan_type_imei, @ref connector_wan_type_esn, or
  * @ref connector_wan_type_meid.
  *
- * @param [out] config_wan  Pointer to connector_config_wan_type_t where callback writes @ref connector_connection_type_t.
+ * @param [out] config_wan  Pointer to @ref connector_config_wan_type_t where callback writes @ref connector_connection_type_t.
  *
  * @retval connector_callback_continue  The WAN type was successfully returned.
  * @retval connector_callback_abort     Could not get WAN type and abort Cloud Connector.
@@ -821,7 +821,7 @@ static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t 
  * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
  * @ref connector_wan_type_esn.
  *
- * @param [out] config_esn  Pointer to connector_config_pointer_data_t where callback returns pointer to a 4 bytes array with the 8 digit ESN encoded in one digit per nibble.
+ * @param [out] config_esn  Pointer to @ref connector_config_pointer_data_t where callback returns pointer to a 4 bytes array with the 8 digit ESN encoded in one digit per nibble.
  *                          For example, "12345678" ESN must be returned as a pointer to a uint8_t array filled with {0x12, 0x34, 0x56, 0x78}.
 
  * @retval connector_callback_continue  The ESN number was successfully returned.
@@ -881,7 +881,7 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
  * @ref connector_wan_type_meid.
  *
  *
- * @param [out] config_meid  Pointer to connector_config_pointer_data_t where callback returns pointer to a 7 bytes array with the 14 digit MEID encoded in one digit per nibble.
+ * @param [out] config_meid  Pointer to @ref connector_config_pointer_data_t where callback returns pointer to a 7 bytes array with the 14 digit MEID encoded in one digit per nibble.
  *                           For example, "12345678901234" MEID must be returned as a pointer to a uint8_t array filled with {0x12, 0x34, 0x56, 0x78, 0x90, 0x12, 0x34}.
  *
  * @retval connector_callback_continue  The MEID number was successfully returned.
@@ -946,7 +946,7 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
  * @note If password identity verification form is used, @ref app_get_password will be called to obtain
  * the password.
  *
- * @param [out] config_identity  Pointer to connector_config_identity_verification_t where callback writes the identity verification form.
+ * @param [out] config_identity  Pointer to @ref connector_config_identity_verification_t where callback writes the identity verification form.
  *
  * @retval connector_callback_continue  The identity verification form was successfully returned.
  * @retval connector_callback_abort     Could not get the identity verification form and abort Cloud Connector.
@@ -968,7 +968,7 @@ static connector_callback_status_t app_get_identity_verification(connector_confi
  * This routine returns the password which Device Cloud verifies the password to
  * its stored password when password identity verification form is used. See @ref app_get_identity_verification.
  *
- * @param [out] config_password  Pointer connector_config_pointer_string_t where callback returns pointer to
+ * @param [out] config_password  Pointer to @ref connector_config_pointer_string_t where callback returns pointer to
  *                               password and the length of the password in bytes.
  *
  * @retval connector_callback_continue  The password was successfully returned.
@@ -985,6 +985,112 @@ static connector_callback_status_t app_get_password(connector_config_pointer_str
     config_password->string = (char *)connector_password;
     config_password->length = sizeof connector_password -1;
 
+    return connector_callback_continue;
+}
+
+/**
+ * @brief Get maximum active sessions for SM over UDP
+ *
+ * This routine returns the number of active sessions available for SM over UDP.
+ *
+ * @param [out] config_max_sessions  Pointer to  @ref connector_config_sm_max_sessions_t where callback returns the value.
+ *
+ * @retval connector_callback_continue  Requested data was successfully returned.
+ * @retval connector_callback_abort     Requested data was not set and abort Cloud Connector.
+ *
+ */
+static connector_callback_status_t app_get_sm_udp_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
+{
+    UNUSED_ARGUMENT(config_max_sessions);
+    return connector_callback_continue;
+}
+
+/**
+ * @brief Get maximum active sessions for SM over SMS
+ *
+ * This routine returns the number of active sessions available for SM over SMS.
+ *
+ * @param [out] config_max_sessions  Pointer to  @ref connector_config_sm_max_sessions_t where callback returns the value.
+ *
+ * @retval connector_callback_continue  Requested data was successfully returned.
+ * @retval connector_callback_abort     Requested data was not set and abort Cloud Connector.
+ *
+ */
+static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
+{
+    UNUSED_ARGUMENT(config_max_sessions);
+
+    return connector_callback_continue;
+}
+
+/**
+ * @brief Get maximum incoming segments for SM over UDP
+ *
+ * This routine returns the number of segments in which the incoming data in SM over UDP might be splitted.
+ *
+ * @param [out] config_max_rx_segments  Pointer to  @ref connector_config_sm_max_rx_segments_t where callback returns the value.
+ *
+ * @retval connector_callback_continue  Requested data was successfully returned.
+ * @retval connector_callback_abort     Requested data was not set and abort Cloud Connector.
+ *
+ */
+static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
+{
+    UNUSED_ARGUMENT(config_max_rx_segments);
+
+    return connector_callback_continue;
+}
+
+/**
+ * @brief Get maximum incoming segments for SM over SMS
+ *
+ * This routine returns the number of segments in which the incoming data in SM over SMS might be splitted.
+ *
+ * @param [out] config_max_rx_segments  Pointer to  @ref connector_config_sm_max_rx_segments_t where callback returns the value.
+ *
+ * @retval connector_callback_continue  Requested data was successfully returned.
+ * @retval connector_callback_abort     Requested data was not set and abort Cloud Connector.
+ *
+ */
+static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
+{
+    UNUSED_ARGUMENT(config_max_rx_segments);
+    return connector_callback_continue;
+}
+
+/**
+ * @brief Get maximum timeout for incoming SM sessions over UDP
+ *
+ * This routine returns how many seconds should be waited before dropping an incomplete incoming message over UDP. It can be set to SM_WAIT_FOREVER for 
+ * infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
+ *
+ * @param [out] config_rx_timeout  Pointer to  @ref connector_config_sm_rx_timeout_t where callback returns the value.
+ *
+ * @retval connector_callback_continue  Requested data was successfully returned.
+ * @retval connector_callback_abort     Requested data was not set and abort Cloud Connector.
+ *
+ */
+static connector_callback_status_t app_get_sm_udp_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
+{
+    UNUSED_ARGUMENT(config_rx_timeout);
+    return connector_callback_continue;
+}
+
+/**
+ * @brief Get maximum timeout for incoming SM sessions over SMS
+ *
+ * This routine returns how many seconds should be waited before dropping an incomplete incoming message over SMS. It can be set to SM_WAIT_FOREVER for 
+ * infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
+ *
+ * @param [out] config_rx_timeout  Pointer to  @ref connector_config_sm_rx_timeout_t where callback returns the value.
+ *
+ * @retval connector_callback_continue  Requested data was successfully returned.
+ * @retval connector_callback_abort     Requested data was not set and abort Cloud Connector.
+ *
+ */
+static connector_callback_status_t app_get_sm_sms_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
+{
+    UNUSED_ARGUMENT(config_rx_timeout);
     return connector_callback_continue;
 }
 
@@ -1561,6 +1667,42 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
      case connector_request_id_config_password:
          status = app_get_password(data);
          break;
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_SESSIONS)
+    case connector_request_id_config_sm_udp_max_sessions:
+        status = app_get_sm_udp_max_sessions(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_SESSIONS)
+    case connector_request_id_config_sm_sms_max_sessions:
+        status = app_get_sm_sms_max_sessions(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_MAX_RX_SEGMENTS)
+    case connector_request_id_config_sm_udp_max_rx_segments:
+        status = app_get_sm_udp_max_rx_segments(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_MAX_RX_SEGMENTS)
+    case connector_request_id_config_sm_sms_max_rx_segments:
+        status = app_get_sm_sms_max_rx_segments(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP) && !(defined CONNECTOR_SM_UDP_RX_TIMEOUT)
+    case connector_request_id_config_sm_udp_rx_timeout:
+        status = app_get_sm_udp_rx_timeout(data);
+        break;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS) && !(defined CONNECTOR_SM_SMS_RX_TIMEOUT)
+    case connector_request_id_config_sm_sms_rx_timeout:
+        status = app_get_sm_sms_rx_timeout(data);
+        break;
+#endif
 
     default:
         APP_DEBUG("app_config_callback: unknown configuration request= %d\n", request_id);

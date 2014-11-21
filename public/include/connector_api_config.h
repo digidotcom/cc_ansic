@@ -54,12 +54,12 @@ typedef enum {
     connector_request_id_config_meid,              /**< Requesting callback to return CDMA MEID (Mobile Equipment Identifier) */
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
     connector_request_id_config_password,          /**< Requesting callback to return password for the password identity verification form */
-    connector_request_id_config_sm_udp_max_sessions,    /**< Requesting callback to obtain maximum udp short message sessions at a time. */
-    connector_request_id_config_sm_sms_max_sessions,    /**< Requesting callback to obtain maximum sms short message sessions at a time. */
-    connector_request_id_config_sm_udp_max_rx_segments, /**< Requesting callback to obtain maximum udp short message segments used per session during message reception */
-    connector_request_id_config_sm_sms_max_rx_segments, /**< Requesting callback to obtain maximum sms short message segments used per session during message reception */
-    connector_request_id_config_sm_udp_rx_timeout,      /**< Requesting callback to obtain udp incoming sessions timeout in seconds. */
-    connector_request_id_config_sm_sms_rx_timeout       /**< Requesting callback to obtain sms incoming sessions timeout in seconds. */
+    connector_request_id_config_sm_udp_max_sessions,    /**< Requesting callback to obtain maximum UDP Short Messaging sessions active at once. */
+    connector_request_id_config_sm_sms_max_sessions,    /**< Requesting callback to obtain maximum UDP Short Messaging sessions active at once. */
+    connector_request_id_config_sm_udp_max_rx_segments, /**< Requesting callback to obtain maximum segments used per incoming UDP Short Messaging session. */
+    connector_request_id_config_sm_sms_max_rx_segments, /**< Requesting callback to obtain maximum segments used per incoming SMS Short Messaging session. */
+    connector_request_id_config_sm_udp_rx_timeout,      /**< Requesting callback to obtain timeout in seconds for incoming UDP Short Messaging sessions. */
+    connector_request_id_config_sm_sms_rx_timeout       /**< Requesting callback to obtain timeout in seconds for incoming SMS Short Messaging sessions. */
 } connector_request_id_config_t;
 /**
 * @}
@@ -469,17 +469,57 @@ typedef struct {
 * @}
 */
 
+/**
+* @defgroup connector_config_sm_max_sessions_t Short Messaging Maximum Sessions
+* @{
+*/
+/**
+* Transport maximum active sessions at once for @ref connector_request_id_config_sm_udp_max_sessions and @ref connector_request_id_config_sm_sms_max_sessions callbacks.
+*
+* @see @ref sm_udp_max_sessions
+* @see @ref sm_sms_max_sessions
+**/
 typedef struct {
     size_t max_sessions;
 } connector_config_sm_max_sessions_t;
+/**
+* @}
+*/
 
+/**
+* @defgroup connector_config_sm_max_rx_segments_t Short Messaging Maximum incoming segments
+* @{
+*/
+/**
+* Maximum number of incoming segments (packets) expected for the transport. Because incoming segments can arrive at any order, Cloud Connector allocates the maximum
+* and sort the incoming segments it appropriately before processing. Used for @ref connector_request_id_config_sm_udp_max_rx_segments and @ref connector_request_id_config_sm_sms_max_rx_segments callbacks.
+*
+* @see @ref sm_udp_max_rx_segments
+* @see @ref sm_sms_max_sessions
+**/
 typedef struct {
     size_t max_rx_segments;
 } connector_config_sm_max_rx_segments_t;
+/**
+* @}
+*/
 
+/**
+* @defgroup connector_config_sm_rx_timeout_t Short Messaging RX timeout
+* @{
+*/
+/**
+* Timeout for incoming Short Messaging sessions. Used for @ref connector_request_id_config_sm_udp_rx_timeout and @ref connector_request_id_config_sm_sms_rx_timeout callbacks.
+*
+* @see @ref sm_udp_rx_timeout
+* @see @ref sm_sms_rx_timeout
+**/
 typedef struct {
     size_t rx_timeout;
 } connector_config_sm_rx_timeout_t;
+/**
+* @}
+*/
 
 #if !defined _CONNECTOR_API_H
 #error  "Illegal inclusion of connector_api_config.h. You should only include connector_api.h in user code."
