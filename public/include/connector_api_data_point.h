@@ -55,10 +55,10 @@ typedef enum
     connector_data_point_type_long,      /**< a network (big endian) 64-bit two's complement integer */
     connector_data_point_type_float,     /**< a network (big endian) 32-bit IEEE754 floating point */
     connector_data_point_type_double,    /**< a network (big endian) 64-bit IEEE754 floating point */
-    connector_data_point_type_string,    /**< an UTF-8 encoding (ASCII compatible) */
-    connector_data_point_type_binary,     /**< binary data */
-    connector_data_point_type_json,
-    connector_data_point_type_geojson
+    connector_data_point_type_string,    /**< a UTF-8 encoded ASCII compatible string */
+    connector_data_point_type_binary,    /**< binary data */
+    connector_data_point_type_json,      /**< a UTF-8 encoded ASCII compatible string containing a valid JSON. @note Device Cloud does not validate the contents, providing a well formed one is up to the user */
+    connector_data_point_type_geojson    /**< a UTF-8 encoded ASCII compatible string containing a valid GeoJSON. @note Device Cloud does not validate the contents, providing a well formed one is up to the user */
 } connector_data_point_type_t;
 /**
 * @}
