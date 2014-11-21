@@ -55,10 +55,10 @@ typedef enum
     connector_data_point_type_long,      /**< a network (big endian) 64-bit two's complement integer */
     connector_data_point_type_float,     /**< a network (big endian) 32-bit IEEE754 floating point */
     connector_data_point_type_double,    /**< a network (big endian) 64-bit IEEE754 floating point */
-    connector_data_point_type_string,    /**< an UTF-8 encoding (ASCII compatible) */
-    connector_data_point_type_binary,     /**< binary data */
-    connector_data_point_type_json,
-    connector_data_point_type_geojson
+    connector_data_point_type_string,    /**< a UTF-8 encoded ASCII compatible string */
+    connector_data_point_type_binary,    /**< binary data */
+    connector_data_point_type_json,      /**< a UTF-8 encoded ASCII compatible string containing a valid JSON. @note Device Cloud does not validate the contents, providing a well formed one is up to the user */
+    connector_data_point_type_geojson    /**< a UTF-8 encoded ASCII compatible string containing a valid GeoJSON. @note Device Cloud does not validate the contents, providing a well formed one is up to the user */
 } connector_data_point_type_t;
 /**
 * @}
@@ -314,7 +314,7 @@ typedef struct
     void * user_context;                /**< user context to be passed back in response */
 
     uint32_t * request_id;              /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
-                                             and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
+                                             and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired.
                                              See @connector_initiate_session_cancel*/
     connector_data_stream_t * stream;   /**< pointer to list of data streams */
     connector_bool_t response_required; /**< set to connector_true if response is needed */
