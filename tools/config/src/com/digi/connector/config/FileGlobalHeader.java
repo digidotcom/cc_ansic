@@ -42,15 +42,12 @@ public class FileGlobalHeader extends FileGenerator {
             String defineName = generatedFile.replace('.', '_').toLowerCase();
 
             fileWriter.write(String.format("#ifndef %s\n#define %s\n", defineName, defineName));
-            fileWriter.write(CONNECTOR_GLOBAL_HEADER);
-            fileWriter.write(CONNECTOR_CONST_PROTECTION);
             fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE\n");
 
             writeDefinesAndStructures(configData);
             
             writeRciErrorEnumHeader(configData, fileWriter);
     
-            fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
            
             ConfigGenerator.log(String.format("File created:\n\t%s%s",  filePath, generatedFile));

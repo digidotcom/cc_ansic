@@ -241,13 +241,13 @@ static connector_callback_status_t app_process_remote_configuration(connector_re
     return status;
 }
 
-connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config, char const * const request_payload, char const * * response_payload, void * const context)
+connector_callback_status_t app_process_do_command(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = (remote_group_session_t *)remote_config->user_context;
     char const * target = remote_config->attribute.target;
-
-    UNUSED_ARGUMENT(context);
+    char const * const request_payload = remote_config->element.value->string_value;
+    char const * * response_payload = &remote_config->response.element_value->string_value;
 
     APP_DEBUG("app_process_do_command for target '%s':\n", target);
     APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
@@ -271,7 +271,8 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     }
     else if (!strcmp(target, "error"))
     {
-        status = connector_callback_error;
+        remote_config->error_id = connector_rci_error_do_command_failed;
+        remote_config->response.error_hint = "do command intentional failure";
     }
     else if (!strcmp(target, "busy"))
     {
@@ -286,20 +287,22 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
             *response_payload = "I returned busy twice";
         }
     }
-    else if (!strcmp(target, "user_alloc"))
+    else if (!strcmp(target, "malloc"))
     {
-        #define USER_ALLOCATED_MEM "user allocated memory answer"
+        #define ALLOCATED_MEM_SIZE 5000
 
-        char * user_allocated_mem = malloc(sizeof (USER_ALLOCATED_MEM));
+        char * allocated_mem = malloc(ALLOCATED_MEM_SIZE + 1);
 
-        if (user_allocated_mem != NULL)
+        if (allocated_mem != NULL)
         {
-            memcpy(user_allocated_mem, USER_ALLOCATED_MEM, sizeof (USER_ALLOCATED_MEM));
+            memset(allocated_mem, '-', ALLOCATED_MEM_SIZE);
+
+            allocated_mem[ALLOCATED_MEM_SIZE] = '\0';
 
             /* Update session so buffer is freed in the session_end callback */
-            session_ptr->buf_ptr = user_allocated_mem;
+            session_ptr->buf_ptr = allocated_mem;
 
-            *response_payload = user_allocated_mem;
+            *response_payload = allocated_mem;
         }
     }
     else
@@ -310,13 +313,42 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     return status;
 }
 
-connector_callback_status_t app_process_set_factory_default(void * const context)
+int my_set_factory_default_went_wrong(void)
+{
+    return 0;
+}
+
+connector_callback_status_t app_process_set_factory_default(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    UNUSED_ARGUMENT(context);
-
     APP_DEBUG("app_process_set_factory_default\n");
+
+    if (my_set_factory_default_went_wrong())
+    {
+        remote_config->error_id = connector_rci_error_set_factory_default_failed;
+        remote_config->response.error_hint = "can't do that";
+    }
+
+    return status;
+}
+
+int do_not_want_to_reboot(void)
+{
+    return 0;
+}
+
+connector_callback_status_t app_process_reboot(connector_remote_config_t * const remote_config)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
+
+    if (do_not_want_to_reboot())
+    {
+        remote_config->error_id = connector_rci_error_reboot_failed;
+        remote_config->response.error_hint = "don't want to reboot";
+    }
 
     return status;
 }
@@ -360,9 +392,23 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
     case connector_request_id_remote_config_session_cancel:
         status = app_process_session_cancel(data);
         break;
+
     case connector_request_id_remote_config_configurations:
         status = app_process_remote_configuration(data);
         break;
+
+    case connector_request_id_remote_config_do_command:
+        status = app_process_do_command(data);
+        break;
+
+    case connector_request_id_remote_config_set_factory_def:
+        status = app_process_set_factory_default(data);
+        break;
+
+    case connector_request_id_remote_config_reboot:
+        status = app_process_reboot(data);
+        break;
+
     default:
         APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request_id);
         break;

@@ -15,7 +15,6 @@
 #include "rci_binary_util.h"
 #include "rci_binary_buffer.h"
 #include "rci_binary_string.h"
-#include "rci_binary_command.h"
 #include "rci_binary_group.h"
 #include "rci_binary_element.h"
 #include "rci_binary_callback.h"
@@ -49,7 +48,7 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     rci->error.command_error = connector_false;
     rci->input.flag = 0;
 
-    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_start);
+    trigger_rci_callback(rci, connector_request_id_remote_config_session_start);
     set_rci_input_state(rci, rci_input_state_command_id);
     state_call(rci, rci_parser_state_input);
 
@@ -129,7 +128,7 @@ STATIC connector_bool_t rci_action_session_active(rci_t * const rci)
 
 STATIC connector_bool_t rci_action_session_lost(rci_t * const rci)
 {
-    trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_cancel);
+    trigger_rci_callback(rci, connector_request_id_remote_config_session_cancel);
     {
         connector_bool_t const success = rci_callback(rci);
         ASSERT(success); UNUSED_VARIABLE(success);

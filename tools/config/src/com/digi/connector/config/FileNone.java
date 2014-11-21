@@ -68,8 +68,6 @@ public class FileNone extends FileGenerator {
             String defineName = generatedFile.replace('.', '_').toLowerCase();
                        
             fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
-            fileWriter.write(CONNECTOR_GLOBAL_HEADER);
-            fileWriter.write(CONNECTOR_CONST_PROTECTION);
 
             writeDefinesAndStructures(configData);
             
@@ -83,7 +81,6 @@ if(future_feature)
             writePrototypes(configData,fileWriter);
 
             fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
-            fileWriter.write(CONNECTOR_CONST_PROTECTION_RESTORE);
             fileWriter.write(String.format("\n#endif\n"));
             
             /*Write function file */
@@ -111,7 +108,6 @@ if(future_feature)
     
     private void writeFunctionFile(ConfigData configData, BufferedWriter bufferWriter) throws Exception
     {
-        bufferWriter.write(String.format("%s \"%s\"", INCLUDE, HEADER_FILENAME));
         bufferWriter.write(String.format("%s", CONNECTOR_GLOBAL_HEADER));
 
 if(future_feature)

@@ -71,30 +71,8 @@ STATIC connector_bool_t pending_rci_callback(rci_t * const rci)
     return pending;
 }
 
-STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_command_callback, connector_request_id_remote_config_t const remote_config_request)
+STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_config_t const remote_config_request)
 {
-
-    rci->callback.rci_command_callback = rci_command_callback;
-
-    switch (rci_command_callback)
-    {
-        case rci_command_callback_set_query_setting_state:
-            break;
-
-#if (defined RCI_LEGACY_COMMANDS)
-        case rci_command_callback_do_command:
-            /* Provide request */
-            rci->shared.callback_data.element.value = &rci->shared.value;
-            /* Clear response pointer. User will fill in there it's own response buffer */
-            rci->command.do_command.response_string = NULL;
-            goto done;
-
-         case rci_command_callback_reboot:
-         case rci_command_callback_set_factory_default:
-            goto done;
-#endif
-    }
-
     switch (remote_config_request)
     {
     case connector_request_id_remote_config_session_cancel:
@@ -161,6 +139,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
 #endif
                 break;
         }         
+        rci->shared.callback_data.response.element_value = &rci->shared.value;
         break;
     case connector_request_id_remote_config_action_end:
         break;
@@ -198,9 +177,26 @@ STATIC void trigger_rci_callback(rci_t * const rci, rci_command_callback_t rci_c
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
+
     case connector_request_id_remote_config_configurations:
         ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
         break;
+
+#if (defined RCI_LEGACY_COMMANDS)
+    case connector_request_id_remote_config_do_command:
+        /* Provide request */
+        rci->shared.callback_data.element.value = &rci->shared.value;
+        /* Provide response pointer */
+        rci->shared.callback_data.response.element_value = &rci->command.do_command.response_value;
+        rci->shared.callback_data.response.element_value->string_value = NULL;
+        goto done;
+        break;
+
+    case connector_request_id_remote_config_reboot:
+    case connector_request_id_remote_config_set_factory_def:
+        goto done;
+        break;
+#endif
     }
 
 done:
@@ -211,138 +207,103 @@ done:
 STATIC connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
-    connector_remote_config_t * remote_config = &rci->shared.callback_data;
-    connector_remote_config_cancel_t remote_cancel;
+    connector_remote_config_t * const remote_config = &rci->shared.callback_data;
     void * callback_data = NULL;
     connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
 
-    switch (rci->callback.rci_command_callback)
+    switch (remote_config_request)
     {
-        case rci_command_callback_set_query_setting_state:
-            switch (remote_config_request)
-            {
-            case connector_request_id_remote_config_session_start:
+        case connector_request_id_remote_config_session_start:
 #if (defined RCI_PARSER_USES_GROUP_NAMES)
-                rci->shared.callback_data.group.name = NULL;
+            rci->shared.callback_data.group.name = NULL;
 #endif
 #if (defined RCI_PARSER_USES_ELEMENT_NAMES)
-                rci->shared.callback_data.element.name = NULL;
+            rci->shared.callback_data.element.name = NULL;
 #endif
-                /* intentional fall through */
-            case connector_request_id_remote_config_session_end:
-            case connector_request_id_remote_config_action_start:
-            case connector_request_id_remote_config_action_end:
-            case connector_request_id_remote_config_group_start:
-                rci->output.group_skip = connector_false;
-                /* intentional fall through */
-            case connector_request_id_remote_config_group_end:
-            case connector_request_id_remote_config_group_process:
-                rci->output.element_skip = connector_false;
-                remote_config->error_id = connector_success;
-                remote_config->response.error_hint = NULL;
-                callback_data = remote_config;
-                break;
+            /* intentional fall through */
+        case connector_request_id_remote_config_session_end:
+        case connector_request_id_remote_config_action_start:
+        case connector_request_id_remote_config_action_end:
+        case connector_request_id_remote_config_group_start:
+            rci->output.group_skip = connector_false;
+            /* intentional fall through */
+        case connector_request_id_remote_config_group_end:
+        case connector_request_id_remote_config_group_process:
+            rci->output.element_skip = connector_false;
+            remote_config->error_id = connector_success;
+            remote_config->response.error_hint = NULL;
+            callback_data = remote_config;
+            break;
 
-            case connector_request_id_remote_config_session_cancel:
-            {
-                remote_cancel.user_context = remote_config->user_context;
-                callback_data =  &remote_cancel;
-                break;
-            }
-            case connector_request_id_remote_config_configurations:
-                ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
-                callback_complete = connector_false;
-                goto done;
-            }
-            break;            
+        case connector_request_id_remote_config_session_cancel:
+        {
+            connector_remote_config_cancel_t remote_cancel;
 
+            remote_cancel.user_context = remote_config->user_context;
+            callback_data =  &remote_cancel;
+            break;
+        }
+        case connector_request_id_remote_config_configurations:
+            ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
+            callback_complete = connector_false;
+            goto done;
 #if (defined RCI_LEGACY_COMMANDS)
-        case rci_command_callback_do_command:
-        case rci_command_callback_reboot:
-        case rci_command_callback_set_factory_default:
+        case connector_request_id_remote_config_do_command:
+        case connector_request_id_remote_config_reboot:
+        case connector_request_id_remote_config_set_factory_def:
             remote_config->error_id = connector_success;
             callback_data = remote_config;
             break;
 #endif
     }
 
-    switch (rci->callback.rci_command_callback)
+    if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
     {
-        case rci_command_callback_set_query_setting_state:
-            if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
-            {
-                rci->callback.status = connector_callback_continue;
-            }
-            else
-            {
-                rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
-            }
-            break;
+        rci->callback.status = connector_callback_continue;
+    }
+    else
+    {
+        rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, rci->callback.request, callback_data, rci->service_data->connector_ptr->context);
+    }
 
+    switch (remote_config_request)
+    {
 #if (defined RCI_LEGACY_COMMANDS)
-        case rci_command_callback_do_command:
-        {
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
-            connector_callback_status_t const status = app_process_do_command(callback_data, remote_config->element.value->string_value, &rci->command.do_command.response_string, connector_ptr->context);
-            if (status == connector_callback_error) 
-            {
-                rci_global_error(rci, connector_rci_error_do_command_failed, RCI_NO_HINT);
-                set_rci_command_error(rci);
-                state_call(rci, rci_parser_state_error);
 
-                rci->callback.status = connector_callback_continue;
-            }
-            else
+        case connector_request_id_remote_config_reboot:
+        {
+            if (rci->callback.status == connector_callback_continue && remote_config->error_id == connector_success) 
             {
-                rci->callback.status = status;
+                connector_request_id_t request_id;
+                connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+
+                request_id.os_request = connector_request_id_os_reboot;
+                rci->callback.status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL, connector_ptr->context);
             }
-            break;
+            /* intentional fall through */
         }
-        case rci_command_callback_reboot:
+        case connector_request_id_remote_config_do_command:
+        case connector_request_id_remote_config_set_factory_def:
         {
-            connector_callback_status_t status = connector_callback_continue;
-            connector_request_id_t request_id;
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
-
-            connector_class_id_t class_id = connector_class_id_operating_system;
-            request_id.os_request = connector_request_id_os_reboot;
-
-            /* Device Cloud reboots us */
-
-            status = connector_callback(connector_ptr->callback, class_id, request_id, NULL, connector_ptr->context);
-            if (status == connector_callback_error) 
+            if (remote_config->error_id != connector_success)
             {
-                rci_global_error(rci, connector_rci_error_reboot_failed, RCI_NO_HINT);
+                rci_global_error(rci, remote_config->error_id, remote_config->response.error_hint);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
-
-                rci->callback.status = connector_callback_continue;
-            }
-            else
-            {
-                rci->callback.status = status;
-            }
-            break;
-        }
-        case rci_command_callback_set_factory_default:
-        {
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
-            connector_callback_status_t const status = app_process_set_factory_default(connector_ptr->context);
-            if (status == connector_callback_error) 
-            {
-                rci_global_error(rci, connector_rci_error_set_factory_default_failed, RCI_NO_HINT);
-                set_rci_command_error(rci);
-                state_call(rci, rci_parser_state_error);
-
-                rci->callback.status = connector_callback_continue;
-            }
-            else
-            {
-                rci->callback.status = status;
             }
             break;
         }
 #endif
+        case connector_request_id_remote_config_session_start:
+        case connector_request_id_remote_config_session_end:
+        case connector_request_id_remote_config_action_start:
+        case connector_request_id_remote_config_action_end:
+        case connector_request_id_remote_config_group_start:
+        case connector_request_id_remote_config_group_end:
+        case connector_request_id_remote_config_group_process:
+        case connector_request_id_remote_config_session_cancel:
+        case connector_request_id_remote_config_configurations:
+            break;
     }
 
     switch (rci->callback.status)
@@ -414,15 +375,15 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_action_start:
                 break;
             case connector_request_id_remote_config_action_end:
-                rci->shared.callback_data.attribute.source = NULL;
-                rci->shared.callback_data.attribute.compare_to = NULL;
-#if (defined RCI_LEGACY_COMMANDS)
-                rci->shared.callback_data.attribute.target = NULL;
-#endif
                 break;
             case connector_request_id_remote_config_group_start:
             case connector_request_id_remote_config_session_cancel:
             case connector_request_id_remote_config_configurations:
+#if (defined RCI_LEGACY_COMMANDS)
+            case connector_request_id_remote_config_do_command:
+            case connector_request_id_remote_config_reboot:
+            case connector_request_id_remote_config_set_factory_def:
+#endif
                 break;
         }
 #endif

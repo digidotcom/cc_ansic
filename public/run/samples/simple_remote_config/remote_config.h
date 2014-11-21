@@ -8,26 +8,10 @@
 #ifndef remote_config_h
 #define remote_config_h
 
-
-
-#include "connector_api.h"
-
-
-#if (defined CONNECTOR_CONST_PROTECTION)
-#define CONST
-#undef CONNECTOR_CONST_PROTECTION
-#else
-#if (defined CONST)
-#define CONNECTOR_CONST_STORAGE CONST
-#undef CONST
-#endif
-#define CONST const
-#endif
-
 #define RCI_PARSER_USES_ERROR_DESCRIPTIONS
 #define RCI_PARSER_USES_STRING
 #define RCI_PARSER_USES_STRINGS
-#define RCI_COMMANDS_ATTRIBUTE_MAX_LEN 50
+#define RCI_COMMANDS_ATTRIBUTE_MAX_LEN 20
 
 
 typedef enum {
@@ -43,6 +27,18 @@ typedef struct {
 typedef struct {
     char const * string_value;
 } connector_element_value_t;
+
+typedef enum {
+    connector_request_id_remote_config_session_start,
+    connector_request_id_remote_config_action_start,
+    connector_request_id_remote_config_group_start,
+    connector_request_id_remote_config_group_process,
+    connector_request_id_remote_config_group_end,
+    connector_request_id_remote_config_action_end,
+    connector_request_id_remote_config_session_end,
+    connector_request_id_remote_config_session_cancel,
+    connector_request_id_remote_config_configurations
+} connector_request_id_remote_config_t;
 
 typedef enum {
     connector_remote_action_set,
@@ -94,6 +90,12 @@ typedef struct {
   char const * source;
   char const * compare_to;
 } connector_remote_attribute_t;
+
+typedef enum {
+  rci_query_command_attribute_id_source,
+  rci_query_command_attribute_id_compare_to,
+  rci_query_command_attribute_id_count
+} rci_query_command_attribute_id_t;
 
 typedef struct {
   void * user_context;
@@ -171,13 +173,6 @@ typedef enum {
 
 
 extern connector_remote_config_data_t rci_desc_data;
-
-
-#undef CONST
-#if (defined CONNECTOR_CONST_STORAGE)
-#define CONST CONNECTOR_CONST_STORAGE
-#undef CONNECTOR_CONST_STORAGE
-#endif
 
 
 #endif

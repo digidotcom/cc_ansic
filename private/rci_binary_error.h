@@ -110,17 +110,17 @@ STATIC void rci_generate_error(rci_t * const rci)
                 {
                     case connector_request_id_remote_config_action_start:
                     case connector_request_id_remote_config_group_end:
-                        trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_action_end);
+                        trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
                         break;
                     case connector_request_id_remote_config_session_start:
-                        trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
+                        trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                         break;
                     case connector_request_id_remote_config_action_end:
                         {
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
                         }
-                        trigger_rci_callback(rci, rci_command_callback_set_query_setting_state, connector_request_id_remote_config_session_end);
+                        trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                         break;
                     case connector_request_id_remote_config_group_start:
                         {
@@ -133,6 +133,11 @@ STATIC void rci_generate_error(rci_t * const rci)
                         break;
 
                     case connector_request_id_remote_config_group_process:
+#if (defined RCI_LEGACY_COMMANDS)
+                    case connector_request_id_remote_config_do_command:
+                    case connector_request_id_remote_config_reboot:
+                    case connector_request_id_remote_config_set_factory_def:
+#endif
                         set_rci_error_state(rci, rci_error_state_id);
                         state_call(rci, rci_parser_state_traverse);
                         break;
