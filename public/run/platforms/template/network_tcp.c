@@ -20,9 +20,8 @@
 /**
  * @brief   Connect to Device Cloud
  *
- * This routine sets up a connection to Device Cloud,
- * specified in the host_name and fills in a network
- * handle which is then passed to subsequent networking calls.
+ * This routine sets up a TCP connection to the requested URL
+ * and fills in a network handle which is then passed to subsequent TCP networking calls.
  * This routine will take the given host_name and attempt to
  * resolve the name and connect.
  *
