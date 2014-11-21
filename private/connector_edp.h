@@ -85,10 +85,9 @@ STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr
         connector_identity_verification_t const identity_verification = connector_ptr->edp_data.config.identity_verification;
 #else
     {
-        ASSERT((CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_simple) || (CONNECTOR_IDENTITY_VERIFICATION == connector_identity_verification_password));
         connector_identity_verification_t const identity_verification = CONNECTOR_IDENTITY_VERIFICATION;
 #endif
-
+        ASSERT((identity_verification == connector_identity_verification_simple) || (identity_verification == connector_identity_verification_password));
         if (identity_verification == connector_identity_verification_password)
         {
             /* get password for password identity verification */
