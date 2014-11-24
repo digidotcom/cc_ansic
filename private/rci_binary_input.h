@@ -564,23 +564,72 @@ STATIC void process_command_normal_attribute_id(rci_t * const rci)
 
 STATIC void process_command_normal_attribute_value(rci_t * const rci)
 {
-    const char * attribute_string;
-    size_t attribute_len;
-
-
-    if (!get_string(rci, &attribute_string, &attribute_len))
+    switch (rci->command.command_id)
     {
-        goto done;
-    }
+        case rci_command_query_setting:
+        case rci_command_query_state:
+        {
+            uint32_t attribute_value;
+
+            if(!get_uint32(rci, &attribute_value))
+                goto done;
 
 #if (defined RCI_DEBUG)
-    connector_debug_line("attribute_len=%d\n", attribute_len);
-    connector_debug_line("attribute='%.*s'\n", attribute_len, attribute_string);
+            connector_debug_line("attribute_val=%d\n", attribute_value);
 #endif
 
-    ASSERT(attribute_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
-    memcpy(rci->command.attribute[rci->command.attributes_processed].value, attribute_string, attribute_len);
-    rci->command.attribute[rci->command.attributes_processed].value[attribute_len] = '\0';
+            switch (rci->command.attribute[rci->command.attributes_processed].id.query)
+            {
+                case rci_query_command_attribute_id_source:
+                case rci_query_command_attribute_id_compare_to:
+                    rci->command.attribute[rci->command.attributes_processed].value.enum_val = attribute_value;
+                    break;
+                case rci_query_command_attribute_id_count:
+                    ASSERT_GOTO(0, done);
+                    break;
+            }
+            rci->command.attribute[rci->command.attributes_processed].type = attribute_type_enum;
+            break;
+        }
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_do_command:
+        {
+            const char * attribute_value;
+            size_t attribute_value_len;
+
+            if (!get_string(rci, &attribute_value, &attribute_value_len))
+                goto done;
+
+#if (defined RCI_DEBUG)
+            connector_debug_line("attribute_len=%d\n", attribute_value_len);
+            connector_debug_line("attribute='%.*s'\n", attribute_value_len, attribute_value);
+#endif
+
+            switch (rci->command.attribute[rci->command.attributes_processed].id.do_command)
+            {
+                case rci_do_command_attribute_id_target:
+                    ASSERT(attribute_value_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
+                    memcpy(rci->command.attribute[rci->command.attributes_processed].value.string_val, attribute_value, attribute_value_len);
+                    rci->command.attribute[rci->command.attributes_processed].value.string_val[attribute_value_len] = '\0';
+                    break;
+                case rci_do_command_attribute_id_count:
+                    ASSERT_GOTO(0, done);
+                    break;
+            }
+            rci->command.attribute[rci->command.attributes_processed].type = attribute_type_string;
+            break;
+        }
+#endif
+        case rci_command_set_setting:
+        case rci_command_set_state:
+        case rci_command_query_descriptor:
+#if (defined RCI_LEGACY_COMMANDS)
+        case rci_command_reboot:
+        case rci_command_set_factory_default:
+#endif
+           ASSERT_GOTO(0, done);
+           break;
+    }         
 
     rci->command.attributes_processed++;
 

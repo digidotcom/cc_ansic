@@ -130,6 +130,14 @@ typedef enum {
 #endif
 } rci_command_t;
 
+typedef enum
+{
+    attribute_type_enum,
+#if (defined RCI_LEGACY_COMMANDS)
+    attribute_type_string,
+#endif
+} rci_command_attribute_type_t;
+
 typedef union
 {
     unsigned int val;
@@ -300,7 +308,14 @@ typedef struct rci
         struct 
         {
             rci_command_attribute_t id;
-            char value[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
+            rci_command_attribute_type_t type;
+            union
+            {
+                uint32_t enum_val; 
+#if (defined RCI_LEGACY_COMMANDS)
+                char string_val[RCI_COMMANDS_ATTRIBUTE_MAX_LEN + 1];
+#endif
+            } value;
         } attribute[MAX_ATTRIBUTES];
 
 #if (defined RCI_LEGACY_COMMANDS)

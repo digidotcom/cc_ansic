@@ -590,7 +590,17 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            overflow = rci_output_string(rci, rci->command.attribute[rci->command.attributes_processed].value, strlen(rci->command.attribute[rci->command.attributes_processed].value));
+            switch (rci->command.attribute[rci->command.attributes_processed].type)
+            {
+                case attribute_type_enum:
+                    overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attributes_processed].value.enum_val);
+                    break;
+#if (defined RCI_LEGACY_COMMANDS)
+                case attribute_type_string:
+                    overflow = rci_output_string(rci, rci->command.attribute[rci->command.attributes_processed].value.string_val, strlen(rci->command.attribute[rci->command.attributes_processed].value.string_val));
+                    break;
+#endif
+            }
             if (overflow)
             {
                 goto done;

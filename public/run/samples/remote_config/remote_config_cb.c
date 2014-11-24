@@ -75,13 +75,34 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
     if (remote_config->action == connector_remote_action_query)
     {
         APP_DEBUG("connector_remote_action_query\n");
-        if (remote_config->attribute.source != NULL)
+        APP_DEBUG("source=");
+        switch (remote_config->attribute.source)
         {
-            APP_DEBUG("source='%s'\n", remote_config->attribute.source);
+            case rci_query_command_attribute_source_value_current:
+                APP_DEBUG("'rci_query_command_attribute_source_value_current'\n");
+                break;
+            case rci_query_command_attribute_source_value_stored:
+                APP_DEBUG("'rci_query_command_attribute_source_value_stored'\n");
+                break;
+            case rci_query_command_attribute_source_value_defaults:
+                APP_DEBUG("'rci_query_command_attribute_source_value_defaults'\n");
+                break;
         }
-        if (remote_config->attribute.compare_to != NULL)
+        APP_DEBUG("compare_to=");
+        switch (remote_config->attribute.compare_to)
         {
-            APP_DEBUG("compare_to='%s'\n", remote_config->attribute.compare_to);
+            case rci_query_command_attribute_compare_to_value_current:
+                APP_DEBUG("'rci_query_command_attribute_compare_to_value_current'\n");
+                break;
+            case rci_query_command_attribute_compare_to_value_stored:
+                APP_DEBUG("'rci_query_command_attribute_compare_to_value_stored'\n");
+                break;
+            case rci_query_command_attribute_compare_to_value_defaults:
+                APP_DEBUG("'rci_query_command_attribute_compare_to_value_defaults'\n");
+                break;
+            case rci_query_command_attribute_compare_to_value_none:
+                APP_DEBUG("'rci_query_command_attribute_compare_to_value_none'\n");
+                break;
         }
     }
 
