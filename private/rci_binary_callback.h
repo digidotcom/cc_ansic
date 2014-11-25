@@ -79,8 +79,8 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         break;
 
     case connector_request_id_remote_config_session_start:
-        rci->shared.callback_data.attribute.source = NULL;
-        rci->shared.callback_data.attribute.compare_to = NULL;
+        rci->shared.callback_data.attribute.source = rci_query_command_attribute_source_current;
+        rci->shared.callback_data.attribute.compare_to = rci_query_command_attribute_compare_to_current;
 #if (defined RCI_LEGACY_COMMANDS)
         rci->shared.callback_data.attribute.target = NULL;
 #endif
@@ -99,10 +99,10 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
                     switch (rci->command.attribute[i].id.query)
                     {
                         case rci_query_command_attribute_id_source:
-                            rci->shared.callback_data.attribute.source = rci->command.attribute[i].value;
+                            rci->shared.callback_data.attribute.source = rci->command.attribute[i].value.enum_val;
                             break;
                         case rci_query_command_attribute_id_compare_to:
-                            rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value;
+                            rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value.enum_val;
                             break;
                         case rci_query_command_attribute_id_count:
                             ASSERT_GOTO(0, done);
@@ -120,7 +120,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
                     switch (rci->command.attribute[i].id.do_command)
                     {
                         case rci_do_command_attribute_id_target:
-                            rci->shared.callback_data.attribute.target = rci->command.attribute[i].value;
+                            rci->shared.callback_data.attribute.target = rci->command.attribute[i].value.string_val;
                             break;
                         case rci_do_command_attribute_id_count:
                             ASSERT_GOTO(0, done);

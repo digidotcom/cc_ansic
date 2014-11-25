@@ -223,8 +223,18 @@ public class Descriptors {
         
         /* setup query command descriptor */
         query_descriptors += String.format(" bin_id=\"%d\">\n", id)
-                           + "  <attr name=\"source\" type=\"string\" max=\"" + ConfigData.AttributeMaxLen() + "\" desc=\"Query source\" bin_id=\"0\" />"
-                           + "  <attr name=\"compare_to\" type=\"string\" max=\"" + ConfigData.AttributeMaxLen() + "\" desc=\"Query compare_to\" bin_id=\"1\" />"
+                           + "  <attr name=\"source\" type=\"enum\" desc=\"Source of settings returned\" bin_id=\"0\" default=\"current\" >"
+                           + "      <value value=\"current\" desc=\"Settings stored in flash\" bin_id=\"0\" />"
+                           + "      <value value=\"stored\" desc=\"Current settings\" bin_id=\"1\" />"
+                           + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
+                           + "  </attr>"
+
+                           + "  <attr name=\"compare_to\" type=\"enum\" desc=\"Return only differences from this source\" bin_id=\"1\" default=\"none\" >"
+                           + "      <value value=\"current\" desc=\"Settings stored in flash\" bin_id=\"0\" />"
+                           + "      <value value=\"stored\" desc=\"Current settings\" bin_id=\"1\" />"
+                           + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
+                           + "      <value value=\"none\" desc=\"Return all settings\" bin_id=\"3\" />"
+                           + "  </attr>"
                            + String.format("<format_define name=\"all_%ss_groups\">\n", config_type);
 
         /*

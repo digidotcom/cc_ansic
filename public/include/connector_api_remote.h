@@ -15,6 +15,19 @@
 
 #if (defined CONNECTOR_RCI_SERVICE)
 
+typedef enum {
+  rci_query_command_attribute_source_current,
+  rci_query_command_attribute_source_stored,
+  rci_query_command_attribute_source_defaults
+} rci_query_command_attribute_source_t;
+
+typedef enum {
+  rci_query_command_attribute_compare_to_current,
+  rci_query_command_attribute_compare_to_stored,
+  rci_query_command_attribute_compare_to_defaults,
+  rci_query_command_attribute_compare_to_none
+} rci_query_command_attribute_compare_to_t;
+
 /**
  * @defgroup connector_remote_group_type_t Cloud Connector remote configuration types
  * @{
