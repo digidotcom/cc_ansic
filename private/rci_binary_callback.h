@@ -79,8 +79,8 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         break;
 
     case connector_request_id_remote_config_session_start:
-        rci->shared.callback_data.attribute.source = rci_query_command_attribute_source_value_current;
-        rci->shared.callback_data.attribute.compare_to = rci_query_command_attribute_compare_to_value_current;
+        rci->shared.callback_data.attribute.source = rci_query_command_attribute_source_current;
+        rci->shared.callback_data.attribute.compare_to = rci_query_command_attribute_compare_to_current;
 #if (defined RCI_LEGACY_COMMANDS)
         rci->shared.callback_data.attribute.target = NULL;
 #endif

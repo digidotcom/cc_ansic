@@ -95,8 +95,8 @@ typedef struct {
 } connector_remote_element_t;
 
 typedef struct {
-  rci_query_command_attribute_source_value_t source;
-  rci_query_command_attribute_compare_to_value_t compare_to;
+  rci_query_command_attribute_source_t source;
+  rci_query_command_attribute_compare_to_t compare_to;
   char const * target;
 } connector_remote_attribute_t;
 

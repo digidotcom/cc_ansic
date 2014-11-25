@@ -565,8 +565,8 @@ public abstract class FileGenerator {
             "} connector_remote_element_t;\n",const_name));
 
         fileWriter.write("\ntypedef struct {\n" +
-                         "  rci_query_command_attribute_source_value_t source;\n" +
-                         "  rci_query_command_attribute_compare_to_value_t compare_to;\n");
+                         "  rci_query_command_attribute_source_t source;\n" +
+                         "  rci_query_command_attribute_compare_to_t compare_to;\n");
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write("  char const * target;\n");
         }
