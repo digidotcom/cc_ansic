@@ -17,6 +17,32 @@
 #ifndef remote_config_h
 #define remote_config_h
 
+/**
+* @defgroup connector_request_id_remote_config_t Remote Configuration Request IDs
+* @{
+*/
+/**
+* Remote Configuration Request ID passed to the application's callback to query or set remote configuration data.
+* The class id for this connector_request_id_remote_config_t is connector_class_id_remote_config.
+*/
+
+typedef enum {
+    connector_request_id_remote_config_session_start,  /**< inform callback to start remote configuration request */
+    connector_request_id_remote_config_action_start,   /**< requesting callback to start query or set remote configuration data */
+    connector_request_id_remote_config_group_start,    /**< requesting callback to start query or set an individual configuration group */
+    connector_request_id_remote_config_group_process,  /**< requesting callback to query or set an element or field of a configuration group */
+    connector_request_id_remote_config_group_end,      /**< requesting callback to end query or set an individual configuration group */
+    connector_request_id_remote_config_action_end,     /**< requesting callback to end query or set remote configuration data */
+    connector_request_id_remote_config_session_end,    /**< inform callback to end remote configuration request
+                                                            Callback may start writing data into NVRAM for set remote configuration request.
+                                                            Callback should end and release any resources used when it's done. */
+    connector_request_id_remote_config_session_cancel,  /**< Requesting callback to abort and cancel any query or set remote configuration request.
+                                                            Callback should stop and release any resources used */
+    connector_request_id_remote_config_configurations
+} connector_request_id_remote_config_t;
+/**
+* @}
+*/
 
 /**
  * @defgroup connector_on_off_t  Cloud Connector on or off values
@@ -62,7 +88,8 @@ typedef enum {
     connector_element_type_ipv4,                /**< Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in the Device Cloud */
     connector_element_type_fqdnv4,              /**< This type accepts either ipv4 or DNS name. */
     connector_element_type_fqdnv6,              /**< This type accepts either IPv6 address, IPv4 address, or DNS name. */
-    connector_element_type_datetime = 22             /**< Date and time type. It's string which contains the ISO 8601 standard
+    connector_element_type_mac_addr = 21,       /**> Valid MAC address which is shown as XX:XX:XX:XX:XX:XX in Device Cloud. */
+    connector_element_type_datetime = 22        /**< Date and time type. It's string which contains the ISO 8601 standard
                                                  for date and time representation. The format is: YYYY-MM-DDTHH:MM:SStz
                                                  where
                                                      @htmlonly
