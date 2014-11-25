@@ -424,7 +424,7 @@
 #define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS      4
 
 /**
-* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the incoming sessions timeout in seconds to this value. 
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming UDP sessions. 
 * If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_max_sessions configuration callback.
 * It can be set to SM_WAIT_FOREVER for infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
 * 
@@ -436,7 +436,7 @@
 #define CONNECTOR_SM_UDP_RX_TIMEOUT                    30
 
 /**
-* If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the incoming sessions timeout in seconds to this value. 
+* If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming SMS sessions.
 * If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_max_sessions configuration callback.
 * It can be set to SM_WAIT_FOREVER for infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
 * 

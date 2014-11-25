@@ -1026,7 +1026,7 @@ static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_
 /**
  * @brief Get maximum incoming segments for SM over UDP
  *
- * This routine returns the number of segments in which the incoming data in SM over UDP might be splitted.
+ * This routine returns the number of segments in which the incoming data in SM over UDP might be split.
  *
  * @param [out] config_max_rx_segments  Pointer to  @ref connector_config_sm_max_rx_segments_t where callback returns the value.
  *
@@ -1044,7 +1044,7 @@ static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_conf
 /**
  * @brief Get maximum incoming segments for SM over SMS
  *
- * This routine returns the number of segments in which the incoming data in SM over SMS might be splitted.
+ * This routine returns the number of segments in which the incoming data in SM over SMS might be split.
  *
  * @param [out] config_max_rx_segments  Pointer to  @ref connector_config_sm_max_rx_segments_t where callback returns the value.
  *
@@ -1061,7 +1061,7 @@ static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_conf
 /**
  * @brief Get maximum timeout for incoming SM sessions over UDP
  *
- * This routine returns how many seconds should be waited before dropping an incomplete incoming message over UDP. It can be set to SM_WAIT_FOREVER for 
+ * This routine returns how many seconds should elapse before dropping an incomplete incoming message over UDP. It can be set to SM_WAIT_FOREVER for 
  * infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
  *
  * @param [out] config_rx_timeout  Pointer to  @ref connector_config_sm_rx_timeout_t where callback returns the value.
@@ -1079,7 +1079,7 @@ static connector_callback_status_t app_get_sm_udp_rx_timeout(connector_config_sm
 /**
  * @brief Get maximum timeout for incoming SM sessions over SMS
  *
- * This routine returns how many seconds should be waited before dropping an incomplete incoming message over SMS. It can be set to SM_WAIT_FOREVER for 
+ * This routine returns how many seconds should elapse before dropping an incomplete incoming message over SMS. It can be set to SM_WAIT_FOREVER for 
  * infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
  *
  * @param [out] config_rx_timeout  Pointer to  @ref connector_config_sm_rx_timeout_t where callback returns the value.

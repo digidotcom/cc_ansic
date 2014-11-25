@@ -2338,7 +2338,7 @@
  *
  * @section sm_udp_max_sessions Short Messaging over UDP maximum active sessions
  *
- * Set the maximum concurrent sessions of Short Messaging at a time over UDP transport.
+ * Set the maximum concurrent sessions of Short Messaging over UDP transport.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_get_sm_udp_max_sessions() in config.c.
@@ -2399,7 +2399,7 @@
  * 
  * @section sm_sms_max_sessions Short Messaging over SMS maximum active sessions
  *
- * Set the maximum concurrent sessions of Short Messaging at a time over SMS transport.
+ * Set the maximum concurrent sessions of Short Messaging over SMS transport.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_get_sm_sms_max_sessions() in config.c.
@@ -2460,7 +2460,7 @@
  *
  * @section sm_udp_max_rx_segments Short Messaging over UDP Maximum incoming segments
  *
- * Set the maximum number of segments in which an incoming session's data in SM over UDP might be splitted.
+ * Set the maximum number of segments in which an incoming session's data in SM over UDP might be split.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_get_sm_udp_max_rx_segments() in config.c.
@@ -2521,7 +2521,7 @@
  *
  * @section sm_sms_max_rx_segments Short Messaging over SMS Maximum incoming segments
  *
- * Set the maximum number of segments in which an incoming session's data in SM over SMS might be splitted.
+ * Set the maximum number of segments in which an incoming session's data in SM over SMS might be split.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function @ref app_get_sm_sms_max_rx_segments() in config.c.
