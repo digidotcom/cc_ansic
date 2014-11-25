@@ -92,7 +92,7 @@
  * <br />
  *
  * @section realloc realloc
- * Callback is used to dynamically re-allocate memory previously allocated  by @ref connector_request_id_os_malloc.
+ * Callback is used to dynamically re-allocate memory previously allocated by @ref connector_request_id_os_malloc.
  *
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_os_realloc() in os.c.
