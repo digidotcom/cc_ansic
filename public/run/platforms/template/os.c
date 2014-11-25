@@ -73,9 +73,9 @@ connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
 }
 
 /**
- * @brief   Dynamically allocate memory
+ * @brief   Reallocate memory block
  *
- * Re-allocate memory previously allocated with @ref app_os_malloc(), if you are not using realloc()
+ * Used to increase the size of a memory block previously allocated with @ref app_os_malloc(), if you are not using realloc()
  * from the C library replace the realloc() call to an equivalent call on your system.
  *
  * @param [in,out] realloc_data  Structure containing the old pointer, old size, and new size.
