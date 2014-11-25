@@ -15,19 +15,19 @@
  *
  * @section open Open
  *
- * This callback is called to start a network transport to communicate with Device Cloud. For
+ * This callback is invoked to start a transport for communicating with Device Cloud. For
  * @ref connector_class_id_network_tcp transport it establishes a connection between Cloud Connector
  * and Device Cloud.
  *
- * The @ref connector_class_id_network_udp transport does notestablish a connection, but it can resolve
- * a domain name and open a communication socket in this callback. UDP does not guarantee reliable data
+ * The @ref connector_class_id_network_udp transport does not necessarily establish a connection, but it can resolve
+ * a domain name and open a communication socket in this callback. Remember that UDP does not guarantee reliable data
  * delivery.
  *
  * If the @ref connector_class_id_network_sms transport does not establish a connection, it's very likely that 
  * during this callback the user configures the Device Cloud phone number where to send SMSs available through 
  * the data->device_cloud_url parameter. Final implementation has to be done by the user as a way to 
  * communicate with the hardware in charge of sending and receiving SMSs is not standard at all. As a 
- * reference, for the linux platform sample, network_sms.c file implements support for @htmlonly <a href="http://wammu.eu/gammu/">Gammu</a>@endhtmlonly, a cellular 
+ * reference, for the Linux platform sample, network_sms.c file implements support for @htmlonly <a href="http://wammu.eu/gammu/">Gammu</a>@endhtmlonly, a cellular
  * manager for mobile phones/modems.
  * @note This callback is called also after an SMS provisioning message arrives from the server to let the user
  * reconfigure the Device Cloud phone number if necessary.
