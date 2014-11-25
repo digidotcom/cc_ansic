@@ -72,9 +72,9 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
 {
     APP_DEBUG("app_process_action_start\n");
 
-    if (remote_config->action == connector_remote_action_query)
+    if (remote_config->action == connector_remote_action_query && remote_config->group.type == connector_remote_group_setting)
     {
-        APP_DEBUG("connector_remote_action_query\n");
+        APP_DEBUG("query setting attributes:\n");
         APP_DEBUG("source=");
         switch (remote_config->attribute.source)
         {

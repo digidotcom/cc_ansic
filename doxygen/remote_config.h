@@ -161,6 +161,22 @@ typedef union {
 */
 
 /**
+/**
+ * @defgroup connector_remote_action_t Cloud Connector remote configuration action types
+ * @{
+ */
+/**
+ * Remote request action types
+ */
+typedef enum {
+    connector_remote_action_set,    /**< Set remote configuration */
+    connector_remote_action_query   /**< Query remote configuration */
+} connector_remote_action_t;
+/**
+ * @}
+ */
+
+/**
 * @defgroup connector_remote_group_t Cloud Connector remote configuration group
 * @{
 */
@@ -220,12 +236,13 @@ typedef struct {
                                      Callback may write its own context which will be passed back to sub-sequential callback.*/
   connector_remote_action_t action;   /**< @htmlonly <ul><li> @endhtmlonly @ref connector_remote_action_set @htmlonly for setting remote configuration or</li>
                                          <li> @endhtmlonly @ref connector_remote_action_query @htmlonly for querying remote configuration </li></ul> @endhtmlonly */
+  connector_remote_attribute_t attribute;  /**< 'source' and 'compare_to' attribute value which are optional in a query setting command request */
   connector_remote_group_t group;     /**< Group configuration to be accessed */
   connector_remote_element_t element; /**< Element of the group configuration */
   unsigned int error_id;              /**< Callback writes error enumeration value if error is encountered.
                                      Error description is sent if it's provided for the given error_id. */
 
-  union {
+  struct {
       char const * error_hint;        /**< Callback returns a pointer to a constant null-terminated string which will be sent
                                         to Device Cloud if an error is encountered.
                                         Note: this string cannot be altered until next callback call.

@@ -79,6 +79,8 @@
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Callback writes its own context which will be passed back to
  *                subsequent callback.</dd>
+ *         <dt><i>action</i></dt><dd>Not applicable</dd>
+ *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt><dd>Not applicable</dd>
  *         <dt><i>element</i></dt><dd>Not applicable</dd>
  *         <dt><i>error_id</i></dt>
@@ -161,6 +163,23 @@
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
+ *
+ *         <dt><i>attribute</i></dt>
+ *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>source</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: Device defaults.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd><dl>
+ *             <dt><i>compare_to</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: Device defaults.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: Return all settings.</li></ul></dd>
+ *         </dl></dd>
+ *
  *         <dt><i>group</i></dt>
  *         <dd><dl>
  *             <dt><i>type</i></dt>
@@ -206,6 +225,41 @@
  * static connector_callback_status_t app_process_action_start(connector_remote_config_t * const data)
  * {
  *     printf("process_action_start\n");
+ *
+ *     if (remote_config->action == connector_remote_action_query && remote_config->group.type == connector_remote_group_setting)
+ *     {
+ *         APP_DEBUG("query setting attributes:\n");
+ *         APP_DEBUG("source=");
+ *         switch (remote_config->attribute.source)
+ *         {
+ *             case rci_query_command_attribute_source_current:
+ *                 APP_DEBUG("'rci_query_command_attribute_source_current'\n");
+ *                 break;
+ *             case rci_query_command_attribute_source_stored:
+ *                 APP_DEBUG("'rci_query_command_attribute_source_stored'\n");
+ *                 break;
+ *             case rci_query_command_attribute_source_defaults:
+ *                 APP_DEBUG("'rci_query_command_attribute_source_defaults'\n");
+ *                 break;
+ *         }
+ *         APP_DEBUG("compare_to=");
+ *         switch (remote_config->attribute.compare_to)
+ *         {
+ *             case rci_query_command_attribute_compare_to_current:
+ *                 APP_DEBUG("'rci_query_command_attribute_compare_to_current'\n");
+ *                 break;
+ *             case rci_query_command_attribute_compare_to_stored:
+ *                 APP_DEBUG("'rci_query_command_attribute_compare_to_stored'\n");
+ *                 break;
+ *             case rci_query_command_attribute_compare_to_defaults:
+ *                 APP_DEBUG("'rci_query_command_attribute_compare_to_defaults'\n");
+ *                 break;
+ *             case rci_query_command_attribute_compare_to_none:
+ *                 APP_DEBUG("'rci_query_command_attribute_compare_to_none'\n");
+ *                 break;
+ *         }
+ *     }
+ *
  *     return connector_callback_continue;
  * }
  *
@@ -238,6 +292,22 @@
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
+ *
+ *         <dt><i>attribute</i></dt>
+ *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>source</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: Device defaults.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd><dl>
+ *             <dt><i>compare_to</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: Device defaults.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: Return all settings.</li></ul></dd>
+ *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
  *         <dd><dl>
@@ -345,7 +415,7 @@
  *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
  *         <dd> - the @endhtmlonly @ref connector_remote_action_set @htmlonly </dd>
- *
+ *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt>
  *         <dd><dl>
  *             <dt><i>type</i></dt>
@@ -496,6 +566,22 @@
  *
  *         <dt><i>action</i></dt>
  *         <dd> - the @endhtmlonly @ref connector_remote_action_query @htmlonly </dd>
+ *
+ *         <dt><i>attribute</i></dt>
+ *         <dd>- only applicable when group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>source</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: Device defaults.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd><dl>
+ *             <dt><i>compare_to</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: Device defaults.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: Return all settings.</li></ul></dd>
+ *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
  *         <dd><dl>
@@ -656,6 +742,22 @@
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
  *
+ *         <dt><i>attribute</i></dt>
+ *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>source</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: Device defaults.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd><dl>
+ *             <dt><i>compare_to</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: Device defaults.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: Return all settings.</li></ul></dd>
+ *         </dl></dd>
+ *
  *         <dt><i>group</i></dt>
  *         <dd><dl>
  *             <dt><i>type</i></dt>
@@ -748,6 +850,23 @@
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
+ *
+ *         <dt><i>attribute</i></dt>
+ *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>source</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: Device defaults.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd><dl>
+ *             <dt><i>compare_to</i></dt>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: Current settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: Settings stored in flash.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: Device defaults.</li>
+ *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: Return all settings.</li></ul></dd>
+ *         </dl></dd>
+ *
  *         <dt><i>group</i></dt>
  *         <dd><dl>
  *             <dt><i>type</i></dt>
@@ -829,6 +948,8 @@
  * <td> Pointer to @endhtmlonly connector_remote_config_t @htmlonly structure:
  *     <dl><dt><i>user_context</i></dt>
  *         <dd> - Pointer to callback's context returned from previous callback.</dd>
+ *         <dt><i>action</i></dt><dd>Not applicable</dd>
+ *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt><dd>Not applicable</dd>
  *         <dt><i>element</i></dt><dd>Not applicable</dd>
  *         <dt><i>error_id</i></dt>

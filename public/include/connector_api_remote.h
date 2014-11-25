@@ -15,18 +15,38 @@
 
 #if (defined CONNECTOR_RCI_SERVICE)
 
+/**
+ * @defgroup rci_query_command_attribute_source_t rci query setting command source attribute value
+ * @{
+ */
+/**
+ * rci query setting command source attribute value.
+ */
 typedef enum {
-  rci_query_command_attribute_source_current,
-  rci_query_command_attribute_source_stored,
-  rci_query_command_attribute_source_defaults
+  rci_query_command_attribute_source_current, /**< Current settings */
+  rci_query_command_attribute_source_stored,  /**< Settings stored in flash */
+  rci_query_command_attribute_source_defaults /**< Device defaults */
 } rci_query_command_attribute_source_t;
+/**
+* @}
+*/
 
+/**
+ * @defgroup rci_query_command_attribute_compare_to_t rci query setting command compare_to attribute value
+ * @{
+ */
+/**
+ * rci query setting command compare_to attribute value.
+ */
 typedef enum {
-  rci_query_command_attribute_compare_to_current,
-  rci_query_command_attribute_compare_to_stored,
-  rci_query_command_attribute_compare_to_defaults,
-  rci_query_command_attribute_compare_to_none
+  rci_query_command_attribute_compare_to_current,  /**< Current settings */
+  rci_query_command_attribute_compare_to_stored,   /**< Settings stored in flash */
+  rci_query_command_attribute_compare_to_defaults, /**< Device defaults */
+  rci_query_command_attribute_compare_to_none      /**< Return all settings */
 } rci_query_command_attribute_compare_to_t;
+/**
+* @}
+*/
 
 /**
  * @defgroup connector_remote_group_type_t Cloud Connector remote configuration types
@@ -39,7 +59,6 @@ typedef enum {
     connector_remote_group_setting, /**< Setting configuration */
     connector_remote_group_state    /**< State configuration */
 } connector_remote_group_type_t;
-
 /**
 * @}
 */
