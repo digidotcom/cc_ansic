@@ -39,6 +39,12 @@
  *  -# @ref get_device_cloud_phone
  *  -# @ref set_device_cloud_phone
  *  -# @ref device_cloud_service_id
+ *  -# @ref sm_udp_max_sessions
+ *  -# @ref sm_sms_max_sessions
+ *  -# @ref sm_udp_max_rx_segments
+ *  -# @ref sm_sms_max_rx_segments
+ *  -# @ref sm_udp_rx_timeout
+ *  -# @ref sm_sms_rx_timeout
  *
  * @section device_id How the Device ID is obtained
  * 
@@ -2325,6 +2331,374 @@
  *         config_service_id->string = (char *)connector_cloud_service_id;
  *         config_service_id->length = sizeof connector_cloud_service_id -1;
  *     }
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section sm_udp_max_sessions Short Messaging over UDP maximum active sessions
+ *
+ * Set the maximum concurrent sessions of Short Messaging over UDP transport.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_get_sm_udp_max_sessions() in config.c.
+ *
+ * @note If @ref CONNECTOR_SM_UDP_MAX_SESSIONS configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_sm_udp_max_sessions()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_sm_udp_max_sessions @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_config_sm_max_sessions_t @htmlonly:
+ *          <dl>
+ *              <dt><i>max_sessions</i></dt>
+ *              <dd> - Callback returns the maximum sessions for UDP transport.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned requested data</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set data and aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define APP_MAX_SM_UDP_SESSIONS      32
+ *
+ * static connector_callback_status_t app_get_sm_udp_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
+ * {
+ *     config_max_sessions->max_sessions = APP_MAX_SM_UDP_SESSIONS;
+ * 
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ * 
+ * @section sm_sms_max_sessions Short Messaging over SMS maximum active sessions
+ *
+ * Set the maximum concurrent sessions of Short Messaging over SMS transport.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_get_sm_sms_max_sessions() in config.c.
+ *
+ * @note If @ref CONNECTOR_SM_SMS_MAX_SESSIONS configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_sm_sms_max_sessions()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_sm_sms_max_sessions @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_config_sm_max_sessions_t @htmlonly:
+ *          <dl>
+ *              <dt><i>max_sessions</i></dt>
+ *              <dd> - Callback returns the maximum sessions for UDP transport.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned requested data</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set data and aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define APP_MAX_SM_SMS_SESSIONS      32
+ *
+ * static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
+ * {
+ *     config_max_sessions->max_sessions = APP_MAX_SM_SMS_SESSIONS;
+ * 
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section sm_udp_max_rx_segments Short Messaging over UDP Maximum incoming segments
+ *
+ * Set the maximum number of segments in which an incoming session's data in SM over UDP might be split.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_get_sm_udp_max_rx_segments() in config.c.
+ *
+ * @note If @ref CONNECTOR_SM_UDP_MAX_RX_SEGMENTS configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_sm_udp_max_rx_segments()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_sm_sms_max_rx_segments @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_config_sm_max_rx_segments_t @htmlonly:
+ *          <dl>
+ *              <dt><i>max_rx_segments</i></dt>
+ *              <dd> - Callback returns the maximum incoming segments for UDP transport.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned requested data</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set data and aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define APP_MAX_SM_UDP_RX_SEGMENTS      5
+ *
+ * static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
+ * {
+ *     config_max_rx_segments->max_rx_segments = APP_MAX_SM_UDP_RX_SEGMENTS;
+ * 
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section sm_sms_max_rx_segments Short Messaging over SMS Maximum incoming segments
+ *
+ * Set the maximum number of segments in which an incoming session's data in SM over SMS might be split.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_get_sm_sms_max_rx_segments() in config.c.
+ *
+ * @note If @ref CONNECTOR_SM_SMS_MAX_RX_SEGMENTS configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_sm_sms_max_rx_segments()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_sm_sms_max_rx_segments @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_config_sm_max_rx_segments_t @htmlonly:
+ *          <dl>
+ *              <dt><i>max_rx_segments</i></dt>
+ *              <dd> - Callback returns the maximum incoming segments for SMS transport.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned requested data</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set data and aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define APP_MAX_SM_SMS_RX_SEGMENTS      3
+ *
+ * static connector_callback_status_t app_get_sm_sms_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
+ * {
+ *     config_max_rx_segments->max_rx_segments = APP_MAX_SM_SMS_RX_SEGMENTS;
+ * 
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section sm_udp_rx_timeout Short Messaging over UDP incoming sessions' timeout
+ *
+ * Set the how many seconds to wait before dropping incomplete incoming sessions. It can be set to SM_WAIT_FOREVER for 
+ * infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_get_sm_udp_rx_timeout() in config.c.
+ *
+ * @note If @ref CONNECTOR_SM_UDP_RX_TIMEOUT configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_sm_udp_rx_timeout()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_sm_udp_rx_timeout @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_config_sm_rx_timeout_t @htmlonly:
+ *          <dl>
+ *              <dt><i>rx_timeout</i></dt>
+ *              <dd> - Callback returns the timeout for incoming SM over UDP sessions.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned requested data</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set data and aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define APP_MAX_SM_UDP_RX_TIMEOUT      30
+ *
+ * static connector_callback_status_t app_get_sm_udp_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
+ * {
+ *     config_max_rx_segments->rx_timeout = APP_MAX_SM_UDP_RX_TIMEOUT;
+ * 
+ *     return connector_callback_continue;
+ * }
+ *
+ * @endcode
+ *
+ * @section sm_udp_rx_timeout Short Messaging over SMS incoming sessions' timeout
+ *
+ * Set the how many seconds to wait before dropping incomplete incoming sessions. It can be set to SM_WAIT_FOREVER for 
+ * infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function @ref app_get_sm_sms_rx_timeout() in config.c.
+ *
+ * @note If @ref CONNECTOR_SM_SMS_RX_TIMEOUT configuration is defined in @ref connector_config.h, this callback
+ * will not be called. See @ref connector_config_data_options
+ *
+ * @see app_get_sm_sms_rx_timeout()
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_config_sm_sms_rx_timeout @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>data</th>
+ * <td> Pointer to @endhtmlonly @ref connector_config_sm_rx_timeout_t @htmlonly:
+ *          <dl>
+ *              <dt><i>rx_timeout</i></dt>
+ *              <dd> - Callback returns the timeout for incoming SM over SMS sessions.</dd>
+ *          </dl>
+ * </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ * <td>Callback successfully returned requested data</td>
+ * </tr>
+ * <tr>
+ * <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ * <td>Callback was unable to set data and aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * #define APP_MAX_SM_SMS_RX_TIMEOUT      (3 * 60)
+ *
+ * static connector_callback_status_t app_get_sm_sms_rx_timeout(connector_config_sm_rx_timeout_t * const config_rx_timeout)
+ * {
+ *     config_max_rx_segments->rx_timeout = APP_MAX_SM_SMS_RX_TIMEOUT;
+ * 
  *     return connector_callback_continue;
  * }
  *

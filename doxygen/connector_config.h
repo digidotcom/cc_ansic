@@ -348,19 +348,8 @@
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
-* the define below to set the maximum short message session at a time. If not set, Cloud Connector will 
-* use the default of 2.
-*
-* @see @ref shortmessaging
-* @see @ref CONNECTOR_TRANSPORT_UDP
-* @see @ref CONNECTOR_TRANSPORT_SMS
-*/
-#define CONNECTOR_SM_MAX_SESSIONS                  4
-
-/**
-* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
 * the define below to enable multipart message functionality. If not set, Cloud Connector will only allow 
-* transmission and reception of single part messages.
+* transmission and reception of single segment messages.
 * @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 * @see @ref CONNECTOR_TRANSPORT_SMS
@@ -368,18 +357,50 @@
 #define CONNECTOR_SM_MULTIPART
 
 /**
-* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
-* the define below to set the maximum Short Message segments used per session during message reception 
-* This define does not affect the number of segments for transmission which is unlimitted, except for
-* Data Points, see @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS. If not set, Cloud Connector will use the 
-* default value of 1. User needs to increase this value if they are planning to use SM to receive larger
-* data. @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the maximum Short Messaging over UDP sessions active at a time.
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_max_sessions configuration callback.
 *
+* @see @ref sm_udp_max_sessions
 * @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
+*/
+#define CONNECTOR_SM_UDP_MAX_SESSIONS                  4
+
+/**
+* If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the maximum Short Messaging over SMS sessions active at a time.
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_max_sessions configuration callback.
+*
+* @see @ref sm_sms_max_sessions
+* @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_SMS
 */
-#define CONNECTOR_SM_MAX_RX_SEGMENTS               4
+#define CONNECTOR_SM_SMS_MAX_SESSIONS                  4
+
+/**
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the maximum Short Message segments used per session during message reception 
+* This define does not affect the number of segments for transmission which is unlimitted, except for Data Points, see @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS. 
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_max_rx_segments configuration callback.
+* User needs to increase this value if SM over UDP is expected to receive larger data. 
+* @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
+*
+* @see @ref sm_udp_max_rx_segments
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+*/
+#define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS               4
+
+/**
+* If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the maximum Short Message segments used per session during message reception 
+* This define does not affect the number of segments for transmission which is unlimitted, except for Data Points, see @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS. 
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_max_rx_segments configuration callback.
+* User needs to increase this value if SM over UDP is expected to receive larger data. 
+* @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
+*
+* @see @ref sm_sms_max_rx_segments
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+*/
+#define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS               4
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined and your application
@@ -403,16 +424,28 @@
 #define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS      4
 
 /**
-* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined, Cloud Connector will use 
-* the define below to set the session timeout in seconds to this value. If not set, Cloud Connector will 
-* use the default of no timeout (0). Cloud Connector will wait for Device Cloud response (complete response) 
-* until this period. 
-*
+* If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming UDP sessions. 
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_max_sessions configuration callback.
+* It can be set to SM_WAIT_FOREVER for infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
+* 
+* @see @ref sm_udp_rx_timeout
 * @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 * @see @ref CONNECTOR_TRANSPORT_SMS
 */
-#define CONNECTOR_SM_TIMEOUT                    30
+#define CONNECTOR_SM_UDP_RX_TIMEOUT                    30
+
+/**
+* If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming SMS sessions.
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_max_sessions configuration callback.
+* It can be set to SM_WAIT_FOREVER for infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
+* 
+* @see @ref sm_sms_rx_timeout
+* @see @ref shortmessaging
+* @see @ref CONNECTOR_TRANSPORT_UDP
+* @see @ref CONNECTOR_TRANSPORT_SMS
+*/
+#define CONNECTOR_SM_SMS_RX_TIMEOUT                    (30 * 60)
 
 /**
  * When defined, the Cloud Connector compilation will expect the C99 stdint.h header file,
