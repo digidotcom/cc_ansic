@@ -15,7 +15,7 @@
  *
  * @section open Open
  *
- * This callback is called to start a transport to communicate with Device Cloud. For
+ * This callback is invoked to start a transport for communicating with Device Cloud. For
  * @ref connector_class_id_network_tcp transport it establishes a connection between Cloud Connector
  * and Device Cloud.
  *
