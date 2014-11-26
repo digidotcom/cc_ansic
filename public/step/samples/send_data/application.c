@@ -84,43 +84,47 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
 
 int application_step(connector_handle_t handle)
 {
-    static int sent_once = 0;
+    static int request_initiated = 0;
     static int app_wait = 0;
+    int ret = 0;
 
-    if (app_wait)
+    if (request_initiated == 0)
     {
-        static time_t last_time = 0;
-        time_t current_time = time(NULL);
-
-        if (current_time - last_time < 1)
-            return 0;
-
-        last_time = current_time;
-        app_wait--;
-    }
-
-    if (app_wait == 0 && sent_once == 0)
-    {
-        connector_status_t const status = app_send_put_request(handle);
-
-        switch (status)
+        if (app_wait > 0)
         {
-        case connector_init_error:
-        case connector_service_busy:
-            app_wait = 2;
-            break;
+            static time_t last_time = 0;
+            time_t current_time = time(NULL);
 
-        case connector_success:
-            sent_once = 1;
-            break;
+            if (current_time - last_time < 1)
+                goto done;
 
-        default:
-            APP_DEBUG("Send data failed [%d]\n", status);
-            sent_once = 1;
-            break;
+            last_time = current_time;
+            app_wait--;
+        }
+        else
+        {
+            connector_status_t const status = app_send_put_request(handle);
+
+            switch (status)
+            {
+            case connector_init_error:
+            case connector_service_busy:
+                app_wait = 2;
+                break;
+
+            case connector_success:
+                request_initiated = 1;
+                break;
+
+            default:
+                APP_DEBUG("Send data failed [%d]\n", status);
+                ret = -1;
+                break;
+            }
         }
     }
 
-    return 0;
+done:
+    return ret;
 }
 

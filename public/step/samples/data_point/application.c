@@ -140,6 +140,7 @@ int application_step(connector_handle_t handle)
     static size_t point_index = 0;
     static size_t busy_count = 0;
     static int app_wait = 0;
+    int ret = 0;
 
     if (data_point == NULL)
     {
@@ -151,19 +152,20 @@ int application_step(connector_handle_t handle)
         app_setup_stream(&data_point->stream[2], "incremental", "Counts", connector_data_point_type_integer, NULL);
     }
 
-    if (app_wait)
+    if (app_wait > 0)
     {
         static time_t last_time = 0;
         time_t current_time = time(NULL);
 
         if (current_time - last_time < 1)
-            return 0;
+        {
+            goto done;
+        }
 
         last_time = current_time;
         app_wait--;
     }
-
-    if (app_wait == 0)
+    else
     {
         if (point_index < APP_POINTS_PER_STREAM)
         {
@@ -186,7 +188,10 @@ int application_step(connector_handle_t handle)
                 case connector_service_busy:
                 case connector_unavailable:
                 {
-                    if (++busy_count > APP_POINTS_PER_STREAM) goto error;
+                    if (++busy_count > APP_POINTS_PER_STREAM)
+                    {
+                        goto error;
+                    }
                     APP_DEBUG("Wait 5 seconds\n");
                     app_wait = 5;
                     break;
@@ -198,16 +203,18 @@ int application_step(connector_handle_t handle)
                     break;
 
                 default:
-                    APP_DEBUG("Failed to send data point multiple. status: %d\n", status);
+                    APP_DEBUG("Failed to send data point multiple. status: %d\n", status);                   
                     goto error;
             }
         }
     }
 
-    return 0;
+    goto done;
 
 error:
     app_free_data(data_point, APP_NUM_STREAMS);
+    ret = -1;
 
-    return -1;
+done:
+    return ret;
 }
