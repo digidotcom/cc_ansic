@@ -140,6 +140,7 @@ int application_step(connector_handle_t handle)
     static size_t point_index = 0;
     static size_t busy_count = 0;
     static int app_wait = 0;
+    int ret = 0;
 
     if (data_point == NULL)
     {
@@ -149,35 +150,32 @@ int application_step(connector_handle_t handle)
         app_setup_stream(&data_point->stream[0], "cpu_usage", "%", connector_data_point_type_integer, NULL);
         app_setup_stream(&data_point->stream[1], "cpu_temperature", "Celsius degree", connector_data_point_type_float, NULL);
         app_setup_stream(&data_point->stream[2], "incremental", "Counts", connector_data_point_type_integer, NULL);
-
     }
 
-    for(;;)
+    if (app_wait > 0)
     {
-        if (app_wait)
+        static time_t last_time = 0;
+        time_t current_time = time(NULL);
+
+        if (current_time - last_time < 1)
         {
-            static time_t last_time = 0;
-            time_t current_time = time(NULL);
-
-            if (current_time - last_time < 1)
-                return 0;
-
-            last_time = current_time;
-            app_wait--;
+            goto done;
         }
 
+        last_time = current_time;
+        app_wait--;
+    }
+    else
+    {
         if (point_index < APP_POINTS_PER_STREAM)
         {
             size_t stream_index;
 
-            /* Collect a sample for each stream */
-            if (app_wait == 0)
-            {
-                for(stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
-                    app_update_point(data_point, stream_index, point_index);
-                point_index++;
-                app_wait = 2;
-            }
+            /* Collect a sample for each stream */            
+            for(stream_index = 0; stream_index < APP_NUM_STREAMS; stream_index++)
+                app_update_point(data_point, stream_index, point_index);
+            point_index++;
+            app_wait = 2;
         }
         else
         {
@@ -190,7 +188,10 @@ int application_step(connector_handle_t handle)
                 case connector_service_busy:
                 case connector_unavailable:
                 {
-                    if (++busy_count > APP_POINTS_PER_STREAM) goto done;
+                    if (++busy_count > APP_POINTS_PER_STREAM)
+                    {
+                        goto error;
+                    }
                     APP_DEBUG("Wait 5 seconds\n");
                     app_wait = 5;
                     break;
@@ -202,14 +203,18 @@ int application_step(connector_handle_t handle)
                     break;
 
                 default:
-                    APP_DEBUG("Failed to send data point multiple. status: %d\n", status);
-                    goto done;
+                    APP_DEBUG("Failed to send data point multiple. status: %d\n", status);                   
+                    goto error;
             }
         }
     }
 
-done:
-    app_free_data(data_point, APP_NUM_STREAMS);
+    goto done;
 
-    return 0;
+error:
+    app_free_data(data_point, APP_NUM_STREAMS);
+    ret = -1;
+
+done:
+    return ret;
 }

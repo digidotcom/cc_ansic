@@ -44,22 +44,11 @@ connector_status_t app_send_put_request(connector_handle_t handle)
     header.user_context = app_data; /* will be returned in all subsequent callbacks */
 
     status = connector_initiate_action(handle, connector_initiate_send_data, &header);
-    if (status == connector_init_error)
-    {
-        static int print_once = 1;
-
-        if (print_once)
-            print_once = 0;
-        else
-            goto error;
-    }
 
     APP_DEBUG("Status: %d, file: %s\n", status, file_path);
-    if (status == connector_success)
-        goto done;
 
-error:
-    free(app_data);
+    if (status != connector_success)
+        free(app_data);
 
 done:
     return status;
@@ -102,10 +91,10 @@ connector_callback_status_t app_data_service_handler(connector_request_id_data_s
 
         case connector_request_id_data_service_send_status:
         {
-            connector_data_service_status_t * const error_ptr = cb_data;
-            client_data_t * const app_data = error_ptr->user_context;
+            connector_data_service_status_t * const status_ptr = cb_data;
+            client_data_t * const app_data = status_ptr->user_context;
 
-            APP_DEBUG("Data service error: %d\n", error_ptr->status);
+            APP_DEBUG("Data service status: %d\n", status_ptr->status);
 
             free(app_data);
             break;
