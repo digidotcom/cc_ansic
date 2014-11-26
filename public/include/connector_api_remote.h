@@ -23,9 +23,9 @@
  * rci query setting command source attribute value.
  */
 typedef enum {
-  rci_query_command_attribute_source_current, /**< Current settings */
-  rci_query_command_attribute_source_stored,  /**< Settings stored in flash */
-  rci_query_command_attribute_source_defaults /**< Device defaults */
+  rci_query_command_attribute_source_current, /**< The current running settings. */
+  rci_query_command_attribute_source_stored,  /**< The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted. */
+  rci_query_command_attribute_source_defaults /**< The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued. */
 } rci_query_command_attribute_source_t;
 /**
 * @}
@@ -39,10 +39,10 @@ typedef enum {
  * rci query setting command compare_to attribute value.
  */
 typedef enum {
-  rci_query_command_attribute_compare_to_current,  /**< Current settings */
-  rci_query_command_attribute_compare_to_stored,   /**< Settings stored in flash */
-  rci_query_command_attribute_compare_to_defaults, /**< Device defaults */
-  rci_query_command_attribute_compare_to_none      /**< Return all settings */
+  rci_query_command_attribute_compare_to_none,      /**< No difference requested. Return all values as specified in source. */
+  rci_query_command_attribute_compare_to_current,  /**< The current running settings. */
+  rci_query_command_attribute_compare_to_stored,   /**< The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted. */
+  rci_query_command_attribute_compare_to_defaults  /**< The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued. */
 } rci_query_command_attribute_compare_to_t;
 /**
 * @}
