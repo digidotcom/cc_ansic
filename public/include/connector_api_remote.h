@@ -15,18 +15,38 @@
 
 #if (defined CONNECTOR_RCI_SERVICE)
 
+/**
+ * @defgroup rci_query_command_attribute_source_t rci query setting command source attribute value
+ * @{
+ */
+/**
+ * rci query setting command source attribute value.
+ */
 typedef enum {
-  rci_query_command_attribute_source_current,
-  rci_query_command_attribute_source_stored,
-  rci_query_command_attribute_source_defaults
+  rci_query_command_attribute_source_current, /**< The current running settings. */
+  rci_query_command_attribute_source_stored,  /**< The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted. */
+  rci_query_command_attribute_source_defaults /**< The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued. */
 } rci_query_command_attribute_source_t;
+/**
+* @}
+*/
 
+/**
+ * @defgroup rci_query_command_attribute_compare_to_t rci query setting command compare_to attribute value
+ * @{
+ */
+/**
+ * rci query setting command compare_to attribute value.
+ */
 typedef enum {
-  rci_query_command_attribute_compare_to_current,
-  rci_query_command_attribute_compare_to_stored,
-  rci_query_command_attribute_compare_to_defaults,
-  rci_query_command_attribute_compare_to_none
+  rci_query_command_attribute_compare_to_none,      /**< No difference requested. Return all values as specified in source. */
+  rci_query_command_attribute_compare_to_current,  /**< The current running settings. */
+  rci_query_command_attribute_compare_to_stored,   /**< The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted. */
+  rci_query_command_attribute_compare_to_defaults  /**< The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued. */
 } rci_query_command_attribute_compare_to_t;
+/**
+* @}
+*/
 
 /**
  * @defgroup connector_remote_group_type_t Cloud Connector remote configuration types
@@ -39,7 +59,6 @@ typedef enum {
     connector_remote_group_setting, /**< Setting configuration */
     connector_remote_group_state    /**< State configuration */
 } connector_remote_group_type_t;
-
 /**
 * @}
 */
