@@ -249,7 +249,7 @@ public class ConfigGenerator {
                             DASH + RCI_LEGACY_COMMANDS_OPTION));
             log(String
                     .format(
-                            "\t%-16s \t= optional max value for commands attribute len, default is %d",
+                            "\t%-16s \t= optional max length for commands attributes type string, default is %d",
                             DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
             log(String
                     .format(

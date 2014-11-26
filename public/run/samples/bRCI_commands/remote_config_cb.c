@@ -117,6 +117,9 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
             APP_DEBUG("compare_to=");
             switch (remote_config->attribute.compare_to)
             {
+                case rci_query_command_attribute_compare_to_none:
+                    APP_DEBUG("'rci_query_command_attribute_compare_to_none'\n");
+                    break;
                 case rci_query_command_attribute_compare_to_current:
                     APP_DEBUG("'rci_query_command_attribute_compare_to_current'\n");
                     break;
@@ -125,9 +128,6 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
                     break;
                 case rci_query_command_attribute_compare_to_defaults:
                     APP_DEBUG("'rci_query_command_attribute_compare_to_defaults'\n");
-                    break;
-                case rci_query_command_attribute_compare_to_none:
-                    APP_DEBUG("'rci_query_command_attribute_compare_to_none'\n");
                     break;
             }
             break;
