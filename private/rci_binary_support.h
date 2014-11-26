@@ -132,9 +132,9 @@ typedef enum {
 
 typedef enum
 {
-    attribute_type_enum,
+    attribute_type_enum
 #if (defined RCI_LEGACY_COMMANDS)
-    attribute_type_string,
+    ,attribute_type_string
 #endif
 } rci_command_attribute_type_t;
 
