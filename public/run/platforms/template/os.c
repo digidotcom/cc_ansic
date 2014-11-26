@@ -73,6 +73,40 @@ connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
 }
 
 /**
+ * @brief   Reallocate memory block
+ *
+ * Used to increase the size of a memory block previously allocated with @ref app_os_malloc(), if you are not using realloc()
+ * from the C library replace the realloc() call to an equivalent call on your system.
+ *
+ * @param [in,out] realloc_data  Structure containing the old pointer, old size, and new size.
+ *                               See @ref connector_os_realloc_t "connector_os_realloc_t" for more information.
+ *
+ * @retval connector_callback_continue  Memory was reallocated.
+ *  
+ * @retval connector_callback_abort     Memory was not allocated and abort Cloud Connector.
+ *
+ * @see os_malloc
+ * @see os_free
+ * @see @ref realloc API Operating System Callback
+ */
+connector_callback_status_t app_os_realloc(connector_os_realloc_t * const realloc_data)
+{
+    connector_callback_status_t status = connector_callback_continue;
+    void * const reallocated = realloc(realloc_data->ptr, realloc_data->new_size);
+
+    if (reallocated == NULL)
+    {
+        APP_DEBUG("app_os_realloc: could not reallocate memory\n");
+        status = connector_callback_abort;
+        goto done;
+    }
+    realloc_data->ptr = reallocated;
+
+done:
+    return status;
+}
+
+/**
  * @brief   Free Dynamically allocate memory.
  *
  * Free dynamically allocate memory, if you are not using
@@ -179,6 +213,13 @@ connector_callback_status_t app_os_handler(connector_request_id_os_t const reque
         {
             connector_os_malloc_t * p = data;
             status = app_os_malloc(p->size, &p->ptr);
+        }
+        break;
+
+    case connector_request_id_os_realloc:
+        {
+            connector_os_realloc_t * const p = data;
+            status = app_os_realloc(p);
         }
         break;
 

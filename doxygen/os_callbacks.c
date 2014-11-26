@@ -20,9 +20,9 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_os_malloc() in os.c.
  *
- * @see app_os_malloc()
+ * @see app_os_realloc()
  * @see app_os_free()
- * @see @ref connector_request_id_os_free
+ * @see @ref connector_request_id_os_malloc
  *
  * @htmlonly
  * <table class="apitable">
@@ -91,6 +91,84 @@
  * @endcode
  * <br />
  *
+ * @section realloc realloc
+ * Callback is used to dynamically re-allocate memory previously allocated by @ref connector_request_id_os_malloc.
+ *
+ * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
+ * and implemented in the @b Platform function app_os_realloc() in os.c.
+ *
+ * @see app_os_malloc()
+ * @see app_os_free()
+ * @see @ref connector_request_id_os_realloc
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ *   </tr>
+ *   <tr>
+ *     <th class="subtitle">Name</th>
+ *     <th class="subtitle">Description</th>
+ *   </tr>
+ *   <tr>
+ *     <th>class_id</th>
+ *     <td>@endhtmlonly @ref connector_class_id_operating_system @htmlonly</td>
+ *   </tr>
+ *   <tr>
+ *     <th>request_id</th>
+ *     <td>@endhtmlonly @ref connector_request_id_os_realloc @htmlonly</td>
+ *   </tr>
+ *   <tr>
+ *     <th>data</th>
+ *     <td>Pointer to @endhtmlonly @ref connector_os_realloc_t "connector_os_realloc_t" @htmlonly structure
+ *          <ul>
+ *          <li><b><i>old_size</i></b> - [IN] Number of bytes <b>currently</b> allocated at <i>ptr</i></li>
+ *          <li><b><i>new_size</i></b> - [IN] Number of bytes <b>to be</b> allocated at <i>ptr</i></li>
+ *          <li><b><i>ptr</i></b> - [IN/OUT] Pointer to the beginning of the allocated memory block</li>
+ *          </ul>
+ *      </td>
+ *   </tr>
+ *   <tr>
+ *     <th colspan="2" class="title">Return Values</th>
+ *   </tr>
+ *   <tr>
+ *     <th class="subtitle">Values</th>
+ *     <th class="subtitle">Description</th>
+ *   </tr>
+ *   <tr>
+ *     <td>@endhtmlonly @ref connector_callback_continue @htmlonly</td>
+ *     <td>Callback successfully reallocated memory</td>
+ *   </tr>
+ *   <tr>
+ *     <td>@endhtmlonly @ref connector_callback_abort @htmlonly</td>
+ *     <td>Callback aborts Cloud Connector</td>
+ *   </tr>
+ * </table>
+ * @endhtmlonly
+ * <br />
+ *
+ * Example:
+ *
+ * @code
+ *
+ * connector_callback_status_t app_os_realloc(connector_os_realloc_t * const realloc_data)
+ * {
+ *    connector_callback_status_t status = connector_callback_continue;
+ *    void * const reallocated = realloc(realloc_data->ptr, realloc_data->new_size);
+ *
+ *    if (reallocated == NULL)
+ *    {
+ *        APP_DEBUG("app_os_realloc: could not reallocate memory\n");
+ *        status = connector_callback_abort;
+ *        goto done;
+ *     }
+ *     realloc_data->ptr = reallocated;
+ *
+ * done:
+ *     return status;
+ * }
+ * @endcode
+ * <br />
  * @section free free
  *
  * Callback is called to free previously allocated memory.
@@ -98,9 +176,9 @@
  * This callback is trapped in application.c, in the @b Sample section of @ref AppStructure "Public Application Framework"
  * and implemented in the @b Platform function app_os_free() in os.c.
  *
- * @see app_os_free()
  * @see app_os_malloc()
- * @see @ref connector_request_id_os_malloc
+ * @see app_os_realloc()
+ * @see @ref connector_request_id_os_free
  *
  * @htmlonly
  * <table class="apitable">
