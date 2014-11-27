@@ -604,13 +604,7 @@ public class ConfigGenerator {
 
             if(rci_legacy){
                 debug_log("rci legacy commands enable");
-                configData.addRCIGroupError("reboot_failed", "Reboot failed");
-
                 configData.addRCIGroupError("invalid_arguments", "Invalid arguments");
-                configData.addRCIGroupError("do_command_failed", "Do Command failed");
-
-                configData.addRCIGroupError("set_factory_default_failed", "Set Factory Default failed");
-
             }
 
             if(rci_dc_attribute_max_len != 0)

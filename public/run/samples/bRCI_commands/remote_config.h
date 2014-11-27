@@ -140,10 +140,7 @@ typedef enum {
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,
- connector_rci_error_reboot_failed,
  connector_rci_error_invalid_arguments,
- connector_rci_error_do_command_failed,
- connector_rci_error_set_factory_default_failed,
  connector_rci_error_COUNT
 } connector_rci_error_id_t;
 
@@ -153,6 +150,9 @@ typedef enum {
  connector_global_error_load_fail =  connector_global_error_OFFSET,
  connector_global_error_save_fail,
  connector_global_error_memory_fail,
+ connector_global_error_reboot_fail,
+ connector_global_error_do_command_fail,
+ connector_global_error_set_factory_default_fail,
  connector_global_error_COUNT
 } connector_global_error_id_t;
 
@@ -166,13 +166,13 @@ typedef enum {
 typedef enum {
  connector_setting_system_error_bad_command = 1, /* Protocol defined */
  connector_setting_system_error_bad_descriptor,
- connector_setting_system_error_reboot_failed,
  connector_setting_system_error_invalid_arguments,
- connector_setting_system_error_do_command_failed,
- connector_setting_system_error_set_factory_default_failed,
  connector_setting_system_error_load_fail, /* User defined (global errors) */
  connector_setting_system_error_save_fail,
  connector_setting_system_error_memory_fail,
+ connector_setting_system_error_reboot_fail,
+ connector_setting_system_error_do_command_fail,
+ connector_setting_system_error_set_factory_default_fail,
  connector_setting_system_error_invalid_length,  /* User defined (group errors)*/
  connector_setting_system_error_COUNT
 } connector_setting_system_error_id_t;

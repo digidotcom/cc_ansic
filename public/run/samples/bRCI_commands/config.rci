@@ -2,6 +2,10 @@ globalerror load_fail "Load fail"
 globalerror save_fail "Save fail"
 globalerror memory_fail "Insufficient memory"
 
+globalerror reboot_fail "Reboot fail"
+globalerror do_command_fail "Do Command fail"
+globalerror set_factory_default_fail "Set Factory Default fail"
+
 # Device info that shows up in Device Cloud device summary
 # Device Cloud queries this system setting to display the information in root folder
 group setting system 2 "System"

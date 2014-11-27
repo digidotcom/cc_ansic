@@ -232,6 +232,9 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
     case connector_request_id_remote_config_configurations:
         status = app_process_remote_configuration(data);
         break;
+    default:
+        APP_DEBUG("app_remote_config_handler: unknown request id %d\n", request_id);
+        break;
     }
 
     return status;

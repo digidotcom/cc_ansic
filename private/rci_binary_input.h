@@ -386,15 +386,6 @@ STATIC connector_bool_t has_rci_no_value(unsigned int data)
     return connector_bool(data == BINARY_RCI_NO_VALUE);
 }
 
-#if (defined RCI_LEGACY_COMMANDS)
-STATIC void rci_invalid_arguments_error(rci_t * const rci)
-{
-    rci_global_error(rci, connector_rci_error_invalid_arguments, RCI_NO_HINT);
-    set_rci_command_error(rci);
-    state_call(rci, rci_parser_state_error);
-}
-#endif
-
 STATIC void process_rci_command(rci_t * const rci)
 {
 #define BINARY_RCI_COMMAND_MASK   0x3F
@@ -451,7 +442,9 @@ STATIC void process_rci_command(rci_t * const rci)
             {
                 if (!has_attribute)
                 {
-                    rci_invalid_arguments_error(rci);
+                    rci_global_error(rci, connector_rci_error_invalid_arguments, RCI_NO_HINT);
+                    set_rci_command_error(rci);
+                    state_call(rci, rci_parser_state_error);
                     goto done;
                 }
                 rci->shared.callback_data.action = connector_remote_action_do_command;

@@ -292,7 +292,7 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     }
     else if (!strcmp(target, "error"))
     {
-        remote_config->error_id = connector_rci_error_do_command_failed;
+        remote_config->error_id = connector_global_error_do_command_fail;
         remote_config->response.error_hint = "do command intentional failure";
     }
     else if (!strcmp(target, "busy"))
@@ -347,7 +347,7 @@ connector_callback_status_t app_process_set_factory_default(connector_remote_con
 
     if (my_set_factory_default_went_wrong())
     {
-        remote_config->error_id = connector_rci_error_set_factory_default_failed;
+        remote_config->error_id = connector_global_error_set_factory_default_fail;
         remote_config->response.error_hint = "can't do that";
     }
 
@@ -367,7 +367,7 @@ connector_callback_status_t app_process_reboot(connector_remote_config_t * const
 
     if (do_not_want_to_reboot())
     {
-        remote_config->error_id = connector_rci_error_reboot_failed;
+        remote_config->error_id = connector_global_error_reboot_fail;
         remote_config->response.error_hint = "don't want to reboot";
     }
 
