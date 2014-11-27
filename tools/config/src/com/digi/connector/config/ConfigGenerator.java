@@ -604,7 +604,6 @@ public class ConfigGenerator {
 
             if(rci_legacy){
                 debug_log("rci legacy commands enable");
-                configData.addRCIGroupError("invalid_arguments", "Invalid arguments");
             }
 
             if(rci_dc_attribute_max_len != 0)

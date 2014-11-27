@@ -439,17 +439,8 @@ STATIC void process_rci_command(rci_t * const rci)
                 break;
 #if (defined RCI_LEGACY_COMMANDS)
             case rci_command_do_command:
-            {
-                if (!has_attribute)
-                {
-                    rci_global_error(rci, connector_rci_error_invalid_arguments, RCI_NO_HINT);
-                    set_rci_command_error(rci);
-                    state_call(rci, rci_parser_state_error);
-                    goto done;
-                }
                 rci->shared.callback_data.action = connector_remote_action_do_command;
                 break;
-            }
             case rci_command_reboot:
                 rci->shared.callback_data.action = connector_remote_action_reboot;
                 break;
@@ -474,12 +465,20 @@ STATIC void process_rci_command(rci_t * const rci)
         }
         else
         {
-            set_rci_input_state(rci, rci_input_state_group_id);
+#if (defined RCI_LEGACY_COMMANDS)
+            if (rci->command.command_id == rci_command_do_command)
+            {
+                set_rci_input_state(rci, rci_input_state_do_command_payload);
+            }
+			else
+#endif
+            {
+                set_rci_input_state(rci, rci_input_state_group_id);
 
-            set_rci_traverse_state(rci, rci_traverse_state_command_id);
-            state_call(rci, rci_parser_state_traverse);
+                set_rci_traverse_state(rci, rci_traverse_state_command_id);
+                state_call(rci, rci_parser_state_traverse);
+            }
         }
-
     }
 done:
     return;

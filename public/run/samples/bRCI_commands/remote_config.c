@@ -20,19 +20,17 @@
 
 #define CONNECTOR_RCI_ERROR_BAD_COMMAND (connector_remote_all_strings+0)
 #define CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR (connector_remote_all_strings+12)
-#define CONNECTOR_RCI_ERROR_INVALID_ARGUMENTS (connector_remote_all_strings+30)
-#define SETTING_SYSTEM_ERROR_INVALID_LENGTH (connector_remote_all_strings+48)
-#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+63)
-#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+73)
-#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+83)
-#define CONNECTOR_GLOBAL_ERROR_REBOOT_FAIL (connector_remote_all_strings+103)
-#define CONNECTOR_GLOBAL_ERROR_DO_COMMAND_FAIL (connector_remote_all_strings+115)
-#define CONNECTOR_GLOBAL_ERROR_SET_FACTORY_DEFAULT_FAIL (connector_remote_all_strings+131)
+#define SETTING_SYSTEM_ERROR_INVALID_LENGTH (connector_remote_all_strings+30)
+#define CONNECTOR_GLOBAL_ERROR_LOAD_FAIL (connector_remote_all_strings+45)
+#define CONNECTOR_GLOBAL_ERROR_SAVE_FAIL (connector_remote_all_strings+55)
+#define CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL (connector_remote_all_strings+65)
+#define CONNECTOR_GLOBAL_ERROR_REBOOT_FAIL (connector_remote_all_strings+85)
+#define CONNECTOR_GLOBAL_ERROR_DO_COMMAND_FAIL (connector_remote_all_strings+97)
+#define CONNECTOR_GLOBAL_ERROR_SET_FACTORY_DEFAULT_FAIL (connector_remote_all_strings+113)
 
 char CONST connector_remote_all_strings[] = {
  11,'B','a','d',' ','c','o','m','m','a','n','d',
  17,'B','a','d',' ','c','o','n','f','i','g','u','r','a','t','i','o','n',
- 17,'I','n','v','a','l','i','d',' ','a','r','g','u','m','e','n','t','s',
  14,'I','n','v','a','l','i','d',' ','L','e','n','g','t','h',
  9,'L','o','a','d',' ','f','a','i','l',
  9,'S','a','v','e',' ','f','a','i','l',
@@ -45,7 +43,6 @@ char CONST connector_remote_all_strings[] = {
 static char const * const connector_rci_errors[] = {
  CONNECTOR_RCI_ERROR_BAD_COMMAND, /*bad_command*/
  CONNECTOR_RCI_ERROR_BAD_DESCRIPTOR, /*bad_descriptor*/
- CONNECTOR_RCI_ERROR_INVALID_ARGUMENTS, /*invalid_arguments*/
  CONNECTOR_GLOBAL_ERROR_LOAD_FAIL, /*load_fail*/
  CONNECTOR_GLOBAL_ERROR_SAVE_FAIL, /*save_fail*/
  CONNECTOR_GLOBAL_ERROR_MEMORY_FAIL, /*memory_fail*/

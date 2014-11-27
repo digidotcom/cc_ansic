@@ -140,7 +140,6 @@ typedef enum {
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,
- connector_rci_error_invalid_arguments,
  connector_rci_error_COUNT
 } connector_rci_error_id_t;
 
@@ -166,7 +165,6 @@ typedef enum {
 typedef enum {
  connector_setting_system_error_bad_command = 1, /* Protocol defined */
  connector_setting_system_error_bad_descriptor,
- connector_setting_system_error_invalid_arguments,
  connector_setting_system_error_load_fail, /* User defined (global errors) */
  connector_setting_system_error_save_fail,
  connector_setting_system_error_memory_fail,

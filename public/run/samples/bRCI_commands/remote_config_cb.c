@@ -270,9 +270,26 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
     char const * const request_payload = remote_config->element.value->string_value;
     char const * * response_payload = &remote_config->response.element_value->string_value;
 
-    APP_DEBUG("app_process_do_command for target '%s':\n", target);
-    APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
-    APP_DEBUG("request_payload='%s'\n", request_payload);
+    if (target != NULL)
+    {
+        APP_DEBUG("app_process_do_command for target '%s':\n", target);
+    }
+    else
+    {
+        APP_DEBUG("app_process_do_command with no target\n");
+        *response_payload = "no target";
+        goto done;
+    }
+
+    if (request_payload != NULL)
+    {
+        APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
+        APP_DEBUG("request_payload='%s'\n", request_payload);
+    }
+    else
+    {
+        APP_DEBUG("no payload!\n");
+    }
 
     if (!strcmp(target, "echo"))
     {
@@ -331,6 +348,7 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
         *response_payload = "not supported command";
     }
 
+done:
     return status;
 }
 
