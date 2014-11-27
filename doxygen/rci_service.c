@@ -168,16 +168,16 @@
  *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *         <dd><dl>
  *             <dt><i>compare_to</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -232,30 +232,30 @@
  *         APP_DEBUG("source=");
  *         switch (remote_config->attribute.source)
  *         {
- *             case rci_query_command_attribute_source_current:
- *                 APP_DEBUG("'rci_query_command_attribute_source_current'\n");
+ *             case rci_query_setting_attribute_source_current:
+ *                 APP_DEBUG("'rci_query_setting_attribute_source_current'\n");
  *                 break;
- *             case rci_query_command_attribute_source_stored:
- *                 APP_DEBUG("'rci_query_command_attribute_source_stored'\n");
+ *             case rci_query_setting_attribute_source_stored:
+ *                 APP_DEBUG("'rci_query_setting_attribute_source_stored'\n");
  *                 break;
- *             case rci_query_command_attribute_source_defaults:
- *                 APP_DEBUG("'rci_query_command_attribute_source_defaults'\n");
+ *             case rci_query_setting_attribute_source_defaults:
+ *                 APP_DEBUG("'rci_query_setting_attribute_source_defaults'\n");
  *                 break;
  *         }
  *         APP_DEBUG("compare_to=");
  *         switch (remote_config->attribute.compare_to)
  *         {
- *             case rci_query_command_attribute_compare_to_none:
- *                 APP_DEBUG("'rci_query_command_attribute_compare_to_none'\n");
+ *             case rci_query_setting_attribute_compare_to_none:
+ *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_none'\n");
  *                 break;
- *             case rci_query_command_attribute_compare_to_current:
- *                 APP_DEBUG("'rci_query_command_attribute_compare_to_current'\n");
+ *             case rci_query_setting_attribute_compare_to_current:
+ *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_current'\n");
  *                 break;
- *             case rci_query_command_attribute_compare_to_stored:
- *                 APP_DEBUG("'rci_query_command_attribute_compare_to_stored'\n");
+ *             case rci_query_setting_attribute_compare_to_stored:
+ *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_stored'\n");
  *                 break;
- *             case rci_query_command_attribute_compare_to_defaults:
- *                 APP_DEBUG("'rci_query_command_attribute_compare_to_defaults'\n");
+ *             case rci_query_setting_attribute_compare_to_defaults:
+ *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_defaults'\n");
  *                 break;
  *         }
  *     }
@@ -297,16 +297,16 @@
  *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *         <dd><dl>
  *             <dt><i>compare_to</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -571,16 +571,16 @@
  *         <dd>- only applicable when group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *         <dd><dl>
  *             <dt><i>compare_to</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -746,16 +746,16 @@
  *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *         <dd><dl>
  *             <dt><i>compare_to</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -855,16 +855,16 @@
  *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_source_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_source_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *         <dd><dl>
  *             <dt><i>compare_to</i></dt>
- *             <dd> <ul><li>@endhtmlonly @ref rci_query_command_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_current @htmlonly: The current running settings.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
- *                      <li>@endhtmlonly @ref rci_query_command_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_none @htmlonly: No difference requested. Return all values as specified in source.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
+ *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>

@@ -69,10 +69,10 @@ public abstract class FileGenerator {
 
     /* Following enum has to be in syncr. with sendDescriptors() function */
     protected final static String RCI_QUERY_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
-    "  rci_query_command_attribute_id_source,\n" +      /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
-    "  rci_query_command_attribute_id_compare_to,\n" +  /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
-    "  rci_query_command_attribute_id_count\n" +
-    "} rci_query_command_attribute_id_t;\n";
+    "  rci_query_setting_attribute_id_source,\n" +      /* 'source' attribute is bin_id=0 in the uploaded descriptor for query command */
+    "  rci_query_setting_attribute_id_compare_to,\n" +  /* 'compare_to' attribute is bin_id=1 in the uploaded descriptor for query command */
+    "  rci_query_setting_attribute_id_count\n" +
+    "} rci_query_setting_attribute_id_t;\n";
 
     /* Following enum has to be in syncr. with sendDescriptors() function */
     protected final static String RCI_DO_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
@@ -565,8 +565,8 @@ public abstract class FileGenerator {
             "} connector_remote_element_t;\n",const_name));
 
         fileWriter.write("\ntypedef struct {\n" +
-                         "  rci_query_command_attribute_source_t source;\n" +
-                         "  rci_query_command_attribute_compare_to_t compare_to;\n");
+                         "  rci_query_setting_attribute_source_t source;\n" +
+                         "  rci_query_setting_attribute_compare_to_t compare_to;\n");
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write("  char const * target;\n");
         }

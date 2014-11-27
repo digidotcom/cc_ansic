@@ -522,7 +522,8 @@ STATIC void process_command_attribute(rci_t * const rci)
                 switch (rci->shared.callback_data.action)
                 {
                     case connector_remote_action_query:
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_command_attribute_id_count, done);
+                        ASSERT_GOTO(rci->shared.callback_data.group.type == connector_remote_group_setting, done);
+                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_setting_attribute_id_count, done);
                         break;
                     case connector_remote_action_set:
                         ASSERT_GOTO(0, done);
@@ -567,7 +568,6 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
     switch (rci->command.command_id)
     {
         case rci_command_query_setting:
-        case rci_command_query_state:
         {
             uint32_t attribute_value;
 
@@ -578,13 +578,13 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
             connector_debug_line("attribute_val=%d\n", attribute_value);
 #endif
 
-            switch (rci->command.attribute[rci->command.attributes_processed].id.query)
+            switch (rci->command.attribute[rci->command.attributes_processed].id.query_setting)
             {
-                case rci_query_command_attribute_id_source:
-                case rci_query_command_attribute_id_compare_to:
+                case rci_query_setting_attribute_id_source:
+                case rci_query_setting_attribute_id_compare_to:
                     rci->command.attribute[rci->command.attributes_processed].value.enum_val = attribute_value;
                     break;
-                case rci_query_command_attribute_id_count:
+                case rci_query_setting_attribute_id_count:
                     ASSERT_GOTO(0, done);
                     break;
             }
@@ -620,6 +620,7 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
             break;
         }
 #endif
+        case rci_command_query_state:
         case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:

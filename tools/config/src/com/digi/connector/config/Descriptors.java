@@ -221,21 +221,23 @@ public class Descriptors {
         String query_descriptors = String.format("<descriptor element=\"query_%s\" desc=\"Retrieve %s\" format=\"all_%ss_groups\"\n",
                                                   config_type, desc, config_type);
         
-        /* setup query command descriptor */
-        query_descriptors += String.format(" bin_id=\"%d\">\n", id)
-                           + "  <attr name=\"source\" type=\"enum\" desc=\"Source of settings returned\" bin_id=\"0\" default=\"current\" >"
-                           + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"0\" />"
-                           + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"1\" />"
-                           + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
-                           + "  </attr>"
+        /* setup query setting command descriptor */
+        query_descriptors += String.format(" bin_id=\"%d\">\n", id);
 
-                           + "  <attr name=\"compare_to\" type=\"enum\" desc=\"Return only differences from this source\" bin_id=\"1\" default=\"none\" >"
-                           + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"0\" />"
-                           + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"1\" />"
-                           + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
-                           + "      <value value=\"none\" desc=\"Return all settings\" bin_id=\"3\" />"
-                           + "  </attr>"
-                           + String.format("<format_define name=\"all_%ss_groups\">\n", config_type);
+        if (config_type.equalsIgnoreCase("setting"))
+            query_descriptors += "  <attr name=\"source\" type=\"enum\" desc=\"Source of settings returned\" bin_id=\"0\" default=\"current\" >"
+                               + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"0\" />"
+                               + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"1\" />"
+                               + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
+                               + "  </attr>"
+                               + "  <attr name=\"compare_to\" type=\"enum\" desc=\"Return only differences from this source\" bin_id=\"1\" default=\"none\" >"
+                               + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"0\" />"
+                               + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"1\" />"
+                               + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
+                               + "      <value value=\"none\" desc=\"Return all settings\" bin_id=\"3\" />"
+                               + "  </attr>";
+
+        query_descriptors += String.format("<format_define name=\"all_%ss_groups\">\n", config_type);
 
         /*
          * get all errors for query command descriptor. 1. common errors. 2.

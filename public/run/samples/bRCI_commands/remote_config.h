@@ -95,16 +95,16 @@ typedef struct {
 } connector_remote_element_t;
 
 typedef struct {
-  rci_query_command_attribute_source_t source;
-  rci_query_command_attribute_compare_to_t compare_to;
+  rci_query_setting_attribute_source_t source;
+  rci_query_setting_attribute_compare_to_t compare_to;
   char const * target;
 } connector_remote_attribute_t;
 
 typedef enum {
-  rci_query_command_attribute_id_source,
-  rci_query_command_attribute_id_compare_to,
-  rci_query_command_attribute_id_count
-} rci_query_command_attribute_id_t;
+  rci_query_setting_attribute_id_source,
+  rci_query_setting_attribute_id_compare_to,
+  rci_query_setting_attribute_id_count
+} rci_query_setting_attribute_id_t;
 
 typedef enum {
   rci_do_command_attribute_id_target,

@@ -389,6 +389,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
     {
         case rci_command_set_setting:
         case rci_command_set_state:
+        case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_reboot:
         case rci_command_set_factory_default:
@@ -397,7 +398,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
-        case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -483,10 +483,10 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
 
     switch (rci->command.command_id)
     {
+        case rci_command_query_state:
         case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
-
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_reboot:
         case rci_command_set_factory_default:
@@ -495,7 +495,6 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
-        case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -531,10 +530,10 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
 
     switch (rci->command.command_id)
     {
+        case rci_command_query_state:
         case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
-
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_reboot:
         case rci_command_set_factory_default:
@@ -543,7 +542,6 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
-        case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -574,6 +572,7 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
 
     switch (rci->command.command_id)
     {
+        case rci_command_query_state:
         case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
@@ -586,7 +585,6 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
-        case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -624,9 +622,10 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
     {
         switch (rci->command.command_id)
         {
-            case rci_command_query_descriptor:
+            case rci_command_query_state:
             case rci_command_set_setting:
             case rci_command_set_state:
+            case rci_command_query_descriptor:
 #if (defined RCI_LEGACY_COMMANDS)
             case rci_command_reboot:
             case rci_command_set_factory_default:
@@ -634,7 +633,6 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
                 ASSERT_GOTO(connector_false, done);
                 break;
             case rci_command_query_setting:
-            case rci_command_query_state:     
                 state_call(rci, rci_parser_state_traverse);
                 break;
 #if (defined RCI_LEGACY_COMMANDS)

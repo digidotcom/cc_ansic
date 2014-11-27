@@ -78,30 +78,30 @@ static connector_callback_status_t app_process_action_start(connector_remote_con
         APP_DEBUG("source=");
         switch (remote_config->attribute.source)
         {
-            case rci_query_command_attribute_source_current:
-                APP_DEBUG("'rci_query_command_attribute_source_current'\n");
+            case rci_query_setting_attribute_source_current:
+                APP_DEBUG("'rci_query_setting_attribute_source_current'\n");
                 break;
-            case rci_query_command_attribute_source_stored:
-                APP_DEBUG("'rci_query_command_attribute_source_stored'\n");
+            case rci_query_setting_attribute_source_stored:
+                APP_DEBUG("'rci_query_setting_attribute_source_stored'\n");
                 break;
-            case rci_query_command_attribute_source_defaults:
-                APP_DEBUG("'rci_query_command_attribute_source_defaults'\n");
+            case rci_query_setting_attribute_source_defaults:
+                APP_DEBUG("'rci_query_setting_attribute_source_defaults'\n");
                 break;
         }
         APP_DEBUG("compare_to=");
         switch (remote_config->attribute.compare_to)
         {
-            case rci_query_command_attribute_compare_to_none:
-                APP_DEBUG("'rci_query_command_attribute_compare_to_none'\n");
+            case rci_query_setting_attribute_compare_to_none:
+                APP_DEBUG("'rci_query_setting_attribute_compare_to_none'\n");
                 break;
-            case rci_query_command_attribute_compare_to_current:
-                APP_DEBUG("'rci_query_command_attribute_compare_to_current'\n");
+            case rci_query_setting_attribute_compare_to_current:
+                APP_DEBUG("'rci_query_setting_attribute_compare_to_current'\n");
                 break;
-            case rci_query_command_attribute_compare_to_stored:
-                APP_DEBUG("'rci_query_command_attribute_compare_to_stored'\n");
+            case rci_query_setting_attribute_compare_to_stored:
+                APP_DEBUG("'rci_query_setting_attribute_compare_to_stored'\n");
                 break;
-            case rci_query_command_attribute_compare_to_defaults:
-                APP_DEBUG("'rci_query_command_attribute_compare_to_defaults'\n");
+            case rci_query_setting_attribute_compare_to_defaults:
+                APP_DEBUG("'rci_query_setting_attribute_compare_to_defaults'\n");
                 break;
         }
     }

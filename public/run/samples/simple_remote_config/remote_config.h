@@ -92,10 +92,10 @@ typedef struct {
 } connector_remote_attribute_t;
 
 typedef enum {
-  rci_query_command_attribute_id_source,
-  rci_query_command_attribute_id_compare_to,
-  rci_query_command_attribute_id_count
-} rci_query_command_attribute_id_t;
+  rci_query_setting_attribute_id_source,
+  rci_query_setting_attribute_id_compare_to,
+  rci_query_setting_attribute_id_count
+} rci_query_setting_attribute_id_t;
 
 typedef struct {
   void * user_context;

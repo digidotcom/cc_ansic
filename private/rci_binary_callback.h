@@ -79,8 +79,8 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         break;
 
     case connector_request_id_remote_config_session_start:
-        rci->shared.callback_data.attribute.source = rci_query_command_attribute_source_current;
-        rci->shared.callback_data.attribute.compare_to = rci_query_command_attribute_compare_to_current;
+        rci->shared.callback_data.attribute.source = rci_query_setting_attribute_source_current;
+        rci->shared.callback_data.attribute.compare_to = rci_query_setting_attribute_compare_to_current;
 #if (defined RCI_LEGACY_COMMANDS)
         rci->shared.callback_data.attribute.target = NULL;
 #endif
@@ -91,20 +91,19 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         switch (rci->command.command_id)
         {
             case rci_command_query_setting:
-            case rci_command_query_state:
             {
                 unsigned int i;
                 for (i=0; i < rci->command.attribute_count; i++)
                 {
-                    switch (rci->command.attribute[i].id.query)
+                    switch (rci->command.attribute[i].id.query_setting)
                     {
-                        case rci_query_command_attribute_id_source:
+                        case rci_query_setting_attribute_id_source:
                             rci->shared.callback_data.attribute.source = rci->command.attribute[i].value.enum_val;
                             break;
-                        case rci_query_command_attribute_id_compare_to:
+                        case rci_query_setting_attribute_id_compare_to:
                             rci->shared.callback_data.attribute.compare_to = rci->command.attribute[i].value.enum_val;
                             break;
-                        case rci_query_command_attribute_id_count:
+                        case rci_query_setting_attribute_id_count:
                             ASSERT_GOTO(0, done);
                             break;
                     }
@@ -130,6 +129,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
                 break;
             }
 #endif
+            case rci_command_query_state:
             case rci_command_set_setting:
             case rci_command_set_state:
             case rci_command_query_descriptor:
