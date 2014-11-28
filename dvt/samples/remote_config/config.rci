@@ -55,8 +55,8 @@ group setting device_info  "Device info"
     error invalid_length "invalid length" 
 
 group setting attibute_feedback  "Attribute feedback"
-    element source "source" type string access  read_write  min  0 max  20 
-    element compare_to "compare_to" type string access  read_write  min  0 max  20 
+    element source "source" type uint32 min 0 max 2
+    element compare_to "compare_to" type uint32 min 0 max 3
    
 group state debug_info "Debug info on IC thread"
     element version "Version" type 0x_hex32 access  read_only 

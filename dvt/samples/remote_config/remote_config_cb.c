@@ -199,23 +199,18 @@ static connector_callback_status_t app_rci_group_get(connector_remote_config_t *
         switch (remote_config->element.id)
         {
             case connector_setting_attibute_feedback_source:
-                if (remote_config->attribute.source != NULL)
-                {
-                    remote_config->response.element_value->string_value = remote_config->attribute.source;
-                    return connector_callback_continue;
-                }
+                remote_config->response.element_value->unsigned_integer_value = remote_config->attribute.source;
                 break;
             case connector_setting_attibute_feedback_compare_to:
-                if (remote_config->attribute.compare_to != NULL)
-                {
-                    remote_config->response.element_value->string_value = remote_config->attribute.compare_to;
-                    return connector_callback_continue;
-                }
+                remote_config->response.element_value->unsigned_integer_value = remote_config->attribute.compare_to;
+                return connector_callback_continue;
                 break;
             default:
                 ASSERT(0);
                 break;
         }
+
+        return connector_callback_continue;
     }
 
     switch(remote_config->element.type){

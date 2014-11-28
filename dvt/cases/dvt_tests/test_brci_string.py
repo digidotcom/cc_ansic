@@ -106,7 +106,7 @@ class Test_brci_string(object):
         #               <device id="00000000-00000000-BD34D8FF-FFD8E610"/>
         #           </targets>
         #           <rci_request version="1.1">
-        #               <query_setting source="internal_defaults">
+        #               <query_setting source="defaults">
         #                   <device_info/>
         #               </query_setting>
         #           </rci_request>
@@ -680,18 +680,18 @@ class Test_brci_string(object):
 
         # Get values
         attributeName = "source"
-        attributeValue = "testSource"     
         settingName = attributeName
-        Value,xmlResponse = self.getSettingValueWithAttributes('%s="%s"' % (attributeName, attributeValue), groupName, settingName, settingType, cache = cache)
-        log.info("source value is '%s'" % (Value))
-        assert_equal(attributeValue, Value, "Verification attribute '%s' was unsuccessful." % attributeName)
+        Value,xmlResponse = self.getSettingValueWithAttributes('%s="stored"' % (attributeName), groupName, settingName, settingType, cache = cache)
+        log.info("source value is '%d'" % (Value))
+        # Compare returned value with 1 (rci_query_setting_attribute_source_stored)
+        assert_equal(1, Value, "Verification attribute '%s' was unsuccessful." % attributeName)
 
         attributeName = "compare_to"
-        attributeValue = "testCompareTo"     
         settingName = attributeName
-        Value,xmlResponse = self.getSettingValueWithAttributes('%s="%s"' % (attributeName, attributeValue), groupName, settingName, settingType, cache = cache)
-        log.info("source value is '%s'" % (Value))
-        assert_equal(attributeValue, Value, "Verification attribute '%s' was unsuccessful." % attributeName)
+        Value,xmlResponse = self.getSettingValueWithAttributes('%s="defaults"' % (attributeName), groupName, settingName, settingType, cache = cache)
+        log.info("source value is '%d'" % (Value))
+        # Compare returned value with 3 (rci_query_setting_attribute_compare_to_defaults)
+        assert_equal(3, Value, "Verification attribute '%s' was unsuccessful." % attributeName)
 
         # Verify that Device is connected
         self.ensure_connected()
