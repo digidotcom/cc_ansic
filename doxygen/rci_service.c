@@ -333,8 +333,8 @@
  *                    <dd><ul><li>action is @endhtmlonly @ref connector_remote_action_query.@htmlonly</li>
  *                          <li>group.type is @endhtmlonly @ref connector_remote_group_setting.@htmlonly</li>
  *                          <li>attribute.compare_to is different than @endhtmlonly @ref rci_query_setting_attribute_compare_to_none.@htmlonly</li></ul></dd> 
- *                    <dd>&nbsp;&nbsp;this field can be set to 'connector_true' to force Cloud Connector to ignore this group. 
- *                    Cloud Connector won't query the elements callback for the group and will skip the group in the response.</dd>
+ *                    <dd>&nbsp;&nbsp;this field can be set to 'connector_true' to inform the Cloud Connector that there is no need to transmit a value to Device Cloud. 
+ *                    Cloud Connector won't call the elements callback for the group and will skip the group in the response.</dd>
  *             <dt><i>error_hint</i></dt>
  *             <dd> - Callback returns a pointer to a constant null-terminated hint string
  *                    which will be sent to Device Cloud if error is encountered.
@@ -628,7 +628,7 @@
  *             <dd> - If the following conditions are met:</dd>
  *                    <dd><ul><li>group.type is @endhtmlonly @ref connector_remote_group_setting.@htmlonly</li>
  *                          <li>attribute.compare_to is different than @endhtmlonly @ref rci_query_setting_attribute_compare_to_none.@htmlonly</li></ul></dd> 
- *                    <dd>&nbsp;&nbsp;this field can be set to 'connector_true' to force Cloud Connector to ignore this element. 
+ *                    <dd>&nbsp;&nbsp;this field can be set to 'connector_true' to inform the Cloud Connector that there is no need to transmit a value to Device Cloud. 
  *                    Cloud Connector will skip the element in the response.</dd>
  *            <dt><i>error_hint</i></dt>
  *            <dd> - Callback returns a pointer to a constant null-terminated hint string

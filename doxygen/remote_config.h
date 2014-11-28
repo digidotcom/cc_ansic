@@ -243,7 +243,7 @@ typedef struct {
                                      Error description is sent if it's provided for the given error_id. */
 
   struct {
-      connector_bool_t compare_matches; /**< Callback sets this field to connector_true to force Cloud Connector to ignore this group/element */
+      connector_bool_t compare_matches; /**< Callback sets this field to connector_true to inform the Cloud Connector that there is no need to transmit a value to Device Cloud */
       char const * error_hint;        /**< Callback returns a pointer to a constant null-terminated string which will be sent
                                         to Device Cloud if an error is encountered.
                                         Note: this string cannot be altered until next callback call.
