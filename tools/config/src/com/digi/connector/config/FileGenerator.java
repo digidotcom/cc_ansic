@@ -89,6 +89,7 @@ public abstract class FileGenerator {
     "  unsigned int error_id;\n" +
     "\n" +
     "  struct {\n" +
+    "      connector_bool_t compare_matches;\n" +
     "      char const * error_hint;\n" +
     "      connector_element_value_t * element_value;\n" +
     "  } response;\n" +
@@ -1008,7 +1009,7 @@ else{
     protected void writeRciErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter ) throws IOException {
 
     /* write typedef enum for rci errors */
-        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + RCI_ERROR_NOT_AVAILABLE + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
+        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
         writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), bufferWriter);
         bufferWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + prefix  + GLOBAL_RCI_ERROR + ID_T_STRING);
     }

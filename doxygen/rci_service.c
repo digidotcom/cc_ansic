@@ -328,6 +328,13 @@
  *
  *         <dt><i>response</i></dt>
  *         <dd><dl>
+ *             <dt><i>compare_matches</i></dt>
+ *             <dd> - If the following conditions are met:</dd>
+ *                    <dd><ul><li>action is @endhtmlonly @ref connector_remote_action_query.@htmlonly</li>
+ *                          <li>group.type is @endhtmlonly @ref connector_remote_group_setting.@htmlonly</li>
+ *                          <li>attribute.compare_to is different than @endhtmlonly @ref rci_query_setting_attribute_compare_to_none.@htmlonly</li></ul></dd> 
+ *                    <dd>&nbsp;&nbsp;this field can be set to 'connector_true' to inform the Cloud Connector that there is no need to transmit a value to Device Cloud. 
+ *                    Cloud Connector won't call the elements callback for the group and will skip the group in the response.</dd>
  *             <dt><i>error_hint</i></dt>
  *             <dd> - Callback returns a pointer to a constant null-terminated hint string
  *                    which will be sent to Device Cloud if error is encountered.
@@ -616,7 +623,13 @@
  *                     error is encountered. Cloud Connector sends error description if it's provided for the given error_id.</dd>
  *
  *        <dt><i>response</i></dt>
- *        <dd><dl> Callback writes error hint if error is encountered or the value of the element.
+ *        <dd><dl> Callback writes compare_matches to skip response for the element, error hint if error is encountered or the value of the element.
+ *             <dt><i>compare_matches</i></dt>
+ *             <dd> - If the following conditions are met:</dd>
+ *                    <dd><ul><li>group.type is @endhtmlonly @ref connector_remote_group_setting.@htmlonly</li>
+ *                          <li>attribute.compare_to is different than @endhtmlonly @ref rci_query_setting_attribute_compare_to_none.@htmlonly</li></ul></dd> 
+ *                    <dd>&nbsp;&nbsp;this field can be set to 'connector_true' to inform the Cloud Connector that there is no need to transmit a value to Device Cloud. 
+ *                    Cloud Connector will skip the element in the response.</dd>
  *            <dt><i>error_hint</i></dt>
  *            <dd> - Callback returns a pointer to a constant null-terminated hint string
  *                         which will be sent to Device Cloud if error is encountered.
