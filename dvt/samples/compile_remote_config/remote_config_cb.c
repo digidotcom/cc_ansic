@@ -35,6 +35,7 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
     case connector_request_id_remote_config_group_end:
     case connector_request_id_remote_config_group_process:
     case connector_request_id_remote_config_session_cancel:
+    case connector_request_id_remote_config_configurations:
         break;
     default:
         ASSERT(0);
