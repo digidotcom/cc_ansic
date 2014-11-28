@@ -318,6 +318,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
         if ((connector_rci_error_id_t)remote_config->error_id == connector_rci_error_not_available)
         {
+            ASSERT(rci->shared.callback_data.action == connector_remote_action_query);
+            ASSERT(rci->shared.callback_data.group.type == connector_remote_group_setting);
+            ASSERT(rci->shared.callback_data.attribute.compare_to != rci_query_setting_attribute_compare_to_none);
             switch (remote_config_request)
             {
                 case connector_request_id_remote_config_group_process:
