@@ -231,10 +231,10 @@ public class Descriptors {
                                + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
                                + "  </attr>"
                                + "  <attr name=\"compare_to\" type=\"enum\" desc=\"Return only differences from this source\" bin_id=\"1\" default=\"none\" >"
-                               + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"0\" />"
-                               + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"1\" />"
-                               + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
-                               + "      <value value=\"none\" desc=\"Return all settings\" bin_id=\"3\" />"
+                               + "      <value value=\"none\" desc=\"Return all settings\" bin_id=\"0\" />"
+                               + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"1\" />"
+                               + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"2\" />"
+                               + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"3\" />"
                                + "  </attr>";
 
         query_descriptors += String.format("<format_define name=\"all_%ss_groups\">\n", config_type);
