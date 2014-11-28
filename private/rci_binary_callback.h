@@ -231,6 +231,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         case connector_request_id_remote_config_group_process:
             rci->output.element_skip = connector_false;
             remote_config->error_id = connector_success;
+            remote_config->response.compare_matches = connector_false;
             remote_config->response.error_hint = NULL;
             callback_data = remote_config;
             break;
@@ -252,6 +253,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         case connector_request_id_remote_config_reboot:
         case connector_request_id_remote_config_set_factory_def:
             remote_config->error_id = connector_success;
+            remote_config->response.compare_matches = connector_false;
             callback_data = remote_config;
             break;
 #endif
@@ -316,11 +318,12 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     case connector_callback_continue:
         callback_complete = connector_true;
 
-        if ((connector_rci_error_id_t)remote_config->error_id == connector_rci_error_not_available)
+        if (remote_config->response.compare_matches)
         {
             ASSERT(rci->shared.callback_data.action == connector_remote_action_query);
             ASSERT(rci->shared.callback_data.group.type == connector_remote_group_setting);
             ASSERT(rci->shared.callback_data.attribute.compare_to != rci_query_setting_attribute_compare_to_none);
+
             switch (remote_config_request)
             {
                 case connector_request_id_remote_config_group_process:
@@ -336,8 +339,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                     ASSERT(0);
                     break;
             }
-
-            remote_config->error_id = connector_success;
         }
         break;
 

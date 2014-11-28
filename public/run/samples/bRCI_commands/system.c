@@ -41,7 +41,7 @@ connector_callback_status_t app_system_group_init(connector_remote_config_t * co
     {
         if (strlen(system_persistent_ptr->description) == 0 && strlen(system_persistent_ptr->contact) == 0 && strlen(system_persistent_ptr->location) == 0)
         {
-            remote_config->error_id = connector_rci_error_not_available; 
+            remote_config->response.compare_matches = connector_true;
             session_ptr->group_context = NULL;
 
             printf("skipping system group index %d\n", remote_config->group.index);
@@ -91,7 +91,7 @@ connector_callback_status_t app_system_group_get(connector_remote_config_t * con
     /* Just a test: Skip reporting this element if 'compare_to' attributte is 'defaults' and content has not changed */
     if (remote_config->attribute.compare_to == rci_query_setting_attribute_compare_to_defaults && strlen(data_ptr) == 0)
     {
-        remote_config->error_id = connector_rci_error_not_available;
+        remote_config->response.compare_matches = connector_true;
     }
     else
     {

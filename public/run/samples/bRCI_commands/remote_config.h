@@ -120,6 +120,7 @@ typedef struct {
   unsigned int error_id;
 
   struct {
+      connector_bool_t compare_matches;
       char const * error_hint;
       connector_element_value_t * element_value;
   } response;
@@ -134,9 +135,7 @@ typedef struct connector_remote_group_table {
   size_t count;
 } connector_remote_group_table_t;
 
-
 typedef enum {
- connector_rci_error_not_available = -1,
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,
