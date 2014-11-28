@@ -25,22 +25,28 @@ typedef struct {
     char description[SYSTEM_STRING_LENGTH];
 } system_data_t;
 
-system_data_t system_config_data = {"\0", "\0", "\0"};
+system_data_t system_config_data[2] = {{"\0", "\0", "\0"},{"\0", "\0", "\0"}};
 
 connector_callback_status_t app_system_group_init(connector_remote_config_t * const remote_config)
 {
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * system_ptr;
+    system_data_t const * const system_persistent_ptr = &system_config_data[remote_config->group.index-1];
 
     void * ptr;
 
-    /* Skip reporting 'system' group index 2 */
-    if (remote_config->group.index == 2)
+    /* Just a test: Skip reporting this group index for queries if 'compare_to' attributte is 'defaults' and content has not changed */
+    if (remote_config->action == connector_remote_action_query && remote_config->attribute.compare_to == rci_query_setting_attribute_compare_to_defaults)
     {
-        remote_config->error_id = connector_rci_error_not_available; 
-        session_ptr->group_context = NULL;
-        goto done;
+        if (strlen(system_persistent_ptr->description) == 0 && strlen(system_persistent_ptr->contact) == 0 && strlen(system_persistent_ptr->location) == 0)
+        {
+            remote_config->error_id = connector_rci_error_not_available; 
+            session_ptr->group_context = NULL;
+
+            printf("skipping system group index %d\n", remote_config->group.index);
+            goto done;
+        }
     }
 
     ptr = malloc(sizeof *system_ptr);
@@ -51,7 +57,7 @@ connector_callback_status_t app_system_group_init(connector_remote_config_t * co
     }
 
     system_ptr = ptr;
-    *system_ptr = system_config_data;  /* load data */
+    *system_ptr = *system_persistent_ptr; /* load data */
     session_ptr->group_context = system_ptr;
 
 done:
@@ -63,23 +69,36 @@ connector_callback_status_t app_system_group_get(connector_remote_config_t * con
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
+    char const * data_ptr; 
 
     switch (remote_config->element.id)
     {
     case connector_setting_system_contact:
-        remote_config->response.element_value->string_value = system_ptr->contact;
+        data_ptr = system_ptr->contact;
         break;
     case connector_setting_system_location:
-        remote_config->response.element_value->string_value = system_ptr->location;
+        data_ptr = system_ptr->location;
         break;
     case connector_setting_system_description:
-        remote_config->response.element_value->string_value = system_ptr->description;
+        data_ptr = system_ptr->description;
         break;
     default:
-        ASSERT(0);
+        status = connector_callback_error;
+        goto done;
         break;
     }
 
+    /* Just a test: Skip reporting this element if 'compare_to' attributte is 'defaults' and content has not changed */
+    if (remote_config->attribute.compare_to == rci_query_setting_attribute_compare_to_defaults && strlen(data_ptr) == 0)
+    {
+        remote_config->error_id = connector_rci_error_not_available;
+    }
+    else
+    {
+        remote_config->response.element_value->string_value = data_ptr;
+    }
+
+done:
     return status;
 }
 
@@ -122,6 +141,7 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
     connector_callback_status_t status = connector_callback_continue;
     remote_group_session_t * const session_ptr = remote_config->user_context;
     system_data_t * const system_ptr = session_ptr->group_context;
+    system_data_t * system_persistent_ptr = &system_config_data[remote_config->group.index-1];
 
     if (system_ptr == NULL)
     {
@@ -131,7 +151,7 @@ connector_callback_status_t app_system_group_end(connector_remote_config_t * con
     if (remote_config->action == connector_remote_action_set)
     {
         /* save data */
-        system_config_data = *system_ptr;
+        *system_persistent_ptr = *system_ptr;
     }
 
     free(system_ptr);
