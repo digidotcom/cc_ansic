@@ -43,12 +43,8 @@ STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr
 {
     connector_status_t result;
 
-    if (connector_ptr->device_id_method == connector_device_id_method_manual)
-    {
-        /* then we have to obtain connection type from the callback */
-        result = get_config_connection_type(connector_ptr);
-        COND_ELSE_GOTO(result == connector_working, done);
-    }
+    result = get_config_connection_type(connector_ptr);
+    COND_ELSE_GOTO(result == connector_working, done);
 
     switch (connector_ptr->connection_type)
     {
@@ -96,7 +92,6 @@ STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr
         }
     }
 
-    connector_ptr->edp_data.network_handle = NULL;
     result = connector_working;
 
 done:
@@ -130,8 +125,6 @@ STATIC connector_status_t connector_edp_init(connector_data_t * const connector_
         goto done;
     }
 
-    edp_get_device_cloud(connector_ptr);
-
 done:
     return result;
 }
@@ -151,6 +144,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         case connector_transport_idle:
             if (connector_ptr->edp_data.stop.auto_connect)
             {
+                connector_ptr->edp_data.network_handle = NULL;
                 edp_set_active_state(connector_ptr, connector_transport_open);
             }
 

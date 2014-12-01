@@ -839,24 +839,13 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
 
     switch (edp_get_edp_state(connector_ptr))
     {
-    case edp_configuration_init:
-        result = connector_edp_init(connector_ptr);
-        switch(result)
-        {
-        case connector_working:
-            edp_set_edp_state(connector_ptr, edp_communication_connect_to_cloud);
-            break;
-        default:
-            break;
-        }
-        break;
     case edp_communication_connect_to_cloud:
+        edp_get_device_cloud(connector_ptr);
         result = connect_to_cloud(connector_ptr, connector_ptr->edp_data.config.cloud_url);
-
         switch(result)
         {
         case connector_working:
-            edp_set_edp_state(connector_ptr, edp_communication_send_version);
+            edp_set_edp_state(connector_ptr, edp_configuration_init);
             connector_ptr->edp_data.send_packet.packet_buffer.in_use = connector_false;
             connector_ptr->edp_data.receive_packet.packet_buffer.in_use = connector_false;
             connector_ptr->edp_data.receive_packet.packet_buffer.next = NULL;
@@ -902,7 +891,17 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             break;
         }
         break;
-
+    case edp_configuration_init:
+        result = connector_edp_init(connector_ptr);
+        switch(result)
+        {
+        case connector_working:
+            edp_set_edp_state(connector_ptr, edp_communication_send_version);
+            break;
+        default:
+            break;
+        }
+        break;
     case edp_communication_send_version:
     case edp_communication_send_keepalive:
     case edp_initialization_send_protocol_version:

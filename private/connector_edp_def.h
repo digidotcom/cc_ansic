@@ -84,8 +84,8 @@
 
 /* IRL EDP States */
 typedef enum {
-    edp_configuration_init,
     edp_communication_connect_to_cloud,
+    edp_configuration_init,
     edp_communication_send_version,
     edp_communication_receive_version_response,
     edp_communication_send_keepalive,
