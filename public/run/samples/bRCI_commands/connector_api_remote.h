@@ -5,8 +5,22 @@
  * The command line arguments were: "-rci_legacy_commands hbujanda2:***** "Linux Application" 1.0.0.0 config.rci"
  * The version of RCI Generator tool was: 2.0.0.0 */
 
-#ifndef remote_config_h
-#define remote_config_h
+/*
+ * Copyright (c) 2013 Digi International Inc.,
+ * All rights not expressly granted are reserved.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
+ * =======================================================================
+ */
+
+#ifndef _CONNECTOR_API_REMOTE_H
+#define _CONNECTOR_API_REMOTE_H
+
+#if (defined CONNECTOR_RCI_SERVICE)
 
 #define RCI_PARSER_USES_ERROR_DESCRIPTIONS
 #define RCI_PARSER_USES_STRING
@@ -53,6 +67,17 @@ typedef enum {
     connector_remote_action_set_factory_def
 } connector_remote_action_t;
 
+typedef enum {
+    connector_remote_group_setting, /**< Setting configuration */
+    connector_remote_group_state    /**< State configuration */
+} connector_remote_group_type_t;
+
+typedef enum {
+    connector_element_access_read_only,     /**< Read only */
+    connector_element_access_write_only,    /**< Write only */
+    connector_element_access_read_write     /**< Read and write */
+} connector_element_access_t;
+
 typedef struct rci_data {
  unsigned int group_index;
  connector_remote_action_t action;
@@ -93,6 +118,19 @@ typedef struct {
   connector_element_value_type_t type;
   connector_element_value_t * value;
 } connector_remote_element_t;
+
+typedef enum {
+  rci_query_setting_attribute_source_current,
+  rci_query_setting_attribute_source_stored,
+  rci_query_setting_attribute_source_defaults
+} rci_query_setting_attribute_source_t;
+
+typedef enum {
+  rci_query_setting_attribute_compare_to_none,
+  rci_query_setting_attribute_compare_to_current,
+  rci_query_setting_attribute_compare_to_stored,
+  rci_query_setting_attribute_compare_to_defaults
+} rci_query_setting_attribute_compare_to_t;
 
 typedef struct {
   rci_query_setting_attribute_source_t source;
@@ -190,8 +228,24 @@ typedef enum {
  connector_state_COUNT
 } connector_state_id_t;
 
+typedef struct connector_remote_config_data {
+    struct connector_remote_group_table const * group_table;
+    char const * const * error_table;
+    unsigned int global_error_count;
+    uint32_t firmware_target_zero_version;
+    uint32_t vendor_id;
+    char const * device_type;
+} connector_remote_config_data_t;
 
 extern connector_remote_config_data_t rci_desc_data;
 
 
+#endif
+
+#if !defined _CONNECTOR_API_H
+#error  "Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code."
+#endif
+
+#else
+#error  "Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code."
 #endif
