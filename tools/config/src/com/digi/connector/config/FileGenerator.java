@@ -215,7 +215,7 @@ public abstract class FileGenerator {
         int value = -1;
        
         for (Element.ElementType type : Element.ElementType.values()) {
-            if(ConfigGenerator.rciParserOption()){
+            if(type.isSet() && ConfigGenerator.rciParserOption()){
                 if (!isFirstEnum) {
                     enumString += ",\n";
                 }
