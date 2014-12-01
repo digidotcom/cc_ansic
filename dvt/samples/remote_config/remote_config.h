@@ -8,22 +8,6 @@
 #ifndef remote_config_h
 #define remote_config_h
 
-
-
-#include "connector_api.h"
-
-
-#if (defined CONNECTOR_CONST_PROTECTION)
-#define CONST
-#undef CONNECTOR_CONST_PROTECTION
-#else
-#if (defined CONST)
-#define CONNECTOR_CONST_STORAGE CONST
-#undef CONST
-#endif
-#define CONST const
-#endif
-
 #define RCI_PARSER_USES_ERROR_DESCRIPTIONS
 #define RCI_PARSER_USES_STRING
 #define RCI_PARSER_USES_MULTILINE_STRING
@@ -45,6 +29,7 @@
 
 
 #include "float.h"
+#define RCI_COMMANDS_ATTRIBUTE_MAX_LEN 20
 
 typedef enum {
     connector_off,
@@ -105,6 +90,23 @@ typedef union {
     connector_bool_t  boolean_value;
 } connector_element_value_t;
 
+typedef enum {
+    connector_request_id_remote_config_session_start,
+    connector_request_id_remote_config_action_start,
+    connector_request_id_remote_config_group_start,
+    connector_request_id_remote_config_group_process,
+    connector_request_id_remote_config_group_end,
+    connector_request_id_remote_config_action_end,
+    connector_request_id_remote_config_session_end,
+    connector_request_id_remote_config_session_cancel,
+    connector_request_id_remote_config_configurations
+} connector_request_id_remote_config_t;
+
+typedef enum {
+    connector_remote_action_set,
+    connector_remote_action_query
+} connector_remote_action_t;
+
 typedef struct rci_data {
  unsigned int group_index;
  connector_remote_action_t action;
@@ -147,13 +149,26 @@ typedef struct {
 } connector_remote_element_t;
 
 typedef struct {
+  rci_query_setting_attribute_source_t source;
+  rci_query_setting_attribute_compare_to_t compare_to;
+} connector_remote_attribute_t;
+
+typedef enum {
+  rci_query_setting_attribute_id_source,
+  rci_query_setting_attribute_id_compare_to,
+  rci_query_setting_attribute_id_count
+} rci_query_setting_attribute_id_t;
+
+typedef struct {
   void * user_context;
   connector_remote_action_t CONST action;
+  connector_remote_attribute_t CONST attribute;
   connector_remote_group_t CONST group;
   connector_remote_element_t CONST element;
   unsigned int error_id;
 
-  union {
+  struct {
+      connector_bool_t compare_matches;
       char const * error_hint;
       connector_element_value_t * element_value;
   } response;
@@ -170,7 +185,6 @@ typedef struct connector_remote_group_table {
 
 
 typedef enum {
- connector_rci_error_not_available = -1,
  connector_rci_error_OFFSET = 1,
  connector_rci_error_bad_command =  connector_rci_error_OFFSET,
  connector_rci_error_bad_descriptor,
@@ -285,6 +299,12 @@ typedef enum {
 } connector_setting_device_info_error_id_t;
 
 typedef enum {
+ connector_setting_attibute_feedback_source,
+ connector_setting_attibute_feedback_compare_to,
+ connector_setting_attibute_feedback_COUNT
+} connector_setting_attibute_feedback_id_t;
+
+typedef enum {
  connector_setting_state_test_test1,
  connector_setting_state_test_test2,
  connector_setting_state_test_test3,
@@ -337,6 +357,7 @@ typedef enum {
  connector_setting_ethernet,
  connector_setting_device_stats,
  connector_setting_device_info,
+ connector_setting_attibute_feedback,
  connector_setting_state_test,
  connector_setting_system,
  connector_setting_devicesecurity,
@@ -391,13 +412,6 @@ typedef enum {
 
 
 extern connector_remote_config_data_t rci_desc_data;
-
-
-#undef CONST
-#if (defined CONNECTOR_CONST_STORAGE)
-#define CONST CONNECTOR_CONST_STORAGE
-#undef CONNECTOR_CONST_STORAGE
-#endif
 
 
 #endif

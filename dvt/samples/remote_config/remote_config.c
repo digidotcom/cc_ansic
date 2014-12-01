@@ -9,7 +9,7 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-#include  "remote_config.h"
+
 
 #include "connector_api.h"
 
@@ -174,6 +174,17 @@ static char CONST * CONST setting_device_info_errors[] = {
  SETTING_DEVICE_INFO_ERROR_INVALID_LENGTH /*invalid_length*/
 };
 
+static connector_group_element_t CONST setting_attibute_feedback_elements[] = {
+ {  /*source*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ },
+ {  /*compare_to*/
+   connector_element_access_read_write,
+   connector_element_type_uint32
+ }
+};
+
 static connector_group_element_t CONST setting_state_test_elements[] = {
  {  /*test1*/
    connector_element_access_read_write,
@@ -305,6 +316,16 @@ static connector_group_t CONST connector_setting_groups[] = {
    },
    { asizeof(setting_device_info_errors),
      setting_device_info_errors
+   }  /* errors*/
+}
+,
+ {  /*attibute_feedback*/
+   1 , /* instances */
+   { asizeof(setting_attibute_feedback_elements),
+     setting_attibute_feedback_elements
+   },
+   { 0,
+     NULL
    }  /* errors*/
 }
 ,
