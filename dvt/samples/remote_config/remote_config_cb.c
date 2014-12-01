@@ -199,18 +199,23 @@ static connector_callback_status_t app_rci_group_get(connector_remote_config_t *
         switch (remote_config->element.id)
         {
             case connector_setting_attibute_feedback_source:
-                remote_config->response.element_value->unsigned_integer_value = remote_config->attribute.source;
+                if (remote_config->attribute.source != rci_query_setting_attribute_source_current)
+                {
+                    remote_config->response.element_value->unsigned_integer_value = remote_config->attribute.source;
+                    goto done;
+                }
                 break;
             case connector_setting_attibute_feedback_compare_to:
-                remote_config->response.element_value->unsigned_integer_value = remote_config->attribute.compare_to;
-                return connector_callback_continue;
+                if (remote_config->attribute.compare_to != rci_query_setting_attribute_compare_to_none)
+                {
+                    remote_config->response.element_value->unsigned_integer_value = remote_config->attribute.compare_to;
+                    goto done;
+                }
                 break;
             default:
                 ASSERT(0);
                 break;
         }
-
-        return connector_callback_continue;
     }
 
     switch(remote_config->element.type){
@@ -262,6 +267,7 @@ static connector_callback_status_t app_rci_group_get(connector_remote_config_t *
             APP_DEBUG("Unknown Type.\n");
     }
 
+done:
     return connector_callback_continue;
 }
 

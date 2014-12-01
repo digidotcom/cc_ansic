@@ -664,7 +664,8 @@ class Test_brci_string(object):
         ## Verify that Device is connected
         #self.ensure_connected()
 
-    def test_command_attributes(self):
+    # This test must execute the last. Keep the _x_ in the test name.
+    def test_x_command_attributes(self):
         ''' Verify command attributes '''
 
         # Verify that Device is connected
@@ -684,14 +685,14 @@ class Test_brci_string(object):
         Value,xmlResponse = self.getSettingValueWithAttributes('%s="stored"' % (attributeName), groupName, settingName, settingType, cache = cache)
         log.info("source value is '%s'" % (Value))
         # Compare returned value with 1 (rci_query_setting_attribute_source_stored)
-        assert_equal(1, int(Value), "Verification attribute '%s' was unsuccessful." % attributeName)
+        assert_equal("1", Value, "Verification attribute '%s' was unsuccessful." % attributeName)
 
         attributeName = "compare_to"
         settingName = attributeName
         Value,xmlResponse = self.getSettingValueWithAttributes('%s="defaults"' % (attributeName), groupName, settingName, settingType, cache = cache)
         log.info("source value is '%s'" % (Value))
         # Compare returned value with 3 (rci_query_setting_attribute_compare_to_defaults)
-        assert_equal(2, int(Value), "Verification attribute '%s' was unsuccessful." % attributeName)
+        assert_equal("3", Value, "Verification attribute '%s' was unsuccessful." % attributeName)
 
         # Verify that Device is connected
         self.ensure_connected()
