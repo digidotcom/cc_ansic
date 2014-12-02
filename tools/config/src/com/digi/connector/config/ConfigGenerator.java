@@ -158,7 +158,7 @@ public class ConfigGenerator {
 
         log("Description:");
         log("\tIt generates and uploads configuration information (descriptors) to Device Cloud");
-        log("\tand it also generates ANSI C api header file (connector_api_remote.h) ");
+        log("\tand it also generates ANSI C API header file (connector_api_remote.h) ");
         log("\tfrom the input configuration file.\n");
 
         log("Options:");
