@@ -19,7 +19,7 @@ public abstract class FileGenerator {
 
     protected static String TOOL_NAME = "RCI Generator";
 
-    protected final static String HEADER_FILENAME = "remote_config.h";
+    protected final static String HEADER_FILENAME = "connector_api_remote.h";
 
     protected final static String CONNECTOR_PREFIX = "connector";
     protected final static String DEFINE = "#define ";
@@ -79,6 +79,30 @@ public abstract class FileGenerator {
     "  rci_do_command_attribute_id_target,\n" +      /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
     "  rci_do_command_attribute_id_count,\n" +
     "} rci_do_command_attribute_id_t;\n";
+
+    protected final static String CONNECTOR_REMOTE_GROUP_TYPE = "\ntypedef enum {\n" +
+    "    connector_remote_group_setting,\n" +
+    "    connector_remote_group_state\n" +
+    "} connector_remote_group_type_t;\n";
+
+    protected final static String CONNECTOR_ELEMENT_ACCESS = "\ntypedef enum {\n" +
+    "    connector_element_access_read_only,\n" +
+    "    connector_element_access_write_only,\n" +
+    "    connector_element_access_read_write\n" +
+    "} connector_element_access_t;\n";
+
+    protected final static String RCI_QUERY_SETTING_ATTRIBUTE_SOURCE = "\ntypedef enum {\n" +
+    "    rci_query_setting_attribute_source_current,\n" +
+    "    rci_query_setting_attribute_source_stored,\n" +
+    "    rci_query_setting_attribute_source_defaults\n" +
+    "} rci_query_setting_attribute_source_t;\n";
+
+    protected final static String RCI_QUERY_SETTING_ATTRIBUTE_COMPARE_TO = "\ntypedef enum {\n" +
+    "    rci_query_setting_attribute_compare_to_none,\n" +
+    "    rci_query_setting_attribute_compare_to_current,\n" +
+    "    rci_query_setting_attribute_compare_to_stored,\n" +
+    "    rci_query_setting_attribute_compare_to_defaults\n" +
+    "} rci_query_setting_attribute_compare_to_t;\n";
 
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
@@ -534,6 +558,9 @@ public abstract class FileGenerator {
         }
         fileWriter.write("\n} connector_remote_action_t;\n");
 
+        fileWriter.write(CONNECTOR_REMOTE_GROUP_TYPE);
+
+        fileWriter.write(CONNECTOR_ELEMENT_ACCESS);
 
         fileWriter.write(CONNECTOR_RCI_INFO);
         fileWriter.write("\ntypedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);\n");
@@ -564,6 +591,9 @@ public abstract class FileGenerator {
             "  connector_element_value_t * value;\n" +
             "%s" +
             "} connector_remote_element_t;\n",const_name));
+
+        fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_SOURCE);
+        fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_COMPARE_TO);
 
         fileWriter.write("\ntypedef struct {\n" +
                          "  rci_query_setting_attribute_source_t source;\n" +

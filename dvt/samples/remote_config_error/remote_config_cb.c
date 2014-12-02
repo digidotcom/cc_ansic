@@ -12,7 +12,6 @@
 #include "connector_config.h"
 #include "connector_api.h"
 #include "platform.h"
-#include "remote_config.h"
 
 #if !defined CONNECTOR_RCI_SERVICE
 #error "Must define CONNECTOR_RCI_SERVICE in connector_config.h to run this sample"

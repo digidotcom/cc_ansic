@@ -74,7 +74,7 @@ def generate_rci_global_header(dir, jar, keystore):
     
     abs_dir = os.path.abspath(dir)
 
-    print '>>> Generating RCI global remote_config.h in %s'% dir
+    print '>>> Generating RCI global connector_api_remote.h in %s'% dir
     args = ['java', 
                 '-jar', jar, 
                 '-path=%s' % abs_dir,

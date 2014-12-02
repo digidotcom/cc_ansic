@@ -14,7 +14,6 @@
 #include "connector_types.h"
 #include "connector_api.h"
 #include "connector_config.h"
-#include "remote_config.h"
 #include "platform.h"
 #include <string.h>
 

@@ -667,7 +667,7 @@ INPUT                  = ./mainpage.c \
                          ./rci_advance_sample.c \
                          ./rci_tool.c \
                          ./connector_config.h \
-                         ./remote_config.h \
+                         ./connector_api_remote.h \
                          ./upgrade_existing.c \
                          ../public/run/platforms/template \
                          ../public/include

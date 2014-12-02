@@ -14,7 +14,6 @@
 #include "connector_config.h"
 #include "connector_api.h"
 #include "platform.h"
-#include "remote_config.h"
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {

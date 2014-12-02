@@ -15,7 +15,7 @@ import com.digi.connector.config.Element.ElementType;
 public class FileNone extends FileGenerator {
 
 	private static String COPYRIGHT = "/*\n"
-			 +" * Copyright (c) 2013 Digi International Inc.,\n"
+			 +" * Copyright (c) 2014 Digi International Inc.,\n"
 			 +" * All rights not expressly granted are reserved.\n"
 			 +" *\n"
 			 +" * This Source Code Form is subject to the terms of the Mozilla Public\n"
@@ -28,6 +28,16 @@ public class FileNone extends FileGenerator {
 
     protected final static String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
     protected final static String RETURN_CONTINUE = "    return connector_callback_continue;\n}\n";
+
+    protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
+    "    struct connector_remote_group_table const * group_table;\n" +
+    "    char const * const * error_table;\n" +
+    "    unsigned int global_error_count;\n" +
+    "    uint32_t firmware_target_zero_version;\n" +
+    "    uint32_t vendor_id;\n" +
+    "    char const * device_type;\n" +
+    "} connector_remote_config_data_t;\n";
+
 
     private static FileType fileType = FileType.NONE;
     private BufferedWriter functionWriter = null;
@@ -58,6 +68,8 @@ public class FileNone extends FileGenerator {
         note_string += String.format(" * This file was generated on: %s \n", dateFormat.format(date))
                      + String.format(" * The command line arguments were: %s\n", ConfigGenerator.getArgumentLogString())
                      + String.format(" * The version of %s tool was: %s */\n\n", TOOL_NAME, ConfigGenerator.VERSION);
+
+        note_string += COPYRIGHT;
         
         bufferWriter.write(note_string);
         
@@ -65,7 +77,7 @@ public class FileNone extends FileGenerator {
     public void generateFile(ConfigData configData) throws Exception {
         try {
 
-            String defineName = generatedFile.replace('.', '_').toLowerCase();
+            String defineName = generatedFile.replace('.', '_').toUpperCase();
                        
             fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
 
@@ -80,8 +92,16 @@ public class FileNone extends FileGenerator {
 if(future_feature)
             writePrototypes(configData,fileWriter);
 
+            fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
+
             fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
-            fileWriter.write(String.format("\n#endif\n"));
+
+            fileWriter.write("\n#if !defined _CONNECTOR_API_H\n");
+            fileWriter.write("#error  \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n");
+            fileWriter.write("#endif\n\n");
+            fileWriter.write("#else\n");
+            fileWriter.write("#error  \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n");
+            fileWriter.write("#endif\n");
             
             /*Write function file */
             writeFunctionFile(configData, functionWriter);
