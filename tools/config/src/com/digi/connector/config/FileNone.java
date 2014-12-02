@@ -81,8 +81,6 @@ public class FileNone extends FileGenerator {
                        
             fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
 
-            fileWriter.write("#if (defined CONNECTOR_RCI_SERVICE)\n\n");
-
             writeDefinesAndStructures(configData);
             
             /* Write all group enum in H file */
@@ -97,7 +95,6 @@ if(future_feature)
             fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
 
             fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
-            fileWriter.write(String.format("\n#endif\n"));
 
             fileWriter.write("\n#if !defined _CONNECTOR_API_H\n");
             fileWriter.write("#error  \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n");
