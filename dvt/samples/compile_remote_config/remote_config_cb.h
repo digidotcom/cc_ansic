@@ -13,8 +13,6 @@
 #ifndef REMOTE_CONFIG_CB_H_
 #define REMOTE_CONFIG_CB_H_
 
-#include "remote_config.h"
-
 extern connector_callback_status_t app_system_session_start(connector_remote_config_t * const remote_config);
 
 extern connector_callback_status_t app_system_session_end(connector_remote_config_t * const remote_config);
