@@ -369,7 +369,10 @@ typedef enum
 typedef char const * connector_json_t;
 typedef char const * connector_geojson_t;
 
+#if (defined CONNECTOR_RCI_SERVICE)
 #include "connector_api_remote.h"
+#endif
+
 #include "connector_api_firmware.h"
 #include "connector_api_data_service.h"
 #include "connector_api_data_point.h"
