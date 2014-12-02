@@ -11,6 +11,15 @@ import com.digi.connector.config.ConfigGenerator.FileType;
 public class FileGlobalHeader extends FileGenerator {
 
     private static FileType fileType = FileType.GLOBAL_HEADER;
+
+    protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
+    "    struct connector_remote_group_table const * group_table;\n" +
+    "    char const * const * error_table;\n" +
+    "    unsigned int global_error_count;\n" +
+    "    uint32_t firmware_target_zero_version;\n" +
+    "    uint32_t vendor_id;\n" +
+    "    char const * device_type;\n" +
+    "} connector_remote_config_data_t;\n";
     
 	public FileGlobalHeader(String directoryPath) throws IOException {
 		
@@ -39,7 +48,7 @@ public class FileGlobalHeader extends FileGenerator {
     public void generateFile(ConfigData configData) throws Exception {
         try {
 
-            String defineName = generatedFile.replace('.', '_').toLowerCase();
+            String defineName = generatedFile.replace('.', '_').toUpperCase();
 
             fileWriter.write(String.format("#ifndef %s\n#define %s\n", defineName, defineName));
             fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE\n");
@@ -47,6 +56,10 @@ public class FileGlobalHeader extends FileGenerator {
             writeDefinesAndStructures(configData);
             
             writeRciErrorEnumHeader(configData, fileWriter);
+
+            fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
+
+            fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
     
             fileWriter.write(String.format("\n#endif\n"));
            
