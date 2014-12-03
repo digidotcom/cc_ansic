@@ -208,6 +208,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
     connector_remote_config_t * const remote_config = &rci->shared.callback_data;
+    connector_remote_config_cancel_t remote_cancel;
     void * callback_data = NULL;
     connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
 
@@ -238,8 +239,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
         case connector_request_id_remote_config_session_cancel:
         {
-            connector_remote_config_cancel_t remote_cancel;
-
             remote_cancel.user_context = remote_config->user_context;
             callback_data =  &remote_cancel;
             break;
