@@ -11,7 +11,6 @@
  */
 #include "connector_api.h"
 #include "platform.h"
-#include "remote_config.h"
 
 
 extern connector_callback_status_t app_firmware_handler(connector_request_id_firmware_t const request,
