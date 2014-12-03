@@ -130,6 +130,9 @@ STATIC connector_status_t malloc_cb(connector_callback_t const callback, size_t 
         {
             result = (notify_error_status(callback, connector_class_id_operating_system, request_id, connector_invalid_data, context) == connector_working) ? connector_pending : connector_abort;
         }
+#if (defined CONNECTOR_DEBUG)
+        memset(data.ptr, 0xCD, length);
+#endif
         break;
 
     case connector_callback_busy:
