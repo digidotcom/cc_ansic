@@ -295,7 +295,7 @@ typedef enum {
 typedef enum
 {
     connector_initiate_transport_start, /**< Starts the specified (TCP, UDP or SMS) transport method. */
-    connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method. */
+    connector_initiate_transport_stop,  /**< Stops the specified (TCP, UDP or SMS) transport method. It will not try to reconnect regardless the value returned in the @ref connector_close_status_t*/
 
     #if (defined CONNECTOR_DATA_SERVICE)
     connector_initiate_send_data,       /**< Initiates the action to send data to the Device Cloud, the data will be stored in a file on Device Cloud. */

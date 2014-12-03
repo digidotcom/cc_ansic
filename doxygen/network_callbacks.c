@@ -288,7 +288,8 @@
  *          <li><b><i>handle</i></b> - [In] @endhtmlonly @ref connector_network_handle_t "Network handle" @htmlonly </li>
  *          <li><b><i>status</i></b> -  [IN] @endhtmlonly @ref connector_close_status_t "Reason for closing the network handle" @htmlonly </li>
  *          <li><b><i>reconnect</i></b> - [OUT] The callback must set it to @endhtmlonly @ref connector_true @htmlonly to restart the transport or
- *                                              to @endhtmlonly @ref connector_false @htmlonly to avoid restarting the transport</li>
+ *                                              to @endhtmlonly @ref connector_false @htmlonly to avoid restarting the transport.
+ *                                              This value is ignored if transport is closed by a @endhtmlonly @ref connector_initiate_transport_stop @htmlonly action.</li>
  *        </ul>
  * </td>
  * </tr>

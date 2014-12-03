@@ -124,7 +124,7 @@ typedef struct  {
     connector_network_handle_t CONST handle;    /**< Network handle associated with a connection through the connector_network_open callback */
     connector_close_status_t  CONST status;     /**< Reason for closing the network handle */
 
-    connector_bool_t  reconnect;                /**< connector_true - reconnect, connector_false - don't reconnect */
+    connector_bool_t  reconnect;                /**< connector_true - reconnect, connector_false - don't reconnect. This value is ignored if transport is closed by a @ref connector_initiate_transport_stop action. */
 } connector_network_close_t;
 /**
 * @}
