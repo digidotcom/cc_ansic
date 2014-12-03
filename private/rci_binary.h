@@ -155,14 +155,13 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
 #endif
 
     {
-        connector_bool_t success;
+        connector_bool_t success = connector_false;
 
         switch (action)
         {
         case rci_session_start:
             if (rci_internal_data == NULL)
             {
-
 #if (!defined CONNECTOR_NO_MALLOC)
                 connector_status_t const connector_status = malloc_data(connector_ptr, sizeof *rci_internal_data, (void **)&rci_internal_data);
 
@@ -191,10 +190,6 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
         case rci_session_lost:
             ASSERT(rci_internal_data != NULL);
             success = rci_action_session_lost(rci_internal_data);
-            break;
-
-        default:
-            success = connector_false;
             break;
         }
 
