@@ -204,6 +204,27 @@ done:
     rci->callback.status = connector_callback_busy;
 }
 
+STATIC connector_status_t free_rci_internal_data(connector_data_t * const connector_ptr)
+{
+    connector_status_t status = connector_working;
+
+    if (connector_ptr->rci_internal_data != NULL)
+    {
+        if (connector_ptr->rci_internal_data->input.storage != NULL)
+        {
+            status = free_data(connector_ptr, connector_ptr->rci_internal_data->input.storage);
+            ASSERT_GOTO(status == connector_working, done);
+        }
+        status = free_data(connector_ptr, connector_ptr->rci_internal_data);
+        ASSERT_GOTO(status == connector_working, done);
+
+        connector_ptr->rci_internal_data = NULL;
+    }
+
+done:
+    return status;
+}
+
 STATIC connector_bool_t rci_callback(rci_t * const rci)
 {
     connector_bool_t callback_complete;
