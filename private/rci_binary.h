@@ -38,6 +38,9 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     rci->input.destination = rci_buffer_position(&rci->buffer.input);
     reset_input_content(rci);
 
+    rci->output.content.data = NULL;
+    rci->output.content.length = 0;
+
     invalidate_group_id(rci);
     invalidate_group_index(rci);
     invalidate_element_id(rci);
