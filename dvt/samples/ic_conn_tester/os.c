@@ -26,6 +26,7 @@ connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
     *ptr = malloc(size);
     if (*ptr != NULL)
     {
+        memset(*ptr, 0xCD, size);
         status = connector_callback_continue;
     }
     else
