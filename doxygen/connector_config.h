@@ -183,10 +183,7 @@
 #define CONNECTOR_RCI_SERVICE
 
 /**
- * This is used to define the maximum content length in bytes of an element's value for the @ref rci_service,
- * Cloud Connector includes the @ref rci_service that allows user remote configuration, control, and information
- * exchange between a device and Device Cloud.
- * See @ref CONNECTOR_RCI_SERVICE to enable or disable the service.
+ * When @ref CONNECTOR_NO_MALLOC is defined, this defines the maximum content length in bytes of an element's value for the @ref rci_service.
  *
  * @code
  * #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 256
@@ -237,7 +234,7 @@
 #define CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH   256
 
 /**
- * When defined, Cloud Connector private library does not use dynamic memory allocations,
+ * When defined, Cloud Connector private library does not use dynamic memory allocations and
  * static memory buffers are used instead. This eliminates the possibility of memory fragmentation.
  *
  * When no dynamic RAM option is used, @ref 
@@ -247,7 +244,9 @@
  * When no dynamic RAM option is used, @ref 
  * CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS should be defined and 
  * it must be less or equal to 32. The default is 1. 
- *  
+ *
+ * @note If using @ref rci_support, then @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH must be defined.
+ *
  * To enable no dynamic RAM feature, uncomment this line in connector_config.h:
  *
  * @code

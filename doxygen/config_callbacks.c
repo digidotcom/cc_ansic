@@ -1330,7 +1330,7 @@
  * @note If @ref CONNECTOR_REMOTE_CONFIGURATION_SUPPORT is defined in @ref connector_config.h, this callback is not needed.
  * It enables remote configuration capability. See @ref connector_config_data_options.
  *
- * @note The @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH must be set to the maximum content length in bytes of an element's value in @ref connector_config.h.
+ * @note If using the @ref CONNECTOR_NO_MALLOC version, then the @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH macro must be set to the maximum content length in bytes of an element's value in @ref connector_config.h.
  *
  * @note Define @ref CONNECTOR_COMPRESSION in @ref connector_config.h for compression transfer.
  *
