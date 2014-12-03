@@ -166,6 +166,7 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
                 switch (connector_status)
                 {
                     case connector_working:
+                        rci_internal_data->service_data = NULL;
                         connector_ptr->rci_internal_data = rci_internal_data;
                         break;
                     default:
