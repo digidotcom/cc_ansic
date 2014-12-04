@@ -402,7 +402,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #endif
     }
 
-done:
     return callback_complete;
 }
 
