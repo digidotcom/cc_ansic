@@ -562,7 +562,6 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
  * @retval connector_callback_abort     Could not get the remote configuration support and abort Cloud Connector.
  *
  * @note @b CONNECTOR_RCI_SERVICE must be defined in connector_config.h
- * @note @b CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH is used to define maximum length of an element including the name of element in @ref connector_config.h.
  * @note This routine is not called if you define @b CONNECTOR_REMOTE_CONFIGURATION_SUPPORT configuration in @ref connector_config.h.
  * @note This CONNECTOR_REMOTE_CONFIGURATION_SUPPORT indicates application supports remote configuration. See @ref connector_config_data_options
  *
