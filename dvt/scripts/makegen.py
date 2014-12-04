@@ -91,6 +91,12 @@ def generate_makefile(path, make_template):
     # List of *.c files in the directory.
     app_src = [ f for f in os.listdir(full_path) if f.endswith('.c') ]
     
+    # if there is an *.rci file, assume rci is enabled and that ConfigGenerator
+    # will generate a remote_config.c we want to compile
+    rci = [ f for f in os.listdir(full_path) if f.endswith('.rci') ]
+    if rci and "remote_config.c" not in app_src:
+        app_src.append("remote_config.c")
+
     # Get the Mode and name of the Sample, this will be used for determining
     # what libraries and platform files to include.
     (_, mode, _, sample) = full_path.rsplit(os.sep, 3)
