@@ -177,11 +177,6 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
-
-    case connector_request_id_remote_config_configurations:
-        ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
-        break;
-
 #if (defined RCI_LEGACY_COMMANDS)
     case connector_request_id_remote_config_do_command:
         /* Provide request */
@@ -264,10 +259,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             callback_data =  &remote_cancel;
             break;
         }
-        case connector_request_id_remote_config_configurations:
-            ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
-            callback_complete = connector_false;
-            goto done;
 #if (defined RCI_LEGACY_COMMANDS)
         case connector_request_id_remote_config_do_command:
         case connector_request_id_remote_config_reboot:
@@ -324,7 +315,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         case connector_request_id_remote_config_group_end:
         case connector_request_id_remote_config_group_process:
         case connector_request_id_remote_config_session_cancel:
-        case connector_request_id_remote_config_configurations:
             break;
     }
 
@@ -402,7 +392,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 break;
             case connector_request_id_remote_config_group_start:
             case connector_request_id_remote_config_session_cancel:
-            case connector_request_id_remote_config_configurations:
 #if (defined RCI_LEGACY_COMMANDS)
             case connector_request_id_remote_config_do_command:
             case connector_request_id_remote_config_reboot:

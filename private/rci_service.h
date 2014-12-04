@@ -267,8 +267,8 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
     rci_data.global_error_count = 0;
     rci_data.group_table = NULL;
 
-    request_id.remote_config_request = connector_request_id_remote_config_configurations;
-    callback_status = connector_callback(connector_ptr->callback, connector_class_id_remote_config,
+    request_id.config_request = connector_request_id_config_rci_descriptor_data;
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_config,
                                          request_id, &rci_data, connector_ptr->context);
     switch (callback_status)
     {

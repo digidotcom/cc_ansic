@@ -59,7 +59,8 @@ typedef enum {
     connector_request_id_config_sm_udp_max_rx_segments, /**< Requesting callback to obtain maximum segments used per incoming UDP Short Messaging session. */
     connector_request_id_config_sm_sms_max_rx_segments, /**< Requesting callback to obtain maximum segments used per incoming SMS Short Messaging session. */
     connector_request_id_config_sm_udp_rx_timeout,      /**< Requesting callback to obtain timeout in seconds for incoming UDP Short Messaging sessions. */
-    connector_request_id_config_sm_sms_rx_timeout       /**< Requesting callback to obtain timeout in seconds for incoming SMS Short Messaging sessions. */
+    connector_request_id_config_sm_sms_rx_timeout,      /**< Requesting callback to obtain timeout in seconds for incoming SMS Short Messaging sessions. */
+    connector_request_id_config_rci_descriptor_data     /**< Requesting callback to obtain Remote Configuration Interface descriptor data see @ref rci_descriptor_data. */
 } connector_request_id_config_t;
 /**
 * @}
@@ -517,6 +518,22 @@ typedef struct {
 typedef struct {
     size_t rx_timeout;
 } connector_config_sm_rx_timeout_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_config_rci_descriptor_data_t Remote Configuration Interface descriptor data
+* @{
+*/
+/**
+* This structure is used to load the RCI descriptor when @ref rci_service is enabled. Used for @ref connector_request_id_config_rci_descriptor_data callback.
+*
+* @see @ref rci_descriptor_data
+**/
+typedef struct {
+    struct connector_remote_config_data const * rci_data;
+} connector_config_rci_descriptor_data_t;
 /**
 * @}
 */
