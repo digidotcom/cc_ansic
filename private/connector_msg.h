@@ -1188,21 +1188,22 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         service_data.error_value = result;
         service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
 #if (defined CONNECTOR_DATA_SERVICE)
-        service_data.send_data_initiator = connector_send_data_initiator_unknown;
+        if (session != NULL)
+        {
+            msg_service_request_t * const session_service_data = &session->service_layer_data;
+
+            session_service_data->send_data_initiator = service_data.send_data_initiator;
+        }
+        else
+        {
+            service_data.send_data_initiator = connector_send_data_initiator_unknown;
+        }
 #endif
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
         {
             status = msg_delete_session(connector_ptr, msg_ptr, session);
         }
-#if (defined CONNECTOR_DATA_SERVICE)
-        else if (session != NULL)
-        {
-            msg_service_request_t * const session_service_data = &session->service_layer_data;
-
-            session_service_data->send_data_initiator = service_data.send_data_initiator;
-        }
-#endif
     }
 
     if (pending_request != NULL)
