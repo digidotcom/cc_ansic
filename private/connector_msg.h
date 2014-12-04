@@ -483,6 +483,9 @@ STATIC msg_session_t * msg_create_session(connector_data_t * const connector_ptr
     session->service_id = service_id;
     session->error = connector_session_error_none;
     session->service_layer_data.error_value = connector_session_error_none;
+#if (defined CONNECTOR_DATA_SERVICE)
+    session->service_layer_data.send_data_initiator = connector_send_data_initiator_unknown;
+#endif
     session->error_flag = 0;
     session->send_data_bytes = 0;
     session->service_context = NULL;
