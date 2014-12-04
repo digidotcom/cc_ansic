@@ -92,6 +92,7 @@ STATIC connector_status_t rci_service_callback(connector_data_t * const connecto
             MsgSetLastData(service_request->need_data->flags);
             MsgSetSendNow(service_request->need_data->flags);
             connector_debug_print_buffer("rci_service.response", service_data->output.data, service_data->output.bytes);
+            free_rci_internal_data(connector_ptr);
             service_request->need_data->length_in_bytes = service_data->output.bytes;
             break;
 

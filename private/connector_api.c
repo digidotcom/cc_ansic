@@ -538,6 +538,9 @@ connector_status_t connector_step(connector_handle_t const handle)
                 connector_ptr->connector_got_device_id = connector_false; /* TODO, Probably this should not be done with provisioning! */
                 result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated : connector_abort;
                 connector_debug_line("connector_step: free Cloud Connector");
+#if (defined CONNECTOR_RCI_SERVICE && !defined CONNECTOR_NO_MALLOC)
+                free_rci_internal_data(connector_ptr);
+#endif
                 free_data_buffer(connector_ptr, named_buffer_id(connector_data), connector_ptr);
                 goto done;
             }
