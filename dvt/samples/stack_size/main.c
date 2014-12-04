@@ -397,7 +397,9 @@ int main (void)
             APP_DEBUG("total malloc memory = %" PRIsize " after all threads are canceled\n", total_malloc_size);
             if (connector_run_thread_status == connector_device_terminated)
             {
-                APP_DEBUG("Error: connector_run has been terminated by connector_initiate_terminate but total malloc memory is not 0 after all threads are canceled\n");
+                APP_DEBUG("\n\n\n" ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" "Error: connector_run has been terminated by connector_initiate_terminate but total malloc memory is not 0 after all threads are canceled"
+                                   "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" "\n\n\n");
+                assert(0);
                 if (file_fd != NULL)
                 {
                     fprintf(file_fd, "<h1>Memory Leak</h1>\n");

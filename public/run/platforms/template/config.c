@@ -1172,6 +1172,7 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_sm_sms_max_rx_segments);
         enum_to_case(connector_request_id_config_sm_udp_rx_timeout);
         enum_to_case(connector_request_id_config_sm_sms_rx_timeout);
+        enum_to_case(connector_request_id_config_rci_descriptor_data);
     }
     return result;
 }
@@ -1264,7 +1265,6 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
         enum_to_case(connector_request_id_remote_config_action_end);
         enum_to_case(connector_request_id_remote_config_session_end);
         enum_to_case(connector_request_id_remote_config_session_cancel);
-        enum_to_case(connector_request_id_remote_config_configurations);
     }
     return result;
 }
@@ -1527,6 +1527,16 @@ static connector_callback_status_t app_config_error(connector_config_error_statu
     return result;
 }
 
+#if (defined CONNECTOR_RCI_SERVICE)
+static connector_callback_status_t app_load_rci_descriptor_data(connector_remote_config_data_t * const rci_desc)
+{
+    connector_callback_status_t status = connector_callback_continue;
+
+    *rci_desc = rci_desc_data;
+    return status;
+}
+#endif
+
 /**
  * @cond DEV
  */
@@ -1702,6 +1712,12 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
     case connector_request_id_config_sm_sms_rx_timeout:
         status = app_get_sm_sms_rx_timeout(data);
         break;
+#endif
+
+#if (defined CONNECTOR_RCI_SERVICE)
+    case connector_request_id_config_rci_descriptor_data:
+         status = app_load_rci_descriptor_data(data);
+         break;
 #endif
 
     default:
