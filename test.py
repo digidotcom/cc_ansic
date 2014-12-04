@@ -666,6 +666,19 @@ class TestRunner(object):
                         self.log.info('Killing Process with pid %s.' % pid, extra=log_extra)
                         os.kill(int(pid), signal.SIGKILL)
         except Exception, e:
+
+            # Initialize vars
+            message = "Execution script process has failed"
+            if ( test_script is None ):
+                test_script = "execution"
+            resultFilename = "%s_%s_%s_%s.xml" % (self.description, execution_type, test, test_script)
+            resultFilePath = os.path.abspath(os.path.join(".",resultFilename))
+            result = False
+            logRegisterProcess = "%s" % e
+
+            # Generate the XML file
+            return self.generateXMLTestResultContent(resultFilePath,execution_type,test,test_script,result,message,logRegisterProcess)
+
             log.exception(e)
         finally:
             # Remove Sandbox directory
@@ -744,6 +757,68 @@ class TestRunner(object):
             else:
                 _msg ="Unknown error sending the signal to process with pid %s !!" % pid
                 return (True,_msg)
+
+
+    def generateXMLTestResultContent(self,resultFilePath,testType,testGroup,testName,result,message,logProcess):
+        # filePath: destination path to generate a xml file, ej. "/home/username/TestFolder/results/result_xxxxx/dvt_reboot/<filename>.xml"
+        # testType: Type name, ej. 'dvt'
+        # testGroup: Group name, ej. 'reboot'
+        # testName: Test name, ej. 'build'
+        # result: 'True' or 'False'
+        # Message: Summary for this result, ej. 'Build Process Failed'
+        # logProcess: all stack trace for the build process
+
+        # Initialize vars
+        numTests = 1
+        if(result):
+            numFailures = 0
+        else:
+            numFailures = 1
+
+
+        # Escape characters that will have conflicts with XML
+        # "   &quot;
+        # '   &apos;
+        # <   &lt;
+        # >   &gt;
+        # &   &amp;
+        if(logProcess != None):
+            #logProcess = logProcess.replace("<","&lt;")
+            #logProcess = logProcess.replace(">","&gt;")
+            #logProcess = "<![CDATA[%s]]>" % logProcess
+            logProcess = logProcess.replace("<","")
+            logProcess = logProcess.replace(">","")
+
+
+        # File Content
+        fileContent = """<?xml version="1.0" encoding="UTF-8"?>"""
+        fileContent += """<testsuite name="nosetests" tests="%s" errors="0" failures="%s" skip="0">""" % (numTests,numFailures)
+
+        if(result):
+            # Test Case was successfully
+            fileContent += """<testcase classname="%s_%s.%sTestCase" name="test_%s_%s_%s" time="1" />""" % (testType,testGroup,testName,testType,testGroup,testName)
+        else:
+            fileContent += """<testcase classname="%s_%s.%sTestCase" name="test_%s_%s_%s" time="1" >""" % (testType,testGroup,testName,testType,testGroup,testName)
+            # Add a Failure line
+            fileContent += """<failure type="exceptions.AssertionError" message="%s">%s</failure>""" % (message,logProcess)
+            # End Test case
+            fileContent += """</testcase>"""
+
+        fileContent += """</testsuite>"""
+
+        # Generate result file
+        try:
+            handlerFile = open(resultFilePath, "w")
+            handlerFile.write(fileContent)
+            handlerFile.close()
+        except IOError,e:
+            log.info("An error was occurred generating XML result file")
+            _msg = "Exception [IOError]: %s" % (str(e))
+            log.info(_msg)
+            log.exception('Exception caught: %s' % type(e))
+
+        return True
+
 
 def clean_output(description, directory):
     for root, folders, files in os.walk(directory):
