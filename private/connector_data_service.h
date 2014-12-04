@@ -847,35 +847,18 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
 
 STATIC connector_status_t data_service_put_request_init(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
-    connector_status_t status = connector_working;
+    connector_status_t status = connector_invalid_data;
     connector_session_error_t result = service_request->error_value;
     msg_session_t * const session = service_request->session;
     connector_request_data_service_send_t * send_ptr = (void *)service_request->have_data;
     data_service_context_t * ds_ptr = NULL;
+    void * ptr = NULL;
 
-    if (send_ptr != NULL)
-    {
-        void * ptr;
+    ASSERT_GOTO(send_ptr != NULL, done);
 
-        if ((result != connector_session_error_none) || (session == NULL)) goto error;
-
-        status = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
-        if (status != connector_working)
-            goto error;
-
-        ds_ptr = ptr;
-    }
-    else
-    {
-        status = connector_invalid_data;
-        ASSERT_GOTO(send_ptr != NULL, done);
-    }
-
-    #if !(defined CONNECTOR_DATA_POINTS)
+#if !(defined CONNECTOR_DATA_POINTS)
     service_request->send_data_initiator = connector_send_data_initiator_user;
-    #endif
-
-    #if (defined CONNECTOR_DATA_POINTS)
+#else
     if (strncmp(send_ptr->path, internal_dp4d_path, internal_dp4d_path_strlen) == 0)
     {
         char * const modifiable_path = (char *)send_ptr->path; /* Discarding "const" qualifier */
@@ -884,11 +867,20 @@ STATIC connector_status_t data_service_put_request_init(connector_data_t * const
 
         service_request->send_data_initiator = connector_send_data_initiator_data_point;
     }
-	else
-	{
+    else
+    {
         service_request->send_data_initiator = connector_send_data_initiator_user;
-	}
-    #endif
+    }
+#endif
+
+    status = connector_working;
+    if ((result != connector_session_error_none) || (session == NULL)) goto error;
+
+    status = malloc_data_buffer(connector_ptr, sizeof *ds_ptr, named_buffer_id(put_request), &ptr);
+    ASSERT_GOTO(status == connector_working, error);
+    ASSERT_GOTO(ptr != NULL, error);
+
+    ds_ptr = ptr;
 
     ds_ptr->header = send_ptr;
     ds_ptr->callback_context = send_ptr->user_context;
