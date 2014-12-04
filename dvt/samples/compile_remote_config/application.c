@@ -68,6 +68,9 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     case connector_class_id_remote_config:
         status = app_remote_config_handler(request_id.remote_config_request, data);
         break;
+    case connector_class_id_status:
+        status = app_status_handler(request_id.status_request, data);
+        break;
     default:
         /* not supported */
         status = connector_callback_unrecognized;
