@@ -2427,7 +2427,7 @@
  * <td> Pointer to @endhtmlonly @ref connector_config_sm_max_sessions_t @htmlonly:
  *          <dl>
  *              <dt><i>max_sessions</i></dt>
- *              <dd> - Callback returns the maximum sessions for UDP transport.</dd>
+ *              <dd> - Callback returns the maximum sessions for SMS transport.</dd>
  *          </dl>
  * </td>
  * </tr>

@@ -863,7 +863,7 @@
  *
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
  * to notify an application that a response was received with no known associated request.  The reason
- * for this is either the session  @ref CONNECTOR_SM_TIMEOUT "timed-out", or the transport was
+ * for this is either the session  @ref CONNECTOR_SM_TX_TIMEOUT "tx timed-out", or the transport was
  * @ref connector_initiate_stop_request_t "terminated" and the message context lost.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
@@ -914,7 +914,7 @@
  * </table>
  * @endhtmlonly
  *
- * @see @ref CONNECTOR_SM_TIMEOUT
+ * @see @ref CONNECTOR_SM_TX_TIMEOUT
  *
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
