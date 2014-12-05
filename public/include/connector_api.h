@@ -516,7 +516,8 @@ typedef struct
  /**
  * @param class_id              This is a grouping or category of callback functions.  Each class_id contains a number of related request_id's.
  * @param request_id            The request ID defines the specific callback being requested.
- * @param data                  Points to specific structure for a given class ID and request ID
+ * @param data                  Points to specific structure for a given class ID and request ID.
+ * @param context               The same context passed to @ref connector_init "connector_init()" as "context" argument.
  *
  * @retval  connector_callback_continue The callback completed successfully and Cloud Connector should continue
  *                                      it's process.
@@ -553,6 +554,7 @@ typedef connector_callback_status_t (* connector_callback_t) (connector_class_id
  *
  * @param [in] callback  Callback function that is used to
  *        interface between the application and Cloud Connector.
+ * @param [in] context  User-controlled context passed to "callback". Set to NULL if not used.
  *
  * @retval NULL         An error occurred and Cloud Connector was unable to initialize.
  * @retval "Not NULL"   Success.  A Handle was returned for subsequent Cloud Connector calls.

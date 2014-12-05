@@ -181,7 +181,7 @@
  * @section connect_build Building
  *
  * To build this example on a Linux system, go to the public/run/samples/remote_config
- * directory and run @ref rci_tool to generate the missing files @b connector_api_remote.h and @ref remote_config.c. The typical
+ * directory and run @ref rci_tool to generate the missing files @b connector_api_remote.h and @b remote_config.c. The typical
  * arguments are:
  * @code
  * java -jar ConfigGenerator.jar username:password -url=login.etherios.com "Linux Application" 1.0.0.0 config.rci

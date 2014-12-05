@@ -99,7 +99,7 @@
  *
  * @subsection debug_routine Implement the debug routine and macro
  *
- * Open the file debug.c and implement the @ref connector_debug_printf.  For the linux
+ * Open the file debug.c and implement the @ref connector_debug_vprintf.  For the linux
  * platform the file is located at public/run/platforms/linux/debug.c.  Click on the
  * routine to see a description, then modify to operate with your platform.  Cloud Connector
  * calls this routine to display debug information when @ref CONNECTOR_DEBUG is defined connector_config.h.

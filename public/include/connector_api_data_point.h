@@ -116,16 +116,26 @@ typedef struct
 */
 typedef struct connector_data_point_t
 {
+    /** Data in each data point */
     struct data
     {
+        /**
+         * Data format type
+         */
         enum type
         {
             connector_data_type_native, /**< the data value is in native format */
             connector_data_type_text    /**< the data value is in ascii/text format */
-        } type;     /**< data format type */
+        } type; /**< Data format type */
 
+        /**
+         * Each data element
+         */
         union
         {
+            /**
+             * To represent the data value in their native form.
+             */
             union
             {
                 int32_t int_value;    /**< 32-bit two's complement integer */
@@ -137,15 +147,19 @@ typedef struct connector_data_point_t
                 float float_value;  /**< 32-bit IEEE754 floating point */
                 double double_value;/**< 64-bit IEEE754 floating point */
                 #endif
-            } native;               /**< to represent the data value in their native form */
+            } native;
 
             char * text;            /**< carries data in ascii format, a null-terminated string */
-        } element;  /**< each data element */
+        } element;
 
     } data;  /**< data in each data point */
 
+    /** Time at the data point is captured */
     struct time
     {
+        /**
+         * Time value format
+         */
         enum
         {
             connector_time_cloud,                  /**< The time is ignored and Device Cloud time is used instead. */
@@ -154,8 +168,11 @@ typedef struct connector_data_point_t
             connector_time_local_epoch_whole,       /**< The time value is specified in Epoch milliseconds 64-bit format. */
 #endif
             connector_time_local_iso8601            /**< The time value is specified in ISO 8601 string format. */
-        } source;   /**< Time value format */
+        } source;
 
+        /**
+         * Time value data structure
+         */
         union
         {
             connector_time_epoch_fractional_t since_epoch_fractional;   /**< Time since the Epoch time in seconds and milliseconds */
@@ -182,12 +199,16 @@ typedef struct connector_data_point_t
                                                                                  - 2012-01-12T06:16:55.235Z
                                                                                  - 2012-12-22T03:16:44Z
                                                                                  - 2012-12-21T19:16:44-08:00 */
-        } value;    /**< Time value data structure */
+        } value;
 
-    } time;   /**< Time at the data point is captured */
+    } time; /**< Time at the data point is captured */
 
+    /** Location where the data point is captured */
     struct location
     {
+        /**
+         * Location format type
+         */
         enum
         {
             connector_location_type_ignore, /**< location is ignored */
@@ -195,40 +216,52 @@ typedef struct connector_data_point_t
             connector_location_type_native, /**< location value is represented in its native format */
             #endif
             connector_location_type_text    /**< location value is represented in ascii */
-        } type; /**< location format type */
+        } type;
 
+        /**
+         * location value
+         */
         union
         {
             #if (defined FLOATING_POINT_SUPPORTED)
+            /**
+             * Location in native format
+             */
             struct
             {
                 float latitude;     /**< latitude in degree */
                 float longitude;    /**< longitude in degree */
                 float elevation;    /**< elevation in meters */
-            } native; /**< location in native format */
+            } native;
             #endif
 
+            /**
+             * Location in text format.
+             */
             struct
             {
                 char * latitude;   /**< latitude in degree (null-terminated string) */
                 char * longitude;  /**< longitude in degree (null-terminated string) */
                 char * elevation;  /**< elevation in meters (null-terminated string) */
-            } text; /**< location in text format */
+            } text;
+        } value;
 
-        } value; /**< location value */
+    } location; /**< Location where the data point is captured */
 
-    } location; /**< location where the data point is captured */
-
+    /** User specified data point quality */
     struct quality
     {
+        /**
+         * Quality format type.
+         */
         enum
         {
             connector_quality_type_ignore, /**< quality is ignored */
             connector_quality_type_native  /**< user specified data quality, an integer value */
-        } type; /**< quality format type */
+        } type;
 
         int value; /**< data quality value */
-    } quality; /**< user specified data point quality */
+    } quality; /**< User specified data point quality */
 
     char * description; /**< null terminated description string (optional field, set to NULL if not used) */
 

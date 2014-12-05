@@ -52,7 +52,7 @@
  *   required for application development.  All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
  *   might require updating to match your platform's characteristics (i.e., data size and supported compiler data types).
  *
- *   Public header @endhtmlonly @ref connector_debug.h @htmlonly contains the prototype for @endhtmlonly @ref connector_debug_printf() @htmlonly which is a required
+ *   Public header @endhtmlonly @ref connector_debug.h @htmlonly contains the prototype for @endhtmlonly @ref connector_debug_vprintf() @htmlonly which is a required
  *   porting implementation function when @endhtmlonly @ref CONNECTOR_DEBUG @htmlonly is defined.  Also contains appropriate definitions for the macro ASSERT(),
  *   which is used within the private folder.</p>
  *

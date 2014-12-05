@@ -34,7 +34,7 @@
 
 /**
  * When defined, Cloud Connector private library includes debug support.  Cloud Connector state
- * and debug data will be displayed using the @ref connector_debug_printf. See @ref debug_routine
+ * and debug data will be displayed using the @ref connector_debug_vprintf. See @ref debug_routine
  * for its implementation. Macro error testing is compiled and implemented using the
  * @ref ASSERT macro.
  *

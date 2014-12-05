@@ -67,7 +67,13 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned char uint8_t;
 
+/**
+ *  Appends the correct suffix to an 8-bit signed integer literal.
+ */
 #define INT8_C(c)       c
+/**
+ *  Appends the correct suffix to an 8-bit unsigned integer literal.
+ */
 #define UINT8_C(c)      c
 
 #ifndef UINT8_MAX
@@ -82,7 +88,13 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned short uint16_t;
 
+/**
+ *  Appends the correct suffix to a 16-bit signed integer literal.
+ */
 #define INT16_C(c)      c
+/**
+ *  Appends the correct suffix to a 16-bit unsigned integer literal.
+ */
 #define UINT16_C(c)     c
 
 #ifndef UINT16_MAX
@@ -97,7 +109,13 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned long int uint32_t;
 
+/**
+ *  Appends the correct suffix to a 32-bit signed integer literal.
+ */
 #define INT32_C(c)      c
+/**
+ *  Appends the correct suffix to a 32-bit unsigned integer literal.
+ */
 #define UINT32_C(c)     c ## U
 
 #ifndef UINT32_MAX
@@ -175,8 +193,13 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
  */
   typedef unsigned long long int uint64_t;
 
-
+/**
+ *  Appends the correct suffix to a 64-bit signed integer literal.
+ */
 #define INT64_C(c)      c ## LL
+/**
+ *  Appends the correct suffix to a 64-bit unsigned integer literal.
+ */
 #define UINT64_C(c)     c ## ULL
 
 #ifndef UINT64_MAX
