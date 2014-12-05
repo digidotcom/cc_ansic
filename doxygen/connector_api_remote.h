@@ -123,7 +123,7 @@ typedef enum {
     connector_element_type_ipv4,                /**< Valid IPv4 address (32-bit value) which is shown aaa.bbb.ccc.ddd in the Device Cloud */
     connector_element_type_fqdnv4,              /**< This type accepts either ipv4 or DNS name. */
     connector_element_type_fqdnv6,              /**< This type accepts either IPv6 address, IPv4 address, or DNS name. */
-    connector_element_type_mac_addr = 21,       /**> Valid MAC address which is shown as XX:XX:XX:XX:XX:XX in Device Cloud. */
+    connector_element_type_mac_addr = 21,       /**< Valid MAC address which is shown as XX:XX:XX:XX:XX:XX in Device Cloud. */
     connector_element_type_datetime = 22        /**< Date and time type. It's string which contains the ISO 8601 standard
                                                  for date and time representation. The format is: YYYY-MM-DDTHH:MM:SStz
                                                  where

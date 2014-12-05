@@ -36,9 +36,9 @@
  * which calls connector_initiate_action() to initiate the actual transfer of the data points. The sample
  * waits for the response before sending the next set of points.
  *
- * If the app_data_point_handler() is called with @ref connector_request_id_data_point_multiple_response
+ * If the app_data_point_handler() is called with @ref connector_request_id_data_point_response
  * then this indicates a response from Device Cloud is received (this callback will only be called if response
- * was requested). The @ref connector_request_id_data_point_multiple_status is allways issued indicating the
+ * was requested). The @ref connector_request_id_data_point_status is allways issued indicating the
  * status of the request after it's been completed. This sample uses linux, /proc/stat file
  * to calculate the "CPU usage"; the "CPU temperature" is just a random float number and "incremental" is an
  * incremental integer.

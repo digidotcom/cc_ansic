@@ -47,7 +47,7 @@ typedef struct  {
     {
         char const * CONST url;    /**< Pointer to Device Cloud URL. Used for TCP and UDP transports */
         char const * CONST phone;    /**< Pointer to Device Cloud Phone Number where to send SMSs. Used for SMS transport */
-    } device_cloud;
+    } device_cloud;  /**< Device Cloud information */
     connector_network_handle_t handle;      /**< Application defined network handle associated with the connection */
 } connector_network_open_t;
 /**

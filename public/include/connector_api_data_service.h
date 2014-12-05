@@ -41,7 +41,7 @@ typedef struct
 
     uint32_t * request_id;              /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
                                              and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
-                                             See @connector_initiate_session_cancel*/
+                                             See @ref connector_initiate_session_cancel*/
     enum
     {
         connector_data_service_send_option_overwrite,   /**< overwrite the content if the path is already exists */
