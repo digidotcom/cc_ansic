@@ -280,7 +280,7 @@ typedef struct
     void * user_context;            /**< user context to be passed back in response */
 
     uint32_t * request_id;          /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
-                                         and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
+                                         and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired.
                                          See @ref connector_initiate_session_cancel*/
     char * path;                    /**< data stream path name. On the cloud the stream name will be 'device ID'/'path' */
     void * point;                   /**< binary data of size specified in bytes_used */

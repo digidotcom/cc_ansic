@@ -361,6 +361,9 @@
  *                                        during a @endhtmlonly @ref ping_response_callback "response callback". @htmlonly </li>
  *        <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if notification of ping receipt is needed,
  *                                             otherwise set to @ref connector_false.  See @ref ping_response_callback . @htmlonly </li>
+ *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
+ *                                      and might be used for canceling the session. <b>Only valid for SM</b>. Set to NULL if not desired. </li>
+ *        <li><b><i>timeout_in_seconds</i></b>, outgoing sessions timeout in seconds. <b>Only valid for SM</b>. Use SM_WAIT_FOREVER to wait forever for the complete request/response </li>
  *      </ul>
  *    </td>
  * </tr>
@@ -388,6 +391,8 @@
  *
  *   ping_request.transport = connector_transport_udp;
  *   ping_request.response_required = connector_true;
+ *   ping_request.timeout_in_seconds = SM_WAIT_FOREVER;
+ *   ping_request.request_id = NULL;
  *
  *   // Send ping to Device Cloud
  *   status = connector_initiate_action(handle, connector_initiate_ping_request, &ping_request);
@@ -531,8 +536,6 @@
  *      -# @ref cli_request_callback
  *      -# @ref cli_response_length_callback
  *      -# @ref cli_response_callback
- *
- *      If an error is encountered during the CLI Callback Sequence, this additional CLI callback is made:
  *      -# @ref cli_status_callback
  *
  * @subsection cli_request_callback  CLI request callback
@@ -743,11 +746,13 @@
  * @see @ref cli_response_length_callback
  * @see @ref cli_status_callback
  *
- * @subsection cli_status_callback  CLI session error callback
+ * @subsection cli_status_callback  CLI status callback
  *
- * The @ref connector_request_id_sm_cli_status callback is made when an unexpected CLI error occurs during
- * a @ref cli_cb_sequence.  This error can occur if the @ref connector_initiate_stop_request_t "stop transport"
+ * Cloud Connector will make @ref connector_request_id_sm_cli_status callback to pass the reason for session complete. 
+ * It can indicate success or error if the @ref connector_initiate_stop_request_t "stop transport"
  * was initiated while processing a CLI request or if Cloud Connector fails to allocate the required resources.
+ * User will receive this callback when Device Connector finishes with the session. 
+ * User can free their user_context and any other reserved data as soon as they receive this callback.
  *
  * @htmlonly
  * <table class="apitable">
@@ -772,8 +777,11 @@
  *       <li><b><i>transport</i></b>: @endhtmlonly Transport to use: @ref connector_transport_udp or @ref connector_transport_sms. @htmlonly </li>
  *       <li><b><i>user_context</i></b>: The opaque application-defined context passed in from the @endhtmlonly @ref cli_request_callback @htmlonly </li>
  *       <li><b><i>status</i></b>: @endhtmlonly
- *                                 @b connector_sm_cli_status_cancel if @ref connector_initiate_stop_request_t "transport stopped"
- *                                 @b connector_sm_cli_status_error if resource allocation failure. @htmlonly
+ *                                 <ul>
+ *                                 <li>@b connector_sm_cli_status_success session finished successfully</li>
+ *                                 <li>@b connector_sm_cli_status_cancel if @ref connector_initiate_stop_request_t "transport stopped"</li>
+ *                                 <li>@b connector_sm_cli_status_error if resource allocation failure. @htmlonly</li>
+ *                                 </ul>
  *       </li>
  *     </ul>
  *   </td>

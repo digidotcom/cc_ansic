@@ -40,7 +40,7 @@ typedef struct
     char const * content_type;          /**< null-terminated content type (text/plain, text/xml, application/json, etc. Applicable only in TCP transport method */
 
     uint32_t * request_id;              /**< pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
-                                             and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired. This field  connector_initiate_action().
+                                             and might be used for canceling the session. Only valid for SM protocol. Set to NULL if not desired.
                                              See @ref connector_initiate_session_cancel*/
     enum
     {
