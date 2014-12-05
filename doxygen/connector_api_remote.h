@@ -39,7 +39,7 @@ typedef enum {
     connector_request_id_remote_config_session_end,    /**< inform callback to end remote configuration request
                                                             Callback may start writing data into NVRAM for set remote configuration request.
                                                             Callback should end and release any resources used when it's done. */
-    connector_request_id_remote_config_session_cancel,  /**< Requesting callback to abort and cancel any query or set remote configuration request.
+    connector_request_id_remote_config_session_cancel   /**< Requesting callback to abort and cancel any query or set remote configuration request.
                                                             Callback should stop and release any resources used */
 } connector_request_id_remote_config_t;
 /**
@@ -196,7 +196,6 @@ typedef union {
 */
 
 /**
-/**
  * @defgroup connector_remote_action_t Cloud Connector remote configuration action types
  * @{
  */
@@ -239,6 +238,21 @@ typedef enum {
     connector_element_access_write_only,    /**< Write only */
     connector_element_access_read_write     /**< Read and write */
 } connector_element_access_t;
+/**
+* @}
+*/
+
+/** 
+* @defgroup connector_remote_attribute_t Cloud Connector remote configuration attributes
+* @{
+*/
+/**
+* Remote configuration attributes
+*/
+typedef struct {
+    rci_query_setting_attribute_source_t source;                /**< 'source' attribute value */
+    rci_query_setting_attribute_compare_to_t compare_to;        /**< 'compare_to' attribute value */
+} connector_remote_attribute_t;
 /**
 * @}
 */
