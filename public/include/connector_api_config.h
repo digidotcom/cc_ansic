@@ -534,7 +534,7 @@ typedef struct {
 * @see @ref rci_descriptor_data
 **/
 typedef struct {
-    connector_remote_config_data_t const * rci_data;
+    connector_remote_config_data_t const * rci_data;  /**< pointer to Cloud Connector's internal RCI data structure */
 } connector_config_rci_descriptor_data_t;
 /**
 * @}
