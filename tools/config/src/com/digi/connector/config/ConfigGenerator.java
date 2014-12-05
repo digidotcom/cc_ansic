@@ -147,10 +147,16 @@ public class ConfigGenerator {
                 + URL_OPTION
                 + "] ["
                 + DASH
-                + USE_NAMES_OPTION
+                + NO_BACKUP_OPTION
                 + "] ["
                 + DASH
-                + PREFIX_OPTION
+                + SAVE_DESCRIPTORS_OPTION
+                + "] ["
+                + DASH
+                + NO_UPLOAD_OPTION
+                + "] ["
+                + DASH
+                + USE_NAMES_OPTION
                 +"] "
                 + String.format("<\"%s\"[:\"%s\"]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
@@ -191,12 +197,21 @@ public class ConfigGenerator {
                         DASH + URL_OPTION + "=<Device Cloud URL>", URL_DEFAULT));
         log(String
                 .format(
-                        "\t%-16s \t= optional behavior,adding ASCIIZ names. Default is %s.",
-                        DASH + USE_NAMES_OPTION + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
+                        "\t%-16s \t= do not backup remote_config.c and .h files.",
+                        DASH + NO_BACKUP_OPTION));
         log(String
                 .format(
-                        "\t%-16s \t= optional behavior,adding a prefix to the structures.",
-                        DASH + PREFIX_OPTION + "=<prefix>"));
+                        "\t%-16s \t= save a local copy of the Descriptors that the tool uploads to Device Cloud",
+                        DASH + SAVE_DESCRIPTORS_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= do not upload Descriptors to Device Cloud.If this option and -vendor are set,you don't" +
+                        " need to use a valid username:password.",
+                        DASH + NO_UPLOAD_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional, add ASCIIZ string \"name\" field to connector_remote_group_t and/or connector_remote_element_t structures. Default is %s.",
+                        DASH + USE_NAMES_OPTION + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -219,22 +234,17 @@ public class ConfigGenerator {
                     + HIDDEN_HELP_OPTION));
 
             log(String
+                .format(
+                        "\t%-16s \t= delete current Descriptors in Device Cloud",
+                        DASH + DELETE_DESCRIPTOR_OPTION));
+            log(String
+                .format(
+                        "\t%-16s \t= optional behavior,adding a prefix to the structures.",
+                        DASH + PREFIX_OPTION + "=<prefix>"));
+            log(String
                     .format(
                             "\t%-16s \t= Choose the output Type. Default is none.",
                             DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
-            log(String
-                    .format(
-                            "\t%-16s \t= delete current Descriptors in Device Cloud",
-                            DASH + DELETE_DESCRIPTOR_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= save a local copy of the Descriptors that the tool uploads to Device Cloud",
-                            DASH + SAVE_DESCRIPTORS_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= No upload Descriptors to Device Cloud.If this option and -vendor are set,you don't" +
-                            " need to use a valid username:password.",
-                            DASH + NO_UPLOAD_OPTION));
             log(String
                     .format(
                             "\t%-16s \t= create bin_id log",
@@ -255,11 +265,7 @@ public class ConfigGenerator {
                     .format(
                             "\t%-16s \t= optional behaviour for future features using prototypes",
                             DASH + PROTOTYPES_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= No backup remote_config.c and .h files.",
-                            DASH + NO_BACKUP_OPTION));
-        }
+         }
 
         System.exit(1);
     }

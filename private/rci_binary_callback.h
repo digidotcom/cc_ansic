@@ -27,13 +27,13 @@ STATIC void rci_error(rci_t * const rci, unsigned int const id, char const * con
 }
 
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
-#define get_rci_global_error(rci, id)   rci->service_data->connector_ptr->rci_data.error_table[(id) - connector_rci_error_OFFSET]
+#define get_rci_global_error(rci, id)   rci->service_data->connector_ptr->rci_data->error_table[(id) - connector_rci_error_OFFSET]
 static char const * get_rci_group_error(rci_t * const rci, unsigned int const id)
 {
     connector_group_t const * const group = get_current_group(rci);
-    unsigned int const index = (id - rci->service_data->connector_ptr->rci_data.global_error_count);
+    unsigned int const index = (id - rci->service_data->connector_ptr->rci_data->global_error_count);
 
-    ASSERT(id >= rci->service_data->connector_ptr->rci_data.global_error_count);
+    ASSERT(id >= rci->service_data->connector_ptr->rci_data->global_error_count);
     ASSERT(index < group->errors.count);
 
     return group->errors.description[index];
@@ -52,7 +52,7 @@ STATIC void rci_global_error(rci_t * const rci, unsigned int const id, char cons
 
 STATIC void rci_group_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
-    if (id < rci->service_data->connector_ptr->rci_data.global_error_count)
+    if (id < rci->service_data->connector_ptr->rci_data->global_error_count)
     {
         rci_global_error(rci, id, hint);
     }
@@ -177,6 +177,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
         rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
         break;
+
 #if (defined RCI_LEGACY_COMMANDS)
     case connector_request_id_remote_config_do_command:
         /* Provide request */
@@ -392,6 +393,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 break;
             case connector_request_id_remote_config_group_start:
             case connector_request_id_remote_config_session_cancel:
+            case connector_request_id_remote_config_configurations:
 #if (defined RCI_LEGACY_COMMANDS)
             case connector_request_id_remote_config_do_command:
             case connector_request_id_remote_config_reboot:

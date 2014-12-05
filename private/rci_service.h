@@ -254,22 +254,17 @@ STATIC void validate_rci_tuple(connector_data_t const * const connector_ptr, cha
 
 STATIC connector_status_t connector_facility_rci_service_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
-    connector_status_t result;
+    connector_status_t result = connector_invalid_data;
     msg_service_id_t const service_id = msg_service_id_brci;
     connector_request_id_t request_id;
     connector_callback_status_t callback_status;
-    connector_remote_config_data_t rci_data;
+    connector_config_rci_descriptor_data_t config_rci_descriptor;
 
-    rci_data.device_type = NULL;
-    rci_data.vendor_id = 0;
-    rci_data.firmware_target_zero_version = 0;
-    rci_data.error_table = NULL;
-    rci_data.global_error_count = 0;
-    rci_data.group_table = NULL;
+    config_rci_descriptor.rci_data = NULL;
 
     request_id.config_request = connector_request_id_config_rci_descriptor_data;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_config,
-                                         request_id, &rci_data, connector_ptr->context);
+                                         request_id, &config_rci_descriptor, connector_ptr->context);
     switch (callback_status)
     {
         case connector_callback_unrecognized:
@@ -277,24 +272,27 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
             goto done;
 
         case connector_callback_continue:
-            ASSERT(rci_data.group_table != NULL);
-            ASSERT(rci_data.vendor_id != 0x00);
-            ASSERT(rci_data.device_type != NULL);
-            ASSERT(rci_data.error_table != NULL);
-            if (rci_data.global_error_count < connector_rci_error_COUNT)
-                rci_data.global_error_count = connector_rci_error_COUNT;
+        {
+            connector_remote_config_data_t const * const rci_data = config_rci_descriptor.rci_data;
+
+            ASSERT_GOTO(rci_data != NULL, done);
+            ASSERT(rci_data->group_table != NULL);
+            ASSERT(rci_data->vendor_id != 0x00);
+            ASSERT(rci_data->device_type != NULL);
+            ASSERT(rci_data->error_table != NULL);
+            ASSERT(rci_data->global_error_count >= connector_rci_error_COUNT);
+
+#if (defined CONNECTOR_DEBUG)
+            validate_rci_tuple(connector_ptr, rci_data->device_type, rci_data->vendor_id, rci_data->firmware_target_zero_version);
+#endif
             connector_ptr->rci_data = rci_data;
             break;
-
+        }
         default:
             result = connector_abort;
             goto done;
 
     }
-
-#if (defined CONNECTOR_DEBUG)
-    validate_rci_tuple(connector_ptr, rci_data.device_type, rci_data.vendor_id, rci_data.firmware_target_zero_version);
-#endif
 
     result = msg_init_facility(connector_ptr, facility_index, service_id, rci_service_callback);
 

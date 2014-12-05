@@ -212,7 +212,7 @@ typedef struct connector_data {
 #endif
 
 #if (defined CONNECTOR_RCI_SERVICE)
-    connector_remote_config_data_t rci_data;
+    connector_remote_config_data_t const * rci_data;
     struct rci * rci_internal_data;
 #endif
 
