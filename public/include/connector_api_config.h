@@ -55,7 +55,7 @@ typedef enum {
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
     connector_request_id_config_password,          /**< Requesting callback to return password for the password identity verification form */
     connector_request_id_config_sm_udp_max_sessions,    /**< Requesting callback to obtain maximum UDP Short Messaging sessions active at once. */
-    connector_request_id_config_sm_sms_max_sessions,    /**< Requesting callback to obtain maximum UDP Short Messaging sessions active at once. */
+    connector_request_id_config_sm_sms_max_sessions,    /**< Requesting callback to obtain maximum SMS Short Messaging sessions active at once. */
     connector_request_id_config_sm_udp_max_rx_segments, /**< Requesting callback to obtain maximum segments used per incoming UDP Short Messaging session. */
     connector_request_id_config_sm_sms_max_rx_segments, /**< Requesting callback to obtain maximum segments used per incoming SMS Short Messaging session. */
     connector_request_id_config_sm_udp_rx_timeout,      /**< Requesting callback to obtain timeout in seconds for incoming UDP Short Messaging sessions. */
@@ -481,7 +481,7 @@ typedef struct {
 * @see @ref sm_sms_max_sessions
 **/
 typedef struct {
-    size_t max_sessions;
+    size_t max_sessions;  /**< maximum active sessions */
 } connector_config_sm_max_sessions_t;
 /**
 * @}
@@ -499,7 +499,7 @@ typedef struct {
 * @see @ref sm_sms_max_sessions
 **/
 typedef struct {
-    size_t max_rx_segments;
+    size_t max_rx_segments;   /**< Maximum number of incoming segments (packets) */
 } connector_config_sm_max_rx_segments_t;
 /**
 * @}
@@ -516,7 +516,7 @@ typedef struct {
 * @see @ref sm_sms_rx_timeout
 **/
 typedef struct {
-    size_t rx_timeout;
+    size_t rx_timeout;  /**< Timeout for incoming Short Messaging sessions */
 } connector_config_sm_rx_timeout_t;
 /**
 * @}

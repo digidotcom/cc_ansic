@@ -399,14 +399,14 @@
 * @see @ref shortmessaging
 * @see @ref CONNECTOR_TRANSPORT_UDP
 */
-#define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS               4
+#define CONNECTOR_SM_SMS_MAX_RX_SEGMENTS               4
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined and your application
 * sends Data Points over one of these transports, Cloud Connector will use the define below to allocate
 * a buffer to process the @ref connector_initiate_data_point requests
 * that use SMS or UDP. If both are defined, the buffer will be allocated with the maximum value.
-* This define does not affect the number of segments for reception (see @ref CONNECTOR_SM_MAX_RX_SEGMENTS).
+* This define does not affect the number of segments for reception (see @ref CONNECTOR_SM_UDP_MAX_RX_SEGMENTS and @ref CONNECTOR_SM_SMS_MAX_RX_SEGMENTS).
 * Each Data Point is sent in CSV format (one per line, '\\n' terminated). The default order is:\n\n
 * DATA, TIMESTAMP, QUALITY, DESCRIPTION, LOCATION, DATATYPE, UNITS, FORWARDTO \n\n
 * All fields are sent, even empty ones (i.e.: data,1,,,99)
@@ -424,7 +424,7 @@
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming UDP sessions. 
-* If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_max_sessions configuration callback.
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_rx_timeout configuration callback.
 * It can be set to SM_WAIT_FOREVER for infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
 * 
 * @see @ref sm_udp_rx_timeout
@@ -436,7 +436,7 @@
 
 /**
 * If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming SMS sessions.
-* If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_max_sessions configuration callback.
+* If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_rx_timeout configuration callback.
 * It can be set to SM_WAIT_FOREVER for infinite wait time but it is not recommended as delivery is not guaranteed in Short Messaging.
 * 
 * @see @ref sm_sms_rx_timeout
@@ -489,7 +489,7 @@
 
 /**
  * Sets the outbound packets' maximum size in UDP transport (it has no effect on SM/SMS or EDP/TCP).
- * This change only has effect if no multipacket messaging is enabled (@ref CONNECTOR_SM_MAX_SEGMENTS > 1).
+ * This change only has effect if no multipacket messaging is enabled (@ref CONNECTOR_SM_MULTIPART).
  * If it is not defined the default value of 1472 is used. This value is used for buffers declaration
  * so it might help to save RAM. If you do not know which value to use, leave it undefined.
  *
