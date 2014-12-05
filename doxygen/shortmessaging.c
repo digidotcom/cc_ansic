@@ -863,8 +863,12 @@
  *
  * Cloud Connector will make @ref connector_request_id_sm_opaque_response @ref connector_callback_t "callback"
  * to notify an application that a response was received with no known associated request.  The reason
- * for this is either the session  @ref CONNECTOR_SM_TX_TIMEOUT "tx timed-out", or the transport was
- * @ref connector_initiate_stop_request_t "terminated" and the message context lost.
+ * for this is either the outgoing session "timed-out" (see timeout_in_seconds field of 
+ * @ref connector_request_data_service_send_t "connector_request_data_service_send_t",
+ * @ref connector_request_data_point_t "connector_request_data_point_t", 
+ * @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t" and 
+ * @ref connector_sm_send_ping_request_t "connector_sm_send_ping_request_t" structures),
+ * or the transport was @ref connector_initiate_stop_request_t "terminated" and the message context lost.
  *
  * The @ref connector_request_id_sm_opaque_response "pending data" @ref connector_callback_t "callback"
  * is called with the following information:
@@ -914,7 +918,11 @@
  * </table>
  * @endhtmlonly
  *
- * @see @ref CONNECTOR_SM_TX_TIMEOUT
+ * See timeout_in_seconds field of following structures:
+ * @ref connector_request_data_service_send_t "connector_request_data_service_send_t",
+ * @ref connector_request_data_point_t "connector_request_data_point_t", 
+ * @ref connector_request_data_point_binary_t "connector_request_data_point_binary_t" and 
+ * @ref connector_sm_send_ping_request_t "connector_sm_send_ping_request_t".
  *
  * @subsection ping_request_from_cloud  Device Cloud Ping Notification
  *
