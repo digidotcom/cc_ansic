@@ -337,6 +337,9 @@ typedef struct {
 * @}
 */
 
+/* Automatically generated RCI internal descriptor Data, this pointer must be passed to @ref connector_request_id_config_rci_descriptor_data request callback */
+extern connector_remote_config_data_t const * const rci_descriptor_data;
+
 #endif
 
 #if !defined _CONNECTOR_API_H
