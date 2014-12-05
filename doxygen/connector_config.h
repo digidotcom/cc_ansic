@@ -404,7 +404,7 @@
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined and your application
 * sends Data Points over one of these transports, Cloud Connector will use the define below to allocate
-* a buffer to process the @ref connector_initiate_data_point_single requests
+* a buffer to process the @ref connector_initiate_data_point requests
 * that use SMS or UDP. If both are defined, the buffer will be allocated with the maximum value.
 * This define does not affect the number of segments for reception (see @ref CONNECTOR_SM_MAX_RX_SEGMENTS).
 * Each Data Point is sent in CSV format (one per line, '\\n' terminated). The default order is:\n\n
