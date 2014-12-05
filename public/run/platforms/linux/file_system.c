@@ -77,11 +77,11 @@ typedef struct
 } app_dir_data_t;
 
 
-static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(connector_filesystem_errnum_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
-    switch(errnum)
+    switch (errnum)
     {
     #if EAGAIN != EWOULDBLOCK
         case EWOULDBLOCK:
@@ -92,7 +92,7 @@ static connector_callback_status_t app_process_file_error(uintptr_t * const erro
 
         default:
             status = connector_callback_error;
-            *error_token = (uintptr_t)errnum;
+            *error_token = errnum;
             break;
     }
     return status;
@@ -431,11 +431,11 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
     if (dirp != NULL)
     {
-        app_dir_data_t * dir_data = malloc (sizeof *dir_data);
+        app_dir_data_t * const dir_data = malloc (sizeof *dir_data);
 
         if (dir_data != NULL)
         {
-            data->handle = (uintptr_t)dir_data;
+            data->handle = dir_data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s: %p\n", data->path, (void *) dirp);
@@ -453,9 +453,9 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     return status;
 }
 
-static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
+static connector_callback_status_t app_process_file_closedir(connector_file_system_closedir_t * const data)
 {
-    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
+    app_dir_data_t * const dir_data = data->handle;
 
     ASSERT(dir_data != NULL);
     APP_DEBUG("closedir %p\n", (void *) dir_data->dirp);
@@ -479,7 +479,7 @@ static connector_callback_status_t app_process_file_closedir(connector_file_syst
 static connector_callback_status_t app_process_file_readdir(connector_file_system_readdir_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
+    app_dir_data_t * const dir_data = data->handle;
     struct dirent  * result = NULL;
 
     /* Read next directory entry */
@@ -550,7 +550,7 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
 static connector_callback_status_t app_process_file_lseek(connector_file_system_lseek_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) data->handle;
+    long int const fd = data->handle;
     int  origin;
     off_t result;
 
@@ -591,7 +591,7 @@ static connector_callback_status_t app_process_file_lseek(connector_file_system_
 static connector_callback_status_t app_process_file_ftruncate(connector_file_system_truncate_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) data->handle;
+    long int const fd = data->handle;
 
     int const result = ftruncate(fd, data->length_in_bytes);
 
@@ -626,7 +626,7 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
 static connector_callback_status_t app_process_file_read(connector_file_system_read_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) data->handle;
+    long int const fd = data->handle;
 
     int const result = read(fd, data->buffer, data->bytes_available);
 
@@ -647,7 +647,7 @@ done:
 static connector_callback_status_t app_process_file_write(connector_file_system_write_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) data->handle;
+    long int const fd = data->handle;
 
     int const result = write(fd, data->buffer, data->bytes_available);
 
@@ -668,7 +668,7 @@ done:
 static connector_callback_status_t app_process_file_close(connector_file_system_close_t * const data)
 {
     connector_callback_status_t status = connector_callback_continue;
-    long int const fd = (long int) data->handle;
+    long int const fd = data->handle;
     int const result = close(fd);
 
     if (result < 0)
