@@ -43,15 +43,6 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
 
 static connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data)
 {
-    if (request_id == connector_request_id_remote_config_configurations)
-    {
-        connector_remote_config_data_t * const remote_configuration = data;
-        *remote_configuration = rci_desc_data;
-    }
-    else
-    {
-        printf("unknown request %d\n", request_id);
-    }
 
     return connector_callback_continue;
 }

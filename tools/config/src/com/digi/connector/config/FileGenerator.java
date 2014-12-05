@@ -539,8 +539,7 @@ public abstract class FileGenerator {
                          "    connector_request_id_remote_config_group_end,\n" +
                          "    connector_request_id_remote_config_action_end,\n" +
                          "    connector_request_id_remote_config_session_end,\n" +
-                         "    connector_request_id_remote_config_session_cancel,\n" +
-                         "    connector_request_id_remote_config_configurations");
+                         "    connector_request_id_remote_config_session_cancel");
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(",\n    connector_request_id_remote_config_do_command,\n" +
                              "    connector_request_id_remote_config_reboot,\n" +

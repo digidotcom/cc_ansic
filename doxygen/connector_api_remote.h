@@ -41,7 +41,6 @@ typedef enum {
                                                             Callback should end and release any resources used when it's done. */
     connector_request_id_remote_config_session_cancel,  /**< Requesting callback to abort and cancel any query or set remote configuration request.
                                                             Callback should stop and release any resources used */
-    connector_request_id_remote_config_configurations
 } connector_request_id_remote_config_t;
 /**
 * @}

@@ -314,14 +314,6 @@ static connector_callback_status_t app_rci_group_set(connector_remote_config_t *
     return connector_callback_continue;
 }
 
-static connector_callback_status_t app_process_remote_configuration(connector_remote_config_data_t * const rci_desc)
-{
-    connector_callback_status_t status = connector_callback_continue;
-
-    *rci_desc = rci_desc_data;
-    return status;
-}
-
 connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id,
                                                       void * const data)
 {
@@ -339,9 +331,6 @@ connector_callback_status_t app_remote_config_handler(connector_request_id_remot
             break;
         case connector_request_id_remote_config_group_process:
             status = app_rci_group_process(data);
-            break;
-        case connector_request_id_remote_config_configurations:
-            status = app_process_remote_configuration(data);
             break;
         default:
             APP_DEBUG("Request Unknown: %d.\n", request_id);

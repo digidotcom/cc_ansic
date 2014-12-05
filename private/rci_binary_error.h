@@ -149,9 +149,6 @@ STATIC void rci_generate_error(rci_t * const rci)
                     case connector_request_id_remote_config_session_end:
                         rci->status = rci_status_complete;
                         break;
-                    case connector_request_id_remote_config_configurations:
-                        ASSERT(remote_config_request != connector_request_id_remote_config_configurations);
-                        break;
                 }
                 break;
             }
