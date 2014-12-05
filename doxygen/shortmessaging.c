@@ -748,9 +748,11 @@
  *
  * @subsection cli_status_callback  CLI status callback
  *
- * The @ref connector_request_id_sm_cli_status callback is made to signal the end of a @ref cli_cb_sequence. It can indicate success or   
- * error if the @ref connector_initiate_stop_request_t "stop transport"
+ * Cloud Connector will make @ref connector_request_id_sm_cli_status callback to pass the reason for session complete. 
+ * It can indicate success or error if the @ref connector_initiate_stop_request_t "stop transport"
  * was initiated while processing a CLI request or if Cloud Connector fails to allocate the required resources.
+ * User will receive this callback when Device Connector finishes with the session. 
+ * User can free their user_context and any other reserved data as soon as they receive this callback.
  *
  * @htmlonly
  * <table class="apitable">
