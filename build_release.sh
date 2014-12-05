@@ -1,4 +1,4 @@
-#!/bin/bash
+c#!/bin/bash
 
 # This release generates all the part numbers required for releasing and
 # optionally moves it to "pending" folder in the \\eng server.
@@ -109,9 +109,9 @@ mkdir -p "${BASE_DIR}"
 cp -rf private "${BASE_DIR}"
 cp -rf public "${BASE_DIR}"
 cp -rf docs "${BASE_DIR}"
-echo ">> Removing deprecated data_point_single sample"
-rm -rf "${BASE_DIR}"/public/run/samples/data_point_single
-rm -rf "${BASE_DIR}"/public/step/samples/data_point_single
+echo ">> Removing some samples"
+rm -rf "${BASE_DIR}"/public/run/samples/bRCI_commands
+rm -rf "${BASE_DIR}"/public/run/samples/rci_reworked
 echo ">> Removing unused directories"
 rm     "${BASE_DIR}/public/run/platforms/linux/network_sms_proxy.c_aux"
 rm -rf "${BASE_DIR}/public/run/platforms/mqx"
