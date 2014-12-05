@@ -311,7 +311,7 @@
  * An additional major feature is available for @ref sm_udp_enable_battery_dm "Battery-backed" SM applications over UDP:
  *      -# @ref pending_data "Message pending" to notify applications more messages are queued.
  *
- * An additional major function is available to do @ref CONNECTOR_SM_PROVISION "SMS Provisioning" for SM over SMS:
+ * An additional major function is available to do @ref sm_sms_enable_dm "SMS Provisioning" for SM over SMS:
  *      -# @ref config_request_from_cloud "SMS Provisioning" to notify applications that an SMS provisioning message
  *                                                           has been received from Device Cloud. This way the device
  *                                                           configures the phone number where to send SMS messages.
