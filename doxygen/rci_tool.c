@@ -27,7 +27,7 @@
  *   <th colspan="2" class="title">Usage</th>
  * </tr>
  * <tr>
- *   <td colspan="2"> @endhtmlonly java -jar ConfigGenerator.jar [-help] [-verbose] [-nodesc] [-vendor] [-path] [-url] [-noBackup] [-saveDescriptors] [-noUpload] [-usenames=none|groups|elements|all]
+ *   <td colspan="2"> @endhtmlonly java -jar ConfigGenerator.jar [-help] [-verbose] [-nodesc] [-vendor] [-path] [-url] [-noBackup] [-saveDescriptors] [-noUpload] [-usenames={none|groups|elements|all}]
  *                     \<"username"[:"password"]\> \<device_type\> \<firmware_version\> \<input_config_file\> @htmlonly
  *   </td>
  * </tr>
@@ -87,8 +87,8 @@
  *   <td> Optional to avoid uploading the descriptors to Device Cloud, useful when this process has to be done manually in production environments.</td>
  * </tr>
  * <tr>
- *   <th> -usenames=none|groups|elelemnts|all</th>
- *   <td> Optional to add an ASCIIZ string to connector_remote_group_t and/or connector_remote_element_t structures. Useful for debugging but it increases code size.</td>
+ *   <th> -usenames={none|groups|elelemnts|all}</th>
+ *   <td> Optional to add an ASCIIZ string 'name' field to connector_remote_group_t and/or connector_remote_element_t structures. Useful for debugging but it increases code size.</td>
  * </tr>
  * <tr>
  *   <th> username </th>
