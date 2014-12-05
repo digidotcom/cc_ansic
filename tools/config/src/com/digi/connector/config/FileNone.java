@@ -94,7 +94,7 @@ if(future_feature)
 
             fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
 
-            fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
+            fileWriter.write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
 
             fileWriter.write("\n#if !defined _CONNECTOR_API_H\n");
             fileWriter.write("#error  \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n");
@@ -158,14 +158,17 @@ if(future_feature)
         /* write structures in source file */
         writeAllStructures(configData,bufferWriter);
 
-        bufferWriter.write(String.format("\nconnector_remote_config_data_t rci_desc_data = {\n" +
+        bufferWriter.write(String.format("\nstatic connector_remote_config_data_t const rci_internal_data = {\n" +
 		"    connector_group_table,\n"+
 		"    connector_rci_errors,\n"+
 		"    connector_global_error_COUNT,\n"+
 		"    FIRMWARE_TARGET_ZERO_VERSION,\n"+
 		"    %s,\n"+
 		"    \"%s\"\n"+
-		"};\n", Descriptors.vendorId(),Descriptors.deviceType()));
+		"};\n"+
+		"\n"+
+		"connector_remote_config_data_t const * const rci_descriptor_data = &rci_internal_data;"
+		, Descriptors.vendorId(),Descriptors.deviceType()));
 
 if(future_feature){
 		writeFunctionsCB(configData,bufferWriter);

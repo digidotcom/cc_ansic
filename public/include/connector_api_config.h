@@ -532,7 +532,7 @@ typedef struct {
 * @see @ref rci_descriptor_data
 **/
 typedef struct {
-    struct connector_remote_config_data const * rci_data;
+    connector_remote_config_data_t const * rci_data;
 } connector_config_rci_descriptor_data_t;
 /**
 * @}

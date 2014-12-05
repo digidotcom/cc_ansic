@@ -95,7 +95,7 @@ enum fw_abort {
 
 STATIC uint32_t rci_get_firmware_target_zero_version(connector_data_t const * const connector_ptr)
 {
-    return connector_ptr->rci_data.firmware_target_zero_version;
+    return connector_ptr->rci_data->firmware_target_zero_version;
 }
 
 STATIC connector_status_t send_fw_message(connector_firmware_data_t * const fw_ptr)

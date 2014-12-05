@@ -83,7 +83,6 @@ typedef enum {
 * @}
 */
 
-#include "connector_api_config.h"
 #include "connector_api_network.h"
 
  /**
@@ -373,6 +372,7 @@ typedef char const * connector_geojson_t;
 #include "connector_api_remote.h"
 #endif
 
+#include "connector_api_config.h"
 #include "connector_api_firmware.h"
 #include "connector_api_data_service.h"
 #include "connector_api_data_point.h"

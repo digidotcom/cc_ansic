@@ -59,7 +59,7 @@ public class FileGlobalHeader extends FileGenerator {
 
             fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
 
-            fileWriter.write("\nextern connector_remote_config_data_t rci_desc_data;\n\n");
+            fileWriter.write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
     
             fileWriter.write(String.format("\n#endif\n"));
            
