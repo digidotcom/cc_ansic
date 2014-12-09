@@ -37,12 +37,12 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 #if __STDC_VERSION__ >= 199901L
   /* If the compiler is C99 complaint, then we have stdint.h. */
-  #define CONNECTOR_HAVE_STDINT_HEADER
+  #define CONNECTOR_HAS_STDINT_HEADER
 #endif
 
 #if (defined __MWERKS__) && (defined __MQX__)
-  #if (!defined CONNECTOR_HAVE_STDINT_HEADER)
-    #define CONNECTOR_HAVE_STDINT_HEADER
+  #if (!defined CONNECTOR_HAS_STDINT_HEADER)
+    #define CONNECTOR_HAS_STDINT_HEADER
   #endif
 #else
   #if !defined IAR
@@ -50,7 +50,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
   #endif
 #endif
 
-#if defined CONNECTOR_HAVE_STDINT_HEADER
+#if defined CONNECTOR_HAS_STDINT_HEADER
   #include <stdint.h>
   #include <inttypes.h>
 

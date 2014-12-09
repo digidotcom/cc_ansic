@@ -453,14 +453,14 @@
  * This define should get added to your makefile:
  *
  * @code
- * CFLAGS +=-std=c89 -DCONNECTOR_HAVE_STDINT_HEADER
+ * CFLAGS +=-std=c89 -DCONNECTOR_HAS_STDINT_HEADER
  * @endcode
  *
  * @see @ref errors_due_to_C89_and_stdint
  * @see @ref resolving_compilation_issues
  *
  */
-#define CONNECTOR_HAVE_STDINT_HEADER
+#define CONNECTOR_HAS_STDINT_HEADER
 
 /**
  * When defined, the Cloud Connector compilation will expect the compiler has float support by:

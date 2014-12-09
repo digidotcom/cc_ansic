@@ -51,7 +51,7 @@
  * Some C89 compilers include elements of C99.  In particular, those
  * C89 compilers that also include stdint.h, which is a part of C99, will
  * result in compilation failures.  These compilation failures can be resolved
- * by defining CONNECTOR_HAVE_STDINT_HEADER in your make or build system.
+ * by defining CONNECTOR_HAS_STDINT_HEADER in your make or build system.
  *
  * @section requirements Platform Memory Requirements
  * Cloud Connector requires both persistent storage (Flash) and RAM.  Flash is used to store instructions and variables.  RAM is used for 

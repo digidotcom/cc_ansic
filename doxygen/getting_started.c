@@ -218,7 +218,7 @@
  * : *** [../../platforms/linux/config.o] Error 1
  * @endcode
   *
- * These compilation errors can be resolved by defining  @ref CONNECTOR_HAVE_STDINT_HEADER
+ * These compilation errors can be resolved by defining  @ref CONNECTOR_HAS_STDINT_HEADER
  * in your  or build system.
  *
  * @note When updating your file, since it's not a dependency, you must perform a
