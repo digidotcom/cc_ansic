@@ -914,7 +914,7 @@ def main():
     parser.add_argument('--configuration', action='store', type=str,
         default='default', choices=['default', 'nodebug', 'compression',
                                     'debug', 'config_header', 'template',
-                                    'all', 'library' ],
+                                    'all', 'library', 'no_malloc' ],
         help='Configuration to run against.  Default executes all.')
     parser.add_argument('--tty', action='store_true',dest='tty', default=False,
         help='Whether or not to run in a separate TTY session (only useful for Jenkins execution).')
@@ -962,7 +962,7 @@ def main():
     configurations = []
     if args.configuration == 'all':
         configurations = ['default', 'nodebug', 'compression', 'debug',
-                            'config_header', 'library']
+                            'config_header', 'library', 'no_malloc']
     else:
         configurations = [args.configuration]
 
@@ -980,6 +980,8 @@ def main():
             replace_list.append(('/* #define CONNECTOR_DEBUG */', '#define CONNECTOR_DEBUG'))
         if configuration == 'config_header':
             update_config_header = True
+        if configuration == 'no_malloc':
+            replace_list.append(('/* #define CONNECTOR_NO_MALLOC */', '#define CONNECTOR_NO_MALLOC'))
 
         if configuration == 'template':
             log.info("============ Template platform =============")
