@@ -37,9 +37,7 @@
  */
 static connector_callback_status_t app_get_ip_address(connector_config_ip_address_t * const config_ip)
 {
-
     UNUSED_ARGUMENT(config_ip);
-
     return connector_callback_continue;
 }
 
@@ -57,24 +55,9 @@ static connector_callback_status_t app_get_ip_address(connector_config_ip_addres
  */
 static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
-	//! @cond Suppress the the Doxygen warnings
-    #define MAC_ADDR_LENGTH     6
-	//! @endcond
-
-    /* MAC address used in this sample */
-    static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-#error "Specify device MAC address for LAN connection"
-
-    ASSERT(config_mac->bytes_required == MAC_ADDR_LENGTH);
-
-    config_mac->data = (uint8_t *)device_mac_addr;
-
+    UNUSED_ARGUMENT(config_mac);
     return connector_callback_continue;
 }
-
-#define DEVICE_ID_LENGTH    16
-static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
 
 /**
  * @brief   Load the Cloud Connector's device ID
@@ -102,8 +85,7 @@ static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
  */
 static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    config_device_id->data = provisioned_device_id;
-
+    UNUSED_ARGUMENT(config_device_id);
     return connector_callback_continue;
 }
 
@@ -124,8 +106,7 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
  */
 static connector_callback_status_t app_save_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    memcpy(config_device_id->data, provisioned_device_id, config_device_id->bytes_required);
-
+    UNUSED_ARGUMENT(config_device_id);
     return connector_callback_continue;
 }
 
@@ -148,8 +129,7 @@ static connector_callback_status_t app_save_device_id(connector_config_pointer_d
  */
 static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_t * const config_vendor)
 {
-    config_vendor->id  =  0x00000000;
-
+    UNUSED_ARGUMENT(config_vendor);
     return connector_callback_continue;
 }
 
@@ -177,12 +157,7 @@ static connector_callback_status_t app_get_vendor_id(connector_config_vendor_id_
  */
 static connector_callback_status_t app_get_device_type(connector_config_pointer_string_t * const config_device_type)
 {
-    static char const device_type[] = "Linux Application";
-
-    /* Return pointer to device type. */
-    config_device_type->string = (char *)device_type;
-    config_device_type->length = sizeof device_type -1;
-
+    UNUSED_ARGUMENT(config_device_type);
     return connector_callback_continue;
 }
 
@@ -204,11 +179,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
  */
 static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static  char const connector_cloud_url[] = "login.etherios.com";
-
-    config_url->string = (char *)connector_cloud_url;
-    config_url->length = sizeof connector_cloud_url -1;
-
+    UNUSED_ARGUMENT(config_url);
     return connector_callback_continue;
 }
 
@@ -230,11 +201,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
  */
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
-    static char connector_cloud_phone[] = "447786201216"; /* phone number corresponding to login.etherios.com */
-
-    config_phone->string = (char *)connector_cloud_phone;
-    config_phone->length = sizeof connector_cloud_phone -1;
-
+    UNUSED_ARGUMENT(config_phone);
     return connector_callback_continue;
 }
 
@@ -256,6 +223,8 @@ static connector_callback_status_t app_get_device_cloud_phone(connector_config_p
  */
 static connector_callback_status_t app_set_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {
+    UNUSED_ARGUMENT(config_phone);
+    return connector_callback_continue;
     static char connector_cloud_phone[16] = "";	// empty: will require a provisioning message from the server for initialization
 
     if (config_phone->length > (sizeof connector_cloud_phone -1))
@@ -272,7 +241,7 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
 }
 
 /**
- * @brief   Get the Device Cloud service-id (if used) where to send SMSs (Only used for SMS transport)
+ * @brief   Get the Device Cloud Service ID (if used) where to send SMSs (Only used for SMS transport)
  *
  * This routine assigns a pointer to the ASCII null-terminated string of
  * Device Cloud Service Id, this is typically empty if using world wide long codes or idgp withing US.
@@ -282,18 +251,14 @@ static connector_callback_status_t app_set_device_cloud_phone(connector_config_p
  * @retval connector_callback_continue  The Service Id was successfully returned.
  * @retval connector_callback_abort     Could not get the Service Id and abort Cloud Connector.
  *
- * @see @ref get_device_cloud_service_id API Configuration Callback
+ * @see @ref device_cloud_service_id API Configuration Callback
  *
- * @note This routine is not needed if you define @b CONNECTOR_CLOUD_SERVICE_ID configuration in @ref connector_config.h.
+ * @note This routine is not needed if you define @ref CONNECTOR_CLOUD_SERVICE_ID configuration in @ref connector_config.h.
  * See @ref connector_config_data_options
  */
 static connector_callback_status_t app_get_device_cloud_service_id(connector_config_pointer_string_t * const config_service_id)
 {
-    static char connector_cloud_service_id[] = "";  /* empty: No shared-code used */
-
-    config_service_id->string = (char *)connector_cloud_service_id;
-    config_service_id->length = strlen(connector_cloud_service_id);
-
+    UNUSED_ARGUMENT(config_service_id);
     return connector_callback_continue;
 }
 
@@ -315,10 +280,7 @@ static connector_callback_status_t app_get_device_cloud_service_id(connector_con
  */
 static connector_callback_status_t app_get_connection_type(connector_config_connection_type_t * const config_connection)
 {
-
-    /* Return pointer to connection type */
-    config_connection->type = connector_connection_type_lan;
-
+    UNUSED_ARGUMENT(config_connection);
     return connector_callback_continue;
 }
 
@@ -340,8 +302,7 @@ static connector_callback_status_t app_get_connection_type(connector_config_conn
  */
 static connector_callback_status_t app_get_link_speed(connector_config_link_speed_t * const config_link)
 {
-    config_link->speed = 0;
-
+    UNUSED_ARGUMENT(config_link);
     return connector_callback_continue;
 }
 
@@ -365,14 +326,7 @@ static connector_callback_status_t app_get_link_speed(connector_config_link_spee
  */
 static connector_callback_status_t app_get_phone_number(connector_config_pointer_string_t * const config_phone_number)
 {
-    /*
-     * Return pointer to phone number for WAN connection type.
-     */
-    static char const phone_number[] ="000-000-0000";
-
-    config_phone_number->string = (char *)phone_number;
-    config_phone_number->length = sizeof phone_number -1;
-
+    UNUSED_ARGUMENT(config_phone_number);
     return connector_callback_continue;
 }
 
@@ -396,14 +350,7 @@ static connector_callback_status_t app_get_phone_number(connector_config_pointer
  */
 static connector_callback_status_t app_get_tx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-
-/** @cond Suppress the the Doxygen warnings      */
-#define DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS     90
-/** @endcond */
-
-    /* Return Tx keepalive interval in seconds */
-    config_keepalive->interval_in_seconds = DEVICE_TX_KEEPALIVE_INTERVAL_IN_SECONDS;
-
+    UNUSED_ARGUMENT(config_keepalive);
     return connector_callback_continue;
 }
 
@@ -427,13 +374,7 @@ static connector_callback_status_t app_get_tx_keepalive_interval(connector_confi
  */
 static connector_callback_status_t app_get_rx_keepalive_interval(connector_config_keepalive_t * const config_keepalive)
 {
-/** @cond Suppress the the Doxygen warnings      */
-#define DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS     60
-/** @endcond */
-
-    /* Return Rx keepalive interval in seconds */
-    config_keepalive->interval_in_seconds = DEVICE_RX_KEEPALIVE_INTERVAL_IN_SECONDS;
-
+    UNUSED_ARGUMENT(config_keepalive);
     return connector_callback_continue;
 }
 
@@ -456,15 +397,7 @@ static connector_callback_status_t app_get_rx_keepalive_interval(connector_confi
  */
 static connector_callback_status_t app_get_wait_count(connector_config_wait_count_t * const config_wait)
 {
-/** @cond Suppress the the Doxygen warnings      */
-#define DEVICE_WAIT_COUNT     5
-/** @endcond */
-    /*
-     * Return wait count (number of times not receiving Tx keepalive
-     * from Device Cloud is allowed).
-     */
-    config_wait->count = DEVICE_WAIT_COUNT;
-
+    UNUSED_ARGUMENT(config_wait);
     return connector_callback_continue;
 }
 
@@ -490,8 +423,7 @@ static connector_callback_status_t app_get_wait_count(connector_config_wait_coun
  */
 static connector_callback_status_t app_get_firmware_support(connector_config_supported_t * const config_status)
 {
-    config_status->supported = connector_true;
-
+    UNUSED_ARGUMENT(config_status);
     return connector_callback_continue;
 }
 
@@ -517,8 +449,7 @@ static connector_callback_status_t app_get_firmware_support(connector_config_sup
  */
 static connector_callback_status_t app_get_data_service_support(connector_config_supported_t * const config_status)
 {
-    config_status->supported = connector_true;
-
+    UNUSED_ARGUMENT(config_status);
     return connector_callback_continue;
 }
 
@@ -544,8 +475,7 @@ static connector_callback_status_t app_get_data_service_support(connector_config
  */
 static connector_callback_status_t app_get_file_system_support(connector_config_supported_t * const config_status)
 {
-    config_status->supported = connector_true;
-
+    UNUSED_ARGUMENT(config_status);
     return connector_callback_continue;
 }
 
@@ -568,8 +498,7 @@ static connector_callback_status_t app_get_file_system_support(connector_config_
  */
 static connector_callback_status_t app_get_remote_configuration_support(connector_config_supported_t * const config_status)
 {
-    config_status->supported = connector_true;
-
+    UNUSED_ARGUMENT(config_status);
     return connector_callback_continue;
 }
 
@@ -592,13 +521,7 @@ static connector_callback_status_t app_get_remote_configuration_support(connecto
  */
 static connector_callback_status_t app_get_max_message_transactions(connector_config_max_transaction_t * const config_max_transaction)
 {
-/** @cond Suppress the the Doxygen warnings     */
-#define    CONNECTOR_MAX_MSG_TRANSACTIONS    1
-/* @endcond	 */
-
-    config_max_transaction->count = CONNECTOR_MAX_MSG_TRANSACTIONS;
-
-
+    UNUSED_ARGUMENT(config_max_transaction);
     return connector_callback_continue;
 }
 
@@ -623,30 +546,8 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
  */
 static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
 {
-
-    config_device->method = connector_device_id_method_auto;
-
+    UNUSED_ARGUMENT(config_device);
     return connector_callback_continue;
-}
-
-static void get_hex_digit(char str, uint8_t * const value)
-{
-
-    if (isdigit(str))
-    {
-        *value = str - '0';
-    }
-    else if (isxdigit(str))
-    {
-        int const hex = tolower(str);
-        *value = (hex - 'a') + 10;
-    }
-    else
-    {
-        APP_DEBUG("get_hex_digit: invalid digit %c\n", str);
-    }
-
-    return;
 }
 
 /**
@@ -670,41 +571,7 @@ static void get_hex_digit(char str, uint8_t * const value)
  */
 static connector_callback_status_t app_get_imei_number(connector_config_pointer_data_t * const config_imei)
 {
-    /** @cond Suppress the the Doxygen warnings      */
-    #define APP_IMEI_LENGTH 8
-    /* @endcond      */
-
-    /* Each nibble corresponds a decimal digit.
-     * Most upper nibble must be 0.
-     */
-    static char const app_imei_number_string[] = "000000-00-000000-0";
-    static uint8_t app_imei_number[APP_IMEI_LENGTH] = {0};
-    int i = sizeof app_imei_number_string -1;
-    int index = sizeof app_imei_number -1;
-
-    while (i > 0)
-    {
-        int n = 0;
-
-        app_imei_number[index] = 0;
-
-        /* loop 2 times here for 2 digits (1 bytes) */
-        while (n < 2 && i > 0)
-        {
-            i--;
-            if (app_imei_number_string[i] != '-')
-            {
-                uint8_t value;
-                get_hex_digit(app_imei_number_string[i], &value);
-                app_imei_number[index] += (value << ((uint8_t)n * 4));
-                n++;
-            }
-        }
-        index--;
-    }
-
-    config_imei->data = app_imei_number;
-    ASSERT(config_imei->bytes_required == sizeof app_imei_number);
+    UNUSED_ARGUMENT(config_imei);
     return connector_callback_continue;
 }
 
@@ -730,7 +597,7 @@ static connector_callback_status_t app_get_imei_number(connector_config_pointer_
  */
 static connector_callback_status_t app_start_network_tcp(connector_config_connect_type_t * const config_connect)
 {
-    config_connect->type = connector_connect_auto;
+    UNUSED_ARGUMENT(config_connect);
     return connector_callback_continue;
 }
 
@@ -757,7 +624,7 @@ static connector_callback_status_t app_start_network_tcp(connector_config_connec
 */
 static connector_callback_status_t app_start_network_udp(connector_config_connect_type_t * const config_connect)
 {
-    config_connect->type = connector_connect_auto;
+    UNUSED_ARGUMENT(config_connect);
     return connector_callback_continue;
 }
 
@@ -784,7 +651,7 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
 */
 static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
 {
-    config_connect->type = connector_connect_auto;
+    UNUSED_ARGUMENT(config_connect);
     return connector_callback_continue;
 }
 
@@ -806,9 +673,7 @@ static connector_callback_status_t app_start_network_sms(connector_config_connec
  */
 static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
 {
-
-    config_wan->type = connector_wan_type_imei;
-
+    UNUSED_ARGUMENT(config_wan);
     return connector_callback_continue;
 }
 
@@ -833,42 +698,7 @@ static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t 
  */
 static connector_callback_status_t app_get_esn(connector_config_pointer_data_t * const config_esn)
 {
-    /** @cond Suppress the the Doxygen warnings      */
-    #define APP_ESN_HEX_LENGTH 4
-    /* @endcond  */
-
-    /* Each nibble corresponds a decimal digit.
-     * Most upper nibble must be 0.
-     */
-    static char const app_esn_hex_string[] = "00000000";
-    static uint8_t app_esn_hex[APP_ESN_HEX_LENGTH] = {0};
-    int i = sizeof app_esn_hex_string -1;
-    int index = sizeof app_esn_hex -1;
-
-    while (i > 0)
-    {
-        int n = 0;
-
-        app_esn_hex[index] = 0;
-
-        /* loop 2 times here for 2 digits (1 bytes) */
-        while (n < 2 && i > 0)
-        {
-            i--;
-            if (app_esn_hex_string[i] != '-')
-            {
-                uint8_t value;
-                get_hex_digit(app_esn_hex_string[i], &value);
-                app_esn_hex[index] += (value << ((uint8_t)n * 4));
-                n++;
-            }
-        }
-        index--;
-    }
-
-    config_esn->data = app_esn_hex;
-    ASSERT(config_esn->bytes_required == sizeof app_esn_hex);
-
+    UNUSED_ARGUMENT(config_esn);
     return connector_callback_continue;
 }
 
@@ -893,42 +723,7 @@ static connector_callback_status_t app_get_esn(connector_config_pointer_data_t *
  */
 static connector_callback_status_t app_get_meid(connector_config_pointer_data_t * const config_meid)
 {
-    /** @cond Suppress the the Doxygen warnings  */
-    #define APP_MEID_HEX_LENGTH 7
-    /* @endcond  */
-
-    /* Each nibble corresponds a decimal digit.
-     * Most upper nibble must be 0.
-     */
-    static char const app_meid_hex_string[] = "00000000000000";
-    static uint8_t app_meid_hex[APP_MEID_HEX_LENGTH] = {0};
-    int i = sizeof app_meid_hex_string -1;
-    int index = sizeof app_meid_hex -1;
-
-    while (i > 0)
-    {
-        int n = 0;
-
-        app_meid_hex[index] = 0;
-
-        /* loop 2 times here for 2 digits (1 bytes) */
-        while (n < 2 && i > 0)
-        {
-            i--;
-            if (app_meid_hex_string[i] != '-')
-            {
-                uint8_t value;
-                get_hex_digit(app_meid_hex_string[i], &value);
-                app_meid_hex[index] += (value << ((uint8_t)n * 4));
-                n++;
-            }
-        }
-        index--;
-    }
-
-    config_meid->data = app_meid_hex;
-    ASSERT(config_meid->bytes_required == sizeof app_meid_hex);
-
+    UNUSED_ARGUMENT(config_meid);
     return connector_callback_continue;
 }
 
@@ -955,9 +750,7 @@ static connector_callback_status_t app_get_meid(connector_config_pointer_data_t 
  */
 static connector_callback_status_t app_get_identity_verification(connector_config_identity_verification_t * const config_identity)
 {
-
-    config_identity->type = connector_identity_verification_simple;
-
+    UNUSED_ARGUMENT(config_identity);
     return connector_callback_continue;
 }
 
@@ -978,12 +771,7 @@ static connector_callback_status_t app_get_identity_verification(connector_confi
  */
 static connector_callback_status_t app_get_password(connector_config_pointer_string_t * const config_password)
 {
-    static  char const connector_password[] = "";
-
-    /* Return pointer to password. */
-    config_password->string = (char *)connector_password;
-    config_password->length = sizeof connector_password -1;
-
+    UNUSED_ARGUMENT(config_password);
     return connector_callback_continue;
 }
 
@@ -1018,7 +806,6 @@ static connector_callback_status_t app_get_sm_udp_max_sessions(connector_config_
 static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_sm_max_sessions_t * const config_max_sessions)
 {
     UNUSED_ARGUMENT(config_max_sessions);
-
     return connector_callback_continue;
 }
 
@@ -1036,7 +823,6 @@ static connector_callback_status_t app_get_sm_sms_max_sessions(connector_config_
 static connector_callback_status_t app_get_sm_udp_max_rx_segments(connector_config_sm_max_rx_segments_t * const config_max_rx_segments)
 {
     UNUSED_ARGUMENT(config_max_rx_segments);
-
     return connector_callback_continue;
 }
 
@@ -1391,6 +1177,7 @@ static char const * app_sm_class_to_string(connector_request_id_sm_t const value
         enum_to_case(connector_request_id_sm_more_data);
         enum_to_case(connector_request_id_sm_opaque_response);
         enum_to_case(connector_request_id_sm_config_request);
+        enum_to_case(connector_request_id_sm_request_connect);
     }
     return result;
 }

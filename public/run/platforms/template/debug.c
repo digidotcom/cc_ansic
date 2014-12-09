@@ -23,21 +23,6 @@
 #include <stdarg.h>
 #include "connector_debug.h"
 
-/**
- * @brief Cloud Connector debug
- *
- * Debug output from Cloud Connector, Writes a formatted string to stdout, expanding the format
- * tags with the value of the argument list arg.
- * Cloud Connector uses this routine to display debug information when @ref CONNECTOR_DEBUG is defined.
- *
- * @param [in] format Tells how to format the various arguments
- * @param [out] ...   A variable argument list of expressions whose values should be printed according
- *                    to the placeholders in the "format" string. If there are more placeholders than
- *                    supplied arguments, the result is undefined. If there are more arguments than
- *                    placeholders, the excess arguments are simply ignored.
- *
- * @see @ref CONNECTOR_DEBUG
- */
 void connector_debug_vprintf(debug_t const debug, char const * const format, va_list args)
 {
     if ((debug == debug_all) || (debug == debug_beg))
