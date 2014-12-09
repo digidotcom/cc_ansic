@@ -570,8 +570,8 @@ STATIC connector_status_t sm_process_cli_request(connector_data_t * const connec
 
         cli_request.transport = session->transport;
         cli_request.user_context = session->user.context;
-        cli_request.buffer = cli_command;
         cli_request.bytes_used = cli_bytes;
+        cli_request.buffer = cli_request.bytes_used != 0 ? cli_command : NULL;
         cli_request.response_required = SmIsResponseNeeded(session->flags);
         cli_request.more_data = SmIsNotLastData(session->flags);
 

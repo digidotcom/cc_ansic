@@ -192,8 +192,8 @@ STATIC connector_status_t process_ds_receive_data(connector_data_t * const conne
     connector_data_service_receive_data_t device_request;
     device_request.transport = connector_transport_tcp;
     device_request.user_context = data_service->callback_context;
-    device_request.buffer = data;
     device_request.bytes_used = data_length;
+    device_request.buffer = device_request.bytes_used != 0 ? data : NULL;
     device_request.more_data = MsgIsLastData(flags) ? connector_false : connector_true;
 
     result = call_ds_receive_callback(connector_ptr, data_service, &device_request);
