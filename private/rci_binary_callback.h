@@ -200,6 +200,7 @@ done:
     rci->callback.status = connector_callback_busy;
 }
 
+#if !(defined CONNECTOR_NO_MALLOC)
 STATIC connector_status_t free_rci_internal_data(connector_data_t * const connector_ptr)
 {
     connector_status_t status = connector_working;
@@ -220,6 +221,7 @@ STATIC connector_status_t free_rci_internal_data(connector_data_t * const connec
 done:
     return status;
 }
+#endif
 
 STATIC connector_bool_t rci_callback(rci_t * const rci)
 {
