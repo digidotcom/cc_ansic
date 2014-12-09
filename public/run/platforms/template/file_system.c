@@ -334,7 +334,7 @@ connector_callback_status_t app_process_file_readdir(connector_file_system_readd
  * @retval connector_callback_abort     The application aborts 
  *                                  Cloud Connector.
  */
-connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
+connector_callback_status_t app_process_file_closedir(connector_file_system_closedir_t * const data)
 {
     connector_callback_status_t rc = connector_callback_continue;
 

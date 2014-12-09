@@ -5,6 +5,7 @@
  * @section file_system_overview1 File System
  *
  *  -# @ref file_system_overview
+ *  -# @ref file_system_custom_types
  *  -# @ref file_system_context
  *  -# @ref file_system_term
  *  -# @ref file_system_large_files 
@@ -65,6 +66,19 @@
  * @note See @ref file_system_support under Configuration to enable or disable file system.
  * <br /><br />
  *
+ * @section file_system_custom_types User-defined File System types
+ * 
+ * Depending on the platform in which the application runs it is possible to define the file and dir handle types and the errnum type 
+ * so the callbacks can handle them properly. Also, it is mandatory to define the default values for it so Cloud Connector can properly
+ * init it and check wether an error ocurred.
+ * See these example definitions in connector_types.h:
+ * - @ref connector_filesystem_file_handle_t "connector_filesystem_file_handle_t"
+ * - @ref connector_filesystem_dir_handle_t "connector_filesystem_dir_handle_t"
+ * - @ref connector_filesystem_errnum_t "connector_filesystem_errnum_t"
+ * - @ref CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED "CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED"
+ * - @ref CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED "CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED"
+ * - @ref CONNECTOR_FILESYSTEM_ERRNUM_NONE "CONNECTOR_FILESYSTEM_ERRNUM_NONE"
+ * 
  * @section file_system_context Session Context
  *
  * Data structures for all file system callbacks have the <b><i>user_context</i></b> field. This field is provided to 
@@ -78,7 +92,7 @@
  *
  * @section file_system_term Session Termination and Error Processing
  * 
- * Data structures for all file system callbacks have the <b><i>void * errnum</i></b> field. If a callback encounters an error
+ * Data structures for all file system callbacks have the <b><i>connector_filesystem_errnum_t errnum</i></b> field. If a callback encounters an error
  * it should set <b><i>errnum</i></b> to some user defined error token, for example <i>errno</i>, and return @ref connector_callback_error.
  * The <b><i>errnum</i></b> will be later used in the callback to @ref file_system_get_error "get error status and description", which
  * translates <b><i>errnum</i></b> to error status and error description to be send to Device Cloud.
@@ -195,7 +209,7 @@
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  *    int oflag = 0; 
- *    long int fd;
+ *    connector_filesystem_dir_handle_t fd;
  *
  *    if (data->oflag & CONNECTOR_FILE_O_RDONLY) oflag |= O_RDONLY;
  *    if (data->oflag & CONNECTOR_FILE_O_WRONLY) oflag |= O_WRONLY;
@@ -209,7 +223,7 @@
  *
  *    if (fd >= 0)
  *    {
- *          data->handle = (void *) fd;
+ *          data->handle = fd;
  *    }
  *    else 
  *    {
@@ -318,7 +332,7 @@
  *           break;
  *    }
  *
- *    offset = lseek((long int) data->handle, data->requested_offset, origin);
+ *    offset = lseek(data->handle, data->requested_offset, origin);
  *
  *    data->resulting_offset = (connector_file_offset_t) offset;
  *
@@ -410,7 +424,7 @@
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  * 
- *    int result = read((long int) data->handle, data->buffer, data->bytes_available);
+ *    int result = read(data->handle, data->buffer, data->bytes_available);
  *
  *    if (result >= 0)
  *    {
@@ -504,7 +518,7 @@
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  * 
- *    int result = write((long int) data->handle, data->buffer, data->bytes_available);
+ *    int result = write(data->handle, data->buffer, data->bytes_available);
  * 
  *    if (result >= 0)
  *    {
@@ -594,7 +608,7 @@
  * {
  *    connector_callback_status_t status = connector_callback_continue;
  * 
- *    int result = ftruncate((long int) data->handle, data->length_in_bytes);
+ *    int result = ftruncate(data->handle, data->length_in_bytes);
  * 
  *    if (result < 0)
  *    {
@@ -680,7 +694,7 @@
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  * 
- *     int result = close((long int) data->handle);
+ *     int result = close(data->handle);
  *
  *     if (result < 0 && errno == EIO)
  *     {
@@ -873,7 +887,7 @@
  *         else
  *         {
  *             closedir(dirp);
- *             data->errnum = (void *) ENOMEM;
+ *             data->errnum = ENOMEM;
  *             status = connector_callback_error; 
  *         }
  *     }
@@ -991,7 +1005,7 @@
  *        }
  *        else
  *        {
- *              data->errnum = (void *) rc;
+ *              data->errnum = rc;
  *              status = connector_callback_error;
  *        }
  *     }
@@ -1046,7 +1060,7 @@
  * </tr>
  * <tr>
  * <th>data</th>
- * <td> pointer to @endhtmlonly @ref connector_file_system_close_t "connector_file_system_close_t" @htmlonly structure where:
+ * <td> pointer to @endhtmlonly @ref connector_file_system_closedir_t "connector_file_system_close_t" @htmlonly structure where:
  *   <ul>
  *      <li><b><i>user_context</i></b> - [IN/OUT] Application-owned pointer</li>
  *      <br /> 
@@ -1092,7 +1106,7 @@
  * } app_dir_data_t;
  *
  *
- * connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
+ * connector_callback_status_t app_process_file_closedir(connector_file_system_closedir_t * const data)
  * {
  *     app_dir_data_t * dir_data = data->handle;
  *
@@ -1374,7 +1388,7 @@
  *        }
  *        else
  *        {
- *              data->errnum = (void *) errno;
+ *              data->errnum = errno;
  *              status = connector_callback_error;
  *        }
  *     }
@@ -1552,7 +1566,7 @@
  *
  * connector_callback_status_t app_process_file_get_error(connector_file_system_get_error_t * const data)
  * {
- *   long int errnum = (long int) data->errnum;
+ *   connector_filesystem_errnum_t errnum = data->errnum;
  *
  *   if (errnum != NULL)
  *   {

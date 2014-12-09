@@ -273,14 +273,6 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 
 #endif
 
-/**
-*  An unsigned integer type with the property that any valid pointer to
-*  void can be converted to this type, then converted back to pointer
-*  to void, and the result will compare equal to the original pointer.
-*  This is used mainly for filesystem's handles and errnums.
-*/
-typedef void * uintptr_t;
-
 #ifndef SIZE_MAX
 /**
 *  size_t maximum value.
@@ -318,5 +310,82 @@ typedef void * connector_network_handle_t;
 * @}
 */
 
+/**
+* @defgroup connector_filesystem_file_handle_t Filesystem's file Handle
+* @{
+*/
+/**
+ * Used to reference a file handle, passed into other file operations for Cloud Connector API calls.
+ * Also the @ref CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED macro must be defined accordingly.
+ */
+typedef long int connector_filesystem_file_handle_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED Filesystem's file handle's value when not initialized or invalid
+* @{
+*/
+/**
+ * Value to which file handle is set when invalid or not initialized.
+ * The @ref connector_filesystem_file_handle_t type must be defined accordingly.
+ */
+#define CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED    -1
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_filesystem_dir_handle_t Filesystem's directory Handle
+* @{
+*/
+/**
+ * Used to reference a dir handle, passed into other directory operations for Cloud Connector API calls.
+ * Also the @ref CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED macro must be defined accordingly.
+ */
+typedef void * connector_filesystem_dir_handle_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED Filesystem's directory handle's value when not initialized or invalid
+* @{
+*/
+/**
+ * Value to which directory handle is set when invalid or not initialized.
+ * The @ref connector_filesystem_dir_handle_t type must be defined accordingly.
+ */
+#define CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED     NULL
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_filesystem_errnum_t Filesystem's errnum type
+* @{
+*/
+/**
+ * Used among directory and file operations for Cloud Connector API calls to report errors to Device Cloud when an operation cannot be performed properly.
+ * Also the @ref CONNECTOR_FILESYSTEM_ERRNUM_NONE macro must be defined accordingly.
+ */
+typedef long int connector_filesystem_errnum_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup CONNECTOR_FILESYSTEM_ERRNUM_NONE Filesystem's errnum for success or no-error
+* @{
+*/
+/**
+ * Value to which filesystem's errnum is set when no error ocurred.
+ * The @ref connector_filesystem_errnum_t type must be defined accordingly.
+ */
+#define CONNECTOR_FILESYSTEM_ERRNUM_NONE    0
+/**
+* @}
+*/
 
 #endif

@@ -44,20 +44,37 @@ typedef enum
     fs_state_stat_dir_entry,
     fs_state_closing,
     fs_state_closed
-}fs_state_t;
+} fs_state_t;
+
+typedef enum
+{
+    fs_error_path_too_long,
+    fs_error_format,
+    fs_error_invalid_offset,
+    fs_error_invalid_hash,
+    fs_error_generic,
+    fs_error_large_file,
+    fs_error_session_canceled
+} fs_error_internal_t;
 
 typedef struct
 {
     void * user_context;
-    uintptr_t errnum;
+    connector_filesystem_errnum_t errnum;
 } fs_user_data;
 
 typedef struct
 {
     void * user_context;
-    uintptr_t errnum;
+    union {
+        connector_filesystem_errnum_t user;
+        fs_error_internal_t internal;
+    } errnum;
 
-    uintptr_t handle;
+    struct {
+        connector_filesystem_file_handle_t file;
+        connector_filesystem_dir_handle_t dir;
+    } handle;
 
     union
     {
@@ -106,7 +123,7 @@ typedef struct
 #define FsSetLsSingleFile(context)  FsBitSet(context->flags, FS_LS_SINGLE_FILE)
 
 #define FsHasInternalError(context) FsIsBitSet(context->flags, FS_ERROR_INTERNAL_FLAG)
-#define FsSetInternalError(context, error) {FsBitSet(context->flags,FS_ERROR_INTERNAL_FLAG); context->errnum=(uintptr_t)error;}
+#define FsSetInternalError(context, error) {FsBitSet(context->flags,FS_ERROR_INTERNAL_FLAG); context->errnum.internal=error;}
 
 #define FsSessionErrorCalled(context) FsIsBitSet(context->flags, FS_SESSION_ERROR_CALLED)
 #define FsSetSessionErrorCalled(context) FsBitSet(context->flags, FS_SESSION_ERROR_CALLED)
@@ -115,7 +132,7 @@ typedef struct
 #define FsGetState(context)    (context->state)
 
 
-#define FsOperationSuccess(status, context) (status==connector_working && context->errnum==(uintptr_t)NULL)
+#define FsOperationSuccess(status, context) (status==connector_working && context->errnum.user==CONNECTOR_FILESYSTEM_ERRNUM_NONE)
 
 STATIC void fs_set_service_error(msg_service_request_t * const service_request, connector_session_error_t const session_error)
 {
@@ -137,22 +154,9 @@ STATIC connector_status_t fs_set_abort(connector_data_t * const connector_ptr,
     return context->status;
 }
 
-typedef enum
+STATIC void fs_get_internal_error_data(connector_file_system_get_error_t * const data, fs_error_internal_t const error_internal)
 {
-    fs_error_path_too_long,
-    fs_error_format,
-    fs_error_invalid_offset,
-    fs_error_invalid_hash,
-    fs_error_generic,
-    fs_error_large_file,
-    fs_error_session_canceled
-}fs_error_internal_t;
-
-STATIC void fs_get_internal_error_data(connector_file_system_get_error_t * const data)
-{
-
-    unsigned long int code = (unsigned long int) data->errnum;
-
+    fs_error_internal_t error_code = error_internal;
     static struct
     {
         char const * hint;
@@ -168,7 +172,7 @@ STATIC void fs_get_internal_error_data(connector_file_system_get_error_t * const
         {"Offset is too large or negative", connector_file_system_request_format_error}
     };
 
-    switch(code)
+    switch (error_code)
     {
         case fs_error_path_too_long:
         case fs_error_format:
@@ -180,14 +184,14 @@ STATIC void fs_get_internal_error_data(connector_file_system_get_error_t * const
 
     default:
         ASSERT(connector_false);
-        code = fs_error_generic;
+        error_code = fs_error_generic;
         break;
     }
-    ASSERT(code < asizeof(error_data));
+    ASSERT(error_code < asizeof(error_data));
 
-    data->error_status = error_data[code].status;
-    data->bytes_used = MIN_VALUE(data->bytes_available, strlen(error_data[code].hint));
-    memcpy(data->buffer, error_data[code].hint, data->bytes_used);
+    data->error_status = error_data[error_code].status;
+    data->bytes_used = MIN_VALUE(data->bytes_available, strlen(error_data[error_code].hint));
+    memcpy(data->buffer, error_data[error_code].hint, data->bytes_used);
 }
 
 STATIC connector_status_t format_file_error_msg(connector_data_t * const connector_ptr,
@@ -224,13 +228,13 @@ STATIC connector_status_t format_file_error_msg(connector_data_t * const connect
          connector_file_system_get_error_t data;
 
          data.buffer = fs_error_response + header_bytes;
-         data.errnum = context->errnum;
+         data.errnum = context->errnum.user;
          data.bytes_available = buffer_size;
          data.bytes_used = 0;
 
          if (FsHasInternalError(context))
          {
-             fs_get_internal_error_data(&data);
+             fs_get_internal_error_data(&data, context->errnum.internal);
          }
          else
          {
@@ -289,7 +293,7 @@ STATIC connector_status_t fs_call_user(connector_data_t * const connector_ptr,
     request_id.file_system_request = fs_request_id;
 
     data->user_context = context->user_context;
-    data->errnum = (uintptr_t)NULL;
+    data->errnum = CONNECTOR_FILESYSTEM_ERRNUM_NONE;
 
     callback_status = connector_callback(connector_ptr->callback,
                                          connector_class_id_file_system,
@@ -323,12 +327,12 @@ STATIC connector_status_t fs_call_user(connector_data_t * const connector_ptr,
         case connector_callback_error:
             status = connector_working;
             /* don't overwrite previous errno */
-            if (context->errnum == (uintptr_t)NULL)
+            if (context->errnum.user == CONNECTOR_FILESYSTEM_ERRNUM_NONE)
             {
-                if (data->errnum != (uintptr_t)NULL)
+                if (data->errnum != CONNECTOR_FILESYSTEM_ERRNUM_NONE)
                 {
                     /* user returned errno */
-                    context->errnum = data->errnum;
+                    context->errnum.user = data->errnum;
                 }
                 else
                 {
@@ -497,7 +501,7 @@ STATIC connector_status_t call_file_opendir_user(connector_data_t * const connec
     connector_file_system_opendir_t data;
 
     data.path = path;
-    data.handle = (uintptr_t)NULL;
+    data.handle = CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -510,9 +514,9 @@ STATIC connector_status_t call_file_opendir_user(connector_data_t * const connec
 
     if (FsOperationSuccess(status, context))
     {
-        if (data.handle != (uintptr_t)NULL)
+        if (data.handle != CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED)
         {
-            context->handle = data.handle;
+            context->handle.dir = data.handle;
             FsSetState(context, fs_state_open);
         }
         else
@@ -549,7 +553,7 @@ STATIC connector_status_t call_file_readdir_user(connector_data_t * const connec
     connector_status_t  status;
 
     connector_file_system_readdir_t data;
-    data.handle = context->handle;
+    data.handle = context->handle.dir;
     data.entry_name = path;
     data.bytes_available = buffer_size;
     *path = '\0';
@@ -581,20 +585,56 @@ STATIC connector_status_t call_file_close_user(connector_data_t * const connecto
                                                connector_request_id_file_system_t const fs_request_id)
 {
     connector_status_t status = context->status;
-    connector_file_system_close_t data;
 
     if (!FsIsOpen(context))
         goto done;
 
-    data.handle = context->handle;
-
     FsSetState(context, fs_state_closing);
 
-    status = fs_call_user(connector_ptr,
-                          service_request,
-                          context,
-                          fs_request_id,
-                          &data);
+    switch (fs_request_id)
+    {
+        case connector_request_id_file_system_close:
+        {
+            connector_file_system_close_t data;
+
+            data.handle = context->handle.file;
+
+            status = fs_call_user(connector_ptr,
+                                  service_request,
+                                  context,
+                                  fs_request_id,
+                                  &data);
+            break;
+        }
+        case connector_request_id_file_system_closedir:
+        {
+            connector_file_system_closedir_t data;
+
+            data.handle = context->handle.dir;
+
+            status = fs_call_user(connector_ptr,
+                                  service_request,
+                                  context,
+                                  fs_request_id,
+                                  &data);
+            break;
+        }
+        case connector_request_id_file_system_open:
+        case connector_request_id_file_system_read:
+        case connector_request_id_file_system_write:
+        case connector_request_id_file_system_lseek:
+        case connector_request_id_file_system_ftruncate:
+        case connector_request_id_file_system_remove:
+        case connector_request_id_file_system_stat:
+        case connector_request_id_file_system_stat_dir_entry:
+        case connector_request_id_file_system_opendir:
+        case connector_request_id_file_system_readdir:
+        case connector_request_id_file_system_get_error:
+        case connector_request_id_file_system_session_error:
+        case connector_request_id_file_system_hash:
+            break;
+    }
+
 
     if (status == connector_pending)
         goto done;
@@ -640,7 +680,7 @@ STATIC connector_status_t call_file_open_user(connector_data_t * const connector
 
     data.path  = path;
     data.oflag = oflag;
-    data.handle = (uintptr_t)NULL;
+    data.handle = CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -653,9 +693,9 @@ STATIC connector_status_t call_file_open_user(connector_data_t * const connector
 
     if (FsOperationSuccess(status, context))
     {
-        if (data.handle != (uintptr_t)NULL)
+        if (data.handle != CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED)
         {
-            context->handle = data.handle;
+            context->handle.file = data.handle;
             FsSetState(context, fs_state_open);
         }
         else
@@ -684,7 +724,7 @@ STATIC connector_status_t call_file_lseek_user(connector_data_t * const connecto
     connector_file_system_lseek_t data;
     connector_status_t status;
 
-    data.handle = context->handle;
+    data.handle = context->handle.file;
     data.requested_offset = offset_in;
     data.resulting_offset = -1;
     data.origin = origin;
@@ -708,7 +748,7 @@ STATIC connector_status_t call_file_ftruncate_user(connector_data_t * const conn
     connector_status_t status;
     connector_file_system_truncate_t data;
 
-    data.handle = context->handle;
+    data.handle = context->handle.file;
     data.length_in_bytes = context->data.f.offset;
 
     status = fs_call_user(connector_ptr,
@@ -745,7 +785,7 @@ STATIC connector_status_t call_file_read_user(connector_data_t * const connector
     connector_status_t status;
     connector_file_system_read_t data;
 
-    data.handle = context->handle;
+    data.handle = context->handle.file;
     data.buffer = buffer;
     data.bytes_available = *buffer_size;
     data.bytes_used = 0;
@@ -783,7 +823,7 @@ STATIC connector_status_t call_file_write_user(connector_data_t * const connecto
     connector_status_t status;
     connector_file_system_write_t data;
 
-    data.handle = context->handle;
+    data.handle = context->handle.file;
     data.buffer = buffer;
     data.bytes_available = *bytes_done;
     data.bytes_used = 0;
@@ -957,7 +997,7 @@ STATIC connector_status_t process_get_close(connector_data_t * const connector_p
         if (status == connector_pending)
         {
             if (context->status == connector_working &&
-                context->errnum == (uintptr_t)NULL &&
+                context->errnum.user == CONNECTOR_FILESYSTEM_ERRNUM_NONE &&
                 service_data->length_in_bytes > 0)
             {
                 /* Return final data portion, will set last bit later
@@ -977,7 +1017,7 @@ STATIC connector_status_t process_get_close(connector_data_t * const connector_p
         goto done;
 
     /* no errors, set last bit and send out last portion of data */
-    if (context->errnum == (uintptr_t)NULL)
+    if (context->errnum.user == CONNECTOR_FILESYSTEM_ERRNUM_NONE)
     {
         MsgSetLastData(service_data->flags);
         goto done;
@@ -1007,7 +1047,7 @@ STATIC connector_status_t process_file_get_response(connector_data_t * const con
     msg_service_data_t * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if ((context->errnum != (uintptr_t)NULL) || (FsGetState(context) >= fs_state_closing))
+    if ((context->errnum.user != CONNECTOR_FILESYSTEM_ERRNUM_NONE) || (FsGetState(context) >= fs_state_closing))
     {
         service_data->length_in_bytes = 0;
         goto close_file;
@@ -1118,7 +1158,7 @@ STATIC connector_status_t process_file_response_nodata(connector_data_t * const 
     msg_service_data_t * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if (context->errnum == (uintptr_t)NULL)
+    if (context->errnum.user == CONNECTOR_FILESYSTEM_ERRNUM_NONE)
     {
         uint8_t * const data_ptr = service_data->data_ptr;
 
@@ -1186,7 +1226,7 @@ STATIC connector_status_t process_file_put_request(connector_data_t * const conn
 {
     connector_status_t status = connector_working;
 
-    if ((context->errnum != (uintptr_t)NULL) || (FsGetState(context) >= fs_state_closing))
+    if ((context->errnum.user != CONNECTOR_FILESYSTEM_ERRNUM_NONE) || (FsGetState(context) >= fs_state_closing))
         goto close_file;
 
     {
@@ -1472,7 +1512,7 @@ STATIC connector_status_t process_file_ls_request(connector_data_t * const conne
 
     path += FS_OPCODE_BYTES;
 
-    if (context->errnum != (uintptr_t)NULL)
+    if (context->errnum.user != CONNECTOR_FILESYSTEM_ERRNUM_NONE)
         goto done;
 
     if (parse_file_ls_header(context, service_data->data_ptr, service_data->length_in_bytes) == 0)
@@ -1513,7 +1553,7 @@ STATIC connector_status_t process_file_ls_response(connector_data_t * const conn
     msg_service_data_t    * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if ((context->errnum != (uintptr_t)NULL) || (FsGetState(context) >= fs_state_closing))
+    if ((context->errnum.user != CONNECTOR_FILESYSTEM_ERRNUM_NONE) || (FsGetState(context) >= fs_state_closing))
     {
        service_data->length_in_bytes = 0;
        goto close_dir;
@@ -1554,7 +1594,7 @@ STATIC connector_status_t process_file_ls_response(connector_data_t * const conn
                 if (status == connector_pending || status == connector_abort)
                     goto done;
 
-                if (status == connector_working && context->errnum != (uintptr_t)NULL)
+                if (status == connector_working && context->errnum.user != CONNECTOR_FILESYSTEM_ERRNUM_NONE)
                 {
                     if (format_file_error_msg(connector_ptr, service_request, context) == connector_abort)
                     {
@@ -1675,10 +1715,11 @@ STATIC connector_status_t allocate_file_context(connector_data_t * const connect
 
     context = ptr;
 
-    context->handle = (uintptr_t)NULL;
+    context->handle.file = CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED;
+    context->handle.dir = CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED;
     context->user_context = NULL;
     context->flags = 0;
-    context->errnum = (uintptr_t)NULL;
+    context->errnum.user = CONNECTOR_FILESYSTEM_ERRNUM_NONE;
     context->state = fs_state_none;
     context->status = connector_working;
 

@@ -154,7 +154,7 @@ static void update_error_case(char const * const path)
     dvt_current_state = dvt_fs_state_at_start;
 }
 
-static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(connector_filesystem_errnum_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
@@ -503,7 +503,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = (uintptr_t)dir_data;
+            data->handle = dir_data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
@@ -523,7 +523,7 @@ done:
     return status;
 }
 
-static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
+static connector_callback_status_t app_process_file_closedir(connector_file_system_closedir_t * const data)
 {
     app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
 

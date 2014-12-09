@@ -75,7 +75,7 @@ typedef struct
 } app_dir_data_t;
 
 
-static connector_callback_status_t app_process_file_error(uintptr_t * const error_token, long int const errnum)
+static connector_callback_status_t app_process_file_error(connector_filesystem_errnum_t * const error_token, long int const errnum)
 {
     connector_callback_status_t status;
 
@@ -412,7 +412,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
 
         if (dir_data != NULL)
         {
-            data->handle = (uintptr_t)data;
+            data->handle = data;
 
             dir_data->dirp = dirp;
             APP_DEBUG("opendir for %s returned %p\n", data->path, (void *) dirp);
@@ -430,7 +430,7 @@ static connector_callback_status_t app_process_file_opendir(connector_file_syste
     return status;
 }
 
-static connector_callback_status_t app_process_file_closedir(connector_file_system_close_t * const data)
+static connector_callback_status_t app_process_file_closedir(connector_file_system_closedir_t * const data)
 {
     app_dir_data_t * dir_data = (app_dir_data_t *)data->handle;
 
@@ -1015,7 +1015,7 @@ static int dvt_pre_test(connector_request_id_file_system_t const request_id,
         case set_io_error_no_errno:
             {
                connector_file_system_read_t * pdata = data;
-               pdata->errnum = (uintptr_t)NULL;
+               pdata->errnum = CONNECTOR_FILESYSTEM_ERRNUM_NONE;
                *status = connector_callback_error;
             }
             break;
