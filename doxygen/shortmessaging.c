@@ -813,8 +813,8 @@
  *
  * @subsection sm_connect Request TCP start
  *
- * Requests the Cloud Connector to start its TCP transport.  This request will
- * be handled in the Cloud Connector private layer will start the TCP.
+ * Requests the Cloud Connector to start its TCP transport.  This request is passed to the user by
+ * a @ref connector_request_id_sm_request_connect request to allow the TCP transport to be started or not.
  *
  * Once the TCP transport @ref network_tcp_start "is started", devices can make use of
  * the TCP features like @ref firmware_download, @ref rci_service, or reliable
@@ -837,6 +837,8 @@
  *
  * @note If @ref CONNECTOR_TRANSPORT_TCP "CONNECTOR_TRANSPORT_TCP is disabled" Cloud Connector
  * returns an error response to Device Cloud.
+ * 
+ * @see @ref start_tcp_transport
  *
  * @subsection sm_reboot Reboot device
  *
@@ -972,10 +974,57 @@
  * </tr>
  * </table>
  * @endhtmlonly
+ * 
+ * @subsection start_tcp_transport  Device Cloud start TCP transport request
  *
- * @note The @b response_required member is passing information on to the application.  There is no required
- * action necessary from the Cloud Connector application, regardless of the value for @b response_required.
+ * Cloud Connector will make a Reuqest Connect @ref connector_request_id_sm_request_connect "callback" to
+ * notify an application that Device Cloud requests to start the TCP transport and let it decide whether to
+ * allow it or not.
  *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th> <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>class_id</td>
+ *   <td>@endhtmlonly @ref connector_class_id_short_message @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_id</td>
+ *   <td>@endhtmlonly @ref connector_request_id_sm_request_connect @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>data</td>
+ *   <td>Pointer to @endhtmlonly connector_sm_request_connect_t @htmlonly structure:
+ *     <ul>
+ *       <li><b><i>transport</i></b>: @endhtmlonly Transport that received the request to start TCP communication: @ref connector_transport_udp or @ref connector_transport_sms. @htmlonly </li>
+ *       <li><b><i>allow</i></b>: Set to @endhtmlonly @ref connector_true to allow starting TCP communication,
+ *                                            @ref connector_false to ignore the request.  @htmlonly </li>
+ *     </ul>
+ *   </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ *   <td>Continue</td>
+ * </tr>
+ * <tr>
+ *   <td>@endhtmlonly @ref connector_callback_unrecognized @htmlonly</td>
+ *   <td>Application doesn't implement this callback</td>
+ * </tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ *   <td>Aborts Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * @see @ref sm_connect
  *
  *
  * @subsection config_request_from_cloud  Device Cloud Config Notification
