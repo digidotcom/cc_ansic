@@ -558,7 +558,7 @@ STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
             break;
         }
 
-#if (defined FLOATING_POINT_SUPPORTED)
+#if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
         case connector_data_point_type_float:
             bytes_processed = connector_snprintf(buffer, bytes_available, "%f", dp_ptr->data.element.native.float_value);
             break;
@@ -653,7 +653,7 @@ STATIC size_t dp_process_location(data_point_info_t * const dp_info, char * cons
                                                 dp_ptr->location.value.text.elevation);
             break;
 
-        #if (defined FLOATING_POINT_SUPPORTED)
+        #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
         case connector_location_type_native:
             bytes_processed = connector_snprintf(buffer, bytes_available, "\"%f,%f,%f\"",
                                                 dp_ptr->location.value.native.latitude,

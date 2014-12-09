@@ -374,7 +374,7 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
                     break;
 
                 case connector_data_point_type_float:
-                    #if (defined FLOATING_POINT_SUPPORTED)
+                    #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                     {
                         point->data.element.native.float_value = (float)drand48();
                     }
@@ -390,7 +390,7 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
                     break;
 
                 case connector_data_point_type_double:
-                    #if (defined FLOATING_POINT_SUPPORTED)
+                    #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                     {
                         point->data.element.native.double_value = drand48();
                     }
@@ -720,7 +720,7 @@ void app_show_datastreams(connector_request_data_point_t * dp_ptr)
                                 break;
 
                             case connector_data_point_type_float:
-                                #if (defined FLOATING_POINT_SUPPORTED)
+                                #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                                     APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%f'\n",
                                         point.location.value.text.latitude,
                                         point.location.value.text.longitude,
@@ -739,7 +739,7 @@ void app_show_datastreams(connector_request_data_point_t * dp_ptr)
                                 #endif
                                 break;
                             case connector_data_point_type_double:
-                                #if (defined FLOATING_POINT_SUPPORTED)
+                                #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                                     APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%f'\n",
                                         point.location.value.text.latitude,
                                         point.location.value.text.longitude,

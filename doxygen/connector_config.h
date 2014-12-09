@@ -468,7 +468,7 @@
  *    - "%f" and "%lf" format specifiers are supported.
  *
  */
-#define FLOATING_POINT_SUPPORTED
+#define CONNECTOR_SUPPORTS_FLOATING_POINT
 
 /**
  * When defined, the Cloud Connector compilation will expect the compiler has 64 bit integers support by:

@@ -144,7 +144,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                 }
                 break;
             case connector_data_point_type_float:
-                #if (defined FLOATING_POINT_SUPPORTED)
+                #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                 if (test_case == 1)
                 {
                     point->data.type = connector_data_type_native;
@@ -162,7 +162,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                 break;
 
             case connector_data_point_type_double:
-                #if (defined FLOATING_POINT_SUPPORTED)
+                #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                 if (test_case == 1)
                 {
                     point->data.type = connector_data_type_native;
@@ -259,7 +259,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     break;
                 }
 
-                #if (defined FLOATING_POINT_SUPPORTED)
+                #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                 case connector_location_type_native:
                     point->location.type = connector_location_type_native;
                     point->location.value.native.latitude = 42.22;

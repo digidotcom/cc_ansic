@@ -143,7 +143,7 @@ typedef struct connector_data_point_t
                 int64_t long_value;   /**< 64-bit two's complement integer */
                 #endif
                 char * string_value;/**< a null-terminated utf-8 encoding string */
-                #if (defined FLOATING_POINT_SUPPORTED)
+                #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                 float float_value;  /**< 32-bit IEEE754 floating point */
                 double double_value;/**< 64-bit IEEE754 floating point */
                 #endif
@@ -212,7 +212,7 @@ typedef struct connector_data_point_t
         enum
         {
             connector_location_type_ignore, /**< location is ignored */
-            #if (defined FLOATING_POINT_SUPPORTED)
+            #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
             connector_location_type_native, /**< location value is represented in its native format */
             #endif
             connector_location_type_text    /**< location value is represented in ascii */
@@ -223,7 +223,7 @@ typedef struct connector_data_point_t
          */
         union
         {
-            #if (defined FLOATING_POINT_SUPPORTED)
+            #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
             /**
              * Location in native format
              */
