@@ -293,7 +293,7 @@ typedef void * connector_network_handle_t;
 */
 /**
  * Used to reference a file handle, passed into other file operations for Cloud Connector API calls.
- * Also the @ref CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT macro must be defined accordingly.
+ * Also the @ref CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED macro must be defined accordingly.
  */
 typedef long int connector_filesystem_file_handle_t;
 /**
@@ -301,14 +301,14 @@ typedef long int connector_filesystem_file_handle_t;
 */
 
 /**
-* @defgroup CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT Filesystem's file handle's value when not initialized or invalid
+* @defgroup CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED Filesystem's file handle's value when not initialized or invalid
 * @{
 */
 /**
  * Value to which file handle is set when invalid or not initialized.
  * The @ref connector_filesystem_file_handle_t type must be defined accordingly.
  */
-#define CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT         -1
+#define CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED    -1
 /**
 * @}
 */
@@ -319,7 +319,7 @@ typedef long int connector_filesystem_file_handle_t;
 */
 /**
  * Used to reference a dir handle, passed into other directory operations for Cloud Connector API calls.
- * Also the @ref CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT macro must be defined accordingly.
+ * Also the @ref CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED macro must be defined accordingly.
  */
 typedef void * connector_filesystem_dir_handle_t;
 /**
@@ -327,14 +327,14 @@ typedef void * connector_filesystem_dir_handle_t;
 */
 
 /**
-* @defgroup CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT Filesystem's directory handle's value when not initialized or invalid
+* @defgroup CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED Filesystem's directory handle's value when not initialized or invalid
 * @{
 */
 /**
  * Value to which directory handle is set when invalid or not initialized.
  * The @ref connector_filesystem_dir_handle_t type must be defined accordingly.
  */
-#define CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT          NULL
+#define CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED     NULL
 /**
 * @}
 */

@@ -179,14 +179,14 @@ typedef enum
 */
 typedef struct
 {
-    void * user_context;                            /**< Holds user context */
-   connector_filesystem_errnum_t errnum;            /**< Application defined error token */
+    void * user_context;                                /**< Holds user context */
+    connector_filesystem_errnum_t errnum;               /**< Application defined error token */
 
-   connector_filesystem_file_handle_t CONST handle;      /**< Application defined file handle */
-   connector_file_offset_t CONST requested_offset;  /**< Requested file offset */
-   connector_file_offset_t resulting_offset;        /**< Resulting file position */
+    connector_filesystem_file_handle_t CONST handle;    /**< Application defined file handle */
+    connector_file_offset_t CONST requested_offset;     /**< Requested file offset */
+    connector_file_offset_t resulting_offset;           /**< Resulting file position */
 
-   connector_file_system_seek_origin_t CONST origin;/**< File seek origin */
+   connector_file_system_seek_origin_t CONST origin;    /**< File seek origin */
 } connector_file_system_lseek_t;
 /**
 * @}

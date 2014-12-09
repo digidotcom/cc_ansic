@@ -75,8 +75,8 @@
  * - @ref connector_filesystem_file_handle_t "connector_filesystem_file_handle_t"
  * - @ref connector_filesystem_dir_handle_t "connector_filesystem_dir_handle_t"
  * - @ref connector_filesystem_errnum_t "connector_filesystem_errnum_t"
- * - @ref CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT "CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT"
- * - @ref CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT "CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT"
+ * - @ref CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED "CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED"
+ * - @ref CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED "CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED"
  * - @ref CONNECTOR_FILESYSTEM_ERRNUM_NONE "CONNECTOR_FILESYSTEM_ERRNUM_NONE"
  * 
  * @section file_system_context Session Context

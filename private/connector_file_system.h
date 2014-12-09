@@ -501,7 +501,7 @@ STATIC connector_status_t call_file_opendir_user(connector_data_t * const connec
     connector_file_system_opendir_t data;
 
     data.path = path;
-    data.handle = CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT;
+    data.handle = CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -514,7 +514,7 @@ STATIC connector_status_t call_file_opendir_user(connector_data_t * const connec
 
     if (FsOperationSuccess(status, context))
     {
-        if (data.handle != CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT)
+        if (data.handle != CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED)
         {
             context->handle.dir = data.handle;
             FsSetState(context, fs_state_open);
@@ -680,7 +680,7 @@ STATIC connector_status_t call_file_open_user(connector_data_t * const connector
 
     data.path  = path;
     data.oflag = oflag;
-    data.handle = CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT;
+    data.handle = CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED;
 
     status = fs_call_user(connector_ptr,
                           service_request,
@@ -693,7 +693,7 @@ STATIC connector_status_t call_file_open_user(connector_data_t * const connector
 
     if (FsOperationSuccess(status, context))
     {
-        if (data.handle != CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT)
+        if (data.handle != CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED)
         {
             context->handle.file = data.handle;
             FsSetState(context, fs_state_open);
@@ -1715,8 +1715,8 @@ STATIC connector_status_t allocate_file_context(connector_data_t * const connect
 
     context = ptr;
 
-    context->handle.file = CONNECTOR_FILESYSTEM_FILE_HANDLE_UNINIT;
-    context->handle.dir = CONNECTOR_FILESYSTEM_DIR_HANDLE_UNINIT;
+    context->handle.file = CONNECTOR_FILESYSTEM_FILE_HANDLE_NOT_INITIALIZED;
+    context->handle.dir = CONNECTOR_FILESYSTEM_DIR_HANDLE_NOT_INITIALIZED;
     context->user_context = NULL;
     context->flags = 0;
     context->errnum.user = CONNECTOR_FILESYSTEM_ERRNUM_NONE;
