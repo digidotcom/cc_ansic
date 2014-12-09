@@ -186,7 +186,7 @@ int connector_snprintf(char * const str, size_t const size, char const * const f
 #define PRIx32 "lx"
 #endif
 
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
 
 /**
  *  Unsigned 64 bit value.

@@ -406,7 +406,7 @@ connector_request_data_point_t * generateDataStreamStructure(size_t const number
                     break;
 
                 case connector_data_point_type_long:
-                    #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                    #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
                     {
                         /* function return signed long integers, uniformly distributed over the interval [-2**31,2**31] */
                         point->data.element.native.long_value = mrand48();
@@ -758,7 +758,7 @@ void app_show_datastreams(connector_request_data_point_t * dp_ptr)
                                 #endif
                                 break;
                             case connector_data_point_type_long:
-                                #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                                #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
                                     APP_DEBUG("[DataPoint] Location: '%s,%s,%s' -- Quality: '%d' -- Description: '%s' -- Data: '%" PRId64 "' \n",
                                         point.location.value.text.latitude,
                                         point.location.value.text.longitude,

@@ -476,7 +476,7 @@
  *    - "%lld" and "%" PRId64 format specifiers are supported.
  *
  */
-#define CONNECTOR_HAS_64_BIT_INTEGERS
+#define CONNECTOR_SUPPORTS_64_BIT_INTEGERS
 
 /**
  * Sets the outbound packets' maximum size in TCP transport (it has no effect on SM/UDP or SM/SMS).

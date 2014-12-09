@@ -29,7 +29,7 @@
 #define BYTE32_1(x32)   ((uint8_t) (((uint32_t)(x32)) >>  8))
 #define BYTE32_0(x32)   ((uint8_t)  ((uint32_t)(x32)))
 
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
 #define LOW32(x64)      ((uint32_t) (x64))
 #define HIGH32(x64)     ((uint32_t) (((uint64_t)(x64)) >> 32))
 

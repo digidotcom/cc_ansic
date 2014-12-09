@@ -83,7 +83,7 @@ typedef struct
 * @}
 */
 
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
 /**
 * @defgroup connector_time_epoch_whole_t  connector_time_epoch_whole_t
 * @brief Structure to represent time in milliseconds.
@@ -139,7 +139,7 @@ typedef struct connector_data_point_t
             union
             {
                 int32_t int_value;    /**< 32-bit two's complement integer */
-                #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
                 int64_t long_value;   /**< 64-bit two's complement integer */
                 #endif
                 char * string_value;/**< a null-terminated utf-8 encoding string */
@@ -164,7 +164,7 @@ typedef struct connector_data_point_t
         {
             connector_time_cloud,                  /**< The time is ignored and Device Cloud time is used instead. */
             connector_time_local_epoch_fractional,  /**< The time value is specified in Epoch sec/msec format. */
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
             connector_time_local_epoch_whole,       /**< The time value is specified in Epoch milliseconds 64-bit format. */
 #endif
             connector_time_local_iso8601            /**< The time value is specified in ISO 8601 string format. */
@@ -176,7 +176,7 @@ typedef struct connector_data_point_t
         union
         {
             connector_time_epoch_fractional_t since_epoch_fractional;   /**< Time since the Epoch time in seconds and milliseconds */
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
             connector_time_epoch_whole_t since_epoch_whole;             /**< Time since the Epoch time in milliseconds */
 #endif
             char * iso8601_string;                                      /**<

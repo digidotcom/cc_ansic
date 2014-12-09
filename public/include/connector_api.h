@@ -40,7 +40,7 @@
          after connector_config.h and before defining module specific data types. */
 
 #if (defined CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES)
-#define CONNECTOR_HAS_64_BIT_INTEGERS
+#define CONNECTOR_SUPPORTS_64_BIT_INTEGERS
 #endif
 
 #if !((defined CONNECTOR_TRANSPORT_TCP) || (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS))

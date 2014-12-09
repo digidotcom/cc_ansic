@@ -529,7 +529,7 @@ STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const bu
             bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId32, dp_ptr->data.element.native.int_value);
             break;
 
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
         case connector_data_point_type_long:
             bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId64, dp_ptr->data.element.native.long_value);
             break;
@@ -592,7 +592,7 @@ STATIC size_t dp_process_time(data_point_info_t * const dp_info, char * const bu
                                                  dp_ptr->time.value.since_epoch_fractional.milliseconds);
             break;
 
-        #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+        #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
         case connector_time_local_epoch_whole:
         {
             ASSERT(dp_ptr->time.value.since_epoch_whole.milliseconds <= INT64_MAX);

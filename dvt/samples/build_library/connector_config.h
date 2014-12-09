@@ -66,7 +66,7 @@
 #endif
 
 #define CONNECTOR_DEVICE_HEALTH
-#define CONNECTOR_HAS_64_BIT_INTEGERS
+#define CONNECTOR_SUPPORTS_64_BIT_INTEGERS
 
 typedef enum {
  connector_setting_simple_enhanced_services_report_rate,

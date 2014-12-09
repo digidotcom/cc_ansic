@@ -2021,7 +2021,7 @@ PREDEFINED             = CONNECTOR_VERSION \
                          CONNECTOR_FIRMWARE_SERVICE \
                          CONNECTOR_RCI_SERVICE \
                          CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES \
-                         CONNECTOR_HAS_64_BIT_INTEGERS
+                         CONNECTOR_SUPPORTS_64_BIT_INTEGERS
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

@@ -39,7 +39,7 @@
  * number requires more than 32-bits.  On a 64-bit target, it can make use of the @ref connector_time_epoch_whole_t
  * data structure.  This data structure includes a long long unsigned integer millisecond member to hold this value.
  *
- * To enable 64-bit support, you need to define CONNECTOR_HAS_64_BIT_INTEGERS.
+ * To enable 64-bit support, you need to define CONNECTOR_SUPPORTS_64_BIT_INTEGERS.
  *
  * @section sixtyfourfilesystemls File System Support for Large Files
  *

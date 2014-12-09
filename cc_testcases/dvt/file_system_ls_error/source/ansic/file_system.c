@@ -94,7 +94,7 @@ static void update_error_case(char const * const path)
  *    Makefile: 
  *          CFLAGS += -D_FILE_OFFSET_BITS=64 
  */ 
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
 #define CONNECTOR_OFFSET_MAX INT64_MAX
 #define PRIoffset  PRId64
 #else

@@ -127,7 +127,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                 }
                 break;
             case connector_data_point_type_long:
-			    #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+			    #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
                 if (test_case == 1)
                 {
                     point->data.type = connector_data_type_native;
@@ -227,7 +227,7 @@ static connector_data_point_t * get_stream_points(connector_data_point_type_t co
                     break;
                 }
 
-                #if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+                #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
                 case connector_time_local_epoch_whole:
                     point->time.source = connector_time_local_epoch_whole;
                     point->time.value.since_epoch_whole.milliseconds = (current_time.tv_sec * UINT64_C(1000)) + (current_time.tv_usec / UINT64_C(1000));

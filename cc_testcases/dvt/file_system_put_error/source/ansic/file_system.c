@@ -101,7 +101,7 @@ static void update_error_case(connector_file_offset_t offset)
  *    Makefile: 
  *          CFLAGS += -D_FILE_OFFSET_BITS=64 
  */ 
-#if (defined CONNECTOR_HAS_64_BIT_INTEGERS)
+#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
 #define CONNECTOR_OFFSET_MAX INT64_MAX
 #define PRIoffset  PRId64
 #else
