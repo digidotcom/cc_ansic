@@ -16,8 +16,8 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_01_send_file_valid_path_without_content(self):
-        """ Sends an invalid target to the device without payload
-        Verifies if the returned response is the expected.
+        """ Sends a put_file request to upload a file to the device without payload
+        Verifies if the returned response is the expected and the generated file has the expected content.
         """
 
         filePath = os.path.join(self.tempPath, "test_01_send_file_valid_path_without_content.txt")
@@ -38,6 +38,9 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_02_send_file_valid_path_with_increasing_content(self):
+        """ Sends a put_file request to upload a file to the device several times with a different payload in each iteration.
+        Verifies if the returned response is the expected and the generated file has the expected content.
+        """
 
         maxFileSize = 23453
 
@@ -65,6 +68,9 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_03_send_file_valid_path_with_big_content(self):
+        """ Sends a put_file request to upload a file to the device with the maximum payload allowed.
+        Verifies if the returned response is the expected and the generated file has the expected content.
+        """
 
         fileSizeList = [1048576, 2000000] # 1MB,2MB,...
 
@@ -89,6 +95,9 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_04_send_data_chunks_with_valid_offset(self):
+        """ Sends several put_file requests to upload different data chunks over the same file with a different offset.
+        Verifies if the returned response is the expected and the generated file has the expected content.
+        """
 
         filePath = os.path.join(self.tempPath, "test_04_send_file_with_offset.txt")
         originalFileData = fileContent
@@ -145,6 +154,9 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_05_send_data_chunks_with_truncate_option(self):
+        """ Sends several put_file requests to upload different data chunks over the same file with the truncate option.
+        Verifies if the returned response is the expected and the generated file has the expected content.
+        """
 
         filePath = os.path.join(self.tempPath, "test_05_send_data_chunks_with_truncate_option.txt")
         originalFileData = fileContent
@@ -223,7 +235,8 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_06_verify_filesystem_ls_command(self):
-
+        """ Sends list folder request over file system and verify that the response match with the expected files.
+        """
  
         # Generate a suite of files and directories to test
         fileList,directoryList = self.generateFilesAndDirectories("test_06_verify_filesystem_ls_command")
@@ -307,7 +320,8 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
 
 
     def test_07_verify_filesystem_ls_command_with_hash(self):
-
+        """ Sends list folder request over file system with the hash flag enabled and verify that the response match with the expected files.
+        """
 
         # Generate a suite of files and directories to test
         fileList,directoryList = self.generateFilesAndDirectories("test_07_verify_filesystem_ls_command_with_hash")
@@ -496,4 +510,3 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
         crc32_decimal = "%s" % crc32
         crc32_hexadecimal = "%08X" % crc32
         return crc32_decimal
-
