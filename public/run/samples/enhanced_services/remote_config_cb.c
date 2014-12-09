@@ -104,13 +104,13 @@ static remote_group_table_t * get_group_table(connector_remote_group_type_t grou
     {
     case connector_remote_group_setting:
 
-        if (group_index < asizeof(remote_setting_table))
+        if (group_index < ARRAY_SIZE(remote_setting_table))
         {
             group_ptr = &remote_setting_table[group_index];
         }
         break;
     case connector_remote_group_state:
-        if (group_index < asizeof(remote_state_table))
+        if (group_index < ARRAY_SIZE(remote_state_table))
         {
             group_ptr = &remote_state_table[group_index];
         }

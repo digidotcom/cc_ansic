@@ -240,7 +240,7 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
     ptr = (uint8_t *)packet;
     start_ptr = ptr;
 
-    for (i=0; i < asizeof(keepalive_parameters); i++)
+    for (i=0; i < ARRAY_SIZE(keepalive_parameters); i++)
     {
         size_t const len = build_keepalive_param(ptr, keepalive_parameters[i].type, keepalive_parameters[i].value);
         ptr += len;

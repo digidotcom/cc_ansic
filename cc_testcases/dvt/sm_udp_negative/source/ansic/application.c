@@ -140,7 +140,7 @@ int application_run(connector_handle_t handle)
     unsigned int const ping_interval_in_seconds = 2;
     typedef connector_status_t (* send_fn_t)(connector_handle_t handle);
     send_fn_t const send_fn[] = {app_send_ping, app_send_data};
-    size_t const send_fn_count = asizeof(send_fn);
+    size_t const send_fn_count = ARRAY_SIZE(send_fn);
     size_t message_count = 0;
     connector_status_t status;
 

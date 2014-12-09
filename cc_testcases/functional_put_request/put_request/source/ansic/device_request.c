@@ -94,7 +94,7 @@ static connector_callback_status_t app_process_device_request_target(connector_d
     }
 
     /* check for supported target */
-    for(unsigned int i = 0; i < asizeof(device_request_targets); i++){
+    for(unsigned int i = 0; i < ARRAY_SIZE(device_request_targets); i++){
 
         if(strcmp(target_data->target, device_request_targets[i]) == 0){
             /* If it is a known target, fill the test structure */

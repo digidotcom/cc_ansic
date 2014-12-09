@@ -94,7 +94,7 @@ static connector_callback_status_t app_process_group(connector_request_id_remote
     {
     case connector_remote_group_setting:
 
-        if (remote_config->group.id >= asizeof(remote_setting_table))
+        if (remote_config->group.id >= ARRAY_SIZE(remote_setting_table))
         {
             ASSERT(0);
             goto done;
@@ -103,7 +103,7 @@ static connector_callback_status_t app_process_group(connector_request_id_remote
         group_ptr = &remote_setting_table[remote_config->group.id];
         break;
     case connector_remote_group_state:
-        if (remote_config->group.id >= asizeof(remote_state_table))
+        if (remote_config->group.id >= ARRAY_SIZE(remote_state_table))
         {
             ASSERT(0);
             goto done;

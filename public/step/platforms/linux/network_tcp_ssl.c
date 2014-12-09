@@ -145,7 +145,7 @@ error:
 static int get_user_passwd(char * buf, int size, int rwflag, void * password)
 {
   char const passwd[] = APP_SSL_CLNT_CERT_PASSWORD;
-  int const pwd_bytes = asizeof(passwd) - 1;
+  int const pwd_bytes = ARRAY_SIZE(passwd) - 1;
   int const copy_bytes = (pwd_bytes < size) ? pwd_bytes : size-1;
 
   UNUSED_ARGUMENT(rwflag);

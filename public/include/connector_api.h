@@ -65,7 +65,7 @@
 
 #include "connector_types.h"
 
-#define asizeof(array)  (sizeof array/sizeof array[0])
+#define ARRAY_SIZE(array)  (sizeof array/sizeof array[0])
 
 /**
  * @defgroup connector_bool_t Connector Boolean Type

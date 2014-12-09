@@ -495,7 +495,7 @@ static void dev_health_process_path(health_metrics_data_t * const health_metrics
 {
     unsigned int i;
 
-    for(i = 0; i < asizeof(dev_health_root_groups); i++)
+    for(i = 0; i < ARRAY_SIZE(dev_health_root_groups); i++)
     {
         dev_health_path_group_t const * const root_group = dev_health_root_groups[i];
         size_t const name_len = root_group->name_len;

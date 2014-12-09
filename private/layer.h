@@ -75,7 +75,7 @@ static connector_facility_service_t const connector_supported_service_table[] = 
 #endif
 };
 
-static size_t const connector_facility_count = asizeof(connector_supported_service_table);
+static size_t const connector_facility_count = ARRAY_SIZE(connector_supported_service_table);
 
 
 STATIC connector_status_t layer_remove_facilities(connector_data_t * const connector_ptr, connector_supported_facility_cb_index_t cb_index)

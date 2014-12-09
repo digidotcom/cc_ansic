@@ -187,7 +187,7 @@ STATIC void fs_get_internal_error_data(connector_file_system_get_error_t * const
         error_code = fs_error_generic;
         break;
     }
-    ASSERT(error_code < asizeof(error_data));
+    ASSERT(error_code < ARRAY_SIZE(error_data));
 
     data->error_status = error_data[error_code].status;
     data->bytes_used = MIN_VALUE(data->bytes_available, strlen(error_data[error_code].hint));

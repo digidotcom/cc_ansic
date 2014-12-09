@@ -23,7 +23,7 @@ typedef struct device_request_handle {
     size_t length_in_bytes;
 } device_request_handle_t;
 
-#define asizeof(array)  (sizeof array/sizeof array[0])
+#define ARRAY_SIZE(array)  (sizeof array/sizeof array[0])
 
 static connector_callback_status_t process_device_request(
     connector_data_service_msg_request_t const * const request_data,
@@ -40,7 +40,7 @@ static connector_callback_status_t process_device_request(
         /* target should not be null on 1st chunk of data */
         led_callback_t * callback = NULL;
         int i;
-        for(i = 0; i < asizeof(led_callbacks); i++){
+        for(i = 0; i < ARRAY_SIZE(led_callbacks); i++){
             led_callback_t * led = &led_callbacks[i];
             if(strcmp(request->target, led->target) == 0){
                 callback = led;

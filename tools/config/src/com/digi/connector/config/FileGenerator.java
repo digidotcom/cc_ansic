@@ -935,12 +935,12 @@ else{
                     }
 
                     group_string += String.format("   %d ,%s", group.getInstances(),COMMENTED(" instances "))
-                                  + String.format("   { asizeof(%s%s),\n", prefix, define_name.toLowerCase())
+                                  + String.format("   { ARRAY_SIZE(%s%s),\n", prefix, define_name.toLowerCase())
                                   + String.format("     %s%s\n   },\n", prefix, define_name.toLowerCase());
                     if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                         define_name = getDefineString(group.getName() + "_errors");
 
-                        group_string += String.format("   { asizeof(%s%s),\n", prefix, define_name.toLowerCase())
+                        group_string += String.format("   { ARRAY_SIZE(%s%s),\n", prefix, define_name.toLowerCase())
                                         + String.format("     %s%s\n   }", prefix, define_name.toLowerCase());
 
                     } else {
@@ -984,7 +984,7 @@ else{
 
             rciGroupString += " {";
             if (!groups.isEmpty()) {
-                rciGroupString += String.format(" %sconnector_%s_groups,\n   asizeof(%sconnector_%s_groups)\n }",
+                rciGroupString += String.format(" %sconnector_%s_groups,\n   ARRAY_SIZE(%sconnector_%s_groups)\n }",
                                                    prefix,configType,prefix, configType);
 
             } else {

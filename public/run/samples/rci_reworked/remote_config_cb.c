@@ -235,10 +235,10 @@ static connector_group_element_t CONST setting_devicesecurity_elements[] = {
 static connector_group_t CONST connector_setting_groups[] = {
  {  /*serial*/
    2 , /* instances */
-   { asizeof(setting_serial_elements),
+   { ARRAY_SIZE(setting_serial_elements),
      setting_serial_elements
    },
-   { asizeof(setting_serial_errors),
+   { ARRAY_SIZE(setting_serial_errors),
      setting_serial_errors
    },  /* errors*/
    (rci_function_t)rci_setting_serial_start, /* start callback*/
@@ -247,10 +247,10 @@ static connector_group_t CONST connector_setting_groups[] = {
 ,
  {  /*ethernet*/
    1 , /* instances */
-   { asizeof(setting_ethernet_elements),
+   { ARRAY_SIZE(setting_ethernet_elements),
      setting_ethernet_elements
    },
-   { asizeof(setting_ethernet_errors),
+   { ARRAY_SIZE(setting_ethernet_errors),
      setting_ethernet_errors
    },  /* errors*/
    (rci_function_t)rci_setting_ethernet_start, /* start callback*/
@@ -259,10 +259,10 @@ static connector_group_t CONST connector_setting_groups[] = {
 ,
  {  /*device_time*/
    1 , /* instances */
-   { asizeof(setting_device_time_elements),
+   { ARRAY_SIZE(setting_device_time_elements),
      setting_device_time_elements
    },
-   { asizeof(setting_device_time_errors),
+   { ARRAY_SIZE(setting_device_time_errors),
      setting_device_time_errors
    },  /* errors*/
    (rci_function_t)rci_setting_device_time_start, /* start callback*/
@@ -271,7 +271,7 @@ static connector_group_t CONST connector_setting_groups[] = {
 ,
  {  /*device_info*/
    1 , /* instances */
-   { asizeof(setting_device_info_elements),
+   { ARRAY_SIZE(setting_device_info_elements),
      setting_device_info_elements
    },
    { 0,
@@ -283,7 +283,7 @@ static connector_group_t CONST connector_setting_groups[] = {
 ,
  {  /*system*/
    1 , /* instances */
-   { asizeof(setting_system_elements),
+   { ARRAY_SIZE(setting_system_elements),
      setting_system_elements
    },
    { 0,
@@ -295,7 +295,7 @@ static connector_group_t CONST connector_setting_groups[] = {
 ,
  {  /*devicesecurity*/
    1 , /* instances */
-   { asizeof(setting_devicesecurity_elements),
+   { ARRAY_SIZE(setting_devicesecurity_elements),
      setting_devicesecurity_elements
    },
    { 0,
@@ -344,10 +344,10 @@ static connector_group_element_t CONST state_gps_stats_elements[] = {
 static connector_group_t CONST connector_state_groups[] = {
  {  /*device_state*/
    1 , /* instances */
-   { asizeof(state_device_state_elements),
+   { ARRAY_SIZE(state_device_state_elements),
      state_device_state_elements
    },
-   { asizeof(state_device_state_errors),
+   { ARRAY_SIZE(state_device_state_errors),
      state_device_state_errors
    },  /* errors*/
    (rci_function_t)rci_state_device_state_start, /* start callback*/
@@ -356,7 +356,7 @@ static connector_group_t CONST connector_state_groups[] = {
 ,
  {  /*gps_stats*/
    1 , /* instances */
-   { asizeof(state_gps_stats_elements),
+   { ARRAY_SIZE(state_gps_stats_elements),
      state_gps_stats_elements
    },
    { 0,
@@ -370,10 +370,10 @@ static connector_group_t CONST connector_state_groups[] = {
 
 static connector_remote_group_table_t CONST connector_group_table[] = {
  { connector_setting_groups,
-   asizeof(connector_setting_groups)
+   ARRAY_SIZE(connector_setting_groups)
  },
  { connector_state_groups,
-   asizeof(connector_state_groups)
+   ARRAY_SIZE(connector_state_groups)
  }
 };
 

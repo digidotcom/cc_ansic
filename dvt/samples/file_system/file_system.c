@@ -134,7 +134,7 @@ static dvt_fs_error_entry_t dvt_fs_error_list[] =
     {"dvt_fs_rm_tout.test", dvt_fs_error_rm_timeout}
 };
 
-static size_t const  dvt_fs_error_list_count  = asizeof(dvt_fs_error_list);
+static size_t const  dvt_fs_error_list_count  = ARRAY_SIZE(dvt_fs_error_list);
 static dvt_fs_error_cases_t dvt_current_error_case = dvt_fs_error_none;
 static dvt_fs_state_t dvt_current_state = dvt_fs_state_at_start;
 

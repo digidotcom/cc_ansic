@@ -76,7 +76,7 @@ static connector_callback_status_t app_network_connect(char const * const host_n
         {
             char server_name[64];
 
-            if (length >= asizeof(server_name))
+            if (length >= ARRAY_SIZE(server_name))
             {
                 APP_DEBUG("app_connect_to_server: server name length [%" PRIsize "]\n", length);
                 goto done;

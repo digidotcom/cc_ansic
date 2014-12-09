@@ -279,7 +279,7 @@ static dev_health_path_group_t const dev_health_mobile_net_cell_id_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_cell_id_elements,
-                asizeof(dev_health_mobile_net_cell_id_elements)
+                ARRAY_SIZE(dev_health_mobile_net_cell_id_elements)
             }
         }
     }
@@ -301,7 +301,7 @@ static dev_health_path_group_t const dev_health_mobile_net_network_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_network_elements,
-                asizeof(dev_health_mobile_net_network_elements)
+                ARRAY_SIZE(dev_health_mobile_net_network_elements)
             }
         }
     }
@@ -323,7 +323,7 @@ static dev_health_path_group_t const dev_health_mobile_net_rssi_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_rssi_elements,
-                asizeof(dev_health_mobile_net_rssi_elements)
+                ARRAY_SIZE(dev_health_mobile_net_rssi_elements)
             }
         }
     }
@@ -345,7 +345,7 @@ static dev_health_path_group_t const dev_health_mobile_net_ecio_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_ecio_elements,
-                asizeof(dev_health_mobile_net_ecio_elements)
+                ARRAY_SIZE(dev_health_mobile_net_ecio_elements)
             }
         }
     }
@@ -367,7 +367,7 @@ static dev_health_path_group_t const dev_health_mobile_net_rsrp_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_rsrp_elements,
-                asizeof(dev_health_mobile_net_rsrp_elements)
+                ARRAY_SIZE(dev_health_mobile_net_rsrp_elements)
             }
         }
     }
@@ -389,7 +389,7 @@ static dev_health_path_group_t const dev_health_mobile_net_rsrq_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_rsrq_elements,
-                asizeof(dev_health_mobile_net_rsrq_elements)
+                ARRAY_SIZE(dev_health_mobile_net_rsrq_elements)
             }
         }
     }
@@ -411,7 +411,7 @@ static dev_health_path_group_t const dev_health_mobile_net_sinr_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_sinr_elements,
-                asizeof(dev_health_mobile_net_sinr_elements)
+                ARRAY_SIZE(dev_health_mobile_net_sinr_elements)
             }
         }
     }
@@ -433,7 +433,7 @@ static dev_health_path_group_t const dev_health_mobile_net_snr_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_snr_elements,
-                asizeof(dev_health_mobile_net_snr_elements)
+                ARRAY_SIZE(dev_health_mobile_net_snr_elements)
             }
         }
     }
@@ -455,7 +455,7 @@ static dev_health_path_group_t const dev_health_mobile_net_status_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_status_elements,
-                asizeof(dev_health_mobile_net_status_elements)
+                ARRAY_SIZE(dev_health_mobile_net_status_elements)
             }
         }
     }
@@ -477,7 +477,7 @@ static dev_health_path_group_t const dev_health_mobile_net_lac_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_lac_elements,
-                asizeof(dev_health_mobile_net_lac_elements)
+                ARRAY_SIZE(dev_health_mobile_net_lac_elements)
             }
         }
     }
@@ -499,7 +499,7 @@ static dev_health_path_group_t const dev_health_mobile_net_tac_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_tac_elements,
-                asizeof(dev_health_mobile_net_tac_elements)
+                ARRAY_SIZE(dev_health_mobile_net_tac_elements)
             }
         }
     }
@@ -521,7 +521,7 @@ static dev_health_path_group_t const dev_health_mobile_net_session_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_session_elements,
-                asizeof(dev_health_mobile_net_session_elements)
+                ARRAY_SIZE(dev_health_mobile_net_session_elements)
             }
         }
     }
@@ -543,7 +543,7 @@ static dev_health_path_group_t const dev_health_mobile_net_info_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_info_elements,
-                asizeof(dev_health_mobile_net_info_elements)
+                ARRAY_SIZE(dev_health_mobile_net_info_elements)
             }
         }
     }
@@ -730,7 +730,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_rxbytes_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_rxbytes_elements,
-                asizeof(dev_health_mobile_net_2g_rxbytes_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_rxbytes_elements)
             }
         }
     }
@@ -752,7 +752,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_txbytes_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_txbytes_elements,
-                asizeof(dev_health_mobile_net_2g_txbytes_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_txbytes_elements)
             }
         }
     }
@@ -774,7 +774,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_losspercent_group 
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_losspercent_elements,
-                asizeof(dev_health_mobile_net_2g_losspercent_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_losspercent_elements)
             }
         }
     }
@@ -796,7 +796,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_uptime_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_uptime_elements,
-                asizeof(dev_health_mobile_net_2g_uptime_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_uptime_elements)
             }
         }
     }
@@ -823,7 +823,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_latency_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_latency_elements,
-                asizeof(dev_health_mobile_net_2g_latency_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_latency_elements)
             }
         }
     }
@@ -845,7 +845,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_transactions_group
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_transactions_elements,
-                asizeof(dev_health_mobile_net_2g_transactions_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_transactions_elements)
             }
         }
     }
@@ -867,7 +867,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_fdrop_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_fdrop_elements,
-                asizeof(dev_health_mobile_net_2g_fdrop_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_fdrop_elements)
             }
         }
     }
@@ -889,7 +889,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_drop_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_drop_elements,
-                asizeof(dev_health_mobile_net_2g_drop_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_drop_elements)
             }
         }
     }
@@ -911,7 +911,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_oos_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_oos_elements,
-                asizeof(dev_health_mobile_net_2g_oos_elements)
+                ARRAY_SIZE(dev_health_mobile_net_2g_oos_elements)
             }
         }
     }
@@ -940,7 +940,7 @@ static dev_health_path_group_t const dev_health_mobile_net_2g_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_2g_subgroups,
-                asizeof(dev_health_mobile_net_2g_subgroups)
+                ARRAY_SIZE(dev_health_mobile_net_2g_subgroups)
             }
         }
     }
@@ -962,7 +962,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_rxbytes_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_rxbytes_elements,
-                asizeof(dev_health_mobile_net_3g_rxbytes_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_rxbytes_elements)
             }
         }
     }
@@ -984,7 +984,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_txbytes_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_txbytes_elements,
-                asizeof(dev_health_mobile_net_3g_txbytes_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_txbytes_elements)
             }
         }
     }
@@ -1006,7 +1006,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_losspercent_group 
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_losspercent_elements,
-                asizeof(dev_health_mobile_net_3g_losspercent_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_losspercent_elements)
             }
         }
     }
@@ -1028,7 +1028,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_uptime_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_uptime_elements,
-                asizeof(dev_health_mobile_net_3g_uptime_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_uptime_elements)
             }
         }
     }
@@ -1055,7 +1055,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_latency_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_latency_elements,
-                asizeof(dev_health_mobile_net_3g_latency_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_latency_elements)
             }
         }
     }
@@ -1077,7 +1077,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_transactions_group
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_transactions_elements,
-                asizeof(dev_health_mobile_net_3g_transactions_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_transactions_elements)
             }
         }
     }
@@ -1099,7 +1099,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_fdrop_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_fdrop_elements,
-                asizeof(dev_health_mobile_net_3g_fdrop_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_fdrop_elements)
             }
         }
     }
@@ -1121,7 +1121,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_drop_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_drop_elements,
-                asizeof(dev_health_mobile_net_3g_drop_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_drop_elements)
             }
         }
     }
@@ -1143,7 +1143,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_oos_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_oos_elements,
-                asizeof(dev_health_mobile_net_3g_oos_elements)
+                ARRAY_SIZE(dev_health_mobile_net_3g_oos_elements)
             }
         }
     }
@@ -1172,7 +1172,7 @@ static dev_health_path_group_t const dev_health_mobile_net_3g_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_3g_subgroups,
-                asizeof(dev_health_mobile_net_3g_subgroups)
+                ARRAY_SIZE(dev_health_mobile_net_3g_subgroups)
             }
         }
     }
@@ -1194,7 +1194,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_rxbytes_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_rxbytes_elements,
-                asizeof(dev_health_mobile_net_4g_rxbytes_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_rxbytes_elements)
             }
         }
     }
@@ -1216,7 +1216,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_txbytes_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_txbytes_elements,
-                asizeof(dev_health_mobile_net_4g_txbytes_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_txbytes_elements)
             }
         }
     }
@@ -1238,7 +1238,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_losspercent_group 
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_losspercent_elements,
-                asizeof(dev_health_mobile_net_4g_losspercent_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_losspercent_elements)
             }
         }
     }
@@ -1260,7 +1260,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_uptime_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_uptime_elements,
-                asizeof(dev_health_mobile_net_4g_uptime_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_uptime_elements)
             }
         }
     }
@@ -1287,7 +1287,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_latency_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_latency_elements,
-                asizeof(dev_health_mobile_net_4g_latency_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_latency_elements)
             }
         }
     }
@@ -1309,7 +1309,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_transactions_group
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_transactions_elements,
-                asizeof(dev_health_mobile_net_4g_transactions_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_transactions_elements)
             }
         }
     }
@@ -1331,7 +1331,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_fdrop_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_fdrop_elements,
-                asizeof(dev_health_mobile_net_4g_fdrop_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_fdrop_elements)
             }
         }
     }
@@ -1353,7 +1353,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_drop_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_drop_elements,
-                asizeof(dev_health_mobile_net_4g_drop_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_drop_elements)
             }
         }
     }
@@ -1375,7 +1375,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_oos_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_oos_elements,
-                asizeof(dev_health_mobile_net_4g_oos_elements)
+                ARRAY_SIZE(dev_health_mobile_net_4g_oos_elements)
             }
         }
     }
@@ -1404,7 +1404,7 @@ static dev_health_path_group_t const dev_health_mobile_net_4g_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_4g_subgroups,
-                asizeof(dev_health_mobile_net_4g_subgroups)
+                ARRAY_SIZE(dev_health_mobile_net_4g_subgroups)
             }
         }
     }
@@ -1441,7 +1441,7 @@ static dev_health_path_group_t const dev_health_mobile_module_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_module_elements,
-                asizeof(dev_health_mobile_module_elements)
+                ARRAY_SIZE(dev_health_mobile_module_elements)
             }
         }
     }
@@ -1457,7 +1457,7 @@ static dev_health_path_group_t const dev_health_mobile_temperature_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_temperature_elements,
-                asizeof(dev_health_mobile_temperature_elements)
+                ARRAY_SIZE(dev_health_mobile_temperature_elements)
             }
         }
     }
@@ -1473,7 +1473,7 @@ static dev_health_path_group_t const dev_health_mobile_active_sim_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_active_sim_elements,
-                asizeof(dev_health_mobile_active_sim_elements)
+                ARRAY_SIZE(dev_health_mobile_active_sim_elements)
             }
         }
     }
@@ -1489,7 +1489,7 @@ static dev_health_path_group_t const dev_health_mobile_net_group =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_net_subgroups,
-                asizeof(dev_health_mobile_net_subgroups)
+                ARRAY_SIZE(dev_health_mobile_net_subgroups)
             }
         }
     }
@@ -1513,7 +1513,7 @@ static dev_health_path_group_t const dev_health_root_group_mobile =
         {
             {
                 (dev_health_item_t const * const *)dev_health_mobile_levels,
-                asizeof(dev_health_mobile_levels)
+                ARRAY_SIZE(dev_health_mobile_levels)
             }
         }
     }
@@ -1542,7 +1542,7 @@ static dev_health_path_group_t const dev_health_eth_tx =
         {
             {
                 dev_health_eth_tx_elements,
-                asizeof(dev_health_eth_tx_elements)
+                ARRAY_SIZE(dev_health_eth_tx_elements)
             }
         }
     }
@@ -1569,7 +1569,7 @@ static dev_health_path_group_t const dev_health_eth_rx =
         {
             {
                 dev_health_eth_rx_elements,
-                asizeof(dev_health_eth_rx_elements)
+                ARRAY_SIZE(dev_health_eth_rx_elements)
             }
         }
     }
@@ -1594,7 +1594,7 @@ static dev_health_path_group_t const dev_health_eth_link =
         {
             {
                 dev_health_eth_link_elements,
-                asizeof(dev_health_eth_link_elements)
+                ARRAY_SIZE(dev_health_eth_link_elements)
             }
         }
     }
@@ -1617,7 +1617,7 @@ static dev_health_path_group_t const dev_health_root_group_eth =
         {
             {
                 (dev_health_item_t const * const *)dev_health_eth_levels,
-                asizeof(dev_health_eth_levels)
+                ARRAY_SIZE(dev_health_eth_levels)
             }
         }
     }
@@ -1648,7 +1648,7 @@ static dev_health_path_group_t const dev_health_root_group_wifi =
         {
             {
                 dev_health_wifi_elements,
-                asizeof(dev_health_wifi_elements)
+                ARRAY_SIZE(dev_health_wifi_elements)
             }
         }
     }
@@ -1673,7 +1673,7 @@ static dev_health_path_group_t const dev_health_system_mem =
         {
             {
                 dev_health_system_mem_elements,
-                asizeof(dev_health_system_mem_elements)
+                ARRAY_SIZE(dev_health_system_mem_elements)
             }
         }
     }
@@ -1696,7 +1696,7 @@ static dev_health_path_group_t const dev_health_system_reboots =
         {
             {
                 dev_health_system_reboots_elements,
-                asizeof(dev_health_system_reboots_elements)
+                ARRAY_SIZE(dev_health_system_reboots_elements)
             }
         }
     }
@@ -1721,7 +1721,7 @@ static dev_health_path_group_t const dev_health_system_msg =
         {
             {
                 dev_health_system_msg_elements,
-                 asizeof(dev_health_system_msg_elements)
+                 ARRAY_SIZE(dev_health_system_msg_elements)
             }
         }
 
@@ -1747,7 +1747,7 @@ static dev_health_path_group_t const dev_health_system_buf =
         {
             {
                 dev_health_system_buf_elements,
-                asizeof(dev_health_system_buf_elements)
+                ARRAY_SIZE(dev_health_system_buf_elements)
             }
         }
     }
@@ -1772,7 +1772,7 @@ static dev_health_path_group_t const dev_health_system_bigbuf =
         {
             {
                 dev_health_system_bigbuf_elements,
-                asizeof(dev_health_system_bigbuf_elements)
+                ARRAY_SIZE(dev_health_system_bigbuf_elements)
             }
         }
     }
@@ -1795,7 +1795,7 @@ static dev_health_path_group_t const dev_health_system_cpu =
         {
             {
                 dev_health_system_cpu_elements,
-                asizeof(dev_health_system_cpu_elements)
+                ARRAY_SIZE(dev_health_system_cpu_elements)
             }
         }
     }
@@ -1821,7 +1821,7 @@ static dev_health_path_group_t const dev_health_root_group_system =
         {
             {
                 (dev_health_item_t const * const *)dev_health_system_groups,
-                asizeof(dev_health_system_groups)
+                ARRAY_SIZE(dev_health_system_groups)
             }
         }
     }

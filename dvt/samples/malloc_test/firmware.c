@@ -37,7 +37,7 @@ static firmware_list_t firmware_list[] = {
     {{0,0,1,0}, ".*\\.a",            "Libaray Image"}   /* any *.a files */
 };
 
-static size_t const firmware_list_count = asizeof(firmware_list);
+static size_t const firmware_list_count = ARRAY_SIZE(firmware_list);
 static size_t total_image_size = 0;
 
 static connector_callback_status_t app_firmware_target_count(connector_firmware_count_t * const target_info)
@@ -54,7 +54,7 @@ static connector_callback_status_t app_firmware_target_info(connector_firmware_i
     connector_callback_status_t status = connector_callback_continue;
     firmware_list_t * firmware_info;
 
-    ASSERT(request_info->target_number < asizeof(firmware_list));
+    ASSERT(request_info->target_number < ARRAY_SIZE(firmware_list));
 
     firmware_info = &firmware_list[request_info->target_number];
 

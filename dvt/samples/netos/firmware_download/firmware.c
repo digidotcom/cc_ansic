@@ -17,8 +17,8 @@
 #include "fservapi.h"
 
 
-#ifndef asizeof
-#define asizeof(array) (sizeof(array)/sizeof(array[0]))
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(array) (sizeof(array)/sizeof(array[0]))
 #endif
 
 typedef struct {
@@ -204,7 +204,7 @@ connector_callback_status_t app_firmware_handler(connector_firmware_request_t co
     case connector_firmware_target_count:
         if (response_data != NULL)
         {
-            static uint16_t firmware_list_count = asizeof(firmware_list);
+            static uint16_t firmware_list_count = ARRAY_SIZE(firmware_list);
 
             uint16_t * count = response_data;
 

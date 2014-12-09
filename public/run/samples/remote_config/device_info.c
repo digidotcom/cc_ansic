@@ -95,7 +95,7 @@ connector_callback_status_t app_device_info_group_get(connector_remote_config_t 
         config_data[connector_setting_device_info_company] = device_info_ptr->company;
         config_data[connector_setting_device_info_desc] = device_info_ptr->desc;
 
-        ASSERT(asizeof(config_data) == connector_setting_device_info_COUNT);
+        ASSERT(ARRAY_SIZE(config_data) == connector_setting_device_info_COUNT);
 
         remote_config->response.element_value->string_value = config_data[remote_config->element.id];
         if (remote_config->element.id == connector_setting_device_info_desc)

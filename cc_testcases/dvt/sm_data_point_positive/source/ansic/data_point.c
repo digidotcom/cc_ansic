@@ -36,7 +36,7 @@ static dvt_dp_t dvt_dp_info[] = {
     #endif
 };
 
-static size_t const dvt_dp_transport_count = asizeof(dvt_dp_info);
+static size_t const dvt_dp_transport_count = ARRAY_SIZE(dvt_dp_info);
 
 static void free_dp_binary_ptr(connector_request_data_point_binary_t * const dp_ptr)
 {
@@ -329,8 +329,8 @@ static char * get_stream_name(connector_transport_t const transport, connector_d
     static char * app_type[] = {"int", "long", "float", "double", "string", "binary"};
     char * path_name = malloc(path_max_size);
 
-    ASSERT(transport < asizeof(app_transport));
-    ASSERT(type < asizeof(app_type));
+    ASSERT(transport < ARRAY_SIZE(app_transport));
+    ASSERT(type < ARRAY_SIZE(app_type));
 
     if (path_name == NULL)
     {

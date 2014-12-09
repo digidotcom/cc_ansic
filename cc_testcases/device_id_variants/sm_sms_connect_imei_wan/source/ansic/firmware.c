@@ -32,7 +32,7 @@ static connector_callback_status_t app_firmware_target_count(connector_firmware_
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    target_info->count = asizeof(firmware_list);
+    target_info->count = ARRAY_SIZE(firmware_list);
 
     return status;
 }
@@ -42,7 +42,7 @@ static connector_callback_status_t app_firmware_target_info(connector_firmware_i
     connector_callback_status_t status = connector_callback_continue;
     firmware_list_t * firmware_info;
 
-    ASSERT(request_info->target_number <= asizeof(firmware_list));
+    ASSERT(request_info->target_number <= ARRAY_SIZE(firmware_list));
 
     firmware_info = &firmware_list[request_info->target_number];
 
