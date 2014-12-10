@@ -170,9 +170,11 @@ void add_setting_data(connector_remote_config_t * const remote_config,
 
     while(s_data->count == s_data->capacity ||
         element_id >= s_data->capacity){ // resize array
-        s_data->capacity += 10;
-        unsigned int new_size = s_data->capacity * sizeof(ptr);
+        unsigned int const new_capacity = s_data->capacity + 10;
+        unsigned int const new_size = new_capacity * sizeof(ptr);
+
         s_data->group_data = (void **)realloc(s_data->group_data, new_size);
+        s_data->capacity = new_capacity;
     }
 
     void * data_ptr = malloc(length + 1);
