@@ -1078,7 +1078,27 @@ STATIC connector_status_t sm_pass_user_data(connector_data_t * const connector_p
         case connector_sm_cmd_connect:
             #if (defined CONNECTOR_TRANSPORT_TCP)
             if (edp_get_active_state(connector_ptr) == connector_transport_idle)
-                edp_set_active_state(connector_ptr, connector_transport_open);
+            {
+                connector_request_id_t request_id;
+                connector_callback_status_t callback_status;
+
+                connector_sm_request_connect_t request_connect;
+                request_connect.transport = session->transport;
+                request_connect.allow = connector_true;
+
+                request_id.sm_request = connector_request_id_sm_request_connect;
+                callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &request_connect, connector_ptr->context);
+                ASSERT(callback_status == connector_callback_continue);
+                if (callback_status != connector_callback_continue)
+                {
+                    connector_debug_line("WARNING: connector_request_id_sm_request_connect returned invalid value, starting TCP");
+                }
+
+                if (request_connect.allow)
+                {
+                    edp_set_active_state(connector_ptr, connector_transport_open);
+                }
+            }
             result = connector_working;
             #else
             connector_debug_line("WARNING: received a 'request connect' but TCP transport is not available");

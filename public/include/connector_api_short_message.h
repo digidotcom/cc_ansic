@@ -86,7 +86,8 @@ typedef enum
                                                 User need to use new request (can be ping) to pull the pending messages from Device Cloud. */
     connector_request_id_sm_opaque_response,/**< Cloud Connector will use this to provide Device Cloud response for which
                                                 there is no associated request */
-    connector_request_id_sm_config_request /**< used when Cloud Connector receives config request from Device Cloud. Used only if the transport method is SMS */
+    connector_request_id_sm_config_request, /**< used when Cloud Connector receives config request from Device Cloud. Used only if the transport method is SMS */
+    connector_request_id_sm_request_connect /**< used when Cloud Connector receives a request to start TCP transport, user can allow or not this action. */
 } connector_request_id_sm_t;
 /**
 * @}
@@ -315,6 +316,25 @@ typedef struct
     connector_bool_t CONST response_required;   /**< connector_true if Device Cloud wants response, no action is
                                                      needed by user. This is information purpose only */
 } connector_sm_receive_config_request_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_sm_request_connect_t Received a Short Message command to start TCP transport.
+* @{
+*/
+/**
+* This data structure is used when the the callback is called with the connector_request_id_sm_request_connect.
+* User may allow or not Cloud Connector to start TCP transport.
+*
+* @see connector_request_id_sm_request_connect
+*/
+typedef struct
+{
+    connector_transport_t CONST transport;  /**< transport from which the request is received */
+    connector_bool_t allow;                 /**< if set to connector_true, TCP transport will start immediately. */
+} connector_sm_request_connect_t;
 /**
 * @}
 */
