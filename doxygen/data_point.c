@@ -58,8 +58,8 @@
  *        <li><b><i>point</i></b>, pointer to binary data</li>
  *        <li><b><i>bytes_used</i></b>, number of bytes filled in point </li>
  *        <li><b><i>response_required</i></b>, if set to connector_true Device Cloud will send a response with the result of the transaction </li>
- *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
- *                                      and might be used for canceling the session. <b>Only valid for SM</b>. Set to NULL if not desired. </li>
+ *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by Cloud Connector after a successful connector_initiate_action()
+ *                                      and might be used for @endhtmlonly @ref initiate_session_cancel "canceling the session" @htmlonly. <b>Only valid for SM</b>. Set to NULL if cancel is not going to be used. </li>
  *        <li><b><i>timeout_in_seconds</i></b>, outgoing sessions timeout in seconds. <b>Only valid for SM</b>. Use SM_WAIT_FOREVER to wait forever for the complete request/response </li>
  *      </ul>
  *    </td>
@@ -265,8 +265,8 @@
  *        <li><b><i>user_context</i></b> is the application context which will be returned in the response/status</li>
  *        <li><b><i>stream</i></b>, pointer to a @endhtmlonly @ref connector_data_stream_t "connector_data_stream_t" linked list @htmlonly</li>
  *        <li><b><i>response_required</i></b>, set to connector_true if response is needed </li>
- *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
- *                                      and might be used for canceling the session. <b>Only valid for SM</b>. Set to NULL if not desired. </li>
+ *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by Cloud Connector after a successful connector_initiate_action()
+ *                                      and might be used for @endhtmlonly @ref initiate_session_cancel "canceling the session" @htmlonly. <b>Only valid for SM</b>. Set to NULL if cancel is not going to be used. </li>
  *        <li><b><i>timeout_in_seconds</i></b>, outgoing sessions timeout in seconds. <b>Only valid for SM</b>. Use SM_WAIT_FOREVER to wait forever for the complete request/response </li>
  *      </ul>
  *    </td>

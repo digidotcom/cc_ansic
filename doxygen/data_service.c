@@ -78,8 +78,8 @@
  *        <li><b><i>content_type</i></b> is "text/plain", "text/xml", "application/json", etc (shouldn't be stack variable) </li>
  *        <li><b><i>option</i></b>, is to inform Device Connector on what to do with the data </li>
  *        <li><b><i>response_required</i></b>, set to connector_true if the response is needed </li>
- *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
- *                                      and might be used for canceling the session. <b>Only valid for SM</b>. Set to NULL if not desired. </li>
+ *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by Cloud Connector after a successful connector_initiate_action()
+ *                                      and might be used for @endhtmlonly @ref initiate_session_cancel "canceling the session" @htmlonly. <b>Only valid for SM</b>. Set to NULL if cancel is not going to be used. </li>
  *        <li><b><i>timeout_in_seconds</i></b>, outgoing sessions timeout in seconds. <b>Only valid for SM</b>. Use SM_WAIT_FOREVER to wait forever for the complete request/response </li>
  *        </ul></td>
  * </tr>

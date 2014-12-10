@@ -765,6 +765,9 @@ connector_status_t connector_run(connector_handle_t const handle);
  *                      @li @b connector_initiate_session_cancel:
  *                          Initiates the action to cancel a session.
  *
+ *                      @li @b connector_initiate_session_cancel_all:
+ *                          Initiates the action to cancel all sessions.
+ *
  * @param [in] request_data  Pointer to Request data
  *                      @li @b connector_initiate_terminate:
  *                          Should be NULL.
