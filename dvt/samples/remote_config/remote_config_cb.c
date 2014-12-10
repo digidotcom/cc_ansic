@@ -118,14 +118,23 @@ void add_setting_data(connector_remote_config_t * const remote_config,
     // Init setting data if not set.
     //APP_DEBUG("Setting Data for %d:%d.\n", group_id, element_id);
     if(r_data->setting_data == NULL){
-        r_data->setting_data = (setting_data_t **)malloc(10*sizeof(setting_data_t));
-        r_data->capacity = 10;
+        unsigned int const capacity = 10;
+        size_t const malloc_size = capacity * sizeof(setting_data_t *);
+        unsigned int i;
+
+        r_data->capacity = capacity;
+        r_data->setting_data = malloc(malloc_size);
+        for (i = 0; i < capacity; i++)
+        {
+            r_data->setting_data[i] = NULL;
+        }
     }
 
     // If group id extends size of setting_data grow it.
     if(r_data->count == r_data->capacity){ // resize array
-        r_data->capacity = r_data->capacity + 10;
         int new_size = r_data->count * sizeof(setting_data_t);
+
+        r_data->capacity += 10;
         r_data->setting_data = (setting_data_t **)realloc(r_data->setting_data, new_size);
     }
 
@@ -147,12 +156,14 @@ void add_setting_data(connector_remote_config_t * const remote_config,
 
     // Allocate Setting Data if not found.
     if(s_data == NULL){
-        s_data =(setting_data_t *)malloc(sizeof(setting_data_t));
+
+        s_data = malloc(sizeof *s_data);
+
         r_data->setting_data[i] = s_data;
         r_data->count = r_data->count + 1;
         s_data->group_id = group_id;
         s_data->index = index;
-        s_data->group_data = (void **)malloc(10*sizeof(ptr));
+        s_data->group_data = malloc(10 * sizeof(ptr));
         s_data->capacity = 10;
         s_data->count = 0;
     }
