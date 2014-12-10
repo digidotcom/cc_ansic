@@ -665,7 +665,7 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
         connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;    /* Assume it's SMS transport */
         ASSERT(sm_ptr->network.class_id == connector_class_id_network_sms);
 
-        if (sm_ptr->network.handle != NULL)
+        if (sm_ptr->network.handle != NULL && SmIsSmsConfigNotInit(session->flags))
         {
             connector_callback_status_t callback_status;
             connector_request_id_t request_id;
@@ -677,61 +677,39 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
 
             request_id.network_request = connector_request_id_network_close;
             callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &close_data, connector_ptr->context);
-                ASSERT(callback_status != connector_callback_unrecognized);
+            ASSERT(callback_status != connector_callback_unrecognized);
             switch (callback_status)
             {
                 case connector_callback_busy:
                     result = connector_pending;
                     sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
-                    goto error;
+                    break;
 
                 case connector_callback_continue:
+                {
+                    unsigned long int uptime;
+
+                    SmSetSmsConfigInit(session->flags);
                     sm_ptr->network.handle = NULL;
+
+                    if (get_system_time(connector_ptr, &uptime) == connector_working)
+                    {
+                        sm_ptr->transport.connect_at = uptime;
+                        sm_ptr->transport.state = connector_transport_wait_for_reconnect;
+                        result = connector_pending;
+                    }
+                    else
+                    {
+                        result = connector_abort;
+                    }
                     break;
+                }
 
                 default:
                     sm_ptr->close.status = connector_close_status_abort;
                     break;
             }
-        }
-
-        if (sm_ptr->network.handle == NULL)
-        {
-            connector_callback_status_t callback_status;
-            connector_request_id_t request_id;
-            connector_network_open_t open_data;
-
-            /* Open */
-            open_data.device_cloud.phone = config_request.phone_number;
-            open_data.handle = sm_ptr->network.handle;
-
-            request_id.network_request = connector_request_id_network_open;
-            callback_status = connector_callback(connector_ptr->callback, sm_ptr->network.class_id, request_id, &open_data, connector_ptr->context);
-            ASSERT(callback_status != connector_callback_unrecognized);
-            switch (callback_status)
-            {
-                case connector_callback_continue:
-                    sm_ptr->network.handle = open_data.handle;
-                    break;
-
-                case  connector_callback_abort:
-                    result = connector_abort;
-                    goto error;
-
-                case connector_callback_unrecognized:
-                    result = connector_unavailable;
-                    goto error;
-
-                case connector_callback_error:
-                    result = connector_open_error;
-                    goto error;
-
-                case connector_callback_busy:
-                    sm_ptr->network.handle = open_data.handle; /* Keep user handle */
-                    result = connector_pending;
-                    sm_ptr->transport.state = connector_transport_receive; /* Keep on receive state to complete reconfiguration operation */
-                    goto error;
-            }
+            goto done;
         }
     }
 
@@ -740,7 +718,7 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
     result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
     if (result != connector_working)
     {
-        goto error;
+        goto done;
     }
 #endif
 
@@ -755,7 +733,7 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &config_request, connector_ptr->context);
         result = sm_map_callback_status_to_connector_status(callback_status);
     }
-error:
+done:
     return result;
 }
 #endif
@@ -1142,6 +1120,7 @@ STATIC connector_status_t sm_pass_user_data(connector_data_t * const connector_p
                 case connector_sm_error_complete:
                     if (SmIsLastData(session->flags))
                         sm_switch_path(connector_ptr, session, next_state);
+                    SmClearSmsConfigInit(session->flags);
                     break;
 
                 default:
