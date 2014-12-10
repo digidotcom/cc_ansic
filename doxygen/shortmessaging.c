@@ -361,8 +361,8 @@
  *                                        during a @endhtmlonly @ref ping_response_callback "response callback". @htmlonly </li>
  *        <li><b><i>response_required</i></b>: Set to @endhtmlonly @ref connector_true if notification of ping receipt is needed,
  *                                             otherwise set to @ref connector_false.  See @ref ping_response_callback . @htmlonly </li>
- *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by by Cloud Connector after a successful connector_initiate_action()
- *                                      and might be used for canceling the session. <b>Only valid for SM</b>. Set to NULL if not desired. </li>
+ *        <li><b><i>request_id</i></b>, pointer to where to store the session's Request ID. This value is saved by Cloud Connector after a successful connector_initiate_action()
+ *                                      and might be used for @endhtmlonly @ref initiate_session_cancel "canceling the session" @htmlonly. <b>Only valid for SM</b>. Set to NULL if cancel is not going to be used. </li>
  *        <li><b><i>timeout_in_seconds</i></b>, outgoing sessions timeout in seconds. <b>Only valid for SM</b>. Use SM_WAIT_FOREVER to wait forever for the complete request/response </li>
  *      </ul>
  *    </td>
@@ -1041,6 +1041,75 @@
  *
  * @note The @b response_required member is passing information on to the application.  There is no required
  * action necessary from the Cloud Connector application, regardless of the value for @b response_required.
+ *
+
+ * @subsection initiate_session_cancel  Initiate an SM (UDP or SMS) session cancel
+ *
+ * This method is used to cancel a session that:
+ * <ul>
+ *     <li> Was initiated through any of following actions (request): 
+ *          <ul>
+ *              <li>connector_initiate_send_data</li>
+ *              <li>connector_initiate_data_point</li>
+ *              <li>connector_initiate_data_point_binary</li>
+ *              <li>connector_initiate_ping_request</li>
+ *          </ul>
+ *     </li>
+ *     <li> Transport used was UDP or SMS.</li>
+ *     <li> Request's timeout has not elapsed.</li>
+ * </ul>
+ *
+ * The application initiates a Session Cancel by calling @ref connector_initiate_action()
+ * using a @ref connector_initiate_session_cancel or @ref connector_initiate_session_cancel_all types and a connector_sm_cancel_request_t
+ * request_data structure:
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr>
+ *   <th colspan="2" class="title">Arguments</th>
+ * </tr>
+ * <tr>
+ *   <th class="subtitle">Name</th>
+ *   <th class="subtitle">Description</th>
+ * </tr>
+ * <tr>
+ *   <td>handle</td>
+ *   <td>@endhtmlonly @ref connector_handle_t "Handle" returned from the connector_init() @htmlonly function.</td>
+ * </tr>
+ * <tr>
+ *   <td>request</td>
+ *   <td>@endhtmlonly @ref connector_initiate_session_cancel or @ref connector_initiate_session_cancel_all @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <td>request_data</td>
+ *   <td>Pointer to @endhtmlonly connector_sm_cancel_request_t @htmlonly structure, where member:
+ *      <ul>
+ *        <li><b><i>transport</i></b>: @endhtmlonly Transport used by the session to cancel: @ref connector_transport_udp or @ref connector_transport_sms. @htmlonly </li>
+ *        <li><b><i>request_id</i></b>: The Request ID of the session to cancel (got from previous call to connector_initiate_action). 
+ *                                      For connector_initiate_session_cancel_all this is ignored and all current sessions for the transport specified are cancelled. </li>
+ *      </ul>
+ *    </td>
+ * </tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_success @htmlonly</th>
+ *   <td>Session cancel initiated</td>
+ * </tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_unavailable @htmlonly</th>
+ *   <td>Cloud Connector is not running (not started or stopped) </td>
+ * </tr>
+ * <tr>
+ *   <th>@endhtmlonly @ref connector_service_busy @htmlonly</th>
+ *   <td>Previous SM request is not yet processed</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * @see @ref connector_initiate_action()
+ * @see @ref connector_initiate_session_cancel
+ * @see @ref connector_initiate_session_cancel_all
  *
  *
  * @htmlinclude terminate.html
