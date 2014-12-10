@@ -34,6 +34,10 @@
 /* #define CONNECTOR_NO_MALLOC */
 #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
 
+#if (defined CONNECTOR_NO_MALLOC)
+#define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS    1
+#endif
+
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
 #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
