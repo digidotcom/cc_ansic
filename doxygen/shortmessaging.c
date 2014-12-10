@@ -1055,8 +1055,8 @@
  *              <li>connector_initiate_ping_request</li>
  *          </ul>
  *     </li>
- *     <li> request_data.transport was UDP or SMS.</li>
- *     <li> request.timeout has not expired.</li>
+ *     <li> Transport used was UDP or SMS.</li>
+ *     <li> Request's timeout has not elapsed.</li>
  * </ul>
  *
  * The application initiates a Session Cancel by calling @ref connector_initiate_action()
