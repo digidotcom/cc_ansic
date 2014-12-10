@@ -459,6 +459,16 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
             break;
         }
         
+        case connector_request_id_sm_request_connect:
+        {
+            connector_sm_request_connect_t * const request_connect = data;
+            request_connect->allow = connector_true;
+            APP_DEBUG("connector_request_id_sm_request_connect called %s...\n", request_connect->allow ? "ALLOWING" : "REJECTING");
+
+            status = connector_callback_continue;
+            break;
+        }
+
         default:
             APP_DEBUG("Request not supported in this sample: %d\n", request);
             break;
