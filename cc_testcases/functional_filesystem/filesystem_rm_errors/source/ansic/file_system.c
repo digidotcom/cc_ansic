@@ -556,18 +556,6 @@ static connector_callback_status_t app_process_file_open(connector_file_system_o
 
     data->handle = fd;
 
-
-
-
-    /******** Modified for testing rm command ********/
-
-    /* Save the file like the test name */
-    current_test_case = malloc( sizeof(char) * 100 );
-    current_test_case = basename(data->path);
-    /******** End of Modifications for testing rm command ********/
-
-
-
     return status;
 }
 
@@ -636,11 +624,11 @@ static connector_callback_status_t app_process_file_remove(connector_file_system
     connector_callback_status_t status = connector_callback_continue;
 
 
-
-
-
-
     /******** Modified for testing rm command ********/
+
+    /* Save the file to remove the test name */
+    current_test_case = malloc( sizeof(char) * 100 );
+    current_test_case = basename(data->path);
 
     /*APP_DEBUG("FILENAME in app_process_file_write: '%s'\n",current_test_case);*/
 
