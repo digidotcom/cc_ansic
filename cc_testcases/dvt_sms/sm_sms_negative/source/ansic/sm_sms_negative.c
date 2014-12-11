@@ -72,6 +72,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     connector_status_t status = connector_no_resource;
     static char const buffer[] = "iDigi sm sms dvt for device data\n";
     static char const file_path[] = "test/sm_sms_neg.txt";
+    static char const file_path_no_response[] = "test/sm_sms_neg_no_response.txt";
     static client_data_t app_data[CONNECTOR_SM_SMS_MAX_SESSIONS];
     static size_t test_cases = 0;
     static connector_bool_t response_needed = connector_true;
@@ -84,13 +85,17 @@ connector_status_t app_send_data(connector_handle_t handle)
     header_ptr->option = connector_data_service_send_option_overwrite;
     header_ptr->response_required = response_needed;
     if (header_ptr->response_required)
+    {
         header_ptr->timeout_in_seconds = CONNECTOR_SM_TX_TIMEOUT;
-    header_ptr->path = (test_cases % 3) ? NULL : file_path;
+        header_ptr->path = file_path;
+    }
+    else
+        header_ptr->path = (test_cases % 3) ? NULL : file_path_no_response;
     header_ptr->user_context = app_ptr; /* will be returned in all subsequent callbacks */
     header_ptr->request_id = &app_ptr->request_id;
     
     status = connector_initiate_action(handle, connector_initiate_send_data, header_ptr);
-    APP_DEBUG("Status: Send %s [%d] with request_id=%d\n", file_path, status, *header_ptr->request_id);
+    APP_DEBUG("Status: Send %s [%d] with request_id=%d\n", header_ptr->response_required ? file_path : file_path_no_response, status, *header_ptr->request_id);
     if (status == connector_success)
     {
         if (test_cases < 2)
