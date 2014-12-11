@@ -1601,7 +1601,7 @@ STATIC connector_status_t msg_process_start(connector_data_t * const connector_p
         session->session_id = session_id;
         if (session->out_dblock != NULL)
         {
-            result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_client].window_size, msg_block_state_send_response);
+            result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_response);
             if (result != connector_session_error_none)
                 goto error;
         }
