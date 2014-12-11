@@ -977,7 +977,7 @@
  * 
  * @subsection start_tcp_transport  Device Cloud start TCP transport request
  *
- * Cloud Connector will make a Reuqest Connect @ref connector_request_id_sm_request_connect "callback" to
+ * Cloud Connector will make a Request Connect @ref connector_request_id_sm_request_connect "callback" to
  * notify an application that Device Cloud requests to start the TCP transport and let it decide whether to
  * allow it or not.
  *
