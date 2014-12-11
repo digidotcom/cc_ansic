@@ -45,13 +45,9 @@ typedef enum {
     connector_request_id_config_remote_configuration, /**< Requesting callback to return whether remote configuration is supported or not. */
     connector_request_id_config_max_transaction,   /**< Requesting callback to obtain maximum messaging sessions supported by client. */
     connector_request_id_config_device_id_method,  /**< Requesting callback to obtain method on how device id is generated */
-    connector_request_id_config_imei_number,       /**< Requesting callback to return GSM IMEI number */
     connector_request_id_config_network_tcp,       /**< Requesting callback to return whether connection over TCP need to start now. */
     connector_request_id_config_network_udp,       /**< Requesting callback to return whether connection over UDP need to start now. */
     connector_request_id_config_network_sms,       /**< Requesting callback to return whether connection over SMS need to start now. */
-    connector_request_id_config_wan_type,          /**< Requesting callback to return WAN type used. It tells Cloud Connector whether it's GSM IMEI, CDMA ESN or CDMA MEID. */
-    connector_request_id_config_esn,               /**< Requesting callback to return CDMA ESN (Electronic Serial Number) */
-    connector_request_id_config_meid,              /**< Requesting callback to return CDMA MEID (Mobile Equipment Identifier) */
     connector_request_id_config_identity_verification,     /**< Requesting callback to return identity verification form. */
     connector_request_id_config_password,          /**< Requesting callback to return password for the password identity verification form */
     connector_request_id_config_sm_udp_max_sessions,    /**< Requesting callback to obtain maximum UDP Short Messaging sessions active at once. */
@@ -289,47 +285,6 @@ typedef struct {
 
 
 /**
-* @defgroup connector_device_id_method_t Device ID Method Types
-* @{
-*
-*/
-/**
- * Device ID method type which is used in the application's callback telling
- * the connector how to obtain a device ID.
- *
- * @see connector_config_device_id_method_t
- */
-typedef enum {
-    connector_device_id_method_auto,         /**< Callback returns this type telling Cloud Connector to
-                                                 generate the device ID from MAC address (See @ref mac_address callback)
-                                                 for LAN connection type or generate the device ID according to the @ref wan_type.
-                                                 @note Cloud Connector will not call @ref device_id callback. */
-    connector_device_id_method_manual        /**< Callback returns this type telling Cloud Connector to retrieve device ID from
-                                                  @ref device_id callback */
-} connector_device_id_method_t;
-/**
-* @}
-*/
-
-
-/**
-* @defgroup connector_config_device_id_method_t Device ID Method Configuration
-* @{
-*/
-/**
- * Device ID method configuration returned by the application's callback for @ref connector_request_id_config_device_id_method callback.
- *
- * @see @ref device_id_method
-*/
-typedef struct {
-    connector_device_id_method_t method;    /**< Device ID method */
-} connector_config_device_id_method_t;
-/**
-* @}
-*/
-
-
-/**
 * @defgroup connector_connect_auto_type_t Network Connection Action Types
 * @{
 */
@@ -366,47 +321,6 @@ typedef enum {
 typedef struct {
     connector_connect_auto_type_t type;   /**< Connection action */
 } connector_config_connect_type_t;
-/**
-* @}
-*/
-
-
-/**
-* @defgroup connector_wan_type_t Device WAN Types
-* @{
-*/
-/**
- * Device WAN connection type which tells the connector the device WAN type for the device WAN ID.
- *
- * @see connector_config_wan_type_t
- */
-typedef enum {
-    connector_wan_type_imei,    /**< IMEI number for GSM network */
-    connector_wan_type_esn,     /**< ESN for CDMA network */
-    connector_wan_type_meid     /**< MEID for CDMA network */
-} connector_wan_type_t;
-/**
-* @}
-*/
-
-
-/**
-* @defgroup connector_config_wan_type_t Device WAN Type Configuration
-* @{
-*/
-/**
-* Device WAN type configuration for @ref connector_request_id_config_wan_type callback.
-* This is used to tell the connector the device WAN type. The connector uses this WAN type to
-* get a corresponding WAN ID.
-*
-* @ref wan_type
-* @ref imei_number
-* @ref esn_number
-* @ref meid_number
-**/
-typedef struct {
-    connector_wan_type_t type;   /**< WAN type */
-} connector_config_wan_type_t;
 /**
 * @}
 */

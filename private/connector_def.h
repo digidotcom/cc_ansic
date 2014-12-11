@@ -175,8 +175,6 @@ typedef struct connector_data {
 
     connector_connection_type_t connection_type;
 
-    connector_wan_type_t wan_type;
-
 #if !(defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)
     uint32_t link_speed;
 #endif
@@ -186,7 +184,6 @@ typedef struct connector_data {
     size_t phone_dialed_length;
 #endif
 
-    connector_device_id_method_t device_id_method;
     connector_bool_t connector_got_device_id;
 #if (CONNECTOR_TRANSPORT_COUNT > 1)
     connector_network_type_t first_running_network;

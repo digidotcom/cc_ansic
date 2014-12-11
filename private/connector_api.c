@@ -113,137 +113,24 @@ STATIC connector_status_t get_config_connect_status(connector_data_t * const con
 }
 #endif
 
-STATIC connector_status_t get_wan_device_id(connector_data_t * const connector_ptr,
-                                            uint8_t * const device_id,
-                                            connector_request_id_config_t config_request)
-{
-
-enum {
-    imei_device_id_prefix = 1,
-    esn_hex_device_id_prefix,
-    esn_dec_device_id_prefix,
-    meid_hex_device_id_prefix,
-    meid_dec_device_id_prefix
-};
-
-    connector_status_t result;
-
-    result = get_config_wan_id(connector_ptr, config_request);
-    if (result == connector_working)
-    {
-        uint8_t * dst = device_id + (DEVICE_ID_LENGTH - connector_ptr->wan_id_length);
-
-#if (defined CONNECTOR_DEBUG)
-        {
-            char const * wan_string = NULL;
-
-            switch (connector_ptr->wan_type)
-            {
-            case connector_wan_type_imei:
-                wan_string = "IMEI";
-                break;
-            case connector_wan_type_esn:
-                wan_string = "ESN";
-                break;
-            case connector_wan_type_meid:
-                wan_string = "MEID";
-                break;
-            }
-            connector_debug_print_buffer(wan_string, connector_ptr->wan_id, connector_ptr->wan_id_length);
-        }
-#endif
-        memcpy(dst, connector_ptr->wan_id, connector_ptr->wan_id_length);
-
-        switch (connector_ptr->wan_type)
-        {
-        case connector_wan_type_imei:
-            device_id[1] = imei_device_id_prefix;
-            break;
-        case connector_wan_type_esn:
-            device_id[1] = esn_hex_device_id_prefix;
-            break;
-        case connector_wan_type_meid:
-            device_id[1] = meid_hex_device_id_prefix;
-            break;
-        }
-    }
-
-    return result;
-}
-
-
 STATIC connector_status_t manage_device_id(connector_data_t * const connector_ptr)
 {
     connector_status_t result;
-
+    unsigned int i;
     connector_ptr->connector_got_device_id = connector_false;
 
-    result = get_config_device_id_method(connector_ptr);
+    result = get_config_device_id(connector_ptr);
     COND_ELSE_GOTO(result == connector_working, error);
-
-    switch (connector_ptr->device_id_method)
+    /* If the returned Device ID is zero, Cloud Connector will ask the Device Cloud for a Device ID. */
+    connector_ptr->connector_got_device_id = connector_false;
+    for (i = 0; i < DEVICE_ID_LENGTH; i++)
     {
-        case connector_device_id_method_manual:
-            result = get_config_device_id(connector_ptr);
-            COND_ELSE_GOTO(result == connector_working, error);
-            {
-                uint8_t const null_device_id[DEVICE_ID_LENGTH] = {0x00};
-                /* If the returned Device ID is zero, Cloud Connector will ask the Device Cloud for a Device ID. */
-                if (memcmp(connector_ptr->device_id, null_device_id, sizeof null_device_id) == 0)
-                    connector_ptr->connector_got_device_id = connector_false;
-                else
-                    connector_ptr->connector_got_device_id = connector_true;
-            }
-            break;
-
-        case connector_device_id_method_auto:
+        if (connector_ptr->device_id[i] != 0)
         {
-            result = get_config_connection_type(connector_ptr);
-            COND_ELSE_GOTO(result == connector_working, error);
-
-            switch (connector_ptr->connection_type)
-            {
-                case connector_connection_type_lan:
-                {
-                    result = get_config_mac_addr(connector_ptr);
-                    COND_ELSE_GOTO(result == connector_working, error);
-
-                    connector_ptr->device_id[8] = connector_ptr->mac_addr[0];
-                    connector_ptr->device_id[9] = connector_ptr->mac_addr[1];
-                    connector_ptr->device_id[10] = connector_ptr->mac_addr[2];
-                    connector_ptr->device_id[11] = 0xFF;
-                    connector_ptr->device_id[12] = 0xFF;
-                    connector_ptr->device_id[13] = connector_ptr->mac_addr[3];
-                    connector_ptr->device_id[14] = connector_ptr->mac_addr[4];
-                    connector_ptr->device_id[15] = connector_ptr->mac_addr[5];
-                }
-                break;
-
-                case connector_connection_type_wan:
-                {
-                    result = get_config_wan_type(connector_ptr);
-                    COND_ELSE_GOTO(result == connector_working, error);
-
-                    switch (connector_ptr->wan_type)
-                    {
-                    case connector_wan_type_imei:
-                        result = get_wan_device_id(connector_ptr, connector_ptr->device_id, connector_request_id_config_imei_number);
-                        break;
-                    case connector_wan_type_esn:
-                        result = get_wan_device_id(connector_ptr, connector_ptr->device_id, connector_request_id_config_esn);
-                        break;
-                    case connector_wan_type_meid:
-                        result = get_wan_device_id(connector_ptr, connector_ptr->device_id, connector_request_id_config_meid);
-                        break;
-                    }
-                    break;
-                }
-            }
             connector_ptr->connector_got_device_id = connector_true;
             break;
         }
     }
-    COND_ELSE_GOTO(result == connector_working, error);
 
 error:
     return result;
