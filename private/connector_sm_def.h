@@ -51,6 +51,7 @@
 #define SM_COMPRESSED          0x0080
 #define SM_REBOOT              0x0100
 #define SM_TARGET_IN_PAYLOAD   0x0200
+#define SM_SMS_CONFIG_INIT     0x0400
 #define SM_DATA_POINT          0x8000
                                 
 #define SmIsBitSet(flag, bit) (connector_bool(((flag) & (bit)) == (bit)))
@@ -69,6 +70,7 @@
 #define SmIsReboot(flag) SmIsBitSet((flag), SM_REBOOT)
 #define SmIsDatapoint(flag) SmIsBitSet((flag), SM_DATA_POINT)
 #define SmIsTargetInPayload(flag) SmIsBitSet((flag), SM_TARGET_IN_PAYLOAD)
+#define SmIsSmsConfigInit(flag) SmIsBitSet((flag), SM_SMS_CONFIG_INIT)
 
 #define SmIsRequest(flag) SmIsBitClear((flag), SM_RESPONSE_DATA)
 #define SmIsNotLastData(flag) SmIsBitClear((flag), SM_LAST_DATA)
@@ -76,6 +78,7 @@
 #define SmIsCloudOwned(flag) SmIsBitClear((flag), SM_CLIENT_OWNED)
 #define SmNotCompressed(flag) SmIsBitClear((flag), SM_COMPRESSED)
 #define SmIsNoResponseNeeded(flag) SmIsBitClear((flag), SM_RESPONSE_NEEDED)
+#define SmIsSmsConfigNotInit(flag) SmIsBitClear((flag), SM_SMS_CONFIG_INIT)
 
 #define SmSetError(flag) SmBitSet((flag), SM_ERROR)
 #define SmSetResponse(flag) SmBitSet((flag), SM_RESPONSE_DATA)
@@ -88,6 +91,7 @@
 #define SmSetReboot(flag) SmBitSet((flag), SM_REBOOT)
 #define SmSetDatapoint(flag) SmBitSet((flag), SM_DATA_POINT)
 #define SmSetTargetInPayload(flag) SmBitSet((flag), SM_TARGET_IN_PAYLOAD)
+#define SmSetSmsConfigInit(flag) SmBitSet((flag), SM_SMS_CONFIG_INIT)
 
 #define SmClearError(flag) SmBitClear((flag), SM_ERROR)
 #define SmClearResponse(flag) SmBitClear((flag), SM_RESPONSE_DATA)
@@ -96,6 +100,7 @@
 #define SmClearMultiPart(flag) SmBitClear((flag), SM_MULTI_PART)
 #define SmClearCompressed(flag) SmBitClear((flag), SM_COMPRESSED)
 #define SmClearTargetInPayload(flag) SmBitClear((flag), SM_TARGET_IN_PAYLOAD)
+#define SmClearSmsConfigInit(flag) SmBitClear((flag), SM_SMS_CONFIG_INIT)
 
 #define SMS_SERVICEID_WRAPPER_TX_SIZE     1  /* 'service-id '   */
 #define SMS_SERVICEID_WRAPPER_RX_SIZE     3  /* '(service-id):' */
