@@ -95,7 +95,7 @@ connector_status_t app_send_data(connector_handle_t handle)
     header_ptr->request_id = &app_ptr->request_id;
     
     status = connector_initiate_action(handle, connector_initiate_send_data, header_ptr);
-    APP_DEBUG("Status: Send %s [%d] with request_id=%d\n", header_ptr->response_required ? file_path : file_path_no_response, status, *header_ptr->request_id);
+    APP_DEBUG("Status: Send '%s' [%d] with request_id=%d\n", header_ptr->path, status, *header_ptr->request_id);
     if (status == connector_success)
     {
         if (test_cases < 2)
