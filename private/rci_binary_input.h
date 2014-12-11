@@ -470,7 +470,7 @@ STATIC void process_rci_command(rci_t * const rci)
             {
                 set_rci_input_state(rci, rci_input_state_do_command_payload);
             }
-			else
+            else
 #endif
             {
                 set_rci_input_state(rci, rci_input_state_group_id);

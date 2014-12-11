@@ -1701,8 +1701,8 @@ STATIC connector_status_t msg_process_ack(connector_msg_data_t * const msg_fac, 
 
         if (dblock->available_window > 0)
         {
-        	if (MsgIsAckPending(dblock->status_flag))
-        	{
+            if (MsgIsAckPending(dblock->status_flag))
+            {
                 MsgClearAckPending(dblock->status_flag);
             }
         }
@@ -1811,17 +1811,17 @@ STATIC connector_status_t msg_process_pending(connector_data_t * const connector
             break;
 
         case msg_state_get_data:
-        	if ((session->out_dblock != NULL) && MsgIsAckPending(session->out_dblock->status_flag))
-        	{
-        		msg_switch_session(msg_ptr, session);
-        	}
-        	else
-        	{
+            if ((session->out_dblock != NULL) && MsgIsAckPending(session->out_dblock->status_flag))
+            {
+                msg_switch_session(msg_ptr, session);
+            }
+            else
+            {
                 session->saved_state = msg_state_get_data;
                 status = msg_get_service_data(connector_ptr, session);
                 if (status == connector_pending)
                     msg_switch_session(msg_ptr, session);
-        	}
+            }
             break;
 
         case msg_state_send_data:
