@@ -12,7 +12,7 @@ for i in xrange(MAX_TEST_FILE_SIZE):
     fileContent += chr(random.randint(0, 255))
 
 
-class DeviceRequestDvtTestCase(cc_testcase.TestCase):
+class FileSystemDvtTestCase(cc_testcase.TestCase):
 
 
     def test_01_send_file_valid_path_without_content(self):

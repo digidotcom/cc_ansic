@@ -4,10 +4,10 @@ import os
 
 
 
-class DeviceRequestDvtTestCase(cc_testcase.TestCase):
+class FileSystemDvtTestCase(cc_testcase.TestCase):
 
 
-    def test_01_put_file_return_busy(self):
+    def test_01_rm_file_return_busy(self):
         """ Sends rm request to delete a file, several times the Connector shows a "busy" message and then continues the execution normally.
         Verifies if the returned response is the expected.
         """
@@ -49,7 +49,7 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
             if( len(dataBuffer.findAll("Connector busy. Wait till response is sent...")) == 4):
                 self.log.info("Connector busy feedback received correctly")
             else:
-                self.fail("Console feedback for busy status NOT received")
+                self.fail("Console feedback for busy status NOT received.\n dataBuffer: %s" % dataBuffer)
         else:
             self.fail("Console feedback for busy messages NOT found")
 

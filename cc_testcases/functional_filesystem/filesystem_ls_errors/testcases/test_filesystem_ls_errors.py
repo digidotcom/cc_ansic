@@ -4,7 +4,7 @@ import os
 
 
 
-class DeviceRequestDvtTestCase(cc_testcase.TestCase):
+class FileSystemDvtTestCase(cc_testcase.TestCase):
 
 
     def test_01_ls_dir_return_busy(self):
