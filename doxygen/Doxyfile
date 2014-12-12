@@ -773,7 +773,9 @@ INPUT                  = ./mainpage.c \
                          ./data_service.c \
                          ./status_callbacks.c \
                          ./file_system.c \
+                         ./connector_api_remote.h \
                          ./rci_service.c \
+                         ./rci_service_with_legacy_commands.c \
                          ./api_overview.c \
                          ./fw_download_sample.c \
                          ./file_system_sample.c \
@@ -782,7 +784,6 @@ INPUT                  = ./mainpage.c \
                          ./rci_advance_sample.c \
                          ./rci_tool.c \
                          ./connector_config.h \
-                         ./connector_api_remote.h \
                          ../public/run/platforms/template \
                          ../public/include
 
@@ -2022,6 +2023,9 @@ PREDEFINED             = CONNECTOR_VERSION \
                          CONNECTOR_RCI_SERVICE \
                          CONNECTOR_FILE_SYSTEM_HAS_LARGE_FILES \
                          CONNECTOR_SUPPORTS_64_BIT_INTEGERS
+
+# uncomment following line to generate rci documentation with legacy commands support:
+#PREDEFINED            += DOCUMENT_LEGACY_COMMANDS
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

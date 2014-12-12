@@ -39,8 +39,13 @@ typedef enum {
     connector_request_id_remote_config_session_end,    /**< inform callback to end remote configuration request session
                                                             Callback may start writing data into NVRAM for set remote configuration request.
                                                             Callback should end and release any resources used when it's done. */
-    connector_request_id_remote_config_session_cancel   /**< Requesting callback to abort and cancel any query or set remote configuration request.
+    connector_request_id_remote_config_session_cancel,  /**< Requesting callback to abort and cancel any query or set remote configuration request.
                                                             Callback should stop and release any resources used */
+#if defined DOCUMENT_LEGACY_COMMANDS
+    connector_request_id_remote_config_do_command,     /**< requesting callback to process a do_command command */
+    connector_request_id_remote_config_reboot,         /**< requesting callback to process a reboot command */
+    connector_request_id_remote_config_set_factory_def /**< requesting callback to process a set_factory_default command */
+#endif
 } connector_request_id_remote_config_t;
 /**
 * @}
@@ -204,7 +209,12 @@ typedef union {
  */
 typedef enum {
     connector_remote_action_set,    /**< Set remote configuration */
-    connector_remote_action_query   /**< Query remote configuration */
+    connector_remote_action_query,   /**< Query remote configuration */
+#if defined DOCUMENT_LEGACY_COMMANDS
+    connector_remote_action_do_command,     /**< To process a do_command command */
+    connector_remote_action_reboot,         /**< To process a reboot command */
+    connector_remote_action_set_factory_def /**< To process a set_factory_default command */
+#endif
 } connector_remote_action_t;
 /**
  * @}
@@ -252,6 +262,9 @@ typedef enum {
 typedef struct {
     rci_query_setting_attribute_source_t source;                /**< 'source' attribute value which is optional for a query_setting command request */
     rci_query_setting_attribute_compare_to_t compare_to;        /**< 'compare_to' attribute value which is optional for a query_setting command request */
+#if defined DOCUMENT_LEGACY_COMMANDS
+    char const * target;                                        /**< 'target' attribute value for a do_command command request */
+#endif
 } connector_remote_attribute_t;
 /**
 * @}
@@ -310,8 +323,14 @@ typedef struct {
 * -# @ref connector_request_id_remote_config_group_end
 * -# @ref connector_request_id_remote_config_action_end
 * -# @ref connector_request_id_remote_config_session_end
-*
 */
+#if defined (DOCUMENT_LEGACY_COMMANDS)
+/**
+* -# @ref connector_request_id_remote_config_do_command
+* -# @ref connector_request_id_remote_config_reboot
+* -# @ref connector_request_id_remote_config_set_factory_def
+*/
+#endif
 typedef struct {
   void * user_context;                /**< Pointer to callback's context returned from previous callback call.
                                      Callback may write its own context which will be passed back to sub-sequential callback.*/
