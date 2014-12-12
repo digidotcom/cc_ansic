@@ -16,9 +16,7 @@
 /******** Modified for testing ********/
 #include "application.h"
 /* Global flag to force the reconnection */
-connector_bool_t reconnect_transport = connector_false;
-/* Global flag to exit the application thread */
-connector_bool_t terminate_app_thread = connector_false;
+connector_bool_t execute_connector_terminate_action = connector_false;
 /******** End of Modifications for testing ********/
 
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id, void * const data);
@@ -36,14 +34,13 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
         /******** Modified for testing ********/
         /* if either Device Cloud or our application cuts the connection, don't reconnect */
         case connector_close_status_device_terminated:
-            /* Set the global flag to finish the application thread */
-            terminate_app_thread = connector_true;
             type = connector_false;
             break;
 
         case connector_close_status_device_stopped:
-            /* Set the global flag to reconnect automatically */
-            reconnect_transport = connector_true;
+            /* Set the global flag to initiate connector terminate */
+            APP_DEBUG("******************* ENTRA en STOPPED\n");
+            execute_connector_terminate_action = connector_true;
             type = connector_true;
             break;
 
@@ -109,26 +106,24 @@ int application_run(connector_handle_t handle)
     for (;;)
     {
 
-        if (reconnect_transport)
+        if (execute_connector_terminate_action)
         {
-            APP_DEBUG("application_run: relaunch the tcp transport for the next test in 5 seconds...\n");
+            APP_DEBUG("application_run: after 5 seconds, execute a connector terminate action...\n");
             sleep(5);
 
-            connector_transport_t const transport = connector_transport_tcp;
             connector_status_t action_status;
 
-            action_status = connector_initiate_action(handle, connector_initiate_transport_start, &transport);
-
-            if (action_status == connector_success)
+            /* call initiate action to stop and let the close callback to return abort */
+            action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
+            if (action_status != connector_success)
             {
-                reconnect_transport = connector_false;
+                APP_DEBUG("application_run: connector_initiate_action for connector_initiate_terminate returns error %d\n", action_status);
             }
-        }
-
-        if (terminate_app_thread)
-        {
-            APP_DEBUG("application_run: application thread exits\n");
-            break;
+            else
+            {
+                APP_DEBUG("application_run: connector_initiate_action for connector_initiate_terminate was successful!!\n");
+                break;
+            }
         }
 
         /* This sleep is needed to run the sample because without it does not work */

@@ -19,11 +19,7 @@
 
 /* List of supported targets */
 static char * const device_request_targets[] = {
-    "test_connector_wait_sessions_complete_for_transport_all",
-    "test_connector_wait_sessions_complete_for_transport_tcp",
-    "test_connector_stop_immediately_for_transport_all",
-    "test_connector_stop_immediately_for_transport_tcp",
-    "test_connector_terminate"
+    "test_stop_and_terminate_connector"
 };
 
 /******** End of Modifications for testing stop callback ********/
@@ -133,58 +129,14 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
 
         connector_status_t action_status;
 
-        if( strcmp(device_request->target, "test_connector_terminate") == 0)
+        if( strcmp(device_request->target, "test_stop_and_terminate_connector") == 0)
         { /* Test cases for terminate condition */
-
-            /* call initiate action to stop and let the close callback to return abort */
-            action_status = connector_initiate_action(connector_handle, connector_initiate_terminate, NULL);
-            if (action_status != connector_success)
-            {
-                APP_DEBUG("app_process_device_request_data: connector_initiate_action for connector_initiate_terminate returns error %d\n", action_status);
-                status = connector_callback_error;
-                goto done;
-            }
-            else
-            {
-                APP_DEBUG("app_process_device_request_data: connector_initiate_action for connector_initiate_terminate was successful!!\n");
-            }
-
-        }
-        else
-        { /* Test cases for stop transports */
-
-            /* Initialize stop condition for the different test cases */
-            static connector_stop_condition_t condition;
-            static connector_transport_t transport;
-
-            if( strcmp(device_request->target, "test_connector_wait_sessions_complete_for_transport_all") == 0)
-            {
-                condition = connector_wait_sessions_complete;
-                transport = connector_transport_all;
-            }
-            else if( strcmp(device_request->target, "test_connector_wait_sessions_complete_for_transport_tcp") == 0)
-            {
-                condition = connector_wait_sessions_complete;
-                transport = connector_transport_tcp;
-            }
-            else if( strcmp(device_request->target, "test_connector_stop_immediately_for_transport_all") == 0)
-            {
-                condition = connector_stop_immediately;
-                transport = connector_transport_all;
-            }
-            else if( strcmp(device_request->target, "test_connector_stop_immediately_for_transport_tcp") == 0)
-            {
-                condition = connector_stop_immediately;
-                transport = connector_transport_tcp;
-            }
-
 
             /* Create a stop request structure and fill it */
             static connector_initiate_stop_request_t request_data;
-            request_data.transport = transport;
-            request_data.condition = condition;
+            request_data.transport = connector_transport_all;
+            request_data.condition = connector_wait_sessions_complete;
             request_data.user_context = NULL;
-
 
 
             /* call initiate action to stop and let the close callback to return abort */
@@ -201,6 +153,7 @@ static connector_callback_status_t app_process_device_request_data(connector_dat
             }
 
         }
+
     }
     /******** End of Modifications for testing stop callback ********/
 
