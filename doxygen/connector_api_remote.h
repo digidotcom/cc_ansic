@@ -25,18 +25,18 @@
 * @{
 */
 /**
-* Remote Configuration Request ID passed to the application's callback to query or set remote configuration data.
+* Remote Configuration Request ID passed to the application's callback.
 * The class id for this connector_request_id_remote_config_t is connector_class_id_remote_config.
 */
 
 typedef enum {
-    connector_request_id_remote_config_session_start,  /**< inform callback to start remote configuration request */
-    connector_request_id_remote_config_action_start,   /**< requesting callback to start query or set remote configuration data */
+    connector_request_id_remote_config_session_start,  /**< inform callback to start remote configuration request session */
+    connector_request_id_remote_config_action_start,   /**< requesting callback to start a remote configuration request action */
     connector_request_id_remote_config_group_start,    /**< requesting callback to start query or set an individual configuration group */
     connector_request_id_remote_config_group_process,  /**< requesting callback to query or set an element or field of a configuration group */
     connector_request_id_remote_config_group_end,      /**< requesting callback to end query or set an individual configuration group */
-    connector_request_id_remote_config_action_end,     /**< requesting callback to end query or set remote configuration data */
-    connector_request_id_remote_config_session_end,    /**< inform callback to end remote configuration request
+    connector_request_id_remote_config_action_end,     /**< requesting callback to end a remote configuration request action */
+    connector_request_id_remote_config_session_end,    /**< inform callback to end remote configuration request session
                                                             Callback may start writing data into NVRAM for set remote configuration request.
                                                             Callback should end and release any resources used when it's done. */
     connector_request_id_remote_config_session_cancel   /**< Requesting callback to abort and cancel any query or set remote configuration request.
@@ -250,8 +250,8 @@ typedef enum {
 * Remote configuration attributes
 */
 typedef struct {
-    rci_query_setting_attribute_source_t source;                /**< 'source' attribute value */
-    rci_query_setting_attribute_compare_to_t compare_to;        /**< 'compare_to' attribute value */
+    rci_query_setting_attribute_source_t source;                /**< 'source' attribute value which is optional for a query_setting command request */
+    rci_query_setting_attribute_compare_to_t compare_to;        /**< 'compare_to' attribute value which is optional for a query_setting command request */
 } connector_remote_attribute_t;
 /**
 * @}
@@ -315,9 +315,8 @@ typedef struct {
 typedef struct {
   void * user_context;                /**< Pointer to callback's context returned from previous callback call.
                                      Callback may write its own context which will be passed back to sub-sequential callback.*/
-  connector_remote_action_t action;   /**< @htmlonly <ul><li> @endhtmlonly @ref connector_remote_action_set @htmlonly for setting remote configuration or</li>
-                                         <li> @endhtmlonly @ref connector_remote_action_query @htmlonly for querying remote configuration </li></ul> @endhtmlonly */
-  connector_remote_attribute_t attribute;  /**< 'source' and 'compare_to' attribute values which are optional in a query_setting command request */
+  connector_remote_action_t action;   /**< Action being processed */
+  connector_remote_attribute_t attribute;  /**< Command attributes which are optional for some commands */
   connector_remote_group_t group;     /**< Group configuration to be accessed */
   connector_remote_element_t element; /**< Element of the group configuration */
   unsigned int error_id;              /**< Callback writes error enumeration value if error is encountered.

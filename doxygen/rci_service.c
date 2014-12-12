@@ -168,7 +168,7 @@
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
  *
  *         <dt><i>attribute</i></dt>
- *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
  *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
@@ -265,7 +265,7 @@
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
  *
  *         <dt><i>attribute</i></dt>
- *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
  *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
@@ -550,7 +550,7 @@
  *         <dd> - the @endhtmlonly @ref connector_remote_action_query @htmlonly </dd>
  *
  *         <dt><i>attribute</i></dt>
- *         <dd>- only applicable when group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
  *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
@@ -751,7 +751,7 @@
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
  *
  *         <dt><i>attribute</i></dt>
- *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
  *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
@@ -862,7 +862,7 @@
  *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
  *
  *         <dt><i>attribute</i></dt>
- *         <dd>- only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
+ *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>source</i></dt>
  *             <dd> <ul><li>@endhtmlonly @ref rci_query_setting_attribute_source_current @htmlonly: The current running settings.</li>
