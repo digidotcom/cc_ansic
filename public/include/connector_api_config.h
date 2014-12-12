@@ -70,16 +70,9 @@ typedef enum {
 * Application Binary Data Pointer Configuration for the following callbacks:
 *   -# @ref connector_request_id_config_device_id
 *   -# @ref connector_request_id_config_mac_addr
-*   -# @ref connector_request_id_config_imei_number
-*   -# @ref connector_request_id_config_esn
-*   -# @ref connector_request_id_config_meid
 *
 * @see @ref device_id
 * @see @ref mac_address
-* @see @ref imei_number
-* @see @ref esn_number
-* @see @ref meid_number
-*
 */
 typedef struct {
     uint8_t * data;               /**< Application data pointer */

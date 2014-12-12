@@ -63,18 +63,22 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
  * @brief   Load the Cloud Connector's device ID
  *
  * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
- * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
- * is called to provide the Cloud Connector with a previously saved (e.g.: to a file or EEPROM)
- * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, they
- * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
- * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
- * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a
- * Device ID and then call function @ref app_save_device_id so the user saves to a non-volatile
- * storage that provisioned Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
- * in this function.
+ * This function is called to provide the Cloud Connector with a Device ID, it is up to the implementation to decide
+ * which source to use to generate this unique identifier. There are three valid sources to generate the Device ID:
+ *      - Device's MAC address
+ *      - Device's modem's IMEI
+ *      - Device's MEID
+ *      - Device's ESN
+ * 
+ * When any of the previous sources are available, Cloud Connector can ask Device Cloud to assign the Device
+ * a unique randomly generated Device ID for it. This value must be saved into non-volatile memory (e.g.: file, EEPROM, NVRAM, etc.)
+ * and returned every time this is called again, because the autoprovisioning feature must be used only once per Device.
+ * To use this feature, the returned Device ID must be a buffer with all its bytes set to 0x00, this will make Cloud Connector
+ * to get the Device ID from Device Cloud and then call function @ref app_save_device_id so the user saves to a non-volatile
+ * storage that provisioned value.
  * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
  * account which @ref vendor_id is provided.
- * @note Provision a Device ID can only be done by TCP transport.
+ * @note Provisioning a Device ID can only be done by TCP transport.
  *
  * @param [out] config_device_id  Callback returns pointer to memory containing the device ID
  *
@@ -92,8 +96,7 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
 /**
  * @brief   Save the Cloud Connector's Device ID
  *
- * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id and
- * @ref device_id_method is set to @ref connector_device_id_method_manual.
+ * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id.
  * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_load_device_id function.
  * @note Provision a Device ID can only be done by TCP transport.
