@@ -231,40 +231,6 @@
  * {
  *     printf("process_action_start\n");
  *
- *     if (remote_config->action == connector_remote_action_query && remote_config->group.type == connector_remote_group_setting)
- *     {
- *         APP_DEBUG("query setting attributes:\n");
- *         APP_DEBUG("source=");
- *         switch (remote_config->attribute.source)
- *         {
- *             case rci_query_setting_attribute_source_current:
- *                 APP_DEBUG("'rci_query_setting_attribute_source_current'\n");
- *                 break;
- *             case rci_query_setting_attribute_source_stored:
- *                 APP_DEBUG("'rci_query_setting_attribute_source_stored'\n");
- *                 break;
- *             case rci_query_setting_attribute_source_defaults:
- *                 APP_DEBUG("'rci_query_setting_attribute_source_defaults'\n");
- *                 break;
- *         }
- *         APP_DEBUG("compare_to=");
- *         switch (remote_config->attribute.compare_to)
- *         {
- *             case rci_query_setting_attribute_compare_to_none:
- *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_none'\n");
- *                 break;
- *             case rci_query_setting_attribute_compare_to_current:
- *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_current'\n");
- *                 break;
- *             case rci_query_setting_attribute_compare_to_stored:
- *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_stored'\n");
- *                 break;
- *             case rci_query_setting_attribute_compare_to_defaults:
- *                 APP_DEBUG("'rci_query_setting_attribute_compare_to_defaults'\n");
- *                 break;
- *         }
- *     }
- *
  *     return connector_callback_continue;
  * }
  *
@@ -544,10 +510,10 @@
  *     switch (data->element.id)
  *     {
  *     case connector_setting_keepalive_rx:
- *         keepalive_ptr->rx_keepalive = data->element.value->integer_unsigned_value;
+ *         keepalive_ptr->rx_keepalive_current = data->element.value->integer_unsigned_value;
  *         break;
  *     case connector_setting_keepalive_tx:
- *         keepalive_ptr->tx_keepalive = data->element.value->integer_unsigned_value;
+ *         keepalive_ptr->tx_keepalive_current = data->element.value->integer_unsigned_value;
  *         break;
  *     default:
  *         break;
@@ -714,6 +680,8 @@
  *     connector_callback_status_t status = connector_callback_continue;
  *     remote_config_session_t * session_ptr = data->user_context;
  *     keepalive_data_t * keepalive_ptr;
+ *     connector_bool_t const comparing_with_defaults = data->attribute.source == rci_query_setting_attribute_source_current && 
+ *                                                      data->attribute.compare_to == rci_query_setting_attribute_compare_to_defaults;
  *
  *     printf("process_group_get\n");
  *
@@ -722,13 +690,31 @@
  *     switch (data->element.id)
  *     {
  *     case connector_setting_keepalive_rx:
- *         data->response.element_value->integer_unsigned_value = keepalive->rx_keepalive;
+ *
+ *         // Skip reporting this element if Cloud is asking to compare current with defaults and value has not changed
+ *         if (comparing_with_defaults && keepalive->rx_keepalive_current == keepalive->rx_keepalive_default)
+ *         {
+ *             data->response.compare_matches = connector_true;
+ *         }
+ *         else
+ *         {
+ *             data->response.element_value->integer_unsigned_value = keepalive->rx_keepalive_current;
+ *         }
  *         break;
  *     case connector_setting_keepalive_tx:
- *         data->response.element_value->integer_unsigned_value = keepalive->tx_keepalive;
+ *
+ *         // Skip reporting this element if Cloud is asking to compare current with defaults and value has not changed
+ *         if (comparing_with_defaults && keepalive->tx_keepalive_current == keepalive->tx_keepalive_default)
+ *         {
+ *             data->response.compare_matches = connector_true;
+ *         }
+ *         else
+ *         {
+ *             data->response.element_value->integer_unsigned_value = keepalive->tx_keepalive_current;
+ *         }
  *         break;
  *     default:
-  *         break;
+ *         break;
  *     }
  *
  *     return status;
