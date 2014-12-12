@@ -17,7 +17,8 @@
 #include "application.h"
 /* Global flag to force the reconnection */
 connector_bool_t reconnect_transport = connector_false;
-
+/* Global flag to exit the application thread */
+connector_bool_t terminate_app_thread = connector_false;
 /******** End of Modifications for testing ********/
 
 extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request_id, void * const data);
@@ -32,25 +33,32 @@ connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, co
 
     switch (status)
     {
-           /* if either Device Cloud or our application cuts the connection, don't reconnect */
+        /******** Modified for testing ********/
+        /* if either Device Cloud or our application cuts the connection, don't reconnect */
         case connector_close_status_device_terminated:
-        case connector_close_status_device_stopped:
-            /******** Modified for testing ********/
+            APP_DEBUG("****************** ENTRA EN TERMINATED\n");
+            /* Set the global flag to finish the application thread */
+            terminate_app_thread = connector_true;
+            type = connector_false;
+            break;
 
+        case connector_close_status_device_stopped:
+            APP_DEBUG("****************** ENTRA EN STOPPED\n");
             /* Set the global flag to reconnect automatically */
             reconnect_transport = connector_true;
             type = connector_true;
             break;
 
-            /******** End of Modifications for testing ********/
         case connector_close_status_abort:
             type = connector_false;
             break;
 
-       /* otherwise it's an error and we want to retry */
-       default:
-             type = connector_true;
-             break;
+        /* otherwise it's an error and we want to retry */
+        default:
+            type = connector_true;
+            break;
+
+        /******** End of Modifications for testing ********/
     }
 
     return type;
@@ -119,8 +127,15 @@ int application_run(connector_handle_t handle)
             }
         }
 
+        if (terminate_app_thread)
+        {
+            APP_DEBUG("application_run: application thread exits\n");
+            break;
+        }
+
         /* This sleep is needed to run the sample because without it does not work */
         sleep(1);
+
     }
 
     /******** End of Modifications for testing ********/

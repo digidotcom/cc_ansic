@@ -216,3 +216,46 @@ class DeviceRequestDvtTestCase(cc_testcase.TestCase):
                 self.log.info("Waiting for Device to reconnect.")
                 self.deviceMonitor.waitForConnect(30)
                 self.log.info("Device is connected again.")
+
+
+
+    def test_05_connector_terminate(self):
+        """ Verifies that Connector must manage correctly the terminate action.
+            In this case should end the connector thread and the application thread.
+        """
+
+        payload_size = 2048
+        target = "test_connector_terminate"
+        payload = ''.join(random.choice(ascii_letters + digits) for _ in range(payload_size))
+
+        status, response = self.cloudHandler.sendDeviceRequest(self.device_id, target, payload)
+
+        self.log.info("Received response: '%s'" % response.content)
+
+
+        if(status):
+            # Status 200. Checking the received response
+            responseText = response.resource["sci_reply"]["data_service"]["device"]["error"]["desc"]
+            if(responseText == "Device disconnected while processing request"):
+                self.log.info("Received the expected response")
+
+                result, line, dataBuffer = self.deviceHandler.readUntilPattern ( pattern="Cloud Connector terminated", timeout=10)
+
+                if (result):
+                    self.log.info("Connector terminate action feedback received correctly")
+                else:
+                    self.fail("Console feedback for terminate action status NOT received")
+            else:
+                self.fail("Received response from device: \"%s\" is not the expected" % responseText)
+        else:
+            self.log.error("Response content from device: %s" % response.content)
+            self.fail("Incorrect response code: %d" % response.status_code)
+
+
+        # Verify that the device disconnects from Device Cloud
+        if (self.cloudHandler.isDeviceConnected(self.device_id)):
+            self.log.info("Waiting for Cloud to disconnect device.")
+            self.deviceMonitor.waitForDisconnect(30)
+            self.log.info("Device disconnected.")
+        else:
+            self.log.info("Device is disconnected from Device Cloud")
