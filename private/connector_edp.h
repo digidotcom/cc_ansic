@@ -104,7 +104,6 @@ STATIC connector_status_t connector_edp_init(connector_data_t * const connector_
     connector_status_t result;
 
     edp_reset_initial_data(connector_ptr);
-    connector_ptr->edp_data.facilities.list = NULL;
     connector_ptr->edp_data.facilities.supported_mask = 0;
 
     result = edp_config_init(connector_ptr);

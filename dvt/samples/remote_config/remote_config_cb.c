@@ -118,15 +118,32 @@ void add_setting_data(connector_remote_config_t * const remote_config,
     // Init setting data if not set.
     //APP_DEBUG("Setting Data for %d:%d.\n", group_id, element_id);
     if(r_data->setting_data == NULL){
-        r_data->setting_data = (setting_data_t **)malloc(10*sizeof(setting_data_t));
-        r_data->capacity = 10;
+        unsigned int const capacity = 10;
+        size_t const malloc_size = capacity * sizeof(setting_data_t *);
+        unsigned int i;
+
+        r_data->capacity = capacity;
+        r_data->setting_data = malloc(malloc_size);
+        for (i = 0; i < capacity; i++)
+        {
+            r_data->setting_data[i] = NULL;
+        }
     }
 
     // If group id extends size of setting_data grow it.
-    if(r_data->count == r_data->capacity){ // resize array
-        r_data->capacity = r_data->capacity + 10;
-        int new_size = r_data->count * sizeof(setting_data_t);
-        r_data->setting_data = (setting_data_t **)realloc(r_data->setting_data, new_size);
+    if(r_data->count == r_data->capacity)
+    {
+        unsigned int const old_capacity = r_data->capacity;
+        unsigned int const new_capacity = old_capacity + 10;
+        size_t const new_size = new_capacity * sizeof(setting_data_t);
+        unsigned int i;
+
+        r_data->setting_data = realloc(r_data->setting_data, new_size);
+        for (i = old_capacity; i < new_capacity; i++)
+        {
+            r_data->setting_data[i] = NULL;
+        }
+        r_data->capacity = new_capacity;
     }
 
     // Init group data if not set.
@@ -146,22 +163,41 @@ void add_setting_data(connector_remote_config_t * const remote_config,
     }
 
     // Allocate Setting Data if not found.
-    if(s_data == NULL){
-        s_data =(setting_data_t *)malloc(sizeof(setting_data_t));
+    if(s_data == NULL)
+    {
+        s_data = malloc(sizeof *s_data);
+
         r_data->setting_data[i] = s_data;
         r_data->count = r_data->count + 1;
         s_data->group_id = group_id;
         s_data->index = index;
-        s_data->group_data = (void **)malloc(10*sizeof(ptr));
         s_data->capacity = 10;
         s_data->count = 0;
+        s_data->group_data = malloc(s_data->capacity * sizeof(ptr));
+        {
+            unsigned int index;
+            for (index = 0; index < s_data->count; index++)
+            {
+                s_data->group_data[index] = NULL;
+            }
+        }
     }
 
     while(s_data->count == s_data->capacity ||
-        element_id >= s_data->capacity){ // resize array
-        s_data->capacity += 10;
-        unsigned int new_size = s_data->capacity * sizeof(ptr);
-        s_data->group_data = (void **)realloc(s_data->group_data, new_size);
+        element_id >= s_data->capacity)
+    {
+        unsigned int const old_capacity = s_data->capacity;
+        unsigned int const new_capacity = old_capacity + 10;
+        unsigned int const new_size = new_capacity * sizeof(ptr);
+        unsigned int i;
+
+        s_data->group_data = realloc(s_data->group_data, new_size);
+        for (i = old_capacity; i < new_capacity; i++)
+        {
+            s_data->group_data[i] = NULL;
+        }
+
+        s_data->capacity = new_capacity;
     }
 
     void * data_ptr = malloc(length + 1);
