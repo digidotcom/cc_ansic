@@ -117,72 +117,176 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
 
 #define DEVICE_ID_LENGTH    16
 #define DEVICE_ID_FILENAME  "device_id.cfg"
-#define EXECUTABLE_NAME     "connector"
 
-static uint8_t provisioned_device_id[DEVICE_ID_LENGTH];
+static uint8_t device_id[DEVICE_ID_LENGTH] = {0x00};
 
-static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
+#define DEVICE_ID_SOURCE_MAC                0
+#define DEVICE_ID_SOURCE_IMEI               1
+#define DEVICE_ID_SOURCE_MEID               2
+#define DEVICE_ID_SOURCE_ESN                3
+#define DEVICE_ID_SOURCE_AUTOPROVISION      4
+
+#define IMEI_DEVICE_ID_PREFIX   1
+#define ESN_DEVICE_ID_PREFIX    2
+#define MEID_DEVICE_ID_PREFIX   4
+
+#if !(defined APPLICATION_DEVICE_ID_SOURCE)
+#define APPLICATION_DEVICE_ID_SOURCE    DEVICE_ID_SOURCE_MAC
+#endif
+
+#define IMEI_LENGTH     8
+#define MEID_LENGTH     8
+#define ESN_LENGTH      4
+
+static const uint8_t device_imei[IMEI_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static const uint8_t device_meid[MEID_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static const uint8_t device_esn[ESN_LENGTH] = {0x00, 0x00, 0x00, 0x00};
+
+#if (APPLICATION_DEVICE_ID_SOURCE == DEVICE_ID_SOURCE_IMEI)
+#error "Specify device device's IMEI value to generate Device ID and comment this line"
+#elif (APPLICATION_DEVICE_ID_SOURCE == DEVICE_ID_SOURCE_MEID)
+#error "Specify device device's MEID value to generate Device ID and comment this line"
+#elif (APPLICATION_DEVICE_ID_SOURCE == DEVICE_ID_SOURCE_ESN)
+#error "Specify device device's ESN value to generate Device ID and comment this line"
+#elif (APPLICATION_DEVICE_ID_SOURCE > DEVICE_ID_SOURCE_AUTOPROVISION || APPLICATION_DEVICE_ID_SOURCE < DEVICE_ID_SOURCE_MAC)
+#error "Specify APPLICATION_DEVICE_ID_SOURCE to a valid value"
+#endif
+
+static unsigned int const device_id_source = APPLICATION_DEVICE_ID_SOURCE;
+
+static void get_device_id_file_full_path(char const * const file_name, char * const full_path_buffer, size_t buffer_size)
 {
-    char proc_path[PATH_MAX];
-    char device_id_full_path[PATH_MAX] = {0};
-    
+    char proc_path[256];
     pid_t pid = getpid();
+
     sprintf(proc_path, "/proc/%d/exe", pid);
-    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1) 
+    if (readlink(proc_path, full_path_buffer, buffer_size) == -1)
     {
         perror("readlink");
     }
     else
     {
-        /* 'device_id_full_path' has the full executable path (i.e.: /home/user/connector/public/run/samples/connecto_to_device_cloud/connector
-         * We want to write the file to be in the same folder (in previous case /home/user/connector/public/run/samples/connecto_to_device_cloud
-         */
-        strcpy(device_id_full_path + strlen(device_id_full_path) - strlen(EXECUTABLE_NAME), DEVICE_ID_FILENAME);
-    }
+        char * const executable_name = strrchr(full_path_buffer, '/');
 
-    if (access(device_id_full_path, F_OK) != -1)
+        if (executable_name != NULL)
+        {
+            char * const file_name_destination = executable_name + 1;
+            strcpy(file_name_destination, file_name);
+        }
+    }
+}
+
+static connector_bool_t file_exists(char const * const file_path)
+{
+    connector_bool_t file_exists = connector_false;
+
+    if (access(file_path, F_OK) != -1)
     {
-        FILE *file;
-        int bytes_read;
-
-        file = fopen(device_id_full_path, "r");
-        bytes_read = fread(provisioned_device_id, sizeof provisioned_device_id[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
-        ASSERT(bytes_read == sizeof provisioned_device_id);
-        APP_DEBUG("app_load_device_id: read %d bytes from %s\n", bytes_read, device_id_full_path);
-        fclose(file);
+        file_exists = connector_true;
     }
 
-    config_device_id->data = provisioned_device_id;
+    return file_exists;
+}
+
+static void read_device_id_from_file(char const * const file_path, uint8_t * const device_id_buffer, size_t const device_id_size)
+{
+    FILE * const file = fopen(file_path, "r");
+    size_t bytes_read;
+
+    ASSERT(file != NULL);
+    bytes_read = fread(device_id_buffer, sizeof device_id[0], device_id_size, file);
+    ASSERT(bytes_read == device_id_size);
+    APP_DEBUG("read_device_id_from_file: read %" PRIsize " bytes from %s\n", bytes_read, file_path);
+    fclose(file);
+}
+
+static void write_device_id_to_file(char const * const file_path, uint8_t * const device_id_buffer, size_t const device_id_size)
+{
+    FILE * const file = fopen(file_path, "w+");
+    size_t bytes_written;
+
+    bytes_written = fwrite(device_id_buffer, sizeof device_id_buffer[0], device_id_size, file);
+    ASSERT(bytes_written == device_id_size);
+    APP_DEBUG("write_device_id_to_file: wrote %" PRIsize " bytes to %s\n", bytes_written, file_path);
+    fclose(file);
+}
+
+static connector_callback_status_t app_load_device_id(connector_config_pointer_data_t * const config_device_id)
+{
+    switch (device_id_source)
+    {
+        case DEVICE_ID_SOURCE_MAC:
+            device_id[8] = device_mac_addr[0];
+            device_id[9] = device_mac_addr[1];
+            device_id[10] = device_mac_addr[2];
+            device_id[11] = 0xFF;
+            device_id[12] = 0xFF;
+            device_id[13] = device_mac_addr[3];
+            device_id[14] = device_mac_addr[4];
+            device_id[15] = device_mac_addr[5];
+            break;
+        case DEVICE_ID_SOURCE_IMEI:
+            device_id[1] = IMEI_DEVICE_ID_PREFIX;
+
+            device_id[8] = device_imei[0];
+            device_id[9] = device_imei[1];
+            device_id[10] = device_imei[2];
+            device_id[11] = device_imei[3];
+            device_id[12] = device_imei[4];
+            device_id[13] = device_imei[5];
+            device_id[14] = device_imei[6];
+            device_id[15] = device_imei[7];
+            break;
+        case DEVICE_ID_SOURCE_MEID:
+            device_id[1] = MEID_DEVICE_ID_PREFIX;
+
+            device_id[8] = device_meid[0];
+            device_id[9] = device_meid[1];
+            device_id[10] = device_meid[2];
+            device_id[11] = device_meid[3];
+            device_id[12] = device_meid[4];
+            device_id[13] = device_meid[5];
+            device_id[14] = device_meid[6];
+            device_id[15] = device_meid[7];
+            break;
+        case DEVICE_ID_SOURCE_ESN:
+            device_id[1] = ESN_DEVICE_ID_PREFIX;
+
+            device_id[12] = device_esn[0];
+            device_id[13] = device_esn[1];
+            device_id[14] = device_esn[2];
+            device_id[15] = device_esn[3];
+            break;
+        case DEVICE_ID_SOURCE_AUTOPROVISION:
+        {
+            char device_id_file_path[256];
+
+            get_device_id_file_full_path(DEVICE_ID_FILENAME, device_id_file_path, sizeof device_id_file_path);
+
+            if (file_exists(device_id_file_path))
+            {
+                read_device_id_from_file(device_id_file_path, device_id, sizeof device_id);
+            }
+            /* If Device ID is all zeroes then it will be autoprovisioned */
+            break;
+        }
+        default:
+            APP_DEBUG("Invalid device_id_source, please specify a valid one\n");
+            ASSERT(connector_false);
+    }
+
+    config_device_id->data = device_id;
 
     return connector_callback_continue;
 }
 
 static connector_callback_status_t app_save_device_id(connector_config_pointer_data_t * const config_device_id)
 {
-    FILE *file;
-    int bytes_written;
-    char proc_path[PATH_MAX];
-    char device_id_full_path[PATH_MAX] = {0};
+    char device_id_file_path[PATH_MAX];
+
+    get_device_id_file_full_path(DEVICE_ID_FILENAME, device_id_file_path, sizeof device_id_file_path);
     
-    pid_t pid = getpid();
-    sprintf(proc_path, "/proc/%d/exe", pid);
-    if (readlink(proc_path, device_id_full_path, PATH_MAX) == -1) 
-    {
-        perror("readlink");
-    }
-    else
-    {
-        /* 'device_id_full_path' has the full executable path (i.e.: /home/user/connector/public/run/samples/connecto_to_device_cloud/connector
-         * We want to write the file to be in the same folder (in previous case /home/user/connector/public/run/samples/connecto_to_device_cloud
-         */
-        strcpy(device_id_full_path + strlen(device_id_full_path) - strlen(EXECUTABLE_NAME), DEVICE_ID_FILENAME);
-    }
-    
-    file = fopen(device_id_full_path, "w+");
-    bytes_written = fwrite(config_device_id->data, sizeof config_device_id->data[0], sizeof provisioned_device_id / sizeof provisioned_device_id[0], file);
-    ASSERT(bytes_written == sizeof provisioned_device_id);
-    APP_DEBUG("app_load_device_id: wrote %d bytes to %s\n", bytes_written, device_id_full_path);
-    fclose(file);
+    write_device_id_to_file(device_id_file_path, config_device_id->data, config_device_id->bytes_required);
 
     return connector_callback_continue;
 }
@@ -397,16 +501,6 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
 }
 #endif
 
-#if !(defined CONNECTOR_DEVICE_ID_METHOD)
-static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
-{
-
-    config_device->method = connector_device_id_method_auto;
-
-    return connector_callback_continue;
-}
-#endif
-
 /* Converts the first digit char ('0' to '9') to a nibble starting at index and working backwards. */
 static unsigned int digit_to_nibble(char const * const string, int * const index)
 {
@@ -483,16 +577,6 @@ static connector_callback_status_t app_start_network_sms(connector_config_connec
     config_connect->type = connector_connect_auto;
     return connector_callback_continue;
 }
-
-#if !(defined CONNECTOR_WAN_TYPE)
-static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
-{
-
-    config_wan->type = connector_wan_type_imei;
-
-    return connector_callback_continue;
-}
-#endif
 
 static connector_callback_status_t app_get_esn(connector_config_pointer_data_t * const config_esn)
 {
@@ -682,13 +766,9 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_remote_configuration);
         enum_to_case(connector_request_id_config_max_transaction);
         enum_to_case(connector_request_id_config_device_id_method);
-        enum_to_case(connector_request_id_config_imei_number);
         enum_to_case(connector_request_id_config_network_tcp);
         enum_to_case(connector_request_id_config_network_udp);
         enum_to_case(connector_request_id_config_network_sms);
-        enum_to_case(connector_request_id_config_wan_type);
-        enum_to_case(connector_request_id_config_esn);
-        enum_to_case(connector_request_id_config_meid);
         enum_to_case(connector_request_id_config_identity_verification);
         enum_to_case(connector_request_id_config_password);
         enum_to_case(connector_request_id_config_sm_udp_max_sessions);
@@ -1115,16 +1195,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         break;
 #endif
 
-#if !(defined CONNECTOR_DEVICE_ID_METHOD)
-    case connector_request_id_config_device_id_method:
-        status = app_get_device_id_method(data);
-        break;
-#endif
-
-     case connector_request_id_config_imei_number:
-         status = app_get_imei_number(data);
-         break;
-
 #if !(defined CONNECTOR_NETWORK_TCP_START)
      case connector_request_id_config_network_tcp:
          status = app_start_network_tcp(data);
@@ -1142,20 +1212,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
          status = app_start_network_sms(data);
          break;
 #endif
-
-#if !(defined CONNECTOR_WAN_TYPE)
-     case connector_request_id_config_wan_type:
-         status = app_get_wan_type(data);
-         break;
-#endif
-
-     case connector_request_id_config_esn:
-         status = app_get_esn(data);
-         break;
-
-     case connector_request_id_config_meid:
-         status = app_get_meid(data);
-         break;
 
 #if !(defined CONNECTOR_IDENTITY_VERIFICATION)
      case connector_request_id_config_identity_verification:

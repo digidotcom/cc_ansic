@@ -618,11 +618,6 @@
  * See @endhtmlonly @ref rci_support @htmlonly</td>
  * </tr>
  * <tr>
- * <td>@endhtmlonly @ref CONNECTOR_DEVICE_ID_METHOD @htmlonly </td>
- * <td>Tells Cloud Connector how to obtain a device ID.
- * See @endhtmlonly @ref device_id_method @htmlonly</td>
- * </tr>
- * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_NETWORK_TCP_START @htmlonly </td>
  * <td>If defined it enables and starts TCP transport.
  * See @endhtmlonly @ref network_tcp_start @htmlonly</td>
@@ -636,12 +631,6 @@
  * <td>@endhtmlonly @ref CONNECTOR_NETWORK_SMS_START @htmlonly </td>
  * <td>If defined it enables and starts SMS transport.
  * See @endhtmlonly @ref network_sms_start @htmlonly</td>
- * </tr>
- * <tr>
- * <td>@endhtmlonly @ref CONNECTOR_WAN_TYPE @htmlonly </td>
- * <td> @endhtmlonly @ref connector_wan_type_imei  for IMEI ,
- * @ref connector_wan_type_esn for ESN  or @ref connector_wan_type_meid for MEID
- * WAN type. See @ref wan_type @htmlonly</td>
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref CONNECTOR_IDENTITY_VERIFICATION @htmlonly </td>
@@ -833,19 +822,6 @@
 #define CONNECTOR_REMOTE_CONFIGURATION_SUPPORT
 
 /**
- * When defined, this string hardcode for the @ref device_id_method instead of the application framework
- * function @ref app_get_device_id_method() (called via the @ref connector_request_id_config_device_id_method @ref connector_callback_t "callback" in config.c).
- *
- * @note There is no need to implement or port @ref app_get_device_id_method() when CONNECTOR_DEVICE_ID_METHOD is defined.  The
- * values for this define are limited to @ref connector_device_id_method_auto or @ref connector_device_id_method_manual.
- *
- * @see @ref device_id_method
- * @see @ref app_get_device_id_method()
- * @see @ref connector_device_id_method_t
- */
-#define CONNECTOR_DEVICE_ID_METHOD connector_device_id_method_auto
-
-/**
  * When defined, this string hardcode for the @ref network_tcp_start instead of the application framework
  * function @ref app_start_network_tcp() (called via the @ref connector_request_id_config_network_tcp @ref connector_callback_t "callback" in config.c).
  *
@@ -889,22 +865,6 @@
  * @see @ref CONNECTOR_TRANSPORT_SMS
  */
 #define CONNECTOR_NETWORK_SMS_START                 connector_connect_auto
-
-/**
- * When defined, this string hardcode for the @ref wan_type instead of the application framework
- * function @ref app_get_wan_type() (called via the @ref connector_request_id_config_wan_type @ref connector_callback_t "callback" in config.c).
- *
- * @note There is no need to implement or port @ref app_get_wan_type() when CONNECTOR_WAN_TYPE is defined.  The
- * values for this define are limited to @ref connector_wan_type_imei, @ref connector_wan_type_esn or @ref connector_wan_type_meid.
- * @note This define is only used when @ref device_id_method is connector_device_id_method_auto and
- * @ref connection_type is @ref connector_connection_type_wan.
- *
- * @see @ref wan_type
- * @see @ref CONNECTOR_CONNECTION_TYPE
- * @see @ref CONNECTOR_DEVICE_ID_METHOD
- * @see @ref app_get_wan_type()
- */
-#define CONNECTOR_WAN_TYPE                              connector_wan_type_imei
 
 /**
  * When defined, this string hardcode for the @ref identity_verification instead of the application framework

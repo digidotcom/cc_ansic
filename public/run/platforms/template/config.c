@@ -63,18 +63,22 @@ static connector_callback_status_t app_get_mac_addr(connector_config_pointer_dat
  * @brief   Load the Cloud Connector's device ID
  *
  * Device IDs are a globally unique 16-octet value identifier for Device Cloud clients.
- * If the @ref device_id_method is set to @ref connector_device_id_method_manual, this function
- * is called to provide the Cloud Connector with a previously saved (e.g.: to a file or EEPROM)
- * Device ID. Else, if @ref device_id_method is set to @ref connector_device_id_method_auto, they
- * Device ID will be generated either from the MAC address (if @ref connector_connection_type_lan
- * specified) or from MEID/IMEI/ESN (if @ref connector_connection_type_wan).
- * If this function sets config_device_id->data to a zeroed buffer, the Cloud Connector will ask Device Cloud for a
- * Device ID and then call function @ref app_save_device_id so the user saves to a non-volatile
- * storage that provisioned Device ID. In future starts, this Device Cloud-assigned Device ID must be returned
- * in this function.
+ * This function is called to provide the Cloud Connector with a Device ID, it is up to the implementation to decide
+ * which source to use to generate this unique identifier. There are three valid sources to generate the Device ID:
+ *      - Device's MAC address
+ *      - Device's modem's IMEI
+ *      - Device's MEID
+ *      - Device's ESN
+ * 
+ * When any of the previous sources are available, Cloud Connector can ask Device Cloud to assign the Device
+ * a unique randomly generated Device ID for it. This value must be saved into non-volatile memory (e.g.: file, EEPROM, NVRAM, etc.)
+ * and returned every time this is called again, because the autoprovisioning feature must be used only once per Device.
+ * To use this feature, the returned Device ID must be a buffer with all its bytes set to 0x00, this will make Cloud Connector
+ * to get the Device ID from Device Cloud and then call function @ref app_save_device_id so the user saves to a non-volatile
+ * storage that provisioned value.
  * @note If Device Cloud provides a Device ID, it automatically adds that Device ID to the Device Cloud
  * account which @ref vendor_id is provided.
- * @note Provision a Device ID can only be done by TCP transport.
+ * @note Provisioning a Device ID can only be done by TCP transport.
  *
  * @param [out] config_device_id  Callback returns pointer to memory containing the device ID
  *
@@ -92,8 +96,7 @@ static connector_callback_status_t app_load_device_id(connector_config_pointer_d
 /**
  * @brief   Save the Cloud Connector's Device ID
  *
- * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id and
- * @ref device_id_method is set to @ref connector_device_id_method_manual.
+ * This routine is called when a zeroed Device ID is provided in @ref app_load_device_id.
  * In this function the provided Device ID must be saved to a non-volatile storage to be read in future
  * access by @ref app_load_device_id function.
  * @note Provision a Device ID can only be done by TCP transport.
@@ -526,57 +529,6 @@ static connector_callback_status_t app_get_max_message_transactions(connector_co
 }
 
 /**
- * @brief   Get device id method
- *
- * This routine tells Cloud Connector how to obtain a device ID.
- *
- * @param [out] config_device  Pointer connector_config_device_id_method_t where callback writes:
- *                      @li @a @b connector_device_id_method_auto: to generate device ID from
- *                             - @ref mac_address callback for @ref connector_connection_type_lan connection type or
- *                             - @ref wan_type callback for @ref connector_connection_type_wan connection type.
- *                      @li @a @b connector_device_id_method_manual: to obtain device ID from @ref device_id callback.
- *
- * @retval connector_callback_continue  The device ID method was successfully returned.
- * @retval connector_callback_abort     Could not get the device ID method and abort Cloud Connector.
- *
- * @see @ref connection_type API Callback
- *
- * @note This routine is not needed if you define @b CONNECTOR_DEVICE_ID_METHOD configuration in @ref connector_config.h.
- * See @ref connector_config_data_options
- */
-static connector_callback_status_t app_get_device_id_method(connector_config_device_id_method_t * const config_device)
-{
-    UNUSED_ARGUMENT(config_device);
-    return connector_callback_continue;
-}
-
-/**
- * @brief   Get IMEI number
- *
- * This routine returns IMEI number. This routine is called when @ref device_id_method callback returns
- * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
- * @ref connector_wan_type_imei.
- *
- * @param [out] config_imei  Pointer to @ref connector_config_pointer_data_t where callback returns pointer to an 8 bytes array with the 14 digit IMEI plus one check
- *                           digit encoded in one digit per nibble with most upper nibble being 0.
- *                           For example, "350077-52-323751-3" ESN must be returned as a pointer to a uint8_t array filled with {0x03, 0x50, 0x07, 0x75, 0x23, 0x23, 0x75, 0x13}.
- *
- * @retval connector_callback_continue  The IMEI number was successfully returned.
- * @retval connector_callback_abort     Could not get the IMEI number and abort Cloud Connector.
- *
- * @see @ref device_id_method API Callback
- * @see @ref connection_type API Callback
- * @see @ref wan_type API Callback
- *
- */
-static connector_callback_status_t app_get_imei_number(connector_config_pointer_data_t * const config_imei)
-{
-    UNUSED_ARGUMENT(config_imei);
-    return connector_callback_continue;
-}
-
-
-/**
  * @brief  Start Network TCP
  *
  * This routine tells Cloud Connector whether it automatic or manual starts TCP.
@@ -652,78 +604,6 @@ static connector_callback_status_t app_start_network_udp(connector_config_connec
 static connector_callback_status_t app_start_network_sms(connector_config_connect_type_t * const config_connect)
 {
     UNUSED_ARGUMENT(config_connect);
-    return connector_callback_continue;
-}
-
-/**
- * @brief   Get the WAN type
- *
- * This routine specifies the WAN type as @ref connector_wan_type_imei, @ref connector_wan_type_esn, or
- * @ref connector_wan_type_meid.
- *
- * @param [out] config_wan  Pointer to @ref connector_config_wan_type_t where callback writes @ref connector_connection_type_t.
- *
- * @retval connector_callback_continue  The WAN type was successfully returned.
- * @retval connector_callback_abort     Could not get WAN type and abort Cloud Connector.
- *
- * @see @ref wan_type API Configuration Callback
- *
- * @note This routine is not needed if you define @b CONNECTOR_WAN_TYPE configuration in @ref connector_config.h.
- * See @ref connector_config_data_options
- */
-static connector_callback_status_t app_get_wan_type(connector_config_wan_type_t * const config_wan)
-{
-    UNUSED_ARGUMENT(config_wan);
-    return connector_callback_continue;
-}
-
-
-/**
- * @brief   Get ESN number
- *
- * This routine returns the device's ESN (Electronic Serial Number). This routine is called when @ref device_id_method callback returns
- * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
- * @ref connector_wan_type_esn.
- *
- * @param [out] config_esn  Pointer to @ref connector_config_pointer_data_t where callback returns pointer to a 4 bytes array with the 8 digit ESN encoded in one digit per nibble.
- *                          For example, "12345678" ESN must be returned as a pointer to a uint8_t array filled with {0x12, 0x34, 0x56, 0x78}.
-
- * @retval connector_callback_continue  The ESN number was successfully returned.
- * @retval connector_callback_abort     Could not get the ESN number and abort Cloud Connector.
- *
- * @see @ref device_id_method API Callback
- * @see @ref connection_type API Callback
- * @see @ref wan_type API Callback
- *
- */
-static connector_callback_status_t app_get_esn(connector_config_pointer_data_t * const config_esn)
-{
-    UNUSED_ARGUMENT(config_esn);
-    return connector_callback_continue;
-}
-
-/**
- * @brief   Get MEID number
- *
- * This routine returns MEID (Mobile Equipment Identifier) number. This routine is called when @ref device_id_method callback returns
- * @ref connector_device_id_method_auto for WAN connection type and @ref wan_type callback returns
- * @ref connector_wan_type_meid.
- *
- *
- * @param [out] config_meid  Pointer to @ref connector_config_pointer_data_t where callback returns pointer to a 7 bytes array with the 14 digit MEID encoded in one digit per nibble.
- *                           For example, "12345678901234" MEID must be returned as a pointer to a uint8_t array filled with {0x12, 0x34, 0x56, 0x78, 0x90, 0x12, 0x34}.
- *
- * @retval connector_callback_continue  The MEID number was successfully returned.
- * @retval connector_callback_abort     Could not get the MEID number and abort Cloud Connector.
- *
- * @see @ref device_id_method API Callback
- * @see @ref connection_type API Callback
- * @see @ref wan_type API Callback
- *
- */
-static connector_callback_status_t app_get_meid(connector_config_pointer_data_t * const config_meid)
-{
-    UNUSED_ARGUMENT(config_meid);
     return connector_callback_continue;
 }
 
@@ -942,13 +822,9 @@ static char const * app_config_class_to_string(connector_request_id_config_t con
         enum_to_case(connector_request_id_config_remote_configuration);
         enum_to_case(connector_request_id_config_max_transaction);
         enum_to_case(connector_request_id_config_device_id_method);
-        enum_to_case(connector_request_id_config_imei_number);
         enum_to_case(connector_request_id_config_network_tcp);
         enum_to_case(connector_request_id_config_network_udp);
         enum_to_case(connector_request_id_config_network_sms);
-        enum_to_case(connector_request_id_config_wan_type);
-        enum_to_case(connector_request_id_config_esn);
-        enum_to_case(connector_request_id_config_meid);
         enum_to_case(connector_request_id_config_identity_verification);
         enum_to_case(connector_request_id_config_password);
         enum_to_case(connector_request_id_config_sm_udp_max_sessions);
@@ -1439,14 +1315,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
         status = app_get_max_message_transactions(data);
         break;
 
-    case connector_request_id_config_device_id_method:
-        status = app_get_device_id_method(data);
-        break;
-
-     case connector_request_id_config_imei_number:
-         status = app_get_imei_number(data);
-         break;
-
      case connector_request_id_config_network_tcp:
          status = app_start_network_tcp(data);
          break;
@@ -1457,18 +1325,6 @@ connector_callback_status_t app_config_handler(connector_request_id_config_t con
 
      case connector_request_id_config_network_sms:
          status = app_start_network_sms(data);
-         break;
-
-     case connector_request_id_config_wan_type:
-         status = app_get_wan_type(data);
-         break;
-
-     case connector_request_id_config_esn:
-         status = app_get_esn(data);
-         break;
-
-     case connector_request_id_config_meid:
-         status = app_get_meid(data);
          break;
 
      case connector_request_id_config_identity_verification:

@@ -33,6 +33,8 @@
 /* #define CONNECTOR_NO_MALLOC */
 #define CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS 1
 
+#define APPLICATION_DEVICE_ID_SOURCE    DEVICE_ID_SOURCE_ESN
+
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
 #define CONNECTOR_CLOUD_URL                            "login.etherios.com"
