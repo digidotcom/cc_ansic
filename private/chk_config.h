@@ -76,3 +76,7 @@
 #if (defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS) && (CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS > 1) && (!defined CONNECTOR_SM_MULTIPART)
     #error "You must define CONNECTOR_SM_MULTIPART in order to set CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS bigger than 1"
 #endif
+
+#if (defined CONNECTOR_FILE_SYSTEM) && (CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > MSG_MAX_SEND_PACKET_SIZE - 46)
+#error "CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH exceeds the size defined for messaging facility"
+#endif

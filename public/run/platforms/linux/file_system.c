@@ -29,10 +29,6 @@
 #error "Please define CONNECTOR_FILE_SYSTEM in connector_config.h to run this sample"
 #endif
 
-#if CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH > 460
-#error The maximum supported CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH is 460
-#endif
-
 /* #define APP_PRINT_LAST_MODIFIED */
 
 /* 
