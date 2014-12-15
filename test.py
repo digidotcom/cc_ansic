@@ -323,7 +323,7 @@ def unique_device_type(testName = None):
 class TestRunner(object):
     log = None
 
-    def __init__(self, hostname, username, password, mac_address, imei, meid, esn, description, base_dir,
+    def __init__(self, hostname, username, password, mac_address, imei, meid, esn, description, base_dir, configuration="default",
         debug_on=False, cflags='', replace_list=[], update_config_header=False,
         tty=False, gcov=False, test_type=None, test_name=None,
         config_tool_jar='ConfigGenerator.jar', keystore=None, build_only=False):
@@ -347,6 +347,7 @@ class TestRunner(object):
         self.cflags               = cflags
         self.replace_list         = replace_list
         self.update_config_header = update_config_header
+        self.configuration        = configuration
 
         self.tty  = tty
         self.gcov = gcov
@@ -476,6 +477,7 @@ class TestRunner(object):
         log_extra['test']           = test
 
         device_location = None
+        test_script = None
         try:
             pid = None
             sandbox_dir = sandbox(self.base_dir)
@@ -597,7 +599,7 @@ class TestRunner(object):
 
             # Sleep 5 seconds to allow device to do it's initialization (push data for example)
             time.sleep(5)
-            test_script = None
+            #test_script = None
             try:
                 pid = commands.getoutput('pidof -s %s' % connector_path)
                 if pid == '':
@@ -630,7 +632,8 @@ class TestRunner(object):
                                          '--ic-hostname=%s'  % self.hostname,
                                          '--ic-deviceid=%s' % device_id,
                                          '--ic-devicetype=%s' % device_config['device_type'],
-                                         '--ic-vendorid=%s' % device_config['vendor_id']]
+                                         '--ic-vendorid=%s' % device_config['vendor_id'],
+                                         '--ic-configuration=%s'  % self.configuration]
 
                             test_to_run = os.path.join(test_dir, test_script)
                             nose.run(defaultTest=[test_to_run], argv=arguments)
@@ -992,7 +995,7 @@ def main():
         else:
             log.info("============ %s =============" % configuration)
             runner = TestRunner(args.hostname, args.username, args.password,
-                args.mac_address, args.imei, args.meid, args.esn, description, base_dir, debug_on, cflags,
+                args.mac_address, args.imei, args.meid, args.esn, description, base_dir, configuration=configuration, debug_on=debug_on, cflags=cflags,
                 replace_list=replace_list, tty=args.tty,
                 test_name=args.test_name, test_type=args.test_type,
                 config_tool_jar = config_tool_jar, keystore= keystore,

@@ -33,6 +33,7 @@ class ICPlugin(Plugin):
         parser.add_option('--ic-vendorid', action='store', type="string", dest="vendor_id", default="16777242", help="Vendor ID of device running iDigi Connector.")
         parser.add_option('--ic-devicetype', action='store', type="string", dest="device_type", default="ECC DVT", help="Device Type of device runnning iDigi Connector.")
         parser.add_option('--ic-ipaddr', action='store', type="string", dest="ipaddr", default="0.0.0.0", help="IP address of device under test.")
+        parser.add_option('--ic-configuration', action='store', type="string", dest="configuration", default="default", help="Cloud Connector configuration mode to run")
     def configure(self, options, conf):
         Plugin.configure(self, options, conf)
 
@@ -58,6 +59,7 @@ class ICPlugin(Plugin):
         ICPlugin.device_type   = options.device_type
         ICPlugin.vendor_id     = options.vendor_id
         ICPlugin.ipaddr        = options.ipaddr
+        ICPlugin.configuration = options.configuration
 
     def finalize(self, result):
         pass
@@ -72,3 +74,4 @@ class ICPlugin(Plugin):
         test.test.device_type   = ICPlugin.device_type
         test.test.vendor_id     = ICPlugin.vendor_id
         test.test.ipaddr        = ICPlugin.ipaddr
+        test.test.configuration = ICPlugin.configuration
