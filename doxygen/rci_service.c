@@ -50,7 +50,7 @@
  * @section rci_cancel Termination and Error Processing
  * The application-defined callback sets <b><i>error_id</i></b> field in the
  * @ref connector_remote_config_t "remote configuration response" structure
- * to cancel remote configuration request and Cloud Connector sends an error response to Device Cloud.
+ * to make Cloud Connector send an error response to Device Cloud.
  * If Cloud Connector encounters error, it calls application-defined @ref rci_session_cancel callback
  * to cancel remote configuration request.
  *
