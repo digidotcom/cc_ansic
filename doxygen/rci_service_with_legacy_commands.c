@@ -25,7 +25,7 @@
  *  -# @ref rci_session_cancel
  *
  * For legacy commands support, @ref rci_tool must be invoked using the '-rci_legacy_commands' option. Then Cloud Connector 
- * invokes additionally following application-defined callbacks:
+ * can invoke additionally following application-defined callbacks:
  *
  *  -# @ref rci_do_command
  *  -# @ref rci_reboot
@@ -68,7 +68,6 @@
  * @note The request from the Cloud may include several actions (commands) for a single session, then Cloud Connector calls step 2 to 4 repeatedly for each action (command).
  * @note See @ref rci_support under Configuration to enable or disable remote configuration.
  * @note See RCI tool for generating remote configuration source and header files.
- * @note If remote configuration file specifies IPv4 type (see @ref rci_tool), @ref connector_snprintf must be implemented. See @ref snprintf_routine.
  *
  * @section rci_cancel Termination and Error Processing
  * The application-defined callback sets <b><i>error_id</i></b> field in the
@@ -313,11 +312,6 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
- *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
- *         <dd><dl>
- *             <dt><i>target</i></dt>
- *             <dd>Not applicable</dd>
- *         </dl></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -433,7 +427,7 @@
  *                     Callback may write its own context which will be passed back to
  *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_set @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_set @htmlonly.</dd>
  *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt>
  *         <dd><dl>
@@ -587,7 +581,7 @@
  *                 subsequent callback.</dd>
  *
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_query @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_query @htmlonly.</dd>
  *
  *         <dt><i>attribute</i></dt>
  *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
@@ -603,11 +597,6 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
- *         </dl></dd>
- *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
- *         <dd><dl>
- *             <dt><i>target</i></dt>
- *             <dd>Not applicable</dd>
  *         </dl></dd>
  *         </dl></dd>
  *
@@ -810,11 +799,6 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
- *         </dl></dd>
- *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
- *         <dd><dl>
- *             <dt><i>target</i></dt>
- *             <dd>Not applicable</dd>
  *         </dl></dd>
  *         </dl></dd>
  *
@@ -1144,18 +1128,9 @@
  *                     Callback may write its own context which will be passed back to
  *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_do_command @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_do_command @htmlonly.</dd>
  *
  *         <dt><i>attribute</i></dt>
- *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
- *         <dd><dl>
- *             <dt><i>source</i></dt>
- *             <dd>Not applicable</dd>
- *         </dl></dd>
- *         <dd><dl>
- *             <dt><i>compare_to</i></dt>
- *             <dd>Not applicable</dd>
- *         </dl></dd>
  *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
  *         <dd><dl>
  *             <dt><i>target</i></dt>
@@ -1187,7 +1162,7 @@
  *                    This string cannot be altered until next callback call.
  *                    Note: This must be set to NULL for no hint string when error_id is set.</dd>
  *             <dt><i>element_value->string_value</i></dt>
- *            <dd> - Pointer to string where callback returns the do_command response payload</dd>
+ *            <dd> - Pointer to string (allocated by the user) where callback returns the do_command response payload</dd>
  *         </dl></dd>
  *     </dl>
  * </td></tr>
@@ -1323,7 +1298,7 @@
  *                     Callback may write its own context which will be passed back to
  *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_reboot @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_reboot @htmlonly.</dd>
  *
  *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt><dd>Not applicable</dd>
@@ -1364,12 +1339,16 @@
  * {
  *     connector_callback_status_t status = connector_callback_continue;
  * 
- *     APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
- * 
+ *    APP_DEBUG("app_process_reboot\n");
+ *
  *     if (do_not_want_to_reboot())
  *     {
  *         data->error_id = connector_global_error_reboot_fail;
  *         data->response.error_hint = "don't want to reboot";
+ *     }
+ *     else
+ *     {
+ *          APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
  *     }
  * 
  *     return status;
@@ -1400,7 +1379,7 @@
  *                     Callback may write its own context which will be passed back to
  *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_set_factory_def @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_set_factory_def @htmlonly.</dd>
  *
  *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt><dd>Not applicable</dd>
