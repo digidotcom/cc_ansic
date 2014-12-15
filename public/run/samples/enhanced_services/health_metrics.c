@@ -14,7 +14,7 @@
 #include "health_metrics_structs.h"
 #include "health_metrics_process.h"
 
-static char const dev_health_path[] = "file.txt";
+static char const dev_health_path[] = "DataPoint/.csv";
 static size_t const dev_health_path_strlen = sizeof dev_health_path - 1;
 
 size_t dp_process_string(char const * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)

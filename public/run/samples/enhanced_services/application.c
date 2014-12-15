@@ -20,9 +20,11 @@
 
 #include "health_metrics_api.h"
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
-extern connector_status_t app_send_put_request(connector_handle_t handle);
 extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
+
+extern health_metrics_config_t health_metrics_config;
+
+volatile connector_bool_t tcp_transport_started = connector_false;
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -120,10 +122,6 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     }
     return status;
 }
-
-extern health_metrics_config_t health_metrics_config;
-
-connector_bool_t tcp_transport_started = connector_false;
 
 int application_run(connector_handle_t handle)
 {
