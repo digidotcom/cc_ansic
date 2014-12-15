@@ -536,49 +536,52 @@ class Test_brci_string(object):
         # Verify that Device is connected
         self.ensure_connected()
 
-    #def test_increasing_string_size_device_info_description(self):
-        #''' Increase a string until the limit of the reserved buffer '''
-
-        ## Verify that Device is connected
-        #self.ensure_connected()
-
-        ## Generate all valid characters in a line
-        #listCharacters = self.getListValidCharactersString()
-
-        ## Initialize arguments
-        #groupName = "device_info"
-        #settingName = "desc"
-        #settingType = "setting"
-
-        ## String for the description
-        #newDescription = "%s" % listCharacters * 9 # 846 characters
-
-        ## Check string to maximum size 1400
-        #for index in range(0,555):
-
-            #log.info("\n\n")
-            #log.info("Set and Verify description with a string lenght of %s characters:\n'%s'\n\n" % (len(newDescription), newDescription) )
-
-            ## Set and verify setting with each line
-            #assert_equal(   True, # Expected value
-                            #self.verifySettingValue( groupName,       # Group name
-                                                    #settingName,      # Setting name
-                                                    #settingType,      # Setting type
-                                                    #newDescription,   # New value
-                                                    #cache = "false"   # Disable/Enable cache
-                                                    #), # Returned value
-                            #"Verification of field description for characters '%s' was unsuccessful." % newDescription)
-
-            ## Generate a new character
-            #charIndex = random.randint(0,len(listCharacters)-1)
-
-            ## Add a new character
-            #newDescription = "%s%s" % (newDescription,listCharacters[charIndex])
 
 
-        ## Check string bigger than maximum size fails (1401) and the value is not modified
-        ## reverse string to verify with a different string
-        #newDescription = newDescription[::-1]
+
+    def test_increasing_string_size_device_info_description(self):
+        ''' Increase a string until the limit of the reserved buffer '''
+
+        # Verify that Device is connected
+        self.ensure_connected()
+
+        # Generate all valid characters in a line
+        listCharacters = self.getListValidCharactersString()
+
+        # Initialize arguments
+        groupName = "device_info"
+        settingName = "desc"
+        settingType = "setting"
+
+        # String for the description
+        newDescription = "%s" % listCharacters * 14 # 1316 characters
+
+        # Check string to maximum size 1871
+        for index in range(0,555):
+
+            log.info("\n\n")
+            log.info("Set and Verify description with a string lenght of %s characters:\n'%s'\n\n" % (len(newDescription), newDescription) )
+
+            # Set and verify setting with each line
+            assert_equal(   True, # Expected value
+                            self.verifySettingValue( groupName,       # Group name
+                                                    settingName,      # Setting name
+                                                    settingType,      # Setting type
+                                                    newDescription,   # New value
+                                                    cache = "false"   # Disable/Enable cache
+                                                    ), # Returned value
+                            "Verification of field description for characters '%s' was unsuccessful." % newDescription)
+
+            # Generate a new character
+            charIndex = random.randint(0,len(listCharacters)-1)
+
+            # Add a new character
+            newDescription = "%s%s" % (newDescription,listCharacters[charIndex])
+
+
+        # Check string bigger than maximum size fails (1401) and the value is not modified
+        # reverse string to verify with a different string
+        newDescription = newDescription[::-1]
 
         #log.info("\n\n")
         #log.info("Set and Verify description with a string lenght of %s characters bigger than reserved buffer of 1400:\n'%s'\n\n" % (len(newDescription), newDescription) )
@@ -595,8 +598,9 @@ class Test_brci_string(object):
                                         #), # Returned value
                 #"Verification of field description for characters '%s' was unsuccessful." % newDescription)
 
-        ## Verify that Device is connected
-        #self.ensure_connected()
+        # Verify that Device is connected
+        self.ensure_connected()
+
 
 
     def test_read_only_debug_info_version(self):
@@ -628,25 +632,25 @@ class Test_brci_string(object):
 
 
 
-    #def test_xbigger_string_than_buffer_device_info_description(self):
-        #''' Verify if setting a string bigger than reserved buffer, not throws memory errors '''
+    def test_xbigger_string_than_buffer_device_info_description(self):
+        ''' Verify if setting a string bigger than reserved buffer, not throws memory errors '''
 
-        ## Verify that Device is connected
-        #self.ensure_connected()
+        # Verify that Device is connected
+        self.ensure_connected()
 
-        ## Generate all valid characters in a line
-        #listCharacters = self.getListValidCharactersString()
+        # Generate all valid characters in a line
+        listCharacters = self.getListValidCharactersString()
 
-        ## Initialize arguments
-        #groupName = "device_info"
-        #settingName = "desc"
-        #settingType = "setting"
+        # Initialize arguments
+        groupName = "device_info"
+        settingName = "desc"
+        settingType = "setting"
 
-        ## String for the description
-        #newDescription = "%s" % listCharacters * 20 # 1880 characters
+        # String for the description
+        newDescription = "%s" % listCharacters * 30 # 2820 characters
 
 
-        #log.info("Set and Verify description with a string lenght of %s characters bigger than reserved buffer:\n'%s'\n\n" % (len(newDescription), newDescription) )
+        log.info("Set and Verify description with a string lenght of %s characters bigger than reserved buffer:\n'%s'\n\n" % (len(newDescription), newDescription) )
 
         #assert_equal(   True, # Expected value
                 #self.verifySettingError(groupName,       # Group name
@@ -661,8 +665,20 @@ class Test_brci_string(object):
                 #"Verification of field description for characters '%s' was unsuccessful." % newDescription)
 
 
-        ## Verify that Device is connected
-        #self.ensure_connected()
+
+        # Set and verify setting with each line
+        assert_equal(   True, # Expected value
+                        self.verifySettingValue( groupName,       # Group name
+                                                settingName,      # Setting name
+                                                settingType,      # Setting type
+                                                newDescription,   # New value
+                                                cache = "false"   # Disable/Enable cache
+                                                ), # Returned value
+                        "Verification of field description for characters '%s' was unsuccessful." % newDescription)
+
+
+        # Verify that Device is connected
+        self.ensure_connected()
 
     # This test must execute the last. Keep the _x_ in the test name.
     def test_x_command_attributes(self):
