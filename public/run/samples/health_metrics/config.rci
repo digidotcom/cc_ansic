@@ -17,6 +17,7 @@ group state gps_stats "GPS"
     element latitude "Latitude" type string access read_only
     element longitude "Longitude" type string access read_only
     
+# Health Data Metrics configuration
 group setting simple_enhanced_services "Simple Health data reporting configuration"
     element report_rate "Global reporting interval (minutes)" type uint32
     element eth_metrics "Ethernet Metrics" type on_off

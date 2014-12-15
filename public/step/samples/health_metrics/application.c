@@ -20,9 +20,11 @@
 
 #include "health_metrics_api.h"
 
-extern connector_callback_status_t app_data_service_handler(connector_request_id_data_service_t const request, void * const data);
-extern connector_status_t app_send_put_request(connector_handle_t handle);
 extern connector_callback_status_t app_remote_config_handler(connector_request_id_remote_config_t const request_id, void * const data);
+
+extern health_metrics_config_t health_metrics_config;
+
+volatile connector_bool_t tcp_transport_started = connector_false;
 
 connector_bool_t app_connector_reconnect(connector_class_id_t const class_id, connector_close_status_t const status)
 {
@@ -121,34 +123,33 @@ connector_callback_status_t app_connector_callback(connector_class_id_t const cl
     return status;
 }
 
-extern health_metrics_config_t health_metrics_config;
-
-connector_bool_t tcp_transport_started = connector_false;
-
-int application_run(connector_handle_t handle)
+int application_step(connector_handle_t handle)
 {
     static health_metrics_data_t health_metrics_data;
-    int return_status = 0;
+    static connector_bool_t data_init = connector_false;
+    int const return_status = 0;
 
-    health_metrics_config.eth.metrics = connector_true;
-    health_metrics_config.eth.sample_rate = 1;
-    health_metrics_config.mobile.metrics = connector_true;
-    health_metrics_config.mobile.sample_rate = 1;
-    health_metrics_config.sys.metrics = connector_true;
-    health_metrics_config.sys.sample_rate = 1;
-
-    health_metrics_config.report_rate = 1;
-
-    while(!tcp_transport_started)
+    if (!data_init)
     {
-        sleep(1);
+        health_metrics_config.eth.metrics = connector_true;
+        health_metrics_config.eth.sample_rate = 1;
+        health_metrics_config.mobile.metrics = connector_true;
+        health_metrics_config.mobile.sample_rate = 1;
+        health_metrics_config.sys.metrics = connector_true;
+        health_metrics_config.sys.sample_rate = 1;
+        health_metrics_config.report_rate = 1;
+        
+        data_init = connector_true;
     }
 
-    for (;;)
+    if (!tcp_transport_started)
     {
-        health_metrics_report_step(&health_metrics_config, &health_metrics_data, handle);
+        goto done;
     }
 
+    health_metrics_report_step(&health_metrics_config, &health_metrics_data, handle);
+   
+done:
     return return_status;
 }
 

@@ -13,9 +13,6 @@
 #ifndef REMOTE_CONFIG_CB_H_
 #define REMOTE_CONFIG_CB_H_
 
-#include "remote_config.h"
-#include "connector_debug.h"
-
 typedef connector_callback_status_t(* remote_group_cb_t) (connector_remote_config_t * const remote_config);
 typedef void (* remote_group_cancel_cb_t) (connector_remote_config_cancel_t * const remote_config);
 
