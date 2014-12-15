@@ -782,6 +782,7 @@ INPUT                  = ./mainpage.c \
                          ./device_request.c \
                          ./rci_sample.c \
                          ./rci_advance_sample.c \
+                         ./health_metrics_sample.c \
                          ./rci_tool.c \
                          ./connector_config.h \
                          ../public/run/platforms/template \
