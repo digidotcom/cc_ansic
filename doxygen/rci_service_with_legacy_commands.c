@@ -1,9 +1,9 @@
-#if (!defined DOCUMENT_LEGACY_COMMANDS)
-/*! @page rci_service Remote Configuration
+#if (defined DOCUMENT_LEGACY_COMMANDS)
+/*! @page rci_service Remote Configuration with legacy commands support
  *
  * @htmlinclude nav.html
  *
- * @section rci_overview Remote Configuration Overview
+ * @section rci_overview Remote Configuration with legacy commands support Overview
  *
  * Remote configuration is an optional service for applications to
  * exchange device configuration data and information between the device and Device Cloud using
@@ -23,6 +23,13 @@
  *  -# @ref rci_action_end
  *  -# @ref rci_session_end
  *  -# @ref rci_session_cancel
+ *
+ * For legacy commands support, @ref rci_tool must be invoked using the '-rci_legacy_commands' option. Then Cloud Connector 
+ * can invoke additionally following application-defined callbacks:
+ *
+ *  -# @ref rci_do_command
+ *  -# @ref rci_reboot
+ *  -# @ref rci_set_factory_def
  *
  *
  * The sequence calling an application-defined callback for remote configuration is:
@@ -46,6 +53,21 @@
  * @note See @ref rci_support under Configuration to enable or disable remote configuration.
  * @note See RCI tool for generating remote configuration source and header files.
  * @note If remote configuration file specifies IPv4 type (see @ref rci_tool), @ref connector_snprintf must be implemented. See @ref snprintf_routine.
+ *
+ * The sequence calling an application-defined callback for a remote configuration legacy command is:
+ *  -# Cloud Connector calls application-defined @ref rci_session_start callback to start remote configuration request session.
+ *  -# Cloud Connector calls application-defined @ref rci_action_start callback to start the command.
+ *  -# Cloud Connector calls the legacy command application-defined callback:
+ *      -# @ref rci_do_command 
+ *      -# @ref rci_reboot 
+ *      -# @ref rci_set_factory_def 
+ *  -# Cloud Connector calls application-defined @ref rci_action_end callback to end the command.
+ *  -# Cloud Connector calls application-defined @ref rci_session_end callback to end remote configuration request session.
+ *
+ *
+ * @note The request from the Cloud may include several actions (commands) for a single session, then Cloud Connector calls step 2 to 4 repeatedly for each action (command).
+ * @note See @ref rci_support under Configuration to enable or disable remote configuration.
+ * @note See RCI tool for generating remote configuration source and header files.
  *
  * @section rci_cancel Termination and Error Processing
  * The application-defined callback sets <b><i>error_id</i></b> field in the
@@ -166,7 +188,11 @@
  *                subsequent callback.</dd>
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
- *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
+ *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li>
+ *                  <li>@endhtmlonly @ref connector_remote_action_do_command @htmlonly to process a do_command command.</li>
+ *                  <li>@endhtmlonly @ref connector_remote_action_reboot @htmlonly to process a reboot command.</li>
+ *                  <li>@endhtmlonly @ref connector_remote_action_set_factory_def @htmlonly to process a set_factory_default command.</li>
+ *         </ul></dd>
  *
  *         <dt><i>attribute</i></dt>
  *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
@@ -182,6 +208,12 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>target</i></dt>
+ *             <dd>String containing the do_command target attribute </dd>
+ *         </dl></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -279,6 +311,7 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *         </dl></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -394,7 +427,7 @@
  *                     Callback may write its own context which will be passed back to
  *                     subsequent callback.</dd>
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_set @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_set @htmlonly.</dd>
  *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
  *         <dt><i>group</i></dt>
  *         <dd><dl>
@@ -548,7 +581,7 @@
  *                 subsequent callback.</dd>
  *
  *         <dt><i>action</i></dt>
- *         <dd> - the @endhtmlonly @ref connector_remote_action_query @htmlonly </dd>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_query @htmlonly.</dd>
  *
  *         <dt><i>attribute</i></dt>
  *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
@@ -564,6 +597,7 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *         </dl></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -766,6 +800,7 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
  *         </dl></dd>
+ *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
  *         <dd><dl>
@@ -860,8 +895,11 @@
  *                subsequent callback.</dd>
  *         <dt><i>action</i></dt>
  *         <dd> <ul><li>@endhtmlonly @ref connector_remote_action_set @htmlonly to set device configurations or </li>
- *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li></ul></dd>
- *
+ *                  <li>@endhtmlonly @ref connector_remote_action_query @htmlonly to query device configurations.</li>
+ *                  <li>@endhtmlonly @ref connector_remote_action_do_command @htmlonly to process a do_command command.</li>
+ *                  <li>@endhtmlonly @ref connector_remote_action_reboot @htmlonly to process a reboot command.</li>
+ *                  <li>@endhtmlonly @ref connector_remote_action_set_factory_def @htmlonly to process a set_factory_default command.</li>
+ *         </ul></dd>
  *         <dt><i>attribute</i></dt>
  *         <dd>- Following attributes only applicable when action is@endhtmlonly @ref connector_remote_action_query and group.type is @ref connector_remote_group_setting.@htmlonly</dd>
  *         <dd><dl>
@@ -876,6 +914,12 @@
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_current @htmlonly: The current running settings.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_stored @htmlonly: The configuration stored persistently. This is the configuration that will be used by the device if it is rebooted.</li>
  *                      <li>@endhtmlonly @ref rci_query_setting_attribute_compare_to_defaults @htmlonly: The default configuration of the device. This is the configuration that will be used if 'set_factory_default' is issued.</li></ul></dd>
+ *         </dl></dd>
+ *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>target</i></dt>
+ *             <dd>String containing the do_command target attribute </dd>
+ *         </dl></dd>
  *         </dl></dd>
  *
  *         <dt><i>group</i></dt>
@@ -1060,6 +1104,333 @@
  *
  * @endcode
  *
+ * @section rci_do_command   Process a do_command command
+ *
+ * Callback is called to process a do_command command.
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_do_command @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <th>data</th>
+ *   <td> Pointer to @endhtmlonly connector_remote_config_t @htmlonly structure:
+ *     <dl><dt><i>user_context</i></dt>
+ *         <dd> - Pointer to callback's context returned from previous callback.
+ *                     Callback may write its own context which will be passed back to
+ *                     subsequent callback.</dd>
+ *         <dt><i>action</i></dt>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_do_command @htmlonly.</dd>
+ *
+ *         <dt><i>attribute</i></dt>
+ *         <dd>- Following attribute only applicable when action is@endhtmlonly @ref connector_remote_action_do_command.@htmlonly</dd>
+ *         <dd><dl>
+ *             <dt><i>target</i></dt>
+ *             <dd>String containing the do_command target attribute </dd>
+ *         </dl></dd>
+ *         </dl></dd>
+ *
+ *         <dt><i>group</i></dt><dd>Not applicable</dd>
+ *
+ *         <dt><i>element</i></dt>
+ *         <dd><dl>
+ *             <dt><i>id</i></dt>
+ *             <dd> - Not applicable.</dd>
+ *             <dt><i>type</i></dt>
+ *             <dd> - Not applicable</dd>
+ *             <dt><i>value->string_value</i></dt>
+ *             <dd> - Contains a NULL-terminated string with the do_command request payload.</dd>
+ *         </dl></dd>
+ *
+ *         <dt><i>error_id</i></dt>
+ *         <dd> - Callback writes error enumeration value generated by @endhtmlonly @ref rci_tool @htmlonly if
+ *                     error is encountered. Cloud Connector sends error description if it's provided for the given error_id.</dd>
+ *         <dt><i>response</i></dt>
+ *         <dd><dl>
+ *             <dt><i>compare_matches</i></dt><dd>Not applicable</dd>
+ *             <dt><i>error_hint</i></dt>
+ *             <dd> - Callback returns a pointer to a constant null-terminated hint string
+ *                    which will be sent to Device Cloud if error is encountered.
+ *                    This string cannot be altered until next callback call.
+ *                    Note: This must be set to NULL for no hint string when error_id is set.</dd>
+ *             <dt><i>element_value->string_value</i></dt>
+ *            <dd> - Pointer to string (allocated by the user) where callback returns the do_command response payload</dd>
+ *         </dl></dd>
+ *     </dl>
+ * </td></tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Callback processed do_command command successfully or error has occurred</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * connector_callback_status_t app_process_do_command(connector_remote_config_t * const data)
+ * {
+ *     connector_callback_status_t status = connector_callback_continue;
+ *     remote_group_session_t * const session_ptr = (remote_group_session_t *)data->user_context;
+ *     char const * target = data->attribute.target;
+ *     char const * const request_payload = data->element.value->string_value;
+ *     char const * * response_payload = &data->response.element_value->string_value;
+ * 
+ *     if (target != NULL)
+ *     {
+ *         APP_DEBUG("app_process_do_command for target '%s':\n", target);
+ *     }
+ *     else
+ *     {
+ *         APP_DEBUG("app_process_do_command with no target\n");
+ *         *response_payload = "no target";
+ *         goto done;
+ *     }
+ * 
+ *     if (request_payload != NULL)
+ *     {
+ *         APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
+ *         APP_DEBUG("request_payload='%s'\n", request_payload);
+ *     }
+ *     else
+ *     {
+ *         APP_DEBUG("no payload!\n");
+ *     }
+ * 
+ *     if (!strcmp(target, "echo"))
+ *     {
+ *         char * my_answer = malloc(strlen(request_payload) + 1);
+ *         strcpy(my_answer, request_payload);
+ * 
+ *         // Update session so buffer is freed in the session_end callback
+ *         session_ptr->buf_ptr = my_answer;
+ *         *response_payload = my_answer;
+ *     }
+ *     else if (!strcmp(target, "ping"))
+ *     {
+ *         *response_payload = "pong";
+ *     }
+ *     else if (!strcmp(target, "no answer"))
+ *     {
+ *     }
+ *     else if (!strcmp(target, "error"))
+ *     {
+ *         data->error_id = connector_global_error_do_command_fail;
+ *         data->response.error_hint = "do command intentional failure";
+ *     }
+ *     else if (!strcmp(target, "busy"))
+ *     {
+ *         static int i = 0;
+ * 
+ *         if (i++ < 2) 
+ *         {
+ *             status = connector_callback_busy;
+ *         }
+ *         else
+ *         {
+ *             *response_payload = "I returned busy twice";
+ *         }
+ *     }
+ *     else if (!strcmp(target, "malloc"))
+ *     {
+ *         #define ALLOCATED_MEM_SIZE 5000
+ * 
+ *         char * allocated_mem = malloc(ALLOCATED_MEM_SIZE + 1);
+ * 
+ *         if (allocated_mem != NULL)
+ *         {
+ *             memset(allocated_mem, '-', ALLOCATED_MEM_SIZE);
+ * 
+ *             allocated_mem[ALLOCATED_MEM_SIZE] = '\0';
+ * 
+ *             // Update session so buffer is freed in the session_end callback
+ *             session_ptr->buf_ptr = allocated_mem;
+ * 
+ *             *response_payload = allocated_mem;
+ *         }
+ *     }
+ *     else
+ *     {
+ *         *response_payload = "not supported command";
+ *     }
+ * 
+ * done:
+ *     return status;
+ * }
+ * @endcode
+ *
+ * @section rci_reboot   Process a reboot command
+ *
+ * Callback is called to process a reboot command.
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_reboot @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <th>data</th>
+ *   <td> Pointer to @endhtmlonly connector_remote_config_t @htmlonly structure:
+ *     <dl><dt><i>user_context</i></dt>
+ *         <dd> - Pointer to callback's context returned from previous callback.
+ *                     Callback may write its own context which will be passed back to
+ *                     subsequent callback.</dd>
+ *         <dt><i>action</i></dt>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_reboot @htmlonly.</dd>
+ *
+ *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
+ *         <dt><i>group</i></dt><dd>Not applicable</dd>
+ *         <dt><i>element</i></dt><dd>Not applicable</dd>
+ *         <dt><i>error_id</i></dt>
+ *         <dd> - Callback writes error enumeration value generated by @endhtmlonly @ref rci_tool @htmlonly if
+ *                     error is encountered. Cloud Connector sends error description if it's provided for the given error_id.</dd>
+ *         <dt><i>response</i></dt>
+ *         <dd><dl>
+ *             <dt><i>compare_matches</i></dt><dd>Not applicable</dd>
+ *             <dt><i>error_hint</i></dt>
+ *             <dd> - Callback returns a pointer to a constant null-terminated hint string
+ *                    which will be sent to Device Cloud if error is encountered.
+ *                    This string cannot be altered until next callback call.
+ *                    Note: This must be set to NULL for no hint string when error_id is set.</dd>
+ *             <dt><i>element_value->string_value</i></dt><dd>Not applicable</dd>
+ *         </dl></dd>
+ *     </dl>
+ * </td></tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Callback processed reboot command successfully or error has occurred</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * connector_callback_status_t app_process_reboot(connector_remote_config_t * const data)
+ * {
+ *     connector_callback_status_t status = connector_callback_continue;
+ * 
+ *    APP_DEBUG("app_process_reboot\n");
+ *
+ *     if (do_not_want_to_reboot())
+ *     {
+ *         data->error_id = connector_global_error_reboot_fail;
+ *         data->response.error_hint = "don't want to reboot";
+ *     }
+ *     else
+ *     {
+ *          APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
+ *     }
+ * 
+ *     return status;
+ * }
+ * @endcode
+ *
+ * @section rci_set_factory_def   Process a set_factory_default command
+ *
+ * Callback is called to process a set_factory_default command.
+ *
+ * @htmlonly
+ * <table class="apitable">
+ * <tr> <th colspan="2" class="title">Arguments</th> </tr>
+ * <tr><th class="subtitle">Name</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>class_id</th>
+ * <td>@endhtmlonly @ref connector_class_id_remote_config @htmlonly</td>
+ * </tr>
+ * <tr>
+ * <th>request_id</th>
+ * <td>@endhtmlonly @ref connector_request_id_remote_config_set_factory_def @htmlonly</td>
+ * </tr>
+ * <tr>
+ *   <th>data</th>
+ *   <td> Pointer to @endhtmlonly connector_remote_config_t @htmlonly structure:
+ *     <dl><dt><i>user_context</i></dt>
+ *         <dd> - Pointer to callback's context returned from previous callback.
+ *                     Callback may write its own context which will be passed back to
+ *                     subsequent callback.</dd>
+ *         <dt><i>action</i></dt>
+ *         <dd> - @endhtmlonly @ref connector_remote_action_set_factory_def @htmlonly.</dd>
+ *
+ *         <dt><i>attribute</i></dt><dd>Not applicable</dd>
+ *         <dt><i>group</i></dt><dd>Not applicable</dd>
+ *         <dt><i>element</i></dt><dd>Not applicable</dd>
+ *         <dt><i>error_id</i></dt>
+ *         <dd> - Callback writes error enumeration value generated by @endhtmlonly @ref rci_tool @htmlonly if
+ *                     error is encountered. Cloud Connector sends error description if it's provided for the given error_id.</dd>
+ *         <dt><i>response</i></dt>
+ *         <dd><dl>
+ *             <dt><i>compare_matches</i></dt><dd>Not applicable</dd>
+ *             <dt><i>error_hint</i></dt>
+ *             <dd> - Callback returns a pointer to a constant null-terminated hint string
+ *                    which will be sent to Device Cloud if error is encountered.
+ *                    This string cannot be altered until next callback call.
+ *                    Note: This must be set to NULL for no hint string when error_id is set.</dd>
+ *             <dt><i>element_value->string_value</i></dt><dd>Not applicable</dd>
+ *         </dl></dd>
+ *     </dl>
+ * </td></tr>
+ * <tr> <th colspan="2" class="title">Return Values</th> </tr>
+ * <tr><th class="subtitle">Values</th> <th class="subtitle">Description</th></tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_continue @htmlonly</th>
+ * <td>Callback processed set_factory_default command successfully or error has occurred</td>
+ * </tr>
+ * <tr>
+ * <th>@endhtmlonly @ref connector_callback_abort @htmlonly</th>
+ * <td>Callback aborted Cloud Connector</td>
+ * </tr>
+ * </table>
+ * @endhtmlonly
+ *
+ * Example:
+ *
+ * @code
+ *
+ * connector_callback_status_t app_process_set_factory_default(connector_remote_config_t * const data)
+ * {
+ *     connector_callback_status_t status = connector_callback_continue;
+ * 
+ *     APP_DEBUG("app_process_set_factory_default\n");
+ * 
+ *     if (my_set_factory_default_went_wrong())
+ *     {
+ *         data->error_id = connector_global_error_set_factory_default_fail;
+ *         data->response.error_hint = "can't do that";
+ *     }
+ * 
+ *     return status;
+ * }
+ * @endcode
+ *
  * @htmlinclude terminate.html
  */
-#endif

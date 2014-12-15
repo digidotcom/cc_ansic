@@ -373,12 +373,16 @@ connector_callback_status_t app_process_reboot(connector_remote_config_t * const
 {
     connector_callback_status_t status = connector_callback_continue;
 
-    APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
+    APP_DEBUG("app_process_reboot\n");
 
     if (do_not_want_to_reboot())
     {
         remote_config->error_id = connector_global_error_reboot_fail;
         remote_config->response.error_hint = "don't want to reboot";
+    }
+    else
+    {
+        APP_DEBUG("app_process_reboot: The system will be rebooted!\n");
     }
 
     return status;
