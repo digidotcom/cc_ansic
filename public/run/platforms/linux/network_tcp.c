@@ -301,7 +301,7 @@ static connector_callback_status_t app_network_tcp_open(connector_network_open_t
 
         if (elapsed_time >= APP_CONNECT_TIMEOUT)
         {
-            APP_DEBUG("app_network_tcp_open: failed to connect withing 30 seconds\n");
+            APP_DEBUG("app_network_tcp_open: failed to connect within 30 seconds\n");
             status = connector_callback_error;
         }
     }
