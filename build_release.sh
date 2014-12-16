@@ -1,4 +1,4 @@
-c#!/bin/bash
+#!/bin/bash
 
 # This release generates all the part numbers required for releasing and
 # optionally moves it to "pending" folder in the \\eng server.
