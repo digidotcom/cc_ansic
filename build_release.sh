@@ -99,6 +99,11 @@ cd ..
 
 # Move the HTML files into the docs directory
 mkdir -p docs/html
+echo ">> Removing Health Metrics documentation"
+rm doxygen/html/health_metrics_sample.html
+rm doxygen/html/cloud_health_metrics_config.png
+rm doxygen/html/cloud_health_metrics.png
+echo ">> Copying documentation"
 cp -rf doxygen/html/* docs/html
 cp doxygen/user_guide.html docs/
 cp doxygen/images/cloud-connector-logo-H.png docs/html
@@ -203,6 +208,9 @@ for sample in $SAMPLES
 do
   echo ">> Building $sample"
   cd $sample
+  if [ "$sample" == "remote_config" ] || [ "$sample" == "simple_remote_config" ]; then
+    java -jar "${TOOLS_DIR}/ConfigGenerator.jar" username:password "Linux Application" 1.0.0.0 -noUpload -vendor=0x123456 config.rci
+  fi
   make clean; make all
   rc=$?
   if [[ ${rc} != 0 ]]; then
