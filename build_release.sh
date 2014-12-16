@@ -112,6 +112,8 @@ cp -rf docs "${BASE_DIR}"
 echo ">> Removing some samples"
 rm -rf "${BASE_DIR}"/public/run/samples/bRCI_commands
 rm -rf "${BASE_DIR}"/public/run/samples/rci_reworked
+rm -rf "${BASE_DIR}"/public/run/samples/health_metrics
+rm -rf "${BASE_DIR}"/public/step/samples/health_metrics
 echo ">> Removing unused directories"
 rm     "${BASE_DIR}/public/run/platforms/linux/network_sms_proxy.c_aux"
 rm -rf "${BASE_DIR}/public/run/platforms/mqx"
