@@ -243,10 +243,10 @@ done:
         break;
     case rci_status_complete:
         rci_internal_data->service_data->output.bytes = rci_buffer_used(&rci_internal_data->buffer.output);
-        /* no break; */
+        rci_internal_data->service_data = NULL;
+        break;
     case rci_status_internal_error:
     case rci_status_error:
-        rci_internal_data->service_data = NULL;
         break;
     }
 
