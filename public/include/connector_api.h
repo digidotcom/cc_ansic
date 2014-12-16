@@ -378,8 +378,6 @@ typedef char const * connector_geojson_t;
 #include "connector_api_data_point.h"
 #include "connector_api_file_system.h"
 #include "connector_api_short_message.h"
-#include "connector_api_device_health.h"
-
 #include "connector_api_os.h"
 
 
