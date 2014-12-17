@@ -346,6 +346,7 @@ typedef struct rci
     struct {
         rcistr_t content;
         rci_output_state_t state;
+        connector_bool_t input_skip;
         connector_bool_t group_skip;
         connector_bool_t element_skip;
     } output;
