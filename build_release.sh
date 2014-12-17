@@ -81,7 +81,10 @@ function build_config_tool ()
 function copy_python_scripts ()
 {
     mkdir -p "${TOOLS_DIR}/python"
-    cp "${WORKSPACE}/tools/python/"*.py "${TOOLS_DIR}/python"
+    cp "${WORKSPACE}/tools/python/"EnableUDP.py "${TOOLS_DIR}/python"
+    cp "${WORKSPACE}/tools/python/"EnableUDP_Battery.py "${TOOLS_DIR}/python"
+    cp "${WORKSPACE}/tools/python/"ProvisionSMS.py "${TOOLS_DIR}/python"
+    cp "${WORKSPACE}/tools/python/"update_firmware.py "${TOOLS_DIR}/python"
 }
 
 ./dvt/scripts/makegen.sh
