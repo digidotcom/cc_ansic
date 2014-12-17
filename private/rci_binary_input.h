@@ -190,7 +190,14 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
         ASSERT(value <= size_max);
 #endif
         *length = value;
-#if (!defined CONNECTOR_NO_MALLOC)
+#if (defined CONNECTOR_NO_MALLOC)
+        if (new_size > sizeof rci->input.storage)
+        {
+            connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
+            rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+            goto done;
+        }
+#else
         if (new_size > rci->input.storage_len)
         {
             size_t const old_size = rci->input.storage_len;
@@ -210,40 +217,22 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 #endif
         if (bytes == (ber_bytes + *length))
         {
-#if (defined CONNECTOR_NO_MALLOC)
-            if (new_size > sizeof rci->input.storage)
+            char * data = (char *)(rci->shared.content.data + ber_bytes);
+
+            if (!destination_in_storage(rci))
             {
-                connector_debug_line("Maximum content size exceeded while getting a string - wanted %u, had %u", *length, CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH);
-
-                if (rci->output.group_skip == connector_false)
-                {
-                    rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
-                    rci->output.input_skip = connector_true;
-                }
+                memcpy(rci->input.storage, data, *length);
+                data = (char *)rci->input.storage;
             }
-            else
-#endif
-            {
-                char * data = (char *)(rci->shared.content.data + ber_bytes);
 
-                if (!destination_in_storage(rci))
-                {
-                    memcpy(rci->input.storage, data, *length);
-                    data = (char *)rci->input.storage;
-                }
-
-                data[*length] = nul;
-                *string =  data;
-            }
+            data[*length] = nul;
+            *string =  data;
 
             reset_input_content(rci);
             got_string = connector_true;
         }
     }
-
-#if (!defined CONNECTOR_NO_MALLOC)
 done:
-#endif
     return got_string;
 }
 
