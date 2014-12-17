@@ -105,6 +105,7 @@ STATIC void rci_generate_error(rci_t * const rci)
             case rci_error_state_callback:
             {
                 connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
+                connector_remote_config_t const * const response = &rci->shared.callback_data;
 
                 switch (remote_config_request)
                 {
@@ -127,9 +128,16 @@ STATIC void rci_generate_error(rci_t * const rci)
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
                         }
-                        rci->output.group_skip = connector_true;
-                        set_rci_error_state(rci, rci_error_state_id);
-                        state_call(rci, rci_parser_state_traverse);
+                        if (response->error_id < connector_rci_error_COUNT)
+                        {
+                            trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+                        }
+                        else
+                        {
+                            rci->output.group_skip = connector_true;
+                            set_rci_error_state(rci, rci_error_state_id);
+                            state_call(rci, rci_parser_state_traverse);
+                        }
                         break;
 
                     case connector_request_id_remote_config_group_process:
@@ -138,8 +146,19 @@ STATIC void rci_generate_error(rci_t * const rci)
                     case connector_request_id_remote_config_reboot:
                     case connector_request_id_remote_config_set_factory_def:
 #endif
-                        set_rci_error_state(rci, rci_error_state_id);
-                        state_call(rci, rci_parser_state_traverse);
+                        if (response->error_id < connector_rci_error_COUNT)
+                        {
+                            {
+                                connector_bool_t const overflow = rci_output_terminator(rci);
+                                if (overflow) goto done;
+                            }
+                            trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+                        }
+                        else
+                        {
+                            set_rci_error_state(rci, rci_error_state_id);
+                            state_call(rci, rci_parser_state_traverse);
+                        }
                         break;
 
                     case connector_request_id_remote_config_session_cancel:
