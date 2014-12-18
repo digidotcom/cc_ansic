@@ -311,6 +311,19 @@ typedef void * connector_network_handle_t;
 */
 
 /**
+* @defgroup CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED Network handle's value when not initialized or invalid
+* @{
+*/
+/**
+ * Value to which network handle is set when invalid or not initialized.
+ * The @ref connector_network_handle_t type must be defined accordingly.
+ */
+#define CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED    NULL
+/**
+* @}
+*/
+
+/**
 * @defgroup connector_filesystem_file_handle_t Filesystem's file Handle
 * @{
 */
