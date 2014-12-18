@@ -176,7 +176,7 @@
  *
  * @see @ref rci_service
  * @see @ref app_get_remote_configuration_support()
- * @see @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH
+ * @see @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH
  * @see @ref zlib
  * @see @ref CONNECTOR_COMPRESSION
  */
@@ -186,12 +186,12 @@
  * When @ref CONNECTOR_NO_MALLOC is defined, this defines the maximum content length in bytes of an element's value for the @ref rci_service.
  *
  * @code
- * #define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH 256
+ * #define CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH 256
  * @endcode
  *
  * @see @ref CONNECTOR_RCI_SERVICE
  */
-#define CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH    256
+#define CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH    256
 
 /**
 * If defined, Cloud Connector includes the @ref cli_support.
@@ -245,7 +245,7 @@
  * CONNECTOR_NO_MALLOC_MAX_SEND_SESSIONS should be defined and 
  * it must be less or equal to 32. The default is 1. 
  *
- * @note If using @ref rci_support, then @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH must be defined.
+ * @note If using @ref rci_support, then @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH must be defined.
  *
  * To enable no dynamic RAM feature, uncomment this line in connector_config.h:
  *
@@ -817,7 +817,7 @@
  *
  * @see @ref rci_support
  * @see @ref app_get_remote_configuration_support()
- * @see @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH
+ * @see @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH
  */
 #define CONNECTOR_REMOTE_CONFIGURATION_SUPPORT
 

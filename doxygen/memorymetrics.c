@@ -21,7 +21,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref rci_sample "simple_remote_config" @htmlonly </td>
- * <td>@endhtmlonly @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
+ * <td>@endhtmlonly @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
  * <td>38305</td>
  * <td>11683</td>
  * <td>0</td>
@@ -29,7 +29,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref rci_sample "simple_remote_config" @htmlonly </td>
- * <td>@endhtmlonly @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
+ * <td>@endhtmlonly @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FILE_SYSTEM, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled, plus @ref CONNECTOR_FILE_SYSTEM_MAX_PATH_LENGTH and @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
  * <td>32298</td>
  * <td>1236</td>
  * <td>0</td>
@@ -37,7 +37,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref rci_sample "simple_remote_config" @htmlonly </td>
- * <td>@endhtmlonly @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
+ * <td>@endhtmlonly @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
  * <td>32311</td>
  * <td>11274</td>
  * <td>0</td>
@@ -45,7 +45,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref rci_sample "simple_remote_config" @htmlonly </td>
- * <td>@endhtmlonly @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
+ * <td>@endhtmlonly @ref CONNECTOR_RCI_SERVICE, @ref CONNECTOR_FIRMWARE_SERVICE, @ref CONNECTOR_DATA_SERVICE enabled and @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
  * <td>26513</td>
  * <td>1156</td>
  * <td>0</td>
@@ -53,7 +53,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref rci_sample "simple_remote_config" @htmlonly </td>
- * <td>@endhtmlonly @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
+ * <td>@endhtmlonly @ref CONNECTOR_DEBUG, @ref CONNECTOR_RCI_SERVICE enabled and @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
  * <td>26946</td>
  * <td>9450</td>
  * <td>0</td>
@@ -61,7 +61,7 @@
  * </tr>
  * <tr>
  * <td>@endhtmlonly @ref rci_sample "simple_remote_config" @htmlonly </td>
- * <td>@endhtmlonly @ref CONNECTOR_RCI_SERVICE enabled and @ref CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
+ * <td>@endhtmlonly @ref CONNECTOR_RCI_SERVICE enabled and @ref CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH @htmlonly set to 256.</td>
  * <td>22038</td>
  * <td>1020</td>
  * <td>0</td>
