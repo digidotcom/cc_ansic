@@ -395,7 +395,6 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 break;
             case connector_request_id_remote_config_group_start:
             case connector_request_id_remote_config_session_cancel:
-            case connector_request_id_remote_config_configurations:
 #if (defined RCI_LEGACY_COMMANDS)
             case connector_request_id_remote_config_do_command:
             case connector_request_id_remote_config_reboot:
