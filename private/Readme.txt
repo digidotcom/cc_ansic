@@ -27,8 +27,9 @@ ENHANCEMENTS
         New connector_request_id_os_realloc callback (used for RCI in malloc 
         version). [IC4C-347]
 
-        Deprecated CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH macro (now it's only 
-        meaningful for no-malloc version). [IC4C-345]
+        Renamed CONNECTOR_RCI_MAXIMUM_CONTENT_LENGTH macro to 
+        CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH (now it's only meaningful 
+        for no-malloc version). [IC4C-345]
 
         connector_network_open_t structure has old url split into device.url 
         and device.phone for SMS. [IC4C-346]
