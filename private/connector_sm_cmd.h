@@ -665,7 +665,7 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
         connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;    /* Assume it's SMS transport */
         ASSERT(sm_ptr->network.class_id == connector_class_id_network_sms);
 
-        if (sm_ptr->network.handle != NULL && SmIsSmsConfigNotInit(session->flags))
+        if (sm_ptr->network.handle != CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED && SmIsSmsConfigNotInit(session->flags))
         {
             connector_callback_status_t callback_status;
             connector_request_id_t request_id;
@@ -690,7 +690,7 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
                     unsigned long int uptime;
 
                     SmSetSmsConfigInit(session->flags);
-                    sm_ptr->network.handle = NULL;
+                    sm_ptr->network.handle = CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED;
 
                     if (get_system_time(connector_ptr, &uptime) == connector_working)
                     {

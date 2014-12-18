@@ -268,7 +268,7 @@ STATIC connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
     sm_ptr->session.active_client_sessions = 0;
     sm_ptr->session.active_cloud_sessions = 0;
 
-    sm_ptr->network.handle = NULL;
+    sm_ptr->network.handle = CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED;
     sm_ptr->close.status = connector_close_status_device_error;
     sm_ptr->close.callback_needed = connector_true;
     sm_ptr->close.stop_condition = connector_stop_immediately;
@@ -788,7 +788,7 @@ STATIC connector_status_t sm_close_transport(connector_data_t * const connector_
     if (result == connector_abort)
         sm_ptr->close.status = connector_close_status_abort;
 
-    if (sm_ptr->network.handle != NULL)
+    if (sm_ptr->network.handle != CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED)
     {
         connector_callback_status_t callback_status;
         connector_request_id_t request_id;
@@ -816,7 +816,7 @@ STATIC connector_status_t sm_close_transport(connector_data_t * const connector_
                 break;
         }
 
-        sm_ptr->network.handle = NULL;
+        sm_ptr->network.handle = CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED;
     }
 
     if (sm_ptr->network.send_packet.data != NULL)
@@ -920,7 +920,7 @@ STATIC connector_status_t sm_state_machine(connector_data_t * const connector_pt
 
             case connector_transport_receive:
                 sm_ptr->transport.state = connector_transport_send;
-                if (sm_ptr->network.handle != NULL)    /* Give a chance to dynamic reconfiguration of the network when provisioning message arrives */
+                if (sm_ptr->network.handle != CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED)    /* Give a chance to dynamic reconfiguration of the network when provisioning message arrives */
                     result = sm_receive_data(connector_ptr, sm_ptr); /* NOTE: sm_receive_data has precedence over sm_process_recv_path just to keep the receive buffer ready */
                 if ((result != connector_idle) && (result != connector_pending))
                     goto done;

@@ -143,7 +143,7 @@ connector_status_t connector_edp_step(connector_data_t * const connector_ptr)
         case connector_transport_idle:
             if (connector_ptr->edp_data.stop.auto_connect)
             {
-                connector_ptr->edp_data.network_handle = NULL;
+                connector_ptr->edp_data.network_handle = CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED;
                 edp_set_active_state(connector_ptr, connector_transport_open);
             }
 

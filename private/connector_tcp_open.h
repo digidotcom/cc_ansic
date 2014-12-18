@@ -39,7 +39,7 @@ STATIC connector_status_t connect_to_cloud(connector_data_t * const connector_pt
         break;
 
     case connector_callback_error:
-        connector_ptr->edp_data.network_handle = NULL;
+        connector_ptr->edp_data.network_handle = CONNECTOR_NETWORK_HANDLE_NOT_INITIALIZED;
         result = connector_open_error;
         break;
     case connector_callback_busy:
