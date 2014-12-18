@@ -13,7 +13,7 @@
 STATIC void rci_output_error_id(rci_t * const rci)
 {
 
-    connector_remote_config_t const * const response = &rci->shared.callback_data;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t value;
 
     if (rci->error.command_error)
@@ -21,8 +21,8 @@ STATIC void rci_output_error_id(rci_t * const rci)
         #define BINARY_RCI_COMMAND_LOWER_ERROR_ID_MASK  UINT32_C(0x7FF)
         #define BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK   (~UINT32_C(0x1FFF))
         /* Command Error ID is [:13][10:0] */
-        value = (response->error_id & BINARY_RCI_COMMAND_LOWER_ERROR_ID_MASK);
-        value |= ((response->error_id << UINT32_C(2)) & BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK);
+        value = (remote_config->error_id & BINARY_RCI_COMMAND_LOWER_ERROR_ID_MASK);
+        value |= ((remote_config->error_id << UINT32_C(2)) & BINARY_RCI_COMMAND_UPPER_ERROR_ID_MASK);
     }
     else
     {
@@ -31,9 +31,9 @@ STATIC void rci_output_error_id(rci_t * const rci)
         #define BINARY_RCI_MIDDLE_ERROR_ID_MASK UINT32_C(0x780)
         #define BINARY_RCI_UPPER_ERROR_ID_MASK  ()~UINT32_C(0x1FFF))
 
-        value = response->error_id & BINARY_RCI_LOWER_ERROR_ID_MASK;
-        value |= (response->error_id << 1) & BINARY_RCI_MIDDLE_ERROR_ID_MASK;
-        value |= (response->error_id << 3) & BINARY_RCI_MIDDLE_ERROR_ID_MASK;
+        value = remote_config->error_id & BINARY_RCI_LOWER_ERROR_ID_MASK;
+        value |= (remote_config->error_id << 1) & BINARY_RCI_MIDDLE_ERROR_ID_MASK;
+        value |= (remote_config->error_id << 3) & BINARY_RCI_MIDDLE_ERROR_ID_MASK;
 
     }
 
@@ -65,9 +65,9 @@ STATIC void rci_output_error_description(rci_t * const rci)
 
 STATIC void rci_output_error_hint(rci_t * const rci)
 {
-    connector_remote_config_t const * const remote_config_ = &rci->shared.callback_data;
-    size_t const description_length = (remote_config_->response.error_hint == NULL) ? 0 : strlen(remote_config_->response.error_hint);
-    connector_bool_t const overflow = rci_output_string(rci, remote_config_->response.error_hint,  description_length);
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+    size_t const description_length = (remote_config->response.error_hint == NULL) ? 0 : strlen(remote_config->response.error_hint);
+    connector_bool_t const overflow = rci_output_string(rci, remote_config->response.error_hint,  description_length);
 
     if (!overflow)
     {
@@ -105,6 +105,7 @@ STATIC void rci_generate_error(rci_t * const rci)
             case rci_error_state_callback:
             {
                 connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
+                connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
                 switch (remote_config_request)
                 {
@@ -127,9 +128,16 @@ STATIC void rci_generate_error(rci_t * const rci)
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
                         }
-                        rci->output.group_skip = connector_true;
-                        set_rci_error_state(rci, rci_error_state_id);
-                        state_call(rci, rci_parser_state_traverse);
+                        if (remote_config->error_id < connector_rci_error_COUNT)
+                        {
+                            trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+                        }
+                        else
+                        {
+                            rci->output.group_skip = connector_true;
+                            set_rci_error_state(rci, rci_error_state_id);
+                            state_call(rci, rci_parser_state_traverse);
+                        }
                         break;
 
                     case connector_request_id_remote_config_group_process:
@@ -138,8 +146,19 @@ STATIC void rci_generate_error(rci_t * const rci)
                     case connector_request_id_remote_config_reboot:
                     case connector_request_id_remote_config_set_factory_def:
 #endif
-                        set_rci_error_state(rci, rci_error_state_id);
-                        state_call(rci, rci_parser_state_traverse);
+                        if (remote_config->error_id < connector_rci_error_COUNT)
+                        {
+                            {
+                                connector_bool_t const overflow = rci_output_terminator(rci);
+                                if (overflow) goto done;
+                            }
+                            trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+                        }
+                        else
+                        {
+                            set_rci_error_state(rci, rci_error_state_id);
+                            state_call(rci, rci_parser_state_traverse);
+                        }
                         break;
 
                     case connector_request_id_remote_config_session_cancel:
