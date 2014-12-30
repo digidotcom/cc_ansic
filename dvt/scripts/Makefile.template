@@ -34,7 +34,7 @@ CFLAGS +=-std=c99
 # Include POSIX and GNU features.
 CFLAGS += -D_POSIX_C_SOURCE=200112L -D_GNU_SOURCE
 # Include Public Header Files.
-CFLAGS += -I. -I$$(PUBLIC_HEADER_DIR)/custom -I$$(PUBLIC_HEADER_DIR)
+CFLAGS += -iquote. -iquote$$(PUBLIC_HEADER_DIR)/custom -iquote$$(PUBLIC_HEADER_DIR)
 #Include Gammu libraries for SMS support.
 ${GAMMU_INCLUDES}
 
