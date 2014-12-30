@@ -2046,13 +2046,7 @@ STATIC connector_status_t msg_init_facility(connector_data_t * const connector_p
         #endif
 
         msg_ptr->capabilities[msg_capability_client].max_transactions = config_max_transaction.count;
-
-        {
-            uint32_t const recv_window = 16384;
-
-            ASSERT(recv_window > MSG_MAX_RECV_PACKET_SIZE);
-            msg_ptr->capabilities[msg_capability_client].window_size = recv_window;
-        }
+        msg_ptr->capabilities[msg_capability_client].window_size = MSG_RECV_WINDOW_SIZE;
     }
 
     msg_ptr->service_cb[service_id] = callback;

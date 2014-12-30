@@ -479,15 +479,6 @@
 #define CONNECTOR_SUPPORTS_64_BIT_INTEGERS
 
 /**
- * Sets the outbound packets' maximum size in TCP transport (it has no effect on SM/UDP or SM/SMS).
- * If it is not defined the default value of 512 is used. This value is used for buffers declaration
- * so it might help to save RAM. If you do not know which value to use, leave it undefined.
- *
- */
-#define MSG_MAX_SEND_PACKET_SIZE        512
-
-
-/**
  * Sets the outbound packets' maximum size in UDP transport (it has no effect on SM/SMS or EDP/TCP).
  * This change only has effect if no multipacket messaging is enabled (@ref CONNECTOR_SM_MULTIPART).
  * If it is not defined the default value of 1472 is used. This value is used for buffers declaration
@@ -901,6 +892,31 @@
  * @see @ref app_get_device_cloud_service_id()
  */
 #define CONNECTOR_CLOUD_SERVICE_ID                          "" /* empty: No shared-code used */
+
+/**
+ * This macro is for memory and TCP transport optimizations only. When defined, this value is used internally to allocate incoming buffers for EDP processing. If it is not
+ * defined, the default value of 1460 is used.
+ * @note This value is used for buffers declaration so it has direct impact on RAM usage. If you do not know which value to use, leave it undefined.
+ * @see @ref MSG_RECV_WINDOW_SIZE
+ */
+#define MSG_MAX_RECV_PACKET_SIZE         1460
+
+/**
+ * This macro is for memory and TCP transport optimizations only. When defined, this value is used internally to allocate outgoing buffers for EDP processing. If it is not
+ * defined, the default value of 1460 is used. 
+ * @note This value is used for buffers declaration so it has direct impact on RAM usage. If you do not know which value to use, leave it undefined.
+ */
+#define MSG_MAX_SEND_PACKET_SIZE         1460
+
+/**
+ * This macro is for TCP transport optimization only. When defined, this value is used for the incoming window size in EDP's Messaging facility (used by Data Service, Data Points,
+ * RCI and File System). This flow control mechanism is used regardless the TCP layer in order to be able to handle more than one concurrent request. This value tells Device Cloud
+ * how many bytes Cloud Connector can receive without sending back an ACK message.
+ * If not set the default value of 4 times MSG_MAX_RECV_PACKET_SIZE is used.
+ * 
+ * @see @ref MSG_MAX_RECV_PACKET_SIZE
+ */
+#define MSG_RECV_WINDOW_SIZE         (4 * MSG_MAX_RECV_PACKET_SIZE)
 
 /**
 * @}
