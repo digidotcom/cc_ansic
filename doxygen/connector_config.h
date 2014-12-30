@@ -899,14 +899,14 @@
  * @note This value is used for buffers declaration so it has direct impact on RAM usage. If you do not know which value to use, leave it undefined.
  * @see @ref MSG_RECV_WINDOW_SIZE
  */
-#define MSG_MAX_RECV_PACKET_SIZE         1600
+#define MSG_MAX_RECV_PACKET_SIZE         1460
 
 /**
  * This macro is for memory and TCP transport optimizations only. When defined, this value is used internally to allocate outgoing buffers for EDP processing. If it is not
  * defined, the default value of 1460 is used. 
  * @note This value is used for buffers declaration so it has direct impact on RAM usage. If you do not know which value to use, leave it undefined.
  */
-#define MSG_MAX_SEND_PACKET_SIZE         512
+#define MSG_MAX_SEND_PACKET_SIZE         1460
 
 /**
  * This macro is for TCP transport optimization only. When defined, this value is used for the incoming window size in EDP's Messaging facility (used by Data Service, Data Points,
@@ -916,7 +916,7 @@
  * 
  * @see @ref MSG_MAX_RECV_PACKET_SIZE
  */
-#define MSG_RECV_WINDOW_SIZE         (16 * 1024)
+#define MSG_RECV_WINDOW_SIZE         (4 * MSG_MAX_RECV_PACKET_SIZE)
 
 /**
 * @}
