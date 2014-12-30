@@ -12,7 +12,7 @@
  * @subsection data_type_format_etc Updates to connector_types.h
  *
  * When 64-bit support is included with your C89-compatible compiler, you will need to review (and possibly dit) @ref connector_types.h
- * "public/include/connector_types.h" to update the standard ANSI data types, minimums, maximum,
+ * "public/include/custom/connector_types.h" to update the standard ANSI data types, minimums, maximum,
  * and standard format specifiers.
  *
  * -# Data types:

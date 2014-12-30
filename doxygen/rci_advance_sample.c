@@ -322,6 +322,7 @@
  *
  * @li public/run/samples/remote_config
  * @li public/include
+ * @li public/include/custom
  * @li run/platforms/@a my_platform
  *
  * @section running Running

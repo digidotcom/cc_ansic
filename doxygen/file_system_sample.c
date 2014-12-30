@@ -382,6 +382,7 @@
  * The following include paths are required:
  *
  * @li public/include
+ * @li public/include/custom
  * @li run/platforms/linux (substitute with your platform)
  *
  * @htmlinclude terminate.html

@@ -33,8 +33,17 @@
  * <tr>
  *   <td>public/include</td>
  *   <td> @endhtmlonly  @ref api_overview "Cloud Connector Public API" @htmlonly <br></br>
- *   Contains the twelve public headers:
- *      <ol><li>@endhtmlonly  @ref connector_api.h @htmlonly</li>
+ *   Contains the public header:
+ *      <ol>
+ *          <li>@endhtmlonly  @ref connector_api.h @htmlonly</li>
+ *      </ol>
+ * </tr>
+ * <tr>
+ *   <td>public/include/api</td>
+ *   <td>
+ *      Contains the individual API headers that  @endhtmlonly @ref connector_api.h @htmlonly includes. This path is *not* required
+ *      to be included specifically in the compiler path and these files can *not* be included directly. Use only @endhtmlonly @ref connector_api.h @htmlonly.
+ *      <ol>
  *          <li>@endhtmlonly  @ref connector_api_config.h @htmlonly</li>
  *          <li>@endhtmlonly  @ref connector_api_data_point.h @htmlonly</li>
  *          <li>@endhtmlonly  @ref connector_api_data_service.h @htmlonly</li>
@@ -44,20 +53,28 @@
  *          <li>@endhtmlonly  @ref connector_api_os.h @htmlonly</li>
  *          <li>@endhtmlonly  @ref connector_api_remote.h @htmlonly</li>
  *          <li>@endhtmlonly  @ref connector_api_short_message.h @htmlonly</li>
- *          <li>@endhtmlonly  @ref connector_debug.h @htmlonly</li>
- *          <li>@endhtmlonly  @ref connector_types.h @htmlonly</li></ol>
-
+ *      </ol>
+ *   </td>
+ * </tr>
+ * <tr>
+ *   <td>public/include/custom</td>
+ *   <td>
+ *     Contains the files that might be modified depending on the platform's architecture.
+ *     <ol>
+ *       <li>@endhtmlonly  @ref connector_debug.h @htmlonly</li>
+ *       <li>@endhtmlonly  @ref connector_types.h @htmlonly</li>
+ *     </ol>
+ *     <p>
+ *     All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
+ *     might require updating to match your platform's characteristics (i.e., data size and supported compiler data types).
  *
- *   <p>The @endhtmlonly @ref api_overview "Cloud Connector public API" @htmlonly is located in @endhtmlonly @ref connector_api.h @htmlonly and
- *   required for application development.  All the machine device types are located in @endhtmlonly @ref connector_types.h @htmlonly and
- *   might require updating to match your platform's characteristics (i.e., data size and supported compiler data types).
- *
- *   Public header @endhtmlonly @ref connector_debug.h @htmlonly contains the prototype for @endhtmlonly @ref connector_debug_vprintf() @htmlonly which is a required
- *   porting implementation function when @endhtmlonly @ref CONNECTOR_DEBUG @htmlonly is defined.  Also contains appropriate definitions for the macro ASSERT(),
- *   which is used within the private folder.</p>
- *
- *   <br></br>
- *   Note the header file @endhtmlonly @ref connector_config.h @htmlonly has now been moved into the samples directories. </td>
+ *     Public header @endhtmlonly @ref connector_debug.h @htmlonly contains the prototype for @endhtmlonly @ref connector_debug_vprintf() @htmlonly which is a required
+ *     porting implementation function when @endhtmlonly @ref CONNECTOR_DEBUG @htmlonly is defined.  Also contains appropriate definitions for the macro ASSERT(),
+ *     which is used within the private folder.
+ *     </p>
+ *   </td>
+ * </tr>
+ * 
  * </tr>
  * <tr>
  *   <td>public/run</td>

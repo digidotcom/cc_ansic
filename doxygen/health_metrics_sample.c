@@ -553,6 +553,7 @@
  *
  * @li public/run/samples/health_metrics
  * @li public/include
+ * @li public/include/custom
  * @li run/platforms/@a my_platform
  *
  * @section running Running
