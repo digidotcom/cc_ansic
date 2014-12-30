@@ -121,7 +121,7 @@
  *
  * @li public/include
  * @li public/include/custom
- * @li run/platforms/linux (substitute with your platform)
+ * @li run/platforms/@a my_platform
  *
  * @section python_script2 Using a Web Services client to send a device request
  *

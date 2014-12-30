@@ -88,7 +88,7 @@
  *
  * @li public/include
  * @li public/include/custom
- * @li run/platforms/linux (substitute with your platform)
+ * @li run/platforms/@a my_platform
  *
  *
  * <b> How to get CA certificate: </b>

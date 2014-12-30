@@ -117,7 +117,7 @@
  *
  * @li public/include
  * @li public/include/custom
- * @li run/platforms/linux (substitute with your platform)
+ * @li run/platforms/@a my_platform
  *
  * @section web_gui Viewing results from Device Cloud
  *
