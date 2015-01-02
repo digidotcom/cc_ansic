@@ -450,7 +450,7 @@ STATIC connector_callback_status_t dp_handle_data_callback(connector_data_servic
             buffer_info.bytes_available = data_ptr->bytes_available;
             buffer_info.bytes_written = 0;
             data_ptr->bytes_used = dp_generate_csv(&dp_info->data.csv.process_data, &buffer_info);
-            data_ptr->more_data = connector_bool(dp_info->data.csv.process_data.current_data_point == NULL);
+            data_ptr->more_data = connector_bool(dp_info->data.csv.process_data.current_data_point != NULL);
             break;
         }
     }
