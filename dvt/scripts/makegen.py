@@ -56,7 +56,7 @@ vpath $(PLATFORM_DIR)/%.c""",
 
     # Include Platform Directory header files.
     'PLATFORM_HEADER_INCLUDE' : """# Include Platform Header Files.
-CFLAGS += -I$(PLATFORM_DIR)""",
+CFLAGS += -iquote$(PLATFORM_DIR)""",
 
     # Application sorce files to use
     'APP_SRCS'              : '',

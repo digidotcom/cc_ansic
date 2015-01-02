@@ -72,7 +72,7 @@
  *
  * @subsection data_type_format_etc Updates to connector_types.h
  *
- * You will have to review (and edit) @ref connector_types.h "public/include/connector_types.h"
+ * You will have to review (and edit) @ref connector_types.h "public/include/custom/connector_types.h"
  * to update the standard ANSI data types, minimums, maximum, and standard format specifiers.
  *
  * -# Data types:
@@ -104,7 +104,7 @@
  * routine to see a description, then modify to operate with your platform.  Cloud Connector
  * calls this routine to display debug information when @ref CONNECTOR_DEBUG is defined connector_config.h.
  *
- * The file public/include/connector_debug.h implements the macros listed below, which
+ * The file public/include/custom/connector_debug.h implements the macros listed below, which
  * are also used to debug your port.
  *
  *  @li @ref ASSERT
@@ -186,6 +186,7 @@
  * The following is a list of include paths to add to your system:
  *
  * @li public/include
+ * @li public/include/custom
  *
  * @subsection build_sample Build the sample
  *
@@ -487,6 +488,7 @@
  * system:
  *
  * @li public/include
+ * @li public/include/custom
  * @li run/platforms/@a my_platform
  *
  * @section step7 Build the connect_to_device_cloud sample

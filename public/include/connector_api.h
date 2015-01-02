@@ -83,7 +83,7 @@ typedef enum {
 * @}
 */
 
-#include "connector_api_network.h"
+#include "api/connector_api_network.h"
 
  /**
  * @defgroup connector_port_numbers Device Cloud Port
@@ -372,13 +372,13 @@ typedef char const * connector_geojson_t;
 #include "connector_api_remote.h"
 #endif
 
-#include "connector_api_config.h"
-#include "connector_api_firmware.h"
-#include "connector_api_data_service.h"
-#include "connector_api_data_point.h"
-#include "connector_api_file_system.h"
-#include "connector_api_short_message.h"
-#include "connector_api_os.h"
+#include "api/connector_api_config.h"
+#include "api/connector_api_firmware.h"
+#include "api/connector_api_data_service.h"
+#include "api/connector_api_data_point.h"
+#include "api/connector_api_file_system.h"
+#include "api/connector_api_short_message.h"
+#include "api/connector_api_os.h"
 
 
 /**
