@@ -10,92 +10,9 @@
  * =======================================================================
  */
 
-/* Functions string_needs_quotes() and dp_process_string() are used by Enhanced Services support
- * compile them even if CONNECTOR_DATA_POINTS is not defined
- */
-STATIC connector_bool_t string_needs_quotes(char const * const string)
-{
-    connector_bool_t need_quotes = connector_false;
-    size_t index;
-
-    for (index = 0; !need_quotes && string[index] != '\0'; index++)
-    {
-        switch(string[index])
-        {
-            case ' ':
-            case ',':
-            case '\"':
-            case '\t':
-            case '\n':
-            case '\r':
-            case '\\':
-                need_quotes = connector_true;
-                break;
-            default:
-                break;
-        }
-    }
-
-    return need_quotes;
-}
-
-STATIC size_t dp_process_string(char const * const string, char * const buffer, size_t const bytes_available, size_t * bytes_used_ptr, connector_bool_t need_quotes, connector_bool_t first_chunk)
-{
-    size_t bytes_processed = 0;
-    size_t i;
-    size_t extra_chars = 0;
-    size_t const max_strlen = bytes_available - 1;
-
-    ASSERT(string != NULL);
-
-    if (need_quotes && first_chunk)
-    {
-        if (bytes_processed < max_strlen)
-        {
-            buffer[bytes_processed] = '\"';
-        }
-        bytes_processed++;
-        extra_chars++;
-    }
-
-    for (i = 0; string[i] != '\0'; i++)
-    {
-        if (string[i] == '\"' || string[i] == '\\')
-        {
-            if (bytes_processed < max_strlen)
-            {
-                buffer[bytes_processed] = '\\';
-            }
-            bytes_processed++;
-            extra_chars++;
-        }
-
-        if (bytes_processed < max_strlen)
-        {
-            buffer[bytes_processed] = string[i];
-        }
-        bytes_processed++;
-    }
-
-    if (need_quotes)
-    {
-        if (bytes_processed < max_strlen)
-        {
-            buffer[bytes_processed] = '\"';
-        }
-        bytes_processed++;
-        extra_chars++;
-    }
-
-    if (bytes_used_ptr != NULL)
-    {
-        *bytes_used_ptr = bytes_processed - extra_chars;
-    }
-
-    return bytes_processed;
-}
-
 #if (defined CONNECTOR_DATA_POINTS)
+
+#include "connector_data_point_csv_generator.h"
 
 typedef struct
 {
@@ -118,30 +35,9 @@ typedef struct
         struct
         {
             connector_request_data_point_t const * dp_request;
-            connector_data_stream_t const * current_ds;
-            connector_data_point_t const * current_dp;
-            size_t bytes_sent;
-            size_t bytes_to_send;
-
-            /*************************************************************************
-            ** WARNING: Please don't change the order of the state unless default  **
-            **          CSV format described in the Cloud documentation changes.   **
-            *************************************************************************/
-            enum
-            {
-                dp_state_data,
-                dp_state_time,
-                dp_state_quality,
-                dp_state_description,
-                dp_state_location,
-                dp_state_type,
-                dp_state_unit,
-                dp_state_forward_to,
-                dp_state_stream_id
-            } state;
-
-            connector_bool_t first_point;
+            csv_process_data_t process_data;
         } csv;
+
 
         struct
         {
@@ -419,29 +315,41 @@ STATIC connector_status_t dp_process_csv(connector_data_t * const connector_ptr,
     connector_status_t result = connector_idle;
     data_point_info_t * const dp_info = dp_create_dp_info(connector_ptr, &result);
 
-    if (dp_info == NULL) goto done;
+    if (dp_info == NULL)
+    {
+        goto done;
+    }
 
     dp_info->type = dp_content_type_csv;
     dp_info->data.csv.dp_request = dp_ptr;
-    dp_info->data.csv.current_ds = dp_ptr->stream;
-    dp_info->data.csv.current_dp = dp_ptr->stream->point;
-    dp_info->data.csv.bytes_sent = 0;
-    dp_info->data.csv.bytes_to_send = 0;
-    dp_info->data.csv.state = dp_state_data;
-    dp_info->data.csv.first_point = connector_true;
+    dp_info->data.csv.process_data.current_csv_field = csv_data;
+    dp_info->data.csv.process_data.current_data_stream = dp_info->data.csv.dp_request->stream;
+    dp_info->data.csv.process_data.current_data_point = dp_info->data.csv.process_data.current_data_stream->point;
+    dp_info->data.csv.process_data.data.init = connector_false;
 
     result = dp_fill_file_path(dp_info, NULL, ".csv");
-    if (result != connector_working) goto error;
+    if (result != connector_working)
+    {
+        goto error;
+    }
+
     result = dp_send_message(connector_ptr, dp_info, dp_ptr->transport, dp_ptr->response_required, dp_ptr->request_id, dp_ptr->timeout_in_seconds);
-    if (result == connector_working) goto done;
+    if (result == connector_working)
+    {
+        goto done;
+    }
 
 error:
     if (result != connector_pending)
-        result = dp_inform_status(connector_ptr, connector_request_id_data_point_status, dp_ptr->transport,
-                                  dp_ptr->user_context, connector_session_error_format);
+    {
+        result = dp_inform_status(connector_ptr, connector_request_id_data_point_status, dp_ptr->transport, dp_ptr->user_context, connector_session_error_format);
+    }
+
 
     if (free_data_buffer(connector_ptr, named_buffer_id(data_point_block), dp_info) != connector_working)
+    {
         result = connector_abort;
+    }
 
 done:
     return result;
@@ -509,373 +417,6 @@ done:
     return result;
 }
 
-STATIC size_t dp_process_data(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
-    connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-    size_t bytes_processed = 0;
-
-    if (dp_ptr->data.type == connector_data_type_text)
-    {
-        bytes_processed = connector_snprintf(buffer, bytes_available, "%s", dp_ptr->data.element.text);
-        goto done;
-    }
-
-    ASSERT_GOTO(connector_data_point_type_geojson >= ds_ptr->type, done);
-
-    switch (ds_ptr->type)
-    {
-        case connector_data_point_type_integer:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId32, dp_ptr->data.element.native.int_value);
-            break;
-
-#if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
-        case connector_data_point_type_long:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRId64, dp_ptr->data.element.native.long_value);
-            break;
-#endif
-
-        case connector_data_point_type_string:
-        case connector_data_point_type_json:
-        case connector_data_point_type_geojson:
-        {
-            size_t bytes_copied = 0;
-            connector_bool_t const need_quotes = string_needs_quotes(dp_ptr->data.element.native.string_value);
-            connector_bool_t const first_chunk = connector_bool(dp_info->data.csv.bytes_sent == 0);
-            char * const start_of_string = dp_ptr->data.element.native.string_value;
-            unsigned int const bytes_sent = dp_info->data.csv.bytes_sent;
-            char * const string_to_send = start_of_string + bytes_sent;
-
-            if (first_chunk)
-            {
-                dp_info->data.csv.bytes_to_send = strlen(start_of_string);
-            }
-
-            bytes_processed = dp_process_string(string_to_send, buffer, bytes_available, &bytes_copied, need_quotes, first_chunk);
-
-            dp_info->data.csv.bytes_to_send -= bytes_copied;
-            dp_info->data.csv.bytes_sent = dp_info->data.csv.bytes_to_send > 0 ? dp_info->data.csv.bytes_sent + bytes_copied : 0;
-            break;
-        }
-
-#if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
-        case connector_data_point_type_float:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%f", dp_ptr->data.element.native.float_value);
-            break;
-
-        case connector_data_point_type_double:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%lf", dp_ptr->data.element.native.double_value);
-            break;
-#endif
-        default:
-            ASSERT_GOTO(connector_false, done);
-            break;
-    }
-
-done:
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_time(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-    size_t bytes_processed = 0;
-
-    switch (dp_ptr->time.source)
-    {
-        case connector_time_cloud:
-            break;
-
-        case connector_time_local_epoch_fractional:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%u%03u",
-                                                 dp_ptr->time.value.since_epoch_fractional.seconds,
-                                                 dp_ptr->time.value.since_epoch_fractional.milliseconds);
-            break;
-
-        #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
-        case connector_time_local_epoch_whole:
-        {
-            ASSERT(dp_ptr->time.value.since_epoch_whole.milliseconds <= INT64_MAX);
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%" PRIu64, dp_ptr->time.value.since_epoch_whole.milliseconds);
-            break;
-        }
-        #endif
-
-        case connector_time_local_iso8601:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "%s", dp_ptr->time.value.iso8601_string);
-            break;
-    }
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_quality(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-    size_t bytes_processed = 0;
-
-    if (dp_ptr->quality.type != connector_quality_type_ignore)
-        bytes_processed = connector_snprintf(buffer, bytes_available, "%d", dp_ptr->quality.value);
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_description(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-    size_t bytes_processed = 0;
-
-    if (dp_ptr->description != 0)
-    {
-        connector_bool_t const needs_quotes = string_needs_quotes(dp_ptr->description);
-        connector_bool_t const first_chunk = connector_true;
-
-        bytes_processed = dp_process_string(dp_ptr->description, buffer, bytes_available, NULL, needs_quotes, first_chunk);
-    }
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_location(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_point_t const * dp_ptr = dp_info->data.csv.current_dp;
-    size_t bytes_processed = 0;
-
-    switch (dp_ptr->location.type)
-    {
-        case connector_location_type_ignore:
-            break;
-
-        case connector_location_type_text:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "\"%s,%s,%s\"",
-                                                dp_ptr->location.value.text.latitude,
-                                                dp_ptr->location.value.text.longitude,
-                                                dp_ptr->location.value.text.elevation);
-            break;
-
-        #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
-        case connector_location_type_native:
-            bytes_processed = connector_snprintf(buffer, bytes_available, "\"%f,%f,%f\"",
-                                                dp_ptr->location.value.native.latitude,
-                                                dp_ptr->location.value.native.longitude,
-                                                dp_ptr->location.value.native.elevation);
-            break;
-        #endif
-    }
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_type(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    char const * const type_list[] = {"INTEGER", "LONG", "FLOAT", "DOUBLE", "STRING", "BINARY", "JSON", "GEOJSON"};
-    connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
-    size_t bytes_processed = 0;
-
-    ASSERT_GOTO(connector_data_point_type_geojson >= ds_ptr->type, error);
-
-    if (dp_info->data.csv.first_point == connector_false)
-        return 0;
-
-    bytes_processed = connector_snprintf(buffer, bytes_available, "%s", type_list[ds_ptr->type]);
-
-error:
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_unit(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
-    size_t bytes_processed = 0;
-
-    if (dp_info->data.csv.first_point == connector_false)
-        return 0;
-
-    if (ds_ptr->unit != NULL)
-    {
-        connector_bool_t const needs_quotes = connector_false;
-        connector_bool_t const first_chunk = connector_true;
-
-        bytes_processed = dp_process_string(ds_ptr->unit, buffer, bytes_available, NULL, needs_quotes, first_chunk);
-    }
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_forward_to(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
-    size_t bytes_processed = 0;
-
-    if (dp_info->data.csv.first_point == connector_false)
-        return 0;
-
-    if (ds_ptr->forward_to != NULL)
-    {
-        connector_bool_t const needs_quotes = connector_false;
-        connector_bool_t const first_chunk = connector_true;
-
-        bytes_processed = dp_process_string(ds_ptr->forward_to, buffer, bytes_available, NULL, needs_quotes, first_chunk);
-    }
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_process_stream_id(data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available)
-{
-    size_t bytes_processed = 0;
-    connector_data_stream_t const * ds_ptr = dp_info->data.csv.current_ds;
-
-    if (ds_ptr->stream_id != NULL)
-    {
-        connector_bool_t const needs_quotes = connector_false;
-        connector_bool_t const first_chunk = connector_true;
-
-        bytes_processed = dp_process_string(ds_ptr->stream_id, buffer, bytes_available, NULL, needs_quotes, first_chunk);
-    }
-
-    return bytes_processed;
-}
-
-STATIC size_t dp_update_state(data_point_info_t * const dp_info, char * const buffer)
-{
-    if ((dp_info->type == dp_content_type_csv) && (dp_info->data.csv.state == dp_state_stream_id))
-    {
-        *buffer = '\n';
-        dp_info->data.csv.current_dp = dp_info->data.csv.current_dp->next;
-        dp_info->data.csv.first_point = connector_false;
-        if (dp_info->data.csv.current_dp == NULL)
-        {
-            dp_info->data.csv.current_ds = dp_info->data.csv.current_ds->next;
-            if (dp_info->data.csv.current_ds != NULL)
-            {
-                dp_info->data.csv.current_dp = dp_info->data.csv.current_ds->point;
-                dp_info->data.csv.first_point = connector_true;
-            }
-        }
-        dp_info->data.csv.state = dp_state_data;
-    }
-    else
-    {
-        *buffer = ',';
-        dp_info->data.csv.state++;
-    }
-
-    return 1;
-}
-
-
-STATIC size_t dp_fill_csv_payload(data_point_info_t * const dp_info, void * const payload, size_t const total_bytes, connector_transport_t transport)
-{
-    size_t bytes_copied = 0;
-    char * data_ptr = payload;
-    size_t bytes_remaining = total_bytes;
-    size_t (* process_fn) (data_point_info_t * const dp_info, char * const buffer, size_t const bytes_available) = NULL;
-
-    do
-    {
-        switch (dp_info->data.csv.state)
-        {
-            case dp_state_data:
-                process_fn = dp_process_data;
-                break;
-
-            case dp_state_time:
-                process_fn = dp_process_time;
-                break;
-
-            case dp_state_quality:
-                process_fn = dp_process_quality;
-                break;
-
-            case dp_state_description:
-                process_fn = dp_process_description;
-                break;
-
-            case dp_state_location:
-                process_fn = dp_process_location;
-                break;
-
-            case dp_state_type:
-                process_fn = dp_process_type;
-                break;
-
-            case dp_state_unit:
-                process_fn = dp_process_unit;
-                break;
-
-            case dp_state_forward_to:
-                process_fn = dp_process_forward_to;
-                break;
-
-            case dp_state_stream_id:
-                process_fn = dp_process_stream_id;
-                break;
-        }
-
-        bytes_copied = process_fn(dp_info, data_ptr, bytes_remaining);
-        if (bytes_copied > 0)
-        {
-            if (bytes_copied >= bytes_remaining)
-            {
-                #if (defined CONNECTOR_SHORT_MESSAGE)
-                /* For SM transports this is a problem because the buffer where the CSV is
-                 * written is preallocated. If the CSV grows to fill the buffer, then it
-                 * is too late.
-                 */
-                switch (transport)
-                {
-                    #if (defined CONNECTOR_TRANSPORT_UDP)
-                    case connector_transport_udp:
-                    #endif
-                    #if (defined CONNECTOR_TRANSPORT_SMS)
-                    case connector_transport_sms:
-                    #endif
-                        connector_debug_line("WARNING: Not enough space for processing the CSV DataPoint, increase the value of CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS");
-                        ASSERT(connector_false);
-                        break;
-                    #if (defined CONNECTOR_TRANSPORT_TCP)
-                    case connector_transport_tcp:
-                    #endif
-                    case connector_transport_all:
-                        /* For connector_transport_tcp this is not a problem: once the packet is sent,
-                         * this function will be called again to finish the CSV. */
-                        break;
-                }
-                #else
-                UNUSED_PARAMETER(transport);
-                #endif
-                break;
-            }
-
-            data_ptr += bytes_copied;
-            bytes_remaining -= bytes_copied;
-        }
-
-        if (dp_info->data.csv.bytes_to_send == 0)
-        {
-            size_t const bytes_offset = dp_update_state(dp_info, data_ptr);
-
-            bytes_remaining -= bytes_offset;
-            data_ptr += bytes_offset;
-
-            if (dp_info->data.csv.current_dp == NULL)
-            {
-                break;
-            }
-        }
-        else
-        {
-            break;
-        }
-
-    } while (bytes_remaining > 0);
-
-    bytes_copied = total_bytes - bytes_remaining;
-
-    return bytes_copied;
-}
-
 STATIC connector_callback_status_t dp_handle_data_callback(connector_data_service_send_data_t * const data_ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
@@ -902,9 +443,16 @@ STATIC connector_callback_status_t dp_handle_data_callback(connector_data_servic
             break;
 
         case dp_content_type_csv:
-            data_ptr->bytes_used = dp_fill_csv_payload(dp_info, data_ptr->buffer, data_ptr->bytes_available, data_ptr->transport);
-            data_ptr->more_data = (dp_info->data.csv.current_dp == NULL) ? connector_false : connector_true;
+        {
+            buffer_info_t buffer_info;
+
+            buffer_info.buffer = (char *)data_ptr->buffer;
+            buffer_info.bytes_available = data_ptr->bytes_available;
+            buffer_info.bytes_written = 0;
+            data_ptr->bytes_used = dp_generate_csv(&dp_info->data.csv.process_data, &buffer_info);
+            data_ptr->more_data = connector_bool(dp_info->data.csv.process_data.current_data_point == NULL);
             break;
+        }
     }
 
     status = connector_callback_continue;
