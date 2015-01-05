@@ -521,9 +521,11 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
                     else
                     {
                         init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.latitude);
+                        ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
                     }
 #else
                     init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.latitude);
+                    ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
 #endif
                     csv_process_data->data.internal_state++;
                     break;
@@ -538,9 +540,11 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
                     else
                     {
                         init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.longitude);
+                        ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
                     }
 #else
                     init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.longitude);
+                    ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
 #endif
                     csv_process_data->data.internal_state++;
                     break;
@@ -555,9 +559,11 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
                     else
                     {
                         init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.elevation);
+                        ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
                     }
 #else
                     init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.elevation);
+                    ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
 #endif
                     csv_process_data->data.internal_state++;
                     break;
