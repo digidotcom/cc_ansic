@@ -166,7 +166,7 @@ class StackSizeCase(ic_testcase.TestCase):
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
-            self.assertTrue(error is found, "Got error response")
+            self.fail("Got error response: '%s'" % rci_response)
 
     def test_stacksize_c_with_rci_set_setting(self):
 
@@ -189,7 +189,7 @@ class StackSizeCase(ic_testcase.TestCase):
         if len(rci_error_response) != 0:
             self.log.info("Request: %s" % rci_request)
             self.log.info("Response: %s" % rci_response)
-            self.assertTrue(error is found, "Got error response")
+            self.fail("Got error response: '%s'" % rci_response)
 
     def test_stacksize_d_with_fs(self):
 
