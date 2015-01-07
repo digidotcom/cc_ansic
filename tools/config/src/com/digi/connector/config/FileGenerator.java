@@ -912,7 +912,7 @@ if(future_feature){
 	if(ConfigGenerator.rciParserOption()){
 		 if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM){
 			String define_name = getDefineString(group_name + "_" + element.getName() + "_enum");
-			element_string += String.format(",\n   { asizeof(%s%s),\n", prefix, define_name.toLowerCase())
+			element_string += String.format(",\n   { ARRAY_SIZE(%s%s),\n", prefix, define_name.toLowerCase())
 				    + String.format("     %s%s\n   }\n", prefix, define_name.toLowerCase());
 		 }
 		 else {
