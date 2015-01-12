@@ -121,21 +121,12 @@ STATIC connector_bool_t string_needs_quotes(char const * const string)
         goto done;
     }
 
-    for (index = 0; !need_quotes && string[index] != '\0'; index++)
+    for (index = 0; string[index] != '\0'; index++)
     {
-        switch(string[index])
+        if (strchr("\"\\, \t\r\n", string[index]) != NULL)
         {
-            case ' ':
-            case ',':
-            case '\"':
-            case '\t':
-            case '\n':
-            case '\r':
-            case '\\':
-                need_quotes = connector_true;
-                break;
-            default:
-                break;
+            need_quotes = connector_true;
+            break;
         }
     }
 done:
