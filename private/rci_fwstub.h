@@ -452,7 +452,7 @@ STATIC connector_status_t connector_facility_firmware_delete(connector_data_t * 
 
 STATIC connector_status_t connector_facility_firmware_init(connector_data_t * const connector_ptr, unsigned int const facility_index)
 {
-    connector_status_t status = connector_idle;
+    connector_status_t status;
     connector_firmware_data_t * fw_ptr;
 
     /* Add firmware access facility to Device Cloud
@@ -473,7 +473,12 @@ STATIC connector_status_t connector_facility_firmware_init(connector_data_t * co
             goto done;
         }
         fw_ptr = ptr;
-   }
+    }
+    else
+    {
+        status = connector_working;
+    }
+
     fw_ptr->send_busy = connector_false;
     fw_ptr->connector_ptr = connector_ptr;
 
