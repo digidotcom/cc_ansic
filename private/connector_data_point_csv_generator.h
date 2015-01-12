@@ -814,30 +814,13 @@ size_t dp_generate_csv(csv_process_data_t * const csv_process_data, buffer_info_
                 if (done_processing && buffer_info->bytes_available > 0)
                 {
                     csv_process_data->data.init = connector_false;
-                    switch (csv_process_data->current_csv_field)
+                    csv_process_data->current_csv_field++;
+
+                    ASSERT(csv_process_data->current_csv_field <= csv_finished);
+
+                    if (csv_process_data->current_csv_field != csv_finished)
                     {
-                        case csv_description:
-                            put_character(',', buffer_info);
-                            csv_process_data->current_csv_field = csv_location;
-                            break;
-                        case csv_type:
-                            put_character(',', buffer_info);
-                            csv_process_data->current_csv_field = csv_unit;
-                            break;
-                        case csv_unit:
-                            put_character(',', buffer_info);
-                            csv_process_data->current_csv_field = csv_forward_to;
-                            break;
-                        case csv_forward_to:
-                            put_character(',', buffer_info);
-                            csv_process_data->current_csv_field = csv_stream_id;
-                            break;
-                        case csv_stream_id:
-                            csv_process_data->current_csv_field = csv_finished;
-                            break;
-                        default:
-                            ASSERT(0);
-                            break;
+                        put_character(',', buffer_info);
                     }
                 }
                 break;
