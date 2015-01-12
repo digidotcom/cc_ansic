@@ -14,9 +14,11 @@
 #define _CONNECTOR_DATA_POINT_CSV_GENERATOR_H_
 
 #if (defined CONNECTOR_SUPPORTS_64_BIT_INTEGERS)
-#define _int_type_ int64_t
+#define largest_uint_t uint64_t
+#define largest_int_t int64_t
 #else
-#define _int_type_ int32_t
+#define largest_uint_t uint32_t
+#define largest_int_t int32_t
 #endif
 
 #define QUOTES_NEEDED_FLAG          UINT32_C(0x01)
@@ -56,7 +58,7 @@
 #define character_needs_escaping(character) ((character) == '\\' || (character) == '\"' ? connector_true : connector_false)
 
 typedef struct {
-    _int_type_ value;
+    largest_uint_t value;
     int figures;
     connector_bool_t negative;
 } int_info_t;
@@ -218,11 +220,11 @@ STATIC int count_int_ciphers(int const int_value)
     return length;
 }
 
-STATIC int get_next_cipher(int number, int const cipher_order)
+STATIC unsigned int get_next_cipher(largest_uint_t number, unsigned int const cipher_order)
 {
-    int const base = 10;
-    int cipher;
-    int i;
+    unsigned int const base = 10;
+    unsigned int cipher;
+    unsigned int i;
 
     for (i = 0; i < cipher_order - 1; i++)
     {
@@ -253,7 +255,7 @@ STATIC connector_bool_t process_integer(int_info_t * const int_info, buffer_info
 
     while (int_info->figures != 0 && buffer_info->bytes_available > 0)
     {
-        int const cipher = get_next_cipher(int_info->value, int_info->figures--);
+        unsigned int const cipher = get_next_cipher(int_info->value, int_info->figures--);
 
         put_character('0' + cipher, buffer_info);
     }
@@ -305,9 +307,9 @@ done:
     return done_processing;
 }
 
-STATIC void init_int_info(int_info_t * const int_info, _int_type_ const value)
+STATIC void init_int_info(int_info_t * const int_info, largest_int_t const value)
 {
-    _int_type_ const absolute_value = value >= 0 ? value : -value;
+    largest_uint_t const absolute_value = value >= 0 ? value : -value;
 
     int_info->value = absolute_value;
     int_info->figures = count_int_ciphers(absolute_value);
