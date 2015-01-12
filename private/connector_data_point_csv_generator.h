@@ -97,6 +97,26 @@ typedef struct {
     size_t bytes_written;
 } buffer_info_t;
 
+typedef enum {
+    LOCATION_STATE_PUT_LEADING_QUOTE,
+    LOCATION_STATE_INIT_LATITUDE,
+    LOCATION_STATE_PUT_LATITUDE,
+    LOCATION_STATE_PUT_1ST_COMMA,
+    LOCATION_STATE_INIT_LONGITUDE,
+    LOCATION_STATE_PUT_LONGITUDE,
+    LOCATION_STATE_PUT_2ND_COMMA,
+    LOCATION_STATE_INIT_ELEVATION,
+    LOCATION_STATE_PUT_ELEVATION,
+    LOCATION_STATE_PUT_TRAILING_QUOTE,
+    LOCATION_STATE_FINISH
+} location_state_t;
+
+typedef enum {
+    TIME_EPOCH_FRAC_STATE_SECONDS,
+    TIME_EPOCH_FRAC_STATE_MILLISECONDS,
+    TIME_EPOCH_FRAC_STATE_FINISH
+} time_epoch_frac_state_t;
+
 typedef struct {
     connector_data_stream_t const * current_data_stream;
     connector_data_point_t const * current_data_point;
@@ -109,7 +129,10 @@ typedef struct {
             double_info_t dbl;
             string_info_t str;
         } info;
-        uint8_t internal_state;
+        union {
+            location_state_t location;
+            time_epoch_frac_state_t time;
+        } internal_state;
     } data;
 } csv_process_data_t;
 
@@ -490,21 +513,21 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
             if (!csv_process_data->data.init)
             {
                 csv_process_data->data.init = connector_true;
-                csv_process_data->data.internal_state = 0;
+                csv_process_data->data.internal_state.location = LOCATION_STATE_PUT_LEADING_QUOTE;
             }
-            switch (csv_process_data->data.internal_state)
+            switch (csv_process_data->data.internal_state.location)
             {
-                case 0:
-                case 9:
+                case LOCATION_STATE_PUT_LEADING_QUOTE:
+                case LOCATION_STATE_PUT_TRAILING_QUOTE:
                 {
                     if (buffer_info->bytes_available > 0)
                     {
                         put_character('\"', buffer_info);
-                        csv_process_data->data.internal_state++;
+                        csv_process_data->data.internal_state.location++;
                     }
                     break;
                 }
-                case 1:
+                case LOCATION_STATE_INIT_LATITUDE:
                 {
 #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                     if (current_data_point->location.type == connector_location_type_native)
@@ -520,10 +543,10 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
                     init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.latitude);
                     ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
 #endif
-                    csv_process_data->data.internal_state++;
+                    csv_process_data->data.internal_state.location++;
                     break;
                 }
-                case 4:
+                case LOCATION_STATE_INIT_LONGITUDE:
                 {
 #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                     if (current_data_point->location.type == connector_location_type_native)
@@ -539,10 +562,10 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
                     init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.longitude);
                     ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
 #endif
-                    csv_process_data->data.internal_state++;
+                    csv_process_data->data.internal_state.location++;
                     break;
                 }
-                case 7:
+                case LOCATION_STATE_INIT_ELEVATION:
                 {
 #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                     if (current_data_point->location.type == connector_location_type_native)
@@ -558,12 +581,12 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
                     init_string_info(&csv_process_data->data.info.str, current_data_point->location.value.text.elevation);
                     ClearQuotesNeeded(csv_process_data->data.info.str.quotes_info);
 #endif
-                    csv_process_data->data.internal_state++;
+                    csv_process_data->data.internal_state.location++;
                     break;
                 }
-                case 2:
-                case 5:
-                case 8:
+                case LOCATION_STATE_PUT_LATITUDE:
+                case LOCATION_STATE_PUT_LONGITUDE:
+                case LOCATION_STATE_PUT_ELEVATION:
                 {
 #if (defined CONNECTOR_SUPPORTS_FLOATING_POINT)
                     connector_bool_t field_done;
@@ -582,21 +605,21 @@ STATIC connector_bool_t process_csv_location(csv_process_data_t * const csv_proc
 
                     if (field_done)
                     {
-                        csv_process_data->data.internal_state++;
+                        csv_process_data->data.internal_state.location++;
                     }
                     break;
                 }
-                case 3:
-                case 6:
+                case LOCATION_STATE_PUT_1ST_COMMA:
+                case LOCATION_STATE_PUT_2ND_COMMA:
                 {
                     if (buffer_info->bytes_available > 0)
                     {
                         put_character(',', buffer_info);
-                        csv_process_data->data.internal_state++;
+                        csv_process_data->data.internal_state.location++;
                     }
                     break;
                 }
-                default:
+                case LOCATION_STATE_FINISH:
                     done_processing = connector_true;
                     break;
             }
@@ -623,24 +646,24 @@ STATIC connector_bool_t process_csv_time(csv_process_data_t * const csv_process_
             {
                 csv_process_data->data.init = connector_true;
                 init_int_info(&csv_process_data->data.info.intg, current_data_point->time.value.since_epoch_fractional.seconds);
-                csv_process_data->data.internal_state = 0;
+                csv_process_data->data.internal_state.time = TIME_EPOCH_FRAC_STATE_SECONDS;
             }
 
-            switch (csv_process_data->data.internal_state)
+            switch (csv_process_data->data.internal_state.time)
             {
-                case 0:
-                case 1:
+                case TIME_EPOCH_FRAC_STATE_SECONDS:
+                case TIME_EPOCH_FRAC_STATE_MILLISECONDS:
                 {
                     connector_bool_t const field_done = process_integer(&csv_process_data->data.info.intg, buffer_info);
 
                     if (field_done)
                     {
                         init_int_info(&csv_process_data->data.info.intg, current_data_point->time.value.since_epoch_fractional.milliseconds);
-                        csv_process_data->data.internal_state++;
+                        csv_process_data->data.internal_state.time++;
                     }
                     break;
                 }
-                default:
+                case TIME_EPOCH_FRAC_STATE_FINISH:
                     done_processing = connector_true;
                     break;
             }
