@@ -353,6 +353,8 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
             verificationResult = True
             retryCounter+=1;
 
+            self.log.info("Getting the last %s DataPoints uploaded from Device Cloud..." % numberDataPointsUploaded)
+
             # Get the last DataPoints uploaded from Device Cloud
             result,datapointListFromDeviceCloud,requestResponse = self.cloudHandler.getDataPoints(self.device_id, dataStream, size=numberDataPointsUploaded, order="descending")
 
@@ -365,34 +367,39 @@ class DatapointDvtTestCase(cc_testcase.TestCase):
 
             datapointListFromDeviceCloud.reverse()
 
-            self.log.info("Verify if DataPoints uploaded from device match with the readed from Device Cloud...")
+            self.log.info("Verify if DataPoints uploaded from device (%s) match with the readed from Device Cloud (%s)..." % (numberDataPointsUploaded, len(datapointListFromDeviceCloud)) )
 
-            for index in range(0,numberDataPointsUploaded):
-                # Get DataPoint readed from console and DataPoint from Device Cloud
-                eachDatapointFromDeviceCloud = datapointListFromDeviceCloud[index]
-                eachDatapointUploaded = datapointList[index]
+            if ( numberDataPointsUploaded == len(datapointListFromDeviceCloud) ):
 
-                # Verify the Data
-                if ( eachDatapointFromDeviceCloud.data != eachDatapointUploaded["data"] ):
-                    message = "DataPoint data does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.data, eachDatapointUploaded["data"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
-                    self.log.warning(message)
-                    verificationResult = False
-                    break
+                for index in range(0,numberDataPointsUploaded):
+                    # Get DataPoint readed from console and DataPoint from Device Cloud
+                    eachDatapointFromDeviceCloud = datapointListFromDeviceCloud[index]
+                    eachDatapointUploaded = datapointList[index]
 
-                # Verify the Quality
-                if ( eachDatapointFromDeviceCloud.quality != eachDatapointUploaded["quality"] ):
-                    message = "DataPoint quality does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.quality, eachDatapointUploaded["quality"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
-                    self.log.warning(message)
-                    verificationResult = False
-                    break
+                    # Verify the Data
+                    if ( eachDatapointFromDeviceCloud.data != eachDatapointUploaded["data"] ):
+                        message = "DataPoint data does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.data, eachDatapointUploaded["data"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                        self.log.warning(message)
+                        verificationResult = False
+                        break
 
-                # Verify the location
-                if ( eachDatapointFromDeviceCloud.location != eachDatapointUploaded["location"] ):
-                    message = "DataPoint location does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.location, eachDatapointUploaded["location"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
-                    self.log.warning(message)
-                    verificationResult = False
-                    break
+                    # Verify the Quality
+                    if ( eachDatapointFromDeviceCloud.quality != eachDatapointUploaded["quality"] ):
+                        message = "DataPoint quality does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.quality, eachDatapointUploaded["quality"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                        self.log.warning(message)
+                        verificationResult = False
+                        break
 
+                    # Verify the location
+                    if ( eachDatapointFromDeviceCloud.location != eachDatapointUploaded["location"] ):
+                        message = "DataPoint location does not match!!! readed: '%s' != expected: '%s'\n Original DataPoint: %s\n Readed DataPoint: %s\n" % (eachDatapointFromDeviceCloud.location, eachDatapointUploaded["location"], eachDatapointUploaded, eachDatapointFromDeviceCloud)
+                        self.log.warning(message)
+                        verificationResult = False
+                        break
+            else:
+                message = "Number of DataPoints readed from Device Cloud (%s) does not match with the DataPoints uploaded by device (%s)!!!" % ( len(datapointListFromDeviceCloud), numberDataPointsUploaded)
+                self.log.warning(message)
+                verificationResult = False
 
             # All DataPoints were verified
             if ( verificationResult ):
