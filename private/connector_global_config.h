@@ -448,26 +448,3 @@ done:
     return result;
 }
 #endif
-
-#define MAX_DECIMAL_DIGIT       9
-#define MAX_HEXADECIMAL_DIGIT    0xF
-
-STATIC connector_bool_t check_digit_array(uint8_t * const digits, size_t const length, uint8_t const max_digit)
-{
-    connector_bool_t isDigit = connector_true;
-    size_t i;
-
-    for (i=0; i < length; i++)
-    {
-        unsigned char const up_digit = (digits[i] >> 4) & 0xF;
-        unsigned char const lo_digit = digits[i] & 0x0F;
-
-        if (up_digit > max_digit || lo_digit > max_digit)
-        {
-            isDigit = connector_false;
-            break;
-        }
-    }
-
-    return isDigit;
-}
