@@ -1324,9 +1324,7 @@ public abstract class FileGenerator {
         {
                 String defaultErrorsStrings = "";
                 
-                defaultErrorsStrings += enumDefine + "_" + "BUSY = -2,\n";
-                defaultErrorsStrings += enumDefine + "_" + "SKIP = -1,\n";
-                defaultErrorsStrings += enumDefine + "_" + "NONE = 0,\n";
+                defaultErrorsStrings += enumDefine + "_" + "NONE,\n";
                 bufferWriter.write(defaultErrorsStrings.toUpperCase());
                 return;
         }
