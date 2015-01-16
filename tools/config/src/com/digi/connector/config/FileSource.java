@@ -17,7 +17,6 @@ public class FileSource extends FileGenerator {
     private static BufferedWriter headerWriter = null;
     private String headerFile = "";
 
-    
 	public FileSource(String directoryPath) throws IOException {
 		
 		super(directoryPath,SOURCE_NAME+ ".c",fileType);
@@ -62,6 +61,9 @@ public class FileSource extends FileGenerator {
              String headerDefineName = headerFile.replace('.', '_').toLowerCase();
             headerWriter.write(String.format("#ifndef %s\n#define %s\n\n", headerDefineName, headerDefineName));
 
+            fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, "connector_api.h"));
+            fileWriter.write(String.format("#if !(defined CONST)\n#define CONST const\n#endif\n"));
+            
             fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, headerFile));
 
         	writeGlobalErrorEnumHeader(configData,headerWriter);  
@@ -69,10 +71,6 @@ public class FileSource extends FileGenerator {
 
             fileWriter.write(String.format("uint32_t CONST FIRMWARE_TARGET_ZERO_VERSION = 0x%X;\n\n", ConfigGenerator.getFirmware()));
 
-            headerWriter.write(String.format("\n\nextern uint32_t CONST FIRMWARE_TARGET_ZERO_VERSION;\n"));
-            headerWriter.write("extern unsigned int connector_global_error_COUNT;\n\n");
-            headerWriter.write(String.format("extern char CONST * CONST %ss[];\n",GLOBAL_RCI_ERROR));
-            headerWriter.write(String.format("extern connector_remote_group_table_t CONST %s[];\n", CONNECTOR_REMOTE_GROUP_TABLE));
 
             /* Write Define Errors Macros */
             writeDefineRciErrors(configData, fileWriter);
@@ -90,6 +88,18 @@ public class FileSource extends FileGenerator {
             /* write structures in source file */
             writeAllStructures(configData, fileWriter);
 
+            fileWriter.write(String.format("\nconnector_remote_config_data_t const rci_internal_data = {\n" +
+                    "    connector_group_table,\n"+
+                    "    connector_rci_errors,\n"+
+                    "    %d,\n"+
+                    "    %d,\n"+
+                    "    %s,\n"+
+                    "    \"%s\"\n"+
+                    "};\n"+
+                    "\n"+
+                    "connector_remote_config_data_t const * const rci_descriptor_data = &rci_internal_data;"
+                    , configData.getUserGlobalErrors().size(), ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType()));
+            
             headerWriter.write(String.format("\n#endif\n"));
  
 

@@ -1437,14 +1437,7 @@ public abstract class FileGenerator {
 
                     if (index++ == 0) {
                         /*Set start index to the global count */
-                        String startIndexString = COUNT_STRING;
-                        if(bufferWriter == FileSource.getHeaderWriter()){
-                            startIndexString += "_INDEX";
-                            enumString += " = " + GLOBAL_ERROR + "_" + startIndexString;
-                        }
-                        else{
-                            enumString += ", " + COMMENTED(" User defined (group errors)");
-                        }
+                        enumString += ", " + COMMENTED(" User defined (group errors)");
                     }
                     else{
                     enumString += ",\n";
