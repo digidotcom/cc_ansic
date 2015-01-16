@@ -25,7 +25,7 @@ public class ConfigGenerator {
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
-    private final static String PROTOTYPES_OPTION = "use_prototypes";
+    private final static String CCAPI_OPTION = "ccapi";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
     private final static String NO_UPLOAD_OPTION = "noUpload";
     private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
@@ -69,7 +69,7 @@ public class ConfigGenerator {
     private static UseNames useNames = UseNames.NONE;
     private static String prefix = "";
     private static boolean deleteDescriptor;
-    private static boolean prototypes;
+    private static boolean useCcapi;
     private static boolean saveDescriptor;
     private static boolean noUpload;
     private static boolean createBinIdLog;
@@ -265,8 +265,8 @@ public class ConfigGenerator {
                             DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
             log(String
                     .format(
-                            "\t%-16s \t= optional behaviour for future features using prototypes",
-                            DASH + PROTOTYPES_OPTION));
+                            "\t%-16s \t= output for use with CCAPI projects",
+                            DASH + CCAPI_OPTION));
             log(String
                     .format(
                             "\t%-16s \t= Defines and enums names to work with RCI Parser.",
@@ -354,8 +354,8 @@ public class ConfigGenerator {
             } else if (option.equals(HIDDEN_HELP_OPTION)) {
                 hidden_help = true;
                 usage();
-            } else if (option.equals(PROTOTYPES_OPTION)) {
-                prototypes = true;
+            } else if (option.equals(CCAPI_OPTION)) {
+                useCcapi = true;
             } else if (option.equals(SAVE_DESCRIPTORS_OPTION)) {
                 saveDescriptor = true;
             } else if (option.equals(NO_UPLOAD_OPTION)) {
@@ -541,8 +541,8 @@ public class ConfigGenerator {
         return noErrorDescription;
     }
 
-    public static boolean usePrototypes() {
-        return prototypes;
+    public static boolean useCcapi() {
+        return useCcapi;
     }
 
     public static boolean rciLegacyEnabled() {
@@ -660,6 +660,12 @@ public class ConfigGenerator {
                 FileNone fileNone = new FileNone(directoryPath);
                 fileNone.generateFile(configData);
 
+                if (useCcapi())
+                {
+                    FileSourceCcapi ccapiSource = new FileSourceCcapi(directoryPath);
+                    ccapiSource.generateFile(configData);       
+                }
+                
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
                 if(!noUpload || saveDescriptor)

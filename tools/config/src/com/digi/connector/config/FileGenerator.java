@@ -15,13 +15,13 @@ import com.digi.connector.config.Element.ElementType;
 
 public abstract class FileGenerator {
 
-	protected boolean future_feature = ConfigGenerator.usePrototypes();
-
     protected static String TOOL_NAME = "RCI Generator";
 
     protected final static String HEADER_FILENAME = "connector_api_remote.h";
 
     protected final static String CONNECTOR_PREFIX = "connector";
+    protected final static String CCAPI_PREFIX = "ccapi";
+
     protected final static String DEFINE = "#define ";
     protected final static String INCLUDE = "#include ";
     protected final static String ERROR = "error";
@@ -42,27 +42,21 @@ public abstract class FileGenerator {
 
     protected final static String CHAR_CONST_STRING = "static char CONST * CONST ";
     protected final static String CONNECTOR_CALLBACK_STATUS = "\nconnector_callback_status_t ";
+    protected final static String CCAPI_RCI_ERROR = "\nccapi_rci_error_t ";
     protected final static String ID_T_STRING = "_id_t;\n\n";
     protected final static String TYPEDEF_STRUCT = "\ntypedef struct {\n";
 
     /* Do not change these (if you do, you also need to update connector_remote.h */
     protected final static String RCI_PARSER_USES = "RCI_PARSER_USES_";
-    protected final static String RCI_INFO_T = "rci_info_t * const info";
-    protected final static String RCI_FUNCTION_T = "(rci_function_t)";
-    
+    protected final static String RCI_INFO_T = "ccapi_rci_info_t * const info";
+    protected final static String RCI_FUNCTION_T = "(ccapi_rci_function_t)";
+    protected final static String CCAPI_RCI_FUNCTION_T = "(ccapi_rci_function_t)";
+
     protected final static String RCI_PARSER_USES_ERROR_DESCRIPTIONS = RCI_PARSER_USES + "ERROR_DESCRIPTIONS\n";
     protected final static String RCI_PARSER_USES_STRINGS = RCI_PARSER_USES + "STRINGS\n";
     protected final static String RCI_PARSER_USES_UNSIGNED_INTEGER = RCI_PARSER_USES + "UNSIGNED_INTEGER\n";
     
     protected final static String RCI_PARSER_DATA = "CONNECTOR_RCI_PARSER_INTERNAL_DATA";
-
-    protected final static String CONNECTOR_RCI_INFO = "\ntypedef struct rci_data {\n" +
-    " unsigned int group_index;\n" +
-    " connector_remote_action_t action;\n" +
-    " connector_remote_group_type_t group_type;\n" +
-    " char const * error_hint;\n" +
-    " void * user_context;\n" +
-    "} rci_info_t;\n";
 
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
     protected final static String RCI_ERROR_NOT_AVAILABLE = "connector_rci_error_not_available = -1,\n";
@@ -207,6 +201,29 @@ public abstract class FileGenerator {
 
         fileWriter.write(enumString);
     }
+    
+    private void writeCcapiOnOffBooleanEnum(BufferedWriter bufferWriter) throws IOException {
+
+        String enumString = "";
+
+        for (Element.ElementType type : Element.ElementType.values()) {
+            if (type.isSet()) {
+                switch (type) {
+                case ON_OFF:
+                    enumString += "\ntypedef enum {\n"
+                                    + "    CCAPI_OFF,\n"
+                                    + "    CCAPI_ON\n"
+                                    + "} ccapi_on_off_t;\n";
+                    break;
+
+                default:
+                  break;
+                }
+            }
+        }
+
+        bufferWriter.write(enumString);
+    }
 
     private void writeElementTypeEnum() throws IOException {
 
@@ -255,94 +272,296 @@ public abstract class FileGenerator {
         return string;
     }
     
-    protected void writePrototypes(ConfigData configData,BufferedWriter bufferWriter) throws Exception{
+    protected void writePrototypes(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
+        /* Global errors for session/action_start/end functions */
+        bufferWriter.write("\n" + TYPEDEF_ENUM);
+        writeCcapiErrorHeader(null,0, getCcapiEnumString("global" + "_" + ERROR), null, bufferWriter);
+        writeCcapiErrorHeader("rci",1, getCcapiEnumString("global" + "_" + ERROR), configData.getRciGlobalErrors(), bufferWriter);
+        writeCcapiErrorHeader("global",1, getCcapiEnumString("global" + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
+        bufferWriter.write(endCcapiEnumString("global" + "_" + ERROR));
 
-        String session_prototype = CONNECTOR_CALLBACK_STATUS;
+        writeCcapiOnOffBooleanEnum(bufferWriter);
+        /* session/action_start/end functions' prototypes */
+        String globalRetvalErrorType =  "\n" + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
+        String session_prototype = globalRetvalErrorType;
         session_prototype += prefix + "rci_session_start_cb(" + RCI_INFO_T + ");";
-        session_prototype += CONNECTOR_CALLBACK_STATUS;
+        session_prototype += globalRetvalErrorType;
         session_prototype += prefix + "rci_session_end_cb(" + RCI_INFO_T + ");\n";
+        
+        session_prototype += globalRetvalErrorType;
+        session_prototype += prefix + "rci_action_start_cb(" + RCI_INFO_T + ");";
+        session_prototype += globalRetvalErrorType;
+        session_prototype += prefix + "rci_action_end_cb(" + RCI_INFO_T + ");\n";
+        session_prototype += "\n";
         bufferWriter.write(session_prototype);
 
         for (GroupType type : GroupType.values()) {
-	        LinkedList<Group> groups = null;
+            LinkedList<Group> groups = null;
 
-	        configType = type.toString().toLowerCase();
-	        groups = configData.getConfigGroup(configType);
+            configType = type.toString().toLowerCase();
+            groups = configData.getConfigGroup(configType);
 
-	        if (!groups.isEmpty()) {
+            if (!groups.isEmpty()) {
+                /* write typedef enum for values */
 
-	            for (Group group : groups) {
-	                String group_prototype = CONNECTOR_CALLBACK_STATUS;
-		            group_prototype += String.format("%srci_%s_%s_start(%s);",prefix,configType,group.getName(),RCI_INFO_T);
-		            group_prototype += CONNECTOR_CALLBACK_STATUS;
-		            group_prototype += String.format("%srci_%s_%s_end(%s);\n",prefix,configType,group.getName(),RCI_INFO_T);
-		            bufferWriter.write(group_prototype);
+                for (Group group : groups) {
+                    for (Element element : group.getElements()) {
+                        if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                            bufferWriter.write(TYPEDEF_ENUM);
+                            boolean previousempty = false;
+                        int i = 0;
+                        for (ValueStruct value : element.getValues()) {
+                            if(value.getName().equalsIgnoreCase("")) {
+                                previousempty = true;
+                            }
+                            else if(previousempty) {
+                                bufferWriter.write(getCcapiEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replaceAll("[^a-zA-Z_0-9]", "_")) + " = " + i + ",\n");
+                                previousempty = false;
+                            }
+                            else {
+                                bufferWriter.write(getCcapiEnumString(group.getName() + "_" + element.getName() + "_" + value.getName().replaceAll("[^a-zA-Z_0-9]", "_")) + ",\n");
+                            }
+                            i += 1;
+                        }
+                        /* done typedef enum for value */
+                        bufferWriter.write(endCcapiEnumString(group.getName() + "_" + element.getName()));
+                        }
+                    }
+                }
+                
+                /* Write typedef enum for group errors */
+                for (Group group : groups) {
+                    bufferWriter.write(TYPEDEF_ENUM);
+                    
+                    writeCcapiErrorHeader(null,0, getCcapiEnumString(group.getName() + "_" + ERROR), null, bufferWriter);
+                    writeCcapiErrorHeader("rci",1, getCcapiEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors(), bufferWriter);
+                    writeCcapiErrorHeader("global",1, getCcapiEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
 
-		            for (Element element : group.getElements()) {
-		                String protoType = "";
-		                switch(ElementType.toElementType(element.getType())){
-		                    case UINT32:
-		                    case HEX32:
-		                    case X_HEX32:
-		                        protoType += "uint32_t";
-		                        break;
-		                    case INT32:
-		                        protoType += "int32_t";
-		                        break;
-		                    case FLOAT:
-		                        protoType += "float";
-		                        break;
-		                    case ON_OFF:
-		                        protoType += "connector_on_off_t";
-		                        break;
-		                    case ENUM:
-		                        protoType += String.format("%sconnector_%s_%s_%s_id_t",prefix,configType,group.getName(),element.getName());
-		                        break;
-		                    case IPV4:
-		                    case FQDNV4:
-		                    case FQDNV6:
-		                    case DATETIME:
-		                    case STRING:
-		                    case MULTILINE_STRING:
-		                    case PASSWORD:
-		                    case MAC_ADDR:
-		                        protoType += "char const *";
-		                        break;
-		                    case BOOLEAN:
-		                        protoType += "connector_bool_t";
-		                        break;
-	                        default:
-	                            break;
-	                }
-		                String element_prototype ="";
+                    if (!group.getErrors().isEmpty()){
+                        LinkedHashMap<String, String> errorMap = group.getErrors();
+                        int index = 0;
 
-		                switch(ElementType.toElementType(element.getType())){
-		                    case PASSWORD:
-                                element_prototype += String.format("\n%s%srci_%s_%s_%s_get    NULL"
-                                    ,DEFINE,prefix,configType,group.getName(),element.getName());
-			                    break;
-			                default:
-			                    element_prototype += String.format("%s%srci_%s_%s_%s_get(%s, %s * const value);"
-                                    ,CONNECTOR_CALLBACK_STATUS,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
-			                    break;
-		                }
+                        for (String key : errorMap.keySet()) {
+                            String enumString = getCcapiEnumString(group.getName() + "_" + ERROR + "_" + key);
 
-		                if(getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+                            if (index++ == 0) {
+                                /*Set start index to the global count */
+                                String startIndexString = COUNT_STRING;
+                                if(bufferWriter == FileSource.getHeaderWriter()){
+                                    startIndexString += "_INDEX";
+                                    enumString += " = " + GLOBAL_ERROR + "_" + startIndexString;
+                                }
+                                else{
+                                    enumString += ", " + COMMENTED(" User defined (group errors)");
+                                }
+                            }
+                            else {
+                                enumString += ",\n";
+                            }
+                            bufferWriter.write(enumString);
+                        }
+                    }
+                    bufferWriter.write(endCcapiEnumString(group.getName() + "_" + ERROR));
+                }
+                for (Group group : groups) {
+                    String retvalErrorType = "\n" + CCAPI_PREFIX + "_" + configType + "_" + group.getName() + "_error_id_t ";
+                    String group_prototype = retvalErrorType;
+                    group_prototype += String.format("%srci_%s_%s_start(%s);",prefix,configType,group.getName(),RCI_INFO_T);
+                    group_prototype += retvalErrorType;
+                    group_prototype += String.format("%srci_%s_%s_end(%s);\n",prefix,configType,group.getName(),RCI_INFO_T);
+                    bufferWriter.write(group_prototype);
 
-		                    element_prototype += String.format("\n%s%srci_%s_%s_%s_set    NULL \n"
-                                ,DEFINE,prefix,configType,group.getName(),element.getName());
-		                }
-		                else{
-			                element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s const value);\n"
-                                ,CONNECTOR_CALLBACK_STATUS,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
-			                }
-		                bufferWriter.write(element_prototype);
-		            }
-		        }
-	        }
-	    }
+                    for (Element element : group.getElements()) {
+                        String protoType = "";
+                        switch(ElementType.toElementType(element.getType())) {
+                            case UINT32:
+                            case HEX32:
+                            case X_HEX32:
+                                protoType += "uint32_t";
+                                break;
+                            case INT32:
+                                protoType += "int32_t";
+                                break;
+                            case FLOAT:
+                                protoType += "float";
+                                break;
+                            case ON_OFF:
+                                protoType += "ccapi_on_off_t";
+                                break;
+                            case ENUM:
+                                protoType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
+                                break;
+                            case IPV4:
+                            case FQDNV4:
+                            case FQDNV6:
+                            case DATETIME:
+                            case STRING:
+                            case MULTILINE_STRING:
+                            case PASSWORD:
+                            case MAC_ADDR:
+                                protoType += "char const *";
+                                break;
+                            case BOOLEAN:
+                                protoType += "ccapi_bool_t";
+                                break;
+                            default:
+                                break;
+                        }
+                        String element_prototype ="";
+
+                        switch(ElementType.toElementType(element.getType())) {
+                            case PASSWORD:
+                                element_prototype += String.format("\n%s%srci_%s_%s_%s_get    NULL" ,DEFINE,prefix,configType,group.getName(),element.getName());
+                                break;
+                            default:
+                                element_prototype += String.format("%s%srci_%s_%s_%s_get(%s, %s * const value);" ,retvalErrorType,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+                                break;
+                        }
+
+                        if(getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+                            element_prototype += String.format("\n%s%srci_%s_%s_%s_set    NULL \n" ,DEFINE,prefix,configType,group.getName(),element.getName());
+                        }
+                        else {
+                            element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s const value);\n" ,retvalErrorType,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+                        }
+                        
+                        bufferWriter.write(element_prototype);
+                    }
+                }
+            }
+            bufferWriter.write("\n");
+        }
     }
 
+    void writeFunctionsCB(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
+        String session_function = setFunction("_SESSION_GROUP_", "rci_session_start_cb(" + RCI_INFO_T + ")",null);
+        session_function += setFunction("_SESSION_GROUP_", "rci_session_end_cb(" + RCI_INFO_T + ")",null);
+        session_function += setFunction("_SESSION_GROUP_", "rci_action_start_cb(" + RCI_INFO_T + ")",null);
+        session_function += setFunction("_SESSION_GROUP_", "rci_action_end_cb(" + RCI_INFO_T + ")",null);
+        
+        bufferWriter.write(session_function);
+
+        for (GroupType type : GroupType.values()) {
+                LinkedList<Group> groups = null;
+
+                configType = type.toString().toLowerCase();
+                groups = configData.getConfigGroup(configType);
+
+                if (!groups.isEmpty()) {
+
+                    for (Group group : groups) {
+                        String retvalErrorType = "\n" + CCAPI_PREFIX + "_" + configType + "_" + group.getName() + "_error_id_t ";
+                        String group_function = setFunction(group.getName(), String.format("%srci_%s_%s_start(%s)",prefix,configType,group.getName(),RCI_INFO_T),null);
+                        group_function += setFunction(group.getName(), String.format("%srci_%s_%s_end(%s)",prefix,configType,group.getName(),RCI_INFO_T),null);
+                        bufferWriter.write(group_function);
+                            for (Element element : group.getElements()) {
+                                String element_function ="";
+                                String FType = "";
+                                String value = "";
+                                switch(ElementType.toElementType(element.getType())){
+                                    case UINT32:
+                                        if(element.getMin()!=null)
+                                                value += "*value = " + element.getMin();
+                                        else
+                                                value += "*value = 123";
+                                        FType += "uint32_t";
+                                        break;
+                                    case HEX32:
+                                    case X_HEX32:
+                                        value += "*value = 0x20101010";
+                                        FType += "uint32_t";
+                                        break;
+                                    case INT32:
+                                        if(element.getMin()!=null)
+                                                value += "*value = " + element.getMin();
+                                        else
+                                                value += "*value = 15";
+                                        FType += "int32_t";
+                                        break;
+                                    case FLOAT:
+                                        value += "*value = 1.2";
+                                        FType += "float";
+                                        break;
+                                    case ON_OFF:
+                                        value += "*value = CCAPI_ON";
+                                        FType += "ccapi_on_off_t";
+                                        break;
+                                    case ENUM:
+                                        ValueStruct first_value = element.getValues().get(0);
+                                        value += "*value = CCAPI_" + configType.toUpperCase() + "_" + group.getName().toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
+                                        FType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
+                                        break;
+                                    case IPV4:
+                                    case FQDNV4:
+                                    case FQDNV6:
+                                        value += "*value = \"192.168.1.1\"";
+                                        FType += "char const *";
+                                        break;
+                                    case DATETIME:
+                                        value += "*value = \"2002-05-30T09:30:10-0600\";";
+                                        FType += "char const *";
+                                        break;
+                                    case STRING:
+                                    case MULTILINE_STRING:
+                                        value += "*value = \"String\"";
+                                    case PASSWORD:
+                                        FType += "char const *";
+                                        break;
+                                    case MAC_ADDR:
+                                        value += "*value = \"00:04:9D:AB:CD:EF\"";
+                                        FType += "char const *";
+                                        break;
+                                    case BOOLEAN:
+                                        value += "*value = CCAPI_TRUE";
+                                        FType += "ccapi_bool_t";
+                                        break;
+                                default:
+                                    break;
+                                }
+                                if(!(ElementType.toElementType(element.getType()).toValue() == 3/*PASSWORD*/)){
+                                    element_function += setFunction(group.getName(),String.format("%srci_%s_%s_%s_get(%s, %s * const value)"
+                                ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),value);
+                                }
+                                if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+                                    element_function += setFunction(group.getName(), String.format("%srci_%s_%s_%s_set(%s, %s const value)"
+                                ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
+                                    }
+                                bufferWriter.write(element_function);
+                            }//No more elements
+         
+                    }//No more groups
+                }
+        }//No more group types
+    }
+    
+    private String UNUSED(String parameter) {
+        return "UNUSED_PARAMETER(" + parameter + ");\n";
+    }
+    
+    private String setFunction (String groupName, String parameter,String value){
+        String retvalErrorType = "";
+        
+        if (groupName.equals("_SESSION_GROUP_"))
+        {
+                retvalErrorType =  "\n" + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
+        }
+        else
+        {
+                retvalErrorType =  "\n" + CCAPI_PREFIX + "_" + configType + "_" + groupName + "_error_id_t ";
+        }
+        
+        String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
+        String RETURN_CONTINUE = "    return connector_callback_continue;\n}\n";
+
+        String function = retvalErrorType + parameter + "\n{\n    ";
+        function += UNUSED("info") + PRINTF;
+        if(value != null){
+                function += "    " + value + ";\n";
+        }
+        function += RETURN_CONTINUE;
+        return  function;
+    }
+    
     private void writeElementValueStruct() throws IOException {
 
         String headerString = "";
@@ -591,9 +810,6 @@ public abstract class FileGenerator {
 
         fileWriter.write(CONNECTOR_ELEMENT_ACCESS);
 
-        fileWriter.write(CONNECTOR_RCI_INFO);
-        fileWriter.write("\ntypedef connector_callback_status_t (*rci_function_t)(rci_info_t * const info, ...);\n");
-
         writeGroupElementStructs(configData);
 
         String const_name = "";
@@ -656,29 +872,26 @@ public abstract class FileGenerator {
             for (GroupType type : GroupType.values()) {
 
                 String typeName = type.toString().toLowerCase();
-	            LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
+                LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
-	            for (Group group : typeGroups) {
-	                if(max_len < group.getName().length())
-	                {
-	                    max_len = group.getName().length();
-	                }
-	                for (Element element : group.getElements()) {
-	                    if(max_len_el< element.getName().length())
-	                    {
-	                        max_len_el = element.getName().length();
-	                    }
-	                    if (ConfigGenerator.rciParserOption() && Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM){
-	                        for (ValueStruct value : element.getValues()) {
-	                            if(max_len_enum < value.getName().length())
-	                            {
-	                                max_len_enum = value.getName().length();
-	                            }
-	                        }
-	                    }
-	                }
-	            }
-	        }
+                for (Group group : typeGroups) {
+                    if(max_len < group.getName().length()) {
+                        max_len = group.getName().length();
+                    }
+                    for (Element element : group.getElements()) {
+                        if(max_len_el< element.getName().length()) {
+                            max_len_el = element.getName().length();
+                        }
+                        if (ConfigGenerator.rciParserOption() && Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                            for (ValueStruct value : element.getValues()) {
+                                if(max_len_enum < value.getName().length()) {
+                                    max_len_enum = value.getName().length();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             ConfigGenerator.log(e.toString());
         }
@@ -714,19 +927,14 @@ public abstract class FileGenerator {
                 "    connector_element_access_t access;\n" +
                 "    connector_element_value_type_t type;\n",name_e));
 
-if(future_feature){
-	    fileWriter.write("    rci_function_t set_cb;\n" +
-                "    rci_function_t get_cb;\n");
-}
+        if(ConfigGenerator.rciParserOption()) {
+            fileWriter.write("    struct {\n"+
+                    "        size_t count;\n"+
+                    "        connector_element_enum_t CONST * CONST data;\n"+
+                    "    } enums;\n");
+        }
 
-		if(ConfigGenerator.rciParserOption()){
-			fileWriter.write("    struct {\n"+
-				    "        size_t count;\n"+
-				    "        connector_element_enum_t CONST * CONST data;\n"+
-				    "    } enums;\n");
-		}
-
-		fileWriter.write("} connector_group_element_t;\n");
+        fileWriter.write("} connector_group_element_t;\n");
 
         fileWriter.write(String.format("\ntypedef struct {\n" +
                 "%s" +
@@ -739,12 +947,7 @@ if(future_feature){
                 "      size_t count;\n" +
                 "      char CONST * CONST * description;\n" +
                 "  } errors;\n\n",name_g));
-if(future_feature){
-		fileWriter.write("  rci_function_t start_cb;\n" +
-                "  rci_function_t end_cb;\n");
-}
-		fileWriter.write("} connector_group_t;\n");
-
+        fileWriter.write("} connector_group_t;\n");
     }
 
     protected void writeRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
@@ -897,31 +1100,18 @@ if(future_feature){
             element_string += String.format("   %s,\n",  getElementDefine("access", getAccess(element.getAccess())));
             element_string += String.format("   %s", getElementDefine("type", element.getType()));
 
-if(future_feature){
-
-            if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-	            element_string += String.format(",\n   %s%srci_%s_%s_set,\n",RCI_FUNCTION_T,prefix, getDefineString(group_name).toLowerCase(),element.getName());
+            if(ConfigGenerator.rciParserOption()) {
+                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                    String define_name = getDefineString(group_name + "_" + element.getName() + "_enum");
+                    element_string += String.format(",\n   { ARRAY_SIZE(%s%s),\n", prefix, define_name.toLowerCase()) + String.format("     %s%s\n   }\n", prefix, define_name.toLowerCase());
+                }
+                else {
+                    element_string += ",\n   { 0,\n     NULL\n   }\n";
+                }
             }
-            else{
-                element_string +=",\n   NULL,\n";
+            else {
+                element_string +="\n";
             }
-
-            element_string += String.format("   %s%srci_%s_%s_get", RCI_FUNCTION_T,prefix,getDefineString(group_name).toLowerCase(),element.getName());
-}
-
-	if(ConfigGenerator.rciParserOption()){
-		 if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM){
-			String define_name = getDefineString(group_name + "_" + element.getName() + "_enum");
-			element_string += String.format(",\n   { ARRAY_SIZE(%s%s),\n", prefix, define_name.toLowerCase())
-				    + String.format("     %s%s\n   }\n", prefix, define_name.toLowerCase());
-		 }
-		 else {
-			 element_string += ",\n   { 0,\n     NULL\n   }\n";
-		 }
-	}
-	else{
-		element_string +="\n";
-	}
             element_string += " }";
 
             if (element_index < (elements.size() - 1)) {
@@ -1046,27 +1236,20 @@ if(future_feature){
                     } else {
                         group_string += "   { 0,\n     NULL\n   }";
                     }
-if(future_feature){
-                    group_string +=  String.format(", %s",COMMENTED(" errors"));
-
-                    group_string += String.format("   %s%srci_%s_start,\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase())
-                                + String.format("   %s%srci_%s_end\n }\n" , RCI_FUNCTION_T,prefix,getDefineString(group.getName()).toLowerCase());
-}
-else{
-					group_string +=  String.format(" %s}\n",COMMENTED(" errors"));
-}
+                    group_string +=  String.format(" %s}\n",COMMENTED(" errors"));
                     if (group_index < (groups.size() - 1)) {
                         group_string += ",";
                     }
-
                     bufferWriter.write(group_string);
                 }
-                bufferWriter.write("\n};\n\n");
             }
+            bufferWriter.write("\n};\n\n");
         }
 
         String rciGroupString = "static ";
-        if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) rciGroupString = "";
+        if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) {
+            rciGroupString = "";
+        }
         
         rciGroupString += String.format("connector_remote_group_table_t CONST %s[] = {\n",
                                                 CONNECTOR_REMOTE_GROUP_TABLE);
@@ -1131,6 +1314,40 @@ else{
                 error_string += ",\n";
             }
             bufferWriter.write(error_string);
+        }
+
+    }
+
+    protected void writeCcapiErrorHeader(String type,int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+
+        if (errorIndex == 0)
+        {
+                String defaultErrorsStrings = "";
+                
+                defaultErrorsStrings += enumDefine + "_" + "BUSY = -2,\n";
+                defaultErrorsStrings += enumDefine + "_" + "SKIP = -1,\n";
+                defaultErrorsStrings += enumDefine + "_" + "NONE = 0,\n";
+                bufferWriter.write(defaultErrorsStrings.toUpperCase());
+                return;
+        }
+        
+        for (String key : errorMap.keySet()) {
+            String error_string = enumDefine + "_" + key;
+
+            if(type.equalsIgnoreCase("rci")){
+                if (errorIndex == 1)
+                        error_string += " = 1," + COMMENTED(" Protocol defined ");
+                else
+                        error_string += ",\n";
+                errorIndex++;
+            } else if(type.equalsIgnoreCase("global")){
+                if (errorIndex == 1) error_string += "," +  COMMENTED(" User defined (global errors) ");
+                else error_string += ",\n";
+                errorIndex++;
+            } else {
+                error_string += ",\n";
+            }
+            bufferWriter.write(error_string.toUpperCase());
         }
 
     }
@@ -1271,7 +1488,7 @@ else{
 	    }
     }
 
-    private String COMMENTED(String comment) {
+    String COMMENTED(String comment) {
         return " /*" + comment + "*/\n";
     }
 
@@ -1282,6 +1499,17 @@ else{
             str += "_" + enum_name;
         }
         return str;
+    }
+    
+    private String getCcapiEnumString(String enum_name) {
+        String str = " " + CCAPI_PREFIX;
+        if (configType != null)
+                str += "_" + configType;
+
+        if (enum_name != null) {
+            str += "_" + enum_name;
+        }
+        return str.toUpperCase();
     }
 
     private String endEnumString(String group_name) {
@@ -1299,7 +1527,30 @@ else{
         return str;
     }
 
-    private String getDefineString(String define_name) {
+    private String endCcapiEnumString(String group_name) {
+        /*Add _COUNT */
+        
+        String str = " " + CCAPI_PREFIX;
+        if (configType != null)
+                str += "_" + configType;
+        
+        if(group_name!=null)
+           str += "_" + group_name;
+        str += "_" + COUNT_STRING +"\n";
+
+        str = str.toUpperCase();
+        
+        str += "} " + prefix + CCAPI_PREFIX;
+        if (configType != null)
+                str += "_" + configType;
+        if(group_name!=null)
+            str += "_" + group_name;
+        str +=ID_T_STRING;
+
+        return str;
+    }
+    
+    String getDefineString(String define_name) {
         return (configType.toUpperCase() + "_" + define_name.toUpperCase());
     }
 
@@ -1356,7 +1607,7 @@ else{
 
     }
 
-    private String getElementDefine(String type_name, String element_name) {
+    String getElementDefine(String type_name, String element_name) {
         return (String.format("%s_element_%s_%s", CONNECTOR_PREFIX, type_name, element_name));
     }
 
