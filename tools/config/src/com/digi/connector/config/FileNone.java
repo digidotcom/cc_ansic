@@ -148,13 +148,13 @@ public class FileNone extends FileGenerator {
         bufferWriter.write(String.format("\nconnector_remote_config_data_t const rci_internal_data = {\n" +
             "    connector_group_table,\n"+
             "    connector_rci_errors,\n"+
-            "    connector_global_error_COUNT,\n"+
+            "    %d,\n"+
             "    FIRMWARE_TARGET_ZERO_VERSION,\n"+
             "    %s,\n"+
             "    \"%s\"\n"+
             "};\n"+
             "\n"+
             "connector_remote_config_data_t const * const rci_descriptor_data = &rci_internal_data;"
-            , Descriptors.vendorId(),Descriptors.deviceType()));
+            , configData.getUserGlobalErrors().size(), Descriptors.vendorId(),Descriptors.deviceType()));
     }
 }
