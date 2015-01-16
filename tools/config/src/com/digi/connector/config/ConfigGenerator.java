@@ -560,6 +560,10 @@ public class ConfigGenerator {
     }
     
     public static FileType fileTypeOption() {
+        if (useCcapi())
+        {
+            fileType = FileType.SOURCE;
+        }
         return fileType;
     }
 
@@ -660,12 +664,6 @@ public class ConfigGenerator {
                 FileNone fileNone = new FileNone(directoryPath);
                 fileNone.generateFile(configData);
 
-                if (useCcapi())
-                {
-                    FileSourceCcapi ccapiSource = new FileSourceCcapi(directoryPath);
-                    ccapiSource.generateFile(configData);       
-                }
-                
                 /* Generate and upload descriptors */
                 debug_log("Start Generating/loading descriptors");
                 if(!noUpload || saveDescriptor)
@@ -678,6 +676,12 @@ public class ConfigGenerator {
                 Descriptors descriptorsSource = new Descriptors(username, password,
                         vendorId, deviceType, fwVersion);
 
+                if (useCcapi())
+                {
+                    FileSourceCcapi ccapiSource = new FileSourceCcapi(directoryPath);
+                    ccapiSource.generateFile(configData);       
+                }
+                
                 FileSource fileSource = new FileSource(directoryPath);
                 fileSource.generateFile(configData);
 
