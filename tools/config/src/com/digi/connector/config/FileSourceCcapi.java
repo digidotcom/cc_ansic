@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
+import sun.security.krb5.Config;
+
 import com.digi.connector.config.ConfigGenerator.FileType;
 import com.digi.connector.config.ConfigGenerator.UseNames;
 
@@ -38,10 +40,8 @@ public class FileSourceCcapi extends FileGenerator {
         }
 
         headerWriter = new BufferedWriter(new FileWriter(filePath + headerFile));
-        callbacksWriter = new BufferedWriter(new FileWriter(filePath + callbacksFile));
 
         writeHeaderComment(headerWriter);
-        writeHeaderComment(callbacksWriter);
 	}
 	
     public void writeHeaderComment(BufferedWriter bufferWriter) throws IOException {
@@ -75,11 +75,19 @@ public class FileSourceCcapi extends FileGenerator {
             writePrototypes(configData, headerWriter);
             headerWriter.write(String.format("\n#endif\n"));
 
-            callbacksWriter.write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
-            callbacksWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-            callbacksWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, headerFile));
-            
-            writeFunctionsCB(configData, callbacksWriter);
+            if (ConfigGenerator.generateCcapiStubFunctions()) {
+                callbacksWriter = new BufferedWriter(new FileWriter(filePath + callbacksFile));
+                writeHeaderComment(callbacksWriter);
+                
+                callbacksWriter.write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
+                callbacksWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
+                callbacksWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, headerFile));
+                
+                writeFunctionsCB(configData, callbacksWriter);    
+                
+                ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, callbacksFile));
+
+            }
             
             fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
             fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, headerFile));
@@ -159,7 +167,6 @@ public class FileSourceCcapi extends FileGenerator {
 
         for (GroupType type : GroupType.values()) {
             LinkedList<Group> groups = null;
-            System.out.println("GroupType " + type.toString());
 
             configType = type.toString().toLowerCase();
 

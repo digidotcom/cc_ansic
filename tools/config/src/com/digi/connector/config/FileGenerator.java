@@ -44,7 +44,6 @@ public abstract class FileGenerator {
 
     protected final static String CHAR_CONST_STRING = "static char CONST * CONST ";
     protected final static String CONNECTOR_CALLBACK_STATUS = "\nconnector_callback_status_t ";
-    protected final static String CCAPI_RCI_ERROR = "\nccapi_rci_error_t ";
     protected final static String ID_T_STRING = "_id_t;\n\n";
     protected final static String TYPEDEF_STRUCT = "\ntypedef struct {\n";
 

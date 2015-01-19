@@ -26,6 +26,7 @@ public class ConfigGenerator {
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
     private final static String CCAPI_OPTION = "ccapi";
+    private final static String CCAPI_STUB_FUNCTIONS_OPTION = "ccapiStub";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
     private final static String NO_UPLOAD_OPTION = "noUpload";
     private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
@@ -70,6 +71,7 @@ public class ConfigGenerator {
     private static String prefix = "";
     private static boolean deleteDescriptor;
     private static boolean useCcapi;
+    private static boolean CcapiStubFunctions;
     private static boolean saveDescriptor;
     private static boolean noUpload;
     private static boolean createBinIdLog;
@@ -230,6 +232,10 @@ public class ConfigGenerator {
                 FIRMWARE_VERSION));
         log(String.format("\t%-16s \t= The Connector Configuration file",
                 CONFIG_FILENAME));
+        log(String
+                .format(
+                        "\t%-16s \t= output for use with CCAPI projects",
+                        DASH + CCAPI_OPTION));
         if(hidden_help){
             log("Hidden Options:");
             log(String.format("\t%-16s \t= show this extra message", DASH
@@ -265,8 +271,8 @@ public class ConfigGenerator {
                             DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
             log(String
                     .format(
-                            "\t%-16s \t= output for use with CCAPI projects",
-                            DASH + CCAPI_OPTION));
+                            "\t%-16s \t= generate stub functions for CCAPI projects (assumes %s)",
+                            DASH + CCAPI_STUB_FUNCTIONS_OPTION, DASH + CCAPI_OPTION));
             log(String
                     .format(
                             "\t%-16s \t= Defines and enums names to work with RCI Parser.",
@@ -356,6 +362,9 @@ public class ConfigGenerator {
                 usage();
             } else if (option.equals(CCAPI_OPTION)) {
                 useCcapi = true;
+            } else if (option.equals(CCAPI_STUB_FUNCTIONS_OPTION)) {
+                useCcapi = true;
+                CcapiStubFunctions = true;
             } else if (option.equals(SAVE_DESCRIPTORS_OPTION)) {
                 saveDescriptor = true;
             } else if (option.equals(NO_UPLOAD_OPTION)) {
@@ -543,6 +552,10 @@ public class ConfigGenerator {
 
     public static boolean useCcapi() {
         return useCcapi;
+    }
+    
+    public static boolean generateCcapiStubFunctions() {
+        return CcapiStubFunctions;
     }
 
     public static boolean rciLegacyEnabled() {
