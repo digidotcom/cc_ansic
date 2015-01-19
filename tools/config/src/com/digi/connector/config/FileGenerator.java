@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
+import com.digi.connector.config.ConfigGenerator.FileType;
+import com.digi.connector.config.ConfigGenerator.UseNames;
 import com.digi.connector.config.Element.ElementType;
 
 public abstract class FileGenerator {
@@ -450,7 +452,6 @@ public abstract class FileGenerator {
                 if (!groups.isEmpty()) {
 
                     for (Group group : groups) {
-                        String retvalErrorType = "\n" + CCAPI_PREFIX + "_" + configType + "_" + group.getName() + "_error_id_t ";
                         String group_function = setFunction(group.getName(), String.format("%srci_%s_%s_start(%s)",prefix,configType,group.getName(),RCI_INFO_T),null);
                         group_function += setFunction(group.getName(), String.format("%srci_%s_%s_end(%s)",prefix,configType,group.getName(),RCI_INFO_T),null);
                         bufferWriter.write(group_function);
@@ -860,13 +861,9 @@ public abstract class FileGenerator {
 
     }
 
-    private void writeGroupElementStructs(ConfigData configData) throws IOException {
-
-        String name_g = "";
-        String name_e = "";
-        int max_len = 0;
-        int max_len_el = 0;
-        int max_len_enum = 0;
+    private int get_max_group_strlen(ConfigData configData) throws IOException {
+        
+        int max_group_strlen = 0;
 
         try {
             for (GroupType type : GroupType.values()) {
@@ -875,19 +872,32 @@ public abstract class FileGenerator {
                 LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
                 for (Group group : typeGroups) {
-                    if(max_len < group.getName().length()) {
-                        max_len = group.getName().length();
+                    if(max_group_strlen < group.getName().length()) {
+                        max_group_strlen = group.getName().length();
                     }
+                }
+            }
+        } catch (Exception e) {
+            ConfigGenerator.log(e.toString());
+        }
+        
+        return max_group_strlen;
+    }
+    
+    private int get_max_element_strlen(ConfigData configData) throws IOException {
+        
+        int max_element_strlen = 0;
+
+        try {
+            for (GroupType type : GroupType.values()) {
+
+                String typeName = type.toString().toLowerCase();
+                LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
+
+                for (Group group : typeGroups) {
                     for (Element element : group.getElements()) {
-                        if(max_len_el< element.getName().length()) {
-                            max_len_el = element.getName().length();
-                        }
-                        if (ConfigGenerator.rciParserOption() && Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
-                            for (ValueStruct value : element.getValues()) {
-                                if(max_len_enum < value.getName().length()) {
-                                    max_len_enum = value.getName().length();
-                                }
-                            }
+                        if(max_element_strlen< element.getName().length()) {
+                            max_element_strlen = element.getName().length();
                         }
                     }
                 }
@@ -895,18 +905,135 @@ public abstract class FileGenerator {
         } catch (Exception e) {
             ConfigGenerator.log(e.toString());
         }
-        /*if no enums found, disable enumNames option */
-        if(max_len_enum == 0)
-            ConfigGenerator.setRciParser(false);
-        else
-            max_len_enum ++; /* '/0'*/
-        max_len ++;
-        max_len_el ++;
+        
+        return max_element_strlen;
+    }
+    
+    public void generateUseNamesFile(ConfigData configData) throws IOException {
+        if (ConfigGenerator.useNamesOption() != UseNames.NONE) {
+            String USENAMES_NAME = "rci_usenames_defines.h";
+            String usenamesFile = USENAMES_NAME;
+            BufferedWriter usenamesHeaderWriter = null;
+            
+            try {
+                usenamesHeaderWriter = new BufferedWriter(new FileWriter(filePath + usenamesFile));    
+                writeHeaderComment(usenamesHeaderWriter);
+                
+                /* write include header in the header file */
+                String usenamesHeaderDefineName = usenamesFile.replace('.', '_').toLowerCase();
+                usenamesHeaderWriter.write(String.format("#ifndef %s\n#define %s\n\n", usenamesHeaderDefineName, usenamesHeaderDefineName));
+                
+                switch(ConfigGenerator.useNamesOption()){
+                    case NONE:
+                        break;
+                    case ALL:
+                    case ELEMENTS:
+                        usenamesHeaderWriter.write(String.format(
+                                "#if !(defined RCI_ELEMENT_NAME_MAX_SIZE)\n" +
+                                "#define RCI_ELEMENT_NAME_MAX_SIZE %d\n" +
+                                "#else\n" +
+                                "#if RCI_ELEMENT_NAME_MAX_SIZE < %d\n" +
+                                "#undef RCI_ELEMENT_NAME_MAX_SIZE\n" + 
+                                "#define RCI_ELEMENT_NAME_MAX_SIZE %d\n" +
+                                "#endif\n" +
+                        		"#endif\n", get_max_element_strlen(configData), get_max_element_strlen(configData), get_max_element_strlen(configData)));
+                        if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ELEMENTS)
+                            break;
+                    case GROUPS:
+                        usenamesHeaderWriter.write(String.format(
+                                "#if !(defined RCI_GROUP_NAME_MAX_SIZE)\n" +
+                                "#define RCI_GROUP_NAME_MAX_SIZE %d\n" +
+                                "#else\n" +
+                                "#if RCI_GROUP_NAME_MAX_SIZE < %d\n" +
+                                "#undef RCI_GROUP_NAME_MAX_SIZE\n" + 
+                                "#define RCI_GROUP_NAME_MAX_SIZE %d\n" + 
+                                "#endif\n" +
+                                "#endif\n", get_max_group_strlen(configData), get_max_group_strlen(configData), get_max_group_strlen(configData)));
+                        break;
+                }
+                
+                if (ConfigGenerator.rciParserOption())
+                {
+                    usenamesHeaderWriter.write(String.format(
+                            "#if !(defined RCI_ENUM_NAME_MAX_SIZE)\n" +
+                            "#define RCI_ENUM_NAME_MAX_SIZE %d\n" +
+                            "#else\n" +
+                            "#if RCI_ENUM_NAME_MAX_SIZE < %d\n" +
+                            "#undef RCI_ENUM_NAME_MAX_SIZE\n" + 
+                            "#define RCI_ENUM_NAME_MAX_SIZE %d\n" + 
+                            "#endif\n" +
+                            "#endif\n", get_max_enum_strlen(configData), get_max_enum_strlen(configData), get_max_enum_strlen(configData)));
+                }
+                
+                usenamesHeaderWriter.write(String.format("\n#endif\n"));
+                
+                ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, usenamesFile));
+                ConfigGenerator.log(String.format("NOTE: include \"%s%s\" in your connector_config.h so connector_api_remote.h can find the defines\n",  filePath, usenamesFile));
 
+            } catch (IOException e) {
+                throw new IOException(e.getMessage());
+            }
+            finally {
+                if (usenamesHeaderWriter != null){
+                    usenamesHeaderWriter.close();    
+                }
+            }
+            
+        }
+    }
+    private int get_max_enum_strlen(ConfigData configData) throws IOException {
+        
+        int max_enum_strlen = 0;
+
+        if (ConfigGenerator.rciParserOption()) {
+            try {
+                for (GroupType type : GroupType.values()) {
+
+                    String typeName = type.toString().toLowerCase();
+                    LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
+
+                    for (Group group : typeGroups) {
+                        for (Element element : group.getElements()) {
+                            if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                                for (ValueStruct value : element.getValues()) {
+                                    if(max_enum_strlen < value.getName().length()) {
+                                        max_enum_strlen = value.getName().length();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                /* if no enums found, disable enumNames option */
+                if(max_enum_strlen == 0) {
+                    ConfigGenerator.setRciParser(false);
+                }
+            } catch (Exception e) {
+                ConfigGenerator.log(e.toString());
+            }
+        }
+        
+        return max_enum_strlen;
+    }
+    
+    private void writeGroupElementStructs(ConfigData configData) throws IOException {
+        String element_name_struct_field = "";
+        String group_name_struct_field = "";
+        
         if (ConfigGenerator.rciParserOption()){
-            fileWriter.write(String.format("\ntypedef struct {\n" +
-                    "    char name[%d];\n" +
-                    "} connector_element_enum_t;\n", max_len_enum));
+            
+            switch (ConfigGenerator.fileTypeOption())
+            {
+                case SOURCE:
+                case GLOBAL_HEADER:
+                    break;
+                case NONE:
+                    fileWriter.write(String.format("\n" + "#define RCI_ENUM_NAME_MAX_SIZE    %d" + "\n", get_max_enum_strlen(configData) + 1));
+            }
+            
+            fileWriter.write("\ntypedef struct {\n" +
+                    "    char name[RCI_ENUM_NAME_MAX_SIZE];\n" +
+                    "} connector_element_enum_t;\n"); /* max_enum_strlen + 1 */
         }
 
         switch(ConfigGenerator.useNamesOption()){
@@ -914,18 +1041,34 @@ public abstract class FileGenerator {
                 break;
             case ALL:
             case ELEMENTS:
-                name_e = String.format("    char name[%d];\n",max_len_el + 1);
+                switch (ConfigGenerator.fileTypeOption())
+                {
+                    case SOURCE:
+                    case GLOBAL_HEADER:
+                        break;
+                    case NONE:
+                        fileWriter.write(String.format("\n" + "#define RCI_ELEMENT_NAME_MAX_SIZE    %d" + "\n", get_max_element_strlen(configData) + 1));
+                }
+                element_name_struct_field = "    char name[RCI_ELEMENT_NAME_MAX_SIZE];\n";
                 if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ELEMENTS)
                     break;
             case GROUPS:
-                name_g = String.format("  char name[%d];\n",max_len + 1);
+                switch (ConfigGenerator.fileTypeOption())
+                {
+                    case SOURCE:
+                    case GLOBAL_HEADER:
+                        break;
+                    case NONE:
+                        fileWriter.write(String.format("\n" + "#define RCI_GROUP_NAME_MAX_SIZE    %d" + "\n", get_max_group_strlen(configData) + 1));
+                }
+                group_name_struct_field = "  char name[RCI_GROUP_NAME_MAX_SIZE];\n";
                 break;
         }
-
+        
         fileWriter.write(String.format("\ntypedef struct {\n" +
                 "%s" +
                 "    connector_element_access_t access;\n" +
-                "    connector_element_value_type_t type;\n",name_e));
+                "    connector_element_value_type_t type;\n", element_name_struct_field));
 
         if(ConfigGenerator.rciParserOption()) {
             fileWriter.write("    struct {\n"+
@@ -946,7 +1089,7 @@ public abstract class FileGenerator {
                 "  struct {\n" +
                 "      size_t count;\n" +
                 "      char CONST * CONST * description;\n" +
-                "  } errors;\n\n",name_g));
+                "  } errors;\n\n", group_name_struct_field));
         fileWriter.write("} connector_group_t;\n");
     }
 

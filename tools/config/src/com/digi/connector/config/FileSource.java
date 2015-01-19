@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.digi.connector.config.ConfigGenerator.FileType;
+import com.digi.connector.config.ConfigGenerator.UseNames;
 
 public class FileSource extends FileGenerator {
 
@@ -104,8 +105,13 @@ public class FileSource extends FileGenerator {
  
 
             ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, generatedFile));
-        if (generatedFile.length() > 0) ConfigGenerator.log(String.format("\t%s%s", filePath, headerFile));
-
+            if (generatedFile.length() > 0) {
+                ConfigGenerator.log(String.format("\t%s%s", filePath, headerFile));
+            }
+            
+            if (ConfigGenerator.useNamesOption() != UseNames.NONE) {
+                generateUseNamesFile(configData);    
+            }
 
         } catch (IOException e) {
             throw new IOException(e.getMessage());
