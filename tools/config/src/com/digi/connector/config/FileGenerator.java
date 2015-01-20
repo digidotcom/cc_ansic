@@ -423,7 +423,7 @@ public abstract class FileGenerator {
                             element_prototype += String.format("\n%s%srci_%s_%s_%s_set    NULL \n" ,DEFINE,prefix,configType,group.getName(),element.getName());
                         }
                         else {
-                            element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s const value);\n" ,retvalErrorType,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+                            element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s const * const value);\n" ,retvalErrorType,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
                         }
                         
                         bufferWriter.write(element_prototype);
@@ -523,7 +523,7 @@ public abstract class FileGenerator {
                                 ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),value);
                                 }
                                 if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-                                    element_function += setFunction(group.getName(), String.format("%srci_%s_%s_%s_set(%s, %s const value)"
+                                    element_function += setFunction(group.getName(), String.format("%srci_%s_%s_%s_set(%s, %s const * const value)"
                                 ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
                                     }
                                 bufferWriter.write(element_function);
@@ -551,7 +551,7 @@ public abstract class FileGenerator {
         }
         
         String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
-        String RETURN_CONTINUE = "    return connector_callback_continue;\n}\n";
+        String RETURN_CONTINUE = "    return CCAPI_GLOBAL_ERROR_NONE;\n}\n";
 
         String function = retvalErrorType + parameter + "\n{\n    ";
         function += UNUSED("info") + PRINTF;
