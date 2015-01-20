@@ -364,6 +364,8 @@ STATIC void init_double_info(double_info_t * const double_info, double const val
 
     init_int_info(&double_info->integer, integer_part);
     init_int_info(&double_info->fractional, fractional_part);
+    double_info->fractional.figures = 6;
+
     if (value < 0)
     {
         double_info->integer.negative = connector_true;
