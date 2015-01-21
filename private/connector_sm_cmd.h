@@ -580,8 +580,7 @@ STATIC connector_status_t sm_process_cli_request(connector_data_t * const connec
         if (callback_status == connector_callback_unrecognized)
             callback_status = connector_callback_error;
         result = sm_map_callback_status_to_connector_status(callback_status);
-        if (callback_status == connector_callback_continue)
-            session->user.context = cli_request.user_context;
+        session->user.context = cli_request.user_context;
     }
 
     return result;
