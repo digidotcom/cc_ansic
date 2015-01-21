@@ -51,7 +51,6 @@ public class FileGlobalHeader extends FileGenerator {
             String defineName = generatedFile.replace('.', '_').toUpperCase();
 
             fileWriter.write(String.format("#ifndef %s\n#define %s\n", defineName, defineName));
-            fileWriter.write("#define CONNECTOR_BINARY_RCI_SERVICE\n");
 
             writeDefinesAndStructures(configData);
             
@@ -59,8 +58,6 @@ public class FileGlobalHeader extends FileGenerator {
 
             fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
 
-            fileWriter.write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
-    
             fileWriter.write(String.format("\n#endif\n"));
            
             ConfigGenerator.log(String.format("File created:\n\t%s%s",  filePath, generatedFile));
