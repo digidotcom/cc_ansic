@@ -423,7 +423,29 @@ public abstract class FileGenerator {
                             element_prototype += String.format("\n%s%srci_%s_%s_%s_set    NULL \n" ,DEFINE,prefix,configType,group.getName(),element.getName());
                         }
                         else {
-                            element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s const * const value);\n" ,retvalErrorType,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
+                            String value_type_modifier = "";
+                            switch(ElementType.toElementType(element.getType())) {
+                                case UINT32:
+                                case HEX32:
+                                case X_HEX32:
+                                case INT32:
+                                case FLOAT:
+                                case ON_OFF:
+                                case ENUM:
+                                case BOOLEAN:
+                                    value_type_modifier = "const *";
+                                    break;
+                                case IPV4:
+                                case FQDNV4:
+                                case FQDNV6:
+                                case DATETIME:
+                                case STRING:
+                                case MULTILINE_STRING:
+                                case PASSWORD:
+                                case MAC_ADDR:
+                                    break;
+                            }
+                            element_prototype += String.format("%s%srci_%s_%s_%s_set(%s, %s " + value_type_modifier + "const value);\n" ,retvalErrorType,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,protoType);
                         }
                         
                         bufferWriter.write(element_prototype);
@@ -523,8 +545,30 @@ public abstract class FileGenerator {
                                 ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),value);
                                 }
                                 if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
-                                    element_function += setFunction(group.getName(), String.format("%srci_%s_%s_%s_set(%s, %s const * const value)"
-                                ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
+                                    String value_type_modifier = "";
+                                    switch(ElementType.toElementType(element.getType())) {
+                                        case UINT32:
+                                        case HEX32:
+                                        case X_HEX32:
+                                        case INT32:
+                                        case FLOAT:
+                                        case ON_OFF:
+                                        case ENUM:
+                                        case BOOLEAN:
+                                            value_type_modifier = "const *";
+                                            break;
+                                        case IPV4:
+                                        case FQDNV4:
+                                        case FQDNV6:
+                                        case DATETIME:
+                                        case STRING:
+                                        case MULTILINE_STRING:
+                                        case PASSWORD:
+                                        case MAC_ADDR:
+                                            break;
+                                    }
+                                    element_function += setFunction(group.getName(), String.format("%srci_%s_%s_%s_set(%s, %s " + value_type_modifier + "const value)"
+                                                                    ,prefix,configType,group.getName(),element.getName(),RCI_INFO_T,FType),"UNUSED_PARAMETER(value)");
                                     }
                                 bufferWriter.write(element_function);
                             }//No more elements
