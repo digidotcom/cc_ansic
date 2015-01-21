@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
-import sun.security.krb5.Config;
-
 import com.digi.connector.config.ConfigGenerator.FileType;
 import com.digi.connector.config.ConfigGenerator.UseNames;
 
