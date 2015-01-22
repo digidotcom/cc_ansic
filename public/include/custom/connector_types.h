@@ -25,16 +25,6 @@
 #include <assert.h>
 #include <stddef.h>
 
-/**
- * The Cloud Connector uses this function to produce output string according to the format.
- * This function behaves exactly as snprintf except that the variable argument list is passed
- * as a va_list instead of a succession of arguments.
- *
- * In the C library the prototype for vsnprintf is defined as vsnprintf(char * str, size_t size, const char *format, va_list ap);
- *
- */
-int connector_snprintf(char * const str, size_t const size, char const * const format, ...);
-
 #if __STDC_VERSION__ >= 199901L
   /* If the compiler is C99 complaint, then we have stdint.h. */
   #define CONNECTOR_HAS_STDINT_HEADER
