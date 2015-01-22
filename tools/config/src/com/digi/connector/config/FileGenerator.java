@@ -1428,8 +1428,8 @@ public abstract class FileGenerator {
                     }
                     bufferWriter.write(group_string);
                 }
+                bufferWriter.write("\n};\n\n");
             }
-            bufferWriter.write("\n};\n\n");
         }
 
         String rciGroupString = "static ";
