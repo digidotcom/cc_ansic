@@ -89,6 +89,8 @@ public class FileSource extends FileGenerator {
             /* write structures in source file */
             writeAllStructures(configData, fileWriter);
 
+            int GlobalErrorCount = configData.getUserGlobalErrors().size() + 2;
+
             fileWriter.write(String.format("\nconnector_remote_config_data_t const rci_internal_data = {\n" +
                     "    connector_group_table,\n"+
                     "    connector_rci_errors,\n"+
@@ -99,7 +101,7 @@ public class FileSource extends FileGenerator {
                     "};\n"+
                     "\n"+
                     "connector_remote_config_data_t const * const rci_descriptor_data = &rci_internal_data;"
-                    , configData.getUserGlobalErrors().size(), ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType()));
+                    , GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType()));
             
             headerWriter.write(String.format("\n#endif\n"));
  

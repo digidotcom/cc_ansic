@@ -31,9 +31,9 @@ STATIC void rci_error(rci_t * const rci, unsigned int const id, char const * con
 static char const * get_rci_group_error(rci_t * const rci, unsigned int const id)
 {
     connector_group_t const * const group = get_current_group(rci);
-    unsigned int const index = (id - rci->service_data->connector_ptr->rci_data->global_error_count);
+    unsigned int const index = id - (rci->service_data->connector_ptr->rci_data->global_error_count + 1);
 
-    ASSERT(id >= rci->service_data->connector_ptr->rci_data->global_error_count);
+    ASSERT(id >= rci->service_data->connector_ptr->rci_data->global_error_count + 1);
     ASSERT(index < group->errors.count);
 
     return group->errors.description[index];
@@ -52,7 +52,7 @@ STATIC void rci_global_error(rci_t * const rci, unsigned int const id, char cons
 
 STATIC void rci_group_error(rci_t * const rci, unsigned int const id, char const * const hint)
 {
-    if (id < rci->service_data->connector_ptr->rci_data->global_error_count)
+    if (id < (rci->service_data->connector_ptr->rci_data->global_error_count + 1))
     {
         rci_global_error(rci, id, hint);
     }
