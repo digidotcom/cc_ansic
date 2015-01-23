@@ -10,6 +10,7 @@
  * =======================================================================
  */
 
+#include "connector_stringify_tools.h"
 
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
 static char const rci_set_empty_group_hint[] = "Empty group";
@@ -905,6 +906,32 @@ done:
     return;
 }
 
+STATIC size_t uint8_t_array_to_string(char * const buffer, size_t bytes_available, uint8_t const * const array, size_t const array_size, char const separator, unsigned int const base)
+{
+    int_info_t int_info;
+    buffer_info_t buffer_info;
+    size_t i;
+
+    buffer_info.buffer = buffer;
+    buffer_info.bytes_available = bytes_available;
+    buffer_info.bytes_written = 0;
+
+    for (i = 0; i < array_size; i++)
+    {
+        char const terminator = i < array_size - 1 ? separator : '\0';
+
+        init_int_info(&int_info, array[i], base);
+        if (base == 16)
+        {
+            int_info.figures = 2; /* Write hex with leading zeroes (1 -> "01")*/
+        }
+        process_integer(&int_info, &buffer_info);
+        put_character(terminator, &buffer_info);
+    }
+
+    return buffer_info.bytes_written;
+}
+
 STATIC void process_field_value(rci_t * const rci)
 {
     connector_group_element_t const * const element = get_current_element(rci);
@@ -977,20 +1004,14 @@ STATIC void process_field_value(rci_t * const rci)
         {
             char * const data = (char *)rci->input.storage;
             size_t size_written;
-
-            uint8_t ip1 = BYTE32_3(ip_addr);
-            uint8_t ip2 = BYTE32_2(ip_addr);
-            uint8_t ip3 = BYTE32_1(ip_addr);
-            uint8_t ip4 = BYTE32_0(ip_addr);
-
+            uint8_t const ip[4] = {BYTE32_3(ip_addr), BYTE32_2(ip_addr), BYTE32_1(ip_addr), BYTE32_0(ip_addr)};
 #if (defined CONNECTOR_NO_MALLOC)
             size_t const size_avail = sizeof rci->input.storage;
 #else
             size_t const size_avail = rci->input.storage_len;
 #endif
             ASSERT(size_avail >= sizeof "255.255.255.255");
-
-            size_written = connector_snprintf(data, size_avail, "%d.%d.%d.%d", ip1, ip2, ip3, ip4);
+            size_written = uint8_t_array_to_string(data, size_avail, ip, ARRAY_SIZE(ip), '.', 10);
 
             ASSERT(size_written < size_avail);
             ASSERT_GOTO(size_written > 0, done);
@@ -1024,10 +1045,9 @@ STATIC void process_field_value(rci_t * const rci)
 #endif
             ASSERT(size_avail >= sizeof "FF:FF:FF:FF:FF:FF");
 
-            size_written = connector_snprintf(data, size_avail, "%02x:%02x:%02x:%02x:%02x:%02x", 
-                               mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
+            size_written = uint8_t_array_to_string(data, size_avail, mac_addr, ARRAY_SIZE(mac_addr), ':', 16);
 
-            ASSERT(size_written < size_avail);
+            ASSERT(size_written <= size_avail);
             ASSERT_GOTO(size_written > 0, done);
 
             rci->shared.value.string_value = data;

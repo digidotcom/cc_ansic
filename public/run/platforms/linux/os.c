@@ -25,50 +25,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-int connector_snprintf(char * const str, size_t const size, char const * const format, ...)
-{
-    va_list args;
-    int result;
-
-    va_start(args, format);
-
-#if __STDC_VERSION__ >= 199901L
-    result = vsnprintf(str, size, format, args);
-#else
-    /**************************************************************************************
-    * NOTE: This is an example snprintf() implementation for environments                 *
-    * that do not provide one.                                                            *
-    * The following buffer should hold the longest possible string that can be generated. *
-    * Consider the common case to be only one format specifier at once.                   *
-    * WARNING: If an application is using double Data Point types, this value can be as   *
-    * big as:                                                                             *
-    *                 max_digits = 3 + DBL_MANT_DIG - DBL_MIN_EXP                         *
-    * The above expression evaluates to 1077 in a 64-bit Linux machine for GCC 4.8.1.     *
-    **************************************************************************************/
-    #define SAFE_BUFFER_BYTES 64
-
-    if (size >= SAFE_BUFFER_BYTES)
-    {
-        result = vsprintf(str, format, args);
-    }
-    else
-    {
-        char local_buffer[SAFE_BUFFER_BYTES];
-        ssize_t const bytes_needed = vsprintf(local_buffer, format, args);
-
-        if (bytes_needed < (ssize_t)size)
-        {
-            memcpy(str, local_buffer, bytes_needed + 1); /* Don't forget the \0 */
-        }
-        result = bytes_needed;
-    }
-    #undef SAFE_BUFFER_BYTES
-#endif
-    va_end(args);
-
-    return result;
-}
-
 connector_callback_status_t app_os_malloc(size_t const size, void ** ptr)
 {
     connector_callback_status_t status = connector_callback_abort;
@@ -160,8 +116,8 @@ static connector_callback_status_t app_os_reboot(void)
 {
     APP_DEBUG("app_os_reboot!\n");
 
-    /* Note: we must be running as the superuser to reboot the system */
 #ifdef ENV_LINUX
+    /* Note: we must be running as the superuser to reboot the system */
     sync();
     reboot(LINUX_REBOOT_CMD_RESTART);
 #endif
