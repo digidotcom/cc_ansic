@@ -1004,19 +1004,13 @@ STATIC void process_field_value(rci_t * const rci)
         {
             char * const data = (char *)rci->input.storage;
             size_t size_written;
-            uint8_t ip[4];
+            uint8_t const ip[4] = {BYTE32_3(ip_addr), BYTE32_2(ip_addr), BYTE32_1(ip_addr), BYTE32_0(ip_addr)};
 #if (defined CONNECTOR_NO_MALLOC)
             size_t const size_avail = sizeof rci->input.storage;
 #else
             size_t const size_avail = rci->input.storage_len;
 #endif
             ASSERT(size_avail >= sizeof "255.255.255.255");
-
-            ip[0] = BYTE32_3(ip_addr);
-            ip[1] = BYTE32_2(ip_addr);
-            ip[2] = BYTE32_1(ip_addr);
-            ip[3] = BYTE32_0(ip_addr);
-
             size_written = uint8_t_array_to_string(data, size_avail, ip, ARRAY_SIZE(ip), '.', 10);
 
             ASSERT(size_written < size_avail);
