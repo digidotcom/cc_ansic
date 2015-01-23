@@ -18,13 +18,13 @@ public class Descriptors {
 
     private final String RCI_VERSION = "1.1";
 
-    private final String RCI_DESCRIPTORS = "<descriptor element=\"rci_request\" desc=\"Remote Command Interface request\">\n"
-            + "<attr name=\"version\" desc=\"RCI version of request.  Response will be returned in this versions response format\" default=\""
+    private final String RCI_DESCRIPTORS = "<descriptor element=`rci_request` desc=`Remote Command Interface request`>\n"
+            + "<attr name=`version` desc=`RCI version of request.  Response will be returned in this versions response format` default=`"
             + RCI_VERSION
-            + "\">\n"
-            + "<value value=\""
+            + "`>\n"
+            + "<value value=`"
             + RCI_VERSION
-            + "\" desc=\"Version " + RCI_VERSION + "\"/></attr>\n";
+            + "` desc=`Version " + RCI_VERSION + "`/></attr>\n";
 
     private final String SETTING_DESCRIPTOR_DESCRIPTION = "device configuration";
     private final String STATE_DESCRIPTOR_DESCRIPTION = "device state";
@@ -143,9 +143,9 @@ public class Descriptors {
         int errorId = id;
 
         for (String errorName : errorMap.keySet()) {
-            descriptor += String.format("<error_descriptor id=\"%d\" ", errorId);
+            descriptor += String.format("<error_descriptor id=`%d` ", errorId);
             if (errorMap.get(errorName) != null)
-                descriptor += String.format("desc=\"%s\" ", errorMap.get(errorName));
+                descriptor += String.format("desc=`%s` ", errorMap.get(errorName));
             
             descriptor += "/>\n";
             errorId++;
@@ -156,29 +156,35 @@ public class Descriptors {
 
     private void sendRebootDescriptor() throws Exception {
 
-        String reboot_descriptor = "<descriptor element=\"reboot\" desc=\"Reboot the device\" bin_id=\"7\" >";
-        reboot_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Reboot failed\" />";
+        String reboot_descriptor = "<descriptor element=`reboot` desc=`Reboot the device` bin_id=`7` >";
+        reboot_descriptor +=       "  <error_descriptor id=`1` desc=`Reboot failed` />";
         reboot_descriptor +=       "</descriptor>\n";        
+
+        reboot_descriptor = reboot_descriptor.replace('`', '"');
 
         uploadDescriptor("descriptor/reboot", reboot_descriptor);
     }
 
     private void sendDoCommandDescriptor() throws Exception {
 
-        String do_command_descriptor = "<descriptor element=\"do_command\" bin_id=\"6\" > ";
-        do_command_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Invalid arguments\" />";
-        do_command_descriptor +=       "  <attr name=\"target\" type=\"string\" max=\"" + ConfigData.AttributeMaxLen()
-                              + "\" desc=\"The subsystem that the command is forwarded\" bin_id=\"0\" />";
+        String do_command_descriptor = "<descriptor element=`do_command` bin_id=`6` > ";
+        do_command_descriptor +=       "  <error_descriptor id=`1` desc=`Invalid arguments` />";
+        do_command_descriptor +=       "  <attr name=`target` type=`string` max=`" + ConfigData.AttributeMaxLen()
+                              + "` desc=`The subsystem that the command is forwarded` bin_id=`0` />";
         do_command_descriptor +=       "</descriptor>";
+
+        do_command_descriptor = do_command_descriptor.replace('`', '"');
 
         uploadDescriptor("descriptor/do_command", do_command_descriptor);
     }
 
     private void sendSetFactoryDefaultDescriptor() throws Exception {
 
-        String set_factory_default_descriptor = "<descriptor element=\"set_factory_default\" desc=\"Set device configuration to factory defaults\" bin_id=\"8\" >";
-        set_factory_default_descriptor +=       "  <error_descriptor id=\"1\" desc=\"Set Factory Default failed\" />";
+        String set_factory_default_descriptor = "<descriptor element=`set_factory_default` desc=`Set device configuration to factory defaults` bin_id=`8` >";
+        set_factory_default_descriptor +=       "  <error_descriptor id=`1` desc=`Set Factory Default failed` />";
         set_factory_default_descriptor +=       "</descriptor>\n";        
+
+        set_factory_default_descriptor = set_factory_default_descriptor.replace('`', '"');
 
         uploadDescriptor("descriptor/set_factory_default", set_factory_default_descriptor);
     }
@@ -218,26 +224,26 @@ public class Descriptors {
         if (config_type.equalsIgnoreCase(GroupType.STATE.toString()))
             desc = STATE_DESCRIPTOR_DESCRIPTION;
 
-        String query_descriptors = String.format("<descriptor element=\"query_%s\" desc=\"Retrieve %s\" format=\"all_%ss_groups\"\n",
+        String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups`\n",
                                                   config_type, desc, config_type);
         
         /* setup query setting command descriptor */
-        query_descriptors += String.format(" bin_id=\"%d\">\n", id);
+        query_descriptors += String.format(" bin_id=`%d`>\n", id);
 
         if (config_type.equalsIgnoreCase("setting"))
-            query_descriptors += "  <attr name=\"source\" type=\"enum\" desc=\"Source of settings returned\" bin_id=\"0\" default=\"current\" >"
-                               + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"0\" />"
-                               + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"1\" />"
-                               + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"2\" />"
+            query_descriptors += "  <attr name=`source` type=`enum` desc=`Source of settings returned` bin_id=`0` default=`current` >"
+                               + "      <value value=`current` desc=`Current settings` bin_id=`0` />"
+                               + "      <value value=`stored` desc=`Settings stored in flash` bin_id=`1` />"
+                               + "      <value value=`defaults` desc=`Device defaults` bin_id=`2` />"
                                + "  </attr>"
-                               + "  <attr name=\"compare_to\" type=\"enum\" desc=\"Return only differences from this source\" bin_id=\"1\" default=\"none\" >"
-                               + "      <value value=\"none\" desc=\"Return all settings\" bin_id=\"0\" />"
-                               + "      <value value=\"current\" desc=\"Current settings\" bin_id=\"1\" />"
-                               + "      <value value=\"stored\" desc=\"Settings stored in flash\" bin_id=\"2\" />"
-                               + "      <value value=\"defaults\" desc=\"Device defaults\" bin_id=\"3\" />"
+                               + "  <attr name=`compare_to` type=`enum` desc=`Return only differences from this source` bin_id=`1` default=`none` >"
+                               + "      <value value=`none` desc=`Return all settings` bin_id=`0` />"
+                               + "      <value value=`current` desc=`Current settings` bin_id=`1` />"
+                               + "      <value value=`stored` desc=`Settings stored in flash` bin_id=`2` />"
+                               + "      <value value=`defaults` desc=`Device defaults` bin_id=`3` />"
                                + "  </attr>";
 
-        query_descriptors += String.format("<format_define name=\"all_%ss_groups\">\n", config_type);
+        query_descriptors += String.format("<format_define name=`all_%ss_groups`>\n", config_type);
 
         /*
          * get all errors for query command descriptor. 1. common errors. 2.
@@ -247,10 +253,10 @@ public class Descriptors {
          */
         query_descriptors +=  getErrorDescriptors(configData.getUserGlobalErrorsIndex(), configData.getUserGlobalErrors());
 
-        String set_descriptors = String.format("<descriptor element=\"set_%s\" desc=\"Set %s\" format=\"all_%ss_groups\"\n",
+        String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups`\n",
                                                 config_type, desc, config_type);
         
-        set_descriptors += String.format(" bin_id=\"%d\">\n", id+1);
+        set_descriptors += String.format(" bin_id=`%d`>\n", id+1);
     
         /*
          * get all errors for set command descriptor. 1. common errors. 2.
@@ -283,7 +289,7 @@ public class Descriptors {
             if (createBinIdLog)
                 createBinIdLogBuffer += String.format("group_%s_%s_bin_id=%d\n", config_type, group.getName(), groups.indexOf(group));
 
-            query_descriptors += String.format("<attr name=\"index\" desc=\"item number\" type=\"int32\" min=\"1\" max=\"%d\" />",
+            query_descriptors += String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />",
                                                     group.getInstances());
 
             for (Element element : group.getElements()) {
@@ -346,6 +352,9 @@ public class Descriptors {
         }
         query_descriptors += "</format_define>\n</descriptor>\n";
 
+        query_descriptors = query_descriptors.replace('`', '"');
+        set_descriptors = set_descriptors.replace('`', '"');
+
         uploadDescriptor("descriptor/query_" + config_type, query_descriptors);
         uploadDescriptor("descriptor/set_" + config_type, set_descriptors);
 
@@ -382,21 +391,23 @@ public class Descriptors {
                 break;
             }
             if (!groups.isEmpty()) {
-                descriptors += String.format("<descriptor element=\"query_%s\" dscr_avail=\"true\" />\n", configType)
-                               + String.format("<descriptor element=\"set_%s\" dscr_avail=\"true\" />\n", configType);
+                descriptors += String.format("<descriptor element=`query_%s` dscr_avail=`true` />\n", configType)
+                               + String.format("<descriptor element=`set_%s` dscr_avail=`true` />\n", configType);
             }
         }
 
         if(ConfigGenerator.rciLegacyEnabled()){
-            descriptors += String.format("<descriptor element=\"reboot\" dscr_avail=\"true\" />\n");
+            descriptors += String.format("<descriptor element=`reboot` dscr_avail=`true` />\n");
 
-            descriptors += String.format("<descriptor element=\"do_command\" dscr_avail=\"true\" />\n");
+            descriptors += String.format("<descriptor element=`do_command` dscr_avail=`true` />\n");
 
-            descriptors += String.format("<descriptor element=\"set_factory_default\" dscr_avail=\"true\" />\n");
+            descriptors += String.format("<descriptor element=`set_factory_default` dscr_avail=`true` />\n");
         }
 
         descriptors += getErrorDescriptors(configData.getRciGlobalErrorsIndex(), configData.getRciGlobalErrors()) 
                      + "</descriptor>";
+
+        descriptors = descriptors.replace('`', '"');
 
         uploadDescriptor("descriptor", descriptors);
     }

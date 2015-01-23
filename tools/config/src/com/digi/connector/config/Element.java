@@ -127,23 +127,23 @@ public class Element {
         if (helpDescription != null)
             descText += ":" + helpDescription;
 
-        String descriptor = String.format("<element name=\"%s\"", name);
+        String descriptor = String.format("<element name=`%s`", name);
 
         if (descText.length() > 0)
-            descriptor += String.format(" desc=\"%s\"", descText);
+            descriptor += String.format(" desc=`%s`", descText);
 
-        descriptor += String.format(" type=\"%s\"", type);
+        descriptor += String.format(" type=`%s`", type);
 
         if (access != null)
-            descriptor += String.format(" access=\"%s\"", access);
+            descriptor += String.format(" access=`%s`", access);
         if (min != null)
-            descriptor += String.format(" min=\"%s\"", min);
+            descriptor += String.format(" min=`%s`", min);
         if (max != null)
-            descriptor += String.format(" max=\"%s\"", max);
+            descriptor += String.format(" max=`%s`", max);
         if (units != null)
-            descriptor += String.format(" units=\"%s\"", units);
+            descriptor += String.format(" units=`%s`", units);
 
-        descriptor += String.format(" bin_id=\"%d\"", id);
+        descriptor += String.format(" bin_id=`%d`", id);
 
         try {
 
@@ -155,6 +155,8 @@ public class Element {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        descriptor = descriptor.replace('`', '"');
 
         return descriptor;
     }
