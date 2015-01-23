@@ -1011,7 +1011,12 @@ public abstract class FileGenerator {
                 usenamesHeaderWriter.write(String.format("\n#endif\n"));
                 
                 ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, usenamesFile));
-                ConfigGenerator.log(String.format("NOTE: include \"%s%s\" in your connector_config.h so connector_api_remote.h can find the defines\n",  filePath, usenamesFile));
+                String includeFilename = "connector_config.h";
+
+                if (ConfigGenerator.useCcapi()) {
+                    includeFilename = "custom_connector_config.h";
+                }
+                ConfigGenerator.log(String.format("NOTE: include \"%s%s\" in your %s so connector_api_remote.h can find the defines\n",  filePath, usenamesFile, includeFilename));
 
             } catch (IOException e) {
                 throw new IOException(e.getMessage());
