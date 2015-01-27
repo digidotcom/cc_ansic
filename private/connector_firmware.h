@@ -322,8 +322,8 @@ enum fw_info {
             goto done;
         }
 
-        fw_ptr->desc_length = strlen(firmware_info->description);
-        fw_ptr->spec_length = strlen(firmware_info->filespec);
+        fw_ptr->desc_length = firmware_info->description != NULL ? strlen(firmware_info->description) : 0;
+        fw_ptr->spec_length = firmware_info->filespec != NULL ? strlen(firmware_info->filespec) : 0;
 
         if ((fw_ptr->desc_length + fw_ptr->spec_length) > (FW_ID_STRING_LENGTH -1))
         {
