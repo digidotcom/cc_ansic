@@ -138,6 +138,13 @@ typedef enum
 #endif
 } rci_command_attribute_type_t;
 
+#if (defined RCI_LEGACY_COMMANDS)
+typedef enum {
+    rci_do_command_attribute_id_target, /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
+    rci_do_command_attribute_id_count
+} rci_do_command_attribute_id_t;
+#endif
+
 typedef union
 {
     unsigned int val;
