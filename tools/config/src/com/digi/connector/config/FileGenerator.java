@@ -288,6 +288,16 @@ public abstract class FileGenerator {
         session_prototype += globalRetvalErrorType;
         session_prototype += prefix + "rci_action_end_cb(" + RCI_INFO_T + ");\n";
         session_prototype += "\n";
+        
+        if (ConfigGenerator.rciLegacyEnabled()) {
+            session_prototype += globalRetvalErrorType;
+            session_prototype += prefix + "rci_do_command_cb(" + RCI_INFO_T + ");\n";
+            session_prototype += globalRetvalErrorType;
+            session_prototype += prefix + "rci_set_factory_defaults_cb(" + RCI_INFO_T + ");\n";
+            session_prototype += globalRetvalErrorType;
+            session_prototype += prefix + "rci_reboot_cb(" + RCI_INFO_T + ");\n";
+            session_prototype += "\n";
+        }
         bufferWriter.write(session_prototype);
 
         for (GroupType type : GroupType.values()) {
@@ -456,6 +466,11 @@ public abstract class FileGenerator {
         session_function += setFunction("_SESSION_GROUP_", "rci_action_start_cb(" + RCI_INFO_T + ")",null);
         session_function += setFunction("_SESSION_GROUP_", "rci_action_end_cb(" + RCI_INFO_T + ")",null);
         
+        if (ConfigGenerator.rciLegacyEnabled()) {
+            session_function += setFunction("_SESSION_GROUP_", "rci_do_command_cb(" + RCI_INFO_T + ")",null);
+            session_function += setFunction("_SESSION_GROUP_", "rci_set_factory_defaults_cb(" + RCI_INFO_T + ")",null);
+            session_function += setFunction("_SESSION_GROUP_", "rci_reboot_cb(" + RCI_INFO_T + ")",null);
+        }
         bufferWriter.write(session_function);
 
         for (GroupType type : GroupType.values()) {

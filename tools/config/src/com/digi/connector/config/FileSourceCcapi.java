@@ -246,6 +246,11 @@ public class FileSourceCcapi extends FileGenerator {
         ccapi_rci_data += String.format("\n        %s%srci_session_end_cb,", RCI_FUNCTION_T, prefix);
         ccapi_rci_data += String.format("\n        %s%srci_action_start_cb,", RCI_FUNCTION_T, prefix);
         ccapi_rci_data += String.format("\n        %s%srci_action_end_cb", RCI_FUNCTION_T, prefix);
+        if (ConfigGenerator.rciLegacyEnabled()) {
+            ccapi_rci_data += String.format(",\n        %s%srci_do_command_cb,", RCI_FUNCTION_T, prefix);
+            ccapi_rci_data += String.format("\n        %s%srci_set_factory_defaults_cb,", RCI_FUNCTION_T, prefix);
+            ccapi_rci_data += String.format("\n        %s%srci_reboot_cb", RCI_FUNCTION_T, prefix);
+        }
         ccapi_rci_data += String.format("\n    },");
         
         ccapi_rci_data += String.format("\n    &rci_internal_data");
