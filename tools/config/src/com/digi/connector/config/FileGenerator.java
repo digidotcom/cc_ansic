@@ -69,12 +69,6 @@ public abstract class FileGenerator {
     "  rci_query_setting_attribute_id_count\n" +
     "} rci_query_setting_attribute_id_t;\n";
 
-    /* Following enum has to be in syncr. with sendDescriptors() function */
-    protected final static String RCI_DO_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
-    "  rci_do_command_attribute_id_target,\n" +      /* 'target' attribute is bin_id=0 in the uploaded descriptor for do_command command */
-    "  rci_do_command_attribute_id_count,\n" +
-    "} rci_do_command_attribute_id_t;\n";
-
     protected final static String CONNECTOR_REMOTE_GROUP_TYPE = "\ntypedef enum {\n" +
     "    connector_remote_group_setting,\n" +
     "    connector_remote_group_state\n" +
@@ -893,10 +887,6 @@ public abstract class FileGenerator {
         fileWriter.write("} connector_remote_attribute_t;\n");
 
         fileWriter.write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
-
-        if(ConfigGenerator.rciLegacyEnabled()){
-            fileWriter.write(RCI_DO_COMMAND_ATTRIBUTE_ID_T);
-        }
 
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
