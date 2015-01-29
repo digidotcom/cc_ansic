@@ -984,7 +984,7 @@ public abstract class FileGenerator {
                                 "#undef RCI_ELEMENT_NAME_MAX_SIZE\n" + 
                                 "#define RCI_ELEMENT_NAME_MAX_SIZE %d\n" +
                                 "#endif\n" +
-                        		"#endif\n", get_max_element_strlen(configData), get_max_element_strlen(configData), get_max_element_strlen(configData)));
+                                "#endif\n", get_max_element_strlen(configData) + 1, get_max_element_strlen(configData) + 1, get_max_element_strlen(configData) + 1));
                         if(ConfigGenerator.useNamesOption() == ConfigGenerator.UseNames.ELEMENTS)
                             break;
                     case GROUPS:
@@ -996,7 +996,7 @@ public abstract class FileGenerator {
                                 "#undef RCI_GROUP_NAME_MAX_SIZE\n" + 
                                 "#define RCI_GROUP_NAME_MAX_SIZE %d\n" + 
                                 "#endif\n" +
-                                "#endif\n", get_max_group_strlen(configData), get_max_group_strlen(configData), get_max_group_strlen(configData)));
+                                "#endif\n", get_max_group_strlen(configData) + 1, get_max_group_strlen(configData) + 1, get_max_group_strlen(configData) + 1));
                         break;
                 }
                 
