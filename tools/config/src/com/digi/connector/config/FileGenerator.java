@@ -60,6 +60,7 @@ public abstract class FileGenerator {
     protected final static String RCI_PARSER_DATA = "CONNECTOR_RCI_PARSER_INTERNAL_DATA";
 
     protected final static String RCI_LEGACY_DEFINE = "\n#define RCI_LEGACY_COMMANDS\n";
+    protected final static String RCI_PARSER_DEFINE = "\n#define RCI_ENUMS_AS_STRINGS\n";
     protected final static String RCI_ERROR_NOT_AVAILABLE = "connector_rci_error_not_available = -1,\n";
 
     /* Following enum has to be in syncr. with sendDescriptors() function */
@@ -394,7 +395,11 @@ public abstract class FileGenerator {
                                 protoType += "ccapi_on_off_t";
                                 break;
                             case ENUM:
-                                protoType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
+                                if (ConfigGenerator.rciParserOption()) {
+                                    protoType += "char const *";
+                                } else {
+                                    protoType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
+                                }
                                 break;
                             case IPV4:
                             case FQDNV4:
@@ -429,13 +434,17 @@ public abstract class FileGenerator {
                         else {
                             String value_type_modifier = "";
                             switch(ElementType.toElementType(element.getType())) {
+                                case ENUM:
+                                    if (ConfigGenerator.rciParserOption()) {
+                                        break;
+                                    }
+                                    /* Intentional fall-thru */
                                 case UINT32:
                                 case HEX32:
                                 case X_HEX32:
                                 case INT32:
                                 case FLOAT:
                                 case ON_OFF:
-                                case ENUM:
                                 case BOOLEAN:
                                     value_type_modifier = "const *";
                                     break;
@@ -518,9 +527,16 @@ public abstract class FileGenerator {
                                         FType += "ccapi_on_off_t";
                                         break;
                                     case ENUM:
-                                        ValueStruct first_value = element.getValues().get(0);
-                                        value += "*value = CCAPI_" + configType.toUpperCase() + "_" + group.getName().toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
-                                        FType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
+                                        if (ConfigGenerator.rciParserOption()) {
+                                            ValueStruct first_value = element.getValues().get(0);
+                                            value += "*value = \"" + first_value.getName() + "\"";
+                                            FType += "char const *";                                            
+                                        } else {
+                                            ValueStruct first_value = element.getValues().get(0);
+                                            value += "*value = CCAPI_" + configType.toUpperCase() + "_" + group.getName().toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
+                                            FType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
+                                        }
+                                        
                                         break;
                                     case IPV4:
                                     case FQDNV4:
@@ -556,13 +572,17 @@ public abstract class FileGenerator {
                                 if(!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
                                     String value_type_modifier = "";
                                     switch(ElementType.toElementType(element.getType())) {
+                                        case ENUM:
+                                            if (ConfigGenerator.rciParserOption()) {
+                                                break;
+                                            }
+                                            /* Intentional fall-thru */
                                         case UINT32:
                                         case HEX32:
                                         case X_HEX32:
                                         case INT32:
                                         case FLOAT:
                                         case ON_OFF:
-                                        case ENUM:
                                         case BOOLEAN:
                                             value_type_modifier = "const *";
                                             break;
@@ -824,6 +844,9 @@ public abstract class FileGenerator {
 
         if(ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(RCI_LEGACY_DEFINE);
+        }
+        if(ConfigGenerator.rciParserOption()){
+            fileWriter.write(RCI_PARSER_DEFINE);
         }
 
         fileWriter.write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE,ConfigData.AttributeMaxLen()));
