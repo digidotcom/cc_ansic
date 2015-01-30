@@ -273,15 +273,8 @@ connector_callback_status_t app_process_do_command(connector_remote_config_t * c
         goto done;
     }
 
-    if (request_payload != NULL)
-    {
-        APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
-        APP_DEBUG("request_payload='%s'\n", request_payload);
-    }
-    else
-    {
-        APP_DEBUG("no payload!\n");
-    }
+    APP_DEBUG("request_payload len=%d\n", strlen(request_payload));
+    APP_DEBUG("request_payload='%s'\n", request_payload);
 
     if (!strcmp(target, "echo"))
     {
