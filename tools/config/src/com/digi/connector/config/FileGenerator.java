@@ -1000,19 +1000,6 @@ public abstract class FileGenerator {
                         break;
                 }
                 
-                if (ConfigGenerator.rciParserOption())
-                {
-                    usenamesHeaderWriter.write(String.format(
-                            "#if !(defined RCI_ENUM_NAME_MAX_SIZE)\n" +
-                            "#define RCI_ENUM_NAME_MAX_SIZE %d\n" +
-                            "#else\n" +
-                            "#if RCI_ENUM_NAME_MAX_SIZE < %d\n" +
-                            "#undef RCI_ENUM_NAME_MAX_SIZE\n" + 
-                            "#define RCI_ENUM_NAME_MAX_SIZE %d\n" + 
-                            "#endif\n" +
-                            "#endif\n", get_max_enum_strlen(configData), get_max_enum_strlen(configData), get_max_enum_strlen(configData)));
-                }
-                
                 usenamesHeaderWriter.write(String.format("\n#endif\n"));
                 
                 ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, usenamesFile));
@@ -1074,19 +1061,9 @@ public abstract class FileGenerator {
         String group_name_struct_field = "";
         
         if (ConfigGenerator.rciParserOption()){
-            
-            switch (ConfigGenerator.fileTypeOption())
-            {
-                case SOURCE:
-                case GLOBAL_HEADER:
-                    break;
-                case NONE:
-                    fileWriter.write(String.format("\n" + "#define RCI_ENUM_NAME_MAX_SIZE    %d" + "\n", get_max_enum_strlen(configData) + 1));
-            }
-            
             fileWriter.write("\ntypedef struct {\n" +
-                    "    char name[RCI_ENUM_NAME_MAX_SIZE];\n" +
-                    "} connector_element_enum_t;\n"); /* max_enum_strlen + 1 */
+                    "    char const * const name;\n" +
+                    "} connector_element_enum_t;\n");
         }
 
         switch(ConfigGenerator.useNamesOption()){
