@@ -1158,7 +1158,7 @@ STATIC connector_status_t process_file_response_nodata(connector_data_t * const 
     msg_service_data_t * const service_data = service_request->need_data;
     connector_status_t status = connector_working;
 
-    if (context->errnum.user == CONNECTOR_FILESYSTEM_ERRNUM_NONE)
+    if (context->errnum.user == CONNECTOR_FILESYSTEM_ERRNUM_NONE && !FsHasInternalError(context))
     {
         uint8_t * const data_ptr = service_data->data_ptr;
 
@@ -1239,7 +1239,9 @@ STATIC connector_status_t process_file_put_request(connector_data_t * const conn
         {
             size_t header_len = parse_file_put_header(context, data_ptr, service_data->length_in_bytes);
             if (header_len == 0)
+            {
                 goto done;
+            }
 
             if (FsGetState(context) < fs_state_open)
             {
@@ -1278,6 +1280,10 @@ STATIC connector_status_t process_file_put_request(connector_data_t * const conn
             bytes_to_write -= header_len;
         }
 
+        if (!FsIsOpen(context))
+        {
+            goto done;
+        }
         data_ptr += context->data.f.bytes_done;
         bytes_to_write -= context->data.f.bytes_done;
 
