@@ -1124,7 +1124,7 @@ public abstract class FileGenerator {
 
     protected void writeRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            bufferWriter.write(String.format("\nchar CONST %s[] = {\n",
+            bufferWriter.write(String.format("\nstatic char CONST %s[] = {\n",
                     CONNECTOR_REMOTE_ALL_STRING));
         }
         
@@ -1305,8 +1305,6 @@ public abstract class FileGenerator {
             if (errorCount > 0) {
                 String staticString = "static ";
                 
-                if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE)  staticString = "";
-
                 bufferWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
                         
                 /* top-level global errors */
@@ -1418,12 +1416,7 @@ public abstract class FileGenerator {
             }
         }
 
-        String rciGroupString = "static ";
-        if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) {
-            rciGroupString = "";
-        }
-        
-        rciGroupString += String.format("connector_remote_group_table_t CONST %s[] = {\n",
+        String rciGroupString = String.format("static connector_remote_group_table_t CONST %s[] = {\n",
                                                 CONNECTOR_REMOTE_GROUP_TABLE);
 
         for (GroupType type : GroupType.values()) {
@@ -1533,11 +1526,6 @@ public abstract class FileGenerator {
     protected void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
 
         String index_string = "";
-        if(bufferWriter == FileSource.getHeaderWriter())
-        {
-            index_string = "_INDEX";
-            fileWriter.write(String.format("unsigned int %s_%s = %s_%s%s;\n\n", GLOBAL_ERROR, COUNT_STRING, GLOBAL_ERROR, COUNT_STRING, index_string));
-        }
         /* write typedef enum for user global error */
         String enumName = GLOBAL_ERROR + "_" + OFFSET_STRING;
 
