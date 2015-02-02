@@ -198,29 +198,6 @@ public abstract class FileGenerator {
         fileWriter.write(enumString);
     }
     
-    private void writeCcapiOnOffBooleanEnum(BufferedWriter bufferWriter) throws IOException {
-
-        String enumString = "";
-
-        for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
-                switch (type) {
-                case ON_OFF:
-                    enumString += "\ntypedef enum {\n"
-                                    + "    CCAPI_OFF,\n"
-                                    + "    CCAPI_ON\n"
-                                    + "} ccapi_on_off_t;\n";
-                    break;
-
-                default:
-                  break;
-                }
-            }
-        }
-
-        bufferWriter.write(enumString);
-    }
-
     private void writeElementTypeEnum() throws IOException {
 
         String enumString = "\n\ntypedef enum {\n";
@@ -276,7 +253,6 @@ public abstract class FileGenerator {
         writeCcapiErrorHeader("global",1, getCcapiEnumString("global" + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
         bufferWriter.write(endCcapiEnumString("global" + "_" + ERROR));
 
-        writeCcapiOnOffBooleanEnum(bufferWriter);
         /* session/action_start/end functions' prototypes */
         String globalRetvalErrorType =  "\n" + prefix + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
         String session_prototype = globalRetvalErrorType;
