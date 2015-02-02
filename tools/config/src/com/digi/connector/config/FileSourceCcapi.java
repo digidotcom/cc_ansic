@@ -70,6 +70,7 @@ public class FileSourceCcapi extends FileGenerator {
             headerWriter.write(String.format("#ifndef %s\n#define %s\n\n", headerDefineName, headerDefineName));
             headerWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, "connector_api.h"));
             headerWriter.write(String.format("\n%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
+            headerWriter.write("\nextern ccapi_rci_data_t const " + prefix + "ccapi_rci_data;\n");
             writePrototypes(configData, headerWriter);
             headerWriter.write(String.format("\n#endif\n"));
 
@@ -173,7 +174,7 @@ public class FileSourceCcapi extends FileGenerator {
             if (!groups.isEmpty()) {
                 writeGroupStructures(groups, bufferWriter);
 
-                bufferWriter.write(String.format("static ccapi_rci_group_t const ccapi%s_%s_groups[] =\n{", prefix, configType));
+                bufferWriter.write(String.format("static ccapi_rci_group_t const %sccapi_%s_groups[] =\n{", prefix, configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
@@ -198,8 +199,8 @@ public class FileSourceCcapi extends FileGenerator {
             }
         }
 
-        String ccfsm_internal_data = "extern connector_remote_config_data_t const rci_internal_data;\n";
-        String ccapi_rci_data = ccfsm_internal_data + "ccapi_rci_data_t const ccapi_rci_data =\n{";
+        String ccfsm_internal_data = "extern connector_remote_config_data_t const " + prefix + "rci_internal_data;\n";
+        String ccapi_rci_data = ccfsm_internal_data + "ccapi_rci_data_t const " + prefix + "ccapi_rci_data =\n{";
         
         GroupType type = GroupType.SETTING;
         {
@@ -253,7 +254,7 @@ public class FileSourceCcapi extends FileGenerator {
         }
         ccapi_rci_data += String.format("\n    },");
         
-        ccapi_rci_data += String.format("\n    &rci_internal_data");
+        ccapi_rci_data += String.format("\n    &%srci_internal_data", prefix);
         ccapi_rci_data += "\n};\n\n";
         
         bufferWriter.write(ccapi_rci_data);

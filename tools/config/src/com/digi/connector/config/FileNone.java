@@ -127,8 +127,6 @@ public class FileNone extends FileGenerator {
          */
         bufferWriter.write("\n\n#define CONST const \n");
 
-        bufferWriter.write(String.format("#define FIRMWARE_TARGET_ZERO_VERSION  0x%X\n\n",ConfigGenerator.getFirmware()));
-
         /* Write Define Errors Macros */
         writeDefineRciErrors(configData,bufferWriter);
 
@@ -147,16 +145,16 @@ public class FileNone extends FileGenerator {
 
         int GlobalErrorCount = configData.getUserGlobalErrors().size() + 2;
 
-        bufferWriter.write(String.format("\nconnector_remote_config_data_t const rci_internal_data = {\n" +
+        bufferWriter.write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
             "    connector_group_table,\n"+
             "    connector_rci_errors,\n"+
             "    %d,\n"+
-            "    FIRMWARE_TARGET_ZERO_VERSION,\n"+
+            "    0x%X,\n"+
             "    %s,\n"+
             "    \"%s\"\n"+
             "};\n"+
             "\n"+
-            "connector_remote_config_data_t const * const rci_descriptor_data = &rci_internal_data;"
-            , GlobalErrorCount, Descriptors.vendorId(),Descriptors.deviceType()));
+            "connector_remote_config_data_t const * const rci_descriptor_data = &%srci_internal_data;"
+            , prefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), prefix));
     }
 }
