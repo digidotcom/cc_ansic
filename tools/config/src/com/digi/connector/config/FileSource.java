@@ -13,7 +13,7 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 public class FileSource extends FileGenerator {
 
     private static FileType fileType = FileType.SOURCE;
-    private static String SOURCE_NAME = "rci_config";
+    private static String SOURCE_NAME = ConfigGenerator.getPrefix() + "rci_config";
     
     private static BufferedWriter headerWriter = null;
     private String headerFile = "";

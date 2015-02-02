@@ -958,7 +958,7 @@ public abstract class FileGenerator {
     
     public void generateUseNamesFile(ConfigData configData) throws IOException {
         if (ConfigGenerator.useNamesOption() != UseNames.NONE) {
-            String USENAMES_NAME = "rci_usenames_defines.h";
+            String USENAMES_NAME = prefix + "rci_usenames_defines.h";
             String usenamesFile = USENAMES_NAME;
             BufferedWriter usenamesHeaderWriter = null;
             

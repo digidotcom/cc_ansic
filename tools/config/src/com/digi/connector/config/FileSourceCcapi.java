@@ -14,9 +14,9 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 public class FileSourceCcapi extends FileGenerator {
 
     private static FileType fileType = FileType.SOURCE;
-    private static String SOURCE_NAME = "ccapi_rci_data.c";
-    private static String HEADER_NAME = "ccapi_rci_functions.h";
-    private static String CALLBACKS_NAME = "ccapi_rci_functions.c";
+    private static String SOURCE_NAME = ConfigGenerator.getPrefix() + "ccapi_rci_data.c";
+    private static String HEADER_NAME = ConfigGenerator.getPrefix() + "ccapi_rci_functions.h";
+    private static String CALLBACKS_NAME = ConfigGenerator.getPrefix() + "ccapi_rci_functions.c";
     private static BufferedWriter headerWriter = null;
     private static BufferedWriter callbacksWriter = null;
     private String headerFile = "";
