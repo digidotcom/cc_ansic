@@ -13,7 +13,7 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 public class FileSource extends FileGenerator {
 
     private static FileType fileType = FileType.SOURCE;
-    private static String SOURCE_NAME = "rci_config";
+    private static String SOURCE_NAME = ConfigGenerator.getPrefix() + "rci_config";
     
     private static BufferedWriter headerWriter = null;
     private String headerFile = "";
@@ -70,9 +70,6 @@ public class FileSource extends FileGenerator {
         	writeGlobalErrorEnumHeader(configData,headerWriter);  
         	writeGroupTypeAndErrorEnum(configData,headerWriter);
 
-            fileWriter.write(String.format("uint32_t CONST FIRMWARE_TARGET_ZERO_VERSION = 0x%X;\n\n", ConfigGenerator.getFirmware()));
-
-
             /* Write Define Errors Macros */
             writeDefineRciErrors(configData, fileWriter);
 
@@ -91,7 +88,7 @@ public class FileSource extends FileGenerator {
 
             int GlobalErrorCount = configData.getUserGlobalErrors().size() + 2;
 
-            fileWriter.write(String.format("\nconnector_remote_config_data_t const rci_internal_data = {\n" +
+            fileWriter.write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
                     "    connector_group_table,\n"+
                     "    connector_rci_errors,\n"+
                     "    %d,\n"+
@@ -100,8 +97,8 @@ public class FileSource extends FileGenerator {
                     "    \"%s\"\n"+
                     "};\n"+
                     "\n"+
-                    "connector_remote_config_data_t const * const rci_descriptor_data = &rci_internal_data;"
-                    , GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType()));
+                    "connector_remote_config_data_t const * const %srci_descriptor_data = &%srci_internal_data;"
+                    , prefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), prefix, prefix));
             
             headerWriter.write(String.format("\n#endif\n"));
  

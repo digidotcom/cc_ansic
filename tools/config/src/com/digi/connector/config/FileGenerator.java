@@ -198,29 +198,6 @@ public abstract class FileGenerator {
         fileWriter.write(enumString);
     }
     
-    private void writeCcapiOnOffBooleanEnum(BufferedWriter bufferWriter) throws IOException {
-
-        String enumString = "";
-
-        for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
-                switch (type) {
-                case ON_OFF:
-                    enumString += "\ntypedef enum {\n"
-                                    + "    CCAPI_OFF,\n"
-                                    + "    CCAPI_ON\n"
-                                    + "} ccapi_on_off_t;\n";
-                    break;
-
-                default:
-                  break;
-                }
-            }
-        }
-
-        bufferWriter.write(enumString);
-    }
-
     private void writeElementTypeEnum() throws IOException {
 
         String enumString = "\n\ntypedef enum {\n";
@@ -276,9 +253,8 @@ public abstract class FileGenerator {
         writeCcapiErrorHeader("global",1, getCcapiEnumString("global" + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
         bufferWriter.write(endCcapiEnumString("global" + "_" + ERROR));
 
-        writeCcapiOnOffBooleanEnum(bufferWriter);
         /* session/action_start/end functions' prototypes */
-        String globalRetvalErrorType =  "\n" + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
+        String globalRetvalErrorType =  "\n" + prefix + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
         String session_prototype = globalRetvalErrorType;
         session_prototype += prefix + "rci_session_start_cb(" + RCI_INFO_T + ");";
         session_prototype += globalRetvalErrorType;
@@ -370,7 +346,7 @@ public abstract class FileGenerator {
                     bufferWriter.write(endCcapiEnumString(group.getName() + "_" + ERROR));
                 }
                 for (Group group : groups) {
-                    String retvalErrorType = "\n" + CCAPI_PREFIX + "_" + configType + "_" + group.getName() + "_error_id_t ";
+                    String retvalErrorType = "\n" + prefix + CCAPI_PREFIX + "_" + configType + "_" + group.getName() + "_error_id_t ";
                     String group_prototype = retvalErrorType;
                     group_prototype += String.format("%srci_%s_%s_start(%s);",prefix,configType,group.getName(),RCI_INFO_T);
                     group_prototype += retvalErrorType;
@@ -470,10 +446,10 @@ public abstract class FileGenerator {
     }
 
     void writeFunctionsCB(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
-        String session_function = setFunction("_SESSION_GROUP_", "rci_session_start_cb(" + RCI_INFO_T + ")",null);
-        session_function += setFunction("_SESSION_GROUP_", "rci_session_end_cb(" + RCI_INFO_T + ")",null);
-        session_function += setFunction("_SESSION_GROUP_", "rci_action_start_cb(" + RCI_INFO_T + ")",null);
-        session_function += setFunction("_SESSION_GROUP_", "rci_action_end_cb(" + RCI_INFO_T + ")",null);
+        String session_function = setFunction("_SESSION_GROUP_", prefix + "rci_session_start_cb(" + RCI_INFO_T + ")",null);
+        session_function += setFunction("_SESSION_GROUP_", prefix + "rci_session_end_cb(" + RCI_INFO_T + ")",null);
+        session_function += setFunction("_SESSION_GROUP_", prefix + "rci_action_start_cb(" + RCI_INFO_T + ")",null);
+        session_function += setFunction("_SESSION_GROUP_", prefix + "rci_action_end_cb(" + RCI_INFO_T + ")",null);
         
         if (ConfigGenerator.rciLegacyEnabled()) {
             session_function += setFunction("_SESSION_GROUP_", "rci_do_command_cb(" + RCI_INFO_T + ")",null);
@@ -533,7 +509,7 @@ public abstract class FileGenerator {
                                             FType += "char const *";                                            
                                         } else {
                                             ValueStruct first_value = element.getValues().get(0);
-                                            value += "*value = CCAPI_" + configType.toUpperCase() + "_" + group.getName().toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
+                                            value += "*value = " + prefix.toUpperCase() + "CCAPI_" + configType.toUpperCase() + "_" + group.getName().toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
                                             FType += String.format("%s%s_%s_%s_%s_id_t",prefix,CCAPI_PREFIX,configType,group.getName(),element.getName());
                                         }
                                         
@@ -616,15 +592,15 @@ public abstract class FileGenerator {
         
         if (groupName.equals("_SESSION_GROUP_"))
         {
-                retvalErrorType =  "\n" + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
+                retvalErrorType =  "\n" + prefix + CCAPI_PREFIX + "_" + "global" + "_error_id_t ";
         }
         else
         {
-                retvalErrorType =  "\n" + CCAPI_PREFIX + "_" + configType + "_" + groupName + "_error_id_t ";
+                retvalErrorType =  "\n" + prefix + CCAPI_PREFIX + "_" + configType + "_" + groupName + "_error_id_t ";
         }
         
         String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
-        String RETURN_CONTINUE = "    return CCAPI_GLOBAL_ERROR_NONE;\n}\n";
+        String RETURN_CONTINUE = String.format("    return %sCCAPI_GLOBAL_ERROR_NONE;\n}\n", prefix.toUpperCase());
 
         String function = retvalErrorType + parameter + "\n{\n    ";
         function += UNUSED("info") + PRINTF;
@@ -982,7 +958,7 @@ public abstract class FileGenerator {
     
     public void generateUseNamesFile(ConfigData configData) throws IOException {
         if (ConfigGenerator.useNamesOption() != UseNames.NONE) {
-            String USENAMES_NAME = "rci_usenames_defines.h";
+            String USENAMES_NAME = prefix + "rci_usenames_defines.h";
             String usenamesFile = USENAMES_NAME;
             BufferedWriter usenamesHeaderWriter = null;
             
@@ -1148,7 +1124,7 @@ public abstract class FileGenerator {
 
     protected void writeRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            bufferWriter.write(String.format("\nchar CONST %s[] = {\n",
+            bufferWriter.write(String.format("\nstatic char CONST %s[] = {\n",
                     CONNECTOR_REMOTE_ALL_STRING));
         }
         
@@ -1329,8 +1305,6 @@ public abstract class FileGenerator {
             if (errorCount > 0) {
                 String staticString = "static ";
                 
-                if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE)  staticString = "";
-
                 bufferWriter.write(String.format("%schar const * const %ss[] = {\n", staticString, GLOBAL_RCI_ERROR));
                         
                 /* top-level global errors */
@@ -1442,12 +1416,7 @@ public abstract class FileGenerator {
             }
         }
 
-        String rciGroupString = "static ";
-        if (ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.SOURCE) {
-            rciGroupString = "";
-        }
-        
-        rciGroupString += String.format("connector_remote_group_table_t CONST %s[] = {\n",
+        String rciGroupString = String.format("static connector_remote_group_table_t CONST %s[] = {\n",
                                                 CONNECTOR_REMOTE_GROUP_TABLE);
 
         for (GroupType type : GroupType.values()) {
@@ -1557,11 +1526,6 @@ public abstract class FileGenerator {
     protected void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
 
         String index_string = "";
-        if(bufferWriter == FileSource.getHeaderWriter())
-        {
-            index_string = "_INDEX";
-            fileWriter.write(String.format("unsigned int %s_%s = %s_%s%s;\n\n", GLOBAL_ERROR, COUNT_STRING, GLOBAL_ERROR, COUNT_STRING, index_string));
-        }
         /* write typedef enum for user global error */
         String enumName = GLOBAL_ERROR + "_" + OFFSET_STRING;
 
@@ -1680,7 +1644,7 @@ public abstract class FileGenerator {
     }
 
     private String getEnumString(String enum_name) {
-        String str = " " + CONNECTOR_PREFIX + "_" + configType;
+        String str = " " + prefix + CONNECTOR_PREFIX + "_" + configType;
 
         if (enum_name != null) {
             str += "_" + enum_name;
@@ -1689,7 +1653,7 @@ public abstract class FileGenerator {
     }
     
     private String getCcapiEnumString(String enum_name) {
-        String str = " " + CCAPI_PREFIX;
+        String str = " " + prefix + CCAPI_PREFIX;
         if (configType != null)
                 str += "_" + configType;
 
@@ -1701,7 +1665,7 @@ public abstract class FileGenerator {
 
     private String endEnumString(String group_name) {
         /*Add _COUNT */
-        String str = " " + CONNECTOR_PREFIX + "_" + configType;
+        String str = " " + prefix + CONNECTOR_PREFIX + "_" + configType;
         if(group_name!=null)
            str += "_" + group_name;
         str += "_" + COUNT_STRING +"\n";
@@ -1717,7 +1681,7 @@ public abstract class FileGenerator {
     private String endCcapiEnumString(String group_name) {
         /*Add _COUNT */
         
-        String str = " " + CCAPI_PREFIX;
+        String str = " " + prefix + CCAPI_PREFIX;
         if (configType != null)
                 str += "_" + configType;
         
