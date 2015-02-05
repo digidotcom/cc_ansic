@@ -1023,15 +1023,10 @@ STATIC connector_status_t process_get_close(connector_data_t * const connector_p
         goto done;
     }
     /* errors */
-    if (MsgIsStart(service_data->flags))
+    status = format_file_error_msg(connector_ptr, service_request, context);
+    if (!MsgIsStart(service_data->flags))
     {
-        /* send file system-level an error response if no data was sent yet, */
-        if (format_file_error_msg(connector_ptr, service_request, context) == connector_abort)
-           status = connector_abort;
-    }
-    else
-    {
-        /* or cancel the session, if it's late to send a file system level error response */
+        /* If it's too late to send a file system level error response, cancel the session */
         fs_set_service_error(service_request, connector_session_error_cancel);
     }
 
