@@ -796,6 +796,7 @@ STATIC connector_status_t sm_close_transport(connector_data_t * const connector_
 
         close_data.handle = sm_ptr->network.handle;
         close_data.status = sm_ptr->close.status;
+        close_data.reconnect = connector_false;
 
         connector_debug_line("sm_close_transport: status %d", sm_ptr->close.status);
         request_id.network_request = connector_request_id_network_close;
@@ -808,6 +809,7 @@ STATIC connector_status_t sm_close_transport(connector_data_t * const connector_
                 goto done;
 
             case connector_callback_continue:
+                sm_ptr->transport.connect_type = close_data.reconnect ? connector_connect_auto : connector_connect_manual;
                 result = connector_working;
                 break;
 
