@@ -659,6 +659,18 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
         config_request.service_id = (phone_bytes < bytes) ? config_request.phone_number + phone_bytes : NULL;
     }
 
+    /* Callback to config.c so user can save the new phone to persistent storage */
+#if !(defined CONNECTOR_CLOUD_PHONE)
+    if (SmIsSmsConfigNotInit(session->flags))
+    {
+        result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
+        if (result != connector_working)
+        {
+            goto done;
+        }
+    }
+#endif
+
     /* Callback sms transport close/open so new phone makes effect */
     {
         connector_sm_data_t * const sm_ptr = &connector_ptr->sm_sms;    /* Assume it's SMS transport */
@@ -711,15 +723,6 @@ STATIC connector_status_t sm_process_config_request(connector_data_t * const con
             goto done;
         }
     }
-
-    /* Callback to config.c so user can save the new phone to persistent storage */
-#if !(defined CONNECTOR_CLOUD_PHONE)
-    result = set_config_device_cloud_phone(connector_ptr, config_request.phone_number);
-    if (result != connector_working)
-    {
-        goto done;
-    }
-#endif
 
     /* Callback to user */
     {
