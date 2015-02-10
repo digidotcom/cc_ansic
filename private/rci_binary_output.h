@@ -934,20 +934,26 @@ STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
-    connector_bool_t overflow = connector_false;
     
-    if (!rci->output.group_skip && !rci->output.element_skip)
-        overflow = rci_output_terminator(rci);
-
-    if (!overflow)
+    if (remote_config->error_id != connector_success)
     {
-        invalidate_element_id(rci);
-
-        if (remote_config->error_id != connector_success)
-            state_call(rci, rci_parser_state_error);
-        else
-            state_call(rci, rci_parser_state_traverse);
+        state_call(rci, rci_parser_state_error);
     }
+    else
+    {
+        connector_bool_t overflow = connector_false;
+
+        if (!rci->output.group_skip && !rci->output.element_skip)
+            overflow = rci_output_terminator(rci);
+
+        if (!overflow)
+        {
+            invalidate_element_id(rci);
+
+            state_call(rci, rci_parser_state_traverse);
+        }
+    }
+
     return;
 }
 
@@ -962,14 +968,14 @@ STATIC void rci_output_group_terminator(rci_t * const rci)
     else
     {
         connector_bool_t const overflow = rci_output_terminator(rci);
-        if (overflow) goto done;
+        if (!overflow)
+        {
+            invalidate_group_id(rci);
 
-        set_rci_output_state(rci, rci_output_state_response_done);
+            set_rci_output_state(rci, rci_output_state_response_done);
+        }
     }
 
-    invalidate_group_id(rci);
-
-done:
     return;
 }
 
