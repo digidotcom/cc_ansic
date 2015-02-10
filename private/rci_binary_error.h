@@ -105,7 +105,7 @@ STATIC void rci_generate_error(rci_t * const rci)
             case rci_error_state_callback:
             {
                 connector_request_id_remote_config_t const remote_config_request = rci->callback.request.remote_config_request;
-                connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+                connector_remote_config_t * const remote_config = &rci->shared.callback_data;
 
                 switch (remote_config_request)
                 {
@@ -117,11 +117,20 @@ STATIC void rci_generate_error(rci_t * const rci)
                         trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                         break;
                     case connector_request_id_remote_config_action_end:
+                        if (remote_config->error_id < connector_rci_error_COUNT)
                         {
-                            connector_bool_t const overflow = rci_output_terminator(rci);
-                            if (overflow) goto done;
+                            {
+                                connector_bool_t const overflow = rci_output_terminator(rci);
+                                if (overflow) goto done;
+                            }
+                            trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
                         }
-                        trigger_rci_callback(rci, connector_request_id_remote_config_session_end);
+                        else
+                        {
+                            set_rci_error_state(rci, rci_error_state_id);
+                            remote_config->error_id = 0;
+                            state_call(rci, rci_parser_state_output);
+                        }
                         break;
                     case connector_request_id_remote_config_group_start:
                         {
