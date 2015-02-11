@@ -19,7 +19,7 @@ public class ConfigData {
     private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
 
     private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
-        "bad_descriptor", "Bad configuration"};
+        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
 
     private RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 

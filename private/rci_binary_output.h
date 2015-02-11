@@ -196,19 +196,20 @@ done:
     return overflow;
 }
 
+STATIC connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
+{
+    uint8_t const data = value;
+    rci_buffer_t * const output = &rci->buffer.output;
+
+    return rci_output_data(rci, output, &data, sizeof data);
+}
+
 #if defined RCI_PARSER_USES_IPV4
 STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const string)
 {
     rci_buffer_t * const output = &rci->buffer.output;
     connector_bool_t overflow = connector_true;
-    size_t const avail_bytes = rci_buffer_remaining(output);
 
-    if (avail_bytes < sizeof(uint32_t) + 1)
-    {
-        rci->status = rci_status_flush_output;
-        goto done;
-    }
-    else
     {
         uint32_t ipv4 = 0;
         uint8_t * const rci_ber_u32 = rci_buffer_position(output);
@@ -251,8 +252,15 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
             connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
             notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range, rci->service_data->connector_ptr->context);
-            rci->status = rci_status_error;
-            overflow = connector_false;
+
+            {
+                uint8_t * const element_id = rci->buffer.output.current - 1;
+
+                *element_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
+                rci_global_error(rci, connector_rci_error_bad_value, NULL);
+                state_call(rci, rci_parser_state_error);
+            }
+
             connector_debug_line("Invalid IPv4 \"%s\"", string);
             goto done;
         }
@@ -276,14 +284,7 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
 {
     rci_buffer_t * const output = &rci->buffer.output;
     connector_bool_t overflow = connector_true;
-    size_t const avail_bytes = rci_buffer_remaining(output);
 
-    if (avail_bytes < SIZEOF_MAC_ADDR + 1)
-    {
-        rci->status = rci_status_flush_output;
-        goto done;
-    }
-    else
     {
         char mac_addr[SIZEOF_MAC_ADDR] =  {0};
         char * p_mac_addr = mac_addr;
@@ -326,8 +327,15 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
             connector_request_id_t request_id;
             request_id.remote_config_request = connector_request_id_remote_config_group_process;
             notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range, rci->service_data->connector_ptr->context);
-            rci->status = rci_status_error;
-            overflow = connector_false;
+
+            {
+                uint8_t * const element_id = rci->buffer.output.current - 1;
+
+                *element_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
+                rci_global_error(rci, connector_rci_error_bad_value, NULL);
+                state_call(rci, rci_parser_state_error);
+            }
+
             connector_debug_line("Invalid mac_addr \"%s\"", string);
             goto done;
         }
@@ -353,14 +361,6 @@ done:
     return overflow;
 }
 #endif
-
-STATIC connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
-{
-    uint8_t const data = value;
-    rci_buffer_t * const output = &rci->buffer.output;
-
-    return rci_output_data(rci, output, &data, sizeof data);
-}
 
 #if defined RCI_PARSER_USES_FLOAT
 STATIC connector_bool_t rci_output_float(rci_t * const rci, float const value)
@@ -735,10 +735,27 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
     }
 }
 
+#define CCFSM_MAX_OF(a, b)          ((a) > (b) ? (a) : (b))
+
+#define FIELD_ID_LEN 1 /* Should be 5, 9 ? */
+#define STRING_LEN 1
+#define MAC_ADDR_LEN (SIZEOF_MAC_ADDR + STRING_LEN)
+#define IPV_ADDR_LEN (sizeof(uint32_t) + STRING_LEN)
+
+#define REQ_ROOM_FOR_FIELD_ID (FIELD_ID_LEN + CCFSM_MAX_OF(MAC_ADDR_LEN, IPV_ADDR_LEN))
 
 STATIC void rci_output_field_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+
+    rci_buffer_t * const output = &rci->buffer.output;
+    size_t const avail_bytes = rci_buffer_remaining(output);
+
+    if (avail_bytes < REQ_ROOM_FOR_FIELD_ID)
+    {
+        rci->status = rci_status_flush_output;
+        goto done;
+    }
 
     if (!have_element_id(rci))
     {
