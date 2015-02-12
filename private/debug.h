@@ -43,6 +43,8 @@ STATIC void connector_debug_line(char const * const format, ...)
     CALL_DEBUG_VPRINTF(debug_all, format);
 }
 
+#if (defined CONNECTOR_DEBUG)
+
 STATIC void connector_debug_line_beg(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_beg, format);
@@ -57,8 +59,6 @@ STATIC void connector_debug_line_end(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_end, format);
 }
-
-#if (defined CONNECTOR_DEBUG)
 
 #define enum_to_case(name)  case name:  result = #name;             break
 
