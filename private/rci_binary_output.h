@@ -171,8 +171,8 @@ STATIC connector_bool_t rci_output_string(rci_t * const rci, char const * const 
 
     if (rci->output.content.length > 0)
     {
-        size_t const avail_bytes = rci_buffer_remaining(output);
-        size_t const write_bytes = (rci->output.content.length < avail_bytes) ? rci->output.content.length : avail_bytes;
+        size_t const bytes_available = rci_buffer_remaining(output);
+        size_t const write_bytes = (rci->output.content.length < bytes_available) ? rci->output.content.length : bytes_available;
 
         overflow = rci_output_data(rci, output, (uint8_t  *)rci->output.content.data, write_bytes);
         if (overflow) goto done;
@@ -735,21 +735,22 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
     }
 }
 
-#define FIELD_ID_LEN 1 /* Should be 5, 9 ? */
-#define STRING_LEN 1
-#define MAC_ADDR_LEN (SIZEOF_MAC_ADDR + STRING_LEN)
-#define IPV_ADDR_LEN (sizeof(uint32_t) + STRING_LEN)
+#define STRING_LENGTH_LEN 1
+#define MAC_ADDR_LEN (SIZEOF_MAC_ADDR + STRING_LENGTH_LEN)
+#define IPV4_ADDR_LEN (sizeof(uint32_t) + STRING_LENGTH_LEN)
 
-#define REQ_ROOM_FOR_FIELD_ID (FIELD_ID_LEN + MAX_VALUE(MAC_ADDR_LEN, IPV_ADDR_LEN))
+#define BYTES_REQUIRED_FOR_ERROR_PRONE_FIELD_VALUES MAX_VALUE(MAC_ADDR_LEN, IPV4_ADDR_LEN)
 
 STATIC void rci_output_field_id(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-
     rci_buffer_t * const output = &rci->buffer.output;
-    size_t const avail_bytes = rci_buffer_remaining(output);
+    size_t const bytes_available = rci_buffer_remaining(output);
+    uint32_t field_id =  encode_element_id(get_element_id(rci));
+    size_t const bytes_required_for_field_id = 1 + get_bytes_followed(field_id);
+    size_t const total_bytes_required = bytes_required_for_field_id + BYTES_REQUIRED_FOR_ERROR_PRONE_FIELD_VALUES;
 
-    if (avail_bytes < REQ_ROOM_FOR_FIELD_ID)
+    if (bytes_available < total_bytes_required)
     {
         rci->status = rci_status_flush_output;
         goto done;
@@ -763,15 +764,13 @@ STATIC void rci_output_field_id(rci_t * const rci)
 
     {
         /* output field id */
-        uint32_t id =  encode_element_id(get_element_id(rci));
-
-        if (remote_config->error_id != connector_success) id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
+        if (remote_config->error_id != connector_success) field_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
 
         {
             connector_bool_t overflow = connector_false;
 
             if (!rci->output.group_skip && !rci->output.element_skip)
-                overflow = rci_output_uint32(rci, id);
+                overflow = rci_output_uint32(rci, field_id);
 
             if (overflow) goto done;
 
