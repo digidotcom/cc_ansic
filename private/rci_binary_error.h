@@ -131,7 +131,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         }
                         break;
                     case connector_request_id_remote_config_group_process:
-                        if (remote_config->error_id < connector_rci_error_COUNT)
+                        if (remote_config->error_id < connector_rci_error_bad_value)
                         {
                             trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
                         }
