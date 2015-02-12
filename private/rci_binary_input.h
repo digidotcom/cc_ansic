@@ -543,7 +543,8 @@ done:
 
 STATIC void process_command_normal_attribute_id(rci_t * const rci)
 {
-    unsigned int attribute_id;
+    uint32_t attribute_id;
+
     if (get_uint32(rci, &attribute_id))
     {
 #if (defined RCI_DEBUG)
