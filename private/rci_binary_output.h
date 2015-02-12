@@ -735,14 +735,12 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
     }
 }
 
-#define CCFSM_MAX_OF(a, b)          ((a) > (b) ? (a) : (b))
-
 #define FIELD_ID_LEN 1 /* Should be 5, 9 ? */
 #define STRING_LEN 1
 #define MAC_ADDR_LEN (SIZEOF_MAC_ADDR + STRING_LEN)
 #define IPV_ADDR_LEN (sizeof(uint32_t) + STRING_LEN)
 
-#define REQ_ROOM_FOR_FIELD_ID (FIELD_ID_LEN + CCFSM_MAX_OF(MAC_ADDR_LEN, IPV_ADDR_LEN))
+#define REQ_ROOM_FOR_FIELD_ID (FIELD_ID_LEN + MAX_VALUE(MAC_ADDR_LEN, IPV_ADDR_LEN))
 
 STATIC void rci_output_field_id(rci_t * const rci)
 {
