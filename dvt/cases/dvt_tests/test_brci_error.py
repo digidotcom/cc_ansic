@@ -97,25 +97,25 @@ class RciErrorDvtTestCase(ic_testcase.TestCase):
 
     def test_start_session(self):
         self.set_setting("start_session", 0, "", "")
-        self.set_setting("start_session", 5, "Insufficient memory", "")
+        self.set_setting("start_session", 6, "Insufficient memory", "")
 
     def test_start_action(self):
         self.set_setting("start_action", 0, "", "")
-        self.set_setting("start_action", 5, "Insufficient memory", "")
+        self.set_setting("start_action", 6, "Insufficient memory", "")
 
     def test_start_group(self):
         self.set_setting("start_group", 0, "", "")
-        self.set_setting("start_group", 5, "Insufficient memory", "")
+        self.set_setting("start_group", 6, "Insufficient memory", "")
 
     def test_process_group(self):
         self.set_setting("process_group", 0, "", "")
-        self.set_setting("process_group", 3, "Load fail", "Hint")
+        self.set_setting("process_group", 4, "Load fail", "Hint")
 
     def test_end_group(self):
-        self.set_setting("end_group", 5, "Insufficient memory", "")
+        self.set_setting("end_group", 6, "Insufficient memory", "")
 
     def test_end_action(self):
-        self.set_setting("end_action", 5, "Insufficient memory", "")
+        self.set_setting("end_action", 6, "Insufficient memory", "")
 
     def test_end_session(self):
-        self.set_setting("end_session", 5, "Insufficient memory", "")
+        self.set_setting("end_session", 6, "Insufficient memory", "")
