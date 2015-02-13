@@ -73,6 +73,7 @@ group setting devicesecurity "Device Cloud device security"
 group state device_state  "Device State"
     element system_up_time "System Up time" type uint32 access read_only units "seconds"
     element signed_integer "Signed integer" type int32 min -100 max 100
+    element float_value "Float value" type float
     error invalid_integer "Invalid integer value" 
 
 # Device location

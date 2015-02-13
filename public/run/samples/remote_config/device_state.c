@@ -18,9 +18,10 @@
 
 typedef struct {
     int32_t signed_integer;
+    float float_value;
 } device_state_config_data_t;
 
-device_state_config_data_t device_state_config_data = {-10};
+device_state_config_data_t device_state_config_data = {-10, 10.0};
 
 connector_callback_status_t app_device_state_group_init(connector_remote_config_t * const remote_config)
 {
@@ -63,7 +64,10 @@ connector_callback_status_t app_device_state_group_get(connector_remote_config_t
         ASSERT(remote_config->element.type == connector_element_type_int32);
         remote_config->response.element_value->signed_integer_value = device_state_ptr->signed_integer;
         break;
-
+    case connector_state_device_state_float_value:
+        ASSERT(remote_config->element.type == connector_element_type_float);
+        remote_config->response.element_value->float_value = device_state_ptr->float_value;
+        break;
     default:
         ASSERT(0);
         break;
@@ -90,7 +94,10 @@ connector_callback_status_t app_device_state_group_set(connector_remote_config_t
         ASSERT(remote_config->element.type == connector_element_type_int32);
         device_state_ptr->signed_integer= remote_config->element.value->signed_integer_value;
         break;
-
+    case connector_state_device_state_float_value:
+        ASSERT(remote_config->element.type == connector_element_type_float);
+        device_state_ptr->float_value = remote_config->element.value->float_value;
+        break;
     default:
         ASSERT(0);
         break;
