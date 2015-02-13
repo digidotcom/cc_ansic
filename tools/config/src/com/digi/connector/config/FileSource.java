@@ -86,7 +86,7 @@ public class FileSource extends FileGenerator {
             /* write structures in source file */
             writeAllStructures(configData, fileWriter);
 
-            int GlobalErrorCount = configData.getUserGlobalErrors().size() + 2;
+            int GlobalErrorCount = configData.getUserGlobalErrors().size() + configData.rciGlobalErrors.size();
 
             fileWriter.write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
                     "    connector_group_table,\n"+
