@@ -204,6 +204,8 @@ STATIC connector_bool_t rci_output_uint8(rci_t * const rci, uint8_t const value)
     return rci_output_data(rci, output, &data, sizeof data);
 }
 
+#define STRING_LENGTH_LEN 1
+
 #if defined RCI_PARSER_USES_IPV4
 STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const string)
 {
@@ -276,6 +278,9 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
 done:
     return overflow;
 }
+#define IPV4_ADDR_LEN (sizeof(uint32_t) + STRING_LENGTH_LEN)
+#else
+#define IPV4_ADDR_LEN 0
 #endif
 
 #if defined RCI_PARSER_USES_MAC_ADDR
@@ -360,6 +365,9 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
 done:
     return overflow;
 }
+#define MAC_ADDR_LEN (SIZEOF_MAC_ADDR + STRING_LENGTH_LEN)
+#else
+#define MAC_ADDR_LEN 0
 #endif
 
 #if defined RCI_PARSER_USES_FLOAT
@@ -734,10 +742,6 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
             state_call(rci, rci_parser_state_traverse);
     }
 }
-
-#define STRING_LENGTH_LEN 1
-#define MAC_ADDR_LEN (SIZEOF_MAC_ADDR + STRING_LENGTH_LEN)
-#define IPV4_ADDR_LEN (sizeof(uint32_t) + STRING_LENGTH_LEN)
 
 #define BYTES_REQUIRED_FOR_ERROR_PRONE_FIELD_VALUES MAX_VALUE(MAC_ADDR_LEN, IPV4_ADDR_LEN)
 
