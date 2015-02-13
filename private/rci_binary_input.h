@@ -144,33 +144,8 @@ STATIC connector_bool_t get_uint32(rci_t * const rci, uint32_t * const value)
 #if defined RCI_PARSER_USES_FLOAT
 STATIC connector_bool_t get_float(rci_t * const rci, float * const value)
 {
-
-    connector_bool_t value_decoded = connector_false;
-    uint8_t * const rci_ber_u32 = rci->shared.content.data;
-    uint8_t const opcode = message_load_u8(rci_ber_u32, opcode);
-    size_t const bytes_to_follow = get_bytes_to_follow(opcode);
-    size_t const bytes_read = rci->shared.content.length++;
-
-    ASSERT(sizeof(uint32_t) == sizeof(float));
-
-    if (bytes_read < (bytes_to_follow + 1))
-    {
-        goto error;
-    }
-
-    /* Current, we only support single precision float. */
-    ASSERT(bytes_read == record_bytes(rci_ber_u32));
-
-    {
-        uint32_t const float_value = message_load_be32(rci_ber_u32, value);
-        memcpy(value, &float_value, sizeof *value);
-    }
-
-    value_decoded = connector_true;
-    reset_input_content(rci);
-
-error:
-    return value_decoded;
+    ASSERT(sizeof (float) == sizeof (uint32_t));
+    return get_uint32(rci, (uint32_t *)value);
 }
 #endif
 
@@ -1094,10 +1069,13 @@ STATIC void process_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_FLOAT
     case connector_element_type_float:
     {
-        if (!get_float(rci, &rci->shared.value.float_value))
+        float value;
+
+        if (!get_float(rci, &value))
         {
             goto done;
         }
+        rci->shared.value.float_value = value;
         break;
     }
 #endif
