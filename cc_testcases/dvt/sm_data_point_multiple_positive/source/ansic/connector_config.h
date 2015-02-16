@@ -33,7 +33,6 @@
 #define CONNECTOR_SM_UDP_MAX_SESSIONS   4
 #define CONNECTOR_SM_MULTIPART
 #define CONNECTOR_SM_UDP_MAX_RX_SEGMENTS   16
-#define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS   16
 #define CONNECTOR_SM_UDP_RX_TIMEOUT        120  /* In seconds, SM_WAIT_FOREVER: Wait forever for the complete request/response */
 #define CONNECTOR_SM_TX_TIMEOUT CONNECTOR_SM_UDP_RX_TIMEOUT /* Use same timeout as for RX */
 
