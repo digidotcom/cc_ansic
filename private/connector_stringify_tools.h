@@ -82,7 +82,11 @@ typedef struct {
 STATIC void put_character(char const character, buffer_info_t * const buffer_info)
 {
     size_t const offset = buffer_info->bytes_written;
-    buffer_info->buffer[offset] = character;
+
+    if (buffer_info->buffer != NULL)
+    {
+        buffer_info->buffer[offset] = character;
+    }
     buffer_info->bytes_written += 1;
     buffer_info->bytes_available -= 1;
 }
