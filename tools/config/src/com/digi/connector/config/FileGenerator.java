@@ -1318,6 +1318,9 @@ public abstract class FileGenerator {
                 bufferWriter.write("};\n\n");
             }
         }
+        else {
+            bufferWriter.write(String.format("%s%ss NULL\n", DEFINE, GLOBAL_RCI_ERROR));
+        }
     }
 
     private int writeErrorStructures(int errorCount, String defineName, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {

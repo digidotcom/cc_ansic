@@ -281,8 +281,10 @@ STATIC connector_status_t connector_facility_rci_service_init(connector_data_t *
             ASSERT(rci_data->group_table != NULL);
             ASSERT(rci_data->vendor_id != 0x00);
             ASSERT(rci_data->device_type != NULL);
+#if (defined RCI_PARSER_USES_ERROR_DESCRIPTIONS)
             ASSERT(rci_data->error_table != NULL);
-            ASSERT(rci_data->global_error_count >= 2); /* "Bad command" and "Bad Descriptor" are mandatory */
+            ASSERT(rci_data->global_error_count >= 3); /* "Bad command", "Bad Descriptor" and "Bad value" are mandatory */
+#endif
 
 #if (defined CONNECTOR_DEBUG)
             validate_rci_tuple(connector_ptr, rci_data->device_type, rci_data->vendor_id, rci_data->firmware_target_zero_version);
