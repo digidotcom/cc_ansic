@@ -289,7 +289,6 @@
  * @endhtmlonly
  *
  * @note Currently Device Cloud limits the amount of Data Points per transaction to 250, regardless how many Data Streams are involved (it is possible to push 250 data points to a single stream, 1 data point to 250 streams, etc). However, this limitation is subject to change. Please refer to Device Cloud documentation for more information.
- * @note If using a @ref shortmessaging transport (SMS or UDP), the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
  *@see connector_data_stream_t
  *@see connector_request_data_point_t
  *@see connector_initiate_action()
