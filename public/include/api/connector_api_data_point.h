@@ -334,8 +334,6 @@ typedef struct
 * connector_initiate_data_point request id. This structure can be used to send
 * multiple points which are belong to multiple streams.
 *
-* @note If using a @ref shortmessaging transport, the number of Data Points that can be sent at once is limited by @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS.
-*
 * @see connector_request_id_data_point_t
 * @see connector_data_stream_t
 * @see connector_initiate_action

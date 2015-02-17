@@ -377,7 +377,6 @@
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the maximum Short Message segments used per session during message reception 
-* This define does not affect the number of segments for transmission which is unlimitted, except for Data Points, see @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS. 
 * If not set, Cloud Connector will call @ref connector_request_id_config_sm_udp_max_rx_segments configuration callback.
 * User needs to increase this value if SM over UDP is expected to receive larger data. 
 * @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
@@ -390,7 +389,6 @@
 
 /**
 * If @ref CONNECTOR_TRANSPORT_SMS is defined, Cloud Connector will use the define below to set the maximum Short Message segments used per session during message reception 
-* This define does not affect the number of segments for transmission which is unlimitted, except for Data Points, see @ref CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS. 
 * If not set, Cloud Connector will call @ref connector_request_id_config_sm_sms_max_rx_segments configuration callback.
 * User needs to increase this value if SM over UDP is expected to receive larger data. 
 * @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
@@ -400,27 +398,6 @@
 * @see @ref CONNECTOR_TRANSPORT_UDP
 */
 #define CONNECTOR_SM_SMS_MAX_RX_SEGMENTS               4
-
-/**
-* If @ref CONNECTOR_TRANSPORT_UDP or @ref CONNECTOR_TRANSPORT_SMS are defined and your application
-* sends Data Points over one of these transports, Cloud Connector will use the define below to allocate
-* a buffer to process the @ref connector_initiate_data_point requests
-* that use SMS or UDP. If both are defined, the buffer will be allocated with the maximum value.
-* This define does not affect the number of segments for reception (see @ref CONNECTOR_SM_UDP_MAX_RX_SEGMENTS and @ref CONNECTOR_SM_SMS_MAX_RX_SEGMENTS).
-* Each Data Point is sent in CSV format (one per line, '\\n' terminated). The default order is:\n\n
-* DATA, TIMESTAMP, QUALITY, DESCRIPTION, LOCATION, DATATYPE, UNITS, FORWARDTO \n\n
-* All fields are sent, even empty ones (i.e.: data,1,,,99)
-* For more information, please refer to the <a href="http://ftp1.digi.com/support/documentation/html/90002008">Device Cloud Programming Guide</a> 
-* section "Data Streams", subsection "CSV".\n
-* If this macro is not defined, Cloud Connector will use the default value of 1.
-* @ref CONNECTOR_SM_MULTIPART must be defined in order to configure this parameter to a value bigger than 1.
-*
-* @see @ref shortmessaging
-* @see @ref data_point
-* @see @ref CONNECTOR_TRANSPORT_UDP
-* @see @ref CONNECTOR_TRANSPORT_SMS
-*/
-#define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS      4
 
 /**
 * If @ref CONNECTOR_TRANSPORT_UDP is defined, Cloud Connector will use the define below to set the timeout (in seconds) for all incoming UDP sessions. 

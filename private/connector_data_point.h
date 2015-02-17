@@ -575,6 +575,7 @@ STATIC connector_callback_status_t dp_handle_length_callback(connector_data_t * 
     data_point_info_t * const dp_info = data_ptr->user_context;
 
     ASSERT_GOTO(dp_info != NULL, error);
+    UNUSED_PARAMETER(connector_ptr);
     switch (dp_info->type)
     {
         case dp_content_type_binary:
@@ -583,44 +584,15 @@ STATIC connector_callback_status_t dp_handle_length_callback(connector_data_t * 
 
         case dp_content_type_csv:
         {
-            connector_sm_data_t * sm_ptr = NULL;
-            size_t max_payload_bytes;
+            buffer_info_t buffer_info;
+            csv_process_data_t aux_process_data;
 
-            switch (data_ptr->transport)
-            {
-                #if (defined CONNECTOR_TRANSPORT_UDP)
-                case connector_transport_udp:
-                    sm_ptr = &connector_ptr->sm_udp;
-                    break;
-                #endif
+            buffer_info.buffer = NULL;
+            buffer_info.bytes_available = SIZE_MAX;
+            buffer_info.bytes_written = 0;
+            aux_process_data = dp_info->data.csv.process_data;
 
-                #if (defined CONNECTOR_TRANSPORT_SMS)
-                case connector_transport_sms:
-                    sm_ptr = &connector_ptr->sm_sms;
-                    break;
-                #endif
-
-                default:
-                    ASSERT(connector_false);
-                    break;
-            }
-
-            max_payload_bytes = sm_ptr->transport.sm_mtu_tx - record_end(segment);
-
-            #if !(defined CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS)
-            #define CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS   1
-            #endif
-
-            if (CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS == 1)
-            {
-                data_ptr->total_bytes = max_payload_bytes;
-            }
-            else
-            {
-                size_t const segment0_overhead_bytes = record_end(segment0) - record_end(segmentn);
-                data_ptr->total_bytes = CONNECTOR_SM_MAX_DATA_POINTS_SEGMENTS * max_payload_bytes - segment0_overhead_bytes;
-            }
-
+            data_ptr->total_bytes = dp_generate_csv(&aux_process_data, &buffer_info);
             break;
         }
     }
