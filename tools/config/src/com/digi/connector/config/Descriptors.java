@@ -83,7 +83,8 @@ public class Descriptors {
                     break;
                 }
 
-                if (!groups.isEmpty()) sendDescriptors(configType, groups, configData, id);
+                /* Descriptors must be uploaded even if the group is empty */
+                sendDescriptors(configType, groups, configData, id);
                 /* add 2 because sendDescriptors uploads 2 sets of descriptors (query and set ). */
                 id += 2;
             }
