@@ -211,8 +211,7 @@ public class FileSourceCcapi extends FileGenerator {
 
         	ccapi_rci_data += String.format("\n    {");
             if (groups.isEmpty()) {
-
-            	ccapi_rci_data += String.format("\n        NULL");
+                ccapi_rci_data += String.format("\n        NULL,");
             	ccapi_rci_data += String.format("\n        0");
             }
             else {
@@ -231,8 +230,7 @@ public class FileSourceCcapi extends FileGenerator {
 
         	ccapi_rci_data += String.format("\n    {");
             if (groups.isEmpty()) {
-
-            	ccapi_rci_data += String.format("\n        NULL");
+                ccapi_rci_data += String.format("\n        NULL,");
             	ccapi_rci_data += String.format("\n        0");
             }
             else {
