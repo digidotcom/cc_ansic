@@ -359,6 +359,7 @@ STATIC connector_bool_t process_csv_time(csv_process_data_t * const csv_process_
                     if (field_done)
                     {
                         init_int_info(&csv_process_data->data.info.intg, current_data_point->time.value.since_epoch_fractional.milliseconds, 10);
+                        csv_process_data->data.info.intg.figures = 3; /* Always add leading zeroes, i.e. 1 millisecond must be "001" */
                         csv_process_data->data.internal_state.time++;
                     }
                     break;

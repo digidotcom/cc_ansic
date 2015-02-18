@@ -91,10 +91,10 @@ STATIC void put_character(char const character, buffer_info_t * const buffer_inf
     buffer_info->bytes_available -= 1;
 }
 
-STATIC int count_int_ciphers(int const int_value)
+STATIC int count_int_ciphers(largest_uint_t const int_value)
 {
     int length = 1;
-    int value = int_value;
+    largest_uint_t value = int_value;
 
     while ((value /= 10) >= 1)
     {
@@ -326,7 +326,7 @@ STATIC void init_double_info(double_info_t * const double_info, double const val
 
     init_int_info(&double_info->integer, integer_part, 10);
     init_int_info(&double_info->fractional, fractional_part, 10);
-    double_info->fractional.figures = 6;
+    double_info->fractional.figures = 6; /* Always add leading zeroes */
 
     if (value < 0)
     {
