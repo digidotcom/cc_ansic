@@ -91,10 +91,10 @@ STATIC void put_character(char const character, buffer_info_t * const buffer_inf
     buffer_info->bytes_available -= 1;
 }
 
-STATIC int count_int_ciphers(int const int_value)
+STATIC int count_int_ciphers(largest_uint_t const int_value)
 {
     int length = 1;
-    int value = int_value;
+    largest_uint_t value = int_value;
 
     while ((value /= 10) >= 1)
     {
