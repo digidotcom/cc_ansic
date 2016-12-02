@@ -28,7 +28,7 @@ class ICPlugin(Plugin):
         Plugin.options(self, parser, env=env)
         parser.add_option('--ic-username', action='store', type="string", dest="username", default="iikdvt", help="Username device is provisioned to.")
         parser.add_option('--ic-password', action='store', type="string", dest="password", default="iik1sfun", help="Password of username device is provisioned to.")
-        parser.add_option('--ic-hostname', action='store', type="string", dest="hostname", default="test.etherios.com", help="Server device is connected to.")
+        parser.add_option('--ic-hostname', action='store', type="string", dest="hostname", default="test.idigi.com", help="Server device is connected to.")
         parser.add_option('--ic-deviceid', action='store', type="string", dest="device_id", default="00000000-00000000-00409DFF-FF432317", help="Device ID of device running iDigi Connector.")
         parser.add_option('--ic-vendorid', action='store', type="string", dest="vendor_id", default="16777242", help="Vendor ID of device running iDigi Connector.")
         parser.add_option('--ic-devicetype', action='store', type="string", dest="device_type", default="ECC DVT", help="Device Type of device runnning iDigi Connector.")

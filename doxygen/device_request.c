@@ -126,7 +126,7 @@
  * @section python_script2 Using a Web Services client to send a device request
  *
  * The sample provides a very basic Web Services script, written in python, to send a
- * data service device request to login.etherios.com using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
+ * data service device request to devicecloud.digi.com using @htmlonly <a href="web_services.html">Web Services.</a> @endhtmlonly
  * To run the python script:
  *
  * @code

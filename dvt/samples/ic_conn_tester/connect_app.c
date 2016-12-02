@@ -574,10 +574,10 @@ static bool parse_cmd_line(int argc, char **argv, app_config_t * const config)
         print_adapter_addresses();
 
         APP_PRINTF("Usage  : %s <iDigi Device Cloud Server URL> <Vendor ID> [<MAC Address>]\n\n", APP_NAME);
-        APP_PRINTF("<iDigi Device Cloud Server URL> -  login.etherios.com or my.idigi.co.uk\n\n");
+        APP_PRINTF("<iDigi Device Cloud Server URL> -  devicecloud.digi.com or my.idigi.co.uk\n\n");
         APP_PRINTF("<Vendor ID>   - Unique code identifying the manufacturer of a device,\n");
         APP_PRINTF("                presented as hexidecimal number, for example 0x0300000a\n\n");
-        APP_PRINTF("<MAC Address> - MAC address of the device, used to identify the device to Etherios Device Cloud,\n");
+        APP_PRINTF("<MAC Address> - MAC address of the device, used to identify the device to Device Cloud,\n");
         APP_PRINTF("                for example 01:02:03:04:0a:0b\n\n");
         goto done;
     }

@@ -84,7 +84,7 @@
  * Run @ref rci_tool to generate  * Run @ref rci_tool to generate @b connector_api_remote.h and @b remote_config.c files:
  * @code
  *
- *   java -jar /connector/tools/ConfigGenerator.jar username:password -url=login.etherios.com "Linux Application" 1.0.0.0 config.rci
+ *   java -jar /connector/tools/ConfigGenerator.jar username:password -url=devicecloud.digi.com "Linux Application" 1.0.0.0 config.rci
  *
  * @endcode
  * @note To run the above line you need to have Java Runtime Environment installed in your system. If you
@@ -114,7 +114,7 @@
  * directory and run @ref rci_tool to generate the missing files @b connector_api_remote.h and @b remote_config.c. The typical
  * arguments are:
  * @code
- * java -jar ConfigGenerator.jar username:password -url=login.etherios.com "Linux Application" 1.0.0.0 config.rci
+ * java -jar ConfigGenerator.jar username:password -url=devicecloud.digi.com "Linux Application" 1.0.0.0 config.rci
  * @endcode
  * Then type:
  * @code
@@ -231,7 +231,7 @@
  * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * Log on to @htmlonly <a href="http://login.etherios.com/">Device Cloud</a>@endhtmlonly
+ * Log on to @htmlonly <a href="http://devicecloud.digi.com/">Device Cloud</a>@endhtmlonly
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged, go to Device Management tab and click the Refresh button.
  * The device's status should show as 'Connected'.

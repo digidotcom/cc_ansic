@@ -326,7 +326,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #if !(defined CONNECTOR_CLOUD_URL)
 static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static  char const connector_cloud_url[] = "login.etherios.com";
+    static  char const connector_cloud_url[] = "devicecloud.digi.com";
 
     config_url->string = (char *)connector_cloud_url;
     config_url->length = sizeof connector_cloud_url - 1;
@@ -341,7 +341,7 @@ static connector_callback_status_t app_get_device_cloud_url(connector_config_poi
  * Will be updated if a SMSs provisioning message arrives from the server.
  * If set to nothing, will require a provisioning message from the server for initialization.
  */
-static char connector_cloud_phone[] = "447786201216"; /* phone number corresponding to login.etherios.com */
+static char connector_cloud_phone[] = "447786201216"; /* phone number corresponding to devicecloud.digi.com */
 
 static connector_callback_status_t app_get_device_cloud_phone(connector_config_pointer_string_t * const config_phone)
 {

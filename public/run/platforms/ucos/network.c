@@ -28,7 +28,7 @@
 #include <dns-c.h>
 #else
 #warning "Your project seems to lack DNS:
-#warning "Then you should fill CONNECTOR_CLOUD_URL define with Etherios Cloud IP instead of URL
+#warning "Then you should fill CONNECTOR_CLOUD_URL define with Cloud IP instead of URL
 #warning "If your project has DNS, please, define APP_CFG_DNS_EN  to DEF_ENABLED in your app_cfg.h file
 #endif
 

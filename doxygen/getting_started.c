@@ -46,7 +46,7 @@
  * Two sample applications, @ref step3 "compile_and_link" and @ref step7 "connect_to_device_cloud", will
  * be used to confirm your compilation and port, respectively.  When complete, your
  * device will be connected to Device Cloud and displayed in the
- * <a href="http://www.etherios.com/devicecloud/devicemanager">Device Management</a>.
+ * <a href="https://www.digi.com/products/cloud/digi-device-cloud">Device Management</a>.
  *
  * @section step1 Do you have a C89 or C99 compliant compiler?
  *
@@ -264,11 +264,11 @@
  * @ref add_your_device_to_the_cloud "instructed to register your Device Cloud Device ID.
  *
  * To create an account, navigate to
- * https://myaccount.etherios.com/ and follow the instructions to create and register your
+ * https://myaccount.digi.com/ and follow the instructions to create and register your
  * Device Cloud account.
  *
  * @note If you have already created and registered a Device Cloud Account, navigate here
- * https://login.etherios.com/ and follow the instructions in the next step.
+ * https://devicecloud.digi.com/ and follow the instructions in the next step.
  *
  * @image html cloud_registration.png
  *
@@ -517,7 +517,7 @@
  * connector_run thread starts
  * dns_resolve_name: ip address = [108.166.22.160]
  * app_tcp_connect: fd 3
- * app_network_tcp_open: connected to login.etherios.com
+ * app_network_tcp_open: connected to devicecloud.digi.com
  * Send MT Version
  * Receive Mt version
  * Send keepalive params
@@ -527,7 +527,7 @@
  * Send protocol version
  * Receive protocol version
  * Send identity verification
- * Send Device Cloud url = login.etherios.com
+ * Send Device Cloud url = devicecloud.digi.com
  * Send vendor id = 0x01000001
  * Send device type = Linux Application
  * Connection Control: send redirect_report
@@ -570,7 +570,7 @@
  * @note Look @ref device_id "here" for more information on Device ID's.
  *
  *
- *  -# Navigate to http://login.etherios.com and log on to Device Cloud
+ *  -# Navigate to http://devicecloud.digi.com and log on to Device Cloud
  *  -# Click on Device Management tab.
  *  -# Click the Add Devices button to bring up the Add Devices dialog.
  * \n

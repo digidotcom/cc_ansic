@@ -37,7 +37,7 @@ def Usage():
     print '        <Password> is the account password'
     print '        <Device ID> is the device to disconnect.' 
     print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
-    print '                   login.etherios.com.' 
+    print '                   devicecloud.digi.com.' 
     print '' 
     print '    Note:'
     print '        <Device ID> format can either be:'
@@ -46,10 +46,7 @@ def Usage():
     print '    Example Usage:' 
     print '        python ./disconnect.py myaccount mypassword 00049DFF-FFAABBCC'
     print '            Momentarily disconnects 00000000-00000000-00049DFF-FFAABBCC (in user account'
-    print '            myaccount) from login.etherios.com.\n'
-    print '        python ./disconnect.py myukaccount myukpassword 00049DFF-FFAABBCC login.etherios.co.uk'
-    print '            Momentarily disconnects 00000000-00000000-00049DFF-FFAABBCC (in user account'
-    print '            myukaccount) from login.etherios.co.uk.\n'
+    print '            myaccount) from devicecloud.digi.com.\n'
 
 
 def PostMessage(username, password, device_id, cloud_url):
@@ -100,7 +97,7 @@ def main(argv):
         if count > 3:
             cloud_url = argv[3]
         else:
-            cloud_url = "login.etherios.com"
+            cloud_url = "devicecloud.digi.com"
         PostMessage(argv[0], argv[1], argv[2], cloud_url)
 
 if __name__ == "__main__":

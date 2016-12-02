@@ -380,7 +380,7 @@ int main (void)
 
     for (;;)
     {
-        APP_DEBUG("Start Etherios Connector\n");
+        APP_DEBUG("Start Connector\n");
         open_stack_info_file(STACK_SIZE_FILE);
 
         rc = start_connector_thread();

@@ -37,7 +37,7 @@
 
 #ifdef ENABLE_COMPILE_TIME_DATA_PASSING
 #define CONNECTOR_DEVICE_TYPE                          "Linux Cloud Connector Sample"
-#define CONNECTOR_CLOUD_URL                            "login.etherios.com"
+#define CONNECTOR_CLOUD_URL                            "devicecloud.digi.com"
 #define CONNECTOR_TX_KEEPALIVE_IN_SECONDS              90
 #define CONNECTOR_RX_KEEPALIVE_IN_SECONDS              60
 #define CONNECTOR_WAIT_COUNT                           5

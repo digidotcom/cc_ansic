@@ -228,7 +228,7 @@
  * @endcode
  * For example:
  * @code
- * python EnableUDP.py myusername mypassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA true
+ * python EnableUDP.py myusername mypassword devicecloud.digi.com 00000000-00000000-00049DFF-FFAAAAAA true
  * @endcode
  *
  * To learn more about Device Cloud UDP configuration using Web Services, see SM/UDP chapter in the
@@ -256,7 +256,7 @@
  * @endcode
  * For example:
  * @code
- * python EnableUDP_Battery.py myusername mypassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA true
+ * python EnableUDP_Battery.py myusername mypassword devicecloud.digi.com 00000000-00000000-00049DFF-FFAAAAAA true
  * @endcode
  *
  * @subsection sm_sms_enable_dm Enable/Configure SMS transport using Device Management
@@ -293,7 +293,7 @@
  * @endcode
  * For example:
  * @code
- * python ProvisionSMS.py myusername mypassword login.etherios.com 00000000-00000000-00049DFF-FFAAAAAA 54123456789
+ * python ProvisionSMS.py myusername mypassword devicecloud.digi.com 00000000-00000000-00049DFF-FFAAAAAA 54123456789
  * @endcode
  * 
  * To learn more about Device Cloud SMS configuration using Web Services, see SMS chapter in the

@@ -201,7 +201,7 @@ int main (void)
 {
     int rc = 0;
 
-    APP_DEBUG("Start Etherios Connector\n");
+    APP_DEBUG("Start Connector\n");
     connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle != NULL)
     {
@@ -223,7 +223,7 @@ int main (void)
         pthread_join(connector_thread, NULL);
         pthread_join(application_thread, NULL);
 
-        APP_DEBUG("Etherios Cloud Connector terminated\n");
+        APP_DEBUG("Cloud Connector terminated\n");
     }
     else
     {

@@ -40,7 +40,7 @@ def Usage():
     print '        <Target> is the Device\'s target that will handle the Request Data.' 
     print '        <Request Data> is the data to be passed to the Device\'s target.' 
     print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
-    print '                   login.etherios.com.' 
+    print '                   devicecloud.digi.com.' 
     print '' 
     print '    Note:'
     print '        <Device ID> format can either be:'
@@ -49,10 +49,7 @@ def Usage():
     print '    Example Usage:' 
     print '        python ./device_request.py myaccount mypassword 00049DFF-FFAABBCC'
     print '            Sends an SCI Data Service-Device Request to 00000000-00000000-00049DFF-FFAABBCC '
-    print '            (in user account myaccount) through login.etherios.com.\n'
-    print '        python ./device_request.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
-    print '            Sends an SCI Data Service-Device Request to 00000000-00000000-00049DFF-FFAABBCC '
-    print '            (in user account myaccount) through login.etherios.co.uk.\n'
+    print '            (in user account myaccount) through devicecloud.digi.com.\n'
    
 def PostMessage(username, password, device_id, target, state, cloud_url):
     # create HTTP basic authentication string, this consists of
@@ -106,7 +103,7 @@ def main(argv):
         if count > 5:
             cloud_url = argv[5]
         else:
-            cloud_url = "login.etherios.com"
+            cloud_url = "devicecloud.digi.com"
         PostMessage(argv[0], argv[1], argv[2], argv[3], argv[4], cloud_url)
 
 

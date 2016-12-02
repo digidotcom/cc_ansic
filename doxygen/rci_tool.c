@@ -70,7 +70,7 @@
  * </tr>
  * <tr>
  *   <th> -url</th>
- *   <td> Optional for the Device Cloud URL. Default is login.etherios.com </td>
+ *   <td> Optional for the Device Cloud URL. Default is devicecloud.digi.com </td>
  * </tr>
  * <tr>
  * <tr>
@@ -121,7 +121,7 @@
  * Example:
  *
  * @code
- *     java -jar ConfigGenerator.jar username:password -url=login.etherios.com "Linux Application" 1.0.0.0 config.rci
+ *     java -jar ConfigGenerator.jar username:password -url=devicecloud.digi.com "Linux Application" 1.0.0.0 config.rci
  * @endcode
  *
  * @section rci_tool_location Location

@@ -3,7 +3,7 @@ import cc_testcase
 
 from base64 import encodestring
 
-non_etherios_host = 'google.com'
+non_devicecloud_host = 'google.com'
 
 DESTINATION_TAGS = "<destination>%s</destination>"
 
@@ -54,16 +54,16 @@ class RedirectTestCase(cc_testcase.TestCase):
         self.deviceMonitor.waitForConnect(60)
         self.log.info("Device connected.") 
 
-    def test_redirect_multi_urls_first_non_etherios(self):
+    def test_redirect_multi_urls_first_non_devicecloud(self):
 
-        """ Sends redirect request to given device starting with a non-etherios
-        host and verifies that it disconnects and reconnects to an etherios server.
+        """ Sends redirect request to given device starting with a non-devicecloud
+        host and verifies that it disconnects and reconnects to an devicecloud server.
         """
         
         self.log.info("Sending Connection Control Redirect to %s." % self.device_id)
         # Create the request to redirect the device to a nonidigi server and
         # then an iDigi server
-        destination = DESTINATION_TAGS % non_etherios_host + DESTINATION_TAGS % self.hostname
+        destination = DESTINATION_TAGS % non_devicecloud_host + DESTINATION_TAGS % self.hostname
         redirect_request = REDIRECT_REQUEST % \
             (self.device_id, destination)
 
@@ -88,7 +88,7 @@ class RedirectTestCase(cc_testcase.TestCase):
         self.deviceMonitor.waitForDisconnect(30)
         self.log.info("Device disconnected.")
 
-        result, indexPattern, dataBuffer = self.deviceHandler.readUntilPattern(pattern="app_network_tcp_open: failed to connect to %s" % non_etherios_host, timeout=30)
+        result, indexPattern, dataBuffer = self.deviceHandler.readUntilPattern(pattern="app_network_tcp_open: failed to connect to %s" % non_devicecloud_host, timeout=30)
         self.log.info("Console feedback for disconnection = %d" % result)
         if (not result):
             self.fail("Console feedback for disconnection NOT arrived")
@@ -97,9 +97,9 @@ class RedirectTestCase(cc_testcase.TestCase):
         self.deviceMonitor.waitForConnect(60)
         self.log.info("Device connected.") 
 
-    def test_redirect_singleurl_non_etherios(self):
+    def test_redirect_singleurl_non_devicecloud(self):
 
-        """ Sends redirect request to given device starting with a non-etherios
+        """ Sends redirect request to given device starting with a non-devicecloud
         host and verifies that it disconnets and reconnects to the configured
         server.
         """
@@ -107,7 +107,7 @@ class RedirectTestCase(cc_testcase.TestCase):
         self.log.info("Sending Connection Control Redirect to %s." % self.device_id)
         # Create the request to redirect the device to a nonidigi server.
         redirect_request = REDIRECT_REQUEST % \
-            (self.device_id, DESTINATION_TAGS % non_etherios_host)
+            (self.device_id, DESTINATION_TAGS % non_devicecloud_host)
 
         # Send SCI redirect request (using admin credentials).
         self.log.info("Sending SCI Request: \n%s\n" % redirect_request)
@@ -130,7 +130,7 @@ class RedirectTestCase(cc_testcase.TestCase):
         self.deviceMonitor.waitForDisconnect(30)
         self.log.info("Device disconnected.")
 
-        result, indexPattern, dataBuffer = self.deviceHandler.readUntilPattern(pattern="app_network_tcp_open: failed to connect to %s" % non_etherios_host, timeout=30)
+        result, indexPattern, dataBuffer = self.deviceHandler.readUntilPattern(pattern="app_network_tcp_open: failed to connect to %s" % non_devicecloud_host, timeout=30)
         self.log.info("Console feedback for disconnection = %d" % result)
         if (not result):
             self.fail("Console feedback for disconnection NOT arrived")

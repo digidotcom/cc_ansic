@@ -40,7 +40,7 @@ def Usage():
     print '        <Device ID> is the device to download.'
     print '        <image path> is where the image is' 
     print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
-    print '                   login.etherios.com.' 
+    print '                   devicecloud.digi.com.' 
     print '' 
     print '    Note:'
     print '        The file \"image.a\" must be created locally.\n'
@@ -50,10 +50,7 @@ def Usage():
     print '    Example Usage:' 
     print '        python ./update_firmware.py myaccount mypassword 00049DFF-FFAABBCC'
     print '            Performs a firmware download of \"image.a\" to 00000000-00000000-00049DFF-FFAABBCC '
-    print '            (in user account myaccount) through login.etherios.com.\n'
-    print '        python ./update_firmware.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
-    print '            Performs a firmware download of \"image.a\" to 00000000-00000000-00049DFF-FFAABBCC '
-    print '            (in user account myaccount) through login.etherios.co.uk.\n'
+    print '            (in user account myaccount) through devicecloud.digi.com.\n'
 
 
 def PostMessage(username, password, device_id, image_file, cloud_url):
@@ -116,7 +113,7 @@ def main(argv):
         if count > 4:
             cloud_url = argv[4]
         else:
-            cloud_url = "login.etherios.com"
+            cloud_url = "devicecloud.digi.com"
         PostMessage(argv[0], argv[1], argv[2], argv[3], cloud_url)
 
 if __name__ == "__main__":

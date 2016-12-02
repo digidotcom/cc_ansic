@@ -23,7 +23,6 @@
  * The CA certificate is stored in public/certificates/ directory. A define APP_SSL_CA_CERT_PATH can be found
  * in platform.h. By default it is set to "../../../certificates/Digi_Int-ca-cert-public.crt".
  * 
- * @note the certificate name is correct, Etherios Inc. is a division of Digi International Inc..
  * @note the certificate is valid for 100 years (until 2109)
  * 
  * @section ssl_connect Open

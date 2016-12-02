@@ -900,7 +900,7 @@ def main():
     parser.add_argument('--password', action='store', type=str,
         default='iik1sfun', help="Device Cloud Password to run the test with.")
     parser.add_argument('--hostname', action='store', type=str,
-        default='test.etherios.com',
+        default='test.idigi.com',
         help='Device Cloud URL to connect devices to.')
     parser.add_argument('--mac_address', action='store', type=str,
         default=None,

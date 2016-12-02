@@ -9,7 +9,7 @@ class BuildPlugin(Plugin):
         Plugin.options(self, parser, env=env)
         parser.add_option('--build_username', action='store', type="string", dest="username", default="iikdvt", help="Username device is provisioned to.")
         parser.add_option('--build_password', action='store', type="string", dest="password", default="iik1sfun", help="Password of username device is provisioned to.")
-        parser.add_option('--build_hostname', action='store', type="string", dest="hostname", default="test.etherios.com", help="Server device is connected to.")
+        parser.add_option('--build_hostname', action='store', type="string", dest="hostname", default="test.idigi.com", help="Server device is connected to.")
         parser.add_option('--build_device_type', action='store', type="string", dest="device_type", default="Linux Application", help="Device Type to Use for Config Tool.")
         parser.add_option('--build_firmware_version', action='store', type='string', dest="firmware_version", default="1.0.0.0", help="Firmware Version to Use for Config Tool.")
         parser.add_option('--build_config_tool_jar', action='store', type="string", dest="config_tool_jar", default="ConfigGenerator.jar", help="Config Tool Jar used to generate RCI Config Code")

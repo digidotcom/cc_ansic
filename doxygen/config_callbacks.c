@@ -684,7 +684,7 @@
  *     if (class_id == connector_class_id_config && request_id.config_request == connector_request_id_config_device_cloud_url)
  *     {
  *         // Return pointer to Device Cloud url.
- *         static  char const device_cloud_url[] = "login.etherios.com";
+ *         static  char const device_cloud_url[] = "devicecloud.digi.com";
  *         connector_config_pointer_string_t * const config_url = data;
  *
  *         config_url->string = (char *)device_cloud_url;

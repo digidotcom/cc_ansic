@@ -22,8 +22,8 @@ java -jar $TOOL -vendor=0xLL mlchan:mlchan  "Linux Application" 1 config.rci
 printf "Calling the tool with invalid firmware version number:\n"
 java -jar $TOOL mlchan:mlchan "Linux Application" 0x1 config.rci
 
-printf "Calling the tool with -server= test.etherios.com:\n"
-java -jar $TOOL -url= test.etherios.com mlchan:mlchan "Linux Application" 1 config.rci
+printf "Calling the tool with -server= test.idigi.com:\n"
+java -jar $TOOL -url= test.idigi.com mlchan:mlchan "Linux Application" 1 config.rci
 
 printf "Calling the tool with extra argument:\n"
 java -jar $TOOL mlchan:mlchan "Linux Application" 1 config.rci option
@@ -32,5 +32,5 @@ java -jar $TOOL mlchan:mlchan "Linux Application" 1 config.rci option
 for file in $(ls *.rci)
 do
     printf "\n\n%s\n" $file
-    java -jar $TOOL -url=test.etherios.com mlchan:mlchan "Linux Application" 1 $file
+    java -jar $TOOL -url=test.idigi.com mlchan:mlchan "Linux Application" 1 $file
 done

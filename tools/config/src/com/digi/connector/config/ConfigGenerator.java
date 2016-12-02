@@ -39,7 +39,7 @@ public class ConfigGenerator {
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String URL_OPTION = "url";
-    private final static String URL_DEFAULT = "login.etherios.com";
+    private final static String URL_DEFAULT = "devicecloud.digi.com";
 
     private final static String USE_NAMES_OPTION = "usenames";
     private final static String USE_NAMES_DEFAULT = "none";

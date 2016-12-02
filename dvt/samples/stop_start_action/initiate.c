@@ -81,7 +81,7 @@ int initiate_run(connector_handle_t handle)
                 }
             case device_request_app_start_connector:
                 sleep(1);
-                APP_DEBUG("Initiate_run: Start Etherios Connector %s\n", transport_to_string(initiate_action.transport));
+                APP_DEBUG("Initiate_run: Start Connector %s\n", transport_to_string(initiate_action.transport));
 
                 {
                     connector_status_t status;
@@ -123,7 +123,7 @@ int initiate_run(connector_handle_t handle)
             case device_request_stop_connector:
             case device_request_stop_all_transports:
 #if (TRANSPORT_COUNT == 1)
-                APP_DEBUG("Initiate_run: Let reStart Etherios Connector\n");
+                APP_DEBUG("Initiate_run: Let reStart Connector\n");
                 initiate_action.target = device_request_app_start_connector;
 #else
                 APP_DEBUG("initiate_run: transport %s\n", transport_to_string(initiate_action.transport));

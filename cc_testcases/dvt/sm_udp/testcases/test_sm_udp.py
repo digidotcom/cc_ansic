@@ -201,7 +201,7 @@ class SmUdpDvtTestCase(cc_testcase.UDPTestCase):
 
     def test_sm_udp_e_verify_send_data(self):
         file_path = 'FileData/~/' + self.device_id + '/test/sm_udp.txt'
-        expected_content = "Etherios sm udp dvt for device data\n"
+        expected_content = "sm udp dvt for device data\n"
 
         # Send device request
         requestResponse = self.cloudHandler.getRequest(file_path)

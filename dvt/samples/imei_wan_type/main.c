@@ -114,7 +114,7 @@ int main (void)
 
     for (;;)
     {
-        APP_DEBUG("Start Etherios Connector\n");
+        APP_DEBUG("Start Connector\n");
 
         rc = start_connector_thread();
         if (rc != 0)

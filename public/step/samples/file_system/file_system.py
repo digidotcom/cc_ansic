@@ -44,7 +44,7 @@ def Usage():
     print '        <Password> is the account password'
     print '        <Device ID> is the device to query.' 
     print '        [<Device Cloud URL>] is an optional Device Cloud URL.  The default URL is' 
-    print '                   login.etherios.com.' 
+    print '                   devicecloud.digi.com.' 
     print '' 
     print '    Note:'
     print '        <Device ID> format can either be:'
@@ -53,10 +53,7 @@ def Usage():
     print '    Example Usage:' 
     print '        python ./file_system.py myaccount mypassword 00049DFF-FFAABBCC'
     print '            Transfers file \"test_file.txt\" with 00000000-00000000-00049DFF-FFAABBCC '
-    print '            (in user account myaccount) through login.etherios.com.\n'
-    print '        python ./file_system.py myaccount mypassword 00049DFF-FFAABBCC login.etherios.co.uk'
-    print '            Transfers file \"test_file.txt\" with 00000000-00000000-00049DFF-FFAABBCC '
-    print '            (in user account myaccount) through login.etherios.co.uk.\n'
+    print '            (in user account myaccount) through devicecloud.digi.com.\n'
    
 def PostMessage(username, password, device_id, cloud_url):
     # create HTTP basic authentication string, this consists of
@@ -124,7 +121,7 @@ def main(argv):
         if count > 3:
             cloud_url = argv[3]
         else:
-            cloud_url = "login.etherios.com"
+            cloud_url = "devicecloud.digi.com"
         PostMessage(argv[0], argv[1], argv[2], cloud_url)
 
 

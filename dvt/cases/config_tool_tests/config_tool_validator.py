@@ -480,7 +480,7 @@ group state debug_info "Debug info on Cloud Connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in Etherios Device Cloud.
+# Must setup the following group in order for GPS shown in Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
@@ -529,7 +529,7 @@ group state debug_info "Debug info on Cloud Connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in Etherios Device Cloud.
+# Must setup the following group in order for GPS shown in Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
@@ -578,7 +578,7 @@ group state debug_info "Debug info on Cloud Connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in Etherios Device Cloud.
+# Must setup the following group in order for GPS shown in Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")
@@ -624,7 +624,7 @@ group state debug_info "Debug info on Cloud connector thread"
     element usedmem "Allocated memory used" type uint32 access  read_only
 
 # State configuration for GPS
-# Must setup the following group in order for GPS shown in Etherios Device Cloud.
+# Must setup the following group in order for GPS shown in Device Cloud.
 group state gps_stats "GPS"
     element latitude "Latitude" type float access read_only
     element longitude "Longitude" type float access read_only""")

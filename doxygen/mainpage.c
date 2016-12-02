@@ -68,7 +68,7 @@
  *         - Reboot
  *
  * @section communicating Communicating with your device
- * To manage your device remotely you can use <a href="http://www.etherios.com/devicecloud/devicemanager">Device Management</a>
+ * To manage your device remotely you can use <a href="https://www.digi.com/products/cloud/digi-device-cloud">Device Management</a>
  * by logging into your @ref step4 "Device Cloud account".  Alternatively, you can communicate with
  * your device programmatically by using @ref web_services "Device Cloud Web Services".
  *

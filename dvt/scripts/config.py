@@ -135,7 +135,7 @@ def update_config_c(cnfg_file, **device_config):
   old_meid = '"00000000000000"'
   # For backwards compatibility of old tests, replace 'my.idigi.com'
   # or 'developer.idigi.com' with target server.
-  old_server_urls = ['"login.etherios.com"', '"my.idigi.com"', '"developer.idigi.com"']
+  old_server_urls = ['"devicecloud.digi.com"', '"my.idigi.com"', '"developer.idigi.com"']
 
   # Setup Vendor ID
   vendor_id = device_config['vendor_id'] if device_config.has_key('vendor_id') else 0
@@ -147,7 +147,7 @@ def update_config_c(cnfg_file, **device_config):
   device_id = device_config['device_type'] if device_config.has_key('device_type') else 'ECC DVT'
 
   # Setup iDigi Server
-  connector_host = device_config['connector_host'] if device_config.has_key('connector_host') else 'test.etherios.com'
+  connector_host = device_config['connector_host'] if device_config.has_key('connector_host') else 'test.idigi.com'
   new_server_url  = '"' + connector_host + '"'
 
   # Setup Device Type

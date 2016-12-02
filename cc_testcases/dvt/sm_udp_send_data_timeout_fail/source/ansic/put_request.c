@@ -88,7 +88,7 @@ connector_status_t app_send_put_request(connector_handle_t handle, connector_boo
     connector_status_t status;
     static connector_request_data_service_send_t header; /* Cloud connector will hold this until we get a response/error callback */
     static char const file_type[] = "text/plain";
-    static char const buffer[] = "Etherios sm_send_data sample data\n";
+    static char const buffer[] = "sm_send_data sample data\n";
 
     if (app_send_data != NULL)
     {
@@ -254,7 +254,7 @@ connector_callback_status_t app_sm_handler(connector_request_id_sm_t const reque
         {
             connector_sm_more_data_t * const more_data = data;
 
-            APP_DEBUG("More SM data is waiting on %s in Etherios Device Cloud\n", (more_data->transport == connector_transport_udp) ? "UDP" : "SMS");
+            APP_DEBUG("More SM data is waiting on %s in Device Cloud\n", (more_data->transport == connector_transport_udp) ? "UDP" : "SMS");
             break;
         }
 

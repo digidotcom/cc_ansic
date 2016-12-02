@@ -205,7 +205,7 @@ class SmSmsGammuDvtTestCase(cc_testcase.SMSTestCase):
 
     def test_sm_sms_h_verify_send_data(self):
         file_path = 'FileData/~/' + self.device_id + '/test/sm_sms.txt'
-        expected_content = "Etherios sm sms dvt for device data\n"
+        expected_content = "sm sms dvt for device data\n"
         time.sleep(20)
 
         # Send device request

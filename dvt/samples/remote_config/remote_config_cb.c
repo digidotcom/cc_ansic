@@ -29,7 +29,7 @@ uint32_t init_unsigned = 1;
 float init_float = 0.1;
 char * init_string = "default\0";
 char * init_ipv4 = "0.0.0.0\0";
-char * init_fqdnv4 = "login.etherios.com\0";
+char * init_fqdnv4 = "devicecloud.digi.com\0";
 char * init_datetime = "2012-12-21T00:00:00Z\0";
 
 void * ptr = 0;

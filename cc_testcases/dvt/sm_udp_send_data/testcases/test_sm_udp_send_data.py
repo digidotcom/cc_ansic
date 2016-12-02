@@ -24,7 +24,7 @@ class SmUdpSendDataTestCase(cc_testcase.UDPTestCase):
         time.sleep(10)
 
         # Create paths to files.
-        expected_content = 'Etherios sm_send_data sample data\n'
+        expected_content = 'sm_send_data sample data\n'
         file_location = filedata + self.device_id + '/' + file_name
         file_location1 = filedata + self.device_id + '/' + file_name1
         self.log.info("Attempting to Retrieve data from File Locations: %s, %s" % (file_location, file_location1))

@@ -176,7 +176,7 @@ static connector_callback_status_t app_get_device_type(connector_config_pointer_
 #if !(defined CONNECTOR_CLOUD_URL)
 static connector_callback_status_t app_get_device_cloud_url(connector_config_pointer_string_t * const config_url)
 {
-    static  char const connector_cloud_url[] = "login.etherios.com";
+    static  char const connector_cloud_url[] = "devicecloud.digi.com";
     /* Return pointer to device type. */
     config_url->string = (char *)connector_cloud_url;
     config_url->length = sizeof connector_cloud_url -1;
@@ -767,7 +767,7 @@ static char const * app_status_error_to_string(connector_status_t const value)
 }
 
 /*
- * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
+ * This routine is called when a configuration error is encountered by Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 connector_callback_status_t app_config_error(connector_config_error_status_t const * const error_data)

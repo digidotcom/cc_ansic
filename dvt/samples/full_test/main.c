@@ -194,7 +194,7 @@ int main (void)
 {
     connector_handle_t connector_handle;
 
-    APP_DEBUG("Start Etherios Connector\n");
+    APP_DEBUG("Start Connector\n");
     connector_handle = connector_init(app_connector_callback, NULL);
     if (connector_handle != NULL)
     {

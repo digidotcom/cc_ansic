@@ -564,7 +564,7 @@ class TestRciDescriptors(object):
                             '%s_no_error_within_min_max_dns'% element.type))
                     if not element.has_min_or_max():
                         tests.append(RCIGroupTestScenario(element,
-                            'test.etherios.com',
+                            'test.idigi.com',
                             None,
                             '%s_no_error_has_min_dns'% element.type))
 #                        tests.append(RCIGroupTestScenario(element,

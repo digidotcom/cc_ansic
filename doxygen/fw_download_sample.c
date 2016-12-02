@@ -147,13 +147,13 @@
  * Once successfully built, run the executable, in Linux type ./connector to run the
  * sample.
  *
- * Firmware downloads can be initiated by Device Cloud using <a href="http://www.etherios.com/devicecloud/devicemanager">Device Management</a>
+ * Firmware downloads can be initiated by Device Cloud using <a href="https://www.digi.com/products/cloud/digi-device-cloud">Device Management</a>
  * or by issuing a Web Services call.  See @ref services "here" for more information on
  * Web Service calls.
  *
  * @subsection fw_gui Firmware Download using Device Management
  *
- * Log on to Device Cloud at http://login.etherios.com/ and click on your device
+ * Log on to Device Cloud at http://devicecloud.digi.com/ and click on your device
  * (described in the @ref connector_login "Getting Started Section").
  * Once you are logged to see your device, click the Refresh button.
  * The device's status should indicate as 'Connected'. Select the device for firmware update

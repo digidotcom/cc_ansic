@@ -327,10 +327,10 @@ static connector_callback_status_t app_start_network_tcp(connector_auto_connect_
     return connector_callback_continue;
 }
 
-/* End of Etherios Cloud Connector configuration routines */
+/* End of Cloud Connector configuration routines */
 
 /*
- * This routine is called when a configuration error is encountered by Etherios Cloud Connector.
+ * This routine is called when a configuration error is encountered by Cloud Connector.
  * This is currently used as a debug tool for finding configuration errors.
  */
 static void app_config_error(connector_error_status_t const * const error_data)

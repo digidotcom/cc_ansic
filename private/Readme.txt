@@ -1,5 +1,5 @@
                     Release Notes PN _RELEASE_NOTES_PARTNO_
-               Etherios Cloud Connector for Embedded
+               Cloud Connector for Embedded
                             v_CONNECTOR_SW_VERSION_ 
 
 INTRODUCTION
@@ -15,7 +15,7 @@ INTRODUCTION
 
 SUPPORTED PRODUCTS
 
-        Etherios Cloud Connector for Embedded
+        Cloud Connector for Embedded
 
 ENHANCEMENTS
 

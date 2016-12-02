@@ -200,7 +200,7 @@ done:
 
 /*
  * Sends data to the iDigi server, this routine must not block.  If it encounters
- * EAGAIN  error, return connector_callback_busy and Etherios Cloud Connector will ignore the
+ * EAGAIN  error, return connector_callback_busy and Cloud Connector will ignore the
  * sent_length and continue calling this function.
  */
 static connector_callback_status_t app_network_send(connector_write_request_t const * const write_data,
@@ -230,7 +230,7 @@ static connector_callback_status_t app_network_send(connector_write_request_t co
 /*
  * This routine reads a specified number of bytes from the iDigi server.  This 
  * function must not block. If it encounters EAGAIN  error, return
- * connector_callback_busy and Etherios Cloud Connector will ignore the read_data and read_length
+ * connector_callback_busy and Cloud Connector will ignore the read_data and read_length
  * and continue calling this function.
  */
 static connector_callback_status_t app_network_receive(connector_read_request_t const * const read_data, size_t * const read_length)
@@ -246,7 +246,7 @@ static connector_callback_status_t app_network_receive(connector_read_request_t 
     FD_SET(*read_data->network_handle, &read_set);
 
     timeout.tv_sec = read_data->timeout;
-    /* Blocking point for Etherios Cloud Connector */
+    /* Blocking point for Cloud Connector */
     ccode = select((*read_data->network_handle)+1, &read_set, NULL, NULL, &timeout);
     if (ccode < 0)
     {

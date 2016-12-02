@@ -14,7 +14,7 @@ class SmSmsSendDataTestCase(cc_testcase.SMSTestCase):
         
         self.log.info("Begin sm_send_data test.")
 
-        expected_content = 'Etherios sm_send_data sample data\n'
+        expected_content = 'sm_send_data sample data\n'
 
         # Make sure through console feedback that the file has been sent & receibed by the server
         status1, line1, buffer1 = self.deviceHandler.readUntilPattern ( pattern="Received success response from server", timeout=300)

@@ -50,9 +50,8 @@ def Usage():
     print '    To configure the phone-number send following message to the socket: '
     print '        phone-number=xxxxxxxxxx'
     print '    examples:'
-    print '        for login.etherios.com: phone-number=447786201216'
-    print '        for test.etherios.com:  phone-number=447786201217'
-    print '        for login.etherios.co.uk:  not supported using long codes.'
+    print '        for devicecloud.digi.com: phone-number=447786201216'
+    print '        for test.idigi.com:  phone-number=447786201217'
 
 
 def sms_callback(a):
@@ -82,7 +81,7 @@ def ListenForConnections():
     #for tests, skip sms sent.
     mute = 0
 
-    #etherios telephone where to send SMSs
+    #device cloud telephone where to send SMSs
     #requires initialitation using 'phone-number=xxxxxxx'
     phone_number = ''
 
