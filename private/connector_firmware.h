@@ -778,7 +778,7 @@ enum fw_complete_response {
         fw_abort_status_t fw_status;
 
         fw_status.user_status = connector_firmware_status_user_abort;
-        send_fw_abort(fw_ptr, download_complete.target_number, fw_download_abort_opcode, fw_status);
+        result = send_fw_abort(fw_ptr, download_complete.target_number, fw_download_abort_opcode, fw_status);
     }
 
 
