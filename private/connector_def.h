@@ -192,7 +192,7 @@ typedef struct connector_data {
 #endif
 
     connector_bool_t connector_got_device_id;
-#if (CONNECTOR_TRANSPORT_COUNT > 1)
+#if (defined CONNECTOR_MULTIPLE_TRANSPORTS)
     connector_network_type_t first_running_network;
 #endif
 

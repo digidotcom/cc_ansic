@@ -382,7 +382,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 
 #endif
 
-#if (defined CONNECTOR_TRANSPORT_COUNT > 1)
+#if (defined CONNECTOR_MULTIPLE_TRANSPORTS)
     connector_handle->first_running_network = (connector_network_type_t) 0;
 #endif
 #if (defined CONNECTOR_DATA_POINTS)
@@ -443,7 +443,7 @@ connector_status_t connector_step(connector_handle_t const handle)
             break;
     }
 
-#if (CONNECTOR_TRANSPORT_COUNT == 1)
+#if !(defined CONNECTOR_MULTIPLE_TRANSPORTS)
 #if (defined CONNECTOR_TRANSPORT_TCP)
     result = connector_edp_step(connector_ptr);
 #endif
