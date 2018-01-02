@@ -52,6 +52,7 @@ STATIC connector_status_t call_ds_receive_callback(connector_data_t * const conn
         case connector_request_id_data_service_receive_reply_length:
             request_id.data_service_request = connector_request_id_data_service_receive_reply_data;
             /* fall thru for error (not-handle) response data */
+            // fall through
         case connector_request_id_data_service_receive_target:
         case connector_request_id_data_service_receive_data:
         case connector_request_id_data_service_receive_status:

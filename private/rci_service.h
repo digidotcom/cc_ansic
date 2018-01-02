@@ -123,7 +123,7 @@ STATIC connector_status_t rci_service_callback(connector_data_t * const connecto
         case rci_status_error:
             status = connector_abort;
 
-            /* no break; */
+            // fall through
         case rci_status_internal_error:
             error_status = connector_session_error_cancel;
             break;

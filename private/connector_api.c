@@ -500,7 +500,7 @@ error:
     {
     case connector_abort:
         abort_connector(connector_ptr);
-        /* no break; */
+        // fall through
     case connector_device_terminated:
         result = connector_working;
         break;
@@ -591,7 +591,6 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
                 }
 
                 /* no break */
-
 #if (defined CONNECTOR_SHORT_MESSAGE)
 #if (defined CONNECTOR_TRANSPORT_UDP)
             case connector_transport_udp:
@@ -608,6 +607,7 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
+            // fall through
             case connector_transport_tcp:
                 result = edp_initiate_action(connector_ptr, request, request_data);
 
