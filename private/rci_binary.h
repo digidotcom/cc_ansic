@@ -96,7 +96,7 @@ STATIC connector_bool_t rci_action_session_active(rci_t * const rci)
         {
             rci->status = rci_status_internal_error;
         }
-        // fall through
+        /* fall through */
         case rci_status_internal_error:
         {
             success = connector_false;

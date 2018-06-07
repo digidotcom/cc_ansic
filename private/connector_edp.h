@@ -323,7 +323,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             {
                 break;
             }
-            // fall through
+            /* fall through */
         case connector_transport_redirect:
             result = connector_unavailable;
             goto done;
@@ -367,7 +367,7 @@ connector_status_t edp_initiate_action(connector_data_t * const connector_ptr, c
             {
                 break;
             }
-            // fall through
+            /* fall through */
         case connector_transport_redirect:
             result = connector_unavailable;
             goto done;

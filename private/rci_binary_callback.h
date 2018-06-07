@@ -304,7 +304,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 rci->callback.status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL, connector_ptr->context);
             }
         }
-        // fall through
+        /* fall through */
         case connector_request_id_remote_config_do_command:
         case connector_request_id_remote_config_set_factory_def:
         {
