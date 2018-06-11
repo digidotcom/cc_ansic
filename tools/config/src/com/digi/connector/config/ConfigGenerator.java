@@ -35,6 +35,7 @@ public class ConfigGenerator {
     private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_attribute_max_len";
     private final static String NO_BACKUP_OPTION = "noBackup";
     private final static String RCI_PARSER_OPTION = "rci_parser";
+    private final static String OVERRIDE_MAX_NAME_LENGTH = "maxNameLength";
 
     private final static String FILE_TYPE_OPTION = "type";
 
@@ -80,6 +81,7 @@ public class ConfigGenerator {
     private static int rci_dc_attribute_max_len = 0;
     private static boolean noBackup;
     private static boolean rciParser;
+    private static int maxNameLength = 40;
 
     private static boolean hidden_help;
 
@@ -161,6 +163,9 @@ public class ConfigGenerator {
                 + "] ["
                 + DASH
                 + USE_NAMES_OPTION
+                +"] ["
+                + DASH
+                + OVERRIDE_MAX_NAME_LENGTH
                 +"] "
                 + String.format("<\"%s\"[:\"%s\"]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
@@ -277,6 +282,10 @@ public class ConfigGenerator {
                     .format(
                             "\t%-16s \t= Defines and enums names to work with RCI Parser.",
                             DASH + RCI_PARSER_OPTION));
+            log(String
+                    .format(
+                            "\t%-16s \t= optional behavior,defining the max length of element names.",
+                            DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
          }
 
         System.exit(1);
@@ -343,6 +352,13 @@ public class ConfigGenerator {
                         rci_dc_attribute_max_len = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
                         throw new IOException("-rci_dc_attribute_max_len expect an integer value");
+                    }
+                } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
+                    try{
+                        maxNameLength = Integer.parseInt(keys[1]);
+                        Parser.setMaxNameLength(maxNameLength);
+                    } catch (NumberFormatException e) {
+                        throw new IOException("-maxNameLength expected an integer value");
                     }
                 }
                 else {
