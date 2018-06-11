@@ -81,7 +81,6 @@ public class ConfigGenerator {
     private static int rci_dc_attribute_max_len = 0;
     private static boolean noBackup;
     private static boolean rciParser;
-    private static int maxNameLength = 40;
 
     private static boolean hidden_help;
 
@@ -284,7 +283,7 @@ public class ConfigGenerator {
                             DASH + RCI_PARSER_OPTION));
             log(String
                     .format(
-                            "\t%-16s \t= optional behavior,defining the max length of element names.",
+                            "\t%-16s \t= optional behavior, defining the max length of element names.",
                             DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
          }
 
@@ -355,8 +354,7 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
                     try{
-                        maxNameLength = Integer.parseInt(keys[1]);
-                        Parser.setMaxNameLength(maxNameLength);
+                        Parser.setMaxNameLength(Integer.parseInt(keys[1]));
                     } catch (NumberFormatException e) {
                         throw new IOException("-maxNameLength expected an integer value");
                     }
