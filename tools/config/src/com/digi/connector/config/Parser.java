@@ -13,8 +13,8 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
-    private final static int MAX_NAME_LENGTH = 40;
-
+    
+    private static int MAX_NAME_LENGTH = 40;
     private static TokenScanner tokenScanner;
     private static String token;
     private static int groupLineNumber;
@@ -22,6 +22,10 @@ public class Parser {
     private static ArrayDeque<Integer> listLineNumber;
     private static LinkedList<Group> groupConfig;
 
+    public static void setMaxNameLength(int max_name) {
+        MAX_NAME_LENGTH = max_name;
+    }
+    
     public static void processFile(String fileName, ConfigData configData) throws IOException, NullPointerException {
 
         try {
