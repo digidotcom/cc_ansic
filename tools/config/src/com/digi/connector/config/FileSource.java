@@ -8,12 +8,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.digi.connector.config.ConfigGenerator.FileType;
-import com.digi.connector.config.ConfigGenerator.UseNames;
 
 public class FileSource extends FileGenerator {
 
     private static FileType fileType = FileType.SOURCE;
-    private static String SOURCE_NAME = ConfigGenerator.getPrefix() + "rci_config";
+    private static String SOURCE_NAME = ConfigGenerator.getCustomPrefix() + "rci_config";
     
     private static BufferedWriter headerWriter = null;
     private String headerFile = "";
@@ -98,7 +97,7 @@ public class FileSource extends FileGenerator {
                     "};\n"+
                     "\n"+
                     "connector_remote_config_data_t const * const %srci_descriptor_data = &%srci_internal_data;"
-                    , prefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), prefix, prefix));
+                    , customPrefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix, customPrefix));
             
             headerWriter.write(String.format("\n#endif\n"));
  
@@ -108,10 +107,7 @@ public class FileSource extends FileGenerator {
                 ConfigGenerator.log(String.format("\t%s%s", filePath, headerFile));
             }
             
-            if (ConfigGenerator.useNamesOption() != UseNames.NONE) {
-                generateUseNamesFile(configData);    
-            }
-
+            generateUseNamesFile(configData);    
         } catch (IOException e) {
             throw new IOException(e.getMessage());
         }
@@ -126,5 +122,4 @@ public class FileSource extends FileGenerator {
     public static BufferedWriter getHeaderWriter(){
     	return headerWriter;
     }
-    
 }

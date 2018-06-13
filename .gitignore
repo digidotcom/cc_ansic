@@ -34,6 +34,9 @@ dist
 .project
 .cproject
 
+# tag files
+.tags*
+
 # Generated Makefiles and Executables
 public/*/samples/*/Makefile
 public/*/samples/*/connector
