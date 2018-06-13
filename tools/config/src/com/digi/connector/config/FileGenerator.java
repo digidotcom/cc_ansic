@@ -1317,7 +1317,7 @@ public abstract class FileGenerator {
             }
             
             String itemVariable = getDefineString(customPrefix + prefix + "__" + sanitizeName(item.getName())).toLowerCase() + suffix;
-            bufferWriter.write("{ " + getElementDefine("type", type) + ", &" + itemVariable + " }");
+            bufferWriter.write("{ " + getElementDefine("type", type) + ", { &" + itemVariable + " } }");
         }
         bufferWriter.write("\n};\n\n");
     }
@@ -1415,7 +1415,7 @@ public abstract class FileGenerator {
                     	optional +
                 		"        " + group.getInstances() + ", " + COMMENTED("instances") + "\n" +
                         "        { ARRAY_SIZE(" + items_name + "), " + items_name + " }, \n" +
-                    	"    }\n";
+                    	"    },\n";
                     
                     if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                         String errors_name = customPrefix + getDefineString(group.getName() + "_errors").toLowerCase();
