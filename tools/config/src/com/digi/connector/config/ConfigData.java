@@ -131,7 +131,7 @@ public class ConfigData {
 		}
 	}
 	
-	public static int getMaxDepth() {
+	public int getMaxDepth() {
 		return max_list_depth;
 	}
 	

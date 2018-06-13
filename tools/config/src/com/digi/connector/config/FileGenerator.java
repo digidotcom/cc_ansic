@@ -93,15 +93,6 @@ public abstract class FileGenerator {
     "    rci_query_setting_attribute_compare_to_defaults\n" +
     "} rci_query_setting_attribute_compare_to_t;\n";
 
-    protected final static String CONNECTOR_REMOTE_LIST_T = "\ntypedef struct {\n" +
-    "  unsigned int depth;\n" +
-    "  struct {\n" + 
-    "      unsigned int id;\n" + 
-    "      unsigned int index;\n" + 
-    "      char const * CONST name;\n" + // TODO: Based on whether or not list string are available. 
-    "  } level[RCI_LIST_MAX_DEPTH];\n" + 
-    "} connector_remote_list_t;\n";
-
     protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "  connector_remote_action_t CONST action;\n" +
@@ -859,25 +850,34 @@ public abstract class FileGenerator {
         }
 
         fileWriter.write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, ConfigData.AttributeMaxLen()));
-        fileWriter.write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, ConfigData.getMaxDepth()));
+        fileWriter.write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, configData.getMaxDepth()));
 
 
         writeOnOffBooleanEnum();
         writeElementTypeEnum();
         writeElementValueStruct();
 
+        String list_start = "";
+        String list_end = "";
+        	
+        if (configData.getMaxDepth() > 0) {
+        	list_start = "    connector_request_id_remote_config_list_start,\n";
+        	list_end   = "    connector_request_id_remote_config_list_end,\n";
+        }
+        
         fileWriter.write("\ntypedef enum {\n" +
                          "    connector_request_id_remote_config_session_start,\n" +
                          "    connector_request_id_remote_config_action_start,\n" +
                          "    connector_request_id_remote_config_group_start,\n" +
-                         "    connector_request_id_remote_config_list_start,\n" +
+                         list_start +
                          "    connector_request_id_remote_config_element_process,\n" +
-                         "    connector_request_id_remote_config_list_end,\n" +
+                         list_end +
                          "    connector_request_id_remote_config_group_end,\n" +
                          "    connector_request_id_remote_config_action_end,\n" +
                          "    connector_request_id_remote_config_session_end,\n" +
                          "    connector_request_id_remote_config_session_cancel");
-        if(ConfigGenerator.rciLegacyEnabled()){
+        
+        if (ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(",\n    connector_request_id_remote_config_do_command,\n" +
                              "    connector_request_id_remote_config_reboot,\n" +
                              "    connector_request_id_remote_config_set_factory_def");
@@ -893,7 +893,7 @@ public abstract class FileGenerator {
         fileWriter.write("\ntypedef enum {\n" +
                          "    connector_remote_action_set,\n" +
                          "    connector_remote_action_query");
-        if(ConfigGenerator.rciLegacyEnabled()){
+        if (ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write(",\n    connector_remote_action_do_command,\n" +
                              "    connector_remote_action_reboot,\n" +
                              "    connector_remote_action_set_factory_def");
@@ -908,43 +908,64 @@ public abstract class FileGenerator {
 
         String const_name = "";
         if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
-            const_name = "  char const * name;\n";
+            const_name = "    char const * name;\n";
             fileWriter.write("\n"+ DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n");
         }
-        fileWriter.write(String.format("\ntypedef struct {\n" +
-            "  connector_remote_group_type_t type;\n" +
-            "  unsigned int id;\n" +
-            "  unsigned int index;\n" +
-            "%s" +
-            "} connector_remote_group_t;\n", const_name));
+        
+        fileWriter.write(
+        	"\n" + 
+        	"typedef struct {\n" +
+            "    connector_remote_group_type_t type;\n" +
+            "    unsigned int id;\n" +
+            "    unsigned int index;\n" +
+            const_name +
+            "} connector_remote_group_t;\n"
+            );
 
         if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
-            const_name = "  char const * name;\n";
             fileWriter.write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
+        } else {
+	        fileWriter.write(
+        		"\n" + 
+        		"typedef struct {\n" +
+	            "  unsigned int id;\n" +
+	            "  connector_element_value_type_t type;\n" +
+	            "  connector_element_value_t * value;\n" +
+	            "} connector_remote_element_t;\n"
+	            );
         }
-        else
-            const_name = "";
-        fileWriter.write(String.format("\ntypedef struct {\n" +
-            "  unsigned int id;\n" +
-            "  connector_element_value_type_t type;\n" +
-            "  connector_element_value_t * value;\n" +
-            "%s" +
-            "} connector_remote_element_t;\n",const_name));
-
+        
         fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_SOURCE);
         fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_COMPARE_TO);
 
         fileWriter.write("\ntypedef struct {\n" +
                          "  rci_query_setting_attribute_source_t source;\n" +
                          "  rci_query_setting_attribute_compare_to_t compare_to;\n");
-        if(ConfigGenerator.rciLegacyEnabled()){
+        if (ConfigGenerator.rciLegacyEnabled()){
             fileWriter.write("  char const * target;\n");
         }
         fileWriter.write("} connector_remote_attribute_t;\n");
 
         fileWriter.write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
 
-        fileWriter.write(CONNECTOR_REMOTE_LIST_T);
+        if (configData.getMaxDepth() > 0) {
+        	String name_field = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
+    			? "        char const * CONST name;\n"
+				: "";
+
+            fileWriter.write(
+           		"\n" +
+           		"typedef struct {\n" +
+        	    "    unsigned int depth;\n" +
+        	    "    struct {\n" + 
+        	    "        unsigned int id;\n" + 
+        	    "          unsigned int index;\n" +
+        	    name_field + 
+        	    "    } level[RCI_LIST_MAX_DEPTH];\n" + 
+        	    "} connector_remote_list_t;\n"
+        	    );
+        }
+
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
