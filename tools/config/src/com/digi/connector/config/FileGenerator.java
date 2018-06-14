@@ -93,22 +93,6 @@ public abstract class FileGenerator {
     "    rci_query_setting_attribute_compare_to_defaults\n" +
     "} rci_query_setting_attribute_compare_to_t;\n";
 
-    protected final static String CONNECTOR_REMOTE_CONFIG_T = "\ntypedef struct {\n" +
-    "  void * user_context;\n" +
-    "  connector_remote_action_t CONST action;\n" +
-    "  connector_remote_attribute_t CONST attribute;\n" +
-    "  connector_remote_group_t CONST group;\n" +
-    "  connector_remote_list_t CONST list;\n" +
-    "  connector_remote_element_t CONST element;\n" +
-    "  unsigned int error_id;\n" +
-    "\n" +
-    "  struct {\n" +
-    "      connector_bool_t compare_matches;\n" +
-    "      char const * error_hint;\n" +
-    "      connector_element_value_t * element_value;\n" +
-    "  } response;\n" +
-    "} connector_remote_config_t;\n";
-
     protected final static String CONNECTOR_REMOTE_CONFIG_CANCEL_T = "\ntypedef struct {\n" +
     "  void * user_context;\n" +
     "} connector_remote_config_cancel_t;\n";
@@ -966,7 +950,30 @@ public abstract class FileGenerator {
         	    );
         }
 
-        fileWriter.write(CONNECTOR_REMOTE_CONFIG_T);
+        String list_field = "";
+        if (configData.getMaxDepth() > 0) {
+        	list_field = "    connector_remote_list_t CONST list;\n";
+        }
+        
+        fileWriter.write(
+    	    "    void * user_context;\n" +
+    	    "    connector_remote_action_t CONST action;\n" +
+    	    "    connector_remote_attribute_t CONST attribute;\n" +
+    	    "    connector_remote_group_t CONST group;\n" +
+    	    list_field +
+    	    "    connector_remote_element_t CONST element;\n" +
+    	    "    unsigned int error_id;\n" +
+    	    "\n" +
+    	    "    struct {\n" +
+    	    "        connector_bool_t compare_matches;\n" +
+    	    "        char const * error_hint;\n" +
+    	    "        connector_element_value_t * element_value;\n" +
+    	    "    } response;\n" +
+    	    "} connector_remote_config_t;\n"
+    	    );
+
+
+
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
 
