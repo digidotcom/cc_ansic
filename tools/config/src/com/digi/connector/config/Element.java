@@ -137,9 +137,7 @@ public class Element extends Item {
         else
             throw new Exception("Duplicate <type> keyword: " + theType);
 
-        ElementType elementType = ElementType.toElementType(type);
-
-        elementType.set();
+        ElementType.toElementType(type).set();
     }
 
     public void setMin(String theMin) throws Exception {

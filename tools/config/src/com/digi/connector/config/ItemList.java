@@ -5,8 +5,6 @@ import java.util.LinkedList;
 
 import javax.naming.NamingException;
 
-import com.digi.connector.config.Element.ElementType;
-
 public class ItemList extends Item {
 
     private final int instances;
@@ -21,8 +19,6 @@ public class ItemList extends Item {
 
         instances = count;
         items = new LinkedList<Item>();
-        
-        ElementType.toElementType("list").set();
     }
 
     // TODO: Seems like an odd place for this to live, given that the class

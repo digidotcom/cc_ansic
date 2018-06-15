@@ -112,7 +112,6 @@ public abstract class FileGenerator {
     protected String customPrefix;
 
     public FileGenerator(String directoryPath, String file_name, ConfigGenerator.FileType fileType) throws IOException {
-
         if (directoryPath != null) {
             filePath = directoryPath;
             /* add a / if last char is not / */
@@ -823,6 +822,7 @@ public abstract class FileGenerator {
     }
 
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
+    	boolean haveLists = ElementType.LIST.isSet();
         String optional_field;
 
         writeDefineOptionHeader(configData);
@@ -835,7 +835,9 @@ public abstract class FileGenerator {
         }
 
         fileWriter.write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, ConfigData.AttributeMaxLen()));
-        fileWriter.write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, configData.getMaxDepth()));
+        if (haveLists) {
+            fileWriter.write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, configData.getMaxDepth()));
+        }
 
 
         writeOnOffBooleanEnum();
@@ -845,7 +847,7 @@ public abstract class FileGenerator {
         String list_start = "";
         String list_end = "";
         	
-        if (configData.getMaxDepth() > 0) {
+        if (haveLists) {
         	list_start = "    connector_request_id_remote_config_list_start,\n";
         	list_end   = "    connector_request_id_remote_config_list_end,\n";
         }
@@ -937,7 +939,7 @@ public abstract class FileGenerator {
 
         fileWriter.write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
 
-        if (configData.getMaxDepth() > 0) {
+        if (haveLists) {
         	optional_field = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
     			? "        char const * CONST name;\n"
 				: "";
@@ -954,7 +956,7 @@ public abstract class FileGenerator {
         	    );
         }
 
-        optional_field = (configData.getMaxDepth() > 0)
+        optional_field = haveLists
     		? "    connector_remote_list_t CONST list;\n"
 			: "";
         fileWriter.write(

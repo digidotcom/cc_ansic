@@ -9,6 +9,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.Element.ElementType;
 
 public class Parser {
 
@@ -370,8 +371,8 @@ public class Parser {
          * description] [access <access>]
          */
 
-		 String name = getName();
-		 listLineNumber.push(tokenScanner.getLineNumber());
+		String name = getName();
+		listLineNumber.push(tokenScanner.getLineNumber());
 		
 		 /* parse instances */
 		int instances;
@@ -421,6 +422,8 @@ public class Parser {
 		}
 
         listLineNumber.pop();
+        ElementType.toElementType("list").set();
+
         return list;
     }
 }
