@@ -956,6 +956,8 @@ public abstract class FileGenerator {
         }
         
         fileWriter.write(
+       		"\n" +
+       		"typedef struct {\n" +
     	    "    void * user_context;\n" +
     	    "    connector_remote_action_t CONST action;\n" +
     	    "    connector_remote_attribute_t CONST attribute;\n" +
