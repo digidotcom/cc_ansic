@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -23,17 +23,38 @@
 #define invalidate_element_id(rci)      set_element_id(rci, INVALID_ID)
 #define have_element_id(rci)            (get_element_id(rci) != INVALID_ID)
 
-static connector_group_element_t const * get_current_element(rci_t const * const rci)
+static connector_collection_t const * get_current_collection_info(rci_t const * const rci)
 {
-    ASSERT(have_group_id(rci));
+	ASSERT(have_group_id(rci));
+	{
+		connector_group_t const * const group = get_current_group(rci);
+		connector_collection_t const * info =  &group->collection;
+
+#if (defined RCI_PARSER_USES_LIST)
+		{
+			int i;
+			for (i = 0; i < get_list_depth(rci); i++)
+			{
+				connector_item_t const * list = info->item.data + rci->shared.list.level[i].id;
+				ASSERT(list->type == connector_element_type_list);
+				info = list->data.collection;
+			}
+		}
+#endif
+
+		return info;
+	}
+}
+
+static connector_item_t const * get_current_element(rci_t const * const rci)
+{
     ASSERT(have_element_id(rci));
-
-    {
-        connector_group_t const * const group = get_current_group(rci);
+	{
         unsigned int const id = get_element_id(rci);
+		connector_collection_t const * const info = get_current_collection_info(rci);
 
-        ASSERT(id < group->elements.count);
+		ASSERT(id < info->item.count);
 
-        return (group->elements.data + id);
-    }
+		return info->item.data + id;
+	}
 }

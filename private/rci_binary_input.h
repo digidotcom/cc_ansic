@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -685,6 +685,7 @@ STATIC void process_group_id(rci_t * const rci)
             switch (rci->shared.callback_data.action)
             {
                 case connector_remote_action_query:
+					set_should_traverse_all_groups(rci, connector_true);
                     set_rci_traverse_state(rci, rci_traverse_state_all_groups);
                     state_call(rci, rci_parser_state_traverse);
                     break;
@@ -723,9 +724,9 @@ STATIC void process_group_id(rci_t * const rci)
 
         {
             connector_group_t const * const group =  get_current_group(rci);
-            if (group->instances > 1)
+            if (group->collection.instances > 1)
             {
-                set_rci_input_flag(rci, RCI_FLAG_GET_ALL_INSTANCES);
+                set_should_traverse_all_group_instances(rci, connector_true);
             }
         }
 
@@ -764,6 +765,74 @@ STATIC void process_group_attribute(rci_t * const rci)
     return;
 }
 
+#if (defined RCI_PARSER_USES_LIST)
+STATIC void start_list(rci_t * const rci)
+{
+	invalidate_element_id(rci);
+	set_rci_input_state(rci, rci_input_state_field_id);
+	set_rci_traverse_state(rci, rci_traverse_state_list_id);
+	state_call(rci, rci_parser_state_traverse);
+}
+
+STATIC void process_list_attribute(rci_t * const rci, connector_bool_t type_expected)
+{
+    unsigned int type;
+
+    if (decode_attribute(rci, &type, &get_current_list_index(rci)))
+    {
+        switch (type)
+        {
+            case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
+				set_should_traverse_all_list_instances(rci, connector_false);
+				if (type_expected == connector_true)
+				{
+					set_rci_input_state(rci, rci_input_state_field_type);
+				}
+				else
+				{
+					start_list(rci);
+				}
+		    	break;
+            case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+            case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
+                ASSERT(connector_false);
+                break;
+        }
+    }
+
+    return;
+}
+
+STATIC void process_list_start(rci_t * const rci, uint32_t value)
+{
+	if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
+    {
+		if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
+		{
+			set_rci_input_state(rci, rci_input_state_list_attribute_and_field_type);
+		}
+
+		set_rci_input_state(rci, rci_input_state_list_attribute);
+		goto done;
+	}
+	
+	set_current_list_index(rci, 1);
+	set_should_traverse_all_list_instances(rci, connector_true);
+
+	if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
+	{
+		set_rci_input_state(rci, rci_input_state_field_type);
+	}
+	else
+	{
+		start_list(rci);
+	}
+
+done:
+	return;
+}
+#endif
+
 STATIC void process_field_id(rci_t * const rci)
 {
     uint32_t value;
@@ -786,14 +855,13 @@ STATIC void process_field_id(rci_t * const rci)
             switch (rci->shared.callback_data.action)
             {
                 case connector_remote_action_query:
-                    /* all fields */
-                    if (is_rci_input_flag(rci,RCI_FLAG_GET_ALL_INSTANCES))
-                        set_rci_traverse_state(rci, rci_traverse_state_all_group_instances);
-                    else
-                        set_rci_traverse_state(rci, rci_traverse_state_all_elements);
-
-                    set_rci_input_state(rci, rci_input_state_group_id);
-
+#if (defined RCI_PARSER_USES_LIST)
+					if (get_query_depth(rci) > 0)
+						set_rci_input_state(rci, rci_input_state_field_id);
+					else
+#endif
+            			set_rci_input_state(rci, rci_input_state_group_id);
+					set_rci_traverse_state(rci, rci_traverse_state_all_elements);
                     state_call(rci, rci_parser_state_traverse);
                     break;
                 case connector_remote_action_set:
@@ -812,7 +880,13 @@ STATIC void process_field_id(rci_t * const rci)
         {
             /* done with all fields */
             invalidate_element_id(rci);
-            set_rci_input_state(rci, rci_input_state_group_id);
+
+#if (defined RCI_PARSER_USES_LIST)
+			if (get_list_depth(rci) > 0)
+				set_rci_input_state(rci, rci_input_state_field_id);
+			else
+#endif
+            	set_rci_input_state(rci, rci_input_state_group_id);
 
             set_rci_traverse_state(rci, rci_traverse_state_element_end);
             state_call(rci, rci_parser_state_traverse);
@@ -820,34 +894,54 @@ STATIC void process_field_id(rci_t * const rci)
         goto done;
     }
 
-    if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
-    {
-        set_rci_input_state(rci, rci_input_state_field_type);
-    }
-    else
-    {
-        set_rci_input_state(rci, rci_input_state_field_no_value);
-    }
-
-
-    if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
-    {
-        connector_debug_line("process_field_id: field attribute is not supported");
-        rci_set_output_error(rci, connector_rci_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
-        goto done;
-    }
-
-    {
+	{
         unsigned int const id = decode_element_id(value);
 
-        set_element_id(rci, id);
+		set_element_id(rci, id);
 
         if (!have_element_id(rci))
         {
             connector_debug_line("process_field_id: unrecognized field id (mismatch of descriptors). element id = %d", id);
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
+			goto done;
         }
 
+#if (defined RCI_PARSER_USES_LIST)
+		if (get_list_depth(rci) > 0)
+			set_should_traverse_all_list_instances(rci, connector_false);
+		else
+#endif
+			set_should_traverse_all_group_instances(rci, connector_false);
+
+#if (defined RCI_PARSER_USES_LIST)
+		{
+			connector_item_t const * const element = get_current_element(rci);
+			if (element->type == connector_element_type_list)
+			{
+				increment_list_depth(rci);
+				set_current_list_id(rci, id);
+				set_query_depth(rci, get_list_depth(rci));
+				process_list_start(rci, value);
+				goto done;
+			}
+		}
+#endif
+
+		if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
+    	{
+        	connector_debug_line("process_field_id: field attribute is not supported");
+        	rci_set_output_error(rci, connector_rci_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
+        	goto done;
+    	}
+
+	    if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
+		{
+			set_rci_input_state(rci, rci_input_state_field_type);
+		}
+		else
+		{
+			set_rci_input_state(rci, rci_input_state_field_no_value);
+		}
     }
 
 done:
@@ -856,7 +950,7 @@ done:
 
 STATIC void process_field_type(rci_t * const rci)
 {
-    connector_group_element_t const * const element = get_current_element(rci);
+    connector_item_t const * const element = get_current_element(rci);
     connector_bool_t error = connector_false;
     uint32_t type;
 
@@ -876,6 +970,13 @@ STATIC void process_field_type(rci_t * const rci)
                     rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
                     error = connector_true;
                 }
+#if (defined RCI_PARSER_USES_LIST)
+				else if (element->type == connector_element_type_list)
+				{
+					start_list(rci);
+					goto done;
+				}
+#endif
                 break;
         }
     }
@@ -917,7 +1018,7 @@ STATIC size_t uint8_t_array_to_string(char * const buffer, size_t bytes_availabl
 
 STATIC void process_field_value(rci_t * const rci)
 {
-    connector_group_element_t const * const element = get_current_element(rci);
+    connector_item_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
 
 #if (defined RCI_PARSER_USES_ON_OFF) || (defined RCI_PARSER_USES_BOOLEAN)
@@ -1128,6 +1229,12 @@ STATIC void process_field_value(rci_t * const rci)
         break;
     }
 #endif
+
+#if (defined RCI_PARSER_USES_LIST)
+	case connector_element_type_list:
+		ASSERT(connector_false);
+		break;
+#endif
     }
 
 #if (defined RCI_PARSER_USES_ON_OFF) || (defined RCI_PARSER_USES_BOOLEAN)
@@ -1156,7 +1263,7 @@ STATIC void process_field_no_value(rci_t * const rci)
     if (has_rci_no_value(modifier_ber))
     {
         /* this initializes element.value in case for set setting */
-        connector_group_element_t const * const element = get_current_element(rci);
+        connector_item_t const * const element = get_current_element(rci);
         connector_element_value_type_t const type = element->type;
 
         switch (type)
@@ -1247,6 +1354,12 @@ STATIC void process_field_no_value(rci_t * const rci)
             rci->shared.value.boolean_value = connector_false;
             break;
 #endif
+
+#if (defined RCI_PARSER_USES_LIST)
+		case connector_element_type_list:
+			ASSERT(connector_false);
+			break;
+#endif
         }
 
         reset_input_content(rci);
@@ -1318,6 +1431,14 @@ STATIC void rci_parse_input(rci_t * const rci)
             case rci_input_state_group_attribute:
                 process_group_attribute(rci);
                 break;
+#if (defined RCI_PARSER_USES_LIST)
+			case rci_input_state_list_attribute:
+				process_list_attribute(rci, connector_false);
+				break;
+			case rci_input_state_list_attribute_and_field_type:
+				process_list_attribute(rci, connector_true);
+				break;
+#endif
             case rci_input_state_field_id:
                 process_field_id(rci);
                 break;

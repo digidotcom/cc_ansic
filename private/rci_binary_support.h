@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -120,6 +120,7 @@ enum
     rci_field_type_ip4,
     rci_field_type_fqdnv4,
     rci_field_type_fqdnv6,
+	rci_field_type_list = 0x11,
     rci_field_type_mac_addr = 0x15,
     rci_field_type_datetime
 };
@@ -217,6 +218,10 @@ typedef enum
     rci_input_state_group_id,
     rci_input_state_group_attribute,
     rci_input_state_field_id,
+#if (defined RCI_PARSER_USES_LIST)
+	rci_input_state_list_attribute,
+	rci_input_state_list_attribute_and_field_type,
+#endif
     rci_input_state_field_type,
     rci_input_state_field_no_value,
     rci_input_state_field_value,
@@ -234,6 +239,10 @@ typedef enum
     rci_output_state_command_normal_attribute_value,
     rci_output_state_group_id,
     rci_output_state_group_attribute,
+#if (defined RCI_PARSER_USES_LIST)
+	rci_output_state_list_id,
+	rci_output_state_list_attribute,
+#endif
     rci_output_state_field_id,
     rci_output_state_field_value,
     rci_output_state_field_terminator,
@@ -250,6 +259,10 @@ typedef enum
     rci_traverse_state_none,
     rci_traverse_state_command_id,
     rci_traverse_state_group_id,
+#if (defined RCI_PARSER_USES_LIST)
+	rci_traverse_state_list_id,
+	rci_traverse_state_all_list_instances,
+#endif
     rci_traverse_state_element_id,
     rci_traverse_state_element_end,
     rci_traverse_state_group_end,
@@ -262,13 +275,6 @@ typedef enum
     rci_traverse_state_command_set_factory_default
 #endif
 } rci_traverse_state_t;
-
-typedef enum
-{
-    rci_traverse_process_group,
-    rci_traverse_process_element,
-    rci_traverse_process_next_instance
-} rci_traverse_process_state_t;
 
 typedef enum
 {
@@ -342,12 +348,10 @@ typedef struct rci
 
     struct {
         rci_traverse_state_t state;
-        rci_traverse_process_state_t process_state;
     } traverse;
 
     struct {
         rci_input_state_t state;
-        unsigned int flag;
         uint8_t * destination;
 #if (defined CONNECTOR_NO_MALLOC)
         uint8_t storage[CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH + sizeof nul + sizeof(uint32_t)];
@@ -361,6 +365,9 @@ typedef struct rci
         rcistr_t content;
         rci_output_state_t state;
         connector_bool_t group_skip;
+#if (defined RCI_PARSER_USES_LIST)
+		unsigned int skip_depth;
+#endif
         connector_bool_t element_skip;
     } output;
 
@@ -372,11 +379,23 @@ typedef struct rci
 
     struct {
         rcistr_t content;
+		uint8_t flag;
 
         struct {
             unsigned int id;
             unsigned int index;
         } group;
+
+#if (defined RCI_PARSER_USES_LIST)
+		struct {
+            unsigned int depth;
+            struct {
+                unsigned int id;
+                unsigned int index;
+            } level[RCI_LIST_MAX_DEPTH];
+			unsigned int query_depth;
+        } list;
+#endif
 
         struct {
             unsigned int id;
@@ -389,9 +408,21 @@ typedef struct rci
     } shared;
 } rci_t;
 
-#define set_rci_input_flag(rci, value)     (rci)->input.flag |= (value)
-#define is_rci_input_flag(rci, value)      (((rci)->input.flag & (value)) == (value))
-#define clea_rci_input_flag(rci, value)    (rci)->input.flag &= ~(value)
+#define RCI_SHARED_FLAG_ALL_GROUPS 				(1 << 0)
+#define RCI_SHARED_FLAG_ALL_GROUP_INSTANCES		(1 << 1)
+#define RCI_SHARED_FLAG_ALL_LIST_INSTANCES		(1 << 2)
+
+#define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
+#define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)
+#define SET_RCI_SHARED_FLAG(rci, flag, state)	((state) == connector_true ? (RCI_SHARED_FLAG_VARIABLE(rci) |= (flag)) : (RCI_SHARED_FLAG_VARIABLE(rci) &= ~(flag)))
+
+#define should_traverse_all_groups(rci)				(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUPS))
+#define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES))
+#define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES))
+
+#define set_should_traverse_all_groups(rci, state)				(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))
+#define set_should_traverse_all_group_instances(rci, state)		(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES, state))
+#define set_should_traverse_all_list_instances(rci, state)		(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES, state))
 
 #define set_rci_input_state(rci, value)     (rci)->input.state = (value)
 #define get_rci_input_state(rci)            (rci)->input.state

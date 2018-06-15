@@ -73,7 +73,7 @@ STATIC connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
         {
         case connector_callback_unrecognized:
             status = connector_callback_abort;
-            // fall through
+            /* fall through */
         case connector_callback_abort:
             connector_debug_line("tcp_receive_buffer: callback returns abort");
            goto done;

@@ -137,10 +137,15 @@ STATIC void rci_generate_error(rci_t * const rci)
                             state_call(rci, rci_parser_state_traverse);
                         }
                         break;
-                    case connector_request_id_remote_config_group_process:
+                    case connector_request_id_remote_config_element_process:
                         if (remote_config->error_id < connector_rci_error_bad_value)
                         {
-                            trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+#if (defined RCI_PARSER_USES_LIST)
+							if (get_list_depth(rci) > 0)
+								trigger_rci_callback(rci, connector_request_id_remote_config_list_end);
+							else
+#endif
+                            	trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
                         }
                         else
                         {
@@ -199,6 +204,35 @@ STATIC void rci_generate_error(rci_t * const rci)
                     case connector_request_id_remote_config_session_end:
                         rci->status = rci_status_complete;
                         break;
+#if (defined RCI_PARSER_USES_LIST)
+					case connector_request_id_remote_config_list_end:
+						if (remote_config->error_id < connector_rci_error_COUNT)
+                        {
+                            connector_bool_t const overflow = rci_output_terminator(rci);
+                            if (overflow) goto done;
+
+                            trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
+                        }
+                        else
+                        {
+                            set_rci_error_state(rci, rci_error_state_id);
+                            remote_config->error_id = 0;
+                            state_call(rci, rci_parser_state_output);
+                        }
+                        break;
+					case connector_request_id_remote_config_list_start:
+                        if (remote_config->error_id < connector_rci_error_COUNT)
+                        {
+                            trigger_rci_callback(rci, connector_request_id_remote_config_list_end);
+                        }
+                        else
+                        {
+                            rci->output.skip_depth = get_list_depth(rci);
+                            set_rci_error_state(rci, rci_error_state_id);
+                            state_call(rci, rci_parser_state_traverse);
+                        }
+						break;
+#endif
                 }
                 break;
             }

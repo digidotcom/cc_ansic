@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -16,6 +16,13 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
+
+#if (defined RCI_PARSER_USES_LIST)
+#define SHOULD_OUTPUT(rci)	(!(rci)->output.group_skip && (rci)->output.skip_depth == 0 && !(rci)->output.element_skip)
+#else
+#define SHOULD_OUTPUT(rci)	(!(rci)->output.group_skip && !(rci)->output.element_skip)
+#endif
+
 STATIC void rci_set_output_error(rci_t * const rci, unsigned int const id, char const * const hint, rci_output_state_t state)
 {
     rci_global_error(rci, id, hint);
@@ -259,7 +266,7 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
         if (dot_count != 4)
         {
             connector_request_id_t request_id;
-            request_id.remote_config_request = connector_request_id_remote_config_group_process;
+            request_id.remote_config_request = connector_request_id_remote_config_element_process;
             notify_error_status(rci->service_data->connector_ptr->callback, connector_class_id_remote_config, request_id, connector_invalid_data_range, rci->service_data->connector_ptr->context);
 
             {
@@ -684,7 +691,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
     {
         connector_bool_t overflow = connector_false;
         
-        if (!rci->output.group_skip && !rci->output.element_skip)
+        if (SHOULD_OUTPUT(rci))
             overflow = rci_output_uint32(rci, encoding_data);
 
         if (!overflow)
@@ -728,17 +735,16 @@ STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const i
             encoding_data_high = index & (~(0x1F));
             encoding_data = (encoding_data_high << 2)| BINARY_RCI_ATTRIBUTE_TYPE_INDEX | encoding_data_low;
         }
-        if (!rci->output.group_skip && !rci->output.element_skip)
+        if (SHOULD_OUTPUT(rci))
             overflow = rci_output_uint32(rci, encoding_data);
     }
 
     return overflow;
 }
 
-STATIC void rci_output_group_attribute(rci_t * const rci)
+STATIC void rci_output_index(rci_t * const rci, unsigned int index)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-    unsigned int const index = get_group_index(rci);
     connector_bool_t overflow = encode_attribute(rci, index);
 
     if (!overflow)
@@ -780,7 +786,7 @@ STATIC void rci_output_field_id(rci_t * const rci)
         {
             connector_bool_t overflow = connector_false;
 
-            if (!rci->output.group_skip && !rci->output.element_skip)
+            if (SHOULD_OUTPUT(rci))
                 overflow = rci_output_uint32(rci, field_id);
 
             if (overflow) goto done;
@@ -797,10 +803,60 @@ done:
     return;
 }
 
+#if (defined RCI_PARSER_USES_LIST)
+STATIC void rci_output_list_id(rci_t * const rci)
+{
+	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+    uint32_t field_id = encode_element_id(get_current_list_id(rci));
+
+    if (!have_current_list_id(rci))
+    {
+        state_call(rci, rci_parser_state_error);
+        goto done;
+    }
+
+    {
+        /* output field id */
+        if (remote_config->error_id != connector_success)
+		{
+			field_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
+		}	
+		else
+		{
+			if (get_current_list_index(rci) > 1)
+			{
+				field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
+				set_rci_output_state(rci, rci_output_state_list_attribute);
+			}
+			else
+			{
+				state_call(rci, rci_parser_state_traverse);
+			}
+		}	
+
+        {
+            connector_bool_t overflow = connector_false;
+
+            if (SHOULD_OUTPUT(rci))
+                overflow = rci_output_uint32(rci, field_id);
+
+            if (overflow) goto done;
+
+            if (remote_config->error_id != connector_success)
+                state_call(rci, rci_parser_state_error);
+        }
+
+    }
+
+done:
+    return;
+}
+#endif
+
 
 STATIC void rci_output_field_value(rci_t * const rci)
 {
-    connector_group_element_t const * const element = get_current_element(rci);
+    connector_item_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
 
     connector_bool_t overflow = connector_false;
@@ -809,7 +865,7 @@ STATIC void rci_output_field_value(rci_t * const rci)
     switch (rci->shared.callback_data.action)
     {
         case connector_remote_action_set:
-            if (!rci->output.group_skip && !rci->output.element_skip)
+            if (SHOULD_OUTPUT(rci))
                 overflow = rci_output_no_value(rci);
             goto done;
 
@@ -823,7 +879,7 @@ STATIC void rci_output_field_value(rci_t * const rci)
 #endif
     }
 
-    if (rci->output.group_skip || rci->output.element_skip)
+    if (!SHOULD_OUTPUT(rci))
     {
         goto done;
     }
@@ -920,6 +976,12 @@ STATIC void rci_output_field_value(rci_t * const rci)
         overflow = rci_output_mac_addr(rci, rci->shared.value.string_value);
         break;
 #endif
+
+#if (defined RCI_PARSER_USES_LIST)
+	case connector_element_type_list:
+		ASSERT(connector_false);
+		break;
+#endif
     }
 
 done:
@@ -968,13 +1030,11 @@ STATIC void rci_output_field_terminator(rci_t * const rci)
     {
         connector_bool_t overflow = connector_false;
 
-        if (!rci->output.group_skip && !rci->output.element_skip)
+        if (SHOULD_OUTPUT(rci))
             overflow = rci_output_terminator(rci);
 
         if (!overflow)
         {
-            invalidate_element_id(rci);
-
             state_call(rci, rci_parser_state_traverse);
         }
     }
@@ -995,8 +1055,6 @@ STATIC void rci_output_group_terminator(rci_t * const rci)
         connector_bool_t const overflow = rci_output_terminator(rci);
         if (!overflow)
         {
-            invalidate_group_id(rci);
-
             set_rci_output_state(rci, rci_output_state_response_done);
         }
     }
@@ -1037,8 +1095,18 @@ STATIC void rci_generate_output(rci_t * const rci)
                 break;
 
             case rci_output_state_group_attribute:
-                rci_output_group_attribute(rci);
+                rci_output_index(rci, get_group_index(rci));
                 break;
+
+#if (defined RCI_PARSER_USES_LIST)
+			case rci_output_state_list_id:
+				rci_output_list_id(rci);
+				break;
+		
+			case rci_output_state_list_attribute:
+				rci_output_index(rci, get_current_list_index(rci));
+				break;
+#endif
 
             case rci_output_state_field_id:
                 rci_output_field_id(rci);

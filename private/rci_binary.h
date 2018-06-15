@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -23,6 +23,9 @@
 #include "rci_binary_buffer.h"
 #include "rci_binary_string.h"
 #include "rci_binary_group.h"
+#if (defined RCI_PARSER_USES_LIST)
+#include "rci_binary_list.h"
+#endif
 #include "rci_binary_element.h"
 #include "rci_binary_callback.h"
 #include "rci_binary_output.h"
@@ -50,13 +53,27 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
     invalidate_group_id(rci);
     invalidate_group_index(rci);
+
+#if (defined RCI_PARSER_USES_LIST)
+	{
+		int i;
+		for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
+		{
+			rci->shared.list.level[i].id = INVALID_ID;
+			rci->shared.list.level[i].index = INVALID_INDEX;
+		}
+	}
+	set_list_depth(rci, 0);
+	set_query_depth(rci, 0);
+#endif
+
     invalidate_element_id(rci);
 
     rci->shared.callback_data.response.element_value = &rci->shared.value;
 
     rci->status = rci_status_busy;
     rci->error.command_error = connector_false;
-    rci->input.flag = 0;
+    rci->shared.flag = 0;
 
     trigger_rci_callback(rci, connector_request_id_remote_config_session_start);
     set_rci_input_state(rci, rci_input_state_command_id);
@@ -96,7 +113,7 @@ STATIC connector_bool_t rci_action_session_active(rci_t * const rci)
         {
             rci->status = rci_status_internal_error;
         }
-        // fall through
+        /* fall through */
         case rci_status_internal_error:
         {
             success = connector_false;

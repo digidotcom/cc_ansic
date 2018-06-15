@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -154,11 +154,13 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     case connector_request_id_remote_config_group_start:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_index(rci));
-
+#if (defined RCI_PARSER_USES_LIST)
+		rci->shared.callback_data.list.depth = 0;
+#endif
         rci->shared.callback_data.group.id = get_group_id(rci);
         rci->shared.callback_data.group.index = get_group_index(rci);
-#if (defined RCI_PARSER_USES_GROUP_NAMES)
-        rci->shared.callback_data.group.name = get_current_group(rci)->name;
+#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
+        rci->shared.callback_data.group.name = get_current_group(rci)->collection.name;
 #endif
         break;
 
@@ -167,18 +169,45 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         ASSERT(have_group_index(rci));
         break;
 
-    case connector_request_id_remote_config_group_process:
+#if (defined RCI_PARSER_USES_LIST)
+	case connector_request_id_remote_config_list_start:
+		ASSERT(have_group_id(rci));
+		ASSERT(get_list_depth(rci) > 0 && get_list_depth(rci) <= RCI_LIST_MAX_DEPTH);
+		
+		rci->shared.callback_data.list.depth = get_list_depth(rci);
+		{
+			unsigned int const index = get_list_depth(rci) - 1;
+
+			rci->shared.callback_data.list.level[index].id = rci->shared.list.level[index].id;
+			rci->shared.callback_data.list.level[index].index = rci->shared.list.level[index].index;
+			#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
+			{
+				connector_collection_t const * const list = get_current_collection_info(rci);
+				rci->shared.callback_data.list.level[index].name = list->name;
+			}
+			#endif
+		}
+		break;
+
+	case connector_request_id_remote_config_list_end:
+		ASSERT(have_current_list_id(rci));
+		ASSERT(have_current_list_index(rci));
+		rci->shared.callback_data.list.depth = get_list_depth(rci);
+		break;
+#endif
+
+    case connector_request_id_remote_config_element_process:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_index(rci));
         ASSERT(have_element_id(rci));
 
         rci->shared.callback_data.element.id = get_element_id(rci);
         {
-            connector_group_element_t const * const element = get_current_element(rci);
+            connector_item_t const * const element = get_current_element(rci);
 
             rci->shared.callback_data.element.type = element->type;
 #if (defined RCI_PARSER_USES_ELEMENT_NAMES)
-            rci->shared.callback_data.element.name = element->name;
+            rci->shared.callback_data.element.name = element->data.element->name;
 #endif
         }
 
@@ -241,8 +270,18 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
     switch (remote_config_request)
     {
         case connector_request_id_remote_config_session_start:
-#if (defined RCI_PARSER_USES_GROUP_NAMES)
-            rci->shared.callback_data.group.name = NULL;
+#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
+			rci->shared.callback_data.group.name = NULL;
+
+#if (defined RCI_PARSER_USES_LIST)
+			{
+				int i;
+				for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
+				{
+		       		rci->shared.callback_data.list.level[i].name = NULL;
+				}
+			}
+#endif
 #endif
 #if (defined RCI_PARSER_USES_ELEMENT_NAMES)
             rci->shared.callback_data.element.name = NULL;
@@ -255,7 +294,16 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             rci->output.group_skip = connector_false;
             /* intentional fall through */
         case connector_request_id_remote_config_group_end:
-        case connector_request_id_remote_config_group_process:
+#if (defined RCI_PARSER_USES_LIST)
+		case connector_request_id_remote_config_list_start:
+			if (get_list_depth(rci) <= rci->output.skip_depth)
+			{
+				rci->output.skip_depth = 0;
+			}
+			/* intentional fall through */
+		case connector_request_id_remote_config_list_end:
+#endif
+        case connector_request_id_remote_config_element_process:
             rci->output.element_skip = connector_false;
             remote_config->error_id = connector_success;
             remote_config->response.compare_matches = connector_false;
@@ -280,7 +328,13 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #endif
     }
 
-    if (remote_config_request == connector_request_id_remote_config_group_process && rci->output.group_skip == connector_true)
+#if (defined RCI_PARSER_USES_LIST)
+    if (((remote_config_request == connector_request_id_remote_config_element_process || remote_config_request == connector_request_id_remote_config_list_start)
+  		&& (rci->output.group_skip == connector_true || rci->output.skip_depth != 0))
+		|| (remote_config_request == connector_request_id_remote_config_list_end && get_list_depth(rci) > rci->output.skip_depth))
+#else
+	if (remote_config_request == connector_request_id_remote_config_element_process && rci->output.group_skip == connector_true)
+#endif
     {
         rci->callback.status = connector_callback_continue;
     }
@@ -304,7 +358,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 rci->callback.status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL, connector_ptr->context);
             }
         }
-        // fall through
+        /* fall through */
         case connector_request_id_remote_config_do_command:
         case connector_request_id_remote_config_set_factory_def:
         {
@@ -322,8 +376,12 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         case connector_request_id_remote_config_action_start:
         case connector_request_id_remote_config_action_end:
         case connector_request_id_remote_config_group_start:
+        case connector_request_id_remote_config_element_process:
+#if (defined RCI_PARSER_USES_LIST)
+		case connector_request_id_remote_config_list_start:
+		case connector_request_id_remote_config_list_end:
+#endif
         case connector_request_id_remote_config_group_end:
-        case connector_request_id_remote_config_group_process:
         case connector_request_id_remote_config_session_cancel:
             break;
     }
@@ -346,13 +404,19 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 
             switch (remote_config_request)
             {
-                case connector_request_id_remote_config_group_process:
+                case connector_request_id_remote_config_element_process:
                     rci->output.element_skip = connector_true;
                     break;
 
                 case connector_request_id_remote_config_group_start:
                     rci->output.group_skip = connector_true;
                     break;
+
+#if (defined RCI_PARSER_USES_LIST)
+                case connector_request_id_remote_config_list_start:
+                    rci->output.skip_depth = get_list_depth(rci);
+                    break;
+#endif
 
                 default:
                     /* Invalid error_id for this callback */
@@ -380,19 +444,28 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             reset_input_content(rci);
         }
 
-#if (defined RCI_PARSER_USES_GROUP_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
+#if (defined RCI_PARSER_USES_COLLECTION_NAMES) || (defined RCI_PARSER_USES_ELEMENT_NAMES)
         switch (remote_config_request)
         {
             case connector_request_id_remote_config_group_end:
-#if (defined RCI_PARSER_USES_GROUP_NAMES)
+#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
                 rci->shared.callback_data.group.name = NULL;
 #endif
                 break;
-            case connector_request_id_remote_config_group_process:
+            case connector_request_id_remote_config_element_process:
 #if (defined RCI_PARSER_USES_ELEMENT_NAMES)
                 rci->shared.callback_data.element.name = NULL;
 #endif
                 break;
+#if (defined RCI_PARSER_USES_LIST)
+			case connector_request_id_remote_config_list_start:
+				break;
+			case connector_request_id_remote_config_list_end:
+#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
+                rci->shared.callback_data.list.level[get_list_depth(rci) - 1].name = NULL;
+#endif
+				break;
+#endif
             case connector_request_id_remote_config_session_start:
                 break;
             case connector_request_id_remote_config_session_end:

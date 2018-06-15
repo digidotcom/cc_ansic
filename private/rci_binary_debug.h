@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2018 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -39,6 +39,10 @@ static char const * rci_input_state_t_as_string(rci_input_state_t const value)
         enum_to_case(rci_input_state_group_id);
         enum_to_case(rci_input_state_group_attribute);
         enum_to_case(rci_input_state_field_id);
+#if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(rci_input_state_list_attribute);
+		enum_to_case(rci_input_state_list_attribute_and_field_type);
+#endif
         enum_to_case(rci_input_state_field_type);
         enum_to_case(rci_input_state_field_no_value);
         enum_to_case(rci_input_state_field_value);
@@ -61,6 +65,10 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
         enum_to_case(rci_output_state_command_normal_attribute_value);
         enum_to_case(rci_output_state_group_id);
         enum_to_case(rci_output_state_group_attribute);
+#if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(rci_output_state_list_id);
+		enum_to_case(rci_output_state_list_attribute);
+#endif
         enum_to_case(rci_output_state_field_id);
         enum_to_case(rci_output_state_field_value);
         enum_to_case(rci_output_state_field_terminator);
@@ -87,6 +95,10 @@ static char const * rci_traverse_state_t_as_string(rci_traverse_state_t const va
         enum_to_case(rci_traverse_state_group_end);
         enum_to_case(rci_traverse_state_all_groups);
         enum_to_case(rci_traverse_state_all_group_instances);
+#if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(rci_traverse_state_all_list_instances);
+		enum_to_case(rci_traverse_state_list_id);
+#endif
         enum_to_case(rci_traverse_state_all_elements);
 #if (defined RCI_LEGACY_COMMANDS)
         enum_to_case(rci_traverse_state_command_do_command);
