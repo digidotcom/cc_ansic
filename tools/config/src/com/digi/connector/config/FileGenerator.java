@@ -823,6 +823,7 @@ public abstract class FileGenerator {
     }
 
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
+        String optional_field;
 
         writeDefineOptionHeader(configData);
 
@@ -890,34 +891,38 @@ public abstract class FileGenerator {
 
         writeGroupElementStructs(configData);
 
-        String const_name = "";
+        optional_field = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
+			? "        char const * CONST name;\n"
+			: "";
+        
         if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
-            const_name = "    char const * name;\n";
             fileWriter.write("\n"+ DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n");
         }
-        
         fileWriter.write(
         	"\n" + 
         	"typedef struct {\n" +
             "    connector_remote_group_type_t type;\n" +
             "    unsigned int id;\n" +
             "    unsigned int index;\n" +
-            const_name +
+            optional_field +
             "} connector_remote_group_t;\n"
             );
 
+        optional_field = ConfigGenerator.useNamesOption(UseNames.ELEMENTS)
+			? "        char const * CONST name;\n"
+			: "";
         if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
             fileWriter.write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
-        } else {
-	        fileWriter.write(
-        		"\n" + 
-        		"typedef struct {\n" +
-	            "  unsigned int id;\n" +
-	            "  connector_element_value_type_t type;\n" +
-	            "  connector_element_value_t * value;\n" +
-	            "} connector_remote_element_t;\n"
-	            );
         }
+        fileWriter.write(
+    		"\n" + 
+    		"typedef struct {\n" +
+            "    unsigned int id;\n" +
+            "    connector_element_value_type_t type;\n" +
+            "    connector_element_value_t * value;\n" +
+            optional_field + 
+            "} connector_remote_element_t;\n"
+            );
         
         fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_SOURCE);
         fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_COMPARE_TO);
@@ -933,10 +938,9 @@ public abstract class FileGenerator {
         fileWriter.write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
 
         if (configData.getMaxDepth() > 0) {
-        	String name_field = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
+        	optional_field = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
     			? "        char const * CONST name;\n"
 				: "";
-
             fileWriter.write(
            		"\n" +
            		"typedef struct {\n" +
@@ -944,17 +948,15 @@ public abstract class FileGenerator {
         	    "    struct {\n" + 
         	    "        unsigned int id;\n" + 
         	    "          unsigned int index;\n" +
-        	    name_field + 
+        	    optional_field + 
         	    "    } level[RCI_LIST_MAX_DEPTH];\n" + 
         	    "} connector_remote_list_t;\n"
         	    );
         }
 
-        String list_field = "";
-        if (configData.getMaxDepth() > 0) {
-        	list_field = "    connector_remote_list_t CONST list;\n";
-        }
-        
+        optional_field = (configData.getMaxDepth() > 0)
+    		? "    connector_remote_list_t CONST list;\n"
+			: "";
         fileWriter.write(
        		"\n" +
        		"typedef struct {\n" +
@@ -962,7 +964,7 @@ public abstract class FileGenerator {
     	    "    connector_remote_action_t CONST action;\n" +
     	    "    connector_remote_attribute_t CONST attribute;\n" +
     	    "    connector_remote_group_t CONST group;\n" +
-    	    list_field +
+    	    optional_field +
     	    "    connector_remote_element_t CONST element;\n" +
     	    "    unsigned int error_id;\n" +
     	    "\n" +
@@ -973,8 +975,6 @@ public abstract class FileGenerator {
     	    "    } response;\n" +
     	    "} connector_remote_config_t;\n"
     	    );
-
-
 
         fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
         fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
