@@ -3,10 +3,13 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import com.digi.connector.config.ConfigGenerator.UseNames;
 
 public class ConfigData {
 
@@ -24,27 +27,22 @@ public class ConfigData {
     RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
 
     private static int CommandsAttributeMaxLen = 20;
+    private static int max_list_depth = 0;
+
+    private static EnumMap<UseNames, Integer> max_name_length = new EnumMap<UseNames, Integer>(UseNames.class);
 
 
     public ConfigData() throws Exception {
         groupList = new ArrayList<LinkedList<Group>>();
+        groupList.add(GroupType.toGroupType("setting").getIndex(), new LinkedList<Group>());
+        groupList.add(GroupType.toGroupType("state").getIndex(), new LinkedList<Group>());
 
-        GroupType type;
-        LinkedList<Group> groups;
-
-        type = GroupType.toGroupType("setting");
-        groups = new LinkedList<Group>();
-        groupList.add(type.getIndex(), groups);
-
-        type = GroupType.toGroupType("state");
-        groups = new LinkedList<Group>();
-        groupList.add(type.getIndex(), groups);
-
-        int index = 1;
-        rciErrorMap.put(rciGlobalErrors, index);
-
-        index += rciGlobalErrors.size();
-         rciErrorMap.put(userGlobalErrors, index);
+        rciErrorMap.put(rciGlobalErrors, 1);
+        rciErrorMap.put(userGlobalErrors, rciGlobalErrors.size() + 1);
+        
+    	for (UseNames name: UseNames.values()) {
+    		max_name_length.put(name, 0);
+    	}
     }
 
     public LinkedList<Group> getSettingGroups() throws Exception {
@@ -115,14 +113,34 @@ public class ConfigData {
         return size;
     }
 
-    public void setAttributeMaxLen(int len) throws Exception{
-        if(len>0)
+    public void setAttributeMaxLen(int len) throws Exception {
+        if (len > 0)
             CommandsAttributeMaxLen = len;
-        else throw new Exception("Invalid CommandsAttributeMaxLen");
+        else
+        	throw new Exception("Invalid CommandsAttributeMaxLen");
     }
 
 	public static int AttributeMaxLen() {
 
 		return CommandsAttributeMaxLen;
 	}
+
+	public void listDepth(int depth) {
+		if (depth > max_list_depth) {
+			max_list_depth = depth;
+		}
+	}
+	
+	public int getMaxDepth() {
+		return max_list_depth;
+	}
+	
+    public void nameLength(UseNames type, int length) {
+    	int current = max_name_length.get(type);
+    	max_name_length.put(type, Math.max(current, length));
+    }
+    
+    public int getMaxNameLength(UseNames type) {
+    	return max_name_length.get(type);
+    }
 }

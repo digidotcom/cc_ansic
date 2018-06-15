@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Element {
+public class Element extends Item {
 
     private final static int INT32_MIN_VALUE = -2147483648;
     private final static int INT32_MAX_VALUE = 2147483647;
@@ -14,11 +14,7 @@ public class Element {
     private final static String BAD_MISSING_MIN_VALUE = "Bad or missing min value!";
     private final static String BAD_MISSING_MAX_VALUE = "Bad or missing max value!";
 
-    private final String name;
-    private final String description;
-    private final String helpDescription;
     private String type;
-    private String access;
     private String min;
     private String max;
     private String units;
@@ -41,6 +37,7 @@ public class Element {
         IPV4(false, 13),
         FQDNV4(true, 14),
         FQDNV6(true, 15),
+        LIST(false, 17),
         MAC_ADDR(false, 21),
         DATETIME(false, 22);
 
@@ -95,44 +92,13 @@ public class Element {
 
     }
 
-    public enum AccessType {
-        READ_ONLY, WRITE_ONLY, READ_WRITE;
-
-        public static AccessType toAccessType(String str) throws Exception {
-            try {
-                return valueOf(str.toUpperCase());
-
-            } catch (Exception e) {
-                throw new Exception("Invalid access Type: " + str);
-            }
-        }
-    }
-
     public Element(String name, String description, String helpDescription) throws IOException {
-        this.name = name;
-        
-        if (description == null) {
-            throw new IOException("Missing or bad element description");
-      }
-        this.description = description;
-        this.helpDescription = helpDescription;
+        super(name, description, helpDescription);
         this.values = new LinkedList<ValueStruct>();
     }
 
     public String toString(int id) {
-
-        String descText = "";
-        if (description != null)
-            descText += description;
-        if (helpDescription != null)
-            descText += ":" + helpDescription;
-
-        String descriptor = String.format("<element name=`%s`", name);
-
-        if (descText.length() > 0)
-            descriptor += String.format(" desc=`%s`", descText);
-
-        descriptor += String.format(" type=`%s`", type);
+        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, toRciDescription(), type);
 
         if (access != null)
             descriptor += String.format(" access=`%s`", access);
@@ -170,17 +136,8 @@ public class Element {
             type = theType;
         else
             throw new Exception("Duplicate <type> keyword: " + theType);
-        
-        ElementType elementType = ElementType.toElementType(type);
 
-        elementType.set();
-    }
-
-    public void setAccess(String theAccess) throws Exception {
-        if (access == null)
-            access = theAccess;
-        else
-            throw new Exception("Duplicate <access> keyword: " + theAccess);
+        ElementType.toElementType(type).set();
     }
 
     public void setMin(String theMin) throws Exception {
@@ -223,20 +180,8 @@ public class Element {
             units = theUnit;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public String getAccess() {
-        return access;
     }
 
     public String getMin() {
@@ -249,10 +194,6 @@ public class Element {
 
     public String getUnit() {
         return units;
-    }
-
-    public String getHelpDescription() {
-        return helpDescription;
     }
 
     public LinkedList<ValueStruct> getValues() {
@@ -282,7 +223,7 @@ public class Element {
                 if (!isValidFloat(min)) {
                     throw new Exception(BAD_MISSING_MIN_VALUE);
                 }
-                
+
                 if (!isValidFloat(max)) {
                     throw new Exception(BAD_MISSING_MAX_VALUE);
                 }
@@ -381,7 +322,7 @@ public class Element {
             if (etype != ElementType.ENUM && !values.isEmpty()) {
                 throw new Exception("Invalid <value> for type: " + type);
             }
-            
+
         } catch (Exception e) {
             throw e;
         }

@@ -6,16 +6,13 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 
 import com.digi.connector.config.ConfigGenerator.FileType;
-import com.digi.connector.config.Element.ElementType;
-
 
 public class FileNone extends FileGenerator {
 
     private static String COPYRIGHT = "/*\n"
-            +" * Copyright (c) 2017 Digi International Inc.\n"
+            +" * Copyright (c) 2018 Digi International Inc.\n"
             +" *\n"
             +" * This Source Code Form is subject to the terms of the Mozilla Public\n"
             +" * License, v. 2.0. If a copy of the MPL was not distributed with this file,\n"
@@ -162,6 +159,6 @@ public class FileNone extends FileGenerator {
             "};\n"+
             "\n"+
             "connector_remote_config_data_t const * const rci_descriptor_data = &%srci_internal_data;"
-            , prefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), prefix));
+            , customPrefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix));
     }
 }

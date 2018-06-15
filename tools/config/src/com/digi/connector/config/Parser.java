@@ -3,21 +3,24 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.Element.ElementType;
+
 public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
-
-    // PRIVATE variables
+    
     private static int MAX_NAME_LENGTH = 40;
     private static TokenScanner tokenScanner;
-    private static boolean isReadToken;
     private static String token;
     private static int groupLineNumber;
     private static int elementLineNumber;
+    private static ArrayDeque<Integer> listLineNumber;
     private static LinkedList<Group> groupConfig;
 
     public static void setMaxNameLength(int max_name) {
@@ -27,36 +30,30 @@ public class Parser {
     public static void processFile(String fileName, ConfigData configData) throws IOException, NullPointerException {
 
         try {
+            listLineNumber = new ArrayDeque<Integer>();
             tokenScanner = new TokenScanner(fileName);
-
             token = null;
-            isReadToken = true;
 
             /* first use a Scanner to get each word */
-            while (!isReadToken || tokenScanner.hasToken()) {
-                if (isReadToken) {
-                    token = tokenScanner.getToken();
-                }
+            while (tokenScanner.hasToken()) {
+                token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("globalerror")) {
                     configData.addUserGroupError(getName(), getLongDescription());
-                    isReadToken = true;
-                    
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>
                      * [instances] <description> [help description]
                      */
-                    
+
                     /* parse setting or state */
                     String groupType = tokenScanner.getToken();
-                    
+
                     /* parse name */
                     String nameStr = getName();
 
                     /* make sure group name doesn't exist in setting and state config */
-
-                    String typeName = groupType.toString().toLowerCase();
+                    String typeName = groupType.toLowerCase();
                     LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
 
                     for (Group group : typeGroups) {
@@ -67,9 +64,7 @@ public class Parser {
                         }
                     }
 
-                    groupConfig = configData.getConfigGroup(groupType);
-
-                    
+                    groupConfig = configData.getConfigGroup(typeName);
                     groupLineNumber = tokenScanner.getLineNumber();
 
                     /* parse instances */
@@ -83,46 +78,45 @@ public class Parser {
                     }
 
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
-
-                    isReadToken = true;
-                    /*
-                     * Parse elements and errors for the group.
-                     */
+                    configData.nameLength(UseNames.COLLECTIONS, nameStr.length());
+                    
+                    String group_access = (typeName == "setting") ? "read_write" : "read_only"; 
                     while (tokenScanner.hasToken()) {
-                        if (isReadToken) {
-                            token = tokenScanner.getToken();
-                            isReadToken = false; /*
-                                                  * token is already obtained
-                                                  * from processElement
-                                                  */
-                        }
-                        
-                        if (token.equalsIgnoreCase("element")) {
-                            Element element = processElement();
+                        token = tokenScanner.getToken();
 
-                            try{
+                        if (token.equalsIgnoreCase("element")) {
+                            Element element = processElement(group_access, configData);
+
+                            try {
                                 element.validate();
                             }
-                            catch(Exception e){
+                            catch (Exception e){
                                 throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
                             }
 
-                            theGroup.addElement(element);
+                            theGroup.addItem(element);
+                        } else if (token.equalsIgnoreCase("list")) {
+                            ItemList list = processList(group_access, configData, 0);
+
+                            try {
+                                list.validate();
+                            }
+                            catch (Exception e){
+                                throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
+                            }
                             
+                            theGroup.addItem(list);
                         } else if (token.equalsIgnoreCase("error")) {
                             theGroup.addError(getName(), getLongDescription());
-                            isReadToken = true;
-                            
                         } else if (token.startsWith("#")) {
                             tokenScanner.skipCommentLine();
-                            isReadToken = true;
-                            
                         } else {
+                        	tokenScanner.pushbackToken(token);
                             break;
                         }
                     }
 
-                    try{
+                    try {
                         theGroup.validate();
                     }
                     catch(Exception e){
@@ -130,15 +124,8 @@ public class Parser {
                     }
 
                     groupConfig.add(theGroup);
-
-//                    if (!tokenScanner.hasToken()) {
-                        /* end of file */
-//                        break;
-//                    }
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
-                    isReadToken = true;
-                    
                 } else {
                     throw new Exception("Unrecognized keyword: " + token);
                 }
@@ -158,16 +145,18 @@ public class Parser {
     }
 
     private static String errorFoundLog(String fileName, String str) {
-        String message = "Error found in " + fileName + ", line ";
+        int lineNumber;
 
         if (str.indexOf("<group>") != -1)
-            message += groupLineNumber;
+            lineNumber = groupLineNumber;
         else if (str.indexOf("<element>") != -1)
-            message += elementLineNumber;
+            lineNumber = elementLineNumber;
+        else if (str.indexOf("<list>") != -1)
+            lineNumber = listLineNumber.pop();
         else
-            message += tokenScanner.getLineNumber();
+            lineNumber = tokenScanner.getLineNumber();
 
-        return message + ": " + str;
+        return "Error found in " + fileName + ", line " + lineNumber + ": " + str;
     }
 
     private static String getName() throws Exception {
@@ -176,15 +165,16 @@ public class Parser {
         if (name == null) {
             throw new Exception("Missing name!");
         }
+        
         if (name.length() > MAX_NAME_LENGTH) {
             throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
         }
-        /* Now the descriptor can contain no alphanumeric chars,
-         * and the enums will replace them with "_"
-            if(!checkAlphaCharacters(name)){
-                throw new Exception("Invalid character in the name: " + name);
-            }
-        }*/
+        
+        /* Only allow alphanumeric, hyphen, and underscore */
+        if (!name.matches("[a-zA-Z0-9_-]+")) {
+            throw new Exception("Invalid character in name: " + name);
+        }
+    
         return name;
     }
 
@@ -299,10 +289,10 @@ public class Parser {
         String access = tokenScanner.getToken();
 
         if (access == null) {
-            throw new Exception("Missing access!");
+            throw new Exception("Missing access");
 
         }
-        Element.AccessType.toAccessType(access);
+        Item.AccessType.toAccessType(access);
 
         return access;
     }
@@ -322,36 +312,32 @@ public class Parser {
         return mvalue;
     }
 
-    private static final Element processElement() throws Exception {
+    private static final Element processElement(String default_access, ConfigData configData) throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
          * description] type <type> [min <min>] [max <max>] [access <access>]
          * [units <unit>]
          */
-        Element element = new Element(getName(), getDescription(), getLongDescription());
-        
+    	String name = getName();
         elementLineNumber = tokenScanner.getLineNumber();
-        try {
 
+        Element element = new Element(name, getDescription(), getLongDescription());
+        configData.nameLength(UseNames.ELEMENTS, name.length());
+
+        try {
             while (tokenScanner.hasToken()) {
                 token = tokenScanner.getToken();
-                isReadToken = true; 
 
                 if (token.equalsIgnoreCase("type")) {
                     element.setType(getType());
-                    
                 } else if (token.equalsIgnoreCase("access")) {
                     element.setAccess(getAccess());
-                    
                 } else if (token.equalsIgnoreCase("min")) {
                     element.setMin(getMinMax());
-                    
                 } else if (token.equalsIgnoreCase("max")) {
                     element.setMax(getMinMax());
-
                 } else if (token.equalsIgnoreCase("units")) {
                     element.setUnit(getDescription());
-                    
                 } else if (token.equalsIgnoreCase("value")) {
                     /*
                      * Parse Value for element with enum type syntax for parsing
@@ -363,20 +349,81 @@ public class Parser {
                         element.addValue(getName(), getDescription(), getLongDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
-                    
                 } else {
-                    isReadToken = false; 
+                    tokenScanner.pushbackToken(token);
                     break;
                 }
             }
-
             
+            if (element.getAccess() == null) {
+            	element.setAccess(default_access);
+            }
         } catch (IOException e) {
             throw new IOException(e.toString());
         }
 
         return element;
-
     }
 
+    private static final ItemList processList(String default_access, ConfigData configData, int depth) throws Exception {
+        /*
+         * syntax for parsing list: list <name> [instances] <description> [help
+         * description] [access <access>]
+         */
+
+		String name = getName();
+		listLineNumber.push(tokenScanner.getLineNumber());
+		
+		 /* parse instances */
+		int instances;
+		if (tokenScanner.hasTokenInt()) {
+			instances = tokenScanner.getTokenInt();
+		} else if (tokenScanner.hasToken("\\(.*")){
+			instances = getMathExpression();
+		} else {
+			instances = 1;
+		}
+
+		depth += 1;
+		configData.listDepth(depth);
+
+		ItemList list = new ItemList(name, instances, getDescription(), getLongDescription());
+        configData.nameLength(UseNames.COLLECTIONS, name.length());
+        
+		try {
+			String list_access = default_access;
+			
+		    while (tokenScanner.hasToken()) {
+		        token = tokenScanner.getToken();
+		
+		        if (token.equalsIgnoreCase("access")) {
+		        	list_access = getAccess();
+		            list.setAccess(list_access);
+		        } else if (token.equalsIgnoreCase("element")) {
+		            list.addItem(processElement(list_access, configData));
+		        } else if (token.equalsIgnoreCase("list")) {
+		            list.addItem(processList(list_access, configData, depth));
+		        } else if (token.equalsIgnoreCase("end")) {
+		            break;
+		        } else if (token.startsWith("#")) {
+		            tokenScanner.skipCommentLine();
+		        } else {
+		            tokenScanner.pushbackToken(token);
+		            break;
+		        }
+		    }
+		    
+		    if (list.getAccess() == null) {
+		    	list.setAccess(list_access);
+		    }
+		
+		} catch (IOException e) {
+		    throw new IOException(e.toString());
+		}
+
+        listLineNumber.pop();
+        ElementType.toElementType("list").set();
+
+        return list;
+    }
 }

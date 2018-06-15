@@ -1,37 +1,14 @@
 package com.digi.connector.config;
 
-public class ValueStruct {
+import java.io.IOException;
 
-    private final String name;
-    private final String description;
-    private final String helpDescription;
+public class ValueStruct extends Item {
 
-    public ValueStruct(String name, String description, String helpDescription) {
-
-        this.name = name;
-        this.description = description;
-        this.helpDescription = helpDescription;
-    }
-
-    public String getName() {
-        return name;
+    public ValueStruct(String name, String description, String helpDescription) throws IOException {
+        super(name, description == null ? "" : description, helpDescription);
     }
 
     public String toString(int id) {
-        String descText = "";
-
-        if (description != null)
-            descText += description;
-        if (helpDescription != null)
-            descText += ":" + helpDescription;
-
-        String descriptor = String
-                .format("<value value=\"%s\"", name);
-        if (descText.length() > 0)
-            descriptor += String.format(" desc=\"%s\"", descText);
-        descriptor += String.format(" bin_id=\"%d\"/>", id);
-        
-        return descriptor;
+        return String.format("<value value=\"%s\" desc=\"%s\" bin_id=\"%d\"/>", name, toRciDescription(), id);
     }
-
 }

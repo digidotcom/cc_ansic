@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class TokenScanner {
 
     private int lineNumber;
     private Scanner lineScanner;
     private Scanner tokenScanner;
+    private String back;
 
     public TokenScanner(String fileName) throws Exception {
         try {
@@ -21,8 +23,8 @@ public class TokenScanner {
             }
 
             lineScanner = new Scanner(new FileReader(configFile));
-
             tokenScanner = null;
+            back = null;
 
         } catch (NullPointerException e) {
             ConfigGenerator.log("Unable to open " + fileName);
@@ -30,10 +32,23 @@ public class TokenScanner {
         }
     }
 
+    public void pushbackToken(String token) {
+    	assert back == null;
+    	
+    	back = token;
+    }
+        
     public String getToken() {
-        String aWord = null;
+        String aWord;
+        
+        if (back == null) {
+        	aWord = null;
+        } else {
+        	aWord = back;
+        	back = null;
+        }
 
-        do {
+        while (aWord == null) {
             if ((tokenScanner != null) && (!tokenScanner.hasNext())) {
                 tokenScanner.close();
                 tokenScanner = null;
@@ -57,7 +72,7 @@ public class TokenScanner {
             if (!lineScanner.hasNextLine()) {
                 break;
             }
-        } while (aWord == null);
+        }
 
         return aWord;
     }
@@ -66,9 +81,7 @@ public class TokenScanner {
         String str = getToken();
 
         try {
-            int anInt = Integer.parseInt(str);
-            return anInt;
-
+            return Integer.parseInt(str);
         } catch (NumberFormatException e) {
             throw new IOException("Not an integer (expect an integer value)");
         }
@@ -100,44 +113,58 @@ public class TokenScanner {
     }
 
     public boolean hasToken() {
-        boolean token_avail = false;
-
-        if (tokenScanner != null) {
-            token_avail = tokenScanner.hasNext();
+    	if (back != null) {
+    		return true;
+    	}
+    	
+        if ((tokenScanner != null) && tokenScanner.hasNext()) {
+            return true;
         }
-        if (!token_avail) {
-            token_avail = lineScanner.hasNext();
+        
+        if (lineScanner.hasNext()) {
+        	return true;
         }
 
-        return token_avail;
+        return false;
     }
 
     public boolean hasToken(String pattern) {
-        boolean token_avail = false;
+    	if ((back != null) && Pattern.matches(pattern, back)) {
+    		return true;
+    	}
 
-        if (tokenScanner != null) {
-            token_avail = tokenScanner.hasNext(pattern);
+        if ((tokenScanner != null) && tokenScanner.hasNext(pattern)) {
+        	return true;
         }
 
-        if (!token_avail) {
-            token_avail = lineScanner.hasNext(pattern);
+        if (lineScanner.hasNext(pattern)) {
+        	return true;
         }
 
-        return token_avail;
+        return false;
     }
 
     public boolean hasTokenInt() {
-        boolean token_avail = false;
+    	if (back != null) {
+    		int radix = (tokenScanner != null) ? tokenScanner.radix() : lineScanner.radix();
+    		
+            try {
+                Integer.parseInt(back, radix);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+    	}
 
-        if (tokenScanner != null) {
-            token_avail = tokenScanner.hasNextInt();
+        if ((tokenScanner != null) && tokenScanner.hasNextInt()) {
+        	return true;
         }
 
-        if (!token_avail) {
-            token_avail = lineScanner.hasNextInt();
+        if (lineScanner.hasNextInt()) {
+        	return true;
         }
 
-        return token_avail;
+        return false;
     }
 
     public int getLineNumber() {

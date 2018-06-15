@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.lang.StringBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.bind.DatatypeConverter;
@@ -38,7 +39,7 @@ public class Descriptors {
     private int responseCode;
 
     public Descriptors(final String username, final String password,
-                       final String vendorId, final String deviceType, 
+                       final String vendorId, final String deviceType,
                        final long version) throws IOException  {
         this.username = username;
         this.password = password;
@@ -64,7 +65,6 @@ public class Descriptors {
     }
 
     public void processDescriptors(ConfigData configData) throws Exception {
-
         if (ConfigGenerator.deleteDescriptorOption()) {
             deleteDescriptors();
         } else {
@@ -74,7 +74,7 @@ public class Descriptors {
                 LinkedList<Group> groups = null;
 
                 String configType = type.toString().toLowerCase();
-                
+
                 try {
                     groups = configData.getConfigGroup(configType);
 
@@ -118,16 +118,16 @@ public class Descriptors {
             case 401:
             ConfigGenerator.log("Unauthorized: verify username and password are valid\n");
             break;
-            
+
             case 403:
             ConfigGenerator.log("Forbidden: deleting previous RCI descriptors failed, verify that vendor ID is valid and is owned by your account.\n");
             break;
-            
+
             default:
             ConfigGenerator.log("Response status: " + response);
             break;
             }
-            
+
             System.exit(1);
         }
         ConfigGenerator.debug_log("Deleted target: " + target);
@@ -135,10 +135,10 @@ public class Descriptors {
             ConfigGenerator.debug_log(String.format("Deleted: 0x%X/%s", Long.parseLong(vendorId.substring(2), 16), deviceType));
         else
             ConfigGenerator.debug_log(String.format("Deleted: 0x%X/%s", Long.parseLong(vendorId, 10), deviceType));
-            
+
         ConfigGenerator.debug_log(response);
     }
-    
+
     private String getErrorDescriptors(int id, LinkedHashMap<String, String> errorMap) {
         String descriptor = "";
         int errorId = id;
@@ -147,7 +147,7 @@ public class Descriptors {
             descriptor += String.format("<error_descriptor id=`%d` ", errorId);
             if (errorMap.get(errorName) != null)
                 descriptor += String.format("desc=`%s` ", errorMap.get(errorName));
-            
+
             descriptor += "/>\n";
             errorId++;
         }
@@ -159,7 +159,7 @@ public class Descriptors {
 
         String reboot_descriptor = "<descriptor element=`reboot` desc=`Reboot the device` bin_id=`7` >";
         reboot_descriptor +=       "  <error_descriptor id=`1` desc=`Reboot failed` />";
-        reboot_descriptor +=       "</descriptor>\n";        
+        reboot_descriptor +=       "</descriptor>\n";
 
         reboot_descriptor = reboot_descriptor.replace('`', '"');
 
@@ -183,7 +183,7 @@ public class Descriptors {
 
         String set_factory_default_descriptor = "<descriptor element=`set_factory_default` desc=`Set device configuration to factory defaults` bin_id=`8` >";
         set_factory_default_descriptor +=       "  <error_descriptor id=`1` desc=`Set Factory Default failed` />";
-        set_factory_default_descriptor +=       "</descriptor>\n";        
+        set_factory_default_descriptor +=       "</descriptor>\n";
 
         set_factory_default_descriptor = set_factory_default_descriptor.replace('`', '"');
 
@@ -214,22 +214,86 @@ public class Descriptors {
 
         return id;
     }
+    
+    private int getBinId(BufferedReader bin_id_reader, StringBuilder createBinIdLogBuffer, String key, int computed) throws Exception {
+        int id;
+        String BinIdKey = key + "_bin_id";
 
+        if (bin_id_reader == null) {
+            id = computed;
+            if (createBinIdLogBuffer != null) {
+                createBinIdLogBuffer.append(String.format("%s=%d\n", BinIdKey, id));
+            }
+        } else {
+        	id = getBinId(bin_id_reader, BinIdKey);
+            if (id == -1) {
+            	String error = "Fatal: BinIdKey not found: " + BinIdKey;
+            	
+                ConfigGenerator.log(error);
+                throw new Exception(error);
+            }
+        }
+
+        return id;
+    }
+
+    private int getBinId(BufferedReader bin_id_reader, StringBuilder createBinIdLogBuffer, String key, ItemList items, Item item) throws Exception {
+    	return getBinId(bin_id_reader, createBinIdLogBuffer, key, items.getItems().indexOf(item));
+    }
+
+    private String itemDescriptors(BufferedReader bin_id_reader, StringBuilder createBinIdLogBuffer, String prefix, ItemList list) throws Exception {
+    	String result = "";
+    	LinkedList<Item> items = list.getItems(); 
+
+        for (Item item : items) {
+            assert (item instanceof Element) || (item instanceof ItemList);
+
+            String item_prefix = prefix + "_" + item.getName();
+            int item_id = getBinId(bin_id_reader, createBinIdLogBuffer, item_prefix, list, item);
+            
+            result += item.toString(item_id);
+
+            if (item instanceof Element) {
+                Element element = (Element) item;
+                
+                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                    for (ValueStruct value: element.getValues()) {
+                    	String value_prefix = item_prefix + "_" + value.getName();
+                        int value_id = getBinId(bin_id_reader, createBinIdLogBuffer, value_prefix, element.getValues().indexOf(value));
+
+                        result += value.toString(value_id);
+                    }
+                    result += "</element>\n";
+                }
+            } else {
+                ItemList subitems = (ItemList) item;
+                String subitems_prefix = prefix + "_" + subitems.getName();
+
+                result += 
+                	String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />", subitems.getInstances()) +
+                	itemDescriptors(bin_id_reader, createBinIdLogBuffer, subitems_prefix, subitems);
+
+            }
+        }
+        result += "</descriptor>";
+        
+    	return result;
+    }
+    
     private void sendDescriptors(String config_type, LinkedList<Group> groups, ConfigData configData, int id) throws Exception {
         String desc = SETTING_DESCRIPTOR_DESCRIPTION;
-        boolean createBinIdLog = ConfigGenerator.createBinIdLogOption();
-        boolean useBinIdLog = ConfigGenerator.useBinIdLogOption();
-        String createBinIdLogBuffer = "";
-        BufferedReader bin_id_reader = null;
+        StringBuilder createBinIdLogBuffer = ConfigGenerator.createBinIdLogOption()
+        	? new StringBuilder()
+        	: null;
+        BufferedReader bin_id_reader = ConfigGenerator.useBinIdLogOption()
+        	? new BufferedReader(new FileReader("bin_id_" + config_type + ".log"))
+        	: null;
 
         if (config_type.equalsIgnoreCase(GroupType.STATE.toString()))
             desc = STATE_DESCRIPTOR_DESCRIPTION;
 
-        String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups`\n",
-                                                  config_type, desc, config_type);
-        
-        /* setup query setting command descriptor */
-        query_descriptors += String.format(" bin_id=`%d`>\n", id);
+        String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups` bin_id=`%d`>\n",
+                                                  config_type, desc, config_type, id);
 
         if (config_type.equalsIgnoreCase("setting"))
             query_descriptors += "  <attr name=`source` type=`enum` desc=`Source of settings returned` bin_id=`0` default=`current` >"
@@ -249,107 +313,46 @@ public class Descriptors {
         /*
          * get all errors for query command descriptor. 1. common errors. 2.
          * command errors. 3. user global errors
-         * 
+         *
          * We must offset the error_id for command errors.
          */
         query_descriptors +=  getErrorDescriptors(configData.getUserGlobalErrorsIndex(), configData.getUserGlobalErrors());
 
-        String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups`\n",
-                                                config_type, desc, config_type);
-        
-        set_descriptors += String.format(" bin_id=`%d`>\n", id+1);
-    
+        String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups` bin_id=`%d`>\n",
+                                                config_type, desc, config_type, id+1);
+
         /*
          * get all errors for set command descriptor. 1. common errors. 2.
          * command errors. 3. user global errors
-         * 
+         *
          * We must offset the error_id for command errors.
          */
-        set_descriptors += getErrorDescriptors(configData.getUserGlobalErrorsIndex(), configData.getUserGlobalErrors());
+        set_descriptors += getErrorDescriptors(configData.getUserGlobalErrorsIndex(), configData.getUserGlobalErrors())
+        	+ "</descriptor>";
 
-        set_descriptors += "</descriptor>";
-
-        if (useBinIdLog)
-            bin_id_reader = new BufferedReader(new FileReader("bin_id_" + config_type + ".log"));
-
+        int gid = 0;
         for (Group group : groups) {
-            if (!useBinIdLog)
-                query_descriptors += group.toString(groups.indexOf(group));
-            else {
-                String BinIdKey = String.format("group_%s_%s_bin_id", config_type, group.getName());
-                int group_id = getBinId(bin_id_reader, BinIdKey);
-
-                if (group_id == -1) {
-                    ConfigGenerator.log("Fatal: BinIdKey not found: " + BinIdKey + " !!!!!!");
-                    return;
-                }
-
-                query_descriptors += group.toString(group_id);
-            }
-
-            if (createBinIdLog)
-                createBinIdLogBuffer += String.format("group_%s_%s_bin_id=%d\n", config_type, group.getName(), groups.indexOf(group));
-
-            query_descriptors += String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />",
-                                                    group.getInstances());
-
-            for (Element element : group.getElements()) {
-
-                if (!useBinIdLog)
-                    query_descriptors += element.toString(group.getElements().indexOf(element));
-                else {
-                    String BinIdKey = String.format("group_%s_%s_%s_bin_id", config_type, group.getName(), element.getName());
-                    int element_id = getBinId(bin_id_reader, BinIdKey);
-
-                    if (element_id == -1) {
-                        ConfigGenerator.log("Fatal: BinIdKey not found: " + BinIdKey + " !!!!!!");
-                        return;
-                    }
-
-                    query_descriptors += element.toString(element_id);
-                }
-
-                if (createBinIdLog)
-                    createBinIdLogBuffer += String.format("group_%s_%s_%s_bin_id=%d\n", config_type, group.getName(), element.getName(), group.getElements().indexOf(element));
-                
-                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
-
-                    for (ValueStruct value : element.getValues()) {
-                        if (!useBinIdLog)
-                            query_descriptors += value.toString(element.getValues().indexOf(value));
-                        else {
-                            String BinIdKey = String.format("group_%s_%s_%s_%s_bin_id", config_type, group.getName(), element.getName(), value.getName());
-                            int value_id = getBinId(bin_id_reader, BinIdKey);
-
-                            if (value_id == -1) {
-                                ConfigGenerator.log("Fatal: BinIdKey not found: " + BinIdKey + " !!!!!!");
-                                return;
-                            }
-
-                            query_descriptors += value.toString(value_id);
-                        }
-
-
-                        if (createBinIdLog)
-                            createBinIdLogBuffer += String.format("group_%s_%s_%s_%s_bin_id=%d\n", config_type, group.getName(), element.getName(), value.getName(), element.getValues().indexOf(value));
-                    }
-
-                    query_descriptors += "</element>\n";
-
-                }
-            }
+            String prefix = "group_" + config_type + "_" + group.getName();
+            
+            int group_id = getBinId(bin_id_reader, createBinIdLogBuffer, prefix, gid);
+            query_descriptors += 
+            	group.toString(group_id) +
+            	String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />", group.getInstances());
 
             /*
-             * Write error for individual groups 1. common errors 2. group
-             * errors 3. user global error 4. user group error
+             * Write errors for individual groups
              * 
+             *  1. common errors
+             *  2. group errors
+             *  3. user global error
+             *  4. user group error
+             *
              * We must offset the error id for group errors.
              */
             query_descriptors += getErrorDescriptors(configData.getUserGlobalErrorsIndex(), configData.getUserGlobalErrors());
-
             query_descriptors += getErrorDescriptors(configData.getAllErrorsSize() + 1, group.getErrors());
-
-            query_descriptors += "</descriptor>";
+            query_descriptors += itemDescriptors(bin_id_reader, createBinIdLogBuffer, prefix, group);
+            gid++;
         }
         query_descriptors += "</format_define>\n</descriptor>\n";
 
@@ -359,11 +362,11 @@ public class Descriptors {
         uploadDescriptor("descriptor/query_" + config_type, query_descriptors);
         uploadDescriptor("descriptor/set_" + config_type, set_descriptors);
 
-        if (createBinIdLog) {
+        if (createBinIdLogBuffer != null) {
             try {
-                BufferedWriter fileWriter = new BufferedWriter(new FileWriter("bin_id_" + config_type + ".log"));
+            	FileWriter fileWriter = new FileWriter("bin_id_" + config_type + ".log");
 
-                fileWriter.write(createBinIdLogBuffer);
+                fileWriter.write(createBinIdLogBuffer.toString());
                 fileWriter.close();
 
              } catch (IOException e) {
@@ -371,7 +374,7 @@ public class Descriptors {
              }
          }
 
-        if (useBinIdLog)
+        if (bin_id_reader != null)
             bin_id_reader.close();
     }
 
@@ -405,7 +408,7 @@ public class Descriptors {
             descriptors += String.format("<descriptor element=`set_factory_default` dscr_avail=`true` />\n");
         }
 
-        descriptors += getErrorDescriptors(configData.getRciGlobalErrorsIndex(), configData.getRciGlobalErrors()) 
+        descriptors += getErrorDescriptors(configData.getRciGlobalErrorsIndex(), configData.getRciGlobalErrors())
                      + "</descriptor>";
 
         descriptors = descriptors.replace('`', '"');

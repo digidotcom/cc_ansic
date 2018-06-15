@@ -7,6 +7,7 @@ import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.EnumSet;
 import java.util.regex.Pattern;
 
 public class ConfigGenerator {
@@ -55,6 +56,8 @@ public class ConfigGenerator {
     public final static String FIRMWARE_VERSION = "firmwareVersion";
     public final static String CONFIG_FILENAME = "configFileName";
 
+    public static enum UseNames { NONE, COLLECTIONS, ELEMENTS };
+
     private static String urlName;
     private static String vendorId;
 
@@ -68,8 +71,8 @@ public class ConfigGenerator {
     private static boolean noErrorDescription;
     private static boolean verboseOption;
     private static FileType fileType = FileType.NONE;
-    private static UseNames useNames = UseNames.NONE;
-    private static String prefix = "";
+    private static EnumSet<UseNames> useNames;
+    private static String customPrefix = "";
     private static boolean deleteDescriptor;
     private static boolean useCcapi;
     private static boolean CcapiStubFunctions;
@@ -104,26 +107,6 @@ public class ConfigGenerator {
         
     }
     
-    public enum UseNames {
-        NONE,
-        GROUPS,
-        ELEMENTS,
-        ALL;
-
-        public static UseNames toUseNames(String str) throws Exception {
-            try {
-                return valueOf(str.toUpperCase());
-            } catch (Exception e) {
-                log("Available use names:");
-                for (UseNames useNames : UseNames.values()) {
-                    log(String.format("\t%s",useNames.toString()));
-                }
-                throw new Exception("Invalid use name: " + str);
-            }
-        }
-
-    }
-
     private static void usage() {
         String className = ConfigGenerator.class.getName();
 
@@ -219,7 +202,7 @@ public class ConfigGenerator {
         log(String
                 .format(
                         "\t%-16s \t= optional, add ASCIIZ string \"name\" field to connector_remote_group_t and/or connector_remote_element_t structures. Default is %s.",
-                        DASH + USE_NAMES_OPTION + "={none|groups|elements|all}", USE_NAMES_DEFAULT));
+                        DASH + USE_NAMES_OPTION + "={none|collections|elements|all}", USE_NAMES_DEFAULT));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -309,6 +292,34 @@ public class ConfigGenerator {
 
     }
 
+    private static EnumSet<UseNames> parseNamesList(String option) throws Exception {
+    	EnumSet<UseNames> result;
+    	String compact = option.replace(" ",  "").toUpperCase();
+    	
+    	switch (compact) {
+    	case "NONE":
+    		result = EnumSet.of(UseNames.NONE);
+    		break;
+    		
+    	case "ALL":
+    		result = EnumSet.complementOf(EnumSet.of(UseNames.NONE));
+    		break;
+    		
+    	default:
+    		result = EnumSet.noneOf(UseNames.class);
+	    	for (String type: compact.split(",")) {
+	    		try {
+	    			result.add(UseNames.valueOf(type));
+	    		} catch (Exception e) {
+	                log("Available use name types:" + UseNames.values());
+	                throw new Exception("Invalid use name type: " + type);
+	    		}
+	    	}
+    	}
+    	
+    	return result;
+    }
+    
     private static void toOption(String option) {
 
         /* split the [option]=[option value] */
@@ -339,15 +350,12 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(FILE_TYPE_OPTION)) {
                     fileType = FileType.toFileType(keys[1]);
-
                 } else if (keys[0].equals(PREFIX_OPTION)) {
-                    prefix = keys[1] + "_";
-
+                    customPrefix = keys[1] + "_";
                 } else if (keys[0].equals(USE_NAMES_OPTION)) {
-                    useNames = UseNames.toUseNames(keys[1]);
-
+                    useNames = parseNamesList(keys[1]);
                 } else if (keys[0].equals(RCI_DC_TARGET_MAX_OPTION)) {
-                    try{
+                    try {
                         rci_dc_attribute_max_len = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
                         throw new IOException("-rci_dc_attribute_max_len expect an integer value");
@@ -519,8 +527,8 @@ public class ConfigGenerator {
         return fwVersion;
     }
 
-    public static String getPrefix() {
-        return prefix;
+    public static String getCustomPrefix() {
+        return customPrefix;
     }
 
     public static String getArgumentLogString() {
@@ -594,8 +602,8 @@ public class ConfigGenerator {
         return fileType;
     }
 
-    public static UseNames useNamesOption() {
-        return useNames;
+    public static boolean useNamesOption(UseNames desired) {
+        return useNames.contains(desired);
     }
 
     public static boolean deleteDescriptorOption() {
@@ -630,6 +638,7 @@ public class ConfigGenerator {
 	public static void setRciParser(boolean b) {
 		rciParser = b;
 	}
+	
     public static String filename() {
         return filename;
     }
