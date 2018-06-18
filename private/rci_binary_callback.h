@@ -201,6 +201,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         ASSERT(have_group_index(rci));
         ASSERT(have_element_id(rci));
 
+#if (defined RCI_PARSER_USES_LIST)
+		rci->shared.callback_data.list.depth = get_list_depth(rci);
+#endif
         rci->shared.callback_data.element.id = get_element_id(rci);
         {
             connector_item_t const * const element = get_current_element(rci);
