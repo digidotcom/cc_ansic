@@ -291,6 +291,7 @@ STATIC connector_bool_t traverse_all_groups(rci_t * const rci)
     if (table->count == 0)
     {
         traverse_group_end(rci);
+        goto done;
     }
     else if (!have_group_id(rci))
     {
