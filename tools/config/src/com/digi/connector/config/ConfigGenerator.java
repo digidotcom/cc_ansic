@@ -21,7 +21,6 @@ public class ConfigGenerator {
 
     private final static String NO_DESC_OPTION = "nodesc";
     private final static String HELP_OPTION = "help";
-    private final static String HIDDEN_HELP_OPTION = "hidden_help";
     private final static String VERBOSE_OPTION = "verbose";
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
@@ -84,8 +83,6 @@ public class ConfigGenerator {
     private static int rci_dc_attribute_max_len = 0;
     private static boolean noBackup;
     private static boolean rciParser;
-
-    private static boolean hidden_help;
 
     public enum FileType {
         NONE,
@@ -223,52 +220,46 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= output for use with CCAPI projects",
                         DASH + CCAPI_OPTION));
-        if(hidden_help){
-            log("Hidden Options:");
-            log(String.format("\t%-16s \t= show this extra message", DASH
-                    + HIDDEN_HELP_OPTION));
-
-            log(String
+        log(String
+            .format(
+                    "\t%-16s \t= delete current Descriptors in Device Cloud",
+                    DASH + DELETE_DESCRIPTOR_OPTION));
+        log(String
+            .format(
+                    "\t%-16s \t= optional behavior,adding a prefix to the structures.",
+                    DASH + PREFIX_OPTION + "=<prefix>"));
+        log(String
                 .format(
-                        "\t%-16s \t= delete current Descriptors in Device Cloud",
-                        DASH + DELETE_DESCRIPTOR_OPTION));
-            log(String
+                        "\t%-16s \t= Choose the output Type. Default is none.",
+                        DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
+        log(String
                 .format(
-                        "\t%-16s \t= optional behavior,adding a prefix to the structures.",
-                        DASH + PREFIX_OPTION + "=<prefix>"));
-            log(String
-                    .format(
-                            "\t%-16s \t= Choose the output Type. Default is none.",
-                            DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
-            log(String
-                    .format(
-                            "\t%-16s \t= create bin_id log",
-                            DASH + CREATE_BIN_ID_LOG_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= use bin_id log",
-                            DASH + USE_BIN_ID_LOG_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
-                            DASH + RCI_LEGACY_COMMANDS_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= optional max length for commands attributes type string, default is %d",
-                            DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
-            log(String
-                    .format(
-                            "\t%-16s \t= generate stub functions for CCAPI projects (assumes %s)",
-                            DASH + CCAPI_STUB_FUNCTIONS_OPTION, DASH + CCAPI_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= Defines and enums names to work with RCI Parser.",
-                            DASH + RCI_PARSER_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= optional behavior, defining the max length of element names.",
-                            DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
-         }
+                        "\t%-16s \t= create bin_id log",
+                        DASH + CREATE_BIN_ID_LOG_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= use bin_id log",
+                        DASH + USE_BIN_ID_LOG_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
+                        DASH + RCI_LEGACY_COMMANDS_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional max length for commands attributes type string, default is %d",
+                        DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
+        log(String
+                .format(
+                        "\t%-16s \t= generate stub functions for CCAPI projects (assumes %s)",
+                        DASH + CCAPI_STUB_FUNCTIONS_OPTION, DASH + CCAPI_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= Defines and enums names to work with RCI Parser.",
+                        DASH + RCI_PARSER_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior, defining the max length of element names.",
+                        DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
 
         System.exit(1);
     }
@@ -378,9 +369,6 @@ public class ConfigGenerator {
             } else if (option.equals(DELETE_DESCRIPTOR_OPTION)) {
                 deleteDescriptor = true;
             } else if (option.equals(HELP_OPTION)) {
-                usage();
-            } else if (option.equals(HIDDEN_HELP_OPTION)) {
-                hidden_help = true;
                 usage();
             } else if (option.equals(CCAPI_OPTION)) {
                 useCcapi = true;
