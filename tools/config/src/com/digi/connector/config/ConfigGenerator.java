@@ -630,15 +630,10 @@ public class ConfigGenerator {
         return useBinIdLog;
     }
 
-
     public static boolean rciParserOption() {
         return rciParser;
     }
 
-	public static void setRciParser(boolean b) {
-		rciParser = b;
-	}
-	
     public static String filename() {
         return filename;
     }
