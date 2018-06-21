@@ -11,9 +11,21 @@ public class ConfigGenerator {
 
 // 1.0.0.0 version XML RCI
 // 2.0.0.0 version Binary RCI only
-
+// 3.0.0.0 version List support & specific callbacks moved to user space
+	
     public final static String VERSION = "2.0.0.0";
-    
+
+    public static enum UseNames { NONE, COLLECTIONS, ELEMENTS };
+    public static enum FileType { NONE, SOURCE, GLOBAL_HEADER;
+        public static FileType toFileType(String str) throws Exception {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (Exception e) {
+                throw new Exception("Invalid file type: " + str);
+            }
+        }
+    }
+
     private final static long FIRMWARE_VERSION_MAX_VALUE = 4294967295L;
 
     private final static String NO_DESC_OPTION = "nodesc";
@@ -33,7 +45,6 @@ public class ConfigGenerator {
     private final static String NO_BACKUP_OPTION = "noBackup";
     private final static String RCI_PARSER_OPTION = "rci_parser";
     private final static String OVERRIDE_MAX_NAME_LENGTH = "maxNameLength";
-
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String URL_OPTION = "url";
@@ -42,17 +53,15 @@ public class ConfigGenerator {
     private final static String USE_NAMES_OPTION = "usenames";
     private final static String USE_NAMES_DEFAULT = "none";
 
-    public final static String PREFIX_OPTION = "prefix";
+    private final static String PREFIX_OPTION = "prefix";
 
-    public final static String DASH = "-";
+    private final static String DASH = "-";
 
-    public final static String USERNAME = "username";
-    public final static String PASSWORD = "password";
-    public final static String DEVICE_TYPE = "deviceType";
-    public final static String FIRMWARE_VERSION = "firmwareVersion";
-    public final static String CONFIG_FILENAME = "configFileName";
-
-    public static enum UseNames { NONE, COLLECTIONS, ELEMENTS };
+    private final static String USERNAME = "username";
+    private final static String PASSWORD = "password";
+    private final static String DEVICE_TYPE = "deviceType";
+    private final static String FIRMWARE_VERSION = "firmwareVersion";
+    private final static String CONFIG_FILENAME = "configFileName";
 
     private static String urlName;
     private static String vendorId;
@@ -81,25 +90,7 @@ public class ConfigGenerator {
     private static boolean noBackup;
     private static boolean rciParser;
 
-    public enum FileType {
-        NONE,
-        SOURCE,
-        GLOBAL_HEADER;
-
-        public static FileType toFileType(String str) throws Exception {
-            try {
-                return valueOf(str.toUpperCase());
-                
-            } catch (Exception e) {
-                log("Available file types:");
-                for (FileType fileType : FileType.values()) {
-                    log(String.format("\t%s",fileType.toString()));
-                }
-                throw new Exception("Invalid file type: " + str);
-            }
-        }
-        
-    }
+    private static ConfigGenerator instance = null;
     
     private static void usage() {
         String className = ConfigGenerator.class.getName();
@@ -396,7 +387,6 @@ public class ConfigGenerator {
             usage();
             System.exit(1);
         }
-
     }
 
     private boolean getDottedFwVersion(String arg) {
@@ -524,7 +514,7 @@ public class ConfigGenerator {
         return urlName;
     }
 
-    public ConfigGenerator(String args[]) {
+    private ConfigGenerator(String args[]) {
         int argCount = 0;
 
         argumentLog = "\"";
@@ -623,10 +613,14 @@ public class ConfigGenerator {
         return filename;
     }
 
+    public static ConfigGenerator getInstance() {
+    	return instance;
+    }
+    
     public static void main(String[] args) {
-        
         try {
-            new ConfigGenerator(args);
+            ConfigData configData = ConfigData.getInstance();
+        	instance = new ConfigGenerator(args);
 
             if (deleteDescriptorOption()) {
                 /* descriptor constructor for arguments */
@@ -642,7 +636,6 @@ public class ConfigGenerator {
 
             /* parse file */
             debug_log("Start reading filename: " + filename);
-            ConfigData configData = new ConfigData();
 
             if(rci_legacy){
                 debug_log("rci legacy commands enable");

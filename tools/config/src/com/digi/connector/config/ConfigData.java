@@ -33,8 +33,9 @@ public class ConfigData {
     private static EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
     private static EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
-
-    public ConfigData() throws Exception {
+    private static ConfigData instance; 
+    
+    private ConfigData() throws Exception {
         groupList = new ArrayList<LinkedList<Group>>();
         groupList.add(GroupType.toGroupType("setting").getIndex(), new LinkedList<Group>());
         groupList.add(GroupType.toGroupType("state").getIndex(), new LinkedList<Group>());
@@ -45,6 +46,13 @@ public class ConfigData {
     	for (UseNames name: UseNames.values()) {
     		max_name_length.put(name, 0);
     	}
+    }
+    
+    public static ConfigData getInstance() throws Exception {
+    	if (instance == null)
+    		instance = new ConfigData();
+    	
+    	return instance;
     }
 
     public LinkedList<Group> getSettingGroups() throws Exception {

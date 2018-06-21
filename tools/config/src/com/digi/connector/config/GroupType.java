@@ -21,8 +21,9 @@ public class GroupType {
         this.type = type;			
     }
 
-    private static GroupType build( final int index,final String type) {
-        final GroupType group= new GroupType(index, type);
+    private static GroupType build(final int index, final String type) {
+        final GroupType group = new GroupType(index, type);
+        
         TYPE_MAP.put(type, group);
         TYPE_LIST.add(group);
         return group;
