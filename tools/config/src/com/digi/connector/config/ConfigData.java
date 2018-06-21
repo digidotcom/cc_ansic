@@ -1,15 +1,16 @@
 package com.digi.connector.config;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.Element;
 
 public class ConfigData {
 
@@ -19,7 +20,7 @@ public class ConfigData {
     private RciStrings userGlobalErrors = new RciStrings();
 
     /* user global error */
-    private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
+    private Map<Object, Integer> rciErrorMap = new HashMap<>();
 
     private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
         "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
@@ -29,7 +30,8 @@ public class ConfigData {
     private static int CommandsAttributeMaxLen = 20;
     private static int max_list_depth = 0;
 
-    private static EnumMap<UseNames, Integer> max_name_length = new EnumMap<UseNames, Integer>(UseNames.class);
+    private static EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
+    private static EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
 
     public ConfigData() throws Exception {
@@ -133,6 +135,14 @@ public class ConfigData {
 	
 	public int getMaxDepth() {
 		return max_list_depth;
+	}
+	
+	public void addTypeSeen(Element.Type type) {
+		typesSeen.add(type);
+	}
+	
+	public EnumSet<Element.Type> getTypesSeen() {
+		return typesSeen;
 	}
 	
     public void nameLength(UseNames type, int length) {

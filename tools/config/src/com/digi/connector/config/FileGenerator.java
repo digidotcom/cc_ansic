@@ -8,11 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
-import com.digi.connector.config.Element.ElementType;
 
 public abstract class FileGenerator {
 
@@ -158,56 +158,28 @@ public abstract class FileGenerator {
     abstract void writeHeaderComment(BufferedWriter bufferWriter) throws IOException;
     abstract void generateFile(ConfigData configData) throws Exception;
 
-    private void writeOnOffBooleanEnum() throws IOException {
-
-        String enumString = "";
-
-        for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
-                switch (type) {
-                case ON_OFF:
-                    enumString += "\ntypedef enum {\n"
-                                    + "    connector_off,\n"
-                                    + "    connector_on\n"
-                                    + "} connector_on_off_t;\n";
-                    break;
-
-                default:
-                  break;
-                }
-            }
-        }
-
-        fileWriter.write(enumString);
-    }
-
-    private void writeElementTypeEnum() throws IOException {
-
-        String enumString = "\n\ntypedef enum {\n";
-        Boolean isFirstEnum = true;
+    private void writeElementTypeEnums(EnumSet<Element.Type> typesSeen) throws IOException {
+    	LinkedList<String> enum_lines = new LinkedList<String>();
         int previous = -1;
+        for (Element.Type type : typesSeen) {
+            String enum_line = "    connector_element_type_" + type.toLowerName();
 
-        for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
-            	int current = type.toValue();
-            	
-                if (!isFirstEnum) {
-                    enumString += ",\n";
-                } else {
-                	isFirstEnum = false;
-                }
-
-                enumString += "    connector_element_type_" + type.toName().toLowerCase();
-
-                if (current != (previous + 1)) {
-                    enumString += String.format(" = %d", current);
-                }
-                previous = current;
+        	int current = type.toValue();
+            if (current != (previous + 1)) {
+            	enum_line += String.format(" = %d", current);
             }
+            previous = current;
+            
+            enum_lines.add(enum_line);
         }
 
-        enumString += "\n} connector_element_value_type_t;\n";
-        fileWriter.write(enumString);
+        assert(enum_lines.size() != 0);
+        fileWriter.write(
+        	"\n" +
+        	"\n" + 
+        	"typedef enum {\n" +
+        	String.join(",\n", enum_lines) + "\n" +
+        	"} connector_element_value_type_t;\n");
     }
 
     private String enumStructureString() {
@@ -229,7 +201,7 @@ public abstract class FileGenerator {
             if (item instanceof Element) {
                 Element element = (Element) item;
 
-                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                if (element.getType() == Element.Type.ENUM) {
                     bufferWriter.write(TYPEDEF_ENUM);
                     boolean previousempty = false;
                     
@@ -268,7 +240,7 @@ public abstract class FileGenerator {
 	            Element element = (Element) item;
 	
 	            String protoType = "";
-	            switch (ElementType.toElementType(element.getType())) {
+	            switch (element.getType()) {
 	                case UINT32:
 	                case HEX32:
 	                case X_HEX32:
@@ -309,7 +281,7 @@ public abstract class FileGenerator {
 	            }
 	            
 	            String element_prototype ="";
-	            switch (ElementType.toElementType(element.getType())) {
+	            switch (element.getType()) {
 	                case PASSWORD:
 	                    element_prototype += String.format("\n%s%srci_%s_%s_%s_get    NULL",
 	                    	DEFINE, customPrefix, configType, prefix, element.getName());
@@ -326,7 +298,7 @@ public abstract class FileGenerator {
 	            }
 	            else {
 	                String value_type_modifier = "";
-	                switch (ElementType.toElementType(element.getType())) {
+	                switch (element.getType()) {
 	                    case ENUM:
 	                        if (ConfigGenerator.rciParserOption()) {
 	                            break;
@@ -468,7 +440,7 @@ public abstract class FileGenerator {
                 String FType = "";
                 String value = "";
                 
-                switch (ElementType.toElementType(element.getType())){
+                switch (element.getType()) {
                     case UINT32:
                         if (element.getMin()!=null)
                            value += "*value = " + element.getMin();
@@ -535,7 +507,7 @@ public abstract class FileGenerator {
                     break;
                 }
                 
-                if (ElementType.toElementType(element.getType()) != ElementType.PASSWORD) {
+                if (element.getType() != Element.Type.PASSWORD) {
                     element_function += setFunction(prefix, String.format("%srci_%s_%s_%s_get(%s, %s * const value)", 
                     	customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), value);
                 }
@@ -543,7 +515,7 @@ public abstract class FileGenerator {
                 if (!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
                     String value_type_modifier = "";
                     
-                    switch (ElementType.toElementType(element.getType())) {
+                    switch (element.getType()) {
                         case ENUM:
                             if (ConfigGenerator.rciParserOption()) {
                                 break;
@@ -632,7 +604,7 @@ public abstract class FileGenerator {
         return function;
     }
 
-    private void writeElementValueStruct() throws IOException {
+    private void writeElementValueStruct(EnumSet<Element.Type> typesSeen) throws IOException {
 
         String headerString = "";
         String structString = "";
@@ -645,98 +617,96 @@ public abstract class FileGenerator {
         Boolean isStringDefined = false;
         Boolean isEnumValueStructDefined = false;
 
-        for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
-                switch (type) {
-                case UINT32:
-                case HEX32:
-                case X_HEX32:
-                    if (!isUnsignedIntegerDefined) {
-                        /* if not defined yet, then define it */
-                        structString += TYPEDEF_STRUCT
-                            + "   uint32_t min_value;\n"
-                            + "   uint32_t max_value;\n"
-                            + "} connector_element_value_unsigned_integer_t;\n";
-                        elementValueStruct += "    uint32_t unsigned_integer_value;\n";
-                        if(ConfigGenerator.rciParserOption())
-                            defineElementString += "#define UNSIGNED_INTEGER_VALUE\n";
-                        isUnsignedIntegerDefined = true;
-                        optionCount++;
-                    }
-                    break;
-
-                case INT32:
+        for (Element.Type type : typesSeen) {
+            switch (type) {
+            case UINT32:
+            case HEX32:
+            case X_HEX32:
+                if (!isUnsignedIntegerDefined) {
+                    /* if not defined yet, then define it */
                     structString += TYPEDEF_STRUCT
-                                    + "   int32_t min_value;\n"
-                                    + "   int32_t max_value;\n"
-                                    + "} connector_element_value_signed_integer_t;\n";
-                    elementValueStruct += "    int32_t signed_integer_value;\n";
+                        + "   uint32_t min_value;\n"
+                        + "   uint32_t max_value;\n"
+                        + "} connector_element_value_unsigned_integer_t;\n";
+                    elementValueStruct += "    uint32_t unsigned_integer_value;\n";
                     if(ConfigGenerator.rciParserOption())
-                        defineElementString += "#define SIGNED_INTEGER_VALUE\n";
+                        defineElementString += "#define UNSIGNED_INTEGER_VALUE\n";
+                    isUnsignedIntegerDefined = true;
                     optionCount++;
-                    break;
-
-                case ENUM:
-                    if (!isEnumValueStructDefined) {
-                        structString += enumStructureString();
-                        isEnumValueStructDefined = true;
-                    }
-                    elementValueStruct += "    unsigned int enum_value;\n";
-                    if(ConfigGenerator.rciParserOption())
-                        defineElementString += "#define ENUM_VALUE\n";
-                    optionCount++;
-                    break;
-
-                case FLOAT:
-                    structString += TYPEDEF_STRUCT
-                                    + "    float min_value;\n"
-                                    + "    float max_value;\n"
-                                    + "} connector_element_value_float_t;\n";
-                    elementValueStruct += "    float float_value;\n";
-                    if(ConfigGenerator.rciParserOption())
-                        defineElementString += "#define FLOAT_VALUE\n";
-                    optionCount++;
-                    break;
-
-                case ON_OFF:
-                    if (!isEnumValueStructDefined) {
-                        /* rci parser needs this structure for on/off type */
-                        structString += enumStructureString();
-                        isEnumValueStructDefined = true;
-                    }
-                    elementValueStruct += "    connector_on_off_t  on_off_value;\n";
-                    if(ConfigGenerator.rciParserOption())
-                        defineElementString += "#define ON_OFF_VALUE\n";
-                    optionCount++;
-                    break;
-
-                case BOOLEAN:
-                    if (!isEnumValueStructDefined) {
-                        /* rci parser needs this structure for boolean type */
-                        structString += enumStructureString();
-                        isEnumValueStructDefined = true;
-                    }
-                    elementValueStruct += "    connector_bool_t  boolean_value;\n";
-                    if(ConfigGenerator.rciParserOption())
-                        defineElementString += "#define BOOLEAN_VALUE\n";
-                    optionCount++;
-                    break;
-
-                default:
-                    if (!isStringDefined) {
-                        /* if not defined yet then define it */
-                        structString += TYPEDEF_STRUCT
-                                        + "    size_t min_length_in_bytes;\n"
-                                        + "    size_t max_length_in_bytes;\n"
-                                        + "} connector_element_value_string_t;\n";
-                        elementValueStruct += "    char const * string_value;\n";
-                        if(ConfigGenerator.rciParserOption())
-                            defineElementString += "#define STRING_VALUE\n";
-                        isStringDefined = true;
-                        optionCount++;
-                    }
-                    break;
                 }
+                break;
+
+            case INT32:
+                structString += TYPEDEF_STRUCT
+                                + "   int32_t min_value;\n"
+                                + "   int32_t max_value;\n"
+                                + "} connector_element_value_signed_integer_t;\n";
+                elementValueStruct += "    int32_t signed_integer_value;\n";
+                if(ConfigGenerator.rciParserOption())
+                    defineElementString += "#define SIGNED_INTEGER_VALUE\n";
+                optionCount++;
+                break;
+
+            case ENUM:
+                if (!isEnumValueStructDefined) {
+                    structString += enumStructureString();
+                    isEnumValueStructDefined = true;
+                }
+                elementValueStruct += "    unsigned int enum_value;\n";
+                if(ConfigGenerator.rciParserOption())
+                    defineElementString += "#define ENUM_VALUE\n";
+                optionCount++;
+                break;
+
+            case FLOAT:
+                structString += TYPEDEF_STRUCT
+                                + "    float min_value;\n"
+                                + "    float max_value;\n"
+                                + "} connector_element_value_float_t;\n";
+                elementValueStruct += "    float float_value;\n";
+                if(ConfigGenerator.rciParserOption())
+                    defineElementString += "#define FLOAT_VALUE\n";
+                optionCount++;
+                break;
+
+            case ON_OFF:
+                if (!isEnumValueStructDefined) {
+                    /* rci parser needs this structure for on/off type */
+                    structString += enumStructureString();
+                    isEnumValueStructDefined = true;
+                }
+                elementValueStruct += "    connector_on_off_t  on_off_value;\n";
+                if(ConfigGenerator.rciParserOption())
+                    defineElementString += "#define ON_OFF_VALUE\n";
+                optionCount++;
+                break;
+
+            case BOOLEAN:
+                if (!isEnumValueStructDefined) {
+                    /* rci parser needs this structure for boolean type */
+                    structString += enumStructureString();
+                    isEnumValueStructDefined = true;
+                }
+                elementValueStruct += "    connector_bool_t  boolean_value;\n";
+                if(ConfigGenerator.rciParserOption())
+                    defineElementString += "#define BOOLEAN_VALUE\n";
+                optionCount++;
+                break;
+
+            default:
+                if (!isStringDefined) {
+                    /* if not defined yet then define it */
+                    structString += TYPEDEF_STRUCT
+                                    + "    size_t min_length_in_bytes;\n"
+                                    + "    size_t max_length_in_bytes;\n"
+                                    + "} connector_element_value_string_t;\n";
+                    elementValueStruct += "    char const * string_value;\n";
+                    if(ConfigGenerator.rciParserOption())
+                        defineElementString += "#define STRING_VALUE\n";
+                    isStringDefined = true;
+                    optionCount++;
+                }
+                break;
             }
         }
 
@@ -780,35 +750,33 @@ public abstract class FileGenerator {
 
         String floatInclude = null;
 
-        for (Element.ElementType type : Element.ElementType.values()) {
-            if (type.isSet()) {
-                headerString += DEFINE + RCI_PARSER_USES + type.toName().toUpperCase() + "\n";
+        for (Element.Type type : configData.getTypesSeen()) {
+            headerString += DEFINE + RCI_PARSER_USES + type.toUpperName() + "\n";
 
-                switch (type) {
-                case UINT32:
-                case HEX32:
-                case X_HEX32:
-                    if (unsignedIntegerString == null) {
-                        unsignedIntegerString = DEFINE + RCI_PARSER_USES_UNSIGNED_INTEGER;
-                    }
-                    break;
-
-                case INT32:
-                case ENUM:
-                    break;
-                case FLOAT:
-                    floatInclude = INCLUDE + FLOAT_HEADER;
-                    break;
-
-                case ON_OFF:
-                case BOOLEAN:
-                    break;
-                default:
-                    if (stringsString == null) {
-                        stringsString = DEFINE + RCI_PARSER_USES_STRINGS;
-                    }
-                    break;
+            switch (type) {
+            case UINT32:
+            case HEX32:
+            case X_HEX32:
+                if (unsignedIntegerString == null) {
+                    unsignedIntegerString = DEFINE + RCI_PARSER_USES_UNSIGNED_INTEGER;
                 }
+                break;
+
+            case INT32:
+            case ENUM:
+                break;
+            case FLOAT:
+                floatInclude = INCLUDE + FLOAT_HEADER;
+                break;
+
+            case ON_OFF:
+            case BOOLEAN:
+                break;
+            default:
+                if (stringsString == null) {
+                    stringsString = DEFINE + RCI_PARSER_USES_STRINGS;
+                }
+                break;
             }
         }
 
@@ -822,7 +790,8 @@ public abstract class FileGenerator {
     }
 
     protected void writeDefinesAndStructures(ConfigData configData) throws IOException {
-    	boolean haveLists = ElementType.LIST.isSet();
+    	EnumSet<Element.Type> typesSeen = configData.getTypesSeen();
+    	boolean haveLists = typesSeen.contains(Element.Type.LIST);
         String optional_field;
 
         writeDefineOptionHeader(configData);
@@ -840,9 +809,17 @@ public abstract class FileGenerator {
         }
 
 
-        writeOnOffBooleanEnum();
-        writeElementTypeEnum();
-        writeElementValueStruct();
+    	if (typesSeen.contains(Element.Type.ON_OFF)) {
+            fileWriter.write(
+        		"\n" +
+        		"typedef enum {\n" +
+                "    connector_off,\n" +
+                "    connector_on\n" +
+                "} connector_on_off_t;\n");
+    	}
+    	
+        writeElementTypeEnums(typesSeen);
+        writeElementValueStruct(typesSeen);
 
         String list_start = "";
         String list_end = "";
@@ -1261,7 +1238,7 @@ public abstract class FileGenerator {
             if (item instanceof Element) {
                 Element element = (Element) item;
                 
-                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                if (element.getType() == Element.Type.ENUM) {
                 	writeEnumArray(bufferWriter, element, prefix);
                 }
             } else {
@@ -1290,7 +1267,7 @@ public abstract class FileGenerator {
                 if (ConfigGenerator.rciParserOption()) {
                     String enum_struct;
 
-                    if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                    if (element.getType() == Element.Type.ENUM) {
                         String define_name = getDefineString(prefix + "__" + element.getName() + "_enum");
                         String variableName = customPrefix + define_name.toLowerCase();
                         
@@ -1336,7 +1313,7 @@ public abstract class FileGenerator {
             if (item instanceof Element) {
             	Element element = (Element) item;
             	
-            	type = element.getType();
+            	type = element.getType().toLowerName();
             	suffix = "_element";
             } else {
             	type = "list";
@@ -1632,7 +1609,7 @@ public abstract class FileGenerator {
 
                 element_enum_string += getEnumString(item_prefix) + ",\n";
 
-                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                if (element.getType() == Element.Type.ENUM) {
                 	writeEnumHeader(bufferWriter, element, item_prefix);
                 }
             } else {

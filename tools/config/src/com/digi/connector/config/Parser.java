@@ -9,7 +9,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
-import com.digi.connector.config.Element.ElementType;
 
 public class Parser {
 
@@ -330,7 +329,8 @@ public class Parser {
                 token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("type")) {
-                    element.setType(getType());
+                    Element.Type type = element.setType(getType());
+                    configData.addTypeSeen(type);
                 } else if (token.equalsIgnoreCase("access")) {
                     element.setAccess(getAccess());
                 } else if (token.equalsIgnoreCase("min")) {
@@ -423,7 +423,7 @@ public class Parser {
 		}
 
         listLineNumber.pop();
-        ElementType.toElementType("list").set();
+        configData.addTypeSeen(Element.Type.LIST);
 
         return list;
     }

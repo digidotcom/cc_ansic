@@ -256,7 +256,7 @@ public class Descriptors {
             if (item instanceof Element) {
                 Element element = (Element) item;
                 
-                if (Element.ElementType.toElementType(element.getType()) == Element.ElementType.ENUM) {
+                if (element.getType() == Element.Type.ENUM) {
                     for (ValueStruct value: element.getValues()) {
                     	String value_prefix = item_prefix + "_" + value.getName();
                         int value_id = getBinId(bin_id_reader, createBinIdLogBuffer, value_prefix, element.getValues().indexOf(value));

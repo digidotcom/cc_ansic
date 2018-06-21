@@ -24,9 +24,6 @@ public class FileGlobalHeader extends FileGenerator {
 	public FileGlobalHeader(String directoryPath) throws IOException {
 		
 		super(directoryPath,HEADER_FILENAME,fileType);
-        for (Element.ElementType type : Element.ElementType.values()) {
-            type.set();
-        }
 	}
 	
     public void writeHeaderComment(BufferedWriter bufferWriter) throws IOException {
@@ -46,6 +43,12 @@ public class FileGlobalHeader extends FileGenerator {
         
     }
     public void generateFile(ConfigData configData) throws Exception {
+		
+		// TODO: This needs to be added to the FileGenerator constructor, so we can override ConfigData version without overwriting it -ASK 
+        for (Element.Type type : Element.Type.values()) {
+            configData.addTypeSeen(type);
+        }
+        
         try {
 
             String defineName = generatedFile.replace('.', '_').toUpperCase();
