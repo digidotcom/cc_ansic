@@ -206,7 +206,7 @@ public abstract class FileGenerator {
                     boolean previousempty = false;
                     
                     int i = 0;
-                    for (ValueStruct value : element.getValues()) {
+                    for (Value value : element.getValues()) {
                         if (value.getName().equals("")) {
                             previousempty = true;
                         }
@@ -468,7 +468,7 @@ public abstract class FileGenerator {
                         FType += "ccapi_on_off_t";
                         break;
                     case ENUM:
-                        ValueStruct first_value = element.getValues().get(0);
+                        Value first_value = element.getValues().get(0);
                         if (ConfigGenerator.rciParserOption()) {
                             value += "*value = \"" + first_value.getName() + "\"";
                             FType += "char const *";
@@ -1211,7 +1211,7 @@ public abstract class FileGenerator {
         bufferWriter.write(String.format("static connector_element_enum_t CONST %s%s[] = {\n",
                 customPrefix, define_name.toLowerCase()));
         
-        for (ValueStruct value : element.getValues()) {
+        for (Value value : element.getValues()) {
         	if (!first) {
                 bufferWriter.write(",\n");
         	} else {
@@ -1562,7 +1562,7 @@ public abstract class FileGenerator {
         int index = 0;
         
         bufferWriter.write(TYPEDEF_ENUM);
-        for (ValueStruct value : element.getValues()) {
+        for (Value value : element.getValues()) {
             if (value.getName().equals(""))
             	explicit = true;
             else {

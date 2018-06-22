@@ -92,11 +92,11 @@ public class Element extends Item {
     private String min;
     private String max;
     private String units;
-    private final LinkedList<ValueStruct> values;
+    private final LinkedList<Value> values;
 
     public Element(String name, String description, String helpDescription) throws IOException {
         super(name, description, helpDescription);
-        this.values = new LinkedList<ValueStruct>();
+        this.values = new LinkedList<Value>();
     }
 
     public String toString(int id) {
@@ -161,7 +161,7 @@ public class Element extends Item {
         if (values.contains(valueName))
             throw new Exception("Duplicate <value>: " + valueName);
       
-        ValueStruct value = new ValueStruct(valueName, description, helpDescription);
+        Value value = new Value(valueName, description, helpDescription);
         values.add(value);
     }
 
@@ -191,7 +191,7 @@ public class Element extends Item {
         return units;
     }
 
-    public LinkedList<ValueStruct> getValues() {
+    public LinkedList<Value> getValues() {
         return values;
     }
     
