@@ -6,12 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.digi.connector.config.ConfigGenerator.FileType;
-
 public class FileGlobalHeader extends FileGenerator {
-
-    private static FileType fileType = FileType.GLOBAL_HEADER;
-
     protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
     "    struct connector_remote_group_table const * group_table;\n" +
     "    char const * const * error_table;\n" +
@@ -22,8 +17,7 @@ public class FileGlobalHeader extends FileGenerator {
     "} connector_remote_config_data_t;\n";
     
 	public FileGlobalHeader(String directoryPath) throws IOException {
-		
-		super(directoryPath,HEADER_FILENAME,fileType);
+		super(directoryPath,HEADER_FILENAME);
 	}
 	
     public void writeHeaderComment(BufferedWriter bufferWriter) throws IOException {

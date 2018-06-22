@@ -8,11 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
-import com.digi.connector.config.ConfigGenerator.FileType;
-
 public class FileSourceCcapi extends FileGenerator {
 
-    private static FileType fileType = FileType.SOURCE;
     private static String SOURCE_NAME = ConfigGenerator.getCustomPrefix() + "ccapi_rci_data.c";
     private static String HEADER_NAME = ConfigGenerator.getCustomPrefix() + "ccapi_rci_functions.h";
     private static String CALLBACKS_NAME = ConfigGenerator.getCustomPrefix() + "ccapi_rci_functions.c";
@@ -22,7 +19,7 @@ public class FileSourceCcapi extends FileGenerator {
     private String callbacksFile = "";
 
 	public FileSourceCcapi(String directoryPath) throws IOException {
-		super(directoryPath,SOURCE_NAME,fileType);
+		super(directoryPath,SOURCE_NAME);
         /* Need to create a header file + source file
          * fileWriter is source file writer.
          * So we need to create local header file.

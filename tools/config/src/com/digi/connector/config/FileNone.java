@@ -7,8 +7,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.digi.connector.config.ConfigGenerator.FileType;
-
 public class FileNone extends FileGenerator {
 
     private static String COPYRIGHT = "/*\n"
@@ -39,14 +37,12 @@ public class FileNone extends FileGenerator {
     "    char const * device_type;\n" +
     "} connector_remote_config_data_t;\n";
 
-
-    private static FileType fileType = FileType.NONE;
     private BufferedWriter functionWriter = null;
     private String functionFile = "";
     
     public FileNone(String directoryPath) throws IOException {
         
-        super(directoryPath,HEADER_FILENAME,fileType);
+        super(directoryPath,HEADER_FILENAME);
         functionFile = "remote_config.c";
 
         if(!ConfigGenerator.noBackupOption())

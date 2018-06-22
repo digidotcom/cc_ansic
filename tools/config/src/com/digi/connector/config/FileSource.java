@@ -7,11 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.digi.connector.config.ConfigGenerator.FileType;
-
 public class FileSource extends FileGenerator {
-
-    private static FileType fileType = FileType.SOURCE;
     private static String SOURCE_NAME = ConfigGenerator.getCustomPrefix() + "rci_config";
     
     private static BufferedWriter headerWriter = null;
@@ -19,7 +15,7 @@ public class FileSource extends FileGenerator {
 
 	public FileSource(String directoryPath) throws IOException {
 		
-		super(directoryPath,SOURCE_NAME+ ".c",fileType);
+		super(directoryPath,SOURCE_NAME+ ".c");
         /* Need to create a header file + source file
          * fileWriter is source file writer. 
          * So we need to create local header file.

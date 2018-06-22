@@ -111,7 +111,7 @@ public abstract class FileGenerator {
     private Boolean isFirstRemoteString;
     protected String customPrefix;
 
-    public FileGenerator(String directoryPath, String file_name, ConfigGenerator.FileType fileType) throws IOException {
+    public FileGenerator(String directoryPath, String file_name) throws IOException {
         if (directoryPath != null) {
             filePath = directoryPath;
             /* add a / if last char is not / */
