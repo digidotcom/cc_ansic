@@ -47,7 +47,7 @@ public class Element extends Item {
 	        return value;
 	    }
 
-	    public static Element.Type toType(String str) throws Exception {
+	    public static Type toType(String str) throws Exception {
 	        try {
 	            if (str.equalsIgnoreCase(STRING_0XHEX32)) {
 	                return X_HEX32;

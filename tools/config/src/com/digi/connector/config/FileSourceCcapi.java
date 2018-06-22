@@ -173,12 +173,10 @@ public class FileSourceCcapi extends FileGenerator {
     protected void writeAllCcapiStructures(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
         String define_name;
 
-        for (GroupType type : GroupType.values()) {
-            LinkedList<Group> groups = null;
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> groups = configData.getConfigGroup(type);
 
             configType = type.toString().toLowerCase();
-
-            groups = configData.getConfigGroup(configType);
 
             if (!groups.isEmpty()) {
                 writeGroupStructures(groups, bufferWriter);
@@ -211,12 +209,13 @@ public class FileSourceCcapi extends FileGenerator {
         String ccfsm_internal_data = "extern connector_remote_config_data_t const " + customPrefix + "rci_internal_data;\n";
         String ccapi_rci_data = ccfsm_internal_data + "ccapi_rci_data_t const " + customPrefix + "ccapi_rci_data =\n{";
 
-        GroupType type = GroupType.SETTING;
+        Group.Type type;
+        
+        type = Group.Type.SETTING;
         {
-        	LinkedList<Group> groups = null;
+        	LinkedList<Group> groups = configData.getConfigGroup(type);
 
-            configType = type.toString().toLowerCase();
-            groups = configData.getConfigGroup(configType);
+            configType = type.toLowerName();
 
         	ccapi_rci_data += String.format("\n    {");
             if (groups.isEmpty()) {
@@ -230,12 +229,11 @@ public class FileSourceCcapi extends FileGenerator {
         	ccapi_rci_data += String.format("\n    },");
         }
 
-        type = GroupType.STATE;
+        type = Group.Type.STATE;
         {
-        	LinkedList<Group> groups = null;
+        	LinkedList<Group> groups = configData.getConfigGroup(type);
 
-            configType = type.toString().toLowerCase();
-            groups = configData.getConfigGroup(configType);
+            configType = type.toLowerName();
 
         	ccapi_rci_data += String.format("\n    {");
             if (groups.isEmpty()) {

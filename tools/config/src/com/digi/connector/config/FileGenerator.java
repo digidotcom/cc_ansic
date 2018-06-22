@@ -159,7 +159,7 @@ public abstract class FileGenerator {
     abstract void generateFile(ConfigData configData) throws Exception;
 
     private void writeElementTypeEnums(EnumSet<Element.Type> typesSeen) throws IOException {
-    	LinkedList<String> enum_lines = new LinkedList<String>();
+    	LinkedList<String> enum_lines = new LinkedList<>();
         int previous = -1;
         for (Element.Type type : typesSeen) {
             String enum_line = "    connector_element_type_" + type.toLowerName();
@@ -368,11 +368,10 @@ public abstract class FileGenerator {
         }
         bufferWriter.write(session_prototype);
 
-        for (GroupType type : GroupType.values()) {
-            LinkedList<Group> groups = null;
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> groups = configData.getConfigGroup(type);;
 
-            configType = type.toString().toLowerCase();
-            groups = configData.getConfigGroup(configType);
+            configType = type.toLowerName();
 
             if (!groups.isEmpty()) {
                 for (Group group : groups) {
@@ -568,10 +567,8 @@ public abstract class FileGenerator {
         }
         bufferWriter.write(session_function);
 
-        for (GroupType type : GroupType.values()) {
-            configType = type.toString().toLowerCase();
-            
-            LinkedList<Group> groups = configData.getConfigGroup(configType);
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> groups = configData.getConfigGroup(type);
             for (Group group : groups) {
                 String group_function = setFunction(group.getName(), String.format("%srci_%s_%s_start(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
                 group_function += setFunction(group.getName(), String.format("%srci_%s_%s_end(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
@@ -1115,13 +1112,10 @@ public abstract class FileGenerator {
 
         writeRciErrorsRemoteAllStrings(configData, bufferWriter);
 
-        for (GroupType type : GroupType.values()) {
-            LinkedList<Group> theConfig = null;
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> theConfig = configData.getConfigGroup(type);
 
-            configType = type.toString().toLowerCase();
-
-            theConfig = configData.getConfigGroup(configType);
-
+            configType = type.toLowerName();
             if (!theConfig.isEmpty()) {
                 writeGroupRemoteAllStrings(theConfig, bufferWriter);
             }
@@ -1134,13 +1128,11 @@ public abstract class FileGenerator {
     }
 
     protected void writeDefineGroupErrors(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
-        for (GroupType type : GroupType.values()) {
+        for (Group.Type type : Group.Type.values()) {
             String defineName = null;
-            LinkedList<Group> groups = null;
+            LinkedList<Group> groups = configData.getConfigGroup(type);
 
-            configType = type.toString().toLowerCase();
-
-            groups = configData.getConfigGroup(configType);
+            configType = type.toLowerName();
 
             for (Group group : groups) {
                 defineName = getDefineString(group.getName());
@@ -1399,12 +1391,10 @@ public abstract class FileGenerator {
     }
 
     protected void writeAllStructures(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
-        for (GroupType type : GroupType.values()) {
-            LinkedList<Group> groups = null;
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> groups = configData.getConfigGroup(type);
 
-            configType = type.toString().toLowerCase();
-
-            groups = configData.getConfigGroup(configType);
+            configType = type.toLowerName();
 
             if (!groups.isEmpty()) {
                 writeGroupStructures(groups, bufferWriter);
@@ -1446,33 +1436,26 @@ public abstract class FileGenerator {
             }
         }
 
-        String rciGroupString = String.format("static connector_remote_group_table_t CONST %s[] = {\n",
-                                                CONNECTOR_REMOTE_GROUP_TABLE);
+    	LinkedList<String> group_lines = new LinkedList<>();
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> groups = configData.getConfigGroup(type);
 
-        for (GroupType type : GroupType.values()) {
-            LinkedList<Group> groups = null;
-
-            configType = type.toString().toLowerCase();
-
-            groups = configData.getConfigGroup(configType);
-
-            if (type.getIndex() != 0) {
-                rciGroupString += ",\n";
-            }
-
-            rciGroupString += " {";
             if (!groups.isEmpty()) {
-                rciGroupString += String.format(" %sconnector_%s_groups,\n   ARRAY_SIZE(%sconnector_%s_groups)\n }",
-                                                   customPrefix,configType,customPrefix, configType);
-
+            	group_lines.add("    { NULL, 0 }");
             } else {
-                rciGroupString += "NULL,\n 0\n }";
+                String var_name = customPrefix + "connector_" + type.toLowerName() + "_groups";
+
+                group_lines.add(String.format("    { %s, ARRAY_SIZE(%s) }", var_name, var_name));
             }
 
         }
-        rciGroupString += "\n};\n\n";
 
-        bufferWriter.write(rciGroupString);
+        bufferWriter.write(
+        		String.format("static connector_remote_group_table_t CONST %s[] =\n", CONNECTOR_REMOTE_GROUP_TABLE) +
+        		"{\n" +
+        		String.join(",\n", group_lines) + "\n" +
+                "};\n" +
+        		"\n");
     }
 
     protected void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
@@ -1517,11 +1500,11 @@ public abstract class FileGenerator {
 
         if (errorIndex == 0)
         {
-                String defaultErrorsStrings = "";
+            String defaultErrorsStrings = "";
 
-                defaultErrorsStrings += enumDefine + "_" + "NONE,\n";
-                bufferWriter.write(defaultErrorsStrings.toUpperCase());
-                return;
+            defaultErrorsStrings += enumDefine + "_" + "NONE,\n";
+            bufferWriter.write(defaultErrorsStrings.toUpperCase());
+            return;
         }
 
         for (String key : errorMap.keySet()) {
@@ -1657,11 +1640,10 @@ public abstract class FileGenerator {
 
     protected void writeGroupTypeAndErrorEnum(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
 
-        for (GroupType type : GroupType.values()) {
-	        LinkedList<Group> groups = null;
+        for (Group.Type type : Group.Type.values()) {
+	        LinkedList<Group> groups = configData.getConfigGroup(type);
 
-	        configType = type.toString().toLowerCase();
-	        groups = configData.getConfigGroup(configType);
+            configType = type.toLowerName();
 
 	        if (!groups.isEmpty()) {
 	            /* build group enum string for group enum */

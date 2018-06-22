@@ -70,21 +70,11 @@ public class Descriptors {
         } else {
             ConfigGenerator.log("\nProcessing Descriptors, please wait...");
             int id = 1;
-            for (GroupType type : GroupType.values()) {
-                LinkedList<Group> groups = null;
-
-                String configType = type.toString().toLowerCase();
-
-                try {
-                    groups = configData.getConfigGroup(configType);
-
-                } catch (Exception e) {
-                    /* end of the ConfigData ConfigType */
-                    break;
-                }
+            for (Group.Type type : Group.Type.values()) {
+                LinkedList<Group> groups = configData.getConfigGroup(type);
 
                 /* Descriptors must be uploaded even if the group is empty */
-                sendDescriptors(configType, groups, configData, id);
+                sendDescriptors(type, groups, configData, id);
                 /* add 2 because sendDescriptors uploads 2 sets of descriptors (query and set ). */
                 id += 2;
             }
@@ -279,17 +269,17 @@ public class Descriptors {
     	return result;
     }
     
-    private void sendDescriptors(String config_type, LinkedList<Group> groups, ConfigData configData, int id) throws Exception {
-        String desc = SETTING_DESCRIPTOR_DESCRIPTION;
+    private void sendDescriptors(Group.Type type, LinkedList<Group> groups, ConfigData configData, int id) throws Exception {
+        String desc = (type == Group.Type.SETTING)
+        	? SETTING_DESCRIPTOR_DESCRIPTION
+        	: STATE_DESCRIPTOR_DESCRIPTION;
+        String config_type = type.toLowerName();
         StringBuilder createBinIdLogBuffer = ConfigGenerator.createBinIdLogOption()
         	? new StringBuilder()
         	: null;
         BufferedReader bin_id_reader = ConfigGenerator.useBinIdLogOption()
         	? new BufferedReader(new FileReader("bin_id_" + config_type + ".log"))
         	: null;
-
-        if (config_type.equalsIgnoreCase(GroupType.STATE.toString()))
-            desc = STATE_DESCRIPTOR_DESCRIPTION;
 
         String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups` bin_id=`%d`>\n",
                                                   config_type, desc, config_type, id);
@@ -378,22 +368,14 @@ public class Descriptors {
             bin_id_reader.close();
     }
 
-    private void sendRciDescriptors(ConfigData configData) throws IOException {
+    private void sendRciDescriptors(ConfigData configData) throws Exception {
         String descriptors = RCI_DESCRIPTORS;
 
-        for (GroupType type : GroupType.values()) {
-            LinkedList<Group> groups = null;
+        for (Group.Type type : Group.Type.values()) {
+            LinkedList<Group> groups = configData.getConfigGroup(type);
 
-            String configType = type.toString().toLowerCase();
+            String configType = type.toLowerName();
 
-            try {
-
-                groups = configData.getConfigGroup(configType);
-
-            } catch (Exception e) {
-                /* end of the ConfigData ConfigType */
-                break;
-            }
             if (!groups.isEmpty()) {
                 descriptors += String.format("<descriptor element=`query_%s` dscr_avail=`true` />\n", configType)
                                + String.format("<descriptor element=`set_%s` dscr_avail=`true` />\n", configType);

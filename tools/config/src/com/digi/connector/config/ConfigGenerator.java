@@ -646,17 +646,15 @@ public class ConfigGenerator {
 
             if (fileTypeOption() != FileType.GLOBAL_HEADER) {
                 Parser.processFile(filename, configData);
-    
-                if ((configData.getSettingGroups().isEmpty())
-                        && (configData.getStateGroups().isEmpty())) {
-                    throw new IOException("No groups specified in file: "
-                            + filename);
-                }
+                
+                int setting_groups = configData.getConfigGroup(Group.Type.SETTING).size(); 
+                int state_groups = configData.getConfigGroup(Group.Type.STATE).size(); 
+                int total_groups = setting_groups + state_groups;
+                if (total_groups == 0)
+                    throw new IOException("No groups specified in file: " + filename);
 
-                debug_log("Number of setting groups: "
-                        + configData.getSettingGroups().size());
-                debug_log("Number of state groups: "
-                        + configData.getStateGroups().size());
+                debug_log("Number of setting groups: " + setting_groups);
+                debug_log("Number of state groups: " + state_groups);
             }
             
             /* Generate H and C files */

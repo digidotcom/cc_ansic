@@ -1,7 +1,6 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import com.digi.connector.config.Element;
 public class ConfigData {
 
     /* user setting and state groups */
-    private ArrayList<LinkedList<Group>> groupList;
+    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
 
     private RciStrings userGlobalErrors = new RciStrings();
 
@@ -36,9 +35,9 @@ public class ConfigData {
     private static ConfigData instance; 
     
     private ConfigData() throws Exception {
-        groupList = new ArrayList<LinkedList<Group>>();
-        groupList.add(GroupType.toGroupType("setting").getIndex(), new LinkedList<Group>());
-        groupList.add(GroupType.toGroupType("state").getIndex(), new LinkedList<Group>());
+        groupList = new LinkedHashMap<Group.Type, LinkedList<Group>>(2);
+        groupList.put(Group.Type.SETTING, new LinkedList<Group>());
+        groupList.put(Group.Type.STATE, new LinkedList<Group>());
 
         rciErrorMap.put(rciGlobalErrors, 1);
         rciErrorMap.put(userGlobalErrors, rciGlobalErrors.size() + 1);
@@ -55,20 +54,8 @@ public class ConfigData {
     	return instance;
     }
 
-    public LinkedList<Group> getSettingGroups() throws Exception {
-        return getConfigGroup("setting");
-    }
-
-    public LinkedList<Group> getStateGroups() throws Exception {
-        return getConfigGroup("state");
-    }
-
-    public LinkedList<Group> getConfigGroup(String type) throws Exception {
-        GroupType groupType = GroupType.toGroupType(type);
-
-        LinkedList<Group> config = groupList.get(groupType.getIndex());
-
-        return config;
+    public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
+        return groupList.get(type);
     }
 
     public LinkedHashMap<String, String> getUserGlobalErrors() {

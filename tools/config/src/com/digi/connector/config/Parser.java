@@ -51,19 +51,15 @@ public class Parser {
                     /* parse name */
                     String nameStr = getName();
 
-                    /* make sure group name doesn't exist in setting and state config */
-                    String typeName = groupType.toLowerCase();
-                    LinkedList<Group> typeGroups = configData.getConfigGroup(typeName);
-
-                    for (Group group : typeGroups) {
-                        if (group.getName().equals(nameStr)) {
-                            /* duplicate */
-                            String desc = "name";
-                            throw new Exception("Duplicate <group> " + desc + ": " + nameStr);
-                        }
+                    // TODO: Seems like something we should check when we add it to the list. -ASK
+                    /* make sure group name doesn't exist in group */
+                    Group.Type type = Group.Type.toType(groupType);
+                    
+                    groupConfig = configData.getConfigGroup(type);
+                    if (groupConfig.contains(nameStr)) {
+                        throw new Exception("Duplicate <group> name: " + nameStr);
                     }
 
-                    groupConfig = configData.getConfigGroup(typeName);
                     groupLineNumber = tokenScanner.getLineNumber();
 
                     /* parse instances */
@@ -79,7 +75,7 @@ public class Parser {
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
                     configData.nameLength(UseNames.COLLECTIONS, nameStr.length());
                     
-                    String group_access = (typeName.compareToIgnoreCase("setting") == 0) ? "read_write" : "read_only"; 
+                    String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only"; 
                     while (tokenScanner.hasToken()) {
                         token = tokenScanner.getToken();
 
