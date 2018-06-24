@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -13,11 +12,11 @@ public class GenApiUserSourceFile extends GenSourceFile {
 	}
 
     public void writeContent(ConfigData configData) throws Exception {
-        fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-        fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
+        write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
+        write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
 
         /* write structures in source file */
-        writeAllCcapiStructures(configData, fileWriter);
+        writeAllCcapiStructures(configData);
     }
 
     private String getDefineString(String define_name) {
@@ -35,7 +34,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
         return "/* " + comment + " */";
     }
 
-    private void writeItemArrays(String prefix, ItemList list, BufferedWriter bufferWriter) throws Exception {
+    private void writeItemArrays(String prefix, ItemList list) throws Exception {
     	String current = String.format("static ccapi_rci_element_t const %s%s_elements[] = {",
         		customPrefix, getDefineString(prefix).toLowerCase());
 
@@ -59,7 +58,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
             } else {
                 ItemList items = (ItemList) item;
 
-            	writeItemArrays(prefix + "_" + items.getName(), items, bufferWriter);
+            	writeItemArrays(prefix + "_" + items.getName(), items);
 
             	// TODO: Not sure what to do about lists in the CCAPI version quite yet. Making them NULL for now to trigger an error. -ASK
                 current += 
@@ -74,21 +73,21 @@ public class GenApiUserSourceFile extends GenSourceFile {
         	current = current.substring(0, current.length() - 1);
         }
 
-        bufferWriter.write(current + "\n};\n\n");
+        write(current + "\n};\n\n");
     }
 
-    private void writeGroupStructures(LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
+    private void writeGroupStructures(LinkedList<Group> groups) throws Exception {
 
         for (int group_index = 0; group_index < groups.size(); group_index++) {
             Group group = groups.get(group_index);
 
             /* write element structure */
-            writeItemArrays(group.getName(), group, bufferWriter);
+            writeItemArrays(group.getName(), group);
         }
 
     }
 
-    private void writeAllCcapiStructures(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
+    private void writeAllCcapiStructures(ConfigData configData) throws Exception {
         String define_name;
 
         for (Group.Type type : Group.Type.values()) {
@@ -97,9 +96,9 @@ public class GenApiUserSourceFile extends GenSourceFile {
             configType = type.toString().toLowerCase();
 
             if (!groups.isEmpty()) {
-                writeGroupStructures(groups, bufferWriter);
+                writeGroupStructures(groups);
 
-                bufferWriter.write(String.format("static ccapi_rci_group_t const %sccapi_%s_groups[] =\n{", customPrefix, configType));
+                write(String.format("static ccapi_rci_group_t const %sccapi_%s_groups[] =\n{", customPrefix, configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
@@ -118,9 +117,9 @@ public class GenApiUserSourceFile extends GenSourceFile {
                     if (group_index < (groups.size() - 1)) {
                     	group_string += String.format(",");
                     }
-                    bufferWriter.write(group_string);
+                    write(group_string);
                 }
-                bufferWriter.write("\n};\n\n");
+                write("\n};\n\n");
             }
         }
 
@@ -180,6 +179,6 @@ public class GenApiUserSourceFile extends GenSourceFile {
         ccapi_rci_data += String.format("\n    &%srci_internal_data", customPrefix);
         ccapi_rci_data += "\n};\n\n";
 
-        bufferWriter.write(ccapi_rci_data);
+        write(ccapi_rci_data);
     }
 }

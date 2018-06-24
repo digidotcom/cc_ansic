@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -19,14 +18,13 @@ public class GenFsmSourceFile extends GenSourceFile {
     "} connector_remote_config_data_t;\n";
 
     private final static String FILENAME = "remote_config.c";
-    static public String getBasename() { return FILENAME; }
 
 	public GenFsmSourceFile(String dir) throws IOException {
 		super(dir, FILENAME, GenFile.Type.INTERNAL);
 	}
 
     public void writeContent(ConfigData configData) throws Exception {
-        writeFunctionFile(configData, fileWriter);
+        writeFunctionFile(configData);
     }
 
     private int prevRemoteStringLength;
@@ -48,17 +46,17 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
     }
 
-    private void writeDefineErrors(String prefixName, LinkedHashMap<String, String> errorMap, ConfigGenerator.FileType fileType,BufferedWriter bufferWriter) throws IOException {
+    private void writeDefineErrors(String prefixName, LinkedHashMap<String, String> errorMap, ConfigGenerator.FileType fileType) throws IOException {
         for (String key : errorMap.keySet()) {
             String defineName = prefixName.toUpperCase() + "_" + key.toUpperCase();
             /* define name string index for each error */
-            bufferWriter.write(getDefineStringIndex(defineName, errorMap.get(key), fileType));
+            write(getDefineStringIndex(defineName, errorMap.get(key), fileType));
         }
     }
 
-    private void writeDefineRciErrors(ConfigData configData,BufferedWriter bufferWriter) throws IOException {
+    private void writeDefineRciErrors(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE,bufferWriter);
+            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE);
         }
     }
 
@@ -66,7 +64,7 @@ public class GenFsmSourceFile extends GenSourceFile {
         return (configType.toUpperCase() + "_" + define_name.toUpperCase());
     }
 
-    private void writeDefineGroupErrors(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
+    private void writeDefineGroupErrors(ConfigData configData) throws Exception {
         for (Group.Type type : Group.Type.values()) {
             String defineName = null;
             LinkedList<Group> groups = configData.getConfigGroup(type);
@@ -86,7 +84,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                         /* define name string index for each error in the group
                          * #define [group name + ERROR + error name]
                          */
-                        bufferWriter.write(getDefineStringIndex(defineName, errorMap.get(key), ConfigGenerator.FileType.SOURCE));
+                        write(getDefineStringIndex(defineName, errorMap.get(key), ConfigGenerator.FileType.SOURCE));
                     }
                 }
             }
@@ -94,9 +92,9 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     }
 
-    private void writeDefineGlobalErrors(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
+    private void writeDefineGlobalErrors(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_ERROR, configData.getUserGlobalErrors(), ConfigGenerator.FileType.SOURCE,bufferWriter);
+            writeDefineErrors(GLOBAL_ERROR, configData.getUserGlobalErrors(), ConfigGenerator.FileType.SOURCE);
         }
     }
 
@@ -131,55 +129,55 @@ public class GenFsmSourceFile extends GenSourceFile {
         return quote_char;
     }
 
-    private void writeLinkedHashMapStrings(LinkedHashMap<String, String> stringMap,BufferedWriter bufferWriter) throws IOException {
+    private void writeLinkedHashMapStrings(LinkedHashMap<String, String> stringMap) throws IOException {
         for (String key : stringMap.keySet()) {
-            bufferWriter.write(getCharString(stringMap.get(key)));
+            write(getCharString(stringMap.get(key)));
         }
     }
 
-    private void writeRciErrorsRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
+    private void writeRciErrorsRemoteAllStrings(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getRciGlobalErrors(),bufferWriter);
+            writeLinkedHashMapStrings(configData.getRciGlobalErrors());
         }
     }
 
-    private void writeGroupRemoteAllStrings(LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
+    private void writeGroupRemoteAllStrings(LinkedList<Group> groups) throws Exception {
         for (Group group : groups) {
             if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 for (String key : errorMap.keySet()) {
-                    bufferWriter.write(getCharString(errorMap.get(key)));
+                    write(getCharString(errorMap.get(key)));
                 }
             }
         }
     }
 
-    private void writeErrorsRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
+    private void writeErrorsRemoteAllStrings(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getUserGlobalErrors(),bufferWriter);
+            writeLinkedHashMapStrings(configData.getUserGlobalErrors());
         }
     }
 
-    protected void writeRemoteAllStrings(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
+    protected void writeRemoteAllStrings(ConfigData configData) throws Exception {
         if (!ConfigGenerator.excludeErrorDescription()) {
-            bufferWriter.write(String.format("\nstatic char CONST %s[] = {\n",
+            write(String.format("\nstatic char CONST %s[] = {\n",
                     CONNECTOR_REMOTE_ALL_STRING));
         }
 
-        writeRciErrorsRemoteAllStrings(configData, bufferWriter);
+        writeRciErrorsRemoteAllStrings(configData);
 
         for (Group.Type type : Group.Type.values()) {
             LinkedList<Group> theConfig = configData.getConfigGroup(type);
 
             configType = type.toLowerName();
             if (!theConfig.isEmpty()) {
-                writeGroupRemoteAllStrings(theConfig, bufferWriter);
+                writeGroupRemoteAllStrings(theConfig);
             }
         }
-        writeErrorsRemoteAllStrings(configData, bufferWriter);
+        writeErrorsRemoteAllStrings(configData);
 
         if (!ConfigGenerator.excludeErrorDescription()) {
-            bufferWriter.write("\n};\n\n"); // end of CONNECTOR_REMOTE_ALL_STRING
+            write("\n};\n\n"); // end of CONNECTOR_REMOTE_ALL_STRING
         }
     }
 
@@ -192,38 +190,38 @@ public class GenFsmSourceFile extends GenSourceFile {
         return "/* " + comment + " */";
     }
 
-    private int writeErrorStructures(int errorCount, String prefix, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+    private int writeErrorStructures(int errorCount, String prefix, LinkedHashMap<String, String> errorMap) throws IOException {
     	String defineName = prefix.toUpperCase();
     	
         for (String key : errorMap.keySet()) {
-            bufferWriter.write(getRemoteString(defineName + "_" + key));
+            write(getRemoteString(defineName + "_" + key));
             errorCount--;
             if (errorCount > 0) {
-                bufferWriter.write(",");
+                write(",");
             }
-            bufferWriter.write(COMMENTED(key) + "\n");
+            write(COMMENTED(key) + "\n");
         }
 
         return errorCount;
     }
 
-    private void writeGlobalErrorStructures(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
+    private void writeGlobalErrorStructures(ConfigData configData) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
             int errorCount = configData.getRciGlobalErrors().size() + configData.getUserGlobalErrors().size();
 
             if (errorCount > 0) {
-                bufferWriter.write(String.format("static char const * const %ss[] = {\n", GLOBAL_RCI_ERROR));
+                write(String.format("static char const * const %ss[] = {\n", GLOBAL_RCI_ERROR));
 
                 /* top-level global errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(),  bufferWriter);
+                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR, configData.getRciGlobalErrors());
                 /* group global errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
+                errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR, configData.getUserGlobalErrors());
 
-                bufferWriter.write("};\n\n");
+                write("};\n\n");
             }
         }
         else {
-            bufferWriter.write(String.format("%s%ss NULL\n", DEFINE, GLOBAL_RCI_ERROR));
+            write(String.format("%s%ss NULL\n", DEFINE, GLOBAL_RCI_ERROR));
         }
     }
 
@@ -242,7 +240,7 @@ public class GenFsmSourceFile extends GenSourceFile {
         return (String.format("%s_element_%s_%s", CONNECTOR_PREFIX, type_name, element_name));
     }
 
-    private void writeCollectionArray(BufferedWriter bufferWriter, ItemList items, String prefix) throws Exception {
+    private void writeCollectionArray(ItemList items, String prefix) throws Exception {
     	// Traverse down the tree to define all the lists first as they need to be defined before the collections that include them are. 
         for (Item item: items.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
@@ -254,8 +252,8 @@ public class GenFsmSourceFile extends GenSourceFile {
                 	? String.format("    \"%s\",\n", element.getName())
                 	: "";
                 
-                bufferWriter.write("static connector_element_t CONST " + itemVariable + "_element = {\n");
-                bufferWriter.write(optional + "    " + getElementDefine("access", getAccess(element.getAccess())) + ",\n");
+                write("static connector_element_t CONST " + itemVariable + "_element = {\n");
+                write(optional + "    " + getElementDefine("access", getAccess(element.getAccess())) + ",\n");
                 
                 if (ConfigGenerator.rciParserOption()) {
                     String enum_struct;
@@ -270,34 +268,34 @@ public class GenFsmSourceFile extends GenSourceFile {
                     	enum_struct = "{ 0, NULL}, ";
                     }
                     
-                    bufferWriter.write(enum_struct);
+                    write(enum_struct);
                 }
-                bufferWriter.write(	"};\n\n");
+                write(	"};\n\n");
             } else {
             	ItemList subitems = (ItemList) item;
             	String subitemsPrefix = prefix + "__" + sanitizeName(item.getName()).toLowerCase();
             	
-            	writeCollectionArray(bufferWriter, subitems, subitemsPrefix);
+            	writeCollectionArray(subitems, subitemsPrefix);
             	
             	String subitemsVariable = itemVariable + "_items";
                 String optional = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
                     	? String.format("    \"%s\",\n", subitems.getName())
                     	: "";
             	
-                bufferWriter.write("static connector_collection_t CONST " + itemVariable + "_collection = {\n");
-                bufferWriter.write(optional + "    " + subitems.getInstances() + ", " + COMMENTED("instances") + "\n");
-                bufferWriter.write("    {\n");
-                bufferWriter.write("        " + subitems.getItems().size() + ", " + COMMENTED("items") + "\n");
-                bufferWriter.write("        " + subitemsVariable + "\n");
-                bufferWriter.write("    }\n");
-                bufferWriter.write("};\n\n");
+                write("static connector_collection_t CONST " + itemVariable + "_collection = {\n");
+                write(optional + "    " + subitems.getInstances() + ", " + COMMENTED("instances") + "\n");
+                write("    {\n");
+                write("        " + subitems.getItems().size() + ", " + COMMENTED("items") + "\n");
+                write("        " + subitemsVariable + "\n");
+                write("    }\n");
+                write("};\n\n");
             }
         }
         
         // Then write the array for this level
     	String itemsVariable = getDefineString(customPrefix + prefix).toLowerCase();
     	boolean first = true;
-        bufferWriter.write("static connector_item_t CONST " + itemsVariable + "_items[] = {\n");
+        write("static connector_item_t CONST " + itemsVariable + "_items[] = {\n");
         for (Item item: items.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -313,37 +311,37 @@ public class GenFsmSourceFile extends GenSourceFile {
             	suffix = "_collection";
             }
             if (!first) {
-            	bufferWriter.write(",\n");
+            	write(",\n");
             } else {
             	first = false;
             }
             
             String itemVariable = getDefineString(customPrefix + prefix + "__" + sanitizeName(item.getName())).toLowerCase() + suffix;
-            bufferWriter.write("{ " + getElementDefine("type", type) + ", { &" + itemVariable + " } }");
+            write("{ " + getElementDefine("type", type) + ", { &" + itemVariable + " } }");
         }
-        bufferWriter.write("\n};\n\n");
+        write("\n};\n\n");
     }
     
-    private void writeEnumArray(BufferedWriter bufferWriter, Element element, String prefix) throws Exception {
+    private void writeEnumArray(Element element, String prefix) throws Exception {
         boolean first = true;
         String define_name = getDefineString(prefix + "__" + element.getName() + "_enum");
         
-        bufferWriter.write(String.format("static connector_element_enum_t CONST %s%s[] = {\n",
+        write(String.format("static connector_element_enum_t CONST %s%s[] = {\n",
                 customPrefix, define_name.toLowerCase()));
         
         for (Value value : element.getValues()) {
         	if (!first) {
-                bufferWriter.write(",\n");
+                write(",\n");
         	} else {
         		first = false;
         	}
         	
-            bufferWriter.write(String.format("    {\"%s\"}",value.getName()));
+            write(String.format("    {\"%s\"}",value.getName()));
         }
-        bufferWriter.write("\n};\n\n");
+        write("\n};\n\n");
     }
 
-    private void writeEnumArrays(BufferedWriter bufferWriter, ItemList items, String prefix) throws Exception{
+    private void writeEnumArrays(ItemList items, String prefix) throws Exception{
         for (Item item: items.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -351,58 +349,58 @@ public class GenFsmSourceFile extends GenSourceFile {
                 Element element = (Element) item;
                 
                 if (element.getType() == Element.Type.ENUM) {
-                	writeEnumArray(bufferWriter, element, prefix);
+                	writeEnumArray(element, prefix);
                 }
             } else {
             	ItemList subitems = (ItemList) item;
             	
-            	writeEnumArrays(bufferWriter, subitems, prefix + "__" + sanitizeName(subitems.getName()));
+            	writeEnumArrays(subitems, prefix + "__" + sanitizeName(subitems.getName()));
             }
         }
     }
 
-    private void writeCollectionArrays(BufferedWriter bufferWriter, ItemList items, String prefix) throws Exception {
+    private void writeCollectionArrays(ItemList items, String prefix) throws Exception {
         if (ConfigGenerator.rciParserOption()) {
-            writeEnumArrays(bufferWriter, items, prefix);
+            writeEnumArrays(items, prefix);
         }
 
-        writeCollectionArray(bufferWriter, items, prefix);
+        writeCollectionArray(items, prefix);
     }
 
-    private void writeLocalErrorStructures(String error_name, LinkedHashMap<String, String> localErrors, BufferedWriter bufferWriter) throws IOException {
+    private void writeLocalErrorStructures(String error_name, LinkedHashMap<String, String> localErrors) throws IOException {
         if (!ConfigGenerator.excludeErrorDescription()) {
         	int errorCount = localErrors.size();
         	 
 	        if (errorCount > 0) {
 	            String define_name = getDefineString(error_name + "_" + ERROR);
 	            
-	            bufferWriter.write(CHAR_CONST_STRING + customPrefix + define_name.toLowerCase() + "s[] = {\n");
-	            writeErrorStructures(errorCount, define_name, localErrors, bufferWriter);
-	            bufferWriter.write("};\n\n");
+	            write(CHAR_CONST_STRING + customPrefix + define_name.toLowerCase() + "s[] = {\n");
+	            writeErrorStructures(errorCount, define_name, localErrors);
+	            write("};\n\n");
 	        }
 	    }
     }
     
-    private void writeGroupStructures(LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
+    private void writeGroupStructures(LinkedList<Group> groups) throws Exception {
         for (Group group: groups) {
-            writeCollectionArrays(bufferWriter, group, group.getName());
+            writeCollectionArrays(group, group.getName());
             
             if (!ConfigGenerator.excludeErrorDescription()) {
-            	writeLocalErrorStructures(group.getName(), group.getErrors(), bufferWriter);
+            	writeLocalErrorStructures(group.getName(), group.getErrors());
             }
         }
     }
 
-    private void writeAllStructures(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
+    private void writeAllStructures(ConfigData configData) throws Exception {
         for (Group.Type type : Group.Type.values()) {
             LinkedList<Group> groups = configData.getConfigGroup(type);
 
             configType = type.toLowerName();
 
             if (!groups.isEmpty()) {
-                writeGroupStructures(groups, bufferWriter);
+                writeGroupStructures(groups);
 
-                bufferWriter.write(String.format("static connector_group_t CONST %sconnector_%s_groups[] = {", customPrefix, configType));
+                write(String.format("static connector_group_t CONST %sconnector_%s_groups[] = {", customPrefix, configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
@@ -433,9 +431,9 @@ public class GenFsmSourceFile extends GenSourceFile {
                     } else {
                         group_string += "}\n";
                     }
-                    bufferWriter.write(group_string);
+                    write(group_string);
                 }
-                bufferWriter.write("\n};\n\n");
+                write("\n};\n\n");
             }
         }
 
@@ -453,7 +451,7 @@ public class GenFsmSourceFile extends GenSourceFile {
 
         }
 
-        bufferWriter.write(
+        write(
         		String.format("static connector_remote_group_table_t CONST %s[] =\n", CONNECTOR_REMOTE_GROUP_TABLE) +
         		"{\n" +
         		String.join(",\n", group_lines) + "\n" +
@@ -461,9 +459,9 @@ public class GenFsmSourceFile extends GenSourceFile {
         		"\n");
     }
 
-    private void writeFunctionFile(ConfigData configData, BufferedWriter bufferWriter) throws Exception
+    private void writeFunctionFile(ConfigData configData) throws Exception
     {
-        bufferWriter.write(String.format("%s", CONNECTOR_GLOBAL_HEADER));
+        write(String.format("%s", CONNECTOR_GLOBAL_HEADER));
 
         /*
          * Start writing:
@@ -471,27 +469,27 @@ public class GenFsmSourceFile extends GenSourceFile {
          * 2. all #define for all RCI and user's global errors
          * 3. all strings in connector_remote_all_strings[]
          */
-        bufferWriter.write("\n\n#define CONST const \n");
+        write("\n\n#define CONST const \n");
 
         /* Write Define Errors Macros */
-        writeDefineRciErrors(configData,bufferWriter);
+        writeDefineRciErrors(configData);
 
-        writeDefineGroupErrors(configData,bufferWriter);
+        writeDefineGroupErrors(configData);
 
-        writeDefineGlobalErrors(configData,bufferWriter);
+        writeDefineGlobalErrors(configData);
 
         /* write remote all strings in source file */
-        writeRemoteAllStrings(configData,bufferWriter);
+        writeRemoteAllStrings(configData);
 
         /* write connector_rci_errors[] */
-        writeGlobalErrorStructures(configData,bufferWriter);
+        writeGlobalErrorStructures(configData);
 
         /* write structures in source file */
-        writeAllStructures(configData,bufferWriter);
+        writeAllStructures(configData);
 
         int GlobalErrorCount = configData.getUserGlobalErrors().size() + configData.rciGlobalErrors.size();
 
-        bufferWriter.write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
+        write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
             "    connector_group_table,\n"+
             "    connector_rci_errors,\n"+
             "    %d,\n"+

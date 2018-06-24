@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -37,16 +36,16 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         writeDefinesAndStructures(configData);
         
         /* Write all group enum in H file */
-        writeRciErrorEnumHeader(configData, fileWriter);
-        writeGlobalErrorEnumHeader(configData, fileWriter);
+        writeRciErrorEnumHeader(configData);
+        writeGlobalErrorEnumHeader(configData);
 
-        writeGroupTypeAndErrorEnum(configData,fileWriter);
+        writeGroupTypeAndErrorEnum(configData);
 
-        fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
+        write(CONNECTOR_REMOTE_CONFIG_DATA);
 
-        fileWriter.write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
+        write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
 
-        fileWriter.write(
+        write(
     		"\n" + 
         	"#if !defined _CONNECTOR_API_H\n" + 
         	"#error \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n" + 
@@ -104,7 +103,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         if (floatInclude != null)
             headerString += "\n\n" + floatInclude;
 
-        fileWriter.write(headerString);
+        write(headerString);
     }
 
     private void writeElementTypeEnums(EnumSet<Element.Type> typesSeen) throws IOException {
@@ -123,7 +122,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
 
         assert(enum_lines.size() != 0);
-        fileWriter.write(
+        write(
         	"\n" +
         	"\n" + 
         	"typedef enum {\n" +
@@ -268,7 +267,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         if(ConfigGenerator.rciParserOption())
             headerString += defineElementString;
-        fileWriter.write(headerString);
+        write(headerString);
     }
 
     /* returns field name (or "" if not used) */
@@ -287,7 +286,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                     break;
                     
                 case NONE:
-                    fileWriter.write(String.format("\n" + "#define RCI_%s_NAME_MAX_SIZE %d",
+                    write(String.format("\n" + "#define RCI_%s_NAME_MAX_SIZE %d",
                     	name, configData.getMaxNameLength(type) + 1));
             }
             field = String.format("    char name[RCI_%s_NAME_MAX_SIZE];\n", name);
@@ -300,10 +299,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         String element_name_struct_field = writeGroupElementDefine(configData, UseNames.ELEMENTS);
         String collection_name_struct_field = writeGroupElementDefine(configData, UseNames.COLLECTIONS);
 
-        fileWriter.write("\n");
+        write("\n");
         
         if (ConfigGenerator.rciParserOption()) {
-            fileWriter.write(
+            write(
         		"\ntypedef struct {\n" +
                 "    char const * const name;\n" +
                 "} connector_element_enum_t;\n"
@@ -319,7 +318,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 "    } enums;\n";
         }
 
-        fileWriter.write(
+        write(
            		"\n" + 
     	        "typedef struct {\n" + 
         		element_name_struct_field +
@@ -328,7 +327,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	        "} connector_element_t;\n"
     	        );
             
-        fileWriter.write(
+        write(
            		"\n" + 
     	        "typedef struct {\n" + 
         		collection_name_struct_field +
@@ -340,7 +339,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	        "} connector_collection_t;\n"
     	        );
             
-        fileWriter.write(
+        write(
     		"\n" + 
     		"typedef struct connector_item {\n" +
             "    connector_element_value_type_t type;\n" +
@@ -351,7 +350,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     		"} connector_item_t;\n"
             );
 
-        fileWriter.write(
+        write(
         		"\ntypedef struct {\n" +
                 "    connector_collection_t collection;\n" +
                 "    struct {\n" +
@@ -371,20 +370,20 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         writeDefineOptionHeader(configData);
 
         if(ConfigGenerator.rciLegacyEnabled()){
-            fileWriter.write(RCI_LEGACY_DEFINE);
+            write(RCI_LEGACY_DEFINE);
         }
         if(ConfigGenerator.rciParserOption()){
-            fileWriter.write(RCI_PARSER_DEFINE);
+            write(RCI_PARSER_DEFINE);
         }
 
-        fileWriter.write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, ConfigData.AttributeMaxLen()));
+        write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, ConfigData.AttributeMaxLen()));
         if (haveLists) {
-            fileWriter.write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, configData.getMaxDepth()));
+            write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, configData.getMaxDepth()));
         }
 
 
     	if (typesSeen.contains(Element.Type.ON_OFF)) {
-            fileWriter.write(
+            write(
         		"\n" +
         		"typedef enum {\n" +
                 "    connector_off,\n" +
@@ -403,7 +402,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	list_end   = "    connector_request_id_remote_config_list_end,\n";
         }
         
-        fileWriter.write("\ntypedef enum {\n" +
+        write("\ntypedef enum {\n" +
                          "    connector_request_id_remote_config_session_start,\n" +
                          "    connector_request_id_remote_config_action_start,\n" +
                          "    connector_request_id_remote_config_group_start,\n" +
@@ -416,31 +415,31 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                          "    connector_request_id_remote_config_session_cancel");
         
         if (ConfigGenerator.rciLegacyEnabled()){
-            fileWriter.write(",\n    connector_request_id_remote_config_do_command,\n" +
+            write(",\n    connector_request_id_remote_config_do_command,\n" +
                              "    connector_request_id_remote_config_reboot,\n" +
                              "    connector_request_id_remote_config_set_factory_def");
         }
-        fileWriter.write("\n} connector_request_id_remote_config_t;\n");
+        write("\n} connector_request_id_remote_config_t;\n");
         
-        fileWriter.write(
+        write(
         	"\n" +
         	"/* deprecated */\n" +
         	"#define connector_request_id_remote_config_group_process connector_request_id_remote_config_element_process\n"
         	);
 
-        fileWriter.write("\ntypedef enum {\n" +
+        write("\ntypedef enum {\n" +
                          "    connector_remote_action_set,\n" +
                          "    connector_remote_action_query");
         if (ConfigGenerator.rciLegacyEnabled()){
-            fileWriter.write(",\n    connector_remote_action_do_command,\n" +
+            write(",\n    connector_remote_action_do_command,\n" +
                              "    connector_remote_action_reboot,\n" +
                              "    connector_remote_action_set_factory_def");
         }
-        fileWriter.write("\n} connector_remote_action_t;\n");
+        write("\n} connector_remote_action_t;\n");
 
-        fileWriter.write(CONNECTOR_REMOTE_GROUP_TYPE);
+        write(CONNECTOR_REMOTE_GROUP_TYPE);
 
-        fileWriter.write(CONNECTOR_ELEMENT_ACCESS);
+        write(CONNECTOR_ELEMENT_ACCESS);
 
         writeGroupElementStructs(configData);
 
@@ -449,9 +448,9 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 			: "";
         
         if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
-            fileWriter.write("\n"+ DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n");
+            write("\n"+ DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n");
         }
-        fileWriter.write(
+        write(
         	"\n" + 
         	"typedef struct {\n" +
             "    connector_remote_group_type_t type;\n" +
@@ -465,9 +464,9 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 			? "        char const * CONST name;\n"
 			: "";
         if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
-            fileWriter.write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
+            write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
         }
-        fileWriter.write(
+        write(
     		"\n" + 
     		"typedef struct {\n" +
             "    unsigned int id;\n" +
@@ -477,24 +476,24 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "} connector_remote_element_t;\n"
             );
         
-        fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_SOURCE);
-        fileWriter.write(RCI_QUERY_SETTING_ATTRIBUTE_COMPARE_TO);
+        write(RCI_QUERY_SETTING_ATTRIBUTE_SOURCE);
+        write(RCI_QUERY_SETTING_ATTRIBUTE_COMPARE_TO);
 
-        fileWriter.write("\ntypedef struct {\n" +
+        write("\ntypedef struct {\n" +
                          "  rci_query_setting_attribute_source_t source;\n" +
                          "  rci_query_setting_attribute_compare_to_t compare_to;\n");
         if (ConfigGenerator.rciLegacyEnabled()){
-            fileWriter.write("  char const * target;\n");
+            write("  char const * target;\n");
         }
-        fileWriter.write("} connector_remote_attribute_t;\n");
+        write("} connector_remote_attribute_t;\n");
 
-        fileWriter.write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
+        write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
 
         if (haveLists) {
         	optional_field = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
     			? "        char const * CONST name;\n"
 				: "";
-            fileWriter.write(
+            write(
            		"\n" +
            		"typedef struct {\n" +
         	    "    unsigned int depth;\n" +
@@ -510,7 +509,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         optional_field = haveLists
     		? "    connector_remote_list_t CONST list;\n"
 			: "";
-        fileWriter.write(
+        write(
        		"\n" +
        		"typedef struct {\n" +
     	    "    void * user_context;\n" +
@@ -529,8 +528,8 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	    "} connector_remote_config_t;\n"
     	    );
 
-        fileWriter.write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
-        fileWriter.write(CONNECTOR_REMOTE_GROUP_TABLE_T);
+        write(CONNECTOR_REMOTE_CONFIG_CANCEL_T);
+        write(CONNECTOR_REMOTE_GROUP_TABLE_T);
 
     }
     
@@ -538,7 +537,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         return "/* " + comment + " */";
     }
 
-    private void writeErrorHeader(String type, int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+    private void writeErrorHeader(String type, int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
 
         for (String key : errorMap.keySet()) {
             String error_string = enumDefine + "_" + key;
@@ -554,11 +553,11 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             } else {
                 error_string += ",\n";
             }
-            bufferWriter.write(error_string);
+            write(error_string);
         }
     }
 
-    private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+    private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
 
         for (String key : errorMap.keySet()) {
             String error_string = " " + enumDefine + "_" + key;
@@ -570,27 +569,27 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
             error_string += ",\n";
 
-            bufferWriter.write(error_string);
+            write(error_string);
         }
     }
 
-    private void writeRciErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter ) throws IOException {
+    private void writeRciErrorEnumHeader(ConfigData configData ) throws IOException {
 
     /* write typedef enum for rci errors */
-        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
-        writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), bufferWriter);
-        bufferWriter.write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + customPrefix  + GLOBAL_RCI_ERROR + ID_T_STRING);
+        write("\n" + TYPEDEF_ENUM + " " + GLOBAL_RCI_ERROR + "_" + OFFSET_STRING + " = 1,\n");
+        writeErrorHeader(configData.getRciGlobalErrorsIndex(),GLOBAL_RCI_ERROR, configData.getRciGlobalErrors());
+        write(" " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + "\n} " + customPrefix  + GLOBAL_RCI_ERROR + ID_T_STRING);
     }
 
-    private void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
+    private void writeGlobalErrorEnumHeader(ConfigData configData) throws IOException {
 
         String index_string = "";
         /* write typedef enum for user global error */
         String enumName = GLOBAL_ERROR + "_" + OFFSET_STRING;
 
-        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
+        write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
 
-        writeErrorHeader(1,GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
+        writeErrorHeader(1,GLOBAL_ERROR, configData.getUserGlobalErrors());
 
         String endString = String.format(" %s_%s%s", GLOBAL_ERROR, COUNT_STRING, index_string);
 
@@ -599,7 +598,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
         endString += "\n} " + customPrefix + GLOBAL_ERROR + ID_T_STRING;
 
-        bufferWriter.write(endString);
+        write(endString);
 
     }
 
@@ -622,11 +621,11 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	return name.replace('-', '_');
     }
 
-    private void writeEnumHeader(BufferedWriter bufferWriter, Element element, String prefix) throws Exception {
+    private void writeEnumHeader(Element element, String prefix) throws Exception {
         boolean explicit = false;
         int index = 0;
         
-        bufferWriter.write(TYPEDEF_ENUM);
+        write(TYPEDEF_ENUM);
         for (Value value : element.getValues()) {
             if (value.getName().equals(""))
             	explicit = true;
@@ -637,14 +636,14 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             		line += " = " + index;
             		explicit = false;
             	}
-                bufferWriter.write(line + ",\n");
+                write(line + ",\n");
             }
             index++;
         }
-        bufferWriter.write(endEnumString(prefix));
+        write(endEnumString(prefix));
     }
     
-    private void writeListEnumHeader(BufferedWriter bufferWriter, ItemList list, String prefix) throws Exception {
+    private void writeListEnumHeader(ItemList list, String prefix) throws Exception {
         String element_enum_string = TYPEDEF_ENUM;
 
         for (Item item : list.getItems()) {
@@ -658,17 +657,17 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 element_enum_string += getEnumString(item_prefix) + ",\n";
 
                 if (element.getType() == Element.Type.ENUM) {
-                	writeEnumHeader(bufferWriter, element, item_prefix);
+                	writeEnumHeader(element, item_prefix);
                 }
             } else {
                 ItemList sublist = (ItemList) item;
                 
-                writeListEnumHeader(bufferWriter, sublist, item_prefix + "_");
+                writeListEnumHeader(sublist, item_prefix + "_");
             }
         }
         element_enum_string += endEnumString(prefix);
 
-        bufferWriter.write(element_enum_string);
+        write(element_enum_string);
     }
     
     private String getEnumString(String enum_name) {
@@ -680,16 +679,16 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         return str;
     }
 
-    private void writeAllEnumHeaders(ConfigData configData, LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
+    private void writeAllEnumHeaders(ConfigData configData, LinkedList<Group> groups) throws Exception {
 
         for (Group group : groups) {
-        	writeListEnumHeader(bufferWriter, group, group.getName());
+        	writeListEnumHeader(group, group.getName());
         	
             if (!group.getErrors().isEmpty()) {
-                bufferWriter.write(TYPEDEF_ENUM);
+                write(TYPEDEF_ENUM);
 
-                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors(), bufferWriter);
-                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
+                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors());
+                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors());
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
@@ -705,14 +704,14 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                     enumString += ",\n";
                     }
 
-                    bufferWriter.write(enumString);
+                    write(enumString);
                 }
-                bufferWriter.write(endEnumString(group.getName() + "_" + ERROR));
+                write(endEnumString(group.getName() + "_" + ERROR));
             }
         }
     }
 
-    private void writeGroupTypeAndErrorEnum(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
+    private void writeGroupTypeAndErrorEnum(ConfigData configData) throws Exception {
 
         for (Group.Type type : Group.Type.values()) {
 	        LinkedList<Group> groups = configData.getConfigGroup(type);
@@ -724,7 +723,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 	            String group_enum_string = TYPEDEF_ENUM;
 
 	            /* Write all enum in H file */
-	            writeAllEnumHeaders(configData,groups, bufferWriter);
+	            writeAllEnumHeaders(configData,groups);
 
 	            for (Group group : groups) {
 	                /* add each group enum */
@@ -733,7 +732,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
 	            /* write group enum buffer to fileWriter */
 	            group_enum_string += endEnumString(null);
-	            bufferWriter.write(group_enum_string);
+	            write(group_enum_string);
 	        }
 	    }
     }

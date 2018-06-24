@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
@@ -13,8 +12,8 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
 		super(dir, FILE, GenFile.Type.USER);
 	}
 
-    private void generateUseNamesHeader(BufferedWriter writer, String type, int amount) throws IOException {
-        writer.write(String.format(
+    private void generateUseNamesHeader(String type, int amount) throws IOException {
+        write(String.format(
             "#if !(defined RCI_%s_NAME_MAX_SIZE)\n" +
             "#define RCI_%s_NAME_MAX_SIZE %d\n" +
             "#else\n" +
@@ -27,11 +26,11 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
 
     public void writeGuardedContent(ConfigData configData) throws Exception {
         if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
-        	generateUseNamesHeader(fileWriter, "ELEMENTS", configData.getMaxNameLength(UseNames.ELEMENTS) + 1);
+        	generateUseNamesHeader("ELEMENTS", configData.getMaxNameLength(UseNames.ELEMENTS) + 1);
         }
         
         if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
-        	generateUseNamesHeader(fileWriter, "COLLECTIONS", configData.getMaxNameLength(UseNames.COLLECTIONS) + 1);
+        	generateUseNamesHeader("COLLECTIONS", configData.getMaxNameLength(UseNames.COLLECTIONS) + 1);
         }
     }
 }

@@ -10,9 +10,11 @@ import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Arrays;
 
 public abstract class GenFile {
-    private static String COPYRIGHT = String.join("\n",
+    private static List<String> COPYRIGHT = Arrays.asList(
 		"/*",
         " * Copyright (c) 2018 Digi International Inc.", 
         " *",
@@ -34,9 +36,9 @@ public abstract class GenFile {
         );
 
     public enum Type { INTERNAL, USER };
-    protected Path path;
     private Type type;
-    protected BufferedWriter fileWriter;
+    protected Path path;
+    private BufferedWriter writer;
 
     abstract protected void writeContent(ConfigData configData) throws Exception;
 
@@ -61,35 +63,50 @@ public abstract class GenFile {
         ConfigGenerator.log("Existing file " + existing + " saved as: " + backup);
 	}
 
+    // TODO Eventually this goes away. -ASK
+    public final void write(String content) throws IOException {
+    	writer.write(content);
+    }
+
+    public final void writeLine(String line) throws IOException {
+    	writer.write(line);
+    	writer.newLine();
+    }
+    
+    public final void writeBlock(Iterable<? extends String> lines) throws IOException {
+    	for (String line: lines) {
+    		writeLine(line);
+    	}
+    	writer.newLine();
+    }
+
     private void writePreamble() throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
 
-        fileWriter.write(
-        	"/*\n" +
-        	" * This is an auto-generated file - DO NOT EDIT! \n" +
-        	" * It was generated using " + ConfigGenerator.class.toString() + ".\n" + 
-        	" * This file was generated on " + dateFormat.format(date) + ".\n" +
-            " * The command line arguments were: " + ConfigGenerator.getArgumentLogString() + ".\n" +
-            " * The version was: " + ConfigGenerator.VERSION + ".\n" +
-            " */\n");
+        writeBlock(Arrays.asList(
+        	"/*",
+        	" * This is an auto-generated file - DO NOT EDIT!",
+        	" * It was generated using: " + ConfigGenerator.class.toString(), 
+        	" * This file was generated on: " + dateFormat.format(date),
+            " * The command line arguments were: " + ConfigGenerator.getArgumentLogString(),
+            " * The version was: " + ConfigGenerator.VERSION,
+            " */"));
 
         if (type == Type.INTERNAL) {
-            fileWriter.write(COPYRIGHT);
+            writeBlock(COPYRIGHT);
         }
     }
     
     public final void generateFile(ConfigData configData) throws Exception {
-
-        fileWriter = new BufferedWriter(new FileWriter(path.toFile()));
-
+        writer = new BufferedWriter(new FileWriter(path.toFile()));
         try {
 	    	writePreamble();
 	    	writeContent(configData);
 	    	
 	        ConfigGenerator.log(String.format("File created: %s\n", path));
         } finally {
-        	fileWriter.close();
+        	writer.close();
         }
     }
     

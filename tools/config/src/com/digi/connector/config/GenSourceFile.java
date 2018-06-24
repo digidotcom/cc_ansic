@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 public abstract class GenSourceFile extends GenFile{
@@ -91,7 +90,6 @@ public abstract class GenSourceFile extends GenFile{
     protected String filePath = "";
     protected String generatedFile = "";
 
-    protected BufferedWriter fileWriter;
     protected String configType;
     protected String customPrefix;
 

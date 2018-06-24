@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -13,11 +12,11 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 	}
 	
     public void writeGuardedContent(ConfigData configData) throws Exception {
-    	writeGlobalErrorEnumHeader(configData, fileWriter);  
-    	writeGroupTypeAndErrorEnum(configData, fileWriter);
+    	writeGlobalErrorEnumHeader(configData);  
+    	writeGroupTypeAndErrorEnum(configData);
     }
     
-    private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+    private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
 
         for (String key : errorMap.keySet()) {
             String error_string = " " + enumDefine + "_" + key;
@@ -29,20 +28,20 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
             error_string += ",\n";
 
-            bufferWriter.write(error_string);
+            write(error_string);
         }
 
     }
 
-    private void writeGlobalErrorEnumHeader(ConfigData configData, BufferedWriter bufferWriter) throws IOException {
+    private void writeGlobalErrorEnumHeader(ConfigData configData) throws IOException {
 
         String index_string = "";
         /* write typedef enum for user global error */
         String enumName = GLOBAL_ERROR + "_" + OFFSET_STRING;
 
-        bufferWriter.write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
+        write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
 
-        writeErrorHeader(1,GLOBAL_ERROR, configData.getUserGlobalErrors(), bufferWriter);
+        writeErrorHeader(1,GLOBAL_ERROR, configData.getUserGlobalErrors());
 
         String endString = String.format(" %s_%s%s", GLOBAL_ERROR, COUNT_STRING, index_string);
 
@@ -51,7 +50,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         }
         endString += "\n} " + customPrefix + GLOBAL_ERROR + ID_T_STRING;
 
-        bufferWriter.write(endString);
+        write(endString);
 
     }
     
@@ -83,11 +82,11 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         return str;
     }
 
-    private void writeEnumHeader(BufferedWriter bufferWriter, Element element, String prefix) throws Exception {
+    private void writeEnumHeader(Element element, String prefix) throws Exception {
         boolean explicit = false;
         int index = 0;
         
-        bufferWriter.write(TYPEDEF_ENUM);
+        write(TYPEDEF_ENUM);
         for (Value value : element.getValues()) {
             if (value.getName().equals(""))
             	explicit = true;
@@ -98,14 +97,14 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
             		line += " = " + index;
             		explicit = false;
             	}
-                bufferWriter.write(line + ",\n");
+                write(line + ",\n");
             }
             index++;
         }
-        bufferWriter.write(endEnumString(prefix));
+        write(endEnumString(prefix));
     }
     
-    private void writeListEnumHeader(BufferedWriter bufferWriter, ItemList list, String prefix) throws Exception {
+    private void writeListEnumHeader(ItemList list, String prefix) throws Exception {
         String element_enum_string = TYPEDEF_ENUM;
 
         for (Item item : list.getItems()) {
@@ -119,24 +118,24 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
                 element_enum_string += getEnumString(item_prefix) + ",\n";
 
                 if (element.getType() == Element.Type.ENUM) {
-                	writeEnumHeader(bufferWriter, element, item_prefix);
+                	writeEnumHeader(element, item_prefix);
                 }
             } else {
                 ItemList sublist = (ItemList) item;
                 
-                writeListEnumHeader(bufferWriter, sublist, item_prefix + "_");
+                writeListEnumHeader(sublist, item_prefix + "_");
             }
         }
         element_enum_string += endEnumString(prefix);
 
-        bufferWriter.write(element_enum_string);
+        write(element_enum_string);
     }
     
     private String COMMENTED(String comment) {
         return "/* " + comment + " */";
     }
 
-    private void writeErrorHeader(String type, int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
+    private void writeErrorHeader(String type, int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
 
         for (String key : errorMap.keySet()) {
             String error_string = enumDefine + "_" + key;
@@ -152,21 +151,21 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
             } else {
                 error_string += ",\n";
             }
-            bufferWriter.write(error_string);
+            write(error_string);
         }
 
     }
 
-    private void writeAllEnumHeaders(ConfigData configData, LinkedList<Group> groups, BufferedWriter bufferWriter) throws Exception {
+    private void writeAllEnumHeaders(ConfigData configData, LinkedList<Group> groups) throws Exception {
 
         for (Group group : groups) {
-        	writeListEnumHeader(bufferWriter, group, group.getName());
+        	writeListEnumHeader(group, group.getName());
         	
             if (!group.getErrors().isEmpty()) {
-                bufferWriter.write(TYPEDEF_ENUM);
+                write(TYPEDEF_ENUM);
 
-                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors(), bufferWriter);
-                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors(), bufferWriter);
+                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors());
+                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors());
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
@@ -182,14 +181,14 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
                     enumString += ",\n";
                     }
 
-                    bufferWriter.write(enumString);
+                    write(enumString);
                 }
-                bufferWriter.write(endEnumString(group.getName() + "_" + ERROR));
+                write(endEnumString(group.getName() + "_" + ERROR));
             }
         }
     }
 
-    private void writeGroupTypeAndErrorEnum(ConfigData configData,BufferedWriter bufferWriter) throws Exception {
+    private void writeGroupTypeAndErrorEnum(ConfigData configData) throws Exception {
 
         for (Group.Type type : Group.Type.values()) {
 	        LinkedList<Group> groups = configData.getConfigGroup(type);
@@ -201,7 +200,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 	            String group_enum_string = TYPEDEF_ENUM;
 
 	            /* Write all enum in H file */
-	            writeAllEnumHeaders(configData,groups, bufferWriter);
+	            writeAllEnumHeaders(configData,groups);
 
 	            for (Group group : groups) {
 	                /* add each group enum */
@@ -210,7 +209,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
 	            /* write group enum buffer to fileWriter */
 	            group_enum_string += endEnumString(null);
-	            bufferWriter.write(group_enum_string);
+	            write(group_enum_string);
 	        }
 	    }
     }

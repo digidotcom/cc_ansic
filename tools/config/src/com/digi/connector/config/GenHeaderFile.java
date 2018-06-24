@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 public abstract class GenHeaderFile extends GenFile{
@@ -94,7 +93,6 @@ public abstract class GenHeaderFile extends GenFile{
     protected String filePath = "";
     protected String generatedFile = "";
 
-    protected BufferedWriter fileWriter;
     protected String configType;
     protected String customPrefix;
 
@@ -124,7 +122,7 @@ public abstract class GenHeaderFile extends GenFile{
     private void writeGuardHeader(ConfigData configData) throws Exception {
         String unique = path.getFileName().toString().replace('.', '_').toUpperCase();
 
-    	fileWriter.write(
+    	write(
     		"#ifndef " + unique + "\n" +
     		"#define " + unique + "\n" + 
 			"\n");
@@ -133,7 +131,7 @@ public abstract class GenHeaderFile extends GenFile{
     abstract void writeGuardedContent(ConfigData configData) throws Exception;
 
     private void writeGuardFooter(ConfigData configData) throws Exception {
-    	fileWriter.write(
+    	write(
     		"#endif \n" +
 			"\n");
     }

@@ -1,6 +1,5 @@
 package com.digi.connector.config;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -13,11 +12,11 @@ public class GenApiUserStubsFile extends GenSourceFile {
 	}
 	
     public void writeContent(ConfigData configData) throws Exception {
-        fileWriter.write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
-        fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-        fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
+        write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
+        write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
+        write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
 
-        writeFunctionsCB(configData, fileWriter);
+        writeFunctionsCB(configData);
     }
     
     private String UNUSED(String parameter) {
@@ -49,7 +48,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
         return access;
     }
 
-    private void writeItemFunctionsCB(ConfigData configData, BufferedWriter bufferWriter, String prefix, ItemList list) throws Exception {
+    private void writeItemFunctionsCB(ConfigData configData, String prefix, ItemList list) throws Exception {
         for (Item item : list.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -164,16 +163,16 @@ public class GenApiUserStubsFile extends GenSourceFile {
                     element_function += setFunction(prefix, String.format("%srci_%s_%s_%s_set(%s, %s " + value_type_modifier + "const value)",
                     	customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), "UNUSED_PARAMETER(value)");
                 }
-                bufferWriter.write(element_function);
+                write(element_function);
             } else {
                 ItemList items = (ItemList) item;
             	
-                writeItemFunctionsCB(configData, bufferWriter, prefix + "_" + items.getName(), items); 
+                writeItemFunctionsCB(configData, prefix + "_" + items.getName(), items); 
             }
         }
     }
 
-    private void writeFunctionsCB(ConfigData configData, BufferedWriter bufferWriter) throws Exception {
+    private void writeFunctionsCB(ConfigData configData) throws Exception {
         String session_function = 
         	setFunction("_SESSION_GROUP_", customPrefix + "rci_session_start_cb(" + RCI_INFO_T + ")", null) +
         	setFunction("_SESSION_GROUP_", customPrefix + "rci_session_end_cb(" + RCI_INFO_T + ")", null) +
@@ -186,16 +185,16 @@ public class GenApiUserStubsFile extends GenSourceFile {
             	setFunction("_SESSION_GROUP_", "rci_set_factory_defaults_cb(" + RCI_INFO_T + ")", null) +
             	setFunction("_SESSION_GROUP_", "rci_reboot_cb(" + RCI_INFO_T + ")", null);
         }
-        bufferWriter.write(session_function);
+        write(session_function);
 
         for (Group.Type type : Group.Type.values()) {
             LinkedList<Group> groups = configData.getConfigGroup(type);
             for (Group group : groups) {
                 String group_function = setFunction(group.getName(), String.format("%srci_%s_%s_start(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
                 group_function += setFunction(group.getName(), String.format("%srci_%s_%s_end(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
-                bufferWriter.write(group_function);
+                write(group_function);
                
-                writeItemFunctionsCB(configData, bufferWriter, group.getName(), group);
+                writeItemFunctionsCB(configData, group.getName(), group);
             }
         }
     }
