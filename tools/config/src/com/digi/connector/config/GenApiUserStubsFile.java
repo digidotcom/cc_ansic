@@ -12,24 +12,12 @@ public class GenApiUserStubsFile extends GenSourceFile {
 		super(directoryPath, FILENAME, GenFile.Type.USER);
 	}
 	
-    public void generateFile(ConfigData configData) throws Exception {
-        try {
+    public void writeContent(ConfigData configData) throws Exception {
+        fileWriter.write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
+        fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
+        fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
 
-        	writePreamble();
-        	
-            fileWriter.write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
-            fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-            fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.getBasename()));
-
-            writeFunctionsCB(configData, fileWriter);
-
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s", filePath, FILENAME));
-
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        } finally {
-            fileWriter.close();
-        }
+        writeFunctionsCB(configData, fileWriter);
     }
     
     private String UNUSED(String parameter) {

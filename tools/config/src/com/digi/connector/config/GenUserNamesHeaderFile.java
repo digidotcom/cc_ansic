@@ -25,32 +25,13 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
             "#endif\n", type, type, amount, type, amount, type, type, amount));
     }
 
-    public void generateFile(ConfigData configData) throws Exception {
-        try {
-            writePreamble();
-	
-	        /* write include header in the header file */
-	        String usenamesHeaderDefineName = FILE.replace('.', '_').toLowerCase();
-	        fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", usenamesHeaderDefineName, usenamesHeaderDefineName));
-	
-	        if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
-	        	generateUseNamesHeader(fileWriter, "ELEMENTS", configData.getMaxNameLength(UseNames.ELEMENTS) + 1);
-	        }
-	        
-	        if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
-	        	generateUseNamesHeader(fileWriter, "COLLECTIONS", configData.getMaxNameLength(UseNames.COLLECTIONS) + 1);
-	        }
-	
-	        fileWriter.write(String.format("\n#endif\n"));
-	
-	        ConfigGenerator.log(String.format("Files created:\n\t%s",  path));
-	        ConfigGenerator.log(String.format("NOTE: include \"%s%s\" in your custom_connector_config.h so connector_api_remote.h can find the defines\n",  path));
-	    } catch (IOException e) {
-	        throw new IOException(e.getMessage());
-	    } finally {
-	        if (fileWriter != null){
-	        	fileWriter.close();
-	        }
-	    }
+    public void writeGuardedContent(ConfigData configData) throws Exception {
+        if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
+        	generateUseNamesHeader(fileWriter, "ELEMENTS", configData.getMaxNameLength(UseNames.ELEMENTS) + 1);
+        }
+        
+        if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
+        	generateUseNamesHeader(fileWriter, "COLLECTIONS", configData.getMaxNameLength(UseNames.COLLECTIONS) + 1);
+        }
     }
 }

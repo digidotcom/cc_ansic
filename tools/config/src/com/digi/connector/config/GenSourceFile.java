@@ -1,17 +1,9 @@
 package com.digi.connector.config;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public abstract class GenSourceFile extends GenFile{
-
-    protected static String TOOL_NAME = "RCI Generator";
-
     protected final static String HEADER_FILENAME = "connector_api_remote.h";
 
     protected final static String CONNECTOR_PREFIX = "connector";
@@ -115,29 +107,4 @@ public abstract class GenSourceFile extends GenFile{
     public GenSourceFile(String dir, String file, GenFile.Type type) throws IOException {
     	super(dir, file, type);
     }
-
-    protected void checkPreviousBuild(String new_path) throws IOException {
-
-        File new_file = new File(new_path);
-        int i = 0;
-
-        while(new_file.isFile()){
-            i++;
-            new_file = new File(new_path + "_bkp_" + i );
-        }
-        if(i>0){
-            String dest = new_path + "_bkp_" + i;
-            InputStream in = new FileInputStream(new_path);
-            OutputStream out = new FileOutputStream(dest);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-
-            ConfigGenerator.log("Existing file " + new_path + " saved as: " + dest);
-        }
-	}
 }

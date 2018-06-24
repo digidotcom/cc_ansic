@@ -25,19 +25,8 @@ public class GenFsmSourceFile extends GenSourceFile {
 		super(dir, FILENAME, GenFile.Type.INTERNAL);
 	}
 
-    public void generateFile(ConfigData configData) throws Exception {
-        try {
-            writePreamble();
-
-            writeFunctionFile(configData, fileWriter);
-            
-                       
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, FILENAME));
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        } finally {
-            fileWriter.close();
-        }
+    public void writeContent(ConfigData configData) throws Exception {
+        writeFunctionFile(configData, fileWriter);
     }
 
     private int prevRemoteStringLength;

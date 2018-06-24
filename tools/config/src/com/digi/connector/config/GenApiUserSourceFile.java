@@ -12,29 +12,12 @@ public class GenApiUserSourceFile extends GenSourceFile {
 		super(directoryPath, FILENAME, GenFile.Type.USER);
 	}
 
-    public void generateFile(ConfigData configData) throws Exception {
-        try {
+    public void writeContent(ConfigData configData) throws Exception {
+        fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
+        fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
 
-        	writePreamble();
-        	
-            fileWriter.write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-            fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.getBasename()));
-
-            /* write structures in source file */
-            writeAllCcapiStructures(configData, fileWriter);
-
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, generatedFile));
-            if (generatedFile.length() > 0) {
-                ConfigGenerator.log(String.format("\t%s%s", path));
-            }
-
-
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        } finally {
-            fileWriter.close();
-        }
-
+        /* write structures in source file */
+        writeAllCcapiStructures(configData, fileWriter);
     }
 
     private String getDefineString(String define_name) {

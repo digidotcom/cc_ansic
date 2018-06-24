@@ -20,7 +20,6 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     "} connector_remote_config_data_t;\n";
 
     private final static String FILENAME = "connector_api_remote.h";
-    static public String getBasename() { return FILENAME; }
     
     // TODO: Everything in this class *must* use types instead of ConfigData/configData
     private EnumSet<Element.Type> types;
@@ -34,38 +33,26 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 		this(dir, ConfigData.getInstance().getTypesSeen());
 	}
 
-    public void generateFile(ConfigData configData) throws Exception {
-        try {
-            writePreamble();
+    public void writeGuardedContent(ConfigData configData) throws Exception {
+        writeDefinesAndStructures(configData);
         
-            String defineName = FILENAME.replace('.', '_').toUpperCase();
-            fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", defineName, defineName));
+        /* Write all group enum in H file */
+        writeRciErrorEnumHeader(configData, fileWriter);
+        writeGlobalErrorEnumHeader(configData, fileWriter);
 
-            writeDefinesAndStructures(configData);
-            
-            /* Write all group enum in H file */
-            writeRciErrorEnumHeader(configData, fileWriter);
-            writeGlobalErrorEnumHeader(configData, fileWriter);
+        writeGroupTypeAndErrorEnum(configData,fileWriter);
 
-            writeGroupTypeAndErrorEnum(configData,fileWriter);
+        fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
 
-            fileWriter.write(CONNECTOR_REMOTE_CONFIG_DATA);
+        fileWriter.write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
 
-            fileWriter.write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
-
-            fileWriter.write("\n#if !defined _CONNECTOR_API_H\n");
-            fileWriter.write("#error  \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n");
-            fileWriter.write("#endif\n\n");
-            fileWriter.write("#else\n");
-            fileWriter.write("#error  \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n");
-            fileWriter.write("#endif\n");
-            
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, FILENAME));
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        } finally {
-            fileWriter.close();
-        }
+        fileWriter.write(
+    		"\n" + 
+        	"#if !defined _CONNECTOR_API_H\n" + 
+        	"#error \"Illegal inclusion of connector_api_remote.h. You should only include connector_api.h in user code.\"\n" + 
+        	"#endif\n" + 
+        	"\n");
+        
     }
 
     private void writeDefineOptionHeader(ConfigData configData) throws IOException {

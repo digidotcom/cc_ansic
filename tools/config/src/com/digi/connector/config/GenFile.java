@@ -2,14 +2,11 @@ package com.digi.connector.config;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,19 +38,30 @@ public abstract class GenFile {
     private Type type;
     protected BufferedWriter fileWriter;
 
-    abstract public void generateFile(ConfigData configData) throws Exception;
+    abstract protected void writeContent(ConfigData configData) throws Exception;
 
     public GenFile(String dir, String file, Type type) throws IOException {
         this.path = Paths.get(dir, file);
         this.type = type;
 
-        if (!ConfigGenerator.noBackupOption())
-            checkPreviousBuild(path.toString());
-
-        fileWriter = new BufferedWriter(new FileWriter(path.toString()));
+        File existing = path.toFile();
+        if (!ConfigGenerator.noBackupOption() && existing.exists())
+        	backupExisting(existing);
     }
 
-    public void writePreamble() throws IOException {
+    private void backupExisting(File existing) throws IOException {
+        File backup;
+
+        int i = 0;
+        do {
+        	backup = new File(existing.getPath() + "_bkp_" + i++);
+        } while (!backup.isFile());
+        
+        Files.copy(existing.toPath(), backup.toPath());
+        ConfigGenerator.log("Existing file " + existing + " saved as: " + backup);
+	}
+
+    private void writePreamble() throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
 
@@ -70,29 +78,19 @@ public abstract class GenFile {
             fileWriter.write(COPYRIGHT);
         }
     }
+    
+    public final void generateFile(ConfigData configData) throws Exception {
 
-    protected void checkPreviousBuild(String new_path) throws IOException {
+        fileWriter = new BufferedWriter(new FileWriter(path.toFile()));
 
-        File new_file = new File(new_path);
-        int i = 0;
-
-        while(new_file.isFile()){
-            i++;
-            new_file = new File(new_path + "_bkp_" + i );
+        try {
+	    	writePreamble();
+	    	writeContent(configData);
+	    	
+	        ConfigGenerator.log(String.format("File created: %s\n", path));
+        } finally {
+        	fileWriter.close();
         }
-        if(i>0){
-            String dest = new_path + "_bkp_" + i;
-            InputStream in = new FileInputStream(new_path);
-            OutputStream out = new FileOutputStream(dest);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-
-            ConfigGenerator.log("Existing file " + new_path + " saved as: " + dest);
-        }
-	}
+    }
+    
 }

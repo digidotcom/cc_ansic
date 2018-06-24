@@ -1,12 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public abstract class GenHeaderFile extends GenFile{
 
@@ -112,32 +107,34 @@ public abstract class GenHeaderFile extends GenFile{
     "    char const * device_type;\n" +
     "} connector_remote_config_data_t;\n";
 
+    protected String file;
+    
     public GenHeaderFile(String dir, String file, GenFile.Type type) throws IOException {
     	super(dir, file, type);
+    	
+    	this.file = file;
     }
 
-    protected void checkPreviousBuild(String new_path) throws IOException {
+    protected void writeContent(ConfigData configData) throws Exception {
+    	writeGuardHeader(configData);
+    	writeGuardedContent(configData);
+    	writeGuardFooter(configData);
+    }
 
-        File new_file = new File(new_path);
-        int i = 0;
+    private void writeGuardHeader(ConfigData configData) throws Exception {
+        String unique = path.getFileName().toString().replace('.', '_').toUpperCase();
 
-        while(new_file.isFile()){
-            i++;
-            new_file = new File(new_path + "_bkp_" + i );
-        }
-        if(i>0){
-            String dest = new_path + "_bkp_" + i;
-            InputStream in = new FileInputStream(new_path);
-            OutputStream out = new FileOutputStream(dest);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
+    	fileWriter.write(
+    		"#ifndef " + unique + "\n" +
+    		"#define " + unique + "\n" + 
+			"\n");
+    }
 
-            ConfigGenerator.log("Existing file " + new_path + " saved as: " + dest);
-        }
-	}
+    abstract void writeGuardedContent(ConfigData configData) throws Exception;
+
+    private void writeGuardFooter(ConfigData configData) throws Exception {
+    	fileWriter.write(
+    		"#endif \n" +
+			"\n");
+    }
 }

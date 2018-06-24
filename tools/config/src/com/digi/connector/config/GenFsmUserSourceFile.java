@@ -15,53 +15,42 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 		super(path, FILENAME, GenFile.Type.USER);
 	}
 
-	public void generateFile(ConfigData configData) throws Exception {
-        try {
-        	writePreamble();
+	public void writeContent(ConfigData configData) throws Exception {
+        fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, "connector_api.h"));
+        fileWriter.write(String.format("#if !(defined CONST)\n#define CONST const\n#endif\n"));
+        
+        fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenFsmUserHeaderFile.FILENAME));
 
-            fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, "connector_api.h"));
-            fileWriter.write(String.format("#if !(defined CONST)\n#define CONST const\n#endif\n"));
-            
-            fileWriter.write(String.format("%s \"%s\"\n\n", INCLUDE, GenFsmUserHeaderFile.getBasename()));
+        /* Write Define Errors Macros */
+        writeDefineRciErrors(configData, fileWriter);
 
-            /* Write Define Errors Macros */
-            writeDefineRciErrors(configData, fileWriter);
+        writeDefineGroupErrors(configData, fileWriter);
 
-            writeDefineGroupErrors(configData, fileWriter);
+        writeDefineGlobalErrors(configData, fileWriter);
 
-            writeDefineGlobalErrors(configData, fileWriter);
+        /* write remote all strings in source file */
+        writeRemoteAllStrings(configData, fileWriter);
 
-            /* write remote all strings in source file */
-            writeRemoteAllStrings(configData, fileWriter);
+        /* write connector_rci_errors[] */
+        writeGlobalErrorStructures(configData, fileWriter);
 
-            /* write connector_rci_errors[] */
-            writeGlobalErrorStructures(configData, fileWriter);
+        /* write structures in source file */
+        writeAllStructures(configData, fileWriter);
 
-            /* write structures in source file */
-            writeAllStructures(configData, fileWriter);
+        int GlobalErrorCount = configData.getUserGlobalErrors().size() + configData.rciGlobalErrors.size();
 
-            int GlobalErrorCount = configData.getUserGlobalErrors().size() + configData.rciGlobalErrors.size();
-
-            fileWriter.write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
-                    "    connector_group_table,\n"+
-                    "    connector_rci_errors,\n"+
-                    "    %d,\n"+
-                    "    %d,\n"+
-                    "    %s,\n"+
-                    "    \"%s\"\n"+
-                    "};\n"+
-                    "\n"+
-                    "connector_remote_config_data_t const * const %srci_descriptor_data = &%srci_internal_data;"
-                    , customPrefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix, customPrefix));
- 
-
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, FILENAME));
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        } finally {
-            fileWriter.close();
-        }
-
+        fileWriter.write(String.format(
+        		"\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
+                "    connector_group_table,\n"+
+                "    connector_rci_errors,\n"+
+                "    %d,\n"+
+                "    %d,\n"+
+                "    %s,\n"+
+                "    \"%s\"\n"+
+                "};\n"+
+                "\n"+
+                "connector_remote_config_data_t const * const %srci_descriptor_data = &%srci_internal_data;"
+                , customPrefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix, customPrefix));
     }
 
     private Boolean isFirstRemoteString;

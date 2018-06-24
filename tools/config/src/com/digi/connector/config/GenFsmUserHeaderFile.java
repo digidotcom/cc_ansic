@@ -6,33 +6,15 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 public class GenFsmUserHeaderFile extends GenHeaderFile {
-    private final static String FILENAME = ConfigGenerator.getCustomPrefix() + "rci_config.h";
-    static public String getBasename() { return FILENAME; }
+    public final static String FILENAME = ConfigGenerator.getCustomPrefix() + "rci_config.h";
 
 	public GenFsmUserHeaderFile(String path) throws IOException {
 		super(path, FILENAME, GenFile.Type.USER);
 	}
 	
-    public void generateFile(ConfigData configData) throws Exception {
-        try {
-        	writePreamble();
-        	
-            /* write include header in the header file */
-             String headerDefineName = FILENAME.replace('.', '_').toLowerCase();
-            fileWriter.write(String.format("#ifndef %s\n#define %s\n\n", headerDefineName, headerDefineName));
-
-        	writeGlobalErrorEnumHeader(configData,fileWriter);  
-        	writeGroupTypeAndErrorEnum(configData,fileWriter);
-
-        	fileWriter.write(String.format("\n#endif\n"));
- 
-
-            ConfigGenerator.log(String.format("Files created:\n\t%s%s",  filePath, FILENAME));
-        } catch (IOException e) {
-            throw new IOException(e.getMessage());
-        } finally {
-        	fileWriter.close();
-        }
+    public void writeGuardedContent(ConfigData configData) throws Exception {
+    	writeGlobalErrorEnumHeader(configData, fileWriter);  
+    	writeGroupTypeAndErrorEnum(configData, fileWriter);
     }
     
     private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap, BufferedWriter bufferWriter) throws IOException {
