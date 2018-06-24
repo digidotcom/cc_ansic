@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 public class ConfigGenerator {
@@ -13,7 +14,7 @@ public class ConfigGenerator {
 // 2.0.0.0 version Binary RCI only
 // 3.0.0.0 version List support & specific callbacks moved to user space
 	
-    public final static String VERSION = "2.0.0.0";
+    public final static String VERSION = "3.0.0.0";
 
     public static enum UseNames { NONE, COLLECTIONS, ELEMENTS };
     public static enum FileType { NONE, SOURCE, GLOBAL_HEADER;
@@ -659,51 +660,52 @@ public class ConfigGenerator {
             
             /* Generate H and C files */
             debug_log("Start generating files");
-
-
+            LinkedList<GenFile> files = new LinkedList<>();
+            
             switch(fileTypeOption())
             {
             case NONE:
-                /* descriptor constructor for arguments */
-                Descriptors descriptors = new Descriptors(username, password,
-                        vendorId, deviceType, fwVersion);
-
-                FileNone fileNone = new FileNone(directoryPath);
-                fileNone.generateFile(configData);
-
-                /* Generate and upload descriptors */
-                debug_log("Start Generating/loading descriptors");
-                if(!noUpload || saveDescriptor)
-					descriptors.processDescriptors(configData);
-
+            	files.add(new GenFsmHeaderFile(directoryPath));
+            	files.add(new GenFsmSourceFile(directoryPath));
                 break;
 
             case SOURCE:
-                /* descriptor constructor for arguments */
-                Descriptors descriptorsSource = new Descriptors(username, password,
-                        vendorId, deviceType, fwVersion);
 
-                if (useCcapi())
+            	// TODO: Why does ccapi need both types of files? I don't think it does. -ASK
+            	files.add(new GenFsmUserHeaderFile(directoryPath));
+            	files.add(new GenFsmUserSourceFile(directoryPath));
+
+            	if (useCcapi())
                 {
-                    FileSourceCcapi ccapiSource = new FileSourceCcapi(directoryPath);
-                    ccapiSource.generateFile(configData);       
+                	files.add(new GenApiUserHeaderFile(directoryPath));
+                	files.add(new GenApiUserSourceFile(directoryPath));
+                	if (generateCcapiStubFunctions()) {
+                		files.add(new GenApiUserStubsFile(directoryPath));
+                	}
                 }
-                
-                FileSource fileSource = new FileSource(directoryPath);
-                fileSource.generateFile(configData);
-
-                /* Generate and upload descriptors */
-                debug_log("Start Generating/loading descriptors");
-                if(!noUpload || saveDescriptor)
-                    descriptorsSource.processDescriptors(configData);
                 break;
 
             case GLOBAL_HEADER:
-                FileGlobalHeader fileGlobalHeader = new FileGlobalHeader(directoryPath);
-                fileGlobalHeader.generateFile(configData);
+            	files.add(new GenFsmFullHeaderFile(directoryPath));
                 break;
             }
 
+            if (!useNamesOption(UseNames.NONE)) {
+        		files.add(new GenUserNamesHeaderFile(directoryPath));
+        	}
+
+            //generate
+            for (GenFile file: files) {
+                file.generateFile(configData);
+
+            }
+            
+            if (!noUpload || saveDescriptor) {
+                debug_log("Start Generating/uploading descriptors");
+
+            	Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
+				descriptors.processDescriptors(configData);
+            }
             
             log("\nDone.\n");
             System.exit(0);
