@@ -239,10 +239,6 @@ public class Element extends Item {
         	}
         }
         
-        if (type == Type.ENUM && values.isEmpty()) {
-            throw new Exception("No values found for enum type");
-        }
-
         if (requiresMax.contains(type) && max == null) {
             throw new Exception("max is required");
         }
@@ -250,7 +246,7 @@ public class Element extends Item {
         switch (type) {
         case ENUM:
             if (values.isEmpty()) {
-                throw new Exception("Missing <value>!");
+                throw new Exception("No values found for enum type");
             }
             break;
 
