@@ -6,17 +6,17 @@ import java.util.LinkedList;
 
 public class GenApiUserHeaderFile extends GenHeaderFile {
 
-    public static String FILENAME = ConfigGenerator.getCustomPrefix() + "ccapi_rci_functions.h";
-    
-	public GenApiUserHeaderFile(String dir) throws IOException {
-		super(dir, FILENAME, GenFile.Type.USER);
+    private static String FILENAME = "ccapi_rci_functions.h";
+
+	public GenApiUserHeaderFile() throws IOException {
+		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
 	}
 
-    public void writeGuardedContent(ConfigData configData) throws Exception {
+    public void writeGuardedContent() throws Exception {
         write(String.format("%s \"%s\"\n\n", INCLUDE, "connector_api.h"));
         write(String.format("\n%s UNUSED_PARAMETER(a) (void)(a)\n",DEFINE));
         write("\nextern ccapi_rci_data_t const " + customPrefix + "ccapi_rci_data;\n");
-        writePrototypes(configData);
+        writePrototypes();
     }
 
     private String COMMENTED(String comment) {
@@ -96,7 +96,7 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
 
     }
 
-    private void writeEnumValues(ConfigData configData, String prefix, ItemList list) throws Exception {
+    private void writeEnumValues(String prefix, ItemList list) throws Exception {
         for (Item item : list.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -129,21 +129,21 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
             } else {
                 ItemList items = (ItemList) item;
             	
-                writeEnumValues(configData, prefix + "_" + items.getName(), items); 
+                writeEnumValues(prefix + "_" + items.getName(), items); 
             }
         }
     }
 
     private String sanitizeName(String name) {
-    	return name.replace('-', '_');
+    	return name.replace('-', '_').replace(".","_fullstop_");
     }
 
-    private void writePrototypes(ConfigData configData) throws Exception {
+    private void writePrototypes() throws Exception {
         /* Global errors for session/action_start/end functions */
         write("\n" + TYPEDEF_ENUM);
         writeCcapiErrorHeader(null,0, getCcapiEnumString("global" + "_" + ERROR), null);
-        writeCcapiErrorHeader("rci",1, getCcapiEnumString("global" + "_" + ERROR), configData.getRciGlobalErrors());
-        writeCcapiErrorHeader("global",1, getCcapiEnumString("global" + "_" + ERROR), configData.getUserGlobalErrors());
+        writeCcapiErrorHeader("rci",1, getCcapiEnumString("global" + "_" + ERROR), config.getRciGlobalErrors());
+        writeCcapiErrorHeader("global",1, getCcapiEnumString("global" + "_" + ERROR), config.getUserGlobalErrors());
         write(endCcapiEnumString("global" + "_" + ERROR));
 
         /* session/action_start/end functions' prototypes */
@@ -159,7 +159,7 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
         session_prototype += customPrefix + "rci_action_end_cb(" + RCI_INFO_T + ");\n";
         session_prototype += "\n";
 
-        if (ConfigGenerator.rciLegacyEnabled()) {
+        if (options.rciLegacyEnabled()) {
             session_prototype += globalRetvalErrorType;
             session_prototype += customPrefix + "rci_do_command_cb(" + RCI_INFO_T + ");\n";
             session_prototype += globalRetvalErrorType;
@@ -171,13 +171,13 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
         write(session_prototype);
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = configData.getConfigGroup(type);;
+            LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
 
             if (!groups.isEmpty()) {
                 for (Group group : groups) {
-                	writeEnumValues(configData, group.getName(), group);
+                	writeEnumValues(group.getName(), group);
                 }
 
                 /* Write typedef enum for group errors */
@@ -185,8 +185,8 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
                     write(TYPEDEF_ENUM);
 
                     writeCcapiErrorHeader(null,0, getCcapiEnumString(group.getName() + "_" + ERROR), null);
-                    writeCcapiErrorHeader("rci",1, getCcapiEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors());
-                    writeCcapiErrorHeader("global",1, getCcapiEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors());
+                    writeCcapiErrorHeader("rci",1, getCcapiEnumString(group.getName() + "_" + ERROR), config.getRciGlobalErrors());
+                    writeCcapiErrorHeader("global",1, getCcapiEnumString(group.getName() + "_" + ERROR), config.getUserGlobalErrors());
 
                     if (!group.getErrors().isEmpty()){
                         LinkedHashMap<String, String> errorMap = group.getErrors();
@@ -219,14 +219,14 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
                     		retvalErrorType + String.format("%srci_%s_%s_end(%s);\n",customPrefix,configType,group.getName(),RCI_INFO_T);
                     write(group_prototype);
 
-                    writeItemPrototypes(configData, group.getName(), group, retvalErrorType);
+                    writeItemPrototypes(group.getName(), group, retvalErrorType);
                 }
             }
             write("\n");
         }
     }
 
-    private void writeItemPrototypes(ConfigData configData, String prefix, ItemList list, String retvalErrorType) throws Exception {
+    private void writeItemPrototypes(String prefix, ItemList list, String retvalErrorType) throws Exception {
 	    for (Item item : list.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 	
@@ -250,7 +250,7 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
 	                    protoType += "ccapi_on_off_t";
 	                    break;
 	                case ENUM:
-	                    if (ConfigGenerator.rciParserOption()) {
+	                    if (options.rciParserOption()) {
 	                        protoType += "char const *";
 	                    } else {
 	                        protoType += String.format("%s%s_%s_%s_%s_id_t",
@@ -294,7 +294,7 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
 	                String value_type_modifier = "";
 	                switch (element.getType()) {
 	                    case ENUM:
-	                        if (ConfigGenerator.rciParserOption()) {
+	                        if (options.rciParserOption()) {
 	                            break;
 	                        }
 	                        /* Intentional fall-thru */
@@ -325,7 +325,7 @@ public class GenApiUserHeaderFile extends GenHeaderFile {
 	        } else {
 	            ItemList items = (ItemList) item;
 	        	
-	            writeItemPrototypes(configData, prefix + "_" + items.getName(), items, retvalErrorType); 
+	            writeItemPrototypes(prefix + "_" + items.getName(), items, retvalErrorType); 
 	        }
 	    }
     }

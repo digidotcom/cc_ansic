@@ -5,15 +5,15 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 public class GenFsmUserHeaderFile extends GenHeaderFile {
-    public final static String FILENAME = ConfigGenerator.getCustomPrefix() + "rci_config.h";
+    public final static String FILENAME = "rci_config.h";
 
-	public GenFsmUserHeaderFile(String path) throws IOException {
-		super(path, FILENAME, GenFile.Type.USER);
+	public GenFsmUserHeaderFile() throws IOException {
+		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
 	}
 	
-    public void writeGuardedContent(ConfigData configData) throws Exception {
-    	writeGlobalErrorEnumHeader(configData);  
-    	writeGroupTypeAndErrorEnum(configData);
+    public void writeGuardedContent() throws Exception {
+    	writeGlobalErrorEnumHeader();  
+    	writeGroupTypeAndErrorEnum();
     }
     
     private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
@@ -33,7 +33,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
     }
 
-    private void writeGlobalErrorEnumHeader(ConfigData configData) throws IOException {
+    private void writeGlobalErrorEnumHeader() throws IOException {
 
         String index_string = "";
         /* write typedef enum for user global error */
@@ -41,11 +41,11 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
         write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
 
-        writeErrorHeader(1,GLOBAL_ERROR, configData.getUserGlobalErrors());
+        writeErrorHeader(1,GLOBAL_ERROR, config.getUserGlobalErrors());
 
         String endString = String.format(" %s_%s%s", GLOBAL_ERROR, COUNT_STRING, index_string);
 
-        if (configData.getUserGlobalErrors().isEmpty()) {
+        if (config.getUserGlobalErrors().isEmpty()) {
             endString += " = " + enumName;
         }
         endString += "\n} " + customPrefix + GLOBAL_ERROR + ID_T_STRING;
@@ -64,7 +64,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
     }
 
     private String sanitizeName(String name) {
-    	return name.replace('-', '_');
+    	return name.replace('-', '_').replace(".","_fullstop_");
     }
 
     private String endEnumString(String group_name) {
@@ -156,7 +156,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
     }
 
-    private void writeAllEnumHeaders(ConfigData configData, LinkedList<Group> groups) throws Exception {
+    private void writeAllEnumHeaders(LinkedList<Group> groups) throws Exception {
 
         for (Group group : groups) {
         	writeListEnumHeader(group, group.getName());
@@ -164,8 +164,8 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
-                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), configData.getRciGlobalErrors());
-                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), configData.getUserGlobalErrors());
+                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), config.getRciGlobalErrors());
+                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), config.getUserGlobalErrors());
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
@@ -188,10 +188,10 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         }
     }
 
-    private void writeGroupTypeAndErrorEnum(ConfigData configData) throws Exception {
+    private void writeGroupTypeAndErrorEnum() throws Exception {
 
         for (Group.Type type : Group.Type.values()) {
-	        LinkedList<Group> groups = configData.getConfigGroup(type);
+	        LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
 
@@ -200,7 +200,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 	            String group_enum_string = TYPEDEF_ENUM;
 
 	            /* Write all enum in H file */
-	            writeAllEnumHeaders(configData,groups);
+	            writeAllEnumHeaders(groups);
 
 	            for (Group group : groups) {
 	                /* add each group enum */

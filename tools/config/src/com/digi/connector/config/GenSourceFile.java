@@ -91,7 +91,6 @@ public abstract class GenSourceFile extends GenFile{
     protected String generatedFile = "";
 
     protected String configType;
-    protected String customPrefix;
 
     protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
     "    struct connector_remote_group_table const * group_table;\n" +
@@ -102,7 +101,7 @@ public abstract class GenSourceFile extends GenFile{
     "    char const * device_type;\n" +
     "} connector_remote_config_data_t;\n";
 
-    public GenSourceFile(String dir, String file, GenFile.Type type) throws IOException {
-    	super(dir, file, type);
+    public GenSourceFile(String file, GenFile.Type type, GenFile.UsePrefix use) throws IOException {
+    	super(file, type, use);
     }
 }

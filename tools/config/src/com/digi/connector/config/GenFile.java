@@ -35,19 +35,29 @@ public abstract class GenFile {
         " */"
         );
 
-    public enum Type { INTERNAL, USER };
     private Type type;
-    protected Path path;
     private BufferedWriter writer;
 
-    abstract protected void writeContent(ConfigData configData) throws Exception;
+    protected Path path;
+    protected final GenSource code = GenSource.getInstance();
+    protected final ConfigData config = ConfigData.getInstance();
+    protected final ConfigGenerator options = ConfigGenerator.getInstance();
+    protected final String customPrefix = options.getCustomPrefix();
+    
+    public enum Type { INTERNAL, USER };
+    public enum UsePrefix { CUSTOM, NONE };
 
-    public GenFile(String dir, String file, Type type) throws IOException {
-        this.path = Paths.get(dir, file);
+    abstract protected void writeContent() throws Exception;
+
+    public GenFile(String file, Type type, UsePrefix use) throws IOException {
+    	if (use == UsePrefix.CUSTOM) {
+    		file = customPrefix + file;
+    	}
+        this.path = Paths.get(options.getDir(), file);
         this.type = type;
 
         File existing = path.toFile();
-        if (!ConfigGenerator.noBackupOption() && existing.exists())
+        if (!options.noBackupOption() && existing.exists())
         	backupExisting(existing);
     }
 
@@ -60,7 +70,7 @@ public abstract class GenFile {
         } while (!backup.isFile());
         
         Files.copy(existing.toPath(), backup.toPath());
-        ConfigGenerator.log("Existing file " + existing + " saved as: " + backup);
+        options.log("Existing file " + existing + " saved as: " + backup);
 	}
 
     // TODO Eventually this goes away. -ASK
@@ -89,7 +99,7 @@ public abstract class GenFile {
         	" * This is an auto-generated file - DO NOT EDIT!",
         	" * It was generated using: " + ConfigGenerator.class.toString(), 
         	" * This file was generated on: " + dateFormat.format(date),
-            " * The command line arguments were: " + ConfigGenerator.getArgumentLogString(),
+            " * The command line arguments were: " + options.getArgumentLogString(),
             " * The version was: " + ConfigGenerator.VERSION,
             " */"));
 
@@ -98,13 +108,13 @@ public abstract class GenFile {
         }
     }
     
-    public final void generateFile(ConfigData configData) throws Exception {
+    public final void generateFile() throws Exception {
         writer = new BufferedWriter(new FileWriter(path.toFile()));
         try {
 	    	writePreamble();
-	    	writeContent(configData);
+	    	writeContent();
 	    	
-	        ConfigGenerator.log(String.format("File created: %s\n", path));
+	        options.log(String.format("File created: %s\n", path));
         } finally {
         	writer.close();
         }

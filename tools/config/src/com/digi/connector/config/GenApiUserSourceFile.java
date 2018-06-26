@@ -5,18 +5,21 @@ import java.util.LinkedList;
 
 public class GenApiUserSourceFile extends GenSourceFile {
 
-    private static String FILENAME = ConfigGenerator.getCustomPrefix() + "ccapi_rci_data.c";
+    private static String FILENAME = "ccapi_rci_data.c";
 
-	public GenApiUserSourceFile(String directoryPath) throws IOException {
-		super(directoryPath, FILENAME, GenFile.Type.USER);
+    private GenApiUserHeaderFile header;
+	public GenApiUserSourceFile(GenApiUserHeaderFile header) throws IOException {
+		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
+		
+		this.header = header;
 	}
 
-    public void writeContent(ConfigData configData) throws Exception {
+    public void writeContent() throws Exception {
         write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-        write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
+        write(String.format("%s \"%s\"\n\n", INCLUDE, header.path.getFileName().toString()));
 
         /* write structures in source file */
-        writeAllCcapiStructures(configData);
+        writeAllCcapiStructures();
     }
 
     private String getDefineString(String define_name) {
@@ -87,11 +90,11 @@ public class GenApiUserSourceFile extends GenSourceFile {
 
     }
 
-    private void writeAllCcapiStructures(ConfigData configData) throws Exception {
+    private void writeAllCcapiStructures() throws Exception {
         String define_name;
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = configData.getConfigGroup(type);
+            LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toString().toLowerCase();
 
@@ -130,7 +133,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
         
         type = Group.Type.SETTING;
         {
-        	LinkedList<Group> groups = configData.getConfigGroup(type);
+        	LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
 
@@ -148,7 +151,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
 
         type = Group.Type.STATE;
         {
-        	LinkedList<Group> groups = configData.getConfigGroup(type);
+        	LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
 
@@ -169,7 +172,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
         ccapi_rci_data += String.format("\n        %s%srci_session_end_cb,", RCI_FUNCTION_T, customPrefix);
         ccapi_rci_data += String.format("\n        %s%srci_action_start_cb,", RCI_FUNCTION_T, customPrefix);
         ccapi_rci_data += String.format("\n        %s%srci_action_end_cb", RCI_FUNCTION_T, customPrefix);
-        if (ConfigGenerator.rciLegacyEnabled()) {
+        if (options.rciLegacyEnabled()) {
             ccapi_rci_data += String.format(",\n        %s%srci_do_command_cb,", RCI_FUNCTION_T, customPrefix);
             ccapi_rci_data += String.format("\n        %s%srci_set_factory_defaults_cb,", RCI_FUNCTION_T, customPrefix);
             ccapi_rci_data += String.format("\n        %s%srci_reboot_cb", RCI_FUNCTION_T, customPrefix);

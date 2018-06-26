@@ -22,11 +22,14 @@ public class Parser {
     private static ArrayDeque<Integer> listLineNumber;
     private static LinkedList<Group> groupConfig;
 
+    private final static ConfigData config = ConfigData.getInstance();
+    private final static ConfigGenerator options = ConfigGenerator.getInstance();
+
     public static void setMaxNameLength(int max_name) {
         MAX_NAME_LENGTH = max_name;
     }
     
-    public static void processFile(String fileName, ConfigData configData) throws IOException, NullPointerException {
+    public static void processFile(String fileName) throws IOException, NullPointerException {
 
         try {
             listLineNumber = new ArrayDeque<Integer>();
@@ -38,7 +41,7 @@ public class Parser {
                 token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("globalerror")) {
-                    configData.addUserGroupError(getName(), getLongDescription());
+                    config.addUserGroupError(getName(), getLongDescription());
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>
@@ -55,7 +58,7 @@ public class Parser {
                     /* make sure group name doesn't exist in group */
                     Group.Type type = Group.Type.toType(groupType);
                     
-                    groupConfig = configData.getConfigGroup(type);
+                    groupConfig = config.getConfigGroup(type);
                     if (groupConfig.contains(nameStr)) {
                         throw new Exception("Duplicate <group> name: " + nameStr);
                     }
@@ -73,14 +76,14 @@ public class Parser {
                     }
 
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
-                    configData.nameLength(UseNames.COLLECTIONS, nameStr.length());
+                    config.nameLength(UseNames.COLLECTIONS, nameStr.length());
                     
                     String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only"; 
                     while (tokenScanner.hasToken()) {
                         token = tokenScanner.getToken();
 
                         if (token.equalsIgnoreCase("element")) {
-                            Element element = processElement(group_access, configData);
+                            Element element = processElement(group_access, config);
 
                             try {
                                 element.validate();
@@ -91,7 +94,7 @@ public class Parser {
 
                             theGroup.addItem(element);
                         } else if (token.equalsIgnoreCase("list")) {
-                            ItemList list = processList(group_access, configData, 0);
+                            ItemList list = processList(group_access, config, 0);
 
                             try {
                                 list.validate();
@@ -126,8 +129,8 @@ public class Parser {
                 }
             }
         } catch (NullPointerException e) {
-            ConfigGenerator.log("Parser NullPointerException");
-            ConfigGenerator.log(e.toString());
+            options.log("Parser NullPointerException");
+            options.log(e.toString());
             throw new NullPointerException();
 
         } catch (Exception e) {
@@ -308,7 +311,7 @@ public class Parser {
         return mvalue;
     }
 
-    private static final Element processElement(String default_access, ConfigData configData) throws Exception {
+    private static final Element processElement(String default_access, ConfigData config) throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
          * description] type <type> [min <min>] [max <max>] [access <access>]
@@ -318,7 +321,7 @@ public class Parser {
         elementLineNumber = tokenScanner.getLineNumber();
 
         Element element = new Element(name, getDescription(), getLongDescription());
-        configData.nameLength(UseNames.ELEMENTS, name.length());
+        config.nameLength(UseNames.ELEMENTS, name.length());
 
         try {
             while (tokenScanner.hasToken()) {
@@ -326,7 +329,7 @@ public class Parser {
 
                 if (token.equalsIgnoreCase("type")) {
                     Element.Type type = element.setType(getType());
-                    configData.addTypeSeen(type);
+                    config.addTypeSeen(type);
                 } else if (token.equalsIgnoreCase("access")) {
                     element.setAccess(getAccess());
                 } else if (token.equalsIgnoreCase("min")) {
@@ -362,7 +365,7 @@ public class Parser {
         return element;
     }
 
-    private static final ItemList processList(String default_access, ConfigData configData, int depth) throws Exception {
+    private static final ItemList processList(String default_access, ConfigData config, int depth) throws Exception {
         /*
          * syntax for parsing list: list <name> [instances] <description> [help
          * description] [access <access>]
@@ -382,10 +385,10 @@ public class Parser {
 		}
 
 		depth += 1;
-		configData.listDepth(depth);
+		config.listDepth(depth);
 
 		ItemList list = new ItemList(name, instances, getDescription(), getLongDescription());
-        configData.nameLength(UseNames.COLLECTIONS, name.length());
+        config.nameLength(UseNames.COLLECTIONS, name.length());
         
 		try {
 			String list_access = default_access;
@@ -397,9 +400,9 @@ public class Parser {
 		        	list_access = getAccess();
 		            list.setAccess(list_access);
 		        } else if (token.equalsIgnoreCase("element")) {
-		            list.addItem(processElement(list_access, configData));
+		            list.addItem(processElement(list_access, config));
 		        } else if (token.equalsIgnoreCase("list")) {
-		            list.addItem(processList(list_access, configData, depth));
+		            list.addItem(processList(list_access, config, depth));
 		        } else if (token.equalsIgnoreCase("end")) {
 		            break;
 		        } else if (token.startsWith("#")) {
@@ -419,7 +422,7 @@ public class Parser {
 		}
 
         listLineNumber.pop();
-        configData.addTypeSeen(Element.Type.LIST);
+        config.addTypeSeen(Element.Type.LIST);
 
         return list;
     }

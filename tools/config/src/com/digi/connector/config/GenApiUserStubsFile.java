@@ -5,18 +5,21 @@ import java.util.LinkedList;
 
 public class GenApiUserStubsFile extends GenSourceFile {
 
-    private static String FILENAME = ConfigGenerator.getCustomPrefix() + "ccapi_rci_functions.c";
+    private static String FILENAME = "ccapi_rci_functions.c";
 
-	public GenApiUserStubsFile(String directoryPath) throws IOException {
-		super(directoryPath, FILENAME, GenFile.Type.USER);
+    private GenApiUserHeaderFile header;
+	public GenApiUserStubsFile(GenApiUserHeaderFile header) throws IOException {
+		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
+		
+		this.header = header;
 	}
-	
-    public void writeContent(ConfigData configData) throws Exception {
+
+    public void writeContent() throws Exception {
         write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
         write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
-        write(String.format("%s \"%s\"\n\n", INCLUDE, GenApiUserHeaderFile.FILENAME));
+        write(String.format("%s \"%s\"\n\n", INCLUDE, header.path.getFileName().toString()));
 
-        writeFunctionsCB(configData);
+        writeFunctionsCB();
     }
     
     private String UNUSED(String parameter) {
@@ -48,7 +51,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
         return access;
     }
 
-    private void writeItemFunctionsCB(ConfigData configData, String prefix, ItemList list) throws Exception {
+    private void writeItemFunctionsCB(String prefix, ItemList list) throws Exception {
         for (Item item : list.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -89,10 +92,15 @@ public class GenApiUserStubsFile extends GenSourceFile {
                         break;
                     case ENUM:
                         Value first_value = element.getValues().get(0);
-                        if (ConfigGenerator.rciParserOption()) {
+                        if (options.rciParserOption()) {
                             value += "*value = \"" + first_value.getName() + "\"";
                             FType += "char const *";
                         } else {
+                        	System.err.println(customPrefix);
+                        	System.err.println(configType);
+                        	System.err.println(prefix);
+                        	System.err.println(element);
+                        	System.err.println(first_value);
                             value += "*value = " + customPrefix.toUpperCase() + "CCAPI_" + configType.toUpperCase() + "_" + prefix.toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
                             FType += String.format("%s%s_%s_%s_%s_id_t", customPrefix, CCAPI_PREFIX, configType, prefix, element.getName());
                         }
@@ -136,7 +144,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                     
                     switch (element.getType()) {
                         case ENUM:
-                            if (ConfigGenerator.rciParserOption()) {
+                            if (options.rciParserOption()) {
                                 break;
                             }
                             /* Intentional fall-thru */
@@ -167,19 +175,19 @@ public class GenApiUserStubsFile extends GenSourceFile {
             } else {
                 ItemList items = (ItemList) item;
             	
-                writeItemFunctionsCB(configData, prefix + "_" + items.getName(), items); 
+                writeItemFunctionsCB(prefix + "_" + items.getName(), items); 
             }
         }
     }
 
-    private void writeFunctionsCB(ConfigData configData) throws Exception {
+    private void writeFunctionsCB() throws Exception {
         String session_function = 
         	setFunction("_SESSION_GROUP_", customPrefix + "rci_session_start_cb(" + RCI_INFO_T + ")", null) +
         	setFunction("_SESSION_GROUP_", customPrefix + "rci_session_end_cb(" + RCI_INFO_T + ")", null) +
         	setFunction("_SESSION_GROUP_", customPrefix + "rci_action_start_cb(" + RCI_INFO_T + ")", null) +
         	setFunction("_SESSION_GROUP_", customPrefix + "rci_action_end_cb(" + RCI_INFO_T + ")", null);
 
-        if (ConfigGenerator.rciLegacyEnabled()) {
+        if (options.rciLegacyEnabled()) {
             session_function += 
             	setFunction("_SESSION_GROUP_", "rci_do_command_cb(" + RCI_INFO_T + ")", null) + 
             	setFunction("_SESSION_GROUP_", "rci_set_factory_defaults_cb(" + RCI_INFO_T + ")", null) +
@@ -188,13 +196,16 @@ public class GenApiUserStubsFile extends GenSourceFile {
         write(session_function);
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = configData.getConfigGroup(type);
+            LinkedList<Group> groups = config.getConfigGroup(type);
+
+            configType = type.toLowerName();
+
             for (Group group : groups) {
                 String group_function = setFunction(group.getName(), String.format("%srci_%s_%s_start(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
                 group_function += setFunction(group.getName(), String.format("%srci_%s_%s_end(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
                 write(group_function);
                
-                writeItemFunctionsCB(configData, group.getName(), group);
+                writeItemFunctionsCB(group.getName(), group);
             }
         }
     }

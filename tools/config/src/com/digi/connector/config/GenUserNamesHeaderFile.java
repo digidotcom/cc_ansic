@@ -6,10 +6,10 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 
 public class GenUserNamesHeaderFile extends GenHeaderFile {
 
-    private static String FILE = ConfigGenerator.getCustomPrefix() + "rci_usenames_defines.h";
+    private static String FILE = "rci_usenames_defines.h";
 
-	public GenUserNamesHeaderFile(String dir) throws IOException {
-		super(dir, FILE, GenFile.Type.USER);
+	public GenUserNamesHeaderFile() throws IOException {
+		super(FILE, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
 	}
 
     private void generateUseNamesHeader(String type, int amount) throws IOException {
@@ -24,13 +24,13 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
             "#endif\n", type, type, amount, type, amount, type, type, amount));
     }
 
-    public void writeGuardedContent(ConfigData configData) throws Exception {
-        if (ConfigGenerator.useNamesOption(UseNames.ELEMENTS)) {
-        	generateUseNamesHeader("ELEMENTS", configData.getMaxNameLength(UseNames.ELEMENTS) + 1);
+    public void writeGuardedContent() throws Exception {
+        if (options.useNamesOption(UseNames.ELEMENTS)) {
+        	generateUseNamesHeader("ELEMENTS", config.getMaxNameLength(UseNames.ELEMENTS) + 1);
         }
         
-        if (ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)) {
-        	generateUseNamesHeader("COLLECTIONS", configData.getMaxNameLength(UseNames.COLLECTIONS) + 1);
+        if (options.useNamesOption(UseNames.COLLECTIONS)) {
+        	generateUseNamesHeader("COLLECTIONS", config.getMaxNameLength(UseNames.COLLECTIONS) + 1);
         }
     }
 }

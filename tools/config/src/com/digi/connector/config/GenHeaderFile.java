@@ -105,21 +105,17 @@ public abstract class GenHeaderFile extends GenFile{
     "    char const * device_type;\n" +
     "} connector_remote_config_data_t;\n";
 
-    protected String file;
-    
-    public GenHeaderFile(String dir, String file, GenFile.Type type) throws IOException {
-    	super(dir, file, type);
-    	
-    	this.file = file;
+    public GenHeaderFile(String file, GenFile.Type type, GenFile.UsePrefix use) throws IOException {
+    	super(file, type, use);
     }
 
-    protected void writeContent(ConfigData configData) throws Exception {
-    	writeGuardHeader(configData);
-    	writeGuardedContent(configData);
-    	writeGuardFooter(configData);
+    protected void writeContent() throws Exception {
+    	writeGuardHeader();
+    	writeGuardedContent();
+    	writeGuardFooter();
     }
 
-    private void writeGuardHeader(ConfigData configData) throws Exception {
+    private void writeGuardHeader() throws Exception {
         String unique = path.getFileName().toString().replace('.', '_').toUpperCase();
 
     	write(
@@ -128,9 +124,9 @@ public abstract class GenHeaderFile extends GenFile{
 			"\n");
     }
 
-    abstract void writeGuardedContent(ConfigData configData) throws Exception;
+    abstract void writeGuardedContent() throws Exception;
 
-    private void writeGuardFooter(ConfigData configData) throws Exception {
+    private void writeGuardFooter() throws Exception {
     	write(
     		"#endif \n" +
 			"\n");

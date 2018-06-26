@@ -12,29 +12,8 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 import com.digi.connector.config.Element;
 
 public class ConfigData {
-
-    /* user setting and state groups */
-    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
-
-    private RciStrings userGlobalErrors = new RciStrings();
-
-    /* user global error */
-    private Map<Object, Integer> rciErrorMap = new HashMap<>();
-
-    private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
-        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
-
-    RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
-
-    private static int CommandsAttributeMaxLen = 20;
-    private static int max_list_depth = 0;
-
-    private static EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
-    private static EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
-
-    private static ConfigData instance; 
-    
-    private ConfigData() throws Exception {
+	private static ConfigData instance = null;
+    private ConfigData() {
         groupList = new LinkedHashMap<Group.Type, LinkedList<Group>>(2);
         groupList.put(Group.Type.SETTING, new LinkedList<Group>());
         groupList.put(Group.Type.STATE, new LinkedList<Group>());
@@ -46,13 +25,26 @@ public class ConfigData {
     		max_name_length.put(name, 0);
     	}
     }
-    
-    public static ConfigData getInstance() throws Exception {
-    	if (instance == null)
-    		instance = new ConfigData();
-    	
-    	return instance;
-    }
+	public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
+
+    /* user setting and state groups */
+    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
+
+    private RciStrings userGlobalErrors = new RciStrings();
+
+    /* user global error */
+    private Map<Object, Integer> rciErrorMap = new HashMap<>();
+
+    private final String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
+        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
+
+    RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
+
+    private int CommandsAttributeMaxLen = 20;
+    private int max_list_depth = 0;
+
+    private EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
+    private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
     public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
         return groupList.get(type);
@@ -117,7 +109,7 @@ public class ConfigData {
         	throw new Exception("Invalid CommandsAttributeMaxLen");
     }
 
-	public static int AttributeMaxLen() {
+	public int AttributeMaxLen() {
 
 		return CommandsAttributeMaxLen;
 	}

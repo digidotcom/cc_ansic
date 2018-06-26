@@ -19,12 +19,12 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     private final static String FILENAME = "remote_config.c";
 
-	public GenFsmSourceFile(String dir) throws IOException {
-		super(dir, FILENAME, GenFile.Type.INTERNAL);
+	public GenFsmSourceFile() throws IOException {
+		super(FILENAME, GenFile.Type.INTERNAL, GenFile.UsePrefix.NONE);
 	}
 
-    public void writeContent(ConfigData configData) throws Exception {
-        writeFunctionFile(configData);
+    public void writeContent() throws Exception {
+        writeFunctionFile();
     }
 
     private int prevRemoteStringLength;
@@ -38,8 +38,8 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
         prevRemoteStringLength++; /* add extra byte for the size */
 
-        if (fileType == ConfigGenerator.fileTypeOption() ||
-            ConfigGenerator.fileTypeOption() == ConfigGenerator.FileType.NONE) {
+        if (fileType == options.fileTypeOption() ||
+            options.fileTypeOption() == ConfigGenerator.FileType.NONE) {
             return str;
         } else {
             return "";
@@ -54,9 +54,9 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
     }
 
-    private void writeDefineRciErrors(ConfigData configData) throws IOException {
-        if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_RCI_ERROR, configData.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE);
+    private void writeDefineRciErrors() throws IOException {
+        if (!options.excludeErrorDescription()) {
+            writeDefineErrors(GLOBAL_RCI_ERROR, config.getRciGlobalErrors(), ConfigGenerator.FileType.SOURCE);
         }
     }
 
@@ -64,10 +64,10 @@ public class GenFsmSourceFile extends GenSourceFile {
         return (configType.toUpperCase() + "_" + define_name.toUpperCase());
     }
 
-    private void writeDefineGroupErrors(ConfigData configData) throws Exception {
+    private void writeDefineGroupErrors() throws Exception {
         for (Group.Type type : Group.Type.values()) {
             String defineName = null;
-            LinkedList<Group> groups = configData.getConfigGroup(type);
+            LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
 
@@ -77,7 +77,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                  * #define [group name]
                  */
 
-                if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
+                if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                     LinkedHashMap<String, String> errorMap = group.getErrors();
                     for (String key : errorMap.keySet()) {
                         defineName = getDefineString(group.getName() + "_" + ERROR + "_" + key);
@@ -92,9 +92,9 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     }
 
-    private void writeDefineGlobalErrors(ConfigData configData) throws IOException {
-        if (!ConfigGenerator.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_ERROR, configData.getUserGlobalErrors(), ConfigGenerator.FileType.SOURCE);
+    private void writeDefineGlobalErrors() throws IOException {
+        if (!options.excludeErrorDescription()) {
+            writeDefineErrors(GLOBAL_ERROR, config.getUserGlobalErrors(), ConfigGenerator.FileType.SOURCE);
         }
     }
 
@@ -135,15 +135,15 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
     }
 
-    private void writeRciErrorsRemoteAllStrings(ConfigData configData) throws IOException {
-        if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getRciGlobalErrors());
+    private void writeRciErrorsRemoteAllStrings() throws IOException {
+        if (!options.excludeErrorDescription()) {
+            writeLinkedHashMapStrings(config.getRciGlobalErrors());
         }
     }
 
     private void writeGroupRemoteAllStrings(LinkedList<Group> groups) throws Exception {
         for (Group group : groups) {
-            if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
+            if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 for (String key : errorMap.keySet()) {
                     write(getCharString(errorMap.get(key)));
@@ -152,31 +152,31 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
     }
 
-    private void writeErrorsRemoteAllStrings(ConfigData configData) throws IOException {
-        if (!ConfigGenerator.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(configData.getUserGlobalErrors());
+    private void writeErrorsRemoteAllStrings() throws IOException {
+        if (!options.excludeErrorDescription()) {
+            writeLinkedHashMapStrings(config.getUserGlobalErrors());
         }
     }
 
-    protected void writeRemoteAllStrings(ConfigData configData) throws Exception {
-        if (!ConfigGenerator.excludeErrorDescription()) {
+    protected void writeRemoteAllStrings() throws Exception {
+        if (!options.excludeErrorDescription()) {
             write(String.format("\nstatic char CONST %s[] = {\n",
                     CONNECTOR_REMOTE_ALL_STRING));
         }
 
-        writeRciErrorsRemoteAllStrings(configData);
+        writeRciErrorsRemoteAllStrings();
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> theConfig = configData.getConfigGroup(type);
+            LinkedList<Group> theConfig = config.getConfigGroup(type);
 
             configType = type.toLowerName();
             if (!theConfig.isEmpty()) {
                 writeGroupRemoteAllStrings(theConfig);
             }
         }
-        writeErrorsRemoteAllStrings(configData);
+        writeErrorsRemoteAllStrings();
 
-        if (!ConfigGenerator.excludeErrorDescription()) {
+        if (!options.excludeErrorDescription()) {
             write("\n};\n\n"); // end of CONNECTOR_REMOTE_ALL_STRING
         }
     }
@@ -205,17 +205,17 @@ public class GenFsmSourceFile extends GenSourceFile {
         return errorCount;
     }
 
-    private void writeGlobalErrorStructures(ConfigData configData) throws IOException {
-        if (!ConfigGenerator.excludeErrorDescription()) {
-            int errorCount = configData.getRciGlobalErrors().size() + configData.getUserGlobalErrors().size();
+    private void writeGlobalErrorStructures() throws IOException {
+        if (!options.excludeErrorDescription()) {
+            int errorCount = config.getRciGlobalErrors().size() + config.getUserGlobalErrors().size();
 
             if (errorCount > 0) {
                 write(String.format("static char const * const %ss[] = {\n", GLOBAL_RCI_ERROR));
 
                 /* top-level global errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR, configData.getRciGlobalErrors());
+                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR, config.getRciGlobalErrors());
                 /* group global errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR, configData.getUserGlobalErrors());
+                errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR, config.getUserGlobalErrors());
 
                 write("};\n\n");
             }
@@ -226,7 +226,7 @@ public class GenFsmSourceFile extends GenSourceFile {
     }
 
     private String sanitizeName(String name) {
-    	return name.replace('-', '_');
+    	return name.replace('-', '_').replace(".","_fullstop_");
     }
 
     private String getAccess(String access) {
@@ -248,14 +248,14 @@ public class GenFsmSourceFile extends GenSourceFile {
             String itemVariable = getDefineString(customPrefix + prefix + "__" + sanitizeName(item.getName())).toLowerCase();
             if (item instanceof Element) {
                 Element element = (Element) item;
-                String optional = ConfigGenerator.useNamesOption(UseNames.ELEMENTS)
+                String optional = options.useNamesOption(UseNames.ELEMENTS)
                 	? String.format("    \"%s\",\n", element.getName())
                 	: "";
                 
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
                 write(optional + "    " + getElementDefine("access", getAccess(element.getAccess())) + ",\n");
                 
-                if (ConfigGenerator.rciParserOption()) {
+                if (options.rciParserOption()) {
                     String enum_struct;
 
                     if (element.getType() == Element.Type.ENUM) {
@@ -278,7 +278,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             	writeCollectionArray(subitems, subitemsPrefix);
             	
             	String subitemsVariable = itemVariable + "_items";
-                String optional = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
+                String optional = options.useNamesOption(UseNames.COLLECTIONS)
                     	? String.format("    \"%s\",\n", subitems.getName())
                     	: "";
             	
@@ -360,7 +360,7 @@ public class GenFsmSourceFile extends GenSourceFile {
     }
 
     private void writeCollectionArrays(ItemList items, String prefix) throws Exception {
-        if (ConfigGenerator.rciParserOption()) {
+        if (options.rciParserOption()) {
             writeEnumArrays(items, prefix);
         }
 
@@ -368,7 +368,7 @@ public class GenFsmSourceFile extends GenSourceFile {
     }
 
     private void writeLocalErrorStructures(String error_name, LinkedHashMap<String, String> localErrors) throws IOException {
-        if (!ConfigGenerator.excludeErrorDescription()) {
+        if (!options.excludeErrorDescription()) {
         	int errorCount = localErrors.size();
         	 
 	        if (errorCount > 0) {
@@ -385,15 +385,15 @@ public class GenFsmSourceFile extends GenSourceFile {
         for (Group group: groups) {
             writeCollectionArrays(group, group.getName());
             
-            if (!ConfigGenerator.excludeErrorDescription()) {
+            if (!options.excludeErrorDescription()) {
             	writeLocalErrorStructures(group.getName(), group.getErrors());
             }
         }
     }
 
-    private void writeAllStructures(ConfigData configData) throws Exception {
+    private void writeAllStructures() throws Exception {
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = configData.getConfigGroup(type);
+            LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
 
@@ -405,7 +405,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
                     String items_name = customPrefix + getDefineString(group.getName() + "_items").toLowerCase();
-                    String optional = ConfigGenerator.useNamesOption(UseNames.COLLECTIONS)
+                    String optional = options.useNamesOption(UseNames.COLLECTIONS)
                         	? String.format("        \"%s\",\n", group.getName())
                         	: "";
                     String group_string = 
@@ -417,7 +417,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                         "        { ARRAY_SIZE(" + items_name + "), " + items_name + " }, \n" +
                     	"    },\n";
                     
-                    if ((!ConfigGenerator.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
+                    if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                         String errors_name = customPrefix + getDefineString(group.getName() + "_errors").toLowerCase();
 
                         group_string += "    { ARRAY_SIZE(" + errors_name + "), " + errors_name + " }, \n";
@@ -439,7 +439,7 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     	LinkedList<String> group_lines = new LinkedList<>();
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = configData.getConfigGroup(type);
+            LinkedList<Group> groups = config.getConfigGroup(type);
 
             if (!groups.isEmpty()) {
             	group_lines.add("    { NULL, 0 }");
@@ -459,7 +459,7 @@ public class GenFsmSourceFile extends GenSourceFile {
         		"\n");
     }
 
-    private void writeFunctionFile(ConfigData configData) throws Exception
+    private void writeFunctionFile() throws Exception
     {
         write(String.format("%s", CONNECTOR_GLOBAL_HEADER));
 
@@ -472,22 +472,22 @@ public class GenFsmSourceFile extends GenSourceFile {
         write("\n\n#define CONST const \n");
 
         /* Write Define Errors Macros */
-        writeDefineRciErrors(configData);
+        writeDefineRciErrors();
 
-        writeDefineGroupErrors(configData);
+        writeDefineGroupErrors();
 
-        writeDefineGlobalErrors(configData);
+        writeDefineGlobalErrors();
 
         /* write remote all strings in source file */
-        writeRemoteAllStrings(configData);
+        writeRemoteAllStrings();
 
         /* write connector_rci_errors[] */
-        writeGlobalErrorStructures(configData);
+        writeGlobalErrorStructures();
 
         /* write structures in source file */
-        writeAllStructures(configData);
+        writeAllStructures();
 
-        int GlobalErrorCount = configData.getUserGlobalErrors().size() + configData.rciGlobalErrors.size();
+        int GlobalErrorCount = config.getUserGlobalErrors().size() + config.rciGlobalErrors.size();
 
         write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
             "    connector_group_table,\n"+
@@ -499,6 +499,6 @@ public class GenFsmSourceFile extends GenSourceFile {
             "};\n"+
             "\n"+
             "connector_remote_config_data_t const * const rci_descriptor_data = &%srci_internal_data;"
-            , customPrefix, GlobalErrorCount, ConfigGenerator.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix));
+            , customPrefix, GlobalErrorCount, options.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix));
     }
 }
