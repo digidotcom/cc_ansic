@@ -9,6 +9,6 @@ public class ValueStruct extends Item {
     }
 
     public String toString(int id) {
-        return String.format("<value value=\"%s\" desc=\"%s\" bin_id=\"%d\"/>", name, toRciDescription(), id);
+        return String.format("<value value=\"%s\" desc=\"%s\" bin_id=\"%d\"/>", name, getDescription(), id);
     }
 }

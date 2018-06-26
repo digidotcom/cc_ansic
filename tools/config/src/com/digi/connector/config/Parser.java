@@ -80,7 +80,7 @@ public class Parser {
                     Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
                     configData.nameLength(UseNames.COLLECTIONS, nameStr.length());
                     
-                    String group_access = (typeName == "setting") ? "read_write" : "read_only"; 
+                    String group_access = (typeName.compareToIgnoreCase("setting") == 0) ? "read_write" : "read_only"; 
                     while (tokenScanner.hasToken()) {
                         token = tokenScanner.getToken();
 
@@ -171,7 +171,8 @@ public class Parser {
         }
         
         /* Only allow alphanumeric, hyphen, and underscore */
-        if (!name.matches("[a-zA-Z0-9_-]+")) {
+        /* See https://www.w3.org/TR/xml/#NT-Name */
+        if (!name.matches("[:A-Z_a-z][:A-Z_a-z0-9.-]*")) {
             throw new Exception("Invalid character in name: " + name);
         }
     

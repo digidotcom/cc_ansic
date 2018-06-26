@@ -14,6 +14,12 @@ public class Group extends ItemList {
         errorMap = new LinkedHashMap<String, String>();
     }
 
+    public String toString(int id) {
+        return String.format(
+            "<descriptor element=\"%s\" desc=\"%s\" bin_id=\"%d\">",
+             name, toRciDescription(), id);
+    }
+
     public LinkedHashMap<String, String> getErrors() {
         return errorMap;
     }

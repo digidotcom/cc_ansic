@@ -271,12 +271,11 @@ public class Descriptors {
 
                 result += 
                 	String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />", subitems.getInstances()) +
-                	itemDescriptors(bin_id_reader, createBinIdLogBuffer, subitems_prefix, subitems);
+                    itemDescriptors(bin_id_reader, createBinIdLogBuffer, subitems_prefix, subitems);
+                    result += "</element>\n";
 
             }
-        }
-        result += "</descriptor>";
-        
+        }       
     	return result;
     }
     
@@ -352,6 +351,7 @@ public class Descriptors {
             query_descriptors += getErrorDescriptors(configData.getUserGlobalErrorsIndex(), configData.getUserGlobalErrors());
             query_descriptors += getErrorDescriptors(configData.getAllErrorsSize() + 1, group.getErrors());
             query_descriptors += itemDescriptors(bin_id_reader, createBinIdLogBuffer, prefix, group);
+            query_descriptors +=  "</descriptor>";
             gid++;
         }
         query_descriptors += "</format_define>\n</descriptor>\n";

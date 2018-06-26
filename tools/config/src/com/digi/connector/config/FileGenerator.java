@@ -219,7 +219,7 @@ public abstract class FileGenerator {
     }
 
     private String sanitizeName(String name) {
-    	return name.replace('-', '_');
+    	return name.replace('-', '_').replace(".","_fullstop_");
     }
 
     protected void writeEnumValues(ConfigData configData, BufferedWriter bufferWriter, String prefix, ItemList list) throws Exception {
