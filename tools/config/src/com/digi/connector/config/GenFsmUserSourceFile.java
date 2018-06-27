@@ -202,19 +202,8 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         }
     }
 
-    private String sanitizeName(String name) {
-    	return name.replace('-', '_').replace(".","_fullstop_");
-    }
-
     private String getDefineString(String define_name) {
         return (configType.toUpperCase() + "_" + define_name.toUpperCase());
-    }
-
-    private String getAccess(String access) {
-        if (access == null) {
-            return "read_write";
-        }
-        return access;
     }
 
     private String getElementDefine(String type_name, String element_name) {
@@ -230,7 +219,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         for (Item item: items.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
-            String itemVariable = getDefineString(customPrefix + prefix + "__" + sanitizeName(item.getName())).toLowerCase();
+            String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase();
             if (item instanceof Element) {
                 Element element = (Element) item;
                 String optional = options.useNamesOption(UseNames.ELEMENTS)
@@ -238,7 +227,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
                 	: "";
                 
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
-                write(optional + "    " + getElementDefine("access", getAccess(element.getAccess())) + ",\n");
+                write(optional + "    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
                 
                 if (options.rciParserOption()) {
                     String enum_struct;
@@ -258,7 +247,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
                 write(	"};\n\n");
             } else {
             	ItemList subitems = (ItemList) item;
-            	String subitemsPrefix = prefix + "__" + sanitizeName(item.getName()).toLowerCase();
+            	String subitemsPrefix = prefix + "__" + item.getSanitizedName().toLowerCase();
             	
             	writeCollectionArray(subitems, subitemsPrefix);
             	
@@ -301,7 +290,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
             	first = false;
             }
             
-            String itemVariable = getDefineString(customPrefix + prefix + "__" + sanitizeName(item.getName())).toLowerCase() + suffix;
+            String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase() + suffix;
             write("{ " + getElementDefine("type", type) + ", { &" + itemVariable + " } }");
         }
         write("\n};\n\n");
@@ -339,7 +328,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
             } else {
             	ItemList subitems = (ItemList) item;
             	
-            	writeEnumArrays(subitems, prefix + "__" + sanitizeName(subitems.getName()));
+            	writeEnumArrays(subitems, prefix + "__" + subitems.getSanitizedName());
             }
         }
     }

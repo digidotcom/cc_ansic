@@ -132,14 +132,12 @@ public class Parser {
             options.log("Parser NullPointerException");
             options.log(e.toString());
             throw new NullPointerException();
-
         } catch (Exception e) {
             throw new IOException(errorFoundLog(fileName, e.getMessage()));
         }
         finally {
             tokenScanner.close();
         }
-
     }
 
     private static String errorFoundLog(String fileName, String str) {
@@ -158,7 +156,7 @@ public class Parser {
     }
 
     private static String getName() throws Exception {
-        String name = tokenScanner.getToken(); // tokenScanner.next();
+        String name = tokenScanner.getToken();
 
         if (name == null) {
             throw new Exception("Missing name!");
@@ -172,6 +170,25 @@ public class Parser {
         /* See https://www.w3.org/TR/xml/#NT-Name */
         if (!name.matches("[:A-Z_a-z][:A-Z_a-z0-9.-]*")) {
             throw new Exception("Invalid character in name: " + name);
+        }
+    
+        return name;
+    }
+
+    private static String getValueName() throws Exception {
+        String name = tokenScanner.getToken();
+
+        if (name == null) {
+            throw new Exception("Missing name!");
+        }
+        
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
+        }
+        
+        // Relaxed slightly for values in that we allow digits in the first position
+        if (!name.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
+            throw new Exception("Invalid character in value name: " + name);
         }
     
         return name;
@@ -209,25 +226,6 @@ public class Parser {
 
         }
         return result;
-    }
-
-    private static String getQuotedName() throws Exception {
-
-        String name = null;
-        if (tokenScanner.hasToken("\\\".*")) {
-            name = tokenScanner.getTokenInLine("\\\".*?\\\"");
-            if (name == null) {
-                throw new Exception("Missing name!");
-            }
-
-            name = name.substring(1, name
-                    .lastIndexOf("\""));
-
-            if (name.length() > MAX_NAME_LENGTH) {
-                throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
-            }
-        }
-        return name;
     }
 
     private static String getDescription() throws Exception {
@@ -343,10 +341,7 @@ public class Parser {
                      * Parse Value for element with enum type syntax for parsing
                      * value: value <name> [description] [help description]
                      */
-                    if (tokenScanner.hasToken("\\\".*"))
-                        element.addValue(getQuotedName(), getDescription(), getLongDescription());
-                    else
-                        element.addValue(getName(), getDescription(), getLongDescription());
+                     element.addValue(getValueName(), getDescription(), getLongDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {

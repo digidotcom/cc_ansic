@@ -26,13 +26,6 @@ public class GenApiUserSourceFile extends GenSourceFile {
         return (configType.toUpperCase() + "_" + define_name.toUpperCase());
     }
     
-    private String getAccess(String access) {
-        if (access == null) {
-            return "read_write";
-        }
-        return access;
-    }
-    
     private String COMMENTED(String comment) {
         return "/* " + comment + " */";
     }
@@ -49,7 +42,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
                 
                 current += String.format("\n { %s", COMMENTED(element.getName()));
 
-                if (getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+                if (element.getAccess() == Item.AccessType.READ_ONLY) {
                 	current += "   NULL,\n";
                 }
                 else {

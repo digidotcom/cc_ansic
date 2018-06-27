@@ -44,13 +44,6 @@ public class GenApiUserStubsFile extends GenSourceFile {
         return function;
     }
 
-    private String getAccess(String access) {
-        if (access == null) {
-            return "read_write";
-        }
-        return access;
-    }
-
     private void writeItemFunctionsCB(String prefix, ItemList list) throws Exception {
         for (Item item : list.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
@@ -96,11 +89,6 @@ public class GenApiUserStubsFile extends GenSourceFile {
                             value += "*value = \"" + first_value.getName() + "\"";
                             FType += "char const *";
                         } else {
-                        	System.err.println(customPrefix);
-                        	System.err.println(configType);
-                        	System.err.println(prefix);
-                        	System.err.println(element);
-                        	System.err.println(first_value);
                             value += "*value = " + customPrefix.toUpperCase() + "CCAPI_" + configType.toUpperCase() + "_" + prefix.toUpperCase() + "_" + element.getName().toUpperCase() + "_" + first_value.getName().replace(" ", "_").toUpperCase();
                             FType += String.format("%s%s_%s_%s_%s_id_t", customPrefix, CCAPI_PREFIX, configType, prefix, element.getName());
                         }
@@ -139,7 +127,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                     	customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), value);
                 }
                 
-                if (!getAccess(element.getAccess()).equalsIgnoreCase("read_only")) {
+                if (element.getAccess() != Item.AccessType.READ_ONLY) {
                     String value_type_modifier = "";
                     
                     switch (element.getType()) {

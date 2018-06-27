@@ -83,10 +83,14 @@ public abstract class GenFile {
     	writer.newLine();
     }
     
-    public final void writeBlock(Iterable<? extends String> lines) throws IOException {
+    public final void writeLines(Iterable<? extends String> lines) throws IOException {
     	for (String line: lines) {
     		writeLine(line);
     	}
+    }
+
+    public final void writeBlock(Iterable<? extends String> lines) throws IOException {
+    	writeLines(lines);
     	writer.newLine();
     }
 
@@ -114,10 +118,9 @@ public abstract class GenFile {
 	    	writePreamble();
 	    	writeContent();
 	    	
-	        options.log(String.format("File created: %s\n", path));
+	        options.log(String.format("File created: %s", path));
         } finally {
         	writer.close();
         }
     }
-    
 }

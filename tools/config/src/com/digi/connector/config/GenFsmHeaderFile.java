@@ -611,10 +611,6 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         return str;
     }
 
-    private String sanitizeName(String name) {
-    	return name.replace('-', '_').replace(".","_fullstop_");
-    }
-
     private void writeEnumHeader(Element element, String prefix) throws Exception {
         boolean explicit = false;
         int index = 0;
@@ -624,7 +620,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             if (value.getName().equals(""))
             	explicit = true;
             else {
-            	String line = getEnumString(prefix + "_" + sanitizeName(value.getName()));
+            	String line = getEnumString(prefix + "_" + value.getSanitizedName());
             	
             	if (explicit) {
             		line += " = " + index;
@@ -641,7 +637,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         String element_enum_string = TYPEDEF_ENUM;
 
         for (Item item : list.getItems()) {
-        	String item_prefix = prefix + "_" + sanitizeName(item.getName());
+        	String item_prefix = prefix + "_" + item.getSanitizedName();
         	
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -681,14 +677,14 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
-                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), config.getRciGlobalErrors());
-                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), config.getUserGlobalErrors());
+                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + "ERROR"), config.getRciGlobalErrors());
+                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + "ERROR"), config.getUserGlobalErrors());
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
 
                 for (String key : errorMap.keySet()) {
-                    String enumString = getEnumString(group.getName() + "_" + ERROR + "_" + key);
+                    String enumString = getEnumString(group.getName() + "_" + "ERROR" + "_" + key);
 
                     if (index++ == 0) {
                         /*Set start index to the global count */
@@ -700,7 +696,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
                     write(enumString);
                 }
-                write(endEnumString(group.getName() + "_" + ERROR));
+                write(endEnumString(group.getName() + "_" + "ERROR"));
             }
         }
     }

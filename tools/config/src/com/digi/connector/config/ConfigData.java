@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
 import com.digi.connector.config.Element;
@@ -33,7 +34,7 @@ public class ConfigData {
     private RciStrings userGlobalErrors = new RciStrings();
 
     /* user global error */
-    private Map<Object, Integer> rciErrorMap = new HashMap<>();
+    private Map<RciStrings, Integer> rciErrorMap = new HashMap<>();
 
     private final String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
         "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
@@ -48,6 +49,20 @@ public class ConfigData {
 
     public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
         return groupList.get(type);
+    }
+
+    public LinkedList<SimpleImmutableEntry<Group.Type, Group>> getConfigGroupEntries() {
+    	LinkedList<SimpleImmutableEntry<Group.Type, Group>> result = new LinkedList<>();
+    	
+        for (Map.Entry<Group.Type, LinkedList<Group>> pair : groupList.entrySet()) {
+        	Group.Type type = pair.getKey();
+        	LinkedList<Group> groups = pair.getValue();
+
+            for (Group group : groups) {
+                result.add(new SimpleImmutableEntry<Group.Type, Group>(type, group));
+            }
+        }
+        return result;
     }
 
     public LinkedHashMap<String, String> getUserGlobalErrors() {
@@ -91,7 +106,7 @@ public class ConfigData {
         return rciErrorMap.get(userGlobalErrors);
     }
 
-    public Map<Object, Integer> getRciErrorMap() {
+    public Map<RciStrings, Integer> getRciErrorMap() {
         return rciErrorMap;
     }
 

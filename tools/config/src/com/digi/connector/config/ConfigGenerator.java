@@ -704,7 +704,7 @@ public class ConfigGenerator {
 			descriptors.processDescriptors();
         }
         
-        log("\nDone.\n");
+        log("Done.");
     }
     
     public static void main(String[] args) {

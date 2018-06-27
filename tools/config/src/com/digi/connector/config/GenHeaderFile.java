@@ -13,7 +13,7 @@ public abstract class GenHeaderFile extends GenFile{
 
     protected final static String DEFINE = "#define ";
     protected final static String INCLUDE = "#include ";
-    protected final static String ERROR = "error";
+//    protected final static String ERROR = "error";
 
     protected final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
     protected final static String FLOAT_HEADER = "\"float.h\"\n";
@@ -28,7 +28,6 @@ public abstract class GenHeaderFile extends GenFile{
 
     protected final static String COUNT_STRING = "COUNT";
     protected final static String OFFSET_STRING = "OFFSET";
-
     protected final static String CHAR_CONST_STRING = "static char CONST * CONST ";
     protected final static String CONNECTOR_CALLBACK_STATUS = "\nconnector_callback_status_t ";
     protected final static String ID_T_STRING = "_id_t;\n\n";
@@ -36,7 +35,7 @@ public abstract class GenHeaderFile extends GenFile{
 
     /* Do not change these (if you do, you also need to update connector_remote.h */
     protected final static String RCI_PARSER_USES = "RCI_PARSER_USES_";
-    protected final static String RCI_INFO_T = "ccapi_rci_info_t * const info";
+    protected final static String CCAPI_CB_PARAMETERS = "ccapi_rci_info_t * const info";
     protected final static String RCI_FUNCTION_T = "(ccapi_rci_function_t)";
     protected final static String CCAPI_RCI_FUNCTION_T = "(ccapi_rci_function_t)";
 
@@ -94,7 +93,7 @@ public abstract class GenHeaderFile extends GenFile{
     protected String generatedFile = "";
 
     protected String configType;
-    protected String customPrefix;
+    protected String customPrefix = options.getCustomPrefix();
 
     protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
     "    struct connector_remote_group_table const * group_table;\n" +

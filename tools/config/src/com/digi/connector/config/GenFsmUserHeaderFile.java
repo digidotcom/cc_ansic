@@ -164,14 +164,14 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
-                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + ERROR), config.getRciGlobalErrors());
-                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + ERROR), config.getUserGlobalErrors());
+                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + "ERROR"), config.getRciGlobalErrors());
+                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + "ERROR"), config.getUserGlobalErrors());
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
 
                 for (String key : errorMap.keySet()) {
-                    String enumString = getEnumString(group.getName() + "_" + ERROR + "_" + key);
+                    String enumString = getEnumString(group.getName() + "_" + "ERROR" + "_" + key);
 
                     if (index++ == 0) {
                         /*Set start index to the global count */
@@ -183,7 +183,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
                     write(enumString);
                 }
-                write(endEnumString(group.getName() + "_" + ERROR));
+                write(endEnumString(group.getName() + "_" + "ERROR"));
             }
         }
     }
