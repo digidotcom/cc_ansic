@@ -7,7 +7,7 @@ public abstract class Item {
     protected final String name;
     protected final String description;
     protected final String helpDescription;
-    protected AccessType access; // TODO: store as AccessType instead of String
+    protected AccessType access;
 
     public enum AccessType {
         READ_ONLY, WRITE_ONLY, READ_WRITE;

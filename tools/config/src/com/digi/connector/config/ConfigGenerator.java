@@ -662,7 +662,7 @@ public class ConfigGenerator {
         switch(fileTypeOption())
         {
         case NONE:
-        	files.add(new GenFsmHeaderFile(config.getTypesSeen()));
+           	files.add(new GenFsmHeaderFile(config.getTypesSeen()));
         	files.add(new GenFsmSourceFile());
             break;
 
@@ -670,7 +670,10 @@ public class ConfigGenerator {
 
         	if (useCcapi())
             {
-        		GenApiUserHeaderFile header = new GenApiUserHeaderFile();
+               	files.add(new GenFsmFullHeaderFile());
+            	files.add(new GenFsmSourceFile());
+
+               	GenApiUserHeaderFile header = new GenApiUserHeaderFile();
             	files.add(header);
             	files.add(new GenApiUserSourceFile(header));
             	

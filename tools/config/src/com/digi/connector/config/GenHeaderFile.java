@@ -13,7 +13,6 @@ public abstract class GenHeaderFile extends GenFile{
 
     protected final static String DEFINE = "#define ";
     protected final static String INCLUDE = "#include ";
-//    protected final static String ERROR = "error";
 
     protected final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
     protected final static String FLOAT_HEADER = "\"float.h\"\n";

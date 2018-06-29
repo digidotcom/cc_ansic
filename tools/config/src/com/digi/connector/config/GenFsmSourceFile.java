@@ -98,7 +98,7 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
     }
 
-    private Boolean isFirstRemoteString;
+    private Boolean isFirstRemoteString = true;
     private String getCharString(String string) {
 
         String quote_char = (isFirstRemoteString) ? "": ",\n";
