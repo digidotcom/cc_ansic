@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public abstract class Item {
 
+	private static final String[] invalid = { "error", "warning" };
     protected final String name;
     protected final String description;
     protected final String helpDescription;
@@ -28,6 +29,11 @@ public abstract class Item {
             throw new IOException("Missing or bad description");
         }
 
+        for (String test: invalid) {
+        	if (name.equalsIgnoreCase(test)) {
+                throw new IOException("Invalid name: " + name);
+        	}
+        }
         this.name = name;
         this.description = description.replaceAll(":", "::");
         this.helpDescription = helpDescription;
