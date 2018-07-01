@@ -65,7 +65,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             	continue;
             }
             
-            writeBlock(code.enumerationTypedef(partial + "_id_t", getValues(prefix.toUpperCase(), element)));
+            writeBlock(Code.enumerationTypedef(partial + "_id_t", getValues(prefix.toUpperCase(), element)));
         }
     }
 
@@ -76,8 +76,8 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
     	{
     		LinkedList<String> lines = new LinkedList<>();
     		
-	    	lines.add(code.include("connector_api.h"));
-	    	lines.add(code.define("UNUSED_PARAMETER(a)", "(void)(a)"));
+	    	lines.add(Code.include("connector_api.h"));
+	    	lines.add(Code.define("UNUSED_PARAMETER(a)", "(void)(a)"));
 	    	lines.add("extern ccapi_rci_data_t const " + customPrefix + "ccapi_rci_data;");
 	    	writeBlock(lines);
     	}
@@ -85,7 +85,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
     	// Global errors
         {
         	String prefix = customPrefix + String.join("_", CCAPI_PREFIX, "global", "error");
-            writeBlock(code.enumerationTypedef(prefix + "_id_t", getErrors(prefix.toUpperCase())));
+            writeBlock(Code.enumerationTypedef(prefix + "_id_t", getErrors(prefix.toUpperCase())));
         }
         
     	// Group errors
@@ -94,7 +94,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
         	Group group = entry.getValue();
 
             String prefix = customPrefix + String.join("_", CCAPI_PREFIX, type, group.getSanitizedName());
-            writeBlock(code.enumerationTypedef(prefix + "_id_t", getErrors(prefix.toUpperCase(), group.getErrors().keySet())));
+            writeBlock(Code.enumerationTypedef(prefix + "_id_t", getErrors(prefix.toUpperCase(), group.getErrors().keySet())));
         }
         
         // All enumeration values
@@ -118,7 +118,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
         	Collections.addAll(functions, 
     			group_prefix + "_start_cb",
     			group_prefix + "_end_cb");
-            writeBlock(code.prototypes(group_return_type, functions, CCAPI_CB_PARAMETERS));
+            writeBlock(Code.prototypes(group_return_type, functions, CCAPI_CB_PARAMETERS));
         }
         
         // Down-level prototypes
@@ -136,11 +136,8 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
         String return_type = customPrefix + CCAPI_PREFIX + "_global_error_id_t ";
     	LinkedList<String> functions = new LinkedList<>();
     	
-    	Collections.addAll(functions, "rci_session_start_cb", "rci_session_end_cb", "rci_action_start_cb", "rci_action_end_cb");
-        if (options.rciLegacyEnabled()) {
-        	Collections.addAll(functions, "rci_do_command_cb", "rci_set_factory_defaults_cb", "rci_reboot_cb");
-        }
-        writeBlock(code.prototypes(return_type, functions, CCAPI_CB_PARAMETERS));
+    	Collections.addAll(functions, "rci_session_start_cb", "rci_session_end_cb", "rci_action_start_cb", "rci_action_end_cb", "rci_do_command_cb", "rci_set_factory_defaults_cb", "rci_reboot_cb");
+        writeBlock(Code.prototypes(return_type, functions, CCAPI_CB_PARAMETERS));
     }
 
     private void writeItemPrototypes(String prefix, ItemList list, String retval) throws Exception {
@@ -156,27 +153,27 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             Element element = (Element) item;
             String function = prefix + "_" + element.getSanitizedName();
             
-            String value_type = null;
+            Code.Type value_type = null;
             switch (element.getType()) {
             case UINT32:
             case HEX32:
             case X_HEX32:
-            	value_type = "uint32_t";
+            	value_type = UINT32;
                 break;
             case INT32:
-            	value_type = "int32_t";
+            	value_type = UINT32;
                 break;
             case FLOAT:
-            	value_type = "float";
+            	value_type = UINT32;
                 break;
             case ON_OFF:
-            	value_type = "ccapi_on_off_t";
+            	value_type = new Code.Type("ccapi_on_off_t");
                 break;
             case ENUM:
                 if (options.rciParserOption()) {
-                	value_type = "char const *";
+                	value_type = CHAR.constant().pointer();
                 } else {
-                	value_type = prefix + "_" + element.getSanitizedName() + "_id_t";
+                	value_type = new Code.Type(prefix + "_" + element.getSanitizedName() + "_id_t");
                 }
                 break;
             case IPV4:
@@ -187,10 +184,10 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             case MULTILINE_STRING:
             case PASSWORD:
             case MAC_ADDR:
-            	value_type = "char const *";
+            	value_type = CHAR.constant().pointer();
                 break;
             case BOOLEAN:
-            	value_type = "ccapi_bool_t";
+            	value_type = new Code.Type("ccapi_bool_t");
                 break;
             case LIST:
             	break;
@@ -198,13 +195,13 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             assert value_type != null;
 
             if (element.getAccess() == Item.AccessType.WRITE_ONLY) {
-            	writeLine(code.define(function + "_get", "NULL"));
+            	writeLine(Code.define(function + "_get", "NULL"));
             } else {
-            	writeLine(code.prototype(retval, function + "_get", CCAPI_CB_PARAMETERS + ", " + value_type + " const value"));
+            	writeLine(Code.prototype(retval, function + "_get", Code.parameters(CCAPI_CB_PARAMETERS, value_type.constant().named("value"))));
             }
 
             if (element.getAccess() == Item.AccessType.READ_ONLY) {
-            	writeLine(code.define(function + "_set", "NULL"));
+            	writeLine(Code.define(function + "_set", "NULL"));
             }
             else {
                 switch (element.getType()) {
@@ -220,7 +217,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
                     case FLOAT:
                     case ON_OFF:
                     case BOOLEAN:
-                        value_type += " const *";
+                        value_type = value_type.constant().pointer();
                         break;
                     case IPV4:
                     case FQDNV4:
@@ -233,7 +230,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
                     case LIST:
                         break;
                 }
-            	writeLine(code.prototype(retval, function + "_get", CCAPI_CB_PARAMETERS + ", " + value_type + " const value"));
+            	writeLine(Code.prototype(retval, function + "_get", Code.parameters(CCAPI_CB_PARAMETERS, value_type.constant().named("value"))));
             }
 	    }
     }

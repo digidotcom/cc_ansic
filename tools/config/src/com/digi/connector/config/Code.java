@@ -4,17 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.LinkedList;
 
-public class GenSource {
-	private static GenSource instance = null;
-	private GenSource() {}
-	public static final GenSource getInstance() { if (instance == null) instance = new GenSource(); return instance; }
+public final class Code {
+	private static final String QUOTE = Character.toString('"');
+	public static final String commented(String string) { return "/* " + string + " */"; }
+	public static final String quoted(String string) { return QUOTE + string + QUOTE; }
+	public static final String indented(String line) { return "    " + line; }
 	
-	private final String QUOTE = Character.toString('"');
-	public final String commented(String string) { return "/* " + string + " */"; }
-	public final String quoted(String string) { return QUOTE + string + QUOTE; }
-	public final String indented(String line) { return "    " + line; }
-	
-	public final LinkedList<String> indented(List<String> lines) {
+	public static final LinkedList<String> indented(List<String> lines) {
 		LinkedList<String> result = new LinkedList<>();
 
 		for (String line: lines) {
@@ -23,20 +19,21 @@ public class GenSource {
 		return result;
 	} 
 	
-	public final LinkedList<String> commas(List<String> lines) {
+	public static final LinkedList<String> commas(List<String> strings) {
 		LinkedList<String> result = new LinkedList<>();
 
-		assert !lines.isEmpty();
-		int last = lines.size() -1;
-		for (String line: lines.subList(0, last)) {
-			assert !line.isEmpty();
-			result.add(line + ",");
+		if (!strings.isEmpty()) {
+			int last = strings.size() -1;
+			for (String line: strings.subList(0, last)) {
+				assert !line.isEmpty();
+				result.add(line + ",");
+			}
+			result.add(strings.get(last));
 		}
-		result.add(lines.get(last));
 		return result;
 	}
 
-	private final LinkedList<String> _struct(String typedef, String tag, String type, List<String> fields) {
+	private static final LinkedList<String> _struct(String typedef, String tag, String type, List<String> fields) {
 		LinkedList<String> result = new LinkedList<>();
 		
 		assert tag.trim() == tag;
@@ -55,12 +52,12 @@ public class GenSource {
 		return result;
 	}
 	
-	public final LinkedList<String> structTaggedTypedef(String tag, String type, List<String> fields) { return _struct("typedef ", tag, type, fields); }
-	public final LinkedList<String> structTagged(String tag, List<String> fields) { return _struct("", tag, "", fields); }
-	public final LinkedList<String> structTypedef(String type, List<String> fields) { return structTaggedTypedef("", type, fields); }
-	public final LinkedList<String> struct(List<String> fields) { return structTagged("", fields); }
+	public static final LinkedList<String> structTaggedTypedef(String tag, String type, List<String> fields) { return _struct("typedef ", tag, type, fields); }
+	public static final LinkedList<String> structTagged(String tag, List<String> fields) { return _struct("", tag, "", fields); }
+	public static final LinkedList<String> structTypedef(String type, List<String> fields) { return structTaggedTypedef("", type, fields); }
+	public static final LinkedList<String> struct(List<String> fields) { return structTagged("", fields); }
 	
-	public final String define(String name, String value) {
+	public static final String define(String name, String value) {
 		assert !name.isEmpty();
 		String result = "#define " + name;
 		if (value != null) {
@@ -70,10 +67,10 @@ public class GenSource {
 		return result;
 	}
 
-	public final String include(String filename) { return "#include " + quoted(filename); }
+	public static final String include(String filename) { return "#include " + quoted(filename); }
 	
-	public final String define(String name) { return define(name, null); }
-	public final LinkedList<String> define(List<String> names) {
+	public static final String define(String name) { return define(name, null); }
+	public static final LinkedList<String> define(List<String> names) {
 		LinkedList<String> result = new LinkedList<>();
 		
 		for (String name: names) {
@@ -82,7 +79,7 @@ public class GenSource {
 		return result;
 	}
 
-	public final LinkedList<String> define(Map<String, Object> pairs) {
+	public static final LinkedList<String> define(Map<String, Object> pairs) {
 		LinkedList<String> result = new LinkedList<>();
 		
 		for (Map.Entry<String, Object> pair : pairs.entrySet()) {
@@ -94,7 +91,7 @@ public class GenSource {
 		return result;
 	}
 	
-	private final LinkedList<String> _enumeration(String typedef, String tag, String type, Map<String, Integer> pairs) {
+	private static final LinkedList<String> _enumeration(String typedef, String tag, String type, Map<String, Integer> pairs) {
 		LinkedList<String> result = new LinkedList<>();
 		
 		assert tag.trim() == tag;
@@ -127,20 +124,57 @@ public class GenSource {
 		return result;
 	}
 	
-	public final LinkedList<String> enumerationTaggedTypedef(String tag, String type, Map<String, Integer> pairs) { return _enumeration("typedef ", tag, type, pairs); }
-	public final LinkedList<String> enumerationTagged(String tag, Map<String, Integer> pairs) { return _enumeration("", tag, "", pairs); }
-	public final LinkedList<String> enumerationTypedef(String type, Map<String, Integer> pairs) { return enumerationTaggedTypedef("", type, pairs); }
-	public final LinkedList<String> enumeration(Map<String, Integer> pairs) { return enumerationTagged("", pairs); }
+	public static final LinkedList<String> enumerationTaggedTypedef(String tag, String type, Map<String, Integer> pairs) { return _enumeration("typedef ", tag, type, pairs); }
+	public static final LinkedList<String> enumerationTagged(String tag, Map<String, Integer> pairs) { return _enumeration("", tag, "", pairs); }
+	public static final LinkedList<String> enumerationTypedef(String type, Map<String, Integer> pairs) { return enumerationTaggedTypedef("", type, pairs); }
+	public static final LinkedList<String> enumeration(Map<String, Integer> pairs) { return enumerationTagged("", pairs); }
 	
-	public final String prototype(String return_type, String name, String parameters) {
-		return return_type + " " + name + "(" + parameters + ");";
+	public static final String parameters(String ...parameters) {
+		return String.join(", ", parameters);
 	}
-	public final LinkedList<String>  prototypes(String return_type, List<String> names, String parameters) {
+
+	public static final String signature(String type, String name, String parameters) {
+		return type + " " + name + "(" + parameters + ")";
+	}
+	
+	public static final String function(String type, String name, String parameters, String statements) {
+		return null;
+	}
+	
+	public static final String prototype(String signature) {
+		return signature + ";";
+	}
+	
+	public static final String prototype(String type, String name, String parameters) {
+		return prototype(signature(type, name, parameters));
+	}
+	
+	public static final LinkedList<String> prototypes(List<String> signatures) {
+		LinkedList<String> result = new LinkedList<>();
+		
+		for (String signature: signatures) {
+			result.add(prototype(signature));
+		}
+		return result;
+	}
+	
+	public static final LinkedList<String> prototypes(String type, List<String> names, String parameters) {
 		LinkedList<String> result = new LinkedList<>();
 		
 		for (String name: names) {
-			result.add(prototype(return_type, name, parameters));
+			result.add(prototype(type, name, parameters));
 		}
 		return result;
+	}
+	
+	public static final class Type {
+		private String type;
+		
+		public Type(String base) { type = base; }
+		
+		public final Type struct(String tag) { return new Type("struct " + tag); }
+		public final Type constant() { return new Type(type + " const"); }
+		public final Type pointer() { return new Type(type + " *"); }
+		public final String named(String name) { return type + " " + name; }
 	}
 }

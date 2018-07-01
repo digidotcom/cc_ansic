@@ -39,10 +39,15 @@ public abstract class GenFile {
     private BufferedWriter writer;
 
     protected Path path;
-    protected final GenSource code = GenSource.getInstance();
     protected final ConfigData config = ConfigData.getInstance();
     protected final ConfigGenerator options = ConfigGenerator.getInstance();
     protected final String customPrefix = options.getCustomPrefix();
+
+    protected static final Code.Type INT = new Code.Type("int");
+    protected static final Code.Type INT32 = new Code.Type("int32_t");
+    protected static final Code.Type UINT32 = new Code.Type("uint32_t");
+    protected static final Code.Type FLOAT = new Code.Type("float");
+    protected static final Code.Type CHAR = new Code.Type("char"); 
     
     public enum Type { INTERNAL, USER };
     public enum UsePrefix { CUSTOM, NONE };
