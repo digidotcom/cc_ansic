@@ -79,7 +79,7 @@ public abstract class GenFile {
         options.log("Existing file " + existing + " saved as: " + backup);
 	}
 
-    // TODO Eventually this goes away. -ASK
+    // TODO When all callers are using writeLine(), writeLines(), or writeBLock() this method goes away. -ASK
     public final void write(String content) throws IOException {
     	writer.write(content);
     }

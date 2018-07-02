@@ -183,7 +183,7 @@ public class Parser {
         }
         
         if (name.length() > MAX_NAME_LENGTH) {
-            throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
+            throw new Exception("The name is larger than the maximum length of " + MAX_NAME_LENGTH);
         }
         
         // Relaxed slightly for values in that we allow digits in the first position

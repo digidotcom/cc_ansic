@@ -109,6 +109,8 @@ public class GenApiUserStubsFile extends GenSourceFile {
                     case STRING:
                     case MULTILINE_STRING:
                         value += "*value = \"String\"";
+                        FType += "char const *";
+                        break;
                     case PASSWORD:
                         FType += "char const *";
                         break;
