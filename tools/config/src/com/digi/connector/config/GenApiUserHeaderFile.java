@@ -9,6 +9,8 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.digi.connector.config.ConfigGenerator.UseNames;
+
 public final class GenApiUserHeaderFile extends GenHeaderFile {
 
     private static final String FILENAME = "ccapi_rci_functions.h";
@@ -167,13 +169,13 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             	value_type = UINT32;
                 break;
             case ON_OFF:
-            	value_type = new Code.Type("ccapi_on_off_t");
+            	value_type = Code.Type.base("ccapi_on_off_t");
                 break;
             case ENUM:
-                if (options.rciParserOption()) {
+                if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                 	value_type = CHAR.constant().pointer();
                 } else {
-                	value_type = new Code.Type(prefix + "_" + element.getSanitizedName() + "_id_t");
+                	value_type = Code.Type.base(prefix + "_" + element.getSanitizedName() + "_id_t");
                 }
                 break;
             case IPV4:
@@ -187,7 +189,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             	value_type = CHAR.constant().pointer();
                 break;
             case BOOLEAN:
-            	value_type = new Code.Type("ccapi_bool_t");
+            	value_type = Code.Type.base("ccapi_bool_t");
                 break;
             case LIST:
             	break;
@@ -206,7 +208,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             else {
                 switch (element.getType()) {
                     case ENUM:
-                        if (options.rciParserOption()) {
+                        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                             break;
                         }
                         /* Intentional fall-thru */

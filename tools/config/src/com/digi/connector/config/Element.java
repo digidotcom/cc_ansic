@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.EnumSet;
 
+import com.digi.connector.config.ConfigGenerator.UseNames;
+
 public class Element extends Item {
 	public enum Type {
 	    STRING(1),
@@ -25,7 +27,7 @@ public class Element extends Item {
 	    DATETIME(22);
 
 	    /* special type since enum name cannot start with 0x */
-	    private final static String STRING_0XHEX32 = "0x_hex32";
+	    private final static String STRING_0XHEX32 = "0X_HEX32";
 	    private final int value;
 
 	    private Type(int value) {
@@ -58,6 +60,10 @@ public class Element extends Item {
 	            throw new Exception("Invalid element Type: " + str);
 	        }
 	    }
+	    
+        public String toString() {
+        	return toLowerName();
+        }
 	}
 
 	private final static EnumSet<Type> supportsMinMax = EnumSet.of(
@@ -151,7 +157,7 @@ public class Element extends Item {
         max = theMax;
     }
 
-    public void addValue(String valueName, String description, String helpDescription) throws Exception {
+    public void addValue(ConfigData config, String valueName, String description, String helpDescription) throws Exception {
         if (type == null)
             throw new Exception("Missing type enum on element: " + name);
         
@@ -162,6 +168,8 @@ public class Element extends Item {
             throw new Exception("Duplicate <value>: " + valueName);
       
         Value value = new Value(valueName, description, helpDescription);
+        config.nameLength(UseNames.VALUES, valueName.length());
+
         values.add(value);
     }
 

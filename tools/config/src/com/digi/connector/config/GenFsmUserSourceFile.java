@@ -207,7 +207,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
     }
 
     private String getElementDefine(String type_name, String element_name) {
-        return (String.format("%s_element_%s_%s", CONNECTOR_PREFIX, type_name, element_name));
+        return (String.format("connector_element_%s_%s", type_name, element_name));
     }
 
     private String COMMENTED(String comment) {
@@ -222,14 +222,14 @@ public class GenFsmUserSourceFile extends GenSourceFile {
             String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase();
             if (item instanceof Element) {
                 Element element = (Element) item;
-                String optional = options.useNamesOption(UseNames.ELEMENTS)
+                String optional = options.useNames().contains(UseNames.ELEMENTS)
                 	? String.format("    \"%s\",\n", element.getName())
                 	: "";
                 
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
                 write(optional + "    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
                 
-                if (options.rciParserOption()) {
+                if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                     String enum_struct;
 
                     if (element.getType() == Element.Type.ENUM) {
@@ -252,7 +252,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
             	writeCollectionArray(subitems, subitemsPrefix);
             	
             	String subitemsVariable = itemVariable + "_items";
-                String optional = options.useNamesOption(UseNames.COLLECTIONS)
+                String optional = options.useNames().contains(UseNames.COLLECTIONS)
                     	? String.format("    \"%s\",\n", subitems.getName())
                     	: "";
             	
@@ -334,7 +334,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
     }
 
     private void writeCollectionArrays(ItemList items, String prefix) throws Exception {
-        if (options.rciParserOption()) {
+        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
             writeEnumArrays(items, prefix);
         }
 
@@ -399,7 +399,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
                     String items_name = customPrefix + getDefineString(group.getName() + "_items").toLowerCase();
-                    String optional = options.useNamesOption(UseNames.COLLECTIONS)
+                    String optional = options.useNames().contains(UseNames.COLLECTIONS)
                         	? String.format("        \"%s\",\n", group.getName())
                         	: "";
                     String group_string = 

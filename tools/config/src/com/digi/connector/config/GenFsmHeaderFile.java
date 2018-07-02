@@ -9,15 +9,6 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 
 public class GenFsmHeaderFile extends GenHeaderFile {
 
-    protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
-    "    struct connector_remote_group_table const * group_table;\n" +
-    "    char const * const * error_table;\n" +
-    "    unsigned int global_error_count;\n" +
-    "    uint32_t firmware_target_zero_version;\n" +
-    "    uint32_t vendor_id;\n" +
-    "    char const * device_type;\n" +
-    "} connector_remote_config_data_t;\n";
-
     private final static String FILENAME = "connector_api_remote.h";
     
     private EnumSet<Element.Type> types;
@@ -36,7 +27,18 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeGroupTypeAndErrorEnum();
 
-        write(CONNECTOR_REMOTE_CONFIG_DATA);
+        {
+        	LinkedList<String> fields = new LinkedList<>();
+        	
+	        fields.add(Code.Type.struct("connector_remote_group_table").constant().pointer().named("group_table"));
+	        fields.add(CHAR.constant().pointer().constant().named("error_table"));
+	        fields.add(UINT.named("global_error_count"));
+	        fields.add(UINT32.named("firmware_target_zero_version"));
+	        fields.add(UINT32.named("vendor_id"));
+	        fields.add(CHAR.constant().pointer().named("device_type"));
+	        
+	        writeBlock(Code.structTaggedTypedef("connector_remote_config_data", fields, "connector_remote_config_data_t"));
+        }
 
         write("\nextern connector_remote_config_data_t const * const rci_descriptor_data;\n\n");
 
@@ -269,7 +271,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private String writeGroupElementDefine(ConfigData config, UseNames type) throws IOException {
     	String field = "";
     	
-        if (options.useNamesOption(type)) {
+        if (options.useNames().contains(type)) {
         	String value = type.name();
         	boolean plural = value.endsWith("S");
         	String name = plural ? value.substring(0, value.length() - 1) : value;
@@ -284,7 +286,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                     write(String.format("\n" + "#define RCI_%s_NAME_MAX_SIZE %d",
                     	name, config.getMaxNameLength(type) + 1));
             }
-            field = String.format("    char name[RCI_%s_NAME_MAX_SIZE];\n", name);
+            field = String.format("    char const * name;\n", name);
         }
     
     	return field;
@@ -296,7 +298,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         write("\n");
         
-        if (options.rciParserOption()) {
+        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
             write(
         		"\ntypedef struct {\n" +
                 "    char const * const name;\n" +
@@ -305,7 +307,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
 
         String element_enum_data = "";
-        if (options.rciParserOption()) {
+        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
             element_enum_data = 
         		"    struct {\n"+
                 "        size_t count;\n"+
@@ -366,7 +368,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         if(options.rciLegacyEnabled()){
             write(RCI_LEGACY_DEFINE);
         }
-        if(options.rciParserOption()){
+        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
             write(RCI_PARSER_DEFINE);
         }
 
@@ -408,7 +410,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                          "    connector_request_id_remote_config_session_end,\n" +
                          "    connector_request_id_remote_config_session_cancel");
         
-        if (options.rciLegacyEnabled()){
+        if (options.rciLegacyEnabled() || options.useCcapi()){
             write(",\n    connector_request_id_remote_config_do_command,\n" +
                              "    connector_request_id_remote_config_reboot,\n" +
                              "    connector_request_id_remote_config_set_factory_def");
@@ -424,7 +426,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write("\ntypedef enum {\n" +
                          "    connector_remote_action_set,\n" +
                          "    connector_remote_action_query");
-        if (options.rciLegacyEnabled()){
+        if (options.rciLegacyEnabled() || options.useCcapi()){
             write(",\n    connector_remote_action_do_command,\n" +
                              "    connector_remote_action_reboot,\n" +
                              "    connector_remote_action_set_factory_def");
@@ -437,11 +439,11 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeGroupElementStructs();
 
-        optional_field = options.useNamesOption(UseNames.COLLECTIONS)
+        optional_field = options.useNames().contains(UseNames.COLLECTIONS)
 			? "        char const * CONST name;\n"
 			: "";
         
-        if (options.useNamesOption(UseNames.COLLECTIONS)) {
+        if (options.useNames().contains(UseNames.COLLECTIONS)) {
             write("\n"+ DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n");
         }
         write(
@@ -454,10 +456,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "} connector_remote_group_t;\n"
             );
 
-        optional_field = options.useNamesOption(UseNames.ELEMENTS)
+        optional_field = options.useNames().contains(UseNames.ELEMENTS)
 			? "        char const * CONST name;\n"
 			: "";
-        if (options.useNamesOption(UseNames.ELEMENTS)) {
+        if (options.useNames().contains(UseNames.ELEMENTS)) {
             write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
         }
         write(
@@ -476,7 +478,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write("\ntypedef struct {\n" +
                          "  rci_query_setting_attribute_source_t source;\n" +
                          "  rci_query_setting_attribute_compare_to_t compare_to;\n");
-        if (options.rciLegacyEnabled()){
+        if (options.rciLegacyEnabled() || options.useCcapi()){
             write("  char const * target;\n");
         }
         write("} connector_remote_attribute_t;\n");
@@ -484,7 +486,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
 
         if (haveLists) {
-        	optional_field = options.useNamesOption(UseNames.COLLECTIONS)
+        	optional_field = options.useNames().contains(UseNames.COLLECTIONS)
     			? "        char const * CONST name;\n"
 				: "";
             write(

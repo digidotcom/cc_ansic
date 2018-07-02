@@ -33,7 +33,7 @@ public final class Code {
 		return result;
 	}
 
-	private static final LinkedList<String> _struct(String typedef, String tag, String type, List<String> fields) {
+	private static final LinkedList<String> _struct(String typedef, String tag, List<String> fields, String type) {
 		LinkedList<String> result = new LinkedList<>();
 		
 		assert tag.trim() == tag;
@@ -42,7 +42,7 @@ public final class Code {
 		}
 		result.add(typedef + "struct " + tag + "{");
 		for (String field: fields) {
-			result.add(indented(field));
+			result.add(indented(field + ";"));
 		}
 		assert type.trim() == type;
 		if (!type.isEmpty()) {
@@ -52,9 +52,9 @@ public final class Code {
 		return result;
 	}
 	
-	public static final LinkedList<String> structTaggedTypedef(String tag, String type, List<String> fields) { return _struct("typedef ", tag, type, fields); }
-	public static final LinkedList<String> structTagged(String tag, List<String> fields) { return _struct("", tag, "", fields); }
-	public static final LinkedList<String> structTypedef(String type, List<String> fields) { return structTaggedTypedef("", type, fields); }
+	public static final LinkedList<String> structTaggedTypedef(String tag, List<String> fields, String type) { return _struct("typedef ", tag, fields, type); }
+	public static final LinkedList<String> structTagged(String tag, List<String> fields) { return _struct("", tag, fields, ""); }
+	public static final LinkedList<String> structTypedef(List<String> fields, String type) { return structTaggedTypedef("", fields, type); }
 	public static final LinkedList<String> struct(List<String> fields) { return structTagged("", fields); }
 	
 	public static final String define(String name, String value) {
@@ -137,8 +137,20 @@ public final class Code {
 		return type + " " + name + "(" + parameters + ")";
 	}
 	
-	public static final String function(String type, String name, String parameters, String statements) {
-		return null;
+	public static final LinkedList<String> function(String signature, List<String> statements) {
+		LinkedList<String> result = new LinkedList<>();
+		
+		result.add(signature);
+		result.add("{");
+		for (String statement: statements) {
+			result.add(indented(statement + ";"));
+		}
+		result.add("}");
+		return result;
+	}
+	
+	public static final LinkedList<String> function(String type, String name, String parameters, List<String> statements) {
+		return function(signature(type, name, parameters), statements);
 	}
 	
 	public static final String prototype(String signature) {
@@ -170,9 +182,11 @@ public final class Code {
 	public static final class Type {
 		private String type;
 		
-		public Type(String base) { type = base; }
+		private Type(String base) { type = base; }
 		
-		public final Type struct(String tag) { return new Type("struct " + tag); }
+		public static final Type base(String base) { return new Type(base); }
+		public static final Type struct(String tag) { return new Type("struct " + tag); }
+		
 		public final Type constant() { return new Type(type + " const"); }
 		public final Type pointer() { return new Type(type + " *"); }
 		public final String named(String name) { return type + " " + name; }

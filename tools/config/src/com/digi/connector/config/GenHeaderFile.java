@@ -1,12 +1,9 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 public abstract class GenHeaderFile extends GenFile{
-
-    protected static String TOOL_NAME = "RCI Generator";
-
-    protected final static String HEADER_FILENAME = "connector_api_remote.h";
 
     protected final static String CONNECTOR_PREFIX = "connector";
     protected final static String CCAPI_PREFIX = "ccapi";
@@ -14,7 +11,6 @@ public abstract class GenHeaderFile extends GenFile{
     protected final static String DEFINE = "#define ";
     protected final static String INCLUDE = "#include ";
 
-    protected final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
     protected final static String FLOAT_HEADER = "\"float.h\"\n";
 
     protected final static String TYPEDEF_ENUM = "typedef enum {\n";
@@ -94,15 +90,6 @@ public abstract class GenHeaderFile extends GenFile{
     protected String configType;
     protected String customPrefix = options.getCustomPrefix();
 
-    protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
-    "    struct connector_remote_group_table const * group_table;\n" +
-    "    char const * const * error_table;\n" +
-    "    unsigned int global_error_count;\n" +
-    "    uint32_t firmware_target_zero_version;\n" +
-    "    uint32_t vendor_id;\n" +
-    "    char const * device_type;\n" +
-    "} connector_remote_config_data_t;\n";
-
     public GenHeaderFile(String file, GenFile.Type type, GenFile.UsePrefix use) throws IOException {
     	super(file, type, use);
     }
@@ -116,17 +103,17 @@ public abstract class GenHeaderFile extends GenFile{
     private void writeGuardHeader() throws Exception {
         String unique = path.getFileName().toString().replace('.', '_').toUpperCase();
 
-    	write(
-    		"#ifndef " + unique + "\n" +
-    		"#define " + unique + "\n" + 
-			"\n");
+        LinkedList<String> lines = new LinkedList<>();
+    	lines.add("#ifndef " + unique);
+    	lines.add("#define " + unique);
+    	writeBlock(lines);
     }
 
     abstract void writeGuardedContent() throws Exception;
 
     private void writeGuardFooter() throws Exception {
-    	write(
-    		"#endif \n" +
-			"\n");
+        LinkedList<String> lines = new LinkedList<>();
+    	lines.add("#endif");
+    	writeBlock(lines);
     }
 }

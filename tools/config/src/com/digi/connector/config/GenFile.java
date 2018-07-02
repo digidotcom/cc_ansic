@@ -43,11 +43,12 @@ public abstract class GenFile {
     protected final ConfigGenerator options = ConfigGenerator.getInstance();
     protected final String customPrefix = options.getCustomPrefix();
 
-    protected static final Code.Type INT = new Code.Type("int");
-    protected static final Code.Type INT32 = new Code.Type("int32_t");
-    protected static final Code.Type UINT32 = new Code.Type("uint32_t");
-    protected static final Code.Type FLOAT = new Code.Type("float");
-    protected static final Code.Type CHAR = new Code.Type("char"); 
+    protected static final Code.Type INT = Code.Type.base("int");
+    protected static final Code.Type UINT = Code.Type.base("unsigned int");
+    protected static final Code.Type INT32 = Code.Type.base("int32_t");
+    protected static final Code.Type UINT32 = Code.Type.base("uint32_t");
+    protected static final Code.Type FLOAT = Code.Type.base("float");
+    protected static final Code.Type CHAR = Code.Type.base("char"); 
     
     public enum Type { INTERNAL, USER };
     public enum UsePrefix { CUSTOM, NONE };

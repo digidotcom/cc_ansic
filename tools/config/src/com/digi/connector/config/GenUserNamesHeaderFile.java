@@ -25,12 +25,16 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
     }
 
     public void writeGuardedContent() throws Exception {
-        if (options.useNamesOption(UseNames.ELEMENTS)) {
+        if (options.useNames().contains(UseNames.ELEMENTS)) {
         	generateUseNamesHeader("ELEMENTS", config.getMaxNameLength(UseNames.ELEMENTS) + 1);
         }
         
-        if (options.useNamesOption(UseNames.COLLECTIONS)) {
+        if (options.useNames().contains(UseNames.COLLECTIONS)) {
         	generateUseNamesHeader("COLLECTIONS", config.getMaxNameLength(UseNames.COLLECTIONS) + 1);
+        }
+        
+        if (options.useNames().contains(UseNames.VALUES)) {
+        	generateUseNamesHeader("VALUES", config.getMaxNameLength(UseNames.VALUES) + 1);
         }
     }
 }

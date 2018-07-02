@@ -21,6 +21,10 @@ public abstract class Item {
                 throw new Exception("Invalid access Type: " + str);
             }
         }
+        
+        public String toString() {
+        	return name().toLowerCase();
+        }
     }
 
     public Item(String name, String description, String helpDescription) throws IOException {

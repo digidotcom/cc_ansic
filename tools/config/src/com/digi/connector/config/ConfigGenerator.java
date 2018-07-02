@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.EnumSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.Collections;
 
 public class ConfigGenerator {
 	private static ConfigGenerator instance = null;
@@ -45,7 +47,7 @@ public class ConfigGenerator {
 	
     public final static String VERSION = "3.0.0.0";
 
-    public static enum UseNames { NONE, COLLECTIONS, ELEMENTS };
+    public static enum UseNames { COLLECTIONS, ELEMENTS, VALUES };
     public static enum FileType { NONE, SOURCE, GLOBAL_HEADER;
         public static FileType toFileType(String str) throws Exception {
             try {
@@ -216,7 +218,7 @@ public class ConfigGenerator {
         log(String
                 .format(
                         "\t%-16s \t= optional, add ASCIIZ string \"name\" field to connector_remote_group_t and/or connector_remote_element_t structures. Default is %s.",
-                        DASH + USE_NAMES_OPTION + "={none|collections|elements|all}", USE_NAMES_DEFAULT));
+                        DASH + USE_NAMES_OPTION + "={none|collections|elements|values|all}", USE_NAMES_DEFAULT));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -306,11 +308,11 @@ public class ConfigGenerator {
     	
     	switch (compact) {
     	case "NONE":
-    		result = EnumSet.of(UseNames.NONE);
+    		result = EnumSet.noneOf(UseNames.class);
     		break;
     		
     	case "ALL":
-    		result = EnumSet.complementOf(EnumSet.of(UseNames.NONE));
+    		result = EnumSet.allOf(UseNames.class);
     		break;
     		
     	default:
@@ -577,8 +579,8 @@ public class ConfigGenerator {
         return fileType;
     }
 
-    public boolean useNamesOption(UseNames desired) {
-        return useNames.contains(desired);
+    public Set<UseNames> useNames() {
+        return Collections.unmodifiableSet(useNames);
     }
 
     public boolean deleteDescriptorOption() {
@@ -691,20 +693,20 @@ public class ConfigGenerator {
             break;
         }
 
-        if (!useNamesOption(UseNames.NONE)) {
+        if (!useNames().isEmpty()) {
     		files.add(new GenUserNamesHeaderFile());
     	}
 
-        //generate
-        for (GenFile file: files) {
-            file.generateFile();
-        }
-        
         if (!noUpload || saveDescriptor) {
             debug_log("Start Generating/uploading descriptors");
 
         	Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
 			descriptors.processDescriptors();
+        }
+        
+        //generate
+        for (GenFile file: files) {
+            file.generateFile();
         }
         
         log("Done.");

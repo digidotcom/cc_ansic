@@ -341,7 +341,7 @@ public class Parser {
                      * Parse Value for element with enum type syntax for parsing
                      * value: value <name> [description] [help description]
                      */
-                     element.addValue(getValueName(), getDescription(), getLongDescription());
+                     element.addValue(config, getValueName(), getDescription(), getLongDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {

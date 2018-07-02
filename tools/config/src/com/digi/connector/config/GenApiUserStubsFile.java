@@ -3,6 +3,8 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import com.digi.connector.config.ConfigGenerator.UseNames;
+
 public class GenApiUserStubsFile extends GenSourceFile {
 
     private static String FILENAME = "ccapi_rci_functions.c";
@@ -85,7 +87,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                         break;
                     case ENUM:
                         Value first_value = element.getValues().get(0);
-                        if (options.rciParserOption()) {
+                        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                             value += "*value = \"" + first_value.getName() + "\"";
                             FType += "char const *";
                         } else {
@@ -132,7 +134,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                     
                     switch (element.getType()) {
                         case ENUM:
-                            if (options.rciParserOption()) {
+                            if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                                 break;
                             }
                             /* Intentional fall-thru */
