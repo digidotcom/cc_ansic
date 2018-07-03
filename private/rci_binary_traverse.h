@@ -140,7 +140,7 @@ STATIC connector_bool_t traverse_all_list_instances(rci_t * const rci)
 	else
 	{
 		connector_collection_t const * const info = get_current_collection_info(rci);
-		if (info->instances > 1 && info->instances > get_current_list_index(rci))
+		if (get_current_list_count(rci) > get_current_list_index(rci))
         {
             /* next instances */
             increment_current_list_index(rci);
@@ -253,8 +253,7 @@ STATIC connector_bool_t traverse_all_group_instances(rci_t * const rci)
 	}
 	else
 	{
-		connector_group_t const * const group = get_current_group(rci);
-		if (group->collection.instances > 1 && group->collection.instances > get_group_index(rci))
+		if (rci->shared.group.info.keys.count > get_group_index(rci))
         {
             /* next instances */
             increment_group_index(rci);

@@ -35,7 +35,7 @@
 #define set_current_list_id(rci, value)		(CURRENT_LIST_ID_VARIABLE(rci) = (value))
 #define invalidate_current_list_id(rci)		(set_current_list_id(rci, INVALID_ID))
 
-#define CURRENT_LIST_INDEX_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).index)
+#define CURRENT_LIST_INDEX_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).specifier.value.index)
 #define get_current_list_index(rci)				(CURRENT_LIST_INDEX_VARIABLE(rci))
 #define have_current_list_index(rci)			(get_current_list_index(rci) != INVALID_INDEX)
 #define increment_current_list_index(rci)		(CURRENT_LIST_INDEX_VARIABLE(rci)++)

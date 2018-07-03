@@ -100,7 +100,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
             case rci_command_query_setting:
             {
                 unsigned int i;
-                for (i=0; i < rci->command.attribute_count; i++)
+                for (i=0; i < rci->shared.attribute_count; i++)
                 {
                     switch (rci->command.attribute[i].id.query_setting)
                     {
@@ -121,7 +121,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
             case rci_command_do_command:
             {
                 unsigned int i;
-                for (i=0; i < rci->command.attribute_count; i++)
+                for (i=0; i < rci->shared.attribute_count; i++)
                 {
                     switch (rci->command.attribute[i].id.do_command)
                     {
@@ -179,7 +179,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 			unsigned int const index = get_list_depth(rci) - 1;
 
 			rci->shared.callback_data.list.level[index].id = rci->shared.list.level[index].id;
-			rci->shared.callback_data.list.level[index].index = rci->shared.list.level[index].index;
+			rci->shared.callback_data.list.level[index].index = rci->shared.list.level[index].specifier.value.index;
 			#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
 			{
 				connector_collection_t const * const list = get_current_collection_info(rci);

@@ -47,6 +47,8 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
     rci->input.destination = rci_buffer_position(&rci->buffer.input);
     reset_input_content(rci);
+	rci->shared.attribute_count = 0;
+	rci->shared.attributes_processed = 0;
 
     rci->output.content.data = NULL;
     rci->output.content.length = 0;
@@ -60,7 +62,7 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 		for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
 		{
 			rci->shared.list.level[i].id = INVALID_ID;
-			rci->shared.list.level[i].index = INVALID_INDEX;
+			rci->shared.list.level[i].specifier.value.index = INVALID_INDEX;
 		}
 	}
 	set_list_depth(rci, 0);

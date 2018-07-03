@@ -25,7 +25,7 @@
 #define have_group_id(rci)              (get_group_id(rci) != INVALID_ID)
 #define increment_group_id(rci)         (GROUP_ID_VARIABLE(rci)++)
 
-#define GROUP_INDEX_VARIABLE(rci)       ((rci)->shared.group.index)
+#define GROUP_INDEX_VARIABLE(rci)       ((rci)->shared.group.specifier.value.index)
 #define set_group_index(rci, value)     (GROUP_INDEX_VARIABLE(rci) = (value))
 #define get_group_index(rci)            (GROUP_INDEX_VARIABLE(rci))
 #define increment_group_index(rci)      (GROUP_INDEX_VARIABLE(rci)++)

@@ -41,7 +41,6 @@ static char const * rci_input_state_t_as_string(rci_input_state_t const value)
         enum_to_case(rci_input_state_field_id);
 #if (defined RCI_PARSER_USES_LIST)
 		enum_to_case(rci_input_state_list_attribute);
-		enum_to_case(rci_input_state_list_attribute_and_field_type);
 #endif
         enum_to_case(rci_input_state_field_type);
         enum_to_case(rci_input_state_field_no_value);

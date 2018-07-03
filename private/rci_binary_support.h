@@ -217,10 +217,13 @@ typedef enum
     rci_input_state_command_normal_attribute_value,
     rci_input_state_group_id,
     rci_input_state_group_attribute,
+	rci_input_state_group_normal_attribute_id,
+	rci_input_state_group_normal_attribute_value,
     rci_input_state_field_id,
 #if (defined RCI_PARSER_USES_LIST)
 	rci_input_state_list_attribute,
-	rci_input_state_list_attribute_and_field_type,
+	rci_input_state_list_normal_attribute_id,
+	rci_input_state_list_normal_attribute_value,
 #endif
     rci_input_state_field_type,
     rci_input_state_field_no_value,
@@ -284,6 +287,13 @@ typedef enum
     rci_error_state_callback
 } rci_error_state_t;
 
+typedef enum
+{
+	rci_specifier_type_unknown,
+	rci_specifier_type_int,
+	rci_specifier_type_string
+} rci_specifier_type_t;
+
 typedef struct
 {
     uint8_t * data;
@@ -295,6 +305,29 @@ typedef struct
     rcistr_t name;
     rcistr_t value;
 } rci_attribute_t;
+
+typedef struct
+{
+	rci_specifier_type_t type;
+	union {
+		unsigned int index;
+		char * name;
+	} value;
+	struct {
+		unsigned int count;
+		char ** values;
+	} keys;
+} rci_collection_info_t;
+
+typedef struct
+{
+	unsigned int type;
+	union {
+		unsigned int index;
+		rcistr_t name;
+		unsigned int count;
+	} value;
+} rci_attribute_info_t;
 
 typedef struct rci
 {
@@ -316,15 +349,12 @@ typedef struct rci
 
     struct {
         rci_command_t command_id;
-        unsigned int attribute_count;
-        unsigned int attributes_processed;
 
 #if (defined RCI_LEGACY_COMMANDS)
 #define MAX_ATTRIBUTES MAX_VALUE((unsigned int)rci_query_setting_attribute_id_count, (unsigned int)rci_do_command_attribute_id_count)
 #else
 #define MAX_ATTRIBUTES rci_query_setting_attribute_id_count
 #endif
-
         struct 
         {
             rci_command_attribute_t id;
@@ -381,9 +411,13 @@ typedef struct rci
         rcistr_t content;
 		uint8_t flag;
 
+		uint32_t last_attribute_id;
+        unsigned int attribute_count;
+        unsigned int attributes_processed;
+
         struct {
             unsigned int id;
-            unsigned int index;
+			rci_collection_info_t info;
         } group;
 
 #if (defined RCI_PARSER_USES_LIST)
@@ -391,7 +425,7 @@ typedef struct rci
             unsigned int depth;
             struct {
                 unsigned int id;
-                unsigned int index;
+				rci_collection_info_t info;
             } level[RCI_LIST_MAX_DEPTH];
 			unsigned int query_depth;
         } list;
@@ -411,6 +445,7 @@ typedef struct rci
 #define RCI_SHARED_FLAG_ALL_GROUPS 				(1 << 0)
 #define RCI_SHARED_FLAG_ALL_GROUP_INSTANCES		(1 << 1)
 #define RCI_SHARED_FLAG_ALL_LIST_INSTANCES		(1 << 2)
+#define RCI_SHARED_FLAG_TYPE_EXPECTED			(1 << 3)
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)

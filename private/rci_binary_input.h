@@ -139,7 +139,6 @@ done:
 
 STATIC connector_bool_t get_uint32(rci_t * const rci, uint32_t * const value)
 {
-
     size_t const bytes = get_modifier_ber(rci, value);
 
     if (bytes > 0)
@@ -156,6 +155,63 @@ STATIC connector_bool_t get_float(rci_t * const rci, float * const value)
 }
 #endif
 
+STATIC connector_bool_t get_string_of_len(rci_t * const rci, char const * * string, uint32_t const length, size_t const offset)
+{
+	connector_bool_t got_string = connector_false;
+	size_t const new_size = offset + length + sizeof "";
+    size_t const bytes = rci->shared.content.length;
+#if defined CONNECTOR_DEBUG
+    size_t const size_max = SIZE_MAX;
+
+    (void)size_max;
+    ASSERT(length <= size_max);
+#endif
+#if (defined CONNECTOR_NO_MALLOC)
+    if (new_size > sizeof rci->input.storage)
+    {
+        connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH);
+        rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+        goto done;
+    }
+#else
+    if (new_size > rci->input.storage_len)
+    {
+        size_t const old_size = rci->input.storage_len;
+        connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
+        connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
+
+        switch (connector_status)
+        {
+            case connector_working:
+                rci->input.storage_len = new_size;
+                break;
+            default:
+                connector_debug_line("Not enough memory for string, wanted %" PRIsize, new_size);
+                goto done;
+        }
+    }
+#endif
+    if (bytes == (offset + length))
+    {
+        char * data = (char *)(rci->shared.content.data + offset);
+
+        if (!destination_in_storage(rci))
+        {
+            memcpy(rci->input.storage, data, length);
+            data = (char *)rci->input.storage;
+        }
+
+        data[length] = nul;
+        *string =  data;
+
+        reset_input_content(rci);
+        got_string = connector_true;
+    }
+
+done:
+	return got_string;
+}
+
 STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, size_t * const length)
 {
     connector_bool_t got_string = connector_false;
@@ -164,58 +220,9 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 
     if (ber_bytes > 0)
     {
-        size_t const new_size = ber_bytes + value + sizeof "";
-        size_t const bytes = rci->shared.content.length;
-#if defined CONNECTOR_DEBUG
-        size_t const size_max = SIZE_MAX;
-
-        (void)size_max;
-        ASSERT(value <= size_max);
-#endif
-        *length = value;
-#if (defined CONNECTOR_NO_MALLOC)
-        if (new_size > sizeof rci->input.storage)
-        {
-            connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH);
-            rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
-            goto done;
-        }
-#else
-        if (new_size > rci->input.storage_len)
-        {
-            size_t const old_size = rci->input.storage_len;
-            connector_data_t * const connector_ptr = rci->service_data->connector_ptr;
-            connector_status_t const connector_status = realloc_data(connector_ptr, old_size, new_size, (void **)&rci->input.storage);
-
-            switch (connector_status)
-            {
-                case connector_working:
-                    rci->input.storage_len = new_size;
-                    break;
-                default:
-                    connector_debug_line("Not enough memory for string, wanted %" PRIsize, new_size);
-                    goto done;
-            }
-        }
-#endif
-        if (bytes == (ber_bytes + *length))
-        {
-            char * data = (char *)(rci->shared.content.data + ber_bytes);
-
-            if (!destination_in_storage(rci))
-            {
-                memcpy(rci->input.storage, data, *length);
-                data = (char *)rci->input.storage;
-            }
-
-            data[*length] = nul;
-            *string =  data;
-
-            reset_input_content(rci);
-            got_string = connector_true;
-        }
+        got_string = get_string_of_len(rci, string, value, ber_bytes);
     }
-done:
+
     return got_string;
 }
 
@@ -274,23 +281,26 @@ done:
 }
 #endif
 
-STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * type, unsigned int * value)
+STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t * attribute_info)
 {
-#define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK  0x1F
-#define BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK 0x7F80
+#define BINARY_RCI_ATTRIBUTE_LOW_MASK  0x1F
+#define BINARY_RCI_ATTRIBUTE_HIGH_MASK 0x7F80
 #define BINARY_RCI_ATTRIBUTE_TYPE_NORMAL_COUNT_MASK 0x0F
 
     connector_bool_t got_attribute = connector_false;
     uint32_t attribute_value;
+	size_t bytes = get_modifier_ber(rci, &attribute_value);
 
-    if (get_uint32(rci, &attribute_value))
+    if (bytes > 0)
     {
-        *type = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_MASK;
-        switch (*type)
+        attribute_info->type = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_MASK;
+        switch (attribute_info->type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
+			case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
             {
-                if (attribute_value & (~BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK))
+				unsigned int value;
+                if (attribute_value & (~BINARY_RCI_ATTRIBUTE_LOW_MASK))
                 {
                     /* attribute is wrapped around the "attribute type" bits (bits 5 and 6)
                      *
@@ -299,9 +309,9 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * type,
                      */
                     uint16_t index_low, index_high;
 
-                    index_low = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
-                    index_high = (attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_HIGH_MASK) >> 2;
-                    *value = index_high | index_low;
+                    index_low = attribute_value & BINARY_RCI_ATTRIBUTE_LOW_MASK;
+                    index_high = (attribute_value & BINARY_RCI_ATTRIBUTE_HIGH_MASK) >> 2;
+                    value = index_high | index_low;
                 }
                 else
                 {
@@ -309,33 +319,44 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, unsigned int * type,
                      * bit |7 | 6 5 | 4 3 2 1 0|
                      *     |x | 0 1 | - index -|
                      */
-                    *value =  attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_INDEX_LOW_MASK;
+                    value = attribute_value & BINARY_RCI_ATTRIBUTE_LOW_MASK;
                 }
-                connector_debug_line("decode_attribute: index = %d", *value);
-                got_attribute = connector_true;
+				if (attribute_info->type == BINARY_RCI_ATTRIBUTE_TYPE_INDEX)
+				{
+					attribute_info->value.index = value;
+					connector_debug_line("decode_attribute: index = %d", attribute_info->value.index);
+		           	got_attribute = connector_true;
+				}
+				else if (value > 0)
+				{
+					if (get_string_of_len(rci, &attribute_info->value.name.data, value, bytes) == connector_true)
+					{
+						attribute_info->value.name.length = value + sizeof "";
+						connector_debug_line("decode_attribute: index = %s", attribute_info->value.name.data);
+				       	got_attribute = connector_true;
+					}
+				}
                 break;
             }
-            case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
-                /* Tool doesn't support name and enum attribute */
-                connector_debug_line("decode_attribute: unsupported attribute type");
-                rci->status = rci_status_internal_error;
-                ASSERT(connector_false);
-                break;
-
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
             {
                 /* attribute output
                  * bit |7 | 6 5 | 4 3 2 1 0|
                  *     |x | 0 0 | x - cnt -|
                  */
-                *value =  attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_NORMAL_COUNT_MASK;
 
-                connector_debug_line("decode_attribute: count = %d", *value);
-                got_attribute = connector_true;
+				attribute_info->value.count = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_NORMAL_COUNT_MASK;
+				connector_debug_line("decode_attribute: count = %d", attribute_info->value.count);
+				got_attribute = connector_true;
                 break;
             }
         }
     }
+	
+	if (got_attribute)
+	{
+		reset_input_content(rci);
+	}
 
     return got_attribute;
 }
@@ -396,7 +417,7 @@ STATIC void process_rci_command(rci_t * const rci)
         command &= BINARY_RCI_COMMAND_MASK;
 
         rci->command.command_id = (rci_command_t)command;
-        rci->command.attribute_count = 0;
+        rci->shared.attribute_count = 0;
 
         switch (command)
         {
@@ -469,11 +490,11 @@ done:
 
 STATIC void process_command_attribute(rci_t * const rci)
 {
-    unsigned int type, value;
+	rci_attribute_info_t attr;
 
-    if (decode_attribute(rci, &type, &value))
+    if (decode_attribute(rci, &attr))
     {
-        switch (type)
+        switch (attr.type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
                 /* We don't support command attribute; so just ignore it. */
@@ -489,23 +510,23 @@ STATIC void process_command_attribute(rci_t * const rci)
 
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
 
-                rci->command.attribute_count = value;
-                rci->command.attributes_processed = 0;
+                rci->shared.attribute_count = attr.value.index;
+                rci->shared.attributes_processed = 0;
 
-                ASSERT(rci->command.attribute_count > 0);
+                ASSERT(rci->shared.attribute_count > 0);
 
                 switch (rci->shared.callback_data.action)
                 {
                     case connector_remote_action_query:
                         ASSERT_GOTO(rci->shared.callback_data.group.type == connector_remote_group_setting, done);
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_query_setting_attribute_id_count, done);
+                        ASSERT_GOTO(rci->shared.attribute_count <= rci_query_setting_attribute_id_count, done);
                         break;
                     case connector_remote_action_set:
                         ASSERT_GOTO(0, done);
                         break;
 #if (defined RCI_LEGACY_COMMANDS)
                     case connector_remote_action_do_command:
-                        ASSERT_GOTO(rci->command.attribute_count <= rci_do_command_attribute_id_count, done);
+                        ASSERT_GOTO(rci->shared.attribute_count <= rci_do_command_attribute_id_count, done);
                         break;
                     case connector_remote_action_reboot:
                     case connector_remote_action_set_factory_def:
@@ -533,7 +554,7 @@ STATIC void process_command_normal_attribute_id(rci_t * const rci)
         connector_debug_line("attribute_id=%d\n", attribute_id);
 #endif
 
-        rci->command.attribute[rci->command.attributes_processed].id.val = attribute_id;
+        rci->command.attribute[rci->shared.attributes_processed].id.val = attribute_id;
 
         set_rci_input_state(rci, rci_input_state_command_normal_attribute_value);
     }
@@ -554,17 +575,17 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
             connector_debug_line("attribute_val=%d\n", attribute_value);
 #endif
 
-            switch (rci->command.attribute[rci->command.attributes_processed].id.query_setting)
+            switch (rci->command.attribute[rci->shared.attributes_processed].id.query_setting)
             {
                 case rci_query_setting_attribute_id_source:
                 case rci_query_setting_attribute_id_compare_to:
-                    rci->command.attribute[rci->command.attributes_processed].value.enum_val = attribute_value;
+                    rci->command.attribute[rci->shared.attributes_processed].value.enum_val = attribute_value;
                     break;
                 case rci_query_setting_attribute_id_count:
                     ASSERT_GOTO(0, done);
                     break;
             }
-            rci->command.attribute[rci->command.attributes_processed].type = attribute_type_enum;
+            rci->command.attribute[rci->shared.attributes_processed].type = attribute_type_enum;
             break;
         }
 #if (defined RCI_LEGACY_COMMANDS)
@@ -581,18 +602,18 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
             connector_debug_line("attribute='%.*s'\n", attribute_value_len, attribute_value);
 #endif
 
-            switch (rci->command.attribute[rci->command.attributes_processed].id.do_command)
+            switch (rci->command.attribute[rci->shared.attributes_processed].id.do_command)
             {
                 case rci_do_command_attribute_id_target:
                     ASSERT(attribute_value_len <= RCI_COMMANDS_ATTRIBUTE_MAX_LEN);
-                    memcpy(rci->command.attribute[rci->command.attributes_processed].value.string_val, attribute_value, attribute_value_len);
-                    rci->command.attribute[rci->command.attributes_processed].value.string_val[attribute_value_len] = '\0';
+                    memcpy(rci->command.attribute[rci->shared.attributes_processed].value.string_val, attribute_value, attribute_value_len);
+                    rci->command.attribute[rci->shared.attributes_processed].value.string_val[attribute_value_len] = '\0';
                     break;
                 case rci_do_command_attribute_id_count:
                     ASSERT_GOTO(0, done);
                     break;
             }
-            rci->command.attribute[rci->command.attributes_processed].type = attribute_type_string;
+            rci->command.attribute[rci->shared.attributes_processed].type = attribute_type_string;
             break;
         }
 #endif
@@ -608,9 +629,9 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
            break;
     }         
 
-    rci->command.attributes_processed++;
+    rci->shared.attributes_processed++;
 
-    if (rci->command.attributes_processed == rci->command.attribute_count)
+    if (rci->shared.attributes_processed == rci->shared.attribute_count)
     {
 #if (defined RCI_LEGACY_COMMANDS)
         if (rci->command.command_id == rci_command_do_command)
@@ -715,19 +736,20 @@ STATIC void process_group_id(rci_t * const rci)
             goto done;
         }
 
+        {
+            connector_group_t const * const group =  get_current_group(rci);
+            if (group->collection.instances > 1)
+            {
+				rci->shared.group.info.keys.count = 0;
+                set_should_traverse_all_group_instances(rci, connector_true);
+            }
+        }
+
         if (has_rci_atribute(group_id))
         {
             invalidate_group_index(rci);
             set_rci_input_state(rci, rci_input_state_group_attribute);
             goto done;
-        }
-
-        {
-            connector_group_t const * const group =  get_current_group(rci);
-            if (group->collection.instances > 1)
-            {
-                set_should_traverse_all_group_instances(rci, connector_true);
-            }
         }
 
         set_rci_input_state(rci, rci_input_state_field_id);
@@ -744,22 +766,30 @@ done:
 
 STATIC void process_group_attribute(rci_t * const rci)
 {
-    unsigned int type;
+    rci_attribute_info_t attr;
 
-    if (decode_attribute(rci, &type, &rci->shared.group.index))
+    if (decode_attribute(rci, &attr))
     {
-        switch (type)
+        switch (attr.type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
-                set_rci_input_state(rci, rci_input_state_field_id);
-                set_rci_traverse_state(rci, rci_traverse_state_group_id);
-                state_call(rci, rci_parser_state_traverse);
+				set_should_traverse_all_group_instances(rci, connector_false);
+				rci->shared.group.specifier.value.index = attr.value.index;
+				break;
+			case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+				set_should_traverse_all_group_instances(rci, connector_false);
+				rci->shared.group.specifier.value.index = 1;
                 break;
-            case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
-                ASSERT(connector_false);
+				rci->shared.attribute_count = attr.value.count;
+				set_rci_input_state(rci, rci_input_state_group_normal_attribute_id);
+				return;
                 break;
         }
+
+		set_rci_input_state(rci, rci_input_state_field_id);
+    	set_rci_traverse_state(rci, rci_traverse_state_group_id);
+    	state_call(rci, rci_parser_state_traverse);
     }
 
     return;
@@ -773,31 +803,175 @@ STATIC void start_list(rci_t * const rci)
 	set_rci_traverse_state(rci, rci_traverse_state_list_id);
 	state_call(rci, rci_parser_state_traverse);
 }
+#endif
 
-STATIC void process_list_attribute(rci_t * const rci, connector_bool_t type_expected)
+STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_bool_t is_group)
 {
-    unsigned int type;
+    uint32_t attribute_id;
 
-    if (decode_attribute(rci, &type, &get_current_list_index(rci)))
+    if (get_uint32(rci, &attribute_id))
     {
-        switch (type)
+#if (defined RCI_DEBUG)
+        connector_debug_line("attribute_id=%d\n", attribute_id);
+#endif
+		switch (attribute_id)
+		{
+			case rci_collection_index: 
+			case rci_collection_name:
+			case rci_collection_count:
+			case rci_collection_complete:
+				rci->shared.last_attribute_id = attribute_id;
+				break;
+			default:
+				ASSERT(connector_false);
+				break;
+		}
+		
+		if (is_group == connector_true)
+			set_rci_input_state(rci, rci_input_state_group_normal_attribute_value);
+		else
+			set_rci_input_state(rci, rci_input_state_list_normal_attribute_value);
+    }
+}
+
+STATIC void process_collection_normal_attribute_value(rci_t * const rci, connector_bool_t is_group)
+{
+	connector_bool_t got_attribute = connector_false;
+
+	if (rci->shared.last_attribute_id == rci_collection_name)
+	{
+		const char * attribute_value;
+        size_t attribute_value_len;
+
+        if (get_string(rci, &attribute_value, &attribute_value_len) == connector_true)
+		{
+#if (defined RCI_DEBUG)
+        	connector_debug_line("proccess_collection_normal_attribute_value name=%s\n", attribute_value);
+#endif
+			/* NEED TO COPY STRING !!!!! */
+			if (is_group == connector_true)
+			{
+				set_should_traverse_all_group_instances(rci, connector_false);
+				rci->shared.group.specifier.value.index = 1; /* DEBUG !!!!! */
+			}
+			else
+			{
+				set_should_traverse_all_list_instances(rci, connector_false);
+				set_current_list_index(rci, 1); /* DEBUG !!!!! */
+			}
+
+			got_attribute = connector_true;
+		}
+	}
+	else
+	{
+		uint32_t attribute_value;
+		
+		if (get_uint32(rci, &attribute_value))
+		{
+			switch (rci->shared.last_attribute_id)
+			{
+				case rci_collection_index:
+#if (defined RCI_DEBUG)
+        			connector_debug_line("proccess_collection_normal_attribute_value index=%u\n", attribute_value);
+#endif
+					if (is_group == connector_true)
+					{
+						set_should_traverse_all_group_instances(rci, connector_false);
+						rci->shared.group.specifier.value.index = attribute_value;
+					}
+					else
+					{
+						set_should_traverse_all_list_instances(rci, connector_false);
+						set_current_list_index(rci, attribute_value);
+					}
+					break;
+				case rci_collection_count:
+#if (defined RCI_DEBUG)
+        			connector_debug_line("proccess_collection_normal_attribute_value count=%u\n", attribute_value);
+#endif
+					if (is_group == connector_true)
+						rci->shared.group.info.keys.count = attribute_value;
+					/* trigger set_instances callback or set flag? Do we need to wait? */
+					break;
+				case rci_collection_complete:
+#if (defined RCI_DEBUG)
+        			connector_debug_line("proccess_collection_normal_attribute_value complete=%u\n", attribute_value);
+#endif
+					if (attribute_value)
+					{
+						if (is_group == connector_true)
+							rci->shared.group.info.keys.count = 0;
+						/* trigger set_instances callback or set flag? Do we need to wait? */
+					}
+					break;
+			}
+			got_attribute = connector_true;
+		}
+	}
+
+	if (got_attribute == connector_true)
+	{
+		rci->shared.attributes_processed++;
+
+		if (rci->shared.attributes_processed == rci->shared.attribute_count)
+		{
+			set_rci_input_state(rci, rci_input_state_field_id);
+	
+			if (is_group == connector_true)
+			{
+				set_rci_traverse_state(rci, rci_traverse_state_group_id);
+				state_call(rci, rci_parser_state_traverse);
+			}
+			else if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_TYPE_EXPECTED))
+			{
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_TYPE_EXPECTED, connector_false);
+				set_rci_input_state(rci, rci_input_state_field_type);
+			}
+			else
+			{
+				start_list();
+			}			
+		}
+		else if (is_group == connector_true)
+		{
+			set_rci_input_state(rci, rci_input_state_group_normal_attribute_id);
+		}
+		else
+		{
+			set_rci_input_state(rci, rci_input_state_list_normal_attribute_id);
+		}
+	}
+}
+
+#if (defined RCI_PARSER_USES_LIST)
+STATIC void process_list_attribute(rci_t * const rci)
+{
+    rci_attribute_info_t attr;
+
+    if (decode_attribute(rci, &attr))
+    {
+        switch (attr.type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
-				set_should_traverse_all_list_instances(rci, connector_false);
-				if (type_expected == connector_true)
-				{
-					set_rci_input_state(rci, rci_input_state_field_type);
-				}
-				else
-				{
-					start_list(rci);
-				}
-		    	break;
-            case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+				set_current_list_index(rci, attr.value.index);
+				break;
+			case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+		    	break;	
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
                 ASSERT(connector_false);
                 break;
         }
+		set_should_traverse_all_list_instances(rci, connector_false);
+		if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_TYPE_EXPECTED))
+		{
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_TYPE_EXPECTED, connector_false);
+			set_rci_input_state(rci, rci_input_state_field_type);
+		}
+		else
+		{
+			start_list(rci);
+		}
     }
 
     return;
@@ -809,14 +983,14 @@ STATIC void process_list_start(rci_t * const rci, uint32_t value)
     {
 		if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
 		{
-			set_rci_input_state(rci, rci_input_state_list_attribute_and_field_type);
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_TYPE_EXPECTED, connector_true);
 		}
 
 		set_rci_input_state(rci, rci_input_state_list_attribute);
 		goto done;
 	}
 	
-	set_current_list_index(rci, 1);
+	set_current_list_index(rci, 1); /* Need to set index to indicate we have already traversed the first instance */
 	set_should_traverse_all_list_instances(rci, connector_true);
 
 	if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
@@ -1431,12 +1605,21 @@ STATIC void rci_parse_input(rci_t * const rci)
             case rci_input_state_group_attribute:
                 process_group_attribute(rci);
                 break;
+			case rci_input_state_group_normal_attribute_id:
+				process_collection_normal_attribute_id(rci, connector_true);
+				break;
+			case rci_input_state_group_normal_attribute_value:
+				process_collection_normal_attribute_value(rci, connector_true);
+				break;
 #if (defined RCI_PARSER_USES_LIST)
 			case rci_input_state_list_attribute:
-				process_list_attribute(rci, connector_false);
+				process_list_attribute(rci);
 				break;
-			case rci_input_state_list_attribute_and_field_type:
-				process_list_attribute(rci, connector_true);
+			case rci_input_state_list_normal_attribute_id:
+				process_collection_normal_attribute_id(rci, connector_false);
+				break;
+			case rci_input_state_list_normal_attribute_value:
+				process_collection_normal_attribute_value(rci, connector_false);
 				break;
 #endif
             case rci_input_state_field_id:

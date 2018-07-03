@@ -423,7 +423,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            if (rci->command.attribute_count == 0)
+            if (rci->shared.attribute_count == 0)
             {
                 overflow = rci_output_uint32(rci, rci->command.command_id);
             }
@@ -447,7 +447,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
         goto done;
     }
 
-    if (rci->command.attribute_count > 0)
+    if (rci->shared.attribute_count > 0)
     {
         set_rci_output_state(rci, rci_output_state_command_normal_attribute_count);
     }
@@ -520,7 +520,7 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            overflow = rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->command.attribute_count);
+            overflow = rci_output_uint8(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL | rci->shared.attribute_count);
             if (overflow)
             {
                 goto done;
@@ -534,9 +534,9 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
         goto done;
     }
 
-    rci->command.attributes_processed = 0;
+    rci->shared.attributes_processed = 0;
 
-    ASSERT_GOTO(rci->command.attribute_count > 0, done);
+    ASSERT_GOTO(rci->shared.attribute_count > 0, done);
 
     set_rci_output_state(rci, rci_output_state_command_normal_attribute_id);
 
@@ -567,7 +567,7 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attributes_processed].id.val);
+            overflow = rci_output_uint8(rci, rci->command.attribute[rci->shared.attributes_processed].id.val);
             if (overflow)
             {
                 goto done;
@@ -610,14 +610,14 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
-            switch (rci->command.attribute[rci->command.attributes_processed].type)
+            switch (rci->command.attribute[rci->shared.attributes_processed].type)
             {
                 case attribute_type_enum:
-                    overflow = rci_output_uint8(rci, rci->command.attribute[rci->command.attributes_processed].value.enum_val);
+                    overflow = rci_output_uint8(rci, rci->command.attribute[rci->shared.attributes_processed].value.enum_val);
                     break;
 #if (defined RCI_LEGACY_COMMANDS)
                 case attribute_type_string:
-                    overflow = rci_output_string(rci, rci->command.attribute[rci->command.attributes_processed].value.string_val, strlen(rci->command.attribute[rci->command.attributes_processed].value.string_val));
+                    overflow = rci_output_string(rci, rci->command.attribute[rci->shared.attributes_processed].value.string_val, strlen(rci->command.attribute[rci->shared.attributes_processed].value.string_val));
                     break;
 #endif
             }
@@ -634,9 +634,9 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
         goto done;
     }
 
-    rci->command.attributes_processed++;
+    rci->shared.attributes_processed++;
 
-    if (rci->command.attributes_processed < rci->command.attribute_count)
+    if (rci->shared.attributes_processed < rci->shared.attribute_count)
     {
         set_rci_output_state(rci, rci_output_state_command_normal_attribute_id);
     }
