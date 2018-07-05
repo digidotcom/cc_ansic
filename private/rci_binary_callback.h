@@ -153,12 +153,12 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
     case connector_request_id_remote_config_group_start:
         ASSERT(have_group_id(rci));
-        ASSERT(have_group_index(rci));
+        ASSERT(have_group_instance(rci));
 #if (defined RCI_PARSER_USES_LIST)
 		rci->shared.callback_data.list.depth = 0;
 #endif
         rci->shared.callback_data.group.id = get_group_id(rci);
-        rci->shared.callback_data.group.index = get_group_index(rci);
+        rci->shared.callback_data.group.index = get_group_instance(rci);
 #if (defined RCI_PARSER_USES_COLLECTION_NAMES)
         rci->shared.callback_data.group.name = get_current_group(rci)->collection.name;
 #endif
@@ -166,7 +166,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
     case connector_request_id_remote_config_group_end:
         ASSERT(have_group_id(rci));
-        ASSERT(have_group_index(rci));
+        ASSERT(have_group_instance(rci));
         break;
 
 #if (defined RCI_PARSER_USES_LIST)
@@ -179,7 +179,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 			unsigned int const index = get_list_depth(rci) - 1;
 
 			rci->shared.callback_data.list.level[index].id = rci->shared.list.level[index].id;
-			rci->shared.callback_data.list.level[index].index = rci->shared.list.level[index].specifier.value.index;
+			rci->shared.callback_data.list.level[index].index = rci->shared.list.level[index].info.instance;
 			#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
 			{
 				connector_collection_t const * const list = get_current_collection_info(rci);
@@ -191,14 +191,14 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 
 	case connector_request_id_remote_config_list_end:
 		ASSERT(have_current_list_id(rci));
-		ASSERT(have_current_list_index(rci));
+		ASSERT(have_current_list_instance(rci));
 		rci->shared.callback_data.list.depth = get_list_depth(rci);
 		break;
 #endif
 
     case connector_request_id_remote_config_element_process:
         ASSERT(have_group_id(rci));
-        ASSERT(have_group_index(rci));
+        ASSERT(have_group_instance(rci));
         ASSERT(have_element_id(rci));
 
 #if (defined RCI_PARSER_USES_LIST)

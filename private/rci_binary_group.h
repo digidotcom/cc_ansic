@@ -25,12 +25,14 @@
 #define have_group_id(rci)              (get_group_id(rci) != INVALID_ID)
 #define increment_group_id(rci)         (GROUP_ID_VARIABLE(rci)++)
 
-#define GROUP_INDEX_VARIABLE(rci)       ((rci)->shared.group.specifier.value.index)
-#define set_group_index(rci, value)     (GROUP_INDEX_VARIABLE(rci) = (value))
-#define get_group_index(rci)            (GROUP_INDEX_VARIABLE(rci))
-#define increment_group_index(rci)      (GROUP_INDEX_VARIABLE(rci)++)
-#define invalidate_group_index(rci)     set_group_index(rci, INVALID_INDEX)
-#define have_group_index(rci)           (get_group_index(rci) != INVALID_INDEX)
+#define GROUP_INSTANCE_VARIABLE(rci)       ((rci)->shared.group.info.instance)
+#define set_group_instance(rci, value)     (GROUP_INSTANCE_VARIABLE(rci) = (value))
+#define get_group_instance(rci)            (GROUP_INSTANCE_VARIABLE(rci))
+#define increment_group_instance(rci)      (GROUP_INSTANCE_VARIABLE(rci)++)
+#define invalidate_group_instance(rci)     set_group_instance(rci, INVALID_INDEX)
+#define have_group_instance(rci)           (get_group_instance(rci) != INVALID_INDEX)
+
+#define get_group_name(rci)		((rci)->shared.group.info.keys.is_list == connector_true ? (rci)->shared.group.info.keys.data.list[get_group_instance(rci)] : (rci)->shared.group.info.keys.data.key_store)
 
 static connector_group_t const * get_current_group(rci_t const * const rci)
 {

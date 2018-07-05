@@ -54,7 +54,10 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
     rci->output.content.length = 0;
 
     invalidate_group_id(rci);
-    invalidate_group_index(rci);
+    invalidate_group_instance(rci);
+	rci->shared.group.info.keys.is_list = connector_true;
+	rci->shared.group.info.keys.data.list = NULL;
+	rci->shared.group.info.keys.count = INVALID_INDEX;
 
 #if (defined RCI_PARSER_USES_LIST)
 	{
@@ -62,7 +65,10 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 		for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
 		{
 			rci->shared.list.level[i].id = INVALID_ID;
-			rci->shared.list.level[i].specifier.value.index = INVALID_INDEX;
+			rci->shared.list.level[i].info.instance = INVALID_INDEX;
+			rci->shared.list.level[i].info.keys.is_list = connector_true;
+			rci->shared.list.level[i].info.keys.data.list = NULL;
+			rci->shared.list.level[i].info.keys.count = INVALID_INDEX;
 		}
 	}
 	set_list_depth(rci, 0);

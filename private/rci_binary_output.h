@@ -685,7 +685,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
 
     encoding_data = encode_group_id(get_group_id(rci));
 
-    if (get_group_index(rci) > 1)
+    if (get_group_instance(rci) > 1 || rci->shared.group.info.type == rci_specifier_type_string || should_output_count(rci))
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
     {
@@ -702,58 +702,176 @@ done:
     return;
 }
 
-STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const index)
+STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const type, unsigned int const num)
 {
-    uint32_t encoding_data;
+    uint32_t encoding_data = type;
     connector_bool_t overflow = connector_false;
 
-    if (index > 1)
+    #define BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_ONE_BYTE     31
+    #define BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_TWO_BYTES    0x1FFF
+
+    if (num < BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_ONE_BYTE)
     {
-        #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX                 0x20
-        #define BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_ONE_BYTE     31
-        #define BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_TWO_BYTES    0x1FFF
-
-        if (index < BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_ONE_BYTE)
-        {
-            /* attribute output
-             * bit |7 | 6 5 | 4 3 2 1 0|
-             *     |x | 0 1 | - index -|
-             */
-            encoding_data = index | BINARY_RCI_ATTRIBUTE_TYPE_INDEX;
-        }
-        else
-        {
-            /* attribute must be wrapped around the "attribute type" bits (bits 5 and 6)
-             *
-             * bit |15 14 13 12 11 10 9 8 7 | 6 5 | 4 3 2 1 0|
-             *     |       - index -        | 0 1 | - index -|
-             */
-            uint16_t encoding_data_high, encoding_data_low;
-
-            ASSERT(index  < BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_TWO_BYTES);
-            encoding_data_low = index & 0x1F;
-            encoding_data_high = index & (~(0x1F));
-            encoding_data = (encoding_data_high << 2)| BINARY_RCI_ATTRIBUTE_TYPE_INDEX | encoding_data_low;
-        }
-        if (SHOULD_OUTPUT(rci))
-            overflow = rci_output_uint32(rci, encoding_data);
+        /* attribute output
+         * bit |7 | 6 5 | 4 3 2 1 0|
+         *     |x | 0 1 | - index -|
+         */
+        encoding_data |= num;
     }
+    else
+    {
+        /* attribute must be wrapped around the "attribute type" bits (bits 5 and 6)
+         *
+         * bit |15 14 13 12 11 10 9 8 7 | 6 5 | 4 3 2 1 0|
+         *     |       - index -        | 0 1 | - index -|
+         */
+        uint16_t encoding_data_high, encoding_data_low;
+
+        ASSERT(num < BINARY_RCI_MAX_ATTRIBUTE_INDEX_FOR_TWO_BYTES);
+        encoding_data_low = num & 0x1F;
+        encoding_data_high = num & (~(0x1F));
+        encoding_data |= (encoding_data_high << 2) | encoding_data_low;
+    }
+    if (SHOULD_OUTPUT(rci))
+        overflow = rci_output_uint32(rci, encoding_data);
 
     return overflow;
 }
 
-STATIC void rci_output_index(rci_t * const rci, unsigned int index)
+STATIC void rci_output_group_attribute(rci_t * const rci)
 {
-    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-    connector_bool_t overflow = encode_attribute(rci, index);
 
-    if (!overflow)
-    {
-        if (remote_config->error_id != connector_success)
-            state_call(rci, rci_parser_state_error);
-        else
-            state_call(rci, rci_parser_state_traverse);
-    }
+	if (should_output_count(rci))
+	{
+		unsigned int attributes = 1;
+		connector_bool_t overflow;
+		if (get_group_instance(rci) > 1 || rci->shared.group.info.type == rci_specifier_type_string)
+		{
+			attributes = 2;
+		}
+		overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL, attributes);
+		if (!overflow)
+		{
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
+			set_rci_output_state(rci, rci_output_state_group_count_id);
+		}
+	}
+	else if (rci->shared.group.info.type == rci_specifier_type_string)
+	{
+		connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NAME, strlen(get_group_name(rci)));
+		if (!overflow)
+			set_rci_output_state(rci, rci_output_state_group_name_string);
+	}
+	else if (get_group_instance(rci) > 1)
+	{
+		connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_INDEX, rci->shared.group.info.instance);
+		if (!overflow)
+		{
+			connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+			if (remote_config->error_id != connector_success)
+    			state_call(rci, rci_parser_state_error);
+			else
+				state_call(rci, rci_parser_state_traverse);
+		}
+	}
+	else
+	{
+		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+		if (remote_config->error_id != connector_success)
+			state_call(rci, rci_parser_state_error);
+		else
+			state_call(rci, rci_parser_state_traverse);
+	}
+}
+
+STATIC void rci_output_group_count_id(rci_t * const rci)
+{
+	connector_bool_t overflow = rci_output_uint8(rci, rci_collection_count);
+
+	if (!overflow)
+		set_rci_output_state(rci, rci_output_state_group_count_value);
+}
+
+STATIC void rci_output_group_count_value(rci_t * const rci)
+{
+	connector_bool_t overflow = rci_output_uint32(rci, rci->shared.group.info.keys.count);
+
+	if (!overflow)
+	{
+		if (get_group_instance(rci) > 1 || rci->shared.group.info.type == rci_specifier_type_string)
+		{
+			set_rci_output_state(rci, rci_output_state_group_specifier_id);
+		}
+		else
+		{
+			connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+			if (remote_config->error_id != connector_success)
+				state_call(rci, rci_parser_state_error);
+			else
+				state_call(rci, rci_parser_state_traverse);
+		}
+	}
+}
+
+STATIC void rci_output_group_specifier_id(rci_t * const rci)
+{
+	connector_bool_t overflow;
+
+	if (rci->shared.group.info.type == rci_specifier_type_string)
+	{
+		overflow = rci_output_uint8(rci, rci_collection_name);
+	}
+	else if (get_group_instance(rci) > 1)
+	{
+		overflow = rci_output_uint8(rci, rci_collection_index);
+	}
+
+	if (!overflow)
+		set_rci_output_state(rci, rci_output_state_group_specifier_value);
+}
+
+STATIC void rci_output_group_specifier_value(rci_t * const rci)
+{
+	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+	connector_bool_t overflow;
+
+	if (rci->shared.group.info.type == rci_specifier_type_string)
+	{
+		overflow = rci_output_string(rci, get_group_name(rci), strlen(get_group_name(rci)));
+	}
+	else if (get_group_instance(rci) > 1)
+	{
+		overflow = rci_output_uint32(rci, get_group_instance(rci));
+	}
+
+	if (!overflow)
+	{
+    	if (remote_config->error_id != connector_success)
+    		state_call(rci, rci_parser_state_error);
+		else
+			state_call(rci, rci_parser_state_traverse);
+	}
+}
+
+STATIC void rci_output_group_name_string(rci_t * const rci)
+{
+	connector_bool_t overflow;
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+	size_t len = strlen(get_group_name(rci));
+	if (!rcistr_valid(&rci->output.content)) /* bypass output of leading length */
+	{
+		rci->output.content.data = get_group_name(rci);
+        rci->output.content.length = len;
+	}
+	overflow = rci_output_string(rci, get_group_name(rci), len);
+
+	if (!overflow)
+	{
+		if (remote_config->error_id != connector_success)
+			state_call(rci, rci_parser_state_error);
+		else
+			state_call(rci, rci_parser_state_traverse);
+	}
 }
 
 #define BYTES_REQUIRED_FOR_ERROR_PRONE_FIELD_VALUES MAX_VALUE(MAC_ADDR_LEN, IPV4_ADDR_LEN)
@@ -823,7 +941,7 @@ STATIC void rci_output_list_id(rci_t * const rci)
 		}	
 		else
 		{
-			if (get_current_list_index(rci) > 1)
+			if (get_current_list_instance(rci) > 1)
 			{
 				field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
 				set_rci_output_state(rci, rci_output_state_list_attribute);
@@ -850,6 +968,19 @@ STATIC void rci_output_list_id(rci_t * const rci)
 
 done:
     return;
+}
+
+STATIC void rci_output_list_index(rci_t * const rci)
+{
+	connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_INDEX, get_current_list_instance(rci));
+	if (!overflow)
+	{
+		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+		if (remote_config->error_id != connector_success)
+			state_call(rci, rci_parser_state_error);
+		else
+			state_call(rci, rci_parser_state_traverse);
+	}
 }
 #endif
 
@@ -1095,8 +1226,28 @@ STATIC void rci_generate_output(rci_t * const rci)
                 break;
 
             case rci_output_state_group_attribute:
-                rci_output_index(rci, get_group_index(rci));
+                rci_output_group_attribute(rci);
                 break;
+
+			case rci_output_state_group_count_id:
+				rci_output_group_count_id(rci);
+				break;
+
+			case rci_output_state_group_count_value:
+				rci_output_group_count_value(rci);
+				break;
+
+			case rci_output_state_group_specifier_id:
+				rci_output_group_specifier_id(rci);
+				break;
+
+			case rci_output_state_group_specifier_value:
+				rci_output_group_specifier_value(rci);
+				break;
+
+			case rci_output_state_group_name_string:
+				rci_output_group_name_string(rci);
+				break;
 
 #if (defined RCI_PARSER_USES_LIST)
 			case rci_output_state_list_id:
@@ -1104,7 +1255,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 				break;
 		
 			case rci_output_state_list_attribute:
-				rci_output_index(rci, get_current_list_index(rci));
+				rci_output_list_index(rci);
 				break;
 #endif
 

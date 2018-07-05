@@ -35,9 +35,12 @@
 #define set_current_list_id(rci, value)		(CURRENT_LIST_ID_VARIABLE(rci) = (value))
 #define invalidate_current_list_id(rci)		(set_current_list_id(rci, INVALID_ID))
 
-#define CURRENT_LIST_INDEX_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).specifier.value.index)
-#define get_current_list_index(rci)				(CURRENT_LIST_INDEX_VARIABLE(rci))
-#define have_current_list_index(rci)			(get_current_list_index(rci) != INVALID_INDEX)
-#define increment_current_list_index(rci)		(CURRENT_LIST_INDEX_VARIABLE(rci)++)
-#define set_current_list_index(rci, value)		(CURRENT_LIST_INDEX_VARIABLE(rci) = (value))
-#define invalidate_current_list_index(rci)		(set_current_list_index(rci, INVALID_INDEX))
+#define CURRENT_LIST_COUNT_VARIABLE(rci)	(CURRENT_LIST_VARIABLE(rci).info.keys.count)
+#define get_current_list_count(rci)			(CURRENT_LIST_COUNT_VARIABLE(rci))
+
+#define CURRENT_LIST_INSTANCE_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).info.instance)
+#define get_current_list_instance(rci)			(CURRENT_LIST_INSTANCE_VARIABLE(rci))
+#define have_current_list_instance(rci)			(get_current_list_instance(rci) != INVALID_INDEX)
+#define increment_current_list_instance(rci)	(CURRENT_LIST_INSTANCE_VARIABLE(rci)++)
+#define set_current_list_instance(rci, value)	(CURRENT_LIST_INSTANCE_VARIABLE(rci) = (value))
+#define invalidate_current_list_instance(rci)	(set_current_list_instance(rci, INVALID_INDEX))
