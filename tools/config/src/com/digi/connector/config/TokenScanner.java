@@ -13,6 +13,8 @@ public class TokenScanner {
     private Scanner tokenScanner;
     private String back;
 
+    private final static ConfigGenerator options = ConfigGenerator.getInstance();
+
     public TokenScanner(String fileName) throws Exception {
         try {
 
@@ -27,7 +29,7 @@ public class TokenScanner {
             back = null;
 
         } catch (NullPointerException e) {
-            ConfigGenerator.log("Unable to open " + fileName);
+            options.log("Unable to open " + fileName);
             throw new Exception("Error in opening " + fileName);
         }
     }

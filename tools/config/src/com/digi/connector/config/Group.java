@@ -4,6 +4,26 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 public class Group extends ItemList {
+	public enum Type {
+	    SETTING,
+	    STATE;
+
+	    public String toUpperName() {
+            return name();
+	    }
+
+	    public String toLowerName() {
+	        return toUpperName().toLowerCase();
+	    }
+
+	    public static Type toType(String str) throws Exception {
+	        try {
+                return valueOf(str.toUpperCase());
+	        } catch (Exception e) {
+	            throw new Exception("Invalid group Type: " + str);
+	        }
+	    }
+	}
 
     private final LinkedHashMap<String, String> errorMap;
 

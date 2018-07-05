@@ -1,27 +1,67 @@
 package com.digi.connector.config;
 
-/*import java.io.BufferedReader;
-import java.io.InputStreamReader;*/
-
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.Collections;
 
 public class ConfigGenerator {
+	private static ConfigGenerator instance = null;
+    private ConfigGenerator(String args[]) {
+        int argCount = 0;
+        String argLog = "";
+        		
+        for (String arg : args) {
+            if (arg.startsWith(DASH)) {
+                String str = arg.substring(DASH.length());
+
+                toOption(str);
+
+                argLog += arg + " ";
+            } else {
+                toArgument(++argCount, arg);
+            }
+        }
+        argumentLog = "\"" + argLog + "\"";
+
+        if (argCount != 4 && fileTypeOption() != FileType.GLOBAL_HEADER) {
+            log("Missing arguments!");
+            usage();
+        }
+        if (password == null && fileTypeOption() != FileType.GLOBAL_HEADER) {
+            queryPassword();
+        }
+        
+        instance = this;
+    }
+	public static final ConfigGenerator getInstance() { assert instance != null; return instance; }
 
 // 1.0.0.0 version XML RCI
 // 2.0.0.0 version Binary RCI only
+// 3.0.0.0 version List support & specific callbacks moved to user space
+	
+    public final static String VERSION = "3.0.0.0";
 
-    public final static String VERSION = "2.0.0.0";
-    
+    public static enum UseNames { COLLECTIONS, ELEMENTS, VALUES };
+    public static enum FileType { NONE, SOURCE, GLOBAL_HEADER;
+        public static FileType toFileType(String str) throws Exception {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (Exception e) {
+                throw new Exception("Invalid file type: " + str);
+            }
+        }
+    }
+
     private final static long FIRMWARE_VERSION_MAX_VALUE = 4294967295L;
 
     private final static String NO_DESC_OPTION = "nodesc";
     private final static String HELP_OPTION = "help";
-    private final static String HIDDEN_HELP_OPTION = "hidden_help";
     private final static String VERBOSE_OPTION = "verbose";
     private final static String VENDOR_OPTION = "vendor";
     private final static String DIRECTORY_OPTION = "path";
@@ -37,7 +77,6 @@ public class ConfigGenerator {
     private final static String NO_BACKUP_OPTION = "noBackup";
     private final static String RCI_PARSER_OPTION = "rci_parser";
     private final static String OVERRIDE_MAX_NAME_LENGTH = "maxNameLength";
-
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String URL_OPTION = "url";
@@ -46,68 +85,45 @@ public class ConfigGenerator {
     private final static String USE_NAMES_OPTION = "usenames";
     private final static String USE_NAMES_DEFAULT = "none";
 
-    public final static String PREFIX_OPTION = "prefix";
+    private final static String PREFIX_OPTION = "prefix";
 
-    public final static String DASH = "-";
+    private final static String DASH = "-";
 
-    public final static String USERNAME = "username";
-    public final static String PASSWORD = "password";
-    public final static String DEVICE_TYPE = "deviceType";
-    public final static String FIRMWARE_VERSION = "firmwareVersion";
-    public final static String CONFIG_FILENAME = "configFileName";
+    private final static String USERNAME = "username";
+    private final static String PASSWORD = "password";
+    private final static String DEVICE_TYPE = "deviceType";
+    private final static String FIRMWARE_VERSION = "firmwareVersion";
+    private final static String CONFIG_FILENAME = "configFileName";
 
-    public static enum UseNames { NONE, COLLECTIONS, ELEMENTS };
+    private String urlName = URL_DEFAULT;
+    private String vendorId;
 
-    private static String urlName;
-    private static String vendorId;
+    private String deviceType;
+    private long fwVersion;
+    private String username;
+    private String password;
+    private String filename;
+    private String argumentLog;
+    private String directory = ".";
+    private boolean noErrorDescription;
+    private boolean verboseOption;
+    private FileType fileType = FileType.NONE;
+    private EnumSet<UseNames> useNames;
+    private String customPrefix = "";
+    private boolean deleteDescriptor;
+    private boolean useCcapi;
+    private boolean CcapiStubFunctions;
+    private boolean saveDescriptor;
+    private boolean noUpload;
+    private boolean createBinIdLog;
+    private boolean useBinIdLog;
+    private boolean rci_legacy;
+    private int rci_dc_attribute_max_len = 0;
+    private boolean noBackup;
+    private boolean rciParser;
 
-    private static String deviceType;
-    private static long fwVersion;
-    private static String username;
-    private static String password;
-    private static String filename;
-    private static String argumentLog;
-    private static String directoryPath;
-    private static boolean noErrorDescription;
-    private static boolean verboseOption;
-    private static FileType fileType = FileType.NONE;
-    private static EnumSet<UseNames> useNames;
-    private static String customPrefix = "";
-    private static boolean deleteDescriptor;
-    private static boolean useCcapi;
-    private static boolean CcapiStubFunctions;
-    private static boolean saveDescriptor;
-    private static boolean noUpload;
-    private static boolean createBinIdLog;
-    private static boolean useBinIdLog;
-    private static boolean rci_legacy;
-    private static int rci_dc_attribute_max_len = 0;
-    private static boolean noBackup;
-    private static boolean rciParser;
-
-    private static boolean hidden_help;
-
-    public enum FileType {
-        NONE,
-        SOURCE,
-        GLOBAL_HEADER;
-
-        public static FileType toFileType(String str) throws Exception {
-            try {
-                return valueOf(str.toUpperCase());
-                
-            } catch (Exception e) {
-                log("Available file types:");
-                for (FileType fileType : FileType.values()) {
-                    log(String.format("\t%s",fileType.toString()));
-                }
-                throw new Exception("Invalid file type: " + str);
-            }
-        }
-        
-    }
-    
-    private static void usage() {
+    private void usage() {
+    	ConfigData config = ConfigData.getInstance();
         String className = ConfigGenerator.class.getName();
 
         int firstChar = className.lastIndexOf(".") + 1;
@@ -202,7 +218,7 @@ public class ConfigGenerator {
         log(String
                 .format(
                         "\t%-16s \t= optional, add ASCIIZ string \"name\" field to connector_remote_group_t and/or connector_remote_element_t structures. Default is %s.",
-                        DASH + USE_NAMES_OPTION + "={none|collections|elements|all}", USE_NAMES_DEFAULT));
+                        DASH + USE_NAMES_OPTION + "={none|collections|elements|values|all}", USE_NAMES_DEFAULT));
         log(String
                 .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
@@ -223,52 +239,46 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= output for use with CCAPI projects",
                         DASH + CCAPI_OPTION));
-        if(hidden_help){
-            log("Hidden Options:");
-            log(String.format("\t%-16s \t= show this extra message", DASH
-                    + HIDDEN_HELP_OPTION));
-
-            log(String
+        log(String
+            .format(
+                    "\t%-16s \t= delete current Descriptors in Device Cloud",
+                    DASH + DELETE_DESCRIPTOR_OPTION));
+        log(String
+            .format(
+                    "\t%-16s \t= optional behavior,adding a prefix to the structures.",
+                    DASH + PREFIX_OPTION + "=<prefix>"));
+        log(String
                 .format(
-                        "\t%-16s \t= delete current Descriptors in Device Cloud",
-                        DASH + DELETE_DESCRIPTOR_OPTION));
-            log(String
+                        "\t%-16s \t= Choose the output Type. Default is none.",
+                        DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
+        log(String
                 .format(
-                        "\t%-16s \t= optional behavior,adding a prefix to the structures.",
-                        DASH + PREFIX_OPTION + "=<prefix>"));
-            log(String
-                    .format(
-                            "\t%-16s \t= Choose the output Type. Default is none.",
-                            DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
-            log(String
-                    .format(
-                            "\t%-16s \t= create bin_id log",
-                            DASH + CREATE_BIN_ID_LOG_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= use bin_id log",
-                            DASH + USE_BIN_ID_LOG_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
-                            DASH + RCI_LEGACY_COMMANDS_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= optional max length for commands attributes type string, default is %d",
-                            DASH + RCI_DC_TARGET_MAX_OPTION,ConfigData.AttributeMaxLen()));
-            log(String
-                    .format(
-                            "\t%-16s \t= generate stub functions for CCAPI projects (assumes %s)",
-                            DASH + CCAPI_STUB_FUNCTIONS_OPTION, DASH + CCAPI_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= Defines and enums names to work with RCI Parser.",
-                            DASH + RCI_PARSER_OPTION));
-            log(String
-                    .format(
-                            "\t%-16s \t= optional behavior, defining the max length of element names.",
-                            DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
-         }
+                        "\t%-16s \t= create bin_id log",
+                        DASH + CREATE_BIN_ID_LOG_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= use bin_id log",
+                        DASH + USE_BIN_ID_LOG_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
+                        DASH + RCI_LEGACY_COMMANDS_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional max length for commands attributes type string, default is %d",
+                        DASH + RCI_DC_TARGET_MAX_OPTION, config.AttributeMaxLen())); // TODO: Move this setting to the ConfigGenerator class
+        log(String
+                .format(
+                        "\t%-16s \t= generate stub functions for CCAPI projects (assumes %s)",
+                        DASH + CCAPI_STUB_FUNCTIONS_OPTION, DASH + CCAPI_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= Defines and enums names to work with RCI Parser.",
+                        DASH + RCI_PARSER_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior, defining the max length of element names.",
+                        DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
 
         System.exit(1);
     }
@@ -292,17 +302,17 @@ public class ConfigGenerator {
 
     }
 
-    private static EnumSet<UseNames> parseNamesList(String option) throws Exception {
+    private EnumSet<UseNames> parseNamesList(String option) throws Exception {
     	EnumSet<UseNames> result;
     	String compact = option.replace(" ",  "").toUpperCase();
     	
     	switch (compact) {
     	case "NONE":
-    		result = EnumSet.of(UseNames.NONE);
+    		result = EnumSet.noneOf(UseNames.class);
     		break;
     		
     	case "ALL":
-    		result = EnumSet.complementOf(EnumSet.of(UseNames.NONE));
+    		result = EnumSet.allOf(UseNames.class);
     		break;
     		
     	default:
@@ -320,7 +330,7 @@ public class ConfigGenerator {
     	return result;
     }
     
-    private static void toOption(String option) {
+    private void toOption(String option) {
 
         /* split the [option]=[option value] */
         try {
@@ -344,7 +354,7 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(DIRECTORY_OPTION)) {
                     if (new File(keys[1]).isDirectory()) {
-                        directoryPath = keys[1];
+                        directory = keys[1];
                     } else {
                         throw new Exception("Invalid directory path!");
                     }
@@ -379,9 +389,6 @@ public class ConfigGenerator {
                 deleteDescriptor = true;
             } else if (option.equals(HELP_OPTION)) {
                 usage();
-            } else if (option.equals(HIDDEN_HELP_OPTION)) {
-                hidden_help = true;
-                usage();
             } else if (option.equals(CCAPI_OPTION)) {
                 useCcapi = true;
             } else if (option.equals(CCAPI_STUB_FUNCTIONS_OPTION)) {
@@ -411,7 +418,6 @@ public class ConfigGenerator {
             usage();
             System.exit(1);
         }
-
     }
 
     private boolean getDottedFwVersion(String arg) {
@@ -523,78 +529,49 @@ public class ConfigGenerator {
         }
     }
 
-    public static long getFirmware() {
+    public long getFirmware() {
         return fwVersion;
     }
 
-    public static String getCustomPrefix() {
+    public String getCustomPrefix() {
         return customPrefix;
     }
 
-    public static String getArgumentLogString() {
+    public String getArgumentLogString() {
         return argumentLog;
     }
 
-    public static String getUrlName() {
+    public String getUrlName() {
         return urlName;
     }
 
-    public ConfigGenerator(String args[]) {
-        int argCount = 0;
-
-        argumentLog = "\"";
-
-        urlName = URL_DEFAULT;
-
-        for (String arg : args) {
-            if (arg.startsWith(DASH)) {
-                String str = arg.substring(DASH.length());
-
-                toOption(str);
-
-                argumentLog += arg + " ";
-            } else {
-                toArgument(++argCount, arg);
-            }
-        }
-        argumentLog += "\"";
-
-        if (argCount != 4 && fileTypeOption() != FileType.GLOBAL_HEADER) {
-            log("Missing arguments!");
-            usage();
-        }
-        if (password == null && fileTypeOption() != FileType.GLOBAL_HEADER) {
-            queryPassword();
-        }
-    }
-
-    public static boolean excludeErrorDescription() {
+    public boolean excludeErrorDescription() {
         return noErrorDescription;
     }
 
-    public static boolean useCcapi() {
+    public boolean useCcapi() {
         return useCcapi;
     }
     
-    public static boolean generateCcapiStubFunctions() {
+    public boolean generateCcapiStubFunctions() {
         return CcapiStubFunctions;
     }
 
-    public static boolean rciLegacyEnabled() {
+    public boolean rciLegacyEnabled() {
         return rci_legacy;
     }
 
-    public static void log(Object aObject) {
+    public void log(Object aObject) {
         System.out.println(String.valueOf(aObject));
     }
 
-    public static void debug_log(Object aObject) {
+    public void debug_log(Object aObject) {
         if (verboseOption) {
             System.out.println(String.valueOf(aObject));
         }
     }
     
-    public static FileType fileTypeOption() {
+    public FileType fileTypeOption() {
         if (useCcapi())
         {
             fileType = FileType.SOURCE;
@@ -602,154 +579,157 @@ public class ConfigGenerator {
         return fileType;
     }
 
-    public static boolean useNamesOption(UseNames desired) {
-        return useNames.contains(desired);
+    public Set<UseNames> useNames() {
+        return Collections.unmodifiableSet(useNames);
     }
 
-    public static boolean deleteDescriptorOption() {
+    public boolean deleteDescriptorOption() {
         return deleteDescriptor;
     }
 
-    public static boolean saveDescriptorOption() {
+    public boolean saveDescriptorOption() {
         return saveDescriptor;
     }
 
-    public static boolean noUploadOption() {
+    public boolean noUploadOption() {
         return noUpload;
     }
 
-    public static boolean noBackupOption() {
+    public boolean noBackupOption() {
         return noBackup;
     }
 
-    public static boolean createBinIdLogOption() {
+    public boolean createBinIdLogOption() {
         return createBinIdLog && !useBinIdLog;
     }
 
-    public static boolean useBinIdLogOption() {
+    public boolean useBinIdLogOption() {
         return useBinIdLog;
     }
 
-
-    public static boolean rciParserOption() {
+    public boolean rciParserOption() {
         return rciParser;
     }
 
-	public static void setRciParser(boolean b) {
-		rciParser = b;
-	}
-	
-    public static String filename() {
+    public String getDir() {
+        return directory;
+    }
+
+    public String filename() {
         return filename;
     }
 
-    public static void main(String[] args) {
-        
-        try {
-            new ConfigGenerator(args);
+    private final void execute() throws Exception {
+    	ConfigData config = ConfigData.getInstance();
 
-            if (deleteDescriptorOption()) {
-                /* descriptor constructor for arguments */
-                Descriptors descriptors = new Descriptors(username, password,
-                        vendorId, deviceType, fwVersion);
-                
-                /* Generate and upload descriptors */
-                debug_log("Start deleting descriptors");
-                descriptors.processDescriptors(null);
-                log("\nDescriptors deleted.\n");
-                System.exit(0);
-            }
-
-            /* parse file */
-            debug_log("Start reading filename: " + filename);
-            ConfigData configData = new ConfigData();
-
-            if(rci_legacy){
-                debug_log("rci legacy commands enable");
-            }
-
-            if(rci_dc_attribute_max_len != 0)
-                configData.setAttributeMaxLen(rci_dc_attribute_max_len);
-
-            if (fileTypeOption() != FileType.GLOBAL_HEADER) {
-                Parser.processFile(filename, configData);
-    
-                if ((configData.getSettingGroups().isEmpty())
-                        && (configData.getStateGroups().isEmpty())) {
-                    throw new IOException("No groups specified in file: "
-                            + filename);
-                }
-
-                debug_log("Number of setting groups: "
-                        + configData.getSettingGroups().size());
-                debug_log("Number of state groups: "
-                        + configData.getStateGroups().size());
-            }
+        if (deleteDescriptorOption()) {
+            /* descriptor constructor for arguments */
+            Descriptors descriptors = new Descriptors(username, password,
+                    vendorId, deviceType, fwVersion);
             
-            /* Generate H and C files */
-            debug_log("Start generating files");
-
-
-            switch(fileTypeOption())
-            {
-            case NONE:
-                /* descriptor constructor for arguments */
-                Descriptors descriptors = new Descriptors(username, password,
-                        vendorId, deviceType, fwVersion);
-
-                FileNone fileNone = new FileNone(directoryPath);
-                fileNone.generateFile(configData);
-
-                /* Generate and upload descriptors */
-                debug_log("Start Generating/loading descriptors");
-                if(!noUpload || saveDescriptor)
-					descriptors.processDescriptors(configData);
-
-                break;
-
-            case SOURCE:
-                /* descriptor constructor for arguments */
-                Descriptors descriptorsSource = new Descriptors(username, password,
-                        vendorId, deviceType, fwVersion);
-
-                if (useCcapi())
-                {
-                    FileSourceCcapi ccapiSource = new FileSourceCcapi(directoryPath);
-                    ccapiSource.generateFile(configData);       
-                }
-                
-                FileSource fileSource = new FileSource(directoryPath);
-                fileSource.generateFile(configData);
-
-                /* Generate and upload descriptors */
-                debug_log("Start Generating/loading descriptors");
-                if(!noUpload || saveDescriptor)
-                    descriptorsSource.processDescriptors(configData);
-                break;
-
-            case GLOBAL_HEADER:
-                FileGlobalHeader fileGlobalHeader = new FileGlobalHeader(directoryPath);
-                fileGlobalHeader.generateFile(configData);
-                break;
-            }
-
-            
-            log("\nDone.\n");
+            /* Generate and upload descriptors */
+            debug_log("Start deleting descriptors");
+            descriptors.deleteDescriptors();
+            log("\nDescriptors deleted.\n");
             System.exit(0);
-
-        } catch (Exception e) {
-
-            if (e.getMessage() != null) {
-                log(e.getMessage());
-            }
-            
-            if (verboseOption) {
-                e.printStackTrace();
-                if (e.getCause() != null)
-                    System.err.println(e.getMessage());
-            }
-            System.exit(1);
         }
-    }
 
+        /* parse file */
+        debug_log("Start reading filename: " + filename);
+
+        if (rci_legacy){
+            debug_log("rci legacy commands enable");
+        }
+
+        if (rci_dc_attribute_max_len != 0)
+            config.setAttributeMaxLen(rci_dc_attribute_max_len);
+
+        if (fileTypeOption() != FileType.GLOBAL_HEADER) {
+            Parser.processFile(filename);
+            
+            int setting_groups = config.getConfigGroup(Group.Type.SETTING).size(); 
+            int state_groups = config.getConfigGroup(Group.Type.STATE).size(); 
+            int total_groups = setting_groups + state_groups;
+            if (total_groups == 0)
+                throw new IOException("No groups specified in file: " + filename);
+
+            debug_log("Number of setting groups: " + setting_groups);
+            debug_log("Number of state groups: " + state_groups);
+        }
+        
+        /* Generate H and C files */
+        debug_log("Start generating files");
+        LinkedList<GenFile> files = new LinkedList<>();
+        
+        switch(fileTypeOption())
+        {
+        case NONE:
+           	files.add(new GenFsmHeaderFile(config.getTypesSeen()));
+        	files.add(new GenFsmSourceFile());
+            break;
+
+        case SOURCE:
+
+        	if (useCcapi())
+            {
+               	files.add(new GenFsmFullHeaderFile());
+            	files.add(new GenFsmSourceFile());
+
+               	GenApiUserHeaderFile header = new GenApiUserHeaderFile();
+            	files.add(header);
+            	files.add(new GenApiUserSourceFile(header));
+            	
+            	if (generateCcapiStubFunctions()) {
+            		files.add(new GenApiUserStubsFile(header));
+            	}
+            } else {
+            	files.add(new GenFsmUserHeaderFile());
+            	files.add(new GenFsmUserSourceFile());
+            }
+            break;
+
+        case GLOBAL_HEADER:
+        	files.add(new GenFsmFullHeaderFile());
+            break;
+        }
+
+        if (!useNames().isEmpty()) {
+    		files.add(new GenUserNamesHeaderFile());
+    	}
+
+        if (!noUpload || saveDescriptor) {
+            debug_log("Start Generating/uploading descriptors");
+
+        	Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
+			descriptors.processDescriptors();
+        }
+        
+        //generate
+        for (GenFile file: files) {
+            file.generateFile();
+        }
+        
+        log("Done.");
+    }
+    
+    public static void main(String[] args) {
+        try {
+        	instance = new ConfigGenerator(args);
+
+        	instance.execute();
+            System.exit(0);
+            
+	    } catch (Exception e) {
+	        if (e.getMessage() != null) {
+	            instance.log(e.getMessage());
+	        }
+	        
+	        if (instance.verboseOption) {
+	            e.printStackTrace();
+	            if (e.getCause() != null)
+	                System.err.println(e.getMessage());
+	        }
+	        System.exit(1);
+	    }
+    }
 }

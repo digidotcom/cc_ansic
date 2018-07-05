@@ -2,9 +2,9 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 
-public class ValueStruct extends Item {
+public class Value extends Item {
 
-    public ValueStruct(String name, String description, String helpDescription) throws IOException {
+    public Value(String name, String description, String helpDescription) throws IOException {
         super(name, description == null ? "" : description, helpDescription);
     }
 
