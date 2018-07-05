@@ -1,41 +1,23 @@
 package com.digi.connector.config;
 
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.Element;
 
 public class ConfigData {
-
-    /* user setting and state groups */
-    private ArrayList<LinkedList<Group>> groupList;
-
-    private RciStrings userGlobalErrors = new RciStrings();
-
-    /* user global error */
-    private Map<Object, Integer> rciErrorMap = new HashMap<Object, Integer>();
-
-    private final static String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
-        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
-
-    RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
-
-    private static int CommandsAttributeMaxLen = 20;
-    private static int max_list_depth = 0;
-
-    private static EnumMap<UseNames, Integer> max_name_length = new EnumMap<UseNames, Integer>(UseNames.class);
-
-
-    public ConfigData() throws Exception {
-        groupList = new ArrayList<LinkedList<Group>>();
-        groupList.add(GroupType.toGroupType("setting").getIndex(), new LinkedList<Group>());
-        groupList.add(GroupType.toGroupType("state").getIndex(), new LinkedList<Group>());
+	private static ConfigData instance = null;
+    private ConfigData() {
+        groupList = new LinkedHashMap<Group.Type, LinkedList<Group>>(2);
+        groupList.put(Group.Type.SETTING, new LinkedList<Group>());
+        groupList.put(Group.Type.STATE, new LinkedList<Group>());
 
         rciErrorMap.put(rciGlobalErrors, 1);
         rciErrorMap.put(userGlobalErrors, rciGlobalErrors.size() + 1);
@@ -44,21 +26,43 @@ public class ConfigData {
     		max_name_length.put(name, 0);
     	}
     }
+	public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
 
-    public LinkedList<Group> getSettingGroups() throws Exception {
-        return getConfigGroup("setting");
+    /* user setting and state groups */
+    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
+
+    private RciStrings userGlobalErrors = new RciStrings();
+
+    /* user global error */
+    private Map<RciStrings, Integer> rciErrorMap = new HashMap<>();
+
+    private final String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
+        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
+
+    RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
+
+    private int CommandsAttributeMaxLen = 20;
+    private int max_list_depth = 0;
+
+    private EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
+    private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
+
+    public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
+        return groupList.get(type);
     }
 
-    public LinkedList<Group> getStateGroups() throws Exception {
-        return getConfigGroup("state");
-    }
+    public LinkedList<SimpleImmutableEntry<Group.Type, Group>> getConfigGroupEntries() {
+    	LinkedList<SimpleImmutableEntry<Group.Type, Group>> result = new LinkedList<>();
+    	
+        for (Map.Entry<Group.Type, LinkedList<Group>> pair : groupList.entrySet()) {
+        	Group.Type type = pair.getKey();
+        	LinkedList<Group> groups = pair.getValue();
 
-    public LinkedList<Group> getConfigGroup(String type) throws Exception {
-        GroupType groupType = GroupType.toGroupType(type);
-
-        LinkedList<Group> config = groupList.get(groupType.getIndex());
-
-        return config;
+            for (Group group : groups) {
+                result.add(new SimpleImmutableEntry<Group.Type, Group>(type, group));
+            }
+        }
+        return result;
     }
 
     public LinkedHashMap<String, String> getUserGlobalErrors() {
@@ -102,7 +106,7 @@ public class ConfigData {
         return rciErrorMap.get(userGlobalErrors);
     }
 
-    public Map<Object, Integer> getRciErrorMap() {
+    public Map<RciStrings, Integer> getRciErrorMap() {
         return rciErrorMap;
     }
 
@@ -120,7 +124,7 @@ public class ConfigData {
         	throw new Exception("Invalid CommandsAttributeMaxLen");
     }
 
-	public static int AttributeMaxLen() {
+	public int AttributeMaxLen() {
 
 		return CommandsAttributeMaxLen;
 	}
@@ -133,6 +137,14 @@ public class ConfigData {
 	
 	public int getMaxDepth() {
 		return max_list_depth;
+	}
+	
+	public void addTypeSeen(Element.Type type) {
+		typesSeen.add(type);
+	}
+	
+	public EnumSet<Element.Type> getTypesSeen() {
+		return typesSeen;
 	}
 	
     public void nameLength(UseNames type, int length) {
