@@ -151,6 +151,17 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     case connector_request_id_remote_config_action_end:
         break;
 
+    case connector_request_id_remote_config_group_instances_lock:
+        ASSERT(have_group_id(rci));
+#if (defined RCI_PARSER_USES_LIST)
+		rci->shared.callback_data.list.depth = 0;
+#endif
+        rci->shared.callback_data.group.id = get_group_id(rci);
+#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
+        rci->shared.callback_data.group.name = get_current_group(rci)->collection.name;
+#endif
+        break;
+
     case connector_request_id_remote_config_group_start:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_instance(rci));
@@ -427,6 +438,24 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                     break;
             }
         }
+
+		/*if (is_group_dynamic(rci))*/
+		{
+            switch (remote_config_request)
+            {
+                case connector_request_id_remote_config_group_instances_lock:
+					/* If we have a group count already it means we will be setting it later */
+                    if (rci->shared.callback_data.action != connector_remote_action_set || !have_group_count(rci)) 
+					{
+						rci->shared.group.info.keys.count = 3;
+					}
+					rci->shared.group.lock = get_group_id(rci);
+					break;
+				case connector_request_id_remote_config_group_instances_unlock:
+					rci->shared.group.lock = INVALID_ID;
+					break;
+            }
+		}
         break;
 
     case connector_callback_busy:

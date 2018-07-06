@@ -32,6 +32,13 @@
 #define invalidate_group_instance(rci)     set_group_instance(rci, INVALID_INDEX)
 #define have_group_instance(rci)           (get_group_instance(rci) != INVALID_INDEX)
 
+#define have_group_count(rci)		((rci)->shared.group.info.keys.count != INVALID_ID)
+
+#define GROUP_LOCK_VARIABLE(rci)		((rci)->shared.group.lock)
+#define get_group_lock(rci)				(GROUP_LOCK_VARIABLE(rci))
+#define set_group_lock(rci, value)		(GROUP_LOCK_VARIABLE(rci) = (value))
+#define have_group_lock(rci)			(get_group_lock(rci) != INVALID_ID)
+
 #define get_group_name(rci)		((rci)->shared.group.info.keys.is_list == connector_true ? (rci)->shared.group.info.keys.data.list[get_group_instance(rci)] : (rci)->shared.group.info.keys.data.key_store)
 
 static connector_group_t const * get_current_group(rci_t const * const rci)

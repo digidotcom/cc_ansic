@@ -909,7 +909,7 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 						{
 							rci->shared.group.info.type = rci_specifier_type_string;
 							rci->shared.group.info.keys.count = 0;
-							/* This will trigger a set_instances callback in traverse_group_count(). Will this casue an issue? */
+							/* This will trigger a set_instances callback in traverse_group_id(). Will this casue an issue? */
 						}
 					}
 					break;
@@ -1000,6 +1000,7 @@ STATIC void process_list_start(rci_t * const rci, uint32_t value)
 	}
 	
 	set_current_list_instance(rci, 1); /* Need to set instance to indicate we have already traversed the first instance */
+	SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
 	set_should_traverse_all_list_instances(rci, connector_true);
 
 	if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)

@@ -247,7 +247,8 @@ typedef enum
 	rci_output_state_group_specifier_id,
 	rci_output_state_group_specifier_value,
 	rci_output_state_group_name_string,
-	rci_output_state_complete_attribute,
+	rci_output_state_complete_attribute_id,
+	rci_output_state_complete_attribute_value,
 #if (defined RCI_PARSER_USES_LIST)
 	rci_output_state_list_id,
 	rci_output_state_list_attribute,
@@ -326,7 +327,7 @@ typedef struct
 	struct {
 		unsigned int count;
 		connector_bool_t is_list;
-		union {
+		struct { /* collapse this */
 			char key_store[RCI_MAX_KEY_LENGTH];
 			char const * const * list;
 		} data;
@@ -434,6 +435,7 @@ typedef struct rci
 
         struct {
             unsigned int id;
+			unsigned int lock;
 			rci_collection_info_t info;
         } group;
 
@@ -473,6 +475,7 @@ typedef struct rci
 #define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES))
 #define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES))
 #define should_output_count(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
+#define should_remove_instance(rci)					0
 		
 #define set_should_traverse_all_groups(rci, state)				(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))
 #define set_should_traverse_all_group_instances(rci, state)		(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES, state))

@@ -753,7 +753,10 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
 		if (!overflow)
 		{
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
-			set_rci_output_state(rci, rci_output_state_group_count_id);
+			if (rci->shared.group.info.type == rci_specifier_type_string)
+				set_rci_output_state(rci, rci_output_state_complete_attribute_id);
+			else
+				set_rci_output_state(rci, rci_output_state_group_count_id);
 		}
 	}
 	else if (rci->shared.group.info.type == rci_specifier_type_string)
@@ -1235,6 +1238,10 @@ STATIC void rci_generate_output(rci_t * const rci)
 
 			case rci_output_state_group_count_value:
 				rci_output_group_count_value(rci);
+				break;
+
+			case rci_output_state_complete_attribute_id:
+				state_call(rci, rci_parser_state_traverse);
 				break;
 
 			case rci_output_state_group_specifier_id:

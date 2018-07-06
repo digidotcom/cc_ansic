@@ -58,6 +58,7 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 	rci->shared.group.info.keys.is_list = connector_true;
 	rci->shared.group.info.keys.data.list = NULL;
 	rci->shared.group.info.keys.count = INVALID_INDEX;
+	rci->shared.group.lock = INVALID_ID;
 
 #if (defined RCI_PARSER_USES_LIST)
 	{
