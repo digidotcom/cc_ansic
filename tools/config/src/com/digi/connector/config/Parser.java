@@ -3,6 +3,7 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.ArrayDeque;
 
 import javax.script.ScriptEngine;
@@ -66,29 +67,48 @@ public class Parser {
                     groupLineNumber = tokenScanner.getLineNumber();
 
                     /* parse instances */
-                    int groupInstances = 1;
-
+                    Integer groupInstances;
                     if (tokenScanner.hasTokenInt()) {
                         groupInstances = tokenScanner.getTokenInt();
-                    }
-                    else if (tokenScanner.hasToken("\\(.*")){
+                    } else if (tokenScanner.hasToken("\\(.*")){
                         groupInstances = getMathExpression();
+                    } else {
+                    	groupInstances = null;
                     }
 
-                    Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
+                    Group theGroup = new Group(nameStr, getDescription(), getLongDescription());
                     config.nameLength(UseNames.COLLECTIONS, nameStr.length());
+                    
+                    if (groupInstances != null) {
+                    	theGroup.setInstances(groupInstances);
+                    }
                     
                     String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only"; 
                     while (tokenScanner.hasToken()) {
                         token = tokenScanner.getToken();
 
-                        if (token.equalsIgnoreCase("element")) {
+                        if (token.equalsIgnoreCase("capacity")) {
+                        	token = tokenScanner.getToken();
+                        	if (token.equalsIgnoreCase("fixed")) {
+                        		theGroup.setCapacity(ItemList.Capacity.FIXED);
+                        	} else if (token.equalsIgnoreCase("variable")) {
+                        		theGroup.setCapacity(ItemList.Capacity.VARIABLE);
+                        	} else {
+                                throw new Exception("Error in <group>: Invalid capacity type of " + token );
+                            }
+                        } else if (token.equalsIgnoreCase("keys")) {
+                        	token = tokenScanner.getToken();
+                        	if (token.equals("{}")) {
+                        		theGroup.setKeys(new LinkedHashSet<String>());
+                        	} else {
+                                throw new Exception("Error in <group>: Key parser is unimplemented");
+                        	}
+                        } else if (token.equalsIgnoreCase("element")) {
                             Element element = processElement(group_access, config);
 
                             try {
                                 element.validate();
-                            }
-                            catch (Exception e){
+                            } catch (Exception e) {
                                 throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
                             }
 
@@ -98,8 +118,7 @@ public class Parser {
 
                             try {
                                 list.validate();
-                            }
-                            catch (Exception e){
+                            } catch (Exception e) {
                                 throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
                             }
                             
@@ -116,8 +135,7 @@ public class Parser {
 
                     try {
                         theGroup.validate();
-                    }
-                    catch(Exception e){
+                    } catch(Exception e) {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
                     }
 
@@ -369,29 +387,48 @@ public class Parser {
 		String name = getName();
 		listLineNumber.push(tokenScanner.getLineNumber());
 		
-		 /* parse instances */
-		int instances;
-		if (tokenScanner.hasTokenInt()) {
-			instances = tokenScanner.getTokenInt();
-		} else if (tokenScanner.hasToken("\\(.*")){
-			instances = getMathExpression();
-		} else {
-			instances = 1;
-		}
+        Integer instances;
+        if (tokenScanner.hasTokenInt()) {
+        	instances = tokenScanner.getTokenInt();
+        } else if (tokenScanner.hasToken("\\(.*")){
+        	instances = getMathExpression();
+        } else {
+        	instances = null;
+        }
 
 		depth += 1;
 		config.listDepth(depth);
 
-		ItemList list = new ItemList(name, instances, getDescription(), getLongDescription());
+		ItemList list = new ItemList(name, getDescription(), getLongDescription());
         config.nameLength(UseNames.COLLECTIONS, name.length());
-        
+
+        if (instances != null) {
+        	list.setInstances(instances);
+        }
+
 		try {
 			String list_access = default_access;
 			
 		    while (tokenScanner.hasToken()) {
 		        token = tokenScanner.getToken();
 		
-		        if (token.equalsIgnoreCase("access")) {
+                if (token.equalsIgnoreCase("capacity")) {
+                	token = tokenScanner.getToken();
+                	if (token.equalsIgnoreCase("fixed")) {
+                		list.setCapacity(ItemList.Capacity.FIXED);
+                	} else if (token.equalsIgnoreCase("variable")) {
+                		list.setCapacity(ItemList.Capacity.VARIABLE);
+                	} else {
+                        throw new Exception("Error in <group>: Invalid capacity type of " + token );
+                    }
+                } else if (token.equalsIgnoreCase("keys")) {
+                	token = tokenScanner.getToken();
+                	if (token.equals("{}")) {
+                		list.setKeys(new LinkedHashSet<String>());
+                	} else {
+                        throw new Exception("Error in <group>: Key parser is unimplemented");
+                	}
+                } else if (token.equalsIgnoreCase("access")) {
 		        	list_access = getAccess();
 		            list.setAccess(list_access);
 		        } else if (token.equalsIgnoreCase("element")) {
