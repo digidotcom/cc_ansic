@@ -110,11 +110,10 @@ error:
 }
 
 #define MAC_ADDR_LENGTH     6
-static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static uint8_t const device_mac_addr[MAC_ADDR_LENGTH] = {0x08, 0x00, 0x27, 0x7d, 0xa7, 0x18};
 
 static connector_callback_status_t app_get_mac_addr(connector_config_pointer_data_t * const config_mac)
 {
-#error "Specify device MAC address for LAN connection"
     ASSERT(config_mac->bytes_required == MAC_ADDR_LENGTH);
 
     config_mac->data = (uint8_t *)device_mac_addr;
@@ -844,7 +843,13 @@ static char const * app_remote_config_class_to_string(connector_request_id_remot
         enum_to_case(connector_request_id_remote_config_session_start);
         enum_to_case(connector_request_id_remote_config_action_start);
         enum_to_case(connector_request_id_remote_config_group_start);
-        enum_to_case(connector_request_id_remote_config_group_process);
+#if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(connector_request_id_remote_config_list_start);
+#endif
+        enum_to_case(connector_request_id_remote_config_element_process);
+#if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(connector_request_id_remote_config_list_end);
+#endif
         enum_to_case(connector_request_id_remote_config_group_end);
         enum_to_case(connector_request_id_remote_config_action_end);
         enum_to_case(connector_request_id_remote_config_session_end);

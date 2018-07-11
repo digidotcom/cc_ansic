@@ -20,6 +20,7 @@
 #define CONNECTOR_DEBUG_H_
 
 #include "connector_config.h"
+#include <stdarg.h>
 
 #if (defined CONNECTOR_DEBUG)
 

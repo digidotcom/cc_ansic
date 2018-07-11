@@ -738,17 +738,13 @@ STATIC void process_group_id(rci_t * const rci)
 
         if (has_rci_atribute(group_id))
         {
-            set_group_instance(rci, 1);
-			set_should_traverse_all_group_instances(rci, connector_false);
             set_rci_input_state(rci, rci_input_state_group_attribute);
             goto done;
         }
 
-		set_should_traverse_all_group_instances(rci, connector_true);
         set_rci_input_state(rci, rci_input_state_field_id);
     }
 
-    set_group_instance(rci, 1);
     set_rci_traverse_state(rci, rci_traverse_state_group_count);
     state_call(rci, rci_parser_state_traverse);
     connector_debug_line("process_group_id: group id = %d", get_group_id(rci));
@@ -761,8 +757,9 @@ STATIC void handle_index_attribute(rci_t * const rci, uint32_t index, connector_
 {
 	if (is_group == connector_true)
 	{
+
 		rci->shared.group.info.type = rci_specifier_type_int;
-		set_group_instance(rci, 1);
+		set_group_instance(rci, index);
 	}
 }
 
@@ -770,15 +767,12 @@ STATIC void handle_name_attribute(rci_t * const rci, char const * const name, si
 {
 	if (is_group == connector_true)
 	{
-		rci->shared.group.info.type = rci_specifier_type_string;
-		rci->shared.group.info.keys.is_list = connector_false;
 		memcpy(rci->shared.group.info.keys.data.key_store, name, name_len);
 		rci->shared.group.info.keys.data.key_store[name_len] = '\0';
-		set_group_instance(rci, 1);
+		set_group_instance(rci, 0);
 	}
 	else
 	{
-		set_should_traverse_all_list_instances(rci, connector_false);
 		/* FIXME: implement */
 	}
 }
@@ -851,10 +845,9 @@ STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_
 #endif
 		switch (attribute_id)
 		{
-			case rci_collection_index: 
-			case rci_collection_name:
-			case rci_collection_count:
-			case rci_collection_complete:
+			case 0:
+			case 1:
+			case 2:
 				rci->shared.last_attribute_id = attribute_id;
 				break;
 			default:
@@ -869,53 +862,104 @@ STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_
     }
 }
 
-STATIC void process_collection_normal_attribute_value(rci_t * const rci, connector_bool_t is_group)
+STATIC connector_bool_t handle_array_attribute(rci_t * const rci, connector_bool_t is_group)
+{
+	uint32_t attribute_value;
+	connector_bool_t got_attribute = connector_false;
+
+	if (get_uint32(rci, &attribute_value))
+	{
+		switch (rci->shared.last_attribute_id)
+		{
+			case rci_array_attribute_index:
+				handle_index_attribute(rci, attribute_value, is_group);
+				break;
+			case rci_array_attribute_count:
+				if (rci->shared.callback_data.action == connector_remote_action_set)
+				{
+					if (is_group == connector_true)
+					{
+						rci->shared.group.info.keys.count = attribute_value;
+					}
+					else
+					{
+						get_current_list_collection_info(rci).keys.count = attribute_value;
+					}
+				}
+				break;
+			case rci_array_attribute_shrink:
+				if (rci->shared.callback_data.action == connector_remote_action_set && attribute_value == connector_false)
+					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_true)
+				break;
+		}
+		got_attribute = connector_true;
+	}
+
+	return got_attribute;
+}
+
+STATIC connector_bool_t handle_dictionary_attribute(rci_t * const rci, connector_bool_t is_group)
 {
 	connector_bool_t got_attribute = connector_false;
 
-	if (rci->shared.last_attribute_id == rci_collection_name)
+	if (rci->shared.last_attribute_id == rci_dictionary_attribute_name)
 	{
 		got_attribute = get_name_attribute(rci, is_group);
 	}
 	else
 	{
 		uint32_t attribute_value;
-		
 		if (get_uint32(rci, &attribute_value))
 		{
-			switch (rci->shared.last_attribute_id)
+			if (rci->shared.callback_data.action == connector_remote_action_set)
 			{
-				case rci_collection_index:
-					handle_index_attribute(rci, attribute_value, is_group);
-					break;
-				case rci_collection_count:
-#if (defined RCI_DEBUG)
-        			connector_debug_line("proccess_collection_normal_attribute_value count=%u\n", attribute_value);
-#endif
-					if (is_group == connector_true)
-					{
-						rci->shared.group.info.type = rci_specifier_type_int;
-						rci->shared.group.info.keys.count = attribute_value;
-					}
-					break;
-				case rci_collection_complete:
-#if (defined RCI_DEBUG)
-        			connector_debug_line("proccess_collection_normal_attribute_value complete=%u\n", attribute_value);
-#endif
-					/* the complete flag only has meaning during a set operation and complete=false is a no-op */
-					if (rci->shared.callback_data.action == connector_remote_action_set && attribute_value > 0) 
-					{
-						if (is_group == connector_true)
+				switch (rci->shared.last_attribute_id)
+				{
+					case rci_dictionary_attribute_complete:
+						if (attribute_value == connector_true)
 						{
-							rci->shared.group.info.type = rci_specifier_type_string;
-							rci->shared.group.info.keys.count = 0;
-							/* This will trigger a set_instances callback in traverse_group_id(). Will this casue an issue? */
+							if (is_group == connector_true)
+							{
+								rci->shared.group.info.keys.count = 0;
+							}
+							else
+							{
+								get_current_list_collection_info(rci).keys.count = 0;
+							}
 						}
-					}
-					break;
+						break;
+					case rci_dictionary_attribute_remove:
+						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, attribute_value)
+						break;
+				}
 			}
 			got_attribute = connector_true;
 		}
+	}
+
+	return got_attribute;
+}
+
+STATIC void process_collection_normal_attribute_value(rci_t * const rci, connector_bool_t is_group)
+{
+	connector_bool_t got_attribute = connector_false;
+
+	connector_collection_type_t collection_type = is_group == connector_true ? get_group_collection_type(rci) : get_current_list_collection_type(rci);
+
+	switch (collection_type)
+	{
+		case connector_collection_static_array:
+			ASSERT(rci->shared.last_attribute_id == rci_collection_index);
+			/* intentional fall-through */
+		case connector_collection_static_array:
+			got_attribute = handle_array_attribute(rci, is_group);
+			break;
+		case connector_collection_static_dictionary:
+			ASSERT(rci->shared.last_attribute_id == rci_collection_name);
+			/* intentional fall-through */
+		case connector_collection_dynamic_dictionary:
+			got_attribute = handle_dictionary_attribute(rci, is_group);
+			break;
 	}
 
 	if (got_attribute == connector_true)
@@ -962,16 +1006,17 @@ STATIC void process_list_attribute(rci_t * const rci)
         switch (attr.type)
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
-				set_current_list_instance(rci, attr.value.index);
+				handle_index_attribute(rci, attr.value.index, connector_false);
 				break;
 			case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
-				set_current_list_instance(rci, 1);
+				handle_name_attribute(rci, attr.value.name.data, attr.value.name.length, connector_false);
 		    	break;	
             case BINARY_RCI_ATTRIBUTE_TYPE_NORMAL:
-                ASSERT(connector_false);
+                rci->shared.attribute_count = attr.value.count;
+				set_rci_input_state(rci, rci_input_state_list_normal_attribute_id);
+				return;
                 break;
         }
-		set_should_traverse_all_list_instances(rci, connector_false);
 		if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_TYPE_EXPECTED))
 		{
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_TYPE_EXPECTED, connector_false);
@@ -998,10 +1043,6 @@ STATIC void process_list_start(rci_t * const rci, uint32_t value)
 		set_rci_input_state(rci, rci_input_state_list_attribute);
 		goto done;
 	}
-	
-	set_current_list_instance(rci, 1); /* Need to set instance to indicate we have already traversed the first instance */
-	SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
-	set_should_traverse_all_list_instances(rci, connector_true);
 
 	if ((value & BINARY_RCI_FIELD_TYPE_INDICATOR_BIT) == BINARY_RCI_FIELD_TYPE_INDICATOR_BIT)
 	{
@@ -1045,6 +1086,7 @@ STATIC void process_field_id(rci_t * const rci)
 					else
 #endif
             			set_rci_input_state(rci, rci_input_state_group_id);
+
 					set_rci_traverse_state(rci, rci_traverse_state_all_elements);
                     state_call(rci, rci_parser_state_traverse);
                     break;
@@ -1089,13 +1131,6 @@ STATIC void process_field_id(rci_t * const rci)
             rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
 			goto done;
         }
-
-#if (defined RCI_PARSER_USES_LIST)
-		if (get_list_depth(rci) > 0)
-			set_should_traverse_all_list_instances(rci, connector_false);
-		else
-#endif
-			set_should_traverse_all_group_instances(rci, connector_false);
 
 #if (defined RCI_PARSER_USES_LIST)
 		{
