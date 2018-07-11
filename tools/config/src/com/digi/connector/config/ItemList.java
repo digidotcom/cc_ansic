@@ -20,7 +20,7 @@ public class ItemList extends Item {
     protected final String collectionXmlAttributes(String header) {
     	String result = header;
 
-        if (instances == null) {
+        if (isDictionary()) {
         	int MAX_KEY_LENGTH = 64; // TODO: This should be configurable. -ASK
         	result += String.format("<attr bin_id=`0` name=`name` desc=`key name` type=`string` max=`%d` />", MAX_KEY_LENGTH);
         	if (capacity == ItemList.Capacity.VARIABLE) {
@@ -37,6 +37,7 @@ public class ItemList extends Item {
 
     	return result;
     }
+    
     // TODO: Seems like an odd place for this to live, given that the class
     // has no other knowledge of XML. -ASK
     public String toString(int id) {
@@ -55,6 +56,14 @@ public class ItemList extends Item {
         return helpDescription;
     }
 
+    public boolean isDictionary() {
+    	return (instances == null);
+    }
+    
+    public boolean isArray() {
+    	return !isDictionary();
+    }
+    
     public void setCapacity(Capacity capacity) {
     	this.capacity = capacity;
     }
@@ -68,7 +77,7 @@ public class ItemList extends Item {
     }
 
     public LinkedHashSet<String> getKeys() {
-    	return keys;
+    	return (keys != null) ? keys : new LinkedHashSet<String>();
     }
 
     public void setInstances(int count) throws Exception {

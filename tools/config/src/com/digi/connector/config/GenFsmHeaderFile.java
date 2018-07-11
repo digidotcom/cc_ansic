@@ -31,7 +31,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	LinkedList<String> fields = new LinkedList<>();
         	
 	        fields.add(Code.Type.struct("connector_remote_group_table").constant().pointer().named("group_table"));
-	        fields.add(CHAR.constant().pointer().constant().named("error_table"));
+	        fields.add(CHAR.constant().pointer().constant().pointer().named("error_table"));
 	        fields.add(UINT.named("global_error_count"));
 	        fields.add(UINT32.named("firmware_target_zero_version"));
 	        fields.add(UINT32.named("vendor_id"));
@@ -141,7 +141,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 if (!isUnsignedIntegerDefined) {
                     /* if not defined yet, then define it */
                     structString += TYPEDEF_STRUCT
-                        + "   u)int32_t min_value;\n"
+                        + "   uint32_t min_value;\n"
                         + "   uint32_t max_value;\n"
                         + "} connector_element_value_unsigned_integer_t;\n";
                     elementValueStruct += "    uint32_t unsigned_integer_value;\n";
@@ -308,12 +308,24 @@ public class GenFsmHeaderFile extends GenHeaderFile {
            		element_enum_data +		
     	        "} connector_element_t;\n"
     	        );
-            
+
+        write(
+            	"\n" +
+            	"typedef struct {\n" +
+            	"    unsigned int entries;\n" +
+            	"    char const * const keys[];\n" +
+            	"} connector_dictionary_t;\n"
+            	);
+     
         write(
            		"\n" + 
     	        "typedef struct {\n" + 
         		collection_name_struct_field +
-    	        "    size_t instances;\n" + 
+        		"    connector_collection_type_t collection_type;\n" +
+    	        "    union {\n" +
+    	        "        size_t instances;\n" +
+    	        "        connector_dictionary_t dictionary;\n" +
+    			"    } capacity;\n" +
     	        "    struct {\n" + 
     	        "        size_t count;\n" + 
     	        "        struct connector_item CONST * CONST data;\n" + 
@@ -437,7 +449,17 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(CONNECTOR_REMOTE_GROUP_TYPE);
 
         write(CONNECTOR_ELEMENT_ACCESS);
-
+        
+        write(
+    		"\n" +
+    		"typedef enum {\n" +
+    		"    connector_collection_type_fixed_array,\n" +
+        	"    connector_collection_type_variable_array,\n" +
+        	"    connector_collection_type_fixed_dictionary,\n" +
+        	"    connector_collection_type_variable_dictionary\n" +
+        	"} connector_collection_type_t;\n"
+        	);
+        
         writeGroupElementStructs();
 
         if (options.useNames().contains(UseNames.COLLECTIONS)) {
@@ -447,26 +469,8 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             	);
         }
         
-        write(
-        	"\n" +
-        	"typedef struct {\n" +
-        	"    unsigned int entries;\n" +
-        	"    char const * const keys[];\n" +
-        	"} connector_dictionary_t;\n"
-        	);
- 
-        write(
-    		"\n" +
-    		"typedef enum {\n" +
-    		"    connector_collection_static_array,\n" +
-        	"    connector_collection_dynamic_array,\n" +
-        	"    connector_collection_static_dictionary,\n" +
-        	"    connector_collection_dynamic_dictionary\n" +
-        	"} connector_collection_t;\n"
-        	);
-        
         optional_field = options.useNames().contains(UseNames.COLLECTIONS)
-			? "        char const * CONST name;\n"
+			? "    char const * CONST name;\n"
 			: "";
         
         write(
@@ -474,7 +478,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	"typedef struct {\n" +
             "    connector_remote_group_type_t type;\n" +
             "    unsigned int id;\n" +
-            "    connector_collection_t collection_type;\n" +
+            "    connector_collection_type_t collection_type;\n" +
             "    union {\n" +
             "        unsigned int index;\n" +
             "        char const * const key;\n" +
@@ -486,7 +490,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             );
 
         optional_field = options.useNames().contains(UseNames.ELEMENTS)
-			? "        char const * CONST name;\n"
+			? "    char const * CONST name;\n"
 			: "";
         if (options.useNames().contains(UseNames.ELEMENTS)) {
             write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
@@ -525,7 +529,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	    "    unsigned int depth;\n" +
         	    "    struct {\n" + 
         	    "        unsigned int id;\n" + 
-                "        connector_collection_t collection_type;\n" +
+                "        connector_collection_type_t collection_type;\n" +
                 "        union {\n" +
                 "            unsigned int index;\n" +
                 "            char const * const key;\n" +
