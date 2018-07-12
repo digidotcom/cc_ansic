@@ -745,7 +745,7 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
 	{
 		unsigned int attributes = 1;
 		connector_bool_t overflow;
-		if (get_group_instance(rci) > 1 || group_is_dictionary(rci))
+		if (get_group_instance(rci) > 1 /*|| group_is_dictionary(rci)*/)
 		{
 			attributes = 2;
 		}
@@ -754,7 +754,8 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
 		{
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
 			if (group_is_dictionary(rci))
-				set_rci_output_state(rci, rci_output_state_complete_attribute_id);
+				/* FIXME: output complete */
+				set_rci_output_state(rci, rci_output_state_group_specifier_id);
 			else
 				set_rci_output_state(rci, rci_output_state_group_count_id);
 		}
@@ -1241,6 +1242,7 @@ STATIC void rci_generate_output(rci_t * const rci)
 				break;
 
 			case rci_output_state_complete_attribute_id:
+				/* FIXME: implement */
 				state_call(rci, rci_parser_state_traverse);
 				break;
 
