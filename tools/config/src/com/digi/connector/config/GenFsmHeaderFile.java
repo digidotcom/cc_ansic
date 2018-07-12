@@ -313,7 +313,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             	"\n" +
             	"typedef struct {\n" +
             	"    unsigned int entries;\n" +
-            	"    char const * const keys[];\n" +
+            	"    char const * const * keys;\n" +
             	"} connector_dictionary_t;\n"
             	);
      
@@ -481,7 +481,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "    connector_collection_type_t collection_type;\n" +
             "    union {\n" +
             "        unsigned int index;\n" +
-            "        char const * const key;\n" +
+            "        char const * key;\n" +
             "        unsigned int count;\n" +
             "        connector_dictionary_t dictionary;\n" +
             "    } item;\n" +
@@ -532,7 +532,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 "        connector_collection_type_t collection_type;\n" +
                 "        union {\n" +
                 "            unsigned int index;\n" +
-                "            char const * const key;\n" +
+                "            char const * key;\n" +
                 "            unsigned int count;\n" +
                 "            connector_dictionary_t dictionary;\n" +
                 "        } item;\n" +
