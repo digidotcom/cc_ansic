@@ -372,6 +372,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, config.AttributeMaxLen()));
         if (haveLists) {
             write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, config.getMaxDepth()));
+            write(String.format("%sRCI_DICT_MAX_KEY_LENGTH %d\n", DEFINE, config.getMaxKeyLength()));
         }
 
 

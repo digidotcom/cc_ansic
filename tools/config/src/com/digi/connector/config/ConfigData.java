@@ -43,7 +43,8 @@ public class ConfigData {
 
     private int CommandsAttributeMaxLen = 20;
     private int max_list_depth = 0;
-
+    private int max_key_length;
+    
     private EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
     private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
@@ -154,5 +155,13 @@ public class ConfigData {
     
     public int getMaxNameLength(UseNames type) {
     	return max_name_length.get(type);
+    }
+
+    public int setMaxKeyLength(int length) {
+    	return max_key_length = length;
+    }
+
+    public int getMaxKeyLength() {
+    	return max_key_length;
     }
 }
