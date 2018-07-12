@@ -220,6 +220,7 @@ STATIC connector_bool_t get_string(rci_t * const rci, char const * * string, siz
 
     if (ber_bytes > 0)
     {
+		*length = value;
         got_string = get_string_of_len(rci, string, value, ber_bytes);
     }
 
@@ -757,8 +758,6 @@ STATIC void handle_index_attribute(rci_t * const rci, uint32_t index, connector_
 {
 	if (is_group == connector_true)
 	{
-
-		rci->shared.group.info.type = rci_specifier_type_int;
 		set_group_instance(rci, index);
 	}
 }
@@ -767,8 +766,13 @@ STATIC void handle_name_attribute(rci_t * const rci, char const * const name, si
 {
 	if (is_group == connector_true)
 	{
-		memcpy(rci->shared.group.info.keys.data.key_store, name, name_len);
-		rci->shared.group.info.keys.data.key_store[name_len] = '\0';
+		if (name_len > RCI_DICT_MAX_KEY_LENGTH)
+		{
+			return;
+		}
+		
+		memcpy(rci->shared.group.info.keys.key_store, name, name_len);
+		rci->shared.group.info.keys.key_store[name_len] = '\0';
 		set_group_instance(rci, 0);
 	}
 	else
@@ -883,13 +887,13 @@ STATIC connector_bool_t handle_array_attribute(rci_t * const rci, connector_bool
 					}
 					else
 					{
-						get_current_list_collection_info(rci).keys.count = attribute_value;
+						set_current_list_count(rci, attribute_value);
 					}
 				}
 				break;
 			case rci_array_attribute_shrink:
 				if (rci->shared.callback_data.action == connector_remote_action_set && attribute_value == connector_false)
-					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_true)
+					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_true);
 				break;
 		}
 		got_attribute = connector_true;
@@ -918,18 +922,19 @@ STATIC connector_bool_t handle_dictionary_attribute(rci_t * const rci, connector
 					case rci_dictionary_attribute_complete:
 						if (attribute_value == connector_true)
 						{
+							SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_true);
 							if (is_group == connector_true)
 							{
 								rci->shared.group.info.keys.count = 0;
 							}
 							else
 							{
-								get_current_list_collection_info(rci).keys.count = 0;
+								set_current_list_count(rci, 0);
 							}
 						}
 						break;
 					case rci_dictionary_attribute_remove:
-						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, attribute_value)
+						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, attribute_value);
 						break;
 				}
 			}
@@ -948,16 +953,16 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 
 	switch (collection_type)
 	{
-		case connector_collection_static_array:
-			ASSERT(rci->shared.last_attribute_id == rci_collection_index);
+		case connector_collection_type_fixed_array:
+			ASSERT(rci->shared.last_attribute_id == rci_array_attribute_index);
 			/* intentional fall-through */
-		case connector_collection_static_array:
+		case connector_collection_type_variable_array:
 			got_attribute = handle_array_attribute(rci, is_group);
 			break;
-		case connector_collection_static_dictionary:
-			ASSERT(rci->shared.last_attribute_id == rci_collection_name);
+		case connector_collection_type_fixed_dictionary:
+			ASSERT(rci->shared.last_attribute_id == rci_dictionary_attribute_name);
 			/* intentional fall-through */
-		case connector_collection_dynamic_dictionary:
+		case connector_collection_type_variable_dictionary:
 			got_attribute = handle_dictionary_attribute(rci, is_group);
 			break;
 	}

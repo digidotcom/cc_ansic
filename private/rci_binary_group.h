@@ -32,14 +32,24 @@
 #define invalidate_group_instance(rci)     set_group_instance(rci, INVALID_INDEX)
 #define have_group_instance(rci)           (get_group_instance(rci) != INVALID_INDEX)
 
-#define have_group_count(rci)		((rci)->shared.group.info.keys.count != INVALID_ID)
+#define GROUP_COUNT_VARIABLE(rci)		((rci)->shared.group.info.keys.count)
+#define get_group_count(rci)			(GROUP_COUNT_VARIABLE(rci))
+#define set_group_count(rci, value)		(GROUP_COUNT_VARIABLE(rci) = (value))
+#define have_group_count(rci)			(get_group_count(rci) != INVALID_ID)
 
 #define GROUP_LOCK_VARIABLE(rci)		((rci)->shared.group.lock)
 #define get_group_lock(rci)				(GROUP_LOCK_VARIABLE(rci))
 #define set_group_lock(rci, value)		(GROUP_LOCK_VARIABLE(rci) = (value))
 #define have_group_lock(rci)			(get_group_lock(rci) != INVALID_ID)
 
-#define get_group_name(rci)		((rci)->shared.group.info.keys.is_list == connector_true ? (rci)->shared.group.info.keys.data.list[get_group_instance(rci)] : (rci)->shared.group.info.keys.data.key_store)
+#define GROUP_LOCK_VARIABLE(rci)		((rci)->shared.group.lock)
+#define get_group_lock(rci)				(GROUP_LOCK_VARIABLE(rci))
+#define set_group_lock(rci, value)		(GROUP_LOCK_VARIABLE(rci) = (value))
+#define have_group_lock(rci)			(get_group_lock(rci) != INVALID_ID)
+
+#define get_group_name(rci)		(get_group_instance(rci) == 0 ? (rci)->shared.group.info.keys.key_store : (rci)->shared.group.info.keys.list[get_group_instance(rci) - 1])
+
+#define get_group_collection_type(rci) (get_current_group((rci))->collection.collection_type)
 
 static connector_group_t const * get_current_group(rci_t const * const rci)
 {
@@ -51,6 +61,13 @@ static connector_group_t const * get_current_group(rci_t const * const rci)
     ASSERT(group_id < table->count);
 
     return (table->groups + group_id);
+}
+
+static connector_bool_t group_is_dictionary(rci_t const * const rci)
+{
+	connector_collection_type_t collection_type = get_group_collection_type(rci);
+
+	return (collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
 }
 
 

@@ -35,8 +35,15 @@
 #define set_current_list_id(rci, value)		(CURRENT_LIST_ID_VARIABLE(rci) = (value))
 #define invalidate_current_list_id(rci)		(set_current_list_id(rci, INVALID_ID))
 
+#define CURRENT_LIST_LOCK_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).lock)
+#define get_current_list_lock(rci)			(CURRENT_LIST_LOCK_VARIABLE(rci))
+#define have_current_list_lock(rci)			(get_current_list_lock(rci) != INVALID_ID)
+#define set_current_list_lock(rci, value)	(CURRENT_LIST_LOCK_VARIABLE(rci) = (value))
+#define invalidate_current_list_lock(rci)	(set_current_list_lock(rci, INVALID_ID))
+
 #define CURRENT_LIST_COUNT_VARIABLE(rci)	(CURRENT_LIST_VARIABLE(rci).info.keys.count)
 #define get_current_list_count(rci)			(CURRENT_LIST_COUNT_VARIABLE(rci))
+#define set_current_list_count(rci, value)	(CURRENT_LIST_COUNT_VARIABLE(rci) = (value))
 
 #define CURRENT_LIST_INSTANCE_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).info.instance)
 #define get_current_list_instance(rci)			(CURRENT_LIST_INSTANCE_VARIABLE(rci))
@@ -44,3 +51,7 @@
 #define increment_current_list_instance(rci)	(CURRENT_LIST_INSTANCE_VARIABLE(rci)++)
 #define set_current_list_instance(rci, value)	(CURRENT_LIST_INSTANCE_VARIABLE(rci) = (value))
 #define invalidate_current_list_instance(rci)	(set_current_list_instance(rci, INVALID_INDEX))
+
+#define set_current_list_key_list(rci, value)	(CURRENT_LIST_VARIABLE(rci).info.keys.list = (value))
+
+#define get_current_list_collection_type(rci) (get_current_collection_info((rci))->collection_type)

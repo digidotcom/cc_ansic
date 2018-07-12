@@ -685,7 +685,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
 
     encoding_data = encode_group_id(get_group_id(rci));
 
-    if (get_group_instance(rci) > 1 || rci->shared.group.info.type == rci_specifier_type_string || should_output_count(rci))
+    if (get_group_instance(rci) > 1 || group_is_dictionary(rci) || should_output_count(rci))
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
     {
@@ -745,7 +745,7 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
 	{
 		unsigned int attributes = 1;
 		connector_bool_t overflow;
-		if (get_group_instance(rci) > 1 || rci->shared.group.info.type == rci_specifier_type_string)
+		if (get_group_instance(rci) > 1 || group_is_dictionary(rci))
 		{
 			attributes = 2;
 		}
@@ -753,13 +753,13 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
 		if (!overflow)
 		{
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
-			if (rci->shared.group.info.type == rci_specifier_type_string)
+			if (group_is_dictionary(rci))
 				set_rci_output_state(rci, rci_output_state_complete_attribute_id);
 			else
 				set_rci_output_state(rci, rci_output_state_group_count_id);
 		}
 	}
-	else if (rci->shared.group.info.type == rci_specifier_type_string)
+	else if (group_is_dictionary(rci))
 	{
 		connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NAME, strlen(get_group_name(rci)));
 		if (!overflow)
@@ -789,7 +789,7 @@ STATIC void rci_output_group_attribute(rci_t * const rci)
 
 STATIC void rci_output_group_count_id(rci_t * const rci)
 {
-	connector_bool_t overflow = rci_output_uint8(rci, rci_collection_count);
+	connector_bool_t overflow = rci_output_uint8(rci, rci_array_attribute_count);
 
 	if (!overflow)
 		set_rci_output_state(rci, rci_output_state_group_count_value);
@@ -801,7 +801,7 @@ STATIC void rci_output_group_count_value(rci_t * const rci)
 
 	if (!overflow)
 	{
-		if (get_group_instance(rci) > 1 || rci->shared.group.info.type == rci_specifier_type_string)
+		if (get_group_instance(rci) > 1 || group_is_dictionary(rci))
 		{
 			set_rci_output_state(rci, rci_output_state_group_specifier_id);
 		}
@@ -820,13 +820,13 @@ STATIC void rci_output_group_specifier_id(rci_t * const rci)
 {
 	connector_bool_t overflow;
 
-	if (rci->shared.group.info.type == rci_specifier_type_string)
+	if (group_is_dictionary(rci))
 	{
-		overflow = rci_output_uint8(rci, rci_collection_name);
+		overflow = rci_output_uint8(rci, rci_dictionary_attribute_name);
 	}
 	else if (get_group_instance(rci) > 1)
 	{
-		overflow = rci_output_uint8(rci, rci_collection_index);
+		overflow = rci_output_uint8(rci, rci_array_attribute_index);
 	}
 
 	if (!overflow)
@@ -838,7 +838,7 @@ STATIC void rci_output_group_specifier_value(rci_t * const rci)
 	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 	connector_bool_t overflow;
 
-	if (rci->shared.group.info.type == rci_specifier_type_string)
+	if (group_is_dictionary(rci))
 	{
 		overflow = rci_output_string(rci, get_group_name(rci), strlen(get_group_name(rci)));
 	}

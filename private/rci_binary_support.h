@@ -208,7 +208,6 @@ typedef enum
     rci_parser_state_error
 } rci_parser_state_t;
 
-
 typedef enum
 {
     rci_input_state_command_id,
@@ -303,10 +302,17 @@ typedef enum
 
 typedef enum
 {
-	rci_specifier_type_unknown,
-	rci_specifier_type_int,
-	rci_specifier_type_string
-} rci_specifier_type_t;
+	rci_dictionary_attribute_name,
+	rci_dictionary_attribute_complete,
+	rci_dictionary_attribute_remove
+} rci_dictionary_attribute_t;
+
+typedef enum
+{
+	rci_array_attribute_index,
+	rci_array_attribute_count,
+	rci_array_attribute_shrink
+} rci_array_attribute_t;
 
 typedef struct
 {
@@ -325,7 +331,7 @@ typedef struct
 	unsigned int instance;
 	struct {
 		unsigned int count;
-		char key_store[RCI_MAX_KEY_LENGTH];
+		char key_store[RCI_DICT_MAX_KEY_LENGTH + 1];
 		char const * const * list;
 	} keys;
 } rci_collection_info_t;
@@ -440,6 +446,7 @@ typedef struct rci
             unsigned int depth;
             struct {
                 unsigned int id;
+				unsigned int lock;
 				rci_collection_info_t info;
             } level[RCI_LIST_MAX_DEPTH];
 			unsigned int query_depth;
@@ -474,6 +481,8 @@ typedef struct rci
 #define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES))
 #define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES))
 #define should_output_count(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
+#define should_set_count(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SET_COUNT))
+#define should_remove_instance(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE))
 
 #define set_should_traverse_all_groups(rci, state)				(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))
 #define set_should_traverse_all_group_instances(rci, state)		(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES, state))

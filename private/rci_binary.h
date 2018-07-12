@@ -55,8 +55,8 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
     invalidate_group_id(rci);
     invalidate_group_instance(rci);
-	rci->shared.group.info.keys.is_list = connector_true;
-	rci->shared.group.info.keys.data.list = NULL;
+	rci->shared.group.info.keys.list = NULL;
+	rci->shared.group.info.keys.key_store[0] = '\0';
 	rci->shared.group.info.keys.count = INVALID_INDEX;
 	rci->shared.group.lock = INVALID_ID;
 
@@ -67,8 +67,8 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 		{
 			rci->shared.list.level[i].id = INVALID_ID;
 			rci->shared.list.level[i].info.instance = INVALID_INDEX;
-			rci->shared.list.level[i].info.keys.is_list = connector_true;
-			rci->shared.list.level[i].info.keys.data.list = NULL;
+			rci->shared.list.level[i].info.keys.list = NULL;
+			rci->shared.list.level[i].info.keys.key_store[0] = '\0';
 			rci->shared.list.level[i].info.keys.count = INVALID_INDEX;
 		}
 	}
