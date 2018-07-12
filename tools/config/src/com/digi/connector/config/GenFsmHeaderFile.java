@@ -313,7 +313,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             	"\n" +
             	"typedef struct {\n" +
             	"    unsigned int entries;\n" +
-            	"    char const * const keys[];\n" +
+            	"    char const * const * keys;\n" +
             	"} connector_dictionary_t;\n"
             	);
      
@@ -372,6 +372,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, config.AttributeMaxLen()));
         if (haveLists) {
             write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, config.getMaxDepth()));
+            write(String.format("%sRCI_DICT_MAX_KEY_LENGTH %d\n", DEFINE, config.getMaxKeyLength()));
         }
 
 
@@ -481,7 +482,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "    connector_collection_type_t collection_type;\n" +
             "    union {\n" +
             "        unsigned int index;\n" +
-            "        char const * const key;\n" +
+            "        char const * key;\n" +
             "        unsigned int count;\n" +
             "        connector_dictionary_t dictionary;\n" +
             "    } item;\n" +
@@ -532,7 +533,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 "        connector_collection_type_t collection_type;\n" +
                 "        union {\n" +
                 "            unsigned int index;\n" +
-                "            char const * const key;\n" +
+                "            char const * key;\n" +
                 "            unsigned int count;\n" +
                 "            connector_dictionary_t dictionary;\n" +
                 "        } item;\n" +
