@@ -738,12 +738,11 @@ public class ConfigGenerator {
 	        if (e.getMessage() != null) {
 	            instance.log(e.getMessage());
 	        }
+
+	        if (e.getCause() != null)
+                System.err.println(e.getCause());
 	        
-	        if (instance.verboseOption) {
-	            e.printStackTrace();
-	            if (e.getCause() != null)
-	                System.err.println(e.getMessage());
-	        }
+            e.printStackTrace();
 	        System.exit(1);
 	    }
     }
