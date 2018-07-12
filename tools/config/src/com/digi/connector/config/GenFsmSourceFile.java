@@ -2,20 +2,13 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ItemList.Capacity;
 
 public class GenFsmSourceFile extends GenSourceFile {
-
-    protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
-    "    struct connector_remote_group_table const * group_table;\n" +
-    "    char const * const * error_table;\n" +
-    "    unsigned int global_error_count;\n" +
-    "    uint32_t firmware_target_zero_version;\n" +
-    "    uint32_t vendor_id;\n" +
-    "    char const * device_type;\n" +
-    "} connector_remote_config_data_t;\n";
 
     private final static String FILENAME = "remote_config.c";
 
@@ -228,6 +221,38 @@ public class GenFsmSourceFile extends GenSourceFile {
     private String getElementDefine(String type_name, String element_name) {
         return (String.format("connector_element_%s_%s", type_name, element_name));
     }
+    
+    private String getCollectionType(ItemList list) {
+        boolean isFixedCapacity = (list.getCapacity() == Capacity.FIXED);
+        boolean isDictionary = list.isDictionary();
+         
+        String type = "connector_collection_type_";
+        type += (isFixedCapacity) ? "fixed_": "variable_";
+        type += (isDictionary) ? "dictionary": "array";
+        
+        return type;
+    }
+
+    private String getCapacityInitializer(ItemList list, String varname) {
+    	String result;
+	    boolean isDictionary = list.isDictionary();
+	     
+	    if (isDictionary) {
+	    	LinkedHashSet<String> keys = list.getKeys();
+	    	
+	    	if (keys.isEmpty()) {
+	        	result = "{ 0, NULL }";
+	    	} else {
+	    		String keys_name = varname + "_keys";
+	
+	            result = "{ " + keys.size() + ", " + keys_name + " }";
+	    	}
+	    } else {
+	    	result = "{ " + list.getInstances() + " " + COMMENTED("instances")+ " }";
+	    }
+	    
+	    return result;
+    }
 
     private void writeCollectionArray(ItemList items, String prefix) throws Exception {
     	// Traverse down the tree to define all the lists first as they need to be defined before the collections that include them are. 
@@ -242,7 +267,8 @@ public class GenFsmSourceFile extends GenSourceFile {
                 	: "";
                 
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
-                write(optional + "    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
+                write(optional);
+                write("    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
                 
                 if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                     String enum_struct;
@@ -257,22 +283,29 @@ public class GenFsmSourceFile extends GenSourceFile {
                     	enum_struct = "{ 0, NULL}, ";
                     }
                     
-                    write(enum_struct);
+                    write("    " + enum_struct + "\n");
                 }
-                write(	"};\n\n");
+                write("};\n");
+                write("\n");
             } else {
             	ItemList subitems = (ItemList) item;
             	String subitemsPrefix = prefix + "__" + item.getSanitizedName().toLowerCase();
             	
             	writeCollectionArray(subitems, subitemsPrefix);
+	    		writeCollectionKeysArray(subitems.getKeys(), itemVariable);
             	
             	String subitemsVariable = itemVariable + "_items";
                 String optional = options.useNames().contains(UseNames.COLLECTIONS)
-                    	? String.format("    \"%s\",\n", subitems.getName())
-                    	: "";
-            	
+                	? String.format("    \"%s\",\n", subitems.getName())
+                	: "";
+
+                String type = getCollectionType(subitems);
+                String capacity = getCapacityInitializer(subitems, itemVariable);
+
                 write("static connector_collection_t CONST " + itemVariable + "_collection = {\n");
-                write(optional + "    " + subitems.getInstances() + ", " + COMMENTED("instances") + "\n");
+                write(optional);
+                write("    " + type + ",\n");
+                write("    " + capacity + ",\n");
                 write("    {\n");
                 write("        " + subitems.getItems().size() + ", " + COMMENTED("items") + "\n");
                 write("        " + subitemsVariable + "\n");
@@ -380,8 +413,24 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
     }
 
+    private void writeCollectionKeysArray(LinkedHashSet<String> keys, String varname) throws IOException {
+    	if (!keys.isEmpty()) {
+	    	LinkedList<String> values = new LinkedList<>();
+	        for (String key: new LinkedList<String>(keys)) {
+	        	values.add(Code.quoted(key));
+	        }
+	        
+	        write("static char const * const " + varname + "_keys[] = {\n");
+	        for (String line: Code.commas(values)) {
+	        	write(Code.indented(line));
+	        }
+	        write("}\n");
+			write("\n");
+    	}
+    }
+    
     private void writeAllStructures() throws Exception {
-        for (Group.Type type : Group.Type.values()) {
+        for (Group.Type type: Group.Type.values()) {
             LinkedList<Group> groups = config.getConfigGroup(type);
 
             configType = type.toLowerName();
@@ -389,6 +438,12 @@ public class GenFsmSourceFile extends GenSourceFile {
             if (!groups.isEmpty()) {
                 writeGroupStructures(groups);
 
+                for (Group group: groups) {
+                	if (group.isDictionary() && !group.getKeys().isEmpty()) {
+                		writeCollectionKeysArray(group.getKeys(), customPrefix + getDefineString(group.getName()));
+                	}
+                }
+                	
                 write(String.format("static connector_group_t CONST %sconnector_%s_groups[] = {", customPrefix, configType));
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
@@ -397,13 +452,17 @@ public class GenFsmSourceFile extends GenSourceFile {
                     String optional = options.useNames().contains(UseNames.COLLECTIONS)
                         	? String.format("        \"%s\",\n", group.getName())
                         	: "";
+                        	
+                    String ctype = getCollectionType(group);
+                    String capacity = getCapacityInitializer(group, customPrefix + getDefineString(group.getName()));
                     String group_string = 
                     	"\n" +
                     	"{\n" +
             			"    {\n" +
                     	optional +
-                		"        " + group.getInstances() + ", " + COMMENTED("instances") + "\n" +
-                        "        { ARRAY_SIZE(" + items_name + "), " + items_name + " }, \n" +
+                    	"        " + ctype + ",\n" + 
+                    	"        " + capacity + ",\n" +
+                        "        { " + group.getItems().size() + ", " + items_name + " }, \n" +
                     	"    },\n";
                     
                     if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {

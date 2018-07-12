@@ -100,6 +100,11 @@ public abstract class GenFile {
     	writer.newLine();
     }
 
+    public final void writeBlock(String line) throws IOException {
+    	writeLine(line);
+    	writer.newLine();
+    }
+
     private void writePreamble() throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();

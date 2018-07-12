@@ -31,7 +31,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	LinkedList<String> fields = new LinkedList<>();
         	
 	        fields.add(Code.Type.struct("connector_remote_group_table").constant().pointer().named("group_table"));
-	        fields.add(CHAR.constant().pointer().constant().named("error_table"));
+	        fields.add(CHAR.constant().pointer().constant().pointer().named("error_table"));
 	        fields.add(UINT.named("global_error_count"));
 	        fields.add(UINT32.named("firmware_target_zero_version"));
 	        fields.add(UINT32.named("vendor_id"));
@@ -52,55 +52,40 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     }
 
     private void writeDefineOptionHeader() throws IOException {
-        /* if fileType == SOURCE, we should not this function */
-        String headerString = "";
+        LinkedList<String> defines = new LinkedList<>();
 
         if (!options.excludeErrorDescription()) {
-            headerString += DEFINE + RCI_PARSER_USES_ERROR_DESCRIPTIONS;
+        	defines.add(Code.define(RCI_PARSER_USES + "ERROR_DESCRIPTIONS"));
         }
-
-        String unsignedIntegerString = null;
-        String stringsString = null;
-
-        String floatInclude = null;
 
         for (Element.Type type : types) {
-            headerString += DEFINE + RCI_PARSER_USES + type.toUpperName() + "\n";
-
-            switch (type) {
-            case UINT32:
-            case HEX32:
-            case X_HEX32:
-                if (unsignedIntegerString == null) {
-                    unsignedIntegerString = DEFINE + RCI_PARSER_USES_UNSIGNED_INTEGER;
-                }
-                break;
-
-            case INT32:
-            case ENUM:
-                break;
-            case FLOAT:
-                floatInclude = INCLUDE + FLOAT_HEADER;
-                break;
-
-            case ON_OFF:
-            case BOOLEAN:
-                break;
-            default:
-                if (stringsString == null) {
-                    stringsString = DEFINE + RCI_PARSER_USES_STRINGS;
-                }
-                break;
-            }
+        	defines.add(Code.define(RCI_PARSER_USES + type.toUpperName()));
+        }
+        
+        EnumSet<Element.Type> isUnsigned = EnumSet.of(Element.Type.UINT32, Element.Type.HEX32, Element.Type.X_HEX32);
+        for (Element.Type type : types) {
+        	if (isUnsigned.contains(type)) {
+        		defines.add(Code.define(RCI_PARSER_USES + "UNSIGNED_INTEGER"));
+        		break;
+        	}
         }
 
-        if (unsignedIntegerString != null) headerString += unsignedIntegerString;
-        if (stringsString != null) headerString += stringsString;
+        EnumSet<Element.Type> isString = EnumSet.of(
+        	Element.Type.STRING, Element.Type.MULTILINE_STRING, Element.Type.PASSWORD, 
+    		Element.Type.IPV4, Element.Type.FQDNV4, Element.Type.FQDNV6, Element.Type.MAC_ADDR,
+    		Element.Type.DATETIME);
+        for (Element.Type type : types) {
+        	if (isString.contains(type)) {
+        		defines.add(Code.define(RCI_PARSER_USES + "STRINGS"));
+        		break;
+        	}
+        }
 
-        if (floatInclude != null)
-            headerString += "\n\n" + floatInclude;
-
-        write(headerString);
+        writeBlock(defines);
+        
+        if (types.contains(Element.Type.FLOAT)) {
+        	writeBlock(Code.include("float.h"));
+        }
     }
 
     private void writeElementTypeEnums() throws IOException {
@@ -323,12 +308,24 @@ public class GenFsmHeaderFile extends GenHeaderFile {
            		element_enum_data +		
     	        "} connector_element_t;\n"
     	        );
-            
+
+        write(
+            	"\n" +
+            	"typedef struct {\n" +
+            	"    unsigned int entries;\n" +
+            	"    char const * const keys[];\n" +
+            	"} connector_dictionary_t;\n"
+            	);
+     
         write(
            		"\n" + 
     	        "typedef struct {\n" + 
         		collection_name_struct_field +
-    	        "    size_t instances;\n" + 
+        		"    connector_collection_type_t collection_type;\n" +
+    	        "    union {\n" +
+    	        "        size_t instances;\n" +
+    	        "        connector_dictionary_t dictionary;\n" +
+    			"    } capacity;\n" +
     	        "    struct {\n" + 
     	        "        size_t count;\n" + 
     	        "        struct connector_item CONST * CONST data;\n" + 
@@ -365,7 +362,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeDefineOptionHeader();
 
-        if(options.rciLegacyEnabled()){
+        if (options.rciLegacyEnabled()){
             write(RCI_LEGACY_DEFINE);
         }
         if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
@@ -390,26 +387,42 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         writeElementTypeEnums();
         writeElementValueStruct();
 
+        String list_instances_lock = "";
+        String list_instances_set = "";
+        String list_instance_remove = "";
         String list_start = "";
         String list_end = "";
+        String list_instances_unlock = "";
         	
         if (haveLists) {
-        	list_start = "    connector_request_id_remote_config_list_start,\n";
-        	list_end   = "    connector_request_id_remote_config_list_end,\n";
+        	list_instances_lock 	= "    connector_request_id_remote_config_list_instances_lock,\n";
+        	list_instances_set 		= "    connector_request_id_remote_config_list_instances_set,\n";
+        	list_instance_remove 	= "    connector_request_id_remote_config_list_instance_remove,\n";
+        	list_start 				= "    connector_request_id_remote_config_list_start,\n";
+        	list_end   				= "    connector_request_id_remote_config_list_end,\n";
+        	list_instances_unlock 	= "    connector_request_id_remote_config_list_instances_unlock,\n";
         }
         
         write("\ntypedef enum {\n" +
                          "    connector_request_id_remote_config_session_start,\n" +
                          "    connector_request_id_remote_config_action_start,\n" +
+                         "    connector_request_id_remote_config_group_instances_lock,\n" +
+                         "    connector_request_id_remote_config_group_instances_set,\n" +
+                         "    connector_request_id_remote_config_group_instance_remove,\n" +
                          "    connector_request_id_remote_config_group_start,\n" +
+                         list_instances_lock +
+                         list_instances_set +
+                         list_instance_remove +
                          list_start +
                          "    connector_request_id_remote_config_element_process,\n" +
                          list_end +
+                         list_instances_unlock +
                          "    connector_request_id_remote_config_group_end,\n" +
+                         "    connector_request_id_remote_config_group_instances_unlock,\n" +
                          "    connector_request_id_remote_config_action_end,\n" +
                          "    connector_request_id_remote_config_session_end,\n" +
                          "    connector_request_id_remote_config_session_cancel");
-        
+
         if (options.rciLegacyEnabled() || options.useCcapi()){
             write(",\n    connector_request_id_remote_config_do_command,\n" +
                              "    connector_request_id_remote_config_reboot,\n" +
@@ -436,28 +449,48 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(CONNECTOR_REMOTE_GROUP_TYPE);
 
         write(CONNECTOR_ELEMENT_ACCESS);
-
+        
+        write(
+    		"\n" +
+    		"typedef enum {\n" +
+    		"    connector_collection_type_fixed_array,\n" +
+        	"    connector_collection_type_variable_array,\n" +
+        	"    connector_collection_type_fixed_dictionary,\n" +
+        	"    connector_collection_type_variable_dictionary\n" +
+        	"} connector_collection_type_t;\n"
+        	);
+        
         writeGroupElementStructs();
 
+        if (options.useNames().contains(UseNames.COLLECTIONS)) {
+            write(
+            	"\n" +
+            	DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n"
+            	);
+        }
+        
         optional_field = options.useNames().contains(UseNames.COLLECTIONS)
-			? "        char const * CONST name;\n"
+			? "    char const * CONST name;\n"
 			: "";
         
-        if (options.useNames().contains(UseNames.COLLECTIONS)) {
-            write("\n"+ DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n");
-        }
         write(
         	"\n" + 
         	"typedef struct {\n" +
             "    connector_remote_group_type_t type;\n" +
             "    unsigned int id;\n" +
-            "    unsigned int index;\n" +
+            "    connector_collection_type_t collection_type;\n" +
+            "    union {\n" +
+            "        unsigned int index;\n" +
+            "        char const * const key;\n" +
+            "        unsigned int count;\n" +
+            "        connector_dictionary_t dictionary;\n" +
+            "    } item;\n" +
             optional_field +
             "} connector_remote_group_t;\n"
             );
 
         optional_field = options.useNames().contains(UseNames.ELEMENTS)
-			? "        char const * CONST name;\n"
+			? "    char const * CONST name;\n"
 			: "";
         if (options.useNames().contains(UseNames.ELEMENTS)) {
             write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
@@ -489,19 +522,26 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	optional_field = options.useNames().contains(UseNames.COLLECTIONS)
     			? "        char const * CONST name;\n"
 				: "";
+        	
             write(
            		"\n" +
            		"typedef struct {\n" +
         	    "    unsigned int depth;\n" +
         	    "    struct {\n" + 
         	    "        unsigned int id;\n" + 
-        	    "          unsigned int index;\n" +
+                "        connector_collection_type_t collection_type;\n" +
+                "        union {\n" +
+                "            unsigned int index;\n" +
+                "            char const * const key;\n" +
+                "            unsigned int count;\n" +
+                "            connector_dictionary_t dictionary;\n" +
+                "        } item;\n" +
         	    optional_field + 
         	    "    } level[RCI_LIST_MAX_DEPTH];\n" + 
         	    "} connector_remote_list_t;\n"
         	    );
         }
-
+        
         optional_field = haveLists
     		? "    connector_remote_list_t CONST list;\n"
 			: "";
@@ -520,6 +560,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	    "        connector_bool_t compare_matches;\n" +
     	    "        char const * error_hint;\n" +
     	    "        connector_element_value_t * element_value;\n" +
+    	    "        union {\n" +
+    	    "           unsigned int count;\n" + 
+    	    "           connector_dictionary_t dictionary;\n" +
+            "        } item;\n" +
     	    "    } response;\n" +
     	    "} connector_remote_config_t;\n"
     	    );

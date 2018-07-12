@@ -79,7 +79,7 @@ public class Descriptors {
             id += 2;
         }
 
-        if(options.rciLegacyEnabled()){
+        if (options.rciLegacyEnabled()){
             sendRebootDescriptor();
             sendDoCommandDescriptor();
             sendSetFactoryDefaultDescriptor();
@@ -87,9 +87,9 @@ public class Descriptors {
 
         sendRciDescriptors();
 
-        if(!options.noUploadOption())
+        if (!options.noUploadOption())
             options.log("\nDescriptors were uploaded successfully.");
-        if(options.saveDescriptorOption())
+        if (options.saveDescriptorOption())
             options.log("\nDescriptors were saved successfully.");
     }
 
@@ -258,11 +258,8 @@ public class Descriptors {
                 ItemList subitems = (ItemList) item;
                 String subitems_prefix = prefix + "_" + subitems.getName();
 
-                result += 
-                	String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />", subitems.getInstances()) +
-                    itemDescriptors(bin_id_reader, createBinIdLogBuffer, subitems_prefix, subitems);
-                    result += "</element>\n";
-
+                result += itemDescriptors(bin_id_reader, createBinIdLogBuffer, subitems_prefix, subitems);
+                result += "</element>\n";
             }
         }       
     	return result;
@@ -323,10 +320,8 @@ public class Descriptors {
             String prefix = "group_" + config_type + "_" + group.getName();
             
             int group_id = getBinId(bin_id_reader, createBinIdLogBuffer, prefix, gid);
-            query_descriptors += 
-            	group.toString(group_id) +
-            	String.format("<attr name=`index` desc=`item number` type=`int32` min=`1` max=`%d` />", group.getInstances());
-
+            query_descriptors += group.toString(group_id);
+            
             /*
              * Write errors for individual groups
              * 
@@ -554,7 +549,7 @@ public class Descriptors {
 
     private void uploadDescriptor(String descName, String buffer) {
 
-        if(!options.noUploadOption())
+        if (!options.noUploadOption())
             options.debug_log("Uploading descriptor:" + descName);
 
         if (callDeleteFlag && !options.noUploadOption()) {
@@ -571,7 +566,7 @@ public class Descriptors {
         message += "</DeviceMetaData>";
 
         options.debug_log(message);
-        if(options.saveDescriptorOption()){
+        if (options.saveDescriptorOption()) {
 	        try {
 	            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
 		        String message2 = "<DeviceMetaData>";
@@ -588,7 +583,8 @@ public class Descriptors {
 				e.printStackTrace();
 			}
         }
-        if(!options.noUploadOption()){
+        
+        if (!options.noUploadOption()) {
 	        String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
 	        if (responseCode != 0)
 	        {
@@ -622,11 +618,11 @@ public class Descriptors {
         }
     }
 
-    public static String vendorId(){
-        try{
+    public static String vendorId() {
+        try {
             return String.format("0x%X", Long.parseLong(vendorId));
         }
-        catch (NumberFormatException nfe){
+        catch (NumberFormatException nfe) {
             return vendorId;
         }
     }
