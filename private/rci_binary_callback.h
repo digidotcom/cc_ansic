@@ -265,12 +265,15 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 		break;
 
 	case connector_request_id_remote_config_list_end:
-		ASSERT(have_current_list_id(rci));
 		ASSERT(have_current_list_instance(rci));
+		ASSERT(have_current_list_id(rci));
+		/* Intentional fall-through */
+
+	case connector_request_id_remote_config_list_instances_unlock:
 		rci->shared.callback_data.list.depth = get_list_depth(rci);
 		break;
-#endif
 
+#endif
     case connector_request_id_remote_config_element_process:
         ASSERT(have_group_id(rci));
         ASSERT(have_group_instance(rci));
@@ -383,6 +386,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 			}
 			/* intentional fall through */
 		case connector_request_id_remote_config_list_end:
+		case connector_request_id_remote_config_list_instances_unlock:
 #endif
         case connector_request_id_remote_config_element_process:
             rci->output.element_skip = connector_false;
@@ -565,7 +569,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_PARSER_USES_LIST)
 			case connector_request_id_remote_config_list_instances_lock:
 			{
-				if (remote_config->list.level[get_list_depth(rci) - 1].collection_type == connector_collection_type_variable_array)
+				if (remote_config->list.level[remote_config->list.depth - 1].collection_type == connector_collection_type_variable_array)
 				{
 		            if (!should_set_count(rci))
 					{
@@ -591,9 +595,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 				break;
 			case connector_request_id_remote_config_list_instances_unlock:
 #if (defined RCI_PARSER_USES_COLLECTION_NAMES)
-                rci->shared.callback_data.list.level[get_list_depth(rci) - 1].name = NULL;
+                rci->shared.callback_data.list.level[rci->shared.callback_data.list.depth - 1].name = NULL;
 #endif
-				invalidate_current_list_lock(rci);
+				invalidate_list_lock(rci, rci->shared.callback_data.list.depth - 1);
 				break;
 #endif
             case connector_request_id_remote_config_session_start:

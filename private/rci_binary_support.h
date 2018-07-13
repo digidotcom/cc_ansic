@@ -429,7 +429,7 @@ typedef struct rci
 
     struct {
         rcistr_t content;
-		uint8_t flag;
+		uint16_t flag;
 
 		uint32_t last_attribute_id;
 		uint8_t attribute_count;
@@ -472,14 +472,19 @@ typedef struct rci
 #define RCI_SHARED_FLAG_REMOVE					(1 << 5)
 #define RCI_SHARED_FLAG_DONT_SHRINK				(1 << 6)
 #define RCI_SHARED_FLAG_SET_COUNT				(1 << 7)
+#define RCI_SHARED_FLAG_ALL_ELEMENTS			(1 << 8)
+#define RCI_SHARED_FLAG_SKIP_INPUT				(1 << 9)
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)
 #define SET_RCI_SHARED_FLAG(rci, flag, state)	((state) == connector_true ? (RCI_SHARED_FLAG_VARIABLE(rci) |= (flag)) : (RCI_SHARED_FLAG_VARIABLE(rci) &= ~(flag)))
 
 #define should_traverse_all_groups(rci)				(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUPS))
-#define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES))
-#define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES))
+#define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | RCI_SHARED_FLAG_ALL_GROUPS))
+#define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES | RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | \
+													 RCI_SHARED_FLAG_ALL_GROUPS))
+#define should_traverse_all_elements(rci)			(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_ELEMENTS | RCI_SHARED_FLAG_ALL_LIST_INSTANCES | \
+													 RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | RCI_SHARED_FLAG_ALL_GROUPS))
 #define should_output_count(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
 #define should_set_count(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SET_COUNT))
 #define should_remove_instance(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE))

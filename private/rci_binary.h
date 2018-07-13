@@ -66,6 +66,7 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 		for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
 		{
 			rci->shared.list.level[i].id = INVALID_ID;
+			rci->shared.list.level[i].lock = INVALID_ID;
 			rci->shared.list.level[i].info.instance = INVALID_INDEX;
 			rci->shared.list.level[i].info.keys.list = NULL;
 			rci->shared.list.level[i].info.keys.key_store[0] = '\0';

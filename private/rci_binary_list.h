@@ -41,6 +41,8 @@
 #define set_current_list_lock(rci, value)	(CURRENT_LIST_LOCK_VARIABLE(rci) = (value))
 #define invalidate_current_list_lock(rci)	(set_current_list_lock(rci, INVALID_ID))
 
+#define invalidate_list_lock(rci, index)	((rci)->shared.list.level[(index)].lock = INVALID_ID)
+
 #define CURRENT_LIST_COUNT_VARIABLE(rci)	(CURRENT_LIST_VARIABLE(rci).info.keys.count)
 #define get_current_list_count(rci)			(CURRENT_LIST_COUNT_VARIABLE(rci))
 #define set_current_list_count(rci, value)	(CURRENT_LIST_COUNT_VARIABLE(rci) = (value))

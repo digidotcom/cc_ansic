@@ -75,8 +75,8 @@ STATIC void traverse_group_count(rci_t * const rci)
 
 	if (!have_group_instance(rci))
 	{
-		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
-		set_should_traverse_all_group_instances(rci, connector_true);	
+		if (collection_type == connector_collection_type_variable_dictionary)
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
 
 		if (get_group_count(rci) == 0)
 		{
@@ -184,15 +184,43 @@ STATIC void traverse_list_id(rci_t * const rci)
 }
 #endif
 
-STATIC void traverse_element_id(rci_t * const rci)
+STATIC connector_bool_t release_last_list_lock(rci_t * const rci)
 {
+	connector_bool_t need_unlock = connector_false;
+	
+	if (get_list_depth(rci) == RCI_LIST_MAX_DEPTH) goto done;
+	
+	increment_list_depth(rci);
+	if (have_current_list_lock(rci))
+	{
+		trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
+		need_unlock = connector_true;
+	}
+	decrement_list_depth(rci);
+
+done:
+	return need_unlock;
+}
+
+STATIC connector_bool_t traverse_element_id(rci_t * const rci)
+{
+	connector_bool_t done = connector_false;
     connector_item_t const * const element = get_current_element(rci);
 
-	/* release list_level + 1 lock? */
+	if (release_last_list_lock(rci) == connector_true) goto done;
 
 #if (defined RCI_PARSER_USES_LIST)
 	ASSERT(element->type != connector_element_type_list);
 #endif
+
+	if (should_traverse_all_elements(rci) || get_list_depth(rci) > get_query_depth(rci))
+	{
+		set_rci_traverse_state(rci, rci_traverse_state_all_elements);
+	}
+	else
+	{
+		done = connector_true;
+	}
 
     if ((rci->shared.callback_data.action == connector_remote_action_query) &&
         (element->data.element->access == connector_element_access_write_only))
@@ -205,7 +233,7 @@ STATIC void traverse_element_id(rci_t * const rci)
     state_call(rci, rci_parser_state_output);
 
 done:
-    return;
+    return done;
 }
 
 #if (defined RCI_LEGACY_COMMANDS)
@@ -238,16 +266,18 @@ STATIC void traverse_command_set_factory_default(rci_t * const rci)
 }
 #endif
 
-STATIC void traverse_element_end(rci_t * const rci)
+STATIC connector_bool_t traverse_element_end(rci_t * const rci)
 {
-	/* release list_level + 1 lock? */
+	connector_bool_t done = connector_false;
+
+	if (release_last_list_lock(rci) == connector_true) goto done;
 
 #if (defined RCI_PARSER_USES_LIST)
 	if (get_list_depth(rci) > 0)
 	{
 		trigger_rci_callback(rci, connector_request_id_remote_config_list_end);
 		set_element_id(rci, get_current_list_id(rci));
-		/* traverse_all_element_instances() needs the list info so don't invalidate it if we will be transitioning to that state */
+		/* traverse_all_list_instances() needs the list info so don't invalidate it if we will be transitioning to that state */
 		if (get_list_depth(rci) < get_query_depth(rci) || (get_list_depth(rci) == get_query_depth(rci) && !should_traverse_all_list_instances(rci))) 
 		{
 			invalidate_current_list_id(rci);
@@ -261,8 +291,35 @@ STATIC void traverse_element_end(rci_t * const rci)
     	trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
 	}
 
+#if (defined RCI_PARSER_USES_LIST)
+	ASSERT(get_list_depth(rci) >= get_query_depth(rci));
+	if (get_list_depth(rci) == 0)
+	{
+#endif
+		if (should_traverse_all_group_instances(rci))
+		{
+			set_rci_traverse_state(rci, rci_traverse_state_all_group_instances);
+		}
+		else
+		{
+    		done = connector_true;
+		}
+#if (defined RCI_PARSER_USES_LIST)
+	}
+	else if (get_list_depth(rci) >= get_query_depth(rci))
+	{
+		if (should_traverse_all_list_instances(rci) || get_list_depth(rci) > get_query_depth(rci))
+			set_rci_traverse_state(rci, rci_traverse_state_all_list_instances);
+		else
+			done = connector_true;
+	}
+#endif
+
     set_rci_output_state(rci, rci_output_state_field_terminator);
     state_call(rci, rci_parser_state_output);
+
+done:
+	return done;
 }
 
 STATIC connector_bool_t traverse_group_end(rci_t * const rci)
@@ -334,14 +391,12 @@ STATIC void traverse_element(rci_t * const rci)
 	else
 #endif
 	{
-		traverse_element_id(rci);
+		set_rci_traverse_state(rci, rci_traverse_state_element_id);
 	}
 }
 
-STATIC connector_bool_t traverse_all_elements(rci_t * const rci)
+STATIC void traverse_all_elements(rci_t * const rci)
 {
-    connector_bool_t done = connector_false;
-
 	if (!have_element_id(rci))
 	{
 		set_element_id(rci, 0);
@@ -357,32 +412,8 @@ STATIC connector_bool_t traverse_all_elements(rci_t * const rci)
         }
         else
         {
-#if (defined RCI_PARSER_USES_LIST)
-			ASSERT(get_list_depth(rci) >= get_query_depth(rci));
-			if (get_list_depth(rci) == 0)
-			{
-#endif
-				if (should_traverse_all_group_instances(rci) || should_traverse_all_groups(rci))
-				{
-					set_rci_traverse_state(rci, rci_traverse_state_all_group_instances);
-				}
-				else
-				{
-            		done = connector_true;
-				}
-#if (defined RCI_PARSER_USES_LIST)
-			}
-			else if (get_list_depth(rci) >= get_query_depth(rci))
-			{
-				if (rci->shared.flag != 0 || get_list_depth(rci) > get_query_depth(rci))
-					set_rci_traverse_state(rci, rci_traverse_state_all_list_instances);
-				else
-					done = connector_true;
-			}
-#endif
-
 			invalidate_element_id(rci);
-			traverse_element_end(rci);
+			set_rci_traverse_state(rci, rci_traverse_state_element_end);
 			
 			goto done;
         }
@@ -391,7 +422,7 @@ STATIC connector_bool_t traverse_all_elements(rci_t * const rci)
 	traverse_element(rci);
 
 done:
-	return done;
+	return;
 }
 
 STATIC connector_bool_t traverse_all_group_instances(rci_t * const rci)
@@ -528,15 +559,16 @@ STATIC void rci_traverse_data(rci_t * const rci)
 #endif
 
         case rci_traverse_state_element_id:
-            traverse_element_id(rci);
+            done_state = traverse_element_id(rci);
             break;
 
         case rci_traverse_state_all_elements:
-            done_state = traverse_all_elements(rci);
+            traverse_all_elements(rci);
+			done_state = connector_false;
             break;
 
         case rci_traverse_state_element_end:
-            traverse_element_end(rci);
+            done_state = traverse_element_end(rci);
             break;
 
         case rci_traverse_state_group_end:
