@@ -434,7 +434,14 @@ public class Parser {
 		        } else if (token.equalsIgnoreCase("element")) {
 		            list.addItem(processElement(list_access, config));
 		        } else if (token.equalsIgnoreCase("list")) {
-		            list.addItem(processList(list_access, config, depth));
+		        	ItemList sublist = processList(list_access, config, depth);
+
+		            try {
+                        sublist.validate();
+                    } catch (Exception e) {
+                        throw new Exception("Error in <list>: " + sublist.getName() + "\n\t" + e.getMessage());
+                    }
+		            list.addItem(sublist);
 		        } else if (token.equalsIgnoreCase("end")) {
 		            break;
 		        } else if (token.startsWith("#")) {
