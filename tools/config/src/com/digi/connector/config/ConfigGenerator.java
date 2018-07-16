@@ -109,7 +109,7 @@ public class ConfigGenerator {
     private boolean noErrorDescription;
     private boolean verboseOption;
     private FileType fileType = FileType.NONE;
-    private EnumSet<UseNames> useNames;
+    private EnumSet<UseNames> useNames = EnumSet.noneOf(UseNames.class);
     private String customPrefix = "";
     private boolean deleteDescriptor;
     private boolean useCcapi;
