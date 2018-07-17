@@ -47,6 +47,7 @@ STATIC void traverse_group_count(rci_t * const rci)
 		}
 		if (should_set_count(rci))
 		{
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
 			trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_set);
 			goto done;
 		}
@@ -161,6 +162,7 @@ STATIC void traverse_list_count(rci_t * const rci)
 		}
 		if (should_set_count(rci))
 		{
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
 			trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_set);
 			goto done;
 		}

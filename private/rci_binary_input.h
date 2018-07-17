@@ -946,6 +946,7 @@ STATIC connector_bool_t handle_array_attribute(rci_t * const rci, connector_bool
 				handle_index_attribute(rci, attribute_value, is_group);
 				break;
 			case rci_array_attribute_count:
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_true);
 				if (rci->shared.callback_data.action == connector_remote_action_set)
 				{
 					if (is_group == connector_true)

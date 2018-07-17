@@ -212,7 +212,6 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 			rci->shared.callback_data.group.item.dictionary.entries = rci->shared.group.info.keys.count;
 			rci->shared.callback_data.group.item.dictionary.keys = rci->shared.group.info.keys.list;
 		}
-		rci->shared.callback_data.group.collection_type = collection_type;
 		break;
 	}
 
@@ -253,7 +252,6 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 				rci->shared.callback_data.list.level[index].item.key = rci->shared.list.level[index].info.keys.list[instance - 1];
 			}
 		}
-		rci->shared.callback_data.list.level[index].collection_type = collection_type;
 	}
 	/* intentional fall-through */
 
@@ -264,7 +262,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 		rci->shared.callback_data.list.depth = get_list_depth(rci);
 		{
 			unsigned int const index = get_list_depth(rci) - 1;
-
+			rci->shared.callback_data.list.level[index].collection_type = get_current_list_collection_type(rci);;
 			rci->shared.callback_data.list.level[index].id = rci->shared.list.level[index].id;
 			#if (defined RCI_PARSER_USES_COLLECTION_NAMES)
 			{
@@ -283,6 +281,23 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 	case connector_request_id_remote_config_list_instances_unlock:
 		rci->shared.callback_data.list.depth = get_list_depth(rci);
 		break;
+
+	case connector_request_id_remote_config_list_instances_set:
+	{
+		unsigned int index = get_list_depth(rci) - 1;
+		connector_collection_type_t const collection_type = get_current_list_collection_type(rci);
+		ASSERT(collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary);
+		if (collection_type == connector_collection_type_variable_array)
+		{
+			rci->shared.callback_data.list.level[index].item.count = rci->shared.list.level[index].info.keys.count;
+		}
+		else
+		{
+			rci->shared.callback_data.list.level[index].item.dictionary.entries = rci->shared.list.level[index].info.keys.count;
+			rci->shared.callback_data.list.level[index].item.dictionary.keys = rci->shared.list.level[index].info.keys.list;
+		}
+		break;
+	}
 
 #endif
     case connector_request_id_remote_config_element_process:
@@ -391,6 +406,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 		case connector_request_id_remote_config_group_instances_unlock:
 #if (defined RCI_PARSER_USES_LIST)
 		case connector_request_id_remote_config_list_instances_lock:
+		case connector_request_id_remote_config_list_instances_set:
 		case connector_request_id_remote_config_list_start:
 		case connector_request_id_remote_config_list_instance_remove:
 			if (get_list_depth(rci) <= rci->output.skip_depth)
@@ -548,13 +564,10 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             case connector_request_id_remote_config_group_instances_lock:
 				if (remote_config->group.collection_type == connector_collection_type_variable_array)
 				{
-		            if (!should_set_count(rci))
+		            if (!should_set_count(rci) || remote_config->response.item.count == rci->shared.group.info.keys.count ||
+						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_DONT_SHRINK) && remote_config->response.item.count > rci->shared.group.info.keys.count))
 					{
 						rci->shared.group.info.keys.count = remote_config->response.item.count;
-					}
-					else if (remote_config->response.item.count == rci->shared.group.info.keys.count ||
-							(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_DONT_SHRINK) && remote_config->response.item.count > rci->shared.group.info.keys.count))
-					{
 						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
 					}
 					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_false);
@@ -584,13 +597,10 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 			{
 				if (remote_config->list.level[remote_config->list.depth - 1].collection_type == connector_collection_type_variable_array)
 				{
-		            if (!should_set_count(rci))
+		            if (!should_set_count(rci) || remote_config->response.item.count == get_current_list_count(rci) ||
+						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_DONT_SHRINK) && remote_config->response.item.count > get_current_list_count(rci)))
 					{
 						set_current_list_count(rci, remote_config->response.item.count);
-					}
-					else if (remote_config->response.item.count == rci->shared.group.info.keys.count ||
-							(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_DONT_SHRINK) && remote_config->response.item.count > get_current_list_count(rci)))
-					{
 						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
 					}
 					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_false);
