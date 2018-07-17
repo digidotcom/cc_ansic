@@ -2,7 +2,7 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 
-public abstract class GenSourceFile extends GenFile{
+public abstract class GenSourceFile extends GenFile {
     protected final static String HEADER_FILENAME = "connector_api_remote.h";
 
     protected final static String CCAPI_PREFIX = "ccapi";

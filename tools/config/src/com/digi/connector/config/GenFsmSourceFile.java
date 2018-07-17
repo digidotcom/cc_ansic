@@ -546,7 +546,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             "    \"%s\"\n"+
             "};\n"+
             "\n"+
-            "connector_remote_config_data_t const * const rci_descriptor_data = &%srci_internal_data;"
-            , customPrefix, GlobalErrorCount, options.getFirmware(), Descriptors.vendorId(),Descriptors.deviceType(), customPrefix));
+            "connector_remote_config_data_t const * const rci_descriptor_data = &%srci_internal_data;\n"
+            , customPrefix, GlobalErrorCount, options.getFirmware(), options.getVendorId(), options.getDeviceType(), customPrefix));
     }
 }

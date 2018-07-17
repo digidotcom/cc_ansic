@@ -542,6 +542,14 @@ public class ConfigGenerator {
         }
     }
 
+    public String getVendorId() {
+    	return vendorId;
+    }
+    
+    public String getDeviceType() {
+    	return deviceType;
+    }
+    
     public long getFirmware() {
         return fwVersion;
     }
@@ -716,6 +724,10 @@ public class ConfigGenerator {
             debug_log("Start Generating/uploading descriptors");
 
         	Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
+        	// If the user requested the vendorID from Device Cloud, store it for future use. 
+        	if (vendorId == null) {
+        		vendorId = Descriptors.vendorId();
+        	}
 			descriptors.processDescriptors();
         }
         
