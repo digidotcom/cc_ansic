@@ -371,10 +371,16 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, config.AttributeMaxLen()));
         if (haveLists) {
-            write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, config.getMaxDepth()));
+            // TODO: Currently the CCAPI layer requires all values to be defined even if they are not in the RCI configuration file.
+            // Unfortunately, this means that if no lists are defined the value RCI_LIST_MAX_DEPTH is set to zero.
+        	// Because both the CCFSM and CCAPI layers are currently not conditionally compiled a value of zero is causing compiler errors.
+        	// For now a value of zero will be written as a value of one. 
+        	// The thinking is that the correct fix for this issue will be to use a unified collection array and the removal of the distinction
+        	// between groups and lists. - ASK & PO
+        	int max_depth = config.getMaxDepth();
+            write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, max_depth == 0 ? 1 : max_depth));
             write(String.format("%sRCI_DICT_MAX_KEY_LENGTH %d\n", DEFINE, config.getMaxKeyLength()));
         }
-
 
     	if (types.contains(Element.Type.ON_OFF)) {
             write(
