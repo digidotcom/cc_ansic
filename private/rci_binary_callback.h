@@ -151,6 +151,13 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     case connector_request_id_remote_config_action_end:
         break;
 
+	case connector_request_id_remote_config_group_instance_remove:
+		ASSERT(get_group_collection_type(rci) == connector_collection_type_variable_dictionary);
+		ASSERT(rci->shared.group.info.instance == 0);
+		rci->shared.callback_data.group.collection_type = connector_collection_type_variable_dictionary;
+		rci->shared.callback_data.group.item.key = rci->shared.group.info.keys.key_store;
+		break;
+
     case connector_request_id_remote_config_group_start:
 	{
 		connector_collection_type_t const collection_type = get_group_collection_type(rci);
@@ -205,16 +212,9 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 			rci->shared.callback_data.group.item.dictionary.entries = rci->shared.group.info.keys.count;
 			rci->shared.callback_data.group.item.dictionary.keys = rci->shared.group.info.keys.list;
 		}
-		rci->shared.callback_data.group.type = collection_type;
+		rci->shared.callback_data.group.collection_type = collection_type;
 		break;
 	}
-
-	case connector_request_id_remote_config_group_instance_remove:
-		ASSERT(get_group_collection_type(rci) == connector_collection_type_variable_dictionary);
-		ASSERT(rci->shared.group.info.instance == 0);
-		rci->shared.callback_data.group.type = connector_collection_type_variable_dictionary;
-		rci->shared.callback_data.group.item.key = rci->shared.group.info.keys.key_store;
-		break;
 
     case connector_request_id_remote_config_group_end:
         ASSERT(have_group_id(rci));
@@ -222,6 +222,17 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         break;
 
 #if (defined RCI_PARSER_USES_LIST)
+
+	case connector_request_id_remote_config_list_instance_remove:
+	{
+		unsigned int const index = get_list_depth(rci) - 1;
+		ASSERT(get_current_list_collection_type(rci) == connector_collection_type_variable_dictionary);
+		ASSERT(get_current_list_instance(rci) == 0);
+		rci->shared.callback_data.list.level[index].collection_type = connector_collection_type_variable_dictionary;
+		rci->shared.callback_data.list.level[index].item.key = rci->shared.list.level[index].info.keys.key_store;
+		break;
+	}
+
 	case connector_request_id_remote_config_list_start:
 	{
 		unsigned int const index = get_list_depth(rci) - 1;
@@ -373,6 +384,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         case connector_request_id_remote_config_action_end:
 		case connector_request_id_remote_config_group_instances_lock:
         case connector_request_id_remote_config_group_start:
+		case connector_request_id_remote_config_group_instance_remove:
             rci->output.group_skip = connector_false;
             /* intentional fall through */
         case connector_request_id_remote_config_group_end:
@@ -380,6 +392,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 #if (defined RCI_PARSER_USES_LIST)
 		case connector_request_id_remote_config_list_instances_lock:
 		case connector_request_id_remote_config_list_start:
+		case connector_request_id_remote_config_list_instance_remove:
 			if (get_list_depth(rci) <= rci->output.skip_depth)
 			{
 				rci->output.skip_depth = 0;

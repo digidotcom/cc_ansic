@@ -23,6 +23,24 @@
 #define invalidate_element_id(rci)      set_element_id(rci, INVALID_ID)
 #define have_element_id(rci)            (get_element_id(rci) != INVALID_ID)
 
+static connector_bool_t have_collection_instances(rci_t const * const rci)
+{
+	if (!have_group_id(rci)) 
+	{
+		return connector_false;
+	}
+	else
+	{
+		int i;
+		for (i = 0; i < get_list_depth(rci); i++)
+		{
+			if (rci->shared.list.level[i].info.instance == INVALID_INDEX) return connector_false;
+		}
+	}
+
+	return connector_true;
+}
+
 static connector_collection_t const * get_current_collection_info(rci_t const * const rci)
 {
 	ASSERT(have_group_id(rci));

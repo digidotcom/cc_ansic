@@ -240,22 +240,18 @@ typedef enum
     rci_output_state_command_normal_attribute_id,
     rci_output_state_command_normal_attribute_value,
     rci_output_state_group_id,
-    rci_output_state_group_attribute,
-	rci_output_state_group_count_id,
-	rci_output_state_group_count_value,
-	rci_output_state_group_specifier_id,
-	rci_output_state_group_specifier_value,
-	rci_output_state_group_name_string,
+    rci_output_state_collection_attribute,
+	rci_output_state_collection_count_id,
+	rci_output_state_collection_count_value,
+	rci_output_state_collection_specifier_id,
+	rci_output_state_collection_specifier_value,
+	rci_output_state_collection_name_string,
 	rci_output_state_complete_attribute_id,
 	rci_output_state_complete_attribute_value,
+	rci_output_state_remove_attribute_id,
+	rci_output_state_remove_attribute_value,
 #if (defined RCI_PARSER_USES_LIST)
 	rci_output_state_list_id,
-	rci_output_state_list_attribute,
-	rci_output_state_list_count_id,
-	rci_output_state_list_count_value,
-	rci_output_state_list_specifier_id,
-	rci_output_state_list_specifier_value,
-	rci_output_state_list_name_string,
 #endif
     rci_output_state_field_id,
     rci_output_state_field_value,
@@ -488,6 +484,7 @@ typedef struct rci
 #define should_output_count(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
 #define should_set_count(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SET_COUNT))
 #define should_remove_instance(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE))
+#define should_skip_input(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_INPUT))
 
 #define set_should_traverse_all_groups(rci, state)				(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))
 #define set_should_traverse_all_group_instances(rci, state)		(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES, state))

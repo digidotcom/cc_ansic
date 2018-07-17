@@ -657,6 +657,37 @@ done:
     return;
 }
 
+STATIC void start_group(rci_t * const rci)
+{
+	if (!have_group_instance(rci))
+	{
+		if (rci->shared.callback_data.action == connector_remote_action_set)
+		{
+			connector_collection_type_t collection_type = get_group_collection_type(rci);
+			if (collection_type == connector_collection_type_fixed_array || collection_type == connector_collection_type_variable_array)
+			{
+				set_group_instance(rci, 1);
+			}
+			else
+			{
+				/* ERROR */
+			}
+		}
+		else
+		{
+			set_should_traverse_all_group_instances(rci, connector_true);
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
+		}
+	}
+	else if (should_remove_instance(rci))
+	{
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
+	}
+
+	set_query_depth(rci, 0);
+    set_rci_traverse_state(rci, rci_traverse_state_group_count);
+    state_call(rci, rci_parser_state_traverse);
+}
 
 STATIC void process_group_id(rci_t * const rci)
 {
@@ -746,8 +777,7 @@ STATIC void process_group_id(rci_t * const rci)
         set_rci_input_state(rci, rci_input_state_field_id);
     }
 
-    set_rci_traverse_state(rci, rci_traverse_state_group_count);
-    state_call(rci, rci_parser_state_traverse);
+    start_group(rci);
     connector_debug_line("process_group_id: group id = %d", get_group_id(rci));
 
 done:
@@ -760,24 +790,33 @@ STATIC void handle_index_attribute(rci_t * const rci, uint32_t index, connector_
 	{
 		set_group_instance(rci, index);
 	}
+	else
+	{
+		set_current_list_instance(rci, index);
+	}
 }
 
 STATIC void handle_name_attribute(rci_t * const rci, char const * const name, size_t const name_len, connector_bool_t is_group)
 {
-	if (is_group == connector_true)
+	if (name_len > RCI_DICT_MAX_KEY_LENGTH)
 	{
-		if (name_len > RCI_DICT_MAX_KEY_LENGTH)
-		{
-			return;
-		}
-		
-		memcpy(rci->shared.group.info.keys.key_store, name, name_len);
-		rci->shared.group.info.keys.key_store[name_len] = '\0';
-		set_group_instance(rci, 0);
+		/* ERROR */
 	}
 	else
 	{
-		/* FIXME: implement */
+		char * target;
+		if (is_group == connector_true)
+		{
+			target = rci->shared.group.info.keys.key_store;
+			set_group_instance(rci, 0);
+		}
+		else
+		{
+			target = rci->shared.list.level[get_list_depth(rci) - 1].info.keys.key_store;
+			set_current_list_instance(rci, 0);
+		}
+		memcpy(target, name, name_len);
+		target[name_len] = '\0';
 	}
 }
 
@@ -821,8 +860,7 @@ STATIC void process_group_attribute(rci_t * const rci)
         }
 
 		set_rci_input_state(rci, rci_input_state_field_id);
-    	set_rci_traverse_state(rci, rci_traverse_state_group_count);
-    	state_call(rci, rci_parser_state_traverse);
+		start_group(rci);
     }
 
     return;
@@ -833,12 +871,41 @@ STATIC void start_list(rci_t * const rci)
 {
 	invalidate_element_id(rci);
 	set_rci_input_state(rci, rci_input_state_field_id);
+
+	if (should_skip_input(rci)) return;
+
+	if (!have_current_list_instance(rci))
+	{
+		if (rci->shared.callback_data.action == connector_remote_action_set)
+		{
+			connector_collection_type_t collection_type = get_current_list_collection_type(rci);
+			if (collection_type == connector_collection_type_fixed_array || collection_type == connector_collection_type_variable_array)
+			{
+				set_current_list_instance(rci, 1);
+			}
+			else if (!should_set_count(rci))
+			{
+				/* ERROR */
+			}
+		}
+		else
+		{
+			set_should_traverse_all_list_instances(rci, connector_true);
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
+		}
+	}
+	else if (should_remove_instance(rci))
+	{
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
+	}
+
+	set_query_depth(rci, get_list_depth(rci));
 	set_rci_traverse_state(rci, rci_traverse_state_list_count);
 	state_call(rci, rci_parser_state_traverse);
 }
 #endif
 
-STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_bool_t is_group) /* Can is_group be replaced with get_current_depth() == 0? */
+STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_bool_t is_group) /* Can is_group be replaced with get_list_depth() == 0? */
 {
     uint32_t attribute_id;
 
@@ -977,8 +1044,7 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 	
 			if (is_group == connector_true)
 			{
-				set_rci_traverse_state(rci, rci_traverse_state_group_count);
-				state_call(rci, rci_parser_state_traverse);
+				start_group(rci);
 			}
 			else if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_TYPE_EXPECTED))
 			{
@@ -1080,18 +1146,30 @@ STATIC void process_field_id(rci_t * const rci)
 
     if (has_rci_terminated(value))
     {
-        if (!have_element_id(rci))
+#if (defined RCI_PARSER_USES_LIST)
+		if (get_list_depth(rci) > 0)
+			set_rci_input_state(rci, rci_input_state_field_id);
+		else
+#endif
+        	set_rci_input_state(rci, rci_input_state_group_id);
+		if (should_skip_input(rci))
+		{
+			if (get_list_depth(rci) == get_query_depth(rci))
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_false);
+			
+			if (get_list_depth(rci) > 0)
+			{
+				invalidate_current_list_id(rci);
+				invalidate_current_list_instance(rci);
+				decrement_list_depth(rci);
+			}
+		}
+        else if (!have_element_id(rci))
         {
             switch (rci->shared.callback_data.action)
             {
                 case connector_remote_action_query:
-#if (defined RCI_PARSER_USES_LIST)
-					if (get_query_depth(rci) > 0)
-						set_rci_input_state(rci, rci_input_state_field_id);
-					else
-#endif
-            			set_rci_input_state(rci, rci_input_state_group_id);
-
+					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_true);
 					set_rci_traverse_state(rci, rci_traverse_state_all_elements);
                     state_call(rci, rci_parser_state_traverse);
                     break;
@@ -1111,13 +1189,6 @@ STATIC void process_field_id(rci_t * const rci)
         {
             /* done with all fields */
             invalidate_element_id(rci);
-
-#if (defined RCI_PARSER_USES_LIST)
-			if (get_list_depth(rci) > 0)
-				set_rci_input_state(rci, rci_input_state_field_id);
-			else
-#endif
-            	set_rci_input_state(rci, rci_input_state_group_id);
 
             set_rci_traverse_state(rci, rci_traverse_state_element_end);
             state_call(rci, rci_parser_state_traverse);
@@ -1144,7 +1215,6 @@ STATIC void process_field_id(rci_t * const rci)
 			{
 				increment_list_depth(rci);
 				set_current_list_id(rci, id);
-				set_query_depth(rci, get_list_depth(rci));
 				process_list_start(rci, value);
 				goto done;
 			}
@@ -1238,6 +1308,19 @@ STATIC size_t uint8_t_array_to_string(char * const buffer, size_t bytes_availabl
     }
 
     return buffer_info.bytes_written;
+}
+
+STATIC void start_element(rci_t * const rci)
+{
+	if (should_skip_input(rci)) return;
+
+	if (!have_collection_instances(rci))
+	{
+		/* ERROR */
+	}
+
+    set_rci_traverse_state(rci, rci_traverse_state_element_id);
+    state_call(rci, rci_parser_state_traverse);
 }
 
 STATIC void process_field_value(rci_t * const rci)
@@ -1470,8 +1553,7 @@ STATIC void process_field_value(rci_t * const rci)
     else
 #endif
     {
-        set_rci_traverse_state(rci, rci_traverse_state_element_id);
-        state_call(rci, rci_parser_state_traverse);
+		start_element(rci);
     }
     set_rci_input_state(rci, rci_input_state_field_id);
 
@@ -1587,9 +1669,8 @@ STATIC void process_field_no_value(rci_t * const rci)
         }
 
         reset_input_content(rci);
-        set_rci_traverse_state(rci, rci_traverse_state_element_id);
-        state_call(rci, rci_parser_state_traverse);
         set_rci_input_state(rci, rci_input_state_field_id);
+		start_element(rci);
     }
     else
     {

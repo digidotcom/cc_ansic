@@ -67,22 +67,16 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
         enum_to_case(rci_output_state_command_normal_attribute_id);
         enum_to_case(rci_output_state_command_normal_attribute_value);
         enum_to_case(rci_output_state_group_id);
-        enum_to_case(rci_output_state_group_attribute);
-		enum_to_case(rci_output_state_group_count_id);
-		enum_to_case(rci_output_state_group_count_value);
-		enum_to_case(rci_output_state_group_specifier_id);
-		enum_to_case(rci_output_state_group_specifier_value);
-		enum_to_case(rci_output_state_group_name_string);
+        enum_to_case(rci_output_state_collection_attribute);
+		enum_to_case(rci_output_state_collection_count_id);
+		enum_to_case(rci_output_state_collection_count_value);
+		enum_to_case(rci_output_state_collection_specifier_id);
+		enum_to_case(rci_output_state_collection_specifier_value);
+		enum_to_case(rci_output_state_collection_name_string);
 		enum_to_case(rci_output_state_complete_attribute_id);
 		enum_to_case(rci_output_state_complete_attribute_value);
 #if (defined RCI_PARSER_USES_LIST)
-		enum_to_case(rci_output_state_list_count_id);
-		enum_to_case(rci_output_state_list_count_value);
-		enum_to_case(rci_output_state_list_specifier_id);
-		enum_to_case(rci_output_state_list_specifier_value);
-		enum_to_case(rci_output_state_list_name_string);
 		enum_to_case(rci_output_state_list_id);
-		enum_to_case(rci_output_state_list_attribute);
 #endif
         enum_to_case(rci_output_state_field_id);
         enum_to_case(rci_output_state_field_value);

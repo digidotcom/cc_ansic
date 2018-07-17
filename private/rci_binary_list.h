@@ -56,4 +56,8 @@
 
 #define set_current_list_key_list(rci, value)	(CURRENT_LIST_VARIABLE(rci).info.keys.list = (value))
 
+#define get_current_list_name(rci)			(get_current_list_instance(rci) == 0 ? \
+											 CURRENT_LIST_VARIABLE(rci).info.keys.key_store : \
+											 CURRENT_LIST_VARIABLE(rci).info.keys.list[get_current_list_instance(rci) - 1])
+
 #define get_current_list_collection_type(rci) (get_current_collection_info((rci))->collection_type)
