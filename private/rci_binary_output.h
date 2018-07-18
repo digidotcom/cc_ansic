@@ -17,11 +17,8 @@
  * =======================================================================
  */
 
-#if (defined RCI_PARSER_USES_LIST)
-#define SHOULD_OUTPUT(rci)	(!(rci)->output.group_skip && (rci)->output.skip_depth == 0 && !(rci)->output.element_skip)
-#else
-#define SHOULD_OUTPUT(rci)	(!(rci)->output.group_skip && !(rci)->output.element_skip)
-#endif
+
+#define SHOULD_OUTPUT(rci)	(get_list_depth(rci) < (rci)->output.skip_depth && !(rci)->output.element_skip)
 
 STATIC void rci_set_output_error(rci_t * const rci, unsigned int const id, char const * const hint, rci_output_state_t state)
 {
@@ -683,20 +680,29 @@ STATIC void rci_output_group_id(rci_t * const rci)
         goto done;
     }
 
+	if (!SHOULD_OUTPUT(rci))
+	{
+		state_call(rci, rci_parser_state_traverse);
+		goto done;
+	}
+
     encoding_data = encode_group_id(get_group_id(rci));
 
-    if (get_group_instance(rci) > 1 || group_is_dictionary(rci) || should_output_count(rci) || should_remove_instance(rci))
+    if ((get_group_instance(rci) != INVALID_INDEX && get_group_instance(rci) > 1) || group_is_dictionary(rci) || should_output_count(rci) || should_remove_instance(rci))
+	{
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
-    {
-        connector_bool_t overflow = connector_false;
-        
-        if (SHOULD_OUTPUT(rci))
-            overflow = rci_output_uint32(rci, encoding_data);
-
-        if (!overflow)
+        if (rci_output_uint32(rci, encoding_data) == connector_false)
             set_rci_output_state(rci, rci_output_state_collection_attribute);
     }
+	else if (rci_output_uint32(rci, encoding_data) == connector_false)
+	{
+		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+		if (remote_config->error_id != connector_success)
+			state_call(rci, rci_parser_state_error);
+		else
+			state_call(rci, rci_parser_state_traverse);
+	}
 
 done:
     return;
@@ -889,17 +895,14 @@ STATIC void rci_output_complete_attribute_value(rci_t * const rci)
 STATIC void rci_output_collection_specifier_id(rci_t * const rci)
 {
 	connector_bool_t overflow;
-	unsigned int instance;
 	connector_collection_type_t collection_type;
 
 	if (get_list_depth(rci) > 0)
 	{
-		instance = get_current_list_instance(rci);
 		collection_type = get_current_list_collection_type(rci);
 	}
 	else
 	{
-		instance = get_group_instance(rci);
 		collection_type = get_group_collection_type(rci);	
 	}
 
@@ -946,11 +949,7 @@ STATIC void rci_output_collection_specifier_value(rci_t * const rci)
 
 	if (!overflow)
 	{
-    	if (remote_config->error_id != connector_success)
-		{
-    		state_call(rci, rci_parser_state_error);
-		}
-		else if (should_output_count(rci))
+		if (should_output_count(rci))
 		{
 			if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
 				set_rci_output_state(rci, rci_output_state_complete_attribute_id);
@@ -961,6 +960,10 @@ STATIC void rci_output_collection_specifier_value(rci_t * const rci)
 		{
 			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
 		}
+    	else if (remote_config->error_id != connector_success)
+		{
+    		state_call(rci, rci_parser_state_error);
+		} 
 		else
 		{
 			state_call(rci, rci_parser_state_traverse);
@@ -1040,6 +1043,7 @@ done:
 #if (defined RCI_PARSER_USES_LIST)
 STATIC void rci_output_list_id(rci_t * const rci)
 {
+	connector_collection_type_t collection_type = get_current_list_collection_type(rci);
 	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t field_id = encode_element_id(get_current_list_id(rci));
 
@@ -1049,40 +1053,32 @@ STATIC void rci_output_list_id(rci_t * const rci)
         goto done;
     }
 
-    {
-        /* output field id */
-        if (remote_config->error_id != connector_success)
-		{
-			field_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
-		}	
-		else
-		{
-			connector_collection_type_t collection_type = get_current_list_collection_type(rci);
-			if (get_current_list_instance(rci) > 1 || collection_type == connector_collection_type_variable_dictionary ||
-				collection_type == connector_collection_type_fixed_dictionary || should_output_count(rci) || should_remove_instance(rci))
-			{
-				field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
-				set_rci_output_state(rci, rci_output_state_collection_attribute);
-			}
-			else
-			{
-				state_call(rci, rci_parser_state_traverse);
-			}
-		}	
+	if (!SHOULD_OUTPUT(rci))
+	{
+		state_call(rci, rci_parser_state_traverse);
+		goto done;
+	}
 
-        {
-            connector_bool_t overflow = connector_false;
+    /* output field id */
+    if (remote_config->error_id != connector_success)
+	{
+		field_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
+		if (rci_output_uint32(rci, field_id) == connector_false)
+			state_call(rci, rci_parser_state_error);
+	}	
+	else if (get_current_list_instance(rci) > 1 || collection_type == connector_collection_type_variable_dictionary ||
+		collection_type == connector_collection_type_fixed_dictionary || should_output_count(rci) || should_remove_instance(rci))
+	{
+		field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
+		set_rci_output_state(rci, rci_output_state_collection_attribute);
 
-            if (SHOULD_OUTPUT(rci))
-                overflow = rci_output_uint32(rci, field_id);
-
-            if (overflow) goto done;
-
-            if (remote_config->error_id != connector_success)
-                state_call(rci, rci_parser_state_error);
-        }
-
-    }
+		if (rci_output_uint32(rci, field_id) == connector_false)
+		    set_rci_output_state(rci, rci_output_state_collection_attribute);
+	}
+	else if (rci_output_uint32(rci, field_id) == connector_false)
+	{
+		state_call(rci, rci_parser_state_traverse);
+	}
 
 done:
     return;

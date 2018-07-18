@@ -52,6 +52,7 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
     rci->output.content.data = NULL;
     rci->output.content.length = 0;
+	rci->output.skip_depth = INVALID_DEPTH;
 
     invalidate_group_id(rci);
     invalidate_group_instance(rci);

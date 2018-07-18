@@ -196,10 +196,7 @@ STATIC void traverse_list_count(rci_t * const rci)
 
 		if (get_current_list_count(rci) == 0)
 		{
-			if (finish_all_list_instances(rci) == connector_true)
-			{
-				set_rci_traverse_state(rci, rci_traverse_state_none);
-			}
+			set_rci_traverse_state(rci, rci_traverse_state_list_instances_done);
 			set_rci_output_state(rci, rci_output_state_list_id);
    			state_call(rci, rci_parser_state_output);
 		}
@@ -486,6 +483,7 @@ STATIC connector_bool_t traverse_all_group_instances(rci_t * const rci)
 		}
 		else
 		{
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES, connector_false);
 			done = connector_true;
 		}
 		goto done;
@@ -594,6 +592,10 @@ STATIC void rci_traverse_data(rci_t * const rci)
 
 		case rci_traverse_state_all_list_instances:
 			done_state = traverse_all_list_instances(rci);
+			break;
+
+		case rci_traverse_state_list_instances_done:
+			done_state = finish_all_list_instances(rci);
 			break;
 #endif
 

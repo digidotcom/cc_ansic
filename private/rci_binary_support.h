@@ -72,6 +72,7 @@ enum {
 #define INVALID_ID              UINT_MAX
 #define INVALID_INDEX           UINT_MAX
 #define INVALID_COUNT           ((size_t)-1)
+#define INVALID_DEPTH			UINT_MAX
 
 #define ROUND_UP(value, interval)   ((value) + -(value) % (interval))
 
@@ -274,6 +275,7 @@ typedef enum
 	rci_traverse_state_list_count,
 	rci_traverse_state_list_id,
 	rci_traverse_state_all_list_instances,
+	rci_traverse_state_list_instances_done,
 #endif
     rci_traverse_state_element_id,
     rci_traverse_state_element_end,
@@ -410,10 +412,7 @@ typedef struct rci
     struct {
         rcistr_t content;
         rci_output_state_t state;
-        connector_bool_t group_skip;
-#if (defined RCI_PARSER_USES_LIST)
 		unsigned int skip_depth;
-#endif
         connector_bool_t element_skip;
     } output;
 
@@ -470,6 +469,7 @@ typedef struct rci
 #define RCI_SHARED_FLAG_SET_COUNT				(1 << 7)
 #define RCI_SHARED_FLAG_ALL_ELEMENTS			(1 << 8)
 #define RCI_SHARED_FLAG_SKIP_INPUT				(1 << 9)
+#define RCI_SHARED_FLAG_SKIP_COLLECTION			(1 << 10)
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)

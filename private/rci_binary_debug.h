@@ -75,6 +75,8 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
 		enum_to_case(rci_output_state_collection_name_string);
 		enum_to_case(rci_output_state_complete_attribute_id);
 		enum_to_case(rci_output_state_complete_attribute_value);
+		enum_to_case(rci_output_state_remove_attribute_id);
+		enum_to_case(rci_output_state_remove_attribute_value);
 #if (defined RCI_PARSER_USES_LIST)
 		enum_to_case(rci_output_state_list_id);
 #endif
@@ -108,6 +110,7 @@ static char const * rci_traverse_state_t_as_string(rci_traverse_state_t const va
 		enum_to_case(rci_traverse_state_list_count);
 		enum_to_case(rci_traverse_state_all_list_instances);
 		enum_to_case(rci_traverse_state_list_id);
+		enum_to_case(rci_traverse_state_list_instances_done);
 #endif
         enum_to_case(rci_traverse_state_all_elements);
         enum_to_case(rci_traverse_state_group_end);
