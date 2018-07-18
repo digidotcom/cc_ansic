@@ -398,27 +398,33 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         case connector_request_id_remote_config_action_start:
         case connector_request_id_remote_config_action_end:
 		case connector_request_id_remote_config_group_instances_lock:
-		case connector_request_id_remote_config_list_instances_lock:
-			if (get_list_depth(rci) <= rci->output.skip_depth)
+		case connector_request_id_remote_config_group_instances_unlock:
+#if 0
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_COLLECTION, connector_false);
+			if (get_list_depth(rci) < rci->output.skip_depth)
 			{
 				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_COLLECTION, connector_false);
 			}
             /* intentional fall through */
+#endif
 		case connector_request_id_remote_config_group_instances_set:
 		case connector_request_id_remote_config_group_instance_remove:
 		case connector_request_id_remote_config_group_start:
+		case connector_request_id_remote_config_group_end:
+		case connector_request_id_remote_config_list_instances_lock:
+		case connector_request_id_remote_config_list_instances_unlock:
 		case connector_request_id_remote_config_list_instances_set:
 		case connector_request_id_remote_config_list_instance_remove:
 		case connector_request_id_remote_config_list_start:
-			if (get_list_depth(rci) <= rci->output.skip_depth && !RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_COLLECTION))
+#if 0
+			if (get_list_depth(rci) <= rci->output.skip_depth && RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_COLLECTION) == connector_false)
 			{
 				rci->output.skip_depth = INVALID_DEPTH;
 			}
+#endif
 			/* intentional fall through */
-		case connector_request_id_remote_config_group_end:
-		case connector_request_id_remote_config_group_instances_unlock:
+
 		case connector_request_id_remote_config_list_end:
-		case connector_request_id_remote_config_list_instances_unlock:
         case connector_request_id_remote_config_element_process:
             rci->output.element_skip = connector_false;
             remote_config->error_id = connector_success;
@@ -450,6 +456,8 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 				(remote_config_request == connector_request_id_remote_config_list_instances_unlock || remote_config_request == connector_request_id_remote_config_group_instances_unlock))
 			||	(remote_config_request == connector_request_id_remote_config_list_end && remote_config_request != connector_request_id_remote_config_group_end))))
 	{
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_COLLECTION, connector_false);
+		rci->output.skip_depth = INVALID_DEPTH;
 		rci->callback.status = connector_callback(rci->service_data->connector_ptr->callback,
 												  connector_class_id_remote_config,
 												  rci->callback.request,
@@ -590,6 +598,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 							rci->shared.group.info.keys.count = remote_config->response.item.count;
 						else
 							rci->shared.group.info.keys.count = 0;
+
 						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
 					}
 					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_false);

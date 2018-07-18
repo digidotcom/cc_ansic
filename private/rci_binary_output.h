@@ -682,6 +682,8 @@ STATIC void rci_output_group_id(rci_t * const rci)
 
 	if (!SHOULD_OUTPUT(rci))
 	{
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_false);
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
 		state_call(rci, rci_parser_state_traverse);
 		goto done;
 	}
@@ -1055,6 +1057,8 @@ STATIC void rci_output_list_id(rci_t * const rci)
 
 	if (!SHOULD_OUTPUT(rci))
 	{
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_false);
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
 		state_call(rci, rci_parser_state_traverse);
 		goto done;
 	}
