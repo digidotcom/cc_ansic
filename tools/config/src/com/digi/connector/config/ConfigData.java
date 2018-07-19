@@ -47,8 +47,21 @@ public class ConfigData {
     private EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
     private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
+    public boolean countainsGroupName(final Group.Type type, final String needle) throws Exception {
+    	for (Group group: getConfigGroup(type)) {
+    		if (group.getName().equals(needle)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+
     public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
         return groupList.get(type);
+    }
+
+    public void addConfigGroup(Group.Type type, Group group) throws Exception {
+        getConfigGroup(type).add(group);
     }
 
     public LinkedList<SimpleImmutableEntry<Group.Type, Group>> getConfigGroupEntries() {
