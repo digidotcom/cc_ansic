@@ -165,7 +165,7 @@ public class Parser {
             lineNumber = groupLineNumber;
         else if (str.indexOf("<element>") != -1)
             lineNumber = elementLineNumber;
-        else if (str.indexOf("<list>") != -1)
+        else if ((str.indexOf("<list>") != -1) && !listLineNumber.isEmpty())
             lineNumber = listLineNumber.pop();
         else
             lineNumber = tokenScanner.getLineNumber();
