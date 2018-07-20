@@ -24,6 +24,7 @@ static char const rci_set_empty_group_hint[] = "Empty group";
 static char const rci_set_empty_element_hint[] = "empty element";
 static char const rci_error_descriptor_mismatch_hint[] = "Mismatch configurations";
 static char const rci_error_content_size_hint[] = "Maximum content size exceeded";
+static char const rci_set_missing_key_hint[] = "Missing key";
 #else
 #define rci_set_empty_group_hint            RCI_NO_HINT
 #define rci_set_empty_element_hint          RCI_NO_HINT
@@ -552,7 +553,7 @@ STATIC void process_command_normal_attribute_id(rci_t * const rci)
     if (get_uint32(rci, &attribute_id))
     {
 #if (defined RCI_DEBUG)
-        connector_debug_line("attribute_id=%d\n", attribute_id);
+        connector_debug_line("attribute_id=%d", attribute_id);
 #endif
 
         rci->command.attribute[rci->shared.attributes_processed].id.val = attribute_id;
@@ -573,7 +574,7 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
                 goto done;
 
 #if (defined RCI_DEBUG)
-            connector_debug_line("attribute_val=%d\n", attribute_value);
+            connector_debug_line("attribute_val=%d", attribute_value);
 #endif
 
             switch (rci->command.attribute[rci->shared.attributes_processed].id.query_setting)
@@ -599,8 +600,8 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
                 goto done;
 
 #if (defined RCI_DEBUG)
-            connector_debug_line("attribute_len=%d\n", attribute_value_len);
-            connector_debug_line("attribute='%.*s'\n", attribute_value_len, attribute_value);
+            connector_debug_line("attribute_len=%d", attribute_value_len);
+            connector_debug_line("attribute='%.*s'", attribute_value_len, attribute_value);
 #endif
 
             switch (rci->command.attribute[rci->shared.attributes_processed].id.do_command)
@@ -668,9 +669,10 @@ STATIC void start_group(rci_t * const rci)
 			{
 				set_group_instance(rci, 1);
 			}
-			else
+			else if (!should_set_count(rci))
 			{
-				/* ERROR */
+				rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_missing_key_hint, rci_output_state_group_id);
+				return;
 			}
 		}
 		else
@@ -800,7 +802,8 @@ STATIC void handle_name_attribute(rci_t * const rci, char const * const name, si
 {
 	if (name_len > RCI_DICT_MAX_KEY_LENGTH)
 	{
-		/* ERROR */
+		rci_output_state_t state = get_list_depth(rci) > 0 ? rci_output_state_field_id : rci_output_state_group_id;
+		rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, state);
 	}
 	else
 	{
@@ -879,13 +882,19 @@ STATIC void start_list(rci_t * const rci)
 		if (rci->shared.callback_data.action == connector_remote_action_set)
 		{
 			connector_collection_type_t collection_type = get_current_list_collection_type(rci);
-			if (collection_type == connector_collection_type_fixed_array || collection_type == connector_collection_type_variable_array)
+			if (collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary)
+			{
+				if (should_remove_instance(rci) || !should_set_count(rci))
+				{
+		        	rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_missing_key_hint, rci_output_state_field_id);
+					return;
+				}
+				set_current_list_instance(rci, 0);
+				rci->shared.list.level[get_list_depth(rci) - 1].info.keys.key_store[0] = '\0';
+			}
+			else
 			{
 				set_current_list_instance(rci, 1);
-			}
-			else if (!should_set_count(rci))
-			{
-				/* ERROR */
 			}
 		}
 		else
@@ -912,7 +921,7 @@ STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_
     if (get_uint32(rci, &attribute_id))
     {
 #if (defined RCI_DEBUG)
-        connector_debug_line("attribute_id=%d\n", attribute_id);
+        connector_debug_line("attribute_id=%d", attribute_id);
 #endif
 		switch (attribute_id)
 		{
@@ -1051,11 +1060,11 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 			{
 				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_TYPE_EXPECTED, connector_false);
 				set_rci_input_state(rci, rci_input_state_field_type);
-			}
+			}	
 			else
 			{
 				start_list(rci);
-			}			
+			}	
 		}
 		else if (is_group == connector_true)
 		{
@@ -1165,26 +1174,11 @@ STATIC void process_field_id(rci_t * const rci)
 				decrement_list_depth(rci);
 			}
 		}
-        else if (!have_element_id(rci))
+        else if (!have_element_id(rci) && rci->shared.callback_data.action == connector_remote_action_query)
         {
-            switch (rci->shared.callback_data.action)
-            {
-                case connector_remote_action_query:
-					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_true);
-					set_rci_traverse_state(rci, rci_traverse_state_all_elements);
-                    state_call(rci, rci_parser_state_traverse);
-                    break;
-                case connector_remote_action_set:
-                    connector_debug_line("process_field_id: got set command with no field id specified");
-                    rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_element_hint, rci_output_state_field_id);
-                    break;
-#if (defined RCI_LEGACY_COMMANDS)
-                case connector_remote_action_do_command:
-                case connector_remote_action_reboot:
-                case connector_remote_action_set_factory_def:
-                    ASSERT_GOTO(0, done);
-#endif
-            }
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_true);
+			set_rci_traverse_state(rci, rci_traverse_state_all_elements);
+			state_call(rci, rci_parser_state_traverse);
         }
         else
         {
@@ -1199,6 +1193,11 @@ STATIC void process_field_id(rci_t * const rci)
 
 	{
         unsigned int const id = decode_element_id(value);
+
+		if (!have_element_id(rci))
+		{
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_FIRST_ELEMENT, connector_true);
+		}
 
 		set_element_id(rci, id);
 
@@ -1314,11 +1313,6 @@ STATIC size_t uint8_t_array_to_string(char * const buffer, size_t bytes_availabl
 STATIC void start_element(rci_t * const rci)
 {
 	if (should_skip_input(rci)) return;
-
-	if (!have_collection_instances(rci))
-	{
-		/* ERROR */
-	}
 
     set_rci_traverse_state(rci, rci_traverse_state_element_id);
     state_call(rci, rci_parser_state_traverse);

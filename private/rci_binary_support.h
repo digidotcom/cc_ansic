@@ -279,6 +279,7 @@ typedef enum
 #endif
     rci_traverse_state_element_id,
     rci_traverse_state_element_end,
+	rci_traverse_state_elements_done,
     rci_traverse_state_group_end,
     rci_traverse_state_all_groups,
     rci_traverse_state_all_group_instances,
@@ -470,6 +471,8 @@ typedef struct rci
 #define RCI_SHARED_FLAG_ALL_ELEMENTS			(1 << 8)
 #define RCI_SHARED_FLAG_SKIP_INPUT				(1 << 9)
 #define RCI_SHARED_FLAG_SKIP_COLLECTION			(1 << 10)
+#define RCI_SHARED_FLAG_FIRST_ELEMENT			(1 << 11)
+#define RCI_SHARED_FLAG_SKIP_CLOSE				(1 << 12)
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)

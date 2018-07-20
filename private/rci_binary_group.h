@@ -70,4 +70,11 @@ static connector_bool_t group_is_dictionary(rci_t const * const rci)
 	return (collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
 }
 
+static connector_bool_t group_is_dynamic(rci_t const * const rci)
+{
+	connector_collection_type_t collection_type = get_group_collection_type(rci);
+
+	return (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
+}
+
 

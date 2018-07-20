@@ -23,47 +23,6 @@
 #define invalidate_element_id(rci)      set_element_id(rci, INVALID_ID)
 #define have_element_id(rci)            (get_element_id(rci) != INVALID_ID)
 
-static connector_bool_t have_collection_instances(rci_t const * const rci)
-{
-	if (!have_group_id(rci)) 
-	{
-		return connector_false;
-	}
-	else
-	{
-		int i;
-		for (i = 0; i < get_list_depth(rci); i++)
-		{
-			if (rci->shared.list.level[i].info.instance == INVALID_INDEX) return connector_false;
-		}
-	}
-
-	return connector_true;
-}
-
-static connector_collection_t const * get_current_collection_info(rci_t const * const rci)
-{
-	ASSERT(have_group_id(rci));
-	{
-		connector_group_t const * const group = get_current_group(rci);
-		connector_collection_t const * info =  &group->collection;
-
-#if (defined RCI_PARSER_USES_LIST)
-		{
-			int i;
-			for (i = 0; i < get_list_depth(rci); i++)
-			{
-				connector_item_t const * list = info->item.data + rci->shared.list.level[i].id;
-				ASSERT(list->type == connector_element_type_list);
-				info = list->data.collection;
-			}
-		}
-#endif
-
-		return info;
-	}
-}
-
 static connector_item_t const * get_current_element(rci_t const * const rci)
 {
     ASSERT(have_element_id(rci));
