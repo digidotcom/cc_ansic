@@ -2,7 +2,6 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.LinkedList;
 import java.util.ArrayDeque;
 
 import javax.script.ScriptEngine;
@@ -20,7 +19,6 @@ public class Parser {
     private static int groupLineNumber;
     private static int elementLineNumber;
     private static ArrayDeque<Integer> listLineNumber;
-    private static LinkedList<Group> groupConfig;
 
     private final static ConfigData config = ConfigData.getInstance();
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
@@ -58,8 +56,7 @@ public class Parser {
                     /* make sure group name doesn't exist in group */
                     Group.Type type = Group.Type.toType(groupType);
                     
-                    groupConfig = config.getConfigGroup(type);
-                    if (groupConfig.contains(nameStr)) {
+                    if (config.countainsGroupName(type, nameStr)) {
                         throw new Exception("Duplicate <group> name: " + nameStr);
                     }
 
@@ -121,7 +118,7 @@ public class Parser {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
                     }
 
-                    groupConfig.add(theGroup);
+                    config.addConfigGroup(type, theGroup);
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
