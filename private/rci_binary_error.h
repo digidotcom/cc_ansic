@@ -301,7 +301,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 					case connector_request_id_remote_config_list_start:
                         if (remote_config->error_id < connector_rci_error_COUNT)
                         {
-							if (remote_config_request == connector_request_id_remote_config_group_start)
+							if (remote_config_request == connector_request_id_remote_config_list_start)
 		                        trigger_rci_callback(rci, connector_request_id_remote_config_list_end);
 							else
 								trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);

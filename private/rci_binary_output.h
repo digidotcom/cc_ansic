@@ -20,6 +20,24 @@
 
 #define SHOULD_OUTPUT(rci)	(get_list_depth(rci) < (rci)->output.skip_depth && !(rci)->output.element_skip)
 
+STATIC connector_bool_t should_output_name(rci_t * const rci)
+{ 
+	connector_collection_type_t type = get_list_depth(rci) > 0 ? get_current_list_collection_type(rci) : get_group_collection_type(rci);
+
+	if (type == connector_collection_type_variable_dictionary || type == connector_collection_type_fixed_dictionary)
+	{
+		char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+		return  name != NULL && name[0] != '\0' ?
+			connector_true
+			:
+			connector_false;
+	}
+	else
+	{
+		return connector_false;
+	}
+}
+
 STATIC void rci_set_output_error(rci_t * const rci, unsigned int const id, char const * const hint, rci_output_state_t state)
 {
     rci_global_error(rci, id, hint);
@@ -765,7 +783,7 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
 	if (should_output_count(rci) || should_remove_instance(rci))
 	{
 		if (instance != INVALID_INDEX &&
-		   (instance > 1 || collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary))
+		   (instance > 1 || should_output_name(rci)))
 		{
 			if (!encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL, 2))
 			{
@@ -790,7 +808,7 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
 			}
 		}
 	}
-	else if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
+	else if (should_output_name(rci))
 	{
 		char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
 		connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NAME, strlen(name));
@@ -1045,7 +1063,6 @@ done:
 #if (defined RCI_PARSER_USES_LIST)
 STATIC void rci_output_list_id(rci_t * const rci)
 {
-	connector_collection_type_t collection_type = get_current_list_collection_type(rci);
 	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     uint32_t field_id = encode_element_id(get_current_list_id(rci));
 
@@ -1067,11 +1084,9 @@ STATIC void rci_output_list_id(rci_t * const rci)
     if (remote_config->error_id != connector_success)
 	{
 		field_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
-		if (rci_output_uint32(rci, field_id) == connector_false)
-			state_call(rci, rci_parser_state_error);
-	}	
-	else if (get_current_list_instance(rci) > 1 || collection_type == connector_collection_type_variable_dictionary ||
-		collection_type == connector_collection_type_fixed_dictionary || should_output_count(rci) || should_remove_instance(rci))
+	}
+	
+	if (get_current_list_instance(rci) > 1 || should_output_name(rci) || should_output_count(rci) || should_remove_instance(rci))
 	{
 		field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
 		set_rci_output_state(rci, rci_output_state_collection_attribute);
@@ -1081,7 +1096,10 @@ STATIC void rci_output_list_id(rci_t * const rci)
 	}
 	else if (rci_output_uint32(rci, field_id) == connector_false)
 	{
-		state_call(rci, rci_parser_state_traverse);
+		if (remote_config->error_id != connector_success)
+			state_call(rci, rci_parser_state_error);
+		else
+			state_call(rci, rci_parser_state_traverse);
 	}
 
 done:

@@ -21,10 +21,9 @@
 
 #if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
 static char const rci_set_empty_group_hint[] = "Empty group";
-static char const rci_set_empty_element_hint[] = "empty element";
+static char const rci_set_empty_element_hint[] = "Empty element";
 static char const rci_error_descriptor_mismatch_hint[] = "Mismatch configurations";
 static char const rci_error_content_size_hint[] = "Maximum content size exceeded";
-static char const rci_set_missing_key_hint[] = "Missing key";
 #else
 #define rci_set_empty_group_hint            RCI_NO_HINT
 #define rci_set_empty_element_hint          RCI_NO_HINT
@@ -300,6 +299,7 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
         {
             case BINARY_RCI_ATTRIBUTE_TYPE_INDEX:
 			case BINARY_RCI_ATTRIBUTE_TYPE_NAME:
+			case BINARY_RCI_ATTRIBUTE_TYPE_COUNT:
             {
 				unsigned int value;
                 if (attribute_value & (~BINARY_RCI_ATTRIBUTE_LOW_MASK))
@@ -323,7 +323,7 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
                      */
                     value = attribute_value & BINARY_RCI_ATTRIBUTE_LOW_MASK;
                 }
-				if (attribute_info->type == BINARY_RCI_ATTRIBUTE_TYPE_INDEX)
+				if (attribute_info->type == BINARY_RCI_ATTRIBUTE_TYPE_INDEX || attribute_info->type == BINARY_RCI_ATTRIBUTE_TYPE_COUNT)
 				{
 					attribute_info->value.index = value;
 					connector_debug_line("decode_attribute: index = %d", attribute_info->value.index);
@@ -665,14 +665,14 @@ STATIC void start_group(rci_t * const rci)
 		if (rci->shared.callback_data.action == connector_remote_action_set)
 		{
 			connector_collection_type_t collection_type = get_group_collection_type(rci);
-			if (collection_type == connector_collection_type_fixed_array || collection_type == connector_collection_type_variable_array)
+			if (collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary)
+			{
+				set_group_instance(rci, 0);
+				rci->shared.group.info.keys.key_store[0] = '\0';
+			}
+			else
 			{
 				set_group_instance(rci, 1);
-			}
-			else if (!should_set_count(rci))
-			{
-				rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_missing_key_hint, rci_output_state_group_id);
-				return;
 			}
 		}
 		else
@@ -860,6 +860,10 @@ STATIC void process_group_attribute(rci_t * const rci)
 				set_rci_input_state(rci, rci_input_state_group_normal_attribute_id);
 				return;
                 break;
+			case BINARY_RCI_ATTRIBUTE_TYPE_COUNT:
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_true);
+				rci->shared.group.info.keys.count = attr.value.count;
+				break;
         }
 
 		set_rci_input_state(rci, rci_input_state_field_id);
@@ -892,11 +896,6 @@ STATIC void start_list(rci_t * const rci)
 			connector_collection_type_t collection_type = get_current_list_collection_type(rci);
 			if (collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary)
 			{
-				if (should_remove_instance(rci) || !should_set_count(rci))
-				{
-		        	rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_missing_key_hint, rci_output_state_field_id);
-					return;
-				}
 				set_current_list_instance(rci, 0);
 				rci->shared.list.level[get_list_depth(rci) - 1].info.keys.key_store[0] = '\0';
 			}
@@ -1105,6 +1104,10 @@ STATIC void process_list_attribute(rci_t * const rci)
 				set_rci_input_state(rci, rci_input_state_list_normal_attribute_id);
 				return;
                 break;
+			case BINARY_RCI_ATTRIBUTE_TYPE_COUNT:
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_true);
+				set_current_list_count(rci, attr.value.count);
+				break;
         }
 		if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_TYPE_EXPECTED))
 		{
