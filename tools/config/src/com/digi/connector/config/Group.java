@@ -37,7 +37,7 @@ public class Group extends ItemList {
     public String toString(int id) {
         return String.format(
             "<descriptor element=\"%s\" desc=\"%s\" bin_id=\"%d\">",
-             name, toRciDescription(), id);
+             name, Descriptors.encodeEntities(toRciDescription()), id);
     }
 
     public LinkedHashMap<String, String> getErrors() {
