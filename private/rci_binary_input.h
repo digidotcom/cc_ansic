@@ -875,7 +875,15 @@ STATIC void start_list(rci_t * const rci)
 	invalidate_element_id(rci);
 	set_rci_input_state(rci, rci_input_state_field_id);
 
-	if (should_skip_input(rci)) return;
+	if (should_skip_input(rci))
+	{
+		if (destination_in_storage(rci))
+        {
+            rci->input.destination = rci->buffer.input.current;
+            reset_input_content(rci);
+        }
+		return;
+	}
 
 	if (!have_current_list_instance(rci))
 	{
@@ -1312,7 +1320,15 @@ STATIC size_t uint8_t_array_to_string(char * const buffer, size_t bytes_availabl
 
 STATIC void start_element(rci_t * const rci)
 {
-	if (should_skip_input(rci)) return;
+	if (should_skip_input(rci))
+	{
+		if (destination_in_storage(rci))
+        {
+            rci->input.destination = rci->buffer.input.current;
+            reset_input_content(rci);
+        }
+		return;
+	}
 
     set_rci_traverse_state(rci, rci_traverse_state_element_id);
     state_call(rci, rci_parser_state_traverse);
