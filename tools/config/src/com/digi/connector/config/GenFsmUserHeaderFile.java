@@ -1,6 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -16,7 +17,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
     	writeGroupTypeAndErrorEnum();
     }
     
-    private void writeErrorHeader(int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
+    private void writeErrorHeader(int errorIndex, String enumDefine, Map<String, String> errorMap) throws IOException {
 
         for (String key : errorMap.keySet()) {
             String error_string = " " + enumDefine + "_" + key;
@@ -39,13 +40,13 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         /* write typedef enum for user global error */
         String enumName = GLOBAL_ERROR + "_" + OFFSET_STRING;
 
-        write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_RCI_ERROR + "_" + COUNT_STRING + ",\n");
+        write("\n" + TYPEDEF_ENUM + " " + enumName + " = " + GLOBAL_ERROR + "_" + COUNT_STRING + ",\n");
 
-        writeErrorHeader(1,GLOBAL_ERROR, config.getUserGlobalErrors());
+        writeErrorHeader(1, GLOBAL_ERROR, config.getGlobalUserErrors());
 
         String endString = String.format(" %s_%s%s", GLOBAL_ERROR, COUNT_STRING, index_string);
 
-        if (config.getUserGlobalErrors().isEmpty()) {
+        if (config.getGlobalUserErrors().isEmpty()) {
             endString += " = " + enumName;
         }
         endString += "\n} " + customPrefix + GLOBAL_ERROR + ID_T_STRING;
@@ -135,8 +136,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         return "/* " + comment + " */";
     }
 
-    private void writeErrorHeader(String type, int errorIndex, String enumDefine, LinkedHashMap<String, String> errorMap) throws IOException {
-
+    private void writeErrorHeader(String type, int errorIndex, String enumDefine, Map<String, String> errorMap) throws IOException {
         for (String key : errorMap.keySet()) {
             String error_string = enumDefine + "_" + key;
 
@@ -153,7 +153,6 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
             }
             write(error_string);
         }
-
     }
 
     private void writeAllEnumHeaders(LinkedList<Group> groups) throws Exception {
@@ -164,8 +163,9 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
-                writeErrorHeader("rci",1, getEnumString(group.getName() + "_" + "ERROR"), config.getRciGlobalErrors());
-                writeErrorHeader("global",1, getEnumString(group.getName() + "_" + "ERROR"), config.getUserGlobalErrors());
+                writeErrorHeader("rci", 1, getEnumString(group.getName() + "_" + "ERROR"), config.getGlobalFatalProtocolErrors());
+                writeErrorHeader("rci", 1, getEnumString(group.getName() + "_" + "ERROR"), config.getGlobalProtocolErrors());
+                writeErrorHeader("global", 1, getEnumString(group.getName() + "_" + "ERROR"), config.getGlobalUserErrors());
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;

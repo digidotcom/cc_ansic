@@ -8,12 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.LinkedList;
-import java.lang.StringBuilder;
+import java.util.Base64;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.xml.bind.DatatypeConverter;
 
 public class Descriptors {
 
@@ -128,20 +127,20 @@ public class Descriptors {
         options.debug_log(response);
     }
 
-    private String getErrorDescriptors(int id, LinkedHashMap<String, String> errorMap) {
-        String descriptor = "";
-        int errorId = id;
+    private String getErrorDescriptors(final int start, final Map<String, String> errors) {
+        String descriptors = "";
+        int id = start;
 
-        for (String errorName : errorMap.keySet()) {
-            descriptor += String.format("<error_descriptor id=`%d` ", errorId);
-            if (errorMap.get(errorName) != null)
-                descriptor += String.format("desc=`%s` ", errorMap.get(errorName));
+        for (String value : errors.values()) {
+            descriptors += String.format("<error_descriptor id=`%d` ", id);
+            if (value != null)
+                descriptors += String.format("desc=`%s` ", value);
 
-            descriptor += "/>\n";
-            errorId++;
+            descriptors += "/>\n";
+            id++;
         }
 
-        return descriptor;
+        return descriptors;
     }
 
     private void sendRebootDescriptor() throws Exception {
@@ -276,7 +275,8 @@ public class Descriptors {
         BufferedReader bin_id_reader = options.useBinIdLogOption()
         	? new BufferedReader(new FileReader("bin_id_" + config_type + ".log"))
         	: null;
-
+        final String rciUserGlobalErrors = getErrorDescriptors(config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
+        	
         String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups` bin_id=`%d`>\n",
                                                   config_type, desc, config_type, id);
 
@@ -301,7 +301,7 @@ public class Descriptors {
          *
          * We must offset the error_id for command errors.
          */
-        query_descriptors +=  getErrorDescriptors(config.getUserGlobalErrorsIndex(), config.getUserGlobalErrors());
+        query_descriptors += rciUserGlobalErrors;
 
         String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups` bin_id=`%d`>\n",
                                                 config_type, desc, config_type, id+1);
@@ -312,8 +312,7 @@ public class Descriptors {
          *
          * We must offset the error_id for command errors.
          */
-        set_descriptors += getErrorDescriptors(config.getUserGlobalErrorsIndex(), config.getUserGlobalErrors())
-        	+ "</descriptor>";
+        set_descriptors += rciUserGlobalErrors + "</descriptor>";
 
         int gid = 0;
         for (Group group : groups) {
@@ -332,8 +331,8 @@ public class Descriptors {
              *
              * We must offset the error id for group errors.
              */
-            query_descriptors += getErrorDescriptors(config.getUserGlobalErrorsIndex(), config.getUserGlobalErrors());
-            query_descriptors += getErrorDescriptors(config.getAllErrorsSize() + 1, group.getErrors());
+            query_descriptors += rciUserGlobalErrors;
+            query_descriptors += getErrorDescriptors(config.getGroupErrorsOffset(), group.getErrors());
             query_descriptors += itemDescriptors(bin_id_reader, createBinIdLogBuffer, prefix, group);
             query_descriptors +=  "</descriptor>";
             gid++;
@@ -384,8 +383,9 @@ public class Descriptors {
             descriptors += String.format("<descriptor element=`set_factory_default` dscr_avail=`true` />\n");
         }
 
-        descriptors += getErrorDescriptors(config.getRciGlobalErrorsIndex(), config.getRciGlobalErrors())
-                     + "</descriptor>";
+        descriptors += getErrorDescriptors(config.getGlobalFatalProtocolErrorsOffset(), config.getGlobalFatalProtocolErrors());
+        descriptors += getErrorDescriptors(config.getGlobalProtocolErrorsOffset(), config.getGlobalProtocolErrors())
+                + "</descriptor>";
 
         descriptors = descriptors.replace('`', '"');
 
@@ -396,7 +396,7 @@ public class Descriptors {
         String response = "";
         String cloud = "https://" + options.getUrlName() + target;
         String credential = username + ":" + password;
-        String encodedCredential = DatatypeConverter.printBase64Binary(credential.getBytes());
+        String encodedCredential = Base64.getEncoder().encodeToString(credential.getBytes());
         HttpsURLConnection connection = null;
 
         responseCode = 0;

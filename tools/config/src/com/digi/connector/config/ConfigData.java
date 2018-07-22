@@ -3,10 +3,10 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Collections;
 import java.util.AbstractMap.SimpleImmutableEntry;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
@@ -19,9 +19,6 @@ public class ConfigData {
         groupList.put(Group.Type.SETTING, new LinkedList<Group>());
         groupList.put(Group.Type.STATE, new LinkedList<Group>());
 
-        rciErrorMap.put(rciGlobalErrors, 1);
-        rciErrorMap.put(userGlobalErrors, rciGlobalErrors.size() + 1);
-        
     	for (UseNames name: UseNames.values()) {
     		max_name_length.put(name, 0);
     	}
@@ -31,15 +28,22 @@ public class ConfigData {
     /* user setting and state groups */
     private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
 
-    private RciStrings userGlobalErrors = new RciStrings();
+    private final int globalFatalProtocolErrorsOffset = 1;
+    private final Map<String, String> globalFatalProtocolErrors = Collections.unmodifiableMap(new LinkedHashMap<>(Map.of(
+		"bad_command", "Bad command",
+        "bad_descriptor", "Bad configuration",
+        "bad_value", "Bad value"
+   	)));
+    
+    private final int globalProtocolErrorsOffset = globalFatalProtocolErrorsOffset + globalFatalProtocolErrors.size();
+    private final Map<String, String> globalProtocolErrors = Collections.unmodifiableMap(new LinkedHashMap<>(Map.of(
+		"invalid_index", "Invalid index",
+        "invalid_name", "Invalid name",
+        "missing_name", "Missing name"
+   	)));
 
-    /* user global error */
-    private Map<RciStrings, Integer> rciErrorMap = new HashMap<>();
-
-    private final String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
-        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
-
-    RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
+    private final int globalUserErrorsOffset = globalProtocolErrorsOffset + globalProtocolErrors.size();
+    private final Map<String, String> globalUserErrors = new LinkedHashMap<>();
 
     private int CommandsAttributeMaxLen = 20;
     private int max_list_depth = 0;
@@ -66,58 +70,59 @@ public class ConfigData {
         return result;
     }
 
-    public LinkedHashMap<String, String> getUserGlobalErrors() {
-        return userGlobalErrors.getStrings();
+    public boolean isProtocolGlobalError(String name) {
+    	return (globalFatalProtocolErrors.containsKey(name) || globalProtocolErrors.containsKey(name)); 
     }
-
-    public void addRCIGroupError(String name, String description)
-            throws Exception {
-
-        if ((rciGlobalErrors.size() > 0) && (rciGlobalErrors.getStrings().containsKey(name))) {
-            throw new Exception("Duplicate RCI_COMMAND");
-        }
-
-        rciGlobalErrors.addStrings(name, description);
+    
+    public boolean isUserGlobalError(String name) {
+    	return globalUserErrors.containsKey(name);
     }
+    
+    public void addUserGlobalError(String name, String description) throws Exception {
 
-    public void addUserGroupError(String name, String description)
-            throws Exception {
-
-        if ((userGlobalErrors.size() > 0) && (userGlobalErrors.getStrings().containsKey(name))) {
-            throw new Exception("Duplicate <globalerror>: " + name);
-        }
-        
         if (description == null) {
             throw new IOException("Missing or bad globalerror description");
-      }
+        }
+         
+        if (isProtocolGlobalError(name)) {
+            throw new Exception("Existing protocol error <globalerror>: " + name);
+        }
 
-        userGlobalErrors.addStrings(name, description);
+        if (isUserGlobalError(name)) {
+            throw new Exception("Duplicate <globalerror>: " + name);
+        }
+
+        globalUserErrors.put(name, description);
     }
 
-    public LinkedHashMap<String, String> getRciGlobalErrors() {
-        return rciGlobalErrors.getStrings();
+    public int getGlobalFatalProtocolErrorsOffset() {
+    	return globalFatalProtocolErrorsOffset;
     }
-
-
-    public int getRciGlobalErrorsIndex() {
-        return rciErrorMap.get(rciGlobalErrors);
+    
+    public Map<String, String> getGlobalFatalProtocolErrors() {
+    	return globalFatalProtocolErrors;
     }
-
-    public int getUserGlobalErrorsIndex() {
-        return rciErrorMap.get(userGlobalErrors);
+    
+    public int getGlobalProtocolErrorsOffset() {
+    	return globalProtocolErrorsOffset;
     }
-
-    public Map<RciStrings, Integer> getRciErrorMap() {
-        return rciErrorMap;
+    
+    public Map<String, String> getGlobalProtocolErrors() {
+    	return globalProtocolErrors;
     }
-
-    public int getAllErrorsSize() {
-        int size = rciGlobalErrors.size()
-                + userGlobalErrors.size();
-
-        return size;
+    
+    public int getGlobalUserErrorsOffset() {
+    	return globalUserErrorsOffset;
     }
-
+    
+    public Map<String, String> getGlobalUserErrors() {
+    	return globalUserErrors;
+    }
+    
+    public int getGroupErrorsOffset() {
+    	return globalUserErrorsOffset + globalUserErrors.size();
+    }
+    
     public void setAttributeMaxLen(int len) throws Exception {
         if (len > 0)
             CommandsAttributeMaxLen = len;

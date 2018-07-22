@@ -42,7 +42,7 @@ public class Parser {
                 token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("globalerror")) {
-                    config.addUserGroupError(getName(), getLongDescription());
+                    config.addUserGlobalError(getName(), getLongDescription());
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>

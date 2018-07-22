@@ -3,7 +3,7 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public abstract class GenHeaderFile extends GenFile{
+public abstract class GenHeaderFile extends GenFile {
 
     protected final static String CONNECTOR_PREFIX = "connector";
     protected final static String CCAPI_PREFIX = "ccapi";
@@ -12,9 +12,6 @@ public abstract class GenHeaderFile extends GenFile{
     protected final static String INCLUDE = "#include ";
 
     protected final static String TYPEDEF_ENUM = "typedef enum {\n";
-
-    protected final static String GLOBAL_RCI_ERROR = "connector_rci_error";
-    protected final static String GLOBAL_ERROR = "connector_global_error";
 
     protected final static String CONNECTOR_REMOTE_ALL_STRING = "connector_remote_all_strings";
     protected final static String CONNECTOR_REMOTE_GROUP_TABLE = "connector_group_table";

@@ -1,6 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -36,7 +37,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         /* write structures in source file */
         writeAllStructures();
 
-        int GlobalErrorCount = config.getUserGlobalErrors().size() + config.rciGlobalErrors.size();
+        int GlobalErrorCount = config.getGlobalFatalProtocolErrors().size() + config.getGlobalProtocolErrors().size() + config.getGlobalUserErrors().size();
 
         write(String.format(
         		"\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
@@ -83,7 +84,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         return quote_char;
     }
 
-    private void writeLinkedHashMapStrings(LinkedHashMap<String, String> stringMap) throws IOException {
+    private void writeLinkedHashMapStrings(Map<String, String> stringMap) throws IOException {
         for (String key : stringMap.keySet()) {
             write(getCharString(stringMap.get(key)));
         }
@@ -91,7 +92,8 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     private void writeRciErrorsRemoteAllStrings() throws IOException {
         if (!options.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(config.getRciGlobalErrors());
+            writeLinkedHashMapStrings(config.getGlobalFatalProtocolErrors());
+            writeLinkedHashMapStrings(config.getGlobalProtocolErrors());
         }
     }
 
@@ -108,7 +110,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     private void writeErrorsRemoteAllStrings() throws IOException {
         if (!options.excludeErrorDescription()) {
-            writeLinkedHashMapStrings(config.getUserGlobalErrors());
+            writeLinkedHashMapStrings(config.getGlobalUserErrors());
         }
     }
 
@@ -137,7 +139,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     private void writeDefineGlobalErrors() throws IOException {
         if (!options.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_ERROR, config.getUserGlobalErrors(), FileType.SOURCE);
+            writeDefineErrors(GLOBAL_ERROR, config.getGlobalUserErrors(), FileType.SOURCE);
         }
     }
 
@@ -188,7 +190,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         }
     }
 
-    private void writeDefineErrors(String prefixName, LinkedHashMap<String, String> errorMap, FileType fileType) throws IOException {
+    private void writeDefineErrors(String prefixName, Map<String, String> errorMap, FileType fileType) throws IOException {
         for (String key : errorMap.keySet()) {
             String defineName = prefixName.toUpperCase() + "_" + key.toUpperCase();
             /* define name string index for each error */
@@ -198,7 +200,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     private void writeDefineRciErrors() throws IOException {
         if (!options.excludeErrorDescription()) {
-            writeDefineErrors(GLOBAL_RCI_ERROR, config.getRciGlobalErrors(), FileType.SOURCE);
+            writeDefineErrors(GLOBAL_ERROR, config.getGlobalUserErrors(), FileType.SOURCE);
         }
     }
 
@@ -346,7 +348,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     }
 
-    private int writeErrorStructures(int errorCount, String prefix, LinkedHashMap<String, String> errorMap) throws IOException {
+    private int writeErrorStructures(int errorCount, String prefix, Map<String, String> errorMap) throws IOException {
     	String defineName = prefix.toUpperCase();
     	
         for (String key : errorMap.keySet()) {
@@ -455,21 +457,20 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     private void writeGlobalErrorStructures() throws IOException {
         if (!options.excludeErrorDescription()) {
-            int errorCount = config.getRciGlobalErrors().size() + config.getUserGlobalErrors().size();
+            int errorCount = config.getGlobalFatalProtocolErrors().size() + config.getGlobalProtocolErrors().size() + config.getGlobalUserErrors().size();
 
             if (errorCount > 0) {
-                write(String.format("static char const * const %ss[] = {\n", GLOBAL_RCI_ERROR));
+                write(String.format("static char const * const %ss[] = {\n", GLOBAL_ERROR));
 
-                /* top-level global errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_RCI_ERROR, config.getRciGlobalErrors());
-                /* group global errors */
-                errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR, config.getUserGlobalErrors());
+                errorCount = writeErrorStructures(errorCount, GLOBAL_FATAL_PROTOCOL_ERROR, config.getGlobalFatalProtocolErrors());
+                errorCount = writeErrorStructures(errorCount, GLOBAL_PROTOCOL_ERROR, config.getGlobalProtocolErrors());
+                errorCount = writeErrorStructures(errorCount, GLOBAL_ERROR, config.getGlobalUserErrors());
 
                 write("};\n\n");
             }
         }
         else {
-            write(String.format("%s%ss NULL\n", DEFINE, GLOBAL_RCI_ERROR));
+            write(String.format("%s%ss NULL\n", DEFINE, GLOBAL_ERROR));
         }
     }
 }

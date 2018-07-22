@@ -6,20 +6,14 @@ public class RciStrings {
 
     protected final LinkedHashMap<String, String> rciStrings = new LinkedHashMap<String, String>();
 
-    public RciStrings(String[] strPairs) // throws Exception
+    public RciStrings(String[] strPairs)
     {
         for (int i = 0; i < strPairs.length; i += 2) {
-            /*
-             * if (errors.containsKey(strPairs[i])) { throw new
-             * Exception("Duplicate name: " + strPairs[i]); }
-             */
             rciStrings.put(strPairs[i], strPairs[i+1]);
         }
-        
     }
 
     public RciStrings() {
-
     }
 
     public void addStrings(String key, String value) {
