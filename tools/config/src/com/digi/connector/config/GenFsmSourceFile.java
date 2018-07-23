@@ -67,7 +67,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             configType = type.toLowerName();
 
             for (Group group : groups) {
-                defineName = getDefineString(group.getName());
+                defineName = getDefineString(group.getSanitizedName());
                 /* define name string index
                  * #define [group name]
                  */
@@ -75,7 +75,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                 if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                     LinkedHashMap<String, String> errorMap = group.getErrors();
                     for (String key : errorMap.keySet()) {
-                        defineName = getDefineString(group.getName() + "_" + ERROR + "_" + key);
+                        defineName = getDefineString(group.getSanitizedName() + "_" + ERROR + "_" + key);
                         /* define name string index for each error in the group
                          * #define [group name + ERROR + error name]
                          */
@@ -391,10 +391,10 @@ public class GenFsmSourceFile extends GenSourceFile {
     
     private void writeGroupStructures(LinkedList<Group> groups) throws Exception {
         for (Group group: groups) {
-            writeCollectionArrays(group, group.getName());
+            writeCollectionArrays(group, group.getSanitizedName());
             
             if (!options.excludeErrorDescription()) {
-            	writeLocalErrorStructures(group.getName(), group.getErrors());
+            	writeLocalErrorStructures(group.getSanitizedName(), group.getErrors());
             }
         }
     }
@@ -426,7 +426,7 @@ public class GenFsmSourceFile extends GenSourceFile {
 
                 for (Group group: groups) {
                 	if (group.isDictionary() && !group.getKeys().isEmpty()) {
-                		writeCollectionKeysArray(group.getKeys(), customPrefix + getDefineString(group.getName()));
+                		writeCollectionKeysArray(group.getKeys(), customPrefix + getDefineString(group.getSanitizedName()));
                 	}
                 }
                 	
@@ -434,13 +434,13 @@ public class GenFsmSourceFile extends GenSourceFile {
 
                 for (int group_index = 0; group_index < groups.size(); group_index++) {
                     Group group = groups.get(group_index);
-                    String items_name = customPrefix + getDefineString(group.getName() + "_items").toLowerCase();
+                    String items_name = customPrefix + getDefineString(group.getSanitizedName() + "_items").toLowerCase();
                     String optional = options.useNames().contains(UseNames.COLLECTIONS)
-                        	? String.format("        \"%s\",\n", group.getName())
+                        	? String.format("        \"%s\",\n", group.getSanitizedName())
                         	: "";
                         	
                     String ctype = getCollectionType(group);
-                    String capacity = getCapacityInitializer(group, customPrefix + getDefineString(group.getName()));
+                    String capacity = getCapacityInitializer(group, customPrefix + getDefineString(group.getSanitizedName()));
                     String group_string = 
                     	"\n" +
                     	"{\n" +
@@ -452,7 +452,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                     	"    },\n";
                     
                     if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
-                        String errors_name = customPrefix + getDefineString(group.getName() + "_errors").toLowerCase();
+                        String errors_name = customPrefix + getDefineString(group.getSanitizedName() + "_errors").toLowerCase();
 
                         group_string += "    { ARRAY_SIZE(" + errors_name + "), " + errors_name + " }, \n";
                         
@@ -522,7 +522,7 @@ public class GenFsmSourceFile extends GenSourceFile {
         final int GlobalErrorCount = config.getGlobalFatalProtocolErrors().size() + config.getGlobalProtocolErrors().size() + config.getGlobalUserErrors().size();
         write(String.format("\nconnector_remote_config_data_t const %srci_internal_data = {\n" +
             "    connector_group_table,\n"+
-            "    connector_rci_errors,\n"+
+            "    connector_global_errors,\n"+
             "    %d,\n"+
             "    0x%X,\n"+
             "    %s,\n"+

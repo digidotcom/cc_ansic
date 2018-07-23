@@ -6,7 +6,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Collections;
 import java.util.AbstractMap.SimpleImmutableEntry;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
@@ -19,6 +18,21 @@ public class ConfigData {
         groupList.put(Group.Type.SETTING, new LinkedList<Group>());
         groupList.put(Group.Type.STATE, new LinkedList<Group>());
 
+        globalFatalProtocolErrorsOffset = 1;
+        globalFatalProtocolErrors = new LinkedHashMap<>();
+        globalFatalProtocolErrors.put("bad_command", "Bad command");
+        globalFatalProtocolErrors.put("bad_descriptor", "Bad configuration");
+        globalFatalProtocolErrors.put("bad_value", "Bad value");
+            
+        globalProtocolErrorsOffset = globalFatalProtocolErrorsOffset + globalFatalProtocolErrors.size();
+        globalProtocolErrors = new LinkedHashMap<>();
+        globalProtocolErrors.put("invalid_index", "Invalid index");
+		globalProtocolErrors.put("invalid_name", "Invalid name");
+		globalProtocolErrors.put("missing_name", "Missing name");
+        
+        globalUserErrorsOffset = globalProtocolErrorsOffset + globalProtocolErrors.size();
+        globalUserErrors = new LinkedHashMap<>();
+        
     	for (UseNames name: UseNames.values()) {
     		max_name_length.put(name, 0);
     	}
@@ -28,22 +42,14 @@ public class ConfigData {
     /* user setting and state groups */
     private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
 
-    private final int globalFatalProtocolErrorsOffset = 1;
-    private final Map<String, String> globalFatalProtocolErrors = Collections.unmodifiableMap(new LinkedHashMap<>(Map.of(
-		"bad_command", "Bad command",
-        "bad_descriptor", "Bad configuration",
-        "bad_value", "Bad value"
-   	)));
+    private int globalFatalProtocolErrorsOffset;
+    private final Map<String, String> globalFatalProtocolErrors;
     
-    private final int globalProtocolErrorsOffset = globalFatalProtocolErrorsOffset + globalFatalProtocolErrors.size();
-    private final Map<String, String> globalProtocolErrors = Collections.unmodifiableMap(new LinkedHashMap<>(Map.of(
-		"invalid_index", "Invalid index",
-        "invalid_name", "Invalid name",
-        "missing_name", "Missing name"
-   	)));
+    private int globalProtocolErrorsOffset;
+    private Map<String, String> globalProtocolErrors;
 
-    private final int globalUserErrorsOffset = globalProtocolErrorsOffset + globalProtocolErrors.size();
-    private final Map<String, String> globalUserErrors = new LinkedHashMap<>();
+    private int globalUserErrorsOffset;
+    private Map<String, String> globalUserErrors;
 
     private int CommandsAttributeMaxLen = 20;
     private int max_list_depth = 0;

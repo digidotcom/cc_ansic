@@ -320,13 +320,18 @@ public class GenFsmHeaderFile extends GenHeaderFile {
      
         write(
            		"\n" + 
+    	        "typedef union {\n" + 
+    	        "    size_t instances;\n" +
+    	        "    connector_dictionary_t dictionary;\n" +
+    			"} connector_collection_capacity_t;\n"
+    	        );
+            
+        write(
+           		"\n" + 
     	        "typedef struct {\n" + 
         		collection_name_struct_field +
         		"    connector_collection_type_t collection_type;\n" +
-    	        "    union {\n" +
-    	        "        size_t instances;\n" +
-    	        "        connector_dictionary_t dictionary;\n" +
-    			"    } capacity;\n" +
+    	        "    connector_collection_capacity_t capacity;\n" +
     	        "    struct {\n" + 
     	        "        size_t count;\n" + 
     	        "        struct connector_item CONST * CONST data;\n" + 
@@ -336,12 +341,17 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             
         write(
     		"\n" + 
+    		"typedef union {\n" +
+            "    connector_collection_t CONST * CONST collection;\n" +
+            "    connector_element_t CONST * CONST element;\n" +
+    		"} connector_item_data_t;\n"
+            );
+
+        write(
+    		"\n" + 
     		"typedef struct connector_item {\n" +
             "    connector_element_value_type_t type;\n" +
-    		"    union {\n" +
-            "        connector_collection_t CONST * CONST collection;\n" +
-            "        connector_element_t CONST * CONST element;\n" +
-            "    } data;\n" +
+            "    connector_item_data_t data;\n" +
     		"} connector_item_t;\n"
             );
 
@@ -477,6 +487,16 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             	);
         }
         
+        write(
+        	"\n" + 
+        	"typedef union {\n" +
+            "    unsigned int index;\n" +
+            "    char const * key;\n" +
+            "    unsigned int count;\n" +
+            "    connector_dictionary_t dictionary;\n" +
+            "} connector_group_item_t;\n"
+            );
+
         optional_field = options.useNames().contains(UseNames.COLLECTIONS)
 			? "    char const * CONST name;\n"
 			: "";
@@ -487,12 +507,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "    connector_remote_group_type_t type;\n" +
             "    unsigned int id;\n" +
             "    connector_collection_type_t collection_type;\n" +
-            "    union {\n" +
-            "        unsigned int index;\n" +
-            "        char const * key;\n" +
-            "        unsigned int count;\n" +
-            "        connector_dictionary_t dictionary;\n" +
-            "    } item;\n" +
+            "    connector_group_item_t item;\n" +
             optional_field +
             "} connector_remote_group_t;\n"
             );
@@ -527,7 +542,17 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
 
         if (haveLists) {
-        	optional_field = options.useNames().contains(UseNames.COLLECTIONS)
+            write(
+           		"\n" +
+           		"typedef union {\n" +
+                "    unsigned int index;\n" +
+                "    char const * key;\n" +
+                "    unsigned int count;\n" +
+                "    connector_dictionary_t dictionary;\n" +
+        	    "} connector_list_item_t;\n"
+        	    );
+
+            optional_field = options.useNames().contains(UseNames.COLLECTIONS)
     			? "        char const * CONST name;\n"
 				: "";
         	
@@ -538,18 +563,21 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	    "    struct {\n" + 
         	    "        unsigned int id;\n" + 
                 "        connector_collection_type_t collection_type;\n" +
-                "        union {\n" +
-                "            unsigned int index;\n" +
-                "            char const * key;\n" +
-                "            unsigned int count;\n" +
-                "            connector_dictionary_t dictionary;\n" +
-                "        } item;\n" +
+                "        connector_list_item_t item;\n" +
         	    optional_field + 
         	    "    } level[RCI_LIST_MAX_DEPTH];\n" + 
         	    "} connector_remote_list_t;\n"
         	    );
         }
         
+        write(
+       		"\n" +
+       		"typedef union {\n" +
+    	    "    unsigned int count;\n" + 
+    	    "    connector_dictionary_t dictionary;\n" +
+    	    "} connector_response_item_t;\n"
+    	    );
+
         optional_field = haveLists
     		? "    connector_remote_list_t CONST list;\n"
 			: "";
@@ -568,10 +596,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	    "        connector_bool_t compare_matches;\n" +
     	    "        char const * error_hint;\n" +
     	    "        connector_element_value_t * element_value;\n" +
-    	    "        union {\n" +
-    	    "           unsigned int count;\n" + 
-    	    "           connector_dictionary_t dictionary;\n" +
-            "        } item;\n" +
+            "        connector_response_item_t item;\n" +
     	    "    } response;\n" +
     	    "} connector_remote_config_t;\n"
     	    );
@@ -764,7 +789,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
 	            for (Group group : groups) {
 	                /* add each group enum */
-                    group_enum_string += getEnumString(group.getName()) + ",\n";
+                    group_enum_string += getEnumString(group.getSanitizedName()) + ",\n";
 	            }
 
 	            /* write group enum buffer to fileWriter */
