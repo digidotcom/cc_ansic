@@ -474,6 +474,7 @@ typedef struct rci
 #define RCI_SHARED_FLAG_SKIP_COLLECTION			(1 << 10)
 #define RCI_SHARED_FLAG_FIRST_ELEMENT			(1 << 11)
 #define RCI_SHARED_FLAG_SKIP_CLOSE				(1 << 12)
+#define RCI_SHARED_FLAG_RESTORE_DEPTH			(1 << 13)
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)

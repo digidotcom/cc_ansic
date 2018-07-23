@@ -98,6 +98,10 @@ STATIC void traverse_group_count(rci_t * const rci)
 			set_rci_traverse_state(rci, rci_traverse_state_all_group_instances);
 		}
 	}
+	else if (should_remove_instance(rci))
+	{
+		set_rci_traverse_state(rci, rci_traverse_state_group_id);
+	}
 	else
 	{
 		set_rci_traverse_state(rci, rci_traverse_state_none);
@@ -157,8 +161,6 @@ STATIC void traverse_list_id(rci_t * const rci)
 
 STATIC void traverse_list_count(rci_t * const rci)
 {
-	connector_collection_type_t collection_type = get_current_list_collection_type(rci);
-
 	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_FIRST_ELEMENT))
 	{
 		decrement_list_depth(rci);
@@ -168,75 +170,86 @@ STATIC void traverse_list_count(rci_t * const rci)
 			traverse_list_id(rci);
 
 		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_FIRST_ELEMENT, connector_false);
-		increment_list_depth(rci);
-		goto done;
-	}
-
-	if (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary)
-	{
-		if (!have_current_list_lock(rci))
-		{
-			if (collection_type == connector_collection_type_variable_array)
-			{
-				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
-			}
-			trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_lock);
-			goto done;
-		}
-		if (get_current_list_id(rci) != get_current_list_lock(rci))
-		{
-			trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
-			goto done;
-		}
-		if (should_set_count(rci))
-		{
-			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
-			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
-			trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_set);
-			goto done;
-		}
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_true);
 	}
 	else
 	{
-		if (have_current_list_lock(rci))
-		{
-			trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
-			goto done;
-		}
-		{
-			connector_collection_t const * const info = get_current_collection_info(rci);
-		
-			if (collection_type == connector_collection_type_fixed_array)
-			{
-				set_current_list_count(rci, info->capacity.instances);
-			}
-			else 
-			{
-				set_current_list_count(rci, info->capacity.dictionary.entries);
-				set_current_list_key_list(rci, info->capacity.dictionary.keys);
-			}
-		}
-	}
+		connector_collection_type_t collection_type;
 
-	if (should_traverse_all_list_instances(rci) || get_list_depth(rci) > get_query_depth(rci))
-	{
-		if (collection_type == connector_collection_type_variable_dictionary)
-			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
-
-		if (get_current_list_count(rci) == 0)
+		if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_RESTORE_DEPTH))
 		{
-			set_rci_traverse_state(rci, rci_traverse_state_list_instances_done);
-			set_rci_output_state(rci, rci_output_state_list_id);
-   			state_call(rci, rci_parser_state_output);
+			increment_list_depth(rci);
+			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_false);
+		}
+
+		collection_type = get_current_list_collection_type(rci);
+
+		if (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary)
+		{
+			if (!have_current_list_lock(rci))
+			{
+				if (collection_type == connector_collection_type_variable_array)
+				{
+					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
+				}
+				trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_lock);
+				goto done;
+			}
+			if (get_current_list_id(rci) != get_current_list_lock(rci))
+			{
+				trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
+				goto done;
+			}
+			if (should_set_count(rci))
+			{
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
+				trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_set);
+				goto done;
+			}
 		}
 		else
 		{
-			set_rci_traverse_state(rci, rci_traverse_state_all_list_instances);
+			if (have_current_list_lock(rci))
+			{
+				trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
+				goto done;
+			}
+			{
+				connector_collection_t const * const info = get_current_collection_info(rci);
+		
+				if (collection_type == connector_collection_type_fixed_array)
+				{
+					set_current_list_count(rci, info->capacity.instances);
+				}
+				else 
+				{
+					set_current_list_count(rci, info->capacity.dictionary.entries);
+					set_current_list_key_list(rci, info->capacity.dictionary.keys);
+				}
+			}
 		}
-	}
-	else
-	{
-		set_rci_traverse_state(rci, rci_traverse_state_none);
+
+		if (should_traverse_all_list_instances(rci) || get_list_depth(rci) > get_query_depth(rci))
+		{
+			if (collection_type == connector_collection_type_variable_dictionary)
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
+
+			if (get_current_list_count(rci) == 0)
+			{
+				set_rci_traverse_state(rci, rci_traverse_state_list_instances_done);
+				set_rci_output_state(rci, rci_output_state_list_id);
+	   			state_call(rci, rci_parser_state_output);
+			}
+			else
+			{
+				set_rci_traverse_state(rci, rci_traverse_state_all_list_instances);
+			}
+		}
+		else
+		{
+			set_rci_traverse_state(rci, rci_traverse_state_none);
+		}
 	}
 
 done:
@@ -247,16 +260,27 @@ done:
 STATIC connector_bool_t release_last_list_lock(rci_t * const rci)
 {
 	connector_bool_t need_unlock = connector_false;
+
+	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_RESTORE_DEPTH))
+	{
+		decrement_list_depth(rci);
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_false);
+		goto done;
+	}
 	
 	if (get_list_depth(rci) == RCI_LIST_MAX_DEPTH) goto done;
-	
+
 	increment_list_depth(rci);
 	if (have_current_list_lock(rci))
 	{
 		trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
 		need_unlock = connector_true;
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_true);
 	}
-	decrement_list_depth(rci);
+	else
+	{
+		decrement_list_depth(rci);
+	}
 
 done:
 	return need_unlock;
