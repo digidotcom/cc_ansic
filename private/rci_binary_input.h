@@ -170,7 +170,7 @@ STATIC connector_bool_t get_string_of_len(rci_t * const rci, char const * * stri
     if (new_size > sizeof rci->input.storage)
     {
         connector_debug_line("Maximum content size exceeded while getting  a string - wanted %u, had %u", *length, CONNECTOR_NO_MALLOC_RCI_MAXIMUM_CONTENT_LENGTH);
-        rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+        rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
         goto done;
     }
 #else
@@ -459,7 +459,7 @@ STATIC void process_rci_command(rci_t * const rci)
                  * Just go to error state for returning error message.
                  */
                 connector_debug_line("unsupported rci command: %d\n", command);
-                rci_global_error(rci, connector_rci_error_bad_command, RCI_NO_HINT);
+                rci_global_error(rci, connector_fatal_protocol_error_bad_command, RCI_NO_HINT);
                 set_rci_command_error(rci);
                 state_call(rci, rci_parser_state_error);
                 goto done;
@@ -746,7 +746,7 @@ STATIC void process_group_id(rci_t * const rci)
                     break;
                 case connector_remote_action_set:
                     connector_debug_line("process_group_id: got set command with no group id specified");
-                    rci_set_output_error(rci, connector_rci_error_bad_command, rci_set_empty_group_hint, rci_output_state_group_id);
+                    rci_set_output_error(rci, connector_fatal_protocol_error_bad_command, rci_set_empty_group_hint, rci_output_state_group_id);
                     break;
 #if (defined RCI_LEGACY_COMMANDS)
                 case connector_remote_action_do_command:
@@ -765,7 +765,7 @@ STATIC void process_group_id(rci_t * const rci)
         if (!have_group_id(rci))
         {
             connector_debug_line("process_group_id: unrecognized group (mismatch of descriptors) group id = %d", decode_group_id(group_id));
-            rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_group_id);
+            rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_group_id);
             ASSERT(connector_false);
             goto done;
         }
@@ -803,7 +803,7 @@ STATIC void handle_name_attribute(rci_t * const rci, char const * const name, si
 	if (name_len > RCI_DICT_MAX_KEY_LENGTH)
 	{
 		rci_output_state_t state = get_list_depth(rci) > 0 ? rci_output_state_field_id : rci_output_state_group_id;
-		rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, state);
+		rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_content_size_hint, state);
 	}
 	else
 	{
@@ -1215,7 +1215,7 @@ STATIC void process_field_id(rci_t * const rci)
         if (!have_element_id(rci))
         {
             connector_debug_line("process_field_id: unrecognized field id (mismatch of descriptors). element id = %d", id);
-            rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
+            rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
 			goto done;
         }
 
@@ -1235,7 +1235,7 @@ STATIC void process_field_id(rci_t * const rci)
 		if ((value & BINARY_RCI_FIELD_ATTRIBUTE_BIT) == BINARY_RCI_FIELD_ATTRIBUTE_BIT)
     	{
         	connector_debug_line("process_field_id: field attribute is not supported");
-        	rci_set_output_error(rci, connector_rci_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
+        	rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, RCI_NO_HINT, rci_output_state_field_id);
         	goto done;
     	}
 
@@ -1272,7 +1272,7 @@ STATIC void process_field_type(rci_t * const rci)
                 if (element->type != type)
                 {
                     connector_debug_line("process_field_type: mismatch field type (type %d) != (actual %d)", type, element->type);
-                    rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
+                    rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
                     error = connector_true;
                 }
 #if (defined RCI_PARSER_USES_LIST)
@@ -1562,7 +1562,7 @@ STATIC void process_field_value(rci_t * const rci)
     if (error)
     {
         connector_debug_line("process_field_value: range check error descriptor problem");
-        rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
+        rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_descriptor_mismatch_hint, rci_output_state_field_id);
     }
     else
 #endif
@@ -1800,7 +1800,7 @@ STATIC void rci_parse_input(rci_t * const rci)
             if (rci->input.destination == storage_end)
             {
                 connector_debug_line("Maximum content size exceeded while parsing - wanted %u, had %u", storage_bytes + 1, storage_bytes);
-                rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+                rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
                 goto done;
             }
         }
@@ -1855,7 +1855,7 @@ STATIC void rci_parse_input(rci_t * const rci)
                     if (bytes_wanted >= bytes_have)
                     {
                         connector_debug_line("Maximum content size exceeded while storing - wanted %u, had %u", bytes_wanted, bytes_have);
-                        rci_set_output_error(rci, connector_rci_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
+                        rci_set_output_error(rci, connector_fatal_protocol_error_bad_descriptor, rci_error_content_size_hint, rci_output_state_field_id);
                         goto done;
                     }
 

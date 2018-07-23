@@ -288,7 +288,7 @@ STATIC connector_bool_t rci_output_ipv4(rci_t * const rci, char const * const st
                 uint8_t * const element_id = rci->buffer.output.current - 1;
 
                 *element_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
-                rci_global_error(rci, connector_rci_error_bad_value, NULL);
+                rci_global_error(rci, connector_fatal_protocol_error_bad_value, NULL);
                 state_call(rci, rci_parser_state_error);
             }
 
@@ -366,7 +366,7 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
                 uint8_t * const element_id = rci->buffer.output.current - 1;
 
                 *element_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
-                rci_global_error(rci, connector_rci_error_bad_value, NULL);
+                rci_global_error(rci, connector_fatal_protocol_error_bad_value, NULL);
                 state_call(rci, rci_parser_state_error);
             }
 
@@ -998,10 +998,10 @@ STATIC void rci_output_collection_name_string(rci_t * const rci)
 
 	if (!rcistr_valid(&rci->output.content)) /* bypass output of leading length */
 	{
-		rci->output.content.data = name;
+		rci->output.content.data = (uint8_t *) name;
         rci->output.content.length = strlen(name);
 	}
-	overflow = rci_output_string(rci, rci->output.content.data, rci->output.content.length);
+	overflow = rci_output_string(rci, (char *) rci->output.content.data, rci->output.content.length);
 
 	if (!overflow)
 	{

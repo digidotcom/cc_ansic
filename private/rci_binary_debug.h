@@ -113,6 +113,7 @@ static char const * rci_traverse_state_t_as_string(rci_traverse_state_t const va
 		enum_to_case(rci_traverse_state_list_instances_done);
 #endif
         enum_to_case(rci_traverse_state_all_elements);
+		enum_to_case(rci_traverse_state_elements_done);
         enum_to_case(rci_traverse_state_group_end);
 #if (defined RCI_LEGACY_COMMANDS)
         enum_to_case(rci_traverse_state_command_do_command);
