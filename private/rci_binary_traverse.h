@@ -289,7 +289,7 @@ done:
 STATIC connector_bool_t traverse_element_id(rci_t * const rci)
 {
 	connector_bool_t done = connector_false;
-    connector_item_t const * const element = get_current_element(rci);
+    connector_item_t const * element;
 
 	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_FIRST_ELEMENT))
 	{
@@ -303,6 +303,8 @@ STATIC connector_bool_t traverse_element_id(rci_t * const rci)
 	}
 
 	if (release_last_list_lock(rci) == connector_true) goto done;
+
+	element = get_current_element(rci);
 
 #if (defined RCI_PARSER_USES_LIST)
 	ASSERT(element->type != connector_element_type_list);
