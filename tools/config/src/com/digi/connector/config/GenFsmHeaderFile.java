@@ -623,12 +623,6 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
     }
     
-    private void writeErrorHeader(String enumDefine) throws IOException {
-    	writeErrorHeader(enumDefine, config.getGlobalFatalProtocolErrors(), true);
-    	writeErrorHeader(enumDefine, config.getGlobalProtocolErrors(), false);
-    	writeErrorHeader(enumDefine, config.getGlobalUserErrors(), false);
-    }
-
     private void writeErrorHeader(final String enumDefine, final int offset, final Map<String, String> errors) throws IOException {
     	final int first = offset;
     	final int count = errors.keySet().size();
@@ -750,7 +744,9 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
-                writeErrorHeader(getEnumString(group.getSanitizedName() + "_" + "error"));
+            	writeErrorHeader(getEnumString(group.getSanitizedName() + "_fatal_protocol_error"), config.getGlobalFatalProtocolErrors(), true);
+            	writeErrorHeader(getEnumString(group.getSanitizedName() + "_protocol_error"), config.getGlobalProtocolErrors(), false);
+            	writeErrorHeader(getEnumString(group.getSanitizedName() + "_global_error"), config.getGlobalUserErrors(), false);
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;

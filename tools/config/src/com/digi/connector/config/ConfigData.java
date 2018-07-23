@@ -26,6 +26,7 @@ public class ConfigData {
             
         globalProtocolErrorsOffset = globalFatalProtocolErrorsOffset + globalFatalProtocolErrors.size();
         globalProtocolErrors = new LinkedHashMap<>();
+        globalProtocolErrors.put("bad_value", "Bad value");
         globalProtocolErrors.put("invalid_index", "Invalid index");
 		globalProtocolErrors.put("invalid_name", "Invalid name");
 		globalProtocolErrors.put("missing_name", "Missing name");
