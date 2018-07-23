@@ -764,7 +764,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
 	            for (Group group : groups) {
 	                /* add each group enum */
-                    group_enum_string += getEnumString(group.getName()) + ",\n";
+                    group_enum_string += getEnumString(group.getSanitizedName()) + ",\n";
 	            }
 
 	            /* write group enum buffer to fileWriter */
