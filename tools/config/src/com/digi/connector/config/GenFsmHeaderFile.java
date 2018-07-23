@@ -349,7 +349,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         write(
     		"\n" + 
-    		"typedef struct {\n" +
+    		"typedef struct connector_item {\n" +
             "    connector_element_value_type_t type;\n" +
             "    connector_item_data_t data;\n" +
     		"} connector_item_t;\n"
