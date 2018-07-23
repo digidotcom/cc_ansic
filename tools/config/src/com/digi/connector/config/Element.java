@@ -106,7 +106,7 @@ public class Element extends Item {
     }
 
     public String toString(int id) {
-        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, toRciDescription(), type);
+        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, Descriptors.encodeEntities(toRciDescription()), type);
 
         if (access != null)
             descriptor += String.format(" access=`%s`", access);

@@ -21,12 +21,10 @@ public class ItemList extends Item {
         items = new LinkedList<Item>();
     }
 
-    // TODO: Seems like an odd place for this to live, given that the class
-    // has no other knowledge of XML. -ASK
     public String toString(int id) {
         return String.format(
             "<element name=\"%s\" desc=\"%s\" type=\"list\" bin_id=\"%d\">",
-             name, toRciDescription(), id);
+             name, Descriptors.encodeEntities(toRciDescription()), id);
     }
 
     public String getName() {

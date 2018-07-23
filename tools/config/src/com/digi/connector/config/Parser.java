@@ -7,6 +7,9 @@ import java.util.ArrayDeque;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.CharsetEncoder;
+
 import com.digi.connector.config.ConfigGenerator.UseNames;
 
 public class Parser {
@@ -39,7 +42,7 @@ public class Parser {
                 token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("globalerror")) {
-                    config.addUserGroupError(getName(), getLongDescription());
+                    config.addUserGroupError(getName(), getErrorDescription());
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>
@@ -72,7 +75,7 @@ public class Parser {
                         groupInstances = getMathExpression();
                     }
 
-                    Group theGroup = new Group(nameStr, groupInstances, getDescription(), getLongDescription());
+                    Group theGroup = new Group(nameStr, groupInstances, getDescription(), getHelpDescription());
                     config.nameLength(UseNames.COLLECTIONS, nameStr.length());
                     
                     String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only"; 
@@ -102,7 +105,7 @@ public class Parser {
                             
                             theGroup.addItem(list);
                         } else if (token.equalsIgnoreCase("error")) {
-                            theGroup.addError(getName(), getLongDescription());
+                            theGroup.addError(getName(), getErrorDescription());
                         } else if (token.startsWith("#")) {
                             tokenScanner.skipCommentLine();
                         } else {
@@ -183,7 +186,7 @@ public class Parser {
             throw new Exception("The name is larger than the maximum length of " + MAX_NAME_LENGTH);
         }
         
-        // Relaxed slightly for values in that we allow digits in the first position
+        // Relaxed slightly for values in that we allow digits in the first position (but we really shouldn't -ASK)
         if (!name.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
             throw new Exception("Invalid character in value name: " + name);
         }
@@ -225,49 +228,53 @@ public class Parser {
         return result;
     }
 
-    private static String getDescription() throws Exception {
-
+    private static CharsetEncoder latin_1 = StandardCharsets.ISO_8859_1.newEncoder();
+    
+    private static boolean isLatin_1(String string) {
+    	return latin_1.canEncode(string);
+    }
+    
+    private static String parseDescription(final String type) throws Exception {
         String description = null;
+        
         if (tokenScanner.hasToken("\\\".*")) {
             description = tokenScanner.getTokenInLine("\\\".*?\\\"");
             if (description == null) {
-                throw new Exception("Invalid description");
+                throw new Exception("Invalid " + type + " description");
             }
 
-            description = description.substring(1, description
-                    .lastIndexOf("\""));
+            description = description.substring(1, description.lastIndexOf("\""));
 
-            if (description.length() > MAX_DESCRIPTION_LENGTH) {
-                throw new Exception("description > maximum length "
-                        + MAX_DESCRIPTION_LENGTH);
+            if (!isLatin_1(description)) {
+                throw new Exception("Non-Latin-1 character in " + type + " description");
             }
-
-            description = description.replace(":", "::");
-
+            
             if (description.length() == 0)
                 description = null;
 
+        }
+        return description;
+    	
+    }
+    
+    private static String getDescription() throws Exception {
+        String description = parseDescription("label");
+        if (description != null) {
+            if (description.length() > MAX_DESCRIPTION_LENGTH) {
+                throw new Exception("description > maximum length " + MAX_DESCRIPTION_LENGTH);
+            }
+
+            description = description.replace(":", "::");
         }
         return description;
     }
 
-    private static String getLongDescription() throws Exception {
+    private static String getHelpDescription() throws Exception {
+        return parseDescription("help");
+    }
 
-        String description = null;
-        if (tokenScanner.hasToken("\\\".*")) {
-            description = tokenScanner.getTokenInLine("\\\".*?\\\"");
-            if (description == null) {
-                throw new Exception("Invalid error description");
-            }
-
-            description = description.substring(1, description
-                    .lastIndexOf("\""));
-            description = description.replace(":", "::");
-
-            if (description.length() == 0)
-                description = null;
-        }
-        return description;
+    private static String getErrorDescription() throws Exception {
+        return parseDescription("error");
     }
 
     private static String getType() throws Exception {
@@ -315,7 +322,7 @@ public class Parser {
     	String name = getName();
         elementLineNumber = tokenScanner.getLineNumber();
 
-        Element element = new Element(name, getDescription(), getLongDescription());
+        Element element = new Element(name, getDescription(), getHelpDescription());
         config.nameLength(UseNames.ELEMENTS, name.length());
 
         try {
@@ -338,7 +345,7 @@ public class Parser {
                      * Parse Value for element with enum type syntax for parsing
                      * value: value <name> [description] [help description]
                      */
-                     element.addValue(config, getValueName(), getDescription(), getLongDescription());
+                     element.addValue(config, getValueName(), getDescription(), getHelpDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
@@ -379,7 +386,7 @@ public class Parser {
 		depth += 1;
 		config.listDepth(depth);
 
-		ItemList list = new ItemList(name, instances, getDescription(), getLongDescription());
+		ItemList list = new ItemList(name, instances, getDescription(), getHelpDescription());
         config.nameLength(UseNames.COLLECTIONS, name.length());
         
 		try {

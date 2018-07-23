@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.lang.StringBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 public class Descriptors {
 
@@ -67,6 +67,34 @@ public class Descriptors {
         this.responseCode = 0;
     }
 
+    // From: https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML
+    public static String encodeEntities(final String string) {
+    	final StringBuilder result = new StringBuilder();
+	 
+		 for (char character: string.toCharArray()) {
+			 if (character == '\"') {
+				 result.append("&quot;");
+			 }
+			 else if (character == '&') {
+				 result.append("&amp;");
+			 }
+			 else if (character == '\'') {
+				 result.append("&apos;");
+			 }
+			 else if (character == '<') {
+				 result.append("&lt;");
+			 }
+			 else if (character == '>') {
+				 result.append("&gt;");
+			 }
+			 else {
+				 result.append(character);
+			 }
+		 }
+		 return result.toString();
+    }
+
+    
     public void processDescriptors() throws Exception {
         options.log("\nProcessing Descriptors, please wait...");
         int id = 1;
@@ -135,7 +163,7 @@ public class Descriptors {
         for (String errorName : errorMap.keySet()) {
             descriptor += String.format("<error_descriptor id=`%d` ", errorId);
             if (errorMap.get(errorName) != null)
-                descriptor += String.format("desc=`%s` ", errorMap.get(errorName));
+                descriptor += String.format("desc=`%s` ", Descriptors.encodeEntities(errorMap.get(errorName)));
 
             descriptor += "/>\n";
             errorId++;
@@ -401,7 +429,7 @@ public class Descriptors {
         String response = "";
         String cloud = "https://" + options.getUrlName() + target;
         String credential = username + ":" + password;
-        String encodedCredential = DatatypeConverter.printBase64Binary(credential.getBytes());
+        String encodedCredential = Base64.getEncoder().encodeToString(credential.getBytes());
         HttpsURLConnection connection = null;
 
         responseCode = 0;

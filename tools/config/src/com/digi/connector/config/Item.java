@@ -39,14 +39,14 @@ public abstract class Item {
         	}
         }
         this.name = name;
-        this.description = description.replaceAll(":", "::");
+        this.description = description;
         this.helpDescription = helpDescription;
     }
 
     public String toRciDescription() {
         return (helpDescription == null)
-            ? description
-            : description + ":" + helpDescription;
+            ? getDescription()
+            : getDescription() + ":" + getHelpDescription();
     }
 
     public String getName() {

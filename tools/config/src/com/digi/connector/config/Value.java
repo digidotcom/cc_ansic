@@ -9,6 +9,6 @@ public class Value extends Item {
     }
 
     public String toString(int id) {
-        return String.format("<value value=\"%s\" desc=\"%s\" bin_id=\"%d\"/>", name, getDescription(), id);
+        return String.format("<value value=\"%s\" desc=\"%s\" bin_id=\"%d\"/>", name, Descriptors.encodeEntities(getDescription()), id);
     }
 }
