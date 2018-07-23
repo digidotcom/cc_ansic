@@ -636,10 +636,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
 
         write(
-    		"}\n" +
-    		"#define " + enumDefine + "_FIRST = " + first + "\n" +
-    		"#define " + enumDefine + "_LAST = " + last + "\n" +
-    		"#define " + enumDefine + "_COUNT = " + count + "\n" +
+    		"} " + customPrefix + enumDefine + "_id_t;\n" +
+    		"#define " + enumDefine + "_FIRST " + first + "\n" +
+    		"#define " + enumDefine + "_LAST " + last + "\n" +
+    		"#define " + enumDefine + "_COUNT " + count + "\n" +
     		"\n"
 		);
     }
@@ -720,18 +720,18 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private void writeAllEnumHeaders(ConfigData config, LinkedList<Group> groups) throws Exception {
 
         for (Group group : groups) {
-        	writeListEnumHeader(group, group.getName());
+        	writeListEnumHeader(group, group.getSanitizedName());
 
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
-                writeErrorHeader(getEnumString(group.getName() + "_" + "ERROR"));
+                writeErrorHeader(getEnumString(group.getSanitizedName() + "_" + "error"));
 
                 LinkedHashMap<String, String> errorMap = group.getErrors();
                 int index = 0;
 
                 for (String key : errorMap.keySet()) {
-                    String enumString = getEnumString(group.getName() + "_" + "ERROR" + "_" + key);
+                    String enumString = getEnumString(group.getSanitizedName() + "_" + "error" + "_" + key);
 
                     if (index++ == 0) {
                         /*Set start index to the global count */
@@ -743,7 +743,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
                     write(enumString);
                 }
-                write(endEnumString(group.getName() + "_" + "ERROR"));
+                write(endEnumString(group.getSanitizedName() + "_" + "error"));
             }
         }
     }
