@@ -403,6 +403,10 @@ STATIC connector_bool_t finish_all_elements(rci_t * const rci)
 		else
 			done = connector_true;
 	}
+	else
+	{
+		done = connector_true;
+	}
 #endif
 
 done:
