@@ -100,7 +100,10 @@ STATIC void traverse_group_count(rci_t * const rci)
 	}
 	else if (should_remove_instance(rci))
 	{
-		set_rci_traverse_state(rci, rci_traverse_state_group_id);
+		trigger_rci_callback(rci, connector_request_id_remote_config_group_instance_remove);
+		set_rci_traverse_state(rci, rci_traverse_state_none);
+		set_rci_output_state(rci, rci_output_state_group_id);
+    	state_call(rci, rci_parser_state_output);
 	}
 	else
 	{
@@ -113,14 +116,7 @@ done:
 
 STATIC void traverse_group_id(rci_t * const rci)
 {
-	if (should_remove_instance(rci))
-	{
-		trigger_rci_callback(rci, connector_request_id_remote_config_group_instance_remove);
-	}
-	else 
-	{
-    	trigger_rci_callback(rci, connector_request_id_remote_config_group_start);
-	}
+	trigger_rci_callback(rci, connector_request_id_remote_config_group_start);
 
     set_rci_output_state(rci, rci_output_state_group_id);
     state_call(rci, rci_parser_state_output);
@@ -147,14 +143,7 @@ STATIC connector_bool_t finish_all_list_instances(rci_t * const rci)
 #if (defined RCI_PARSER_USES_LIST)
 STATIC void traverse_list_id(rci_t * const rci)
 {
-	if (should_remove_instance(rci))
-	{
-		trigger_rci_callback(rci, connector_request_id_remote_config_list_instance_remove);
-	}
-	else
-	{
-		trigger_rci_callback(rci, connector_request_id_remote_config_list_start);
-	}
+	trigger_rci_callback(rci, connector_request_id_remote_config_list_start);
 	set_rci_output_state(rci, rci_output_state_list_id);
     state_call(rci, rci_parser_state_output);
 }
@@ -206,6 +195,12 @@ STATIC void traverse_list_count(rci_t * const rci)
 				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_false);
 				trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_set);
 				goto done;
+			}
+			if (should_remove_instance(rci))
+			{
+				trigger_rci_callback(rci, connector_request_id_remote_config_list_instance_remove);
+				set_rci_output_state(rci, rci_output_state_list_id);
+				state_call(rci, rci_parser_state_output);
 			}
 		}
 		else

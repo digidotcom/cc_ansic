@@ -660,6 +660,8 @@ done:
 
 STATIC void start_group(rci_t * const rci)
 {
+	set_query_depth(rci, 0);
+
 	if (!have_group_instance(rci))
 	{
 		if (rci->shared.callback_data.action == connector_remote_action_set)
@@ -681,12 +683,12 @@ STATIC void start_group(rci_t * const rci)
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
 		}
 	}
-	else if (should_remove_instance(rci))
+	
+	if (should_remove_instance(rci))
 	{
 		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
 	}
 
-	set_query_depth(rci, 0);
     set_rci_traverse_state(rci, rci_traverse_state_group_count);
     state_call(rci, rci_parser_state_traverse);
 }
@@ -877,6 +879,7 @@ STATIC void process_group_attribute(rci_t * const rci)
 STATIC void start_list(rci_t * const rci)
 {
 	invalidate_element_id(rci);
+	set_query_depth(rci, get_list_depth(rci));
 	set_rci_input_state(rci, rci_input_state_field_id);
 
 	if (should_skip_input(rci))
@@ -910,12 +913,12 @@ STATIC void start_list(rci_t * const rci)
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
 		}
 	}
-	else if (should_remove_instance(rci))
+	
+	if (should_remove_instance(rci))
 	{
 		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_true);
 	}
 
-	set_query_depth(rci, get_list_depth(rci));
 	set_rci_traverse_state(rci, rci_traverse_state_list_count);
 	state_call(rci, rci_parser_state_traverse);
 }
@@ -1180,16 +1183,29 @@ STATIC void process_field_id(rci_t * const rci)
 			
 			if (get_list_depth(rci) > 0)
 			{
+				set_element_id(rci, get_current_list_id(rci));
 				invalidate_current_list_id(rci);
 				invalidate_current_list_instance(rci);
 				decrement_list_depth(rci);
 			}
 		}
-        else if (!have_element_id(rci) && rci->shared.callback_data.action == connector_remote_action_query)
-        {
-			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_true);
-			set_rci_traverse_state(rci, rci_traverse_state_all_elements);
-			state_call(rci, rci_parser_state_traverse);
+        else if (!have_element_id(rci))
+		{
+			if (rci->shared.callback_data.action == connector_remote_action_query)
+       		{
+				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_true);
+				set_rci_traverse_state(rci, rci_traverse_state_all_elements);
+				state_call(rci, rci_parser_state_traverse);
+			}
+			else
+			{
+				if (get_list_depth(rci) > 0)
+					set_rci_output_state(rci, rci_output_state_list_id);
+				else
+					set_rci_output_state(rci, rci_output_state_group_id);
+
+				state_call(rci, rci_parser_state_output);
+			}
         }
         else
         {

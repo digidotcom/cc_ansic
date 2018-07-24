@@ -471,10 +471,10 @@ typedef struct rci
 #define RCI_SHARED_FLAG_SET_COUNT				(1 << 7)
 #define RCI_SHARED_FLAG_ALL_ELEMENTS			(1 << 8)
 #define RCI_SHARED_FLAG_SKIP_INPUT				(1 << 9)
-#define RCI_SHARED_FLAG_SKIP_COLLECTION			(1 << 10)
+#define RCI_SHARED_FLAG_SKIP_COLLECTION			(1 << 10) /* skip_depth refers to the level at which lock/unlock operations failed instead of start/end operations */
 #define RCI_SHARED_FLAG_FIRST_ELEMENT			(1 << 11)
-#define RCI_SHARED_FLAG_SKIP_CLOSE				(1 << 12)
-#define RCI_SHARED_FLAG_RESTORE_DEPTH			(1 << 13)
+#define RCI_SHARED_FLAG_SKIP_CLOSE				(1 << 12) 
+#define RCI_SHARED_FLAG_RESTORE_DEPTH			(1 << 13) /* Function did something to list_depth that needs to be undone the next time the function is called */
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)
@@ -488,7 +488,7 @@ typedef struct rci
 													 RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | RCI_SHARED_FLAG_ALL_GROUPS))
 #define should_output_count(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
 #define should_set_count(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SET_COUNT))
-#define should_remove_instance(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE))
+#define should_remove_instance(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE) && get_list_depth(rci) == get_query_depth(rci))
 #define should_skip_input(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_INPUT))
 
 #define set_should_traverse_all_groups(rci, state)				(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))
