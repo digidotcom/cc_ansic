@@ -886,7 +886,12 @@ STATIC void rci_output_remove_attribute_value(rci_t * const rci)
 	connector_bool_t overflow = rci_output_uint8(rci, 1);
 
 	if (!overflow)
-		set_rci_output_state(rci, rci_output_state_field_terminator);
+	{
+		if (remote_config->error_id != connector_success)
+			state_call(rci, rci_parser_state_error);
+		else
+			set_rci_output_state(rci, rci_output_state_field_terminator);
+	}
 }
 
 STATIC void rci_output_complete_attribute_id(rci_t * const rci)
