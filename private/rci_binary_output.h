@@ -908,12 +908,13 @@ STATIC void rci_output_complete_attribute_value(rci_t * const rci)
 	{
 		unsigned int const instance = get_list_depth(rci) > 0 ? get_current_list_instance(rci) : get_group_instance(rci);
 		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-		if (remote_config->error_id != connector_success)
+
+		if (should_remove_instance(rci))
+			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
+		else if (remote_config->error_id != connector_success)
 			state_call(rci, rci_parser_state_error);
 		else if (instance == INVALID_INDEX)
 			set_rci_output_state(rci, rci_output_state_field_terminator);
-		else if (should_remove_instance(rci))
-			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
 		else
 			state_call(rci, rci_parser_state_traverse);
 	}
