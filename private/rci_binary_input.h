@@ -879,7 +879,6 @@ STATIC void process_group_attribute(rci_t * const rci)
 STATIC void start_list(rci_t * const rci)
 {
 	invalidate_element_id(rci);
-	set_query_depth(rci, get_list_depth(rci));
 	set_rci_input_state(rci, rci_input_state_field_id);
 
 	if (should_skip_input(rci))
@@ -891,6 +890,8 @@ STATIC void start_list(rci_t * const rci)
         }
 		return;
 	}
+
+	set_query_depth(rci, get_list_depth(rci));
 
 	if (!have_current_list_instance(rci))
 	{
