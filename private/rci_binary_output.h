@@ -884,6 +884,7 @@ STATIC void rci_output_remove_attribute_id(rci_t * const rci)
 STATIC void rci_output_remove_attribute_value(rci_t * const rci)
 {
 	connector_bool_t overflow = rci_output_uint8(rci, 1);
+    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 
 	if (!overflow)
 	{
