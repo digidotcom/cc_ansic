@@ -17,16 +17,6 @@
  * =======================================================================
  */
 
-#if defined RCI_PARSER_USES_ERROR_DESCRIPTIONS
-static char const rci_set_invalid_index_hint[] = "Invalid index";
-static char const rci_set_invalid_name_hint[] = "Invalid name";
-static char const rci_set_missing_name_hint[] = "Missing name";
-#else
-#define rci_set_invalid_index_hint	RCI_NO_HINT
-#define rci_set_invalid_name_hint	RCI_NO_HINT
-#define rci_set_missing_name_hint	RCI_NO_HINT
-#endif
-
 #define state_call(rci, value)  ((rci)->parser.state = (value))
 
 STATIC connector_bool_t is_set_command(connector_remote_action_t const action)

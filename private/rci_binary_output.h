@@ -768,6 +768,8 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
 {
 	unsigned int instance;
 	connector_collection_type_t collection_type;
+	rci_output_state_t next_output_state;
+	unsigned int normal_attribute_count = 0;
 
 	if (get_list_depth(rci) > 0)
 	{
@@ -780,32 +782,35 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
 		collection_type = get_group_collection_type(rci);	
 	}
 
-	if (should_output_count(rci) || should_remove_instance(rci))
+	
+	if (should_output_count(rci))
 	{
-		if (instance != INVALID_INDEX &&
-		   (instance > 1 || should_output_name(rci)))
+		normal_attribute_count++;
+		if (should_remove_instance(rci))
 		{
-			if (!encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL, 2))
-			{
-				set_rci_output_state(rci, rci_output_state_collection_specifier_id);
-			}
+			normal_attribute_count++;
 		}
+		if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
+			next_output_state = rci_output_state_complete_attribute_id;
 		else
+			next_output_state = rci_output_state_collection_count_id;
+	}
+	else if (should_remove_instance(rci))
+	{
+		normal_attribute_count++;
+		next_output_state = rci_output_state_remove_attribute_id;
+	}
+
+	if (normal_attribute_count > 0)
+	{
+		if (instance != INVALID_INDEX && (instance > 1 || should_output_name(rci)))
 		{
-			if (!encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL, 1))
-			{
-				if (should_output_count(rci))
-				{
-					if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
-						set_rci_output_state(rci, rci_output_state_complete_attribute_id);
-					else
-						set_rci_output_state(rci, rci_output_state_collection_count_id);
-				}
-				else
-				{
-					set_rci_output_state(rci, rci_output_state_remove_attribute_id);
-				}
-			}
+			next_output_state = rci_output_state_collection_specifier_id;
+			normal_attribute_count++;
+		}
+		if (!encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NORMAL, normal_attribute_count))
+		{
+			set_rci_output_state(rci, next_output_state);
 		}
 	}
 	else if (should_output_name(rci))
@@ -907,6 +912,8 @@ STATIC void rci_output_complete_attribute_value(rci_t * const rci)
 			state_call(rci, rci_parser_state_error);
 		else if (instance == INVALID_INDEX)
 			set_rci_output_state(rci, rci_output_state_field_terminator);
+		else if (should_remove_instance(rci))
+			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
 		else
 			state_call(rci, rci_parser_state_traverse);
 	}
