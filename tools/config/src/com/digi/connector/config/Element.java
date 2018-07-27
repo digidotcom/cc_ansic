@@ -106,7 +106,7 @@ public class Element extends Item {
     }
 
     public String toString(int id) {
-        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, toRciDescription(), type);
+        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, Descriptors.encodeEntities(toRciDescription()), type);
 
         if (access != null)
             descriptor += String.format(" access=`%s`", access);
@@ -157,6 +157,16 @@ public class Element extends Item {
         max = theMax;
     }
 
+
+    private boolean containsValue(final String needle) {
+    	for (Value value: values) {
+    		if (value.getName().equals(needle)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     public void addValue(ConfigData config, String valueName, String description, String helpDescription) throws Exception {
         if (type == null)
             throw new Exception("Missing type enum on element: " + name);
@@ -164,7 +174,7 @@ public class Element extends Item {
         if (type != Type.ENUM)
             throw new Exception("Invalid <value> for type: " + type.toLowerName());
         
-        if (values.contains(valueName))
+        if (containsValue(valueName))
             throw new Exception("Duplicate <value>: " + valueName);
       
         Value value = new Value(valueName, description, helpDescription);

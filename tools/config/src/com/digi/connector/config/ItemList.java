@@ -37,11 +37,11 @@ public class ItemList extends Item {
 
     	return result;
     }
-    
-    // TODO: Seems like an odd place for this to live, given that the class
-    // has no other knowledge of XML. -ASK
+
     public String toString(int id) {
-        return collectionXmlAttributes(String.format("<element name=`%s` desc=`%s` type=`list` bin_id=`%d`>", name, toRciDescription(), id));
+        return collectionXmlAttributes(String.format(
+            "<element name=\"%s\" desc=\"%s\" type=\"list\" bin_id=\"%d\">",
+             name, Descriptors.encodeEntities(toRciDescription()), id));
     }
 
     public String getName() {

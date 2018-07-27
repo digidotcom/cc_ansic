@@ -38,7 +38,16 @@ public class ConfigData {
     		max_name_length.put(name, 0);
     	}
     }
-	public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
+	public static final ConfigData getInstance() { assert instance != null; return instance; }
+
+    public boolean countainsGroupName(final Group.Type type, final String needle) throws Exception {
+    	for (Group group: getConfigGroup(type)) {
+    		if (group.getName().equals(needle)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 
     /* user setting and state groups */
     private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
@@ -61,6 +70,10 @@ public class ConfigData {
 
     public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
         return groupList.get(type);
+    }
+
+    public void addConfigGroup(Group.Type type, Group group) throws Exception {
+        getConfigGroup(type).add(group);
     }
 
     public LinkedList<SimpleImmutableEntry<Group.Type, Group>> getConfigGroupEntries() {
