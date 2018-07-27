@@ -1165,6 +1165,7 @@ STATIC void process_field_id(rci_t * const rci)
 
 	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_RESTORE_DEPTH))
 	{
+		SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_false);
 		set_element_id(rci, get_current_list_id(rci));
 		decrement_list_depth(rci);
 	}
