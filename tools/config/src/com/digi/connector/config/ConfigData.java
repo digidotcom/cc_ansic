@@ -37,9 +37,11 @@ public class ConfigData {
     	for (UseNames name: UseNames.values()) {
     		max_name_length.put(name, 0);
     	}
+    	
+        instance = this;
     }
-	public static final ConfigData getInstance() { assert instance != null; return instance; }
-
+    public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
+    
     public boolean countainsGroupName(final Group.Type type, final String needle) throws Exception {
     	for (Group group: getConfigGroup(type)) {
     		if (group.getName().equals(needle)) {
