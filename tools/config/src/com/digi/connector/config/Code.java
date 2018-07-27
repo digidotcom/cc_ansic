@@ -69,6 +69,15 @@ public final class Code {
 
 	public static final String include(String filename) { return "#include " + quoted(filename); }
 	
+	public static final String define(String name) { return define(name, null); }
+	public static final LinkedList<String> define(List<String> names) {
+		LinkedList<String> result = new LinkedList<>();
+		
+		for (String name: names) {
+			result.add(define(name));
+		}
+		return result;
+	}
 
 	public static final LinkedList<String> define(Map<String, Object> pairs) {
 		LinkedList<String> result = new LinkedList<>();
@@ -78,15 +87,6 @@ public final class Code {
 		    Object value = pair.getValue();
 		    
 		    result.add(define(name, value.toString()));
-		}
-		return result;
-	}
-	public static final String define(String name) { return define(name, null); }
-	public static final LinkedList<String> define(List<String> names) {
-		LinkedList<String> result = new LinkedList<>();
-		
-		for (String name: names) {
-			result.add(define(name));
 		}
 		return result;
 	}

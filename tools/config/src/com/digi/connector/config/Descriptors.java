@@ -66,6 +66,33 @@ public class Descriptors {
         this.responseCode = 0;
     }
 
+    // From: https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML
+    public static String encodeEntities(final String string) {
+    	final StringBuilder result = new StringBuilder();
+	 
+		 for (char character: string.toCharArray()) {
+			 if (character == '\"') {
+				 result.append("&quot;");
+			 }
+			 else if (character == '&') {
+				 result.append("&amp;");
+			 }
+			 else if (character == '\'') {
+				 result.append("&apos;");
+			 }
+			 else if (character == '<') {
+				 result.append("&lt;");
+			 }
+			 else if (character == '>') {
+				 result.append("&gt;");
+			 }
+			 else {
+				 result.append(character);
+			 }
+		 }
+		 return result.toString();
+    }
+
     public void processDescriptors() throws Exception {
         options.log("\nProcessing Descriptors, please wait...");
         int id = 1;
@@ -134,7 +161,7 @@ public class Descriptors {
         for (String value : errors.values()) {
             descriptors += String.format("<error_descriptor id=`%d` ", id);
             if (value != null)
-                descriptors += String.format("desc=`%s` ", value);
+                descriptors += String.format("desc=`%s` ", Descriptors.encodeEntities(value));
 
             descriptors += "/>\n";
             id++;
