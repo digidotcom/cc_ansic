@@ -1103,7 +1103,6 @@ STATIC void rci_output_list_id(rci_t * const rci)
 	if (get_current_list_instance(rci) > 1 || should_output_name(rci) || should_output_count(rci) || should_remove_instance(rci))
 	{
 		field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
-		set_rci_output_state(rci, rci_output_state_collection_attribute);
 
 		if (rci_output_uint32(rci, field_id) == connector_false)
 		    set_rci_output_state(rci, rci_output_state_collection_attribute);

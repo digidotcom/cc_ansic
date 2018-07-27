@@ -1163,6 +1163,9 @@ STATIC void process_field_id(rci_t * const rci)
         goto done;
     }
 
+	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_RESTORE_DEPTH))
+		decrement_list_depth(rci);
+
     /* Bit 6  - is Field type present indicator
      * Bit 10 - is attributes present indicator
      * Bit 12 - is Error indicator (Should not be set)
@@ -1201,9 +1204,14 @@ STATIC void process_field_id(rci_t * const rci)
 			else
 			{
 				if (get_list_depth(rci) > 0)
+				{
+					SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_true);
 					set_rci_output_state(rci, rci_output_state_list_id);
+				}
 				else
+				{
 					set_rci_output_state(rci, rci_output_state_group_id);
+				}
 
 				state_call(rci, rci_parser_state_output);
 			}
