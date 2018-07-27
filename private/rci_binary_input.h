@@ -1164,7 +1164,10 @@ STATIC void process_field_id(rci_t * const rci)
     }
 
 	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_RESTORE_DEPTH))
+	{
+		set_element_id(rci, get_current_list_id(rci));
 		decrement_list_depth(rci);
+	}
 
     /* Bit 6  - is Field type present indicator
      * Bit 10 - is attributes present indicator
