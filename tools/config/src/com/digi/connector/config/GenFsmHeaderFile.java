@@ -678,29 +678,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         return str;
     }
 
-    private void writeEnumHeader(Element element, String prefix) throws Exception {
-        boolean explicit = false;
-        int index = 0;
-        
-        write(TYPEDEF_ENUM);
-        for (Value value : element.getValues()) {
-            if (value.getName().equals(""))
-            	explicit = true;
-            else {
-            	String line = getEnumString(prefix + "_" + value.getSanitizedName());
-            	
-            	if (explicit) {
-            		line += " = " + index;
-            		explicit = false;
-            	}
-                write(line + ",\n");
-            }
-            index++;
-        }
-        write(endEnumString(prefix));
-    }
-    
-    private void writeListEnumHeader(ItemList list, String prefix) throws Exception {
+    private void writeElementEnums(ItemList list, String prefix) throws Exception {
         String element_enum_string = TYPEDEF_ENUM;
 
         for (Item item : list.getItems()) {
@@ -709,22 +687,55 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             assert (item instanceof Element) || (item instanceof ItemList);
 
             if (item instanceof Element) {
-                Element element = (Element) item;
-
                 element_enum_string += getEnumString(item_prefix) + ",\n";
-
-                if (element.getType() == Element.Type.ENUM) {
-                	writeEnumHeader(element, item_prefix);
-                }
             } else {
                 ItemList sublist = (ItemList) item;
                 
-                writeListEnumHeader(sublist, item_prefix + "_");
+                writeElementEnums(sublist, item_prefix + "_");
             }
         }
         element_enum_string += endEnumString(prefix);
 
         write(element_enum_string);
+    }
+    
+    private void writeValueEnums(ItemList list, String prefix) throws Exception {
+        for (Item item : list.getItems()) {
+        	String item_prefix = prefix + "_" + item.getSanitizedName();
+        	
+            assert (item instanceof Element) || (item instanceof ItemList);
+
+            if (item instanceof Element) {
+                Element element = (Element) item;
+
+                if (element.getType() != Element.Type.ENUM)
+                	continue;
+
+                boolean explicit = false;
+                int index = 0;
+                
+                write(TYPEDEF_ENUM);
+                for (Value value : element.getValues()) {
+                    if (value.getName().equals(""))
+                    	explicit = true;
+                    else {
+                    	String line = getEnumString(prefix + "_" + value.getSanitizedName());
+                    	
+                    	if (explicit) {
+                    		line += " = " + index;
+                    		explicit = false;
+                    	}
+                        write(line + ",\n");
+                    }
+                    index++;
+                }
+                write(endEnumString(prefix));
+            } else {
+                ItemList sublist = (ItemList) item;
+                
+                writeValueEnums(sublist, item_prefix + "_");
+            }
+        }
     }
     
     private String getEnumString(String enum_name) {
@@ -739,7 +750,13 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private void writeAllEnumHeaders(ConfigData config, LinkedList<Group> groups) throws Exception {
 
         for (Group group : groups) {
-        	writeListEnumHeader(group, group.getSanitizedName());
+            if (!options.useNames().contains(UseNames.ELEMENTS)) {
+            	writeElementEnums(group, group.getSanitizedName());
+            }
+
+            if (!options.useNames().contains(UseNames.VALUES)) {
+            	writeValueEnums(group, group.getSanitizedName());
+            }
 
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
@@ -777,20 +794,17 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             configType = type.toLowerName();
 
 	        if (!groups.isEmpty()) {
-	            /* build group enum string for group enum */
-	            String group_enum_string = TYPEDEF_ENUM;
-
-	            /* Write all enum in H file */
 	            writeAllEnumHeaders(config, groups);
 
-	            for (Group group : groups) {
-	                /* add each group enum */
-                    group_enum_string += getEnumString(group.getSanitizedName()) + ",\n";
+	            if (!options.useNames().contains(UseNames.COLLECTIONS)) {
+		            String group_enum_string = TYPEDEF_ENUM;
+		            for (Group group : groups) {
+		                /* add each group enum */
+	                    group_enum_string += getEnumString(group.getSanitizedName()) + ",\n";
+		            }
+		            group_enum_string += endEnumString(null);
+		            write(group_enum_string);
 	            }
-
-	            /* write group enum buffer to fileWriter */
-	            group_enum_string += endEnumString(null);
-	            write(group_enum_string);
 	        }
 	    }
     }
