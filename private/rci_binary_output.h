@@ -1287,23 +1287,14 @@ STATIC void rci_output_do_command_payload(rci_t * const rci)
 STATIC void rci_output_field_terminator(rci_t * const rci)
 {
     connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+    connector_bool_t overflow = connector_false;
 
-    
-    if (remote_config->error_id != connector_success)
+    if (SHOULD_OUTPUT(rci))
+        overflow = rci_output_terminator(rci);
+
+    if (!overflow)
     {
-        state_call(rci, rci_parser_state_error);
-    }
-    else
-    {
-        connector_bool_t overflow = connector_false;
-
-        if (SHOULD_OUTPUT(rci))
-            overflow = rci_output_terminator(rci);
-
-        if (!overflow)
-        {
-            state_call(rci, rci_parser_state_traverse);
-        }
+        state_call(rci, rci_parser_state_traverse);
     }
 
     return;
