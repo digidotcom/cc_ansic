@@ -178,7 +178,7 @@ public class Element extends Item {
             throw new Exception("Duplicate <value>: " + valueName);
       
         Value value = new Value(valueName, description, helpDescription);
-        config.nameLength(UseNames.VALUES, valueName.length());
+        config.nameLengthSeen(UseNames.VALUES, valueName.length());
 
         values.add(value);
     }

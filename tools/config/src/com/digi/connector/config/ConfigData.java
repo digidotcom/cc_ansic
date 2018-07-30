@@ -35,7 +35,7 @@ public class ConfigData {
         globalUserErrors = new LinkedHashMap<>();
         
     	for (UseNames name: UseNames.values()) {
-    		max_name_length.put(name, 0);
+    		max_name_length_seen.put(name, 0);
     	}
     	
         instance = this;
@@ -66,8 +66,9 @@ public class ConfigData {
     private int CommandsAttributeMaxLen = 20;
     private int max_list_depth = 0;
     private int max_key_length;
+    private int max_name_length;
     
-    private EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
+    private EnumMap<UseNames, Integer> max_name_length_seen = new EnumMap<>(UseNames.class);
     private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
     public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
@@ -175,13 +176,13 @@ public class ConfigData {
 		return typesSeen;
 	}
 	
-    public void nameLength(UseNames type, int length) {
-    	int current = max_name_length.get(type);
-    	max_name_length.put(type, Math.max(current, length));
+    public void nameLengthSeen(UseNames type, int length) {
+    	int current = max_name_length_seen.get(type);
+    	max_name_length_seen.put(type, Math.max(current, length));
     }
     
-    public int getMaxNameLength(UseNames type) {
-    	return max_name_length.get(type);
+    public int getMaxNameLengthSeen(UseNames type) {
+    	return max_name_length_seen.get(type);
     }
 
     public int setMaxKeyLength(int length) {
@@ -190,5 +191,13 @@ public class ConfigData {
 
     public int getMaxKeyLength() {
     	return max_key_length;
+    }
+
+    public int setMaxNameLength(int length) {
+    	return max_name_length = length;
+    }
+
+    public int getMaxNameLength() {
+    	return max_name_length;
     }
 }

@@ -121,6 +121,7 @@ public class ConfigGenerator {
     private boolean rci_legacy;
     private int rci_dc_attribute_max_len = 0;
     private int rci_dc_max_key_len = 32;
+    private int rci_dc_max_name_len = 40;
     private boolean noBackup;
     private boolean rciParser;
 
@@ -381,7 +382,7 @@ public class ConfigGenerator {
                     }
                 } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
                     try{
-                        Parser.setMaxNameLength(Integer.parseInt(keys[1]));
+                    	rci_dc_max_name_len = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
                         throw new IOException("-maxNameLength expected an integer value");
                     }
@@ -666,6 +667,7 @@ public class ConfigGenerator {
             config.setAttributeMaxLen(rci_dc_attribute_max_len);
 
         config.setMaxKeyLength(rci_dc_max_key_len);
+        config.setMaxNameLength(rci_dc_max_name_len);
 
         if (fileTypeOption() != FileType.GLOBAL_HEADER) {
             Parser.processFile(filename);
