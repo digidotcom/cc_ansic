@@ -476,6 +476,7 @@ STATIC void traverse_element(rci_t * const rci)
 		increment_list_depth(rci);
 		set_current_list_id(rci, get_element_id(rci));
 		invalidate_current_list_instance(rci);
+		invalidate_element_id(rci);
 		set_rci_traverse_state(rci, rci_traverse_state_list_count);
 	}
 	else
