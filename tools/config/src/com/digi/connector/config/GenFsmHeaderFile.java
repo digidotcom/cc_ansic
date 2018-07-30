@@ -270,7 +270,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                     
                 case NONE:
                     write(String.format("\n" + "#define RCI_%s_NAME_MAX_SIZE %d",
-                    	name, config.getMaxNameLength(type) + 1));
+                    	name, config.getMaxNameLengthSeen(type) + 1));
             }
             field = String.format("    char const * name;\n", name);
         }

@@ -17,7 +17,6 @@ public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
     
-    private static int MAX_NAME_LENGTH = 40;
     private static TokenScanner tokenScanner;
     private static String token;
     private static int groupLineNumber;
@@ -27,10 +26,6 @@ public class Parser {
     private final static ConfigData config = ConfigData.getInstance();
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
 
-    public static void setMaxNameLength(int max_name) {
-        MAX_NAME_LENGTH = max_name;
-    }
-    
     public static void processFile(String fileName) throws IOException, NullPointerException {
 
         try {
@@ -77,7 +72,7 @@ public class Parser {
                     }
 
                     Group theGroup = new Group(nameStr, getDescription(), getHelpDescription());
-                    config.nameLength(UseNames.COLLECTIONS, nameStr.length());
+                    config.nameLengthSeen(UseNames.COLLECTIONS, nameStr.length());
                     
                     if (groupInstances != null) {
                     	theGroup.setInstances(groupInstances);
@@ -180,8 +175,8 @@ public class Parser {
             throw new Exception("Missing name!");
         }
         
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
+        if (name.length() > config.getMaxNameLength()) {
+            throw new Exception("The name > the maximum length limited " + config.getMaxNameLength());
         }
         
         /* Only allow alphanumeric, hyphen, and underscore */
@@ -200,8 +195,8 @@ public class Parser {
             throw new Exception("Missing name!");
         }
         
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new Exception("The name is larger than the maximum length of " + MAX_NAME_LENGTH);
+        if (name.length() > config.getMaxNameLength()) {
+            throw new Exception("The name is larger than the maximum length of " + config.getMaxNameLength());
         }
         
         // Relaxed slightly for values in that we allow digits in the first position (but we really shouldn't -ASK)
@@ -341,7 +336,7 @@ public class Parser {
         elementLineNumber = tokenScanner.getLineNumber();
 
         Element element = new Element(name, getDescription(), getHelpDescription());
-        config.nameLength(UseNames.ELEMENTS, name.length());
+        config.nameLengthSeen(UseNames.ELEMENTS, name.length());
 
         try {
             while (tokenScanner.hasToken()) {
@@ -404,7 +399,7 @@ public class Parser {
 		config.listDepth(depth);
 
 		ItemList list = new ItemList(name, getDescription(), getHelpDescription());
-        config.nameLength(UseNames.COLLECTIONS, name.length());
+        config.nameLengthSeen(UseNames.COLLECTIONS, name.length());
 
         if (instances != null) {
         	list.setInstances(instances);
