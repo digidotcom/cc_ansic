@@ -860,13 +860,7 @@ STATIC void rci_output_collection_count_value(rci_t * const rci)
 
 	if (!overflow)
 	{
-		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-		if (remote_config->error_id != connector_success)
-			state_call(rci, rci_parser_state_error);
-		else if (count == 0)
-			set_rci_output_state(rci, rci_output_state_field_terminator);
-		else
-			state_call(rci, rci_parser_state_traverse);
+		end_collection(rci);
 	}
 }
 
