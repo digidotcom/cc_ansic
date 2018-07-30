@@ -34,6 +34,12 @@ public class Group extends ItemList {
         errorMap = new LinkedHashMap<String, String>();
     }
 
+    public String toString(int id) {
+        return collectionXmlAttributes(String.format(
+            "<descriptor element=\"%s\" desc=\"%s\" bin_id=\"%d\">",
+            name, Descriptors.encodeEntities(toRciDescription()), id));
+    }
+
     public LinkedHashMap<String, String> getErrors() {
         return errorMap;
     }
