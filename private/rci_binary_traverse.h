@@ -151,6 +151,7 @@ STATIC void traverse_list_count(rci_t * const rci)
 {
 	if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_FIRST_ELEMENT))
 	{
+		set_element_id(rci, get_current_list_id(rci));
 		decrement_list_depth(rci);
 		if (get_list_depth(rci) == 0)
 			traverse_group_id(rci);
@@ -167,6 +168,7 @@ STATIC void traverse_list_count(rci_t * const rci)
 		if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_RESTORE_DEPTH))
 		{
 			increment_list_depth(rci);
+			invalidate_element_id(rci);
 			SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_false);
 		}
 
