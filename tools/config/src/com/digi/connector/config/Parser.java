@@ -452,7 +452,12 @@ public class Parser {
 		    if (list.getAccess() == null) {
 		    	list.setAccess(list_access);
 		    }
-		
+		    
+            try {
+                list.validate();
+            } catch(Exception e) {
+                throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
+            }
 		} catch (IOException e) {
 		    throw new IOException(e.toString());
 		}
