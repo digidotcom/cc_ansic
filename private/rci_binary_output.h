@@ -38,6 +38,18 @@ STATIC connector_bool_t should_output_name(rci_t * const rci)
 	}
 }
 
+STATIC void end_collection(rci_t * const rci)
+{
+	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
+
+	if (remote_config->error_id != connector_success)
+		state_call(rci, rci_parser_state_error);
+	else if (!have_element_id(rci))
+		set_rci_output_state(rci, rci_output_state_field_terminator);
+	else
+		state_call(rci, rci_parser_state_traverse);
+}
+
 STATIC void rci_set_output_error(rci_t * const rci, unsigned int const id, char const * const hint, rci_output_state_t state)
 {
     rci_global_error(rci, id, hint);
@@ -717,11 +729,7 @@ STATIC void rci_output_group_id(rci_t * const rci)
     }
 	else if (rci_output_uint32(rci, encoding_data) == connector_false)
 	{
-		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-		if (remote_config->error_id != connector_success)
-			state_call(rci, rci_parser_state_error);
-		else
-			state_call(rci, rci_parser_state_traverse);
+		end_collection(rci);
 	}
 
 done:
@@ -825,20 +833,12 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
 		connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_INDEX, instance);
 		if (!overflow)
 		{
-			connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-			if (remote_config->error_id != connector_success)
-    			state_call(rci, rci_parser_state_error);
-			else
-				state_call(rci, rci_parser_state_traverse);
+			end_collection(rci);
 		}
 	}
 	else
 	{
-		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-		if (remote_config->error_id != connector_success)
-			state_call(rci, rci_parser_state_error);
-		else
-			state_call(rci, rci_parser_state_traverse);
+		end_collection(rci);
 	}
 }
 
@@ -917,12 +917,8 @@ STATIC void rci_output_complete_attribute_value(rci_t * const rci)
 
 		if (should_remove_instance(rci))
 			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
-		else if (remote_config->error_id != connector_success)
-			state_call(rci, rci_parser_state_error);
-		else if (instance == INVALID_INDEX)
-			set_rci_output_state(rci, rci_output_state_field_terminator);
-		else
-			state_call(rci, rci_parser_state_traverse);
+		else 
+			end_collection(rci);
 	}
 }
 
@@ -994,13 +990,9 @@ STATIC void rci_output_collection_specifier_value(rci_t * const rci)
 		{
 			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
 		}
-    	else if (remote_config->error_id != connector_success)
+    	else
 		{
-    		state_call(rci, rci_parser_state_error);
-		} 
-		else
-		{
-			state_call(rci, rci_parser_state_traverse);
+			end_collection(rci);
 		}
 	}
 }
@@ -1019,11 +1011,7 @@ STATIC void rci_output_collection_name_string(rci_t * const rci)
 
 	if (!overflow)
 	{
-		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-		if (remote_config->error_id != connector_success)
-			state_call(rci, rci_parser_state_error);
-		else
-			state_call(rci, rci_parser_state_traverse);
+		end_collection(rci);
 	}
 }
 
