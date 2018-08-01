@@ -594,6 +594,8 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 		case connector_request_id_remote_config_group_instances_set:
 		case connector_request_id_remote_config_list_instances_lock:
 		case connector_request_id_remote_config_list_instances_set:
+		case connector_request_id_remote_config_group_instances_unlock:
+		case connector_request_id_remote_config_list_instances_unlock:
 #if (defined RCI_LEGACY_COMMANDS)
         case connector_request_id_remote_config_do_command:
         case connector_request_id_remote_config_set_factory_def:
@@ -606,10 +608,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             }
             break;
 		case connector_request_id_remote_config_group_instance_remove:
-		case connector_request_id_remote_config_group_instances_unlock:
 		case connector_request_id_remote_config_list_instance_remove:
-		case connector_request_id_remote_config_list_instances_unlock:
-			/* What happens if there is an error in any of the four callbacks above? Do we care? */
         case connector_request_id_remote_config_session_start:
         case connector_request_id_remote_config_session_end:
         case connector_request_id_remote_config_action_start:
