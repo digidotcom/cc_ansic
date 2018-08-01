@@ -55,8 +55,10 @@ STATIC void traverse_group_count(rci_t * const rci)
 		if (should_remove_instance(rci))
 		{
 			trigger_rci_callback(rci, connector_request_id_remote_config_group_instance_remove);
+			set_rci_traverse_state(rci, rci_traverse_state_none);
 			set_rci_output_state(rci, rci_output_state_group_id);
 			state_call(rci, rci_parser_state_output);
+			goto done;
 		}
 	}
 	else
@@ -200,8 +202,10 @@ STATIC void traverse_list_count(rci_t * const rci)
 			if (should_remove_instance(rci))
 			{
 				trigger_rci_callback(rci, connector_request_id_remote_config_list_instance_remove);
+				set_rci_traverse_state(rci, rci_traverse_state_none);
 				set_rci_output_state(rci, rci_output_state_list_id);
 				state_call(rci, rci_parser_state_output);
+				goto done;
 			}
 		}
 		else

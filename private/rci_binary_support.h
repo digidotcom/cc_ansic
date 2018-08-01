@@ -72,7 +72,7 @@ enum {
 #define RCI_NO_HINT             NULL
 #define INVALID_ID              UINT_MAX
 #define INVALID_INDEX           UINT_MAX
-#define INVALID_COUNT           ((size_t)-1)
+#define INVALID_COUNT           SIZE_MAX
 #define INVALID_DEPTH			UINT_MAX
 
 #define ROUND_UP(value, interval)   ((value) + -(value) % (interval))

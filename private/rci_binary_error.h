@@ -82,6 +82,7 @@ STATIC void rci_output_error_hint(rci_t * const rci)
     }
 }
 
+#define is_fatal_protocol_error(err)	((err) < connector_protocol_error_FIRST)
 
 STATIC void rci_generate_error(rci_t * const rci)
 {
@@ -124,7 +125,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         break;
 					case connector_request_id_remote_config_group_instances_set:
 					case connector_request_id_remote_config_group_instances_lock:
-						if (remote_config->error_id < connector_protocol_error_FIRST)
+						if (is_fatal_protocol_error(remote_config->error_id))
 						{
 							trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_unlock);
 						}
@@ -138,7 +139,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 						break;
 					case connector_request_id_remote_config_group_instance_remove:
                     case connector_request_id_remote_config_group_start:
-                        if (remote_config->error_id < connector_protocol_error_FIRST)
+                        if (is_fatal_protocol_error(remote_config->error_id))
                         {
 							if (remote_config_request == connector_request_id_remote_config_group_start)
                             	trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
@@ -156,7 +157,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         }
                         break;
                     case connector_request_id_remote_config_element_process:
-                        if (remote_config->error_id < connector_fatal_protocol_error_bad_value)
+                        if (is_fatal_protocol_error(remote_config->error_id))
                         {
 #if (defined RCI_PARSER_USES_LIST)
 							if (get_list_depth(rci) > 0)
@@ -176,7 +177,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                     case connector_request_id_remote_config_reboot:
                     case connector_request_id_remote_config_set_factory_def:
 #endif
-                        if (remote_config->error_id < connector_protocol_error_FIRST)
+                        if (is_fatal_protocol_error(remote_config->error_id))
                         {
                             trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
                         }
@@ -187,7 +188,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         }
                         break;
 					case connector_request_id_remote_config_group_instances_unlock:
-						if (remote_config->error_id < connector_protocol_error_FIRST)
+						if (is_fatal_protocol_error(remote_config->error_id))
 						{
 							trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
 						}
@@ -199,7 +200,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 						}
 						break;
                     case connector_request_id_remote_config_group_end:
-                        if (remote_config->error_id < connector_protocol_error_FIRST)
+                        if (is_fatal_protocol_error(remote_config->error_id))
                         {
 							connector_collection_type_t const collection_type = get_group_collection_type(rci);
                             connector_bool_t const overflow = rci_output_terminator(rci);
@@ -218,7 +219,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         }
                         break;
                     case connector_request_id_remote_config_action_end:
-                        if (remote_config->error_id < connector_protocol_error_FIRST)
+                        if (is_fatal_protocol_error(remote_config->error_id))
                         {
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
@@ -241,7 +242,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 #if (defined RCI_PARSER_USES_LIST)
 					case connector_request_id_remote_config_list_instances_set:
 					case connector_request_id_remote_config_list_instances_lock:
-						if (remote_config->error_id < connector_protocol_error_FIRST)
+						if (is_fatal_protocol_error(remote_config->error_id))
 						{
 							trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
 						}
@@ -254,7 +255,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 						}
 						break;
 					case connector_request_id_remote_config_list_instances_unlock:
-						if (remote_config->error_id < connector_protocol_error_FIRST)
+						if (is_fatal_protocol_error(remote_config->error_id))
 						{
 							decrement_list_depth(rci);
 							if (get_list_depth(rci) > 0)
@@ -271,7 +272,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 						}
 						break;
 					case connector_request_id_remote_config_list_end:
-						if (remote_config->error_id < connector_protocol_error_FIRST)
+						if (is_fatal_protocol_error(remote_config->error_id))
                         {
 							connector_collection_type_t const collection_type = get_current_list_collection_type(rci);
                             connector_bool_t const overflow = rci_output_terminator(rci);
@@ -299,7 +300,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         break;
 					case connector_request_id_remote_config_list_instance_remove:
 					case connector_request_id_remote_config_list_start:
-                        if (remote_config->error_id < connector_protocol_error_FIRST)
+                        if (is_fatal_protocol_error(remote_config->error_id))
                         {
 							if (remote_config_request == connector_request_id_remote_config_list_start)
 		                        trigger_rci_callback(rci, connector_request_id_remote_config_list_end);

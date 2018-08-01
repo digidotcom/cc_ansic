@@ -331,7 +331,7 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
 				}
 				else if (value > 0)
 				{
-					if (get_string_of_len(rci, &attribute_info->value.name.data, value, bytes) == connector_true)
+					if (get_string_of_len(rci, &attribute_info->value.name.data, value, bytes))
 					{
 						attribute_info->value.name.length = value + sizeof "";
 						connector_debug_line("decode_attribute: index = %s", attribute_info->value.name.data);
@@ -790,7 +790,7 @@ done:
 
 STATIC void handle_index_attribute(rci_t * const rci, uint32_t index, connector_bool_t is_group)
 {
-	if (is_group == connector_true)
+	if (is_group)
 	{
 		set_group_instance(rci, index);
 	}
@@ -810,7 +810,7 @@ STATIC void handle_name_attribute(rci_t * const rci, char const * const name, si
 	else
 	{
 		char * target;
-		if (is_group == connector_true)
+		if (is_group)
 		{
 			target = rci->shared.group.info.keys.key_store;
 			set_group_instance(rci, 0);
@@ -831,7 +831,7 @@ STATIC connector_bool_t get_name_attribute(rci_t * const rci, connector_bool_t i
 	const char * attribute_value;
     size_t attribute_value_len;
 
-    if (get_string(rci, &attribute_value, &attribute_value_len) == connector_true)
+    if (get_string(rci, &attribute_value, &attribute_value_len))
 	{
 #if (defined RCI_DEBUG)
     	connector_debug_line("get_name_attribute: name = %s\n", attribute_value);
@@ -925,7 +925,7 @@ STATIC void start_list(rci_t * const rci)
 }
 #endif
 
-STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_bool_t is_group) /* Can is_group be replaced with get_list_depth() == 0? */
+STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_bool_t is_group) /* TODO: Can is_group be replaced with get_list_depth() == 0? */
 {
     uint32_t attribute_id;
 
@@ -946,7 +946,7 @@ STATIC void process_collection_normal_attribute_id(rci_t * const rci, connector_
 				break;
 		}
 		
-		if (is_group == connector_true)
+		if (is_group)
 			set_rci_input_state(rci, rci_input_state_group_normal_attribute_value);
 		else
 			set_rci_input_state(rci, rci_input_state_list_normal_attribute_value);
@@ -969,7 +969,7 @@ STATIC connector_bool_t handle_array_attribute(rci_t * const rci, connector_bool
 				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_true);
 				if (rci->shared.callback_data.action == connector_remote_action_set)
 				{
-					if (is_group == connector_true)
+					if (is_group)
 					{
 						rci->shared.group.info.keys.count = attribute_value;
 					}
@@ -1008,10 +1008,10 @@ STATIC connector_bool_t handle_dictionary_attribute(rci_t * const rci, connector
 				switch (rci->shared.last_attribute_id)
 				{
 					case rci_dictionary_attribute_complete:
-						if (attribute_value == connector_true)
+						if (attribute_value)
 						{
 							SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SET_COUNT, connector_true);
-							if (is_group == connector_true)
+							if (is_group)
 							{
 								rci->shared.group.info.keys.count = 0;
 							}
@@ -1022,7 +1022,8 @@ STATIC connector_bool_t handle_dictionary_attribute(rci_t * const rci, connector
 						}
 						break;
 					case rci_dictionary_attribute_remove:
-						SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, attribute_value);
+						if (attribute_value)
+							SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_true);
 						break;
 				}
 			}
@@ -1037,7 +1038,7 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 {
 	connector_bool_t got_attribute = connector_false;
 
-	connector_collection_type_t collection_type = is_group == connector_true ? get_group_collection_type(rci) : get_current_list_collection_type(rci);
+	connector_collection_type_t collection_type = is_group  ? get_group_collection_type(rci) : get_current_list_collection_type(rci);
 
 	switch (collection_type)
 	{
@@ -1055,7 +1056,7 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 			break;
 	}
 
-	if (got_attribute == connector_true)
+	if (got_attribute)
 	{
 		rci->shared.attributes_processed++;
 
@@ -1063,7 +1064,7 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 		{
 			set_rci_input_state(rci, rci_input_state_field_id);
 	
-			if (is_group == connector_true)
+			if (is_group)
 			{
 				start_group(rci);
 			}
@@ -1077,13 +1078,11 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 				start_list(rci);
 			}	
 		}
-		else if (is_group == connector_true)
-		{
-			set_rci_input_state(rci, rci_input_state_group_normal_attribute_id);
-		}
 		else
 		{
-			set_rci_input_state(rci, rci_input_state_list_normal_attribute_id);
+			rci_input_state_t const input_state = is_group ? rci_input_state_group_normal_attribute_id : rci_input_state_list_normal_attribute_id;
+
+			set_rci_input_state(rci, input_state);
 		}
 	}
 }
