@@ -1022,10 +1022,9 @@ STATIC connector_bool_t handle_dictionary_attribute(rci_t * const rci, connector
 						}
 						break;
 					case rci_dictionary_attribute_remove:
+						ASSERT(!RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE));
 						if (attribute_value)
 							SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_true);
-						else
-							SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_false);
 						break;
 				}
 			}
