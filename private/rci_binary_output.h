@@ -27,7 +27,7 @@ STATIC connector_bool_t should_output_name(rci_t * const rci)
 	if (type == connector_collection_type_variable_dictionary || type == connector_collection_type_fixed_dictionary)
 	{
 		char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
-		return connector_bool(name != NULL && name[0] != '\0')
+		return connector_bool(name != NULL && name[0] != '\0');
 	}
 	else
 	{
