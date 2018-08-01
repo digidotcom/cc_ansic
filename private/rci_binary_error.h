@@ -268,7 +268,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 							SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_COLLECTION, connector_false);
 							set_rci_error_state(rci, rci_error_state_id);
                             remote_config->error_id = 0;
-                            state_call(rci, rci_parser_state_output);
+                            state_call(rci, rci_parser_state_traverse);
 						}
 						break;
 					case connector_request_id_remote_config_list_end:
