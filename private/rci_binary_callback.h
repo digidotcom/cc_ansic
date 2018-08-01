@@ -538,8 +538,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
 	(request) == connector_request_id_remote_config_group_end)
 #define should_run_end_callback(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_COLLECTION) == connector_false && \
 	RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_CLOSE) == connector_false)
-#define is_valid_callback(rci, request)		((is_end_callback(request) && should_run_end_callback(rci)) || (is_unlock_callback(request)))
-#define should_run_callback(remote_config, rci, request)	((remote_config)->list.depth < (rci)->output.skip_depth || is_valid_callback(rci, request))
+#define is_valid_callback(rci, request)		((should_run_end_callback(rci) && is_end_callback(request)) || is_unlock_callback(request))
+#define should_run_callback(remote_config, rci, request)	((remote_config)->list.depth < (rci)->output.skip_depth || \
+	((remote_config)->list.depth == (rci)->output.skip_depth && is_valid_callback(rci, request)))
 
 		if (error != connector_success)
 		{
