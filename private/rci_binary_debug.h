@@ -39,9 +39,12 @@ static char const * rci_input_state_t_as_string(rci_input_state_t const value)
         enum_to_case(rci_input_state_group_id);
         enum_to_case(rci_input_state_group_attribute);
         enum_to_case(rci_input_state_field_id);
+		enum_to_case(rci_input_state_group_normal_attribute_id);
+		enum_to_case(rci_input_state_group_normal_attribute_value);
 #if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(rci_input_state_list_normal_attribute_id);
+		enum_to_case(rci_input_state_list_normal_attribute_value);
 		enum_to_case(rci_input_state_list_attribute);
-		enum_to_case(rci_input_state_list_attribute_and_field_type);
 #endif
         enum_to_case(rci_input_state_field_type);
         enum_to_case(rci_input_state_field_no_value);
@@ -64,10 +67,18 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
         enum_to_case(rci_output_state_command_normal_attribute_id);
         enum_to_case(rci_output_state_command_normal_attribute_value);
         enum_to_case(rci_output_state_group_id);
-        enum_to_case(rci_output_state_group_attribute);
+        enum_to_case(rci_output_state_collection_attribute);
+		enum_to_case(rci_output_state_collection_count_id);
+		enum_to_case(rci_output_state_collection_count_value);
+		enum_to_case(rci_output_state_collection_specifier_id);
+		enum_to_case(rci_output_state_collection_specifier_value);
+		enum_to_case(rci_output_state_collection_name_string);
+		enum_to_case(rci_output_state_complete_attribute_id);
+		enum_to_case(rci_output_state_complete_attribute_value);
+		enum_to_case(rci_output_state_remove_attribute_id);
+		enum_to_case(rci_output_state_remove_attribute_value);
 #if (defined RCI_PARSER_USES_LIST)
 		enum_to_case(rci_output_state_list_id);
-		enum_to_case(rci_output_state_list_attribute);
 #endif
         enum_to_case(rci_output_state_field_id);
         enum_to_case(rci_output_state_field_value);
@@ -92,14 +103,18 @@ static char const * rci_traverse_state_t_as_string(rci_traverse_state_t const va
         enum_to_case(rci_traverse_state_group_id);
         enum_to_case(rci_traverse_state_element_id);
         enum_to_case(rci_traverse_state_element_end);
-        enum_to_case(rci_traverse_state_group_end);
         enum_to_case(rci_traverse_state_all_groups);
+		enum_to_case(rci_traverse_state_group_count);
         enum_to_case(rci_traverse_state_all_group_instances);
 #if (defined RCI_PARSER_USES_LIST)
+		enum_to_case(rci_traverse_state_list_count);
 		enum_to_case(rci_traverse_state_all_list_instances);
 		enum_to_case(rci_traverse_state_list_id);
+		enum_to_case(rci_traverse_state_list_instances_done);
 #endif
         enum_to_case(rci_traverse_state_all_elements);
+		enum_to_case(rci_traverse_state_elements_done);
+        enum_to_case(rci_traverse_state_group_end);
 #if (defined RCI_LEGACY_COMMANDS)
         enum_to_case(rci_traverse_state_command_do_command);
         enum_to_case(rci_traverse_state_command_reboot);

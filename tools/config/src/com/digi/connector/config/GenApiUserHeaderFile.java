@@ -23,10 +23,13 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
     	Map<String, Integer> result = new LinkedHashMap<>();
     	
         result.put(prefix + "_NONE", result.size());
-        for (String key: config.getRciGlobalErrors().keySet()) {
+        for (String key: config.getGlobalFatalProtocolErrors().keySet()) {
             result.put(prefix + "_" + key.toUpperCase(), result.size());
         }
-        for (String key: config.getUserGlobalErrors().keySet()) {
+        for (String key: config.getGlobalProtocolErrors().keySet()) {
+            result.put(prefix + "_" + key.toUpperCase(), result.size());
+        }
+        for (String key: config.getGlobalUserErrors().keySet()) {
             result.put(prefix + "_" + key.toUpperCase(), result.size());
         }
         for (String key: keys) {

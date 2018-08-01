@@ -3,7 +3,7 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public abstract class GenHeaderFile extends GenFile{
+public abstract class GenHeaderFile extends GenFile {
 
     protected final static String CONNECTOR_PREFIX = "connector";
     protected final static String CCAPI_PREFIX = "ccapi";
@@ -11,12 +11,7 @@ public abstract class GenHeaderFile extends GenFile{
     protected final static String DEFINE = "#define ";
     protected final static String INCLUDE = "#include ";
 
-    protected final static String FLOAT_HEADER = "\"float.h\"\n";
-
     protected final static String TYPEDEF_ENUM = "typedef enum {\n";
-
-    protected final static String GLOBAL_RCI_ERROR = "connector_rci_error";
-    protected final static String GLOBAL_ERROR = "connector_global_error";
 
     protected final static String CONNECTOR_REMOTE_ALL_STRING = "connector_remote_all_strings";
     protected final static String CONNECTOR_REMOTE_GROUP_TABLE = "connector_group_table";
@@ -33,10 +28,6 @@ public abstract class GenHeaderFile extends GenFile{
     protected final static String CCAPI_CB_PARAMETERS = "ccapi_rci_info_t * const info";
     protected final static String RCI_FUNCTION_T = "(ccapi_rci_function_t)";
     protected final static String CCAPI_RCI_FUNCTION_T = "(ccapi_rci_function_t)";
-
-    protected final static String RCI_PARSER_USES_ERROR_DESCRIPTIONS = RCI_PARSER_USES + "ERROR_DESCRIPTIONS\n";
-    protected final static String RCI_PARSER_USES_STRINGS = RCI_PARSER_USES + "STRINGS\n";
-    protected final static String RCI_PARSER_USES_UNSIGNED_INTEGER = RCI_PARSER_USES + "UNSIGNED_INTEGER\n";
 
     protected final static String RCI_PARSER_DATA = "CONNECTOR_RCI_PARSER_INTERNAL_DATA";
 

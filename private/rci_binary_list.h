@@ -35,9 +35,60 @@
 #define set_current_list_id(rci, value)		(CURRENT_LIST_ID_VARIABLE(rci) = (value))
 #define invalidate_current_list_id(rci)		(set_current_list_id(rci, INVALID_ID))
 
-#define CURRENT_LIST_INDEX_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).index)
-#define get_current_list_index(rci)				(CURRENT_LIST_INDEX_VARIABLE(rci))
-#define have_current_list_index(rci)			(get_current_list_index(rci) != INVALID_INDEX)
-#define increment_current_list_index(rci)		(CURRENT_LIST_INDEX_VARIABLE(rci)++)
-#define set_current_list_index(rci, value)		(CURRENT_LIST_INDEX_VARIABLE(rci) = (value))
-#define invalidate_current_list_index(rci)		(set_current_list_index(rci, INVALID_INDEX))
+#define CURRENT_LIST_LOCK_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).lock)
+#define get_current_list_lock(rci)			(CURRENT_LIST_LOCK_VARIABLE(rci))
+#define have_current_list_lock(rci)			(get_current_list_lock(rci) != INVALID_ID)
+#define set_current_list_lock(rci, value)	(CURRENT_LIST_LOCK_VARIABLE(rci) = (value))
+#define invalidate_current_list_lock(rci)	(set_current_list_lock(rci, INVALID_ID))
+
+#define invalidate_list_lock(rci, index)	((rci)->shared.list.level[(index)].lock = INVALID_ID)
+
+#define CURRENT_LIST_COUNT_VARIABLE(rci)	(CURRENT_LIST_VARIABLE(rci).info.keys.count)
+#define get_current_list_count(rci)			(CURRENT_LIST_COUNT_VARIABLE(rci))
+#define set_current_list_count(rci, value)	(CURRENT_LIST_COUNT_VARIABLE(rci) = (value))
+
+#define CURRENT_LIST_INSTANCE_VARIABLE(rci)		(CURRENT_LIST_VARIABLE(rci).info.instance)
+#define get_current_list_instance(rci)			(CURRENT_LIST_INSTANCE_VARIABLE(rci))
+#define have_current_list_instance(rci)			(get_current_list_instance(rci) != INVALID_INDEX)
+#define increment_current_list_instance(rci)	(CURRENT_LIST_INSTANCE_VARIABLE(rci)++)
+#define set_current_list_instance(rci, value)	(CURRENT_LIST_INSTANCE_VARIABLE(rci) = (value))
+#define invalidate_current_list_instance(rci)	(set_current_list_instance(rci, INVALID_INDEX))
+
+#define set_current_list_key_list(rci, value)	(CURRENT_LIST_VARIABLE(rci).info.keys.list = (value))
+
+#define get_current_list_name(rci)			(get_current_list_instance(rci) == 0 ? \
+											 CURRENT_LIST_VARIABLE(rci).info.keys.key_store : \
+											 CURRENT_LIST_VARIABLE(rci).info.keys.list[get_current_list_instance(rci) - 1])
+
+#define get_current_list_collection_type(rci) (get_current_collection_info((rci))->collection_type)
+
+
+static connector_collection_t const * get_current_collection_info(rci_t const * const rci)
+{
+	ASSERT(have_group_id(rci));
+	{
+		connector_group_t const * const group = get_current_group(rci);
+		connector_collection_t const * info =  &group->collection;
+
+#if (defined RCI_PARSER_USES_LIST)
+		{
+			int i;
+			for (i = 0; i < get_list_depth(rci); i++)
+			{
+				connector_item_t const * list = info->item.data + rci->shared.list.level[i].id;
+				ASSERT(list->type == connector_element_type_list);
+				info = list->data.collection;
+			}
+		}
+#endif
+
+		return info;
+	}
+}
+
+static connector_bool_t current_list_is_dynamic(rci_t const * const rci)
+{
+	connector_collection_type_t collection_type = get_current_list_collection_type(rci);
+
+	return (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
+}

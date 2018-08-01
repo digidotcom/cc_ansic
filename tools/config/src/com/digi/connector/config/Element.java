@@ -157,6 +157,7 @@ public class Element extends Item {
         max = theMax;
     }
 
+
     private boolean containsValue(final String needle) {
     	for (Value value: values) {
     		if (value.getName().equals(needle)) {
@@ -177,7 +178,7 @@ public class Element extends Item {
             throw new Exception("Duplicate <value>: " + valueName);
       
         Value value = new Value(valueName, description, helpDescription);
-        config.nameLength(UseNames.VALUES, valueName.length());
+        config.nameLengthSeen(UseNames.VALUES, valueName.length());
 
         values.add(value);
     }

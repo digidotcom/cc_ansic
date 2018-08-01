@@ -2,7 +2,7 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 
-public abstract class GenSourceFile extends GenFile{
+public abstract class GenSourceFile extends GenFile {
     protected final static String HEADER_FILENAME = "connector_api_remote.h";
 
     protected final static String CCAPI_PREFIX = "ccapi";
@@ -14,9 +14,6 @@ public abstract class GenSourceFile extends GenFile{
     protected final static String CONNECTOR_GLOBAL_HEADER = "\n\n#include \"connector_api.h\"\n\n";
 
     protected final static String TYPEDEF_ENUM = "typedef enum {\n";
-
-    protected final static String GLOBAL_RCI_ERROR = "connector_rci_error";
-    protected final static String GLOBAL_ERROR = "connector_global_error";
 
     protected final static String CONNECTOR_REMOTE_ALL_STRING = "connector_remote_all_strings";
     protected final static String CONNECTOR_REMOTE_GROUP_TABLE = "connector_group_table";
@@ -89,15 +86,6 @@ public abstract class GenSourceFile extends GenFile{
     protected String generatedFile = "";
 
     protected String configType;
-
-    protected final static String CONNECTOR_REMOTE_CONFIG_DATA = "typedef struct connector_remote_config_data {\n" +
-    "    struct connector_remote_group_table const * group_table;\n" +
-    "    char const * const * error_table;\n" +
-    "    unsigned int global_error_count;\n" +
-    "    uint32_t firmware_target_zero_version;\n" +
-    "    uint32_t vendor_id;\n" +
-    "    char const * device_type;\n" +
-    "} connector_remote_config_data_t;\n";
 
     public GenSourceFile(String file, GenFile.Type type, GenFile.UsePrefix use) throws IOException {
     	super(file, type, use);

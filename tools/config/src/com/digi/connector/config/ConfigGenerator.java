@@ -77,6 +77,7 @@ public class ConfigGenerator {
     private final static String NO_BACKUP_OPTION = "noBackup";
     private final static String RCI_PARSER_OPTION = "rci_parser";
     private final static String OVERRIDE_MAX_NAME_LENGTH = "maxNameLength";
+    private final static String OVERRIDE_MAX_KEY_LENGTH = "maxKeyLength";
     private final static String FILE_TYPE_OPTION = "type";
 
     private final static String URL_OPTION = "url";
@@ -119,6 +120,8 @@ public class ConfigGenerator {
     private boolean useBinIdLog;
     private boolean rci_legacy;
     private int rci_dc_attribute_max_len = 0;
+    private int rci_dc_max_key_len = 32;
+    private int rci_dc_max_name_len = 40;
     private boolean noBackup;
     private boolean rciParser;
 
@@ -164,6 +167,9 @@ public class ConfigGenerator {
                 +"] ["
                 + DASH
                 + OVERRIDE_MAX_NAME_LENGTH
+                +"] ["
+                + DASH
+                + OVERRIDE_MAX_KEY_LENGTH
                 +"] "
                 + String.format("<\"%s\"[:\"%s\"]> <%s> <%s> <%s>\n", USERNAME,
                         PASSWORD, DEVICE_TYPE, FIRMWARE_VERSION,
@@ -279,6 +285,10 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= optional behavior, defining the max length of element names.",
                         DASH + OVERRIDE_MAX_NAME_LENGTH + "=<integer>"));
+        log(String
+                .format(
+                        "\t%-16s \t= optional behavior, defining the max length of key names.",
+                        DASH + OVERRIDE_MAX_KEY_LENGTH + "=<integer>"));
 
         System.exit(1);
     }
@@ -368,19 +378,23 @@ public class ConfigGenerator {
                     try {
                         rci_dc_attribute_max_len = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
-                        throw new IOException("-rci_dc_attribute_max_len expect an integer value");
+                        throw new IOException("-rci_dc_attribute_max_len expected an integer value");
                     }
                 } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
                     try{
-                        Parser.setMaxNameLength(Integer.parseInt(keys[1]));
+                    	rci_dc_max_name_len = Integer.parseInt(keys[1]);
                     } catch (NumberFormatException e) {
                         throw new IOException("-maxNameLength expected an integer value");
                     }
-                }
-                else {
+                } else if (keys[0].equals(OVERRIDE_MAX_KEY_LENGTH)) {
+	                try{
+	                	rci_dc_max_key_len = Integer.parseInt(keys[1]);
+	                } catch (NumberFormatException e) {
+	                    throw new IOException("-maxKeyLength expected an integer value");
+	                }
+	            } else {
                     throw new Exception("Invalid Option: " + keys[0]);
                 }
-
             } else if (option.equals(NO_DESC_OPTION)) {
                 noErrorDescription = true;
             } else if (option.equals(VERBOSE_OPTION)) {
@@ -529,6 +543,14 @@ public class ConfigGenerator {
         }
     }
 
+    public String getVendorId() {
+    	return vendorId;
+    }
+    
+    public String getDeviceType() {
+    	return deviceType;
+    }
+    
     public long getFirmware() {
         return fwVersion;
     }
@@ -644,6 +666,9 @@ public class ConfigGenerator {
         if (rci_dc_attribute_max_len != 0)
             config.setAttributeMaxLen(rci_dc_attribute_max_len);
 
+        config.setMaxKeyLength(rci_dc_max_key_len);
+        config.setMaxNameLength(rci_dc_max_name_len);
+
         if (fileTypeOption() != FileType.GLOBAL_HEADER) {
             Parser.processFile(filename);
             
@@ -701,6 +726,10 @@ public class ConfigGenerator {
             debug_log("Start Generating/uploading descriptors");
 
         	Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
+        	// If the user requested the vendorID from Device Cloud, store it for future use. 
+        	if (vendorId == null) {
+        		vendorId = Descriptors.vendorId();
+        	}
 			descriptors.processDescriptors();
         }
         
@@ -723,12 +752,11 @@ public class ConfigGenerator {
 	        if (e.getMessage() != null) {
 	            instance.log(e.getMessage());
 	        }
+
+	        if (e.getCause() != null)
+                System.err.println(e.getCause());
 	        
-	        if (instance.verboseOption) {
-	            e.printStackTrace();
-	            if (e.getCause() != null)
-	                System.err.println(e.getMessage());
-	        }
+            e.printStackTrace();
 	        System.exit(1);
 	    }
     }

@@ -35,6 +35,10 @@ public abstract class GenFile {
         " */"
         );
 
+    protected final static String GLOBAL_FATAL_PROTOCOL_ERROR = "connector_fatal_protocol_error";
+    protected final static String GLOBAL_PROTOCOL_ERROR = "connector_protocol_error";
+    protected final static String GLOBAL_ERROR = "connector_global_error";
+
     private Type type;
     private BufferedWriter writer;
 
@@ -97,6 +101,11 @@ public abstract class GenFile {
 
     public final void writeBlock(Iterable<? extends String> lines) throws IOException {
     	writeLines(lines);
+    	writer.newLine();
+    }
+
+    public final void writeBlock(String line) throws IOException {
+    	writeLine(line);
     	writer.newLine();
     }
 

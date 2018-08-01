@@ -3,6 +3,7 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
+import java.util.LinkedHashSet;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -16,7 +17,6 @@ public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
     
-    private static int MAX_NAME_LENGTH = 40;
     private static TokenScanner tokenScanner;
     private static String token;
     private static int groupLineNumber;
@@ -26,10 +26,6 @@ public class Parser {
     private final static ConfigData config = ConfigData.getInstance();
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
 
-    public static void setMaxNameLength(int max_name) {
-        MAX_NAME_LENGTH = max_name;
-    }
-    
     public static void processFile(String fileName) throws IOException, NullPointerException {
 
         try {
@@ -42,7 +38,7 @@ public class Parser {
                 token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("globalerror")) {
-                    config.addUserGroupError(getName(), getErrorDescription());
+                    config.addUserGlobalError(getName(), getErrorDescription());
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>
@@ -66,29 +62,48 @@ public class Parser {
                     groupLineNumber = tokenScanner.getLineNumber();
 
                     /* parse instances */
-                    int groupInstances = 1;
-
+                    Integer groupInstances;
                     if (tokenScanner.hasTokenInt()) {
                         groupInstances = tokenScanner.getTokenInt();
-                    }
-                    else if (tokenScanner.hasToken("\\(.*")){
+                    } else if (tokenScanner.hasToken("\\(.*")){
                         groupInstances = getMathExpression();
+                    } else {
+                    	groupInstances = null;
                     }
 
-                    Group theGroup = new Group(nameStr, groupInstances, getDescription(), getHelpDescription());
-                    config.nameLength(UseNames.COLLECTIONS, nameStr.length());
+                    Group theGroup = new Group(nameStr, getDescription(), getHelpDescription());
+                    config.nameLengthSeen(UseNames.COLLECTIONS, nameStr.length());
                     
+                    if (groupInstances != null) {
+                    	theGroup.setInstances(groupInstances);
+                    }
+
                     String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only"; 
                     while (tokenScanner.hasToken()) {
                         token = tokenScanner.getToken();
 
-                        if (token.equalsIgnoreCase("element")) {
+                        if (token.equalsIgnoreCase("capacity")) {
+                        	token = tokenScanner.getToken();
+                        	if (token.equalsIgnoreCase("fixed")) {
+                        		theGroup.setCapacity(ItemList.Capacity.FIXED);
+                        	} else if (token.equalsIgnoreCase("variable")) {
+                        		theGroup.setCapacity(ItemList.Capacity.VARIABLE);
+                        	} else {
+                                throw new Exception("Error in <group>: Invalid capacity type of " + token );
+                            }
+                        } else if (token.equalsIgnoreCase("keys")) {
+                        	token = tokenScanner.getToken();
+                        	if (token.equals("{}")) {
+                        		theGroup.setKeys(new LinkedHashSet<String>());
+                        	} else {
+                                throw new Exception("Error in <group>: Key parser is unimplemented");
+                        	}
+                        } else if (token.equalsIgnoreCase("element")) {
                             Element element = processElement(group_access, config);
 
                             try {
                                 element.validate();
-                            }
-                            catch (Exception e){
+                            } catch (Exception e) {
                                 throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
                             }
 
@@ -98,8 +113,7 @@ public class Parser {
 
                             try {
                                 list.validate();
-                            }
-                            catch (Exception e){
+                            } catch (Exception e) {
                                 throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
                             }
                             
@@ -116,8 +130,7 @@ public class Parser {
 
                     try {
                         theGroup.validate();
-                    }
-                    catch(Exception e){
+                    } catch(Exception e) {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
                     }
 
@@ -147,7 +160,7 @@ public class Parser {
             lineNumber = groupLineNumber;
         else if (str.indexOf("<element>") != -1)
             lineNumber = elementLineNumber;
-        else if (str.indexOf("<list>") != -1)
+        else if ((str.indexOf("<list>") != -1) && !listLineNumber.isEmpty())
             lineNumber = listLineNumber.pop();
         else
             lineNumber = tokenScanner.getLineNumber();
@@ -162,8 +175,8 @@ public class Parser {
             throw new Exception("Missing name!");
         }
         
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new Exception("The name > the maximum length limited " + MAX_NAME_LENGTH);
+        if (name.length() > config.getMaxNameLength()) {
+            throw new Exception("The name > the maximum length limited " + config.getMaxNameLength());
         }
         
         /* Only allow alphanumeric, hyphen, and underscore */
@@ -182,8 +195,8 @@ public class Parser {
             throw new Exception("Missing name!");
         }
         
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new Exception("The name is larger than the maximum length of " + MAX_NAME_LENGTH);
+        if (name.length() > config.getMaxNameLength()) {
+            throw new Exception("The name is larger than the maximum length of " + config.getMaxNameLength());
         }
         
         // Relaxed slightly for values in that we allow digits in the first position (but we really shouldn't -ASK)
@@ -323,7 +336,7 @@ public class Parser {
         elementLineNumber = tokenScanner.getLineNumber();
 
         Element element = new Element(name, getDescription(), getHelpDescription());
-        config.nameLength(UseNames.ELEMENTS, name.length());
+        config.nameLengthSeen(UseNames.ELEMENTS, name.length());
 
         try {
             while (tokenScanner.hasToken()) {
@@ -373,29 +386,48 @@ public class Parser {
 		String name = getName();
 		listLineNumber.push(tokenScanner.getLineNumber());
 		
-		 /* parse instances */
-		int instances;
-		if (tokenScanner.hasTokenInt()) {
-			instances = tokenScanner.getTokenInt();
-		} else if (tokenScanner.hasToken("\\(.*")){
-			instances = getMathExpression();
-		} else {
-			instances = 1;
-		}
+        Integer instances;
+        if (tokenScanner.hasTokenInt()) {
+        	instances = tokenScanner.getTokenInt();
+        } else if (tokenScanner.hasToken("\\(.*")){
+        	instances = getMathExpression();
+        } else {
+        	instances = null;
+        }
 
 		depth += 1;
 		config.listDepth(depth);
 
-		ItemList list = new ItemList(name, instances, getDescription(), getHelpDescription());
-        config.nameLength(UseNames.COLLECTIONS, name.length());
-        
+		ItemList list = new ItemList(name, getDescription(), getHelpDescription());
+        config.nameLengthSeen(UseNames.COLLECTIONS, name.length());
+
+        if (instances != null) {
+        	list.setInstances(instances);
+        }
+
 		try {
 			String list_access = default_access;
 			
 		    while (tokenScanner.hasToken()) {
 		        token = tokenScanner.getToken();
 		
-		        if (token.equalsIgnoreCase("access")) {
+                if (token.equalsIgnoreCase("capacity")) {
+                	token = tokenScanner.getToken();
+                	if (token.equalsIgnoreCase("fixed")) {
+                		list.setCapacity(ItemList.Capacity.FIXED);
+                	} else if (token.equalsIgnoreCase("variable")) {
+                		list.setCapacity(ItemList.Capacity.VARIABLE);
+                	} else {
+                        throw new Exception("Error in <group>: Invalid capacity type of " + token );
+                    }
+                } else if (token.equalsIgnoreCase("keys")) {
+                	token = tokenScanner.getToken();
+                	if (token.equals("{}")) {
+                		list.setKeys(new LinkedHashSet<String>());
+                	} else {
+                        throw new Exception("Error in <group>: Key parser is unimplemented");
+                	}
+                } else if (token.equalsIgnoreCase("access")) {
 		        	list_access = getAccess();
 		            list.setAccess(list_access);
 		        } else if (token.equalsIgnoreCase("element")) {
@@ -415,7 +447,12 @@ public class Parser {
 		    if (list.getAccess() == null) {
 		    	list.setAccess(list_access);
 		    }
-		
+		    
+            try {
+                list.validate();
+            } catch(Exception e) {
+                throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
+            }
 		} catch (IOException e) {
 		    throw new IOException(e.toString());
 		}

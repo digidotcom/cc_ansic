@@ -24,6 +24,7 @@
 #define BINARY_RCI_ATTRIBUTE_TYPE_NORMAL 0x00
 #define BINARY_RCI_ATTRIBUTE_TYPE_INDEX  0x20
 #define BINARY_RCI_ATTRIBUTE_TYPE_NAME   0x40
+#define BINARY_RCI_ATTRIBUTE_TYPE_COUNT  0x60
 
 #define BINARY_RCI_NO_VALUE        UINT32_C(0xE0)
 #define BINARY_RCI_TERMINATOR      UINT32_C(0xE1)
@@ -71,7 +72,8 @@ enum {
 #define RCI_NO_HINT             NULL
 #define INVALID_ID              UINT_MAX
 #define INVALID_INDEX           UINT_MAX
-#define INVALID_COUNT           ((size_t)-1)
+#define INVALID_COUNT           SIZE_MAX
+#define INVALID_DEPTH			UINT_MAX
 
 #define ROUND_UP(value, interval)   ((value) + -(value) % (interval))
 
@@ -208,7 +210,6 @@ typedef enum
     rci_parser_state_error
 } rci_parser_state_t;
 
-
 typedef enum
 {
     rci_input_state_command_id,
@@ -217,10 +218,13 @@ typedef enum
     rci_input_state_command_normal_attribute_value,
     rci_input_state_group_id,
     rci_input_state_group_attribute,
+	rci_input_state_group_normal_attribute_id,
+	rci_input_state_group_normal_attribute_value,
     rci_input_state_field_id,
 #if (defined RCI_PARSER_USES_LIST)
 	rci_input_state_list_attribute,
-	rci_input_state_list_attribute_and_field_type,
+	rci_input_state_list_normal_attribute_id,
+	rci_input_state_list_normal_attribute_value,
 #endif
     rci_input_state_field_type,
     rci_input_state_field_no_value,
@@ -238,10 +242,18 @@ typedef enum
     rci_output_state_command_normal_attribute_id,
     rci_output_state_command_normal_attribute_value,
     rci_output_state_group_id,
-    rci_output_state_group_attribute,
+    rci_output_state_collection_attribute,
+	rci_output_state_collection_count_id,
+	rci_output_state_collection_count_value,
+	rci_output_state_collection_specifier_id,
+	rci_output_state_collection_specifier_value,
+	rci_output_state_collection_name_string,
+	rci_output_state_complete_attribute_id,
+	rci_output_state_complete_attribute_value,
+	rci_output_state_remove_attribute_id,
+	rci_output_state_remove_attribute_value,
 #if (defined RCI_PARSER_USES_LIST)
 	rci_output_state_list_id,
-	rci_output_state_list_attribute,
 #endif
     rci_output_state_field_id,
     rci_output_state_field_value,
@@ -258,13 +270,17 @@ typedef enum
 {
     rci_traverse_state_none,
     rci_traverse_state_command_id,
+	rci_traverse_state_group_count,
     rci_traverse_state_group_id,
 #if (defined RCI_PARSER_USES_LIST)
+	rci_traverse_state_list_count,
 	rci_traverse_state_list_id,
 	rci_traverse_state_all_list_instances,
+	rci_traverse_state_list_instances_done,
 #endif
     rci_traverse_state_element_id,
     rci_traverse_state_element_end,
+	rci_traverse_state_elements_done,
     rci_traverse_state_group_end,
     rci_traverse_state_all_groups,
     rci_traverse_state_all_group_instances,
@@ -284,6 +300,20 @@ typedef enum
     rci_error_state_callback
 } rci_error_state_t;
 
+typedef enum
+{
+	rci_dictionary_attribute_name,
+	rci_dictionary_attribute_complete,
+	rci_dictionary_attribute_remove
+} rci_dictionary_attribute_t;
+
+typedef enum
+{
+	rci_array_attribute_index,
+	rci_array_attribute_count,
+	rci_array_attribute_shrink
+} rci_array_attribute_t;
+
 typedef struct
 {
     uint8_t * data;
@@ -295,6 +325,29 @@ typedef struct
     rcistr_t name;
     rcistr_t value;
 } rci_attribute_t;
+
+typedef struct
+{
+	unsigned int instance;
+	struct {
+		unsigned int count;
+		char key_store[RCI_DICT_MAX_KEY_LENGTH + 1];
+		char const * const * list;
+	} keys;
+} rci_collection_info_t;
+
+typedef struct
+{
+	unsigned int type;
+	union {
+		unsigned int index;
+		struct {
+			char const * data;
+			size_t length;
+		} name;
+		unsigned int count;
+	} value;
+} rci_attribute_info_t;
 
 typedef struct rci
 {
@@ -316,15 +369,12 @@ typedef struct rci
 
     struct {
         rci_command_t command_id;
-        unsigned int attribute_count;
-        unsigned int attributes_processed;
 
 #if (defined RCI_LEGACY_COMMANDS)
 #define MAX_ATTRIBUTES MAX_VALUE((unsigned int)rci_query_setting_attribute_id_count, (unsigned int)rci_do_command_attribute_id_count)
 #else
 #define MAX_ATTRIBUTES rci_query_setting_attribute_id_count
 #endif
-
         struct 
         {
             rci_command_attribute_t id;
@@ -364,10 +414,7 @@ typedef struct rci
     struct {
         rcistr_t content;
         rci_output_state_t state;
-        connector_bool_t group_skip;
-#if (defined RCI_PARSER_USES_LIST)
 		unsigned int skip_depth;
-#endif
         connector_bool_t element_skip;
     } output;
 
@@ -379,11 +426,16 @@ typedef struct rci
 
     struct {
         rcistr_t content;
-		uint8_t flag;
+		uint16_t flag;
+
+		uint32_t last_attribute_id;
+		uint8_t attribute_count;
+		uint8_t attributes_processed;
 
         struct {
             unsigned int id;
-            unsigned int index;
+			unsigned int lock;
+			rci_collection_info_t info;
         } group;
 
 #if (defined RCI_PARSER_USES_LIST)
@@ -391,7 +443,8 @@ typedef struct rci
             unsigned int depth;
             struct {
                 unsigned int id;
-                unsigned int index;
+				unsigned int lock;
+				rci_collection_info_t info;
             } level[RCI_LIST_MAX_DEPTH];
 			unsigned int query_depth;
         } list;
@@ -411,14 +464,32 @@ typedef struct rci
 #define RCI_SHARED_FLAG_ALL_GROUPS 				(1 << 0)
 #define RCI_SHARED_FLAG_ALL_GROUP_INSTANCES		(1 << 1)
 #define RCI_SHARED_FLAG_ALL_LIST_INSTANCES		(1 << 2)
+#define RCI_SHARED_FLAG_TYPE_EXPECTED			(1 << 3)
+#define RCI_SHARED_FLAG_OUTPUT_COUNT			(1 << 4)
+#define RCI_SHARED_FLAG_REMOVE					(1 << 5)
+#define RCI_SHARED_FLAG_DONT_SHRINK				(1 << 6)
+#define RCI_SHARED_FLAG_SET_COUNT				(1 << 7)
+#define RCI_SHARED_FLAG_ALL_ELEMENTS			(1 << 8)
+#define RCI_SHARED_FLAG_SKIP_INPUT				(1 << 9)
+#define RCI_SHARED_FLAG_SKIP_COLLECTION			(1 << 10) /* skip_depth refers to the level at which lock/unlock operations failed instead of start/end operations */
+#define RCI_SHARED_FLAG_FIRST_ELEMENT			(1 << 11)
+#define RCI_SHARED_FLAG_SKIP_CLOSE				(1 << 12) 
+#define RCI_SHARED_FLAG_RESTORE_DEPTH			(1 << 13) /* Function did something to list_depth that needs to be undone the next time the function is called */
 
 #define RCI_SHARED_FLAG_VARIABLE(rci)			((rci)->shared.flag)
 #define RCI_SHARED_FLAG_IS_SET(rci, flag)		((RCI_SHARED_FLAG_VARIABLE(rci) & (flag)) != 0 ? connector_true : connector_false)
 #define SET_RCI_SHARED_FLAG(rci, flag, state)	((state) == connector_true ? (RCI_SHARED_FLAG_VARIABLE(rci) |= (flag)) : (RCI_SHARED_FLAG_VARIABLE(rci) &= ~(flag)))
 
 #define should_traverse_all_groups(rci)				(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUPS))
-#define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES))
-#define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES))
+#define should_traverse_all_group_instances(rci)	(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | RCI_SHARED_FLAG_ALL_GROUPS))
+#define should_traverse_all_list_instances(rci)		(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_LIST_INSTANCES | RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | \
+													 RCI_SHARED_FLAG_ALL_GROUPS))
+#define should_traverse_all_elements(rci)			(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_ALL_ELEMENTS | RCI_SHARED_FLAG_ALL_LIST_INSTANCES | \
+													 RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | RCI_SHARED_FLAG_ALL_GROUPS))
+#define should_output_count(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
+#define should_set_count(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SET_COUNT))
+#define should_remove_instance(rci)					(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE) && get_list_depth(rci) == get_query_depth(rci))
+#define should_skip_input(rci)						(RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_INPUT))
 
 #define set_should_traverse_all_groups(rci, state)				(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))
 #define set_should_traverse_all_group_instances(rci, state)		(SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUP_INSTANCES, state))

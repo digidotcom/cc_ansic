@@ -27,17 +27,17 @@ public class Group extends ItemList {
 
     private final LinkedHashMap<String, String> errorMap;
 
-    public Group(String name, int count, String description,
+    public Group(String name, String description,
             String helpDescription) throws Exception {
-        super(name, count, description, helpDescription);
+        super(name, description, helpDescription);
 
         errorMap = new LinkedHashMap<String, String>();
     }
 
     public String toString(int id) {
-        return String.format(
+        return collectionXmlAttributes(String.format(
             "<descriptor element=\"%s\" desc=\"%s\" bin_id=\"%d\">",
-             name, Descriptors.encodeEntities(toRciDescription()), id);
+            name, Descriptors.encodeEntities(toRciDescription()), id));
     }
 
     public LinkedHashMap<String, String> getErrors() {

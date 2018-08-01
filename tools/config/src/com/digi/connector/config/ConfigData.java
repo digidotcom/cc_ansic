@@ -3,7 +3,6 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -19,34 +18,30 @@ public class ConfigData {
         groupList.put(Group.Type.SETTING, new LinkedList<Group>());
         groupList.put(Group.Type.STATE, new LinkedList<Group>());
 
-        rciErrorMap.put(rciGlobalErrors, 1);
-        rciErrorMap.put(userGlobalErrors, rciGlobalErrors.size() + 1);
+        globalFatalProtocolErrorsOffset = 1;
+        globalFatalProtocolErrors = new LinkedHashMap<>();
+        globalFatalProtocolErrors.put("bad_command", "Bad command");
+        globalFatalProtocolErrors.put("bad_descriptor", "Bad configuration");
+        globalFatalProtocolErrors.put("bad_value", "Bad value");
+            
+        globalProtocolErrorsOffset = globalFatalProtocolErrorsOffset + globalFatalProtocolErrors.size();
+        globalProtocolErrors = new LinkedHashMap<>();
+        globalProtocolErrors.put("bad_value", "Bad value");
+        globalProtocolErrors.put("invalid_index", "Invalid index");
+		globalProtocolErrors.put("invalid_name", "Invalid name");
+		globalProtocolErrors.put("missing_name", "Missing name");
+        
+        globalUserErrorsOffset = globalProtocolErrorsOffset + globalProtocolErrors.size();
+        globalUserErrors = new LinkedHashMap<>();
         
     	for (UseNames name: UseNames.values()) {
-    		max_name_length.put(name, 0);
+    		max_name_length_seen.put(name, 0);
     	}
+    	
+        instance = this;
     }
-	public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
-
-    /* user setting and state groups */
-    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
-
-    private RciStrings userGlobalErrors = new RciStrings();
-
-    /* user global error */
-    private Map<RciStrings, Integer> rciErrorMap = new HashMap<>();
-
-    private final String[] rciGlobalErrorStrings = { "bad_command", "Bad command",
-        "bad_descriptor", "Bad configuration", "bad_value", "Bad value"};
-
-    RciStrings rciGlobalErrors = new RciStrings(rciGlobalErrorStrings);
-
-    private int CommandsAttributeMaxLen = 20;
-    private int max_list_depth = 0;
-
-    private EnumMap<UseNames, Integer> max_name_length = new EnumMap<>(UseNames.class);
-    private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
-
+    public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
+    
     public boolean countainsGroupName(final Group.Type type, final String needle) throws Exception {
     	for (Group group: getConfigGroup(type)) {
     		if (group.getName().equals(needle)) {
@@ -55,6 +50,26 @@ public class ConfigData {
     	}
     	return false;
     }
+
+    /* user setting and state groups */
+    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
+
+    private int globalFatalProtocolErrorsOffset;
+    private final Map<String, String> globalFatalProtocolErrors;
+    
+    private int globalProtocolErrorsOffset;
+    private Map<String, String> globalProtocolErrors;
+
+    private int globalUserErrorsOffset;
+    private Map<String, String> globalUserErrors;
+
+    private int CommandsAttributeMaxLen = 20;
+    private int max_list_depth = 0;
+    private int max_key_length;
+    private int max_name_length;
+    
+    private EnumMap<UseNames, Integer> max_name_length_seen = new EnumMap<>(UseNames.class);
+    private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
     public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
         return groupList.get(type);
@@ -78,58 +93,59 @@ public class ConfigData {
         return result;
     }
 
-    public LinkedHashMap<String, String> getUserGlobalErrors() {
-        return userGlobalErrors.getStrings();
+    public boolean isProtocolGlobalError(String name) {
+    	return (globalFatalProtocolErrors.containsKey(name) || globalProtocolErrors.containsKey(name)); 
     }
-
-    public void addRCIGroupError(String name, String description)
-            throws Exception {
-
-        if ((rciGlobalErrors.size() > 0) && (rciGlobalErrors.getStrings().containsKey(name))) {
-            throw new Exception("Duplicate RCI_COMMAND");
-        }
-
-        rciGlobalErrors.addStrings(name, description);
+    
+    public boolean isUserGlobalError(String name) {
+    	return globalUserErrors.containsKey(name);
     }
+    
+    public void addUserGlobalError(String name, String description) throws Exception {
 
-    public void addUserGroupError(String name, String description)
-            throws Exception {
-
-        if ((userGlobalErrors.size() > 0) && (userGlobalErrors.getStrings().containsKey(name))) {
-            throw new Exception("Duplicate <globalerror>: " + name);
-        }
-        
         if (description == null) {
             throw new IOException("Missing or bad globalerror description");
-      }
+        }
+         
+        if (isProtocolGlobalError(name)) {
+            throw new Exception("Existing protocol error <globalerror>: " + name);
+        }
 
-        userGlobalErrors.addStrings(name, description);
+        if (isUserGlobalError(name)) {
+            throw new Exception("Duplicate <globalerror>: " + name);
+        }
+
+        globalUserErrors.put(name, description);
     }
 
-    public LinkedHashMap<String, String> getRciGlobalErrors() {
-        return rciGlobalErrors.getStrings();
+    public int getGlobalFatalProtocolErrorsOffset() {
+    	return globalFatalProtocolErrorsOffset;
     }
-
-
-    public int getRciGlobalErrorsIndex() {
-        return rciErrorMap.get(rciGlobalErrors);
+    
+    public Map<String, String> getGlobalFatalProtocolErrors() {
+    	return globalFatalProtocolErrors;
     }
-
-    public int getUserGlobalErrorsIndex() {
-        return rciErrorMap.get(userGlobalErrors);
+    
+    public int getGlobalProtocolErrorsOffset() {
+    	return globalProtocolErrorsOffset;
     }
-
-    public Map<RciStrings, Integer> getRciErrorMap() {
-        return rciErrorMap;
+    
+    public Map<String, String> getGlobalProtocolErrors() {
+    	return globalProtocolErrors;
     }
-
-    public int getAllErrorsSize() {
-        int size = rciGlobalErrors.size()
-                + userGlobalErrors.size();
-
-        return size;
+    
+    public int getGlobalUserErrorsOffset() {
+    	return globalUserErrorsOffset;
     }
-
+    
+    public Map<String, String> getGlobalUserErrors() {
+    	return globalUserErrors;
+    }
+    
+    public int getGroupErrorsOffset() {
+    	return globalUserErrorsOffset + globalUserErrors.size();
+    }
+    
     public void setAttributeMaxLen(int len) throws Exception {
         if (len > 0)
             CommandsAttributeMaxLen = len;
@@ -160,12 +176,28 @@ public class ConfigData {
 		return typesSeen;
 	}
 	
-    public void nameLength(UseNames type, int length) {
-    	int current = max_name_length.get(type);
-    	max_name_length.put(type, Math.max(current, length));
+    public void nameLengthSeen(UseNames type, int length) {
+    	int current = max_name_length_seen.get(type);
+    	max_name_length_seen.put(type, Math.max(current, length));
     }
     
-    public int getMaxNameLength(UseNames type) {
-    	return max_name_length.get(type);
+    public int getMaxNameLengthSeen(UseNames type) {
+    	return max_name_length_seen.get(type);
+    }
+
+    public int setMaxKeyLength(int length) {
+    	return max_key_length = length;
+    }
+
+    public int getMaxKeyLength() {
+    	return max_key_length;
+    }
+
+    public int setMaxNameLength(int length) {
+    	return max_name_length = length;
+    }
+
+    public int getMaxNameLength() {
+    	return max_name_length;
     }
 }
