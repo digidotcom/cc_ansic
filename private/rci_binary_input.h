@@ -697,6 +697,8 @@ STATIC void process_group_id(rci_t * const rci)
 {
     uint32_t group_id;
     size_t const group_length = get_modifier_ber(rci, &group_id);
+	
+	rci->shared.attributes_processed = 0;
 
     if (group_length == 0)
     {
@@ -1157,6 +1159,8 @@ done:
 STATIC void process_field_id(rci_t * const rci)
 {
     uint32_t value;
+
+	rci->shared.attributes_processed = 0;
 
     if (!get_uint32(rci, &value))
     {
