@@ -1191,7 +1191,14 @@ STATIC void process_field_id(rci_t * const rci)
 		if (should_skip_input(rci))
 		{
 			if (get_list_depth(rci) == get_query_depth(rci))
-				SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_INPUT, connector_false);
+			{
+				SET_RCI_SHARED_FLAG(rci,
+									RCI_SHARED_FLAG_SKIP_INPUT |
+									RCI_SHARED_FLAG_DONT_SHRINK |
+									RCI_SHARED_FLAG_REMOVE |
+									RCI_SHARED_FLAG_FIRST_ELEMENT,
+									connector_false);
+			}
 			
 			if (get_list_depth(rci) > 0)
 			{
