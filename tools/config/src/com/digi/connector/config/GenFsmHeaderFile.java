@@ -305,6 +305,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
            		"\n" + 
     	        "typedef struct {\n" + 
         		element_name_struct_field +
+        		"    connector_element_value_t const * const default_value;\n" +
     	        "    connector_element_access_t access;\n" +
            		element_enum_data +		
     	        "} connector_element_t;\n"

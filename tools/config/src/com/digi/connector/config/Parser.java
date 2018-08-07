@@ -99,25 +99,9 @@ public class Parser {
                                 throw new Exception("Error in <group>: Key parser is unimplemented");
                         	}
                         } else if (token.equalsIgnoreCase("element")) {
-                            Element element = processElement(group_access, config);
-
-                            try {
-                                element.validate();
-                            } catch (Exception e) {
-                                throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
-                            }
-
-                            theGroup.addItem(element);
+                        	theGroup.addItem(processElement(group_access, config));
                         } else if (token.equalsIgnoreCase("list")) {
-                            ItemList list = processList(group_access, config, 0);
-
-                            try {
-                                list.validate();
-                            } catch (Exception e) {
-                                throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
-                            }
-                            
-                            theGroup.addItem(list);
+                        	theGroup.addItem(processList(group_access, config, 0));
                         } else if (token.equalsIgnoreCase("error")) {
                             theGroup.addError(getName(), getErrorDescription());
                         } else if (token.startsWith("#")) {
@@ -326,6 +310,25 @@ public class Parser {
         return mvalue;
     }
 
+    private static String getDefault() throws Exception {
+    	String def;
+    	
+        if (tokenScanner.hasToken("\\\".*")) {
+            def  = tokenScanner.getTokenInLine("\\\".*?\\\"");
+            if (def != null) {
+            	def = def.substring(1, def.lastIndexOf("\""));
+            }
+        } else {
+        	def = tokenScanner.getToken();
+        }
+
+        if (def == null) {
+            throw new Exception("Missing default");
+        }
+
+        return def;
+    }
+
     private static final Element processElement(String default_access, ConfigData config) throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
@@ -351,6 +354,8 @@ public class Parser {
                     element.setMin(getMinMax());
                 } else if (token.equalsIgnoreCase("max")) {
                     element.setMax(getMinMax());
+                } else if (token.equalsIgnoreCase("default")) {
+                    element.setDefault(getDefault());
                 } else if (token.equalsIgnoreCase("units")) {
                     element.setUnit(getDescription());
                 } else if (token.equalsIgnoreCase("value")) {
@@ -370,10 +375,17 @@ public class Parser {
             if (element.getAccess() == null) {
             	element.setAccess(default_access);
             }
+            
         } catch (IOException e) {
             throw new IOException(e.toString());
         }
 
+        try {
+            element.validate();
+        } catch (Exception e) {
+            throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
+        }
+        
         return element;
     }
 
@@ -448,14 +460,15 @@ public class Parser {
 		    	list.setAccess(list_access);
 		    }
 		    
-            try {
-                list.validate();
-            } catch(Exception e) {
-                throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
-            }
 		} catch (IOException e) {
 		    throw new IOException(e.toString());
 		}
+
+        try {
+            list.validate();
+        } catch(Exception e) {
+            throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
+        }
 
         listLineNumber.pop();
         config.addTypeSeen(Element.Type.LIST);
