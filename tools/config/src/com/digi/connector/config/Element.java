@@ -338,7 +338,7 @@ public class Element extends Item {
     
     private void validateFQDN(Type type) throws Exception {
 		if (validFQDN.matcher(def) == null) {
-			throw new Exception("invalid IPv4 address");
+			throw new Exception("invalid FQDN address");
 		}
     }
     
