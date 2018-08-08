@@ -252,8 +252,18 @@ public class GenFsmSourceFile extends GenSourceFile {
                 	? String.format("    \"%s\",\n", element.getName())
                 	: "";
                 
+                if (element.getDefault() != null) {
+                	write("connector_element_value_t const " + itemVariable + "_default = { " + element.getDefaultValue() + " };\n\n");
+                }
+                
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
                 write(optional);
+                
+                if (element.getDefault() == null) {
+                	write("    NULL,\n");
+                } else {
+                	write("    &" + itemVariable + "_default,\n");
+                }
                 write("    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
                 
                 if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
