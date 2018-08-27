@@ -385,6 +385,7 @@ STATIC connector_bool_t finish_all_elements(rci_t * const rci)
 #endif
 	{
     	trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+		invalidate_element_id(rci);
 	}
 
 #if (defined RCI_PARSER_USES_LIST)
@@ -439,6 +440,8 @@ STATIC connector_bool_t traverse_group_end(rci_t * const rci)
     	trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
     	set_rci_output_state(rci, rci_output_state_group_terminator);
     	state_call(rci, rci_parser_state_output);
+		invalidate_group_id(rci);
+		invalidate_group_instance(rci);
 		return connector_true;
 	}
 }
