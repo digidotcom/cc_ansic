@@ -1088,10 +1088,7 @@ STATIC void rci_output_list_id(rci_t * const rci)
 	}
 	else if (rci_output_uint32(rci, field_id) == connector_false)
 	{
-		if (remote_config->error_id != connector_success)
-			state_call(rci, rci_parser_state_error);
-		else
-			state_call(rci, rci_parser_state_traverse);
+		end_collection(rci);
 	}
 
 done:
