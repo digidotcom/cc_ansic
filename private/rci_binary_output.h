@@ -1154,6 +1154,10 @@ STATIC void rci_output_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_DATETIME
     case connector_element_type_datetime:
 #endif
+
+#if defined RCI_PARSER_USES_REF_ENUM
+	case connector_element_type_ref_enum:
+#endif
         ASSERT(rci->shared.value.string_value != NULL);
         overflow = rci_output_string(rci, rci->shared.value.string_value, strlen(rci->shared.value.string_value));
         break;

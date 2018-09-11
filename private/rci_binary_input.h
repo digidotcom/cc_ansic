@@ -1416,6 +1416,10 @@ STATIC void process_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_DATETIME
     case connector_element_type_datetime:
 #endif
+
+#if defined RCI_PARSER_USES_REF_ENUM
+	case connector_element_type_ref_enum:
+#endif
         if (!get_string(rci, &rci->shared.value.string_value, &rci->shared.string_value_length))
         {
             goto done;
@@ -1664,6 +1668,10 @@ STATIC void process_field_no_value(rci_t * const rci)
     #if defined RCI_PARSER_USES_MAC_ADDR
         case connector_element_type_mac_addr:
     #endif
+
+	#if defined RCI_PARSER_USES_REF_ENUM
+		case connector_element_type_ref_enum:
+	#endif
             rci->shared.value.string_value = (char *)rci->input.storage;
             rci->input.storage[0] = (uint8_t)nul;
             break;
