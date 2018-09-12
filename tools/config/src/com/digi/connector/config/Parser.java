@@ -113,7 +113,7 @@ public class Parser {
                     }
 
                     try {
-                        theGroup.validate();
+                        theGroup.validate(config);
                     } catch(Exception e) {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
                     }
@@ -125,6 +125,8 @@ public class Parser {
                     throw new Exception("Unrecognized keyword: " + token);
                 }
             }
+            
+            config.validate();
         } catch (NullPointerException e) {
             options.log("Parser NullPointerException");
             options.log(e.toString());
@@ -172,22 +174,59 @@ public class Parser {
         return name;
     }
 
-    private static String getValueName() throws Exception {
-        String name = tokenScanner.getToken();
+    private static String getValueName(Element.Type type) throws Exception {
+    	String name;
+    	
+    	switch (type) {
+    	case ENUM:
+            name = tokenScanner.getToken();
+            if (name == null) {
+                throw new Exception("Missing name!");
+            }
+            
+            if (name.length() > config.getMaxNameLength()) {
+                throw new Exception("The name is larger than the maximum length of " + config.getMaxNameLength());
+            }
+            
+            // Relaxed slightly for values in that we allow digits in the first position (but we really shouldn't -ASK)
+            if (!name.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
+                throw new Exception("Invalid character in value name: " + name);
+            }
+            break;
+    	case REF_ENUM:
+    		name = getString();
+            if (name == null) {
+                throw new Exception("Missing name!");
+            }
+            break;
+        default:
+        	throw new Exception("unexpected value");
+    	}
+    
+        return name;
+    }
+
+    private static String getRefName() throws Exception {
+        String name = getString();
 
         if (name == null) {
             throw new Exception("Missing name!");
         }
         
-        if (name.length() > config.getMaxNameLength()) {
-            throw new Exception("The name is larger than the maximum length of " + config.getMaxNameLength());
+        if (!name.startsWith("/")) {
+            throw new Exception("ref_enum path must start at root: " + name);
         }
         
-        // Relaxed slightly for values in that we allow digits in the first position (but we really shouldn't -ASK)
-        if (!name.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
-            throw new Exception("Invalid character in value name: " + name);
+        if (name.endsWith("/")) {
+            throw new Exception("ref_enum path must not end with '/': " + name);
         }
-    
+        
+        for (String part: name.substring(1).split("/", -1)) {
+	        if (!part.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
+	            throw new Exception("Invalid character in ref_enum path: '" + part + "'");
+	        }
+        }
+        
         return name;
     }
 
@@ -310,18 +349,24 @@ public class Parser {
         return mvalue;
     }
 
-    private static String getDefault() throws Exception {
-    	String def;
+    private static String getString() throws Exception {
+    	String string;
     	
         if (tokenScanner.hasToken("\\\".*")) {
-            def  = tokenScanner.getTokenInLine("\\\".*?\\\"");
-            if (def != null) {
-            	def = def.substring(1, def.lastIndexOf("\""));
+            string  = tokenScanner.getTokenInLine("\\\".*?\\\"");
+            if (string != null) {
+            	string = string.substring(1, string.lastIndexOf("\""));
             }
         } else {
-        	def = tokenScanner.getToken();
+        	string = tokenScanner.getToken();
         }
 
+        return string;
+    }
+
+    private static String getDefault() throws Exception {
+    	String def = getString();
+    	
         if (def == null) {
             throw new Exception("Missing default");
         }
@@ -359,11 +404,9 @@ public class Parser {
                 } else if (token.equalsIgnoreCase("units")) {
                     element.setUnit(getDescription());
                 } else if (token.equalsIgnoreCase("value")) {
-                    /*
-                     * Parse Value for element with enum type syntax for parsing
-                     * value: value <name> [description] [help description]
-                     */
-                     element.addValue(config, getValueName(), getDescription(), getHelpDescription());
+                    element.addValue(config, getValueName(element.getType()), getDescription(), getHelpDescription());
+                } else if (token.equalsIgnoreCase("ref")) {
+                    element.addRef(config, getRefName(), getDescription(), getHelpDescription());
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
@@ -382,6 +425,10 @@ public class Parser {
 
         try {
             element.validate();
+            
+            if (element.getType() == Element.Type.REF_ENUM) {
+            	config.addRefEnum(element);
+            }
         } catch (Exception e) {
             throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
         }
@@ -465,7 +512,7 @@ public class Parser {
 		}
 
         try {
-            list.validate();
+            list.validate(config);
         } catch(Exception e) {
             throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
         }

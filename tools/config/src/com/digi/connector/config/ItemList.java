@@ -38,7 +38,7 @@ public class ItemList extends Item {
     	return result;
     }
 
-    public String toString(int id) {
+    public String toString(Integer id) {
         return collectionXmlAttributes(String.format(
             "<element name=\"%s\" desc=\"%s\" type=\"list\" bin_id=\"%d\">",
              name, Descriptors.encodeEntities(toRciDescription()), id));
@@ -106,7 +106,7 @@ public class ItemList extends Item {
         items.add(newItem);
     }
 
-    public void validate() throws Exception {
+    public void validate(ConfigData config) throws Exception {
     	if (instances == null) { // no count specified
     		if (keys == null) { // and no keys specified
     			instances = 1;
@@ -125,6 +125,13 @@ public class ItemList extends Item {
     		if (capacity == null) {
         		capacity = Capacity.FIXED; 
         	}
+    	}
+    	
+    	if (keys != null) { // is dictionary
+    		assert capacity == Capacity.VARIABLE : "fixed dictionaries are not supported";
+    		if (config.getMaxDynamicKeyLength() == 0) {
+                throw new Exception("max key length must be specified on the command line when using dynamic dictionaries");
+    		}
     	}
     	
         if (items.isEmpty()) {

@@ -185,7 +185,7 @@ public class Descriptors {
 
         String do_command_descriptor = "<descriptor element=`do_command` bin_id=`6` > ";
         do_command_descriptor +=       "  <error_descriptor id=`1` desc=`Invalid arguments` />";
-        do_command_descriptor +=       "  <attr name=`target` type=`string` max=`" + config.AttributeMaxLen()
+        do_command_descriptor +=       "  <attr name=`target` type=`string` max=`" + config.getMaxAttributeLength()
                               + "` desc=`The subsystem that the command is forwarded` bin_id=`0` />";
         do_command_descriptor +=       "</descriptor>";
 
@@ -271,14 +271,27 @@ public class Descriptors {
             if (item instanceof Element) {
                 Element element = (Element) item;
                 
-                if (element.getType() == Element.Type.ENUM) {
+                switch (element.getType()) {
+                case ENUM:
                     for (Value value: element.getValues()) {
                     	String value_prefix = item_prefix + "_" + value.getName();
-                        int value_id = getBinId(bin_id_reader, createBinIdLogBuffer, value_prefix, element.getValues().indexOf(value));
+                        Integer value_id = getBinId(bin_id_reader, createBinIdLogBuffer, value_prefix, element.getValues().indexOf(value));
 
                         result += value.toString(value_id);
                     }
                     result += "</element>\n";
+                    break;
+                case REF_ENUM:
+                    for (Value value: element.getValues()) {
+                        result += value.toString(null);
+                    }
+                    for (Reference ref: element.getRefs()) {
+                        result += ref.toString(null);
+                    }
+                    result += "</element>\n";
+                	break;
+                default:
+                	break;
                 }
             } else {
                 ItemList subitems = (ItemList) item;

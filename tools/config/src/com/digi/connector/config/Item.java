@@ -76,5 +76,5 @@ public abstract class Item {
             throw new Exception("Duplicate <access> keyword: " + access);
     }
 
-    abstract String toString(int id);
+    abstract String toString(Integer id);
 }
