@@ -903,9 +903,6 @@ STATIC void rci_output_complete_attribute_value(rci_t * const rci)
 
 	if (!overflow)
 	{
-		unsigned int const instance = get_list_depth(rci) > 0 ? get_current_list_instance(rci) : get_group_instance(rci);
-		connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
-
 		if (should_remove_instance(rci))
 			set_rci_output_state(rci, rci_output_state_remove_attribute_id);
 		else 
@@ -942,7 +939,6 @@ STATIC void rci_output_collection_specifier_id(rci_t * const rci)
 
 STATIC void rci_output_collection_specifier_value(rci_t * const rci)
 {
-	connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
 	connector_bool_t overflow;
 	unsigned int instance;
 	connector_collection_type_t collection_type;
@@ -1266,7 +1262,6 @@ STATIC void rci_output_do_command_payload(rci_t * const rci)
 
 STATIC void rci_output_field_terminator(rci_t * const rci)
 {
-    connector_remote_config_t const * const remote_config = &rci->shared.callback_data;
     connector_bool_t overflow = connector_false;
 
     if (SHOULD_OUTPUT(rci))
