@@ -74,7 +74,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         EnumSet<Element.Type> isString = EnumSet.of(
         	Element.Type.STRING, Element.Type.MULTILINE_STRING, Element.Type.PASSWORD, 
     		Element.Type.IPV4, Element.Type.FQDNV4, Element.Type.FQDNV6, Element.Type.MAC_ADDR,
-    		Element.Type.DATETIME);
+    		Element.Type.DATETIME, Element.Type.REF_ENUM);
         for (Element.Type type : types) {
         	if (isString.contains(type)) {
         		defines.add(Code.define(RCI_PARSER_USES + "STRINGS"));
@@ -381,7 +381,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             write(RCI_PARSER_DEFINE);
         }
 
-        write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, config.AttributeMaxLen()));
+        write(String.format("%sRCI_COMMANDS_ATTRIBUTE_MAX_LEN %d\n", DEFINE, config.getMaxAttributeLength()));
         if (haveLists) {
             // TODO: Currently the CCAPI layer requires all values to be defined even if they are not in the RCI configuration file.
             // Unfortunately, this means that if no lists are defined the value RCI_LIST_MAX_DEPTH is set to zero.
@@ -391,7 +391,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         	// between groups and lists. - ASK & PO
         	int max_depth = config.getMaxDepth();
             write(String.format("%sRCI_LIST_MAX_DEPTH %d\n", DEFINE, max_depth == 0 ? 1 : max_depth));
-            write(String.format("%sRCI_DICT_MAX_KEY_LENGTH %d\n", DEFINE, config.getMaxKeyLength()));
+            write(String.format("%sRCI_DICT_MAX_KEY_LENGTH %d\n", DEFINE, config.getMaxDynamicKeyLength()));
         }
 
     	if (types.contains(Element.Type.ON_OFF)) {

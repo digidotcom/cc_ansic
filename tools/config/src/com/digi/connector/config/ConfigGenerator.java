@@ -119,9 +119,9 @@ public class ConfigGenerator {
     private boolean createBinIdLog;
     private boolean useBinIdLog;
     private boolean rci_legacy;
-    private int rci_dc_attribute_max_len = 0;
-    private int rci_dc_max_key_len = 32;
-    private int rci_dc_max_name_len = 40;
+    private Integer rci_dc_attribute_max_len;
+    private Integer rci_dc_max_key_len;
+    private Integer rci_dc_max_name_len;
     private boolean noBackup;
     private boolean rciParser;
 
@@ -272,7 +272,7 @@ public class ConfigGenerator {
         log(String
                 .format(
                         "\t%-16s \t= optional max length for commands attributes type string, default is %d",
-                        DASH + RCI_DC_TARGET_MAX_OPTION, config.AttributeMaxLen())); // TODO: Move this setting to the ConfigGenerator class
+                        DASH + RCI_DC_TARGET_MAX_OPTION, config.getMaxAttributeLength())); // TODO: Move this setting to the ConfigGenerator class
         log(String
                 .format(
                         "\t%-16s \t= generate stub functions for CCAPI projects (assumes %s)",
@@ -340,6 +340,18 @@ public class ConfigGenerator {
     	return result;
     }
     
+    private Integer parsePositiveInteger(final String value, final String option) throws IOException {
+        try {
+            Integer result = Integer.parseUnsignedInt(value);
+            if (result == 0)
+            	throw new NumberFormatException();
+            
+            return result;
+        } catch (NumberFormatException e) {
+            throw new IOException(option + " expected an positive integer value");
+        }
+    }
+    
     private void toOption(String option) {
 
         /* split the [option]=[option value] */
@@ -375,23 +387,11 @@ public class ConfigGenerator {
                 } else if (keys[0].equals(USE_NAMES_OPTION)) {
                     useNames = parseNamesList(keys[1]);
                 } else if (keys[0].equals(RCI_DC_TARGET_MAX_OPTION)) {
-                    try {
-                        rci_dc_attribute_max_len = Integer.parseInt(keys[1]);
-                    } catch (NumberFormatException e) {
-                        throw new IOException("-rci_dc_attribute_max_len expected an integer value");
-                    }
+                	rci_dc_attribute_max_len = parsePositiveInteger(keys[1], "-rci_dc_attribute_max_len");
                 } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
-                    try{
-                    	rci_dc_max_name_len = Integer.parseInt(keys[1]);
-                    } catch (NumberFormatException e) {
-                        throw new IOException("-maxNameLength expected an integer value");
-                    }
+                	rci_dc_max_name_len = parsePositiveInteger(keys[1], "-maxNameLength");
                 } else if (keys[0].equals(OVERRIDE_MAX_KEY_LENGTH)) {
-	                try{
-	                	rci_dc_max_key_len = Integer.parseInt(keys[1]);
-	                } catch (NumberFormatException e) {
-	                    throw new IOException("-maxKeyLength expected an integer value");
-	                }
+                	rci_dc_max_key_len = parsePositiveInteger(keys[1], "-maxKeyLength");
 	            } else {
                     throw new Exception("Invalid Option: " + keys[0]);
                 }
@@ -660,13 +660,11 @@ public class ConfigGenerator {
         debug_log("Start reading filename: " + filename);
 
         if (rci_legacy){
-            debug_log("rci legacy commands enable");
+            debug_log("rci legacy commands enabled");
         }
 
-        if (rci_dc_attribute_max_len != 0)
-            config.setAttributeMaxLen(rci_dc_attribute_max_len);
-
-        config.setMaxKeyLength(rci_dc_max_key_len);
+        config.setMaxAttributeLength(rci_dc_attribute_max_len);
+        config.setMaxDynamicKeyLength(rci_dc_max_key_len);
         config.setMaxNameLength(rci_dc_max_name_len);
 
         if (fileTypeOption() != FileType.GLOBAL_HEADER) {

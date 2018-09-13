@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Arrays;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
 import com.digi.connector.config.Element;
@@ -63,10 +64,14 @@ public class ConfigData {
     private int globalUserErrorsOffset;
     private Map<String, String> globalUserErrors;
 
-    private int CommandsAttributeMaxLen = 20;
+    private int max_attribute_length = 20;
     private int max_list_depth = 0;
-    private int max_key_length;
-    private int max_name_length;
+    private int max_dynamic_key_length = 0;
+//    TODO: We don't use this today, but when we add static dictionaries we will need to add it. -ASK 
+//    private int max_static_key_length;
+    private int max_name_length = 40;
+    
+    private LinkedList<Element> ref_enums = new LinkedList<>();
     
     private EnumMap<UseNames, Integer> max_name_length_seen = new EnumMap<>(UseNames.class);
     private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
@@ -146,18 +151,6 @@ public class ConfigData {
     	return globalUserErrorsOffset + globalUserErrors.size();
     }
     
-    public void setAttributeMaxLen(int len) throws Exception {
-        if (len > 0)
-            CommandsAttributeMaxLen = len;
-        else
-        	throw new Exception("Invalid CommandsAttributeMaxLen");
-    }
-
-	public int AttributeMaxLen() {
-
-		return CommandsAttributeMaxLen;
-	}
-
 	public void listDepth(int depth) {
 		if (depth > max_list_depth) {
 			max_list_depth = depth;
@@ -185,19 +178,107 @@ public class ConfigData {
     	return max_name_length_seen.get(type);
     }
 
-    public int setMaxKeyLength(int length) {
-    	return max_key_length = length;
+    public void setMaxAttributeLength(Integer length) throws Exception {
+        if (length != null)
+            max_attribute_length = length;
     }
 
-    public int getMaxKeyLength() {
-    	return max_key_length;
+	public int getMaxAttributeLength() {
+		return max_attribute_length;
+	}
+
+    public void setMaxDynamicKeyLength(Integer length) {
+        if (length != null)
+        	max_dynamic_key_length = length;
     }
 
-    public int setMaxNameLength(int length) {
-    	return max_name_length = length;
+    public int getMaxDynamicKeyLength() {
+    	return max_dynamic_key_length;
+    }
+
+    public void setMaxNameLength(Integer length) {
+        if (length != null)
+        	max_name_length = length;
     }
 
     public int getMaxNameLength() {
     	return max_name_length;
+    }
+    
+    public void addRefEnum(Element ref_enum) {
+    	ref_enums.add(ref_enum);
+    }
+    
+    private boolean match_path(ItemList list, String[] remaining) {
+    	switch (remaining.length) {
+	    	case 0:
+	        	return list.isDictionary();
+	    	case 1:
+	    		return false; // last part is an instance, which is in error
+	    	default:
+	    	{
+	    		final String instance = remaining[0];
+	    		if (list.isArray()) {
+	    			try {
+	    				final int index = Integer.parseInt(instance);
+	    				if (index > list.getInstances()) {
+	    					return false;
+	    				}
+	    						
+	    			} catch (NumberFormatException e) {
+	    				return false;
+	    			}
+	    		}
+	    		
+	    		final String next = remaining[1];
+	    		for (Item item: list.getItems()) {
+	    			if (item.getName().equals(next) && (item instanceof ItemList)) {
+	    				return match_path((ItemList) item, Arrays.copyOfRange(remaining, 2, remaining.length));
+	    			}
+	    		}
+	    		
+	    		return false;
+	    	}
+    	}
+    }
+    
+    public void validate() throws Exception {
+    	if (ref_enums.isEmpty()) {
+    		return;
+    	}
+    	
+    	LinkedList<Group> settings = getConfigGroup(Group.Type.SETTING);
+    	for (Element ref_enum: ref_enums) {
+    		int min_length = Integer.MAX_VALUE;
+    		int max_length = 0;
+    		for (Value value: ref_enum.getValues()) {
+    			min_length = Math.min(min_length, value.name.length());
+    			max_length = Math.max(max_length, value.name.length());
+    		}
+    		for (Reference ref: ref_enum.getRefs()) {
+    			String[] parts = ref.getName().substring(1).split("/");
+    			String top = parts[0];
+    			String[] remaining = Arrays.copyOfRange(parts, 1, parts.length);
+    			
+    			boolean found = false;
+    	    	for (Group group: settings) {
+    	    		if (group.getName().equals(top)) {
+    	    			found = match_path(group, remaining);
+    	    			break;
+    	    		}
+    	    	}
+    	    	
+    	    	if (!found) {
+    	    		throw new Exception("ref_enum has invalid reference: " + ref.getName());
+    	    	}
+    	    	
+    	    	min_length = Math.min(min_length, ref.getName().length() + max_dynamic_key_length);
+    	    	max_length = Math.max(max_length, ref.getName().length() + max_dynamic_key_length);
+    		}
+    		
+    		ref_enum.setMin(String.valueOf(min_length));
+    		ref_enum.setMax(String.valueOf(max_length));
+    	}
+    	
     }
 }

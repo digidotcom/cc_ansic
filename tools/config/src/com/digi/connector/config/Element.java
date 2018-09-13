@@ -29,7 +29,8 @@ public class Element extends Item {
 	    FQDNV6(15),
 	    LIST(17),
 	    MAC_ADDR(21),
-	    DATETIME(22);
+	    DATETIME(22),
+	    REF_ENUM(23);
 
 	    /* special type since enum name cannot start with 0x */
 	    private final static String STRING_0XHEX32 = "0X_HEX32";
@@ -113,13 +114,15 @@ public class Element extends Item {
     private String def;
     private String units;
     private final LinkedList<Value> values;
+    private final LinkedList<Reference> refs;
 
     public Element(String name, String description, String helpDescription) throws IOException {
         super(name, description, helpDescription);
         this.values = new LinkedList<Value>();
+        this.refs = new LinkedList<Reference>();
     }
 
-    public String toString(int id) {
+    public String toString(Integer id) {
         String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, Descriptors.encodeEntities(toRciDescription()), type);
 
         if (access != null)
@@ -135,20 +138,15 @@ public class Element extends Item {
 
         descriptor += String.format(" bin_id=`%d`", id);
 
-        try {
-
-            if (type == Type.ENUM)
-                descriptor += ">";
-            else
-                descriptor += " />";
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        switch (type) {
+        case ENUM:
+        case REF_ENUM:
+            descriptor += ">";
+        default:
+            descriptor += "/>";
         }
 
-        descriptor = descriptor.replace('`', '"');
-
-        return descriptor;
+        return descriptor.replace('`', '"');
     }
 
     public Type setType(String theType) throws Exception {
@@ -191,18 +189,48 @@ public class Element extends Item {
     
     public void addValue(ConfigData config, String valueName, String description, String helpDescription) throws Exception {
         if (type == null)
-            throw new Exception("Missing type enum on element: " + name);
-        
-        if (type != Type.ENUM)
-            throw new Exception("Invalid <value> for type: " + type.toLowerName());
+            throw new Exception("Missing type of enum or ref_enum on element: " + name);
         
         if (containsValue(valueName))
             throw new Exception("Duplicate <value>: " + valueName);
       
+        switch (type) {
+        case ENUM:
+            config.nameLengthSeen(UseNames.VALUES, valueName.length());
+            break;
+        case REF_ENUM:
+        	break;
+        default:
+            throw new Exception("Invalid <value> for type: " + type.toLowerName());
+        }
+        
         Value value = new Value(valueName, description, helpDescription);
-        config.nameLengthSeen(UseNames.VALUES, valueName.length());
-
         values.add(value);
+    }
+
+    private boolean containsRef(final String needle) {
+    	for (Reference ref: refs) {
+    		if (ref.getName().equals(needle)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public void addRef(ConfigData config, String refName, String description, String helpDescription) throws Exception {
+        if (type == null)
+            throw new Exception("Missing type enum on element: " + name);
+        
+        if (type != Type.REF_ENUM)
+            throw new Exception("Invalid <value> for type: " + type.toLowerName());
+        
+        if (containsRef(refName))
+            throw new Exception("Duplicate <value>: " + refName);
+      
+        Reference ref = new Reference(refName, description, helpDescription);
+        config.nameLengthSeen(UseNames.VALUES, refName.length());
+
+        refs.add(ref);
     }
 
     public void setUnit(String theUnit) throws IOException {
@@ -231,6 +259,18 @@ public class Element extends Item {
         return def;
     }
 
+    private int getValueIndex(String needle) {
+		int index = 0;
+    	for (Value value: values) {
+    		if (value.getName().equals(needle)) {
+    			return index;
+    		}
+    		index += 1;
+    	}
+    	
+    	return -1;
+    }
+    
     public String getDefaultValue() {
     	switch (type) {
     	case STRING:
@@ -241,6 +281,7 @@ public class Element extends Item {
     	case FQDNV6:
     	case MAC_ADDR:
     	case DATETIME:
+    	case REF_ENUM:
     		return Code.quoted(def); 
     		
     	case INT32:
@@ -252,12 +293,9 @@ public class Element extends Item {
     		
     	case ENUM:
     	{
-    		int index = 0;
-        	for (Value value: values) {
-        		if (value.getName().equals(def)) {
-        			return String.valueOf(index);
-        		}
-        		index += 1;
+    		int index = getValueIndex(def);
+    		if (index >= 0) {
+      			return String.valueOf(index);
         	}
 
         	assert false: "default value not found";
@@ -284,6 +322,10 @@ public class Element extends Item {
 
     public LinkedList<Value> getValues() {
         return values;
+    }
+    
+    public LinkedList<Reference> getRefs() {
+        return refs;
     }
     
     private Float toFloat(String string, Float def, String which) throws Exception {
@@ -367,15 +409,27 @@ public class Element extends Item {
                 throw new Exception("No values found for enum type");
             }
             
+            if ((def != null) && (getValueIndex(def) == -1)) {
+        		throw new Exception("default enumeration value not found");
+            }
+            break;
+            
+        case REF_ENUM:
+            if (refs.isEmpty()) {
+                throw new Exception("No references found for ref_enum type");
+            }
+            
             if (def != null) {
-            	boolean found = false;
-            	for (Value value: values) {
-            		if (value.getName().equals(def)) {
-            			found = true;
-            			break;
+            	boolean found = (getValueIndex(def) != -1);
+            	
+            	if (!found) {
+            		for (Reference ref: refs) {
+            			found = def.startsWith(ref.getName());
+       					if (found) {
+            				break;
+            			}
             		}
             	}
-            	
             	if (!found) {
             		throw new Exception("default enumeration value not found");
             	}

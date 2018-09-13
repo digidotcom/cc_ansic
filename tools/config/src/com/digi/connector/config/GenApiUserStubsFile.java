@@ -153,6 +153,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                         case FQDNV4:
                         case FQDNV6:
                         case DATETIME:
+                        case REF_ENUM:
                         case STRING:
                         case MULTILINE_STRING:
                         case PASSWORD:
