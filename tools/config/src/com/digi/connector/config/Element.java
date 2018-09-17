@@ -415,8 +415,8 @@ public class Element extends Item {
             break;
             
         case REF_ENUM:
-            if (refs.isEmpty()) {
-                throw new Exception("No references found for ref_enum type");
+            if (values.isEmpty() && refs.isEmpty()) {
+                throw new Exception("No values or references found for ref_enum type");
             }
             
             if (def != null) {
