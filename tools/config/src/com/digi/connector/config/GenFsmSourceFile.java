@@ -276,7 +276,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                         enum_struct = "{ ARRAY_SIZE(" + variableName + "), " + variableName + "}, ";
                     }
                     else {
-                    	enum_struct = "{ 0, NULL}, ";
+                    	enum_struct = "{ 0, NULL }, ";
                     }
                     
                     write("    " + enum_struct + "\n");
