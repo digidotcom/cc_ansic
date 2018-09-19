@@ -142,8 +142,10 @@ public class Element extends Item {
         case ENUM:
         case REF_ENUM:
             descriptor += ">";
+            break;
         default:
             descriptor += "/>";
+            break;
         }
 
         return descriptor.replace('`', '"');
