@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -30,7 +31,11 @@ public class Element extends Item {
 	    LIST(17),
 	    MAC_ADDR(21),
 	    DATETIME(22),
-	    REF_ENUM(23);
+	    REF_ENUM(23),
+	    
+	    // Virtual types
+	    REGEX(-1) // Converts to STRING
+	    ;
 
 	    /* special type since enum name cannot start with 0x */
 	    private final static String STRING_0XHEX32 = "0X_HEX32";
@@ -82,14 +87,18 @@ public class Element extends Item {
 			Type.X_HEX32,
 			Type.FLOAT,
 			Type.FQDNV4,
-			Type.FQDNV6
+			Type.FQDNV6,
+			
+			Type.REGEX
 			);
     private final static EnumSet<Type> requiresMax = EnumSet.of(
     		Type.STRING,
     		Type.MULTILINE_STRING,
     		Type.PASSWORD,
 			Type.FQDNV4,
-			Type.FQDNV6
+			Type.FQDNV6,
+			
+			Type.REGEX
     		);
 
     private static final Set<String> validOnOff = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] { "on","off" })));
@@ -113,6 +122,10 @@ public class Element extends Item {
     private String max;
     private String def;
     private String units;
+    private String regex_pattern;
+    private String regex_case;
+    private String regex_syntax;
+    
     private final LinkedList<Value> values;
     private final LinkedList<Reference> refs;
 
@@ -123,7 +136,9 @@ public class Element extends Item {
     }
 
     public String toString(Integer id) {
-        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, Descriptors.encodeEntities(toRciDescription()), type);
+    	Type rci_type = (type == Type.REGEX) ? Type.STRING : type;
+    	
+        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, Descriptors.encodeEntities(toRciDescription()), rci_type);
 
         if (access != null)
             descriptor += String.format(" access=`%s`", access);
@@ -136,8 +151,19 @@ public class Element extends Item {
         if (def != null)
             descriptor += String.format(" default=`%s`", def);
 
-        descriptor += String.format(" bin_id=`%d`", id);
+    	if (type == Type.REGEX) {
+	    	assert regex_pattern != null : "validation of regex_pattern failed";
+	  		descriptor += String.format(" regex-pattern=`%s`", regex_pattern);
+	  		
+	    	if (regex_case != null)
+	    		descriptor += String.format(" regex-case=`%s`", regex_case);
+	
+	    	assert regex_syntax != null : "validation of regex_syntax failed";
+	  		descriptor += String.format(" regex-syntax=`%s`", regex_syntax);
+    	}
 
+  		descriptor += String.format(" bin_id=`%d`", id);
+    	
         switch (type) {
         case ENUM:
         case REF_ENUM:
@@ -235,14 +261,35 @@ public class Element extends Item {
         refs.add(ref);
     }
 
-    public void setUnit(String theUnit) throws IOException {
-        if (theUnit == null)
-            throw new IOException("Missing or bad units description!");
+    private String ExceptMissingOrBad(String newValue, String currentValue, String name) throws IOException {
+        if (newValue == null)
+            throw new IOException("Missing or bad " + name);
         
-        if (units != null)
-            throw new IOException("Duplicate units: " + theUnit);
-        
-        units = theUnit;
+        if (currentValue != null)
+            throw new IOException("Duplicate " + name + ": " + newValue);
+    	
+        return newValue;
+    }
+    
+    public void setUnit(String theUnits) throws IOException {
+        units = ExceptMissingOrBad(theUnits, units, "units");
+    }
+
+    public void setRegexPattern(String thePattern) throws IOException {
+    	regex_pattern = ExceptMissingOrBad(thePattern, regex_pattern, "regex pattern");
+    	try {
+    		Pattern.compile(regex_pattern);
+    	} catch (PatternSyntaxException e) {
+    		throw new IOException("Invalid regex pattern: " + e.getMessage());
+    	}
+    }
+
+    public void setRegexCase(String theCase) throws IOException {
+    	regex_case = ExceptMissingOrBad(theCase, regex_case, "regex case");
+    }
+
+    public void setRegexSyntax(String theSyntax) throws IOException {
+    	regex_syntax = ExceptMissingOrBad(theSyntax, regex_syntax, "regex syntax");
     }
 
     public Type getType() {
@@ -284,6 +331,7 @@ public class Element extends Item {
     	case MAC_ADDR:
     	case DATETIME:
     	case REF_ENUM:
+    	case REGEX:
     		return Code.quoted(def); 
     		
     	case INT32:
@@ -516,6 +564,32 @@ public class Element extends Item {
         	
         default:
 		    {
+		    	// Handle virtual types
+		    	if (type == Type.REGEX) {
+		    		if (regex_pattern == null) {
+			    		throw new Exception("Regular expressions require a pattern.");
+		    		}
+		    		if (regex_syntax == null) {
+			    		throw new Exception("Regular expressions require a syntax.");
+		    		}
+		    	} else {
+		    		String failboat;
+		    		
+		    		if (regex_pattern != null) {
+		    			failboat = "pattern";
+		    		} else if (regex_case != null) {
+		    			failboat = "case";
+		    		} else if (regex_syntax != null) {
+		    			failboat = "syntax";
+		    		} else {
+		    			failboat = null;
+		    		}
+		    		
+		    		if (failboat != null) {
+		    			throw new Exception("'" + failboat + "' is only valid for 'regex' type");
+		    		}
+		    	}
+
 		    	if (supportsMinMax.contains(type)) {
 			        Long minValue = toLong(min, UINT32_MIN_VALUE, UINT32_MAX_VALUE, UINT32_MIN_VALUE, "min");
 			        Long maxValue = toLong(max, UINT32_MIN_VALUE, UINT32_MAX_VALUE, UINT32_MAX_VALUE, "max");
@@ -527,6 +601,7 @@ public class Element extends Item {
 			    	case STRING:
 			    	case MULTILINE_STRING:
 			    	case PASSWORD:
+			    	case REGEX:
 			    		if (def != null) {
 			    			Long length = (long) def.length();
 			    			

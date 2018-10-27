@@ -3,7 +3,9 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -364,6 +366,23 @@ public class Parser {
         return string;
     }
 
+    private static String getRegexCase() throws Exception {
+    	final String value = getString();
+    	
+        if (value == null) {
+            throw new Exception("Missing case value");
+        }
+
+        final String result = value.toLowerCase();
+        final List<String> valid = Arrays.asList("ignore", "match");
+
+        if (!valid.contains(result)) {
+            throw new Exception("Invalid case value: must be 'ignore' or 'match'");
+        }
+        	
+        return result;
+    }
+    
     private static String getDefault() throws Exception {
     	String def = getString();
     	
@@ -402,7 +421,13 @@ public class Parser {
                 } else if (token.equalsIgnoreCase("default")) {
                     element.setDefault(getDefault());
                 } else if (token.equalsIgnoreCase("units")) {
-                    element.setUnit(getDescription());
+                    element.setUnit(getString());
+                } else if (token.equalsIgnoreCase("pattern")) {
+                    element.setRegexPattern(getString());
+                } else if (token.equalsIgnoreCase("case")) {
+                    element.setRegexCase(getRegexCase());
+                } else if (token.equalsIgnoreCase("syntax")) {
+                    element.setRegexSyntax(getString());
                 } else if (token.equalsIgnoreCase("value")) {
                     element.addValue(config, getValueName(element.getType()), getDescription(), getHelpDescription());
                 } else if (token.equalsIgnoreCase("ref")) {
