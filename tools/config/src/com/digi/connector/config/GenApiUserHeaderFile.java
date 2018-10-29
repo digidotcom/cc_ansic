@@ -187,6 +187,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             case DATETIME:
             case REF_ENUM:
             case STRING:
+            case REGEX:
             case MULTILINE_STRING:
             case PASSWORD:
             case MAC_ADDR:
@@ -231,6 +232,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
                     case DATETIME:
                     case REF_ENUM:
                     case STRING:
+                    case REGEX:
                     case MULTILINE_STRING:
                     case PASSWORD:
                     case MAC_ADDR:

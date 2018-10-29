@@ -155,6 +155,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                         case DATETIME:
                         case REF_ENUM:
                         case STRING:
+                        case REGEX:
                         case MULTILINE_STRING:
                         case PASSWORD:
                         case MAC_ADDR:
