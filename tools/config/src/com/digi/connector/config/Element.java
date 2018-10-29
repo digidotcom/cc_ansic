@@ -122,9 +122,9 @@ public class Element extends Item {
     private String max;
     private String def;
     private String units;
-    private String regex_pattern;
-    private String regex_case;
-    private String regex_syntax;
+    private String regexPattern;
+    private String regexCase;
+    private String regexSyntax;
     
     private final LinkedList<Value> values;
     private final LinkedList<Reference> refs;
@@ -152,14 +152,14 @@ public class Element extends Item {
             descriptor += String.format(" default=`%s`", def);
 
     	if (type == Type.REGEX) {
-	    	assert regex_pattern != null : "validation of regex_pattern failed";
-	  		descriptor += String.format(" regex-pattern=`%s`", regex_pattern);
+	    	assert regexPattern != null : "validation of regex_pattern failed";
+	  		descriptor += String.format(" regex_pattern=`%s`", regexPattern);
 	  		
-	    	if (regex_case != null)
-	    		descriptor += String.format(" regex-case=`%s`", regex_case);
+	    	if (regexCase != null)
+	    		descriptor += String.format(" regex_case=`%s`", regexCase);
 	
-	    	assert regex_syntax != null : "validation of regex_syntax failed";
-	  		descriptor += String.format(" regex-syntax=`%s`", regex_syntax);
+	    	assert regexSyntax != null : "validation of regex_syntax failed";
+	  		descriptor += String.format(" regex_syntax=`%s`", regexSyntax);
     	}
 
   		descriptor += String.format(" bin_id=`%d`", id);
@@ -276,20 +276,20 @@ public class Element extends Item {
     }
 
     public void setRegexPattern(String thePattern) throws IOException {
-    	regex_pattern = ExceptMissingOrBad(thePattern, regex_pattern, "regex pattern");
+    	regexPattern = ExceptMissingOrBad(thePattern, regexPattern, "regex pattern");
     	try {
-    		Pattern.compile(regex_pattern);
+    		Pattern.compile(regexPattern);
     	} catch (PatternSyntaxException e) {
     		throw new IOException("Invalid regex pattern: " + e.getMessage());
     	}
     }
 
     public void setRegexCase(String theCase) throws IOException {
-    	regex_case = ExceptMissingOrBad(theCase, regex_case, "regex case");
+    	regexCase = ExceptMissingOrBad(theCase, regexCase, "regex case");
     }
 
     public void setRegexSyntax(String theSyntax) throws IOException {
-    	regex_syntax = ExceptMissingOrBad(theSyntax, regex_syntax, "regex syntax");
+    	regexSyntax = ExceptMissingOrBad(theSyntax, regexSyntax, "regex syntax");
     }
 
     public Type getType() {
@@ -566,27 +566,27 @@ public class Element extends Item {
 		    {
 		    	// Handle virtual types
 		    	if (type == Type.REGEX) {
-		    		if (regex_pattern == null) {
+		    		if (regexPattern == null) {
 			    		throw new Exception("Regular expressions require a pattern.");
 		    		}
-		    		if (regex_syntax == null) {
+		    		if (regexSyntax == null) {
 			    		throw new Exception("Regular expressions require a syntax.");
 		    		}
 		    	} else {
-		    		String failboat;
+		    		String rejectedAttribute;
 		    		
-		    		if (regex_pattern != null) {
-		    			failboat = "pattern";
-		    		} else if (regex_case != null) {
-		    			failboat = "case";
-		    		} else if (regex_syntax != null) {
-		    			failboat = "syntax";
+		    		if (regexPattern != null) {
+		    			rejectedAttribute = "pattern";
+		    		} else if (regexCase != null) {
+		    			rejectedAttribute = "case";
+		    		} else if (regexSyntax != null) {
+		    			rejectedAttribute = "syntax";
 		    		} else {
-		    			failboat = null;
+		    			rejectedAttribute = null;
 		    		}
 		    		
-		    		if (failboat != null) {
-		    			throw new Exception("'" + failboat + "' is only valid for 'regex' type");
+		    		if (rejectedAttribute != null) {
+		    			throw new Exception("'" + rejectedAttribute + "' is only valid for 'regex' type");
 		    		}
 		    	}
 
