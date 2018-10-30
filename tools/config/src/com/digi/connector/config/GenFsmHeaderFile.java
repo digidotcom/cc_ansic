@@ -93,6 +93,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     	LinkedList<String> enum_lines = new LinkedList<>();
         int previous = -1;
         for (Element.Type type : types) {
+        	if (type == Element.Type.REGEX) {
+        		continue;
+        	}
+        	
             String enum_line = "    connector_element_type_" + type.toLowerName();
 
         	int current = type.toValue();

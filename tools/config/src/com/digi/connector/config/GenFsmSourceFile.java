@@ -322,7 +322,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             if (item instanceof Element) {
             	Element element = (Element) item;
             	
-            	type = element.getType().toLowerName();
+            	type = element.getRciType().toLowerName();
             	suffix = "_element";
             } else {
             	type = "list";

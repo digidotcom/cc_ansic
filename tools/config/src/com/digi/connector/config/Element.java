@@ -296,6 +296,10 @@ public class Element extends Item {
         return type;
     }
 
+    public Type getRciType() {
+    	return (type == Type.REGEX) ? Type.STRING : type; 
+    }
+
     public String getMin() {
         return min;
     }
