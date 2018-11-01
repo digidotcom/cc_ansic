@@ -147,19 +147,19 @@ public class Element extends Item {
         if (max != null)
             descriptor += String.format(" max=`%s`", max);
         if (units != null)
-            descriptor += String.format(" units=`%s`", units);
+            descriptor += String.format(" units=`%s`", Descriptors.encodeEntities(units));
         if (def != null)
-            descriptor += String.format(" default=`%s`", def);
+            descriptor += String.format(" default=`%s`", Descriptors.encodeEntities(def));
 
     	if (type == Type.REGEX) {
 	    	assert regexPattern != null : "validation of regex_pattern failed";
-	  		descriptor += String.format(" regex_pattern=`%s`", regexPattern);
+	  		descriptor += String.format(" regex_pattern=`%s`", Descriptors.encodeEntities(regexPattern));
 	  		
 	    	if (regexCase != null)
 	    		descriptor += String.format(" regex_case=`%s`", regexCase);
 	
 	    	assert regexSyntax != null : "validation of regex_syntax failed";
-	  		descriptor += String.format(" regex_syntax=`%s`", regexSyntax);
+	  		descriptor += String.format(" regex_syntax=`%s`", Descriptors.encodeEntities(regexSyntax));
     	}
 
   		descriptor += String.format(" bin_id=`%d`", id);
