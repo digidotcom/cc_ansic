@@ -70,8 +70,6 @@ public class ConfigGenerator {
     private final static String CCAPI_STUB_FUNCTIONS_OPTION = "ccapiStub";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
     private final static String NO_UPLOAD_OPTION = "noUpload";
-    private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
-    private final static String USE_BIN_ID_LOG_OPTION = "useBinIdLog";
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
     private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_attribute_max_len";
     private final static String NO_BACKUP_OPTION = "noBackup";
@@ -116,8 +114,6 @@ public class ConfigGenerator {
     private boolean CcapiStubFunctions;
     private boolean saveDescriptor;
     private boolean noUpload;
-    private boolean createBinIdLog;
-    private boolean useBinIdLog;
     private boolean rci_legacy;
     private Integer rci_dc_attribute_max_len;
     private Integer rci_dc_max_key_len;
@@ -257,14 +253,6 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= Choose the output Type. Default is none.",
                         DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
-        log(String
-                .format(
-                        "\t%-16s \t= create bin_id log",
-                        DASH + CREATE_BIN_ID_LOG_OPTION));
-        log(String
-                .format(
-                        "\t%-16s \t= use bin_id log",
-                        DASH + USE_BIN_ID_LOG_OPTION));
         log(String
                 .format(
                         "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
@@ -412,10 +400,6 @@ public class ConfigGenerator {
                 saveDescriptor = true;
             } else if (option.equals(NO_UPLOAD_OPTION)) {
                 noUpload = true;
-            } else if (option.equals(CREATE_BIN_ID_LOG_OPTION)) {
-                createBinIdLog = true;
-            } else if (option.equals(USE_BIN_ID_LOG_OPTION)) {
-                useBinIdLog = true;
             } else if (option.equals(RCI_LEGACY_COMMANDS_OPTION)) {
                 rci_legacy = true;
             } else if (option.equals(NO_BACKUP_OPTION)) {
@@ -619,14 +603,6 @@ public class ConfigGenerator {
 
     public boolean noBackupOption() {
         return noBackup;
-    }
-
-    public boolean createBinIdLogOption() {
-        return createBinIdLog && !useBinIdLog;
-    }
-
-    public boolean useBinIdLogOption() {
-        return useBinIdLog;
     }
 
     public boolean rciParserOption() {

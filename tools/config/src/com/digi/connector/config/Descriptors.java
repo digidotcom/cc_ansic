@@ -3,7 +3,6 @@ package com.digi.connector.config;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -205,66 +204,14 @@ public class Descriptors {
         uploadDescriptor("descriptor/set_factory_default", set_factory_default_descriptor);
     }
 
-    private int getBinId(BufferedReader bin_id_reader, String BinIdKey) throws IOException {
-        String respLine;
-        String[] keys = null;
-        int id = -1;
-        boolean found = false;
-
-        do {
-            respLine = bin_id_reader.readLine();
-            if (respLine == null)
-                break;
-
-            options.debug_log(respLine);
-
-            keys = respLine.split("=", 2);
-
-            if (keys.length == 2 && keys[0].equals(BinIdKey))
-                found = true;
-        } while (!found);
-
-        if (found == true)
-             id = Integer.parseInt(keys[1]);
-
-        return id;
-    }
-    
-    private int getBinId(BufferedReader bin_id_reader, StringBuilder createBinIdLogBuffer, String key, int computed) throws Exception {
-        int id;
-        String BinIdKey = key + "_bin_id";
-
-        if (bin_id_reader == null) {
-            id = computed;
-            if (createBinIdLogBuffer != null) {
-                createBinIdLogBuffer.append(String.format("%s=%d\n", BinIdKey, id));
-            }
-        } else {
-        	id = getBinId(bin_id_reader, BinIdKey);
-            if (id == -1) {
-            	String error = "Fatal: BinIdKey not found: " + BinIdKey;
-            	
-                options.log(error);
-                throw new Exception(error);
-            }
-        }
-
-        return id;
-    }
-
-    private int getBinId(BufferedReader bin_id_reader, StringBuilder createBinIdLogBuffer, String key, ItemList items, Item item) throws Exception {
-    	return getBinId(bin_id_reader, createBinIdLogBuffer, key, items.getItems().indexOf(item));
-    }
-
-    private String itemDescriptors(BufferedReader bin_id_reader, StringBuilder createBinIdLogBuffer, String prefix, ItemList list) throws Exception {
+    private String itemDescriptors(String prefix, ItemList list) throws Exception {
     	String result = "";
     	LinkedList<Item> items = list.getItems(); 
 
         for (Item item : items) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
-            String item_prefix = prefix + "_" + item.getName();
-            int item_id = getBinId(bin_id_reader, createBinIdLogBuffer, item_prefix, list, item);
+            int item_id = list.getItems().indexOf(item);
             
             result += item.toString(item_id);
 
@@ -274,8 +221,7 @@ public class Descriptors {
                 switch (element.getType()) {
                 case ENUM:
                     for (Value value: element.getValues()) {
-                    	String value_prefix = item_prefix + "_" + value.getName();
-                        Integer value_id = getBinId(bin_id_reader, createBinIdLogBuffer, value_prefix, element.getValues().indexOf(value));
+                        Integer value_id = element.getValues().indexOf(value);
 
                         result += value.toString(value_id);
                     }
@@ -297,7 +243,7 @@ public class Descriptors {
                 ItemList subitems = (ItemList) item;
                 String subitems_prefix = prefix + "_" + subitems.getName();
 
-                result += itemDescriptors(bin_id_reader, createBinIdLogBuffer, subitems_prefix, subitems);
+                result += itemDescriptors(subitems_prefix, subitems);
                 result += "</element>\n";
             }
         }       
@@ -309,12 +255,6 @@ public class Descriptors {
         	? SETTING_DESCRIPTOR_DESCRIPTION
         	: STATE_DESCRIPTOR_DESCRIPTION;
         String config_type = type.toLowerName();
-        StringBuilder createBinIdLogBuffer = options.createBinIdLogOption()
-        	? new StringBuilder()
-        	: null;
-        BufferedReader bin_id_reader = options.useBinIdLogOption()
-        	? new BufferedReader(new FileReader("bin_id_" + config_type + ".log"))
-        	: null;
         final String rciUserGlobalErrors = getErrorDescriptors(config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
         	
         String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups` bin_id=`%d`>\n",
@@ -358,8 +298,7 @@ public class Descriptors {
         for (Group group : groups) {
             String prefix = "group_" + config_type + "_" + group.getName();
             
-            int group_id = getBinId(bin_id_reader, createBinIdLogBuffer, prefix, gid);
-            query_descriptors += group.toString(group_id);
+            query_descriptors += group.toString(gid);
             
             /*
              * Write errors for individual groups
@@ -373,7 +312,7 @@ public class Descriptors {
              */
             query_descriptors += rciUserGlobalErrors;
             query_descriptors += getErrorDescriptors(config.getGroupErrorsOffset(), group.getErrors());
-            query_descriptors += itemDescriptors(bin_id_reader, createBinIdLogBuffer, prefix, group);
+            query_descriptors += itemDescriptors(prefix, group);
             query_descriptors +=  "</descriptor>";
             gid++;
         }
@@ -384,21 +323,6 @@ public class Descriptors {
 
         uploadDescriptor("descriptor/query_" + config_type, query_descriptors);
         uploadDescriptor("descriptor/set_" + config_type, set_descriptors);
-
-        if (createBinIdLogBuffer != null) {
-            try {
-            	FileWriter fileWriter = new FileWriter("bin_id_" + config_type + ".log");
-
-                fileWriter.write(createBinIdLogBuffer.toString());
-                fileWriter.close();
-
-             } catch (IOException e) {
-                e.printStackTrace();
-             }
-         }
-
-        if (bin_id_reader != null)
-            bin_id_reader.close();
     }
 
     private void sendRciDescriptors() throws Exception {
@@ -605,7 +529,6 @@ public class Descriptors {
         message += tagMessageSegment("dmData", replaceXmlEntities(buffer));
         message += "</DeviceMetaData>";
 
-        options.debug_log(message);
         if (options.saveDescriptorOption()) {
 	        try {
 	            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
