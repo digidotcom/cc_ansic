@@ -1,7 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Collection;
 
 public class GenApiUserSourceFile extends GenSourceFile {
 
@@ -72,22 +72,18 @@ public class GenApiUserSourceFile extends GenSourceFile {
         write(current + "\n};\n\n");
     }
 
-    private void writeGroupStructures(LinkedList<Group> groups) throws Exception {
-
-        for (int group_index = 0; group_index < groups.size(); group_index++) {
-            Group group = groups.get(group_index);
-
+    private void writeGroupStructures(Collection<Group> groups) throws Exception {
+        for (Group group: groups) {
             /* write element structure */
             writeItemArrays(group.getName(), group);
         }
-
     }
 
     private void writeAllCcapiStructures() throws Exception {
         String define_name;
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             configType = type.toString().toLowerCase();
 
@@ -96,12 +92,11 @@ public class GenApiUserSourceFile extends GenSourceFile {
 
                 write(String.format("static ccapi_rci_group_t const %sccapi_%s_groups[] =\n{", customPrefix, configType));
 
-                for (int group_index = 0; group_index < groups.size(); group_index++) {
-                    Group group = groups.get(group_index);
-
+                int remaining = groups.size();
+                for (Group group: groups) {
                     define_name = getDefineString(group.getName() + "_elements");
-                    String group_string = "";
 
+                    String group_string = "";
                     group_string += String.format("\n    { %s", COMMENTED(group.getName()));
                     group_string += String.format("        %s%s,", customPrefix, define_name.toLowerCase());
                     group_string += String.format("\n        ARRAY_SIZE(%s%s),", customPrefix, define_name.toLowerCase());
@@ -110,7 +105,9 @@ public class GenApiUserSourceFile extends GenSourceFile {
             		group_string += String.format("\n            %s%srci_%s_end" , RCI_FUNCTION_T,customPrefix,getDefineString(group.getName()).toLowerCase());
                     group_string += String.format("\n        }");
                     group_string += String.format("\n    }");
-                    if (group_index < (groups.size() - 1)) {
+                    
+                    remaining -= 1;
+                    if (remaining != 0) {
                     	group_string += String.format(",");
                     }
                     write(group_string);
@@ -122,13 +119,8 @@ public class GenApiUserSourceFile extends GenSourceFile {
         String ccfsm_internal_data = "extern connector_remote_config_data_t const " + customPrefix + "rci_internal_data;\n";
         String ccapi_rci_data = ccfsm_internal_data + "ccapi_rci_data_t const " + customPrefix + "ccapi_rci_data =\n{";
 
-        Group.Type type;
-        
-        type = Group.Type.SETTING;
-        {
-        	LinkedList<Group> groups = config.getConfigGroup(type);
-
-            configType = type.toLowerName();
+        for (Group.Type type: Group.Type.values()) {
+            Collection<Group> groups = config.getTable(type).groups();
 
         	ccapi_rci_data += String.format("\n    {");
             if (groups.isEmpty()) {
@@ -136,24 +128,7 @@ public class GenApiUserSourceFile extends GenSourceFile {
             	ccapi_rci_data += String.format("\n        0");
             }
             else {
-            	ccapi_rci_data += String.format("\n        %sccapi_%s_groups,", customPrefix, configType);
-            	ccapi_rci_data += String.format("\n        ARRAY_SIZE(%sccapi_%s_groups)", customPrefix, configType);
-            }
-        	ccapi_rci_data += String.format("\n    },");
-        }
-
-        type = Group.Type.STATE;
-        {
-        	LinkedList<Group> groups = config.getConfigGroup(type);
-
-            configType = type.toLowerName();
-
-        	ccapi_rci_data += String.format("\n    {");
-            if (groups.isEmpty()) {
-                ccapi_rci_data += String.format("\n        NULL,");
-            	ccapi_rci_data += String.format("\n        0");
-            }
-            else {
+                configType = type.toLowerName();
             	ccapi_rci_data += String.format("\n        %sccapi_%s_groups,", customPrefix, configType);
             	ccapi_rci_data += String.format("\n        ARRAY_SIZE(%sccapi_%s_groups)", customPrefix, configType);
             }

@@ -215,7 +215,7 @@ public class Element extends Item {
     	return false;
     }
     
-    public void addValue(ConfigData config, String valueName, String description, String helpDescription) throws Exception {
+    public void addValue(Config config, String valueName, String description, String helpDescription) throws Exception {
         if (type == null)
             throw new Exception("Missing type of enum or ref_enum on element: " + name);
         
@@ -245,7 +245,7 @@ public class Element extends Item {
     	return false;
     }
     
-    public void addRef(ConfigData config, String refName, String description, String helpDescription) throws Exception {
+    public void addRef(Config config, String refName, String description, String helpDescription) throws Exception {
         if (type == null)
             throw new Exception("Missing type enum on element: " + name);
         

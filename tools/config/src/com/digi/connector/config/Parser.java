@@ -25,7 +25,7 @@ public class Parser {
     private static int elementLineNumber;
     private static ArrayDeque<Integer> listLineNumber;
 
-    private final static ConfigData config = ConfigData.getInstance();
+    private final static Config config = Config.getInstance();
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
 
     public static void processFile(String fileName) throws IOException, NullPointerException {
@@ -47,19 +47,11 @@ public class Parser {
                      * [instances] <description> [help description]
                      */
 
-                    /* parse setting or state */
-                    String groupType = tokenScanner.getToken();
+                    /* parse group type */
+                	final Group.Type type = Group.Type.toType(tokenScanner.getToken());
 
                     /* parse name */
                     String nameStr = getName();
-
-                    // TODO: Seems like something we should check when we add it to the list. -ASK
-                    /* make sure group name doesn't exist in group */
-                    Group.Type type = Group.Type.toType(groupType);
-                    
-                    if (config.countainsGroupName(type, nameStr)) {
-                        throw new Exception("Duplicate <group> name: " + nameStr);
-                    }
 
                     groupLineNumber = tokenScanner.getLineNumber();
 
@@ -120,7 +112,7 @@ public class Parser {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
                     }
 
-                    config.addConfigGroup(type, theGroup);
+                    config.getTable(type).add(theGroup);
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
@@ -393,7 +385,7 @@ public class Parser {
         return def;
     }
 
-    private static final Element processElement(String default_access, ConfigData config) throws Exception {
+    private static final Element processElement(String default_access, Config config) throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
          * description] type <type> [min <min>] [max <max>] [access <access>]
@@ -461,7 +453,7 @@ public class Parser {
         return element;
     }
 
-    private static final ItemList processList(String default_access, ConfigData config, int depth) throws Exception {
+    private static final ItemList processList(String default_access, Config config, int depth) throws Exception {
         /*
          * syntax for parsing list: list <name> [instances] <description> [help
          * description] [access <access>]

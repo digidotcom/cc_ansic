@@ -1,6 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -258,7 +259,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     }
 
     /* returns field name (or "" if not used) */
-    private String writeGroupElementDefine(ConfigData config, UseNames type) throws IOException {
+    private String writeGroupElementDefine(Config config, UseNames type) throws IOException {
     	String field = "";
     	
         if (options.useNames().contains(type)) {
@@ -752,7 +753,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         return str;
     }
 
-    private void writeAllEnumHeaders(ConfigData config, LinkedList<Group> groups) throws Exception {
+    private void writeAllEnumHeaders(Config config, Collection<Group> groups) throws Exception {
 
         for (Group group : groups) {
             if (!options.useNames().contains(UseNames.ELEMENTS)) {
@@ -794,7 +795,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private void writeGroupTypeAndErrorEnum() throws Exception {
 
         for (Group.Type type : Group.Type.values()) {
-	        LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             configType = type.toLowerName();
 

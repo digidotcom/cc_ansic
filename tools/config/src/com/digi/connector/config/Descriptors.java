@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.Base64;
+import java.util.Collection;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -36,7 +37,7 @@ public class Descriptors {
     private Boolean callDeleteFlag;
     private int responseCode;
 
-    private final static ConfigData config = ConfigData.getInstance();
+    private final static Config config = Config.getInstance();
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
 
     public Descriptors(final String username, final String password,
@@ -96,7 +97,7 @@ public class Descriptors {
         options.log("\nProcessing Descriptors, please wait...");
         int id = 1;
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             /* Descriptors must be uploaded even if the group is empty */
             sendDescriptors(type, groups, id);
@@ -250,7 +251,7 @@ public class Descriptors {
     	return result;
     }
     
-    private void sendDescriptors(Group.Type type, LinkedList<Group> groups, int id) throws Exception {
+    private void sendDescriptors(Group.Type type, Collection<Group> groups, int id) throws Exception {
         String desc = (type == Group.Type.SETTING)
         	? SETTING_DESCRIPTOR_DESCRIPTION
         	: STATE_DESCRIPTOR_DESCRIPTION;
@@ -329,7 +330,7 @@ public class Descriptors {
         String descriptors = RCI_DESCRIPTORS;
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             String configType = type.toLowerName();
 

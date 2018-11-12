@@ -8,16 +8,22 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
+import java.util.Collection;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
 import com.digi.connector.config.Element;
 
-public class ConfigData {
-	private static ConfigData instance = null;
-    private ConfigData() {
-        groupList = new LinkedHashMap<Group.Type, LinkedList<Group>>(2);
-        groupList.put(Group.Type.SETTING, new LinkedList<Group>());
-        groupList.put(Group.Type.STATE, new LinkedList<Group>());
+public class Config {
+    private EnumMap<Group.Type, Table> table = new EnumMap<>(Group.Type.class);
+    private void initCollection(Group.Type type) {
+    	assert !table.containsKey(type) && table.size() < 2 : "invalid initialization of table";
+        table.put(type, new Table(type));
+    }
+    
+	private static Config instance = null;
+    private Config() {
+    	initCollection(Group.Type.SETTING);
+    	initCollection(Group.Type.STATE);
 
         globalFatalProtocolErrorsOffset = 1;
         globalFatalProtocolErrors = new LinkedHashMap<>();
@@ -41,20 +47,8 @@ public class ConfigData {
     	
         instance = this;
     }
-    public static final ConfigData getInstance() { if (instance == null) instance = new ConfigData(); return instance; }
+    public static final Config getInstance() { if (instance == null) instance = new Config(); return instance; }
     
-    public boolean countainsGroupName(final Group.Type type, final String needle) throws Exception {
-    	for (Group group: getConfigGroup(type)) {
-    		if (group.getName().equals(needle)) {
-    			return true;
-    		}
-    	}
-    	return false;
-    }
-
-    /* user setting and state groups */
-    private LinkedHashMap<Group.Type, LinkedList<Group>> groupList;
-
     private int globalFatalProtocolErrorsOffset;
     private final Map<String, String> globalFatalProtocolErrors;
     
@@ -76,20 +70,15 @@ public class ConfigData {
     private EnumMap<UseNames, Integer> max_name_length_seen = new EnumMap<>(UseNames.class);
     private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
-    public LinkedList<Group> getConfigGroup(Group.Type type) throws Exception {
-        return groupList.get(type);
+    public Table getTable(Group.Type type) {
+    	return table.get(type);
     }
-
-    public void addConfigGroup(Group.Type type, Group group) throws Exception {
-        getConfigGroup(type).add(group);
-    }
-
+    
     public LinkedList<SimpleImmutableEntry<Group.Type, Group>> getConfigGroupEntries() {
     	LinkedList<SimpleImmutableEntry<Group.Type, Group>> result = new LinkedList<>();
     	
-        for (Map.Entry<Group.Type, LinkedList<Group>> pair : groupList.entrySet()) {
-        	Group.Type type = pair.getKey();
-        	LinkedList<Group> groups = pair.getValue();
+        for (Group.Type type: Group.Type.values()) {
+            Collection<Group> groups = getTable(type).groups();
 
             for (Group group : groups) {
                 result.add(new SimpleImmutableEntry<Group.Type, Group>(type, group));
@@ -247,7 +236,7 @@ public class ConfigData {
     		return;
     	}
     	
-    	LinkedList<Group> settings = getConfigGroup(Group.Type.SETTING);
+    	Collection<Group> settings = getTable(Group.Type.SETTING).groups();
     	for (Element ref_enum: ref_enums) {
     		int min_length = Integer.MAX_VALUE;
     		int max_length = 0;

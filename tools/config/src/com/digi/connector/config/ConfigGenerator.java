@@ -122,7 +122,7 @@ public class ConfigGenerator {
     private boolean rciParser;
 
     private void usage() {
-    	ConfigData config = ConfigData.getInstance();
+    	Config config = Config.getInstance();
         String className = ConfigGenerator.class.getName();
 
         int firstChar = className.lastIndexOf(".") + 1;
@@ -618,7 +618,7 @@ public class ConfigGenerator {
     }
 
     private final void execute() throws Exception {
-    	ConfigData config = ConfigData.getInstance();
+    	Config config = Config.getInstance();
 
         if (deleteDescriptorOption()) {
             /* descriptor constructor for arguments */
@@ -646,8 +646,8 @@ public class ConfigGenerator {
         if (fileTypeOption() != FileType.GLOBAL_HEADER) {
             Parser.processFile(filename);
             
-            int setting_groups = config.getConfigGroup(Group.Type.SETTING).size(); 
-            int state_groups = config.getConfigGroup(Group.Type.STATE).size(); 
+            int setting_groups = config.getTable(Group.Type.SETTING).size(); 
+            int state_groups = config.getTable(Group.Type.STATE).size(); 
             int total_groups = setting_groups + state_groups;
             if (total_groups == 0)
                 throw new IOException("No groups specified in file: " + filename);

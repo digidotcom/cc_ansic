@@ -2,6 +2,7 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -97,7 +98,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         }
     }
 
-    private void writeGroupRemoteAllStrings(LinkedList<Group> groups) throws Exception {
+    private void writeGroupRemoteAllStrings(Collection<Group> groups) throws Exception {
         for (Group group : groups) {
             if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                 LinkedHashMap<String, String> errorMap = group.getErrors();
@@ -123,11 +124,10 @@ public class GenFsmUserSourceFile extends GenSourceFile {
         writeRciErrorsRemoteAllStrings();
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> theConfig = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
-            configType = type.toLowerName();
-            if (!theConfig.isEmpty()) {
-                writeGroupRemoteAllStrings(theConfig);
+            if (!groups.isEmpty()) {
+                writeGroupRemoteAllStrings(groups);
             }
         }
         writeErrorsRemoteAllStrings();
@@ -146,7 +146,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
     private void writeDefineGroupErrors() throws Exception {
         for (Group.Type type : Group.Type.values()) {
             String defineName = null;
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             configType = type.toLowerName();
 
@@ -377,7 +377,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 	    }
     }
     
-    private void writeGroupStructures(LinkedList<Group> groups) throws Exception {
+    private void writeGroupStructures(Collection<Group> groups) throws Exception {
         for (Group group: groups) {
             writeCollectionArrays(group, group.getName());
             
@@ -389,7 +389,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     private void writeAllStructures() throws Exception {
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             configType = type.toLowerName();
 
@@ -398,8 +398,8 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
                 write(String.format("static connector_group_t CONST %sconnector_%s_groups[] = {", customPrefix, configType));
 
-                for (int group_index = 0; group_index < groups.size(); group_index++) {
-                    Group group = groups.get(group_index);
+                int remaining = groups.size(); 
+                for (Group group: groups) {
                     String items_name = customPrefix + getDefineString(group.getName() + "_items").toLowerCase();
                     String optional = options.useNames().contains(UseNames.COLLECTIONS)
                         	? String.format("        \"%s\",\n", group.getName())
@@ -422,7 +422,8 @@ public class GenFsmUserSourceFile extends GenSourceFile {
                         group_string += "    { 0, NULL }\n";
                     }
 
-                    if (group_index < (groups.size() - 1)) {
+                    remaining -= 1;
+                    if (remaining != 0) {
                         group_string += "},\n";
                     } else {
                         group_string += "}\n";
@@ -435,7 +436,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
     	LinkedList<String> group_lines = new LinkedList<>();
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             if (!groups.isEmpty()) {
             	group_lines.add("    { NULL, 0 }");

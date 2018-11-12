@@ -106,7 +106,7 @@ public class ItemList extends Item {
         items.add(newItem);
     }
 
-    public void validate(ConfigData config) throws Exception {
+    public void validate(Config config) throws Exception {
     	if (instances == null) { // no count specified
     		if (keys == null) { // and no keys specified
     			instances = 1;
