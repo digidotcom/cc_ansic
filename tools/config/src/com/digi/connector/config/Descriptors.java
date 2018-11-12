@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.LinkedList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -32,16 +33,15 @@ public class Descriptors {
     private final String username;
     private final String password;
     private static String deviceType;
-    private static String vendorId;
+    private static Long vendorId;
     private final long fwVersion;
-    private Boolean callDeleteFlag;
     private int responseCode;
 
     private final static Config config = Config.getInstance();
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
 
     public Descriptors(final String username, final String password,
-                       final String vendorId, final String deviceType,
+                       final Long vendorId, final String deviceType,
                        final long version) throws IOException  {
         this.username = username;
         this.password = password;
@@ -52,17 +52,11 @@ public class Descriptors {
             validateUrlName();
 
         Descriptors.vendorId = vendorId;
-        if (vendorId == null) getVendorId();
-        else {
-            if (vendorId.startsWith("0x")) {
-                String hex = vendorId.substring(2);
-                options.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", Long.parseLong(hex, 16), Long.parseLong(hex, 16)));
-            } else {
-                String dec = vendorId;
-                options.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", Long.parseLong(dec, 10), Long.parseLong(dec, 10)));
-            }
+        if (vendorId == null) {
+        	getVendorId();
+        } else {
+            options.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", vendorId, vendorId));
         }
-        this.callDeleteFlag = true;
         this.responseCode = 0;
     }
 
@@ -94,34 +88,52 @@ public class Descriptors {
     }
 
     public void processDescriptors() throws Exception {
-        options.log("\nProcessing Descriptors, please wait...");
+    	final boolean uploading = !options.noUploadOption();
+    	Map<String, String> descriptors = new HashMap<String, String>(); 
+    	
+    	options.log("\nProcessing Descriptors, please wait...");
+        
         int id = 1;
         for (Group.Type type : Group.Type.values()) {
             Collection<Group> groups = config.getTable(type).groups();
 
             /* Descriptors must be uploaded even if the group is empty */
-            sendDescriptors(type, groups, id);
-            /* add 2 because sendDescriptors uploads 2 sets of descriptors (query and set ). */
+            String config_type = type.toLowerName();
+
+            descriptors.put("descriptor/query_" + config_type, generateQueryDescriptor(type, groups, id));
+            descriptors.put("descriptor/set_" + config_type, generateSetDescriptor(type, groups, id + 1));
             id += 2;
         }
 
         if (options.rciLegacyEnabled()){
-            sendRebootDescriptor();
-            sendDoCommandDescriptor();
-            sendSetFactoryDefaultDescriptor();
+            descriptors.put("descriptor/reboot", generateRebootDescriptor());
+            descriptors.put("descriptor/do_command", generateDoCommandDescriptor());
+            descriptors.put("descriptor/set_factory_default", generateSetFactoryDefaultDescriptor());
         }
 
-        sendRciDescriptors();
+        descriptors.put("descriptor", generateRootDescriptor());
 
-        if (!options.noUploadOption())
-            options.log("\nDescriptors were uploaded successfully.");
-        if (options.saveDescriptorOption())
-            options.log("\nDescriptors were saved successfully.");
+        if (uploading) {
+           deleteDescriptors();
+        }
+        
+        for (Map.Entry<String, String> entry : descriptors.entrySet()) {
+        	String name = entry.getKey();
+        	String content = entry.getValue();
+        	
+        	if (uploading) {
+        		uploadDescriptor(name, content);
+        	} else {
+        		saveDescriptor(name, content);
+        	}
+        }
+        final String done = uploading ? "uploaded" : "saved";
+        options.log("\nDescriptors were " + done + " successfully.");
     }
 
     public void deleteDescriptors()
     {
-        String target = String.format("/ws/DeviceMetaData?condition=dvVendorId=%s and dmDeviceType=\'%s\' and dmVersion=%d",
+        String target = String.format("/ws/DeviceMetaData?condition=dvVendorId=%d and dmDeviceType=\'%s\' and dmVersion=%d",
                 vendorId, deviceType, fwVersion);
 
         String response = sendCloudData(target.replace(" ", "%20"), "DELETE", null);
@@ -146,11 +158,7 @@ public class Descriptors {
             System.exit(1);
         }
         options.debug_log("Deleted target: " + target);
-        if (vendorId.startsWith("0x"))
-            options.debug_log(String.format("Deleted: 0x%X/%s", Long.parseLong(vendorId.substring(2), 16), deviceType));
-        else
-            options.debug_log(String.format("Deleted: 0x%X/%s", Long.parseLong(vendorId, 10), deviceType));
-
+        options.debug_log(String.format("Deleted: 0x%X/%s", vendorId, deviceType));
         options.debug_log(response);
     }
 
@@ -170,18 +178,7 @@ public class Descriptors {
         return descriptors;
     }
 
-    private void sendRebootDescriptor() throws Exception {
-
-        String reboot_descriptor = "<descriptor element=`reboot` desc=`Reboot the device` bin_id=`7` >";
-        reboot_descriptor +=       "  <error_descriptor id=`1` desc=`Reboot failed` />";
-        reboot_descriptor +=       "</descriptor>\n";
-
-        reboot_descriptor = reboot_descriptor.replace('`', '"');
-
-        uploadDescriptor("descriptor/reboot", reboot_descriptor);
-    }
-
-    private void sendDoCommandDescriptor() throws Exception {
+    private String generateDoCommandDescriptor() {
 
         String do_command_descriptor = "<descriptor element=`do_command` bin_id=`6` > ";
         do_command_descriptor +=       "  <error_descriptor id=`1` desc=`Invalid arguments` />";
@@ -191,10 +188,21 @@ public class Descriptors {
 
         do_command_descriptor = do_command_descriptor.replace('`', '"');
 
-        uploadDescriptor("descriptor/do_command", do_command_descriptor);
+        return do_command_descriptor;
     }
 
-    private void sendSetFactoryDefaultDescriptor() throws Exception {
+    private String generateRebootDescriptor() {
+
+        String reboot_descriptor = "<descriptor element=`reboot` desc=`Reboot the device` bin_id=`7` >";
+        reboot_descriptor +=       "  <error_descriptor id=`1` desc=`Reboot failed` />";
+        reboot_descriptor +=       "</descriptor>\n";
+
+        reboot_descriptor = reboot_descriptor.replace('`', '"');
+
+        return reboot_descriptor;
+    }
+
+    private String generateSetFactoryDefaultDescriptor() {
 
         String set_factory_default_descriptor = "<descriptor element=`set_factory_default` desc=`Set device configuration to factory defaults` bin_id=`8` >";
         set_factory_default_descriptor +=       "  <error_descriptor id=`1` desc=`Set Factory Default failed` />";
@@ -202,7 +210,7 @@ public class Descriptors {
 
         set_factory_default_descriptor = set_factory_default_descriptor.replace('`', '"');
 
-        uploadDescriptor("descriptor/set_factory_default", set_factory_default_descriptor);
+        return set_factory_default_descriptor;
     }
 
     private String itemDescriptors(String prefix, ItemList list) throws Exception {
@@ -251,7 +259,7 @@ public class Descriptors {
     	return result;
     }
     
-    private void sendDescriptors(Group.Type type, Collection<Group> groups, int id) throws Exception {
+    private String generateQueryDescriptor(Group.Type type, Collection<Group> groups, int id) throws Exception {
         String desc = (type == Group.Type.SETTING)
         	? SETTING_DESCRIPTOR_DESCRIPTION
         	: STATE_DESCRIPTOR_DESCRIPTION;
@@ -261,7 +269,7 @@ public class Descriptors {
         String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups` bin_id=`%d`>\n",
                                                   config_type, desc, config_type, id);
 
-        if (config_type.equalsIgnoreCase("setting"))
+        if (type == Group.Type.SETTING)
             query_descriptors += "  <attr name=`source` type=`enum` desc=`Source of settings returned` bin_id=`0` default=`current` >"
                                + "      <value value=`current` desc=`Current settings` bin_id=`0` />"
                                + "      <value value=`stored` desc=`Settings stored in flash` bin_id=`1` />"
@@ -284,16 +292,12 @@ public class Descriptors {
          */
         query_descriptors += rciUserGlobalErrors;
 
-        String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups` bin_id=`%d`>\n",
-                                                config_type, desc, config_type, id+1);
-
         /*
          * get all errors for set command descriptor. 1. common errors. 2.
          * command errors. 3. user global errors
          *
          * We must offset the error_id for command errors.
          */
-        set_descriptors += rciUserGlobalErrors + "</descriptor>";
 
         int gid = 0;
         for (Group group : groups) {
@@ -320,13 +324,34 @@ public class Descriptors {
         query_descriptors += "</format_define>\n</descriptor>\n";
 
         query_descriptors = query_descriptors.replace('`', '"');
-        set_descriptors = set_descriptors.replace('`', '"');
 
-        uploadDescriptor("descriptor/query_" + config_type, query_descriptors);
-        uploadDescriptor("descriptor/set_" + config_type, set_descriptors);
+        return query_descriptors;
     }
 
-    private void sendRciDescriptors() throws Exception {
+    private String generateSetDescriptor(Group.Type type, Collection<Group> groups, int id) throws Exception {
+        String desc = (type == Group.Type.SETTING)
+        	? SETTING_DESCRIPTOR_DESCRIPTION
+        	: STATE_DESCRIPTOR_DESCRIPTION;
+        String config_type = type.toLowerName();
+        final String rciUserGlobalErrors = getErrorDescriptors(config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
+        	
+        String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups` bin_id=`%d`>\n",
+                                                config_type, desc, config_type, id);
+
+        /*
+         * get all errors for set command descriptor. 1. common errors. 2.
+         * command errors. 3. user global errors
+         *
+         * We must offset the error_id for command errors.
+         */
+        set_descriptors += rciUserGlobalErrors + "</descriptor>";
+
+        set_descriptors = set_descriptors.replace('`', '"');
+
+        return set_descriptors;
+    }
+
+    private String generateRootDescriptor() throws Exception {
         String descriptors = RCI_DESCRIPTORS;
 
         for (Group.Type type : Group.Type.values()) {
@@ -353,8 +378,8 @@ public class Descriptors {
                 + "</descriptor>";
 
         descriptors = descriptors.replace('`', '"');
-
-        uploadDescriptor("descriptor", descriptors);
+        
+        return descriptors;
     }
 
     private String sendCloudData(String target, String method, String message) {
@@ -423,7 +448,7 @@ public class Descriptors {
 
             } else {
                 startIndex += "<dvVendorId>".length();
-                vendorId = response.substring(startIndex, response.indexOf("</dvVendorId>"));
+                vendorId = Long.parseUnsignedLong(response.substring(startIndex, response.indexOf("</dvVendorId>")));
             }
 
         } else {
@@ -470,11 +495,11 @@ public class Descriptors {
             }
 
             startIndex += "<dvVendorId>".length();
-            vendorId = response.substring(startIndex, response.indexOf("</dvVendorId>"));
+            vendorId = Long.parseUnsignedLong(response.substring(startIndex, response.indexOf("</dvVendorId>")));
         }
 
         if (vendorId != null)
-            options.log(String.format("Device Cloud registered vendor ID: 0x%X", Long.parseLong(vendorId)));
+            options.log(String.format("Device Cloud registered vendor ID: 0x%X", vendorId));
     }
 
 
@@ -512,87 +537,72 @@ public class Descriptors {
         return buffer.replace("<", "&lt;").replace(">", "&gt;");
     }
 
+    private void saveDescriptor(String descName, String buffer) {
+        try {
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
+	        String message = "<DeviceMetaData>";
+	        message += tagMessageSegment("dvVendorId", vendorId.toString());
+	        message += tagMessageSegment("dmDeviceType", deviceType);
+	        message += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
+	        message += tagMessageSegment("dmName", descName);
+	        message += tagMessageSegment("dmData", buffer);
+	        message += "</DeviceMetaData>";
+
+			fileWriter.write(message);
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+
     private void uploadDescriptor(String descName, String buffer) {
-
-        if (!options.noUploadOption())
-            options.debug_log("Uploading descriptor:" + descName);
-
-        if (callDeleteFlag && !options.noUploadOption()) {
-            deleteDescriptors();
-            callDeleteFlag = false;
-        }
+        options.debug_log("Uploading descriptor:" + descName);
 
         String message = "<DeviceMetaData>";
-        message += tagMessageSegment("dvVendorId", vendorId);
+        message += tagMessageSegment("dvVendorId", vendorId.toString());
         message += tagMessageSegment("dmDeviceType", deviceType);
         message += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
         message += tagMessageSegment("dmName", descName);
         message += tagMessageSegment("dmData", replaceXmlEntities(buffer));
         message += "</DeviceMetaData>";
 
-        if (options.saveDescriptorOption()) {
-	        try {
-	            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
-		        String message2 = "<DeviceMetaData>";
-		        message2 += tagMessageSegment("dvVendorId", vendorId);
-		        message2 += tagMessageSegment("dmDeviceType", deviceType);
-		        message2 += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
-		        message2 += tagMessageSegment("dmName", descName);
-		        message2 += tagMessageSegment("dmData", buffer);
-		        message2 += "</DeviceMetaData>";
+        String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
+        if (responseCode != 0)
+        {
+            options.debug_log("Response from " + options.getUrlName());
+            switch (responseCode)
+            {
+                case 401:
+                    options.log("Unauthorized: verify username and password are valid\n");
+                    break;
 
-				fileWriter.write(message2);
-				fileWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+                case 403:
+                    options.log("Forbidden: Uploading " + descName + " failed, verify that vendor ID is valid and is owned by your account.\n");
+                    break;
+
+                default:
+                    options.log("Response status: " + response);
+                    break;
+            }
+
+            System.exit(1);
         }
-        
-        if (!options.noUploadOption()) {
-	        String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
-	        if (responseCode != 0)
-	        {
-	            options.debug_log("Response from " + options.getUrlName());
-	            switch (responseCode)
-	            {
-	                case 401:
-	                    options.log("Unauthorized: verify username and password are valid\n");
-	                    break;
 
-	                case 403:
-	                    options.log("Forbidden: Uploading " + descName + " failed, verify that vendor ID is valid and is owned by your account.\n");
-	                    break;
-
-	                default:
-	                    options.log("Response status: " + response);
-	                    break;
-	            }
-
-	            System.exit(1);
-	        }
-
-	        options.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
-	        options.debug_log(response);
-	        /* prevent error HTTP/1.1 429 Too Many Requests */
-	        try {
-	            Thread.sleep(1000);
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
-        }
-    }
-
-    public static String vendorId() {
+        options.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
+        options.debug_log(response);
+        /* prevent error HTTP/1.1 429 Too Many Requests */
         try {
-            return String.format("0x%X", Long.parseLong(vendorId));
-        }
-        catch (NumberFormatException nfe) {
-            return vendorId;
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public static String deviceType(){
+    public static Long vendorId() {
+        return vendorId;
+    }
+
+    public static String deviceType() {
         return deviceType;
     }
-
 }

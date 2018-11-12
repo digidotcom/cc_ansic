@@ -7,7 +7,6 @@ import java.util.Scanner;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.Collections;
 
 public class ConfigGenerator {
@@ -95,7 +94,7 @@ public class ConfigGenerator {
     private final static String CONFIG_FILENAME = "configFileName";
 
     private String urlName = URL_DEFAULT;
-    private String vendorId;
+    private Long vendorId;
 
     private String deviceType;
     private long fwVersion;
@@ -351,16 +350,14 @@ public class ConfigGenerator {
                 if (keys[0].equals(URL_OPTION)) {
                     urlName = keys[1];
                 } else if (keys[0].equals(VENDOR_OPTION)) {
-
-                    if (Pattern.matches("(0[xX])?\\p{XDigit}+", keys[1])) {
-                        vendorId = keys[1];
-                        if (!vendorId.startsWith("0x") && !vendorId.matches("^\\d+$"))
-                        {
-                            /* not all digits (mix with hex) */
-                            throw new Exception("Invalid Vendor ID! For hexadecimal vendor ID, use 0x prefix");
-                        }
-                    } else {
-                        throw new Exception("Invalid Vendor ID!");
+                	try {
+                		final boolean hex = keys[1].startsWith("0x"); 
+                		final int radix = hex ? 16 : 10;
+                		final String parse = hex ? keys[1].substring(2) : keys[1];
+                		
+                		vendorId = Long.parseUnsignedLong(parse, radix);
+                    } catch (NumberFormatException e) {
+                        throw new Exception("Invalid format for Vendor ID");
                     }
                 } else if (keys[0].equals(DIRECTORY_OPTION)) {
                     if (new File(keys[1]).isDirectory()) {
@@ -527,7 +524,7 @@ public class ConfigGenerator {
         }
     }
 
-    public String getVendorId() {
+    public Long getVendorId() {
     	return vendorId;
     }
     
