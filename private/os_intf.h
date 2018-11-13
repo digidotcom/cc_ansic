@@ -39,6 +39,7 @@ typedef enum
     named_buffer_id(sm_data_block),
     named_buffer_id(sm_packet),
     named_buffer_id(data_point_block),
+	named_buffer_id(streaming_cli_session),
     named_buffer_id(connector_data) = 29,
     named_buffer_id(cc_facility) = 30,
     named_buffer_id(fw_facility) = 31

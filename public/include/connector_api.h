@@ -188,18 +188,19 @@ typedef enum {
 * It tells class id for the request id passed to the application's callback.
 */
 typedef enum {
-    connector_class_id_config,           /**< Configuration Class Id */
-    connector_class_id_operating_system, /**< Operating System Class Id */
-    connector_class_id_firmware,         /**< Firmware Facility Class Id */
-    connector_class_id_data_service,     /**< Data Service Class Id */
-    connector_class_id_remote_config,    /**< Remote Configuration Class ID */
-    connector_class_id_file_system,      /**< File System Class Id */
-    connector_class_id_network_tcp,      /**< TCP Network Class ID */
-    connector_class_id_network_udp,      /**< UDP Network Class ID */
-    connector_class_id_network_sms,      /**< SMS Network Class ID */
-    connector_class_id_status,           /**< Class ID for all status */
-    connector_class_id_short_message,    /**< Short message specific class ID */
-    connector_class_id_data_point        /**< Data point class ID */
+    connector_class_id_config,           	/**< Configuration Class Id */
+    connector_class_id_operating_system, 	/**< Operating System Class Id */
+    connector_class_id_firmware,         	/**< Firmware Facility Class Id */
+    connector_class_id_data_service,     	/**< Data Service Class Id */
+    connector_class_id_remote_config,    	/**< Remote Configuration Class ID */
+    connector_class_id_file_system,      	/**< File System Class Id */
+    connector_class_id_network_tcp,      	/**< TCP Network Class ID */
+    connector_class_id_network_udp,      	/**< UDP Network Class ID */
+    connector_class_id_network_sms,      	/**< SMS Network Class ID */
+    connector_class_id_status,           	/**< Class ID for all status */
+    connector_class_id_short_message,    	/**< Short message specific class ID */
+    connector_class_id_data_point,       	/**< Data point class ID */
+    connector_class_id_streaming_cli,	    /**< Streaming CLI service Class ID */
 } connector_class_id_t;
 /**
 * @}
@@ -389,6 +390,7 @@ typedef char const * connector_geojson_t;
 #include "api/connector_api_file_system.h"
 #include "api/connector_api_short_message.h"
 #include "api/connector_api_os.h"
+#include "api/connector_api_streaming_cli.h"
 
 
 /**
@@ -422,6 +424,9 @@ typedef union {
     #if (defined CONNECTOR_SHORT_MESSAGE)
     connector_request_id_sm_t sm_request;                       /**< Short message request ID for short message class */
     #endif
+	#if (defined CONNECTOR_STREAMING_CLI_SERVICE)
+	connector_request_id_streaming_cli_service_t streaming_cli_service_request;
+	#endif
     int int_value;                                             /**< For debugging purposes. */
 } connector_request_id_t;
 /**

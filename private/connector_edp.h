@@ -29,7 +29,7 @@
 
 #include "connector_cc.h"
 
-#if (defined CONNECTOR_DATA_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE)
+#if (defined CONNECTOR_DATA_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || (defined CONNECTOR_RCI_SERVICE) || (defined CONNECTOR_STREAMING_CLI_SERVICE)
 #include "connector_msg.h"
 #endif
 #if (defined CONNECTOR_DATA_SERVICE)
@@ -37,6 +37,9 @@
 #endif
 #if (defined CONNECTOR_FILE_SYSTEM)
 #include "connector_file_system.h"
+#endif
+#if (defined CONNECTOR_STREAMING_CLI_SERVICE)
+#include "connector_streaming_cli.h"
 #endif
 
 #if (defined CONNECTOR_FIRMWARE_SERVICE)

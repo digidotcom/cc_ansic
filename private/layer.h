@@ -75,9 +75,17 @@ static connector_facility_service_t const connector_supported_service_table[] = 
 
 #if (defined CONNECTOR_RCI_SERVICE)
     #if (defined CONNECTOR_REMOTE_CONFIGURATION_SUPPORT)
-        {{MANDATORY_FACILITY}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process}
+        {{MANDATORY_FACILITY}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process},
     #else
-        {{connector_request_id_config_remote_configuration}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process}
+        {{connector_request_id_config_remote_configuration}, connector_facility_rci_service_init, connector_facility_rci_service_delete, connector_facility_rci_service_cleanup, msg_discovery, msg_process},
+    #endif
+#endif
+
+#if (defined CONNECTOR_STREAMING_CLI_SERVICE)
+    #if (defined CONNECTOR_STREAMING_CLI_SUPPORT)
+        {{MANDATORY_FACILITY}, connector_facility_streaming_cli_service_init, connector_facility_streaming_cli_service_delete, connector_facility_streaming_cli_service_cleanup, msg_discovery, msg_process}
+    #else
+        {{connector_request_id_config_streaming_cli}, connector_facility_streaming_cli_service_init, connector_facility_streaming_cli_service_delete, connector_facility_streaming_cli_service_cleanup, msg_discovery, msg_process}
     #endif
 #endif
 };

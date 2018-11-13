@@ -84,7 +84,7 @@
 
 #if defined CONNECTOR_TRANSPORT_TCP
 
-#if (defined CONNECTOR_DATA_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || defined (CONNECTOR_RCI_SERVICE)
+#if (defined CONNECTOR_DATA_SERVICE) || (defined CONNECTOR_FILE_SYSTEM) || defined (CONNECTOR_RCI_SERVICE) || (defined CONNECTOR_STREAMING_CLI_SERVICE)
 #ifndef CONNECTOR_MSG_MAX_TRANSACTION
 #define CONNECTOR_MSG_MAX_TRANSACTION   1
 #endif
@@ -115,7 +115,13 @@
 #define FILE_SYSTEM_CNT 0
 #endif
 
-#define msg_facility_buffer_cnt (DATA_SERVICE_CNT + FILE_SYSTEM_CNT + RCI_SERVICE_CNT)
+#if defined CONNECTOR_STREAMING_CLI_SERVICE
+#define STREAMING_CLI_SERVICE_CNT 1
+#else
+#define STREAMING_CLI_SERVICE_CNT 0
+#endif
+
+#define msg_facility_buffer_cnt (DATA_SERVICE_CNT + FILE_SYSTEM_CNT + RCI_SERVICE_CNT + STREAMING_CLI_SERVICE_CNT)
 
 #define msg_session_buffer_cnt  (CONNECTOR_MSG_MAX_TRANSACTION * msg_facility_buffer_cnt)
 #define msg_service_buffer_cnt  msg_session_buffer_cnt
@@ -134,6 +140,17 @@ typedef data_service_context_t      named_buffer_type(put_request);
 #define data_point_block_buffer_cnt msg_session_client_buffer_cnt
 typedef data_point_info_t           named_buffer_type(data_point_block);
 #endif
+#endif
+
+#if defined CONNECTOR_STREAMING_CLI_SERVICE
+typedef streaming_cli_session_t named_buffer_type(streaming_cli_session);
+
+#if CONNECTOR_STREAMING_CLI_MAX_SESSIONS > 32
+#error "CONNECTOR_STREAMING_CLI_MAX_SESSIONS must be <= 32"
+#endif
+
+#define streaming_cli_session_buffer_cnt CONNECTOR_STREAMING_CLI_MAX_SESSIONS
+
 #endif
 
 typedef struct
@@ -280,15 +297,24 @@ static struct
     named_buffer_map_define(msg_service);
 #endif
 
-#if defined CONNECTOR_DATA_SERVICE
+#if defined CONNECTOR_DATA_SERVICE || defined CONNECTOR_STREAMING_CLI_SERVICE
     named_buffer_array_define(msg_session_client);
-    named_buffer_array_define(put_request);
     named_buffer_map_define(msg_session_client);
+#endif
+
+#if defined CONNECTOR_DATA_SERVICE
+
+    named_buffer_array_define(put_request);
     named_buffer_map_define(put_request);
 #if defined CONNECTOR_DATA_POINTS
     named_buffer_array_define(data_point_block);
     named_buffer_map_define(data_point_block);
 #endif
+#endif
+
+#if defined CONNECTOR_STREAMING_CLI_SERVICE
+	named_buffer_array_define(streaming_cli_session);
+	named_buffer_map_define(streaming_cli_session);
 #endif
 #endif
 
@@ -405,11 +431,13 @@ STATIC connector_status_t malloc_static_data(connector_data_t * const connector_
         malloc_named_array_element(msg_service, size, ptr, status);
         break;
 
-#if defined CONNECTOR_DATA_SERVICE
+#if defined CONNECTOR_DATA_SERVICE || defined CONNECTOR_STREAMING_CLI_SERVICE
     case named_buffer_id(msg_session_client):
         malloc_named_array_element(msg_session_client, size, ptr, status);
         break;
+#endif
 
+#if defined CONNECTOR_DATA_SERVICE
     case named_buffer_id(put_request):
         malloc_named_array_element(put_request, size, ptr, status);
         break;
@@ -419,6 +447,11 @@ STATIC connector_status_t malloc_static_data(connector_data_t * const connector_
         malloc_named_array_element(data_point_block, size, ptr, status);
         break;
 #endif
+#endif
+#if defined CONNECTOR_STREAMING_CLI_SERVICE
+	case named_buffer_id(streaming_cli_session):
+		malloc_named_array_element(streaming_cli_session, size, ptr, status);
+		break;
 #endif
 #endif
 #endif
@@ -477,6 +510,12 @@ void free_static_data(connector_data_t * const connector_ptr, connector_static_b
         free_named_array_element(msg_service, ptr);
         break;
 
+#if defined CONNECTOR_DATA_SERVICE || defined CONNECTOR_STREAMING_CLI_SERVICE
+    case named_buffer_id(msg_session_client):
+        free_named_array_element(msg_session_client, ptr);
+        break;
+#endif
+
 #if defined CONNECTOR_DATA_SERVICE
     case named_buffer_id(put_request):
         free_named_array_element(put_request, ptr);
@@ -487,6 +526,12 @@ void free_static_data(connector_data_t * const connector_ptr, connector_static_b
         free_named_array_element(data_point_block, ptr);
         break;
 #endif
+#endif
+
+#if defined CONNECTOR_STREAMING_CLI_SERVICE
+	case named_buffer_id(streaming_cli_session):
+		free_named_array_element(streaming_cli_session, ptr);
+		break;
 #endif
 
     case named_buffer_id(msg_session):

@@ -90,68 +90,105 @@ typedef enum {
 
 #define add_list_node(head, tail, node) \
     do { \
-        ASSERT(node != NULL); \
-        if (*head != NULL) \
+        ASSERT((node) != NULL); \
+        if (*(head) != NULL) \
         {\
-            *head->prev = node;\
+            (*(head))->prev = node;\
         }\
-        node->next = *head;\
-        node->prev = NULL;\
-        *head = node;\
-        if ((tail != NULL) && (*tail == NULL)) \
+        (node)->next = *(head);\
+        (node)->prev = NULL;\
+        *(head) = (node);\
+        if (((tail) != NULL) && (*(tail) == NULL)) \
         { \
-            *tail = node; \
+            *(tail) = (node); \
         } \
    } while (0)
 
 #define remove_list_node(head, tail, node) \
     do { \
-        ASSERT(node != NULL); \
-        if (node->next != NULL) \
+        ASSERT((node) != NULL); \
+        if ((node)->next != NULL) \
         {\
-            node->next->prev = node->prev;\
+            (node)->next->prev = (node)->prev;\
         }\
-        if (node->prev != NULL) \
+        if ((node)->prev != NULL) \
         {\
-            node->prev->next = node->next;\
+            (node)->prev->next = (node)->next;\
         }\
-        if (node == *head)\
+        if ((node) == *(head))\
         {\
-            *head = node->next;\
+            *(head) = (node)->next;\
         }\
-        if ((tail != NULL) && (node == *tail))\
+        if (((tail) != NULL) && ((node) == *(tail)))\
         {\
-            *tail = node->prev;\
+            *(tail) = (node)->prev;\
         }\
     } while (0)
 
 #define add_node(head, node) \
     do { \
-        ASSERT(node != NULL); \
-        if (*head != NULL) \
+        ASSERT((node) != NULL); \
+        if (*(head) != NULL) \
         {\
-            *head->prev = node;\
+            (*(head))->prev = (node);\
         }\
-        node->next = *head;\
-        node->prev = NULL;\
-        *head = node;\
+        (node)->next = *(head);\
+        (node)->prev = NULL;\
+        *(head) = (node);\
     } while (0)
 
 #define remove_node(head, node) \
     do { \
-        ASSERT(node != NULL); \
-        if (node->next != NULL) \
+        ASSERT((node) != NULL); \
+        if ((node)->next != NULL) \
         {\
-            node->next->prev = node->prev;\
+            (node)->next->prev = (node)->prev;\
         }\
-        if (node->prev != NULL) \
+        if ((node)->prev != NULL) \
         {\
-            node->prev->next = node->next;\
+            (node)->prev->next = node->next;\
         }\
-        if (node == *head)\
+        if ((node) == *(head))\
         {\
-            *head = node->next;\
+            *(head) = (node)->next;\
         }\
+    } while (0)
+
+#define add_circular_node(head, node) \
+    do { \
+        ASSERT((node) != NULL); \
+		if (*(head) == NULL) \
+		{ \
+			(node)->next = (node); \
+			(node)->prev = (node); \
+			*(head) = (node); \
+		} \
+		else \
+		{ \
+			(node)->next = *(head); \
+			(node)->prev = (*(head))->prev; \
+			(*(head))->prev->next = (node); \
+			(*(head))->prev = (node); \
+		} \
+    } while (0)
+
+#define remove_circular_node(head, node) \
+    do { \
+        ASSERT((node) != NULL); \
+		if (*(head) == (node)) \
+		{ \
+			if ((node)->next == (node)) \
+			{ \
+				*(head) = NULL; \
+				break; \
+			} \
+			else \
+			{ \
+				*(head) = (node)->next; \
+			} \
+		} \
+		(node)->next->prev = (node)->prev; \
+		(node)->prev->next = (node)->next; \
     } while (0)
 
 struct connector_data;
