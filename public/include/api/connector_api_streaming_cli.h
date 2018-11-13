@@ -24,6 +24,10 @@
 
 #ifndef CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH
 #define CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH	1024
+#else
+#if CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH < 30
+#error "CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH must be greater than 30"
+#endif
 #endif
 
 typedef enum {
@@ -33,11 +37,6 @@ typedef enum {
 	connector_request_id_streaming_cli_receive,
 	connector_request_id_streaming_cli_session_end
 } connector_request_id_streaming_cli_service_t;
-
-typedef enum {
-	connector_cli_session_end_initiator_server,
-	connector_cli_session_end_initiator_client
-} connector_streaming_cli_end_initiator_t;
 
 typedef struct {
 	void * handle;

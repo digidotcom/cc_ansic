@@ -17,8 +17,12 @@
  * =======================================================================
  */
 
+#ifndef CONNECTOR_STREAMING_CLI_MAX_SESSIONS
+#define CONNECTOR_STREAMING_CLI_MAX_SESSIONS 1
+#else
 #if (CONNECTOR_STREAMING_CLI_MAX_SESSIONS < 0 || CONNECTOR_STREAMING_CLI_MAX_SESSIONS > 255)
 #error "CONNECTOR_STREAMING_CLI_MAX_SESSIONS must be between 1-255 or 0 for unlimited"
+#endif
 #endif
 
 /* Opcodes */
@@ -159,7 +163,7 @@ STATIC connector_status_t streaming_cli_service_run_cb(connector_data_t * const 
 	connector_request_id_t request_id;
 	request_id.streaming_cli_service_request = request;
 
- 	callback_status = connector_callback(connector_ptr->callback, connector_class_id_streaming_message, request_id, arg, connector_ptr->context);
+ 	callback_status = connector_callback(connector_ptr->callback, connector_class_id_streaming_cli, request_id, arg, connector_ptr->context);
 	switch (callback_status)
 	{
 		case connector_callback_continue:
@@ -470,6 +474,34 @@ STATIC void streaming_cli_service_copy_close_message(streaming_cli_session_t * c
 	}
 }
 
+STATIC connector_status_t streaming_cli_service_handle_close_request(connector_data_t * const connector_ptr, msg_session_t * const msg_session, msg_service_data_t * const service_data)
+{
+	streaming_cli_session_t * const session = msg_session->service_context;
+
+	if (MsgIsStart(service_data->flags))
+	{	
+		session->bytes_consumed = 0;
+		session->session_state = streaming_cli_session_state_closing;
+		if (session->info.streaming.active_send_transaction != NULL)
+		{
+			session->info.streaming.active_send_transaction->service_context = NULL;
+			session->info.streaming.active_send_transaction = NULL;
+		}
+	}
+
+	streaming_cli_service_copy_close_message(session, service_data);
+
+	if (MsgIsLastData(service_data->flags))
+	{
+		MsgSetNoReply(msg_session->in_dblock->status_flag);
+		return streaming_cli_service_close_session(connector_ptr, session);
+	}
+	else
+	{
+		return connector_working;
+	}
+}
+
 STATIC connector_status_t streaming_cli_service_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
 	connector_status_t status = connector_working;
@@ -589,26 +621,7 @@ STATIC connector_status_t streaming_cli_service_request_callback(connector_data_
 			status = streaming_cli_service_write_data(connector_ptr, session, service_data);
 			break;
 		case STREAMING_CLI_OPCODE_CLOSE:
-			if (MsgIsStart(service_data->flags))
-			{	
-				session->bytes_consumed = 0;
-				session->session_state = streaming_cli_session_state_closing;
-				if (session->info.streaming.active_send_transaction != NULL)
-				{
-					session->info.streaming.active_send_transaction->service_context = NULL;
-					session->info.streaming.active_send_transaction = NULL;
-				}
-			}
-			streaming_cli_service_copy_close_message(session, service_data);
-			if (MsgIsLastData(service_data->flags))
-			{
-				MsgSetNoReply(msg_session->in_dblock->status_flag);
-				return streaming_cli_service_close_session(connector_ptr, session);
-			}
-			else
-			{
-				status = connector_working;
-			}
+			return streaming_cli_service_handle_close_request(connector_ptr, msg_session, service_data);
 			break;
 		case STREAMING_CLI_OPCODE_EXEC_REQ:
 			status = streaming_cli_service_execute_command(connector_ptr, session, service_data);
@@ -619,7 +632,7 @@ STATIC connector_status_t streaming_cli_service_request_callback(connector_data_
 	{
 		session->info.streaming.active_recv_transaction = NULL;
 
-		if (MsgIsReplyExpected(msg_session->in_dblock->status_flag))
+		if (MsgReplyExpected(msg_session->in_dblock->status_flag))
 		{
 			session->info.streaming.active_send_transaction = msg_session;
 		}
