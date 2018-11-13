@@ -59,7 +59,7 @@
 #define MsgIsDeflated(flag)     	MsgIsBitSet((flag), MSG_FLAG_DEFLATED)
 #define MsgIsSendNow(flag)      	MsgIsBitSet((flag), MSG_FLAG_SEND_NOW)
 #define MsgIsDoubleBuf(flag)    	MsgIsBitSet((flag), MSG_FLAG_DOUBLE_BUF)
-#define MsgReplyExpected(flag)	MsgIsBitClear((flag), MSG_FLAG_NO_REPLY)
+#define MsgReplyExpected(flag)		MsgIsBitClear((flag), MSG_FLAG_NO_REPLY)
 
 #define MsgIsNotRequest(flag)      	MsgIsBitClear((flag), MSG_FLAG_REQUEST)
 #define MsgIsNotLastData(flag)     	MsgIsBitClear((flag), MSG_FLAG_LAST_DATA)
