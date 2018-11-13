@@ -502,112 +502,10 @@ STATIC connector_status_t streaming_cli_service_handle_close_request(connector_d
 	}
 }
 
-STATIC connector_status_t streaming_cli_service_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+STATIC connector_status_t streaming_cli_service_handle_receive_transaction(connector_data_t * const connector_ptr, msg_session_t * const msg_session, msg_service_data_t * const service_data)
 {
-	connector_status_t status = connector_working;
-	msg_service_data_t * const service_data = service_request->have_data;
-	msg_session_t * const msg_session = service_request->session;
-	streaming_cli_session_t * session = msg_session->service_context;
-
-	if (MsgIsStart(service_data->flags))
-    {
-		uint8_t const opcode = *((uint8_t *) service_data->data_ptr);
-	
-		if (session == NULL)
-		{
-			uint16_t session_id = 0;
-
-			switch (opcode)
-			{
-				case STREAMING_CLI_OPCODE_START_REQ:
-				case STREAMING_CLI_OPCODE_DATA:
-				case STREAMING_CLI_OPCODE_CLOSE:
-				{
-					uint8_t * const streaming_cli_service_session_start_request = service_data->data_ptr;
-					session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
-					session = streaming_cli_service_find_session(connector_ptr, session_id);
-					break;
-				}
-				case STREAMING_CLI_OPCODE_EXEC_REQ:
-					break;
-				default: 
-					msg_set_error(msg_session, connector_session_error_invalid_opcode);
-					return connector_working;
-					break;
-			}
-
-			if (session == NULL)
-			{
-				if (opcode == STREAMING_CLI_OPCODE_CLOSE)
-				{
-					MsgSetNoReply(msg_session->in_dblock->status_flag);
-					return connector_working;
-				}
-				if (opcode == STREAMING_CLI_OPCODE_DATA)
-				{
-					return streaming_cli_service_set_unknown_session_error(connector_ptr, session_id, msg_session);
-				}
-				if (CONNECTOR_STREAMING_CLI_MAX_SESSIONS != 0 && streaming_cli_num_sessions >= CONNECTOR_STREAMING_CLI_MAX_SESSIONS)
-				{
-					return streaming_cli_service_set_max_sessions_error(opcode, msg_session);
-				}
-				if (malloc_data_buffer(connector_ptr, sizeof *session, named_buffer_id(streaming_cli_session), (void **) &session) != connector_working)
-				{
-					return streaming_cli_service_set_general_start_error(msg_session);
-				}
-				streaming_cli_num_sessions++;
-				session->session_state = streaming_cli_session_state_uninitialized;
-				session->bytes_consumed = 0;
-				session->close_reason[0] = '\0';
-
-				if (opcode != STREAMING_CLI_OPCODE_EXEC_REQ)
-				{
-					streaming_cli_session_t ** head_ptr = &streaming_cli_sessions;
-					session->info.streaming.active_recv_transaction = NULL;
-					session->info.streaming.active_send_transaction = NULL;
-					session->info.streaming.session_id = session_id;
-					add_circular_node(head_ptr, session);
-				}
-				else
-				{
-					uint8_t * const streaming_cli_service_execute_request = service_data->data_ptr;
-					session->info.execute.timeout = message_load_be16(streaming_cli_service_execute_request, timeout);
-					session->prev = NULL;
-					session->next = NULL;
-				}
-			}
-			if (opcode != STREAMING_CLI_OPCODE_EXEC_REQ)
-			{
-				if (session->info.streaming.active_recv_transaction != NULL)
-				{
-					session->info.streaming.active_recv_transaction->service_context = NULL;
-					if (opcode == STREAMING_CLI_OPCODE_DATA)
-					{
-						static char const error_msg[] = "Message received out of order";
-						memcpy(session->close_reason, error_msg, sizeof error_msg);
-						session->session_state = streaming_cli_session_state_pending_error;
-						return connector_working;
-					}
-				}
-				if (opcode != STREAMING_CLI_OPCODE_DATA || session->session_state == streaming_cli_session_state_started)
-				{
-					msg_session->service_context = session;
-					session->info.streaming.active_recv_transaction = msg_session;
-				}
-				else
-				{
-					/* Received data for closing session. Discard */
-					return connector_working;
-				}
-			}
-			session->last_opcode = opcode;
-		}
-    }
-	else if (session == NULL)
-	{
-		/* Received data for cancelled session. Discard */
-		return connector_working;
-	}
+	connector_status_t status = connector_abort;
+	streaming_cli_session_t * const session = msg_session->service_context;
 
 	ASSERT(session->info.streaming.active_recv_transaction == msg_session);
 	
@@ -645,6 +543,135 @@ STATIC connector_status_t streaming_cli_service_request_callback(connector_data_
 	return status;
 }
 
+STATIC streaming_cli_session_t * streaming_cli_service_create_new_session(connector_data_t * const connector_ptr, msg_session_t * const msg_session, uint8_t * const data, connector_status_t * const status)
+{
+	streaming_cli_session_t * session;
+	uint8_t const opcode = *data;
+
+	if (CONNECTOR_STREAMING_CLI_MAX_SESSIONS != 0 && streaming_cli_num_sessions >= CONNECTOR_STREAMING_CLI_MAX_SESSIONS)
+	{
+		*status = streaming_cli_service_set_max_sessions_error(opcode, msg_session);
+		return NULL;
+	}
+	if (malloc_data_buffer(connector_ptr, sizeof *session, named_buffer_id(streaming_cli_session), (void **) &session) != connector_working)
+	{
+		*status = streaming_cli_service_set_general_start_error(msg_session);
+		return NULL;
+	}
+	streaming_cli_num_sessions++;
+	session->session_state = streaming_cli_session_state_uninitialized;
+	session->bytes_consumed = 0;
+	session->close_reason[0] = '\0';
+
+	if (opcode != STREAMING_CLI_OPCODE_EXEC_REQ)
+	{
+		uint8_t * const streaming_cli_service_session_start_request = data;
+
+		streaming_cli_session_t ** head_ptr = &streaming_cli_sessions;
+		session->info.streaming.active_recv_transaction = NULL;
+		session->info.streaming.active_send_transaction = NULL;
+		session->info.streaming.session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
+		add_circular_node(head_ptr, session);
+	}
+	else
+	{
+		uint8_t * const streaming_cli_service_execute_request = data;
+
+		session->info.execute.timeout = message_load_be16(streaming_cli_service_execute_request, timeout);
+		session->prev = NULL;
+		session->next = NULL;
+	}
+
+	*status = connector_working;
+	return session;
+}
+
+STATIC connector_status_t streaming_cli_service_request_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
+{
+	msg_service_data_t * const service_data = service_request->have_data;
+	msg_session_t * const msg_session = service_request->session;
+	streaming_cli_session_t * session = msg_session->service_context;
+
+	if (MsgIsStart(service_data->flags))
+    {
+		uint8_t const opcode = *((uint8_t *) service_data->data_ptr);
+	
+		if (session == NULL)
+		{
+			uint16_t session_id = 0;
+
+			switch (opcode)
+			{
+				case STREAMING_CLI_OPCODE_START_REQ:
+				case STREAMING_CLI_OPCODE_DATA:
+				case STREAMING_CLI_OPCODE_CLOSE:
+				{
+					uint8_t * const streaming_cli_service_session_start_request = service_data->data_ptr;
+					session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
+					session = streaming_cli_service_find_session(connector_ptr, session_id);
+					break;
+				}
+				case STREAMING_CLI_OPCODE_EXEC_REQ:
+					break;
+				default: 
+					msg_set_error(msg_session, connector_session_error_invalid_opcode);
+					return connector_working;
+					break;
+			}
+
+			if (session == NULL)
+			{
+				connector_status_t status = connector_working;
+
+				if (opcode == STREAMING_CLI_OPCODE_DATA)
+				{
+					return streaming_cli_service_set_unknown_session_error(connector_ptr, session_id, msg_session);
+				}
+				if (opcode == STREAMING_CLI_OPCODE_CLOSE)
+				{
+					MsgSetNoReply(msg_session->in_dblock->status_flag);
+					return connector_working;
+				}
+				session = streaming_cli_service_create_new_session(connector_ptr, msg_session, service_data->data_ptr, &status);
+				if (session == NULL) return status;
+			}
+
+			if (opcode != STREAMING_CLI_OPCODE_EXEC_REQ)
+			{
+				if (session->info.streaming.active_recv_transaction != NULL)
+				{
+					session->info.streaming.active_recv_transaction->service_context = NULL;
+					if (opcode == STREAMING_CLI_OPCODE_DATA)
+					{
+						static char const error_msg[] = "Message received out of order";
+						memcpy(session->close_reason, error_msg, sizeof error_msg);
+						session->session_state = streaming_cli_session_state_pending_error;
+						return connector_working;
+					}
+				}
+				if (opcode != STREAMING_CLI_OPCODE_DATA || session->session_state == streaming_cli_session_state_started)
+				{
+					msg_session->service_context = session;
+					session->info.streaming.active_recv_transaction = msg_session;
+				}
+				else
+				{
+					/* Received data for closing session. Discard */
+					return connector_working;
+				}
+			}
+			session->last_opcode = opcode;
+		}
+    }
+	else if (session == NULL)
+	{
+		/* Received data for cancelled session. Discard */
+		return connector_working;
+	}
+
+	return streaming_cli_service_handle_receive_transaction(connector_ptr, msg_session, service_data);
+}
+
 STATIC void streaming_cli_service_write_error_hint(streaming_cli_session_t * session, msg_service_data_t * const service_data, size_t offset)
 {
 	uint8_t * const packet = service_data->data_ptr;
@@ -666,12 +693,91 @@ STATIC void streaming_cli_service_write_error_hint(streaming_cli_session_t * ses
 	}
 }
 
+STATIC connector_status_t streaming_cli_service_handle_start_response(connector_data_t * const connector_ptr, msg_session_t * const msg_session, msg_service_data_t * const service_data)
+{
+	connector_status_t status;
+	streaming_cli_session_t * const session = msg_session->service_context;
+	uint8_t * const streaming_cli_service_session_start_response = service_data->data_ptr;
+	size_t bytes_used = 0;
+
+	if (MsgIsStart(service_data->flags))
+	{
+		message_store_u8(streaming_cli_service_session_start_response, opcode, STREAMING_CLI_OPCODE_START_RESP);
+		if (session->session_state == streaming_cli_session_state_ack_start)
+		{
+			session->session_state = streaming_cli_session_state_started;
+			message_store_u8(streaming_cli_service_session_start_response, status, STREAMING_CLI_START_STATUS_SUCCESS);
+		}
+		else
+		{
+			message_store_u8(streaming_cli_service_session_start_response, status, STREAMING_CLI_START_STATUS_ERROR);
+		}
+		bytes_used = record_bytes(streaming_cli_service_session_start_response);
+	}
+
+	streaming_cli_service_write_error_hint(session, service_data, bytes_used);
+
+	if (MsgIsLastData(service_data->flags))
+	{
+		if (session->session_state == streaming_cli_session_state_start_failed)
+		{
+			return streaming_cli_service_close_session(connector_ptr, session);
+		}
+		else
+		{
+			msg_session->service_context = NULL;
+			session->info.streaming.active_send_transaction = NULL;
+			status = connector_working;
+		}
+	}
+	else
+	{
+		status = connector_working;
+	}
+
+	return status;
+}
+
+STATIC connector_status_t streaming_cli_service_send_close(connector_data_t * const connector_ptr, msg_session_t * const msg_session, msg_service_data_t * const service_data)
+{
+	connector_status_t status;
+	streaming_cli_session_t * const session = msg_session->service_context;
+	size_t bytes_used = 0;
+
+	ASSERT(session->session_state == streaming_cli_session_state_send_close);
+
+	if (MsgIsStart(service_data->flags))
+	{
+		uint8_t * const streaming_cli_service_session_close = service_data->data_ptr;
+
+		session->bytes_consumed = 0;
+		message_store_u8(streaming_cli_service_session_close, opcode, STREAMING_CLI_OPCODE_CLOSE);
+		message_store_be16(streaming_cli_service_session_close, session_id, session->info.streaming.session_id);
+
+		bytes_used = record_bytes(streaming_cli_service_session_close);
+	}
+
+	streaming_cli_service_write_error_hint(session, service_data, bytes_used);
+
+	if (MsgIsLastData(service_data->flags))
+	{
+		MsgSetNoReply(msg_session->out_dblock->status_flag);
+		return streaming_cli_service_close_session(connector_ptr, session);
+	}
+	else
+	{
+		status = connector_working;
+	}
+
+	return status;
+}
+
 STATIC connector_status_t streaming_cli_service_response_callback(connector_data_t * const connector_ptr, msg_service_request_t * const service_request)
 {
 	connector_status_t status;
 	msg_service_data_t * const service_data = service_request->need_data;
 	msg_session_t * const msg_session = service_request->session;
-	streaming_cli_session_t * session = msg_session->service_context;
+	streaming_cli_session_t * const session = msg_session->service_context;
 
 	if (session == NULL)
 	{
@@ -700,43 +806,7 @@ STATIC connector_status_t streaming_cli_service_response_callback(connector_data
 
 	if (session->session_state == streaming_cli_session_state_ack_start || session->session_state == streaming_cli_session_state_start_failed)
 	{
-		uint8_t * const streaming_cli_service_session_start_response = service_data->data_ptr;
-		size_t bytes_used = 0;
-
-		if (MsgIsStart(service_data->flags))
-		{
-			message_store_u8(streaming_cli_service_session_start_response, opcode, STREAMING_CLI_OPCODE_START_RESP);
-			if (session->session_state == streaming_cli_session_state_ack_start)
-			{
-				session->session_state = streaming_cli_session_state_started;
-				message_store_u8(streaming_cli_service_session_start_response, status, STREAMING_CLI_START_STATUS_SUCCESS);
-			}
-			else
-			{
-				message_store_u8(streaming_cli_service_session_start_response, status, STREAMING_CLI_START_STATUS_ERROR);
-			}
-			bytes_used = record_bytes(streaming_cli_service_session_start_response);
-		}
-
-		streaming_cli_service_write_error_hint(session, service_data, bytes_used);
-
-		if (MsgIsLastData(service_data->flags))
-		{
-			if (session->session_state == streaming_cli_session_state_start_failed)
-			{
-				return streaming_cli_service_close_session(connector_ptr, session);
-			}
-			else
-			{
-				msg_session->service_context = NULL;
-				session->info.streaming.active_send_transaction = NULL;
-				status = connector_working;
-			}
-		}
-		else
-		{
-			status = connector_working;
-		}
+		status = streaming_cli_service_handle_start_response(connector_ptr, msg_session, service_data);
 	}
 	else if (session->session_state == streaming_cli_session_state_started)
 	{
@@ -751,32 +821,7 @@ STATIC connector_status_t streaming_cli_service_response_callback(connector_data
 	}
 	else
 	{
-		size_t bytes_used = 0;
 
-		ASSERT(session->session_state == streaming_cli_session_state_send_close);
-
-		if (MsgIsStart(service_data->flags))
-		{
-			uint8_t * const streaming_cli_service_session_close = service_data->data_ptr;
-
-			session->bytes_consumed = 0;
-			message_store_u8(streaming_cli_service_session_close, opcode, STREAMING_CLI_OPCODE_CLOSE);
-			message_store_be16(streaming_cli_service_session_close, session_id, session->info.streaming.session_id);
-
-			bytes_used = record_bytes(streaming_cli_service_session_close);
-		}
-
-		streaming_cli_service_write_error_hint(session, service_data, bytes_used);
-
-		if (MsgIsLastData(service_data->flags))
-		{
-			MsgSetNoReply(msg_session->out_dblock->status_flag);
-			return streaming_cli_service_close_session(connector_ptr, session);
-		}
-		else
-		{
-			status = connector_working;
-		}
 	}	
 	
 	return status;
