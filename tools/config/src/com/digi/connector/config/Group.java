@@ -2,6 +2,8 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Group extends ItemList {
 	public enum Type {
@@ -34,12 +36,32 @@ public class Group extends ItemList {
         errorMap = new LinkedHashMap<String, String>();
     }
 
-    public String toString(int id) {
-        return collectionXmlAttributes(String.format(
-            "<descriptor element=\"%s\" desc=\"%s\" bin_id=\"%d\">",
-            name, Descriptors.encodeEntities(toRciDescription()), id));
+    private void addErrorDescriptors(org.dom4j.Element e, final int start, final Map<String, String> errors) {
+        Integer id = start;
+
+        for (String value : errors.values()) {
+        	e.addElement("error_descriptor")
+        		.addAttribute("id", id.toString())
+        		.addAttribute("desc", Objects.toString(value, null));
+            id++;
+        }
     }
 
+    public org.dom4j.Element asElement(final Config config, final Integer id) {
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+    		.addAttribute("element", name)
+			.addAttribute("desc", getRciDescription())
+	 		.addAttribute("bin_id", id.toString());
+    	
+ 		addAttributes(e);
+        // FIXME: REMOVE NEXT LINE
+ 		addErrorDescriptors(e, config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
+        addErrorDescriptors(e, config.getGroupErrorsOffset(), getErrors());
+        addChildren(e);
+        
+ 		return e;
+    }
+    
     public LinkedHashMap<String, String> getErrors() {
         return errorMap;
     }

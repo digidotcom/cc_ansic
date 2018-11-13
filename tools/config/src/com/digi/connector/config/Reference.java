@@ -8,8 +8,13 @@ public class Reference extends Item {
         super(name, description == null ? "" : description, helpDescription);
     }
 
-    public String toString(Integer id) {
+    public org.dom4j.Element asElement(Integer id) {
     	assert id == null;
-        return String.format("<ref name=\"%s\" desc=\"%s\"/>", name, Descriptors.encodeEntities(getDescription()));
+
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("ref")
+    		.addAttribute("name", name)
+			.addAttribute("desc", getDescription());
+    	
+    	return e;
     }
 }

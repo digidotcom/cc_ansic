@@ -537,7 +537,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             "    connector_global_errors,\n"+
             "    %d,\n"+
             "    0x%X,\n"+
-            "    %s,\n"+
+            "    0x%08X,\n"+
             "    \"%s\"\n"+
             "};\n"+
             "\n"+

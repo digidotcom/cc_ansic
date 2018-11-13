@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE project>
 <project basedir="." default="dist" name="ConfigGenerator">
+    <property name="lib.dir" location="lib"/>
 	<property name="build.dir" location="build"/>
 	<property name="class.dir" location="${build.dir}/classes"/>
 	<property name="dist.dir" location="dist"/>
@@ -8,6 +9,10 @@
 	<property name="jar" value="ConfigGenerator.jar"/>
 	<!-- This should be overriden by caller.  Used in the Manifest. -->
 	<property name="version" value="0.0"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
 
 	<target name="clean">
 		<delete file="${dist.dir}/${jar}"/>
@@ -38,6 +43,11 @@
 
 	<target name="dist" depends="jar">
 		<mkdir dir="${dist.dir}"/>
-		<copy file="${build.dir}/${jar}" todir="${dist.dir}"/>
+		<copy todir="${dist.dir}" flatten="true">
+            <resources>
+                <file file="${build.dir}/${jar}"/>
+        		<fileset dir="${lib.dir}" includes="*.jar"/>
+            </resources>
+        </copy>
 	</target>
 </project>

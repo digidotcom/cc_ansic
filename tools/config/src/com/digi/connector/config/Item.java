@@ -43,7 +43,7 @@ public abstract class Item {
         this.helpDescription = helpDescription;
     }
 
-    public String toRciDescription() {
+    public String getRciDescription() {
         return (helpDescription == null)
             ? getDescription()
             : getDescription() + ":" + getHelpDescription();
@@ -76,5 +76,5 @@ public abstract class Item {
             throw new Exception("Duplicate <access> keyword: " + access);
     }
 
-    abstract String toString(Integer id);
+    abstract org.dom4j.Element asElement(Integer id);
 }

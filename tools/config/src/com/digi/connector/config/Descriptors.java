@@ -1,34 +1,22 @@
 package com.digi.connector.config;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Map;
-import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+
 public class Descriptors {
-
-    private final String RCI_VERSION = "1.1";
-
-    private final String RCI_DESCRIPTORS = "<descriptor element=`rci_request` desc=`Remote Command Interface request`>\n"
-            + "<attr name=`version` desc=`RCI version of request.  Response will be returned in this versions response format` default=`"
-            + RCI_VERSION
-            + "`>\n"
-            + "<value value=`"
-            + RCI_VERSION
-            + "` desc=`Version " + RCI_VERSION + "`/></attr>\n";
-
-    private final String SETTING_DESCRIPTOR_DESCRIPTION = "device configuration";
-    private final String STATE_DESCRIPTOR_DESCRIPTION = "device state";
 
     private final String username;
     private final String password;
@@ -41,7 +29,7 @@ public class Descriptors {
     private final static ConfigGenerator options = ConfigGenerator.getInstance();
 
     public Descriptors(final String username, final String password,
-                       final Long vendorId, final String deviceType,
+                       Long vendorId, final String deviceType,
                        final long version) throws IOException  {
         this.username = username;
         this.password = password;
@@ -51,57 +39,38 @@ public class Descriptors {
         if(!options.noUploadOption())
             validateUrlName();
 
-        Descriptors.vendorId = vendorId;
         if (vendorId == null) {
-        	getVendorId();
-        } else {
-            options.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", vendorId, vendorId));
+        	vendorId = getVendorId();
+        	if (vendorId == null) {
+        		vendorId = createVendorId();
+        	}
         }
-        this.responseCode = 0;
-    }
+        
+        if (vendorId == null || vendorId == 0) {
+        	throw new IOException("Invalid Vendor ID");
+        }
+        Descriptors.vendorId = vendorId;
 
-    // From: https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references#Predefined_entities_in_XML
-    public static String encodeEntities(final String string) {
-    	final StringBuilder result = new StringBuilder();
-	 
-		 for (char character: string.toCharArray()) {
-			 if (character == '\"') {
-				 result.append("&quot;");
-			 }
-			 else if (character == '&') {
-				 result.append("&amp;");
-			 }
-			 else if (character == '\'') {
-				 result.append("&apos;");
-			 }
-			 else if (character == '<') {
-				 result.append("&lt;");
-			 }
-			 else if (character == '>') {
-				 result.append("&gt;");
-			 }
-			 else {
-				 result.append(character);
-			 }
-		 }
-		 return result.toString();
+        options.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", vendorId, vendorId));
+        
+        this.responseCode = 0;
     }
 
     public void processDescriptors() throws Exception {
     	final boolean uploading = !options.noUploadOption();
-    	Map<String, String> descriptors = new HashMap<String, String>(); 
+    	Map<String, org.dom4j.Element> descriptors = new HashMap<>(); 
     	
     	options.log("\nProcessing Descriptors, please wait...");
         
         int id = 1;
         for (Group.Type type : Group.Type.values()) {
-            Collection<Group> groups = config.getTable(type).groups();
+            Table table = config.getTable(type);
 
             /* Descriptors must be uploaded even if the group is empty */
             String config_type = type.toLowerName();
 
-            descriptors.put("descriptor/query_" + config_type, generateQueryDescriptor(type, groups, id));
-            descriptors.put("descriptor/set_" + config_type, generateSetDescriptor(type, groups, id + 1));
+            descriptors.put("descriptor/query_" + config_type, table.generateQueryDescriptor(config, id));
+            descriptors.put("descriptor/set_" + config_type, table.generateSetDescriptor(config, id + 1));
             id += 2;
         }
 
@@ -117,9 +86,9 @@ public class Descriptors {
            deleteDescriptors();
         }
         
-        for (Map.Entry<String, String> entry : descriptors.entrySet()) {
+        for (Map.Entry<String, org.dom4j.Element> entry : descriptors.entrySet()) {
         	String name = entry.getKey();
-        	String content = entry.getValue();
+        	org.dom4j.Element content = entry.getValue();
         	
         	if (uploading) {
         		uploadDescriptor(name, content);
@@ -162,224 +131,106 @@ public class Descriptors {
         options.debug_log(response);
     }
 
-    private String getErrorDescriptors(final int start, final Map<String, String> errors) {
-        String descriptors = "";
-        int id = start;
+    private org.dom4j.Element generateDoCommandDescriptor() {
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+    		.addAttribute("element", "do_command")
+    		.addAttribute("desc", "Execute command on device")
+    		.addAttribute("bin_id", "6");
+    	
+    	e.addElement("error_descriptor")
+			.addAttribute("id", "1")
+			.addAttribute("desc", "Invalid arguments");
+    	
+    	e.addElement("attr")
+			.addAttribute("name", "target")
+			.addAttribute("type", "string")
+			.addAttribute("max", Integer.toString(config.getMaxAttributeLength()))
+			.addAttribute("desc", "The subsystem that the command is forwarded to")
+			.addAttribute("bin_id", "0");
+        
+    	return e;
+    }
+
+    private org.dom4j.Element generateRebootDescriptor() {
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+    		.addAttribute("element", "reboot")
+    		.addAttribute("desc", "Reboot the device")
+    		.addAttribute("bin_id", "7");
+
+    	e.addElement("error_descriptor")
+			.addAttribute("id", "1")
+			.addAttribute("desc", "Reboot Failed");
+    	
+        return e;
+    }
+
+    private org.dom4j.Element generateSetFactoryDefaultDescriptor() {
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+    		.addAttribute("element", "set_factory_default")
+    		.addAttribute("desc", "Set device configuration to factory defaults")
+			.addAttribute("bin_id", "8");
+
+    	e.addElement("error_descriptor")
+			.addAttribute("id", "1")
+			.addAttribute("desc", "Set Factory Default failed");
+    	
+        return e;
+    }
+
+    private void addErrorDescriptors(org.dom4j.Element e, final int start, final Map<String, String> errors) {
+        Integer id = start;
 
         for (String value : errors.values()) {
-            descriptors += String.format("<error_descriptor id=`%d` ", id);
-            if (value != null)
-                descriptors += String.format("desc=`%s` ", Descriptors.encodeEntities(value));
-
-            descriptors += "/>\n";
+        	e.addElement("error_descriptor")
+        		.addAttribute("id", id.toString())
+        		.addAttribute("desc", Objects.toString(value, null));
             id++;
         }
-
-        return descriptors;
     }
 
-    private String generateDoCommandDescriptor() {
-
-        String do_command_descriptor = "<descriptor element=`do_command` bin_id=`6` > ";
-        do_command_descriptor +=       "  <error_descriptor id=`1` desc=`Invalid arguments` />";
-        do_command_descriptor +=       "  <attr name=`target` type=`string` max=`" + config.getMaxAttributeLength()
-                              + "` desc=`The subsystem that the command is forwarded` bin_id=`0` />";
-        do_command_descriptor +=       "</descriptor>";
-
-        do_command_descriptor = do_command_descriptor.replace('`', '"');
-
-        return do_command_descriptor;
-    }
-
-    private String generateRebootDescriptor() {
-
-        String reboot_descriptor = "<descriptor element=`reboot` desc=`Reboot the device` bin_id=`7` >";
-        reboot_descriptor +=       "  <error_descriptor id=`1` desc=`Reboot failed` />";
-        reboot_descriptor +=       "</descriptor>\n";
-
-        reboot_descriptor = reboot_descriptor.replace('`', '"');
-
-        return reboot_descriptor;
-    }
-
-    private String generateSetFactoryDefaultDescriptor() {
-
-        String set_factory_default_descriptor = "<descriptor element=`set_factory_default` desc=`Set device configuration to factory defaults` bin_id=`8` >";
-        set_factory_default_descriptor +=       "  <error_descriptor id=`1` desc=`Set Factory Default failed` />";
-        set_factory_default_descriptor +=       "</descriptor>\n";
-
-        set_factory_default_descriptor = set_factory_default_descriptor.replace('`', '"');
-
-        return set_factory_default_descriptor;
-    }
-
-    private String itemDescriptors(String prefix, ItemList list) throws Exception {
-    	String result = "";
-    	LinkedList<Item> items = list.getItems(); 
-
-        for (Item item : items) {
-            assert (item instanceof Element) || (item instanceof ItemList);
-
-            int item_id = list.getItems().indexOf(item);
-            
-            result += item.toString(item_id);
-
-            if (item instanceof Element) {
-                Element element = (Element) item;
-                
-                switch (element.getType()) {
-                case ENUM:
-                    for (Value value: element.getValues()) {
-                        Integer value_id = element.getValues().indexOf(value);
-
-                        result += value.toString(value_id);
-                    }
-                    result += "</element>\n";
-                    break;
-                case REF_ENUM:
-                    for (Value value: element.getValues()) {
-                        result += value.toString(null);
-                    }
-                    for (Reference ref: element.getRefs()) {
-                        result += ref.toString(null);
-                    }
-                    result += "</element>\n";
-                	break;
-                default:
-                	break;
-                }
-            } else {
-                ItemList subitems = (ItemList) item;
-                String subitems_prefix = prefix + "_" + subitems.getName();
-
-                result += itemDescriptors(subitems_prefix, subitems);
-                result += "</element>\n";
-            }
-        }       
-    	return result;
+    private void addAvailableDescriptor(org.dom4j.Element e, final String name) {
+        e.addElement("descriptor")
+	    	.addAttribute("element", name)
+	    	.addAttribute("dscr_avail", "true");
     }
     
-    private String generateQueryDescriptor(Group.Type type, Collection<Group> groups, int id) throws Exception {
-        String desc = (type == Group.Type.SETTING)
-        	? SETTING_DESCRIPTOR_DESCRIPTION
-        	: STATE_DESCRIPTOR_DESCRIPTION;
-        String config_type = type.toLowerName();
-        final String rciUserGlobalErrors = getErrorDescriptors(config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
-        	
-        String query_descriptors = String.format("<descriptor element=`query_%s` desc=`Retrieve %s` format=`all_%ss_groups` bin_id=`%d`>\n",
-                                                  config_type, desc, config_type, id);
+    private org.dom4j.Element generateRootDescriptor() throws Exception {
+        final String version = "1.1";
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor");
 
-        if (type == Group.Type.SETTING)
-            query_descriptors += "  <attr name=`source` type=`enum` desc=`Source of settings returned` bin_id=`0` default=`current` >"
-                               + "      <value value=`current` desc=`Current settings` bin_id=`0` />"
-                               + "      <value value=`stored` desc=`Settings stored in flash` bin_id=`1` />"
-                               + "      <value value=`defaults` desc=`Device defaults` bin_id=`2` />"
-                               + "  </attr>"
-                               + "  <attr name=`compare_to` type=`enum` desc=`Return only differences from this source` bin_id=`1` default=`none` >"
-                               + "      <value value=`none` desc=`Return all settings` bin_id=`0` />"
-                               + "      <value value=`current` desc=`Current settings` bin_id=`1` />"
-                               + "      <value value=`stored` desc=`Settings stored in flash` bin_id=`2` />"
-                               + "      <value value=`defaults` desc=`Device defaults` bin_id=`3` />"
-                               + "  </attr>";
-
-        query_descriptors += String.format("<format_define name=`all_%ss_groups`>\n", config_type);
-
-        /*
-         * get all errors for query command descriptor. 1. common errors. 2.
-         * command errors. 3. user global errors
-         *
-         * We must offset the error_id for command errors.
-         */
-        query_descriptors += rciUserGlobalErrors;
-
-        /*
-         * get all errors for set command descriptor. 1. common errors. 2.
-         * command errors. 3. user global errors
-         *
-         * We must offset the error_id for command errors.
-         */
-
-        int gid = 0;
-        for (Group group : groups) {
-            String prefix = "group_" + config_type + "_" + group.getName();
-            
-            query_descriptors += group.toString(gid);
-            
-            /*
-             * Write errors for individual groups
-             * 
-             *  1. common errors
-             *  2. group errors
-             *  3. user global error
-             *  4. user group error
-             *
-             * We must offset the error id for group errors.
-             */
-            query_descriptors += rciUserGlobalErrors;
-            query_descriptors += getErrorDescriptors(config.getGroupErrorsOffset(), group.getErrors());
-            query_descriptors += itemDescriptors(prefix, group);
-            query_descriptors +=  "</descriptor>";
-            gid++;
-        }
-        query_descriptors += "</format_define>\n</descriptor>\n";
-
-        query_descriptors = query_descriptors.replace('`', '"');
-
-        return query_descriptors;
-    }
-
-    private String generateSetDescriptor(Group.Type type, Collection<Group> groups, int id) throws Exception {
-        String desc = (type == Group.Type.SETTING)
-        	? SETTING_DESCRIPTOR_DESCRIPTION
-        	: STATE_DESCRIPTOR_DESCRIPTION;
-        String config_type = type.toLowerName();
-        final String rciUserGlobalErrors = getErrorDescriptors(config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
-        	
-        String set_descriptors = String.format("<descriptor element=`set_%s` desc=`Set %s` format=`all_%ss_groups` bin_id=`%d`>\n",
-                                                config_type, desc, config_type, id);
-
-        /*
-         * get all errors for set command descriptor. 1. common errors. 2.
-         * command errors. 3. user global errors
-         *
-         * We must offset the error_id for command errors.
-         */
-        set_descriptors += rciUserGlobalErrors + "</descriptor>";
-
-        set_descriptors = set_descriptors.replace('`', '"');
-
-        return set_descriptors;
-    }
-
-    private String generateRootDescriptor() throws Exception {
-        String descriptors = RCI_DESCRIPTORS;
-
+    	e.addAttribute("element", "rci_request");
+    	e.addAttribute("desc", "Remote Command Interface request");
+    	
+    	org.dom4j.Element attr = e.addElement("attr");
+    	attr.addAttribute("name", "version");
+    	attr.addAttribute("desc", "RCI version of request.  Response will be returned in this versions response format");
+    	attr.addAttribute("default", version);
+    	
+    	attr.addElement("value")
+    		.addAttribute("value", version)
+    		.addAttribute("desc", "Version " + version);
+    	
         for (Group.Type type : Group.Type.values()) {
-            Collection<Group> groups = config.getTable(type).groups();
+            final int groups = config.getTable(type).size();
 
-            String configType = type.toLowerName();
+            if (groups != 0) {
+                final String configType = type.toLowerName();
 
-            if (!groups.isEmpty()) {
-                descriptors += String.format("<descriptor element=`query_%s` dscr_avail=`true` />\n", configType)
-                               + String.format("<descriptor element=`set_%s` dscr_avail=`true` />\n", configType);
+                addAvailableDescriptor(e, "query_" + configType);
+                addAvailableDescriptor(e, "set_" + configType);
             }
         }
 
-        if(options.rciLegacyEnabled()){
-            descriptors += String.format("<descriptor element=`reboot` dscr_avail=`true` />\n");
-
-            descriptors += String.format("<descriptor element=`do_command` dscr_avail=`true` />\n");
-
-            descriptors += String.format("<descriptor element=`set_factory_default` dscr_avail=`true` />\n");
+        if (options.rciLegacyEnabled()){
+            addAvailableDescriptor(e, "reboot");
+            addAvailableDescriptor(e, "do_command");
+            addAvailableDescriptor(e, "set_factory_default");
         }
 
-        descriptors += getErrorDescriptors(config.getGlobalFatalProtocolErrorsOffset(), config.getGlobalFatalProtocolErrors());
-        descriptors += getErrorDescriptors(config.getGlobalProtocolErrorsOffset(), config.getGlobalProtocolErrors())
-                + "</descriptor>";
-
-        descriptors = descriptors.replace('`', '"');
+        addErrorDescriptors(e, config.getGlobalFatalProtocolErrorsOffset(), config.getGlobalFatalProtocolErrors());
+        addErrorDescriptors(e, config.getGlobalProtocolErrorsOffset(), config.getGlobalProtocolErrors());
         
-        return descriptors;
+        return e;
     }
 
     private String sendCloudData(String target, String method, String message) {
@@ -433,24 +284,22 @@ public class Descriptors {
         return response;
     }
 
-    private void getVendorId() {
-
+    private Long getVendorId() {
+    	Long result = null;
+    	
         options.debug_log("Query vendor ID");
 
-        // Request an existing vendor ID
         String response = sendCloudData("/ws/DeviceVendor", "GET", null);
-
         if (responseCode == 0) {
             int startIndex = response.indexOf("<dvVendorId>");
 
             if (startIndex == -1 || startIndex != response.lastIndexOf("<dvVendorId>")) {
-                options.debug_log("No vendor ID is found.");
+                options.debug_log("No vendor ID found.");
 
             } else {
                 startIndex += "<dvVendorId>".length();
-                vendorId = Long.parseUnsignedLong(response.substring(startIndex, response.indexOf("</dvVendorId>")));
+                result =  Long.parseUnsignedLong(response.substring(startIndex, response.indexOf("</dvVendorId>")));
             }
-
         } else {
             options.debug_log("Response from " + options.getUrlName());
             switch (responseCode) {
@@ -468,38 +317,42 @@ public class Descriptors {
             }
             System.exit(1);
         }
+        
+        return result;
+    }
 
-        if (vendorId == null) {
-            // Request to create a new Vendor ID
-            options.debug_log("Create a new vendor ID");
-            sendCloudData("/ws/DeviceVendor", "POST", "<DeviceVendor></DeviceVendor>");
+    private Long createVendorId() {
+    	Long result = null;
+    	
+        options.debug_log("Create a new vendor ID");
+        sendCloudData("/ws/DeviceVendor", "POST", "<DeviceVendor></DeviceVendor>");
 
-            response = sendCloudData("/ws/DeviceVendor", "GET", null);
-
-            if (responseCode != 0) {
-                options.log("Response status: " + response);
-            }
-
-            int startIndex = response.indexOf("<dvVendorId>");
-            if (startIndex == -1) {
-                options.log(
-                	"Cannot create a new vendor ID for "
-                    + username
-                    + "user. User needs to manually create one. Refer to \"Setup your Device Cloud Acount\" section of the Getting started guide to obtain one.");
-                System.exit(1);
-            }
-
-            if (startIndex != response.lastIndexOf("<dvVendorId>")) {
-                options.log(username + " has more than one vendor ID, so please specify the correct one.");
-                System.exit(1);
-            }
-
-            startIndex += "<dvVendorId>".length();
-            vendorId = Long.parseUnsignedLong(response.substring(startIndex, response.indexOf("</dvVendorId>")));
+        String response = sendCloudData("/ws/DeviceVendor", "GET", null);
+        if (responseCode != 0) {
+            options.log("Response status: " + response);
         }
 
-        if (vendorId != null)
+        int startIndex = response.indexOf("<dvVendorId>");
+        if (startIndex == -1) {
+            options.log(
+            	"Cannot create a new vendor ID for "
+                + username
+                + "user. User needs to manually create one. Refer to \"Setup your Device Cloud Acount\" section of the Getting started guide to obtain one.");
+            System.exit(1);
+        }
+
+        if (startIndex != response.lastIndexOf("<dvVendorId>")) {
+            options.log(username + " has more than one vendor ID, so please specify the correct one.");
+            System.exit(1);
+        }
+
+        startIndex += "<dvVendorId>".length();
+        result = Long.parseUnsignedLong(response.substring(startIndex, response.indexOf("</dvVendorId>")));
+
+        if (result != null)
             options.log(String.format("Device Cloud registered vendor ID: 0x%X", vendorId));
+        
+        return result;
     }
 
 
@@ -529,44 +382,42 @@ public class Descriptors {
         }
     }
 
-    private String tagMessageSegment(String tagName, String value) {
-        return "<" + tagName + ">" + value + "</" + tagName + ">";
+    private org.dom4j.Element commonMetadata(final String name) {
+    	org.dom4j.Element md = org.dom4j.DocumentHelper.createElement("DeviceMetaData");
+    	
+    	md.addElement("dvVendorId").addText(String.format("0x%08X", vendorId));
+    	md.addElement("dmDeviceType").addText(deviceType);
+    	md.addElement("dmVersion").addText(String.format("%d", fwVersion));
+    	md.addElement("dmName").addText(name);
+    	
+    	return md;
     }
 
-    private String replaceXmlEntities(String buffer) {
-        return buffer.replace("<", "&lt;").replace(">", "&gt;");
-    }
+    private void saveDescriptor(String name, org.dom4j.Element descriptor) {
+        options.debug_log("Saving descriptor:" + name);
 
-    private void saveDescriptor(String descName, String buffer) {
+        org.dom4j.Element md = commonMetadata(name);
+        md.addElement("dmData").add(descriptor);
+        
         try {
-            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(descName.replace("/", "_")+".xml"));
-	        String message = "<DeviceMetaData>";
-	        message += tagMessageSegment("dvVendorId", vendorId.toString());
-	        message += tagMessageSegment("dmDeviceType", deviceType);
-	        message += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
-	        message += tagMessageSegment("dmName", descName);
-	        message += tagMessageSegment("dmData", buffer);
-	        message += "</DeviceMetaData>";
-
-			fileWriter.write(message);
-			fileWriter.close();
+        	final String path = name.replace("/", "_") + ".xml";
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(new FileWriter(path), format);
+            
+			writer.write(md);
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
 
-    private void uploadDescriptor(String descName, String buffer) {
-        options.debug_log("Uploading descriptor:" + descName);
+    private void uploadDescriptor(String name, org.dom4j.Element descriptor) {
+        options.debug_log("Uploading descriptor:" + name);
 
-        String message = "<DeviceMetaData>";
-        message += tagMessageSegment("dvVendorId", vendorId.toString());
-        message += tagMessageSegment("dmDeviceType", deviceType);
-        message += tagMessageSegment("dmVersion", String.format("%d", fwVersion));
-        message += tagMessageSegment("dmName", descName);
-        message += tagMessageSegment("dmData", replaceXmlEntities(buffer));
-        message += "</DeviceMetaData>";
+        org.dom4j.Element md = commonMetadata(name);
+       	md.addElement("dmData").addText(descriptor.asXML());
 
-        String response = sendCloudData("/ws/DeviceMetaData", "POST", message);
+        String response = sendCloudData("/ws/DeviceMetaData", "POST", md.asXML());
         if (responseCode != 0)
         {
             options.debug_log("Response from " + options.getUrlName());
@@ -577,7 +428,7 @@ public class Descriptors {
                     break;
 
                 case 403:
-                    options.log("Forbidden: Uploading " + descName + " failed, verify that vendor ID is valid and is owned by your account.\n");
+                    options.log("Forbidden: Uploading " + name + " failed, verify that vendor ID is valid and is owned by your account.\n");
                     break;
 
                 default:
@@ -588,7 +439,7 @@ public class Descriptors {
             System.exit(1);
         }
 
-        options.debug_log("Created: " + vendorId + "/" + deviceType + "/" + descName);
+        options.debug_log("Created: " + vendorId + "/" + deviceType + "/" + name);
         options.debug_log(response);
         /* prevent error HTTP/1.1 429 Too Many Requests */
         try {
