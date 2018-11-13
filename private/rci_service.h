@@ -38,6 +38,12 @@ STATIC connector_status_t rci_service_callback(connector_data_t * const connecto
     ASSERT_GOTO(connector_ptr != NULL, done);
     ASSERT_GOTO(service_request != NULL, done);
 
+	if (service_request->service_type == msg_service_type_capabilities)
+	{
+		status = connector_idle;
+		goto done;
+	}
+
     session = service_request->session;
     ASSERT_GOTO(session != NULL, done);
 

@@ -30,6 +30,7 @@
 #define MSG_FLAG_REQUEST      UINT32_C(0x01)
 #define MSG_FLAG_LAST_DATA    UINT32_C(0x02)
 #define MSG_FLAG_SENDER       UINT32_C(0x04)
+#define MSG_FLAG_NO_REPLY	  UINT32_C(0x08)
 
 #define MSG_FLAG_CLIENT_OWNED UINT32_C(0x20)
 #define MSG_FLAG_RECEIVING    UINT32_C(0x40)
@@ -46,26 +47,28 @@
 #define MsgBitSet(flag, bit)    ((flag) |= (bit))
 #define MsgBitClear(flag, bit)  ((flag) &= ~(bit))
 
-#define MsgIsRequest(flag)      MsgIsBitSet((flag), MSG_FLAG_REQUEST)
-#define MsgIsLastData(flag)     MsgIsBitSet((flag), MSG_FLAG_LAST_DATA)
-#define MsgIsSender(flag)       MsgIsBitSet((flag), MSG_FLAG_SENDER)
-#define MsgIsReceiving(flag)    MsgIsBitSet((flag), MSG_FLAG_RECEIVING)
-#define MsgIsCompressed(flag)   MsgIsBitSet((flag), MSG_FLAG_COMPRESSED)
-#define MsgIsStart(flag)        MsgIsBitSet((flag), MSG_FLAG_START)
-#define MsgIsAckPending(flag)   MsgIsBitSet((flag), MSG_FLAG_ACK_PENDING)
-#define MsgIsClientOwned(flag)  MsgIsBitSet((flag), MSG_FLAG_CLIENT_OWNED)
-#define MsgIsInflated(flag)     MsgIsBitSet((flag), MSG_FLAG_INFLATED)
-#define MsgIsDeflated(flag)     MsgIsBitSet((flag), MSG_FLAG_DEFLATED)
-#define MsgIsSendNow(flag)      MsgIsBitSet((flag), MSG_FLAG_SEND_NOW)
-#define MsgIsDoubleBuf(flag)    MsgIsBitSet((flag), MSG_FLAG_DOUBLE_BUF)
+#define MsgIsRequest(flag)      	MsgIsBitSet((flag), MSG_FLAG_REQUEST)
+#define MsgIsLastData(flag)     	MsgIsBitSet((flag), MSG_FLAG_LAST_DATA)
+#define MsgIsSender(flag)       	MsgIsBitSet((flag), MSG_FLAG_SENDER)
+#define MsgIsReceiving(flag)    	MsgIsBitSet((flag), MSG_FLAG_RECEIVING)
+#define MsgIsCompressed(flag)   	MsgIsBitSet((flag), MSG_FLAG_COMPRESSED)
+#define MsgIsStart(flag)        	MsgIsBitSet((flag), MSG_FLAG_START)
+#define MsgIsAckPending(flag)   	MsgIsBitSet((flag), MSG_FLAG_ACK_PENDING)
+#define MsgIsClientOwned(flag)  	MsgIsBitSet((flag), MSG_FLAG_CLIENT_OWNED)
+#define MsgIsInflated(flag)     	MsgIsBitSet((flag), MSG_FLAG_INFLATED)
+#define MsgIsDeflated(flag)     	MsgIsBitSet((flag), MSG_FLAG_DEFLATED)
+#define MsgIsSendNow(flag)      	MsgIsBitSet((flag), MSG_FLAG_SEND_NOW)
+#define MsgIsDoubleBuf(flag)    	MsgIsBitSet((flag), MSG_FLAG_DOUBLE_BUF)
+#define MsgIsReplyExpected(flag)	MsgIsBitClear((flag), MSG_FLAG_NO_REPLY)
 
-#define MsgIsNotRequest(flag)      MsgIsBitClear((flag), MSG_FLAG_REQUEST)
-#define MsgIsNotLastData(flag)     MsgIsBitClear((flag), MSG_FLAG_LAST_DATA)
-#define MsgIsNotSender(flag)       MsgIsBitClear((flag), MSG_FLAG_SENDER)
-#define MsgIsNotReceiving(flag)    MsgIsBitClear((flag), MSG_FLAG_RECEIVING)
-#define MsgIsNotClientOwned(flag)  MsgIsBitClear((flag), MSG_FLAG_CLIENT_OWNED)
-#define MsgIsNotInflated(flag)     MsgIsBitClear((flag), MSG_FLAG_INFLATED)
-#define MsgIsNotDeflated(flag)     MsgIsBitClear((flag), MSG_FLAG_DEFLATED)
+#define MsgIsNotRequest(flag)      	MsgIsBitClear((flag), MSG_FLAG_REQUEST)
+#define MsgIsNotLastData(flag)     	MsgIsBitClear((flag), MSG_FLAG_LAST_DATA)
+#define MsgIsNotSender(flag)       	MsgIsBitClear((flag), MSG_FLAG_SENDER)
+#define MsgIsNotReceiving(flag)    	MsgIsBitClear((flag), MSG_FLAG_RECEIVING)
+#define MsgIsNotClientOwned(flag)  	MsgIsBitClear((flag), MSG_FLAG_CLIENT_OWNED)
+#define MsgIsNotInflated(flag)     	MsgIsBitClear((flag), MSG_FLAG_INFLATED)
+#define MsgIsNotDeflated(flag)     	MsgIsBitClear((flag), MSG_FLAG_DEFLATED)
+#define MsgIsReplyNotExpected(flag)	MsgIsBitSet((flag), MSG_FLAG_NO_REPLY)
 
 #define MsgSetRequest(flag)     MsgBitSet((flag), MSG_FLAG_REQUEST)
 #define MsgSetLastData(flag)    MsgBitSet((flag), MSG_FLAG_LAST_DATA)
@@ -79,6 +82,7 @@
 #define MsgSetDeflated(flag)    MsgBitSet((flag), MSG_FLAG_DEFLATED)
 #define MsgSetSendNow(flag)     MsgBitSet((flag), MSG_FLAG_SEND_NOW)
 #define MsgSetDoubleBuf(flag)   MsgBitSet((flag), MSG_FLAG_DOUBLE_BUF)
+#define MsgSetNoReply(flag)		MsgBitSet((flag), MSG_FLAG_NO_REPLY)
 
 #define MsgClearRequest(flag)     MsgBitClear((flag), MSG_FLAG_REQUEST)
 #define MsgClearLastData(flag)    MsgBitClear((flag), MSG_FLAG_LAST_DATA)
@@ -89,6 +93,7 @@
 #define MsgClearInflated(flag)    MsgBitClear((flag), MSG_FLAG_INFLATED)
 #define MsgClearDeflated(flag)    MsgBitClear((flag), MSG_FLAG_DEFLATED)
 #define MsgClearSendNow(flag)     MsgBitClear((flag), MSG_FLAG_SEND_NOW)
+#define MsgClearNoReply(flag)	  MsgBitClear((flag), MSG_FLAG_NO_REPLY)
 
 typedef enum
 {
@@ -97,6 +102,7 @@ typedef enum
     msg_service_id_file,
     msg_service_id_rci,
     msg_service_id_brci,
+	msg_service_id_cli,
     msg_service_id_count
 } msg_service_id_t;
 
@@ -138,7 +144,8 @@ typedef enum
     msg_service_type_have_data,
     msg_service_type_error,
     msg_service_type_free,
-    msg_service_type_pending_request
+    msg_service_type_pending_request,
+	msg_service_type_capabilities
 } msg_service_type_t;
 
 typedef enum
@@ -271,7 +278,6 @@ typedef struct
 {
     msg_capabilities_t capabilities[msg_capability_count];
     connector_msg_callback_t * service_cb[msg_service_id_count];
-    connector_bool_t session_locked;
     struct
     {
         msg_session_t * head;
@@ -283,7 +289,12 @@ typedef struct
         void const * user;
         void const * internal;
     } pending_service_request;
+	msg_service_id_t discovery_state;
 } connector_msg_data_t;
+
+#if (defined CONNECTOR_STREAMING_CLI_SERVICE)
+STATIC connector_status_t streaming_cli_service_poll_sessions(connector_data_t * const data_ptr, connector_msg_data_t * const msg_ptr);
+#endif
 
 STATIC msg_session_t * msg_find_session(connector_msg_data_t const * const msg_ptr, unsigned int const id, connector_bool_t const client_owned)
 {
@@ -428,7 +439,8 @@ STATIC msg_session_t * msg_create_session(connector_data_t * const connector_ptr
         MsgSetClientOwned(flags);
     }
 
-    MsgSetRequest(flags);
+
+   	MsgSetRequest(flags);
     #if (defined CONNECTOR_COMPRESSION)
     MsgSetCompression(flags);
     #endif
@@ -505,16 +517,12 @@ STATIC msg_session_t * msg_create_session(connector_data_t * const connector_ptr
     if (session->in_dblock != NULL)
         session->in_dblock->status_flag = flags;
 
-    if (msg_ptr->session_locked) goto error;
-    msg_ptr->session_locked = connector_true;
     add_list_node(&msg_ptr->session.head, &msg_ptr->session.tail, session);
-    msg_ptr->session_locked = connector_false;
 
     msg_ptr->capabilities[capability_id].active_transactions++;
     *status = connector_working;
     goto done;
 
-error:
     {
         connector_status_t const result = free_data_buffer(connector_ptr, named_buffer_id(msg_session), session);
 
@@ -534,12 +542,9 @@ STATIC connector_status_t msg_delete_session(connector_data_t * const connector_
     ASSERT_GOTO(session != NULL, error);
     ASSERT_GOTO((session->in_dblock != NULL) || (session->out_dblock != NULL), error);
 
-    if (msg_ptr->session_locked) goto error;
-    msg_ptr->session_locked = connector_true;
     remove_list_node(&msg_ptr->session.head, &msg_ptr->session.tail, session);
     if (msg_ptr->session.current == session)
         msg_ptr->session.current = (session->prev != NULL) ? session->prev : msg_ptr->session.tail;
-    msg_ptr->session_locked = connector_false;
 
     #if (defined CONNECTOR_COMPRESSION)
     {
@@ -708,65 +713,126 @@ done:
     return status;
 }
 
-STATIC connector_status_t msg_send_capabilities(connector_data_t * const connector_ptr, connector_msg_data_t const * const msg_ptr, uint8_t const flag)
+STATIC connector_status_t msg_send_capabilities(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, uint8_t const flag)
 {
-    connector_status_t status = connector_pending;
-    uint8_t * capability_packet = NULL;
-    uint8_t * const edp_header = tcp_get_packet_buffer(connector_ptr, E_MSG_FAC_MSG_NUM, &capability_packet, NULL);
-    uint8_t * variable_data_ptr = capability_packet + record_bytes(capability_packet);
+	connector_status_t status = connector_pending;
+	uint8_t * msg_packet = NULL;
+	uint8_t * const edp_header = tcp_get_packet_buffer(connector_ptr, E_MSG_FAC_MSG_NUM, &msg_packet, NULL);
+	size_t packet_len;
 
-    if ((edp_header == NULL) || (capability_packet == NULL))
-        goto error;
+	if ((edp_header == NULL) || (msg_packet == NULL))
+		goto error;
 
-    /*
-     * ------------------------------------------------------------------------------------------
-     * |   0    |    1  |     2   |    3    |   4-7  |     8    | 9-(8+n) |     9+n   | s bytes |
-     *  -----------------------------------------------------------------------------------------
-     * | opcode | flags | version | Max Trx | Window | Count(n) | list    | Count (s) |  list   |
-     * |        |       |         |         |  size  |  compression algo  |     Service Info    |
-     *  -----------------------------------------------------------------------------------------
-     */
-    message_store_u8(capability_packet, opcode, msg_opcode_capability);
-    message_store_u8(capability_packet, flags, flag);
-    message_store_u8(capability_packet, version, MSG_FACILITY_VERSION);
-    message_store_u8(capability_packet, max_transactions, msg_ptr->capabilities[msg_capability_client].max_transactions);
-    message_store_be32(capability_packet, window_size, msg_ptr->capabilities[msg_capability_client].window_size);
+	if (msg_ptr->discovery_state == msg_service_id_none)
+	{
+		uint8_t * capability_packet = msg_packet;
+		uint8_t * variable_data_ptr = capability_packet + record_bytes(capability_packet);
 
-    /* append compression algorithms supported */
-    {
-        uint8_t const compression_length = (msg_ptr->capabilities[msg_capability_client].compression_supported) ? 1 : 0;
+		/*
+		 * ------------------------------------------------------------------------------------------
+		 * |   0    |    1  |     2   |    3    |   4-7  |     8    | 9-(8+n) |     9+n   | s bytes |
+		 *  -----------------------------------------------------------------------------------------
+		 * | opcode | flags | version | Max Trx | Window | Count(n) | list    | Count (s) |  list   |
+		 * |        |       |         |         |  size  |  compression algo  |     Service Info    |
+		 *  -----------------------------------------------------------------------------------------
+		 */
+		message_store_u8(capability_packet, opcode, msg_opcode_capability);
+		message_store_u8(capability_packet, flags, flag);
+		message_store_u8(capability_packet, version, MSG_FACILITY_VERSION);
+		message_store_u8(capability_packet, max_transactions, msg_ptr->capabilities[msg_capability_client].max_transactions);
+		message_store_be32(capability_packet, window_size, msg_ptr->capabilities[msg_capability_client].window_size);
 
-        message_store_u8(capability_packet, compression_count, compression_length);
-        if (compression_length > 0)
-            *variable_data_ptr++ = MSG_COMPRESSION_LIBZ;
-    }
+		/* append compression algorithms supported */
+		{
+			uint8_t const compression_length = (msg_ptr->capabilities[msg_capability_client].compression_supported) ? 1 : 0;
 
-    /* append service IDs of all listeners */
-    {
-        uint16_t services = 0;
-        uint16_t service_id;
+			message_store_u8(capability_packet, compression_count, compression_length);
+			if (compression_length > 0)
+			    *variable_data_ptr++ = MSG_COMPRESSION_LIBZ;
+		}
 
-        for (service_id = 0; service_id < msg_service_id_count; service_id++)
-            if (msg_ptr->service_cb[service_id] !=  NULL) services++;
+		/* append service IDs of all listeners */
+		{
+			uint8_t * services_count = variable_data_ptr;
+			uint16_t services = 0;
+			uint16_t service_id;
 
-        StoreBE16(variable_data_ptr, services);
-        variable_data_ptr += sizeof services;
+			variable_data_ptr += sizeof services;
 
-        for (service_id = 0; service_id < msg_service_id_count; service_id++)
-        {
-            if (msg_ptr->service_cb[service_id] !=  NULL)
-            {
-                StoreBE16(variable_data_ptr, service_id);
-                variable_data_ptr += sizeof service_id;
-            }
-        }
-    }
+			for (service_id = 0; service_id < msg_service_id_count; service_id++)
+			{
+			    if (msg_ptr->service_cb[service_id] !=  NULL)
+			    {
+					services++;
+			        StoreBE16(variable_data_ptr, service_id);
+			        variable_data_ptr += sizeof service_id;
+			    }
+			}
+			StoreBE16(services_count, services);
+		}
 
-    {
-        size_t const packet_len = (size_t)(variable_data_ptr - capability_packet);
+		packet_len = (size_t)(variable_data_ptr - capability_packet);
 
-        status = tcp_initiate_send_facility_packet(connector_ptr, edp_header, packet_len, E_MSG_FAC_MSG_NUM, tcp_release_packet_buffer, NULL);
-    }
+		msg_ptr->discovery_state++;
+	}
+	else
+	{
+		uint8_t * start_packet = msg_packet;
+		msg_service_data_t service_data = {
+			GET_PACKET_DATA_POINTER(start_packet, record_bytes(start_packet)),
+			0,
+			0
+		};
+		msg_service_request_t request = { 
+			NULL,
+			msg_service_type_capabilities,
+			&service_data,
+			NULL,
+			connector_session_error_none,
+#if (defined CONNECTOR_DATA_SERVICE)
+			connector_send_data_initiator_unknown
+#endif
+		};
+
+		while (msg_ptr->discovery_state < msg_service_id_count)
+		{	
+			if (msg_ptr->service_cb[msg_ptr->discovery_state] != NULL)
+			{
+				status = msg_ptr->service_cb[msg_ptr->discovery_state](connector_ptr, &request);
+				if (status == connector_working)
+				{
+					break;
+				}
+				else if (status != connector_idle) goto error;
+			}
+			msg_ptr->discovery_state++;
+		}
+		if (msg_ptr->discovery_state == msg_service_id_count)
+		{
+			msg_ptr->discovery_state = msg_service_id_none;
+			status = tcp_release_packet_buffer(connector_ptr, edp_header, connector_success, NULL);
+			if (status == connector_working)
+			{
+				status = connector_idle;
+			}
+			goto error;
+		}
+		msg_ptr->discovery_state++;
+
+		message_store_u8(start_packet, opcode, msg_opcode_start);
+		message_store_u8(start_packet, flags, MSG_FLAG_REQUEST | MSG_FLAG_LAST_DATA);
+		message_store_be16(start_packet, transaction_id, 0);
+		message_store_be16(start_packet, service_id, msg_ptr->discovery_state);
+		message_store_u8(start_packet, compression_id, MSG_COMPRESSION_NONE);
+
+		packet_len = record_bytes(start_packet) + service_data.length_in_bytes;
+	}
+
+	status = tcp_initiate_send_facility_packet(connector_ptr, edp_header, packet_len, E_MSG_FAC_MSG_NUM, tcp_release_packet_buffer, NULL);
+	if (status == connector_working)
+	{
+		status = connector_pending;
+	}
 
 error:
     return status;
@@ -853,7 +919,7 @@ STATIC connector_status_t msg_send_complete(connector_data_t * const connector_p
             /* update session state */
             if (MsgIsLastData(dblock->status_flag))
             {
-                if (MsgIsRequest(dblock->status_flag))
+                if (MsgIsRequest(dblock->status_flag) && MsgIsReplyExpected(dblock->status_flag))
                 {
                     session->current_state = msg_state_receive;
                 }
@@ -1197,22 +1263,18 @@ STATIC connector_status_t msg_handle_pending_requests(connector_data_t * const c
         service_data.service_type = msg_service_type_pending_request;
         service_data.error_value = result;
         service_data.have_data = pending_request != NULL ? (void *)*pending_request : NULL;
-#if (defined CONNECTOR_DATA_SERVICE)
         service_data.send_data_initiator = connector_send_data_initiator_unknown;
-#endif
         cb_fn(connector_ptr, &service_data);
         if ((service_data.error_value != connector_session_error_none) && (session != NULL))
         {
             status = msg_delete_session(connector_ptr, msg_ptr, session);
         }
-#if (defined CONNECTOR_DATA_SERVICE)
         else if (session != NULL)
         {
             msg_service_request_t * const session_service_data = &session->service_layer_data;
 
             session_service_data->send_data_initiator = service_data.send_data_initiator;
         }
-#endif
     }
 
     if (pending_request != NULL)
@@ -1227,7 +1289,7 @@ STATIC connector_status_t msg_start_session(connector_data_t * const connector_p
 {
     connector_status_t status = connector_working;
     static connector_bool_t const client_owned = connector_true;
-    msg_session_t * const session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_data, client_owned, &status);
+	msg_session_t * const session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_data, client_owned, &status);
 
     if (session == NULL) goto error;
 
@@ -1366,7 +1428,7 @@ STATIC connector_status_t msg_pass_service_data(connector_data_t * const connect
 
         if (MsgIsLastData(dblock->status_flag))
         {
-            if (MsgIsRequest(dblock->status_flag))
+            if (MsgIsRequest(dblock->status_flag) && MsgIsReplyExpected(dblock->status_flag))
             {
                 connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
                 connector_session_error_t result;
@@ -1768,19 +1830,12 @@ STATIC connector_status_t msg_discovery(connector_data_t * const connector_ptr, 
 
 STATIC void msg_switch_session(connector_msg_data_t * const msg_ptr, msg_session_t * const session)
 {
-    if (!msg_ptr->session_locked)
-    {
-        msg_ptr->session_locked = connector_true;
-        msg_ptr->session.current = (session->prev != NULL) ? session->prev : msg_ptr->session.tail;
-        msg_ptr->session_locked = connector_false;
-    }
+    msg_ptr->session.current = (session->prev != NULL) ? session->prev : msg_ptr->session.tail;
 }
 
 STATIC connector_status_t msg_process_pending(connector_data_t * const connector_ptr, connector_msg_data_t * const msg_ptr, unsigned int * const receive_timeout)
 {
     connector_status_t status = connector_idle;
-
-    if (msg_ptr->session_locked) goto done;
 
 #if (defined CONNECTOR_DATA_SERVICE)
     if (msg_ptr->pending_service_request.user != NULL || msg_ptr->pending_service_request.internal != NULL)
@@ -1796,10 +1851,14 @@ STATIC connector_status_t msg_process_pending(connector_data_t * const connector
         goto done;
 #endif
 
-    msg_ptr->session_locked = connector_true;
+#if (defined CONNECTOR_STREAMING_CLI_SERVICE)
+	status = streaming_cli_service_poll_sessions(connector_ptr, msg_ptr);
+    if ((status != connector_idle) && (status != connector_working))
+        goto done;
+#endif
+
     if (msg_ptr->session.current == NULL)
         msg_ptr->session.current = msg_ptr->session.tail;
-    msg_ptr->session_locked = connector_false;
 
     *receive_timeout = MAX_RECEIVE_TIMEOUT_IN_SECONDS;
     if (msg_ptr->session.current != NULL)
