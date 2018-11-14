@@ -92,7 +92,9 @@ public class Descriptors {
         	
         	if (uploading) {
         		uploadDescriptor(name, content);
-        	} else {
+        	}
+        	
+        	if (options.saveDescriptorOption()) {
         		saveDescriptor(name, content);
         	}
         }
