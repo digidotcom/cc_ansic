@@ -1,13 +1,17 @@
 package com.digi.connector.config;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Vector;
 
 public class Table {
 	private Group.Type type;
 	private LinkedHashMap<String, Group> groups = new LinkedHashMap<>();
+	private LinkedHashMap<String, Condition> conditions = new LinkedHashMap<>();
 	
     public Table(Group.Type type) {
     	this.type = type;
@@ -21,7 +25,7 @@ public class Table {
     	return groups.values();
     }
     
-    public void add(Group group) throws Exception {
+    public void addGroup(Group group) throws Exception {
     	final String name = group.getName();
     	
         if (groups.containsKey(name)) {
@@ -29,6 +33,20 @@ public class Table {
         }
 
     	groups.put(name, group);
+    }
+    
+    public void addCondition(Condition condition) throws Exception {
+    	final String name = condition.getName();
+    	
+        if (conditions.containsKey(name)) {
+            throw new Exception("Duplicate <condition> name: " + name);
+        }
+
+    	conditions.put(name, condition);
+    }
+    
+    public Map<String, Condition> conditions() {
+    	return Collections.unmodifiableMap(conditions);
     }
     
     private void addErrorDescriptors(org.dom4j.Element e, final int start, final Map<String, String> errors) {
@@ -140,5 +158,42 @@ public class Table {
         addErrorDescriptors(e, config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
     	
         return e;
+    }
+    
+    public void validate() throws Exception {
+    	for (Map.Entry<String, Condition> item: conditions.entrySet()) {
+    		final String name = item.getKey();
+    		final Location location = item.getValue().getLocation();
+
+    		assert type == location.getType() : "Something terrible happened";
+    		
+    		final Vector<String> path = location.getPath();
+    		final int length = path.size();
+    		
+    		try {
+	    		Item current = groups.get(path.get(0));
+	    		for (int i = 1; i < length; i++) {
+		    		if (current instanceof ItemList) {
+		    			ItemList list = (ItemList) current;
+		    			current = list.find(path.get(i));
+		    		} else {
+		    			throw new NoSuchElementException();
+		    		}
+	    		}
+	    		if (current instanceof Element) {
+	    			// TODO: check Element data for match validity -ASK
+	    			// enums & ref_enums must match one of the listed items
+	    			// boolean on/off must match true/false on/off
+	    			// numeric values must match numbers
+	    			// Possibilities for regex?
+	    		} else {
+	    			throw new Exception("conditional source path does not end at an element: " + name);
+	    		}
+    		} catch (NoSuchElementException e) {
+    			throw new Exception("conditional source path is invalid: " + name);
+    		}
+    	}
+    	
+    	// TODO: In the future we can warn when we have unused conditions. -ASK
     }
 }

@@ -268,6 +268,9 @@ public class Config {
     		ref_enum.setMin(String.valueOf(min_length));
     		ref_enum.setMax(String.valueOf(max_length));
     	}
-    	
+    
+	    for (Table t: table.values()) {
+	    	t.validate();
+	    }
     }
 }

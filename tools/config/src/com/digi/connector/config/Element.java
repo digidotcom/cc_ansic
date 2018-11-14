@@ -2,6 +2,7 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -180,7 +181,7 @@ public class Element extends Item {
         	break;
         }
 
-    	return e;
+    	return wrapConditional(e);
     }
 
     public Type setType(String theType) throws Exception {
@@ -650,5 +651,9 @@ public class Element extends Item {
 		    	break;
 		    }
         }
+    }
+    
+    public Item find(final String name) throws NoSuchElementException {
+    	throw new NoSuchElementException();
     }
 }

@@ -59,7 +59,7 @@ public class Group extends ItemList {
         addErrorDescriptors(e, config.getGroupErrorsOffset(), getErrors());
         addChildren(e);
         
- 		return e;
+ 		return wrapConditional(e);
     }
     
     public LinkedHashMap<String, String> getErrors() {

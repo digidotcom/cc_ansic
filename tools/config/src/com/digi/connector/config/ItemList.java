@@ -1,6 +1,7 @@
 package com.digi.connector.config;
 
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.LinkedHashSet;
 
 import javax.naming.NamingException;
@@ -89,7 +90,7 @@ public class ItemList extends Item {
     	addAttributes(e);
     	addChildren(e);
     	
-    	return e;
+    	return wrapConditional(e);
     }
 
     public String getName() {
@@ -185,5 +186,14 @@ public class ItemList extends Item {
         if (items.isEmpty()) {
             throw new Exception("No items specified");
         }
+    }
+
+    public Item find(final String name) throws NoSuchElementException {
+    	for (Item item: items) {
+    		if (item.name.equals(name)) {
+    			return item;
+    		}
+    	}
+    	throw new NoSuchElementException();
     }
 }

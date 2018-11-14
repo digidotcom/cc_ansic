@@ -23,6 +23,7 @@ public class Parser {
     private static String token;
     private static int groupLineNumber;
     private static int elementLineNumber;
+    private static int conditionLineNumber;
     private static ArrayDeque<Integer> listLineNumber;
 
     private final static Config config = Config.getInstance();
@@ -41,20 +42,21 @@ public class Parser {
 
                 if (token.equalsIgnoreCase("globalerror")) {
                     config.addUserGlobalError(getName(), getErrorDescription());
+                } else if (token.equalsIgnoreCase("condition")) {
+                	processCondition(config);
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>
                      * [instances] <description> [help description]
                      */
 
-                    /* parse group type */
-                	final Group.Type type = Group.Type.toType(tokenScanner.getToken());
-
-                    /* parse name */
-                    String nameStr = getName();
-
                     groupLineNumber = tokenScanner.getLineNumber();
 
+                	final Group.Type type = Group.Type.toType(tokenScanner.getToken());
+                    String nameStr = getName();
+                    Location current = new Location(type);
+                    current.descend(nameStr);
+                    
                     /* parse instances */
                     Integer groupInstances;
                     if (tokenScanner.hasTokenInt()) {
@@ -92,10 +94,12 @@ public class Parser {
                         	} else {
                                 throw new Exception("Error in <group>: Key parser is unimplemented");
                         	}
+                        } else if (token.equalsIgnoreCase("condition")) {
+                        	theGroup.setCondition(getName(), current, config);
                         } else if (token.equalsIgnoreCase("element")) {
-                        	theGroup.addItem(processElement(group_access, config));
+                        	theGroup.addItem(processElement(group_access, current, config));
                         } else if (token.equalsIgnoreCase("list")) {
-                        	theGroup.addItem(processList(group_access, config, 0));
+                        	theGroup.addItem(processList(group_access, current, config, 0));
                         } else if (token.equalsIgnoreCase("error")) {
                             theGroup.addError(getName(), getErrorDescription());
                         } else if (token.startsWith("#")) {
@@ -112,7 +116,7 @@ public class Parser {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
                     }
 
-                    config.getTable(type).add(theGroup);
+                    config.getTable(type).addGroup(theGroup);
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
@@ -140,6 +144,8 @@ public class Parser {
             lineNumber = groupLineNumber;
         else if (str.indexOf("<element>") != -1)
             lineNumber = elementLineNumber;
+        else if (str.indexOf("<condition>") != -1)
+            lineNumber = conditionLineNumber;
         else if ((str.indexOf("<list>") != -1) && !listLineNumber.isEmpty())
             lineNumber = listLineNumber.pop();
         else
@@ -385,15 +391,83 @@ public class Parser {
         return def;
     }
 
-    private static final Element processElement(String default_access, Config config) throws Exception {
+    private static final void processCondition(Config config) throws Exception {
+        /*
+         *  condition NAME source LOCATION_OF_VALUE_TO_MATCH operation regex pattern PATTERN_TO_MATCH [case {match|ignore}]
+		 *  condition NAME source LOCATION_OF_VALUE_TO_MATCH [operation equals] value VALUE_TO_MATCH
+         */
+        conditionLineNumber = tokenScanner.getLineNumber();
+
+        String name = getName();
+        String source = null;
+        Condition.Operation operation = Condition.Operation.defaultOperation();
+        String pattern = null;
+        Condition.RegexCase regexCase = Condition.RegexCase.defaultRegexCase();
+        String value = null;
+        
+        try {
+            while (tokenScanner.hasToken()) {
+                token = tokenScanner.getToken();
+
+                if (token.equalsIgnoreCase("source")) {
+                	source = getString();
+                } else if (token.equalsIgnoreCase("operation")) {
+                    operation = Condition.Operation.toOperation(getString());
+                } else if (token.equalsIgnoreCase("pattern")) {
+                    pattern = getString();
+                } else if (token.equalsIgnoreCase("case")) {
+                    regexCase = Condition.RegexCase.toRegexCase(getString());
+                } else if (token.equalsIgnoreCase("value")) {
+                    value = getString();
+                } else if (token.startsWith("#")) {
+                    tokenScanner.skipCommentLine();
+                } else {
+                    tokenScanner.pushbackToken(token);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            throw new IOException(e.toString());
+        }
+
+        if (source == null) {
+        	throw new Exception("Missing source in <condition>");
+        }
+        
+        Location location = new Location(source);
+        Condition condition = null;
+        switch (operation) {
+        case EQUALS:
+            if (value == null) {
+            	throw new Exception("Missing value in <condition>");
+            }
+
+        	condition = new Condition(name, location, value);
+        	break;
+        	
+        case REGEX:
+            if (pattern == null) {
+            	throw new Exception("Missing pattern in <condition>");
+            }
+
+        	condition = new Condition(name, location, pattern, regexCase);
+        	break;
+        }
+
+        config.getTable(location.getType()).addCondition(condition);
+    }
+
+    private static final Element processElement(final String default_access, final Location current, final Config config) throws Exception {
         /*
          * syntax for parsing element: element <name> <description> [help
          * description] type <type> [min <min>] [max <max>] [access <access>]
          * [units <unit>]
          */
-    	String name = getName();
         elementLineNumber = tokenScanner.getLineNumber();
 
+        String name = getName();
+        current.descend(name);
+        
         Element element = new Element(name, getDescription(), getHelpDescription());
         config.nameLengthSeen(UseNames.ELEMENTS, name.length());
 
@@ -424,6 +498,8 @@ public class Parser {
                     element.addValue(config, getValueName(element.getType()), getDescription(), getHelpDescription());
                 } else if (token.equalsIgnoreCase("ref")) {
                     element.addRef(config, getRefName(), getDescription(), getHelpDescription());
+                } else if (token.equalsIgnoreCase("condition")) {
+                	element.setCondition(getName(), current, config);
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
@@ -450,17 +526,20 @@ public class Parser {
             throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
         }
         
+        current.ascend();
         return element;
     }
 
-    private static final ItemList processList(String default_access, Config config, int depth) throws Exception {
+    private static final ItemList processList(final String default_access, final Location current, final Config config, int depth) throws Exception {
         /*
          * syntax for parsing list: list <name> [instances] <description> [help
          * description] [access <access>]
          */
 
-		String name = getName();
 		listLineNumber.push(tokenScanner.getLineNumber());
+
+		String name = getName();
+		current.descend(name);
 		
         Integer instances;
         if (tokenScanner.hasTokenInt()) {
@@ -494,29 +573,30 @@ public class Parser {
                 	} else if (token.equalsIgnoreCase("variable")) {
                 		list.setCapacity(ItemList.Capacity.VARIABLE);
                 	} else {
-                        throw new Exception("Error in <group>: Invalid capacity type of " + token );
+                        throw new Exception("Error in <list>: Invalid capacity type of " + token );
                     }
                 } else if (token.equalsIgnoreCase("keys")) {
                 	token = tokenScanner.getToken();
                 	if (token.equals("{}")) {
                 		list.setKeys(new LinkedHashSet<String>());
                 	} else {
-                        throw new Exception("Error in <group>: Key parser is unimplemented");
+                        throw new Exception("Error in <list>: Key parser is unimplemented");
                 	}
                 } else if (token.equalsIgnoreCase("access")) {
 		        	list_access = getAccess();
 		            list.setAccess(list_access);
 		        } else if (token.equalsIgnoreCase("element")) {
-		            list.addItem(processElement(list_access, config));
+		            list.addItem(processElement(list_access, current, config));
 		        } else if (token.equalsIgnoreCase("list")) {
-		            list.addItem(processList(list_access, config, depth));
+		            list.addItem(processList(list_access, current, config, depth));
+                } else if (token.equalsIgnoreCase("condition")) {
+                	list.setCondition(getName(), current, config);
 		        } else if (token.equalsIgnoreCase("end")) {
 		            break;
 		        } else if (token.startsWith("#")) {
 		            tokenScanner.skipCommentLine();
 		        } else {
-		            tokenScanner.pushbackToken(token);
-		            break;
+		        	throw new Exception("unknown token in <list>: " + token);
 		        }
 		    }
 		    
@@ -537,6 +617,7 @@ public class Parser {
         listLineNumber.pop();
         config.addTypeSeen(Element.Type.LIST);
 
+        current.ascend();
         return list;
     }
 }
