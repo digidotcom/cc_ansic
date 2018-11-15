@@ -10,9 +10,9 @@
 	<!-- This should be overriden by caller.  Used in the Manifest. -->
 	<property name="version" value="0.0"/>
 
-    <path id="classpath">
-        <fileset dir="${lib.dir}" includes="*.jar"/>
-    </path>
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="*.jar"/>
+	</path>
 
 	<target name="clean">
 		<delete file="${dist.dir}/${jar}"/>
@@ -25,12 +25,13 @@
 
 	<target name="compile" depends="init">
 		<mkdir dir="${class.dir}"/>
-		<javac srcdir="${src.dir}" destdir="${class.dir}" includeantruntime="false" target="1.8" source="1.8"/>
+		<javac classpathref="classpath" srcdir="${src.dir}" destdir="${class.dir}" includeantruntime="false" target="1.8" source="1.8"/>
 	</target>
 
 	<target name="jar" depends="compile">
 		<jar destfile="${build.dir}/${jar}">
 			<fileset dir="${class.dir}"/>
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar"/>
 			<manifest>
 				<attribute name="Main-Class" value="com.digi.connector.config.ConfigGenerator"/>
 				<attribute name="Implementation-Vendor" value="Digi International"/>
@@ -46,7 +47,6 @@
 		<copy todir="${dist.dir}" flatten="true">
             <resources>
                 <file file="${build.dir}/${jar}"/>
-        		<fileset dir="${lib.dir}" includes="*.jar"/>
             </resources>
         </copy>
 	</target>
