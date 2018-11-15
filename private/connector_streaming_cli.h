@@ -821,7 +821,7 @@ STATIC connector_status_t streaming_cli_service_response_callback(connector_data
 	}
 	else
 	{
-
+		status = streaming_cli_service_send_close(connector_ptr, msg_session, service_data);
 	}	
 	
 	return status;
