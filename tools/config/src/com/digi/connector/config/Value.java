@@ -8,11 +8,15 @@ public class Value extends Item {
         super(name, description == null ? "" : description, helpDescription);
     }
 
-    public String toString(Integer id) {
-    	if (id == null) {
-    		return String.format("<value value=\"%s\" desc=\"%s\"/>", name, Descriptors.encodeEntities(getDescription()));
-    	} else {
-    		return String.format("<value value=\"%s\" desc=\"%s\" bin_id=\"%d\"/>", name, Descriptors.encodeEntities(getDescription()), id);
+    public org.dom4j.Element asElement(Integer id) {
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("value")
+    		.addAttribute("value", name)
+    		.addAttribute("desc", getDescription());
+    	
+    	if (id != null) {
+    		e.addAttribute("bin_id", id.toString());
     	}
+    	
+    	return e;
     }
 }

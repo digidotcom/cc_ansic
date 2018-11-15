@@ -2,6 +2,8 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -135,46 +137,51 @@ public class Element extends Item {
         this.refs = new LinkedList<Reference>();
     }
 
-    public String toString(Integer id) {
-    	Type rci_type = (type == Type.REGEX) ? Type.STRING : type;
+    public org.dom4j.Element asElement(Integer id) {
+    	final Type rci_type = (type == Type.REGEX) ? Type.STRING : type;
     	
-        String descriptor = String.format("<element name=`%s` desc=`%s` type=`%s`", name, Descriptors.encodeEntities(toRciDescription()), rci_type);
-
-        if (access != null)
-            descriptor += String.format(" access=`%s`", access);
-        if (min != null)
-            descriptor += String.format(" min=`%s`", min);
-        if (max != null)
-            descriptor += String.format(" max=`%s`", max);
-        if (units != null)
-            descriptor += String.format(" units=`%s`", Descriptors.encodeEntities(units));
-        if (def != null)
-            descriptor += String.format(" default=`%s`", Descriptors.encodeEntities(def));
-
+    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("element")
+			.addAttribute("name", name)
+			.addAttribute("desc", getRciDescription())
+			.addAttribute("type", rci_type.toString())
+			.addAttribute("access", Objects.toString(access, null))
+			.addAttribute("min", Objects.toString(min, null))
+			.addAttribute("max", Objects.toString(max, null))
+			.addAttribute("units", Objects.toString(units, null))
+			.addAttribute("default", Objects.toString(def, null));
+		
     	if (type == Type.REGEX) {
 	    	assert regexPattern != null : "validation of regex_pattern failed";
-	  		descriptor += String.format(" regex_pattern=`%s`", Descriptors.encodeEntities(regexPattern));
-	  		
-	    	if (regexCase != null)
-	    		descriptor += String.format(" regex_case=`%s`", regexCase);
-	
 	    	assert regexSyntax != null : "validation of regex_syntax failed";
-	  		descriptor += String.format(" regex_syntax=`%s`", Descriptors.encodeEntities(regexSyntax));
-    	}
 
-  		descriptor += String.format(" bin_id=`%d`", id);
+	    	e.addAttribute("regex_pattern", regexPattern)
+    			.addAttribute("regex_case", Objects.toString(regexCase, null))
+    			.addAttribute("regex_syntax", regexSyntax);
+    	}
+    	
+ 		e.addAttribute("bin_id", id.toString());
     	
         switch (type) {
         case ENUM:
+            for (Value value: getValues()) {
+                Integer value_id = getValues().indexOf(value);
+                
+                e.add(value.asElement(value_id));
+            }
+            break;
         case REF_ENUM:
-            descriptor += ">";
-            break;
+            for (Value value: getValues()) {
+                e.add(value.asElement(null));
+            }
+            for (Reference ref: getRefs()) {
+            	e.add(ref.asElement(null));
+            }
+        	break;
         default:
-            descriptor += "/>";
-            break;
+        	break;
         }
 
-        return descriptor.replace('`', '"');
+    	return wrapConditional(e);
     }
 
     public Type setType(String theType) throws Exception {
@@ -215,7 +222,7 @@ public class Element extends Item {
     	return false;
     }
     
-    public void addValue(ConfigData config, String valueName, String description, String helpDescription) throws Exception {
+    public void addValue(Config config, String valueName, String description, String helpDescription) throws Exception {
         if (type == null)
             throw new Exception("Missing type of enum or ref_enum on element: " + name);
         
@@ -245,7 +252,7 @@ public class Element extends Item {
     	return false;
     }
     
-    public void addRef(ConfigData config, String refName, String description, String helpDescription) throws Exception {
+    public void addRef(Config config, String refName, String description, String helpDescription) throws Exception {
         if (type == null)
             throw new Exception("Missing type enum on element: " + name);
         
@@ -644,5 +651,9 @@ public class Element extends Item {
 		    	break;
 		    }
         }
+    }
+    
+    public Item find(final String name) throws NoSuchElementException {
+    	throw new NoSuchElementException();
     }
 }

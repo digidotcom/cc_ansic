@@ -2,8 +2,8 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 public class GenFsmUserHeaderFile extends GenHeaderFile {
     public final static String FILENAME = "rci_config.h";
@@ -155,7 +155,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         }
     }
 
-    private void writeAllEnumHeaders(LinkedList<Group> groups) throws Exception {
+    private void writeAllEnumHeaders(Collection<Group> groups) throws Exception {
 
         for (Group group : groups) {
         	writeListEnumHeader(group, group.getName());
@@ -191,7 +191,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
     private void writeGroupTypeAndErrorEnum() throws Exception {
 
         for (Group.Type type : Group.Type.values()) {
-	        LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             configType = type.toLowerName();
 

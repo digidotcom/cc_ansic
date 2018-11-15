@@ -7,7 +7,6 @@ import java.util.Scanner;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.Collections;
 
 public class ConfigGenerator {
@@ -70,8 +69,6 @@ public class ConfigGenerator {
     private final static String CCAPI_STUB_FUNCTIONS_OPTION = "ccapiStub";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
     private final static String NO_UPLOAD_OPTION = "noUpload";
-    private final static String CREATE_BIN_ID_LOG_OPTION = "createBinIdLog";
-    private final static String USE_BIN_ID_LOG_OPTION = "useBinIdLog";
     private final static String RCI_LEGACY_COMMANDS_OPTION = "rci_legacy_commands";
     private final static String RCI_DC_TARGET_MAX_OPTION = "rci_dc_attribute_max_len";
     private final static String NO_BACKUP_OPTION = "noBackup";
@@ -97,7 +94,7 @@ public class ConfigGenerator {
     private final static String CONFIG_FILENAME = "configFileName";
 
     private String urlName = URL_DEFAULT;
-    private String vendorId;
+    private Long vendorId;
 
     private String deviceType;
     private long fwVersion;
@@ -116,8 +113,6 @@ public class ConfigGenerator {
     private boolean CcapiStubFunctions;
     private boolean saveDescriptor;
     private boolean noUpload;
-    private boolean createBinIdLog;
-    private boolean useBinIdLog;
     private boolean rci_legacy;
     private Integer rci_dc_attribute_max_len;
     private Integer rci_dc_max_key_len;
@@ -126,7 +121,7 @@ public class ConfigGenerator {
     private boolean rciParser;
 
     private void usage() {
-    	ConfigData config = ConfigData.getInstance();
+    	Config config = Config.getInstance();
         String className = ConfigGenerator.class.getName();
 
         int firstChar = className.lastIndexOf(".") + 1;
@@ -259,14 +254,6 @@ public class ConfigGenerator {
                         DASH + FILE_TYPE_OPTION + "={none|source|global_header}" ));
         log(String
                 .format(
-                        "\t%-16s \t= create bin_id log",
-                        DASH + CREATE_BIN_ID_LOG_OPTION));
-        log(String
-                .format(
-                        "\t%-16s \t= use bin_id log",
-                        DASH + USE_BIN_ID_LOG_OPTION));
-        log(String
-                .format(
                         "\t%-16s \t= optional support for RCI do_command,reboot and set_factory_default",
                         DASH + RCI_LEGACY_COMMANDS_OPTION));
         log(String
@@ -363,16 +350,14 @@ public class ConfigGenerator {
                 if (keys[0].equals(URL_OPTION)) {
                     urlName = keys[1];
                 } else if (keys[0].equals(VENDOR_OPTION)) {
-
-                    if (Pattern.matches("(0[xX])?\\p{XDigit}+", keys[1])) {
-                        vendorId = keys[1];
-                        if (!vendorId.startsWith("0x") && !vendorId.matches("^\\d+$"))
-                        {
-                            /* not all digits (mix with hex) */
-                            throw new Exception("Invalid Vendor ID! For hexadecimal vendor ID, use 0x prefix");
-                        }
-                    } else {
-                        throw new Exception("Invalid Vendor ID!");
+                	try {
+                		final boolean hex = keys[1].startsWith("0x"); 
+                		final int radix = hex ? 16 : 10;
+                		final String parse = hex ? keys[1].substring(2) : keys[1];
+                		
+                		vendorId = Long.parseUnsignedLong(parse, radix);
+                    } catch (NumberFormatException e) {
+                        throw new Exception("Invalid format for Vendor ID");
                     }
                 } else if (keys[0].equals(DIRECTORY_OPTION)) {
                     if (new File(keys[1]).isDirectory()) {
@@ -412,10 +397,6 @@ public class ConfigGenerator {
                 saveDescriptor = true;
             } else if (option.equals(NO_UPLOAD_OPTION)) {
                 noUpload = true;
-            } else if (option.equals(CREATE_BIN_ID_LOG_OPTION)) {
-                createBinIdLog = true;
-            } else if (option.equals(USE_BIN_ID_LOG_OPTION)) {
-                useBinIdLog = true;
             } else if (option.equals(RCI_LEGACY_COMMANDS_OPTION)) {
                 rci_legacy = true;
             } else if (option.equals(NO_BACKUP_OPTION)) {
@@ -543,7 +524,7 @@ public class ConfigGenerator {
         }
     }
 
-    public String getVendorId() {
+    public Long getVendorId() {
     	return vendorId;
     }
     
@@ -621,14 +602,6 @@ public class ConfigGenerator {
         return noBackup;
     }
 
-    public boolean createBinIdLogOption() {
-        return createBinIdLog && !useBinIdLog;
-    }
-
-    public boolean useBinIdLogOption() {
-        return useBinIdLog;
-    }
-
     public boolean rciParserOption() {
         return rciParser;
     }
@@ -642,7 +615,7 @@ public class ConfigGenerator {
     }
 
     private final void execute() throws Exception {
-    	ConfigData config = ConfigData.getInstance();
+    	Config config = Config.getInstance();
 
         if (deleteDescriptorOption()) {
             /* descriptor constructor for arguments */
@@ -670,8 +643,8 @@ public class ConfigGenerator {
         if (fileTypeOption() != FileType.GLOBAL_HEADER) {
             Parser.processFile(filename);
             
-            int setting_groups = config.getConfigGroup(Group.Type.SETTING).size(); 
-            int state_groups = config.getConfigGroup(Group.Type.STATE).size(); 
+            int setting_groups = config.getTable(Group.Type.SETTING).size(); 
+            int state_groups = config.getTable(Group.Type.STATE).size(); 
             int total_groups = setting_groups + state_groups;
             if (total_groups == 0)
                 throw new IOException("No groups specified in file: " + filename);

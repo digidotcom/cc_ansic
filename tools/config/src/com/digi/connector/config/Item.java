@@ -9,6 +9,7 @@ public abstract class Item {
     protected final String description;
     protected final String helpDescription;
     protected AccessType access;
+    protected org.dom4j.Element wrapper;
 
     public enum AccessType {
         READ_ONLY, WRITE_ONLY, READ_WRITE;
@@ -43,7 +44,7 @@ public abstract class Item {
         this.helpDescription = helpDescription;
     }
 
-    public String toRciDescription() {
+    public String getRciDescription() {
         return (helpDescription == null)
             ? getDescription()
             : getDescription() + ":" + getHelpDescription();
@@ -76,5 +77,24 @@ public abstract class Item {
             throw new Exception("Duplicate <access> keyword: " + access);
     }
 
-    abstract String toString(Integer id);
+    public void setCondition(final String name, final Location current, final Config config) throws Exception {
+    	assert wrapper == null : "Error attempting to overwrite condition";
+    	
+    	final Condition condition = config.getTable(current.getType()).conditions().get(name);
+    	if (condition == null) {
+    		throw new Exception("Condition not found: " + name);
+    	}
+    	
+    	wrapper = condition.wrapper(current);
+    }
+    
+	public org.dom4j.Element wrapConditional(org.dom4j.Element element) {
+		if (wrapper == null)
+			return element;
+		
+		wrapper.add(element);
+		return wrapper;
+	}
+
+    abstract org.dom4j.Element asElement(Integer id);
 }

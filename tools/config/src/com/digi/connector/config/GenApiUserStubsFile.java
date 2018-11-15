@@ -1,7 +1,7 @@
 package com.digi.connector.config;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Collection;
 
 import com.digi.connector.config.ConfigGenerator.UseNames;
 
@@ -190,7 +190,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
         write(session_function);
 
         for (Group.Type type : Group.Type.values()) {
-            LinkedList<Group> groups = config.getConfigGroup(type);
+            Collection<Group> groups = config.getTable(type).groups();
 
             configType = type.toLowerName();
 

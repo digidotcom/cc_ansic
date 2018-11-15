@@ -43,7 +43,7 @@ public abstract class GenFile {
     private BufferedWriter writer;
 
     protected Path path;
-    protected final ConfigData config = ConfigData.getInstance();
+    protected final Config config = Config.getInstance();
     protected final ConfigGenerator options = ConfigGenerator.getInstance();
     protected final String customPrefix = options.getCustomPrefix();
 
