@@ -403,7 +403,7 @@ public class Descriptors {
         
         try {
         	final String path = name.replace("/", "_") + ".xml";
-            OutputFormat format = OutputFormat.createPrettyPrint();
+            OutputFormat format = new OutputFormat();
             XMLWriter writer = new XMLWriter(new FileWriter(path), format);
             
 			writer.write(md);
