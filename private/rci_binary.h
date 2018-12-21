@@ -163,8 +163,12 @@ STATIC connector_bool_t rci_action_session_active(rci_t * const rci)
     return success;
 }
 
-STATIC connector_bool_t rci_action_session_lost(rci_t * const rci)
+STATIC connector_bool_t rci_action_session_lost(rci_t * const rci, rci_service_data_t * service_data)
 {
+    if (rci->service_data == NULL) {
+        rci->service_data = service_data;
+    }
+
     trigger_rci_callback(rci, connector_request_id_remote_config_session_cancel);
     {
         connector_bool_t const success = rci_callback(rci);
@@ -223,7 +227,7 @@ STATIC rci_status_t rci_binary(connector_data_t * const connector_ptr, rci_sessi
 
         case rci_session_lost:
             ASSERT(rci_internal_data != NULL);
-            success = rci_action_session_lost(rci_internal_data);
+            success = rci_action_session_lost(rci_internal_data, service_data);
             break;
         }
 
