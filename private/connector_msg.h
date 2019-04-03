@@ -750,7 +750,6 @@ STATIC size_t msg_fill_service_capabilities_packet(connector_data_t * const conn
 		*status = connector_idle;
 		return 0;
 	}
-	msg_ptr->discovery_state++;
 
 	message_store_u8(start_packet, opcode, msg_opcode_start);
 	message_store_u8(start_packet, flags, MSG_FLAG_REQUEST | MSG_FLAG_LAST_DATA);
@@ -758,6 +757,7 @@ STATIC size_t msg_fill_service_capabilities_packet(connector_data_t * const conn
 	message_store_be16(start_packet, service_id, msg_ptr->discovery_state);
 	message_store_u8(start_packet, compression_id, MSG_COMPRESSION_NONE);
 
+	msg_ptr->discovery_state++;
 	return record_bytes(start_packet) + service_data.length_in_bytes;
 }
 
