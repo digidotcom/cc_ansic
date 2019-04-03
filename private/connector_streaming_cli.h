@@ -134,10 +134,9 @@ static struct
 } streaming_cli_error_buffer;
 
 static unsigned int streaming_cli_num_sessions;
-
 static streaming_cli_session_t * streaming_cli_sessions;
 
-STATIC streaming_cli_session_t * streaming_cli_service_find_session(connector_data_t * const connector_ptr, uint16_t const id)
+STATIC streaming_cli_session_t * streaming_cli_service_find_session(uint16_t const id)
 {
 	streaming_cli_session_t * first_session = streaming_cli_sessions;
 	
@@ -235,7 +234,7 @@ STATIC connector_status_t streaming_cli_service_read_data(connector_data_t * con
 
 STATIC connector_status_t streaming_cli_service_write_data(connector_data_t * const connector_ptr, streaming_cli_session_t * const session, msg_service_data_t * const service_data)
 {
-
+	uint8_t * const buffer = service_data->data_ptr;
 	if (session->session_state == streaming_cli_session_state_started)
 	{
 		connector_status_t status;
@@ -244,7 +243,7 @@ STATIC connector_status_t streaming_cli_service_write_data(connector_data_t * co
 			session->handle,
 			service_data->length_in_bytes - session->bytes_consumed,
 			0,
-			service_data->data_ptr + session->bytes_consumed,
+			buffer + session->bytes_consumed,
 			connector_false
 		};
 
@@ -370,6 +369,10 @@ STATIC connector_status_t streaming_cli_service_close_session(connector_data_t *
 
 STATIC connector_status_t streaming_cli_service_execute_command(connector_data_t * const connector_ptr, streaming_cli_session_t * const session, msg_service_data_t * const service_data)
 {
+	UNUSED_PARAMETER(connector_ptr);
+	UNUSED_PARAMETER(session);
+	UNUSED_PARAMETER(service_data);
+
 	return connector_abort;
 }
 
@@ -452,11 +455,12 @@ STATIC connector_status_t streaming_cli_service_set_general_start_error(msg_sess
 
 STATIC void streaming_cli_service_copy_close_message(streaming_cli_session_t * const session, msg_service_data_t const * const service_data)
 {
-	size_t offset = MsgIsStart(service_data->flags) ? record_bytes(streaming_cli_service_session_close) : 0;
-	size_t num_bytes = service_data->length_in_bytes - offset;
-	size_t total_bytes = session->bytes_consumed + num_bytes;
+	size_t const offset = MsgIsStart(service_data->flags) ? record_bytes(streaming_cli_service_session_close) : 0;
+	size_t const num_bytes = service_data->length_in_bytes - offset;
+	size_t const total_bytes = session->bytes_consumed + num_bytes;
+	char const * const buffer = service_data->data_ptr;
 
-	if (MsgIsLastData(service_data->flags) && *((char *) (service_data->data_ptr + service_data->length_in_bytes - 1)) != '\0')
+	if (MsgIsLastData(service_data->flags) && *(buffer + service_data->length_in_bytes - 1) != '\0')
 	{
 		char const error_msg[] = "Close msg malformed";
 		memcpy(session->close_reason, error_msg, sizeof error_msg);
@@ -469,7 +473,7 @@ STATIC void streaming_cli_service_copy_close_message(streaming_cli_session_t * c
 	}
 	else
 	{
-		memcpy(session->close_reason + session->bytes_consumed, service_data->data_ptr + offset, num_bytes);
+		memcpy(session->close_reason + session->bytes_consumed, buffer + offset, num_bytes);
 		session->bytes_consumed = total_bytes;
 	}
 }
@@ -608,7 +612,7 @@ STATIC connector_status_t streaming_cli_service_request_callback(connector_data_
 				{
 					uint8_t * const streaming_cli_service_session_start_request = service_data->data_ptr;
 					session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
-					session = streaming_cli_service_find_session(connector_ptr, session_id);
+					session = streaming_cli_service_find_session(session_id);
 					break;
 				}
 				case STREAMING_CLI_OPCODE_EXEC_REQ:
