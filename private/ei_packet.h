@@ -83,6 +83,10 @@ do { \
 #define message_load_u8(record, field) *(record + field_named_data(record, field, offset))
 #endif
 
+#define field_offsets_match(field, record1, record2) ((long) field_named_data(record1, field, offset) == (long) field_named_data(record2, field, offset))
+#define field_sizes_match(field, record1, record2) ((long) field_named_data(record1, field, size) == (long) field_named_data(record2, field, size))
+#define fields_equivalent(field, record1, record2) (field_offsets_match(field, record1, record2) && field_sizes_match(field, record1, record2))
+
 #define PACKET_EDP_PROTOCOL_SIZE        ((size_t)record_bytes(edp_protocol))
 #define PACKET_EDP_HEADER_SIZE          ((size_t)record_bytes(edp_header))
 #define PACKET_EDP_FACILITY_SIZE        (PACKET_EDP_PROTOCOL_SIZE + PACKET_EDP_HEADER_SIZE)
@@ -100,6 +104,5 @@ enum edp_protocol {
     field_define(edp_protocol, facility, uint16_t),
     record_end(edp_protocol)
 };
-
 
 #endif

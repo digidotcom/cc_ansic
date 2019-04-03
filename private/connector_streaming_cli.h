@@ -55,6 +55,7 @@ enum {
 enum {
 	field_define(streaming_cli_service_session_start_request, opcode, uint8_t),
 	field_define(streaming_cli_service_session_start_request, session_id, uint16_t),
+	field_define(streaming_cli_service_session_start_request, terminal_mode, uint8_t),
 	record_end(streaming_cli_service_session_start_request)
 } streaming_cli_service_session_start_request;
 
@@ -115,6 +116,7 @@ typedef struct streaming_cli_session
 			msg_session_t * active_recv_transaction;
 			msg_session_t * active_send_transaction;
 			uint16_t session_id;
+			uint8_t terminal_mode;
 		} streaming;
 		struct
 		{
@@ -134,10 +136,9 @@ static struct
 } streaming_cli_error_buffer;
 
 static unsigned int streaming_cli_num_sessions;
-
 static streaming_cli_session_t * streaming_cli_sessions;
 
-STATIC streaming_cli_session_t * streaming_cli_service_find_session(connector_data_t * const connector_ptr, uint16_t const id)
+STATIC streaming_cli_session_t * streaming_cli_service_find_session(uint16_t const id)
 {
 	streaming_cli_session_t * first_session = streaming_cli_sessions;
 	
@@ -235,7 +236,7 @@ STATIC connector_status_t streaming_cli_service_read_data(connector_data_t * con
 
 STATIC connector_status_t streaming_cli_service_write_data(connector_data_t * const connector_ptr, streaming_cli_session_t * const session, msg_service_data_t * const service_data)
 {
-
+	uint8_t * const buffer = service_data->data_ptr;
 	if (session->session_state == streaming_cli_session_state_started)
 	{
 		connector_status_t status;
@@ -244,7 +245,7 @@ STATIC connector_status_t streaming_cli_service_write_data(connector_data_t * co
 			session->handle,
 			service_data->length_in_bytes - session->bytes_consumed,
 			0,
-			service_data->data_ptr + session->bytes_consumed,
+			buffer + session->bytes_consumed,
 			connector_false
 		};
 
@@ -283,7 +284,7 @@ STATIC connector_status_t streaming_cli_service_start_session(connector_data_t *
 	
 	if (session->session_state == streaming_cli_session_state_uninitialized)
 	{
-		connector_streaming_cli_session_start_request_t request = { NULL, session->close_reason, connector_cli_session_start_ok };
+		connector_streaming_cli_session_start_request_t request = { session->info.streaming.terminal_mode, NULL, session->close_reason, connector_cli_session_start_ok };
 		status = streaming_cli_service_run_cb(connector_ptr, connector_request_id_streaming_cli_session_start, &request);
 		if (status == connector_working)
 		{
@@ -370,6 +371,10 @@ STATIC connector_status_t streaming_cli_service_close_session(connector_data_t *
 
 STATIC connector_status_t streaming_cli_service_execute_command(connector_data_t * const connector_ptr, streaming_cli_session_t * const session, msg_service_data_t * const service_data)
 {
+	UNUSED_PARAMETER(connector_ptr);
+	UNUSED_PARAMETER(session);
+	UNUSED_PARAMETER(service_data);
+
 	return connector_abort;
 }
 
@@ -452,11 +457,12 @@ STATIC connector_status_t streaming_cli_service_set_general_start_error(msg_sess
 
 STATIC void streaming_cli_service_copy_close_message(streaming_cli_session_t * const session, msg_service_data_t const * const service_data)
 {
-	size_t offset = MsgIsStart(service_data->flags) ? record_bytes(streaming_cli_service_session_close) : 0;
-	size_t num_bytes = service_data->length_in_bytes - offset;
-	size_t total_bytes = session->bytes_consumed + num_bytes;
+	size_t const offset = MsgIsStart(service_data->flags) ? record_bytes(streaming_cli_service_session_close) : 0;
+	size_t const num_bytes = service_data->length_in_bytes - offset;
+	size_t const total_bytes = session->bytes_consumed + num_bytes;
+	char const * const buffer = service_data->data_ptr;
 
-	if (MsgIsLastData(service_data->flags) && *((char *) (service_data->data_ptr + service_data->length_in_bytes - 1)) != '\0')
+	if (MsgIsLastData(service_data->flags) && *(buffer + service_data->length_in_bytes - 1) != '\0')
 	{
 		char const error_msg[] = "Close msg malformed";
 		memcpy(session->close_reason, error_msg, sizeof error_msg);
@@ -469,7 +475,7 @@ STATIC void streaming_cli_service_copy_close_message(streaming_cli_session_t * c
 	}
 	else
 	{
-		memcpy(session->close_reason + session->bytes_consumed, service_data->data_ptr + offset, num_bytes);
+		memcpy(session->close_reason + session->bytes_consumed, buffer + offset, num_bytes);
 		session->bytes_consumed = total_bytes;
 	}
 }
@@ -563,23 +569,42 @@ STATIC streaming_cli_session_t * streaming_cli_service_create_new_session(connec
 	session->bytes_consumed = 0;
 	session->close_reason[0] = '\0';
 
-	if (opcode != STREAMING_CLI_OPCODE_EXEC_REQ)
+	switch (opcode)
 	{
-		uint8_t * const streaming_cli_service_session_start_request = data;
+		case STREAMING_CLI_OPCODE_START_REQ:
+		{
+			uint8_t * const streaming_cli_service_session_start_request = data;
+			streaming_cli_session_t ** const head_ptr = &streaming_cli_sessions;
 
-		streaming_cli_session_t ** head_ptr = &streaming_cli_sessions;
-		session->info.streaming.active_recv_transaction = NULL;
-		session->info.streaming.active_send_transaction = NULL;
-		session->info.streaming.session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
-		add_circular_node(head_ptr, session);
-	}
-	else
-	{
-		uint8_t * const streaming_cli_service_execute_request = data;
+			session->info.streaming.active_recv_transaction = NULL;
+			session->info.streaming.active_send_transaction = NULL;
 
-		session->info.execute.timeout = message_load_be16(streaming_cli_service_execute_request, timeout);
-		session->prev = NULL;
-		session->next = NULL;
+			session->info.streaming.session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
+			{
+				uint8_t const terminal_mode = message_load_u8(streaming_cli_service_session_start_request, terminal_mode);
+
+				ASSERT(terminal_mode == 0);
+				session->info.streaming.terminal_mode = connector_cli_terminal_dumb;
+			}
+			add_circular_node(head_ptr, session);
+			break;
+		}
+
+		case STREAMING_CLI_OPCODE_EXEC_REQ:
+		{
+			uint8_t * const streaming_cli_service_execute_request = data;
+
+			session->prev = NULL;
+			session->next = NULL;
+			session->info.execute.timeout = message_load_be16(streaming_cli_service_execute_request, timeout);
+			break;
+		}
+
+		default:
+		{
+			ASSERT(connector_false);
+			break;
+		}
 	}
 
 	*status = connector_working;
@@ -608,7 +633,7 @@ STATIC connector_status_t streaming_cli_service_request_callback(connector_data_
 				{
 					uint8_t * const streaming_cli_service_session_start_request = service_data->data_ptr;
 					session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
-					session = streaming_cli_service_find_session(connector_ptr, session_id);
+					session = streaming_cli_service_find_session(session_id);
 					break;
 				}
 				case STREAMING_CLI_OPCODE_EXEC_REQ:
