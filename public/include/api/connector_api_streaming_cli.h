@@ -39,6 +39,9 @@ typedef enum {
 } connector_request_id_streaming_cli_service_t;
 
 typedef struct {
+	enum {
+		connector_cli_terminal_dumb
+	} CONST terminal_mode;
 	void * handle;
 	char * CONST error_hint;
 	enum {

@@ -55,6 +55,7 @@ enum {
 enum {
 	field_define(streaming_cli_service_session_start_request, opcode, uint8_t),
 	field_define(streaming_cli_service_session_start_request, session_id, uint16_t),
+	field_define(streaming_cli_service_session_start_request, terminal_mode, uint8_t),
 	record_end(streaming_cli_service_session_start_request)
 } streaming_cli_service_session_start_request;
 
@@ -115,6 +116,7 @@ typedef struct streaming_cli_session
 			msg_session_t * active_recv_transaction;
 			msg_session_t * active_send_transaction;
 			uint16_t session_id;
+			uint8_t terminal_mode;
 		} streaming;
 		struct
 		{
@@ -282,7 +284,7 @@ STATIC connector_status_t streaming_cli_service_start_session(connector_data_t *
 	
 	if (session->session_state == streaming_cli_session_state_uninitialized)
 	{
-		connector_streaming_cli_session_start_request_t request = { NULL, session->close_reason, connector_cli_session_start_ok };
+		connector_streaming_cli_session_start_request_t request = { session->info.streaming.terminal_mode, NULL, session->close_reason, connector_cli_session_start_ok };
 		status = streaming_cli_service_run_cb(connector_ptr, connector_request_id_streaming_cli_session_start, &request);
 		if (status == connector_working)
 		{
@@ -567,23 +569,42 @@ STATIC streaming_cli_session_t * streaming_cli_service_create_new_session(connec
 	session->bytes_consumed = 0;
 	session->close_reason[0] = '\0';
 
-	if (opcode != STREAMING_CLI_OPCODE_EXEC_REQ)
+	switch (opcode)
 	{
-		uint8_t * const streaming_cli_service_session_start_request = data;
+		case STREAMING_CLI_OPCODE_START_REQ:
+		{
+			uint8_t * const streaming_cli_service_session_start_request = data;
+			streaming_cli_session_t ** const head_ptr = &streaming_cli_sessions;
 
-		streaming_cli_session_t ** head_ptr = &streaming_cli_sessions;
-		session->info.streaming.active_recv_transaction = NULL;
-		session->info.streaming.active_send_transaction = NULL;
-		session->info.streaming.session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
-		add_circular_node(head_ptr, session);
-	}
-	else
-	{
-		uint8_t * const streaming_cli_service_execute_request = data;
+			session->info.streaming.active_recv_transaction = NULL;
+			session->info.streaming.active_send_transaction = NULL;
 
-		session->info.execute.timeout = message_load_be16(streaming_cli_service_execute_request, timeout);
-		session->prev = NULL;
-		session->next = NULL;
+			session->info.streaming.session_id = message_load_be16(streaming_cli_service_session_start_request, session_id);
+			{
+				uint8_t const terminal_mode = message_load_u8(streaming_cli_service_session_start_request, terminal_mode);
+
+				ASSERT(terminal_mode == 0);
+				session->info.streaming.terminal_mode = connector_cli_terminal_dumb;
+			}
+			add_circular_node(head_ptr, session);
+			break;
+		}
+
+		case STREAMING_CLI_OPCODE_EXEC_REQ:
+		{
+			uint8_t * const streaming_cli_service_execute_request = data;
+
+			session->prev = NULL;
+			session->next = NULL;
+			session->info.execute.timeout = message_load_be16(streaming_cli_service_execute_request, timeout);
+			break;
+		}
+
+		default:
+		{
+			ASSERT(connector_false);
+			break;
+		}
 	}
 
 	*status = connector_working;
