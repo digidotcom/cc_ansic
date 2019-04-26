@@ -200,7 +200,7 @@ typedef enum {
     connector_class_id_status,           	/**< Class ID for all status */
     connector_class_id_short_message,    	/**< Short message specific class ID */
     connector_class_id_data_point,       	/**< Data point class ID */
-    connector_class_id_streaming_cli,	    /**< Streaming CLI service Class ID */
+    connector_class_id_streaming_cli	    /**< Streaming CLI service Class ID */
 } connector_class_id_t;
 /**
 * @}

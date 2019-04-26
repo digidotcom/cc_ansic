@@ -228,7 +228,12 @@ public class GenFsmSourceFile extends GenSourceFile {
 	    	LinkedHashSet<String> keys = list.getKeys();
 	    	
 	    	if (keys.isEmpty()) {
-	        	result = "{ 0, NULL }";
+                if (options.c99()) {
+    	        	result = ".capacity.dictionary = ";
+                } else {
+                    result = "";
+                }
+  	        	result += "{ 0, NULL }";
 	    	} else {
 	    		String keys_name = varname + "_keys";
 	
@@ -254,7 +259,44 @@ public class GenFsmSourceFile extends GenSourceFile {
                 	: "";
                 
                 if (element.getDefault() != null) {
-                	write("connector_element_value_t const " + itemVariable + "_default = { " + element.getDefaultValue() + " };\n\n");
+                	write("connector_element_value_t const " + itemVariable + "_default = { ");
+                    if (options.c99()) {
+                        switch (element.getType()) {
+                        	case UINT32:
+                        	case HEX32:
+                        	case X_HEX32:
+                        		write(".unsigned_integer_value = ");
+                        		break;
+                        	case INT32:
+                        		write(".signed_integer_value = ");
+                        		break;
+                        	case FLOAT:
+                        		write(".float_value = ");
+                        		break;
+                        	case ON_OFF:
+                        		write(".on_off_value = ");
+                        		break;
+                        	case BOOLEAN:
+                        		write(".boolean_value = ");
+                        		break;
+                        	case ENUM:
+                        		write(".enum_value = ");
+                        		break;
+                        	case IPV4:
+                        	case FQDNV4:
+                        	case FQDNV6:
+                        	case DATETIME:
+                        	case REF_ENUM:
+                        	case STRING:
+                        	case REGEX:
+                        	case MULTILINE_STRING:
+                        	case PASSWORD:
+                        	case MAC_ADDR:
+                        		write(".string_value = ");
+                        		break;
+                       	}
+                    }
+                    write(element.getDefaultValue() + " };\n\n");
                 }
                 
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
@@ -324,10 +366,10 @@ public class GenFsmSourceFile extends GenSourceFile {
             	Element element = (Element) item;
             	
             	type = element.getRciType().toLowerName();
-            	suffix = "_element";
+            	suffix = "element";
             } else {
             	type = "list";
-            	suffix = "_collection";
+            	suffix = "collection";
             }
             if (!first) {
             	write(",\n");
@@ -335,8 +377,12 @@ public class GenFsmSourceFile extends GenSourceFile {
             	first = false;
             }
             
-            String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase() + suffix;
-            write("{ " + getElementDefine("type", type) + ", { &" + itemVariable + " } }");
+            String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase() + "_" + suffix;
+            write("{ " + getElementDefine("type", type) + ", { ");
+            if (options.c99()) {
+                write("." + suffix + " = ");
+            }
+            write("&" + itemVariable + " } }");
         }
         write("\n};\n\n");
     }

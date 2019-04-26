@@ -66,6 +66,7 @@ public class ConfigGenerator {
     private final static String DIRECTORY_OPTION = "path";
     private final static String DELETE_DESCRIPTOR_OPTION = "deleteDescriptor";
     private final static String CCAPI_OPTION = "ccapi";
+    private final static String C99_OPTION = "c99";
     private final static String CCAPI_STUB_FUNCTIONS_OPTION = "ccapiStub";
     private final static String SAVE_DESCRIPTORS_OPTION = "saveDescriptors";
     private final static String NO_UPLOAD_OPTION = "noUpload";
@@ -110,6 +111,7 @@ public class ConfigGenerator {
     private String customPrefix = "";
     private boolean deleteDescriptor;
     private boolean useCcapi;
+    private boolean c99;
     private boolean CcapiStubFunctions;
     private boolean saveDescriptor;
     private boolean noUpload;
@@ -240,6 +242,10 @@ public class ConfigGenerator {
                 .format(
                         "\t%-16s \t= output for use with CCAPI projects",
                         DASH + CCAPI_OPTION));
+        log(String
+                .format(
+                        "\t%-16s \t= use c99 syntax",
+                        DASH + C99_OPTION));
         log(String
             .format(
                     "\t%-16s \t= delete current Descriptors in Device Cloud",
@@ -390,6 +396,8 @@ public class ConfigGenerator {
                 usage();
             } else if (option.equals(CCAPI_OPTION)) {
                 useCcapi = true;
+            } else if (option.equals(C99_OPTION)) {
+                c99 = true;
             } else if (option.equals(CCAPI_STUB_FUNCTIONS_OPTION)) {
                 useCcapi = true;
                 CcapiStubFunctions = true;
@@ -554,6 +562,10 @@ public class ConfigGenerator {
 
     public boolean useCcapi() {
         return useCcapi;
+    }
+    
+    public boolean c99() {
+        return c99;
     }
     
     public boolean generateCcapiStubFunctions() {

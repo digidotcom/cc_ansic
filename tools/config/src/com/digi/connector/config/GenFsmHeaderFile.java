@@ -379,7 +379,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeDefineOptionHeader();
 
-        if (options.rciLegacyEnabled()){
+        if (options.rciLegacyEnabled() || options.useCcapi()){
             write(RCI_LEGACY_DEFINE);
         }
         if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
