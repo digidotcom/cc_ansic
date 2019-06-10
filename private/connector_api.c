@@ -51,6 +51,41 @@ STATIC connector_status_t connector_stop_callback(connector_data_t * const conne
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 #endif
 
+STATIC unsigned long * last_activity(connector_data_t * const connector_ptr, connector_network_type_t const network)
+{
+#if (defined CONNECTOR_TRANSPORT_TCP)
+    if (network == connector_network_tcp)
+        return &connector_ptr->edp_data.last_activity;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP)
+    if (network == connector_network_udp)
+        return &connector_ptr->sm_udp.last_activity;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS)
+    if (network == connector_network_udp)
+        return &connector_ptr->sm_sms.last_activity;
+#endif
+
+    ASSERT(connector_false);
+}
+
+STATIC connector_bool_t register_activity(connector_data_t * const connector_ptr, connector_network_type_t const network)
+{
+    unsigned long * const storage = last_activity(connector_ptr, network);
+    connector_status_t const result =  get_system_time(connector_ptr, storage);
+
+    return result != connector_abort;
+}
+
+STATIC uint32_t idle_time(connector_data_t * const connector_ptr, connector_network_type_t const network, unsigned long const now)
+{
+    unsigned long const last = *last_activity(connector_ptr, network);
+
+    return (now - last);
+}
+
 #if (defined CONNECTOR_DATA_POINTS)
 #include "connector_data_point.h"
 #endif
@@ -305,6 +340,9 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #endif /* (defined CONNECTOR_TRANSPORT_SMS) */
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
+    if (!register_activity(connector_handle, connector_network_tcp))
+        goto error;
+
 #if !(defined CONNECTOR_NETWORK_TCP_START)
     {
         connector_config_connect_type_t config_connect;
@@ -329,6 +367,9 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
     connector_handle->last_request_id = SM_DEFAULT_REQUEST_ID;
 
 #if defined CONNECTOR_TRANSPORT_UDP
+    if (!register_activity(connector_handle, connector_network_udp))
+        goto error;
+
     {
         connector_sm_data_t * const sm_ptr = get_sm_data(connector_handle, connector_transport_udp);
 
@@ -355,6 +396,9 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #endif
 
 #if defined CONNECTOR_TRANSPORT_SMS
+    if (!register_activity(connector_handle, connector_network_sms))
+        goto error;
+
     {
         connector_sm_data_t * const sm_ptr = get_sm_data(connector_handle, connector_transport_sms);
 
@@ -400,7 +444,7 @@ done:
 }
 
 
-connector_status_t connector_step(connector_handle_t const handle)
+connector_status_t connector_step_report(connector_handle_t const handle, connector_report_t * const report)
 {
     connector_status_t result = connector_init_error;
     connector_data_t * const connector_ptr = handle;
@@ -496,6 +540,25 @@ connector_status_t connector_step(connector_handle_t const handle)
 #endif
 
 error:
+    if (report != NULL)
+    {
+        unsigned long now;
+        
+        result =  get_system_time(connector_ptr, &now);
+        if (result != connector_abort)
+        {
+#if (defined CONNECTOR_TRANSPORT_TCP)
+            report->tcp.idle_in_seconds = idle_time(connector_ptr, connector_network_tcp, now);
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
+            report->udp.idle_in_seconds = idle_time(connector_ptr, connector_network_udp, now);
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+            report->sms.idle_in_seconds = idle_time(connector_ptr, connector_network_sms, now);
+#endif
+        }
+    }
+
     switch (result)
     {
     case connector_abort:
@@ -537,8 +600,9 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 {
     connector_status_t result = connector_init_error;
     connector_data_t * connector_ptr = (connector_data_t *)handle;
+    connector_transport_t transport;
 
-    ASSERT_GOTO(handle != NULL, done);
+    ASSERT_GOTO(handle != NULL, error);
 
     switch (request)
     {
@@ -546,91 +610,106 @@ connector_status_t connector_initiate_action(connector_handle_t const handle, co
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
         result = edp_initiate_action(connector_ptr, request, request_data);
-        COND_ELSE_GOTO(result == connector_success, done);
+        COND_ELSE_GOTO(result == connector_success, error);
 #endif
 
 #if (defined CONNECTOR_SHORT_MESSAGE)
         result = sm_initiate_action(connector_ptr, request, request_data);
-        COND_ELSE_GOTO(result == connector_success, done);
+        COND_ELSE_GOTO(result == connector_success, error);
 #endif
 
         connector_ptr->stop.state = connector_state_terminate_by_initiate_action;
+
+        transport = connector_transport_all;
         result = connector_success;
         break;
 
    default:
+
+        if (request_data == NULL)
+        {
+            result = connector_invalid_data;
+            goto error;
+        }
+
+        transport = *(connector_transport_t const *) request_data;
+
         if (connector_ptr->stop.state == connector_state_terminate_by_initiate_action)
         {
             result = connector_device_terminated;
             goto done;
         }
 
+        switch (transport)
         {
-            connector_transport_t const * const transport = request_data;
-
-            if (transport == NULL)
+        case connector_transport_all:
+            if (request != connector_initiate_transport_stop)
             {
                 result = connector_invalid_data;
                 goto done;
             }
 
-            switch (*transport)
+            if (connector_ptr->stop.state != connector_state_running)
             {
-            case connector_transport_all:
-                if (request != connector_initiate_transport_stop)
-                {
-                    result = connector_invalid_data;
-                    goto done;
-                }
-
-                if (connector_ptr->stop.state != connector_state_running)
-                {
-                    /* already in close state */
-                    result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated: connector_service_busy;
-                    goto done;
-                }
+                /* already in close state */
+                result = (connector_ptr->stop.state == connector_state_terminate_by_initiate_action) ? connector_device_terminated: connector_service_busy;
+                goto done;
+            }
 
                 /* no break */
 #if (defined CONNECTOR_SHORT_MESSAGE)
 #if (defined CONNECTOR_TRANSPORT_UDP)
-            case connector_transport_udp:
+        case connector_transport_udp:
 #endif
 #if (defined CONNECTOR_TRANSPORT_SMS)
-            case connector_transport_sms:
+        case connector_transport_sms:
 #endif
-                result = sm_initiate_action(connector_ptr, request, request_data);
+            result = sm_initiate_action(connector_ptr, request, request_data);
 
-                if (*transport != connector_transport_all)  break;
-                else if (result != connector_success) break;
-                else if (request != connector_initiate_transport_stop) break;
-                /* no break; */
+            if (transport != connector_transport_all)  break;
+            else if (result != connector_success) break;
+            else if (request != connector_initiate_transport_stop) break;
+            /* no break; */
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_TCP)
-            /* fall through */
-            case connector_transport_tcp:
-                result = edp_initiate_action(connector_ptr, request, request_data);
+        /* fall through */
+        case connector_transport_tcp:
+            result = edp_initiate_action(connector_ptr, request, request_data);
 
-                if (*transport != connector_transport_all)  break;
-                else if (result != connector_success) break;
-                else if (request != connector_initiate_transport_stop) break;
+            if (transport != connector_transport_all)  break;
+            else if (result != connector_success) break;
+            else if (request != connector_initiate_transport_stop) break;
 #endif
-                {
-                    connector_initiate_stop_request_t const * const stop_request = request_data;
-                    connector_ptr->stop.condition = stop_request->condition;
-                    connector_ptr->stop.user_context = stop_request->user_context;
-                    connector_ptr->stop.state = connector_state_stop_by_initiate_action;
-                    result = connector_success;
-                }
-                break;
-
-            default:
-                result = connector_invalid_data;
-                goto done;
+            {
+                connector_initiate_stop_request_t const * const stop_request = request_data;
+                connector_ptr->stop.condition = stop_request->condition;
+                connector_ptr->stop.user_context = stop_request->user_context;
+                connector_ptr->stop.state = connector_state_stop_by_initiate_action;
+                result = connector_success;
             }
+            break;
+
+        default:
+            result = connector_invalid_data;
+            goto done;
         }
     }
+
 done:
+#if (defined CONNECTOR_TRANSPORT_TCP)
+    if (transport == connector_transport_tcp || transport == connector_transport_all)
+        register_activity(connector_ptr, connector_network_tcp);
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
+    if (transport == connector_transport_udp || transport == connector_transport_all)
+        register_activity(connector_ptr, connector_network_udp);
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+    if (transport == connector_transport_sms || transport == connector_transport_all)
+        register_activity(connector_ptr, connector_network_sms);
+#endif
+error:
     return result;
 }
 

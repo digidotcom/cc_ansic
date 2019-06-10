@@ -376,6 +376,24 @@ typedef enum
 * @}
 */
 
+typedef struct
+{
+    uint32_t CONST idle_in_seconds;
+} connector_transport_status_t;
+
+typedef struct
+{
+#if (defined CONNECTOR_TRANSPORT_TCP)
+    connector_transport_status_t tcp;
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
+    connector_transport_status_t udp;
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+    connector_transport_status_t sms;
+#endif
+} connector_report_t;
+
 typedef char const * connector_json_t;
 typedef char const * connector_geojson_t;
 
@@ -585,6 +603,8 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 * @}
 */
 
+connector_status_t connector_step_report(connector_handle_t const handle, connector_report_t * const report);
+
 /**
  * @defgroup connector_step Step Routine
  * @{
@@ -653,7 +673,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
  * @see connector_status_t
  * @see connector_run()
  */
-connector_status_t connector_step(connector_handle_t const handle);
+#define connector_step(handle)  connector_step_report((handle), NULL)
 /**
 * @}
 */

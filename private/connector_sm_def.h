@@ -220,6 +220,7 @@ typedef struct connector_sm_data_t
 {
     connector_status_t error_code;
     unsigned long rx_timeout_in_seconds;
+    unsigned long last_activity;
 
     struct
     {

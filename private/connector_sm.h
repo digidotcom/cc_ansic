@@ -1054,13 +1054,23 @@ done:
 #if (defined CONNECTOR_TRANSPORT_UDP)
 STATIC connector_status_t connector_udp_step(connector_data_t * const connector_ptr)
 {
-    return sm_state_machine(connector_ptr, &connector_ptr->sm_udp);
+    connector_status_t const result = sm_state_machine(connector_ptr, &connector_ptr->sm_udp);
+
+    if (result != connector_idle)
+        register_activity(connector_ptr, connector_network_udp);
+
+    return result;
 }
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
 STATIC connector_status_t connector_sms_step(connector_data_t * const connector_ptr)
 {
-    return sm_state_machine(connector_ptr, &connector_ptr->sm_sms);
+    connector_status_t const result = sm_state_machine(connector_ptr, &connector_ptr->sm_sms);
+
+    if (result != connector_idle)
+        register_activity(connector_ptr, connector_network_sms);
+
+    return result;
 }
 #endif

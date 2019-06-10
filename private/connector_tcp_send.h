@@ -80,6 +80,12 @@ STATIC connector_status_t tcp_initiate_send_packet(connector_data_t * const conn
     connector_ptr->edp_data.send_packet.bytes_sent = 0;
     connector_ptr->edp_data.send_packet.complete_cb = send_complete_cb;
     connector_ptr->edp_data.send_packet.user_data = user_data;
+
+    if (type != E_MSG_MT2_TYPE_KA_KEEPALIVE)
+    {
+        register_activity(connector_ptr, connector_network_tcp);
+    }
+    
 done:
     return status;
 }

@@ -307,6 +307,11 @@ STATIC connector_status_t tcp_receive_packet(connector_data_t * const connector_
             type_val = FROM_BE16(connector_ptr->edp_data.receive_packet.packet_type);
             connector_ptr->edp_data.receive_packet.packet_type = type_val;
 
+            if (type_val != E_MSG_MT2_TYPE_KA_KEEPALIVE)
+            {
+                register_activity(connector_ptr, connector_network_tcp);
+            }
+
             switch (type_val)
             {
                 /* Expected MTv2 message types... */
