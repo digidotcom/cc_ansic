@@ -68,7 +68,7 @@ STATIC unsigned long * last_activity(connector_data_t * const connector_ptr, con
         return &connector_ptr->sm_sms.last_activity;
 #endif
 
-    ASSERT(connector_false);
+    ASSERT(connector_false); return NULL;
 }
 
 STATIC connector_bool_t register_activity(connector_data_t * const connector_ptr, connector_network_type_t const network)

@@ -586,7 +586,7 @@ STATIC streaming_cli_session_t * streaming_cli_service_create_new_session(connec
 			{
 				uint8_t const terminal_mode = message_load_u8(streaming_cli_service_session_start_request, terminal_mode);
 
-				ASSERT(terminal_mode == 0);
+				ASSERT(terminal_mode == 0); UNUSED_VARIABLE(terminal_mode);
 				session->info.streaming.terminal_mode = connector_cli_terminal_vt100;
 			}
 			add_circular_node(head_ptr, session);
