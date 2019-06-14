@@ -222,7 +222,7 @@ public class Parser {
         }
         
         for (String part: name.substring(1).split("/", -1)) {
-	        if (!part.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
+	        if (!part.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*") && !part.equals('*')) {
 	            throw new Exception("Invalid character in ref_enum path: '" + part + "'");
 	        }
         }
