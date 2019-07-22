@@ -532,7 +532,7 @@ public class Element extends Item {
 
         case FLOAT:
 	        {
-	            Float minValue = toFloat(min, Float.MIN_VALUE, "min");
+	            Float minValue = toFloat(min, -Float.MAX_VALUE, "min");
 	            Float maxValue = toFloat(max, Float.MAX_VALUE, "max");
 	        	if (minValue > maxValue) {
 	                throw new Exception(MIN_GREATER_THAN_MAX);
