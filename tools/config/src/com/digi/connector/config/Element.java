@@ -399,14 +399,11 @@ public class Element extends Item {
         } catch (NumberFormatException e) {
             throw new Exception(which + VALUE_INVALID);
         }
-        
-    	if (value < Float.MIN_VALUE) {
-    		throw new Exception(which + VALUE_TOO_LOW);
-    	}
 
-    	if (value > Float.MAX_VALUE) {
-    		throw new Exception(which + VALUE_TOO_HIGH);
-    	}
+        if (value.isNaN()) {
+		throw new Exception(which + VALUE_INVALID);
+        }
+
         return value;
     }
 
