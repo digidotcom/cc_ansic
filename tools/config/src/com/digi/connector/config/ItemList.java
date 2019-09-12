@@ -48,6 +48,7 @@ public class ItemList extends Item {
                 .addAttribute("name", "index")
                 .addAttribute("desc", "item number")
                 .addAttribute("type", "int32")
+                .addAttribute("min", "1")
                 .addAttribute("max", String.valueOf(instances));
 
             if (capacity == ItemList.Capacity.VARIABLE) {
