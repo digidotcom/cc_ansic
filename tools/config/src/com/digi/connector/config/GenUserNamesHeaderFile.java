@@ -8,9 +8,9 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
 
     private static String FILE = "rci_usenames_defines.h";
 
-	public GenUserNamesHeaderFile() throws IOException {
-		super(FILE, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
-	}
+    public GenUserNamesHeaderFile() throws IOException {
+        super(FILE, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
+    }
 
     private void generateUseNamesHeader(String type, int amount) throws IOException {
         write(String.format(
@@ -26,15 +26,15 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
 
     public void writeGuardedContent() throws Exception {
         if (options.useNames().contains(UseNames.ELEMENTS)) {
-        	generateUseNamesHeader("ELEMENTS", config.getMaxNameLengthSeen(UseNames.ELEMENTS) + 1);
+            generateUseNamesHeader("ELEMENTS", config.getMaxNameLengthSeen(UseNames.ELEMENTS) + 1);
         }
-        
+
         if (options.useNames().contains(UseNames.COLLECTIONS)) {
-        	generateUseNamesHeader("COLLECTIONS", config.getMaxNameLengthSeen(UseNames.COLLECTIONS) + 1);
+            generateUseNamesHeader("COLLECTIONS", config.getMaxNameLengthSeen(UseNames.COLLECTIONS) + 1);
         }
-        
+
         if (options.useNames().contains(UseNames.VALUES)) {
-        	generateUseNamesHeader("VALUES", config.getMaxNameLengthSeen(UseNames.VALUES) + 1);
+            generateUseNamesHeader("VALUES", config.getMaxNameLengthSeen(UseNames.VALUES) + 1);
         }
     }
 }

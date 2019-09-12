@@ -8,15 +8,15 @@ import java.util.LinkedHashMap;
 public class GenFsmUserHeaderFile extends GenHeaderFile {
     public final static String FILENAME = "rci_config.h";
 
-	public GenFsmUserHeaderFile() throws IOException {
-		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
-	}
-	
-    public void writeGuardedContent() throws Exception {
-    	writeGlobalErrorEnumHeader();  
-    	writeGroupTypeAndErrorEnum();
+    public GenFsmUserHeaderFile() throws IOException {
+        super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
     }
-    
+
+    public void writeGuardedContent() throws Exception {
+        writeGlobalErrorEnumHeader();
+        writeGroupTypeAndErrorEnum();
+    }
+
     private void writeErrorHeader(int errorIndex, String enumDefine, Map<String, String> errorMap) throws IOException {
 
         for (String key : errorMap.keySet()) {
@@ -54,7 +54,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
         write(endString);
 
     }
-    
+
     private String getEnumString(String enum_name) {
         String str = " " + customPrefix + CONNECTOR_PREFIX + "_" + configType;
 
@@ -65,7 +65,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
     }
 
     private String sanitizeName(String name) {
-    	return name.replace('-', '_').replace(".","_fullstop_");
+        return name.replace('-', '_').replace(".","_fullstop_");
     }
 
     private String endEnumString(String group_name) {
@@ -86,31 +86,31 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
     private void writeEnumHeader(Element element, String prefix) throws Exception {
         boolean explicit = false;
         int index = 0;
-        
+
         write(TYPEDEF_ENUM);
         for (Value value : element.getValues()) {
             if (value.getName().equals(""))
-            	explicit = true;
+                explicit = true;
             else {
-            	String line = getEnumString(prefix + "_" + sanitizeName(value.getName()));
-            	
-            	if (explicit) {
-            		line += " = " + index;
-            		explicit = false;
-            	}
+                String line = getEnumString(prefix + "_" + sanitizeName(value.getName()));
+
+                if (explicit) {
+                    line += " = " + index;
+                    explicit = false;
+                }
                 write(line + ",\n");
             }
             index++;
         }
         write(endEnumString(prefix));
     }
-    
+
     private void writeListEnumHeader(ItemList list, String prefix) throws Exception {
         String element_enum_string = TYPEDEF_ENUM;
 
         for (Item item : list.getItems()) {
-        	String item_prefix = prefix + "_" + sanitizeName(item.getName());
-        	
+            String item_prefix = prefix + "_" + sanitizeName(item.getName());
+
             assert (item instanceof Element) || (item instanceof ItemList);
 
             if (item instanceof Element) {
@@ -119,11 +119,11 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
                 element_enum_string += getEnumString(item_prefix) + ",\n";
 
                 if (element.getType() == Element.Type.ENUM) {
-                	writeEnumHeader(element, item_prefix);
+                    writeEnumHeader(element, item_prefix);
                 }
             } else {
                 ItemList sublist = (ItemList) item;
-                
+
                 writeListEnumHeader(sublist, item_prefix + "_");
             }
         }
@@ -131,7 +131,7 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
         write(element_enum_string);
     }
-    
+
     private String COMMENTED(String comment) {
         return "/* " + comment + " */";
     }
@@ -158,8 +158,8 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
     private void writeAllEnumHeaders(Collection<Group> groups) throws Exception {
 
         for (Group group : groups) {
-        	writeListEnumHeader(group, group.getName());
-        	
+            writeListEnumHeader(group, group.getName());
+
             if (!group.getErrors().isEmpty()) {
                 write(TYPEDEF_ENUM);
 
@@ -195,22 +195,22 @@ public class GenFsmUserHeaderFile extends GenHeaderFile {
 
             configType = type.toLowerName();
 
-	        if (!groups.isEmpty()) {
-	            /* build group enum string for group enum */
-	            String group_enum_string = TYPEDEF_ENUM;
+            if (!groups.isEmpty()) {
+                /* build group enum string for group enum */
+                String group_enum_string = TYPEDEF_ENUM;
 
-	            /* Write all enum in H file */
-	            writeAllEnumHeaders(groups);
+                /* Write all enum in H file */
+                writeAllEnumHeaders(groups);
 
-	            for (Group group : groups) {
-	                /* add each group enum */
+                for (Group group : groups) {
+                    /* add each group enum */
                     group_enum_string += getEnumString(group.getName()) + ",\n";
-	            }
+                }
 
-	            /* write group enum buffer to fileWriter */
-	            group_enum_string += endEnumString(null);
-	            write(group_enum_string);
-	        }
-	    }
+                /* write group enum buffer to fileWriter */
+                group_enum_string += endEnumString(null);
+                write(group_enum_string);
+            }
+        }
     }
 }

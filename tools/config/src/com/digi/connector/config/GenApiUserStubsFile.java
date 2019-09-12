@@ -10,11 +10,11 @@ public class GenApiUserStubsFile extends GenSourceFile {
     private static String FILENAME = "ccapi_rci_functions.c";
 
     private GenApiUserHeaderFile header;
-	public GenApiUserStubsFile(GenApiUserHeaderFile header) throws IOException {
-		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
-		
-		this.header = header;
-	}
+    public GenApiUserStubsFile(GenApiUserHeaderFile header) throws IOException {
+        super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
+
+        this.header = header;
+    }
 
     public void writeContent() throws Exception {
         write(String.format("%s <%s>\n", INCLUDE, "stdio.h"));
@@ -23,26 +23,26 @@ public class GenApiUserStubsFile extends GenSourceFile {
 
         writeFunctionsCB();
     }
-    
+
     private String UNUSED(String parameter) {
         return "UNUSED_PARAMETER(" + parameter + ");\n";
     }
 
     private String setFunction (String groupName, String parameter, String value){
 
-    	String name = (groupName.equals("_SESSION_GROUP_"))
-			? "global"
-			: configType + "_" + groupName;
+        String name = (groupName.equals("_SESSION_GROUP_"))
+            ? "global"
+            : configType + "_" + groupName;
         String retvalErrorType = "\n" + customPrefix + CCAPI_PREFIX + "_" + name + "_error_id_t ";
         String PRINTF = "    printf(\"    Called '%s'\\n\", __FUNCTION__);\n";
         String RETURN_CONTINUE = String.format("    return %sCCAPI_GLOBAL_ERROR_NONE;\n}\n", customPrefix.toUpperCase());
         String function = retvalErrorType + parameter + "\n{\n    " + UNUSED("info") + PRINTF;
-        
+
         if (value != null) {
             function += "    " + value + ";\n";
         }
         function += RETURN_CONTINUE;
-        
+
         return function;
     }
 
@@ -56,7 +56,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                 String element_function ="";
                 String FType = "";
                 String value = "";
-                
+
                 switch (element.getType()) {
                     case UINT32:
                         if (element.getMin()!=null)
@@ -125,15 +125,15 @@ public class GenApiUserStubsFile extends GenSourceFile {
                 default:
                     break;
                 }
-                
+
                 if (element.getType() != Element.Type.PASSWORD) {
-                    element_function += setFunction(prefix, String.format("%srci_%s_%s_%s_get(%s, %s * const value)", 
-                    	customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), value);
+                    element_function += setFunction(prefix, String.format("%srci_%s_%s_%s_get(%s, %s * const value)",
+                        customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), value);
                 }
-                
+
                 if (element.getAccess() != Item.AccessType.READ_ONLY) {
                     String value_type_modifier = "";
-                    
+
                     switch (element.getType()) {
                         case ENUM:
                             if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
@@ -163,29 +163,29 @@ public class GenApiUserStubsFile extends GenSourceFile {
                             break;
                     }
                     element_function += setFunction(prefix, String.format("%srci_%s_%s_%s_set(%s, %s " + value_type_modifier + "const value)",
-                    	customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), "UNUSED_PARAMETER(value)");
+                        customPrefix, configType, prefix, element.getName(), RCI_INFO_T, FType), "UNUSED_PARAMETER(value)");
                 }
                 write(element_function);
             } else {
                 ItemList items = (ItemList) item;
-            	
-                writeItemFunctionsCB(prefix + "_" + items.getName(), items); 
+
+                writeItemFunctionsCB(prefix + "_" + items.getName(), items);
             }
         }
     }
 
     private void writeFunctionsCB() throws Exception {
-        String session_function = 
-        	setFunction("_SESSION_GROUP_", customPrefix + "rci_session_start_cb(" + RCI_INFO_T + ")", null) +
-        	setFunction("_SESSION_GROUP_", customPrefix + "rci_session_end_cb(" + RCI_INFO_T + ")", null) +
-        	setFunction("_SESSION_GROUP_", customPrefix + "rci_action_start_cb(" + RCI_INFO_T + ")", null) +
-        	setFunction("_SESSION_GROUP_", customPrefix + "rci_action_end_cb(" + RCI_INFO_T + ")", null);
+        String session_function =
+            setFunction("_SESSION_GROUP_", customPrefix + "rci_session_start_cb(" + RCI_INFO_T + ")", null) +
+            setFunction("_SESSION_GROUP_", customPrefix + "rci_session_end_cb(" + RCI_INFO_T + ")", null) +
+            setFunction("_SESSION_GROUP_", customPrefix + "rci_action_start_cb(" + RCI_INFO_T + ")", null) +
+            setFunction("_SESSION_GROUP_", customPrefix + "rci_action_end_cb(" + RCI_INFO_T + ")", null);
 
         if (options.rciLegacyEnabled()) {
-            session_function += 
-            	setFunction("_SESSION_GROUP_", "rci_do_command_cb(" + RCI_INFO_T + ")", null) + 
-            	setFunction("_SESSION_GROUP_", "rci_set_factory_defaults_cb(" + RCI_INFO_T + ")", null) +
-            	setFunction("_SESSION_GROUP_", "rci_reboot_cb(" + RCI_INFO_T + ")", null);
+            session_function +=
+                setFunction("_SESSION_GROUP_", "rci_do_command_cb(" + RCI_INFO_T + ")", null) +
+                setFunction("_SESSION_GROUP_", "rci_set_factory_defaults_cb(" + RCI_INFO_T + ")", null) +
+                setFunction("_SESSION_GROUP_", "rci_reboot_cb(" + RCI_INFO_T + ")", null);
         }
         write(session_function);
 
@@ -198,7 +198,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                 String group_function = setFunction(group.getName(), String.format("%srci_%s_%s_start(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
                 group_function += setFunction(group.getName(), String.format("%srci_%s_%s_end(%s)",customPrefix,configType,group.getName(),RCI_INFO_T),null);
                 write(group_function);
-               
+
                 writeItemFunctionsCB(group.getName(), group);
             }
         }

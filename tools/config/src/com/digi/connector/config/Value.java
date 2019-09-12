@@ -9,14 +9,14 @@ public class Value extends Item {
     }
 
     public org.dom4j.Element asElement(Integer id) {
-    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("value")
-    		.addAttribute("value", name)
-    		.addAttribute("desc", getDescription());
-    	
-    	if (id != null) {
-    		e.addAttribute("bin_id", id.toString());
-    	}
-    	
-    	return e;
+        org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("value")
+            .addAttribute("value", name)
+            .addAttribute("desc", getDescription());
+
+        if (id != null) {
+            e.addAttribute("bin_id", id.toString());
+        }
+
+        return e;
     }
 }

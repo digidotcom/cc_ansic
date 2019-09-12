@@ -9,12 +9,12 @@ public class Reference extends Item {
     }
 
     public org.dom4j.Element asElement(Integer id) {
-    	assert id == null;
+        assert id == null;
 
-    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("ref")
-    		.addAttribute("name", name)
-			.addAttribute("desc", getDescription());
-    	
-    	return e;
+        org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("ref")
+            .addAttribute("name", name)
+            .addAttribute("desc", getDescription());
+
+        return e;
     }
 }

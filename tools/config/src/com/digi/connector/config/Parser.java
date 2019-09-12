@@ -18,7 +18,7 @@ import com.digi.connector.config.ConfigGenerator.UseNames;
 public class Parser {
 
     private final static int MAX_DESCRIPTION_LENGTH = 200;
-    
+
     private static TokenScanner tokenScanner;
     private static String token;
     private static int groupLineNumber;
@@ -43,7 +43,7 @@ public class Parser {
                 if (token.equalsIgnoreCase("globalerror")) {
                     config.addUserGlobalError(getName(), getErrorDescription());
                 } else if (token.equalsIgnoreCase("condition")) {
-                	processCondition(config);
+                    processCondition(config);
                 } else if (token.equalsIgnoreCase("group")) {
                     /*
                      * syntax for parsing group: group setting or state <name>
@@ -52,11 +52,11 @@ public class Parser {
 
                     groupLineNumber = tokenScanner.getLineNumber();
 
-                	final Group.Type type = Group.Type.toType(tokenScanner.getToken());
+                    final Group.Type type = Group.Type.toType(tokenScanner.getToken());
                     String nameStr = getName();
                     Location current = new Location(type);
                     current.descend(nameStr);
-                    
+
                     /* parse instances */
                     Integer groupInstances;
                     if (tokenScanner.hasTokenInt()) {
@@ -64,48 +64,48 @@ public class Parser {
                     } else if (tokenScanner.hasToken("\\(.*")){
                         groupInstances = getMathExpression();
                     } else {
-                    	groupInstances = null;
+                        groupInstances = null;
                     }
 
                     Group theGroup = new Group(nameStr, getDescription(), getHelpDescription());
                     config.nameLengthSeen(UseNames.COLLECTIONS, nameStr.length());
-                    
+
                     if (groupInstances != null) {
-                    	theGroup.setInstances(groupInstances);
+                        theGroup.setInstances(groupInstances);
                     }
 
-                    String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only"; 
+                    String group_access = (type == Group.Type.SETTING) ? "read_write" : "read_only";
                     while (tokenScanner.hasToken()) {
                         token = tokenScanner.getToken();
 
                         if (token.equalsIgnoreCase("capacity")) {
-                        	token = tokenScanner.getToken();
-                        	if (token.equalsIgnoreCase("fixed")) {
-                        		theGroup.setCapacity(ItemList.Capacity.FIXED);
-                        	} else if (token.equalsIgnoreCase("variable")) {
-                        		theGroup.setCapacity(ItemList.Capacity.VARIABLE);
-                        	} else {
+                            token = tokenScanner.getToken();
+                            if (token.equalsIgnoreCase("fixed")) {
+                                theGroup.setCapacity(ItemList.Capacity.FIXED);
+                            } else if (token.equalsIgnoreCase("variable")) {
+                                theGroup.setCapacity(ItemList.Capacity.VARIABLE);
+                            } else {
                                 throw new Exception("Error in <group>: Invalid capacity type of " + token );
                             }
                         } else if (token.equalsIgnoreCase("keys")) {
-                        	token = tokenScanner.getToken();
-                        	if (token.equals("{}")) {
-                        		theGroup.setKeys(new LinkedHashSet<String>());
-                        	} else {
+                            token = tokenScanner.getToken();
+                            if (token.equals("{}")) {
+                                theGroup.setKeys(new LinkedHashSet<String>());
+                            } else {
                                 throw new Exception("Error in <group>: Key parser is unimplemented");
-                        	}
+                            }
                         } else if (token.equalsIgnoreCase("condition")) {
-                        	theGroup.setCondition(getName(), current, config);
+                            theGroup.setCondition(getName(), current, config);
                         } else if (token.equalsIgnoreCase("element")) {
-                        	theGroup.addItem(processElement(group_access, current, config));
+                            theGroup.addItem(processElement(group_access, current, config));
                         } else if (token.equalsIgnoreCase("list")) {
-                        	theGroup.addItem(processList(group_access, current, config, 0));
+                            theGroup.addItem(processList(group_access, current, config, 0));
                         } else if (token.equalsIgnoreCase("error")) {
                             theGroup.addError(getName(), getErrorDescription());
                         } else if (token.startsWith("#")) {
                             tokenScanner.skipCommentLine();
                         } else {
-                        	tokenScanner.pushbackToken(token);
+                            tokenScanner.pushbackToken(token);
                             break;
                         }
                     }
@@ -123,7 +123,7 @@ public class Parser {
                     throw new Exception("Unrecognized keyword: " + token);
                 }
             }
-            
+
             config.validate();
         } catch (NullPointerException e) {
             options.log("Parser NullPointerException");
@@ -160,49 +160,49 @@ public class Parser {
         if (name == null) {
             throw new Exception("Missing name!");
         }
-        
+
         if (name.length() > config.getMaxNameLength()) {
             throw new Exception("The name > the maximum length limited " + config.getMaxNameLength());
         }
-        
+
         /* Only allow alphanumeric, hyphen, and underscore */
         /* See https://www.w3.org/TR/xml/#NT-Name */
         if (!name.matches("[:A-Z_a-z][:A-Z_a-z0-9.-]*")) {
             throw new Exception("Invalid character in name: " + name);
         }
-    
+
         return name;
     }
 
     private static String getValueName(Element.Type type) throws Exception {
-    	String name;
-    	
-    	switch (type) {
-    	case ENUM:
+        String name;
+
+        switch (type) {
+        case ENUM:
             name = tokenScanner.getToken();
             if (name == null) {
                 throw new Exception("Missing name!");
             }
-            
+
             if (name.length() > config.getMaxNameLength()) {
                 throw new Exception("The name is larger than the maximum length of " + config.getMaxNameLength());
             }
-            
+
             // Relaxed slightly for values in that we allow digits in the first position (but we really shouldn't -ASK)
             if (!name.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*")) {
                 throw new Exception("Invalid character in value name: " + name);
             }
             break;
-    	case REF_ENUM:
-    		name = getString();
+        case REF_ENUM:
+            name = getString();
             if (name == null) {
                 throw new Exception("Missing name!");
             }
             break;
         default:
-        	throw new Exception("unexpected value");
-    	}
-    
+            throw new Exception("unexpected value");
+        }
+
         return name;
     }
 
@@ -212,21 +212,21 @@ public class Parser {
         if (name == null) {
             throw new Exception("Missing name!");
         }
-        
+
         if (!name.startsWith("/")) {
             throw new Exception("ref_enum path must start at root: " + name);
         }
-        
+
         if (name.endsWith("/")) {
             throw new Exception("ref_enum path must not end with '/': " + name);
         }
-        
+
         for (String part: name.substring(1).split("/", -1)) {
-	        if (!part.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*") && !part.equals("*")) {
-	            throw new Exception("Invalid character in ref_enum path: '" + part + "'");
-	        }
+            if (!part.matches("[:A-Z_a-z0-9][:A-Z_a-z0-9.-]*") && !part.equals("*")) {
+                throw new Exception("Invalid character in ref_enum path: '" + part + "'");
+            }
         }
-        
+
         return name;
     }
 
@@ -265,14 +265,14 @@ public class Parser {
     }
 
     private static CharsetEncoder latin_1 = StandardCharsets.ISO_8859_1.newEncoder();
-    
+
     private static boolean isLatin_1(String string) {
-    	return latin_1.canEncode(string);
+        return latin_1.canEncode(string);
     }
-    
+
     private static String parseDescription(final String type) throws Exception {
         String description = null;
-        
+
         if (tokenScanner.hasToken("\\\".*")) {
             description = tokenScanner.getTokenInLine("\\\".*?\\\"");
             if (description == null) {
@@ -284,15 +284,15 @@ public class Parser {
             if (!isLatin_1(description)) {
                 throw new Exception("Non-Latin-1 character in " + type + " description");
             }
-            
+
             if (description.length() == 0)
                 description = null;
 
         }
         return description;
-    	
+
     }
-    
+
     private static String getDescription() throws Exception {
         String description = parseDescription("label");
         if (description != null) {
@@ -350,23 +350,23 @@ public class Parser {
     }
 
     private static String getString() throws Exception {
-    	String string;
-    	
+        String string;
+
         if (tokenScanner.hasToken("\\\".*")) {
             string  = tokenScanner.getTokenInLine("\\\".*?\\\"");
             if (string != null) {
-            	string = string.substring(1, string.lastIndexOf("\""));
+                string = string.substring(1, string.lastIndexOf("\""));
             }
         } else {
-        	string = tokenScanner.getToken();
+            string = tokenScanner.getToken();
         }
 
         return string;
     }
 
     private static String getRegexCase() throws Exception {
-    	final String value = getString();
-    	
+        final String value = getString();
+
         if (value == null) {
             throw new Exception("Missing case value");
         }
@@ -377,13 +377,13 @@ public class Parser {
         if (!valid.contains(result)) {
             throw new Exception("Invalid case value: must be 'ignore' or 'match'");
         }
-        	
+
         return result;
     }
-    
+
     private static String getDefault() throws Exception {
-    	String def = getString();
-    	
+        String def = getString();
+
         if (def == null) {
             throw new Exception("Missing default");
         }
@@ -394,7 +394,7 @@ public class Parser {
     private static final void processCondition(Config config) throws Exception {
         /*
          *  condition NAME source LOCATION_OF_VALUE_TO_MATCH operation regex pattern PATTERN_TO_MATCH [case {match|ignore}]
-		 *  condition NAME source LOCATION_OF_VALUE_TO_MATCH [operation equals] value VALUE_TO_MATCH
+         *  condition NAME source LOCATION_OF_VALUE_TO_MATCH [operation equals] value VALUE_TO_MATCH
          */
         conditionLineNumber = tokenScanner.getLineNumber();
 
@@ -404,13 +404,13 @@ public class Parser {
         String pattern = null;
         Condition.RegexCase regexCase = Condition.RegexCase.defaultRegexCase();
         String value = null;
-        
+
         try {
             while (tokenScanner.hasToken()) {
                 token = tokenScanner.getToken();
 
                 if (token.equalsIgnoreCase("source")) {
-                	source = getString();
+                    source = getString();
                 } else if (token.equalsIgnoreCase("operation")) {
                     operation = Condition.Operation.toOperation(getString());
                 } else if (token.equalsIgnoreCase("pattern")) {
@@ -431,27 +431,27 @@ public class Parser {
         }
 
         if (source == null) {
-        	throw new Exception("Missing source in <condition>");
+            throw new Exception("Missing source in <condition>");
         }
-        
+
         Location location = new Location(source);
         Condition condition = null;
         switch (operation) {
         case EQUALS:
             if (value == null) {
-            	throw new Exception("Missing value in <condition>");
+                throw new Exception("Missing value in <condition>");
             }
 
-        	condition = new Condition(name, location, value);
-        	break;
-        	
+            condition = new Condition(name, location, value);
+            break;
+
         case REGEX:
             if (pattern == null) {
-            	throw new Exception("Missing pattern in <condition>");
+                throw new Exception("Missing pattern in <condition>");
             }
 
-        	condition = new Condition(name, location, pattern, regexCase);
-        	break;
+            condition = new Condition(name, location, pattern, regexCase);
+            break;
         }
 
         config.getTable(location.getType()).addCondition(condition);
@@ -467,7 +467,7 @@ public class Parser {
 
         String name = getName();
         current.descend(name);
-        
+
         Element element = new Element(name, getDescription(), getHelpDescription());
         config.nameLengthSeen(UseNames.ELEMENTS, name.length());
 
@@ -499,7 +499,7 @@ public class Parser {
                 } else if (token.equalsIgnoreCase("ref")) {
                     element.addRef(config, getRefName(), getDescription(), getHelpDescription());
                 } else if (token.equalsIgnoreCase("condition")) {
-                	element.setCondition(getName(), current, config);
+                    element.setCondition(getName(), current, config);
                 } else if (token.startsWith("#")) {
                     tokenScanner.skipCommentLine();
                 } else {
@@ -507,25 +507,25 @@ public class Parser {
                     break;
                 }
             }
-            
+
             if (element.getAccess() == null) {
-            	element.setAccess(default_access);
+                element.setAccess(default_access);
             }
-            
+
         } catch (IOException e) {
             throw new IOException(e.toString());
         }
 
         try {
             element.validate();
-            
+
             if (element.getType() == Element.Type.REF_ENUM) {
-            	config.addRefEnum(element);
+                config.addRefEnum(element);
             }
         } catch (Exception e) {
             throw new Exception("Error in <element>: " + element.getName() + "\n\t" + e.getMessage());
         }
-        
+
         current.ascend();
         return element;
     }
@@ -536,77 +536,77 @@ public class Parser {
          * description] [access <access>]
          */
 
-		listLineNumber.push(tokenScanner.getLineNumber());
+        listLineNumber.push(tokenScanner.getLineNumber());
 
-		String name = getName();
-		current.descend(name);
-		
+        String name = getName();
+        current.descend(name);
+
         Integer instances;
         if (tokenScanner.hasTokenInt()) {
-        	instances = tokenScanner.getTokenInt();
+            instances = tokenScanner.getTokenInt();
         } else if (tokenScanner.hasToken("\\(.*")){
-        	instances = getMathExpression();
+            instances = getMathExpression();
         } else {
-        	instances = null;
+            instances = null;
         }
 
-		depth += 1;
-		config.listDepth(depth);
+        depth += 1;
+        config.listDepth(depth);
 
-		ItemList list = new ItemList(name, getDescription(), getHelpDescription());
+        ItemList list = new ItemList(name, getDescription(), getHelpDescription());
         config.nameLengthSeen(UseNames.COLLECTIONS, name.length());
 
         if (instances != null) {
-        	list.setInstances(instances);
+            list.setInstances(instances);
         }
 
-		try {
-			String list_access = default_access;
-			
-		    while (tokenScanner.hasToken()) {
-		        token = tokenScanner.getToken();
-		
+        try {
+            String list_access = default_access;
+
+            while (tokenScanner.hasToken()) {
+                token = tokenScanner.getToken();
+
                 if (token.equalsIgnoreCase("capacity")) {
-                	token = tokenScanner.getToken();
-                	if (token.equalsIgnoreCase("fixed")) {
-                		list.setCapacity(ItemList.Capacity.FIXED);
-                	} else if (token.equalsIgnoreCase("variable")) {
-                		list.setCapacity(ItemList.Capacity.VARIABLE);
-                	} else {
+                    token = tokenScanner.getToken();
+                    if (token.equalsIgnoreCase("fixed")) {
+                        list.setCapacity(ItemList.Capacity.FIXED);
+                    } else if (token.equalsIgnoreCase("variable")) {
+                        list.setCapacity(ItemList.Capacity.VARIABLE);
+                    } else {
                         throw new Exception("Error in <list>: Invalid capacity type of " + token );
                     }
                 } else if (token.equalsIgnoreCase("keys")) {
-                	token = tokenScanner.getToken();
-                	if (token.equals("{}")) {
-                		list.setKeys(new LinkedHashSet<String>());
-                	} else {
+                    token = tokenScanner.getToken();
+                    if (token.equals("{}")) {
+                        list.setKeys(new LinkedHashSet<String>());
+                    } else {
                         throw new Exception("Error in <list>: Key parser is unimplemented");
-                	}
+                    }
                 } else if (token.equalsIgnoreCase("access")) {
-		        	list_access = getAccess();
-		            list.setAccess(list_access);
-		        } else if (token.equalsIgnoreCase("element")) {
-		            list.addItem(processElement(list_access, current, config));
-		        } else if (token.equalsIgnoreCase("list")) {
-		            list.addItem(processList(list_access, current, config, depth));
+                    list_access = getAccess();
+                    list.setAccess(list_access);
+                } else if (token.equalsIgnoreCase("element")) {
+                    list.addItem(processElement(list_access, current, config));
+                } else if (token.equalsIgnoreCase("list")) {
+                    list.addItem(processList(list_access, current, config, depth));
                 } else if (token.equalsIgnoreCase("condition")) {
-                	list.setCondition(getName(), current, config);
-		        } else if (token.equalsIgnoreCase("end")) {
-		            break;
-		        } else if (token.startsWith("#")) {
-		            tokenScanner.skipCommentLine();
-		        } else {
-		        	throw new Exception("unknown token in <list>: " + token);
-		        }
-		    }
-		    
-		    if (list.getAccess() == null) {
-		    	list.setAccess(list_access);
-		    }
-		    
-		} catch (IOException e) {
-		    throw new IOException(e.toString());
-		}
+                    list.setCondition(getName(), current, config);
+                } else if (token.equalsIgnoreCase("end")) {
+                    break;
+                } else if (token.startsWith("#")) {
+                    tokenScanner.skipCommentLine();
+                } else {
+                    throw new Exception("unknown token in <list>: " + token);
+                }
+            }
+
+            if (list.getAccess() == null) {
+                list.setAccess(list_access);
+            }
+
+        } catch (IOException e) {
+            throw new IOException(e.toString());
+        }
 
         try {
             list.validate(config);

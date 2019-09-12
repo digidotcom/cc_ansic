@@ -10,11 +10,11 @@ import java.util.Set;
 import java.util.Collections;
 
 public class ConfigGenerator {
-	private static ConfigGenerator instance = null;
+    private static ConfigGenerator instance = null;
     private ConfigGenerator(String args[]) {
         int argCount = 0;
         String argLog = "";
-        		
+
         for (String arg : args) {
             if (arg.startsWith(DASH)) {
                 String str = arg.substring(DASH.length());
@@ -35,15 +35,15 @@ public class ConfigGenerator {
         if (password == null && fileTypeOption() != FileType.GLOBAL_HEADER) {
             queryPassword();
         }
-        
+
         instance = this;
     }
-	public static final ConfigGenerator getInstance() { assert instance != null; return instance; }
+    public static final ConfigGenerator getInstance() { assert instance != null; return instance; }
 
 // 1.0.0.0 version XML RCI
 // 2.0.0.0 version Binary RCI only
 // 3.0.0.0 version List support & specific callbacks moved to user space
-	
+
     public final static String VERSION = "3.0.0.0";
 
     public static enum UseNames { COLLECTIONS, ELEMENTS, VALUES };
@@ -123,7 +123,7 @@ public class ConfigGenerator {
     private boolean rciParser;
 
     private void usage() {
-    	Config config = Config.getInstance();
+        Config config = Config.getInstance();
         String className = ConfigGenerator.class.getName();
 
         int firstChar = className.lastIndexOf(".") + 1;
@@ -287,9 +287,9 @@ public class ConfigGenerator {
     }
 
     private void queryPassword() {
-        
+
       Console console = System.console();
-        
+
       if (console == null) {
           System.out.println("Couldn't get Console instance, maybe you're running this from within an IDE?");
           System.exit(1);
@@ -306,45 +306,45 @@ public class ConfigGenerator {
     }
 
     private EnumSet<UseNames> parseNamesList(String option) throws Exception {
-    	EnumSet<UseNames> result;
-    	String compact = option.replace(" ",  "").toUpperCase();
-    	
-    	switch (compact) {
-    	case "NONE":
-    		result = EnumSet.noneOf(UseNames.class);
-    		break;
-    		
-    	case "ALL":
-    		result = EnumSet.allOf(UseNames.class);
-    		break;
-    		
-    	default:
-    		result = EnumSet.noneOf(UseNames.class);
-	    	for (String type: compact.split(",")) {
-	    		try {
-	    			result.add(UseNames.valueOf(type));
-	    		} catch (Exception e) {
-	                log("Available use name types:" + UseNames.values());
-	                throw new Exception("Invalid use name type: " + type);
-	    		}
-	    	}
-    	}
-    	
-    	return result;
+        EnumSet<UseNames> result;
+        String compact = option.replace(" ",  "").toUpperCase();
+
+        switch (compact) {
+        case "NONE":
+            result = EnumSet.noneOf(UseNames.class);
+            break;
+
+        case "ALL":
+            result = EnumSet.allOf(UseNames.class);
+            break;
+
+        default:
+            result = EnumSet.noneOf(UseNames.class);
+            for (String type: compact.split(",")) {
+                try {
+                    result.add(UseNames.valueOf(type));
+                } catch (Exception e) {
+                    log("Available use name types:" + UseNames.values());
+                    throw new Exception("Invalid use name type: " + type);
+                }
+            }
+        }
+
+        return result;
     }
-    
+
     private Integer parsePositiveInteger(final String value, final String option) throws IOException {
         try {
             Integer result = Integer.parseUnsignedInt(value);
             if (result == 0)
-            	throw new NumberFormatException();
-            
+                throw new NumberFormatException();
+
             return result;
         } catch (NumberFormatException e) {
             throw new IOException(option + " expected an positive integer value");
         }
     }
-    
+
     private void toOption(String option) {
 
         /* split the [option]=[option value] */
@@ -356,12 +356,12 @@ public class ConfigGenerator {
                 if (keys[0].equals(URL_OPTION)) {
                     urlName = keys[1];
                 } else if (keys[0].equals(VENDOR_OPTION)) {
-                	try {
-                		final boolean hex = keys[1].startsWith("0x"); 
-                		final int radix = hex ? 16 : 10;
-                		final String parse = hex ? keys[1].substring(2) : keys[1];
-                		
-                		vendorId = Long.parseUnsignedLong(parse, radix);
+                    try {
+                        final boolean hex = keys[1].startsWith("0x");
+                        final int radix = hex ? 16 : 10;
+                        final String parse = hex ? keys[1].substring(2) : keys[1];
+
+                        vendorId = Long.parseUnsignedLong(parse, radix);
                     } catch (NumberFormatException e) {
                         throw new Exception("Invalid format for Vendor ID");
                     }
@@ -378,12 +378,12 @@ public class ConfigGenerator {
                 } else if (keys[0].equals(USE_NAMES_OPTION)) {
                     useNames = parseNamesList(keys[1]);
                 } else if (keys[0].equals(RCI_DC_TARGET_MAX_OPTION)) {
-                	rci_dc_attribute_max_len = parsePositiveInteger(keys[1], "-rci_dc_attribute_max_len");
+                    rci_dc_attribute_max_len = parsePositiveInteger(keys[1], "-rci_dc_attribute_max_len");
                 } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
-                	rci_dc_max_name_len = parsePositiveInteger(keys[1], "-maxNameLength");
+                    rci_dc_max_name_len = parsePositiveInteger(keys[1], "-maxNameLength");
                 } else if (keys[0].equals(OVERRIDE_MAX_KEY_LENGTH)) {
-                	rci_dc_max_key_len = parsePositiveInteger(keys[1], "-maxKeyLength");
-	            } else {
+                    rci_dc_max_key_len = parsePositiveInteger(keys[1], "-maxKeyLength");
+                } else {
                     throw new Exception("Invalid Option: " + keys[0]);
                 }
             } else if (option.equals(NO_DESC_OPTION)) {
@@ -424,12 +424,12 @@ public class ConfigGenerator {
     }
 
     private boolean getDottedFwVersion(String arg) {
-        
+
         String[] versions = arg.split("\\.");
         int length = versions.length;
-        
+
         if (length == 0 || length > 4) return false;
-        
+
         for (String ver : versions)
         {
             int vnumber;
@@ -451,7 +451,7 @@ public class ConfigGenerator {
 
         return true;
     }
-    
+
     private void toArgument(int argNumber, String arg) {
         try {
             switch (argNumber) {
@@ -480,9 +480,9 @@ public class ConfigGenerator {
                 break;
             case 3:
                 /* firmware version */
-                
+
                 Scanner fwVersionScan = new Scanner(arg);
-                
+
                 /* see whether it's decimal firmware version number */
                 if (!fwVersionScan.hasNextLong()) {
                     /* check hex number */
@@ -502,7 +502,7 @@ public class ConfigGenerator {
                 } else {
                     fwVersion = fwVersionScan.nextLong();
                 }
-                
+
                 if (fwVersion > FIRMWARE_VERSION_MAX_VALUE) {
                     throw new Exception(String.format("Exceeded maximum firmware version number %s > %d (0x%X, or %d.%d.%d.%d)", arg,
                                                       FIRMWARE_VERSION_MAX_VALUE, FIRMWARE_VERSION_MAX_VALUE,
@@ -512,7 +512,7 @@ public class ConfigGenerator {
                                                       (FIRMWARE_VERSION_MAX_VALUE & 0xFF)));
                 }
                 debug_log(String.format("FW version: %s = %d (0x%X)", arg, fwVersion,fwVersion));
-                
+
                 argumentLog += " " + arg;
                 break;
 
@@ -521,7 +521,7 @@ public class ConfigGenerator {
                 argumentLog += " " + arg;
 
                 break;
-                
+
             default:
                 log("Unkown argument: " + arg);
                 return;
@@ -533,13 +533,13 @@ public class ConfigGenerator {
     }
 
     public Long getVendorId() {
-    	return vendorId;
+        return vendorId;
     }
-    
+
     public String getDeviceType() {
-    	return deviceType;
+        return deviceType;
     }
-    
+
     public long getFirmware() {
         return fwVersion;
     }
@@ -563,11 +563,11 @@ public class ConfigGenerator {
     public boolean useCcapi() {
         return useCcapi;
     }
-    
+
     public boolean c99() {
         return c99;
     }
-    
+
     public boolean generateCcapiStubFunctions() {
         return CcapiStubFunctions;
     }
@@ -585,7 +585,7 @@ public class ConfigGenerator {
             System.out.println(String.valueOf(aObject));
         }
     }
-    
+
     public FileType fileTypeOption() {
         if (useCcapi())
         {
@@ -627,13 +627,13 @@ public class ConfigGenerator {
     }
 
     private final void execute() throws Exception {
-    	Config config = Config.getInstance();
+        Config config = Config.getInstance();
 
         if (deleteDescriptorOption()) {
             /* descriptor constructor for arguments */
             Descriptors descriptors = new Descriptors(username, password,
                     vendorId, deviceType, fwVersion);
-            
+
             /* Generate and upload descriptors */
             debug_log("Start deleting descriptors");
             descriptors.deleteDescriptors();
@@ -654,9 +654,9 @@ public class ConfigGenerator {
 
         if (fileTypeOption() != FileType.GLOBAL_HEADER) {
             Parser.processFile(filename);
-            
-            int setting_groups = config.getTable(Group.Type.SETTING).size(); 
-            int state_groups = config.getTable(Group.Type.STATE).size(); 
+
+            int setting_groups = config.getTable(Group.Type.SETTING).size();
+            int state_groups = config.getTable(Group.Type.STATE).size();
             int total_groups = setting_groups + state_groups;
             if (total_groups == 0)
                 throw new IOException("No groups specified in file: " + filename);
@@ -664,83 +664,83 @@ public class ConfigGenerator {
             debug_log("Number of setting groups: " + setting_groups);
             debug_log("Number of state groups: " + state_groups);
         }
-        
+
         /* Generate H and C files */
         debug_log("Start generating files");
         LinkedList<GenFile> files = new LinkedList<>();
-        
+
         switch(fileTypeOption())
         {
         case NONE:
-           	files.add(new GenFsmHeaderFile(config.getTypesSeen()));
-        	files.add(new GenFsmSourceFile());
+               files.add(new GenFsmHeaderFile(config.getTypesSeen()));
+            files.add(new GenFsmSourceFile());
             break;
 
         case SOURCE:
 
-        	if (useCcapi())
+            if (useCcapi())
             {
-               	files.add(new GenFsmFullHeaderFile());
-            	files.add(new GenFsmSourceFile());
+                   files.add(new GenFsmFullHeaderFile());
+                files.add(new GenFsmSourceFile());
 
-               	GenApiUserHeaderFile header = new GenApiUserHeaderFile();
-            	files.add(header);
-            	files.add(new GenApiUserSourceFile(header));
-            	
-            	if (generateCcapiStubFunctions()) {
-            		files.add(new GenApiUserStubsFile(header));
-            	}
+                   GenApiUserHeaderFile header = new GenApiUserHeaderFile();
+                files.add(header);
+                files.add(new GenApiUserSourceFile(header));
+
+                if (generateCcapiStubFunctions()) {
+                    files.add(new GenApiUserStubsFile(header));
+                }
             } else {
-            	files.add(new GenFsmUserHeaderFile());
-            	files.add(new GenFsmUserSourceFile());
+                files.add(new GenFsmUserHeaderFile());
+                files.add(new GenFsmUserSourceFile());
             }
             break;
 
         case GLOBAL_HEADER:
-        	files.add(new GenFsmFullHeaderFile());
+            files.add(new GenFsmFullHeaderFile());
             break;
         }
 
         if (!useNames().isEmpty()) {
-    		files.add(new GenUserNamesHeaderFile());
-    	}
+            files.add(new GenUserNamesHeaderFile());
+        }
 
         if (!noUpload || saveDescriptor) {
             debug_log("Start Generating/uploading descriptors");
 
-        	Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
-        	// If the user requested the vendorID from Device Cloud, store it for future use. 
-        	if (vendorId == null) {
-        		vendorId = Descriptors.vendorId();
-        	}
-			descriptors.processDescriptors();
+            Descriptors descriptors = new Descriptors(username, password, vendorId, deviceType, fwVersion);
+            // If the user requested the vendorID from Device Cloud, store it for future use.
+            if (vendorId == null) {
+                vendorId = Descriptors.vendorId();
+            }
+            descriptors.processDescriptors();
         }
-        
+
         //generate
         for (GenFile file: files) {
             file.generateFile();
         }
-        
+
         log("Done.");
     }
-    
+
     public static void main(String[] args) {
         try {
-        	instance = new ConfigGenerator(args);
+            instance = new ConfigGenerator(args);
 
-        	instance.execute();
+            instance.execute();
             System.exit(0);
-            
-	    } catch (Exception e) {
-	        if (e.getMessage() != null) {
-	            instance.log(e.getMessage());
-	        }
 
-	        if (e.getCause() != null)
+        } catch (Exception e) {
+            if (e.getMessage() != null) {
+                instance.log(e.getMessage());
+            }
+
+            if (e.getCause() != null)
                 System.err.println(e.getCause());
-	        
+
             e.printStackTrace();
-	        System.exit(1);
-	    }
+            System.exit(1);
+        }
     }
 }

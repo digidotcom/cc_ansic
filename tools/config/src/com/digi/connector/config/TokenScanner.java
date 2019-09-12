@@ -35,19 +35,19 @@ public class TokenScanner {
     }
 
     public void pushbackToken(String token) {
-    	assert back == null;
-    	
-    	back = token;
+        assert back == null;
+
+        back = token;
     }
-        
+
     public String getToken() {
         String aWord;
-        
+
         if (back == null) {
-        	aWord = null;
+            aWord = null;
         } else {
-        	aWord = back;
-        	back = null;
+            aWord = back;
+            back = null;
         }
 
         while (aWord == null) {
@@ -70,7 +70,7 @@ public class TokenScanner {
             if ((tokenScanner != null) && (tokenScanner.hasNext())) {
                 aWord = tokenScanner.next();
             }
-            
+
             if (!lineScanner.hasNextLine()) {
                 break;
             }
@@ -115,55 +115,55 @@ public class TokenScanner {
     }
 
     public boolean hasToken() {
-    	if (back != null) {
-    		return true;
-    	}
-    	
+        if (back != null) {
+            return true;
+        }
+
         if ((tokenScanner != null) && tokenScanner.hasNext()) {
             return true;
         }
-        
+
         if (lineScanner.hasNext()) {
-        	return true;
+            return true;
         }
 
         return false;
     }
 
     public boolean hasToken(String pattern) {
-    	if ((back != null) && Pattern.matches(pattern, back)) {
-    		return true;
-    	}
+        if ((back != null) && Pattern.matches(pattern, back)) {
+            return true;
+        }
 
         if ((tokenScanner != null) && tokenScanner.hasNext(pattern)) {
-        	return true;
+            return true;
         }
 
         if (lineScanner.hasNext(pattern)) {
-        	return true;
+            return true;
         }
 
         return false;
     }
 
     public boolean hasTokenInt() {
-    	if (back != null) {
-    		int radix = (tokenScanner != null) ? tokenScanner.radix() : lineScanner.radix();
-    		
+        if (back != null) {
+            int radix = (tokenScanner != null) ? tokenScanner.radix() : lineScanner.radix();
+
             try {
                 Integer.parseInt(back, radix);
                 return true;
             } catch (NumberFormatException e) {
                 return false;
             }
-    	}
+        }
 
         if ((tokenScanner != null) && tokenScanner.hasNextInt()) {
-        	return true;
+            return true;
         }
 
         if (lineScanner.hasNextInt()) {
-        	return true;
+            return true;
         }
 
         return false;
@@ -177,7 +177,7 @@ public class TokenScanner {
         tokenScanner.close();
         tokenScanner = null;
     }
-    
+
     public void close() {
         // ensure the underlying stream is always closed
         // this only has any effect if the item passed to the Scanner

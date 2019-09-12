@@ -40,28 +40,28 @@ public class Descriptors {
             validateUrlName();
 
         if (vendorId == null) {
-        	vendorId = getVendorId();
-        	if (vendorId == null) {
-        		vendorId = createVendorId();
-        	}
+            vendorId = getVendorId();
+            if (vendorId == null) {
+                vendorId = createVendorId();
+            }
         }
-        
+
         if (vendorId == null || vendorId == 0) {
-        	throw new IOException("Invalid Vendor ID");
+            throw new IOException("Invalid Vendor ID");
         }
         Descriptors.vendorId = vendorId;
 
         options.debug_log(String.format("Vendor ID = 0x%08X (%d)\n", vendorId, vendorId));
-        
+
         this.responseCode = 0;
     }
 
     public void processDescriptors() throws Exception {
-    	final boolean uploading = !options.noUploadOption();
-    	Map<String, org.dom4j.Element> descriptors = new HashMap<>(); 
-    	
-    	options.log("\nProcessing Descriptors, please wait...");
-        
+        final boolean uploading = !options.noUploadOption();
+        Map<String, org.dom4j.Element> descriptors = new HashMap<>();
+
+        options.log("\nProcessing Descriptors, please wait...");
+
         int id = 1;
         for (Group.Type type : Group.Type.values()) {
             Table table = config.getTable(type);
@@ -85,18 +85,18 @@ public class Descriptors {
         if (uploading) {
            deleteDescriptors();
         }
-        
+
         for (Map.Entry<String, org.dom4j.Element> entry : descriptors.entrySet()) {
-        	String name = entry.getKey();
-        	org.dom4j.Element content = entry.getValue();
-        	
-        	if (uploading) {
-        		uploadDescriptor(name, content);
-        	}
-        	
-        	if (options.saveDescriptorOption()) {
-        		saveDescriptor(name, content);
-        	}
+            String name = entry.getKey();
+            org.dom4j.Element content = entry.getValue();
+
+            if (uploading) {
+                uploadDescriptor(name, content);
+            }
+
+            if (options.saveDescriptorOption()) {
+                saveDescriptor(name, content);
+            }
         }
         final String done = uploading ? "uploaded" : "saved";
         options.log("\nDescriptors were " + done + " successfully.");
@@ -134,48 +134,48 @@ public class Descriptors {
     }
 
     private org.dom4j.Element generateDoCommandDescriptor() {
-    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
-    		.addAttribute("element", "do_command")
-    		.addAttribute("desc", "Execute command on device")
-    		.addAttribute("bin_id", "6");
-    	
-    	e.addElement("error_descriptor")
-			.addAttribute("id", "1")
-			.addAttribute("desc", "Invalid arguments");
-    	
-    	e.addElement("attr")
-			.addAttribute("name", "target")
-			.addAttribute("type", "string")
-			.addAttribute("max", Integer.toString(config.getMaxAttributeLength()))
-			.addAttribute("desc", "The subsystem that the command is forwarded to")
-			.addAttribute("bin_id", "0");
-        
-    	return e;
+        org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+            .addAttribute("element", "do_command")
+            .addAttribute("desc", "Execute command on device")
+            .addAttribute("bin_id", "6");
+
+        e.addElement("error_descriptor")
+            .addAttribute("id", "1")
+            .addAttribute("desc", "Invalid arguments");
+
+        e.addElement("attr")
+            .addAttribute("name", "target")
+            .addAttribute("type", "string")
+            .addAttribute("max", Integer.toString(config.getMaxAttributeLength()))
+            .addAttribute("desc", "The subsystem that the command is forwarded to")
+            .addAttribute("bin_id", "0");
+
+        return e;
     }
 
     private org.dom4j.Element generateRebootDescriptor() {
-    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
-    		.addAttribute("element", "reboot")
-    		.addAttribute("desc", "Reboot the device")
-    		.addAttribute("bin_id", "7");
+        org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+            .addAttribute("element", "reboot")
+            .addAttribute("desc", "Reboot the device")
+            .addAttribute("bin_id", "7");
 
-    	e.addElement("error_descriptor")
-			.addAttribute("id", "1")
-			.addAttribute("desc", "Reboot Failed");
-    	
+        e.addElement("error_descriptor")
+            .addAttribute("id", "1")
+            .addAttribute("desc", "Reboot Failed");
+
         return e;
     }
 
     private org.dom4j.Element generateSetFactoryDefaultDescriptor() {
-    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
-    		.addAttribute("element", "set_factory_default")
-    		.addAttribute("desc", "Set device configuration to factory defaults")
-			.addAttribute("bin_id", "8");
+        org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
+            .addAttribute("element", "set_factory_default")
+            .addAttribute("desc", "Set device configuration to factory defaults")
+            .addAttribute("bin_id", "8");
 
-    	e.addElement("error_descriptor")
-			.addAttribute("id", "1")
-			.addAttribute("desc", "Set Factory Default failed");
-    	
+        e.addElement("error_descriptor")
+            .addAttribute("id", "1")
+            .addAttribute("desc", "Set Factory Default failed");
+
         return e;
     }
 
@@ -183,35 +183,35 @@ public class Descriptors {
         Integer id = start;
 
         for (String value : errors.values()) {
-        	e.addElement("error_descriptor")
-        		.addAttribute("id", id.toString())
-        		.addAttribute("desc", Objects.toString(value, null));
+            e.addElement("error_descriptor")
+                .addAttribute("id", id.toString())
+                .addAttribute("desc", Objects.toString(value, null));
             id++;
         }
     }
 
     private void addAvailableDescriptor(org.dom4j.Element e, final String name) {
         e.addElement("descriptor")
-	    	.addAttribute("element", name)
-	    	.addAttribute("dscr_avail", "true");
+            .addAttribute("element", name)
+            .addAttribute("dscr_avail", "true");
     }
-    
+
     private org.dom4j.Element generateRootDescriptor() throws Exception {
         final String version = "1.1";
-    	org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor");
+        org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor");
 
-    	e.addAttribute("element", "rci_request");
-    	e.addAttribute("desc", "Remote Command Interface request");
-    	
-    	org.dom4j.Element attr = e.addElement("attr");
-    	attr.addAttribute("name", "version");
-    	attr.addAttribute("desc", "RCI version of request.  Response will be returned in this versions response format");
-    	attr.addAttribute("default", version);
-    	
-    	attr.addElement("value")
-    		.addAttribute("value", version)
-    		.addAttribute("desc", "Version " + version);
-    	
+        e.addAttribute("element", "rci_request");
+        e.addAttribute("desc", "Remote Command Interface request");
+
+        org.dom4j.Element attr = e.addElement("attr");
+        attr.addAttribute("name", "version");
+        attr.addAttribute("desc", "RCI version of request.  Response will be returned in this versions response format");
+        attr.addAttribute("default", version);
+
+        attr.addElement("value")
+            .addAttribute("value", version)
+            .addAttribute("desc", "Version " + version);
+
         for (Group.Type type : Group.Type.values()) {
             final int groups = config.getTable(type).size();
 
@@ -231,7 +231,7 @@ public class Descriptors {
 
         addErrorDescriptors(e, config.getGlobalFatalProtocolErrorsOffset(), config.getGlobalFatalProtocolErrors());
         addErrorDescriptors(e, config.getGlobalProtocolErrorsOffset(), config.getGlobalProtocolErrors());
-        
+
         return e;
     }
 
@@ -287,8 +287,8 @@ public class Descriptors {
     }
 
     private Long getVendorId() {
-    	Long result = null;
-    	
+        Long result = null;
+
         options.debug_log("Query vendor ID");
 
         String response = sendCloudData("/ws/DeviceVendor", "GET", null);
@@ -319,13 +319,13 @@ public class Descriptors {
             }
             System.exit(1);
         }
-        
+
         return result;
     }
 
     private Long createVendorId() {
-    	Long result = null;
-    	
+        Long result = null;
+
         options.debug_log("Create a new vendor ID");
         sendCloudData("/ws/DeviceVendor", "POST", "<DeviceVendor></DeviceVendor>");
 
@@ -337,7 +337,7 @@ public class Descriptors {
         int startIndex = response.indexOf("<dvVendorId>");
         if (startIndex == -1) {
             options.log(
-            	"Cannot create a new vendor ID for "
+                "Cannot create a new vendor ID for "
                 + username
                 + "user. User needs to manually create one. Refer to \"Setup your Device Cloud Acount\" section of the Getting started guide to obtain one.");
             System.exit(1);
@@ -353,7 +353,7 @@ public class Descriptors {
 
         if (result != null)
             options.log(String.format("Device Cloud registered vendor ID: 0x%X", vendorId));
-        
+
         return result;
     }
 
@@ -385,14 +385,14 @@ public class Descriptors {
     }
 
     private org.dom4j.Element commonMetadata(final String name) {
-    	org.dom4j.Element md = org.dom4j.DocumentHelper.createElement("DeviceMetaData");
-    	
-    	md.addElement("dvVendorId").addText(String.format("0x%08X", vendorId));
-    	md.addElement("dmDeviceType").addText(deviceType);
-    	md.addElement("dmVersion").addText(String.format("%d", fwVersion));
-    	md.addElement("dmName").addText(name);
-    	
-    	return md;
+        org.dom4j.Element md = org.dom4j.DocumentHelper.createElement("DeviceMetaData");
+
+        md.addElement("dvVendorId").addText(String.format("0x%08X", vendorId));
+        md.addElement("dmDeviceType").addText(deviceType);
+        md.addElement("dmVersion").addText(String.format("%d", fwVersion));
+        md.addElement("dmName").addText(name);
+
+        return md;
     }
 
     private void saveDescriptor(String name, org.dom4j.Element descriptor) {
@@ -400,24 +400,24 @@ public class Descriptors {
 
         org.dom4j.Element md = commonMetadata(name);
         md.addElement("dmData").add(descriptor);
-        
+
         try {
-        	final String path = name.replace("/", "_") + ".xml";
+            final String path = name.replace("/", "_") + ".xml";
             OutputFormat format = new OutputFormat();
             XMLWriter writer = new XMLWriter(new FileWriter(path), format);
-            
-			writer.write(md);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+            writer.write(md);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void uploadDescriptor(String name, org.dom4j.Element descriptor) {
         options.debug_log("Uploading descriptor:" + name);
 
         org.dom4j.Element md = commonMetadata(name);
-       	md.addElement("dmData").addText(descriptor.asXML());
+           md.addElement("dmData").addText(descriptor.asXML());
 
         String response = sendCloudData("/ws/DeviceMetaData", "POST", md.asXML());
         if (responseCode != 0)

@@ -8,11 +8,11 @@ public class GenApiUserSourceFile extends GenSourceFile {
     private static String FILENAME = "ccapi_rci_data.c";
 
     private GenApiUserHeaderFile header;
-	public GenApiUserSourceFile(GenApiUserHeaderFile header) throws IOException {
-		super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
-		
-		this.header = header;
-	}
+    public GenApiUserSourceFile(GenApiUserHeaderFile header) throws IOException {
+        super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.CUSTOM);
+
+        this.header = header;
+    }
 
     public void writeContent() throws Exception {
         write(String.format("%s \"%s\"\n", INCLUDE, "ccapi/ccapi.h"));
@@ -25,28 +25,28 @@ public class GenApiUserSourceFile extends GenSourceFile {
     private String getDefineString(String define_name) {
         return (configType.toUpperCase() + "_" + define_name.toUpperCase());
     }
-    
+
     private String COMMENTED(String comment) {
         return "/* " + comment + " */";
     }
 
     private void writeItemArrays(String prefix, ItemList list) throws Exception {
-    	String current = String.format("static ccapi_rci_element_t const %s%s_elements[] = {",
-        		customPrefix, getDefineString(prefix).toLowerCase());
+        String current = String.format("static ccapi_rci_element_t const %s%s_elements[] = {",
+                customPrefix, getDefineString(prefix).toLowerCase());
 
         for (Item item: list.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
             if (item instanceof Element) {
                 Element element = (Element) item;
-                
+
                 current += String.format("\n { %s", COMMENTED(element.getName()));
 
                 if (element.getAccess() == Item.AccessType.READ_ONLY) {
-                	current += "   NULL,\n";
+                    current += "   NULL,\n";
                 }
                 else {
-                	current += String.format("   %s%srci_%s_%s_set,\n", RCI_FUNCTION_T, customPrefix, getDefineString(prefix).toLowerCase(),element.getName());
+                    current += String.format("   %s%srci_%s_%s_set,\n", RCI_FUNCTION_T, customPrefix, getDefineString(prefix).toLowerCase(),element.getName());
                 }
 
                 current += String.format("   %s%srci_%s_%s_get\n", RCI_FUNCTION_T, customPrefix, getDefineString(prefix).toLowerCase(),element.getName());
@@ -54,19 +54,19 @@ public class GenApiUserSourceFile extends GenSourceFile {
             } else {
                 ItemList items = (ItemList) item;
 
-            	writeItemArrays(prefix + "_" + items.getName(), items);
+                writeItemArrays(prefix + "_" + items.getName(), items);
 
-            	// TODO: Not sure what to do about lists in the CCAPI version quite yet. Making them NULL for now to trigger an error. -ASK
-                current += 
-                	String.format("\n { %s", COMMENTED(items.getName())) +
-	            	"   NULL,\n" +
-	            	"   NULL\n" +
-	                " },";
+                // TODO: Not sure what to do about lists in the CCAPI version quite yet. Making them NULL for now to trigger an error. -ASK
+                current +=
+                    String.format("\n { %s", COMMENTED(items.getName())) +
+                    "   NULL,\n" +
+                    "   NULL\n" +
+                    " },";
             }
         }
-        
+
         if (current.endsWith(",")) {
-        	current = current.substring(0, current.length() - 1);
+            current = current.substring(0, current.length() - 1);
         }
 
         write(current + "\n};\n\n");
@@ -102,13 +102,13 @@ public class GenApiUserSourceFile extends GenSourceFile {
                     group_string += String.format("\n        ARRAY_SIZE(%s%s),", customPrefix, define_name.toLowerCase());
                     group_string += String.format("\n        {");
                     group_string += String.format("\n            %s%srci_%s_start," , RCI_FUNCTION_T,customPrefix,getDefineString(group.getName()).toLowerCase());
-            		group_string += String.format("\n            %s%srci_%s_end" , RCI_FUNCTION_T,customPrefix,getDefineString(group.getName()).toLowerCase());
+                    group_string += String.format("\n            %s%srci_%s_end" , RCI_FUNCTION_T,customPrefix,getDefineString(group.getName()).toLowerCase());
                     group_string += String.format("\n        }");
                     group_string += String.format("\n    }");
-                    
+
                     remaining -= 1;
                     if (remaining != 0) {
-                    	group_string += String.format(",");
+                        group_string += String.format(",");
                     }
                     write(group_string);
                 }
@@ -122,17 +122,17 @@ public class GenApiUserSourceFile extends GenSourceFile {
         for (Group.Type type: Group.Type.values()) {
             Collection<Group> groups = config.getTable(type).groups();
 
-        	ccapi_rci_data += String.format("\n    {");
+            ccapi_rci_data += String.format("\n    {");
             if (groups.isEmpty()) {
                 ccapi_rci_data += String.format("\n        NULL,");
-            	ccapi_rci_data += String.format("\n        0");
+                ccapi_rci_data += String.format("\n        0");
             }
             else {
                 configType = type.toLowerName();
-            	ccapi_rci_data += String.format("\n        %sccapi_%s_groups,", customPrefix, configType);
-            	ccapi_rci_data += String.format("\n        ARRAY_SIZE(%sccapi_%s_groups)", customPrefix, configType);
+                ccapi_rci_data += String.format("\n        %sccapi_%s_groups,", customPrefix, configType);
+                ccapi_rci_data += String.format("\n        ARRAY_SIZE(%sccapi_%s_groups)", customPrefix, configType);
             }
-        	ccapi_rci_data += String.format("\n    },");
+            ccapi_rci_data += String.format("\n    },");
         }
 
         ccapi_rci_data += String.format("\n    {");

@@ -88,6 +88,6 @@ public abstract class GenSourceFile extends GenFile {
     protected String configType;
 
     public GenSourceFile(String file, GenFile.Type type, GenFile.UsePrefix use) throws IOException {
-    	super(file, type, use);
+        super(file, type, use);
     }
 }

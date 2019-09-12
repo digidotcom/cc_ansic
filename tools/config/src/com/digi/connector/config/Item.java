@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public abstract class Item {
 
-	private static final String[] invalid = { "error", "warning" };
+    private static final String[] invalid = { "error", "warning" };
     protected final String name;
     protected final String description;
     protected final String helpDescription;
@@ -22,9 +22,9 @@ public abstract class Item {
                 throw new Exception("Invalid access Type: " + str);
             }
         }
-        
+
         public String toString() {
-        	return name().toLowerCase();
+            return name().toLowerCase();
         }
     }
 
@@ -35,9 +35,9 @@ public abstract class Item {
         }
 
         for (String test: invalid) {
-        	if (name.equalsIgnoreCase(test)) {
+            if (name.equalsIgnoreCase(test)) {
                 throw new IOException("Invalid name: " + name);
-        	}
+            }
         }
         this.name = name;
         this.description = description;
@@ -55,7 +55,7 @@ public abstract class Item {
     }
 
     public String getSanitizedName() {
-    	return name.replace('-', '_').replace(".","_fullstop_");
+        return name.replace('-', '_').replace(".","_fullstop_");
     }
 
     public String getDescription() {
@@ -78,23 +78,23 @@ public abstract class Item {
     }
 
     public void setCondition(final String name, final Location current, final Config config) throws Exception {
-    	assert wrapper == null : "Error attempting to overwrite condition";
-    	
-    	final Condition condition = config.getTable(current.getType()).conditions().get(name);
-    	if (condition == null) {
-    		throw new Exception("Condition not found: " + name);
-    	}
-    	
-    	wrapper = condition.wrapper(current);
+        assert wrapper == null : "Error attempting to overwrite condition";
+
+        final Condition condition = config.getTable(current.getType()).conditions().get(name);
+        if (condition == null) {
+            throw new Exception("Condition not found: " + name);
+        }
+
+        wrapper = condition.wrapper(current);
     }
-    
-	public org.dom4j.Element wrapConditional(org.dom4j.Element element) {
-		if (wrapper == null)
-			return element;
-		
-		wrapper.add(element);
-		return wrapper;
-	}
+
+    public org.dom4j.Element wrapConditional(org.dom4j.Element element) {
+        if (wrapper == null)
+            return element;
+
+        wrapper.add(element);
+        return wrapper;
+    }
 
     abstract org.dom4j.Element asElement(Integer id);
 }

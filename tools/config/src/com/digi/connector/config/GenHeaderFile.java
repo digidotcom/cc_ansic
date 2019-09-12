@@ -82,29 +82,29 @@ public abstract class GenHeaderFile extends GenFile {
     protected String customPrefix = options.getCustomPrefix();
 
     public GenHeaderFile(String file, GenFile.Type type, GenFile.UsePrefix use) throws IOException {
-    	super(file, type, use);
+        super(file, type, use);
     }
 
     protected void writeContent() throws Exception {
-    	writeGuardHeader();
-    	writeGuardedContent();
-    	writeGuardFooter();
+        writeGuardHeader();
+        writeGuardedContent();
+        writeGuardFooter();
     }
 
     private void writeGuardHeader() throws Exception {
         String unique = path.getFileName().toString().replace('.', '_').toUpperCase();
 
         LinkedList<String> lines = new LinkedList<>();
-    	lines.add("#ifndef " + unique);
-    	lines.add("#define " + unique);
-    	writeBlock(lines);
+        lines.add("#ifndef " + unique);
+        lines.add("#define " + unique);
+        writeBlock(lines);
     }
 
     abstract void writeGuardedContent() throws Exception;
 
     private void writeGuardFooter() throws Exception {
         LinkedList<String> lines = new LinkedList<>();
-    	lines.add("#endif");
-    	writeBlock(lines);
+        lines.add("#endif");
+        writeBlock(lines);
     }
 }

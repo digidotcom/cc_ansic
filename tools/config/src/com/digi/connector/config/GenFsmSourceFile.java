@@ -14,9 +14,9 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     private final static String FILENAME = "remote_config.c";
 
-	public GenFsmSourceFile() throws IOException {
-		super(FILENAME, GenFile.Type.INTERNAL, GenFile.UsePrefix.NONE);
-	}
+    public GenFsmSourceFile() throws IOException {
+        super(FILENAME, GenFile.Type.INTERNAL, GenFile.UsePrefix.NONE);
+    }
 
     public void writeContent() throws Exception {
         writeFunctionFile();
@@ -138,15 +138,15 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     private void writeGroupRemoteAllStrings(Collection<Group> groups) throws Exception {
         for (Group group : groups) {
-        	writeLinkedHashMapStrings(group.getErrors());
+            writeLinkedHashMapStrings(group.getErrors());
         }
     }
 
     protected void writeRemoteAllStrings() throws Exception {
         if (options.excludeErrorDescription()) {
-        	return;
+            return;
         }
-        
+
         write(String.format("\nstatic char CONST %s[] = {\n", CONNECTOR_REMOTE_ALL_STRING));
 
         writeRciErrorsRemoteAllStrings();
@@ -172,8 +172,8 @@ public class GenFsmSourceFile extends GenSourceFile {
     }
 
     private int writeErrorStructures(int errorCount, String prefix, Map<String, String> errorMap) throws IOException {
-    	String defineName = prefix.toUpperCase();
-    	
+        String defineName = prefix.toUpperCase();
+
         for (String key : errorMap.keySet()) {
             write(getRemoteString(defineName + "_" + key));
             errorCount--;
@@ -208,46 +208,46 @@ public class GenFsmSourceFile extends GenSourceFile {
     private String getElementDefine(String type_name, String element_name) {
         return (String.format("connector_element_%s_%s", type_name, element_name));
     }
-    
+
     private String getCollectionType(ItemList list) {
         boolean isFixedCapacity = (list.getCapacity() == Capacity.FIXED);
         boolean isDictionary = list.isDictionary();
-         
+
         String type = "connector_collection_type_";
         type += (isFixedCapacity) ? "fixed_": "variable_";
         type += (isDictionary) ? "dictionary": "array";
-        
+
         return type;
     }
 
     private String getCapacityInitializer(ItemList list, String varname) {
-    	String result;
-	    boolean isDictionary = list.isDictionary();
-	     
-	    if (isDictionary) {
-	    	LinkedHashSet<String> keys = list.getKeys();
-	    	
-	    	if (keys.isEmpty()) {
+        String result;
+        boolean isDictionary = list.isDictionary();
+
+        if (isDictionary) {
+            LinkedHashSet<String> keys = list.getKeys();
+
+            if (keys.isEmpty()) {
                 if (options.c99()) {
-    	        	result = ".capacity.dictionary = ";
+                    result = ".capacity.dictionary = ";
                 } else {
                     result = "";
                 }
-  	        	result += "{ 0, NULL }";
-	    	} else {
-	    		String keys_name = varname + "_keys";
-	
-	            result = "{ " + keys.size() + ", " + keys_name + " }";
-	    	}
-	    } else {
-	    	result = "{ " + list.getInstances() + " " + COMMENTED("instances")+ " }";
-	    }
-	    
-	    return result;
+                  result += "{ 0, NULL }";
+            } else {
+                String keys_name = varname + "_keys";
+
+                result = "{ " + keys.size() + ", " + keys_name + " }";
+            }
+        } else {
+            result = "{ " + list.getInstances() + " " + COMMENTED("instances")+ " }";
+        }
+
+        return result;
     }
 
     private void writeCollectionArray(ItemList items, String prefix) throws Exception {
-    	// Traverse down the tree to define all the lists first as they need to be defined before the collections that include them are. 
+        // Traverse down the tree to define all the lists first as they need to be defined before the collections that include them are.
         for (Item item: items.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
@@ -255,88 +255,88 @@ public class GenFsmSourceFile extends GenSourceFile {
             if (item instanceof Element) {
                 Element element = (Element) item;
                 String optional = options.useNames().contains(UseNames.ELEMENTS)
-                	? String.format("    \"%s\",\n", element.getName())
-                	: "";
-                
+                    ? String.format("    \"%s\",\n", element.getName())
+                    : "";
+
                 if (element.getDefault() != null) {
-                	write("connector_element_value_t const " + itemVariable + "_default = { ");
+                    write("connector_element_value_t const " + itemVariable + "_default = { ");
                     if (options.c99()) {
                         switch (element.getType()) {
-                        	case UINT32:
-                        	case HEX32:
-                        	case X_HEX32:
-                        		write(".unsigned_integer_value = ");
-                        		break;
-                        	case INT32:
-                        		write(".signed_integer_value = ");
-                        		break;
-                        	case FLOAT:
-                        		write(".float_value = ");
-                        		break;
-                        	case ON_OFF:
-                        		write(".on_off_value = ");
-                        		break;
-                        	case BOOLEAN:
-                        		write(".boolean_value = ");
-                        		break;
-                        	case ENUM:
-                        		write(".enum_value = ");
-                        		break;
-                        	case IPV4:
-                        	case FQDNV4:
-                        	case FQDNV6:
-                        	case DATETIME:
-                        	case REF_ENUM:
-                        	case STRING:
-                        	case REGEX:
-                        	case MULTILINE_STRING:
-                        	case PASSWORD:
-                        	case MAC_ADDR:
-                        		write(".string_value = ");
-                        		break;
-                       	}
+                            case UINT32:
+                            case HEX32:
+                            case X_HEX32:
+                                write(".unsigned_integer_value = ");
+                                break;
+                            case INT32:
+                                write(".signed_integer_value = ");
+                                break;
+                            case FLOAT:
+                                write(".float_value = ");
+                                break;
+                            case ON_OFF:
+                                write(".on_off_value = ");
+                                break;
+                            case BOOLEAN:
+                                write(".boolean_value = ");
+                                break;
+                            case ENUM:
+                                write(".enum_value = ");
+                                break;
+                            case IPV4:
+                            case FQDNV4:
+                            case FQDNV6:
+                            case DATETIME:
+                            case REF_ENUM:
+                            case STRING:
+                            case REGEX:
+                            case MULTILINE_STRING:
+                            case PASSWORD:
+                            case MAC_ADDR:
+                                write(".string_value = ");
+                                break;
+                           }
                     }
                     write(element.getDefaultValue() + " };\n\n");
                 }
-                
+
                 write("static connector_element_t CONST " + itemVariable + "_element = {\n");
                 write(optional);
-                
+
                 if (element.getDefault() == null) {
-                	write("    NULL,\n");
+                    write("    NULL,\n");
                 } else {
-                	write("    &" + itemVariable + "_default,\n");
+                    write("    &" + itemVariable + "_default,\n");
                 }
                 write("    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
-                
+
                 if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
                     String enum_struct;
 
                     if (element.getType() == Element.Type.ENUM) {
                         String define_name = getDefineString(prefix + "__" + element.getName() + "_enum");
                         String variableName = customPrefix + define_name.toLowerCase();
-                        
+
                         enum_struct = "{ ARRAY_SIZE(" + variableName + "), " + variableName + "}, ";
                     }
                     else {
-                    	enum_struct = "{ 0, NULL }, ";
+                        enum_struct = "{ 0, NULL }, ";
                     }
-                    
+
                     write("    " + enum_struct + "\n");
                 }
                 write("};\n");
                 write("\n");
             } else {
-            	ItemList subitems = (ItemList) item;
-            	String subitemsPrefix = prefix + "__" + item.getSanitizedName().toLowerCase();
-            	
-            	writeCollectionArray(subitems, subitemsPrefix);
-	    		writeCollectionKeysArray(subitems.getKeys(), itemVariable);
-            	
-            	String subitemsVariable = itemVariable + "_items";
+                ItemList subitems = (ItemList) item;
+                String subitemsPrefix = prefix + "__" + item.getSanitizedName().toLowerCase();
+
+                writeCollectionArray(subitems, subitemsPrefix);
+                writeCollectionKeysArray(subitems.getKeys(), itemVariable);
+
+                String subitemsVariable = itemVariable + "_items";
                 String optional = options.useNames().contains(UseNames.COLLECTIONS)
-                	? String.format("    \"%s\",\n", subitems.getName())
-                	: "";
+                    ? String.format("    \"%s\",\n", subitems.getName())
+                    : "";
 
                 String type = getCollectionType(subitems);
                 String capacity = getCapacityInitializer(subitems, itemVariable);
@@ -352,31 +352,31 @@ public class GenFsmSourceFile extends GenSourceFile {
                 write("};\n\n");
             }
         }
-        
+
         // Then write the array for this level
-    	String itemsVariable = getDefineString(customPrefix + prefix).toLowerCase();
-    	boolean first = true;
+        String itemsVariable = getDefineString(customPrefix + prefix).toLowerCase();
+        boolean first = true;
         write("static connector_item_t CONST " + itemsVariable + "_items[] = {\n");
         for (Item item: items.getItems()) {
             assert (item instanceof Element) || (item instanceof ItemList);
 
-            String type; 
+            String type;
             String suffix;
             if (item instanceof Element) {
-            	Element element = (Element) item;
-            	
-            	type = element.getRciType().toLowerName();
-            	suffix = "element";
+                Element element = (Element) item;
+
+                type = element.getRciType().toLowerName();
+                suffix = "element";
             } else {
-            	type = "list";
-            	suffix = "collection";
+                type = "list";
+                suffix = "collection";
             }
             if (!first) {
-            	write(",\n");
+                write(",\n");
             } else {
-            	first = false;
+                first = false;
             }
-            
+
             String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase() + "_" + suffix;
             write("{ " + getElementDefine("type", type) + ", { ");
             if (options.c99()) {
@@ -386,21 +386,21 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
         write("\n};\n\n");
     }
-    
+
     private void writeEnumArray(Element element, String prefix) throws Exception {
         boolean first = true;
         String define_name = getDefineString(prefix + "__" + element.getName() + "_enum");
-        
+
         write(String.format("static connector_element_enum_t CONST %s%s[] = {\n",
                 customPrefix, define_name.toLowerCase()));
-        
+
         for (Value value : element.getValues()) {
-        	if (!first) {
+            if (!first) {
                 write(",\n");
-        	} else {
-        		first = false;
-        	}
-        	
+            } else {
+                first = false;
+            }
+
             write(String.format("    {\"%s\"}",value.getName()));
         }
         write("\n};\n\n");
@@ -412,14 +412,14 @@ public class GenFsmSourceFile extends GenSourceFile {
 
             if (item instanceof Element) {
                 Element element = (Element) item;
-                
+
                 if (element.getType() == Element.Type.ENUM) {
-                	writeEnumArray(element, prefix);
+                    writeEnumArray(element, prefix);
                 }
             } else {
-            	ItemList subitems = (ItemList) item;
-            	
-            	writeEnumArrays(subitems, prefix + "__" + subitems.getSanitizedName());
+                ItemList subitems = (ItemList) item;
+
+                writeEnumArrays(subitems, prefix + "__" + subitems.getSanitizedName());
             }
         }
     }
@@ -434,44 +434,44 @@ public class GenFsmSourceFile extends GenSourceFile {
 
     private void writeLocalErrorStructures(String error_name, LinkedHashMap<String, String> localErrors) throws IOException {
         if (!options.excludeErrorDescription()) {
-        	int errorCount = localErrors.size();
-        	 
-	        if (errorCount > 0) {
-	            String define_name = getDefineString(error_name + "_" + ERROR);
-	            
-	            write(CHAR_CONST_STRING + customPrefix + define_name.toLowerCase() + "s[] = {\n");
-	            writeErrorStructures(errorCount, define_name, localErrors);
-	            write("};\n\n");
-	        }
-	    }
+            int errorCount = localErrors.size();
+
+            if (errorCount > 0) {
+                String define_name = getDefineString(error_name + "_" + ERROR);
+
+                write(CHAR_CONST_STRING + customPrefix + define_name.toLowerCase() + "s[] = {\n");
+                writeErrorStructures(errorCount, define_name, localErrors);
+                write("};\n\n");
+            }
+        }
     }
-    
+
     private void writeGroupStructures(Collection<Group> groups) throws Exception {
         for (Group group: groups) {
             writeCollectionArrays(group, group.getSanitizedName());
-            
+
             if (!options.excludeErrorDescription()) {
-            	writeLocalErrorStructures(group.getSanitizedName(), group.getErrors());
+                writeLocalErrorStructures(group.getSanitizedName(), group.getErrors());
             }
         }
     }
 
     private void writeCollectionKeysArray(LinkedHashSet<String> keys, String varname) throws IOException {
-    	if (!keys.isEmpty()) {
-	    	LinkedList<String> values = new LinkedList<>();
-	        for (String key: new LinkedList<String>(keys)) {
-	        	values.add(Code.quoted(key));
-	        }
-	        
-	        write("static char const * const " + varname + "_keys[] = {\n");
-	        for (String line: Code.commas(values)) {
-	        	write(Code.indented(line));
-	        }
-	        write("}\n");
-			write("\n");
-    	}
+        if (!keys.isEmpty()) {
+            LinkedList<String> values = new LinkedList<>();
+            for (String key: new LinkedList<String>(keys)) {
+                values.add(Code.quoted(key));
+            }
+
+            write("static char const * const " + varname + "_keys[] = {\n");
+            for (String line: Code.commas(values)) {
+                write(Code.indented(line));
+            }
+            write("}\n");
+            write("\n");
+        }
     }
-    
+
     private void writeAllStructures() throws Exception {
         for (Group.Type type: Group.Type.values()) {
             Collection<Group> groups = config.getTable(type).groups();
@@ -482,37 +482,37 @@ public class GenFsmSourceFile extends GenSourceFile {
                 writeGroupStructures(groups);
 
                 for (Group group: groups) {
-                	if (group.isDictionary() && !group.getKeys().isEmpty()) {
-                		writeCollectionKeysArray(group.getKeys(), customPrefix + getDefineString(group.getSanitizedName()));
-                	}
+                    if (group.isDictionary() && !group.getKeys().isEmpty()) {
+                        writeCollectionKeysArray(group.getKeys(), customPrefix + getDefineString(group.getSanitizedName()));
+                    }
                 }
-                	
+
                 write(String.format("static connector_group_t CONST %sconnector_%s_groups[] = {", customPrefix, configType));
 
-                int remaining = groups.size(); 
+                int remaining = groups.size();
                 for (Group group: groups) {
                     String items_name = customPrefix + getDefineString(group.getSanitizedName() + "_items").toLowerCase();
                     String optional = options.useNames().contains(UseNames.COLLECTIONS)
-                        	? String.format("        \"%s\",\n", group.getSanitizedName())
-                        	: "";
-                        	
+                            ? String.format("        \"%s\",\n", group.getSanitizedName())
+                            : "";
+
                     String ctype = getCollectionType(group);
                     String capacity = getCapacityInitializer(group, customPrefix + getDefineString(group.getSanitizedName()));
-                    String group_string = 
-                    	"\n" +
-                    	"{\n" +
-            			"    {\n" +
-                    	optional +
-                    	"        " + ctype + ",\n" + 
-                    	"        " + capacity + ",\n" +
+                    String group_string =
+                        "\n" +
+                        "{\n" +
+                        "    {\n" +
+                        optional +
+                        "        " + ctype + ",\n" +
+                        "        " + capacity + ",\n" +
                         "        { " + group.getItems().size() + ", " + items_name + " }, \n" +
-                    	"    },\n";
-                    
+                        "    },\n";
+
                     if ((!options.excludeErrorDescription()) && (!group.getErrors().isEmpty())) {
                         String errors_name = customPrefix + getDefineString(group.getSanitizedName() + "_errors").toLowerCase();
 
                         group_string += "    { ARRAY_SIZE(" + errors_name + "), " + errors_name + " }, \n";
-                        
+
                     } else {
                         group_string += "    { 0, NULL }\n";
                     }
@@ -529,12 +529,12 @@ public class GenFsmSourceFile extends GenSourceFile {
             }
         }
 
-    	LinkedList<String> group_lines = new LinkedList<>();
+        LinkedList<String> group_lines = new LinkedList<>();
         for (Group.Type type : Group.Type.values()) {
             Collection<Group> groups = config.getTable(type).groups();
 
             if (groups.isEmpty()) {
-            	group_lines.add("    { NULL, 0 }");
+                group_lines.add("    { NULL, 0 }");
             } else {
                 String var_name = customPrefix + "connector_" + type.toLowerName() + "_groups";
 
@@ -544,11 +544,11 @@ public class GenFsmSourceFile extends GenSourceFile {
         }
 
         write(
-        		String.format("static connector_remote_group_table_t CONST %s[] =\n", CONNECTOR_REMOTE_GROUP_TABLE) +
-        		"{\n" +
-        		String.join(",\n", group_lines) + "\n" +
+                String.format("static connector_remote_group_table_t CONST %s[] =\n", CONNECTOR_REMOTE_GROUP_TABLE) +
+                "{\n" +
+                String.join(",\n", group_lines) + "\n" +
                 "};\n" +
-        		"\n");
+                "\n");
     }
 
     private void writeFunctionFile() throws Exception
