@@ -425,11 +425,6 @@ STATIC connector_status_t get_config_phone_number(connector_data_t * const conne
             {
                 result = connector_invalid_data;
             }
-            /* coverity[uninit_use] */
-            else if (phone_number.length == 0)
-            {
-                result = connector_invalid_data_size;
-            }
             else
             {
                 connector_ptr->phone_dialed_length = phone_number.length;
