@@ -60,7 +60,7 @@
 #define SM_TARGET_IN_PAYLOAD   0x0200
 #define SM_SMS_CONFIG_INIT     0x0400
 #define SM_DATA_POINT          0x8000
-                                
+
 #define SmIsBitSet(flag, bit) (connector_bool(((flag) & (bit)) == (bit)))
 #define SmIsBitClear(flag, bit) (connector_bool(((flag) & (bit)) == 0))
 #define SmBitSet(flag, bit) ((flag) |= (bit))

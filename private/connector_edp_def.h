@@ -159,7 +159,7 @@ typedef struct connector_facility {
 
 typedef struct connector_edp_data {
     unsigned long last_activity;
-    
+
     struct {
 #if !(defined CONNECTOR_VENDOR_ID)
         uint32_t vendor_id;

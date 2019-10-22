@@ -26,7 +26,7 @@ Digi International Inc., 9350 Excelsior Blvd., Suite 700, Hopkins, MN 55343
 #if (defined CONNECTOR_STREAMING_CLI_SERVICE)
 
 #ifndef CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH
-#define CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH	1024
+#define CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH 1024
 #else
 #if CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH < 30
 #error "CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH must be greater than 30"
@@ -34,54 +34,54 @@ Digi International Inc., 9350 Excelsior Blvd., Suite 700, Hopkins, MN 55343
 #endif
 
 typedef enum {
-	connector_request_id_streaming_cli_session_start,
-	connector_request_id_streaming_cli_poll,
-	connector_request_id_streaming_cli_send,
-	connector_request_id_streaming_cli_receive,
-	connector_request_id_streaming_cli_session_end
+    connector_request_id_streaming_cli_session_start,
+    connector_request_id_streaming_cli_poll,
+    connector_request_id_streaming_cli_send,
+    connector_request_id_streaming_cli_receive,
+    connector_request_id_streaming_cli_session_end
 } connector_request_id_streaming_cli_service_t;
 
 typedef struct {
-	enum {
-		connector_cli_terminal_vt100
-	} CONST terminal_mode;
-	void * handle;
-	char * CONST error_hint;
-	enum {
-		connector_cli_session_start_ok,
-		connector_cli_session_start_error
-	} session_start_status;
+    enum {
+        connector_cli_terminal_vt100
+    } CONST terminal_mode;
+    void * handle;
+    char * CONST error_hint;
+    enum {
+        connector_cli_session_start_ok,
+        connector_cli_session_start_error
+    } session_start_status;
 } connector_streaming_cli_session_start_request_t;
 
 typedef struct {
-	void * CONST handle;
-	char * CONST error_hint;
+    void * CONST handle;
+    char * CONST error_hint;
 } connector_streaming_cli_session_end_request_t;
 
 typedef struct {
-	void * CONST handle;
-	char * CONST error_hint;
-	enum {
-		connector_cli_session_state_idle,
-		connector_cli_session_state_readable,
-		connector_cli_session_state_done
-	} session_state;
+    void * CONST handle;
+    char * CONST error_hint;
+    enum {
+        connector_cli_session_state_idle,
+        connector_cli_session_state_readable,
+        connector_cli_session_state_done
+    } session_state;
 } connector_streaming_cli_poll_request_t;
 
 typedef struct {
-	void * CONST handle;
-	size_t CONST bytes_available;
-	size_t bytes_used;
-	uint8_t * CONST buffer;
-	connector_bool_t more_data;
+    void * CONST handle;
+    size_t CONST bytes_available;
+    size_t bytes_used;
+    uint8_t * CONST buffer;
+    connector_bool_t more_data;
 } connector_streaming_cli_session_send_data_t;
 
 typedef struct {
-	void * CONST handle;
-	size_t CONST bytes_available;
-	size_t bytes_used;
-	uint8_t CONST * CONST buffer;
-	connector_bool_t CONST more_data;
+    void * CONST handle;
+    size_t CONST bytes_available;
+    size_t bytes_used;
+    uint8_t CONST * CONST buffer;
+    connector_bool_t CONST more_data;
 } connector_streaming_cli_session_receive_data_t;
 
 #endif

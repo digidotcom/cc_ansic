@@ -1957,11 +1957,11 @@ STATIC connector_status_t file_system_callback(connector_data_t * const connecto
     ASSERT_GOTO(connector_ptr != NULL, done);
     ASSERT_GOTO(service_request != NULL, done);
 
-	if (service_request->service_type == msg_service_type_capabilities)
-	{
-		status = connector_idle;
-		goto done;
-	}
+    if (service_request->service_type == msg_service_type_capabilities)
+    {
+        status = connector_idle;
+        goto done;
+    }
 
     ASSERT_GOTO(service_request->session != NULL, done);
 

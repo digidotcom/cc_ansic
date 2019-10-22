@@ -27,7 +27,7 @@
     do \
     { \
         va_list args; \
- \
+        \
         va_start(args, (format)); \
         connector_debug_vprintf((type), (format), args); \
         va_end(args); \
@@ -67,10 +67,10 @@ STATIC void connector_debug_line_end(char const * const format, ...)
     CALL_DEBUG_VPRINTF(debug_end, format);
 }
 
-#define enum_to_case(name)  case name:  result = #name;             break
+#define enum_to_case(name)  case name: result = #name; break
 
 #if !(defined CONNECTOR_DEBUG_NEW_LINE_STR)
-#define CONNECTOR_DEBUG_NEW_LINE_STR	"\n"
+#define CONNECTOR_DEBUG_NEW_LINE_STR    "\n"
 #endif
 
 void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
@@ -118,6 +118,5 @@ static char const * transport_to_string(connector_transport_t const value)
     return result;
 }
 #else
-#define transport_to_string(value)       NULL
+#define transport_to_string(value)  NULL
 #endif
-

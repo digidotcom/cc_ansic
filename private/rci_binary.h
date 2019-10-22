@@ -47,35 +47,35 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
     rci->input.destination = rci_buffer_position(&rci->buffer.input);
     reset_input_content(rci);
-	rci->shared.attribute_count = 0;
-	rci->shared.attributes_processed = 0;
+    rci->shared.attribute_count = 0;
+    rci->shared.attributes_processed = 0;
 
     rci->output.content.data = NULL;
     rci->output.content.length = 0;
-	rci->output.skip_depth = INVALID_DEPTH;
+    rci->output.skip_depth = INVALID_DEPTH;
 
     invalidate_group_id(rci);
     invalidate_group_instance(rci);
-	rci->shared.group.info.keys.list = NULL;
-	rci->shared.group.info.keys.key_store[0] = '\0';
-	rci->shared.group.info.keys.count = INVALID_INDEX;
-	rci->shared.group.lock = INVALID_ID;
+    rci->shared.group.info.keys.list = NULL;
+    rci->shared.group.info.keys.key_store[0] = '\0';
+    rci->shared.group.info.keys.count = INVALID_INDEX;
+    rci->shared.group.lock = INVALID_ID;
 
 #if (defined RCI_PARSER_USES_LIST)
-	{
-		int i;
-		for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
-		{
-			rci->shared.list.level[i].id = INVALID_ID;
-			rci->shared.list.level[i].lock = INVALID_ID;
-			rci->shared.list.level[i].info.instance = INVALID_INDEX;
-			rci->shared.list.level[i].info.keys.list = NULL;
-			rci->shared.list.level[i].info.keys.key_store[0] = '\0';
-			rci->shared.list.level[i].info.keys.count = INVALID_INDEX;
-		}
-	}
-	set_list_depth(rci, 0);
-	set_query_depth(rci, 0);
+    {
+        int i;
+        for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
+        {
+            rci->shared.list.level[i].id = INVALID_ID;
+            rci->shared.list.level[i].lock = INVALID_ID;
+            rci->shared.list.level[i].info.instance = INVALID_INDEX;
+            rci->shared.list.level[i].info.keys.list = NULL;
+            rci->shared.list.level[i].info.keys.key_store[0] = '\0';
+            rci->shared.list.level[i].info.keys.count = INVALID_INDEX;
+        }
+    }
+    set_list_depth(rci, 0);
+    set_query_depth(rci, 0);
 #endif
 
     invalidate_element_id(rci);
@@ -290,4 +290,3 @@ done:
 
     return rci_internal_data->status;
 }
-

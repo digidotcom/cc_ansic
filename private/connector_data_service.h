@@ -916,11 +916,11 @@ STATIC connector_status_t data_service_callback(connector_data_t * const connect
 
     session = service_request->session;
 
-	if (service_request->service_type == msg_service_type_capabilities)
-	{
-		status = connector_idle;
-		goto done;
-	}
+    if (service_request->service_type == msg_service_type_capabilities)
+    {
+        status = connector_idle;
+        goto done;
+    }
 
     if (service_request->service_type == msg_service_type_pending_request || session == NULL)
     {

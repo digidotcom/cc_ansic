@@ -18,52 +18,52 @@
  */
 
 /* Example of adding a STATIC buffer (single structure) or static buffer array named my_data
- *  
- * In os_intf.h: 
+ *
+ * In os_intf.h:
  * 1. Add to connector_static_buffer_id_t:
  *      named_buffer_id(my_data)
  * - Single buffers share a msg_facility map, and their id's should go up from the bottom (28, 27, etc.)
  * - All arrays should be before single buffers
- *  
+ *
  * In this file:
  * 2. - If there is a type, add:
  *         typedef my_buffer_type_t named_buffer_type(my_data);
- *  
+ *
  *    - If you know size in bytes instead (for example 100 bytes), add:
  *         define_sized_buffer_type(my_data, 100);
- *  
+ *
  * For a single static buffer:
- * 3. Add to connector_static_mem: 
+ * 3. Add to connector_static_mem:
  *      named_buffer_define(my_data);
- *  
- * 4. Add to malloc_static_data(): 
+ *
+ * 4. Add to malloc_static_data():
  *      case named_buffer_id(my_data):
  *         malloc_named_static_buffer(my_data, size, ptr, status);
  *         break;
- *  
- * 5. Add to free_static_data(): 
+ *
+ * 5. Add to free_static_data():
  *      case named_buffer_id(my_data):
  *           free_named_static_buffer(my_data);
  *           break;
- *  
- * For an array of 20 elements (must be <= 32): 
- * 3. Add: 
+ *
+ * For an array of 20 elements (must be <= 32):
+ * 3. Add:
  *      #define my_data_buffer_cnt 20
- *  
- * 4. Add to connector_static_mem: 
+ *
+ * 4. Add to connector_static_mem:
  *      named_buffer_array_define(my_data);
  *      named_buffer_map_define(my_data);
  *
- * 5. Add to malloc_static_data(): 
+ * 5. Add to malloc_static_data():
  *      case named_buffer_id(my_data):
  *         malloc_named_array_element(my_data, size, ptr, status);
  *         break;
- * 
- * 6. Add to free_static_data(): 
+ *
+ * 6. Add to free_static_data():
  *      case named_buffer_id(my_data):
  *           free_named_array_element(my_data, ptr);
  *           break;
- * 
+ *
  */
 
 
@@ -259,7 +259,7 @@ typedef struct
 #define sm_packet_buffer_cnt        sm_session_buffer_cnt
 #define sm_data_block_buffer_cnt    sm_session_buffer_cnt
 
-#if defined CONNECTOR_TRANSPORT_UDP 
+#if defined CONNECTOR_TRANSPORT_UDP
 #define SM_MAX_MTU  SM_PACKET_SIZE_UDP
 #else
 #define SM_MAX_MTU  SM_PACKET_SIZE_SMS_ENCODED
@@ -313,8 +313,8 @@ static struct
 #endif
 
 #if defined CONNECTOR_STREAMING_CLI_SERVICE
-	named_buffer_array_define(streaming_cli_session);
-	named_buffer_map_define(streaming_cli_session);
+    named_buffer_array_define(streaming_cli_session);
+    named_buffer_map_define(streaming_cli_session);
 #endif
 #endif
 
@@ -449,9 +449,9 @@ STATIC connector_status_t malloc_static_data(connector_data_t * const connector_
 #endif
 #endif
 #if defined CONNECTOR_STREAMING_CLI_SERVICE
-	case named_buffer_id(streaming_cli_session):
-		malloc_named_array_element(streaming_cli_session, size, ptr, status);
-		break;
+    case named_buffer_id(streaming_cli_session):
+        malloc_named_array_element(streaming_cli_session, size, ptr, status);
+        break;
 #endif
 #endif
 #endif
@@ -529,9 +529,9 @@ void free_static_data(connector_data_t * const connector_ptr, connector_static_b
 #endif
 
 #if defined CONNECTOR_STREAMING_CLI_SERVICE
-	case named_buffer_id(streaming_cli_session):
-		free_named_array_element(streaming_cli_session, ptr);
-		break;
+    case named_buffer_id(streaming_cli_session):
+        free_named_array_element(streaming_cli_session, ptr);
+        break;
 #endif
 
     case named_buffer_id(msg_session):

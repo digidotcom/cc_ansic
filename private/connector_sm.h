@@ -629,7 +629,7 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         goto error;
                     }
                     request_id = get_request_id_ptr(request, request_data);
-                    /* dp_initiate_data_point() and dp_initiate_data_point_binary() convert a connector_initiate_data_point or  
+                    /* dp_initiate_data_point() and dp_initiate_data_point_binary() convert a connector_initiate_data_point or
                      * connector_initiate_data_point_binary to a connector_initiate_send_data,
                      * but we want that that "hidden" connector_initiate_send_data
                      * use the same request_id, which has been already set by dp_send_message().

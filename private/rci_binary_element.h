@@ -26,12 +26,12 @@
 static connector_item_t const * get_current_element(rci_t const * const rci)
 {
     ASSERT(have_element_id(rci));
-	{
+    {
         unsigned int const id = get_element_id(rci);
-		connector_collection_t const * const info = get_current_collection_info(rci);
+        connector_collection_t const * const info = get_current_collection_info(rci);
 
-		ASSERT(id < info->item.count);
+        ASSERT(id < info->item.count);
 
-		return info->item.data + id;
-	}
+        return info->item.data + id;
+    }
 }

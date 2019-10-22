@@ -157,38 +157,38 @@ typedef enum {
 #define add_circular_node(head, node) \
     do { \
         ASSERT((node) != NULL); \
-		if (*(head) == NULL) \
-		{ \
-			(node)->next = (node); \
-			(node)->prev = (node); \
-			*(head) = (node); \
-		} \
-		else \
-		{ \
-			(node)->next = *(head); \
-			(node)->prev = (*(head))->prev; \
-			(*(head))->prev->next = (node); \
-			(*(head))->prev = (node); \
-		} \
+        if (*(head) == NULL) \
+        { \
+            (node)->next = (node); \
+            (node)->prev = (node); \
+            *(head) = (node); \
+        } \
+        else \
+        { \
+            (node)->next = *(head); \
+            (node)->prev = (*(head))->prev; \
+            (*(head))->prev->next = (node); \
+            (*(head))->prev = (node); \
+        } \
     } while (0)
 
 #define remove_circular_node(head, node) \
     do { \
         ASSERT((node) != NULL); \
-		if (*(head) == (node)) \
-		{ \
-			if ((node)->next == (node)) \
-			{ \
-				*(head) = NULL; \
-				break; \
-			} \
-			else \
-			{ \
-				*(head) = (node)->next; \
-			} \
-		} \
-		(node)->next->prev = (node)->prev; \
-		(node)->prev->next = (node)->next; \
+        if (*(head) == (node)) \
+        { \
+            if ((node)->next == (node)) \
+            { \
+                *(head) = NULL; \
+                break; \
+            } \
+            else \
+            { \
+                *(head) = (node)->next; \
+            } \
+        } \
+        (node)->next->prev = (node)->prev; \
+        (node)->prev->next = (node)->next; \
     } while (0)
 
 struct connector_data;
