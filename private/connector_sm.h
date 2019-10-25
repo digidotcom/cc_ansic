@@ -645,17 +645,23 @@ STATIC connector_status_t sm_initiate_action(connector_handle_t const handle, co
                         else
                         {
                             /* Update request_id */
-                            result = sm_get_request_id(connector_ptr, sm_ptr);
-                            ASSERT_GOTO(result == connector_working, error);
-                            sm_ptr->pending.request_id = connector_ptr->last_request_id;
+                            result = sm_get_request_id(connector_ptr, sm_ptr, &sm_ptr->pending.request_id);
+                            if (result != connector_working)
+                            {
+                                connector_debug_line("Unable to get next request id");
+                                goto error;
+                            }
                         }
                     }
                     else
                     {
                         /* Update request_id */
-                        result = sm_get_request_id(connector_ptr, sm_ptr);
-                        ASSERT_GOTO(result == connector_working, error);
-                        sm_ptr->pending.request_id = connector_ptr->last_request_id;
+                        result = sm_get_request_id(connector_ptr, sm_ptr, &sm_ptr->pending.request_id);
+                        if (result != connector_working)
+                        {
+                            connector_debug_line("Unable to get next request id");
+                            goto error;
+                        }
                         if (request_id != NULL)
                             *request_id = sm_ptr->pending.request_id;
                     }

@@ -94,7 +94,13 @@ typedef enum
     connector_request_id_sm_opaque_response,/**< Cloud Connector will use this to provide Device Cloud response for which
                                                 there is no associated request */
     connector_request_id_sm_config_request, /**< used when Cloud Connector receives config request from Device Cloud. Used only if the transport method is SMS */
-    connector_request_id_sm_request_connect /**< used when Cloud Connector receives a request to start TCP transport, user can allow or not this action. */
+    connector_request_id_sm_request_connect, /**< used when Cloud Connector receives a request to start TCP transport, user can allow or not this action. */
+#if (defined CONNECTOR_SM_ENCRYPTION)
+    connector_request_id_sm_encryption_load_data,
+    connector_request_id_sm_encryption_store_data,
+    connector_request_id_sm_encrypt_gcm,
+    connector_request_id_sm_decrypt_gcm,
+#endif
 } connector_request_id_sm_t;
 /**
 * @}
@@ -345,6 +351,156 @@ typedef struct
 /**
 * @}
 */
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+typedef enum connector_sm_transport_t
+{
+    connector_sm_transport_sms,
+    connector_sm_transport_satellite,
+    connector_sm_transport_udp,
+    connector_sm_transport_edp,
+} connector_sm_transport_t;
+
+
+typedef enum
+{
+    connector_sm_encryption_data_type_current_key,
+    connector_sm_encryption_data_type_previous_key,
+    connector_sm_encryption_data_type_id,
+    connector_sm_encryption_data_type_tracking,
+} connector_sm_encryption_data_type_t;
+
+/**
+* @defgroup connector_sm_encryption_load_data_t Load persistent encryption data.
+* @{
+*/
+/**
+* This data structure is used when the the callback is called with the connector_request_id_sm_encryption_load_data.
+* User must load the required data from persistent storage.
+*
+* Return:
+*   connector_callback_continue         success
+*   connector_callback_unrecognized     fatal error
+*   connector_callback_busy             invalid
+*   connector_callback_abort            fatal error
+*   connector_callback_error            failure (never stored, incorrect size, etc.)
+
+* @see connector_request_id_sm_encryption_store_data
+*/
+typedef struct
+{
+    connector_sm_transport_t CONST transport;           /**< transport associated with the data */
+    connector_sm_encryption_data_type_t CONST type;     /**< the type associated with the data */
+    uint8_t * CONST data;                               /**< where to write the data object */
+    size_t CONST bytes_required;                        /**< the size of the requested data object */
+} connector_sm_encryption_load_data_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_sm_encryption_store_data_t Store persistent encryption data.
+* @{
+*/
+/**
+* This data structure is used when the the callback is called with the connector_request_id_sm_encryption_store_data.
+* User must store the required data to persistent storage.
+*
+* Return:
+*   connector_callback_continue         success
+*   connector_callback_unrecognized     fatal error
+*   connector_callback_busy             invalid
+*   connector_callback_abort            fatal error
+*   connector_callback_error            failure (storage error, no more room, etc.)
+
+* @see connector_request_id_sm_encryption_load_data
+*/
+typedef struct
+{
+    connector_sm_transport_t CONST transport;           /**< transport associated with the data */
+    connector_sm_encryption_data_type_t CONST type;     /**< the type associated with the data */
+    uint8_t const * CONST data;                         /**< where to read the data object from */
+    size_t CONST bytes_used;                            /**< the size of the data object */
+} connector_sm_encryption_store_data_t;
+/**
+* @}
+*/
+
+typedef struct
+{
+    size_t CONST length;
+    uint8_t const * CONST data;
+} connector_sm_encryption_buffer_input_t;
+
+typedef struct
+{
+    size_t CONST length;
+    uint8_t * CONST data;
+} connector_sm_encryption_buffer_output_t;
+
+typedef struct
+{
+    size_t CONST length;
+    uint8_t const * CONST input;
+    uint8_t * CONST output;
+} connector_sm_encryption_message_t;
+
+/**
+* @defgroup connector_sm_encrypt_gcm_t Encrypt data using GCM
+* @{
+*/
+/**
+* This data structure is used when the the callback is called with the connector_request_id_sm_encrypt_gcm.
+*
+* Return:
+*   connector_callback_continue         success
+*   connector_callback_unrecognized     failure
+*   connector_callback_busy             invalid
+*   connector_callback_abort            fatal error
+*   connector_callback_error            connector restart
+
+* @see connector_request_id_sm_decrypt_gcm
+*/
+typedef struct
+{
+    connector_sm_encryption_buffer_input_t aad;
+    connector_sm_encryption_buffer_input_t iv;
+    connector_sm_encryption_buffer_input_t key;
+    connector_sm_encryption_buffer_output_t tag;
+    connector_sm_encryption_message_t message;
+} connector_sm_encrypt_gcm_t;
+/**
+* @}
+*/
+
+/**
+* @defgroup connector_sm_decrypt_gcm_t Decrypt data using GCM
+* @{
+*/
+/**
+* This data structure is used when the the callback is called with the connector_request_id_sm_decrypt_gcm.
+*
+* Return:
+*   connector_callback_continue         success
+*   connector_callback_unrecognized     failure
+*   connector_callback_busy             invalid
+*   connector_callback_abort            fatal error
+*   connector_callback_error            connector restart
+
+* @see connector_request_id_sm_encrypt_gcm
+*/
+typedef struct
+{
+    connector_sm_encryption_buffer_input_t aad;
+    connector_sm_encryption_buffer_input_t iv;
+    connector_sm_encryption_buffer_input_t key;
+    connector_sm_encryption_buffer_input_t tag;
+    connector_sm_encryption_message_t message;
+} connector_sm_decrypt_gcm_t;
+/**
+* @}
+*/
+#endif
 
 #endif
 

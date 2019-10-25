@@ -16,40 +16,6 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
-/* This function searches for the next valid request_id and leaves it in connector_ptr->last_request_id */
-STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
-{
-    connector_status_t result = connector_pending;
-    unsigned long const request_id = connector_ptr->last_request_id;
-
-    do
-    {
-        connector_sm_session_t * session = sm_ptr->session.head;
-
-        connector_ptr->last_request_id++;
-        connector_ptr->last_request_id &= SM_REQUEST_ID_MASK;
-
-        while (session != NULL)
-        {
-            /* already used? */
-            if (session->request_id == connector_ptr->last_request_id)
-                break;
-
-            session = session->next;
-        }
-
-        if (session == NULL)
-            break;
-
-    } while (request_id != connector_ptr->last_request_id);
-
-    ASSERT_GOTO(request_id != connector_ptr->last_request_id, error);
-    result = connector_working;
-
-error:
-    return result;
-}
-
 STATIC connector_sm_session_t * get_sm_session(connector_sm_data_t * const sm_ptr, uint32_t const transcation_id, connector_bool_t const client_originated)
 {
     connector_sm_session_t * session = sm_ptr->session.head;
@@ -291,5 +257,3 @@ STATIC connector_status_t sm_process_pending_data(connector_data_t * const conne
 done:
     return result;
 }
-
-

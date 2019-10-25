@@ -83,7 +83,7 @@ typedef enum {
 * @see @ref mac_address
 */
 typedef struct {
-    uint8_t * data;               /**< Application data pointer */
+    uint8_t const * data;               /**< Application data pointer */
     size_t CONST bytes_required;  /**< Number of bytes required and needed on the application data pointer */
 } connector_config_pointer_data_t;
 /**
@@ -128,7 +128,7 @@ typedef struct {
 *
 */
 typedef struct {
-    char * string;  /**< Application string pointer */
+    char const * string;  /**< Application string pointer */
     size_t length;  /**< Number of bytes in the application string pointer */
 } connector_config_pointer_string_t;
 /**
@@ -253,7 +253,7 @@ typedef enum {
 * @see @ref ip_address
 */
 typedef struct {
-    uint8_t * address;        /**< Device's IP address */
+    uint8_t const * address;        /**< Device's IP address */
     connector_config_ip_address_type_t ip_address_type; /**< IPv4 or IPv6 device IP address type */
 } connector_config_ip_address_t;
 /**

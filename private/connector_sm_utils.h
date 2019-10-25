@@ -232,3 +232,447 @@ error:
     return dest_count;
 }
 #endif
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+STATIC connector_sm_transport_t sm_transport(connector_transport_t const connector_transport)
+{
+    connector_sm_transport_t sm_transport;
+
+    switch (connector_transport)
+    {
+        case connector_transport_all:
+            sm_transport = connector_sm_transport_edp;
+            break;
+
+#if (defined CONNECTOR_TRANSPORT_TCP)
+        case connector_transport_tcp:
+            sm_transport = connector_sm_transport_edp;
+            break;
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
+        case connector_transport_udp:
+            sm_transport = connector_sm_transport_udp;
+            break;
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+        case connector_transport_sms:
+            sm_transport = connector_sm_transport_sms;
+            break;
+#endif
+        default:
+            ASSERT(connector_false);
+            break;
+    }
+
+    return sm_transport;
+}
+
+STATIC connector_bool_t sm_configuration_load(connector_data_t * const connector_ptr, connector_transport_t const transport, connector_sm_encryption_data_type_t const type, void * const data, size_t const bytes_required)
+{
+    connector_status_t status;
+    connector_sm_encryption_load_data_t load;
+
+    load.transport = sm_transport(transport);
+    load.type = type;
+    load.data = data;
+    load.bytes_required = bytes_required;
+
+    status = sm_configuration_service_run_cb(connector_ptr, connector_request_id_sm_encryption_load_data, &load);
+    return (status == connector_working);
+}
+
+STATIC connector_bool_t sm_configuration_store(connector_data_t * const connector_ptr, connector_transport_t const transport, connector_sm_encryption_data_type_t const type, void const * const data, size_t const bytes_used)
+{
+    connector_status_t status;
+    connector_sm_encryption_store_data_t store;
+
+    store.transport = sm_transport(transport);
+    store.type = type;
+    store.data = data;
+    store.bytes_used = bytes_used;
+
+    status = sm_configuration_service_run_cb(connector_ptr, connector_request_id_sm_encryption_store_data, &store);
+    return (status == connector_working);
+}
+
+STATIC void sm_generate_iv(connector_data_t * const connector_ptr,
+    uint8_t * const iv, size_t const length,
+    connector_transport_t const transport, uint8_t const type, uint8_t const pool, uint16_t const request_id
+    )
+{
+    memset(iv, 0, length);
+
+    iv[0] = sm_transport(transport);
+    iv[1] = (type | pool);
+    iv[2] = HIGH8(request_id);
+    iv[3] = LOW8(request_id);
+
+    /* XOR in the final bytes of the device ID */
+    {
+        size_t const offset = (sizeof connector_ptr->device_id - length);
+        uint8_t const * source = &connector_ptr->device_id[offset];
+
+        for (size_t i = 0; i < length; i++)
+        {
+            iv[i] ^= source[i];
+        }
+    }
+}
+
+STATIC void sm_generate_aad(
+    connector_data_t * const connector_ptr,
+    uint8_t * const aad, size_t const length,
+    uint8_t const info_byte, uint8_t const cs_byte
+    )
+{
+    uint8_t * current = aad;
+    size_t const device_id_space = length - 2;
+
+    ASSERT(device_id_space == sizeof connector_ptr->device_id);
+    memcpy(current, connector_ptr->device_id, device_id_space);
+    current += device_id_space;
+
+    *current = info_byte;
+    current++;
+    *current = cs_byte;
+}
+
+STATIC connector_bool_t sm_reset_request_id(connector_data_t * connector_ptr, connector_sm_data_t * const data, connector_transport_t const transport, char const * const name)
+{
+    data->request.id = 0;
+    if (!sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_id, &data->request.id, sizeof data->request.id))
+    {
+        connector_debug_line("unable to store reset key for %s", name);
+        return connector_false;
+    }
+
+    return connector_true;
+}
+
+STATIC connector_bool_t sm_encryption_set_key(connector_data_t * connector_ptr, uint8_t const * const key, size_t const length)
+{
+    connector_sm_encryption_data_t * const keyring = &connector_ptr->sm_encryption;
+
+    if (length != sizeof keyring->current.key)
+    {
+        return connector_false;
+    }
+
+    if (!sm_configuration_store(connector_ptr, connector_transport_all, connector_sm_encryption_data_type_current_key, key, length))
+    {
+        connector_debug_line("unable to store new key");
+        return connector_false;
+    }
+
+#if (defined CONNECTOR_TRANSPORT_UDP)
+    if (!sm_reset_request_id(connector_ptr, &connector_ptr->sm_udp, connector_transport_udp, "udp"))
+        return connector_false;
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_SMS)
+    if (!sm_reset_request_id(connector_ptr, &connector_ptr->sm_sms, connector_transport_sms, "sms"))
+        return connector_false;
+#endif
+
+    memcpy(keyring->previous.key, keyring->current.key, sizeof keyring->previous.key);
+    keyring->previous.valid = connector_true;
+    sm_configuration_store(connector_ptr, connector_transport_all, connector_sm_encryption_data_type_previous_key, keyring->previous.key, sizeof keyring->previous.key);
+
+    memcpy(keyring->current.key, key, length);
+    keyring->current.valid = connector_true;
+
+    return connector_true;
+}
+
+STATIC connector_bool_t sm_encryption_get_current_key(connector_data_t * connector_ptr, uint8_t const * * const key, size_t * const length)
+{
+    connector_sm_encryption_data_t * const keyring = &connector_ptr->sm_encryption;
+    connector_bool_t const have_key = keyring->current.valid;
+
+    if (have_key)
+    {
+        *key = keyring->current.key;
+        *length = sizeof keyring->current.key;
+    }
+
+    return have_key;
+}
+
+STATIC connector_bool_t sm_encryption_get_previous_key(connector_data_t * connector_ptr, uint8_t const * * const key, size_t * const length)
+{
+    connector_sm_encryption_data_t * const keyring = &connector_ptr->sm_encryption;
+    connector_bool_t const have_key = keyring->previous.valid;
+
+    if (have_key)
+    {
+        *key = keyring->previous.key;
+        *length = sizeof keyring->previous.key;
+    }
+
+    return have_key;
+}
+
+STATIC connector_bool_t sm_encrypt_block(
+    connector_data_t * connector_ptr,
+    connector_transport_t const transport,
+    uint16_t const request_id, uint8_t const info_byte, int8_t cs_byte,
+    uint8_t const * const plaintext, size_t const plaintext_length,
+    uint8_t * const ciphertext, size_t const ciphertext_length,
+    uint8_t * const tag, size_t const tag_length
+    )
+{
+    uint8_t const type = SmIsResponse(info_byte) ? SM_IV_TYPE_RESPONSE : SM_IV_TYPE_REQUEST;
+    uint8_t iv[SM_IV_LENGTH];
+    uint8_t aad[SM_AAD_LENGTH];
+    connector_sm_encrypt_gcm_t encrypt;
+
+    if (plaintext_length != ciphertext_length)
+    {
+        connector_debug_line("sm_encrypt_block: buffer mismatch plain=%u, cipher=%u", plaintext_length, ciphertext_length);
+        return connector_false;
+    }
+
+    encrypt.message.length = plaintext_length;
+    encrypt.message.input = plaintext;
+    encrypt.message.output = ciphertext;
+
+    encrypt.tag.length = tag_length;
+    encrypt.tag.data = tag;
+
+    encrypt.aad.length = sizeof aad;
+    encrypt.aad.data = aad;
+    sm_generate_aad(connector_ptr, aad, sizeof aad, info_byte, cs_byte);
+
+    encrypt.iv.length = sizeof iv;
+    encrypt.iv.data = iv;
+    sm_generate_iv(connector_ptr, iv, sizeof iv, transport, type, SM_IV_POOL_DEVICE, request_id);
+
+    if (!sm_encryption_get_current_key(connector_ptr, &encrypt.key.data, &encrypt.key.length))
+    {
+        connector_debug_line("sm_encrypt_block: invalid key");
+        return connector_false;
+    }
+
+    {
+        connector_status_t status = sm_configuration_service_run_cb(connector_ptr, connector_request_id_sm_encrypt_gcm, &encrypt);
+
+        if (status != connector_working)
+        {
+            connector_debug_line("sm_encrypt_block: callback failed status=%u", status);
+            return connector_false;
+        }
+    }
+
+    return connector_true;
+}
+
+static uint8_t * get_tracking(connector_data_t * const connector_ptr, connector_transport_t const transport)
+{
+    uint8_t * tracking;
+
+    switch (transport)
+    {
+#if (defined CONNECTOR_TRANSPORT_UDP)
+        case connector_transport_udp:
+            tracking = connector_ptr->sm_udp.request.tracking;
+            break;
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+        case connector_transport_sms:
+            tracking = connector_ptr->sm_sms.request.tracking;
+            break;
+#endif
+        default:
+            tracking = NULL;
+            break;
+    }
+
+    return tracking;
+}
+
+STATIC connector_bool_t sm_have_seen_request(uint8_t const * const tracking, uint16_t const request_id)
+{
+    size_t const byte = (request_id / CHAR_BIT);
+    size_t const bit = (request_id - (byte * CHAR_BIT));
+
+    ASSERT(byte < SM_TRACKING_BYTES);
+    ASSERT(bit < CHAR_BIT);
+
+    return SmIsBitSet(tracking[byte], 1 << bit);
+}
+
+STATIC void sm_mark_request_seen(uint8_t * const tracking, uint16_t const request_id)
+{
+    size_t const byte = (request_id / CHAR_BIT);
+    size_t const bit = (request_id - (byte * CHAR_BIT));
+
+    ASSERT(byte < SM_TRACKING_BYTES);
+    ASSERT(bit < CHAR_BIT);
+
+    SmBitSet(tracking[byte], 1 << bit);
+}
+
+STATIC void sm_clear_all_seen(uint8_t * const tracking)
+{
+    memset(tracking, 0, SM_TRACKING_BYTES);
+}
+
+
+STATIC connector_bool_t sm_decrypt_block(
+    connector_data_t * connector_ptr,
+    connector_transport_t const transport,
+    uint16_t const request_id, uint8_t const info_byte, int8_t cs_byte,
+    uint8_t const * const ciphertext, size_t const ciphertext_length,
+    uint8_t const * const tag, size_t const tag_length,
+    uint8_t * const plaintext, size_t const plaintext_length
+    )
+{
+    uint8_t const type = SmIsResponse(info_byte) ? SM_IV_TYPE_RESPONSE : SM_IV_TYPE_REQUEST;
+    uint8_t * const tracking = get_tracking(connector_ptr, transport);
+    uint8_t iv[SM_IV_LENGTH];
+    uint8_t aad[SM_AAD_LENGTH];
+    connector_sm_decrypt_gcm_t decrypt;
+    connector_status_t status;
+
+    if (tracking == NULL)
+    {
+        connector_debug_line("sm_decrypt_block: no tracking hisotry for sm_transport %u", transport);
+        return connector_false;
+    }
+
+    if (sm_have_seen_request(tracking, request_id))
+    {
+        connector_debug_line("sm_decrypt_block:duplicate request %u", request_id);
+        return connector_false;
+    }
+
+    if (plaintext_length != ciphertext_length)
+    {
+        connector_debug_line("sm_decrypt_block: buffer mismatch plain=%u, cipher=%u", plaintext_length, ciphertext_length);
+        return connector_false;
+    }
+
+    decrypt.message.length = ciphertext_length;
+    decrypt.message.input = ciphertext;
+    decrypt.message.output = plaintext;
+
+    decrypt.tag.length = tag_length;
+    decrypt.tag.data = (uint8_t *) tag;
+
+    decrypt.aad.length = sizeof aad;
+    decrypt.aad.data = aad;
+    sm_generate_aad(connector_ptr, aad, sizeof aad, info_byte, cs_byte);
+
+    decrypt.iv.length = sizeof iv;
+    decrypt.iv.data = iv;
+    sm_generate_iv(connector_ptr, iv, sizeof iv, transport, type, SM_IV_POOL_SERVER, request_id);
+
+    if (!sm_encryption_get_current_key(connector_ptr, &decrypt.key.data, &decrypt.key.length))
+    {
+        connector_debug_line("sm_decrypt_block: invalid key");
+        return connector_false;
+    }
+
+    status = sm_configuration_service_run_cb(connector_ptr, connector_request_id_sm_decrypt_gcm, &decrypt);
+    if (status == connector_working)
+    {
+        connector_sm_encryption_data_t * const keyring = &connector_ptr->sm_encryption;
+
+        /* new key works -- stop using (and tracking) the old one */
+        if (keyring->previous.valid)
+        {
+            keyring->previous.valid = connector_false;
+            sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_previous_key, "", 0);
+            sm_clear_all_seen(tracking);
+        }
+    }
+    else
+    {
+        connector_debug_line("sm_decrypt_block: callback failed current key status=%u", status);
+
+        /* try the old key -- could be an old message in-flight */
+        if (sm_encryption_get_previous_key(connector_ptr, &decrypt.key.data, &decrypt.key.length))
+        {
+            status = sm_configuration_service_run_cb(connector_ptr, connector_request_id_sm_decrypt_gcm, &decrypt);
+            if (status != connector_working)
+            {
+                connector_debug_line("sm_decrypt_block: callback failed previous key status=%u", status);
+                return connector_false;
+            }
+        }
+    }
+
+    sm_mark_request_seen(tracking, request_id);
+    if (!sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_tracking, tracking, SM_TRACKING_BYTES))
+    {
+        connector_debug_line("sm_decrypt_block: tracking write failed");
+        return connector_false;
+    }
+
+    return connector_true;
+}
+
+STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint16_t * const new_request_id)
+{
+    connector_status_t result = connector_pending;
+    uint16_t const request_id = sm_ptr->request.id;
+
+    if (sm_ptr->request.id == SM_REQUEST_ID_LAST)
+        goto error; /* need a new key */
+
+    sm_ptr->request.id++;
+    if (!sm_configuration_store(connector_ptr, sm_ptr->network.transport, connector_sm_encryption_data_type_id, &sm_ptr->request.id, sizeof sm_ptr->request.id))
+    {
+        /* we can no longer trust our request ids */
+        sm_ptr->request.id = SM_REQUEST_ID_LAST;
+        goto error;
+    }
+
+    *new_request_id = request_id;
+    result = connector_working;
+
+error:
+    return result;
+}
+
+#define sm_encryption_tag_bytes()   SM_TAG_LENGTH
+#else
+/* This function searches for the next valid request_id and leaves it in sm_ptr->request.id */
+STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint16_t * const new_request_id)
+{
+    connector_status_t result = connector_pending;
+    uint16_t const request_id = sm_ptr->request.id;
+
+    UNUSED_PARAMETER(connector_ptr);
+
+    do
+    {
+        connector_sm_session_t * session = sm_ptr->session.head;
+
+        sm_ptr->request.id++;
+        sm_ptr->request.id &= SM_REQUEST_ID_MASK;
+
+        while (session != NULL)
+        {
+            /* already used? */
+            if (session->request_id == sm_ptr->request.id)
+                break;
+
+            session = session->next;
+        }
+
+        if (session == NULL)
+            break;
+
+    } while (request_id != sm_ptr->request.id);
+
+    ASSERT_GOTO(request_id != sm_ptr->request.id, error);
+    *new_request_id = sm_ptr->request.id;
+    result = connector_working;
+
+error:
+    return result;
+}
+
+#define sm_encryption_tag_bytes()   0
+#endif

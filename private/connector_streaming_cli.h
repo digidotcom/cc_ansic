@@ -167,7 +167,7 @@ STATIC connector_status_t streaming_cli_service_run_cb(connector_data_t * const 
     connector_request_id_t request_id;
     request_id.streaming_cli_service_request = request;
 
-     callback_status = connector_callback(connector_ptr->callback, connector_class_id_streaming_cli, request_id, arg, connector_ptr->context);
+    callback_status = connector_callback(connector_ptr->callback, connector_class_id_streaming_cli, request_id, arg, connector_ptr->context);
     switch (callback_status)
     {
         case connector_callback_continue:
@@ -922,7 +922,6 @@ STATIC connector_status_t streaming_cli_service_callback(connector_data_t * cons
             service_data->length_in_bytes = record_bytes(streaming_cli_service_capabilities);
 
             status = connector_working;
-
             break;
         }
 

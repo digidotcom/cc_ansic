@@ -1,23 +1,23 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- *
- * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
- * =======================================================================
- */
+Copyright 2019, Digi International Inc.
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, you can obtain one at http://mozilla.org/MPL/2.0/.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+
 #ifndef CONNECTOR_SM_DEF_H
 #define CONNECTOR_SM_DEF_H
+
+#include <limits.h>
 
 #if (defined CONNECTOR_COMPRESSION)
 #include "zlib.h"
@@ -43,8 +43,6 @@
 
 #define SM_PACKET_SIZE_SMS 128
 #define SM_PACKET_SIZE_SMS_ENCODED ((SM_PACKET_SIZE_SMS/4) * 5)
-#define SM_REQUEST_ID_MASK 0x3FF  /* 10 bits */
-#define SM_DEFAULT_REQUEST_ID 0x01
 
 /* NOTE: Some of these bits are tied to protocol, so please don't change them
          without referring to SM protocol */
@@ -53,12 +51,14 @@
 #define SM_MULTI_PART          0x0004
 #define SM_RESPONSE_NEEDED     0x0008
 #define SM_RESPONSE_DATA       0x0010
-#define SM_CLIENT_OWNED        0x0020
-#define SM_ENCODED             0x0040
+#define SM_NEW_KEY             0x0020
+#define SM_ENCRYPTED           0x0040
 #define SM_COMPRESSED          0x0080
 #define SM_REBOOT              0x0100
 #define SM_TARGET_IN_PAYLOAD   0x0200
 #define SM_SMS_CONFIG_INIT     0x0400
+#define SM_CLIENT_OWNED        0x2000
+#define SM_ENCODED             0x4000
 #define SM_DATA_POINT          0x8000
 
 #define SmIsBitSet(flag, bit) (connector_bool(((flag) & (bit)) == (bit)))
@@ -71,6 +71,8 @@
 #define SmIsResponseNeeded(flag) SmIsBitSet((flag), SM_RESPONSE_NEEDED)
 #define SmIsLastData(flag) SmIsBitSet((flag), SM_LAST_DATA)
 #define SmIsMultiPart(flag) SmIsBitSet((flag), SM_MULTI_PART)
+#define SmHasNewKey(flag) SmIsBitSet((flag), SM_NEW_KEY)
+#define SmIsEncrypted(flag) SmIsBitSet((flag), SM_ENCRYPTED)
 #define SmIsCompressed(flag) SmIsBitSet((flag), SM_COMPRESSED)
 #define SmIsClientOwned(flag) SmIsBitSet((flag), SM_CLIENT_OWNED)
 #define SmIsEncoded(flag) SmIsBitSet((flag), SM_ENCODED)
@@ -83,6 +85,7 @@
 #define SmIsNotLastData(flag) SmIsBitClear((flag), SM_LAST_DATA)
 #define SmIsNotMultiPart(flag) SmIsBitClear((flag), SM_MULTI_PART)
 #define SmIsCloudOwned(flag) SmIsBitClear((flag), SM_CLIENT_OWNED)
+#define SmNotEncrypted(flag) SmIsBitClear((flag), SM_ENCRYPTED)
 #define SmNotCompressed(flag) SmIsBitClear((flag), SM_COMPRESSED)
 #define SmIsNoResponseNeeded(flag) SmIsBitClear((flag), SM_RESPONSE_NEEDED)
 #define SmIsSmsConfigNotInit(flag) SmIsBitClear((flag), SM_SMS_CONFIG_INIT)
@@ -92,6 +95,7 @@
 #define SmSetResponseNeeded(flag) SmBitSet((flag), SM_RESPONSE_NEEDED)
 #define SmSetLastData(flag) SmBitSet((flag), SM_LAST_DATA)
 #define SmSetMultiPart(flag) SmBitSet((flag), SM_MULTI_PART)
+#define SmSetEncrypted(flag) SmBitSet((flag), SM_ENCRYPTED)
 #define SmSetCompressed(flag) SmBitSet((flag), SM_COMPRESSED)
 #define SmSetClientOwned(flag) SmBitSet((flag), SM_CLIENT_OWNED)
 #define SmSetEncoded(flag) SmBitSet((flag), SM_ENCODED)
@@ -105,12 +109,44 @@
 #define SmClearResponseNeeded(flag) SmBitClear((flag), SM_RESPONSE_NEEDED)
 #define SmClearLastData(flag) SmBitClear((flag), SM_LAST_DATA)
 #define SmClearMultiPart(flag) SmBitClear((flag), SM_MULTI_PART)
+#define SmClearEncrypted(flag) SmBitClear((flag), SM_ENCRYPTED)
 #define SmClearCompressed(flag) SmBitClear((flag), SM_COMPRESSED)
 #define SmClearTargetInPayload(flag) SmBitClear((flag), SM_TARGET_IN_PAYLOAD)
 #define SmClearSmsConfigInit(flag) SmBitClear((flag), SM_SMS_CONFIG_INIT)
 
 #define SMS_SERVICEID_WRAPPER_TX_SIZE     1  /* 'service-id '   */
 #define SMS_SERVICEID_WRAPPER_RX_SIZE     3  /* '(service-id):' */
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+#define SM_IV_LENGTH    12
+#define SM_KEY_LENGTH   16
+#define SM_TAG_LENGTH   16
+#define SM_AAD_LENGTH   18
+
+#define SM_REQUEST_ID_FIRST 0
+#define SM_REQUEST_ID_LAST  1023
+#define SM_REQUEST_ID_COUNT (SM_REQUEST_ID_LAST - SM_REQUEST_ID_FIRST + 1)
+#define SM_TRACKING_BYTES   ((SM_REQUEST_ID_COUNT + CHAR_BIT - 1) / CHAR_BIT)
+
+#define SM_IV_TYPE_REQUEST      0x00
+#define SM_IV_TYPE_RESPONSE     0x01
+#define SM_IV_POOL_DEVICE       0x00
+#define SM_IV_POOL_SERVER       0x02
+
+typedef struct connector_sm_encryption_key_t
+{
+    connector_bool_t valid;
+    uint8_t key[SM_KEY_LENGTH];
+} connector_sm_encryption_key_t;
+
+typedef struct connector_sm_encryption_data_t
+{
+    connector_sm_encryption_key_t current;
+    connector_sm_encryption_key_t previous;
+} connector_sm_encryption_data_t;
+#else
+#define SM_REQUEST_ID_MASK 0x3FF  /* 10 bits */
+#endif
 
 typedef enum
 {
@@ -256,7 +292,7 @@ typedef struct connector_sm_data_t
     {
         void const * data;
         connector_initiate_request_t request;
-        uint32_t request_id;
+        uint16_t request_id;
         connector_bool_t pending_internal;
     } pending;
 
@@ -270,6 +306,14 @@ typedef struct connector_sm_data_t
         size_t active_cloud_sessions;
         size_t max_segments;
     } session;
+
+    struct
+    {
+        uint16_t id;
+#if (defined CONNECTOR_SM_ENCRYPTION)
+         uint8_t tracking[SM_TRACKING_BYTES];
+#endif
+    } request;
 
 } connector_sm_data_t;
 

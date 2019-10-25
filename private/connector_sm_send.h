@@ -334,6 +334,47 @@ error:
     return result;
 }
 
+#if (defined CONNECTOR_SM_ENCRYPTION)
+STATIC connector_status_t copy_send_buffer(
+    connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
+    uint16_t request_id, uint8_t const info, uint8_t const cmd_status,
+    uint8_t * const dst, uint8_t const * const src, size_t const bytes
+    )
+{
+    connector_transport_t transport = sm_ptr->network.transport;
+    uint8_t const info_byte = (info & 0xf8); /* no multipart bit or high 2-bits of request id */
+    uint8_t const cs_byte = cmd_status;
+    size_t length = bytes - SM_TAG_LENGTH;
+    uint8_t const * const plaintext = src;
+    uint8_t * const tag = dst + length;
+    uint8_t * const ciphertext = dst;
+
+    if (!sm_encrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, plaintext, length, tag, SM_TAG_LENGTH, ciphertext, length))
+    {
+        return connector_invalid_response;
+    }
+
+    return connector_working;
+}
+#else
+STATIC connector_status_t copy_send_buffer(
+    connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
+    uint16_t request_id, uint8_t const info, uint8_t const cmd_status,
+    uint8_t * const dst, uint8_t const * const src, size_t const bytes
+    )
+{
+    UNUSED_PARAMETER(connector_ptr);
+    UNUSED_PARAMETER(sm_ptr);
+    UNUSED_PARAMETER(request_id);
+    UNUSED_PARAMETER(info);
+    UNUSED_PARAMETER(cmd_status);
+
+    memcpy(dst, src, bytes);
+
+    return connector_working;
+}
+#endif
+
 #if (defined CONNECTOR_TRANSPORT_SMS)
 STATIC connector_status_t sm_encode_segment(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
@@ -363,6 +404,8 @@ STATIC connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
     connector_sm_packet_t * const send_ptr = &sm_ptr->network.send_packet;
     uint8_t * data_ptr = send_ptr->data;
     uint8_t * sm_header;
+    uint8_t info_field = 0;
+    uint8_t cmd_field = 0;
 
     if (send_ptr->total_bytes > 0)
     {
@@ -410,9 +453,10 @@ STATIC connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
     {
         uint8_t const sm_version_num = 0x01 << 5;
-        uint8_t const request_id_hi = (session->request_id & SM_REQUEST_ID_MASK) >> 8;
+        uint8_t const request_id_hi = session->request_id >> 8;
         uint8_t const request_id_low = session->request_id & 0xFF;
-        uint8_t info_field = sm_version_num | request_id_hi;
+
+        info_field = sm_version_num | request_id_hi;
 
         if (SmIsResponse(session->flags))
             SmSetResponse(info_field);
@@ -421,14 +465,26 @@ STATIC connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
         if (session->segments.processed == 0)
         {
-            uint8_t cmd_field = SmIsRequest(session->flags) ? session->command : 0;
+            cmd_field = SmIsRequest(session->flags) ? session->command : 0;
 
             if (SmIsError(session->flags))
                 SmSetError(cmd_field);
             if (SmIsCompressed(session->flags))
                 SmSetCompressed(cmd_field);
+            if (SmIsEncrypted(session->flags))
+#if (defined CONNECTOR_SM_ENCRYPTION)
+            {
+                SmSetEncrypted(cmd_field);
+            }
+            else
+#else
+            {
+                result = connector_invalid_response;
+                goto done;
+            }
+#endif
 
-            #if (defined CONNECTOR_SM_MULTIPART)
+#if (defined CONNECTOR_SM_MULTIPART)
             if (SmIsMultiPart(session->flags))
             {
                 uint8_t * const segment0 = sm_header;
@@ -477,21 +533,41 @@ STATIC connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
         if (SmIsError(session->flags))
         {
             uint16_t const error_code = (uint16_t)session->error;
+            size_t const error_code_length = sizeof error_code;
             char * const error_text = (session->error == connector_sm_error_in_request) ? "Request error" : "Unexpected request";
             size_t const error_text_length = strlen(error_text) + 1;
-            size_t const error_code_length = sizeof error_code;
+            size_t const buffer_used = error_code_length + error_text_length;
+            sm_data_block_t temp = { .bytes = buffer_used };
 
-            StoreBE16(data_ptr, error_code);
-            memcpy(data_ptr + error_code_length, error_text, error_text_length);
-            payload_bytes = error_code_length + error_text_length;
+            result = sm_allocate_user_buffer(connector_ptr, &temp);
+            ASSERT_GOTO(result == connector_working, done);
+
+            StoreBE16(temp.data, error_code);
+            memcpy(temp.data + error_code_length, error_text, error_text_length);
+
+            result = copy_send_buffer(connector_ptr, sm_ptr, session->request_id, info_field, cmd_field, data_ptr, temp.data, buffer_used);
+            if (result != connector_working)
+            {
+                goto done;
+            }
+            payload_bytes = buffer_used + sm_encryption_tag_bytes();
+
+            free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), &temp);
         }
         else
         {
-            payload_bytes = (session->in.bytes < bytes_available) ? session->in.bytes : bytes_available;
+            payload_bytes = ((session->in.bytes < bytes_available) ? session->in.bytes : bytes_available) - sm_encryption_tag_bytes();
 
             if (payload_bytes > 0)
             {
-                memcpy(data_ptr, &session->in.data[session->bytes_processed], payload_bytes);
+                result = copy_send_buffer(connector_ptr, sm_ptr, session->request_id, info_field, cmd_field, data_ptr, &session->in.data[session->bytes_processed], payload_bytes);
+                if (result != connector_working)
+                {
+                    goto done;
+                }
+
+                payload_bytes += sm_encryption_tag_bytes();
+
                 session->bytes_processed += payload_bytes;
                 session->in.bytes -= payload_bytes;
             }
@@ -597,4 +673,3 @@ STATIC connector_status_t sm_process_send_path(connector_data_t * const connecto
 error:
     return result;
 }
-

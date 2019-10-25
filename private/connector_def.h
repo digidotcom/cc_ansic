@@ -1,21 +1,18 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- *
- * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
- * =======================================================================
- */
+Copyright 2019, Digi International Inc.
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, you can obtain one at http://mozilla.org/MPL/2.0/.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
 #ifndef CONNECTOR_DEF_H_
 #define CONNECTOR_DEF_H_
@@ -204,8 +201,8 @@ struct connector_data;
 typedef struct connector_data {
 
     uint8_t device_id[DEVICE_ID_LENGTH];
-    uint8_t * mac_addr;
-    uint8_t * wan_id;
+    uint8_t const * mac_addr;
+    uint8_t const * wan_id;
     size_t wan_id_length;
 
     char const * device_cloud_url;
@@ -238,6 +235,10 @@ typedef struct connector_data {
 
 #if (defined CONNECTOR_TRANSPORT_UDP || defined CONNECTOR_TRANSPORT_SMS)
     uint32_t last_request_id;
+#endif
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+    connector_sm_encryption_data_t sm_encryption;
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_UDP)

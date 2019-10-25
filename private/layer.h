@@ -1,22 +1,18 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- *
- * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
- * =======================================================================
- */
+Copyright 2019, Digi International Inc.
 
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, you can obtain one at http://mozilla.org/MPL/2.0/.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
 
 #define MANDATORY_FACILITY          (connector_request_id_config_t)-1
 
@@ -47,7 +43,7 @@ typedef struct {
  * The delete_cb is called to delete the facility from the facility list when user terminates the connector.
  */
 static connector_facility_service_t const connector_supported_service_table[] = {
-        /* mandatory facilities */
+        /* Required facilities */
         {{MANDATORY_FACILITY}, connector_facility_cc_init, connector_facility_cc_delete, connector_facility_cc_cleanup, cc_discovery, cc_process},
 
         /* list of optional facilities */
@@ -83,10 +79,14 @@ static connector_facility_service_t const connector_supported_service_table[] = 
 
 #if (defined CONNECTOR_STREAMING_CLI_SERVICE)
     #if (defined CONNECTOR_STREAMING_CLI_SUPPORT)
-        {{MANDATORY_FACILITY}, connector_facility_streaming_cli_service_init, connector_facility_streaming_cli_service_delete, connector_facility_streaming_cli_service_cleanup, msg_discovery, msg_process}
+        {{MANDATORY_FACILITY}, connector_facility_streaming_cli_service_init, connector_facility_streaming_cli_service_delete, connector_facility_streaming_cli_service_cleanup, msg_discovery, msg_process},
     #else
-        {{connector_request_id_config_streaming_cli}, connector_facility_streaming_cli_service_init, connector_facility_streaming_cli_service_delete, connector_facility_streaming_cli_service_cleanup, msg_discovery, msg_process}
+        {{connector_request_id_config_streaming_cli}, connector_facility_streaming_cli_service_init, connector_facility_streaming_cli_service_delete, connector_facility_streaming_cli_service_cleanup, msg_discovery, msg_process},
     #endif
+#endif
+
+#if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+        {{MANDATORY_FACILITY}, connector_facility_sm_configuration_service_init, connector_facility_sm_configuration_service_delete, NULL, msg_discovery, msg_process},
 #endif
 };
 

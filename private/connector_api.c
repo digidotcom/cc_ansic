@@ -47,7 +47,7 @@ STATIC connector_status_t notify_error_status(connector_callback_t const callbac
 #include "connector_global_config.h"
 
 STATIC connector_status_t connector_stop_callback(connector_data_t * const connector_ptr, connector_transport_t const transport, void * const user_context);
-#if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
+#if !(defined CONNECTOR_NETWORK_TCP_START) || !(defined CONNECTOR_NETWORK_UDP_START) || !(defined CONNECTOR_NETWORK_SMS_START)
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr, connector_request_id_config_t const request_id, connector_config_connect_type_t * const config_ptr);
 #endif
 
@@ -64,7 +64,7 @@ STATIC unsigned long * last_activity(connector_data_t * const connector_ptr, con
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_SMS)
-    if (network == connector_network_udp)
+    if (network == connector_network_sms)
         return &connector_ptr->sm_sms.last_activity;
 #endif
 
@@ -105,7 +105,7 @@ STATIC uint32_t idle_time(connector_data_t * const connector_ptr, connector_netw
 #define DEVICE_ID_LENGTH 16
 
 
-#if !(defined CONNECTOR_NETWORK_TCP_START) || (defined CONNECTOR_TRANSPORT_UDP) || defined (CONNECTOR_TRANSPORT_SMS)
+#if !(defined CONNECTOR_NETWORK_TCP_START) || !(defined CONNECTOR_NETWORK_UDP_START) || !(defined CONNECTOR_NETWORK_SMS_START)
 STATIC connector_status_t get_config_connect_status(connector_data_t * const connector_ptr,
                                                         connector_request_id_config_t const config_request_id,
                                                         connector_config_connect_type_t * const config_connect)
@@ -364,7 +364,40 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
 #endif
 
 #if (defined CONNECTOR_SHORT_MESSAGE)
-    connector_handle->last_request_id = SM_DEFAULT_REQUEST_ID;
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+    {
+        connector_sm_encryption_data_t * const encryption_data = &connector_handle->sm_encryption;
+
+        /* get all encryption data */
+        encryption_data->current.valid =
+            sm_configuration_load(connector_handle, connector_transport_all, connector_sm_encryption_data_type_current_key,
+                &encryption_data->current.key, sizeof encryption_data->current.key);
+
+#if (defined CONNECTOR_TRANSPORT_SMS)
+        encryption_data->current.valid &=
+            sm_configuration_load(connector_handle, connector_transport_sms, connector_sm_encryption_data_type_id,
+                &connector_handle->sm_sms.request.id, sizeof connector_handle->sm_sms.request.id);
+
+        encryption_data->current.valid &=
+            sm_configuration_load(connector_handle, connector_transport_sms, connector_sm_encryption_data_type_tracking,
+                &connector_handle->sm_sms.request.tracking, sizeof connector_handle->sm_sms.request.tracking);
+#endif
+#if (defined CONNECTOR_TRANSPORT_UDP)
+        encryption_data->current.valid &=
+            sm_configuration_load(connector_handle, connector_transport_udp, connector_sm_encryption_data_type_id,
+                &connector_handle->sm_udp.request.id, sizeof connector_handle->sm_udp.request.id);
+
+        encryption_data->current.valid &=
+            sm_configuration_load(connector_handle, connector_transport_udp, connector_sm_encryption_data_type_tracking,
+                &connector_handle->sm_udp.request.tracking, sizeof connector_handle->sm_udp.request.tracking);
+#endif
+
+        /* if our previous key is not valid, that's okay -- we may drop some messages in flight, but we don't need a new key */
+        encryption_data->previous.valid = sm_configuration_load(connector_handle, connector_transport_all, connector_sm_encryption_data_type_previous_key,
+            &encryption_data->previous.key, sizeof encryption_data->previous.key);
+    }
+#endif
 
 #if defined CONNECTOR_TRANSPORT_UDP
     if (!register_activity(connector_handle, connector_network_udp))
@@ -543,7 +576,7 @@ error:
     if (report != NULL)
     {
         unsigned long now;
-        
+
         result =  get_system_time(connector_ptr, &now);
         if (result != connector_abort)
         {
@@ -712,4 +745,3 @@ done:
 error:
     return result;
 }
-

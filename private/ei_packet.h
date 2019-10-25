@@ -67,10 +67,10 @@ do { \
         *(record + field_named_data(record, field, offset)) = (value); \
     } while (0)
 
-#define message_store_array(record, field, value, array) \
+#define message_store_array(record, field, value, asize) \
     do { \
-        ASSERT(field_named_data(record, field, size) == array); \
-        memcpy((record + field_named_data(record, field, offset)), (value), array); \
+        ASSERT(field_named_data(record, field, size) == (asize)); \
+        memcpy((record + field_named_data(record, field, offset)), (value), (asize)); \
     } while (0)
 
 #if (defined CONNECTOR_DEBUG)
@@ -82,6 +82,12 @@ do { \
 #define message_load_be16(record, field) LoadBE16(record + field_named_data(record, field, offset))
 #define message_load_u8(record, field) *(record + field_named_data(record, field, offset))
 #endif
+
+#define message_load_array(value, asize, record, field) \
+    do { \
+        ASSERT(field_named_data(record, field, size) == (asize)); \
+        memcpy((value), (record + field_named_data(record, field, offset)), (asize)); \
+    } while (0)
 
 #define field_offsets_match(field, record1, record2) ((long) field_named_data(record1, field, offset) == (long) field_named_data(record2, field, offset))
 #define field_sizes_match(field, record1, record2) ((long) field_named_data(record1, field, size) == (long) field_named_data(record2, field, size))
