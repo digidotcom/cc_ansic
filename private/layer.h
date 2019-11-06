@@ -86,7 +86,11 @@ static connector_facility_service_t const connector_supported_service_table[] = 
 #endif
 
 #if (defined CONNECTOR_TRANSPORT_UDP) || (defined CONNECTOR_TRANSPORT_SMS)
+	#if (defined CONNECTOR_SM_KEY_DISTRIBUTION_SUPPORT)
         {{MANDATORY_FACILITY}, connector_facility_sm_configuration_service_init, connector_facility_sm_configuration_service_delete, NULL, msg_discovery, msg_process},
+	#else
+		{{connector_request_id_config_sm_key_distribution}, connector_facility_sm_configuration_service_init, connector_facility_sm_configuration_service_delete, NULL, msg_discovery, msg_process},
+	#endif
 #endif
 };
 
