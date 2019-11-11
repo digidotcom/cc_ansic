@@ -39,22 +39,33 @@ STATIC connector_status_t sm_verify_sms_preamble(connector_sm_data_t * const sm_
 
     if (sm_ptr->transport.id_length > 0)
     {
-        uint8_t * const data_ptr = sm_ptr->network.recv_packet.data;
-        char const prefix = '(';
-        char const suffix[] = "):";
-        size_t const suffix_bytes = sizeof suffix - 1;
-        size_t const prefix_bytes = sizeof prefix;
-        size_t const suffix_position = prefix_bytes + sm_ptr->transport.id_length;
-        connector_bool_t const valid_prefix = connector_bool(*data_ptr == prefix);
-        connector_bool_t const valid_shared_key = connector_bool(memcmp(data_ptr + prefix_bytes, sm_ptr->transport.id, sm_ptr->transport.id_length) == 0);
-        connector_bool_t const valid_suffix = connector_bool(memcmp(data_ptr + suffix_position, suffix, suffix_bytes) == 0);
+        char const * const data_ptr = (char *) sm_ptr->network.recv_packet.data;
+        #define PREFIX "("
+        #define SUFFIX "):"
+        #define VALID(func, ptr, var)    connector_bool(func((ptr) + (var).offset, (var).data, (var).length) == 0)
+        struct cmp_tuple {
+            char const * data;
+            size_t length;
+            size_t offset;
+        }
+        prefix = { PREFIX, sizeof PREFIX - 1, 0},
+        shared_key = { (char *) sm_ptr->transport.id, sm_ptr->transport.id_length, prefix.offset + prefix.length },
+        suffix = { SUFFIX, sizeof SUFFIX - 1, shared_key.offset + shared_key.length };
+        connector_bool_t const valid_prefix = VALID(strncmp, data_ptr, prefix);
+        connector_bool_t const valid_shared_key = VALID(strncasecmp, data_ptr, shared_key);
+        connector_bool_t const valid_suffix = VALID(strncmp, data_ptr, suffix);
+        #undef VALID
+        #undef SUFFIX
+        #undef PREFIX
 
         if (valid_prefix && valid_shared_key && valid_suffix)
-            sm_ptr->network.recv_packet.processed_bytes = suffix_position + suffix_bytes;
+        {
+            sm_ptr->network.recv_packet.processed_bytes = suffix.offset + suffix.length;
+        }
         else
         {
             connector_debug_line("sm_verify_sms_preamble: valid_prefix=%d, valid_shared_key=%d, valid_suffix=%d", valid_prefix, valid_shared_key, valid_suffix);
-            connector_debug_line("%s",(char *)data_ptr);
+            connector_debug_line("%s", data_ptr);
 
             result = connector_invalid_response;
         }
