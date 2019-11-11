@@ -354,11 +354,11 @@ STATIC connector_status_t copy_recv_buffer(
     uint16_t request_id = header->request_id;
     uint8_t const info_byte = (header->info & 0xf8); /* no multipart bit or high 2-bits of request id */
     uint8_t const cs_byte = header->cmd_status;
-    size_t const length = bytes_in;
+    size_t const length = (bytes_in - SM_TAG_LENGTH);
     uint8_t const * const ciphertext = src;
-    uint8_t const * const tag = (ciphertext + length - SM_TAG_LENGTH);
+    uint8_t const * const tag = (ciphertext + length);
     uint8_t * const plaintext = dst;
-    size_t message_len = (length - SM_TAG_LENGTH);
+    size_t message_len = length;
 
     if (!sm_decrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, ciphertext, length, tag, SM_TAG_LENGTH, plaintext, length))
     {
@@ -370,12 +370,12 @@ STATIC connector_status_t copy_recv_buffer(
         uint8_t const * const key = dst;
         uint8_t const * const message = dst + SM_KEY_LENGTH;
 
-        if (!sm_encryption_set_key(connector_ptr, key, SM_TAG_LENGTH))
+        if (!sm_encryption_set_key(connector_ptr, key, SM_KEY_LENGTH))
         {
             return connector_invalid_response;
         }
 
-        message_len -= SM_TAG_LENGTH;
+        message_len -= SM_KEY_LENGTH;
         memmove(dst, message, message_len);
     }
 
