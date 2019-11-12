@@ -20,6 +20,7 @@
 #if (defined CONNECTOR_DEBUG)
 
 #include <stdarg.h>
+#include <ctype.h>
 #include "connector_debug.h"
 
 #if !(defined CALL_DEBUG_VPRINTF)
@@ -75,20 +76,37 @@ STATIC void connector_debug_line_end(char const * const format, ...)
 
 void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
 {
-    size_t i;
     uint8_t const * const content = buffer;
 
-    connector_debug_line_beg("%s:", label);
-    for (i = 0; i < length; i++)
+    connector_debug_line("%s (length=%zu):", label, length);
+    for (size_t i = 0; i < length; i += 16)
     {
-        if ((i % 16) == 0)
+        connector_debug_line_beg("%03x: ", i);
+        for (size_t n = 0; n < 16; n++)
         {
-            connector_debug_line_mid(CONNECTOR_DEBUG_NEW_LINE_STR);
-        }
+            size_t const position = (i + n);
+            uint8_t const ch = content[position];
 
-        connector_debug_line_mid(" %02X", content[i]);
+            if (position < length)
+            {
+                connector_debug_line_mid("%02x%c", ch, n == 7 ? '-' : ' ');
+            } else {
+                connector_debug_line_mid("   ");
+            }
+        }
+        for (size_t n = 0; n < 16; n++)
+        {
+            size_t const position = (i + n);
+            uint8_t const ch = content[position];
+
+            if (position < length) {
+                connector_debug_line_mid("%c", isprint(ch) ? ch : '.');
+            } else {
+                connector_debug_line_mid(" ");
+            }
+        }
+        connector_debug_line_end("");
     }
-    connector_debug_line_end("");
 }
 
 #else
