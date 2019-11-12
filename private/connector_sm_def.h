@@ -129,9 +129,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define SM_TRACKING_BYTES   ((SM_REQUEST_ID_COUNT + CHAR_BIT - 1) / CHAR_BIT)
 
 #define SM_IV_TYPE_REQUEST      0x00
-#define SM_IV_TYPE_RESPONSE     0x01
+#define SM_IV_TYPE_RESPONSE     0x80
 #define SM_IV_POOL_DEVICE       0x00
-#define SM_IV_POOL_SERVER       0x02
+#define SM_IV_POOL_SERVER       0x40
 
 typedef struct connector_sm_encryption_key_t
 {
