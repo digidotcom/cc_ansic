@@ -25,9 +25,18 @@ STATIC connector_status_t sm_decode_segment(connector_data_t * const connector_p
 
     if (result == connector_working)
     {
+        connector_debug_print_buffer("encoded", recv_ptr->data, recv_ptr->total_bytes);
+        connector_debug_line("recv_ptr: processed_bytes=%zu, total_bytes=%zu", recv_ptr->processed_bytes, recv_ptr->total_bytes);
+
         recv_ptr->total_bytes = sm_decode85(data_ptr, data_size, recv_ptr->data + recv_ptr->processed_bytes, recv_ptr->total_bytes - recv_ptr->processed_bytes);
+
+        connector_debug_print_buffer("decoded", data_ptr, data_size);
+
         memcpy(recv_ptr->data, data_ptr, recv_ptr->total_bytes);
         recv_ptr->processed_bytes = 0;
+
+        connector_debug_print_buffer("moved", recv_ptr->data, recv_ptr->total_bytes);
+        connector_debug_line("recv_ptr: processed_bytes=%zu, total_bytes=%zu", recv_ptr->processed_bytes, recv_ptr->total_bytes);
 
         result = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), data_ptr);
     }
@@ -284,30 +293,35 @@ STATIC connector_status_t sm_process_header(connector_sm_packet_t * const recv_p
     }
     #endif
 
-    header->isEncrypted = SmIsEncrypted(header->cmd_status);
-    header->hasNewKey = SmHasNewKey(header->cmd_status);
-    #if (defined CONNECTOR_SM_ENCRYPTION)
-    if (!header->isEncrypted)
-    {
-        connector_debug_line("sm_process_header: Received non-encrypted packet, but encryption is enabled");
-        goto error;
-    }
-    #else
-    if (header->isEncrypted)
-    {
-        connector_debug_line("sm_process_header: Received encrypted packet, but encryption is disabled");
-        goto error;
-    }
-    if (header->hasNewKey)
-    {
-        connector_debug_line("sm_process_header: Received a packet with an encryption key, but encryption is disabled");
-        goto error;
-    }
+    #if (defined CONNECTOR_SM_MULTIPART)
+    if (!header->isMultipart || header->segment.number == 0)
     #endif
+    {
+        header->isEncrypted = SmIsEncrypted(header->cmd_status);
+        header->hasNewKey = SmHasNewKey(header->cmd_status);
+        #if (defined CONNECTOR_SM_ENCRYPTION)
+        if (!header->isEncrypted)
+        {
+            connector_debug_line("sm_process_header: Received non-encrypted packet, but encryption is enabled");
+            goto error;
+        }
+        #else
+        if (header->isEncrypted)
+        {
+            connector_debug_line("sm_process_header: Received encrypted packet, but encryption is disabled");
+            goto error;
+        }
+        if (header->hasNewKey)
+        {
+            connector_debug_line("sm_process_header: Received a packet with an encryption key, but encryption is disabled");
+            goto error;
+        }
+        #endif
+    }
 
     if (header->isRequest)
     {
-        header->command = (connector_sm_cmd_t)(header->cmd_status & 0x7F);
+        header->command = (connector_sm_cmd_t) (header->cmd_status & SM_COMMAND_MASK);
         if (header->isPackCmd && (header->command == connector_sm_cmd_pack))
         {
             connector_debug_line("sm_process_header: Pack command inside a pack command is not allowed");
@@ -344,65 +358,6 @@ error:
     return result;
 }
 
-#if (defined CONNECTOR_SM_ENCRYPTION)
-STATIC connector_status_t copy_recv_buffer(
-    connector_data_t * const connector_ptr,
-    connector_sm_data_t * const sm_ptr, sm_header_t const * const header,
-    uint8_t * const dst, uint8_t const * const src,
-    size_t const bytes_in, size_t * const bytes_out
-    )
-{
-    connector_transport_t transport = sm_ptr->network.transport;
-    uint16_t request_id = header->request_id;
-    uint8_t const info_byte = header->info;
-    uint8_t const cs_byte = header->cmd_status;
-    size_t const length = (bytes_in - SM_TAG_LENGTH);
-    uint8_t const * const ciphertext = src;
-    uint8_t const * const tag = (ciphertext + length);
-    uint8_t * const plaintext = dst;
-    size_t message_len = length;
-
-    if (!sm_decrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, ciphertext, length, tag, SM_TAG_LENGTH, plaintext, length))
-    {
-        return connector_invalid_response;
-    }
-
-    if (header->hasNewKey)
-    {
-        uint8_t const * const key = dst;
-        uint8_t const * const message = dst + SM_KEY_LENGTH;
-
-        if (!sm_encryption_set_key(connector_ptr, key, SM_KEY_LENGTH))
-        {
-            return connector_invalid_response;
-        }
-
-        message_len -= SM_KEY_LENGTH;
-        memmove(dst, message, message_len);
-    }
-
-    *bytes_out = message_len;
-    return connector_working;
-}
-#else
-STATIC connector_status_t copy_recv_buffer(
-    connector_data_t * const connector_ptr,
-    connector_sm_data_t * const sm_ptr, sm_header_t const * const header,
-    uint8_t * const dst, uint8_t const * const src,
-    size_t const bytes_in, size_t * const bytes_out
-    )
-{
-    UNUSED_PARAMETER(connector_ptr);
-    UNUSED_PARAMETER(sm_ptr);
-    UNUSED_PARAMETER(header);
-
-    memcpy(dst, src, bytes_in);
-    *bytes_out = bytes_in;
-
-    return connector_working;
-}
-#endif
-
 STATIC connector_status_t sm_update_session(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
                                             sm_header_t * const header, size_t const payload_bytes)
 {
@@ -410,6 +365,8 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
     connector_sm_packet_t * const recv_ptr = &sm_ptr->network.recv_packet;
     connector_bool_t const client_originated = connector_bool(!header->isRequest);
     connector_sm_session_t * session = get_sm_session(sm_ptr, header->request_id, client_originated);
+
+    connector_debug_print_buffer("payload:", &recv_ptr->data[recv_ptr->processed_bytes], payload_bytes);
 
     if (session == NULL)
     {
@@ -421,11 +378,17 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
         }
 
         session->request_id = header->request_id;
+        session->info = header->info;
+        session->cmd_status = header->cmd_status;
         session->command = client_originated ? connector_sm_cmd_opaque_response : header->command;
     }
 
     if (header->segment.number == 0)
     {
+         /* Decryption is not aware of the fact that a message could be split into multiple segments and thus requires the info and cmd_status bytes are from segment0 */
+		 session->info = header->info;
+         session->cmd_status = header->cmd_status;
+
         if (header->isCompressed) SmSetCompressed(session->flags);
 
         if (header->isRequest)
@@ -479,14 +442,9 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
         {
             size_t const max_payload_bytes = sm_get_max_payload_bytes(sm_ptr);
             uint8_t * copy_to = session->in.data + (header->segment.number * max_payload_bytes);
-            size_t actual_bytes;
 
-            result = copy_recv_buffer(connector_ptr, sm_ptr, header, copy_to, &recv_ptr->data[recv_ptr->processed_bytes], payload_bytes, &actual_bytes);
-            if (result != connector_working)
-            {
-                goto error;
-            }
-            session->segments.size_array[header->segment.number] = actual_bytes;
+            memcpy(copy_to, &recv_ptr->data[recv_ptr->processed_bytes], payload_bytes);
+            session->segments.size_array[header->segment.number] = payload_bytes;
             session->segments.processed++;
         }
         else
@@ -503,11 +461,7 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
             result = sm_allocate_user_buffer(connector_ptr, &session->in);
             ASSERT_GOTO(result == connector_working, error);
 
-            result = copy_recv_buffer(connector_ptr, sm_ptr, header, session->in.data, &recv_ptr->data[recv_ptr->processed_bytes], payload_bytes, &session->in.bytes);
-            if (result != connector_working)
-            {
-                goto error;
-            }
+            memcpy(session->in.data, &recv_ptr->data[recv_ptr->processed_bytes], payload_bytes);
         }
         else
         {
@@ -521,18 +475,23 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
     {
         session->bytes_processed = 0;
         session->segments.processed = 0;
-        session->sm_state = connector_sm_state_process_payload;
-
+		#if (defined CONNECTOR_SM_ENCRYPTION)
+		session->sm_state = connector_sm_state_decrypt;
+		#else
+		session->sm_state = connector_sm_state_process_payload;
         #if (defined CONNECTOR_COMPRESSION)
         if (SmIsCompressed(session->flags))
         {
             session->compress.out.data = NULL;
-            session->sm_state = connector_sm_state_decompress;
+			session->sm_state = connector_sm_state_decompress;
         }
         #endif
+		#endif
     }
 
     recv_ptr->processed_bytes += payload_bytes;
+    connector_debug_line("sm_update_session: recv_ptr total_bytes=%zu processed_bytes=%zu", recv_ptr->total_bytes, recv_ptr->processed_bytes);
+
     result = connector_working;
 
 error:
@@ -550,6 +509,7 @@ STATIC connector_status_t sm_process_packet(connector_data_t * const connector_p
     sm_header.crc16 = 0;
     do
     {
+        connector_debug_line("Calling process_header");
         result = sm_process_header(recv_ptr, &sm_header);
         if (result != connector_working) goto error;
 
@@ -589,6 +549,8 @@ STATIC connector_status_t sm_process_packet(connector_data_t * const connector_p
 
             ASSERT(sm_bytes >= sm_header.bytes);
             result = sm_update_session(connector_ptr, sm_ptr, &sm_header, payload_bytes);
+            connector_debug_line("sm_update_session result=%zu", result);
+
             if (result != connector_working) goto error;
         }
 
@@ -598,6 +560,7 @@ STATIC connector_status_t sm_process_packet(connector_data_t * const connector_p
             size_t const sm_header_size = 5;
             size_t const remaining_bytes = recv_ptr->total_bytes - recv_ptr->processed_bytes;
 
+            connector_debug_line("remaining_bytes=%zu", remaining_bytes);
             if (remaining_bytes < sm_header_size) break;
         }
 
@@ -646,6 +609,8 @@ STATIC connector_status_t sm_receive_data(connector_data_t * const connector_ptr
             recv_ptr->total_bytes = read_data.bytes_used;
             recv_ptr->processed_bytes = 0;
 
+            connector_debug_print_buffer("raw", read_data.buffer, read_data.bytes_used);
+
             switch (sm_ptr->network.transport)
             {
                 #if (defined CONNECTOR_TRANSPORT_SMS)
@@ -684,8 +649,8 @@ STATIC connector_status_t sm_receive_data(connector_data_t * const connector_ptr
                     break;
             }
 
-            if(result != connector_working) goto done; /* not Device Cloud packet? */
-                result = sm_process_packet(connector_ptr, sm_ptr);
+            if (result != connector_working) goto done; /* not Device Cloud packet? */
+            result = sm_process_packet(connector_ptr, sm_ptr);
             break;
 
         case connector_callback_abort:
@@ -698,11 +663,165 @@ STATIC connector_status_t sm_receive_data(connector_data_t * const connector_ptr
             break;
     }
 
+
+    connector_debug_line("pre sm_verify_result result=%zu", result);
     sm_verify_result(sm_ptr, &result);
+    connector_debug_line("post sm_verify_result result=%zu", result);
 
 done:
     return result;
 }
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+STATIC connector_status_t sm_decrypt_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
+{
+    connector_status_t status;
+    size_t const max_payload_bytes = sm_get_max_payload_bytes(sm_ptr);
+    size_t const bytes_in = session->in.bytes;
+    size_t bytes_out = bytes_in - SM_TAG_LENGTH;
+    uint8_t * payload;
+
+    sm_data_block_t input = { 0 };
+    sm_data_block_t output = { .bytes = bytes_out };
+
+    size_t session_length = 0;
+    if SmIsMultiPart(session->flags)
+    {
+        for (size_t segment = 0; segment < session->segments.count; segment++)
+        {
+            session_length += session->segments.size_array[segment];
+        }
+        input.bytes = session_length;
+    }
+
+    connector_debug_line("sm_decrypt_data: session_length=%zu", session_length);
+    connector_debug_line("sm_decrypt_data: session->bytes_processed=%zu", session->bytes_processed);
+    connector_debug_line("sm_decrypt_data: session->in.data=%p, session->in.bytes=%zu", session->in.data, session->in.bytes);
+    connector_debug_line("sm_decrypt_data: bytes_in=%zu, bytes_out=%zu", bytes_in, bytes_out);
+
+    status = sm_allocate_user_buffer(connector_ptr, &output);
+    ASSERT_GOTO(status == connector_working, error);
+    payload = output.data;
+
+    /*
+        TODO:
+        Since we don't know the size of each segment until it is received,
+        the session->in.data object is organized as an array of buffers that
+        are max_payload_bytes each. If the following coalescing step was done
+        once before either the decryption (or if no encryption, the
+        decompression) phase it would really make the subsequent processing
+        much easier.
+    */
+    if SmIsMultiPart(session->flags)
+    {
+        uint8_t const * src;
+        uint8_t * dst;
+        status = sm_allocate_user_buffer(connector_ptr, &input);
+        ASSERT_GOTO(status == connector_working, error);
+
+        dst = input.data;
+        src = session->in.data;
+        for (size_t segment = 0; segment < session->segments.count; segment++)
+        {
+            size_t const length = session->segments.size_array[segment];
+
+            memcpy(dst, src, length);
+
+            dst += length;
+            src += max_payload_bytes;
+        }
+		bytes_out = dst - input.data - SM_TAG_LENGTH;
+    }
+    else
+    {
+        input.data = session->in.data;
+    }
+
+    {
+        connector_transport_t transport = sm_ptr->network.transport;
+        uint16_t request_id = session->request_id;
+        uint8_t const info_byte = session->info;
+        uint8_t const cs_byte = session->cmd_status;
+        size_t const length = bytes_out;
+        uint8_t const * const ciphertext = input.data;
+        uint8_t const * const tag = (ciphertext + length);
+        uint8_t * const plaintext = payload;
+
+        if (!sm_decrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, ciphertext, length, tag, SM_TAG_LENGTH, plaintext, length))
+        {
+			/* TODO: We should really differentiate between a failure to decrypt due to invalid encryption data versus because of OS errors */
+            session->sm_state = connector_sm_state_complete; /* discard silently */
+            goto done;
+        }
+
+        if (SmHasNewKey(session->cmd_status))
+        {
+            uint8_t const * const key = payload;
+
+            if (!sm_encryption_set_key(connector_ptr, key, SM_KEY_LENGTH))
+            {
+				return connector_abort;
+            }
+
+            bytes_out -= SM_KEY_LENGTH;
+            payload += SM_KEY_LENGTH;
+        }
+    }
+
+    if SmIsMultiPart(session->flags)
+    {
+        uint8_t const * src = payload;
+        uint8_t * dst = session->in.data;
+        size_t remaining = bytes_out;
+        size_t new_segment_count = session->segments.count;
+
+        for (size_t segment = 0; segment < session->segments.count; segment++)
+        {
+            size_t const length = session->segments.size_array[segment];
+            size_t const copy = (length <= remaining) ? length : remaining;
+
+            memcpy(dst, src, copy);
+            if (copy != length)
+            {
+                session->segments.size_array[segment] = copy;
+                if (copy == 0)
+                {
+                    new_segment_count--;
+                }
+            }
+
+            dst += max_payload_bytes;
+            src += copy;
+            remaining -= copy;
+        }
+        connector_debug_line("sm_decrypt_data: session->segments.count=%zu, new_segment_count=%zu", session->segments.count, new_segment_count);
+    }
+    else
+    {
+        memcpy(session->in.data, output.data, bytes_out);
+    }
+    session->in.bytes = bytes_out;
+
+    session->sm_state = connector_sm_state_process_payload;
+    if (SmIsCompressed(session->flags))
+    {
+        session->compress.out.data = NULL;
+		session->sm_state = connector_sm_state_decompress;
+    }
+
+done:
+    if SmIsMultiPart(session->flags)
+    {
+        status = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), input.data);
+        ASSERT(status == connector_working);
+    }
+    status = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), output.data);
+    ASSERT(status == connector_working);
+
+error:
+    return status;
+}
+#endif
 
 #if (defined CONNECTOR_COMPRESSION)
 STATIC connector_status_t sm_decompress_data(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
@@ -813,7 +932,11 @@ STATIC connector_status_t sm_handle_error(connector_data_t * const connector_ptr
 
     if (SmIsCloudOwned(session->flags) && SmIsRequest(session->flags))
     {
+        #if (defined CONNECTOR_SM_ENCRYPTION)
+        next_state = connector_sm_state_encrypt;
+        #else
         next_state = connector_sm_state_send_data;
+        #endif
     }
 
     SmSetError(session->flags);
@@ -836,12 +959,6 @@ STATIC connector_status_t sm_handle_complete(connector_data_t * const connector_
 {
     connector_status_t result = connector_working;
 
-    if (session->in.data != NULL)
-    {
-        result = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), session->in.data);
-        if (result != connector_working) goto error;
-    }
-
     if (SmIsReboot(session->flags))
         result = sm_process_reboot(connector_ptr);
 
@@ -857,7 +974,6 @@ STATIC connector_status_t sm_handle_complete(connector_data_t * const connector_
             result = sm_delete_session(connector_ptr, sm_ptr, session);
     }
 
-error:
     return result;
 }
 
@@ -865,6 +981,7 @@ STATIC connector_status_t sm_process_recv_path(connector_data_t * const connecto
 {
     connector_status_t result = connector_abort;
 
+    connector_debug_line("sm_process_recv_path: in session->sm_state=%s", sm_state_to_string(session->sm_state));
     ASSERT_GOTO(session != NULL, error);
     switch (session->sm_state)
     {
@@ -885,6 +1002,12 @@ STATIC connector_status_t sm_process_recv_path(connector_data_t * const connecto
 
             result = connector_idle; /* still receiving data, handled in sm_receive_data() */
             break;
+
+        #if (defined CONNECTOR_SM_ENCRYPTION)
+        case connector_sm_state_decrypt:
+            result = sm_decrypt_data(connector_ptr, sm_ptr, session);
+            break;
+        #endif
 
         #if (defined CONNECTOR_COMPRESSION)
         case connector_sm_state_decompress:
@@ -912,5 +1035,6 @@ STATIC connector_status_t sm_process_recv_path(connector_data_t * const connecto
     sm_verify_result(sm_ptr, &result);
 
 error:
+    connector_debug_line("sm_process_recv_path: out session->sm_state=%s", sm_state_to_string(session->sm_state));
     return result;
 }

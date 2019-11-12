@@ -61,6 +61,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define SM_ENCODED             0x4000
 #define SM_DATA_POINT          0x8000
 
+#define SM_COMMAND_MASK        ((uint8_t) ~(SM_COMPRESSED | SM_ENCRYPTED | SM_NEW_KEY))
+
 #define SmIsBitSet(flag, bit) (connector_bool(((flag) & (bit)) == (bit)))
 #define SmIsBitClear(flag, bit) (connector_bool(((flag) & (bit)) == 0))
 #define SmBitSet(flag, bit) ((flag) |= (bit))
@@ -181,10 +183,12 @@ typedef enum
     connector_sm_state_prepare_payload,
     connector_sm_state_more_data,
     connector_sm_state_compress,
+    connector_sm_state_encrypt,
     connector_sm_state_prepare_segment,
     connector_sm_state_encoding,
     connector_sm_state_send_data,
     connector_sm_state_receive_data,
+    connector_sm_state_decrypt,
     connector_sm_state_decompress,
     connector_sm_state_process_payload,
     connector_sm_state_complete,
@@ -223,6 +227,8 @@ typedef struct connector_sm_session_t
     connector_sm_error_id_t error;
     unsigned long start_time;
     uint32_t request_id;
+    uint8_t info;
+    uint8_t cmd_status;
     uint32_t flags;
 
     sm_data_block_t in;
@@ -242,8 +248,8 @@ typedef struct connector_sm_session_t
     struct
     {
         uint16_t * size_array;
-        uint8_t count;
-        uint8_t processed;
+        size_t count;
+        size_t processed;
     } segments;
     unsigned long timeout_in_seconds;
 } connector_sm_session_t;

@@ -342,7 +342,7 @@ STATIC connector_bool_t sm_reset_request_id(connector_data_t * connector_ptr, co
     data->request.id = 0;
     if (!sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_id, &data->request.id, sizeof data->request.id))
     {
-        connector_debug_line("unable to store reset key for %s", name);
+        connector_debug_line("unable to store the reset key for %s", name);
         return connector_false;
     }
 
@@ -431,6 +431,8 @@ STATIC connector_bool_t sm_encrypt_block(
         connector_debug_line("sm_encrypt_block: buffer mismatch plain=%u, cipher=%u", plaintext_length, ciphertext_length);
         return connector_false;
     }
+
+    connector_debug_line("sm_encrypt_block: pointers plain=%p, cipher=%p", plaintext, ciphertext);
 
     encrypt.message.length = plaintext_length;
     encrypt.message.input = plaintext;
@@ -638,8 +640,6 @@ STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_p
 error:
     return result;
 }
-
-#define sm_encryption_tag_bytes()   SM_TAG_LENGTH
 #else
 /* This function searches for the next valid request_id and leaves it in sm_ptr->request.id */
 STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint16_t * const new_request_id)
@@ -677,6 +677,4 @@ STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_p
 error:
     return result;
 }
-
-#define sm_encryption_tag_bytes()   0
 #endif

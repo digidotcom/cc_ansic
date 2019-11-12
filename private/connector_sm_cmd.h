@@ -16,6 +16,33 @@
  * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
  * =======================================================================
  */
+#if (defined CONNECTOR_DEBUG)
+static char const * sm_state_to_string(connector_sm_state_t const value)
+{
+    char const * result = NULL;
+    switch (value)
+    {
+        enum_to_case(connector_sm_state_get_total_length);
+        enum_to_case(connector_sm_state_prepare_payload);
+        enum_to_case(connector_sm_state_more_data);
+        enum_to_case(connector_sm_state_compress);
+        enum_to_case(connector_sm_state_encrypt);
+        enum_to_case(connector_sm_state_prepare_segment);
+        enum_to_case(connector_sm_state_encoding);
+        enum_to_case(connector_sm_state_send_data);
+        enum_to_case(connector_sm_state_receive_data);
+        enum_to_case(connector_sm_state_decrypt);
+        enum_to_case(connector_sm_state_decompress);
+        enum_to_case(connector_sm_state_process_payload);
+        enum_to_case(connector_sm_state_complete);
+        enum_to_case(connector_sm_state_error);
+    }
+    return result;
+}
+#else
+#define sm_state_to_string(value)  NULL
+#endif
+
 STATIC connector_status_t sm_copy_user_request(connector_sm_data_t * const sm_ptr, connector_sm_session_t * const session)
 {
     connector_status_t result = connector_abort;
@@ -80,6 +107,8 @@ error:
 
 STATIC void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_status_t * const result)
 {
+    connector_debug_line("sm_verify_result in: *result=%zu, sm_ptr->close.status=%zu, sm_ptr->transport.state=%zu", *result, sm_ptr->close.status, sm_ptr->transport.state);
+
     switch (*result)
     {
         case connector_pending:
@@ -114,6 +143,7 @@ STATIC void sm_verify_result(connector_sm_data_t * const sm_ptr, connector_statu
     }
 
 done:
+    connector_debug_line("sm_verify_result out: *result=%zu, sm_ptr->close.status=%zu, sm_ptr->transport.state=%zu", *result, sm_ptr->close.status, sm_ptr->transport.state);
     return;
 }
 
@@ -431,8 +461,12 @@ STATIC void sm_set_payload_process(connector_sm_session_t * const session)
     size_t const zlib_header_bytes = 2;
 
     session->in.bytes = session->bytes_processed;
-    session->sm_state = connector_sm_state_prepare_segment;
     session->bytes_processed = SmIsCompressed(session->flags) ? zlib_header_bytes : 0;
+    #if (defined CONNECTOR_SM_ENCRYPTION)
+    session->sm_state = connector_sm_state_encrypt;
+    #else
+    session->sm_state = connector_sm_state_prepare_segment;
+    #endif
 }
 
 STATIC void sm_set_payload_complete(connector_sm_session_t * const session)
@@ -954,11 +988,18 @@ STATIC connector_status_t sm_process_ping_request(connector_data_t * const conne
     cb_data.transport = session->transport;
     cb_data.response_required = SmIsResponseNeeded(session->flags);
 
+    connector_debug_line("sm_process_ping_request");
+
     request_id.sm_request = connector_request_id_sm_ping_request;
     callback_status = connector_callback(connector_ptr->callback, connector_class_id_short_message, request_id, &cb_data, connector_ptr->context);
     if (callback_status == connector_callback_unrecognized)
         callback_status = connector_callback_continue;
+
+    connector_debug_line("callback_status = %d", callback_status);
+
     status = sm_map_callback_status_to_connector_status(callback_status);
+
+    connector_debug_line("status = %d", status);
 
     return status;
 }
@@ -1024,7 +1065,12 @@ error:
 STATIC connector_status_t sm_pass_user_data(connector_data_t * const connector_ptr, connector_sm_session_t * const session, uint8_t * payload, size_t const bytes)
 {
     connector_status_t result = connector_abort;
+
+#if (defined CONNECTOR_SM_ENCRYPTION)
+    connector_sm_state_t next_state = connector_sm_state_encrypt;
+#else
     connector_sm_state_t next_state = connector_sm_state_send_data;
+#endif
 
     switch (session->command)
     {
@@ -1094,6 +1140,8 @@ STATIC connector_status_t sm_pass_user_data(connector_data_t * const connector_p
             break;
 
         case connector_sm_cmd_ping:
+            connector_debug_line("connector_sm_cmd_ping");
+
             if (SmIsCloudOwned(session->flags))
             {
                 result = sm_process_ping_request(connector_ptr, session);
@@ -1187,6 +1235,8 @@ STATIC connector_status_t sm_process_payload(connector_data_t * const connector_
         data_ptr = session->in.data;
         bytes = session->in.bytes;
     }
+
+    connector_debug_print_buffer("sm_process_payload", data_ptr, bytes);
 
     result = sm_pass_user_data(connector_ptr, session, data_ptr, bytes);
     if ((result == connector_working) && (SmIsNotLastData(session->flags)))
