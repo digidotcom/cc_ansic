@@ -27,6 +27,8 @@ STATIC connector_status_t sm_decode_segment(connector_data_t * const connector_p
     {
         recv_ptr->total_bytes = sm_decode85(data_ptr, data_size, recv_ptr->data + recv_ptr->processed_bytes, recv_ptr->total_bytes - recv_ptr->processed_bytes);
         memcpy(recv_ptr->data, data_ptr, recv_ptr->total_bytes);
+        recv_ptr->processed_bytes = 0;
+
         result = free_data_buffer(connector_ptr, named_buffer_id(sm_data_block), data_ptr);
     }
 
