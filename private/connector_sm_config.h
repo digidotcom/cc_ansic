@@ -96,6 +96,7 @@ STATIC connector_status_t sm_configuration_service_run_cb(connector_data_t * con
 
 STATIC void sm_generate_iv(connector_data_t * const connector_ptr, uint8_t * const iv, size_t const length, connector_transport_t const transport, uint8_t const type, uint8_t const pool, uint16_t const request_id);
 STATIC connector_bool_t sm_encryption_set_key(connector_data_t * connector_ptr, uint8_t const * const key, size_t const length);
+STATIC connector_bool_t sm_write_tracking_data(connector_data_t * const connector_ptr, connector_transport_t const transport);
 
 static connector_bool_t sm_encryption_get_key_tag(connector_data_t * const connector_ptr, uint8_t * const tag, size_t const tag_length)
 {
@@ -158,6 +159,18 @@ STATIC connector_status_t sm_configuration_service_request_callback(connector_da
                 {
                     response.error = "unable to store key";
                 }
+#if (defined CONNECTOR_TRANSPORT_UDP)
+                else if (!sm_write_tracking_data(connector_ptr, connector_transport_udp))
+                {
+                    response.error = "unable to write udp tracking data";
+                }
+#endif
+#if (defined CONNECTOR_TRANSPORT_SMS)
+                else if (!sm_write_tracking_data(connector_ptr, connector_transport_sms))
+                {
+                    response.error = "unable to write sms tracking data";
+                }
+#endif
                 else if (!sm_encryption_get_key_tag(connector_ptr, response.tag, sizeof response.tag))
                 {
                     response.error = "unable to generate tag";

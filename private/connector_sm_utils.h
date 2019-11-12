@@ -466,7 +466,7 @@ STATIC connector_bool_t sm_encrypt_block(
     return connector_true;
 }
 
-static uint8_t * get_tracking(connector_data_t * const connector_ptr, connector_transport_t const transport)
+STATIC uint8_t * get_tracking(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     uint8_t * tracking;
 
@@ -490,8 +490,22 @@ static uint8_t * get_tracking(connector_data_t * const connector_ptr, connector_
     return tracking;
 }
 
-STATIC connector_bool_t sm_have_seen_request(uint8_t const * const tracking, uint16_t const request_id)
+STATIC connector_bool_t sm_write_tracking_data(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
+    uint8_t const * const tracking = get_tracking(connector_ptr, transport);
+    connector_bool_t const success = sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_tracking, tracking, SM_TRACKING_BYTES);
+
+    if (!success)
+    {
+        connector_debug_line("sm_write_tracking_data: tracking write failed");
+    }
+
+    return success;
+}
+
+STATIC connector_bool_t sm_have_seen_request(connector_data_t * connector_ptr, connector_transport_t const transport, uint16_t const request_id)
+{
+    uint8_t const * const tracking = get_tracking(connector_ptr, transport);
     size_t const byte = (request_id / CHAR_BIT);
     size_t const bit = (request_id - (byte * CHAR_BIT));
 
@@ -501,8 +515,9 @@ STATIC connector_bool_t sm_have_seen_request(uint8_t const * const tracking, uin
     return SmIsBitSet(tracking[byte], 1 << bit);
 }
 
-STATIC void sm_mark_request_seen(uint8_t * const tracking, uint16_t const request_id)
+STATIC connector_bool_t sm_mark_request_seen(connector_data_t * connector_ptr, connector_transport_t const transport, uint16_t const request_id)
 {
+    uint8_t * const tracking = get_tracking(connector_ptr, transport);
     size_t const byte = (request_id / CHAR_BIT);
     size_t const bit = (request_id - (byte * CHAR_BIT));
 
@@ -510,13 +525,16 @@ STATIC void sm_mark_request_seen(uint8_t * const tracking, uint16_t const reques
     ASSERT(bit < CHAR_BIT);
 
     SmBitSet(tracking[byte], 1 << bit);
+    return sm_write_tracking_data(connector_ptr, transport);
 }
 
-STATIC void sm_clear_all_seen(uint8_t * const tracking)
+STATIC connector_bool_t sm_clear_all_seen(connector_data_t * connector_ptr, connector_transport_t const transport)
 {
-    memset(tracking, 0, SM_TRACKING_BYTES);
-}
+    uint8_t * const tracking = get_tracking(connector_ptr, transport);
 
+    memset(tracking, 0, SM_TRACKING_BYTES);
+    return sm_write_tracking_data(connector_ptr, transport);
+}
 
 STATIC connector_bool_t sm_decrypt_block(
     connector_data_t * connector_ptr,
@@ -528,19 +546,12 @@ STATIC connector_bool_t sm_decrypt_block(
     )
 {
     uint8_t const type = SmIsResponse(info_byte) ? SM_IV_TYPE_RESPONSE : SM_IV_TYPE_REQUEST;
-    uint8_t * const tracking = get_tracking(connector_ptr, transport);
     uint8_t iv[SM_IV_LENGTH];
     uint8_t aad[SM_AAD_LENGTH];
     connector_sm_decrypt_gcm_t decrypt;
     connector_status_t status;
 
-    if (tracking == NULL)
-    {
-        connector_debug_line("sm_decrypt_block: no tracking hisotry for sm_transport %u", transport);
-        return connector_false;
-    }
-
-    if (sm_have_seen_request(tracking, request_id))
+    if (sm_have_seen_request(connector_ptr, transport, request_id))
     {
         connector_debug_line("sm_decrypt_block:duplicate request %u", request_id);
         return connector_false;
@@ -583,7 +594,7 @@ STATIC connector_bool_t sm_decrypt_block(
         {
             keyring->previous.valid = connector_false;
             sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_previous_key, "", 0);
-            sm_clear_all_seen(tracking);
+            sm_clear_all_seen(connector_ptr, transport);
         }
     }
     else
@@ -602,14 +613,7 @@ STATIC connector_bool_t sm_decrypt_block(
         }
     }
 
-    sm_mark_request_seen(tracking, request_id);
-    if (!sm_configuration_store(connector_ptr, transport, connector_sm_encryption_data_type_tracking, tracking, SM_TRACKING_BYTES))
-    {
-        connector_debug_line("sm_decrypt_block: tracking write failed");
-        return connector_false;
-    }
-
-    return connector_true;
+    return sm_mark_request_seen(connector_ptr, transport, request_id);
 }
 
 STATIC connector_status_t sm_get_request_id(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr, uint16_t * const new_request_id)
