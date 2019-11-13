@@ -354,7 +354,7 @@ STATIC connector_status_t copy_recv_buffer(
 {
     connector_transport_t transport = sm_ptr->network.transport;
     uint16_t request_id = header->request_id;
-    uint8_t const info_byte = (header->info & 0xf8); /* no multipart bit or high 2-bits of request id */
+    uint8_t const info_byte = header->info;
     uint8_t const cs_byte = header->cmd_status;
     size_t const length = (bytes_in - SM_TAG_LENGTH);
     uint8_t const * const ciphertext = src;

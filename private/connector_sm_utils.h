@@ -332,7 +332,7 @@ STATIC void sm_generate_aad(
     memcpy(current, connector_ptr->device_id, device_id_space);
     current += device_id_space;
 
-    *current = info_byte;
+    *current = (info_byte & SM_AAD_INFO_BYTE_MASK);
     current++;
     *current = cs_byte;
 }

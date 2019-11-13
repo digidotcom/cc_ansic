@@ -337,13 +337,11 @@ error:
 #if (defined CONNECTOR_SM_ENCRYPTION)
 STATIC connector_status_t copy_send_buffer(
     connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
-    uint16_t request_id, uint8_t const info, uint8_t const cmd_status,
+    uint16_t request_id, uint8_t const info_byte, uint8_t const cs_byte,
     uint8_t * const dst, uint8_t const * const src, size_t const bytes
     )
 {
     connector_transport_t transport = sm_ptr->network.transport;
-    uint8_t const info_byte = (info & 0xf8); /* no multipart bit or high 2-bits of request id */
-    uint8_t const cs_byte = cmd_status;
     size_t length = bytes - SM_TAG_LENGTH;
     uint8_t const * const plaintext = src;
     uint8_t * const tag = dst + length;
@@ -359,15 +357,15 @@ STATIC connector_status_t copy_send_buffer(
 #else
 STATIC connector_status_t copy_send_buffer(
     connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr,
-    uint16_t request_id, uint8_t const info, uint8_t const cmd_status,
+    uint16_t request_id, uint8_t const info_byte, uint8_t const cs_byte,
     uint8_t * const dst, uint8_t const * const src, size_t const bytes
     )
 {
     UNUSED_PARAMETER(connector_ptr);
     UNUSED_PARAMETER(sm_ptr);
     UNUSED_PARAMETER(request_id);
-    UNUSED_PARAMETER(info);
-    UNUSED_PARAMETER(cmd_status);
+    UNUSED_PARAMETER(info_byte);
+    UNUSED_PARAMETER(cs_byte);
 
     memcpy(dst, src, bytes);
 

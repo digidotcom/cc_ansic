@@ -118,6 +118,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define SMS_SERVICEID_WRAPPER_RX_SIZE     3  /* '(service-id):' */
 
 #if (defined CONNECTOR_SM_ENCRYPTION)
+
+#define SM_INFO_BYTE_REQUEST_ID_HIGH    0x03    /* high 2-bits of request ID */
+#define SM_AAD_INFO_BYTE_MASK           ((uint8_t) ~(SM_MULTI_PART | SM_INFO_BYTE_REQUEST_ID_HIGH))
+
 #define SM_IV_LENGTH    12
 #define SM_KEY_LENGTH   16
 #define SM_TAG_LENGTH   16
