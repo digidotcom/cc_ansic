@@ -347,7 +347,7 @@ STATIC connector_status_t copy_send_buffer(
     uint8_t * const tag = dst + length;
     uint8_t * const ciphertext = dst;
 
-    if (!sm_encrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, plaintext, length, tag, SM_TAG_LENGTH, ciphertext, length))
+    if (!sm_encrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, plaintext, length, ciphertext, length, tag, SM_TAG_LENGTH))
     {
         return connector_invalid_response;
     }
