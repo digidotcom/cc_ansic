@@ -104,12 +104,15 @@ static connector_bool_t sm_encryption_get_key_tag(connector_data_t * const conne
     connector_sm_encryption_data_t * const keyring = &connector_ptr->sm_encryption;
     uint16_t const request_id = 0;
     uint8_t iv[SM_IV_LENGTH];
-    uint8_t nothing;
+    uint8_t input;
+    uint8_t output;
+
     connector_sm_encrypt_gcm_t encrypt;
 
+    /* The input and output pointers should not overlap, even if not used */
     encrypt.message.length = 0;
-    encrypt.message.input = &nothing;
-    encrypt.message.output = &nothing;
+    encrypt.message.input = &input;
+    encrypt.message.output = &output;
 
     encrypt.tag.length = tag_length;
     encrypt.tag.data = tag;
