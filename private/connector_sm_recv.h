@@ -803,11 +803,13 @@ STATIC connector_status_t sm_decrypt_data(connector_data_t * const connector_ptr
     session->in.bytes = bytes_out;
 
     session->sm_state = connector_sm_state_process_payload;
+    #if (defined CONNECTOR_COMPRESSION)
     if (SmIsCompressed(session->flags))
     {
         session->compress.out.data = NULL;
 		session->sm_state = connector_sm_state_decompress;
     }
+    #endif
 
 done:
     if SmIsMultiPart(session->flags)

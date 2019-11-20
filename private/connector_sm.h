@@ -22,6 +22,10 @@
 #include "connector_sm_send.h"
 #include "connector_sm_recv.h"
 
+#ifndef SMS_RESERVED_TX_BYTES
+#define SMS_RESERVED_TX_BYTES 0
+#endif
+
 STATIC connector_sm_data_t * get_sm_data(connector_data_t * const connector_ptr, connector_transport_t const transport)
 {
     connector_sm_data_t * sm_ptr = NULL;
@@ -244,7 +248,7 @@ STATIC connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                        For Tx: 'idgp '
                                There is room for 160-5=155 not encoded85 characters. After encoding, that will lead to a max payload of 155*4/5=124 bytes.
                      */
-                    sm_ptr->transport.sm_mtu_tx = (((sm_ptr->transport.mtu - (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE))*4) / 5);
+                    sm_ptr->transport.sm_mtu_tx = (((sm_ptr->transport.mtu - (sm_ptr->transport.id_length + SMS_SERVICEID_WRAPPER_TX_SIZE + SMS_RESERVED_TX_BYTES))*4) / 5);
                     /*
                        For Rx: '(idgp):'
                                There is room for 160-7=153 not encoded85 characters. After encoding, that will lead to a max payload of 153*4/5=122 bytes.
@@ -254,8 +258,8 @@ STATIC connector_status_t sm_initialize(connector_data_t * const connector_ptr, 
                 }
                 else
                 {
-                    sm_ptr->transport.sm_mtu_tx = ((sm_ptr->transport.mtu *4) / 5);
-                    sm_ptr->transport.sm_mtu_rx = sm_ptr->transport.sm_mtu_tx;
+                    sm_ptr->transport.sm_mtu_tx = (((sm_ptr->transport.mtu - SMS_RESERVED_TX_BYTES) * 4) / 5);
+                    sm_ptr->transport.sm_mtu_rx = ((sm_ptr->transport.mtu *4) / 5);
                 }
             }
             break;
