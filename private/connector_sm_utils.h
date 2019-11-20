@@ -553,12 +553,6 @@ STATIC connector_bool_t sm_decrypt_block(
     connector_sm_decrypt_gcm_t decrypt;
     connector_status_t status;
 
-    if (sm_have_seen_request(connector_ptr, transport, request_id))
-    {
-        connector_debug_line("sm_decrypt_block:duplicate request %u", request_id);
-        return connector_false;
-    }
-
     if (plaintext_length != ciphertext_length)
     {
         connector_debug_line("sm_decrypt_block: buffer mismatch plain=%u, cipher=%u", plaintext_length, ciphertext_length);
@@ -613,6 +607,12 @@ STATIC connector_bool_t sm_decrypt_block(
                 return connector_false;
             }
         }
+    }
+
+    if (sm_have_seen_request(connector_ptr, transport, request_id))
+    {
+        connector_debug_line("sm_decrypt_block:duplicate request %u", request_id);
+        return connector_false;
     }
 
     return sm_mark_request_seen(connector_ptr, transport, request_id);
