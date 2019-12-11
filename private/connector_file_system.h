@@ -367,6 +367,11 @@ STATIC size_t file_hash_size(connector_file_system_hash_algorithm_t const hash_a
             result = 4;
             break;
 
+        case connector_file_system_hash_sha512:
+        case connector_file_system_hash_sha3_512:
+            result = 64;
+            break;
+
         default:
             result = 0;
     }
@@ -430,6 +435,8 @@ STATIC connector_status_t call_file_stat_user(connector_data_t * const connector
            {
                case connector_file_system_hash_md5:
                case connector_file_system_hash_crc32:
+               case connector_file_system_hash_sha512:
+               case connector_file_system_hash_sha3_512:
                    context->data.d.hash_alg = data.hash_algorithm.actual;
                    break;
 
@@ -1365,6 +1372,8 @@ STATIC size_t parse_file_ls_header(fs_context_t * const context,
         {
             case connector_file_system_hash_crc32:
             case connector_file_system_hash_md5:
+            case connector_file_system_hash_sha512:
+            case connector_file_system_hash_sha3_512:
             case connector_file_system_hash_best:
             case connector_file_system_hash_none:
                 context->data.d.hash_alg = hash_alg;

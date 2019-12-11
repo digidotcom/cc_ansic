@@ -345,7 +345,9 @@ typedef enum
     connector_file_system_hash_none,       /**< Don't return hash value */
     connector_file_system_hash_best,       /**< Use best available algorithm */
     connector_file_system_hash_crc32,      /**< Use crc32 */
-    connector_file_system_hash_md5         /**< Use md5 */
+    connector_file_system_hash_md5,        /**< Use md5 */
+    connector_file_system_hash_sha512,     /**< Use sha512 */
+    connector_file_system_hash_sha3_512    /**< Use sha3-512 */
 } connector_file_system_hash_algorithm_t;
 /**
 * @}
