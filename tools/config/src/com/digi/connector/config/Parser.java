@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.CharsetEncoder;
 
 import com.digi.connector.config.ConfigGenerator.ItemType;
+import com.digi.connector.config.ItemList.Capacity;
 
 public class Parser {
 
@@ -114,6 +115,19 @@ public class Parser {
                         theGroup.validate(config);
                     } catch(Exception e) {
                         throw new Exception("Error in <group>: " + theGroup.getName() + "\n\t" + e.getMessage());
+                    }
+                    
+                    if (theGroup.isDictionary()) {
+                    	config.dictionarySeen();
+                    	if (Capacity.VARIABLE.equals(theGroup.getCapacity())) {
+                    		config.variableGroupSeen();
+                    		config.variableDictSeen();
+                    	}
+                    } else {
+                    	if (Capacity.VARIABLE.equals(theGroup.getCapacity())) {
+                    		config.variableGroupSeen();
+                    		config.variableArraySeen();
+                    	}
                     }
 
                     config.getTable(type).addGroup(theGroup);
@@ -612,6 +626,18 @@ public class Parser {
             list.validate(config);
         } catch(Exception e) {
             throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
+        }
+        if (list.isDictionary()) {
+        	config.dictionarySeen();
+        	if (Capacity.VARIABLE.equals(list.getCapacity())) {
+        		config.variableListSeen();
+        		config.variableDictSeen();
+        	}
+        } else {
+        	if (Capacity.VARIABLE.equals(list.getCapacity())) {
+        		config.variableListSeen();
+        		config.variableArraySeen();
+        	}
         }
 
         listLineNumber.pop();

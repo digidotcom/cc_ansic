@@ -29,7 +29,8 @@ STATIC void traverse_group_count(rci_t * const rci)
 {
     connector_collection_type_t collection_type = get_group_collection_type(rci);
 
-    if (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary)
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
+    if (is_variable(collection_type) == connector_true)
     {
         if (!have_group_lock(rci))
         {
@@ -68,6 +69,7 @@ STATIC void traverse_group_count(rci_t * const rci)
             trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_unlock);
             goto done;
         }
+#endif
         {
             connector_group_t const * const group = get_current_group(rci);
 
@@ -75,18 +77,24 @@ STATIC void traverse_group_count(rci_t * const rci)
             {
                 rci->shared.group.info.keys.count = group->collection.capacity.instances;
             }
+#if (defined RCI_PARSER_USES_DICT)
             else
             {
                 rci->shared.group.info.keys.count = group->collection.capacity.dictionary.entries;
                 rci->shared.group.info.keys.list = group->collection.capacity.dictionary.keys;
             }
+#endif
         }
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
     }
+#endif
 
     if (should_traverse_all_group_instances(rci))
     {
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
         if (collection_type == connector_collection_type_variable_dictionary)
             SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
+#endif
 
         if (get_group_count(rci) == 0)
         {
@@ -111,7 +119,9 @@ STATIC void traverse_group_count(rci_t * const rci)
         set_rci_traverse_state(rci, rci_traverse_state_none);
     }
 
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
 done:
+#endif
     return;
 }
 
@@ -123,6 +133,7 @@ STATIC void traverse_group_id(rci_t * const rci)
     state_call(rci, rci_parser_state_output);
 }
 
+#if (defined RCI_PARSER_USES_LIST)
 STATIC connector_bool_t finish_all_list_instances(rci_t * const rci)
 {
     set_element_id(rci, get_current_list_id(rci));
@@ -141,7 +152,6 @@ STATIC connector_bool_t finish_all_list_instances(rci_t * const rci)
     return connector_false;
 }
 
-#if (defined RCI_PARSER_USES_LIST)
 STATIC void traverse_list_id(rci_t * const rci)
 {
     trigger_rci_callback(rci, connector_request_id_remote_config_list_start);
@@ -174,16 +184,19 @@ STATIC void traverse_list_count(rci_t * const rci)
             SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_RESTORE_DEPTH, connector_false);
         }
 
-        collection_type = get_current_list_collection_type(rci);
+        collection_type = get_current_collection_type(rci);
 
-        if (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary)
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
+        if (is_variable(collection_type) == connector_true)
         {
             if (!have_current_list_lock(rci))
             {
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
                 if (collection_type == connector_collection_type_variable_array)
                 {
                     SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_true);
                 }
+#endif
                 trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_lock);
                 goto done;
             }
@@ -215,6 +228,7 @@ STATIC void traverse_list_count(rci_t * const rci)
                 trigger_rci_callback(rci, connector_request_id_remote_config_list_instances_unlock);
                 goto done;
             }
+#endif
             {
                 connector_collection_t const * const info = get_current_collection_info(rci);
 
@@ -222,13 +236,17 @@ STATIC void traverse_list_count(rci_t * const rci)
                 {
                     set_current_list_count(rci, info->capacity.instances);
                 }
+#if (defined RCI_PARSER_USES_DICT)
                 else
                 {
                     set_current_list_count(rci, info->capacity.dictionary.entries);
                     set_current_list_key_list(rci, info->capacity.dictionary.keys);
                 }
+#endif
             }
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
         }
+#endif
 
         if (should_traverse_all_list_instances(rci) || get_list_depth(rci) > get_query_depth(rci))
         {
@@ -252,10 +270,11 @@ STATIC void traverse_list_count(rci_t * const rci)
         }
     }
 
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
 done:
+#endif
     return;
 }
-#endif
 
 STATIC connector_bool_t release_last_list_lock(rci_t * const rci)
 {
@@ -268,6 +287,7 @@ STATIC connector_bool_t release_last_list_lock(rci_t * const rci)
         goto done;
     }
 
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
     if (get_list_depth(rci) == RCI_LIST_MAX_DEPTH) goto done;
 
     increment_list_depth(rci);
@@ -281,10 +301,12 @@ STATIC connector_bool_t release_last_list_lock(rci_t * const rci)
     {
         decrement_list_depth(rci);
     }
+#endif
 
 done:
     return need_unlock;
 }
+#endif
 
 STATIC connector_bool_t traverse_element_id(rci_t * const rci)
 {
@@ -293,16 +315,22 @@ STATIC connector_bool_t traverse_element_id(rci_t * const rci)
 
     if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_FIRST_ELEMENT))
     {
+#if (defined RCI_PARSER_USES_LIST)
         if (get_list_depth(rci) == 0)
+#endif
             traverse_group_id(rci);
+#if (defined RCI_PARSER_USES_LIST)
         else
             traverse_list_id(rci);
+#endif
 
         SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_FIRST_ELEMENT, connector_false);
         goto done;
     }
 
+#if (defined RCI_PARSER_USES_LIST)
     if (release_last_list_lock(rci) == connector_true) goto done;
+#endif
 
     element = get_current_element(rci);
 
@@ -310,7 +338,11 @@ STATIC connector_bool_t traverse_element_id(rci_t * const rci)
     ASSERT(element->type != connector_element_type_list);
 #endif
 
-    if (should_traverse_all_elements(rci) || get_list_depth(rci) > get_query_depth(rci))
+    if (should_traverse_all_elements(rci) 
+#if (defined RCI_PARSER_USES_LIST)
+		|| get_list_depth(rci) > get_query_depth(rci)
+#endif
+		)
     {
         set_rci_traverse_state(rci, rci_traverse_state_all_elements);
     }
@@ -366,9 +398,9 @@ STATIC void traverse_command_set_factory_default(rci_t * const rci)
 STATIC connector_bool_t finish_all_elements(rci_t * const rci)
 {
     connector_bool_t done = connector_false;
+#if (defined RCI_PARSER_USES_LIST)
     if (release_last_list_lock(rci) == connector_true) goto done;
 
-#if (defined RCI_PARSER_USES_LIST)
     if (get_list_depth(rci) > 0)
     {
         trigger_rci_callback(rci, connector_request_id_remote_config_list_end);
@@ -415,7 +447,9 @@ STATIC connector_bool_t finish_all_elements(rci_t * const rci)
     }
 #endif
 
+#if (defined RCI_PARSER_USES_LIST)
 done:
+#endif
     return done;
 }
 
@@ -430,12 +464,14 @@ STATIC void traverse_element_end(rci_t * const rci)
 
 STATIC connector_bool_t traverse_group_end(rci_t * const rci)
 {
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
     if (have_group_lock(rci))
     {
         trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_unlock);
         return connector_false;
     }
     else
+#endif
     {
         trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
         set_rci_output_state(rci, rci_output_state_group_terminator);
@@ -511,7 +547,9 @@ STATIC void traverse_all_elements(rci_t * const rci)
         }
         else
         {
+#if (defined RCI_PARSER_USES_LIST)
             if (get_list_depth(rci) == get_query_depth(rci))
+#endif
                 SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_false);
 
             invalidate_element_id(rci);

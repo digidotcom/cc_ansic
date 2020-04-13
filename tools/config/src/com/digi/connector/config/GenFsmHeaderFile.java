@@ -14,9 +14,19 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private final static String FILENAME = "connector_api_remote.h";
 
     private EnumSet<Element.Type> types;
+    private boolean variableGroupSeen;
+    private boolean variableListSeen;
+    private boolean dictionarySeen;
+    private boolean variableArraySeen;
+    private boolean variableDictSeen;
 
-    public GenFsmHeaderFile(EnumSet<Element.Type> validTypes) throws IOException {
+    public GenFsmHeaderFile(EnumSet<Element.Type> validTypes, boolean variableGroupSeen, boolean variableListSeen, boolean dictionarySeen, boolean variableArraySeen, boolean variableDictSeen) throws IOException {
         super(FILENAME, GenFile.Type.USER, GenFile.UsePrefix.NONE);
+        this.variableGroupSeen = variableGroupSeen;
+        this.variableListSeen = variableListSeen;
+        this.dictionarySeen = dictionarySeen;
+        this.variableArraySeen = variableArraySeen;
+        this.variableDictSeen = variableDictSeen;
         types = validTypes;
     }
 
@@ -81,6 +91,22 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 defines.add(Code.define(RCI_PARSER_USES + "STRINGS"));
                 break;
             }
+        }
+        
+        if (variableGroupSeen) {
+        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_GROUP"));
+        }
+        if (variableListSeen) {
+        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_LIST"));
+        }
+        if (dictionarySeen) {
+        	defines.add(Code.define(RCI_PARSER_USES + "DICT"));
+        }
+        if (variableArraySeen) {
+        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_ARRAY"));
+        }
+        if (variableDictSeen) {
+        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_DICT"));
         }
 
         writeBlock(defines);
@@ -286,6 +312,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private void writeGroupElementStructs() throws IOException {
         String element_name_struct_field = writeGroupElementDefine(config, ItemType.ELEMENTS);
         String collection_name_struct_field = writeGroupElementDefine(config, ItemType.COLLECTIONS);
+        String dictionary_struct_field = dictionarySeen ? "    connector_dictionary_t dictionary;\n" : "";
 
         write("\n");
 
@@ -316,19 +343,21 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 "} connector_element_t;\n"
                 );
 
-        write(
-                "\n" +
-                "typedef struct {\n" +
-                "    unsigned int entries;\n" +
-                "    char const * const * keys;\n" +
-                "} connector_dictionary_t;\n"
-                );
+        if (dictionarySeen) {
+	        write(
+	                "\n" +
+	                "typedef struct {\n" +
+	                "    unsigned int entries;\n" +
+	                "    char const * const * keys;\n" +
+	                "} connector_dictionary_t;\n"
+	                );
+        }
 
         write(
                    "\n" +
                 "typedef union {\n" +
                 "    size_t instances;\n" +
-                "    connector_dictionary_t dictionary;\n" +
+                dictionary_struct_field +
                 "} connector_collection_capacity_t;\n"
                 );
 
@@ -347,8 +376,12 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         write(
             "\n" +
-            "typedef union {\n" +
-            "    connector_collection_t CONST * CONST collection;\n" +
+            "typedef union {\n"
+            );
+        if (types.contains(Element.Type.LIST)) {
+	        write("    connector_collection_t CONST * CONST collection;\n");
+        }
+        write(
             "    connector_element_t CONST * CONST element;\n" +
             "} connector_item_data_t;\n"
             );
@@ -410,6 +443,11 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeElementTypeEnums();
         writeElementValueStruct();
+        
+        String group_instances_lock = "";
+        String group_instances_set = "";
+        String group_instance_remove = "";
+        String group_instances_unlock = "";
 
         String list_instances_lock = "";
         String list_instances_set = "";
@@ -417,22 +455,50 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         String list_start = "";
         String list_end = "";
         String list_instances_unlock = "";
+        
+        String variable_array_type = "";
+        String fixed_dictionary_type = "";
+        String variable_dictionary_type = "";
+        
+        String dictionary_struct_field = "";
+        String key_struct_field = "";
 
         if (haveLists) {
-            list_instances_lock 	= "    connector_request_id_remote_config_list_instances_lock,\n";
-            list_instances_set 		= "    connector_request_id_remote_config_list_instances_set,\n";
-            list_instance_remove 	= "    connector_request_id_remote_config_list_instance_remove,\n";
+        	if (variableListSeen) {
+	            list_instances_lock 	= "    connector_request_id_remote_config_list_instances_lock,\n";
+	            list_instances_set 		= "    connector_request_id_remote_config_list_instances_set,\n";
+	            list_instance_remove 	= "    connector_request_id_remote_config_list_instance_remove,\n";
+	            list_instances_unlock 	= "    connector_request_id_remote_config_list_instances_unlock,\n";
+        	}
             list_start 				= "    connector_request_id_remote_config_list_start,\n";
             list_end   				= "    connector_request_id_remote_config_list_end,\n";
-            list_instances_unlock 	= "    connector_request_id_remote_config_list_instances_unlock,\n";
+        }
+        
+        if (variableGroupSeen) {
+            group_instances_lock = "    connector_request_id_remote_config_group_instances_lock,\n";
+            group_instances_set = "    connector_request_id_remote_config_group_instances_set,\n";
+            group_instance_remove = "    connector_request_id_remote_config_group_instance_remove,\n";
+            group_instances_unlock = "    connector_request_id_remote_config_group_instances_unlock,\n";
+        }
+        
+        if (variableArraySeen) {
+        	variable_array_type = ",\n    connector_collection_type_variable_array";
+        }
+        if (dictionarySeen) {
+        	dictionary_struct_field = "    connector_dictionary_t dictionary;\n";
+        	key_struct_field = "    char const * key;\n";
+	        fixed_dictionary_type = ",\n    connector_collection_type_fixed_dictionary";
+	        if (variableDictSeen) {
+	        	variable_dictionary_type = ",\n    connector_collection_type_variable_dictionary";
+	        }
         }
 
         write("\ntypedef enum {\n" +
                          "    connector_request_id_remote_config_session_start,\n" +
                          "    connector_request_id_remote_config_action_start,\n" +
-                         "    connector_request_id_remote_config_group_instances_lock,\n" +
-                         "    connector_request_id_remote_config_group_instances_set,\n" +
-                         "    connector_request_id_remote_config_group_instance_remove,\n" +
+                         group_instances_lock +
+                         group_instances_set +
+                         group_instance_remove +
                          "    connector_request_id_remote_config_group_start,\n" +
                          list_instances_lock +
                          list_instances_set +
@@ -442,7 +508,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                          list_end +
                          list_instances_unlock +
                          "    connector_request_id_remote_config_group_end,\n" +
-                         "    connector_request_id_remote_config_group_instances_unlock,\n" +
+                         group_instances_unlock +
                          "    connector_request_id_remote_config_action_end,\n" +
                          "    connector_request_id_remote_config_session_end,\n" +
                          "    connector_request_id_remote_config_session_cancel");
@@ -477,11 +543,11 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         write(
             "\n" +
             "typedef enum {\n" +
-            "    connector_collection_type_fixed_array,\n" +
-            "    connector_collection_type_variable_array,\n" +
-            "    connector_collection_type_fixed_dictionary,\n" +
-            "    connector_collection_type_variable_dictionary\n" +
-            "} connector_collection_type_t;\n"
+            "    connector_collection_type_fixed_array" +
+            variable_array_type +
+            fixed_dictionary_type +
+            variable_dictionary_type +
+            "\n} connector_collection_type_t;\n"
             );
 
         writeGroupElementStructs();
@@ -497,9 +563,9 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "\n" +
             "typedef union {\n" +
             "    unsigned int index;\n" +
-            "    char const * key;\n" +
+            key_struct_field +
             "    unsigned int count;\n" +
-            "    connector_dictionary_t dictionary;\n" +
+            dictionary_struct_field +
             "} connector_group_item_t;\n"
             );
 
@@ -580,7 +646,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                "\n" +
                "typedef union {\n" +
             "    unsigned int count;\n" +
-            "    connector_dictionary_t dictionary;\n" +
+            dictionary_struct_field +
             "} connector_response_item_t;\n"
             );
 

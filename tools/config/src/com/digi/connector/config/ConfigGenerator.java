@@ -686,7 +686,7 @@ public class ConfigGenerator {
         switch(fileTypeOption())
         {
         case NONE:
-               files.add(new GenFsmHeaderFile(config.getTypesSeen()));
+            files.add(new GenFsmHeaderFile(config.getTypesSeen(), config.isVariableGroupSeen(), config.isVariableListSeen(), config.isDictionarySeen(), config.isVariableArraySeen(), config.isVariableDictSeen()));
             files.add(new GenFsmSourceFile());
             break;
 

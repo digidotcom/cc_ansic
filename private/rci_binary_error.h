@@ -123,6 +123,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                     case connector_request_id_remote_config_action_start:
                         trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
                         break;
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
                     case connector_request_id_remote_config_group_instances_set:
                     case connector_request_id_remote_config_group_instances_lock:
                         if (is_fatal_protocol_error(remote_config->error_id))
@@ -137,14 +138,19 @@ STATIC void rci_generate_error(rci_t * const rci)
                             state_call(rci, rci_parser_state_traverse);
                         }
                         break;
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
                     case connector_request_id_remote_config_group_instance_remove:
+#endif
+#endif
                     case connector_request_id_remote_config_group_start:
                         if (is_fatal_protocol_error(remote_config->error_id))
                         {
                             if (remote_config_request == connector_request_id_remote_config_group_start)
                                 trigger_rci_callback(rci, connector_request_id_remote_config_group_end);
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
                             else
                                 trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_unlock);
+#endif
                         }
                         else
                         {
@@ -187,6 +193,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                             state_call(rci, rci_parser_state_traverse);
                         }
                         break;
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
                     case connector_request_id_remote_config_group_instances_unlock:
                         if (is_fatal_protocol_error(remote_config->error_id))
                         {
@@ -199,16 +206,26 @@ STATIC void rci_generate_error(rci_t * const rci)
                             state_call(rci, rci_parser_state_traverse);
                         }
                         break;
+#endif
                     case connector_request_id_remote_config_group_end:
                         if (is_fatal_protocol_error(remote_config->error_id))
                         {
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
                             connector_collection_type_t const collection_type = get_group_collection_type(rci);
+#endif
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
-
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY) && (defined RCI_PARSER_USES_VARIBLE_DICT)
                             if (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary)
+#elif (defined RCI_PARSER_USES_VARIABLE_ARRAY)
+                            if (collection_type == connector_collection_type_variable_array)
+#else
+							if (collection_type == connector_collection_type_variable_variable_dictionary)
+#endif
                                 trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_unlock);
                             else
+#endif
                                 trigger_rci_callback(rci, connector_request_id_remote_config_action_end);
                         }
                         else
@@ -240,6 +257,7 @@ STATIC void rci_generate_error(rci_t * const rci)
                         rci->status = rci_status_complete;
                         break;
 #if (defined RCI_PARSER_USES_LIST)
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
                     case connector_request_id_remote_config_list_instances_set:
                     case connector_request_id_remote_config_list_instances_lock:
                         if (is_fatal_protocol_error(remote_config->error_id))
@@ -271,10 +289,11 @@ STATIC void rci_generate_error(rci_t * const rci)
                             state_call(rci, rci_parser_state_traverse);
                         }
                         break;
+#endif
                     case connector_request_id_remote_config_list_end:
                         if (is_fatal_protocol_error(remote_config->error_id))
                         {
-                            connector_collection_type_t const collection_type = get_current_list_collection_type(rci);
+                            connector_collection_type_t const collection_type = get_current_collection_type(rci);
                             connector_bool_t const overflow = rci_output_terminator(rci);
                             if (overflow) goto done;
 
@@ -298,7 +317,9 @@ STATIC void rci_generate_error(rci_t * const rci)
                             state_call(rci, rci_parser_state_output);
                         }
                         break;
+#if (defined RCI_PARSER_USES_VARIABLE_LIST) && (defined RCI_PARSER_USES_VARIABLE_DICT)
                     case connector_request_id_remote_config_list_instance_remove:
+#endif
                     case connector_request_id_remote_config_list_start:
                         if (is_fatal_protocol_error(remote_config->error_id))
                         {

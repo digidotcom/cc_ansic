@@ -63,16 +63,19 @@ static connector_group_t const * get_current_group(rci_t const * const rci)
     return (table->groups + group_id);
 }
 
+#if (defined RCI_PARSER_USES_DICT)
 static connector_bool_t group_is_dictionary(rci_t const * const rci)
 {
     connector_collection_type_t collection_type = get_group_collection_type(rci);
-
-    return (collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
+	return is_dictionary(collection_type);
 }
+#endif
 
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
 static connector_bool_t group_is_dynamic(rci_t const * const rci)
 {
     connector_collection_type_t collection_type = get_group_collection_type(rci);
 
     return (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
 }
+#endif

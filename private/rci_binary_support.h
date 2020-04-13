@@ -243,15 +243,21 @@ typedef enum
     rci_output_state_command_normal_attribute_value,
     rci_output_state_group_id,
     rci_output_state_collection_attribute,
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
     rci_output_state_collection_count_id,
     rci_output_state_collection_count_value,
+#endif
     rci_output_state_collection_specifier_id,
     rci_output_state_collection_specifier_value,
+#if (defined RCI_PARSER_USES_DICT)
     rci_output_state_collection_name_string,
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
     rci_output_state_complete_attribute_id,
     rci_output_state_complete_attribute_value,
     rci_output_state_remove_attribute_id,
     rci_output_state_remove_attribute_value,
+#endif
 #if (defined RCI_PARSER_USES_LIST)
     rci_output_state_list_id,
 #endif
@@ -331,8 +337,10 @@ typedef struct
     unsigned int instance;
     struct {
         unsigned int count;
+#if (defined RCI_PARSER_USES_DICT)
         char key_store[RCI_DICT_MAX_KEY_LENGTH + 1];
         char const * const * list;
+#endif
     } keys;
 } rci_collection_info_t;
 
@@ -434,7 +442,9 @@ typedef struct rci
 
         struct {
             unsigned int id;
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
             unsigned int lock;
+#endif
             rci_collection_info_t info;
         } group;
 
@@ -443,7 +453,9 @@ typedef struct rci
             unsigned int depth;
             struct {
                 unsigned int id;
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
                 unsigned int lock;
+#endif
                 rci_collection_info_t info;
             } level[RCI_LIST_MAX_DEPTH];
             unsigned int query_depth;
@@ -488,7 +500,11 @@ typedef struct rci
                                                      RCI_SHARED_FLAG_ALL_GROUP_INSTANCES | RCI_SHARED_FLAG_ALL_GROUPS))
 #define should_output_count(rci)                    (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_OUTPUT_COUNT))
 #define should_set_count(rci)                       (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SET_COUNT))
+#if (defined RCI_PARSER_USES_LIST)
 #define should_remove_instance(rci)                 (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE) && get_list_depth(rci) == get_query_depth(rci))
+#else
+#define should_remove_instance(rci)                 (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_REMOVE))
+#endif
 #define should_skip_input(rci)                      (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_SKIP_INPUT))
 
 #define set_should_traverse_all_groups(rci, state)              (SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_GROUPS, state))

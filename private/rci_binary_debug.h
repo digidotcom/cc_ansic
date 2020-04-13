@@ -68,15 +68,21 @@ static char const * rci_output_state_t_as_string(rci_output_state_t const value)
         enum_to_case(rci_output_state_command_normal_attribute_value);
         enum_to_case(rci_output_state_group_id);
         enum_to_case(rci_output_state_collection_attribute);
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
         enum_to_case(rci_output_state_collection_count_id);
         enum_to_case(rci_output_state_collection_count_value);
+#endif
         enum_to_case(rci_output_state_collection_specifier_id);
         enum_to_case(rci_output_state_collection_specifier_value);
+#if (defined RCI_PARSER_USES_DICT)
         enum_to_case(rci_output_state_collection_name_string);
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
         enum_to_case(rci_output_state_complete_attribute_id);
         enum_to_case(rci_output_state_complete_attribute_value);
         enum_to_case(rci_output_state_remove_attribute_id);
         enum_to_case(rci_output_state_remove_attribute_value);
+#endif
 #if (defined RCI_PARSER_USES_LIST)
         enum_to_case(rci_output_state_list_id);
 #endif

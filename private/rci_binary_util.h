@@ -76,3 +76,27 @@ STATIC uint32_t encode_group_id(unsigned int const group_id)
     return id;
 }
 
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY) || (defined RCI_PARSER_USES_VARIABLE_DICT)
+STATIC connector_bool_t is_variable(connector_collection_type_t collection_type)
+{
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY) && (defined RCI_PARSER_USES_VARIABLE_DICT)
+return collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary;
+#elif (defined RCI_PARSER_USES_VARIABLE_ARRAY)
+return collection_type == connector_collection_type_variable_array;
+#else
+return collection_type == connector_collection_type_variable_dictionary;
+#endif
+}
+#endif
+
+#if (defined RCI_PARSER_USES_DICT)
+STATIC connector_bool_t is_dictionary(connector_collection_type_t collection_type)
+{
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
+	return connector_bool(collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary);
+#else
+	return connector_bool(collection_type == connector_collection_type_fixed_dictionary);
+#endif
+}
+#endif
+

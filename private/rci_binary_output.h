@@ -17,16 +17,20 @@
  * =======================================================================
  */
 
-
+#if (defined RCI_PARSER_USES_LIST)
 #define SHOULD_OUTPUT(rci)  (get_list_depth(rci) < (rci)->output.skip_depth && !(rci)->output.element_skip)
+#else
+#define SHOULD_OUTPUT(rci)  ((rci)->output.skip_depth != 0 && !(rci)->output.element_skip)
+#endif
 
+#if (defined RCI_PARSER_USES_DICT)
 STATIC connector_bool_t should_output_name(rci_t * const rci)
 {
-    connector_collection_type_t type = get_list_depth(rci) > 0 ? get_current_list_collection_type(rci) : get_group_collection_type(rci);
+    connector_collection_type_t type = get_current_collection_type(rci);
 
-    if (type == connector_collection_type_variable_dictionary || type == connector_collection_type_fixed_dictionary)
+    if (is_dictionary(type) == connector_true)
     {
-        char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+        char const * const name = get_current_collection_name(rci);
         return connector_bool(name != NULL && name[0] != '\0');
     }
     else
@@ -34,6 +38,7 @@ STATIC connector_bool_t should_output_name(rci_t * const rci)
         return connector_false;
     }
 }
+#endif
 
 STATIC void end_collection(rci_t * const rci)
 {
@@ -709,15 +714,31 @@ STATIC void rci_output_group_id(rci_t * const rci)
 
     if (!SHOULD_OUTPUT(rci))
     {
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
         SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_false);
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
         SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
+#endif
+#endif
         state_call(rci, rci_parser_state_traverse);
         goto done;
     }
 
     encoding_data = encode_group_id(get_group_id(rci));
 
-    if ((get_group_instance(rci) != INVALID_INDEX && get_group_instance(rci) > 1) || group_is_dictionary(rci) || should_output_count(rci) || should_remove_instance(rci))
+    if ((get_group_instance(rci) != INVALID_INDEX && get_group_instance(rci) > 1) 
+#if (defined RCI_PARSER_USES_DICT)
+		|| group_is_dictionary(rci)
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
+		|| should_output_count(rci)
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
+		|| should_remove_instance(rci)
+#endif
+#endif
+	)
     {
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
@@ -772,43 +793,58 @@ STATIC connector_bool_t encode_attribute(rci_t * const rci, unsigned int const t
 STATIC void rci_output_collection_attribute(rci_t * const rci)
 {
     unsigned int instance;
-    connector_collection_type_t collection_type;
     rci_output_state_t next_output_state;
     unsigned int normal_attribute_count = 0;
 
+#if (defined RCI_PARSER_USES_LIST)
     if (get_list_depth(rci) > 0)
     {
         instance = get_current_list_instance(rci);
-        collection_type = get_current_list_collection_type(rci);
     }
     else
+#endif
     {
         instance = get_group_instance(rci);
-        collection_type = get_group_collection_type(rci);
     }
 
-
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY) || (defined RCI_PARSER_USES_VARIABLE_DICT)
     if (should_output_count(rci))
     {
+#if (defined RCI_PARSER_USES_DICT)
+        connector_collection_type_t collection_type = get_current_collection_type(rci);
+#endif
         normal_attribute_count++;
         if (should_remove_instance(rci))
         {
             normal_attribute_count++;
         }
-        if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
+#if (defined RCI_PARSER_USES_DICT)
+        if (is_dictionary(collection_type) == connector_true)
             next_output_state = rci_output_state_complete_attribute_id;
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
         else
+#endif
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
             next_output_state = rci_output_state_collection_count_id;
+#endif
     }
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
     else if (should_remove_instance(rci))
     {
         normal_attribute_count++;
         next_output_state = rci_output_state_remove_attribute_id;
     }
+#endif
+#endif
 
     if (normal_attribute_count > 0)
     {
-        if (instance != INVALID_INDEX && (instance > 1 || should_output_name(rci)))
+        if (instance != INVALID_INDEX && (instance > 1
+#if (defined RCI_PARSER_USES_DICT)
+			|| should_output_name(rci)
+#endif
+		))
         {
             next_output_state = rci_output_state_collection_specifier_id;
             normal_attribute_count++;
@@ -818,13 +854,15 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
             set_rci_output_state(rci, next_output_state);
         }
     }
+#if (defined RCI_PARSER_USES_DICT)
     else if (should_output_name(rci))
     {
-        char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+        char const * const name = get_current_collection_name(rci);
         connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_NAME, strlen(name));
         if (!overflow)
             set_rci_output_state(rci, rci_output_state_collection_name_string);
     }
+#endif
     else if (instance > 1)
     {
         connector_bool_t overflow = encode_attribute(rci, BINARY_RCI_ATTRIBUTE_TYPE_INDEX, instance);
@@ -839,6 +877,7 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
     }
 }
 
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
 STATIC void rci_output_collection_count_id(rci_t * const rci)
 {
     SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
@@ -852,7 +891,11 @@ STATIC void rci_output_collection_count_id(rci_t * const rci)
 
 STATIC void rci_output_collection_count_value(rci_t * const rci)
 {
+#if (defined RCI_PARSER_USES_LIST)
     unsigned int count = get_list_depth(rci) > 0 ? get_current_list_count(rci) : get_group_count(rci);
+#else
+    unsigned int count = get_group_count(rci);
+#endif
     connector_bool_t overflow = rci_output_uint32(rci, count);
 
     if (!overflow)
@@ -860,7 +903,9 @@ STATIC void rci_output_collection_count_value(rci_t * const rci)
         end_collection(rci);
     }
 }
+#endif
 
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
 STATIC void rci_output_remove_attribute_id(rci_t * const rci)
 {
     SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_REMOVE, connector_false);
@@ -885,7 +930,9 @@ STATIC void rci_output_remove_attribute_value(rci_t * const rci)
             set_rci_output_state(rci, rci_output_state_field_terminator);
     }
 }
+#endif
 
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
 STATIC void rci_output_complete_attribute_id(rci_t * const rci)
 {
     SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_OUTPUT_COUNT, connector_false);
@@ -909,26 +956,20 @@ STATIC void rci_output_complete_attribute_value(rci_t * const rci)
             end_collection(rci);
     }
 }
+#endif
 
 STATIC void rci_output_collection_specifier_id(rci_t * const rci)
 {
     connector_bool_t overflow;
-    connector_collection_type_t collection_type;
 
-    if (get_list_depth(rci) > 0)
-    {
-        collection_type = get_current_list_collection_type(rci);
-    }
-    else
-    {
-        collection_type = get_group_collection_type(rci);
-    }
-
-    if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
+#if (defined RCI_PARSER_USES_DICT)
+    connector_collection_type_t collection_type = get_current_collection_type(rci);
+    if (is_dictionary(collection_type) == connector_true)
     {
         overflow = rci_output_uint8(rci, rci_dictionary_attribute_name);
     }
     else
+#endif
     {
         overflow = rci_output_uint8(rci, rci_array_attribute_index);
     }
@@ -941,53 +982,68 @@ STATIC void rci_output_collection_specifier_value(rci_t * const rci)
 {
     connector_bool_t overflow;
     unsigned int instance;
-    connector_collection_type_t collection_type;
+#if (defined RCI_PARSER_USES_DICT)
+    connector_collection_type_t collection_type = get_current_collection_type(rci);;
+#endif
 
+#if (defined RCI_PARSER_USES_LIST)
     if (get_list_depth(rci) > 0)
     {
         instance = get_current_list_instance(rci);
-        collection_type = get_current_list_collection_type(rci);
     }
     else
+#endif
     {
         instance = get_group_instance(rci);
-        collection_type = get_group_collection_type(rci);
     }
 
-    if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
+#if (defined RCI_PARSER_USES_DICT)
+    if (is_dictionary(collection_type) == connector_true)
     {
-        char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+        char const * const name = get_current_collection_name(rci);
         overflow = rci_output_string(rci, name, strlen(name));
     }
     else
+#endif
     {
         overflow = rci_output_uint32(rci, instance);
     }
 
     if (!overflow)
     {
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY) || (defined RCI_PARSER_USES_VARIABLE_DICT)
         if (should_output_count(rci))
         {
-            if (collection_type == connector_collection_type_variable_dictionary || collection_type == connector_collection_type_fixed_dictionary)
+#if (defined RCI_PARSER_USES_DICT)
+            if (is_dictionary(collection_type) == connector_true)
                 set_rci_output_state(rci, rci_output_state_complete_attribute_id);
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
             else
+#endif
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
                 set_rci_output_state(rci, rci_output_state_collection_count_id);
+#endif
         }
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
         else if (should_remove_instance(rci))
         {
             set_rci_output_state(rci, rci_output_state_remove_attribute_id);
         }
+#endif
         else
+#endif
         {
             end_collection(rci);
         }
     }
 }
 
+#if (defined RCI_PARSER_USES_DICT)
 STATIC void rci_output_collection_name_string(rci_t * const rci)
 {
     connector_bool_t overflow;
-    char const * const name = get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+    char const * const name = get_current_collection_name(rci);
 
     if (!rcistr_valid(&rci->output.content)) /* bypass output of leading length */
     {
@@ -1001,6 +1057,7 @@ STATIC void rci_output_collection_name_string(rci_t * const rci)
         end_collection(rci);
     }
 }
+#endif
 
 #define BYTES_REQUIRED_FOR_ERROR_PRONE_FIELD_VALUES MAX_VALUE(MAC_ADDR_LEN, IPV4_ADDR_LEN)
 
@@ -1075,7 +1132,17 @@ STATIC void rci_output_list_id(rci_t * const rci)
         field_id |= BINARY_RCI_FIELD_TYPE_INDICATOR_BIT;
     }
 
-    if (get_current_list_instance(rci) > 1 || should_output_name(rci) || should_output_count(rci) || should_remove_instance(rci))
+    if (get_current_list_instance(rci) > 1
+#if (defined RCI_PARSER_USES_DICT)
+		|| should_output_name(rci)
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
+		|| should_output_count(rci)
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
+		|| should_remove_instance(rci)
+#endif
+#endif
+	)
     {
         field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
 
@@ -1331,6 +1398,7 @@ STATIC void rci_generate_output(rci_t * const rci)
                 rci_output_collection_attribute(rci);
                 break;
 
+#if (defined RCI_PARSER_USES_VARIABLE_ARRAY)
             case rci_output_state_collection_count_id:
                 rci_output_collection_count_id(rci);
                 break;
@@ -1338,6 +1406,7 @@ STATIC void rci_generate_output(rci_t * const rci)
             case rci_output_state_collection_count_value:
                 rci_output_collection_count_value(rci);
                 break;
+#endif
 
             case rci_output_state_collection_specifier_id:
                 rci_output_collection_specifier_id(rci);
@@ -1347,10 +1416,12 @@ STATIC void rci_generate_output(rci_t * const rci)
                 rci_output_collection_specifier_value(rci);
                 break;
 
+#if (defined RCI_PARSER_USES_DICT)
             case rci_output_state_collection_name_string:
                 rci_output_collection_name_string(rci);
                 break;
 
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
             case rci_output_state_complete_attribute_id:
                 rci_output_complete_attribute_id(rci);
                 break;
@@ -1359,12 +1430,6 @@ STATIC void rci_generate_output(rci_t * const rci)
                 rci_output_complete_attribute_value(rci);
                 break;
 
-#if (defined RCI_PARSER_USES_LIST)
-            case rci_output_state_list_id:
-                rci_output_list_id(rci);
-                break;
-#endif
-
             case rci_output_state_remove_attribute_id:
                 rci_output_remove_attribute_id(rci);
                 break;
@@ -1372,6 +1437,14 @@ STATIC void rci_generate_output(rci_t * const rci)
             case rci_output_state_remove_attribute_value:
                 rci_output_remove_attribute_value(rci);
                 break;
+#endif
+#endif
+
+#if (defined RCI_PARSER_USES_LIST)
+            case rci_output_state_list_id:
+                rci_output_list_id(rci);
+                break;
+#endif
 
             case rci_output_state_field_id:
                 rci_output_field_id(rci);

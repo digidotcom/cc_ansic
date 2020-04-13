@@ -23,9 +23,7 @@
 #include "rci_binary_buffer.h"
 #include "rci_binary_string.h"
 #include "rci_binary_group.h"
-#if (defined RCI_PARSER_USES_LIST)
 #include "rci_binary_list.h"
-#endif
 #include "rci_binary_element.h"
 #include "rci_binary_callback.h"
 #include "rci_binary_output.h"
@@ -56,10 +54,14 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
 
     invalidate_group_id(rci);
     invalidate_group_instance(rci);
+#if (defined RCI_PARSER_USES_DICT)
     rci->shared.group.info.keys.list = NULL;
     rci->shared.group.info.keys.key_store[0] = '\0';
     rci->shared.group.info.keys.count = INVALID_INDEX;
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_GROUP)
     rci->shared.group.lock = INVALID_ID;
+#endif
 
 #if (defined RCI_PARSER_USES_LIST)
     {
@@ -67,11 +69,15 @@ STATIC connector_bool_t rci_action_session_start(rci_t * const rci, rci_service_
         for (i = 0; i < RCI_LIST_MAX_DEPTH; i++)
         {
             rci->shared.list.level[i].id = INVALID_ID;
-            rci->shared.list.level[i].lock = INVALID_ID;
             rci->shared.list.level[i].info.instance = INVALID_INDEX;
+#if (defined RCI_PARSER_USES_DICT)
             rci->shared.list.level[i].info.keys.list = NULL;
             rci->shared.list.level[i].info.keys.key_store[0] = '\0';
             rci->shared.list.level[i].info.keys.count = INVALID_INDEX;
+#endif
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
+            rci->shared.list.level[i].lock = INVALID_ID;
+#endif
         }
     }
     set_list_depth(rci, 0);

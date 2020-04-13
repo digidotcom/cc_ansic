@@ -60,7 +60,7 @@
                                              CURRENT_LIST_VARIABLE(rci).info.keys.key_store : \
                                              CURRENT_LIST_VARIABLE(rci).info.keys.list[get_current_list_instance(rci) - 1])
 
-#define get_current_list_collection_type(rci) (get_current_collection_info((rci))->collection_type)
+#define get_current_collection_type(rci) (get_current_collection_info((rci))->collection_type)
 
 
 static connector_collection_t const * get_current_collection_info(rci_t const * const rci)
@@ -86,9 +86,22 @@ static connector_collection_t const * get_current_collection_info(rci_t const * 
     }
 }
 
+#if (defined RCI_PARSER_USES_DICT)
+static char const * const get_current_collection_name(rci_t const * const rci)
+{
+#if (defined RCI_PARSER_USES_LIST)
+	return get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+#else
+	return get_group_name(rci);
+#endif
+} 
+#endif
+
+#if (defined RCI_PARSER_USES_VARIABLE_LIST)
 static connector_bool_t current_list_is_dynamic(rci_t const * const rci)
 {
-    connector_collection_type_t collection_type = get_current_list_collection_type(rci);
+    connector_collection_type_t collection_type = get_current_collection_type(rci);
 
-    return (collection_type == connector_collection_type_variable_array || collection_type == connector_collection_type_variable_dictionary) ? connector_true : connector_false;
+    return connector_bool(is_variable(collection_type));
 }
+#endif
