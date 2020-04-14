@@ -457,7 +457,7 @@ public class Element extends Item {
             }
         }
 
-        if (requiresMax.contains(type) && max == null) {
+        if (requiresMax.contains(type) && !this.access.equals(AccessType.READ_ONLY) && max == null) {
             throw new Exception("max is required");
         }
 

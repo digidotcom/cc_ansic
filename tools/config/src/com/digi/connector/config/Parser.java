@@ -130,7 +130,7 @@ public class Parser {
             options.log(e.toString());
             throw new NullPointerException();
         } catch (Exception e) {
-            throw new IOException(errorFoundLog(fileName, e.getMessage()));
+            throw new IOException(errorFoundLog(fileName, e.getMessage()), e);
         }
         finally {
             tokenScanner.close();
