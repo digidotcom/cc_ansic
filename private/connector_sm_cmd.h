@@ -241,7 +241,7 @@ STATIC connector_callback_status_t sm_inform_data_complete(connector_data_t * co
     else
     #endif
     {
-        request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_status : connector_request_id_data_service_receive_status;
+        request_id.data_service_request = (SmIsClientOwned(session->flags) == connector_true) ? connector_request_id_data_service_send_status : connector_request_id_data_service_receive_status;
         callback_status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &status_info, connector_ptr->context);
     }
 

@@ -826,7 +826,7 @@ STATIC connector_status_t sm_close_transport(connector_data_t * const connector_
                 goto done;
 
             case connector_callback_continue:
-                sm_ptr->transport.connect_type = close_data.reconnect ? connector_connect_auto : connector_connect_manual;
+                sm_ptr->transport.connect_type = (close_data.reconnect == connector_true) ? connector_connect_auto : connector_connect_manual;
                 result = connector_working;
                 break;
 

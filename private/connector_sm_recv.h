@@ -380,7 +380,7 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
         session->request_id = header->request_id;
         session->info = header->info;
         session->cmd_status = header->cmd_status;
-        session->command = client_originated ? connector_sm_cmd_opaque_response : header->command;
+        session->command = (client_originated == connector_true) ? connector_sm_cmd_opaque_response : header->command;
     }
 
     if (header->segment.number == 0)

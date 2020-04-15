@@ -390,14 +390,14 @@ STATIC connector_bool_t rci_output_mac_addr(rci_t * const rci, char const * cons
 
         {
             uint8_t * rci_ber = rci_buffer_position(output);
-            size_t i;
+            size_t j;
 
             *rci_ber++ = (uint8_t)SIZEOF_MAC_ADDR;
             rci_buffer_advance(output, 1);
 
-            for (i = 0; i < SIZEOF_MAC_ADDR; i++)
+            for (j = 0; j < SIZEOF_MAC_ADDR; j++)
             {
-                *rci_ber++ = mac_addr[i];
+                *rci_ber++ = mac_addr[j];
                 rci_buffer_advance(output, 1);
             }
         }

@@ -76,7 +76,7 @@ STATIC connector_bool_t register_activity(connector_data_t * const connector_ptr
     unsigned long * const storage = last_activity(connector_ptr, network);
     connector_status_t const result =  get_system_time(connector_ptr, storage);
 
-    return result != connector_abort;
+    return connector_bool(result != connector_abort);
 }
 
 STATIC uint32_t idle_time(connector_data_t * const connector_ptr, connector_network_type_t const network, unsigned long const now)

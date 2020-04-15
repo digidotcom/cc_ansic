@@ -47,7 +47,7 @@ STATIC connector_status_t sm_get_user_data_length(connector_data_t * const conne
             {
                 connector_request_id_t request_id;
 
-                request_id.data_service_request = SmIsClientOwned(session->flags) ? connector_request_id_data_service_send_length : connector_request_id_data_service_receive_reply_length;
+                request_id.data_service_request = (SmIsClientOwned(session->flags) == connector_true) ? connector_request_id_data_service_send_length : connector_request_id_data_service_receive_reply_length;
                 status = connector_callback(connector_ptr->callback, connector_class_id_data_service, request_id, &cb_data, connector_ptr->context);
                 if (status == connector_callback_unrecognized)
                     status = connector_callback_continue;
@@ -427,7 +427,7 @@ STATIC connector_status_t sm_send_segment(connector_data_t * const connector_ptr
             {
                 connector_debug_line("ERROR: sm_send_segment: All segments processed but still remaining bytes");
             }
-            result = sm_switch_path(connector_ptr, session, SmIsResponse(session->flags) ? connector_sm_state_complete : connector_sm_state_receive_data);
+            result = sm_switch_path(connector_ptr, session, (SmIsResponse(session->flags) == connector_true) ? connector_sm_state_complete : connector_sm_state_receive_data);
             connector_debug_line("sm_send_segment(sm_switch_path): result=%zu", result);
             if (result != connector_working) goto error;
         }
@@ -536,7 +536,7 @@ STATIC connector_status_t sm_send_data(connector_data_t * const connector_ptr, c
 
         if (session->segments.processed == 0)
         {
-            cmd_field = SmIsRequest(session->flags) ? session->command : 0;
+            cmd_field = (SmIsRequest(session->flags) == connector_true) ? session->command : 0;
 
             if (SmIsError(session->flags))
                 SmSetError(cmd_field);
@@ -691,7 +691,7 @@ STATIC connector_status_t sm_process_send_path(connector_data_t * const connecto
 
         case connector_sm_state_more_data:
 #if (defined CONNECTOR_DATA_SERVICE)
-            result = SmIsClientOwned(session->flags) ? sm_get_more_request_data(connector_ptr, session) : sm_get_more_response_data(connector_ptr, session);
+            result = (SmIsClientOwned(session->flags) == connector_true) ? sm_get_more_request_data(connector_ptr, session) : sm_get_more_response_data(connector_ptr, session);
 #endif
             break;
 

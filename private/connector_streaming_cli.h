@@ -49,48 +49,48 @@ Digi International Inc., 9350 Excelsior Blvd., Suite 700, Hopkins, MN 55343
 static char const streaming_cli_service_unknown_session_error_msg[] = "Unknown session";
 
 /* Message definitions */
-enum {
+enum streaming_cli_service_capabilities {
     field_define(streaming_cli_service_capabilities, opcode, uint8_t),
     field_define(streaming_cli_service_capabilities, max_concurrent_sessions, uint8_t),
     record_end(streaming_cli_service_capabilities)
-} streaming_cli_service_capabilities;
+};
 
-enum {
+enum streaming_cli_service_session_start_request {
     field_define(streaming_cli_service_session_start_request, opcode, uint8_t),
     field_define(streaming_cli_service_session_start_request, session_id, uint16_t),
     field_define(streaming_cli_service_session_start_request, terminal_mode, uint8_t),
     record_end(streaming_cli_service_session_start_request)
-} streaming_cli_service_session_start_request;
+};
 
-enum {
+enum streaming_cli_service_session_start_response {
     field_define(streaming_cli_service_session_start_response, opcode, uint8_t),
     field_define(streaming_cli_service_session_start_response, status, uint8_t),
     record_end(streaming_cli_service_session_start_response)
-}  streaming_cli_service_session_start_response;
+};
 
-enum {
+enum streaming_cli_service_session_data {
     field_define(streaming_cli_service_session_data, opcode, uint8_t),
     field_define(streaming_cli_service_session_data, session_id, uint16_t),
     record_end(streaming_cli_service_session_data)
-} streaming_cli_service_session_data;
+};
 
-enum {
+enum streaming_cli_service_session_close {
     field_define(streaming_cli_service_session_close, opcode, uint8_t),
     field_define(streaming_cli_service_session_close, session_id, uint16_t),
     record_end(streaming_cli_service_session_close)
-} streaming_cli_service_session_close;
+};
 
-enum {
+enum streaming_cli_service_execute_request {
     field_define(streaming_cli_service_execute_request, opcode, uint8_t),
     field_define(streaming_cli_service_execute_request, timeout, uint16_t),
     record_end(streaming_cli_service_execute_request)
-} streaming_cli_service_execute_request;
+};
 
-enum {
+enum streaming_cli_service_execute_response {
     field_define(streaming_cli_service_execute_response, opcode, uint8_t),
     field_define(streaming_cli_service_execute_response, status, uint8_t),
     record_end(streaming_cli_service_execute_response)
-} streaming_cli_service_execute_response;
+};
 
 #define MAX_ERROR_MSG_SIZE (record_bytes(streaming_cli_service_session_close) + sizeof streaming_cli_service_unknown_session_error_msg)
 

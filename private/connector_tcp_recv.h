@@ -508,7 +508,6 @@ enum {
         if (message_load_be16(edp_header, type) == E_MSG_MT2_TYPE_PAYLOAD)
         {
             uint16_t facility;
-            uint8_t * edp_protocol = packet + PACKET_EDP_HEADER_SIZE;
             /* search facility
              *
              * Make sure the facility is not processing previous packet.

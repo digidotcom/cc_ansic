@@ -39,29 +39,29 @@ typedef enum
 #define SM_CAPABILITY_BATTERY           0x40
 
 /* Message definitions */
-enum {
+enum sm_capabilities {
     field_define(sm_capabilities, opcode, uint8_t),
     field_define(sm_capabilities, flags, uint8_t),
     record_end(sm_capabilities)
-} sm_capabilities;
+};
 
 #if (defined CONNECTOR_SM_ENCRYPTION)
-enum {
+enum sm_key_set {
     field_define(sm_key_set, opcode, uint8_t),
     field_define_array(sm_key_set, key, SM_KEY_LENGTH),
     record_end(sm_key_set)
-} sm_key_set;
+};
 
-enum {
+enum sm_key_response {
     field_define(sm_key_response, opcode, uint8_t),
     field_define_array(sm_key_response, tag, SM_TAG_LENGTH),
     record_end(sm_key_response)
-} sm_key_response;
+};
 
-enum {
+enum sm_key_error {
     field_define(sm_key_error, opcode, uint8_t),
     record_end(sm_key_error)
-} sm_key_error;
+};
 
 typedef struct sm_configuration_response
 {

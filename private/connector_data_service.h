@@ -819,16 +819,16 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
 
         case msg_service_type_error:
         {
-            msg_session_t * const session = service_request->session;
-            session->error = service_request->error_value;
+            msg_session_t * const session_inner = service_request->session;
+            session_inner->error = service_request->error_value;
             status = process_send_error(connector_ptr, service_request, ds_ptr->callback_context);
             break;
         }
 
         case msg_service_type_free:
             {
-                msg_session_t const * const session = service_request->session;
-                data_service_context_t const * const data_service = session->service_context;
+                msg_session_t const * const session_inner = service_request->session;
+                data_service_context_t const * const data_service = session_inner->service_context;
                 connector_request_id_data_service_t const previous_request = data_service->request_type;
 
                 if (previous_request != connector_request_id_data_service_send_status)
