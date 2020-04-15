@@ -46,7 +46,7 @@ public class ConfigGenerator {
 
     public final static String VERSION = "3.0.0.0";
 
-    public static enum UseNames { COLLECTIONS, ELEMENTS, VALUES };
+    public static enum ItemType { COLLECTIONS, ELEMENTS, VALUES };
     public static enum FileType { NONE, SOURCE, GLOBAL_HEADER;
         public static FileType toFileType(String str) throws Exception {
             try {
@@ -83,6 +83,9 @@ public class ConfigGenerator {
 
     private final static String USE_NAMES_OPTION = "usenames";
     private final static String USE_NAMES_DEFAULT = "none";
+    
+    private final static String USE_ENUMS_OPTION = "useenums";
+    private final static String USE_ENUMS_DEFAULT = "all";
 
     private final static String PREFIX_OPTION = "prefix";
 
@@ -107,7 +110,8 @@ public class ConfigGenerator {
     private boolean noErrorDescription;
     private boolean verboseOption;
     private FileType fileType = FileType.NONE;
-    private EnumSet<UseNames> useNames = EnumSet.noneOf(UseNames.class);
+    private EnumSet<ItemType> useNames = EnumSet.noneOf(ItemType.class);
+    private EnumSet<ItemType> useEnums = EnumSet.allOf(ItemType.class);
     private String customPrefix = "";
     private boolean deleteDescriptor;
     private boolean useCcapi;
@@ -224,6 +228,10 @@ public class ConfigGenerator {
                         DASH + USE_NAMES_OPTION + "={none|collections|elements|values|all}", USE_NAMES_DEFAULT));
         log(String
                 .format(
+                        "\t%-16s \t= optional, generate ids as enums for specified item types. Default is %s.",
+                        DASH + USE_ENUMS_OPTION + "={none|collections|elements|values|all}", USE_ENUMS_DEFAULT));
+        log(String
+                .format(
                         "\n\t%-16s \t= username to log in to Device Cloud. If no password is given you will be prompted to enter the password",
                         USERNAME));
         log(String
@@ -305,27 +313,27 @@ public class ConfigGenerator {
 
     }
 
-    private EnumSet<UseNames> parseNamesList(String option) throws Exception {
-        EnumSet<UseNames> result;
+    private EnumSet<ItemType> parseItemTypeList(String option) throws Exception {
+        EnumSet<ItemType> result;
         String compact = option.replace(" ",  "").toUpperCase();
 
         switch (compact) {
         case "NONE":
-            result = EnumSet.noneOf(UseNames.class);
+            result = EnumSet.noneOf(ItemType.class);
             break;
 
         case "ALL":
-            result = EnumSet.allOf(UseNames.class);
+            result = EnumSet.allOf(ItemType.class);
             break;
 
         default:
-            result = EnumSet.noneOf(UseNames.class);
+            result = EnumSet.noneOf(ItemType.class);
             for (String type: compact.split(",")) {
                 try {
-                    result.add(UseNames.valueOf(type));
+                    result.add(ItemType.valueOf(type));
                 } catch (Exception e) {
-                    log("Available use name types:" + UseNames.values());
-                    throw new Exception("Invalid use name type: " + type);
+                    log("Available item types:" + ItemType.values());
+                    throw new Exception("Invalid item type: " + type);
                 }
             }
         }
@@ -376,7 +384,9 @@ public class ConfigGenerator {
                 } else if (keys[0].equals(PREFIX_OPTION)) {
                     customPrefix = keys[1] + "_";
                 } else if (keys[0].equals(USE_NAMES_OPTION)) {
-                    useNames = parseNamesList(keys[1]);
+                    useNames = parseItemTypeList(keys[1]);
+                } else if (keys[0].equals(USE_ENUMS_OPTION)) {
+                    useEnums = parseItemTypeList(keys[1]);
                 } else if (keys[0].equals(RCI_DC_TARGET_MAX_OPTION)) {
                     rci_dc_attribute_max_len = parsePositiveInteger(keys[1], "-rci_dc_attribute_max_len");
                 } else if (keys[0].equals(OVERRIDE_MAX_NAME_LENGTH)) {
@@ -594,8 +604,12 @@ public class ConfigGenerator {
         return fileType;
     }
 
-    public Set<UseNames> useNames() {
+    public Set<ItemType> useNames() {
         return Collections.unmodifiableSet(useNames);
+    }
+    
+    public Set<ItemType> useEnums() {
+        return Collections.unmodifiableSet(useEnums);
     }
 
     public boolean deleteDescriptorOption() {

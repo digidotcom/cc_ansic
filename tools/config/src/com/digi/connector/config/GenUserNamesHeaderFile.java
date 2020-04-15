@@ -2,7 +2,7 @@ package com.digi.connector.config;
 
 import java.io.IOException;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 
 public class GenUserNamesHeaderFile extends GenHeaderFile {
 
@@ -25,16 +25,16 @@ public class GenUserNamesHeaderFile extends GenHeaderFile {
     }
 
     public void writeGuardedContent() throws Exception {
-        if (options.useNames().contains(UseNames.ELEMENTS)) {
-            generateUseNamesHeader("ELEMENTS", config.getMaxNameLengthSeen(UseNames.ELEMENTS) + 1);
+        if (options.useNames().contains(ItemType.ELEMENTS)) {
+            generateUseNamesHeader("ELEMENTS", config.getMaxNameLengthSeen(ItemType.ELEMENTS) + 1);
         }
 
-        if (options.useNames().contains(UseNames.COLLECTIONS)) {
-            generateUseNamesHeader("COLLECTIONS", config.getMaxNameLengthSeen(UseNames.COLLECTIONS) + 1);
+        if (options.useNames().contains(ItemType.COLLECTIONS)) {
+            generateUseNamesHeader("COLLECTIONS", config.getMaxNameLengthSeen(ItemType.COLLECTIONS) + 1);
         }
 
-        if (options.useNames().contains(UseNames.VALUES)) {
-            generateUseNamesHeader("VALUES", config.getMaxNameLengthSeen(UseNames.VALUES) + 1);
+        if (options.useNames().contains(ItemType.VALUES)) {
+            generateUseNamesHeader("VALUES", config.getMaxNameLengthSeen(ItemType.VALUES) + 1);
         }
     }
 }

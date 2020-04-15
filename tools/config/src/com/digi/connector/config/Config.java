@@ -10,7 +10,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 import com.digi.connector.config.Element;
 
 public class Config {
@@ -41,7 +41,7 @@ public class Config {
         globalUserErrorsOffset = globalProtocolErrorsOffset + globalProtocolErrors.size();
         globalUserErrors = new LinkedHashMap<>();
 
-        for (UseNames name: UseNames.values()) {
+        for (ItemType name: ItemType.values()) {
             max_name_length_seen.put(name, 0);
         }
 
@@ -67,7 +67,7 @@ public class Config {
 
     private LinkedList<Element> ref_enums = new LinkedList<>();
 
-    private EnumMap<UseNames, Integer> max_name_length_seen = new EnumMap<>(UseNames.class);
+    private EnumMap<ItemType, Integer> max_name_length_seen = new EnumMap<>(ItemType.class);
     private EnumSet<Element.Type> typesSeen = EnumSet.noneOf(Element.Type.class);
 
     public Table getTable(Group.Type type) {
@@ -158,12 +158,12 @@ public class Config {
         return typesSeen;
     }
 
-    public void nameLengthSeen(UseNames type, int length) {
+    public void nameLengthSeen(ItemType type, int length) {
         int current = max_name_length_seen.get(type);
         max_name_length_seen.put(type, Math.max(current, length));
     }
 
-    public int getMaxNameLengthSeen(UseNames type) {
+    public int getMaxNameLengthSeen(ItemType type) {
         return max_name_length_seen.get(type);
     }
 

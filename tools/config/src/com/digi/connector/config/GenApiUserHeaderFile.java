@@ -9,7 +9,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 
 public final class GenApiUserHeaderFile extends GenHeaderFile {
 
@@ -175,7 +175,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
                 value_type = Code.Type.base("ccapi_on_off_t");
                 break;
             case ENUM:
-                if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+                if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
                     value_type = CHAR.constant().pointer();
                 } else {
                     value_type = Code.Type.base(prefix + "_" + element.getSanitizedName() + "_id_t");
@@ -213,7 +213,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             else {
                 switch (element.getType()) {
                     case ENUM:
-                        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+                        if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
                             break;
                         }
                         /* Intentional fall-thru */

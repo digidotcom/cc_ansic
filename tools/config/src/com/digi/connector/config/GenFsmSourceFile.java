@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 import com.digi.connector.config.ItemList.Capacity;
 
 public class GenFsmSourceFile extends GenSourceFile {
@@ -254,7 +254,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             String itemVariable = getDefineString(customPrefix + prefix + "__" + item.getSanitizedName()).toLowerCase();
             if (item instanceof Element) {
                 Element element = (Element) item;
-                String optional = options.useNames().contains(UseNames.ELEMENTS)
+                String optional = options.useNames().contains(ItemType.ELEMENTS)
                     ? String.format("    \"%s\",\n", element.getName())
                     : "";
 
@@ -309,7 +309,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                 }
                 write("    " + getElementDefine("access", element.getAccess().name().toLowerCase()) + ",\n");
 
-                if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+                if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
                     String enum_struct;
 
                     if (element.getType() == Element.Type.ENUM) {
@@ -334,7 +334,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                 writeCollectionKeysArray(subitems.getKeys(), itemVariable);
 
                 String subitemsVariable = itemVariable + "_items";
-                String optional = options.useNames().contains(UseNames.COLLECTIONS)
+                String optional = options.useNames().contains(ItemType.COLLECTIONS)
                     ? String.format("    \"%s\",\n", subitems.getName())
                     : "";
 
@@ -425,7 +425,7 @@ public class GenFsmSourceFile extends GenSourceFile {
     }
 
     private void writeCollectionArrays(ItemList items, String prefix) throws Exception {
-        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+        if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
             writeEnumArrays(items, prefix);
         }
 
@@ -492,7 +492,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                 int remaining = groups.size();
                 for (Group group: groups) {
                     String items_name = customPrefix + getDefineString(group.getSanitizedName() + "_items").toLowerCase();
-                    String optional = options.useNames().contains(UseNames.COLLECTIONS)
+                    String optional = options.useNames().contains(ItemType.COLLECTIONS)
                             ? String.format("        \"%s\",\n", group.getSanitizedName())
                             : "";
 

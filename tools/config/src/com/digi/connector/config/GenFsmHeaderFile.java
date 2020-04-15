@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 
 public class GenFsmHeaderFile extends GenHeaderFile {
 
@@ -259,7 +259,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     }
 
     /* returns field name (or "" if not used) */
-    private String writeGroupElementDefine(Config config, UseNames type) throws IOException {
+    private String writeGroupElementDefine(Config config, ItemType type) throws IOException {
         String field = "";
 
         if (options.useNames().contains(type)) {
@@ -284,12 +284,12 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     }
 
     private void writeGroupElementStructs() throws IOException {
-        String element_name_struct_field = writeGroupElementDefine(config, UseNames.ELEMENTS);
-        String collection_name_struct_field = writeGroupElementDefine(config, UseNames.COLLECTIONS);
+        String element_name_struct_field = writeGroupElementDefine(config, ItemType.ELEMENTS);
+        String collection_name_struct_field = writeGroupElementDefine(config, ItemType.COLLECTIONS);
 
         write("\n");
 
-        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+        if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
             write(
                 "\ntypedef struct {\n" +
                 "    char const * const name;\n" +
@@ -298,7 +298,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
 
         String element_enum_data = "";
-        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+        if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
             element_enum_data =
                 "    struct {\n"+
                 "        size_t count;\n"+
@@ -382,7 +382,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         if (options.rciLegacyEnabled() || options.useCcapi()){
             write(RCI_LEGACY_DEFINE);
         }
-        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+        if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
             write(RCI_PARSER_DEFINE);
         }
 
@@ -486,7 +486,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeGroupElementStructs();
 
-        if (options.useNames().contains(UseNames.COLLECTIONS)) {
+        if (options.useNames().contains(ItemType.COLLECTIONS)) {
             write(
                 "\n" +
                 DEFINE + "RCI_PARSER_USES_COLLECTION_NAMES\n"
@@ -503,7 +503,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "} connector_group_item_t;\n"
             );
 
-        optional_field = options.useNames().contains(UseNames.COLLECTIONS)
+        optional_field = options.useNames().contains(ItemType.COLLECTIONS)
             ? "    char const * CONST name;\n"
             : "";
 
@@ -518,10 +518,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "} connector_remote_group_t;\n"
             );
 
-        optional_field = options.useNames().contains(UseNames.ELEMENTS)
+        optional_field = options.useNames().contains(ItemType.ELEMENTS)
             ? "    char const * CONST name;\n"
             : "";
-        if (options.useNames().contains(UseNames.ELEMENTS)) {
+        if (options.useNames().contains(ItemType.ELEMENTS)) {
             write("\n" + DEFINE + "RCI_PARSER_USES_ELEMENT_NAMES\n");
         }
         write(
@@ -558,7 +558,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 "} connector_list_item_t;\n"
                 );
 
-            optional_field = options.useNames().contains(UseNames.COLLECTIONS)
+            optional_field = options.useNames().contains(ItemType.COLLECTIONS)
                 ? "        char const * CONST name;\n"
                 : "";
 
@@ -756,11 +756,10 @@ public class GenFsmHeaderFile extends GenHeaderFile {
     private void writeAllEnumHeaders(Config config, Collection<Group> groups) throws Exception {
 
         for (Group group : groups) {
-            if (!options.useNames().contains(UseNames.ELEMENTS)) {
+            if (options.useEnums().contains(ItemType.ELEMENTS)) {
                 writeElementEnums(group, group.getSanitizedName());
             }
-
-            if (!options.useNames().contains(UseNames.VALUES)) {
+            if (options.useEnums().contains(ItemType.VALUES)) {
                 writeValueEnums(group, group.getSanitizedName());
             }
 
@@ -802,7 +801,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             if (!groups.isEmpty()) {
                 writeAllEnumHeaders(config, groups);
 
-                if (!options.useNames().contains(UseNames.COLLECTIONS)) {
+                if (options.useEnums().contains(ItemType.COLLECTIONS)) {
                     String group_enum_string = TYPEDEF_ENUM;
                     for (Group group : groups) {
                         /* add each group enum */

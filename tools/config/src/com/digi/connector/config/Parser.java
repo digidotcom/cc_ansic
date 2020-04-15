@@ -13,7 +13,7 @@ import javax.script.ScriptEngineManager;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.CharsetEncoder;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 
 public class Parser {
 
@@ -68,7 +68,7 @@ public class Parser {
                     }
 
                     Group theGroup = new Group(nameStr, getDescription(), getHelpDescription());
-                    config.nameLengthSeen(UseNames.COLLECTIONS, nameStr.length());
+                    config.nameLengthSeen(ItemType.COLLECTIONS, nameStr.length());
 
                     if (groupInstances != null) {
                         theGroup.setInstances(groupInstances);
@@ -469,7 +469,7 @@ public class Parser {
         current.descend(name);
 
         Element element = new Element(name, getDescription(), getHelpDescription());
-        config.nameLengthSeen(UseNames.ELEMENTS, name.length());
+        config.nameLengthSeen(ItemType.ELEMENTS, name.length());
 
         try {
             while (tokenScanner.hasToken()) {
@@ -554,7 +554,7 @@ public class Parser {
         config.listDepth(depth);
 
         ItemList list = new ItemList(name, getDescription(), getHelpDescription());
-        config.nameLengthSeen(UseNames.COLLECTIONS, name.length());
+        config.nameLengthSeen(ItemType.COLLECTIONS, name.length());
 
         if (instances != null) {
             list.setInstances(instances);

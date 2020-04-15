@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 
 public class Element extends Item {
     public enum Type {
@@ -231,7 +231,7 @@ public class Element extends Item {
 
         switch (type) {
         case ENUM:
-            config.nameLengthSeen(UseNames.VALUES, valueName.length());
+            config.nameLengthSeen(ItemType.VALUES, valueName.length());
             break;
         case REF_ENUM:
             break;
@@ -263,7 +263,7 @@ public class Element extends Item {
             throw new Exception("Duplicate <value>: " + refName);
 
         Reference ref = new Reference(refName, description, helpDescription);
-        config.nameLengthSeen(UseNames.VALUES, refName.length());
+        config.nameLengthSeen(ItemType.VALUES, refName.length());
 
         refs.add(ref);
     }

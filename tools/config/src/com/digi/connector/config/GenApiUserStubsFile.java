@@ -3,7 +3,7 @@ package com.digi.connector.config;
 import java.io.IOException;
 import java.util.Collection;
 
-import com.digi.connector.config.ConfigGenerator.UseNames;
+import com.digi.connector.config.ConfigGenerator.ItemType;
 
 public class GenApiUserStubsFile extends GenSourceFile {
 
@@ -87,7 +87,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
                         break;
                     case ENUM:
                         Value first_value = element.getValues().get(0);
-                        if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+                        if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
                             value += "*value = \"" + first_value.getName() + "\"";
                             FType += "char const *";
                         } else {
@@ -136,7 +136,7 @@ public class GenApiUserStubsFile extends GenSourceFile {
 
                     switch (element.getType()) {
                         case ENUM:
-                            if (options.rciParserOption() || options.useNames().contains(UseNames.VALUES)) {
+                            if (options.rciParserOption() || options.useNames().contains(ItemType.VALUES)) {
                                 break;
                             }
                             /* Intentional fall-thru */
