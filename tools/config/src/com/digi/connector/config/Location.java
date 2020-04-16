@@ -75,17 +75,25 @@ public class Location {
             }
             common += 1;
         }
-        if (common == 0) {
-            throw new Exception("Unable to make relative path: no common parent");
-        }
 
         Vector<String> relative = new Vector<>();
-        int up = anchor_size - common;
-        while (up > 0) {
-            relative.add("..");
-            up -= 1;
+        if (common == 0) {
+            // so that we get a "/" at the start of the string
+            relative.add("");
+        } else {
+            int up = anchor_size - common;
+            while (up > 0) {
+                relative.add("..");
+                up -= 1;
+            }
         }
-        relative.addAll(data.subList(common, size));
+        int last = size - 1;
+        for (; common < size; common++) {
+            relative.add(data.get(common));
+            if (common != last) {
+                relative.add("1");
+            }
+        }
         return String.join("/", relative);
     }
 }
