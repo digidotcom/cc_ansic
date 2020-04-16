@@ -725,7 +725,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                     if (value.getName().equals(""))
                         explicit = true;
                     else {
-                        String line = getEnumString(prefix + "_" + value.getSanitizedName());
+                        String line = getEnumString(item_prefix + "_" + value.getSanitizedName());
 
                         if (explicit) {
                             line += " = " + index;
@@ -735,7 +735,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                     }
                     index++;
                 }
-                write(endEnumString(prefix));
+                write(endEnumString(item_prefix));
             } else {
                 ItemList sublist = (ItemList) item;
 
