@@ -118,16 +118,16 @@ public class Parser {
                     }
                     
                     if (theGroup.isDictionary()) {
-                    	config.dictionarySeen();
-                    	if (Capacity.VARIABLE.equals(theGroup.getCapacity())) {
-                    		config.variableGroupSeen();
-                    		config.variableDictSeen();
-                    	}
+                        config.dictionarySeen();
+                        if (Capacity.VARIABLE.equals(theGroup.getCapacity())) {
+                            config.variableGroupSeen();
+                            config.variableDictSeen();
+                        }
                     } else {
-                    	if (Capacity.VARIABLE.equals(theGroup.getCapacity())) {
-                    		config.variableGroupSeen();
-                    		config.variableArraySeen();
-                    	}
+                        if (Capacity.VARIABLE.equals(theGroup.getCapacity())) {
+                            config.variableGroupSeen();
+                            config.variableArraySeen();
+                        }
                     }
 
                     config.getTable(type).addGroup(theGroup);
@@ -628,16 +628,16 @@ public class Parser {
             throw new Exception("Error in <list>: " + list.getName() + "\n\t" + e.getMessage());
         }
         if (list.isDictionary()) {
-        	config.dictionarySeen();
-        	if (Capacity.VARIABLE.equals(list.getCapacity())) {
-        		config.variableListSeen();
-        		config.variableDictSeen();
-        	}
+            config.dictionarySeen();
+            if (Capacity.VARIABLE.equals(list.getCapacity())) {
+                config.variableListSeen();
+                config.variableDictSeen();
+            }
         } else {
-        	if (Capacity.VARIABLE.equals(list.getCapacity())) {
-        		config.variableListSeen();
-        		config.variableArraySeen();
-        	}
+            if (Capacity.VARIABLE.equals(list.getCapacity())) {
+                config.variableListSeen();
+                config.variableArraySeen();
+            }
         }
 
         listLineNumber.pop();

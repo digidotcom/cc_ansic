@@ -67,7 +67,7 @@ static connector_group_t const * get_current_group(rci_t const * const rci)
 static connector_bool_t group_is_dictionary(rci_t const * const rci)
 {
     connector_collection_type_t collection_type = get_group_collection_type(rci);
-	return is_dictionary(collection_type);
+    return is_dictionary(collection_type);
 }
 #endif
 

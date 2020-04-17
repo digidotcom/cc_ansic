@@ -409,21 +409,21 @@ STATIC connector_status_t tcp_receive_packet(connector_data_t * const connector_
         case receive_packet_complete:
 
             if (connector_ptr->edp_data.receive_packet.data_packet != NULL)
-			{
-		        if (connector_ptr->edp_data.receive_packet.packet_type != E_MSG_MT2_TYPE_KA_KEEPALIVE)
-		        {
-		            uint8_t * edp_header = connector_ptr->edp_data.receive_packet.data_packet->buffer;
-		            /* got message data. Let's set edp header */
-		            message_store_be16(edp_header, type, connector_ptr->edp_data.receive_packet.packet_type);
-		            message_store_be16(edp_header, length, connector_ptr->edp_data.receive_packet.packet_length);
-		            *packet = connector_ptr->edp_data.receive_packet.data_packet;
-		            result = connector_working;
-		        }
-				else if (edp_get_active_state(connector_ptr) == connector_transport_open)
-				{
-					tcp_release_receive_packet(connector_ptr, connector_ptr->edp_data.receive_packet.data_packet);
-				}
-			}
+            {
+                if (connector_ptr->edp_data.receive_packet.packet_type != E_MSG_MT2_TYPE_KA_KEEPALIVE)
+                {
+                    uint8_t * edp_header = connector_ptr->edp_data.receive_packet.data_packet->buffer;
+                    /* got message data. Let's set edp header */
+                    message_store_be16(edp_header, type, connector_ptr->edp_data.receive_packet.packet_type);
+                    message_store_be16(edp_header, length, connector_ptr->edp_data.receive_packet.packet_length);
+                    *packet = connector_ptr->edp_data.receive_packet.data_packet;
+                    result = connector_working;
+                }
+                else if (edp_get_active_state(connector_ptr) == connector_transport_open)
+                {
+                    tcp_release_receive_packet(connector_ptr, connector_ptr->edp_data.receive_packet.data_packet);
+                }
+            }
 
             connector_ptr->edp_data.receive_packet.index = receive_packet_init;
             goto done;

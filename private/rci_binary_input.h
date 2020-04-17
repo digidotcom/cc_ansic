@@ -1079,7 +1079,7 @@ STATIC void process_collection_normal_attribute_value(rci_t * const rci, connect
 #if (defined RCI_PARSER_USES_LIST)
     connector_collection_type_t collection_type = is_group  ? get_group_collection_type(rci) : get_current_collection_type(rci);
 #else
-	connector_collection_type_t collection_type = get_group_collection_type(rci);
+    connector_collection_type_t collection_type = get_group_collection_type(rci);
 #endif
 
     switch (collection_type)

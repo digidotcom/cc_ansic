@@ -730,15 +730,15 @@ STATIC void rci_output_group_id(rci_t * const rci)
 
     if ((get_group_instance(rci) != INVALID_INDEX && get_group_instance(rci) > 1) 
 #if (defined RCI_PARSER_USES_DICT)
-		|| group_is_dictionary(rci)
+        || group_is_dictionary(rci)
 #endif
 #if (defined RCI_PARSER_USES_VARIABLE_GROUP)
-		|| should_output_count(rci)
+        || should_output_count(rci)
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
-		|| should_remove_instance(rci)
+        || should_remove_instance(rci)
 #endif
 #endif
-	)
+    )
     {
         encoding_data |= BINARY_RCI_ATTRIBUTE_BIT;
 
@@ -842,9 +842,9 @@ STATIC void rci_output_collection_attribute(rci_t * const rci)
     {
         if (instance != INVALID_INDEX && (instance > 1
 #if (defined RCI_PARSER_USES_DICT)
-			|| should_output_name(rci)
+            || should_output_name(rci)
 #endif
-		))
+        ))
         {
             next_output_state = rci_output_state_collection_specifier_id;
             normal_attribute_count++;
@@ -1134,15 +1134,15 @@ STATIC void rci_output_list_id(rci_t * const rci)
 
     if (get_current_list_instance(rci) > 1
 #if (defined RCI_PARSER_USES_DICT)
-		|| should_output_name(rci)
+        || should_output_name(rci)
 #endif
 #if (defined RCI_PARSER_USES_VARIABLE_LIST)
-		|| should_output_count(rci)
+        || should_output_count(rci)
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
-		|| should_remove_instance(rci)
+        || should_remove_instance(rci)
 #endif
 #endif
-	)
+    )
     {
         field_id |= BINARY_RCI_FIELD_ATTRIBUTE_BIT;
 

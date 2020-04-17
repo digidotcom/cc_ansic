@@ -221,7 +221,7 @@ STATIC void rci_generate_error(rci_t * const rci)
 #elif (defined RCI_PARSER_USES_VARIABLE_ARRAY)
                             if (collection_type == connector_collection_type_variable_array)
 #else
-							if (collection_type == connector_collection_type_variable_variable_dictionary)
+                            if (collection_type == connector_collection_type_variable_variable_dictionary)
 #endif
                                 trigger_rci_callback(rci, connector_request_id_remote_config_group_instances_unlock);
                             else

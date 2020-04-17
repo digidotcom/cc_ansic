@@ -204,46 +204,46 @@ public class Config {
     }
 
     public boolean isVariableGroupSeen() {
-		return variableGroupSeen;
-	}
+        return variableGroupSeen;
+    }
 
-	public void variableGroupSeen() {
-		variableGroupSeen = true;
-	}
+    public void variableGroupSeen() {
+        variableGroupSeen = true;
+    }
 
-	public boolean isVariableListSeen() {
-		return variableListSeen;
-	}
+    public boolean isVariableListSeen() {
+        return variableListSeen;
+    }
 
-	public void variableListSeen() {
-		variableListSeen = true;
-	}
-	
-	public void dictionarySeen() {
-		dictionarySeen = true;
-	}
+    public void variableListSeen() {
+        variableListSeen = true;
+    }
+    
+    public void dictionarySeen() {
+        dictionarySeen = true;
+    }
 
-	public boolean isDictionarySeen() {
-		return dictionarySeen;
-	}
+    public boolean isDictionarySeen() {
+        return dictionarySeen;
+    }
 
-	public boolean isVariableArraySeen() {
-		return variableArraySeen;
-	}
+    public boolean isVariableArraySeen() {
+        return variableArraySeen;
+    }
 
-	public void variableArraySeen() {
-		variableArraySeen = true;
-	}
+    public void variableArraySeen() {
+        variableArraySeen = true;
+    }
 
-	public boolean isVariableDictSeen() {
-		return variableDictSeen;
-	}
+    public boolean isVariableDictSeen() {
+        return variableDictSeen;
+    }
 
-	public void variableDictSeen() {
-		variableDictSeen = true;
-	}
+    public void variableDictSeen() {
+        variableDictSeen = true;
+    }
 
-	private boolean match_path(ItemList list, String[] remaining) {
+    private boolean match_path(ItemList list, String[] remaining) {
         switch (remaining.length) {
             case 0:
                 return list.isDictionary();

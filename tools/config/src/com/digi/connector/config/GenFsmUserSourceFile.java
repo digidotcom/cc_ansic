@@ -246,7 +246,7 @@ public class GenFsmUserSourceFile extends GenSourceFile {
 
                     write(enum_struct);
                 }
-                write(	"};\n\n");
+                write(  "};\n\n");
             } else {
                 ItemList subitems = (ItemList) item;
                 String subitemsPrefix = prefix + "__" + item.getSanitizedName().toLowerCase();

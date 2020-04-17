@@ -247,7 +247,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         if (collection_type == connector_collection_type_variable_array)
         {
             rci->shared.callback_data.group.item.count = rci->shared.group.info.keys.count;
-			break;
+            break;
         }
 #endif
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
@@ -255,11 +255,11 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
         {
             rci->shared.callback_data.group.item.dictionary.entries = rci->shared.group.info.keys.count;
             rci->shared.callback_data.group.item.dictionary.keys = rci->shared.group.info.keys.list;
-			break;
-		}
+            break;
+        }
 #endif
-		ASSERT(0);
-		break;
+        ASSERT(0);
+        break;
     }
 #endif
 
@@ -345,17 +345,17 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 #endif
         {
             rci->shared.callback_data.list.level[index].item.count = rci->shared.list.level[index].info.keys.count;
-			break;
+            break;
         }
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
         if (collection_type == connector_collection_type_variable_dictionary)
         {
             rci->shared.callback_data.list.level[index].item.dictionary.entries = rci->shared.list.level[index].info.keys.count;
             rci->shared.callback_data.list.level[index].item.dictionary.keys = rci->shared.list.level[index].info.keys.list;
-			break;
+            break;
         }
 #endif
-		ASSERT(0);
+        ASSERT(0);
         break;
     }
 #endif
@@ -469,7 +469,7 @@ STATIC unsigned int check_instance(rci_t * const rci)
         {
 #if (defined RCI_PARSER_USES_VARIABLE_GROUP) && (defined RCI_PARSER_USES_VARIABLE_LIST)
             connector_bool_t const is_remove_request = (remote_config_request == connector_request_id_remote_config_group_instance_remove) ||
-														(remote_config_request == connector_request_id_remote_config_list_instance_remove);
+                                                        (remote_config_request == connector_request_id_remote_config_list_instance_remove);
 #elif (defined RCI_PARSER_USES_VARIABLE_GROUP)
             connector_bool_t const is_remove_request = (remote_config_request == connector_request_id_remote_config_group_instance_remove);
 #elif (defined RCI_PARSER_USES_VARIABLE_LIST)
@@ -645,9 +645,9 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
         {
             if (remote_config_request == connector_request_id_remote_config_group_start
 #if (defined RCI_PARSER_USES_LIST)
-				|| remote_config_request == connector_request_id_remote_config_list_start
+                || remote_config_request == connector_request_id_remote_config_list_start
 #endif
-				)
+                )
             {
                 SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_CLOSE, connector_true);
                 remote_config->error_id = error;
@@ -672,7 +672,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
             if (remote_config->list.depth == rci->output.skip_depth &&
                 (remote_config_request == connector_request_id_remote_config_list_end || remote_config_request == connector_request_id_remote_config_group_end))
 #else
-			if (rci->output.skip_depth == 0 && remote_config_request == connector_request_id_remote_config_group_end)
+            if (rci->output.skip_depth == 0 && remote_config_request == connector_request_id_remote_config_group_end)
 #endif
             {
                 SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_SKIP_CLOSE, connector_false);
@@ -823,7 +823,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                     SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_false);
                 }
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
-				else
+                else
 #endif
 #endif
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
@@ -882,7 +882,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                     SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_DONT_SHRINK, connector_false);
                 }
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
-				else
+                else
 #endif
 #endif
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)

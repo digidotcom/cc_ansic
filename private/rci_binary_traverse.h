@@ -340,9 +340,9 @@ STATIC connector_bool_t traverse_element_id(rci_t * const rci)
 
     if (should_traverse_all_elements(rci) 
 #if (defined RCI_PARSER_USES_LIST)
-		|| get_list_depth(rci) > get_query_depth(rci)
+        || get_list_depth(rci) > get_query_depth(rci)
 #endif
-		)
+        )
     {
         set_rci_traverse_state(rci, rci_traverse_state_all_elements);
     }

@@ -90,9 +90,9 @@ static connector_collection_t const * get_current_collection_info(rci_t const * 
 static char const * const get_current_collection_name(rci_t const * const rci)
 {
 #if (defined RCI_PARSER_USES_LIST)
-	return get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
+    return get_list_depth(rci) > 0 ? get_current_list_name(rci) : get_group_name(rci);
 #else
-	return get_group_name(rci);
+    return get_group_name(rci);
 #endif
 } 
 #endif

@@ -1303,13 +1303,13 @@ STATIC connector_status_t msg_start_session(connector_data_t * const connector_p
     msg_session_t * const session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_data, client_owned, &status);
 
     if (session == NULL)
-	{
-		if (status == connector_pending)
-		{
-			status = connector_working;
-		}
-	}
-	else
+    {
+        if (status == connector_pending)
+        {
+            status = connector_working;
+        }
+    }
+    else
     {
         connector_session_error_t const result = msg_initialize_data_block(session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_request);
 

@@ -94,19 +94,19 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         }
         
         if (variableGroupSeen) {
-        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_GROUP"));
+            defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_GROUP"));
         }
         if (variableListSeen) {
-        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_LIST"));
+            defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_LIST"));
         }
         if (dictionarySeen) {
-        	defines.add(Code.define(RCI_PARSER_USES + "DICT"));
+            defines.add(Code.define(RCI_PARSER_USES + "DICT"));
         }
         if (variableArraySeen) {
-        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_ARRAY"));
+            defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_ARRAY"));
         }
         if (variableDictSeen) {
-        	defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_DICT"));
+            defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_DICT"));
         }
 
         writeBlock(defines);
@@ -344,13 +344,13 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 );
 
         if (dictionarySeen) {
-	        write(
-	                "\n" +
-	                "typedef struct {\n" +
-	                "    unsigned int entries;\n" +
-	                "    char const * const * keys;\n" +
-	                "} connector_dictionary_t;\n"
-	                );
+            write(
+                    "\n" +
+                    "typedef struct {\n" +
+                    "    unsigned int entries;\n" +
+                    "    char const * const * keys;\n" +
+                    "} connector_dictionary_t;\n"
+                    );
         }
 
         write(
@@ -379,7 +379,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             "typedef union {\n"
             );
         if (types.contains(Element.Type.LIST)) {
-	        write("    connector_collection_t CONST * CONST collection;\n");
+            write("    connector_collection_t CONST * CONST collection;\n");
         }
         write(
             "    connector_element_t CONST * CONST element;\n" +
@@ -464,33 +464,33 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         String key_struct_field = "";
 
         if (haveLists) {
-        	if (variableListSeen) {
-	            list_instances_lock 	= "    connector_request_id_remote_config_list_instances_lock,\n";
-	            list_instances_set 		= "    connector_request_id_remote_config_list_instances_set,\n";
-	            list_instance_remove 	= "    connector_request_id_remote_config_list_instance_remove,\n";
-	            list_instances_unlock 	= "    connector_request_id_remote_config_list_instances_unlock,\n";
-        	}
-            list_start 				= "    connector_request_id_remote_config_list_start,\n";
-            list_end   				= "    connector_request_id_remote_config_list_end,\n";
+            if (variableListSeen) {
+                list_instances_lock      = "    connector_request_id_remote_config_list_instances_lock,\n";
+                list_instances_set       = "    connector_request_id_remote_config_list_instances_set,\n";
+                list_instance_remove     = "    connector_request_id_remote_config_list_instance_remove,\n";
+                list_instances_unlock    = "    connector_request_id_remote_config_list_instances_unlock,\n";
+            }
+            list_start                   = "    connector_request_id_remote_config_list_start,\n";
+            list_end                     = "    connector_request_id_remote_config_list_end,\n";
         }
         
         if (variableGroupSeen) {
-            group_instances_lock = "    connector_request_id_remote_config_group_instances_lock,\n";
-            group_instances_set = "    connector_request_id_remote_config_group_instances_set,\n";
-            group_instance_remove = "    connector_request_id_remote_config_group_instance_remove,\n";
-            group_instances_unlock = "    connector_request_id_remote_config_group_instances_unlock,\n";
+            group_instances_lock         = "    connector_request_id_remote_config_group_instances_lock,\n";
+            group_instances_set          = "    connector_request_id_remote_config_group_instances_set,\n";
+            group_instance_remove        = "    connector_request_id_remote_config_group_instance_remove,\n";
+            group_instances_unlock       = "    connector_request_id_remote_config_group_instances_unlock,\n";
         }
         
         if (variableArraySeen) {
-        	variable_array_type = ",\n    connector_collection_type_variable_array";
+            variable_array_type          = ",\n    connector_collection_type_variable_array";
         }
         if (dictionarySeen) {
-        	dictionary_struct_field = "    connector_dictionary_t dictionary;\n";
-        	key_struct_field = "    char const * key;\n";
-	        fixed_dictionary_type = ",\n    connector_collection_type_fixed_dictionary";
-	        if (variableDictSeen) {
-	        	variable_dictionary_type = ",\n    connector_collection_type_variable_dictionary";
-	        }
+            dictionary_struct_field      = "    connector_dictionary_t dictionary;\n";
+            key_struct_field             = "    char const * key;\n";
+            fixed_dictionary_type        = ",\n    connector_collection_type_fixed_dictionary";
+            if (variableDictSeen) {
+                variable_dictionary_type = ",\n    connector_collection_type_variable_dictionary";
+            }
         }
 
         write("\ntypedef enum {\n" +

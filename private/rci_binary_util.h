@@ -93,9 +93,9 @@ return collection_type == connector_collection_type_variable_dictionary;
 STATIC connector_bool_t is_dictionary(connector_collection_type_t collection_type)
 {
 #if (defined RCI_PARSER_USES_VARIABLE_DICT)
-	return connector_bool(collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary);
+    return connector_bool(collection_type == connector_collection_type_fixed_dictionary || collection_type == connector_collection_type_variable_dictionary);
 #else
-	return connector_bool(collection_type == connector_collection_type_fixed_dictionary);
+    return connector_bool(collection_type == connector_collection_type_fixed_dictionary);
 #endif
 }
 #endif

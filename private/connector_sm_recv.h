@@ -386,7 +386,7 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
     if (header->segment.number == 0)
     {
          /* Decryption is not aware of the fact that a message could be split into multiple segments and thus requires the info and cmd_status bytes are from segment0 */
-		 session->info = header->info;
+         session->info = header->info;
          session->cmd_status = header->cmd_status;
 
         if (header->isCompressed) SmSetCompressed(session->flags);
@@ -475,18 +475,18 @@ STATIC connector_status_t sm_update_session(connector_data_t * const connector_p
     {
         session->bytes_processed = 0;
         session->segments.processed = 0;
-		#if (defined CONNECTOR_SM_ENCRYPTION)
-		session->sm_state = connector_sm_state_decrypt;
-		#else
-		session->sm_state = connector_sm_state_process_payload;
+        #if (defined CONNECTOR_SM_ENCRYPTION)
+        session->sm_state = connector_sm_state_decrypt;
+        #else
+        session->sm_state = connector_sm_state_process_payload;
         #if (defined CONNECTOR_COMPRESSION)
         if (SmIsCompressed(session->flags))
         {
             session->compress.out.data = NULL;
-			session->sm_state = connector_sm_state_decompress;
+            session->sm_state = connector_sm_state_decompress;
         }
         #endif
-		#endif
+        #endif
     }
 
     recv_ptr->processed_bytes += payload_bytes;
@@ -730,7 +730,7 @@ STATIC connector_status_t sm_decrypt_data(connector_data_t * const connector_ptr
             dst += length;
             src += max_payload_bytes;
         }
-		bytes_out = dst - input.data - SM_TAG_LENGTH;
+        bytes_out = dst - input.data - SM_TAG_LENGTH;
     }
     else
     {
@@ -749,7 +749,7 @@ STATIC connector_status_t sm_decrypt_data(connector_data_t * const connector_ptr
 
         if (!sm_decrypt_block(connector_ptr, transport, request_id, info_byte, cs_byte, ciphertext, length, tag, SM_TAG_LENGTH, plaintext, length))
         {
-			/* TODO: We should really differentiate between a failure to decrypt due to invalid encryption data versus because of OS errors */
+            /* TODO: We should really differentiate between a failure to decrypt due to invalid encryption data versus because of OS errors */
             session->sm_state = connector_sm_state_complete; /* discard silently */
             goto done;
         }
@@ -760,7 +760,7 @@ STATIC connector_status_t sm_decrypt_data(connector_data_t * const connector_ptr
 
             if (!sm_encryption_set_key(connector_ptr, key, SM_KEY_LENGTH))
             {
-				return connector_abort;
+                return connector_abort;
             }
 
             bytes_out -= SM_KEY_LENGTH;
@@ -807,7 +807,7 @@ STATIC connector_status_t sm_decrypt_data(connector_data_t * const connector_ptr
     if (SmIsCompressed(session->flags))
     {
         session->compress.out.data = NULL;
-		session->sm_state = connector_sm_state_decompress;
+        session->sm_state = connector_sm_state_decompress;
     }
     #endif
 
