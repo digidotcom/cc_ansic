@@ -1048,6 +1048,8 @@ STATIC connector_status_t sm_state_machine(connector_data_t * const connector_pt
                     if (uptime >= sm_ptr->transport.connect_at)
                         sm_ptr->transport.state = connector_transport_open;
                 }
+                /* When waiting for reconnect, always return idle. */
+                result = connector_idle;
                 goto done;
             }
             default:
