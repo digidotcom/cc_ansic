@@ -202,11 +202,16 @@ STATIC connector_status_t sm_compress_data(connector_data_t * const connector_pt
     connector_debug_line("sm_compress_data: session->in.data=%p, session->in.bytes=%zu", session->in.data, session->in.bytes);
 
     {
+        int const zlevel = CONNECTOR_COMPRESSION_LEVEL;
+        int const zmethod = Z_DEFLATED;
+        int const zwindowBits = CONNECTOR_COMPRESSION_WINDOW_BITS;
+        int const zmemLevel = CONNECTOR_COMPRESSION_MEM_LEVEL;
+        int const zstrategy = Z_DEFAULT_STRATEGY;
         z_streamp const zlib_ptr = &session->compress.zlib;
         int zret;
 
         memset(zlib_ptr, 0, sizeof *zlib_ptr);
-        zret = deflateInit(zlib_ptr, Z_DEFAULT_COMPRESSION);
+        zret = deflateInit2(zlib_ptr, zlevel, zmethod, zwindowBits, zmemLevel, zstrategy);
         ASSERT_GOTO(zret == Z_OK, error);
 
         zlib_ptr->next_in = session->in.data;

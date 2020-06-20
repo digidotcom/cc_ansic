@@ -19,8 +19,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #define MSG_FACILITY_VERSION  0x01
-#define MSG_COMPRESSION_NONE  0x00
-#define MSG_COMPRESSION_LIBZ  0xFF
+
+#define MSG_COMPRESSION_NONE                0x00
+#define MSG_COMPRESSION_ZLIB_9_WINDOW_BITS  0xFE
+#define MSG_COMPRESSION_ZLIB                0xFF
+
+#if (defined CONNECTOR_DECOMPRESSION_ZLIB)
+#define MSG_COMPRESSION MSG_COMPRESSION_ZLIB
+#elif (defined CONNECTOR_DECOMPRESSION_ZLIB_9_WINDOW_BITS)
+#define MSG_COMPRESSION MSG_COMPRESSION_ZLIB_9_WINDOW_BITS
+#else
+#define MSG_COMPRESSION MSG_COMPRESSION_NONE
+#endif
 
 #define MSG_INVALID_CLIENT_SESSION  0xFFFF
 
@@ -630,8 +640,18 @@ STATIC connector_session_error_t msg_initialize_data_block(msg_session_t * const
         #if (defined CONNECTOR_COMPRESSION)
         if (MsgIsNotDeflated(session->out_dblock->status_flag) == connector_true)
         {
-            memset(&session->out_dblock->zlib, 0, sizeof session->out_dblock->zlib);
-            ASSERT_GOTO(deflateInit(&session->out_dblock->zlib, Z_DEFAULT_COMPRESSION) == Z_OK, compression_error);
+            int const zlevel = CONNECTOR_COMPRESSION_LEVEL;
+            int const zmethod = Z_DEFLATED;
+            int const zwindowBits = CONNECTOR_COMPRESSION_WINDOW_BITS;
+            int const zmemLevel = CONNECTOR_COMPRESSION_MEM_LEVEL;
+            int const zstrategy = Z_DEFAULT_STRATEGY;
+            z_streamp const zlib_ptr = &session->out_dblock->zlib;
+            int zret;
+
+            memset(zlib_ptr, 0, sizeof *zlib_ptr);
+            zret = deflateInit2(zlib_ptr, zlevel, zmethod, zwindowBits, zmemLevel, zstrategy);
+            ASSERT_GOTO(zret == Z_OK, compression_error);
+
             MsgSetDeflated(session->out_dblock->status_flag);
         }
         #endif
@@ -795,7 +815,7 @@ STATIC connector_status_t msg_send_capabilities(connector_data_t * const connect
 
             message_store_u8(capability_packet, compression_count, compression_length);
             if (compression_length > 0)
-                *variable_data_ptr++ = MSG_COMPRESSION_LIBZ;
+                *variable_data_ptr++ = MSG_COMPRESSION_ZLIB;
         }
 
         /* append service IDs of all listeners */
@@ -881,7 +901,7 @@ STATIC void msg_fill_msg_header(msg_session_t * const session, void * ptr)
             message_store_be16(start_packet, transaction_id, session_id);
             message_store_be16(start_packet, service_id, service_id);
         }
-        message_store_u8(start_packet, compression_id, (MsgIsCompressed(session->out_dblock->status_flag) ? MSG_COMPRESSION_LIBZ : MSG_COMPRESSION_NONE));
+        message_store_u8(start_packet, compression_id, (MsgIsCompressed(session->out_dblock->status_flag) ? MSG_COMPRESSION_ZLIB : MSG_COMPRESSION_NONE));
     }
     else
     {
@@ -1386,7 +1406,7 @@ STATIC connector_status_t msg_process_capabilities(connector_data_t * const conn
         {
             uint8_t const compression_id = *compression_list++;
 
-            if (compression_id == MSG_COMPRESSION_LIBZ)
+            if (compression_id == MSG_COMPRESSION)
             {
                 msg_fac->capabilities[msg_capability_cloud].compression_supported = connector_true;
                 break;
