@@ -53,6 +53,14 @@ STATIC void connector_debug_line(char const * const format, ...)
 
 #if (defined CONNECTOR_DEBUG)
 
+#define enum_to_case(name)  case name: result = #name; break
+
+#if !(defined CONNECTOR_DEBUG_NEW_LINE_STR)
+#define CONNECTOR_DEBUG_NEW_LINE_STR    "\n"
+#endif
+
+#if (defined CONNECTOR_DEBUG_PRINT_BUFFERS)
+
 STATIC void connector_debug_line_beg(char const * const format, ...)
 {
     CALL_DEBUG_VPRINTF(debug_beg, format);
@@ -68,13 +76,7 @@ STATIC void connector_debug_line_end(char const * const format, ...)
     CALL_DEBUG_VPRINTF(debug_end, format);
 }
 
-#define enum_to_case(name)  case name: result = #name; break
-
-#if !(defined CONNECTOR_DEBUG_NEW_LINE_STR)
-#define CONNECTOR_DEBUG_NEW_LINE_STR    "\n"
-#endif
-
-void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
+STATIC void connector_debug_print_buffer(char const * const label, void const * const buffer, size_t const length)
 {
     uint8_t const * const content = buffer;
 
@@ -108,8 +110,12 @@ void connector_debug_print_buffer(char const * const label, void const * const b
         connector_debug_line_end("");
     }
 }
+#else
+#define connector_debug_print_buffer(label, buffer, length)
+#endif
 
 #else
+
 #define connector_debug_print_buffer(label, buffer, length)
 
 #define CALL_DEBUG_VPRINTF(type, format) UNUSED_PARAMETER(format)
