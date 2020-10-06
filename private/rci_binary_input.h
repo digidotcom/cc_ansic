@@ -330,8 +330,10 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
 #endif
                 {
                     attribute_info->value.index = value;
+#ifdef RCI_DEBUG
                     connector_debug_line("decode_attribute: index = %d", attribute_info->value.index);
-                       got_attribute = connector_true;
+#endif
+                    got_attribute = connector_true;
                 }
 #if (defined RCI_PARSER_USES_DICT)
                 else if (value > 0)
@@ -339,8 +341,10 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
                     if (get_string_of_len(rci, &attribute_info->value.name.data, value, bytes))
                     {
                         attribute_info->value.name.length = value + sizeof "";
+#ifdef RCI_DEBUG
                         connector_debug_line("decode_attribute: index = %s", attribute_info->value.name.data);
-                           got_attribute = connector_true;
+#endif
+                        got_attribute = connector_true;
                     }
                 }
 #endif
@@ -354,7 +358,9 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
                  */
 
                 attribute_info->value.count = attribute_value & BINARY_RCI_ATTRIBUTE_TYPE_NORMAL_COUNT_MASK;
+#ifdef RCI_DEBUG
                 connector_debug_line("decode_attribute: count = %d", attribute_info->value.count);
+#endif
                 got_attribute = connector_true;
                 break;
             }

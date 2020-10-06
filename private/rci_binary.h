@@ -280,7 +280,9 @@ done:
     case rci_status_busy:
         break;
     case rci_status_more_input:
+#ifdef RCI_DEBUG
         connector_debug_line("Need more input");
+#endif
         break;
     case rci_status_flush_output:
         rci_internal_data->service_data->output.bytes = rci_buffer_used(&rci_internal_data->buffer.output);
