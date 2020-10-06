@@ -1014,6 +1014,23 @@ done:
     return result;
 }
 
+STATIC connector_status_t connector_facility_firmware_cleanup(connector_data_t * const connector_ptr)
+{
+    connector_firmware_data_t * const fw_ptr = get_facility_data(connector_ptr, E_MSG_FAC_FW_NUM);
+
+    if (fw_ptr->update_started == connector_true)
+    {
+        connector_firmware_download_abort_t request_data;
+        request_data.target_number = fw_ptr->target_info.target_number;
+        request_data.status = connector_firmware_status_device_error;
+        return get_fw_config(fw_ptr, connector_request_id_firmware_download_abort, &request_data);
+    }
+    else
+    {
+        return connector_idle;
+    }
+}
+
 STATIC connector_status_t connector_facility_firmware_delete(connector_data_t * const connector_ptr)
 {
     return del_facility_data(connector_ptr, E_MSG_FAC_FW_NUM);

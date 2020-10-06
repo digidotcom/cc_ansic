@@ -49,9 +49,9 @@ static connector_facility_service_t const connector_supported_service_table[] = 
         /* list of optional facilities */
 #if (defined CONNECTOR_FIRMWARE_SERVICE) || (defined CONNECTOR_RCI_SERVICE)
     #if (defined CONNECTOR_FIRMWARE_SUPPORT) || (defined CONNECTOR_RCI_SERVICE)
-        {{MANDATORY_FACILITY}, connector_facility_firmware_init, connector_facility_firmware_delete, NULL, fw_discovery, fw_process},
+        {{MANDATORY_FACILITY}, connector_facility_firmware_init, connector_facility_firmware_delete, connector_facility_firmware_cleanup, fw_discovery, fw_process},
     #else
-        {{connector_request_id_config_firmware_facility}, connector_facility_firmware_init, connector_facility_firmware_delete, NULL, fw_discovery, fw_process},
+        {{connector_request_id_config_firmware_facility}, connector_facility_firmware_init, connector_facility_firmware_delete, connector_facility_firmware_cleanup, fw_discovery, fw_process},
     #endif
 #endif
 #if (defined CONNECTOR_DATA_SERVICE)
