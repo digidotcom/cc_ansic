@@ -1279,13 +1279,38 @@ STATIC void process_field_id(rci_t * const rci)
         else if (!have_element_id(rci))
         {
             if (rci->shared.callback_data.action == connector_remote_action_query)
-               {
+            {
                 SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_ALL_ELEMENTS, connector_true);
                 set_rci_traverse_state(rci, rci_traverse_state_all_elements);
                 state_call(rci, rci_parser_state_traverse);
             }
             else
             {
+#if (defined RCI_PARSER_USES_VARIABLE_DICT)
+                if (get_current_collection_type(rci) == connector_collection_type_variable_dictionary)
+                {
+                    rci_collection_info_t const * info;
+                    assert(!should_remove_instance(rci)); /* If instance removed skip_input should be set instead */
+#if (defined RCI_PARSER_USES_LIST)
+                    if (get_list_depth(rci) > 0)
+                    {
+                        info = &rci->shared.list.level[rci->shared.callback_data.list.depth - 1].info;
+                    }
+                    else
+#endif
+                    {
+                        info = &rci->shared.group.info;
+                    }
+
+                    if (info->keys.key_store[0] != '\0')
+                    {
+                        SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_FIRST_ELEMENT, connector_true);
+                        set_rci_traverse_state(rci, rci_traverse_state_elements_done);
+                        state_call(rci, rci_parser_state_traverse);
+                        goto done;
+                    }
+                }
+#endif
 #if (defined RCI_PARSER_USES_LIST)
                 if (get_list_depth(rci) > 0)
                 {

@@ -400,7 +400,24 @@ STATIC connector_bool_t finish_all_elements(rci_t * const rci)
     connector_bool_t done = connector_false;
 #if (defined RCI_PARSER_USES_LIST)
     if (release_last_list_lock(rci) == connector_true) goto done;
+#endif
 
+    if (RCI_SHARED_FLAG_IS_SET(rci, RCI_SHARED_FLAG_FIRST_ELEMENT)) {
+#if (defined RCI_PARSER_USES_LIST)
+        if (get_list_depth(rci) > 0)
+        {
+            traverse_list_id(rci);
+        }
+        else
+#endif
+        {
+            traverse_group_id(rci);
+        }
+        SET_RCI_SHARED_FLAG(rci, RCI_SHARED_FLAG_FIRST_ELEMENT, connector_false);
+        goto done;
+    }
+
+#if (defined RCI_PARSER_USES_LIST)
     if (get_list_depth(rci) > 0)
     {
         trigger_rci_callback(rci, connector_request_id_remote_config_list_end);
