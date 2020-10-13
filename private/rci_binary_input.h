@@ -340,12 +340,17 @@ STATIC connector_bool_t decode_attribute(rci_t * const rci, rci_attribute_info_t
                 {
                     if (get_string_of_len(rci, &attribute_info->value.name.data, value, bytes))
                     {
-                        attribute_info->value.name.length = value + sizeof "";
+                        attribute_info->value.name.length = value;
 #ifdef RCI_DEBUG
                         connector_debug_line("decode_attribute: index = %s", attribute_info->value.name.data);
 #endif
                         got_attribute = connector_true;
                     }
+                }
+                else
+                {
+                    attribute_info->value.name.length = 0;
+                    got_attribute = connector_true;
                 }
 #endif
                 break;
@@ -848,7 +853,10 @@ STATIC void handle_name_attribute(rci_t * const rci, char const * const name, si
             set_current_list_instance(rci, 0);
         }
 #endif
-        memcpy(target, name, name_len);
+        if (name_len > 0)
+        {
+            memcpy(target, name, name_len);
+        }
         target[name_len] = '\0';
     }
 }
