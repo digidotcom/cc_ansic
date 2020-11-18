@@ -338,7 +338,7 @@ STATIC connector_bool_t traverse_element_id(rci_t * const rci)
     ASSERT(element->type != connector_element_type_list);
 #endif
 
-    if (should_traverse_all_elements(rci) 
+    if (should_traverse_all_elements(rci)
 #if (defined RCI_PARSER_USES_LIST)
         || get_list_depth(rci) > get_query_depth(rci)
 #endif
@@ -464,9 +464,7 @@ STATIC connector_bool_t finish_all_elements(rci_t * const rci)
     }
 #endif
 
-#if (defined RCI_PARSER_USES_LIST)
 done:
-#endif
     return done;
 }
 
