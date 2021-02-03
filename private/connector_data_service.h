@@ -454,12 +454,12 @@ STATIC connector_status_t data_service_device_request_callback(connector_data_t 
 
     switch (service_request->service_type)
     {
-    case msg_service_type_need_data:
-        status = process_data_service_device_response(connector_ptr, service_request);
-        break;
-
     case msg_service_type_have_data:
         status = process_data_service_device_request(connector_ptr, service_request);
+        break;
+
+    case msg_service_type_need_data:
+        status = process_data_service_device_response(connector_ptr, service_request);
         break;
 
     case msg_service_type_error:

@@ -112,6 +112,7 @@ typedef enum
     msg_service_id_cli,
     msg_service_id_pfile,
     msg_service_id_sm,
+    msg_service_id_cli_oneshot,
     msg_service_id_count
 } msg_service_id_t;
 

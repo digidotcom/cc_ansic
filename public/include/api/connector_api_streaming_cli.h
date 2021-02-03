@@ -38,7 +38,9 @@ typedef enum {
     connector_request_id_streaming_cli_poll,
     connector_request_id_streaming_cli_send,
     connector_request_id_streaming_cli_receive,
-    connector_request_id_streaming_cli_session_end
+    connector_request_id_streaming_cli_session_end,
+    connector_request_id_streaming_cli_sessionless_execute,
+    connector_request_id_streaming_cli_sessionless_store
 } connector_request_id_streaming_cli_service_t;
 
 typedef struct {
@@ -83,6 +85,25 @@ typedef struct {
     uint8_t CONST * CONST buffer;
     connector_bool_t CONST more_data;
 } connector_streaming_cli_session_receive_data_t;
+
+typedef struct {
+    void * handle;
+    size_t CONST bytes_available;
+    size_t bytes_used;
+    uint8_t * CONST buffer;
+    connector_bool_t more_data;
+    int timeout;
+    connector_bool_t init;
+} connector_streaming_cli_session_sessionless_execute_store_request_t;
+
+typedef struct {
+    void * CONST handle;
+    size_t CONST bytes_available;
+    size_t bytes_used;
+    uint8_t * CONST buffer;
+    connector_bool_t more_data;
+    int status;
+} connector_streaming_cli_session_sessionless_execute_run_request_t;
 
 #endif
 
