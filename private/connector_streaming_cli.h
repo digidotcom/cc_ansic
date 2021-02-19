@@ -328,11 +328,10 @@ STATIC connector_status_t streaming_cli_service_start_session(connector_data_t *
 STATIC connector_status_t streaming_cli_service_remove_session(connector_data_t * const connector_ptr, streaming_cli_session_t * session)
 {
     connector_status_t status;
-
+    streaming_cli_session_t ** head_ptr = &streaming_cli_sessions;
+    remove_circular_node(head_ptr, session);
     if (session->session_state != streaming_cli_session_state_execute_command)
     {
-        streaming_cli_session_t ** head_ptr = &streaming_cli_sessions;
-        remove_circular_node(head_ptr, session);
         if (session->info.streaming.active_recv_transaction)
         {
             session->info.streaming.active_recv_transaction->service_context = NULL;
@@ -435,14 +434,14 @@ STATIC connector_status_t streaming_cli_service_execute_run_command(connector_da
     if (status == connector_working)
     {   
         service_data->length_in_bytes = MsgIsStart(service_data->flags) ? record_bytes(streaming_cli_service_execute_response) + request.bytes_used : request.bytes_used;
-
         if (!request.more_data)
         {
             uint8_t status_code = request.status == 0 ? STREAMING_CLI_EXEC_STATUS_SUCCESS : request.status == -13 ? STREAMING_CLI_EXEC_STATUS_TIMEOUT : STREAMING_CLI_EXEC_STATUS_ERROR;
             service_data->length_in_bytes++;  //storing another byte need to increment
             streaming_cli_service_execute_response[service_data->length_in_bytes] = status_code;
-service_data->length_in_bytes++;
+            service_data->length_in_bytes++;
             MsgSetLastData(service_data->flags);
+            status = streaming_cli_service_close_session(connector_ptr, session);
         }
     }
     return status;
