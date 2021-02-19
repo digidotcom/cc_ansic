@@ -291,6 +291,7 @@ public class GenFsmSourceFile extends GenSourceFile {
                             case REGEX:
                             case MULTILINE_STRING:
                             case PASSWORD:
+                            case PASSWORD_FORMAT:
                             case MAC_ADDR:
                                 write(".string_value = ");
                                 break;

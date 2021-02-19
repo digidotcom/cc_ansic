@@ -190,6 +190,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
             case REGEX:
             case MULTILINE_STRING:
             case PASSWORD:
+            case PASSWORD_FORMAT:
             case MAC_ADDR:
                 value_type = CHAR.constant().pointer();
                 break;
@@ -235,6 +236,7 @@ public final class GenApiUserHeaderFile extends GenHeaderFile {
                     case REGEX:
                     case MULTILINE_STRING:
                     case PASSWORD:
+                    case PASSWORD_FORMAT:
                     case MAC_ADDR:
                     case LIST:
                         break;

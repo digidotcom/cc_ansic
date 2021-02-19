@@ -120,7 +120,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         LinkedList<String> enum_lines = new LinkedList<>();
         int previous = -1;
         for (Element.Type type : types) {
-            if (type == Element.Type.REGEX) {
+            if (type != type.toRciType()) {
                 continue;
             }
 

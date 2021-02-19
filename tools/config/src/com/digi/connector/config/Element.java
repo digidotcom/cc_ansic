@@ -36,7 +36,8 @@ public class Element extends Item {
         REF_ENUM(23),
 
         // Virtual types
-        REGEX(-1) // Converts to STRING
+        REGEX(-1), // Converts to STRING
+        PASSWORD_FORMAT(-2) // Converts to PASSWORD
         ;
 
         /* special type since enum name cannot start with 0x */
@@ -77,6 +78,15 @@ public class Element extends Item {
         public String toString() {
             return toLowerName();
         }
+
+        public Type toRciType() {
+            if (this == REGEX)
+                return STRING;
+            else if (this == PASSWORD_FORMAT)
+                return PASSWORD;
+            else
+                return this;
+        }
     }
 
     private final static EnumSet<Type> supportsMinMax = EnumSet.of(
@@ -91,7 +101,8 @@ public class Element extends Item {
             Type.FQDNV4,
             Type.FQDNV6,
 
-            Type.REGEX
+            Type.REGEX,
+            Type.PASSWORD_FORMAT
             );
     private final static EnumSet<Type> requiresMax = EnumSet.of(
             Type.STRING,
@@ -100,7 +111,8 @@ public class Element extends Item {
             Type.FQDNV4,
             Type.FQDNV6,
 
-            Type.REGEX
+            Type.REGEX,
+            Type.PASSWORD_FORMAT
             );
 
     private static final Set<String> validOnOff = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] { "on","off" })));
@@ -138,7 +150,7 @@ public class Element extends Item {
     }
 
     public org.dom4j.Element asElement(Integer id) {
-        final Type rci_type = (type == Type.REGEX) ? Type.STRING : type;
+        final Type rci_type = type.toRciType();
 
         org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("element")
             .addAttribute("name", name)
@@ -150,7 +162,7 @@ public class Element extends Item {
             .addAttribute("units", Objects.toString(units, null))
             .addAttribute("default", Objects.toString(def, null));
 
-        if (type == Type.REGEX) {
+        if (type == Type.REGEX || type == Type.PASSWORD_FORMAT) {
             assert regexPattern != null : "validation of regex_pattern failed";
             assert regexSyntax != null : "validation of regex_syntax failed";
 
@@ -304,7 +316,7 @@ public class Element extends Item {
     }
 
     public Type getRciType() {
-        return (type == Type.REGEX) ? Type.STRING : type;
+        return type.toRciType();
     }
 
     public String getMin() {
@@ -343,6 +355,7 @@ public class Element extends Item {
         case DATETIME:
         case REF_ENUM:
         case REGEX:
+        case PASSWORD_FORMAT:
             return Code.quoted(def);
 
         case INT32:
@@ -573,7 +586,7 @@ public class Element extends Item {
         default:
             {
                 // Handle virtual types
-                if (type == Type.REGEX) {
+                if (type == Type.REGEX || type == Type.PASSWORD_FORMAT) {
                     if (regexPattern == null) {
                         throw new Exception("Regular expressions require a pattern.");
                     }
@@ -594,7 +607,7 @@ public class Element extends Item {
                     }
 
                     if (rejectedAttribute != null) {
-                        throw new Exception("'" + rejectedAttribute + "' is only valid for 'regex' type");
+                        throw new Exception("'" + rejectedAttribute + "' is only valid for 'regex' or 'password_format' type");
                     }
                 }
 
@@ -610,6 +623,7 @@ public class Element extends Item {
                     case MULTILINE_STRING:
                     case PASSWORD:
                     case REGEX:
+                    case PASSWORD_FORMAT:
                         if (def != null) {
                             Long length = (long) def.length();
 
