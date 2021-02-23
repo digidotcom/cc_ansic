@@ -122,6 +122,10 @@ typedef struct streaming_cli_session
             uint16_t session_id;
             uint8_t terminal_mode;
         } streaming;
+        struct
+        {
+            uint8_t status;
+        } execute;
     } info;
     uint8_t last_opcode;
     char close_reason[CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH];
@@ -420,7 +424,7 @@ STATIC connector_status_t streaming_cli_service_execute_run_command(connector_da
     request.bytes_used = 0;
     request.buffer = service_data->data_ptr;
     request.more_data = connector_false;
-    request.status = STREAMING_CLI_EXEC_STATUS_SUCCESS;
+    request.status = session->info.execute.status;
 
     if (MsgIsStart(service_data->flags))
     {
@@ -430,6 +434,7 @@ STATIC connector_status_t streaming_cli_service_execute_run_command(connector_da
     }
 
     status = streaming_cli_service_run_cb(connector_ptr, connector_request_id_streaming_cli_sessionless_execute, &request);
+    session->info.execute.status = request.status;
 
     if (status == connector_working)
     {   
@@ -664,6 +669,7 @@ STATIC streaming_cli_session_t * streaming_cli_service_create_new_session(connec
             session->prev = NULL;
             session->next = NULL;
             session->session_state = streaming_cli_session_state_execute_command;
+            session->info.execute.status = STREAMING_CLI_EXEC_STATUS_SUCCESS;
             session->info.streaming.active_recv_transaction = NULL;
             session->info.streaming.active_send_transaction = NULL;
             add_circular_node(head_ptr, session);
