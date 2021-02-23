@@ -288,10 +288,8 @@ public class GenFsmSourceFile extends GenSourceFile {
                             case DATETIME:
                             case REF_ENUM:
                             case STRING:
-                            case REGEX:
                             case MULTILINE_STRING:
                             case PASSWORD:
-                            case PASSWORD_FORMAT:
                             case MAC_ADDR:
                                 write(".string_value = ");
                                 break;
@@ -366,7 +364,7 @@ public class GenFsmSourceFile extends GenSourceFile {
             if (item instanceof Element) {
                 Element element = (Element) item;
 
-                type = element.getRciType().toLowerName();
+                type = element.getType().toLowerName();
                 suffix = "element";
             } else {
                 type = "list";

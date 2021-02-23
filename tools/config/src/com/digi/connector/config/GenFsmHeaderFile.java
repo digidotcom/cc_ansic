@@ -92,7 +92,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
                 break;
             }
         }
-        
+
         if (variableGroupSeen) {
             defines.add(Code.define(RCI_PARSER_USES + "VARIABLE_GROUP"));
         }
@@ -120,10 +120,6 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         LinkedList<String> enum_lines = new LinkedList<>();
         int previous = -1;
         for (Element.Type type : types) {
-            if (type != type.toRciType()) {
-                continue;
-            }
-
             String enum_line = "    connector_element_type_" + type.toLowerName();
 
             int current = type.toValue();
@@ -443,7 +439,7 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         writeElementTypeEnums();
         writeElementValueStruct();
-        
+
         String group_instances_lock = "";
         String group_instances_set = "";
         String group_instance_remove = "";
@@ -455,11 +451,11 @@ public class GenFsmHeaderFile extends GenHeaderFile {
         String list_start = "";
         String list_end = "";
         String list_instances_unlock = "";
-        
+
         String variable_array_type = "";
         String fixed_dictionary_type = "";
         String variable_dictionary_type = "";
-        
+
         String dictionary_struct_field = "";
         String key_struct_field = "";
 
@@ -473,14 +469,14 @@ public class GenFsmHeaderFile extends GenHeaderFile {
             list_start                   = "    connector_request_id_remote_config_list_start,\n";
             list_end                     = "    connector_request_id_remote_config_list_end,\n";
         }
-        
+
         if (variableGroupSeen) {
             group_instances_lock         = "    connector_request_id_remote_config_group_instances_lock,\n";
             group_instances_set          = "    connector_request_id_remote_config_group_instances_set,\n";
             group_instance_remove        = "    connector_request_id_remote_config_group_instance_remove,\n";
             group_instances_unlock       = "    connector_request_id_remote_config_group_instances_unlock,\n";
         }
-        
+
         if (variableArraySeen) {
             variable_array_type          = ",\n    connector_collection_type_variable_array";
         }

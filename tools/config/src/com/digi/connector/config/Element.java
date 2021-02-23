@@ -33,11 +33,7 @@ public class Element extends Item {
         LIST(17),
         MAC_ADDR(21),
         DATETIME(22),
-        REF_ENUM(23),
-
-        // Virtual types
-        REGEX(-1), // Converts to STRING
-        PASSWORD_FORMAT(-2) // Converts to PASSWORD
+        REF_ENUM(23)
         ;
 
         /* special type since enum name cannot start with 0x */
@@ -78,14 +74,50 @@ public class Element extends Item {
         public String toString() {
             return toLowerName();
         }
+    }
 
-        public Type toRciType() {
-            if (this == REGEX)
-                return STRING;
-            else if (this == PASSWORD_FORMAT)
-                return PASSWORD;
-            else
-                return this;
+    private class RegEx {
+        private boolean modified;
+        private String pattern;
+        private String case_sensitive;
+        private String syntax;
+
+        public RegEx() {
+            modified = false;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+            modified = true;
+        }
+
+        public void setCase(String case_sensitive) {
+            this.case_sensitive = case_sensitive;
+            modified = true;
+        }
+
+        public void setSyntax(String syntax) {
+            this.syntax = syntax;
+            modified = true;
+        }
+
+        public void validate() throws Exception {
+            if (!modified)
+                return;
+
+            if ((pattern != null) && (syntax != null))
+                return;
+
+            throw new Exception("Regular expressions require both a 'pattern' and a 'syntax' keyword");
+        }
+
+        public void addAttributes(org.dom4j.Element e) {
+            if (!modified)
+                return;
+
+            e.addAttribute("regex_pattern", pattern)
+                .addAttribute("regex_case", Objects.toString(case_sensitive, null))
+                .addAttribute("regex_syntax", syntax);
         }
     }
 
@@ -99,20 +131,14 @@ public class Element extends Item {
             Type.X_HEX32,
             Type.FLOAT,
             Type.FQDNV4,
-            Type.FQDNV6,
-
-            Type.REGEX,
-            Type.PASSWORD_FORMAT
+            Type.FQDNV6
             );
     private final static EnumSet<Type> requiresMax = EnumSet.of(
             Type.STRING,
             Type.MULTILINE_STRING,
             Type.PASSWORD,
             Type.FQDNV4,
-            Type.FQDNV6,
-
-            Type.REGEX,
-            Type.PASSWORD_FORMAT
+            Type.FQDNV6
             );
 
     private static final Set<String> validOnOff = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] { "on","off" })));
@@ -136,9 +162,7 @@ public class Element extends Item {
     private String max;
     private String def;
     private String units;
-    private String regexPattern;
-    private String regexCase;
-    private String regexSyntax;
+    private RegEx regex = new RegEx();
 
     private final LinkedList<Value> values;
     private final LinkedList<Reference> refs;
@@ -150,28 +174,18 @@ public class Element extends Item {
     }
 
     public org.dom4j.Element asElement(Integer id) {
-        final Type rci_type = type.toRciType();
-
         org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("element")
             .addAttribute("name", name)
             .addAttribute("desc", getRciDescription())
-            .addAttribute("type", rci_type.toString())
+            .addAttribute("type", type.toString())
             .addAttribute("access", Objects.toString(access, null))
             .addAttribute("min", Objects.toString(min, null))
             .addAttribute("max", Objects.toString(max, null))
             .addAttribute("units", Objects.toString(units, null))
             .addAttribute("default", Objects.toString(def, null));
 
-        if (type == Type.REGEX || type == Type.PASSWORD_FORMAT) {
-            assert regexPattern != null : "validation of regex_pattern failed";
-            assert regexSyntax != null : "validation of regex_syntax failed";
-
-            e.addAttribute("regex_pattern", regexPattern)
-                .addAttribute("regex_case", Objects.toString(regexCase, null))
-                .addAttribute("regex_syntax", regexSyntax);
-        }
-
-         e.addAttribute("bin_id", id.toString());
+        regex.addAttributes(e);
+        e.addAttribute("bin_id", id.toString());
 
         switch (type) {
         case ENUM:
@@ -280,43 +294,40 @@ public class Element extends Item {
         refs.add(ref);
     }
 
-    private String ExceptMissingOrBad(String newValue, String currentValue, String name) throws IOException {
+    private void ExceptMissingOrBad(String newValue, String name) throws IOException {
         if (newValue == null)
             throw new IOException("Missing or bad " + name);
-
-        if (currentValue != null)
-            throw new IOException("Duplicate " + name + ": " + newValue);
-
-        return newValue;
     }
 
     public void setUnit(String theUnits) throws IOException {
-        units = ExceptMissingOrBad(theUnits, units, "units");
+        ExceptMissingOrBad(theUnits, "units");
+        if (units != null)
+            throw new IOException("Duplicate " + name + ": " + theUnits);
+
     }
 
     public void setRegexPattern(String thePattern) throws IOException {
-        regexPattern = ExceptMissingOrBad(thePattern, regexPattern, "regex pattern");
+        ExceptMissingOrBad(thePattern, "regex pattern");
         try {
-            Pattern.compile(regexPattern);
+            Pattern.compile(thePattern);
+            regex.setPattern(thePattern);
         } catch (PatternSyntaxException e) {
             throw new IOException("Invalid regex pattern: " + e.getMessage());
         }
     }
 
     public void setRegexCase(String theCase) throws IOException {
-        regexCase = ExceptMissingOrBad(theCase, regexCase, "regex case");
+        ExceptMissingOrBad(theCase, "regex case");
+        regex.setCase(theCase);
     }
 
     public void setRegexSyntax(String theSyntax) throws IOException {
-        regexSyntax = ExceptMissingOrBad(theSyntax, regexSyntax, "regex syntax");
+        ExceptMissingOrBad(theSyntax, "regex syntax");
+        regex.setSyntax(theSyntax);
     }
 
     public Type getType() {
         return type;
-    }
-
-    public Type getRciType() {
-        return type.toRciType();
     }
 
     public String getMin() {
@@ -354,8 +365,6 @@ public class Element extends Item {
         case MAC_ADDR:
         case DATETIME:
         case REF_ENUM:
-        case REGEX:
-        case PASSWORD_FORMAT:
             return Code.quoted(def);
 
         case INT32:
@@ -474,6 +483,8 @@ public class Element extends Item {
             throw new Exception("max is required");
         }
 
+        regex.validate();
+
         switch (type) {
         case ENUM:
             if (values.isEmpty()) {
@@ -585,32 +596,6 @@ public class Element extends Item {
 
         default:
             {
-                // Handle virtual types
-                if (type == Type.REGEX || type == Type.PASSWORD_FORMAT) {
-                    if (regexPattern == null) {
-                        throw new Exception("Regular expressions require a pattern.");
-                    }
-                    if (regexSyntax == null) {
-                        throw new Exception("Regular expressions require a syntax.");
-                    }
-                } else {
-                    String rejectedAttribute;
-
-                    if (regexPattern != null) {
-                        rejectedAttribute = "pattern";
-                    } else if (regexCase != null) {
-                        rejectedAttribute = "case";
-                    } else if (regexSyntax != null) {
-                        rejectedAttribute = "syntax";
-                    } else {
-                        rejectedAttribute = null;
-                    }
-
-                    if (rejectedAttribute != null) {
-                        throw new Exception("'" + rejectedAttribute + "' is only valid for 'regex' or 'password_format' type");
-                    }
-                }
-
                 if (supportsMinMax.contains(type)) {
                     Long minValue = toLong(min, UINT32_MIN_VALUE, UINT32_MAX_VALUE, UINT32_MIN_VALUE, "min");
                     Long maxValue = toLong(max, UINT32_MIN_VALUE, UINT32_MAX_VALUE, UINT32_MAX_VALUE, "max");
@@ -622,8 +607,6 @@ public class Element extends Item {
                     case STRING:
                     case MULTILINE_STRING:
                     case PASSWORD:
-                    case REGEX:
-                    case PASSWORD_FORMAT:
                         if (def != null) {
                             Long length = (long) def.length();
 
