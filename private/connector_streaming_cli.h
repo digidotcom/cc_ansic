@@ -437,9 +437,8 @@ STATIC connector_status_t streaming_cli_service_execute_run_command(connector_da
         if (!request.more_data)
         {
             uint8_t status_code = request.status == 0 ? STREAMING_CLI_EXEC_STATUS_SUCCESS : request.status == -13 ? STREAMING_CLI_EXEC_STATUS_TIMEOUT : STREAMING_CLI_EXEC_STATUS_ERROR;
-            service_data->length_in_bytes++;  //storing another byte need to increment
             streaming_cli_service_execute_response[service_data->length_in_bytes] = status_code;
-            service_data->length_in_bytes++;
+            service_data->length_in_bytes++;  //storing another byte need to increment
             MsgSetLastData(service_data->flags);
             status = streaming_cli_service_close_session(connector_ptr, session);
         }
