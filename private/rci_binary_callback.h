@@ -585,6 +585,17 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                            rci->shared.callback_data.list.level[i].name = NULL;
                     }
                 }
+                /*
+                 * should_run_callback() requires depth to be initialised before
+                 * session/action start otherwise it does random things with
+                 * uninitialised values.  Currently this does not get initialised until
+                 * group/list/... start.  Fixing it here seems like a hack but the code
+                 * above set the precendent, so just go with it for now,  otherwise we
+                 * need a rework of a lot of logic in this file/function.  Not sure
+                 * if INVALID_DEPTH or the higher level depth is more appropriate here.
+                 * In this scenario I believe they will be the same.
+                 */
+                rci->shared.callback_data.list.depth = get_list_depth(rci);
 #endif
 #endif
 #if (defined RCI_PARSER_USES_ELEMENT_NAMES)
