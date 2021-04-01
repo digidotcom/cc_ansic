@@ -53,6 +53,7 @@ static char const streaming_cli_service_unknown_session_error_msg[] = "Unknown s
 enum streaming_cli_service_capabilities {
     field_define(streaming_cli_service_capabilities, opcode, uint8_t),
     field_define(streaming_cli_service_capabilities, max_concurrent_sessions, uint8_t),
+    field_define(streaming_cli_service_capabilities, flags, uint8_t),
     record_end(streaming_cli_service_capabilities)
 };
 
@@ -60,6 +61,7 @@ enum streaming_cli_service_session_start_request {
     field_define(streaming_cli_service_session_start_request, opcode, uint8_t),
     field_define(streaming_cli_service_session_start_request, session_id, uint16_t),
     field_define(streaming_cli_service_session_start_request, terminal_mode, uint8_t),
+    field_define(streaming_cli_service_session_start_request, flags, uint8_t),
     record_end(streaming_cli_service_session_start_request)
 };
 
@@ -84,6 +86,7 @@ enum streaming_cli_service_session_close {
 enum streaming_cli_service_execute_request {
     field_define(streaming_cli_service_execute_request, opcode, uint8_t),
     field_define(streaming_cli_service_execute_request, timeout, uint16_t),
+    field_define(streaming_cli_service_execute_request, flags, uint8_t),
     record_end(streaming_cli_service_execute_request)
 };
 
@@ -91,6 +94,10 @@ enum streaming_cli_service_execute_response {
     field_define(streaming_cli_service_execute_response, opcode, uint8_t),
     field_define(streaming_cli_service_execute_response, status, uint8_t),
     record_end(streaming_cli_service_execute_response)
+};
+
+enum CliServiceFlags {
+    READ_ONLY  = 1 << 0
 };
 
 #define MAX_ERROR_MSG_SIZE (record_bytes(streaming_cli_service_session_close) + sizeof streaming_cli_service_unknown_session_error_msg)
@@ -127,6 +134,7 @@ typedef struct streaming_cli_session
             uint8_t status;
         } execute;
     } info;
+    connector_bool_t read_only;
     uint8_t last_opcode;
     char close_reason[CONNECTOR_STREAMING_CLI_MAX_CLOSE_REASON_LENGTH];
 } streaming_cli_session_t;
@@ -287,7 +295,13 @@ STATIC connector_status_t streaming_cli_service_start_session(connector_data_t *
 
     if (session->session_state == streaming_cli_session_state_uninitialized)
     {
-        connector_streaming_cli_session_start_request_t request = { session->info.streaming.terminal_mode, NULL, session->close_reason, connector_cli_session_start_ok };
+        connector_streaming_cli_session_start_request_t request = {
+            session->info.streaming.terminal_mode,
+            NULL,
+            session->close_reason,
+            connector_cli_session_start_ok,
+            session->read_only
+        };
         status = streaming_cli_service_run_cb(connector_ptr, connector_request_id_streaming_cli_session_start, &request);
         if (status == connector_working)
         {
@@ -389,10 +403,12 @@ STATIC connector_status_t streaming_cli_service_execute_store_command(connector_
         request.buffer += record_bytes(streaming_cli_service_execute_request);
         session->bytes_consumed = record_bytes(streaming_cli_service_execute_request);
         request.timeout = (int) message_load_be16(streaming_cli_service_execute_request, timeout);
+        session->read_only = (connector_bool_t) (READ_ONLY & message_load_u8(streaming_cli_service_execute_request, flags));
         request.init = connector_true;
     }
 
     request.handle = session->handle;
+    request.read_only = session->read_only;
     status = streaming_cli_service_run_cb(connector_ptr, connector_request_id_streaming_cli_sessionless_store, &request);
     session->handle = request.handle;
 
@@ -425,6 +441,7 @@ STATIC connector_status_t streaming_cli_service_execute_run_command(connector_da
     request.buffer = service_data->data_ptr;
     request.more_data = connector_false;
     request.status = session->info.execute.status;
+    request.read_only = session->read_only;
 
     if (MsgIsStart(service_data->flags))
     {
@@ -483,7 +500,7 @@ STATIC connector_status_t streaming_cli_service_set_unknown_session_error(connec
     {
         connector_status_t status;
         connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
-        msg_session_t * response_session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_cli_oneshot, connector_true, &status);
+        msg_session_t * response_session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_cli_oneshot_read_only, connector_true, &status);
         if (status == connector_working)
         {
             if (msg_initialize_data_block(response_session, msg_ptr->capabilities[msg_capability_cloud].window_size,
@@ -658,6 +675,7 @@ STATIC streaming_cli_session_t * streaming_cli_service_create_new_session(connec
 
                 ASSERT(terminal_mode == 0); UNUSED_VARIABLE(terminal_mode);
                 session->info.streaming.terminal_mode = connector_cli_terminal_vt100;
+                session->read_only = (connector_bool_t) (READ_ONLY & message_load_u8(streaming_cli_service_session_start_request, flags));
             }
             add_circular_node(head_ptr, session);
             break;
@@ -995,12 +1013,20 @@ STATIC connector_status_t streaming_cli_service_callback(connector_data_t * cons
         {
             uint8_t * streaming_cli_service_capabilities;
             msg_service_data_t * const service_data = service_request->need_data;
+            uint8_t capabilities_flags = 0;
             ASSERT(service_data != NULL);
             ASSERT(service_data->data_ptr != NULL);
 
             streaming_cli_service_capabilities = service_data->data_ptr;
             message_store_u8(streaming_cli_service_capabilities, opcode, STREAMING_CLI_OPCODE_CAPABILITIES);
             message_store_u8(streaming_cli_service_capabilities, max_concurrent_sessions, CONNECTOR_STREAMING_CLI_MAX_SESSIONS);
+#ifdef CONNECTOR_STREAMING_CLI_CAPABILITIES_EXECUTE
+            capabilities_flags |= 0x01;
+#endif
+#ifdef CONNECTOR_STREAMING_CLI_CAPABILITIES_READ_ONLY
+            capabilities_flags |= 0x02;
+#endif
+            message_store_u8(streaming_cli_service_capabilities, flags, capabilities_flags);
             service_data->length_in_bytes = record_bytes(streaming_cli_service_capabilities);
 
             status = connector_working;
@@ -1018,7 +1044,7 @@ done:
 
 STATIC connector_status_t connector_facility_streaming_cli_service_cleanup(connector_data_t * const connector_ptr)
 {
-    connector_status_t status = msg_cleanup_all_sessions(connector_ptr, msg_service_id_cli_oneshot);
+    connector_status_t status = msg_cleanup_all_sessions(connector_ptr, msg_service_id_cli_oneshot_read_only);
 
     while (status == connector_working && streaming_cli_sessions != NULL)
     {
@@ -1031,7 +1057,7 @@ STATIC connector_status_t connector_facility_streaming_cli_service_cleanup(conne
 
 STATIC connector_status_t connector_facility_streaming_cli_service_delete(connector_data_t * const data_ptr)
 {
-    return msg_delete_facility(data_ptr, msg_service_id_cli_oneshot);
+    return msg_delete_facility(data_ptr, msg_service_id_cli_oneshot_read_only);
 }
 
 STATIC connector_status_t connector_facility_streaming_cli_service_init(connector_data_t * const data_ptr, unsigned int const facility_index)
@@ -1039,12 +1065,12 @@ STATIC connector_status_t connector_facility_streaming_cli_service_init(connecto
     streaming_cli_error_buffer.transaction = NULL;
     streaming_cli_num_sessions = 0;
     streaming_cli_sessions = NULL;
-    return msg_init_facility(data_ptr, facility_index, msg_service_id_cli_oneshot, streaming_cli_service_callback);
+    return msg_init_facility(data_ptr, facility_index, msg_service_id_cli_oneshot_read_only, streaming_cli_service_callback);
 }
 
 STATIC connector_bool_t streaming_cli_service_create_transaction(connector_data_t * const data_ptr, connector_msg_data_t * const msg_ptr, streaming_cli_session_t * const session, connector_status_t * const status)
 {
-    msg_session_t * const msg_session = msg_create_session(data_ptr, msg_ptr, msg_service_id_cli_oneshot, connector_true, status);
+    msg_session_t * const msg_session = msg_create_session(data_ptr, msg_ptr, msg_service_id_cli_oneshot_read_only, connector_true, status);
     if (*status == connector_working)
     {
         if (msg_initialize_data_block(msg_session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_request) == connector_session_error_none)

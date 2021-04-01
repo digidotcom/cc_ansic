@@ -53,6 +53,7 @@ typedef struct {
         connector_cli_session_start_ok,
         connector_cli_session_start_error
     } session_start_status;
+    connector_bool_t read_only;
 } connector_streaming_cli_session_start_request_t;
 
 typedef struct {
@@ -94,6 +95,7 @@ typedef struct {
     connector_bool_t more_data;
     int timeout;
     connector_bool_t init;
+    connector_bool_t read_only;
 } connector_streaming_cli_session_sessionless_execute_store_request_t;
 
 typedef struct {
@@ -103,6 +105,7 @@ typedef struct {
     uint8_t * CONST buffer;
     connector_bool_t more_data;
     int status;
+    connector_bool_t read_only;
 } connector_streaming_cli_session_sessionless_execute_run_request_t;
 
 #endif
