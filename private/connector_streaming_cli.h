@@ -29,13 +29,13 @@ Digi International Inc., 9350 Excelsior Blvd., Suite 700, Hopkins, MN 55343
 #endif
 
 /* Opcodes */
-#define STREAMING_CLI_OPCODE_CAPABILITIES   0x00
-#define STREAMING_CLI_OPCODE_START_REQ      0x01
-#define STREAMING_CLI_OPCODE_START_RESP     0x02
-#define STREAMING_CLI_OPCODE_DATA           0x03
-#define STREAMING_CLI_OPCODE_CLOSE          0x04
-#define STREAMING_CLI_OPCODE_EXEC_REQ       0x05
-#define STREAMING_CLI_OPCODE_EXEC_RESP      0x06
+#define STREAMING_CLI_OPCODE_CAPABILITIES       0x00
+#define STREAMING_CLI_OPCODE_START_REQ          0x01
+#define STREAMING_CLI_OPCODE_START_RESP         0x02
+#define STREAMING_CLI_OPCODE_DATA               0x03
+#define STREAMING_CLI_OPCODE_CLOSE              0x04
+#define STREAMING_CLI_OPCODE_EXEC_REQ           0x05
+#define STREAMING_CLI_OPCODE_EXEC_RESP          0x06
 
 /* Status codes */
 #define STREAMING_CLI_START_STATUS_SUCCESS      0x00
@@ -417,7 +417,7 @@ STATIC connector_status_t streaming_cli_service_execute_run_command(connector_da
     connector_status_t status;
     uint8_t * const streaming_cli_service_execute_response = service_data->data_ptr;
     streaming_cli_session_t * const session = msg_session->service_context;
-    
+
     connector_streaming_cli_session_sessionless_execute_run_request_t request;
     request.handle = session->handle;
     request.bytes_available = service_data->length_in_bytes - 1; // subtract 1 byte to leave room for status
