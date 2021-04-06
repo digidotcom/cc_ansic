@@ -500,7 +500,7 @@ STATIC connector_status_t streaming_cli_service_set_unknown_session_error(connec
     {
         connector_status_t status;
         connector_msg_data_t * const msg_ptr = get_facility_data(connector_ptr, E_MSG_FAC_MSG_NUM);
-        msg_session_t * response_session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_cli_oneshot_read_only, connector_true, &status);
+        msg_session_t * response_session = msg_create_session(connector_ptr, msg_ptr, msg_service_id_cli_extended, connector_true, &status);
         if (status == connector_working)
         {
             if (msg_initialize_data_block(response_session, msg_ptr->capabilities[msg_capability_cloud].window_size,
@@ -1044,7 +1044,7 @@ done:
 
 STATIC connector_status_t connector_facility_streaming_cli_service_cleanup(connector_data_t * const connector_ptr)
 {
-    connector_status_t status = msg_cleanup_all_sessions(connector_ptr, msg_service_id_cli_oneshot_read_only);
+    connector_status_t status = msg_cleanup_all_sessions(connector_ptr, msg_service_id_cli_extended);
 
     while (status == connector_working && streaming_cli_sessions != NULL)
     {
@@ -1057,7 +1057,7 @@ STATIC connector_status_t connector_facility_streaming_cli_service_cleanup(conne
 
 STATIC connector_status_t connector_facility_streaming_cli_service_delete(connector_data_t * const data_ptr)
 {
-    return msg_delete_facility(data_ptr, msg_service_id_cli_oneshot_read_only);
+    return msg_delete_facility(data_ptr, msg_service_id_cli_extended);
 }
 
 STATIC connector_status_t connector_facility_streaming_cli_service_init(connector_data_t * const data_ptr, unsigned int const facility_index)
@@ -1065,12 +1065,12 @@ STATIC connector_status_t connector_facility_streaming_cli_service_init(connecto
     streaming_cli_error_buffer.transaction = NULL;
     streaming_cli_num_sessions = 0;
     streaming_cli_sessions = NULL;
-    return msg_init_facility(data_ptr, facility_index, msg_service_id_cli_oneshot_read_only, streaming_cli_service_callback);
+    return msg_init_facility(data_ptr, facility_index, msg_service_id_cli_extended, streaming_cli_service_callback);
 }
 
 STATIC connector_bool_t streaming_cli_service_create_transaction(connector_data_t * const data_ptr, connector_msg_data_t * const msg_ptr, streaming_cli_session_t * const session, connector_status_t * const status)
 {
-    msg_session_t * const msg_session = msg_create_session(data_ptr, msg_ptr, msg_service_id_cli_oneshot_read_only, connector_true, status);
+    msg_session_t * const msg_session = msg_create_session(data_ptr, msg_ptr, msg_service_id_cli_extended, connector_true, status);
     if (*status == connector_working)
     {
         if (msg_initialize_data_block(msg_session, msg_ptr->capabilities[msg_capability_cloud].window_size, msg_block_state_send_request) == connector_session_error_none)
