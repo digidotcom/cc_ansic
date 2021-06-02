@@ -121,6 +121,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
     case connector_request_id_remote_config_session_start:
         rci->shared.callback_data.attribute.source = rci_query_setting_attribute_source_current;
         rci->shared.callback_data.attribute.compare_to = rci_query_setting_attribute_compare_to_none;
+        rci->shared.callback_data.attribute.embed_transformed_values = connector_false;
 #if (defined RCI_LEGACY_COMMANDS)
         rci->shared.callback_data.attribute.target = NULL;
 #endif
@@ -148,8 +149,19 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
                             break;
                     }
                 }
+                rci->shared.callback_data.element.value = NULL;
+                rci->shared.callback_data.response.element_value = &rci->shared.value;
                 break;
             }
+            case rci_command_set_setting:
+                /* Only one possible attribute for now so just check first attribute if found */
+                if (rci->shared.attribute_count == 1 &&
+                    rci->command.attribute[0].id.set_setting == rci_set_setting_attribute_id_embed_transformed_values) {
+                    rci->shared.callback_data.attribute.embed_transformed_values = connector_bool(rci->command.attribute[0].value.enum_val == 1);
+                }
+                rci->shared.callback_data.element.value = &rci->shared.value;
+                rci->shared.callback_data.response.element_value = &rci->shared.transformed_value;
+                break;
 #if (defined RCI_LEGACY_COMMANDS)
             case rci_command_do_command:
             {
@@ -170,7 +182,6 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
             }
 #endif
             case rci_command_query_state:
-            case rci_command_set_setting:
             case rci_command_set_state:
             case rci_command_query_descriptor:
 #if (defined RCI_LEGACY_COMMANDS)
@@ -179,7 +190,6 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
 #endif
                 break;
         }
-        rci->shared.callback_data.response.element_value = &rci->shared.value;
         break;
     case connector_request_id_remote_config_action_end:
         break;
@@ -378,8 +388,7 @@ STATIC void trigger_rci_callback(rci_t * const rci, connector_request_id_remote_
             rci->shared.callback_data.element.name = element->data.element->name;
 #endif
         }
-
-        rci->shared.callback_data.element.value = is_set_command(rci->shared.callback_data.action) ? &rci->shared.value : NULL;
+        rci->shared.transformed_value.string_value = NULL;
         break;
 
 #if (defined RCI_LEGACY_COMMANDS)

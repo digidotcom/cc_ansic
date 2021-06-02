@@ -438,7 +438,6 @@ STATIC void rci_output_command_id(rci_t * const rci)
 
     switch (rci->command.command_id)
     {
-        case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_state:
 #if (defined RCI_LEGACY_COMMANDS)
@@ -449,6 +448,7 @@ STATIC void rci_output_command_id(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
+        case rci_command_set_setting:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -535,7 +535,6 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
     switch (rci->command.command_id)
     {
         case rci_command_query_state:
-        case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
 #if (defined RCI_LEGACY_COMMANDS)
@@ -546,6 +545,7 @@ STATIC void rci_output_command_normal_attribute_count(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
+        case rci_command_set_setting:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -582,7 +582,6 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
     switch (rci->command.command_id)
     {
         case rci_command_query_state:
-        case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
 #if (defined RCI_LEGACY_COMMANDS)
@@ -593,6 +592,7 @@ STATIC void rci_output_command_normal_attribute_id(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
+        case rci_command_set_setting:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -624,7 +624,6 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
     switch (rci->command.command_id)
     {
         case rci_command_query_state:
-        case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
 
@@ -636,6 +635,7 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
             break;
 
         case rci_command_query_setting:
+        case rci_command_set_setting:
 #if (defined RCI_LEGACY_COMMANDS)
         case rci_command_do_command:
 #endif
@@ -674,7 +674,6 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
         switch (rci->command.command_id)
         {
             case rci_command_query_state:
-            case rci_command_set_setting:
             case rci_command_set_state:
             case rci_command_query_descriptor:
 #if (defined RCI_LEGACY_COMMANDS)
@@ -684,6 +683,7 @@ STATIC void rci_output_command_normal_attribute_value(rci_t * const rci)
                 ASSERT_GOTO(connector_false, done);
                 break;
             case rci_command_query_setting:
+            case rci_command_set_setting:
                 state_call(rci, rci_parser_state_traverse);
                 break;
 #if (defined RCI_LEGACY_COMMANDS)
@@ -1164,30 +1164,22 @@ STATIC void rci_output_field_value(rci_t * const rci)
 {
     connector_item_t const * const element = get_current_element(rci);
     connector_element_value_type_t const type = element->type;
+    connector_element_value_t value = rci->shared.value;
 
     connector_bool_t overflow = connector_false;
-
-
-    switch (rci->shared.callback_data.action)
-    {
-        case connector_remote_action_set:
-            if (SHOULD_OUTPUT(rci))
-                overflow = rci_output_no_value(rci);
-            goto done;
-
-        case connector_remote_action_query:
-            break;
-#if (defined RCI_LEGACY_COMMANDS)
-        case connector_remote_action_do_command:
-        case connector_remote_action_reboot:
-        case connector_remote_action_set_factory_def:
-            ASSERT_GOTO(0, done);
-#endif
-    }
 
     if (!SHOULD_OUTPUT(rci))
     {
         goto done;
+    }
+
+    if (rci->shared.callback_data.action == connector_remote_action_set) {
+        if (rci->shared.callback_data.attribute.embed_transformed_values != connector_true ||
+            rci->shared.transformed_value.string_value == NULL) {
+            overflow = rci_output_no_value(rci);
+            goto done;
+        }
+        value = rci->shared.transformed_value;
     }
 
     switch (type)
@@ -1221,21 +1213,21 @@ STATIC void rci_output_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_REF_ENUM
     case connector_element_type_ref_enum:
 #endif
-        ASSERT(rci->shared.value.string_value != NULL);
-        overflow = rci_output_string(rci, rci->shared.value.string_value, strlen(rci->shared.value.string_value));
+        ASSERT(value.string_value != NULL);
+        overflow = rci_output_string(rci, value.string_value, strlen(value.string_value));
         break;
 #endif
 
 #if defined RCI_PARSER_USES_IPV4
     case connector_element_type_ipv4:
-        ASSERT(rci->shared.value.string_value != NULL);
-        overflow = rci_output_ipv4(rci, rci->shared.value.string_value);
+        ASSERT(value.string_value != NULL);
+        overflow = rci_output_ipv4(rci, value.string_value);
         break;
 #endif
 
 #if defined RCI_PARSER_USES_INT32
     case connector_element_type_int32:
-        overflow = rci_output_uint32(rci, rci->shared.value.signed_integer_value);
+        overflow = rci_output_uint32(rci, value.signed_integer_value);
         break;
 #endif
 
@@ -1252,38 +1244,38 @@ STATIC void rci_output_field_value(rci_t * const rci)
     case connector_element_type_0x_hex32:
 #endif
 
-        overflow = rci_output_uint32(rci, rci->shared.value.unsigned_integer_value);
+        overflow = rci_output_uint32(rci, value.unsigned_integer_value);
         break;
 #endif
 
 #if defined RCI_PARSER_USES_FLOAT
     case connector_element_type_float:
-        overflow = rci_output_float(rci, rci->shared.value.float_value);
+        overflow = rci_output_float(rci, value.float_value);
         break;
 #endif
 
 #if defined RCI_PARSER_USES_ENUM
     case connector_element_type_enum:
-        overflow = rci_output_uint32(rci, rci->shared.value.enum_value);
+        overflow = rci_output_uint32(rci, value.enum_value);
         break;
 #endif
 
 #if defined RCI_PARSER_USES_ON_OFF
     case connector_element_type_on_off:
-        overflow = rci_output_uint32(rci, rci->shared.value.on_off_value);
+        overflow = rci_output_uint32(rci, value.on_off_value);
         break;
 #endif
 
 #if defined RCI_PARSER_USES_BOOLEAN
     case connector_element_type_boolean:
-        overflow = rci_output_uint32(rci, rci->shared.value.boolean_value);
+        overflow = rci_output_uint32(rci, value.boolean_value);
         break;
 #endif
 
 #if defined RCI_PARSER_USES_MAC_ADDR
     case connector_element_type_mac_addr:
-        ASSERT(rci->shared.value.string_value != NULL);
-        overflow = rci_output_mac_addr(rci, rci->shared.value.string_value);
+        ASSERT(value.string_value != NULL);
+        overflow = rci_output_mac_addr(rci, value.string_value);
         break;
 #endif
 

@@ -42,6 +42,11 @@ public abstract class GenHeaderFile extends GenFile {
     "  rci_query_setting_attribute_id_count\n" +
     "} rci_query_setting_attribute_id_t;\n";
 
+    protected final static String RCI_SET_COMMAND_ATTRIBUTE_ID_T = "\ntypedef enum {\n" +
+    "  rci_set_setting_attribute_id_embed_transformed_values,\n" +
+    "  rci_set_setting_attribute_id_count\n" +
+    "} rci_set_setting_attribute_id_t;\n";
+
     protected final static String CONNECTOR_REMOTE_GROUP_TYPE = "\ntypedef enum {\n" +
     "    connector_remote_group_setting,\n" +
     "    connector_remote_group_state\n" +

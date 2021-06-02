@@ -154,6 +154,17 @@ public class Table {
             .addAttribute("format", formatName)
             .addAttribute("bin_id", id.toString());
 
+        if (type == Group.Type.SETTING) {
+            org.dom4j.Element attr;
+
+            attr = e.addElement("attr")
+                .addAttribute("name", "embed_transformed_values")
+                .addAttribute("type", "boolean")
+                .addAttribute("desc", "Specify whether transformed values should be embedded in the response")
+                .addAttribute("bin_id", "0")
+                .addAttribute("default", "false");
+        }
+
         // FIX ME: REMOVE NEXT LINE
         addErrorDescriptors(e, config.getGlobalUserErrorsOffset(), config.getGlobalUserErrors());
 

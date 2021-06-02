@@ -542,7 +542,8 @@ STATIC void process_command_attribute(rci_t * const rci)
                         ASSERT_GOTO(rci->shared.attribute_count <= rci_query_setting_attribute_id_count, done);
                         break;
                     case connector_remote_action_set:
-                        ASSERT_GOTO(0, done);
+                        ASSERT_GOTO(rci->shared.callback_data.group.type == connector_remote_group_setting, done);
+                        ASSERT_GOTO(rci->shared.attribute_count <= rci_set_setting_attribute_id_count, done);
                         break;
 #if (defined RCI_LEGACY_COMMANDS)
                     case connector_remote_action_do_command:
@@ -580,32 +581,36 @@ STATIC void process_command_normal_attribute_id(rci_t * const rci)
     }
 }
 
+STATIC connector_bool_t process_command_enum_attribute_value(rci_t * const rci)
+{
+    uint32_t attribute_value;
+
+    if(!get_uint32(rci, &attribute_value))
+        return connector_false;
+
+    rci->command.attribute[rci->shared.attributes_processed].value.enum_val = attribute_value;
+    rci->command.attribute[rci->shared.attributes_processed].type = attribute_type_enum;
+    return connector_true;
+}
+
 STATIC void process_command_normal_attribute_value(rci_t * const rci)
 {
     switch (rci->command.command_id)
     {
         case rci_command_query_setting:
         {
-            uint32_t attribute_value;
-
-            if(!get_uint32(rci, &attribute_value))
+            if (rci->command.attribute[rci->shared.attributes_processed].id.query_setting >= rci_query_setting_attribute_id_count)
+                ASSERT_GOTO(0, done);
+            if (!process_command_enum_attribute_value(rci))
                 goto done;
-
-#if (defined RCI_DEBUG)
-            connector_debug_line("attribute_val=%d", attribute_value);
-#endif
-
-            switch (rci->command.attribute[rci->shared.attributes_processed].id.query_setting)
-            {
-                case rci_query_setting_attribute_id_source:
-                case rci_query_setting_attribute_id_compare_to:
-                    rci->command.attribute[rci->shared.attributes_processed].value.enum_val = attribute_value;
-                    break;
-                case rci_query_setting_attribute_id_count:
-                    ASSERT_GOTO(0, done);
-                    break;
-            }
-            rci->command.attribute[rci->shared.attributes_processed].type = attribute_type_enum;
+            break;
+        }
+        case rci_command_set_setting:
+        {
+            if (rci->command.attribute[rci->shared.attributes_processed].id.set_setting >= rci_set_setting_attribute_id_count)
+                ASSERT_GOTO(0, done);
+            if (!process_command_enum_attribute_value(rci))
+                goto done;
             break;
         }
 #if (defined RCI_LEGACY_COMMANDS)
@@ -638,7 +643,6 @@ STATIC void process_command_normal_attribute_value(rci_t * const rci)
         }
 #endif
         case rci_command_query_state:
-        case rci_command_set_setting:
         case rci_command_set_state:
         case rci_command_query_descriptor:
 #if (defined RCI_LEGACY_COMMANDS)

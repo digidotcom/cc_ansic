@@ -159,6 +159,7 @@ typedef union
 {
     unsigned int val;
     rci_query_setting_attribute_id_t query_setting;
+    rci_set_setting_attribute_id_t set_setting;
 #if (defined RCI_LEGACY_COMMANDS)
     rci_do_command_attribute_id_t do_command;
 #endif
@@ -467,6 +468,7 @@ typedef struct rci
         } element;
 
         connector_element_value_t value;
+        connector_element_value_t transformed_value;
         size_t string_value_length;
 
         connector_remote_config_t callback_data;

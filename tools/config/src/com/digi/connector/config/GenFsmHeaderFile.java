@@ -601,13 +601,15 @@ public class GenFsmHeaderFile extends GenHeaderFile {
 
         write("\ntypedef struct {\n" +
                          "  rci_query_setting_attribute_source_t source;\n" +
-                         "  rci_query_setting_attribute_compare_to_t compare_to;\n");
+                         "  rci_query_setting_attribute_compare_to_t compare_to;\n" +
+                         "  connector_bool_t embed_transformed_values;\n");
         if (options.rciLegacyEnabled() || options.useCcapi()){
             write("  char const * target;\n");
         }
         write("} connector_remote_attribute_t;\n");
 
         write(RCI_QUERY_COMMAND_ATTRIBUTE_ID_T);
+        write(RCI_SET_COMMAND_ATTRIBUTE_ID_T);
 
         if (haveLists) {
             write(
