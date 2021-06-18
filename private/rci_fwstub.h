@@ -452,6 +452,11 @@ done:
     return status;
 }
 
+STATIC connector_status_t connector_facility_firmware_cleanup(connector_data_t * const connector_ptr)
+{
+    return connector_idle;
+}
+
 STATIC connector_status_t connector_facility_firmware_delete(connector_data_t * const connector_ptr)
 {
     return del_facility_data(connector_ptr, E_MSG_FAC_FW_NUM);
