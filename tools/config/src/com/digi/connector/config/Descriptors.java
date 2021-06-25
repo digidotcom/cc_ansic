@@ -10,9 +10,9 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Base64;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.xml.bind.DatatypeConverter;
 
 public class Descriptors {
 
@@ -417,7 +417,7 @@ public class Descriptors {
         String response = "";
         String cloud = "https://" + ConfigGenerator.getUrlName() + target;
         String credential = username + ":" + password;
-        String encodedCredential = DatatypeConverter.printBase64Binary(credential.getBytes());
+        String encodedCredential = Base64.getEncoder().encodeToString(credential.getBytes());
         HttpsURLConnection connection = null;
 
         responseCode = 0;
