@@ -81,11 +81,11 @@ STATIC connector_status_t tcp_initiate_send_packet(connector_data_t * const conn
     connector_ptr->edp_data.send_packet.complete_cb = send_complete_cb;
     connector_ptr->edp_data.send_packet.user_data = user_data;
 
-    if (type != E_MSG_MT2_TYPE_KA_KEEPALIVE)
+    if (type != E_MSG_MT2_TYPE_KA_KEEPALIVE && type != E_MSG_MT2_TYPE_VERSION)
     {
         register_activity(connector_ptr, connector_network_tcp);
     }
-    
+
 done:
     return status;
 }
@@ -250,6 +250,8 @@ STATIC uint8_t * tcp_get_packet_buffer(connector_data_t * const connector_ptr, u
     return packet;
 }
 
+STATIC connector_status_t send_version(connector_data_t * connector_ptr, uint16_t const type, uint32_t const version);
+
 STATIC connector_status_t tcp_rx_keepalive_process(connector_data_t * const connector_ptr)
 {
    connector_status_t status = connector_idle;
@@ -269,9 +271,9 @@ STATIC connector_status_t tcp_rx_keepalive_process(connector_data_t * const conn
         goto done;
     }
 
-    connector_debug_line("tcp_rx_keepalive_process: time to send Rx keepalive");
+    connector_debug_line("tcp_rx_keepalive_process: time to send Version msg for Rx keepalive");
 
-    status = tcp_initiate_send_packet(connector_ptr, connector_ptr->edp_data.keepalive.send_rx_packet, 0, E_MSG_MT2_TYPE_KA_KEEPALIVE, NULL, NULL);
+    status = send_version(connector_ptr, E_MSG_MT2_TYPE_VERSION, EDP_MT_VERSION);
 
 done:
     return status;
