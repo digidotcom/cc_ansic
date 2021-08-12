@@ -410,7 +410,12 @@ STATIC connector_status_t tcp_receive_packet(connector_data_t * const connector_
 
             if (connector_ptr->edp_data.receive_packet.data_packet != NULL)
             {
-                if (connector_ptr->edp_data.receive_packet.packet_type != E_MSG_MT2_TYPE_KA_KEEPALIVE)
+                /* If we are not in the handshake process we do not acquire the packet buffer for zero length data packets so we can't free it,
+                 * but if we are we will have taken the packet buffer and need to pass even zero length data back to the caller, with the exception
+                 * of keepalives.
+                 */
+                if (connector_ptr->edp_data.receive_packet.packet_type != E_MSG_MT2_TYPE_KA_KEEPALIVE &&
+                    (edp_get_active_state(connector_ptr) == connector_transport_open || connector_ptr->edp_data.receive_packet.packet_length != 0))
                 {
                     uint8_t * edp_header = connector_ptr->edp_data.receive_packet.data_packet->buffer;
                     /* got message data. Let's set edp header */
