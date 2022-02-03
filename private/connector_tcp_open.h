@@ -1056,10 +1056,15 @@ STATIC connector_status_t edp_tcp_open_process(connector_data_t * const connecto
             switch (result)
             {
                 case connector_idle:
-                    /* This means that no data is pending to be sent. */
-                    ASSERT(result != connector_idle);
-                    result = connector_abort;
+                {
+                    if (edp_get_active_state(connector_ptr) != connector_transport_close)
+                    {
+                        /* This means that no data is pending to be sent. */
+                        ASSERT(result != connector_idle);
+                        result = connector_abort;
+                    }
                     goto done;
+                }
                 case connector_working:
                     edp_set_edp_state(connector_ptr, edp_get_next_edp_state(connector_ptr));
                     break;
