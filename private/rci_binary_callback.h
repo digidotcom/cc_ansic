@@ -17,6 +17,12 @@
  * =======================================================================
  */
 
+#if defined(__GNUC__) && __GNUC__ >= 7
+ #define FALL_THROUGH __attribute__ ((fallthrough));
+#else
+ #define FALL_THROUGH /* fall through */
+#endif /* __GNUC__ >= 7 */
+
 #define state_call(rci, value)  ((rci)->parser.state = (value))
 
 STATIC connector_bool_t is_set_command(connector_remote_action_t const action)
@@ -716,6 +722,7 @@ STATIC connector_bool_t rci_callback(rci_t * const rci)
                 rci->callback.status = connector_callback(connector_ptr->callback, connector_class_id_operating_system, request_id, NULL, connector_ptr->context);
             }
         }
+        FALL_THROUGH
         /* fall through */
 #endif
 #if (defined RCI_PARSER_USES_VARIABLE_GROUP)
