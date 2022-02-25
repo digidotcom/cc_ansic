@@ -65,7 +65,9 @@ typedef enum {
     connector_request_id_config_sm_sms_rx_timeout,      /**< Requesting callback to obtain timeout in seconds for incoming SMS Short Messaging sessions. */
     connector_request_id_config_rci_descriptor_data,    /**< Requesting callback to obtain Remote Configuration Interface descriptor data see @ref rci_descriptor_data. */
     connector_request_id_config_streaming_cli,
-	connector_request_id_config_sm_key_distribution
+#if (defined CCIMP_UDP_TRANSPORT_ENABLED || defined CCIMP_SMS_TRANSPORT_ENABLED)
+    connector_request_id_config_sm_key_distribution
+#endif
 } connector_request_id_config_t;
 /**
 * @}
