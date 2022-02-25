@@ -503,7 +503,7 @@ STATIC unsigned int check_instance(rci_t * const rci)
             }
             else
             {
-                int i;
+                unsigned int i;
                 for (i = 0; i < info->keys.count; i++)
                 {
                     if (strcmp(info->keys.list[i], info->keys.key_store) == 0)

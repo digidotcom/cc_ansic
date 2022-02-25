@@ -72,7 +72,7 @@ static connector_collection_t const * get_current_collection_info(rci_t const * 
 
 #if (defined RCI_PARSER_USES_LIST)
         {
-            int i;
+            unsigned int i;
             for (i = 0; i < get_list_depth(rci); i++)
             {
                 connector_item_t const * list = info->item.data + rci->shared.list.level[i].id;
