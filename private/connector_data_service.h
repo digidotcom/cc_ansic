@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2014-2022 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -918,7 +918,43 @@ STATIC connector_status_t data_service_callback(connector_data_t * const connect
 
     if (service_request->service_type == msg_service_type_capabilities)
     {
+#if (defined CONNECTOR_SPEEDTEST_CAP_ENABLED) || (defined CONNECTOR_MODEM_FW_UPDATE_CAP_ENABLED) || (defined CONNECTOR_CLIENT_CERTIFICATE_CAP_ENABLED) || (defined CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED)
+        uint8_t count = 0
+#ifdef CONNECTOR_SPEEDTEST_CAP_ENABLED
+        + 1
+#endif
+#ifdef CONNECTOR_MODEM_FW_UPDATE_CAP_ENABLED
+        + 1
+#endif
+#ifdef CONNECTOR_CLIENT_CERTIFICATE_CAP_ENABLED
+        + 1
+#endif
+#ifdef CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED
+        + 1
+#endif
+;
+        uint8_t const caps[] = { 4, count,
+#ifdef CONNECTOR_SPEEDTEST_CAP_ENABLED
+        0, 17, 'b', 'u', 'i', 'l', 't', 'i', 'n', '/', 's', 'p', 'e', 'e', 'd', 't', 'e', 's', 't', 1,
+#endif
+#ifdef CONNECTOR_MODEM_FW_UPDATE_CAP_ENABLED
+        0, 29, 'b', 'u', 'i', 'l', 't', 'i', 'n', '/', 'm', 'o', 'd', 'e', 'm', '_', 'f', 'i', 'r', 'm', 'w', 'a', 'r', 'e', '_', 'u', 'p', 'd', 'a', 't', 'e', 1,
+#endif
+#ifdef CONNECTOR_CLIENT_CERTIFICATE_CAP_ENABLED
+        0, 30, 'b', 'u', 'i', 'l', 't', 'i', 'n', '/', 'e', 'd', 'p', '_', 'c', 'e', 'r', 't', 'i', 'f', 'i', 'c', 'a', 't', 'e', '_', 'u', 'p', 'd', 'a', 't', 'e', 1,
+#endif
+#ifdef CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED
+        0, 21, 'b', 'u', 'i', 'l', 't', 'i', 'n', '/', 's', 'u', 'b', 's', 'c', 'r', 'i', 'p', 't', 'i', 'o', 'n', 's', 1,
+#endif
+        };
+        msg_service_data_t * const service_data = service_request->need_data;
+        uint8_t * const data_service_capabilities = service_data->data_ptr;
+        memcpy(data_service_capabilities, caps, sizeof caps);
+        service_data->length_in_bytes = sizeof caps;
+        status = connector_working;
+#else
         status = connector_idle;
+#endif /* (defined CONNECTOR_SPEEDTEST_CAP_ENABLED) || (defined CONNECTOR_MODEM_FW_UPDATE_CAP_ENABLED) || (defined CONNECTOR_CLIENT_CERTIFICATE_CAP_ENABLED) || (defined CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED) */
         goto done;
     }
 
