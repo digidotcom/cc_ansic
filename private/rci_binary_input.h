@@ -147,14 +147,6 @@ STATIC connector_bool_t get_uint32(rci_t * const rci, uint32_t * const value)
     return connector_bool(bytes > 0);
 }
 
-#if defined RCI_PARSER_USES_FLOAT
-STATIC connector_bool_t get_float(rci_t * const rci, float * const value)
-{
-    ASSERT(sizeof (float) == sizeof (uint32_t));
-    return get_uint32(rci, (uint32_t *)value);
-}
-#endif
-
 STATIC connector_bool_t get_string_of_len(rci_t * const rci, char const * * string, uint32_t const length, size_t const offset)
 {
     connector_bool_t got_string = connector_false;
@@ -1649,13 +1641,14 @@ STATIC void process_field_value(rci_t * const rci)
 #if defined RCI_PARSER_USES_FLOAT
     case connector_element_type_float:
     {
-        float value;
+        uint32_t value;
+        ASSERT(sizeof (float) == sizeof (uint32_t));
 
-        if (!get_float(rci, &value))
+        if (!get_uint32(rci, &value))
         {
             goto done;
         }
-        rci->shared.value.float_value = value;
+        memcpy(&rci->shared.value.float_value, &value, sizeof value);
         break;
     }
 #endif
