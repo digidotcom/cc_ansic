@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Digi International Inc.
+ * Copyright (c) 2014-2022 Digi International Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
@@ -13,8 +13,8 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  *
- * Digi International Inc. 11001 Bren Road East, Minnetonka, MN 55343
- * =======================================================================
+ * Digi International Inc., 9350 Excelsior Blvd., Suite 700, Hopkins, MN 55343
+ * ===========================================================================
  */
 
 #if (defined CONNECTOR_DATA_POINTS)
@@ -248,12 +248,12 @@ STATIC connector_status_t dp_fill_file_path(data_point_info_t * const dp_info, c
 
     if (full_path_bytes < available_path_bytes)
     {
-        strncpy(dp_info->file_path, internal_dp4d_path, internal_dp4d_path_strlen);
+        strncpy(dp_info->file_path, internal_dp4d_path, internal_dp4d_path_strlen + 1);
         if (path_bytes)
         {
-            strncpy(&dp_info->file_path[internal_dp4d_path_strlen], path, path_bytes);
+            strncpy(&dp_info->file_path[internal_dp4d_path_strlen], path, path_bytes + 1);
         }
-        strncpy(&dp_info->file_path[internal_dp4d_path_strlen + path_bytes], extension, extension_bytes);
+        strncpy(&dp_info->file_path[internal_dp4d_path_strlen + path_bytes], extension, extension_bytes + 1);
         dp_info->file_path[full_path_bytes] = '\0';
         result = connector_working;
     }
