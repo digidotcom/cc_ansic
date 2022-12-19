@@ -33,6 +33,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #define ASSERT_GOTO(cond, label)    ON_ASSERT_DO_((cond), {goto label;}, {})
+#define ASSERT_GOTO_WITH_STATUS(cond, status_code, label)    ON_ASSERT_DO_((cond), {status_code; goto label;}, {})
+
 #define CONFIRM(cond)               do { switch(0) {case 0: case (cond):;} } while (0)
 
 #define COND_ELSE_GOTO(cond, label)    ON_FALSE_DO_((cond), {goto label;})

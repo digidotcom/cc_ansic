@@ -845,8 +845,8 @@ STATIC connector_status_t data_service_put_request_callback(connector_data_t * c
                 break;
             }
         default:
-            status = connector_idle;
             ASSERT(connector_false);
+            status = connector_idle;
             break;
     }
 

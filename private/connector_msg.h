@@ -1964,9 +1964,9 @@ STATIC connector_status_t msg_process_pending(connector_data_t * const connector
             break;
 
         default:
-            status = connector_init_error;
+            //status = connector_init_error;
             connector_debug_line("Failed %X, state %d", session, session->current_state);
-            ASSERT_GOTO(connector_false, done);
+            ASSERT_GOTO_WITH_STATUS(connector_false, status = connector_init_error, done);
             break;
         }
     }
