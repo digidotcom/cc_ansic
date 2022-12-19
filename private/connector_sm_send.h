@@ -78,7 +78,6 @@ STATIC connector_status_t sm_get_user_data_length(connector_data_t * const conne
         #endif
 
         default:
-            //result = connector_abort;
             ASSERT_GOTO_WITH_STATUS(connector_false, result = connector_abort, error);
             break;
     }
