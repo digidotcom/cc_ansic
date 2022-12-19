@@ -730,7 +730,7 @@ STATIC void sm_init_network_packet(connector_sm_packet_t * const packet, void * 
 
 STATIC connector_status_t sm_open_transport(connector_data_t * const connector_ptr, connector_sm_data_t * const sm_ptr)
 {
-    connector_status_t result;
+    connector_status_t result = connector_working;
 
     {
         connector_callback_status_t status;
@@ -755,7 +755,6 @@ STATIC connector_status_t sm_open_transport(connector_data_t * const connector_p
         switch (status)
         {
             case connector_callback_continue:
-                result = connector_working;
                 sm_ptr->network.handle = open_data.handle;
                 break;
 

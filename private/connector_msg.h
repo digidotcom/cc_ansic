@@ -503,6 +503,7 @@ STATIC msg_session_t * msg_create_session(connector_data_t * const connector_ptr
             *current_dblock_ptr = (msg_data_block_t *)(session + 1);
             *other_dblock_ptr = NULL;
             data_ptr += bytes_in_block;
+            (void) data_ptr;    // Value not used currently in this path, but may be in the future
             session->service_layer_data.need_data = (msg_service_data_t *)(client_owned == connector_true ? (*current_dblock_ptr) + 1 : NULL);
             session->service_layer_data.have_data = (msg_service_data_t *)(client_owned == connector_true ? NULL : (*current_dblock_ptr) + 1);
             session->send_data_ptr = NULL;

@@ -419,6 +419,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         ASSERT((CONNECTOR_NETWORK_UDP_START == connector_connect_auto) || (CONNECTOR_NETWORK_UDP_START == connector_connect_manual));
         sm_ptr->transport.connect_type = CONNECTOR_NETWORK_UDP_START;
         status = connector_working;
+        (void) status;  // Value currently not used here, but may be in the future
         #endif
         if (sm_ptr->transport.connect_type == connector_connect_auto)
         {
@@ -448,6 +449,7 @@ connector_handle_t connector_init(connector_callback_t const callback, void * co
         ASSERT((CONNECTOR_NETWORK_SMS_START == connector_connect_auto) || (CONNECTOR_NETWORK_SMS_START == connector_connect_manual));
         sm_ptr->transport.connect_type = CONNECTOR_NETWORK_SMS_START;
         status = connector_working;
+        (void) status;  // Value currently not used here, but may be in the future
         #endif
         if (sm_ptr->transport.connect_type == connector_connect_auto)
         {
