@@ -71,6 +71,7 @@ public class Table {
                .addAttribute("element", "query_" + config_type)
             .addAttribute("desc", desc)
             .addAttribute("format", formatName)
+            .addAttribute("string_encoding", "UTF-8")
             .addAttribute("bin_id", id.toString());
 
         if (type == Group.Type.SETTING) {
@@ -152,6 +153,7 @@ public class Table {
             .addAttribute("element", "set_" + config_type)
             .addAttribute("desc", desc)
             .addAttribute("format", formatName)
+            .addAttribute("string_encoding", "UTF-8")
             .addAttribute("bin_id", id.toString());
 
         if (type == Group.Type.SETTING) {
