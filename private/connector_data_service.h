@@ -918,7 +918,7 @@ STATIC connector_status_t data_service_callback(connector_data_t * const connect
 
     if (service_request->service_type == msg_service_type_capabilities)
     {
-#if (defined CONNECTOR_SPEEDTEST_CAP_ENABLED) || (defined CONNECTOR_MODEM_FW_UPDATE_CAP_ENABLED) || (defined CONNECTOR_CLIENT_CERTIFICATE_CAP_ENABLED) || (defined CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED)
+#if (defined CONNECTOR_SPEEDTEST_CAP_ENABLED) || (defined CONNECTOR_MODEM_FW_UPDATE_CAP_ENABLED) || (defined CONNECTOR_CLIENT_CERTIFICATE_CAP_ENABLED) || (defined CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED) || (defined CONNECTOR_CONTAINER_CAP_ENABLED)
         uint8_t count = 0
 #ifdef CONNECTOR_SPEEDTEST_CAP_ENABLED
         + 1
@@ -930,6 +930,9 @@ STATIC connector_status_t data_service_callback(connector_data_t * const connect
         + 1
 #endif
 #ifdef CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED
+        + 1
+#endif
+#ifdef CONNECTOR_CONTAINER_CAP_ENABLED
         + 1
 #endif
 ;
@@ -945,6 +948,9 @@ STATIC connector_status_t data_service_callback(connector_data_t * const connect
 #endif
 #ifdef CONNECTOR_SUBSCRIPTIONS_CAP_ENABLED
         0, 21, 'b', 'u', 'i', 'l', 't', 'i', 'n', '/', 's', 'u', 'b', 's', 'c', 'r', 'i', 'p', 't', 'i', 'o', 'n', 's', 1,
+#endif
+#ifdef CONNECTOR_CONTAINER_CAP_ENABLED
+        0, 17, 'b', 'u', 'i', 'l', 't', 'i', 'n', '/', 'c', 'o', 'n', 't', 'a', 'i', 'n', 'e', 'r', 1,
 #endif
         };
         msg_service_data_t * const service_data = service_request->need_data;
