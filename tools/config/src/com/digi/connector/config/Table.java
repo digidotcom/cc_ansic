@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.Vector;
 
 public class Table {
+    private final static ConfigGenerator options = ConfigGenerator.getInstance();
+
     private Group.Type type;
     private LinkedHashMap<String, Group> groups = new LinkedHashMap<>();
     private LinkedHashMap<String, Condition> conditions = new LinkedHashMap<>();
@@ -72,6 +74,10 @@ public class Table {
             .addAttribute("desc", desc)
             .addAttribute("format", formatName)
             .addAttribute("bin_id", id.toString());
+
+        if (options.utf8()) {
+            e.addAttribute("string_encoding", "UTF-8");
+        }
 
         if (type == Group.Type.SETTING) {
             org.dom4j.Element attr;
@@ -153,6 +159,10 @@ public class Table {
             .addAttribute("desc", desc)
             .addAttribute("format", formatName)
             .addAttribute("bin_id", id.toString());
+
+        if (options.utf8()) {
+            e.addAttribute("string_encoding", "UTF-8");
+        }
 
         if (type == Group.Type.SETTING) {
             org.dom4j.Element attr;

@@ -139,6 +139,10 @@ public class Descriptors {
             .addAttribute("desc", "Execute command on device")
             .addAttribute("bin_id", "6");
 
+        if (options.utf8()) {
+            e.addAttribute("string_encoding", "UTF-8");
+        }
+
         e.addElement("error_descriptor")
             .addAttribute("id", "1")
             .addAttribute("desc", "Invalid arguments");

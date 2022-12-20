@@ -77,6 +77,7 @@ public class ConfigGenerator {
     private final static String OVERRIDE_MAX_NAME_LENGTH = "maxNameLength";
     private final static String OVERRIDE_MAX_KEY_LENGTH = "maxKeyLength";
     private final static String FILE_TYPE_OPTION = "type";
+    private final static String UTF_8_OPTION = "utf8";
 
     private final static String URL_OPTION = "url";
     private final static String URL_DEFAULT = "devicecloud.digi.com";
@@ -125,6 +126,7 @@ public class ConfigGenerator {
     private Integer rci_dc_max_name_len;
     private boolean noBackup;
     private boolean rciParser;
+    private boolean utf8;
 
     private void usage() {
         Config config = Config.getInstance();
@@ -291,6 +293,11 @@ public class ConfigGenerator {
                         "\t%-16s \t= optional behavior, defining the max length of key names.",
                         DASH + OVERRIDE_MAX_KEY_LENGTH + "=<integer>"));
 
+        log(String
+                .format(
+                        "\t%-16s \t= use UTF-8 encoding for strings",
+                        DASH + UTF_8_OPTION));
+
         System.exit(1);
     }
 
@@ -421,6 +428,8 @@ public class ConfigGenerator {
                 noBackup = true;
             } else if (option.equals(RCI_PARSER_OPTION)) {
                 rciParser = true;
+            } else if (option.equals(UTF_8_OPTION)) {
+                utf8 = true;
             } else if (option.isEmpty()) {
                 throw new Exception("Missing Option!");
             } else {
@@ -638,6 +647,10 @@ public class ConfigGenerator {
 
     public String filename() {
         return filename;
+    }
+
+    public boolean utf8() {
+        return utf8;
     }
 
     private final void execute() throws Exception {
