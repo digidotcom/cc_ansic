@@ -1940,10 +1940,20 @@ STATIC connector_status_t msg_process_pending(connector_data_t * const connector
 
         case msg_state_decompress:
             status = msg_decompress_data(connector_ptr, session);
+            if (status == connector_working && session->current_state == msg_state_process_decompressed)
+            {
+                /* service layer is still processing decompressed data, switch sessions to avoid starvation */
+                msg_switch_session(msg_ptr, session);
+            }
             break;
 
         case msg_state_process_decompressed:
             status = msg_process_decompressed_data(connector_ptr, session);
+            if (status == connector_working && session->current_state == msg_state_process_decompressed)
+            {
+                /* service layer is still processing decompressed data, switch sessions to avoid starvation */
+                msg_switch_session(msg_ptr, session);
+            }
             break;
         #endif
 
