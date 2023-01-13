@@ -137,7 +137,6 @@ public class Descriptors {
         org.dom4j.Element e = org.dom4j.DocumentHelper.createElement("descriptor")
             .addAttribute("element", "do_command")
             .addAttribute("desc", "Execute command on device")
-            .addAttribute("string_encoding", "UTF-8")
             .addAttribute("bin_id", "6");
 
         e.addElement("error_descriptor")
