@@ -303,7 +303,7 @@ public class Element extends Item {
         ExceptMissingOrBad(theUnits, "units");
         if (units != null)
             throw new IOException("Duplicate " + name + ": " + theUnits);
-
+        this.units = theUnits;
     }
 
     public void setRegexPattern(String thePattern) throws IOException {
