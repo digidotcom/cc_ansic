@@ -334,7 +334,9 @@ STATIC connector_status_t get_config_mac_addr(connector_data_t * const connector
 {
     connector_status_t result = connector_working;
 
+#ifndef CC_API_COMPAT
     if (connector_ptr->mac_addr == NULL)
+#endif
     {
         connector_callback_status_t callback_status;
         connector_request_id_t request_id;
@@ -408,7 +410,9 @@ STATIC connector_status_t get_config_link_speed(connector_data_t * const connect
 STATIC connector_status_t get_config_phone_number(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;
+#ifndef CC_API_COMPAT
     if (connector_ptr->phone_dialed == NULL)
+#endif
     {
         connector_callback_status_t callback_status;
         connector_request_id_t request_id;
