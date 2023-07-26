@@ -459,6 +459,7 @@ enum fw_download_response {
     uint8_t abort_opcode = fw_download_abort_opcode;
 
     download_request.target_number = message_load_u8(fw_download_request, target);
+    download_request.status = fw_download_abort_opcode;
 
     response_status.user_status = connector_firmware_status_device_error;
     if (length < record_bytes(fw_download_request))
