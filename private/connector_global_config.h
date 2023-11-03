@@ -286,7 +286,8 @@ STATIC connector_status_t get_config_connection_type(connector_data_t * const co
     connector_status_t result = connector_working;
 
 #if (defined CONNECTOR_CONNECTION_TYPE)
-    ASSERT((CONNECTOR_CONNECTION_TYPE == connector_connection_type_lan) || (CONNECTOR_CONNECTION_TYPE == connector_connection_type_wan));
+    ASSERT((CONNECTOR_CONNECTION_TYPE == connector_connection_type_lan) || (CONNECTOR_CONNECTION_TYPE == connector_connection_type_wan)
+           || (CONNECTOR_CONNECTION_TYPE == connector_connection_type_wifi) || (CONNECTOR_CONNECTION_TYPE == connector_connection_type_wimax));
     connector_ptr->connection_type = CONNECTOR_CONNECTION_TYPE;
 #else
     connector_config_connection_type_t  config_connection;
@@ -305,6 +306,8 @@ STATIC connector_status_t get_config_connection_type(connector_data_t * const co
         {
         case connector_connection_type_lan:
         case connector_connection_type_wan:
+        case connector_connection_type_wifi:
+        case connector_connection_type_wimax:
             connector_ptr->connection_type = config_connection.type;
             break;
 

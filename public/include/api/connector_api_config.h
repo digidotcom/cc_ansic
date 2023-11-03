@@ -148,8 +148,10 @@ typedef struct {
 * @see connector_config_connection_type_t
 */
 typedef enum {
-   connector_connection_type_lan,   /**< LAN connection type for Ethernet or WiFi */
-   connector_connection_type_wan    /**< WAN connection type for PPP over Modem */
+   connector_connection_type_lan,   /**< LAN connection type for Ethernet */
+   connector_connection_type_wan,   /**< WAN connection type for PPP over Modem */
+   connector_connection_type_wifi,  /**< LAN connection type for WiFi */
+   connector_connection_type_wimax, /**< LAN connection type for WiMAx */
 } connector_connection_type_t;
 /**
 * @}

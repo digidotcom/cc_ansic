@@ -62,6 +62,8 @@ STATIC connector_status_t edp_config_init(connector_data_t * const connector_ptr
     switch (connector_ptr->connection_type)
     {
     case connector_connection_type_lan:
+    case connector_connection_type_wifi:
+    case connector_connection_type_wimax:
         break;
     case connector_connection_type_wan:
 #if (!defined CONNECTOR_WAN_LINK_SPEED_IN_BITS_PER_SECOND)

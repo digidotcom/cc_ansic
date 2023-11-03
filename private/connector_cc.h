@@ -33,7 +33,9 @@ typedef enum {
 
 typedef enum {
     ethernet_type = 1,
-    ppp_over_modem_type
+    ppp_over_modem_type,
+    wifi_type,
+    wimax_type,
 } cc_connection_type_t;
 
 enum {
@@ -242,7 +244,24 @@ enum cc_connection_info {
     }
 
     {
-        cc_connection_type_t const connection_type =  (connector_ptr->connection_type == connector_connection_type_lan) ? ethernet_type : ppp_over_modem_type;
+        cc_connection_type_t connection_type;
+
+        switch (connector_ptr->connection_type)
+        {
+        case connector_connection_type_wan:
+            connection_type = ppp_over_modem_type;
+            break;
+        case connector_connection_type_wifi:
+            connection_type = wifi_type;
+            break;
+        case connector_connection_type_wimax:
+            connection_type = wimax_type;
+            break;
+        case connector_connection_type_lan:
+        default:
+            connection_type = ethernet_type;
+            break;
+        }
 
         message_store_u8(connection_report, connection_type, connection_type);
 
@@ -251,6 +270,8 @@ enum cc_connection_info {
         switch (connector_ptr->connection_type)
         {
         case connector_connection_type_lan:
+        case connector_connection_type_wifi:
+        case connector_connection_type_wimax:
             result = get_config_mac_addr(connector_ptr);
             if (result != connector_working)
             {
