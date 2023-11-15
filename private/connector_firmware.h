@@ -77,6 +77,22 @@ enum fw_message {
 #define FW_MESSAGE_HEADER_SIZE record_bytes(fw_message)
 #define FW_MESSAGE_RESPONSE_MAX_SIZE    16
 
+/* Firmware binary block message format:
+ *  --------------------------------------------------------
+ * |   0    |   1    |     2        |  3 - 6  |   7..       |
+ *  --------------------------------------------------------
+ * | opcode | target | Ack required |  offset | binary data |
+ *  --------------------------------------------------------
+ *
+ */
+enum fw_binary_block {
+    field_define(fw_binary_block, opcode, uint8_t),
+    field_define(fw_binary_block, target, uint8_t),
+    field_define(fw_binary_block, ack_required, uint8_t),
+    field_define(fw_binary_block, offset, uint32_t),
+    record_end(fw_binary_block)
+};
+
 enum fw_target_list_hdr {
     field_define(fw_target_list, opcode, uint8_t)
 };
@@ -437,17 +453,18 @@ enum fw_download_request {
 
 
 /* Firmware download response message format:
- *  ---------------------------------
- * |  0     |   1    |     2         |
- *  ---------------------------------
- * | opcode | target | response type |
- *  ---------------------------------
+ *  -----------------------------------------------------------
+ * |  0     |   1    |     2         |         3 - 4          |
+ *  -----------------------------------------------------------
+ * | opcode | target | response type |  max binary chunk size |
+ *  -----------------------------------------------------------
  *
  */
 enum fw_download_response {
     field_define(fw_download_response, opcode, uint8_t),
     field_define(fw_download_response, target, uint8_t),
     field_define(fw_download_response, response_type, uint8_t),
+    field_define(fw_download_response, max_size, uint16_t),
     record_end(fw_download_response)
 };
 
@@ -531,6 +548,8 @@ error:
         message_store_u8(fw_download_response, opcode, fw_download_response_opcode);
         message_store_u8(fw_download_response, target, download_request.target_number);
         message_store_u8(fw_download_response, response_type, download_request.status);
+        /* Max size = Max buffer size - EDP facility size header (header: 4 bytes + protocol: 4 bytes) - Firmware binary block message size (7 bytes) */
+        message_store_be16(fw_download_response, max_size, MSG_MAX_RECV_PACKET_SIZE - PACKET_EDP_FACILITY_SIZE - record_end(fw_binary_block));
 
         fw_ptr->response_size = record_bytes(fw_download_response);
 
@@ -549,22 +568,6 @@ done:
 
 STATIC connector_status_t process_fw_binary_block(connector_firmware_data_t * const fw_ptr, uint8_t * const fw_binary_block, uint16_t const length)
 {
-/* Firmware binary block message format:
- *  --------------------------------------------------------
- * |   0    |   1    |     2        |  3 - 6  |   7..       |
- *  --------------------------------------------------------
- * | opcode | target | Ack required |  offset | binary data |
- *  --------------------------------------------------------
- *
- */
-enum fw_binary_block {
-    field_define(fw_binary_block, opcode, uint8_t),
-    field_define(fw_binary_block, target, uint8_t),
-    field_define(fw_binary_block, ack_required, uint8_t),
-    field_define(fw_binary_block, offset, uint32_t),
-    record_end(fw_binary_block)
-};
-
 /* Firmware binary block acknowledge message format:
  *  -----------------------------------
  * |   0    |    1   | 2 - 5  |    6   |
