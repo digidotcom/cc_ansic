@@ -1,5 +1,5 @@
 /*
-Copyright 2019, Digi International Inc.
+Copyright 2019-2024, Digi International Inc.
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -221,8 +221,8 @@ typedef struct msg_data_block_t
     size_t ack_count;
     unsigned int status_flag;
 #if (defined CONNECTOR_COMPRESSION)
-    uint8_t  buffer_in[MSG_MAX_RECV_PACKET_SIZE];
-    uint8_t  buffer_out[MSG_MAX_RECV_PACKET_SIZE];
+    uint8_t  buffer_in[MSG_MAX_SEND_PACKET_SIZE];
+    uint8_t  buffer_out[MSG_MAX_SEND_PACKET_SIZE];
     size_t   bytes_out;
     int      z_flag;
     z_stream zlib;
