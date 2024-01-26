@@ -2163,6 +2163,7 @@ STATIC connector_status_t msg_init_facility(connector_data_t * const connector_p
         msg_ptr->capabilities[msg_capability_client].window_size = MSG_RECV_WINDOW_SIZE;
     }
 
+	msg_ptr->discovery_state = msg_service_id_none;
     msg_ptr->service_cb[service_id] = callback;
     status = connector_working;
 
