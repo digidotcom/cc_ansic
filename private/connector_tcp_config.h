@@ -176,7 +176,7 @@ done:
 }
 #endif
 
-#if !(defined CONNECTOR_WAIT_COUNT)
+#if !(defined CONNECTOR_AGGRESSIVE_KEEPALIVES) && !(defined CONNECTOR_WAIT_COUNT)
 STATIC connector_status_t get_config_wait_count(connector_data_t * const connector_ptr)
 {
     connector_status_t result = connector_working;

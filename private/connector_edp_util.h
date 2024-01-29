@@ -45,7 +45,9 @@ STATIC void edp_reset_initial_data(connector_data_t * const connector_ptr)
     connector_ptr->edp_data.facilities.current = NULL;
     connector_ptr->edp_data.keepalive.last_rx_sent_time = 0;
     connector_ptr->edp_data.keepalive.last_tx_received_time = 0;
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
     connector_ptr->edp_data.keepalive.miss_tx_count = 0;
+#endif
 
     connector_ptr->edp_data.send_packet.total_length = 0;
     connector_ptr->edp_data.send_packet.bytes_sent = 0;

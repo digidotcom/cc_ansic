@@ -74,6 +74,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define E_MSG_MT2_TYPE_KA_RX_INTERVAL       UINT32_C(0x0020) /* C -> S */
 #define E_MSG_MT2_TYPE_KA_TX_INTERVAL       UINT32_C(0x0021) /* C -> S */
 #define E_MSG_MT2_TYPE_KA_WAIT              UINT32_C(0x0022) /* C -> S */
+#define E_MSG_MT2_TYPE_KA_FIXED_WAIT        UINT32_C(0x0023) /* C -> S */
 #define E_MSG_MT2_TYPE_KA_KEEPALIVE         UINT32_C(0x0030) /* bi-directional */
 #define E_MSG_MT2_TYPE_PAYLOAD              UINT32_C(0x0040) /* bi-directional */
 
@@ -93,10 +94,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define GET_RX_KEEPALIVE_INTERVAL(connector_ptr)    connector_ptr->edp_data.config.rx_keepalive_interval
 #endif
 
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
 #if (defined CONNECTOR_WAIT_COUNT)
 #define GET_WAIT_COUNT(connector_ptr)    CONNECTOR_WAIT_COUNT
 #else
 #define GET_WAIT_COUNT(connector_ptr)    connector_ptr->edp_data.config.wait_count
+#endif
 #endif
 
 #define MAX_RECEIVE_TIMEOUT_IN_SECONDS  1
@@ -193,7 +196,7 @@ typedef struct connector_edp_data {
         uint16_t rx_keepalive_interval;
 #endif
 
-#if !(defined CONNECTOR_WAIT_COUNT)
+#if !(defined CONNECTOR_AGGRESSIVE_KEEPALIVES) && !(defined CONNECTOR_WAIT_COUNT)
         uint16_t wait_count;
 #endif
     } config;
@@ -242,7 +245,9 @@ typedef struct connector_edp_data {
         uint8_t send_rx_packet[PACKET_EDP_HEADER_SIZE];
         unsigned long last_rx_sent_time;
         unsigned long last_tx_received_time;
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
         uint16_t miss_tx_count;
+#endif
     } keepalive;
 
     unsigned long int connect_at;

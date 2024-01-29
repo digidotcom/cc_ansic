@@ -203,7 +203,13 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
     struct {
         uint16_t type;
         uint16_t value;
-    } keepalive_parameters[3];
+    } keepalive_parameters[
+#ifdef CONNECTOR_AGGRESSIVE_KEEPALIVES
+        2
+#else
+        3
+#endif
+    ];
 
 #if !(defined CONNECTOR_TX_KEEPALIVE_IN_SECONDS)
     result = get_config_keepalive(connector_ptr, connector_request_id_config_tx_keepalive);
@@ -215,7 +221,7 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
     COND_ELSE_GOTO(result == connector_working, done);
 #endif
 
-#if !(defined CONNECTOR_WAIT_COUNT)
+#if !(defined CONNECTOR_AGGRESSIVE_KEEPALIVES) && !(defined CONNECTOR_WAIT_COUNT)
     result = get_config_wait_count(connector_ptr);
     COND_ELSE_GOTO(result == connector_working, done);
 #endif
@@ -226,13 +232,17 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
     keepalive_parameters[1].type = E_MSG_MT2_TYPE_KA_TX_INTERVAL;
     keepalive_parameters[1].value = GET_TX_KEEPALIVE_INTERVAL(connector_ptr);
 
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
     keepalive_parameters[2].type = E_MSG_MT2_TYPE_KA_WAIT;
     keepalive_parameters[2].value = GET_WAIT_COUNT(connector_ptr);
+#endif
 
     connector_debug_line("Send keepalive params");
     connector_debug_line("Rx keepalive parameter = %d", keepalive_parameters[0].value);
     connector_debug_line("Tx keepalive parameter = %d", keepalive_parameters[1].value);
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
     connector_debug_line("Wait Count parameter = %d", keepalive_parameters[2].value);
+#endif
 
     packet = tcp_get_packet_buffer(connector_ptr, E_MSG_MT2_MSG_NUM, &ptr, NULL);
     if (packet == NULL)
@@ -253,6 +263,14 @@ STATIC connector_status_t send_keepalive(connector_data_t * const connector_ptr)
         size_t const len = build_keepalive_param(ptr, keepalive_parameters[i].type, keepalive_parameters[i].value);
         ptr += len;
     }
+#ifdef CONNECTOR_AGGRESSIVE_KEEPALIVES
+    {
+        uint8_t * edp_header = ptr;
+        message_store_be16(edp_header, type, E_MSG_MT2_TYPE_KA_FIXED_WAIT);
+        message_store_be16(edp_header, length, 0);
+        ptr += PACKET_EDP_HEADER_SIZE;
+    }
+#endif
     /* Setting the total_length will enable tcp_send_packet_process.
      * Clear length to 0 for actual length that has been sent.
      */

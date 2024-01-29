@@ -95,6 +95,7 @@ STATIC connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
             {
                 status = connector_callback_abort;
             }
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
             else
             {
                 if (connector_ptr->edp_data.keepalive.miss_tx_count > 0)
@@ -104,6 +105,7 @@ STATIC connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
                     connector_ptr->edp_data.keepalive.miss_tx_count = 0;
                 }
             }
+#endif
             goto done;
         }
     }
@@ -114,8 +116,12 @@ STATIC connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
     {
         unsigned long const tx_keepalive_interval = GET_TX_KEEPALIVE_INTERVAL(connector_ptr);
 
+#ifdef CONNECTOR_AGGRESSIVE_KEEPALIVES
+        unsigned long const max_timeout = (tx_keepalive_interval + (tx_keepalive_interval / 2));
+#else
         unsigned long const wait_count = connector_ptr->edp_data.keepalive.miss_tx_count + UINT32_C(1);
         unsigned long const max_timeout = (tx_keepalive_interval * wait_count);
+#endif
 
         if (!is_valid_timing_limit(connector_ptr, connector_ptr->edp_data.keepalive.last_tx_received_time, max_timeout))
         {
@@ -125,8 +131,10 @@ STATIC connector_callback_status_t tcp_receive_buffer(connector_data_t * const c
                 status = connector_callback_abort;
                 goto done;
             }
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
             connector_ptr->edp_data.keepalive.miss_tx_count++;
             if (connector_ptr->edp_data.keepalive.miss_tx_count == GET_WAIT_COUNT(connector_ptr))
+#endif
             {
                 /* consider a lost connection */
                 if (notify_error_status(connector_ptr->callback, connector_class_id_network_tcp, request_id, connector_keepalive_error, connector_ptr->context) != connector_working)

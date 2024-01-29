@@ -40,9 +40,11 @@
 #endif
 #endif
 
+#ifndef CONNECTOR_AGGRESSIVE_KEEPALIVES
 #if (defined CONNECTOR_WAIT_COUNT)
 #if (CONNECTOR_WAIT_COUNT < WAIT_COUNT_MIN) || (CONNECTOR_WAIT_COUNT > WAIT_COUNT_MAX)
     #error "Invalid CONNECTOR_WAIT_COUNT value in connector_config.h."
+#endif
 #endif
 #endif
 
